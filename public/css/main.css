@@ -1,0 +1,14 @@
+body {
+	background-color: #0000AA;
+}
+
+.jbtron0 {
+	text-align: center;
+	font-family: "Arial", Verdana, Serif;
+	font-size: 250%;
+	font-weight: bold;
+}
+
+.loginField {
+	width: 100%;
+}
