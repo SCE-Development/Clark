@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			server.js
 // Date Created: 	October 17, 2017
-// Last Modified: 	October 18, 2017
+// Last Modified: 	October 26, 2017
 // Details:
 // 					This file comprises the MEAN Stack server to be used in conjunction with PROJECT: SkillMatch
 
@@ -13,6 +13,7 @@ var fs = require("fs");
 var settings = require("./util/settings");		// import server settings
 var handles = require("./util/route_handlers");	// import URI endpoint handlers
 var port = process.argv[2];						// allow custom ports
+
 
 
 /* Create server instance */
@@ -27,11 +28,6 @@ app.use(express.static(settings.root + "/js"));		// location of js files
 /* Define Routes (RESTful) */
 app.get("/", handles.rootHandler);				// GET request of the main login page
 app.post("/login", handles.loginHandler);		// POST request: RESTful login
-// app.post("/control", function (request, response) {	// POST request: RESTful control page
-// 	console.log("Control Signal:");
-// 	response.set("Content-Type", "text/javascript");
-// 	response.send("Nothing");
-// });
 
 
 
