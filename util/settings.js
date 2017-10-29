@@ -2,7 +2,8 @@
 
 var defaults = {
 	"port": 8080,
-	"root": __dirname + "/../public"
+	"root": __dirname + "/../public",
+	"logdir": __dirname + "/../log"
 };
 
 module.exports = defaults;
