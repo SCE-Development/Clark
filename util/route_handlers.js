@@ -16,7 +16,7 @@
 var settings = require("./settings");
 
 // Containers
-var handle_map = {};
+var handle_map = {};		// A map of all endpoint handlers
 
 // ExpressJS transaction options
 var options = {
@@ -27,6 +27,14 @@ var options = {
 		"x-sent": true
 	}
 };
+
+// MongoDB client
+var mongo = require("mongodb").MongoClient;
+mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
+	console.log((err) ? "Could not connect to Mongo" : "Connected to Mongo");
+	console.log(err);
+});
+
 
 
 // BEGIN Handler Functions
@@ -76,5 +84,6 @@ handle_map.loginHandler = function (request, response) {			// POST request: REST
 /* END Handler Functions */
 
 
-module.exports = handle_map, options;
+
+module.exports = handle_map;
 // END route_handlers.js 
