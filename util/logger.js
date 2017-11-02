@@ -52,7 +52,14 @@ logger.logToConsole = true;
 	@function	logger.log
 	@parameter	msg - the string message to log
 	@parameter	options - (optional) JSON object of formatting options to customize how @parameter msg is written to the logfile
-	@returns	n/a
+	@returns	An object detailing the message that was logged (i.e. placed in log queue), and its log settings:
+				{
+					"timestamp": [message's timestamp],
+					"month": [message's log month],
+					"day": [message's log day],
+					"year": [message's log year],
+					"src": [message's source]
+				}
 	@details 	
 				This function is used to record server events in daily logfiles within the log directory (defined in settings.js). The function places the messages in a queue and processes them as they come along. As previously implied, this function will store the message in the log file corresponding to current date that @function logger.log was called. If a logfile with today's date does not exist, that log file will be automatically created and piped the message.
 				Whenever @function log is called, it automatically tags @parameter msg with a timestamp in front, and places it at the end of the logfile. If options is specified, it may contain any or all of the following:
@@ -92,6 +99,15 @@ logger.log = function (msg, options = {
 	// Place msg in log queue
 	logger.dataQueue.push(padding + timestamp + sourceTag + msg);
 
+	// Set the message's detailed info
+	var detailedInfo = {
+		"timestamp": timestamp,
+		"month": month,
+		"day": day,
+		"year": year,
+		"src": options.src
+	};
+
 	// If no other process is using the file, take the file mutex so that no other log call can write. Then, flush all messages.
 	if (logger.fileMutex === true) {
 		// Take mutex
@@ -127,6 +143,9 @@ logger.log = function (msg, options = {
 		// Return mutex
 		logger.fileMutex = true;
 	}
+
+	// Return background information about this log message
+	return detailedInfo;
 }
 
 
