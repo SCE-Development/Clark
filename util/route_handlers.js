@@ -51,7 +51,6 @@ handle_map.rootHandler = function (request, response) {			// GET request on root
 		if (error) {
 			console.log(error);
 			response.status(500).end();
-			throw error;
 		} else {
 			console.log(`Sent index.html to ${settings.port}`);
 			response.end();
@@ -74,7 +73,6 @@ handle_map.loginHandler = function (request, response) {			// POST request: REST
 		if (error) {
 			console.log(error);
 			response.status(500).end();
-			throw error;
 		} else {
 			console.log(`Login successful for client on ${settings.port}`);
 			response.end();
