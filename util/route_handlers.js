@@ -13,7 +13,8 @@
 
 "use strict"
 
-var settings = require("./settings");
+var settings = require("./settings");	// acquire system settings
+var logger = require("./logger");		// acquire main system logger
 
 // Containers
 var handle_map = {};		// A map of all endpoint handlers
@@ -31,8 +32,8 @@ var options = {
 // MongoDB client
 var mongo = require("mongodb").MongoClient;
 mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
-	console.log((err) ? "Could not connect to Mongo" : "Connected to Mongo");
-	console.log(err);
+	logger.log((err) ? "Could not connect to Mongo" : "Connected to Mongo");
+	logger.log(err);
 });
 
 
@@ -49,10 +50,10 @@ handle_map.rootHandler = function (request, response) {			// GET request on root
 	response.set("Content-Type", "text/html");
 	response.sendFile("index.html", options, function (error) {
 		if (error) {
-			console.log(error);
+			logger.log(error);
 			response.status(500).end();
 		} else {
-			console.log(`Sent index.html to ${settings.port}`);
+			logger.log(`Sent index.html to ${settings.port}`);
 			response.end();
 		}
 	});
@@ -66,20 +67,20 @@ handle_map.rootHandler = function (request, response) {			// GET request on root
 	@details 	This function handles login endpoint requests (i.e. for login). Used on a POST request
 */
 handle_map.loginHandler = function (request, response) {			// POST request: RESTful login
-	console.log(`Login request ${request.params.id} from ${request.ip}`);
-	console.log(request);
+	logger.log(`Login request ${request.params.id} from ${request.ip}`);
+	logger.log(request);
 	response.set("Content-Type", "text/javascript");
 	response.sendFile("js/index.js", options, function (error) {
 		if (error) {
-			console.log(error);
+			logger.log(error);
 			response.status(500).end();
 		} else {
-			console.log(`Login successful for client on ${settings.port}`);
+			logger.log(`Login successful for client on ${settings.port}`);
 			response.end();
 		}
 	});
 };
-/* END Handler Functions */
+// END Handler Functions
 
 
 

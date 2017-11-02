@@ -46,16 +46,13 @@ logger.log(`\tServer endpoints routed...`);	// test
 
 /* Listen for requests on specified port */
 if (!port) {
-	console.log(`No port specified: Using default port ${settings.port}`);
-	port = settings.port;
 	logger.log(`\tNo port specified: Using default port ${settings.port}`);	// test
+	port = settings.port;
 } else {
-	console.log(`Using port ${port}`);
-	settings.port = port;
 	logger.log(`\tUsing port ${port}`);	// test
+	settings.port = port;
 }
 app.listen(port, function () {
-	console.log(`Now listening on port ${port}`);
 	logger.log(`**** Server Startup Complete ****`);
 	logger.log(`Now listening on port ${port}`);	// test
 });

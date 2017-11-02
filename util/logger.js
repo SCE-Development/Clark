@@ -15,7 +15,7 @@ var settings = require("./settings");
 
 
 
-// Container
+// Container (Singleton)
 const logger = {};
 
 
@@ -39,6 +39,12 @@ logger.fileMutex = true;
 */
 logger.dataQueue = [];		// queue for data to be written, if logs were requested while a logger.fileMutex was unavailable
 
+/*
+	@member 	logger.logToConsole
+	@details 	If true, this member will force the logger to log its message to both the logfile and the console. Defaults to true.
+*/
+logger.logToConsole = true;
+
 
 
 // Methods
@@ -57,7 +63,8 @@ logger.dataQueue = [];		// queue for data to be written, if logs were requested 
 						"src": [string]	// if defined, adds this string before writing the msg; useful for indicating where the message is being logged from
 					}
 	@notes		
-				The logfiles will be named in this format: [logger.logHeader][current_date]	
+				The logfiles will be named in this format: [logger.logHeader][current_date].
+				In contrast to log file logging, all console.log() calls may or may not appear in the server console in the order they are written
 */
 logger.log = function (msg, options = {
 	"addNL": true,
@@ -105,10 +112,14 @@ logger.log = function (msg, options = {
 			var msgFromQueue = logger.dataQueue.shift();	// removes from front of array
 			fs.appendFile(filepath, msgFromQueue, "utf8", function (error) {
 				if (error) {
-					console.log(`(Log Error occurred for ${filename}) [UNLOGGED] ${msgFromQueue}`);
-					console.log(error);
+					if (logger.logToConsole === true) {
+						console.log(`(Log Error occurred for ${filename}) [UNLOGGED] ${msgFromQueue}`);
+						// console.log(error);
+					}
 				} else {
-					console.log(`(Logged to ${filename} from queue) ${msgFromQueue}`);
+					if (logger.logToConsole === true) {
+						console.log(`(Logged to ${filename} from queue) ${msgFromQueue}`);
+					}
 				}
 			});
 		}
