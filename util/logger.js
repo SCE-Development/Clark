@@ -69,7 +69,7 @@ logger.logToConsole = true;
 						"pad": [unsigned int],	// if > 0, adds the specified amount of newlines before writing the timestamp and msg; useful for placing separators in the logfile. Max is 50.
 						"src": [string]	// if defined, adds this string before writing the msg; useful for indicating where the message is being logged from
 					}
-	@notes		
+	@notes
 				The logfiles will be named in this format: [logger.logHeader][current_date].
 				In contrast to log file logging, all console.log() calls may or may not appear in the server console in the order they are written
 */

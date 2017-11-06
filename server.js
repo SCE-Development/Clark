@@ -64,9 +64,11 @@ logger.log(`\tServer endpoints routed...`);	// test
 if (!port) {
 	logger.log(`\tNo port specified: Using default port ${settings.port}`);	// test
 	port = settings.port;
+	logger.log(`\tNo port specified: Using default port ${settings.port}`);	// test
 } else {
 	logger.log(`\tUsing port ${port}`);	// test
 	settings.port = port;
+	logger.log(`\tUsing port ${port}`);	// test
 }
 app.listen(port, function () {
 	logger.log(`**** Server Startup Complete ****`);
