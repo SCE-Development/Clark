@@ -15,7 +15,7 @@ var settings = require("./settings");
 
 
 
-// Container
+// Container (Singleton)
 const logger = {};
 
 
@@ -39,6 +39,12 @@ logger.fileMutex = true;
 */
 logger.dataQueue = [];		// queue for data to be written, if logs were requested while a logger.fileMutex was unavailable
 
+/*
+	@member 	logger.logToConsole
+	@details 	If true, this member will force the logger to log its message to both the logfile and the console. Defaults to true.
+*/
+logger.logToConsole = true;
+
 
 
 // Methods
@@ -46,7 +52,14 @@ logger.dataQueue = [];		// queue for data to be written, if logs were requested 
 	@function	logger.log
 	@parameter	msg - the string message to log
 	@parameter	options - (optional) JSON object of formatting options to customize how @parameter msg is written to the logfile
-	@returns	n/a
+	@returns	An object detailing the message that was logged (i.e. placed in log queue), and its log settings:
+				{
+					"timestamp": [message's timestamp],
+					"month": [message's log month],
+					"day": [message's log day],
+					"year": [message's log year],
+					"src": [message's source]
+				}
 	@details 	
 				This function is used to record server events in daily logfiles within the log directory (defined in settings.js). The function places the messages in a queue and processes them as they come along. As previously implied, this function will store the message in the log file corresponding to current date that @function logger.log was called. If a logfile with today's date does not exist, that log file will be automatically created and piped the message.
 				Whenever @function log is called, it automatically tags @parameter msg with a timestamp in front, and places it at the end of the logfile. If options is specified, it may contain any or all of the following:
@@ -56,8 +69,9 @@ logger.dataQueue = [];		// queue for data to be written, if logs were requested 
 						"pad": [unsigned int],	// if > 0, adds the specified amount of newlines before writing the timestamp and msg; useful for placing separators in the logfile. Max is 50.
 						"src": [string]	// if defined, adds this string before writing the msg; useful for indicating where the message is being logged from
 					}
-	@notes		
-				The logfiles will be named in this format: [logger.logHeader][current_date]	
+	@notes
+				The logfiles will be named in this format: [logger.logHeader][current_date].
+				In contrast to log file logging, all console.log() calls may or may not appear in the server console in the order they are written
 */
 logger.log = function (msg, options = {
 	"addNL": true,
@@ -85,6 +99,15 @@ logger.log = function (msg, options = {
 	// Place msg in log queue
 	logger.dataQueue.push(padding + timestamp + sourceTag + msg);
 
+	// Set the message's detailed info
+	var detailedInfo = {
+		"timestamp": timestamp,
+		"month": month,
+		"day": day,
+		"year": year,
+		"src": options.src
+	};
+
 	// If no other process is using the file, take the file mutex so that no other log call can write. Then, flush all messages.
 	if (logger.fileMutex === true) {
 		// Take mutex
@@ -105,10 +128,14 @@ logger.log = function (msg, options = {
 			var msgFromQueue = logger.dataQueue.shift();	// removes from front of array
 			fs.appendFile(filepath, msgFromQueue, "utf8", function (error) {
 				if (error) {
-					console.log(`(Log Error occurred for ${filename}) [UNLOGGED] ${msgFromQueue}`);
-					console.log(error);
+					if (logger.logToConsole === true) {
+						console.log(`(Log Error occurred for ${filename}) [UNLOGGED] ${msgFromQueue}`);
+						// console.log(error);
+					}
 				} else {
-					console.log(`(Logged to ${filename} from queue) ${msgFromQueue}`);
+					if (logger.logToConsole === true) {
+						console.log(`(Logged to ${filename} from queue) ${msgFromQueue}`);
+					}
 				}
 			});
 		}
@@ -116,6 +143,9 @@ logger.log = function (msg, options = {
 		// Return mutex
 		logger.fileMutex = true;
 	}
+
+	// Return background information about this log message
+	return detailedInfo;
 }
 
 

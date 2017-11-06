@@ -60,4 +60,8 @@ typings/
 # npm package-lock file
 package-lock.json
 
+# **** PROJECT: MEANskills Custom ignore options ****
+# Ignore all server log files in the log directory
+log/*
+
 

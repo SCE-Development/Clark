@@ -3,12 +3,12 @@
 	Name: 			Rolando Javier
 	File: 			utility.js
 	Date Created: 	October 18, 2017
-	Last Modified: 	October 18, 2017
+	Last Modified: 	November 5, 2017
 	Details:
 		This file comsists of all the common utility mothods used
 		by all pages.
 	Dependencies:
-		JQuery
+		JQuery v1.12.4
 */
 
 /* Constants & Globals */
@@ -83,34 +83,49 @@ function pressingKey (key, event) {
 /*
 	@function	post
 	@parameter	uri - the URI endpoint to send the request to
-	@parameter	data - the data string/JSON object to send
+	@parameter	data - the JSON object containing the various data (i.e. key-value pairs) to send (null if no data is sent)
 	@parameter	callback - an optional function to run on
 				a successful AJAX request; is passed three
 				arguements based on the request success:
 				On AJAX success:
 					callback(responseData, responseStatus, jqxhrObject)
 				On AJAX error:
-					callback(errorData, responseStatus, jqxhrObject)
+					callback(errMsg, "failure", null)
 	@details 	This function sends a post request using JQuery's
 				ajax() API
+	@note 		This function automatically converts the data parameter to query-string-like format, if data is not null
 */
 function post (uri, data, callback) {
-	$.ajax(ROOT_OFFSET + uri, {
-		"async": true,
-		"method": "POST",
-		"data": data,
-		"success": function (data, status, jqxhr) {
-			if (callback) {
-				callback(data, status, jqxhr);
-			}
-			logDebug("post()", "ajax request result", "success");
-		},
-		"error": function (jqxhr, status, err) {
-			if (callback) {
-				callback(err, status, jqxhr);
-			}
-			logDebug("post()", "ajax request result", "failure");
+	var postData = (data == null) ? null : "?" + (jQuery.param(data));
+	logDebug("post()", "POST Destination", uri);
+	$.post(ROOT_OFFSET + uri, postData, function (data, status, jqxhr) {	// success function
+		if (callback) {
+			callback(data, status, jqxhr);
+			logDebug("post()", "AJAX request result", "success");
+		}
+	}).fail(function () {
+		if (callback) {
+			callback("Failed to reach " + uri, "failure", null);
+			logDebug("post()", "POST Error", "failed to send to " + uri);
 		}
 	});
+	// $.ajax(ROOT_OFFSET + uri, {
+	// 	"async": true,
+	// 	"method": "POST",
+	// 	"data": jQuery.param(data),
+	// 	"contentType": 'application/x-www-form-urlencoded; charset=UTF-8',
+	// 	"success": function (data, status, jqxhr) {
+	// 		if (callback) {
+	// 			callback(data, status, jqxhr);
+	// 		}
+	// 		logDebug("post()", "ajax request result", "success");
+	// 	},
+	// 	"error": function (jqxhr, status, err) {
+	// 		if (callback) {
+	// 			callback(err, status, jqxhr);
+	// 		}
+	// 		logDebug("post()", "ajax request result", "failure");
+	// 	}
+	// });
 }
 /* END Methods */
