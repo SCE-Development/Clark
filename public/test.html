@@ -1,0 +1,154 @@
+<!-- 
+	PROJECT: 		MEANserver
+	Name: 			Rolando Javier
+	File: 			test.html
+	Date Created: 	November 3, 2017
+	Last Modified: 	November 3, 2017
+	Details:
+		This file serves as a function test page for the MEANserver project
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN header -->
+<head>
+	<!-- Metadata -->
+	<meta charset="UTF-8">
+	<meta name="description" content="MEAN Server Test: This page is a test page for PROJECT: MEAN Skills, and is used to test various server functions.">
+	<meta name="keywords" content="MEAN server test sce">
+	<meta name="author" content="R. Javier">
+	<meta name="last-modified" content="November 3, 2017">
+
+	<!-- Tab Title -->
+	<title>myMEAN.test</title>
+
+	<!-- Standard Includes -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="css/test.css">
+</head>
+<!-- END header -->
+
+<!-- BEGIN body -->
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="jumbotron">
+					<h1>MEANserver Test Interface</h1>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-4">
+				<!-- BEGIN Database Operations Panel -->
+				<div id="operationsAccordion" class="panel-group" role="tablist" aria-multiselectable="true">
+					<div id="dbOpsWritePanel" class="panel panel-default centerText">
+						<div id="dbOpsWritePanelHeading" class="panel-heading" class="tab">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#dbOpsWriteCollapsible">
+									Write to DB
+								</a>
+							</h4>
+						</div>
+						<div id="dbOpsWriteCollapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="dbOpsWritePanelHeading">
+							<div class="panel-body">
+								<!-- BEGIN database selection dropdown -->
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="input-group">
+												<!-- BEGIN Dropdown Selection Button -->
+												<div class="input-group-btn">
+													<button id="dropdownSelectDB" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+														<span class="caret"></span>
+														Select DB
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="dropdownSelectDB">
+														<li class="dbSelectOption" name="testdb"><a href="#">testdb</a></li>
+													</ul>
+												</div>
+												<!-- END Dropdown Selection Button -->
+
+												<!-- BEGIN Database Selection Viewer -->
+												<input type="text" class="form-control" placeholder="Select A Database" aria-label="..." readonly>
+												<!-- END Database Selection Viewer -->
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END database selection dropdown -->
+
+								<!-- BEGIN JSON data input field -->
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="input-group">
+												<input id="jsonInputField" class="form-control" type="text" placeholder="Enter JSON data here...">
+												<span class="input-group-btn">
+													<button id="testMongoWrite" class="btn btn-default">Write</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END JSON data input field -->
+							</div>
+						</div>
+					</div>
+					<div id="dbOpsSearchPanel" class="panel panel-default centerText">
+						<div id="dbOpsSearchHeading" class="panel-heading" role="tab">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#dbOpsSearchCollapsible" aria-expanded="true" aria-controls="dbOpsSearchCollapsible">List Collections</a>
+							</h4>
+						</div>
+						<div id="dbOpsSearchCollapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="dbOpsSearchHeading">
+							<div class="panel-body">
+								<!-- BEGIN collection name field -->
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="input-group">
+												<input id="dbCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
+												<span class="input-group-btn">
+													<button id="testMongoSearch" class="btn btn-default">Find</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END collection name field -->
+							</div>
+						</div>
+					</div>
+					<div id="somePanel" class="panel panel-default centerText">
+						<div id="someHeading" class="panel-heading" role="tab">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#someCollapsible" aria-expanded="true" aria-controls="someCollapsible">Your Tab Title Here...</a>
+							</h4>
+						</div>
+						<div id="someCollapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="someHeading">
+							<div class="panel-body">
+								Your Tab Body Here...
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END Database Operations Panel -->
+
+			<div class="col-sm-4"></div>
+			<div class="col-sm-4"></div>
+		</div>
+	</div>
+</body>
+<!-- END body -->
+
+<!-- BEGIN footer -->
+<footer>
+	<script type="text/javascript" src="js/lib/utility.js"></script>
+	<script type="text/javascript" src="js/test.js"></script>
+</footer>
+<!-- END footer -->
+</html>
