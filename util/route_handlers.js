@@ -205,11 +205,11 @@ handle_map.testFindHandler = function (request, response) {
 handle_map.testFindDocHandler = function (request, response) {
 	var handlerTag = {"src": "testFindDocHandler"};
 	var hasBody = (Object.keys(request.body).length > 0);
-	var searchCriteria = (hasBody) ? delintRequestBody(request.body) : {};	// either the filter, or empty JSON
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};	// either the filter, or empty JSON
 	// response.status(200).send(`Test: ${JSON.stringify(searchCriteria)}`).end();	// test
 
-	logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + JSON.stringify(searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
-	
+	// Find documents
+	logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
 	findDocs(searchCriteria.collection, searchCriteria.search, function (error, list) {
 		if (error != null) {
 			logger.log(`An error occurred`, handlerTag);
@@ -323,7 +323,7 @@ function findDocs (collection, filter, callback) {
 			}
 		} else {
 			// If no error, then the collection exists. We must now find the document(s)
-			logger.log(`Finding docs in collection "${collection}"`, handlerTag);
+			logger.log(`Finding docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
 			result.find(filter).toArray(function(err, docs) {
 				switch (err === null) {
 					// No error; proceed normally
@@ -383,6 +383,40 @@ function delintRequestBody (body, callback) {
 			}
 			break;
 		}
+	}
+}
+
+/*
+	@function 	numerify
+	@parameter 	obj - the JSON object to numerify
+	@returns 	The numerified JSON object
+	@details 	This function takes a JSON object and converts to numbers any (and all) string member-values whose characters are all numeric
+*/
+function numerify (obj) {
+	var handlerTag = {"src": "numerify"};
+
+	try {
+		// Convert obj to string first...
+		var objAsString = JSON.stringify(obj);
+
+		// Then reparse it with a reviver function
+		var newObj = JSON.parse(objAsString,
+			(key, value) => {
+				var handlerTag = {"src": "bodyParser.json.Reviver"};
+				// Attempt to convert string into number
+				if (typeof value === "string" && Number.isNaN(Number(value)) === false) {
+					logger.log(`Converting string ${value} into number ${Number(value)}`, handlerTag);
+					return Number(value);
+				} else {
+					logger.log(`Leaving ${typeof value} ${(typeof value === "object") ? JSON.stringify(value) : value} as is`, handlerTag);
+					return value;
+				}
+			}
+		);
+		return newObj;
+	} catch (err) {
+		logger.log(`Unable to numerify ${typeof obj} ${JSON.stringify(obj)}:\n${err}`, handlerTag);
+		return obj;
 	}
 }
 // END Utility Methods

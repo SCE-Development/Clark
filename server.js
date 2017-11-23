@@ -7,7 +7,7 @@
 // 					This file comprises the MEAN Stack server to be used in conjunction with PROJECT: SkillMatch
 // Dependencies:
 // 					NodeJS v6.9.1
-// 					ExpressJS 4.x
+// 					ExpressJS 4.16.2
 // 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
 // 					multer (NPM middleware req'd by ExpressJS 4.x to parse multi-length POST data parameters: "npm install --save multer")
 

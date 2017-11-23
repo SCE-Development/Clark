@@ -57,7 +57,7 @@ function init() {
 	$("#testMongoDocSearch").on("click", function (event) {
 		// Acquire data to send
 		var collectionName = $("#dbDocCollectionNameField").val();
-		var searchCriteria = {};
+		var searchCriteria = null;
 
 		if (collectionName === "") {
 			console.log(`Error: No collection name given!`);
