@@ -159,12 +159,17 @@ handle_map.testWriteHandler = function (request, response) {
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
 	@returns	To Client: If successful, returns a success status (200) and the list of collections found. Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	This function...
+	@details 	This function serves any and all requests to the "/test/find" endpoint by performing a search of any collections matching the search parameters given in the request body's JSON data. This data is exepected to appear in the following format:
+		{
+			"name": "string of the collection name to find"
+		}
+	If this data is given, the function will search for the collection whose name matches the object's "name" member.
+	If the data field is not given (i.e. instead of a JSON object in the Request body, we have null), the function will return a list of all collections
 */
 handle_map.testFindHandler = function (request, response) {
 	var handlerTag = {"src": "testFindHandler"};
-	var hasEmptyBody = (Object.keys(request.body).length > 0);
-	var searchCriteria = (hasEmptyBody) ? delintRequestBody(request.body).name : ALL_COLLECTIONS;
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? delintRequestBody(request.body).name : ALL_COLLECTIONS;
 
 	logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === ALL_COLLECTIONS) ? "all collections" : ("collection " + JSON.stringify(searchCriteria))} from the database`, handlerTag);
 
@@ -181,6 +186,37 @@ handle_map.testFindHandler = function (request, response) {
 		} else {
 			logger.log(`An error occurred`, handlerTag);
 			response.status(500).send(err).end();
+		}
+	});
+}
+
+/*
+	@function 	testFindDocHandler
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns	To Client: If successful, returns a success status (200) and the list of documents found. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database querying functions) This function handles all endpoint requests to the "test/finddoc" endpoint. It performs a query on the database and returns any results matching the search criteria given by the Request header's data field. The data field is expected to be a JSON object in the following format:
+		{
+			"collection": "string name of collection",
+			"search": {...}
+		}
+	where the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function. Read the findDocs() description for more details on what to give to the "search" parameter.
+*/
+handle_map.testFindDocHandler = function (request, response) {
+	var handlerTag = {"src": "testFindDocHandler"};
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? delintRequestBody(request.body) : {};	// either the filter, or empty JSON
+	// response.status(200).send(`Test: ${JSON.stringify(searchCriteria)}`).end();	// test
+
+	logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + JSON.stringify(searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+	
+	findDocs(searchCriteria.collection, searchCriteria.search, function (error, list) {
+		if (error != null) {
+			logger.log(`An error occurred`, handlerTag);
+			response.status(500).send(error).end();
+		} else {
+			logger.log(`A result was returned`, handlerTag);
+			response.status(200).send(JSON.stringify(list)).end();
 		}
 	});
 }
@@ -255,6 +291,62 @@ function findCollections (collectionName, callback) {
 			database.listCollections().toArray(callback);
 		}
 	}
+}
+
+/*
+	@function 	findDocs
+	@parameter 	collection - the string name of the collection to search through
+	@paremeter 	filter - a JSON object to filter which documents are returned (i.e. search criteria)
+	@parameter 	callback - (optional) a callback function to run after the search is performed. It is passed two parameters:
+					error - if an error occurred, "error" is an object detailing the issue. Otherwise, it is null;
+					list - the array list of documents matching the search criteria
+	@returns	n/a
+	@details 	This function searches for documents fitting the filter criteria if given, or all documents in the collection if not (i.e. given an empty JSON object). The filter criteria is a JSON object which (if not empty) is expected to contain various parameters:
+		{
+			"someParam0": "criteria0",
+			...
+			"someParamN": "criteriaN"
+		}
+	The parameters and criteria given in the object will vary depending on the structure of the collection you are searching
+	@note 		See MongoDB's Collection.find() API doc for more information regarding the parameters
+*/
+function findDocs (collection, filter, callback) {
+	var handlerTag = {"src": "findDocs"};
+
+	// Begin by finding the collection
+	database.collection(collection, {strict: true}, function (error, result) {
+		if (error != null) {
+			// Error? Must report it...
+			logger.log(`Error looking up collection "${collection}": ` + error.toString(), handlerTag);
+			if (typeof callback === "function") {
+				callback(error, null);
+			}
+		} else {
+			// If no error, then the collection exists. We must now find the document(s)
+			logger.log(`Finding docs in collection "${collection}"`, handlerTag);
+			result.find(filter).toArray(function(err, docs) {
+				switch (err === null) {
+					// No error; proceed normally
+					case true: {
+						logger.log(`Document(s) search succeeded`, handlerTag);
+						if (typeof callback === "function") {
+							callback(null,docs);
+						}
+						break;
+					}
+
+					// Err was present
+					default: {
+						logger.log(`Document(s) search failed`, handlerTag);
+						if (typeof callback === "function") {
+							callback(err,null);
+						}
+						break;
+					}
+				}
+			});
+		}
+	});
 }
 // END Database Functions
 

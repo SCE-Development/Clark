@@ -41,11 +41,11 @@
 			</div>
 		</div>
 		<div class="row">
+			<!-- BEGIN Database Operations Panel -->
 			<div class="col-sm-4">
-				<!-- BEGIN Database Operations Panel -->
 				<div id="operationsAccordion" class="panel-group" role="tablist" aria-multiselectable="true">
 					<div id="dbOpsWritePanel" class="panel panel-default centerText">
-						<div id="dbOpsWritePanelHeading" class="panel-heading" class="tab">
+						<div id="dbOpsWritePanelHeading" class="panel-heading" role="tab">
 							<h4 class="panel-title">
 								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#dbOpsWriteCollapsible">
 									Write to DB
@@ -122,6 +122,36 @@
 							</div>
 						</div>
 					</div>
+					<div id="dbDocSearchPanel" class="panel panel-default centerText">
+						<div id="dbDocSearchPanelHeading" class="panel-heading" role="tab">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#dbDocSearchCollapsible" aria-expanded="true" aria-controls="dbDocSearchCollapsible">Find Docs</a>
+							</h4>
+						</div>
+						<div id="dbDocSearchCollapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="dbDocSearchPanelHeading">
+							<div class="panel-body">
+								<!-- BEGIN search criteria field -->
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="input-group">
+												<input id="dbDocCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
+											</div>
+											<div class="input-group">
+												<input id="dbDocRawJsonField" class="form-control" type="text" placeholder="JSON Search Criteria...">
+												<span class="input-group-btn">
+													<button id="testMongoDocSearch" class="btn btn-default">Find</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END search criteria field -->
+								<!-- BEGIN doc name field -->
+								<!-- END doc name field -->
+							</div>
+						</div>
+					</div>
 					<div id="somePanel" class="panel panel-default centerText">
 						<div id="someHeading" class="panel-heading" role="tab">
 							<h4 class="panel-title">
@@ -138,8 +168,13 @@
 			</div>
 			<!-- END Database Operations Panel -->
 
-			<div class="col-sm-4"></div>
-			<div class="col-sm-4"></div>
+			<!-- BEGIN Content Panel -->
+			<div class="col-sm-8">
+				<div id="content_panel">
+					<!-- Initially empty, will fill up when content is acquired -->
+				</div>
+			</div>
+			<!-- END Content Panel -->
 		</div>
 	</div>
 </body>

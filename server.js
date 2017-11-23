@@ -56,6 +56,7 @@ app.post("/login", handles.loginHandler);		// POST request: RESTful login
 app.get("/test", handles.testHandler);			// GET request of the test page
 app.post("/test/write", handles.testWriteHandler);	// POST request to write to the db from the test page
 app.post("/test/find", handles.testFindHandler);	// POST request to find and list the db's collections on the test page
+app.post("/test/finddoc", handles.testFindDocHandler);	// POST request to find and list documents via a search
 logger.log(`\tServer endpoints routed...`);	// test
 
 
