@@ -24,22 +24,42 @@ function init() {
 	/* Setup WriteToMongoDB action */
 	$("#testMongoWrite").on("click", function (event) {
 		// Acquire JSON data to send
-		var data = {
-			"data": $("#jsonInputField").val()
-		};
-		console.log(`Writing "${data}" to Database...`);
-
-		// Send to database using a RESTful POST request to the "/test/write" endpoint
-		post("/test/write", data, function (reply, status, jqxhr) {
-			if (status === "success") {
-				console.log("Replied: " + reply.toString());
-			} else {
-				var errToLog = `Status: ${status.toString()}\nReply: ${reply.toString()}`;
-				console.log("A Problem Occurred...");
-				console.log(errToLog);
-				showError(errToLog);
+		var collectionName = $("#CollectionNameField").val();
+		var newDoc = null
+		
+		if (collectionName === "") {
+			var errToLog = `Error: No collection name given!`;
+			console.log(errToLog);
+			showError(errToLog);
+		} else {
+			try {
+				newDoc = ($("#jsonInputField").val() === "") ? {} : JSON.parse($("#jsonInputField").val());
+			} catch (err) {
+				console.log(`Error: failed to parse raw JSON data "${jsonInputField}"`);
+				console.log(err);
+				showError(err);
+				return;
 			}
-		});
+
+			var data = {
+				"collection": collectionName,
+				"data": newDoc
+			};
+			console.log(`Writing "${JSON.stringify(data)}" to Database...`);
+
+			// Send to database using a RESTful POST request to the "/test/write" endpoint
+			post("/test/write", data, function (reply, status, jqxhr) {
+				if (status === "success") {
+					console.log("Replied: " + reply.toString());
+					showSingleWriteResults(reply);
+				} else {
+					var errToLog = `Status: ${status.toString()}\nReply: ${reply.toString()}`;
+					console.log("A Problem Occurred...");
+					console.log(errToLog);
+					showError(errToLog);
+				}
+			});
+		}
 	});
 
 	/* Setup SearchFromMongoDB action */
@@ -357,6 +377,17 @@ function showSingleDeleteResults (result) {
 */
 function showSingleUpdateResults (result) {
 	var content = `<h3>Update Results</h3><p>${(typeof result === "object") ? JSON.stringify(result) : result}</p>`;
+	$("#content_panel").html(content);
+}
+
+/*
+	@function 	showSingleWriteResults
+	@parameter 	result - the JSON object comprising the result of the single update
+	@returns 	n/a
+	@details 	This function neatly presents the status of the last Write operation from the "/test/updatedoc" endpoint request
+*/
+function showSingleWriteResults (result) {
+	var content = `<h3>Write Results</h3><p>${(typeof result === "object") ? JSON.stringify(result) : result}</p>`;
 	$("#content_panel").html(content);
 }
 // END Utility Functions

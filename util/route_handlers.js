@@ -52,11 +52,11 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 
 		// Then, write server connection information
 		var postmark = logger.log("Database connection established");
-		insertDoc("serverStarts", {"login": postmark}, function (error) {
+		insertDoc("serverStarts", {"login": postmark}, function (error, result) {
 			if (error != null) {
 				logger.log("Postmark not written to database");
 			} else {
-				logger.log("Postmark successfully written to server");
+				logger.log("Postmark successfully written to database");
 			}
 		});
 	}
@@ -132,29 +132,37 @@ handle_map.testHandler = function (request, response) {
 };
 
 /*
-	@function 	testWriteHandler
+	@function 	testWriteNewDocHandler
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
 	@returns	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the reponse header with the error's details
-	@details 	This function performs a database write to the db from the test page for all "/test/write" endpoint requests. Used on a POST request
+	@details 	This function performs a database write to the db from the test page for all "/test/write" endpoint requests. Used on a POST request, it requires that the Request body be a JSON object in the following format:
+		{
+			"collection": "string name of collection",
+			"data": {...}
+		}
+	where the "data" parameter is a JSON object containing the doc parameter expected by the insertDoc() function. Read the insertDoc() description for more deatils on what to give to the "data" parameter.
 */
-handle_map.testWriteHandler = function (request, response) {
-	var handlerTag = {"src": "testWriteHandler"};
-	logger.log(`Client @ ip ${request.ip} is requesting to write to the database`, handlerTag);
-	
+handle_map.testWriteNewDocHandler = function (request, response) {
+	var handlerTag = {"src": "testWriteNewDocHandler"};
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
+
 	// Perform Write
-	insertDoc("testMsg", {"sender": "RJ", "msg": "hi"}, function (error) {	// Note: I really should validate this data before passing it to the db
-		// Will put inside insertDoc's callback:
-		if (error == null) {
-			response.status(200).send("Wrote to database").end();
+	logger.log(`Client @ ip ${request.ip} is requesting to write a new document of ${typeof searchCriteria.data} ${(typeof searchCriteria.data === "object") ? JSON.stringify(searchCriteria.data) : searchCriteria.data} to the ${searchCriteria.collection} collection in the database`, handlerTag);
+	insertDoc(searchCriteria.collection, searchCriteria.data, function (error, result) {	// Note: I really should validate this data before passing it to the db
+		if (error != null) {
+			logger.log(`An error occurred`, handlerTag);
+			response.status(500).send(error).end();
 		} else {
-			response.status(500).send("Couldn't write to database").end();
+			logger.log(`A result was returned`, handlerTag);
+			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
 		}
 	});
 };
 
 /*
-	@function 	testFindHandler
+	@function 	testFindCollectionsHandler
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
 	@returns	To Client: If successful, returns a success status (200) and the list of collections found. Otherwise, returns a server error status (500) and populates the response header with the error's details
@@ -165,8 +173,8 @@ handle_map.testWriteHandler = function (request, response) {
 	If this data is given, the function will search for the collection whose name matches the object's "name" member.
 	If the data field is not given (i.e. instead of a JSON object in the Request body, we have null), the function will return a list of all collections
 */
-handle_map.testFindHandler = function (request, response) {
-	var handlerTag = {"src": "testFindHandler"};
+handle_map.testFindCollectionsHandler = function (request, response) {
+	var handlerTag = {"src": "testFindCollectionsHandler"};
 	var hasBody = (Object.keys(request.body).length > 0);
 	var searchCriteria = (hasBody) ? delintRequestBody(request.body).name : ALL_COLLECTIONS;
 
@@ -320,37 +328,31 @@ handle_map.testUpdateOneDocHandler = function (request, response) {
 	@parameter	collection - the string name of the database collection to write to
 	@parameter	doc - the JSON object to write to the DB
 	@parameter 	callback - (optional) a callback function to run after writing to the database. It is passed two parameters:
-					error - if an error occurred, "error" is an object detailing the issue. Otherwise, it is null.
+					error - if an error occurred, "error" is a MongoError object detailing the issue. Otherwise, it is null.
+					result - if insertion succeeded, "result" is a Collection~insertOneWriteOpResult object. Otherwise, it is null.
 	@returns	n/a
-	@details 	This function inserts a single document to the destination collection
+	@details 	This function inserts a single document to the destination collection and runs a callback indicating the status of the operation
 */
 function insertDoc (collection, doc, callback) {
 	var handlerTag = {"src": "insertDoc"};
-	var validInput = (collection !== null && doc !== null && (typeof doc) === "object") ? true : false;
 
-	// Make sure that the parameters are not invalid
-	if (validInput) {
-		// Check if database collection exists
-		// database.collection(collection).insertOne(doc);
-		database.collection(collection, {strict: true}, function (error, result) {
-			if (error != null) {
-				// If an error occurred, log the error and 
-				logger.log(`Error looking up collection "${collection}": ` + error.toString(), handlerTag);
-				if (typeof callback === "function") {
-					callback(error);
-				}
-			} else {
-				// Else, no error occurred, and the database collection was found; use it to write to the database
-				result.insertOne(doc);
-				logger.log(`Successfully wrote "${JSON.stringify(doc)}" to collection "${collection}"`, handlerTag);
-				if (typeof callback === "function") {
-					callback(null);
-				}
+	// Check if database collection exists
+	database.collection(collection, {strict: true}, function (error, result) {
+		if (error != null) {
+			// If an error occurred, log the error and run the callback with it
+			logger.log(`Error looking up collection "${collection}": ` + error.toString(), handlerTag);
+			if (typeof callback === "function") {
+				callback(error, null);
 			}
-		});
-	} else {
-		logger.log(`Error: Invalid input`, handlerTag);
-	}
+		} else {
+			// Else, no error occurred, and the database collection was found; use it to write to the database
+			logger.log(`Writing new document ${typeof doc} ${(typeof doc === "object") ? JSON.stringify(doc) : doc}`, handlerTag);
+			result.insertOne(doc).then(function (promiseResult) {
+				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
+				callback(null, promiseResult);
+			});
+		}
+	});
 }
 
 /*

@@ -85,7 +85,13 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="input-group">
-												<input id="jsonInputField" class="form-control" type="text" placeholder="Enter JSON data here...">
+												<input id="CollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
+												<span class="input-group-btn">
+													<!-- No button here... -->
+												</span>
+											</div>
+											<div class="input-group">
+												<input id="jsonInputField" class="form-control" type="text" placeholder="Enter JSON data here..." data-toggle="tooltip" title='Some Examples:{"msg":"hi"} or {"loginObj.idNestedMember":123}'>
 												<span class="input-group-btn">
 													<button id="testMongoWrite" class="btn btn-default">Write</button>
 												</span>
