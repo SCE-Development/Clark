@@ -12,12 +12,12 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 - MongoDB Official Driver NPM package v2.2.33
 
 #### On Linux
-  - Though it is not necessary to do so manually (i.e. the webpages include jquery from host servers online), you can acquire **JQuery** by going to the JQuery website and downloading the relevant version or higher.
   - You can acquire **Node.js** from *nodejs.org* or through the command line using *apt-get*. Verify installation using *node -v* on command line.
   - To acquire the other packages, you will need **npm** (the Node Package Manager), which comes pre-installed with Node.js. To verify its installation, you can run *npm -v* on command line.
-  - You can acquire **ExpressJS** by using *npm install express*
-  - You can acquire **Body-Parser** by using *npm install --save body-parser*
-  - You can acquire the **MongoDB Driver** by using *npm install mongodb --save*
+  - Install required Node.js Packages (all listed in package.json under 'dependencies'):
+  ```
+  npm install
+  ```
 
 ---
 

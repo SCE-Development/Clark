@@ -20,8 +20,8 @@
   "homepage": "https://github.com/rjavier441/Project_MEANskills#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "expres": "0.0.5",
     "express": "^4.16.2",
+    "jquery": "^3.2.1",
     "mongodb": "^2.2.33"
   }
 }
