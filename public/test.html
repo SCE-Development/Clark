@@ -112,7 +112,7 @@
 											<div class="input-group">
 												<input id="dbCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
 												<span class="input-group-btn">
-													<button id="testMongoSearch" class="btn btn-default">Find</button>
+													<button id="testMongoSearch" class="btn btn-success">Find</button>
 												</span>
 											</div>
 										</div>
@@ -136,11 +136,14 @@
 										<div class="col-sm-12">
 											<div class="input-group">
 												<input id="dbDocCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
+												<span class="input-group-btn">
+													<!-- No button here... -->
+												</span>
 											</div>
 											<div class="input-group">
-												<input id="dbDocRawJsonField" class="form-control" type="text" placeholder="JSON Search Criteria...">
+												<input id="dbDocRawJsonField" class="form-control" type="text" placeholder="JSON Search Criteria..." data-toggle="tooltip" title='Some Examples:{"msg":"hi"} or {"loginObj.idNestedMember":123}'>
 												<span class="input-group-btn">
-													<button id="testMongoDocSearch" class="btn btn-default">Find</button>
+													<button id="testMongoDocSearch" class="btn btn-success">Find</button>
 												</span>
 											</div>
 										</div>
@@ -169,9 +172,54 @@
 												</span>
 											</div>
 											<div class="input-group">
-												<input id="dbDocDeleteRawJsonField", class="form-control" type="text" placeholder="JSON Search Criteria...">
+												<input id="dbDocDeleteRawJsonField", class="form-control" type="text" placeholder="JSON Search Criteria..." data-toggle="tooltip" title='Some Examples:{"msg":"hi"} or {"loginObj.idNestedMember":123}'>
 												<span class="input-group-btn">
 													<button id="testMongoDocDelete" class="btn btn-danger">Delete</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END search criteria field -->
+							</div>
+						</div>
+					</div>
+					<div id="dbDocUpdatePanel" class="panel panel-default centerText">
+						<div id="dbDocUpdatePanelHeading" class="panel-heading" role="tab">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#dbDocUpdateCollapsible" aria-expanded="true" aria-controls="dbDocUpdateCollapsible">Update/Replace</a>
+							</h4>
+						</div>
+						<div id="dbDocUpdateCollapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="dbDocUpdatePanelHeading">
+							<div class="panel-body">
+								<!-- BEGIN search criteria field -->
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="input-group">
+												<input id="dbDocUpdateCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
+												<span class="input-group-btn" data-toggle="tooltip" data-placement="top" title="Select which operation you'd like to perform">
+													<button id="dropdownSelectUpdateOp" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+														<span class="caret" data-toggle="tooltip" data-placement="top" title="Select which operation you'd like to perform"></span>
+														<span id="updateOpName">Update One</span>
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="dropdownSelectUpdateOp">
+														<li class="updateOpSelectOption" name="Update One"><a href="#">Update One</a></li>
+														<li class="updateOpSelectOption" name="Update Many"><a href="#">Update Many</a></li>
+														<li class="updateOpSelectOption" name="Replace One"><a href="#">Replace One</a></li>
+													</ul>
+												</span>
+											</div>
+											<div class="input-group">
+												<input id="dbDocUpdateRawJsonFilterField" class="form-control" type="text" placeholder="JSON Search Criteria..." data-toggle="tooltip" title='Some Examples:{"msg":"hi"} or {"loginObj.idNestedMember":123}'>
+												<span class="input-group-btn">
+													<!-- No button here... -->
+												</span>
+											</div>
+											<div class="input-group">
+												<input id="dbDocUpdateRawJsonUpdateField" class="form-control" type="text" placeholder="JSON Update Commands..." data-toggle="tooltip" title='Some Examples:{"$set":{"msg":"hi"}} or {"$rename":{"someKey": "replacementKey"}}'>
+												<span class="input-group-btn">
+													<button id="testMongoDocUpdate" class="btn btn-success">Execute</button>
 												</span>
 											</div>
 										</div>

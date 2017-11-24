@@ -16,6 +16,11 @@ function init() {
 	setDebug(true);
 	console.log("Hello World!");
 
+	/* Initialize page tooltips */
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+
 	/* Setup WriteToMongoDB action */
 	$("#testMongoWrite").on("click", function (event) {
 		// Acquire JSON data to send
@@ -29,8 +34,10 @@ function init() {
 			if (status === "success") {
 				console.log("Replied: " + reply.toString());
 			} else {
+				var errToLog = `Status: ${status.toString()}\nReply: ${reply.toString()}`;
 				console.log("A Problem Occurred...");
-				console.log(`Status: ${status.toString()}\nReply: ${reply.toString()}`);
+				console.log(errToLog);
+				showError(errToLog);
 			}
 		});
 	});
@@ -47,8 +54,10 @@ function init() {
 				console.log("Replied: " + reply.toString());
 				showCollectionResults(JSON.parse(reply));
 			} else {
+				var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
 				console.log("A problem occurred");
-				console.log(`Status: ${status.toString()}\n\nReply: ${reply.toString()}`);
+				console.log(errToLog);
+				showError(errToLog);
 			}
 		});
 	});
@@ -60,14 +69,16 @@ function init() {
 		var searchCriteria = null;
 
 		if (collectionName === "") {
-			console.log(`Error: No collection name given!`);
-			$("#content_panel").html(`<p>Error: No collection name given!</p>`);
+			var errToLog = `Error: No collection name given!`;
+			console.log(errToLog);
+			showError(errToLog);
 		} else {
 			try {
 				searchCriteria = ($("#dbDocRawJsonField").val() === "") ? {} : JSON.parse($("#dbDocRawJsonField").val());
 			} catch (err) {
 				console.log("Error: failed to parse raw JSON data \"" + $("#dbDocRawJsonField").val() + "\"");
 				console.log(err);
+				showError(err);
 				return;
 			}
 
@@ -80,8 +91,10 @@ function init() {
 					console.log("Replied: " + reply.toString());
 					showDocumentResults(JSON.parse(reply));
 				} else {
+					var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
 					console.log("A problem occurred");
-					console.log(`Status: ${status.toString()}\n\nReply: ${reply.toString()}`);
+					console.log(errToLog);
+					showError(errToLog);
 				}
 			});
 		}
@@ -108,14 +121,16 @@ function init() {
 		var deleteQuantity = $("#dbDocDeleteQty").html();
 
 		if (collectionName === "") {
-			console.log(`Error: No collection name given!`);
-			$("#content_panel").html(`<p>Error: No collection name given!</p>`);
+			var errToLog = `Error: No collection name given!`;
+			console.log(errToLog);
+			showError(errToLog);
 		} else {
 			try {
 				searchCriteria = ($("#dbDocDeleteRawJsonField").val() === "") ? {} : JSON.parse($("#dbDocDeleteRawJsonField").val());
 			} catch (err) {
 				console.log("Error: failed to parse raw JSON data \"" + $("#dbDocDeleteRawJsonField").val() + "\"");
 				console.log(err);
+				showError(err);
 				return;
 			}
 
@@ -128,8 +143,58 @@ function init() {
 					console.log("Replied: " + reply.toString());
 					showSingleDeleteResults(reply);
 				} else {
+					var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
 					console.log("A problem occurred");
-					console.log(`Status: ${status.toString()}\n\nReply: ${reply.toString()}`);
+					console.log(errToLog);
+					showError(errToLog);
+				}
+			});
+		}
+	});
+
+	/* Setup UpdateOpSelection action */
+	$(".updateOpSelectOption").on("click", function (event) {
+		console.log(`Change update function to ${$(this).attr("name")}`);
+		$("#updateOpName").html($(this).attr("name"));
+	});
+
+	/* Setup UpdateDocsInMongoDB action */
+	$("#testMongoDocUpdate").on("click", function (event) {
+		// Acquire data to send
+		var collectionName = $("#dbDocUpdateCollectionNameField").val();
+		var searchCriteria = null;
+		var updateCriteria = null;
+		var updateOp = $("#updateOpName").html();	// currently unused
+
+		if (collectionName === "") {
+			var errToLog = `Error: No collection name given!`;
+			console.log(errToLog);
+			showError(errToLog);
+		} else {
+			try {
+				searchCriteria = ($("#dbDocUpdateRawJsonFilterField").val() === "") ? {} : JSON.parse($("#dbDocUpdateRawJsonFilterField").val());
+				updateCriteria = ($("#dbDocUpdateRawJsonUpdateField").val() === "") ? {} : JSON.parse($("#dbDocUpdateRawJsonUpdateField").val());
+			} catch (err) {
+				console.log(`Error: failed to parse raw JSON data from either update or search criteria`);
+				console.log(err);
+				showError(err);
+				return;
+			}
+
+			var data = {
+				"collection": collectionName,
+				"search": searchCriteria,
+				"update": updateCriteria
+			};
+			post("/test/updatedoc", data, function (reply, status, jqxhr) {
+				if (status === "success") {
+					console.log(`Replied: ${reply.toString()}`);
+					showSingleUpdateResults(reply);
+				} else {
+					var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
+					console.log("A problem occurred");
+					console.log(errToLog);
+					showError(errToLog);
 				}
 			});
 		}
@@ -140,6 +205,35 @@ function init() {
 
 
 // BEGIN Utility Functions
+/*
+	@function 	showError
+	@parameter 	err - string or object detailing the error that occurred
+	@returns 	n/a
+	@details 	This function neatly shows error messages on the page for the User to see
+*/
+function showError (err) {
+	console.log(`Logging ${(typeof err === "object") ? JSON.stringify(err) : err} to screen`);
+	switch (typeof err) {
+		case "string": {
+			$("#content_panel").html("<h3>Error</h3>" + "<p>" + err + "</p>");
+			break;
+		}
+		case "object": {
+			try {
+				var errObjAsString = JSON.stringify(err);
+				$("#content_panel").html("<h3>Error</h3>" + "<p>" + errObjAsString + "</p>");
+			} catch (err) {
+				$("#content_panel").html("<h3>Error</h3>" + "<p>Attempted to convert error object to string, but failed: " + ((typeof err === "object") ? JSON.stringify(err) : err) + "</p>");
+			}
+			break;
+		}
+		default: {
+			$("#content_panel").html("<h3>Error</h3>" + "<p>An unknown error occurred...</p>");
+			break;
+		}
+	}
+}
+
 /*
 	@function 	showCollectionResults
 	@parameter 	arr - the array-like JSON object of collections returned by the "/test/find" POST request
@@ -252,6 +346,17 @@ function showDocumentResults (arr) {
 */
 function showSingleDeleteResults (result) {
 	var content = `<h3>Deletion Results</h3><p>${(typeof result === "object") ? JSON.stringify(result) : result}</p>`;
+	$("#content_panel").html(content);
+}
+
+/*
+	@function 	showSingleUpdateResults
+	@parameter 	result - the JSON object comprising the result of the single update
+	@returns 	n/a
+	@details 	This function neatly presents the status of the last update operation from the "/test/updatedoc" endpoint request
+*/
+function showSingleUpdateResults (result) {
+	var content = `<h3>Update Results</h3><p>${(typeof result === "object") ? JSON.stringify(result) : result}</p>`;
 	$("#content_panel").html(content);
 }
 // END Utility Functions

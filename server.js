@@ -59,6 +59,7 @@ app.post("/test/find", handles.testFindHandler);	// POST request to find and lis
 app.post("/test/finddoc", handles.testFindDocHandler);	// POST request to find and list documents via a search
 app.post("/test/deletedoc", handles.testDeleteOneDocHandler);	// POST request to find and delete one document
 app.post("/test/deletemanydocs", handles.testDeleteManyDocsHandler);	// POST request to find and delete many documents
+app.post("/test/updatedoc", handles.testUpdateOneDocHandler);	// POST request to update one document
 logger.log(`\tServer endpoints routed...`);	// test
 
 

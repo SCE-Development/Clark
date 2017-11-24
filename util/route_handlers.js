@@ -194,7 +194,7 @@ handle_map.testFindHandler = function (request, response) {
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
 	@returns	To Client: If successful, returns a success status (200) and the list of documents found. Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	(Intended for use in testing the database querying functions) This function handles all endpoint requests to the "test/finddoc" endpoint. It performs a query on the database and returns any results matching the search criteria given by the Request header's data field. The data field is expected to be a JSON object in the following format:
+	@details 	(Intended for use in testing the database querying functions) This function handles all endpoint requests to the "/test/finddoc" endpoint. It performs a query on the database and returns any results matching the search criteria given by the Request header's data field. The data field is expected to be a JSON object in the following format:
 		{
 			"collection": "string name of collection",
 			"search": {...}
@@ -224,8 +224,8 @@ handle_map.testFindDocHandler = function (request, response) {
 	@function 	testDeleteOneDocHandler
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	(Intended for use in testing the database single-deleting function) This function handles all endpoint requests to the "test/deletedoc" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
+	@returns 	To Client: If successful, returns a success status (200) and an object detailing the result of the operation. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database single-deleting function) This function handles all endpoint requests to the "/test/deletedoc" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
 		{
 			"collection": "string name of collection",
 			"search": {...}
@@ -254,8 +254,8 @@ handle_map.testDeleteOneDocHandler = function (request, response) {
 	@function 	testDeleteManyDocsHandler
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	(Intended for use in testing the database multi-deleting function) This function handles all endpoint requests to the "test/deletemanydocs" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
+	@returns 	To Client: If successful, returns a success status (200) and an object detailing the result of the operation. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database multi-deleting function) This function handles all endpoint requests to the "/test/deletemanydocs" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
 		{
 			"collection": "string name of collection",
 			"search": {...}
@@ -278,7 +278,38 @@ handle_map.testDeleteManyDocsHandler = function (request,response) {
 			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
 		}
 	});
-}
+};
+
+/*
+	@function 	testUpdateOneDocHandler
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database single-update function) This function handles all endpoint requests to the "/test/updatedoc" endpoint. It performs an update request to the database using the Request header's data field as search criteria to select which document to update. The data field is expected to be a JSON object with the following format:
+		{
+			"collection": "string name of collection",
+			"search": {...},
+			"update": {...}
+		}
+	where the "search" parameter is a JSON object containing the filter parameters expected by the updateOneDoc() function, and "update" is a JSON object containing the update commands expected by the updateOneDoc() function. Read the updateOneDoc() description for more details on what to give the "search" parameter
+*/
+handle_map.testUpdateOneDocHandler = function (request, response) {
+	var handlerTag = {"src": "testUpdateOneDocHandler"};
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
+
+	// Find documents
+	logger.log(`Client @ ip ${request.ip} is requesting to update a document matching ${typeof searchCriteria.search} ${(typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search} from the ${searchCriteria.collection} collection in the database using ${typeof searchCriteria.update} ${(typeof searchCriteria.update === "object") ? JSON.stringify(searchCriteria.update) : searchCriteria.update}`, handlerTag);
+	updateOneDoc(searchCriteria.collection, searchCriteria.search, searchCriteria.update, function (error, result) {
+		if (error != null) {
+			logger.log(`An error occurred`, handlerTag);
+			response.status(500).send(error).end();
+		} else {
+			logger.log(`A result was returned`, handlerTag);
+			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+		}
+	});
+};
 // END Handler Functions
 
 
@@ -472,6 +503,55 @@ function deleteManyDocs (collection, filter, callback) {
 			result.deleteMany(filter).then(function (promiseResult) {
 				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
 				callback(null, promiseResult);
+			});
+		}
+	});
+}
+
+/*
+	@function 	updateOneDoc
+	@parameter 	collection - the string name of the collection to delete from
+	@parameter 	filter - a JSON object to filter which document is updated (i.e. search criteria)
+	@parameter 	update - a JSON object describing how to update the document
+	@parameter 	callback - a callback function to run after the update is performed. It is passed two parameters:
+					error - if an error occurred, "error" is a MongoError object detailing the issue. Otherwise, it is null.
+					result - if delete was successful, "result" is a Mongo Collection~updateWriteOpResult object. Otherwise, it is null.
+	@returns 	n/a
+	@details 	This function searches through the specified collection for the FIRST document matching the search criteria specified by filter. If found, it then updates the document in the way described by the update object (i.e. via various MongoDB update operators). Then, the function runs the callback, regardless of a successful or failed update operation.
+	@note 		See MongoDB's collection.updateOne() API doc for more information regarding the parameters 
+*/
+function updateOneDoc (collection, filter, update, callback) {
+	var handlerTag = {"src": "updateOneDoc"};
+	var hasFilter = (filter === {} || filter === null || filter === undefined || typeof filter !== "object") ? false : true;
+	var hasUpdate = (update === {} || update === null || update === undefined || typeof update !== "object") ? false : true;
+
+	// Enforce the definition of filter and update objects
+	if (!hasFilter || !hasUpdate) {
+		logger.log(`Error before updating: Operation ineffective with undefined filter and update objects`, handlerTag);
+		if (typeof callback === "function") {
+			callback({
+				"error": `Error before updating: Operation ineffective with undefined filter and update objects`
+			}, null);
+		}
+		return;
+	}
+
+	// Begin by finding the collection
+	database.collection(collection, {strict: true}, function (error, result) {
+		if (error != null) {
+			// If error, report the error
+			logger.log(`Error looking up collection "${collection}": ${error.toString()}`, handlerTag);
+			if (typeof callback === "function") {
+				callback(error, null);
+			}
+		} else {
+			// If no error, search for and update the FIRST relevant doc within the collection
+			logger.log(`Updating first doc matching ${typeof filter} ${filter} in collection "${collection}"`, handlerTag);
+			result.updateOne(filter, update).then(function (promiseResult) {
+				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
+				if (typeof callback === "function") {
+					callback(null, promiseResult);
+				}
 			});
 		}
 	});
