@@ -147,8 +147,37 @@
 									</div>
 								</div>
 								<!-- END search criteria field -->
-								<!-- BEGIN doc name field -->
-								<!-- END doc name field -->
+							</div>
+						</div>
+					</div>
+					<div id="dbDocDeletePanel" class="panel panel-default centerText">
+						<div id="dbDocDeletePanelHeading" class="panel-heading" role="tab">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#dbDocDeleteCollapsible" aria-expanded="true" aria-controls="dbDocDeleteCollapsible">Delete</a>
+							</h4>
+						</div>
+						<div id="dbDocDeleteCollapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="dbDocDeletePanelHeading">
+							<div class="panel-body">
+								<!-- BEGIN search criteria field -->
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="input-group">
+												<input id="dbDocDeleteCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
+												<span class="input-group-btn">
+													<button id="dbDocDeleteQty" class="btn btn-primary">Many</button>
+												</span>
+											</div>
+											<div class="input-group">
+												<input id="dbDocDeleteRawJsonField", class="form-control" type="text" placeholder="JSON Search Criteria...">
+												<span class="input-group-btn">
+													<button id="testMongoDocDelete" class="btn btn-danger">Delete</button>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END search criteria field -->
 							</div>
 						</div>
 					</div>

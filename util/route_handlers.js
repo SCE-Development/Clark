@@ -52,14 +52,13 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 
 		// Then, write server connection information
 		var postmark = logger.log("Database connection established");
-		var written = insertDoc("serverStarts", {
-			"login": postmark
+		insertDoc("serverStarts", {"login": postmark}, function (error) {
+			if (error != null) {
+				logger.log("Postmark not written to database");
+			} else {
+				logger.log("Postmark successfully written to server");
+			}
 		});
-		if (!written) {
-			logger.log("Postmark not written to database");
-		} else {
-			logger.log("Postmark successfully written to server");
-		}
 	}
 });
 
@@ -130,7 +129,7 @@ handle_map.testHandler = function (request, response) {
 			response.end();
 		}
 	});
-}
+};
 
 /*
 	@function 	testWriteHandler
@@ -152,7 +151,7 @@ handle_map.testWriteHandler = function (request, response) {
 			response.status(500).send("Couldn't write to database").end();
 		}
 	});
-}
+};
 
 /*
 	@function 	testFindHandler
@@ -188,7 +187,7 @@ handle_map.testFindHandler = function (request, response) {
 			response.status(500).send(err).end();
 		}
 	});
-}
+};
 
 /*
 	@function 	testFindDocHandler
@@ -217,6 +216,66 @@ handle_map.testFindDocHandler = function (request, response) {
 		} else {
 			logger.log(`A result was returned`, handlerTag);
 			response.status(200).send(JSON.stringify(list)).end();
+		}
+	});
+};
+
+/*
+	@function 	testDeleteOneDocHandler
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database single-deleting function) This function handles all endpoint requests to the "test/deletedoc" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
+		{
+			"collection": "string name of collection",
+			"search": {...}
+		}
+	where the "search" parameter is a JSON object containing the search parameters expected by the deleteOneDoc() function. Read the deleteOneDoc() description for more details on what to give the "search" parameter
+*/
+handle_map.testDeleteOneDocHandler = function (request, response) {
+	var handlerTag = {"src": "testDeleteOneDocHandler"};
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
+
+	// Find documents
+	logger.log(`Client @ ip ${request.ip} is requesting to delete a document matching ${(typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+	deleteOneDoc(searchCriteria.collection, searchCriteria.search, function (error, result) {
+		if (error != null) {
+			logger.log(`An error occurred`, handlerTag);
+			response.status(500).send(error).end();
+		} else {
+			logger.log(`A result was returned`, handlerTag);
+			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+		}
+	});
+};
+
+/*
+	@function 	testDeleteManyDocsHandler
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database multi-deleting function) This function handles all endpoint requests to the "test/deletemanydocs" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
+		{
+			"collection": "string name of collection",
+			"search": {...}
+		}
+	where the "search" parameter is a JSON object containing the search parameters expected by the deleteManyDocs() function. Read the deleteManyDocs() description for more details on what to give the "search" parameter
+*/
+handle_map.testDeleteManyDocsHandler = function (request,response) {
+	var handlerTag = {"src": "testDeleteOneDocHandler"};
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
+
+	// Find documents
+	logger.log(`Client @ ip ${request.ip} is requesting to delete all documents ${(searchCriteria.search == {}) ? "" : ("matching " + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search))} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+	deleteManyDocs(searchCriteria.collection, searchCriteria.search, function (error, result) {
+		if (error != null) {
+			logger.log(`An error occurred`, handlerTag);
+			response.status(500).send(error).end();
+		} else {
+			logger.log(`A result was returned`, handlerTag);
+			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
 		}
 	});
 }
@@ -344,6 +403,75 @@ function findDocs (collection, filter, callback) {
 						break;
 					}
 				}
+			});
+		}
+	});
+}
+
+/*
+	@function 	deleteOneDoc
+	@parameter 	collection - the string name of the collection to delete from
+	@parameter 	filter - a JSON object to filter which document is deleted (i.e. search criteria)
+	@parameter 	callback - a callback function to run after the deletion is performed. It is passed two parameters:
+					error - if an error occurred, "error" is a MongoError object detailing the isssue. Otherwise, it is null.
+					result - if delete was successful, "result" is a Mongo Collection~deleteWriteOpResult object. Otherwise, it is null.
+	@returns 	n/a
+	@details 	This function searches through the specified collection for the FIRST document fitting the search criteria specified in filter. If found, it deletes the entry and runs the callback after the attempt completed, regardless of a successful or failed delete operation
+	@note 		See MongoDB's collection.deleteOne() API doc for more information regarding the parameters
+*/
+function deleteOneDoc (collection, filter, callback) {
+	var handlerTag = {"src": "deleteOneDoc"};
+
+	// Begin by finding the collection
+	database.collection(collection, {strict: true}, function (error, result) {
+		if (error != null) {
+			// If error, report the error
+			logger.log(`Error looking up collection "${collection}": ${error.toString()}`, handlerTag);
+			if (typeof callback === "function") {
+				callback(error, null);
+			}
+		} else {
+			// If no error, search for and delete the FIRST relevant doc within the collection
+			logger.log(`Deleting first doc matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
+			result.deleteOne(filter).then(function (promiseResult) {
+				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
+				if (typeof callback === "function") {
+					callback(null, promiseResult);
+				}
+			});
+		}
+	});
+}
+
+/*
+	@function 	deleteManyDocs
+	@parameter 	collection - the string name of the collection to delete from
+	@parameter 	filter - a JSON object to filter which documents are deleted (i.e. search criteria)
+	@parameter 	callback - a callback function to run after the deletion is performed. It is passed two parameters:
+					error - if an error occurred, "error" is a MongoError object detailing the issue. Otherwise, it is null.
+					result - if delete was successful, "result" is a Mongo Collection~deleteWriteOpResult object. Otherwise, it is null.
+	@returns 	n/a
+	@details 	This function searches through the specified collection for ALL documents matching the search criteria specified by filter (or all documents within the collection, if filter is an empty JSON object). If found, it deletes all the matched entries and runs the callback after the attempt completed, regardless of a successful of failed delete operation.
+	@note 		See MongoDB's collection.deleteMany() API doc for more information regarding the parameters
+*/
+function deleteManyDocs (collection, filter, callback) {
+	var handlerTag = {"src": "deleteManyDocs"};
+	var hasFilter = (filter === {}) ? false : true;
+
+	// Begin by finding the collection
+	database.collection(collection, {strict: true}, function (error, result) {
+		if (error != null) {
+			// If error, report the error
+			logger.log(`Error looking up collection "${collection}": ${error.toString()}`, handlerTag);
+			if (typeof callback === "function") {
+				callback(error, null);
+			}
+		} else {
+			// If no error, search for and delete ALL relevant docs within the collection
+			logger.log(`Deleting all docs ${(hasFilter) ? ("matching " + typeof filter + " " + (typeof filter === "object") ? JSON.stringify(filter) : filter) : ""} in collection "${collection}"`, handlerTag);
+			result.deleteMany(filter).then(function (promiseResult) {
+				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
+				callback(null, promiseResult);
 			});
 		}
 	});

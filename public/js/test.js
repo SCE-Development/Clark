@@ -61,6 +61,7 @@ function init() {
 
 		if (collectionName === "") {
 			console.log(`Error: No collection name given!`);
+			$("#content_panel").html(`<p>Error: No collection name given!</p>`);
 		} else {
 			try {
 				searchCriteria = ($("#dbDocRawJsonField").val() === "") ? {} : JSON.parse($("#dbDocRawJsonField").val());
@@ -77,6 +78,55 @@ function init() {
 			post("/test/finddoc", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());
+					showDocumentResults(JSON.parse(reply));
+				} else {
+					console.log("A problem occurred");
+					console.log(`Status: ${status.toString()}\n\nReply: ${reply.toString()}`);
+				}
+			});
+		}
+	});
+
+	/* Setup DeletionQuantitySelection action */
+	$("#dbDocDeleteQty").on("click", function (event) {
+		var currentContent = $("#dbDocDeleteQty").html();
+		switch (currentContent === "One") {
+			case true:
+				$("#dbDocDeleteQty").html("Many");
+				break;
+			default:
+				$("#dbDocDeleteQty").html("One");
+				break;
+		}
+	});
+
+	/* Setup DeleteOneDocFromMongoDB action*/
+	$("#testMongoDocDelete").on("click", function (event) {
+		// Acquire data to send
+		var collectionName = $("#dbDocDeleteCollectionNameField").val();
+		var searchCriteria = null;
+		var deleteQuantity = $("#dbDocDeleteQty").html();
+
+		if (collectionName === "") {
+			console.log(`Error: No collection name given!`);
+			$("#content_panel").html(`<p>Error: No collection name given!</p>`);
+		} else {
+			try {
+				searchCriteria = ($("#dbDocDeleteRawJsonField").val() === "") ? {} : JSON.parse($("#dbDocDeleteRawJsonField").val());
+			} catch (err) {
+				console.log("Error: failed to parse raw JSON data \"" + $("#dbDocDeleteRawJsonField").val() + "\"");
+				console.log(err);
+				return;
+			}
+
+			var data = {
+				"collection": collectionName,
+				"search": searchCriteria
+			};
+			post((deleteQuantity === "Many") ? "/test/deletemanydocs" : "/test/deletedoc", data, function (reply, status, jqxhr) {
+				if (status === "success") {
+					console.log("Replied: " + reply.toString());
+					showSingleDeleteResults(reply);
 				} else {
 					console.log("A problem occurred");
 					console.log(`Status: ${status.toString()}\n\nReply: ${reply.toString()}`);
@@ -129,11 +179,80 @@ function showCollectionResults (arr) {
 			content += `</div>`;
 		}
 
+		// Add closing div tag
+		content += accordionFooter;
+
+		// Add box title
+		var boxTitle = `<h3>${arr.length} Collections</h3>`;
+
 		// Show panel group
-		$("#content_panel").html(content);
+		$("#content_panel").html(boxTitle + content);
 	} else {
 		$("#content_panel").html("No Collections Were Found...");
 	}
+}
+
+/*
+	@function 	showDocumentResults
+	@parameter 	arr - the array of JSON-objects comprising the documents found from the "/test/finddoc" search
+	@returns 	n/a
+	@details 	This function neatly displays the documents found from the "/test/finddoc" endpoint request
+*/
+function showDocumentResults (arr) {
+	if (arr.length > 0) {
+		var accordionHeader = "<div id='fDR_Accordion' class='panel-group' role='tablist' aria-multiselectable='true'>";
+		var accordionFooter = "</div>";
+		var content = accordionHeader;	// prepend content with starting div tag
+
+		// Compile all elements into a neat-looking panel group (forgive the tabbing)
+		for (var i = 0; i < arr.length; i++) {
+			content += `<div id="fDR_${i}_panel" class="panel panel-default">`;
+				content += `<div id="fDR_${i}_panel_heading" class="panel-heading" role="tab">`;
+					content += `<h4 class="panel-title">`;
+						content += `<a role="button" data-toggle="collapse" data-parent="#fDR_Accordion" href="#fDR_${i}_collapsible">`;
+							content += `Document ${i}`;
+						content += `</a>`;
+					content += `</h4>`;
+				content += `</div>`;
+				content += `<div id="fDR_${i}_collapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="fDR_${i}_panel_heading">`;
+					content += `<div class="panel-body">`;
+						content += `<div class="container-fluid">`;
+							content += `<div class="row">`;
+								content += `<div class="col-sm-12">`;
+									content += `<ul class="list-group">`;
+									// Place a list item for each key in the first level
+									content += `<li class="list-group-item"><div><strong>Top-Level Keys:</strong> ${Object.keys(arr[i]).toString()}</div><div>${(typeof arr[i] === "object") ? JSON.stringify(arr[i]) : arr[i]}</div></li>`;
+									content += `</ul>`;
+								content += `</div>`;
+							content += `</div>`;
+						content += `</div>`;
+					content += `</div>`;
+				content += `</div>`;
+			content += `</div>`;
+		}
+
+		// Add closing div tag
+		content += accordionFooter;
+
+		// Add box title
+		var boxTitle = `<h3>${arr.length} Documents</h3>`;
+
+		// Show panel group
+		$("#content_panel").html(boxTitle + content);
+	} else {
+		$("#content_panel").html("No Documents Were Found...");
+	}
+}
+
+/*
+	@function 	showSingleDeleteResults
+	@parameter 	result - the JSON object comprising the result of the single deletion
+	@returns 	n/a
+	@details 	This function neatly presents the status of the last deletion operation from the "/test/deletedoc" endpoint request
+*/
+function showSingleDeleteResults (result) {
+	var content = `<h3>Deletion Results</h3><p>${(typeof result === "object") ? JSON.stringify(result) : result}</p>`;
+	$("#content_panel").html(content);
 }
 // END Utility Functions
 
