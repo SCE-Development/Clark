@@ -53,6 +53,14 @@ logger.log(`\tStatic asset locations recorded...`);	// test
 */
 app.get("/", handles.rootHandler);				// GET request of the main login page
 app.post("/login", handles.loginHandler);		// POST request: RESTful login
+app.post("/writeNewDoc", handles.testWriteNewDocHandler);	// POST request to write to the db from all pages
+app.post("/findCollections", handles.testFindCollectionsHandler);	// POST request to find and list the db's collections on all page
+app.post("/findDoc", handles.testFindDocHandler);	// POST request to find and list documents via a search
+app.post("/deleteOneDoc", handles.testDeleteOneDocHandler);	// POST request to find and delete one document
+app.post("/deleteManyDocs", handles.testDeleteManyDocsHandler);	// POST request to find and delete many documents
+app.post("/updateOneDoc", handles.testUpdateOneDocHandler);	// POST request to update one document
+
+// Test Page Endpoints (will be removed in production version)
 app.get("/test", handles.testHandler);			// GET request of the test page
 app.post("/test/write", handles.testWriteNewDocHandler);	// POST request to write to the db from the test page
 app.post("/test/find", handles.testFindCollectionsHandler);	// POST request to find and list the db's collections on the test page
