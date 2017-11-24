@@ -7,7 +7,7 @@
 // 					This file comprises the MEAN Stack server to be used in conjunction with PROJECT: SkillMatch
 // Dependencies:
 // 					NodeJS v6.9.1
-// 					ExpressJS 4.x
+// 					ExpressJS 4.16.2
 // 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
 // 					multer (NPM middleware req'd by ExpressJS 4.x to parse multi-length POST data parameters: "npm install --save multer")
 
@@ -54,8 +54,12 @@ logger.log(`\tStatic asset locations recorded...`);	// test
 app.get("/", handles.rootHandler);				// GET request of the main login page
 app.post("/login", handles.loginHandler);		// POST request: RESTful login
 app.get("/test", handles.testHandler);			// GET request of the test page
-app.post("/test/write", handles.testWriteHandler);	// POST request to write to the db from the test page
-app.post("/test/find", handles.testFindHandler);	// POST request to find and list the db's collections on the test page
+app.post("/test/write", handles.testWriteNewDocHandler);	// POST request to write to the db from the test page
+app.post("/test/find", handles.testFindCollectionsHandler);	// POST request to find and list the db's collections on the test page
+app.post("/test/finddoc", handles.testFindDocHandler);	// POST request to find and list documents via a search
+app.post("/test/deletedoc", handles.testDeleteOneDocHandler);	// POST request to find and delete one document
+app.post("/test/deletemanydocs", handles.testDeleteManyDocsHandler);	// POST request to find and delete many documents
+app.post("/test/updatedoc", handles.testUpdateOneDocHandler);	// POST request to update one document
 logger.log(`\tServer endpoints routed...`);	// test
 
 
