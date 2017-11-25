@@ -41,6 +41,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
     1. /css/ - webpage css directory
     1. /js/ - webpage javascript directory
     1. /index.html - login/front-facing portal page
+  - Any added HTML files can go directly in /public
 #### */server.js*
   - This file comprises the MEAN stack webserver that will be serving all requests with relevant endpoints.
 #### */util/*
@@ -51,5 +52,47 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 
 ---
 
-## Notes
-- Currently working on relevant endpoints of the project
+## Using the MEANserver
+#### Endpoint Creation
+  - Endpoints are declared in **server.js**. To create an endpoint having a URI of "*/someEndpoint*", the express.js **app.get()** or **app.post()** methods can be used (depending on your desired request type). By using one of these methods, you can effectively associate an endpoint name (i.e. "*/someEndpoint*") with a handler function to service any requests to it. The available handler functions are imported from the **handle_map** object within **route_handlers.js**. Let's assume that you expect this endpoint to receive POST requests. Therefore, after creating a handler function "*someEndpointHandler*" in the **handle_map** to service your request, associating it is simply done in **server.js** using the line
+  ```javascript
+  app.post("/someEndpoint", handles.someEndpointHandler);
+  ```
+#### Adding Webpages
+  - You can add new webpages to the server by first assigning an endpoint to serve the page (see the **Endpoint Creation** section for more details). Afterwards, you can place your webpage files in the relevant sections of the **/public** directory.
+
+---
+
+## Stable Endpoint Map
+#### Description
+  - This section lists and describes the **stable** endpoints (i.e. whose functions and endpoint names are no longer subject to change by much). All webpages within the server can use these endpoints to perform their designated functions.
+
+#### Endpoints
+###### "/" - Root
+  - Serves requests going out to the server root (i.e. localhost:8080, if using default settings)
+
+###### "/login" - Service Login
+  - This endpoint services any login POST requests and expects the {TBD} JSON object to be passed via the request header's data section. This can be done using **utility.js**'s **post()** function (or JQuery.ajax() if you know how to use it).
+
+###### "/writeNewDoc"
+  - This endpoint services POST requests to write a new document to a given collection in the database.
+  
+###### "/findCollections"
+  - This endpoint services POST requests to acquire a list of collections from the database
+
+###### "/findDoc"
+  - This endpoint services POST requests to acquire a list of documents from a given database collection that match given search criteria
+
+###### "/deleteOneDoc"
+  - This endpoint services POST requests to remove (at most) one document from a given database collection that matches given search criteria
+
+###### "/deleteManyDocs"
+  - This endpoint services POST requests to remove all documents from a given database collection that matches given search criteria
+
+###### "updateOneDoc"
+  - This endpoint services POST requests to update (at most) one document from a given database collection that matches given search criteria
+
+---
+
+## Release Notes
+- Currently working on increasing the depthf of all endpoint description details
