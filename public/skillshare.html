@@ -39,9 +39,11 @@
             padding-left: 5px;
         }
         #search {
-            
             width: 500px;
-            margin: 5em auto;
+            margin-left: 5em auto;
+            margin-top: 5em;
+            margin-bottom: 5em auto;
+            margin-right: 5em auto;
             height: 100px;
             
             padding-left: 25px;
@@ -100,7 +102,7 @@
     <div id="profile" ng-controller="MyController"> 
         <h1 id="name">Profile</h1>
         
-        <h3> Hello, {{name}} </h3>
+        <h3> Hello, {{name}}! </h3>
         <h4> Username: {{username}} </h4>
         <!--
         //need to put the scope controller in here that has the user name of the user from the control. 
@@ -119,7 +121,7 @@
     <div id= "search" ng-controller = "My2ndController">
         
         <h3>SkillShare Search</h3>
-        <input class = "input" type="text">     
+        <input class = "input" type="text" placeholder="Search for skills or courses...">     
         <!--
         <ul>
             <li ng-repeat="rebel in rebels">
@@ -157,6 +159,21 @@ Old Search and Profile:
             padding: 100px;
             background-color: #eda150;
             border-radius: 2em;
+
+            Revision 2:
+ 
+            width: 500px;
+            margin: 5em auto;
+            height: 100px;
+            
+            padding-left: 25px;
+            padding-top: 25px;
+            padding-bottom: 25px;
+            padding-right: 25px;
+            
+            background-color: #eda150;
+            border-radius: 2em;
+            font-family: Arial;
         }
 
 -->
