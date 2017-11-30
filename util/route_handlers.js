@@ -367,6 +367,52 @@ handle_map.testUpdateOneDocHandler = function (request, response) {
 		}
 	});
 };
+
+/*
+	@function 	skillMatchHandler
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	This function handles all endpoint requests to the "/test/skillmatch" endpoint. It performs a query on the database using the Request header's data field as search criteria to determine which match results to return. The data field is expected to be a JSON object with the following format:
+		{
+			"skills": [...],
+			"classes": [...]
+		}
+	where the "skills" parameter is an array of (case-insensitive) skill name strings to match, and "classes" is an array of (case-insensitive) class name strings to match. (They conform to the input specifications of the skillSearch() and classSearch() functions, respectively. Read their descriptions for more details on what to give the "skills" and "classes" parameters)?
+	@note 		This function assumes that the "SkillBank", "Skills", "Users", "CourseBank", and "Courses" collections exist. Invalid results will be returned if any one of these databases is non-existent
+*/
+handle_map.skillMatchHandler = function (request, response) {
+	logger.log(`Starting with ${JSON.stringify(request.body)}`, handlerTag);	// debug
+	var handlerTag = {"src": "skillMatchHandler"};
+	var hasBody = (Object.keys(request.body).length > 0);
+	logger.log(`****** TESTING Delint in SkillMatch ****** : ${delintRequestBody(request.body)}`, handlerTag)// test
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
+
+	// Log request
+	logger.log(`Client @ ip ${request.ip} is requesting to find users matching ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria} from the database`, handlerTag);
+
+	// Begin by finding skill IDs
+	if (typeof searchCriteria.classes !== "object" || typeof searchCriteria.skills !== "object") {	// if skills/classes aren't array objects
+		// If error, report it.
+		logger.log(`Error: invalid skills search parameter ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
+		response.status(200).send("Error: invalid skillmatch parameters").end();
+	} else {
+		// Acquire skill IDs
+		logger.log(`Acquiring skill IDs for ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}...`, handlerTag);
+		findDocs("skillBank", {"name": {"$in": searchCriteria.skills}}, function (error, list) {
+		// findDocs("skillBank", {"name": {"$in": ["placeholder","javascript","mysql","c"]}}, function (error, list) {
+			if (error != null) {
+				// If error, report error
+				logger.log(`An error occurred while acquiring skill ids: ${error}`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				// Else, 
+				logger.log(`Associating skill IDs with skill names...`, handlerTag);
+				response.status(200).send((typeof list === "object") ? JSON.stringify(list) : list).end();
+			}
+		});
+	}
+}
 // END Handler Functions
 
 
@@ -622,13 +668,13 @@ function updateOneDoc (collection, filter, update, callback) {
 */
 function delintRequestBody (body, callback) {
 	var handlerTag = {"src": "delintRequestBody"};
-	// logger.log(`Delinting ${JSON.stringify(body)}`, handlerTag);	// Debug
+	logger.log(`Delinting ${JSON.stringify(body)}`, handlerTag);	// Debug
 	var newBody = body;
 	var newBodyKeys = Object.keys(newBody);	// array of keys
 	for(var i = 0; i < newBodyKeys.length; i++) {
 		var qmarkIndex = newBodyKeys[i].indexOf("?");
 		if (qmarkIndex !== -1) {
-			// logger.log(`Lint found at ${newBodyKeys[i]} index ${qmarkIndex}`, handlerTag);	// Debug
+			logger.log(`Lint found at ${newBodyKeys[i]} index ${qmarkIndex}`, handlerTag);	// Debug
 			// If the key has a "?", create a new property without it.
 			var newKeyName = newBodyKeys[i].substring(qmarkIndex+1);	// acquires the string without "?" in it
 			newBody[newKeyName] = newBody[newBodyKeys[i]];		// copy the original value over
@@ -643,7 +689,14 @@ function delintRequestBody (body, callback) {
 			break;
 		}
 	}
-	return newBody
+
+	// If lint was not found at all, simply return the untouched stuff
+	logger.log(`Lint was not found!`, handlerTag);	// Debug
+	if (typeof callback === "undefined") {
+		return newBody;
+	} else {
+		callback(newBody);
+	}
 }
 
 /*
@@ -677,6 +730,50 @@ function numerify (obj) {
 	} catch (err) {
 		logger.log(`Unable to numerify ${typeof obj} ${JSON.stringify(obj)}:\n${err}`, handlerTag);
 		return obj;
+	}
+}
+
+/*
+	@function 	extractFromObjectArray
+	@parameter 	arr - the array of JSON objects to extract from
+	@parameter 	key - the string specifying the key to extract a value from
+	@parameter 	callback - (optional) a callback function to run after extraction completes. It is passed the resulting array
+	@returns 	If callback is undefined, returns the resulting array
+	@details 	This function takes an array of JSON objects "arr" and iterates through it, extracting from each object the value associated with "key" and placing it into an array, which is either passed to the callback parameter (if defined), or returned to the caller. If the "arr" contains objects that do not have the same set of keys, any objects that do not have the member "key" will cause this function to populate the corresponding array index with "null". As an example, running this section of code:
+		var myArrayOfObjects = [{"a":0, "b":1}, {"a":2, "b":3}, {"a":4, "c":5}, {"a":6, "b":7}];
+		var theKeyToFind = "b"
+		var result = extractFromObjectArray(myArrayOfObjects, theKeyToFind);
+	will populate the result with the follwing array:
+		[1,3,null,7]
+	since myArrayOfObjects[2] does NOT contain a member "b". This is also the function's exact behavior when it encounters incorrectly-typed "arr" member (i.e. one that is NOT of type "object").
+	@note 		This function returns an array whose values are placed in the order that the objects of "arr" are sequenced.
+*/
+function extractFromObjectArray (arr, key, callback) {
+	var result = [];
+	for (var i = 0; i < arr.length + 1; i++) {
+		switch (i) {
+			case arr.length: {
+				if (typeof callback === "function") {
+					callback(result);
+				} else {
+					return result;
+				}
+				break;
+			}
+			default: {
+				switch (typeof arr[i][key]) {
+					case "object": {
+						result[i] = arr[i][key];
+						break;
+					}
+					default: {
+						result[i] = null;
+						break;
+					}
+				}
+				break;
+			}
+		}
 	}
 }
 
@@ -717,6 +814,8 @@ function hashString(unhashed_string) {
 	return output;
 }
 // END Utility Methods
+
+
 
 module.exports = handle_map;
 // END route_handlers.js 

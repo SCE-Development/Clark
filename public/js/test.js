@@ -21,6 +21,21 @@ function init() {
 		$('[data-toggle="tooltip"]').tooltip();
 	});
 
+	/* BEGIN testing skillmatch */
+	// Execute query
+	var testSkills = ["placeholder","javascript","mysql","c"];
+	post("/skillmatch", {"skills": testSkills, "classes": ["placeholder"]}, function (reply, status, jqxhr) {
+		if (status === "success") {
+			console.log("Replied: " + reply.toString());
+		} else {
+			var errToLog = `Status: ${status.toString()}\nReply: ${reply.toString()}`;
+			console.log("A Problem Occurred...");
+			console.log(errToLog);
+			showError(errToLog);
+		}
+	}, true);	// run ajax() instead of post()
+	/* BEGIN testing skillmatch */
+
 	/* Setup WriteToMongoDB action */
 	$("#testMongoWrite").on("click", function (event) {
 		// Acquire JSON data to send

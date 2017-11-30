@@ -59,6 +59,7 @@ app.post("/findDoc", handles.testFindDocHandler);	// POST request to find and li
 app.post("/deleteOneDoc", handles.testDeleteOneDocHandler);	// POST request to find and delete one document
 app.post("/deleteManyDocs", handles.testDeleteManyDocsHandler);	// POST request to find and delete many documents
 app.post("/updateOneDoc", handles.testUpdateOneDocHandler);	// POST request to update one document
+app.post("/skillmatch", handles.skillMatchHandler);	// POST request to acquire the users who match your skillsearch
 
 // Test Page Endpoints (will be removed in production version)
 app.get("/test", handles.testHandler);			// GET request of the test page
