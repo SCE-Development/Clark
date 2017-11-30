@@ -389,35 +389,39 @@ handle_map.testUpdateOneDocHandler = function (request, response) {
 	@note 		This function assumes that the "SkillBank", "Skills", "Users", "CourseBank", and "Courses" collections exist. Invalid results will be returned if any one of these databases is non-existent
 */
 handle_map.skillMatchHandler = function (request, response) {
-	logger.log(`Starting with ${JSON.stringify(request.body)}`, handlerTag);	// debug
 	var handlerTag = {"src": "skillMatchHandler"};
 	var hasBody = (Object.keys(request.body).length > 0);
-	logger.log(`****** TESTING Delint in SkillMatch ****** : ${delintRequestBody(request.body)}`, handlerTag)// test
-	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
-	// Log request
-	logger.log(`Client @ ip ${request.ip} is requesting to find users matching ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria} from the database`, handlerTag);
+	try {
+		var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
-	// Begin by finding skill IDs
-	if (typeof searchCriteria.classes !== "object" || typeof searchCriteria.skills !== "object") {	// if skills/classes aren't array objects
-		// If error, report it.
-		logger.log(`Error: invalid skills search parameter ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
-		response.status(200).send("Error: invalid skillmatch parameters").end();
-	} else {
-		// Acquire skill IDs
-		logger.log(`Acquiring skill IDs for ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}...`, handlerTag);
-		findDocs("skillBank", {"name": {"$in": searchCriteria.skills}}, function (error, list) {
-		// findDocs("skillBank", {"name": {"$in": ["placeholder","javascript","mysql","c"]}}, function (error, list) {
-			if (error != null) {
-				// If error, report error
-				logger.log(`An error occurred while acquiring skill ids: ${error}`, handlerTag);
-				response.status(500).send(error).end();
-			} else {
-				// Else, 
-				logger.log(`Associating skill IDs with skill names...`, handlerTag);
-				response.status(200).send((typeof list === "object") ? JSON.stringify(list) : list).end();
-			}
-		});
+		// Log request
+		logger.log(`Client @ ip ${request.ip} is requesting to find users skilled in any of ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria} from the database`, handlerTag);
+
+		// Begin by verifying valid inputs
+		if (Array.isArray(searchCriteria.classes) !== true || Array.isArray(searchCriteria.skills) !== true) {	// if skills/classes aren't array objects
+			// If error, report it.
+			logger.log(`Error: invalid search parameters ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria}`, handlerTag);
+			response.status(200).send("Error: invalid skillmatch parameters").end();
+		} else {
+			// Else, Acquire users with the included skills
+			logger.log(`Matching users with any of the following skills: ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
+			findDocs("users", {"skills": {"$in": searchCriteria.skills}}, function (error, list) {
+				if (error != null) {
+					// If error, report error
+					logger.log(`An error occurred while matching users: ${error}`, handlerTag);
+					response.status(200).send(error).end();
+				} else {
+					// Else, test
+					logger.log(`${list.length} users were found with some or all of these skills: ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
+					response.status(200).send((typeof list === "object") ? JSON.stringify(list) : list).end();
+				}
+			});
+		}
+	} catch (err) {
+		// If error, report error
+		logger.log(`Unable to match users with skills: ${err}`, handlerTag);
+		response.status(200).send((typeof err === "object") ? JSON.stringify(err) : err).end();
 	}
 }
 // END Handler Functions

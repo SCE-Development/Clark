@@ -23,7 +23,7 @@ function init() {
 
 	/* BEGIN testing skillmatch */
 	// Execute query
-	var testSkills = ["placeholder","javascript","mysql","c"];
+	var testSkills = ["mysql","python","Javascript","c"];
 	post("/skillmatch", {"skills": testSkills, "classes": ["placeholder"]}, function (reply, status, jqxhr) {
 		if (status === "success") {
 			console.log("Replied: " + reply.toString());
