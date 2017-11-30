@@ -8,7 +8,7 @@
 		This file serves as a test login page for the MEANserver project
 -->
 <!DOCTYPE html>
-<html lang="en">
+<html ng-app="app" lang="en">
 <!-- BEGIN header -->
 <head>
 	<!-- Metadata -->
@@ -23,42 +23,159 @@
 
 	<!-- Standard Includes -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-animate.js"></script>	
 	<link rel="stylesheet" href="css/main.css">
+
+
+	<!-- Used for livereloaing page using Grunt -->
+	<script src="//localhost:35729/livereload.js"></script>
 </head>
 <!-- END header -->
 
 <!-- BEGIN body -->
 <body>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="jumbotron jbtron0">
-				Stupid Portal
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-4"></div>
-			<div class="col-md-4" id="loginBox">
-				<div class="input-group">
-					<span class="input-group-addon glyphicon glyphicon-user" id="unameAddon"></span>
-					<input class="loginField form-control" id="uname" name="uname" type="text" placeholder="Username" aria-describedby="unameAddon">
+	
+<div ng-controller="login_page" id="container">
+	<div id="myModal" class="modal fade">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<div id="inline_top">
+						<h5 class="modal-title">New User </h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>	
+					</div>
 				</div>
-				<div class="input-group">
-					<span class="input-group-addon glyphicon glyphicon-log-in" id="pwordAddon"></span>
-					<input class="loginField form-control" id="pword" name="pword" type="password" placeholder="Password" aria-describedby="pwordAddon">
+				<div class="modal-body">
+					<form>
+						<div class="form-group half_input">
+							<label class="form-control-label half_input">First Name:</label>
+							<input type="text" ng-model="new_user.first_name" class="form-control">
+						</div>
+						<div class="form-group half_input">
+							<label class="form-control-label">Last Name:</label>
+							<input type="text" ng-model="new_user.last_name" class="form-control">
+						</div>
+						<div class="form-group">
+							<label class="form-control-label">Username:</label>
+							<input type="text" ng-model="new_user.username" class="form-control">
+						</div>
+						<div class="form-group">
+							<label class="form-control-label">Password:</label>
+							<input type="password" ng-model="new_user.password" class="form-control">
+						</div>
+						<div class="form-group">
+							<label class="form-control-label">Major:</label>
+							<input type="text" ng-model="new_user.major" class="form-control">
+						</div>
+						<div class="form-group">
+							<label class="form-control-label">Graduating (MM/YYYY):</label>
+							<input type="text" ng-model="new_user.grad" class="form-control">
+						</div>
+						<div class="form-group">
+							<label class="form-control-label">Student ID:</label>
+							<input type="text" ng-model="new_user.sid" class="form-control">
+						</div>
+						<div class="dropdown" id="classes_dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"> Classes Taken
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li> <a href="#">EE97/EE98</a> </li>
+								<li> <a href="#">CMPE30</a> </li>
+								<li> <a href="#">CMPE50</a> </li>
+								<li> <a href="#">CMPE102</a> </li>
+								<li> <a href="#">CMPE110</a> </li>
+								<li> <a href="#">CMPE124</a> </li>
+								<li> <a href="#">CMPE125</a> </li>
+								<li> <a href="#">CMPE126</a> </li>
+								<li> <a href="#">CMPE130</a> </li>
+								<li> <a href="#">CMPE131</a> </li>
+								<li> <a href="#">CMPE140</a> </li>
+								<li> <a href="#">CMPE142</a> </li>
+								<li> <a href="#">CMPE148</a> </li>
+								<li> <a href="#">CMPE195A</a> </li>
+								<li> <a href="#">CMPE195B</a> </li>
+							</ul>
+							| <span ng-repeat="x in classes"> <a ng-click="removeClass()" href="#"> {{x}} </a> |</span>	
+						</div>
+						<br>
+						<div class="dropdown" id="skills_dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"> Skills 
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li> <a href="#">Javascript</a> </li> 
+								<li> <a href="#">Java</a> </li> 
+								<li> <a href="#">C++</a> </li> 
+								<li> <a href="#">Python</a> </li> 
+								<li> <a href="#">Git</a> </li> 
+								<li> <a href="#">Agile Development</a> </li> 
+								<li> <a href="#">React</a> </li> 
+								<li> <a href="#">Angular</a> </li> 
+								<li> <a href="#">Node</a> </li> 
+								<li> <a href="#">Shell Scripting</a> </li> 
+								<li> <a href="#">Computer Vision</a> </li> 
+								<li> <a href="#">Ruby</a> </li> 
+								<li> <a href="#">Perl</a> </li> 
+								<li> <a href="#">PHP</a> </li> 
+								<li> <a href="#">Computer Networking</a> </li> 
+							</ul>
+							| <span ng-repeat="x in skills"> <a ng-click="removeSkill()" href="#"> {{x}} </a> |</span>	
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" ng-click="createAccount(new_user)" class="btn btn-primary">Submit</button>
 				</div>
 			</div>
-			<div class="col-md-4"></div>
 		</div>
 	</div>
-</body>
-<!-- END body -->
+	<div class="jumbotron jumbotron-fluid">
+		<div class="container">
+			<h1 class="display-3">SkillMatch</h1>
+			<p class="lead">Connect. Collaborate. Create.</p>
+		</div>
+	</div>
+	<div id="login_input">
+		<h2>Login</h2>
+		<form>
+			<input type="text" ng-model="user.name" placeholder="Username" required>
+			<br>
+			<input type="password" ng-model="user.password" placeholder="Password" required>	
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+				<span class="glyphicon glyphicon-user"></span> New User
+			</button>
+			<button type="button" ng-click="login(user)" class="btn btn-default">
+				<span class="glyphicon glyphicon glyphicon-arrow-right"></span> Submit
+			</button>
+		</form>
+	</div>
+	<br>
+	<div id="about">
+		<div class="panel">
+			<h1>What is Skillmatch?</h1>
+			<p>SkillMatch is a collaboration tool that connects you to developers with the skills you need for any given project. Simply enter the technical skills you require and SkillMatch finds you people the right people for the job.</p>	
+		</div>
+		<div class="panel">
+			<h1>Advanced Algorithms</h1>
+			<p>SkillMatch uses the most advanced algorithms taught in CMPE130 to provide you with the most optimal results. This website implements hashing, sorting, and graph theory.</p>
+		</div>
+		<div class="panel">
+			<h1>About this Group</h1>
+			<p>This project was created by Rolando Javier, Pranav Patil, and Aris Koumis for the CMPE 130 Group Project.</p>
+		</div>
+	</div>
+</div>
 
-<!-- BEGIN footer -->
+</body>
+
 <footer>
 	<script type="text/javascript" src="js/lib/utility.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 </footer>
-<!-- END footer -->
+
 </html>

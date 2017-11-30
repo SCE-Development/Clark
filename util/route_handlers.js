@@ -50,6 +50,26 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 		// First, acquire link to database
 		database = db;
 
+		//Verify necessary collections are present. If not, create them
+		findCollections(null, function(error, list) {
+			var users_collection_present = false
+			var serverStarts_collection_present = false
+			for (var i=0; i<list.length; i++) { 
+				if (list[i].name == "users") {
+					users_collection_present = true;
+				}
+				if (list[i].name == "serverStarts") {
+					serverStarts_collection_present = true;
+				}
+			}
+			if (!users_collection_present) {
+				database.createCollection('users')
+			}
+			if (!serverStarts_collection_present) {
+				database.createCollection('serverStarts')
+			}
+		})
+
 		// Then, write server connection information
 		var postmark = logger.log("Database connection established");
 		insertDoc("serverStarts", {"login": postmark}, function (error, result) {
@@ -97,15 +117,39 @@ handle_map.loginHandler = function (request, response) {			// POST request: REST
 	logger.log(`Login request from ip ${request.ip}`, handlerTag);
 	logger.log(request.toString(), handlerTag);
 	response.set("Content-Type", "text/javascript");
-	response.sendFile("js/index.js", options, function (error) {
-		if (error) {
-			logger.log(error, handlerTag);
-			response.status(500).end();
-		} else {
-			logger.log(`Login successful for client on ${settings.port}`, handlerTag);
-			response.end();
-		}
-	});
+
+	var user = {
+		name: request.body.name,
+		password: request.body.password
+	}
+	
+	//Hash the password
+	var password_hash = hashString(user.password)
+
+	//Attempt to find users in the hashed password collection
+		//Retrieve all entries containing the hashed password
+		findDocs("users", {password: password_hash}, function(error, list) {
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			}
+
+			//If object in collection has same username, login was successful.
+			var login_successful = false
+			if (list.length != 0) {
+				for (var i=0; i<list.length; i++) {
+					if (list[i].name == user.name) {
+						login_successful = true
+					}
+				}	
+			}
+
+			var login_result = login_successful ? "success" : "failure"
+			var html_code = login_successful ? 200 : 500
+			response.status(200).send(JSON.stringify({result: login_result})).end()
+		})
+
+
 };
 
 /*
@@ -147,6 +191,11 @@ handle_map.testWriteNewDocHandler = function (request, response) {
 	var handlerTag = {"src": "testWriteNewDocHandler"};
 	var hasBody = (Object.keys(request.body).length > 0);
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
+
+	//Hash password if new user is being inserted to users collection
+	if (searchCriteria.collection == "users") {
+		searchCriteria.data.password = hashString(searchCriteria.data.password)
+	}
 
 	// Perform Write
 	logger.log(`Client @ ip ${request.ip} is requesting to write a new document of ${typeof searchCriteria.data} ${(typeof searchCriteria.data === "object") ? JSON.stringify(searchCriteria.data) : searchCriteria.data} to the ${searchCriteria.collection} collection in the database`, handlerTag);
@@ -214,9 +263,9 @@ handle_map.testFindDocHandler = function (request, response) {
 	var hasBody = (Object.keys(request.body).length > 0);
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};	// either the filter, or empty JSON
 	// response.status(200).send(`Test: ${JSON.stringify(searchCriteria)}`).end();	// test
-
 	// Find documents
 	logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+	
 	findDocs(searchCriteria.collection, searchCriteria.search, function (error, list) {
 		if (error != null) {
 			logger.log(`An error occurred`, handlerTag);
@@ -335,7 +384,7 @@ handle_map.testUpdateOneDocHandler = function (request, response) {
 */
 function insertDoc (collection, doc, callback) {
 	var handlerTag = {"src": "insertDoc"};
-
+	console.log('hey! ' + JSON.stringify(doc))
 	// Check if database collection exists
 	database.collection(collection, {strict: true}, function (error, result) {
 		if (error != null) {
@@ -594,6 +643,7 @@ function delintRequestBody (body, callback) {
 			break;
 		}
 	}
+	return newBody
 }
 
 /*
@@ -629,9 +679,44 @@ function numerify (obj) {
 		return obj;
 	}
 }
+
+/*
+	@function 	hashString
+	@parameter 	string - the string needing to be encoded
+	@returns 	An encoded string used for hashing.
+	@details 	This function takes a string and encrypts it using caesars cipher. This encryption is used for hashing.
+*/
+function hashString(unhashed_string) {
+	
+	// Make an output variable
+	var output = '';
+
+	//Declare number of letters to shift by
+	var amount = 13;
+
+	// Go through each character
+	for (var i = 0; i < unhashed_string.length; i ++) {
+		// Get the character we'll be appending
+		var c = unhashed_string[i];
+		// If it's a letter...
+		if (c.match(/[a-z]/i)) {
+			// Get its code
+			var code = unhashed_string.charCodeAt(i);
+			// Uppercase letters
+			if ((code >= 65) && (code <= 90))
+				c = String.fromCharCode(((code - 65 + amount) % 26) + 65);
+			// Lowercase letters
+			else if ((code >= 97) && (code <= 122))
+				c = String.fromCharCode(((code - 97 + amount) % 26) + 97);
+		}
+		// Append
+		output += c;
+	}
+
+	// All done!
+	return output;
+}
 // END Utility Methods
-
-
 
 module.exports = handle_map;
 // END route_handlers.js 
