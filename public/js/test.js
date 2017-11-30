@@ -23,8 +23,9 @@ function init() {
 
 	/* BEGIN testing skillmatch */
 	// Execute query
-	var testSkills = ["mysql","python","Javascript","c"];
-	post("/skillmatch", {"skills": testSkills, "classes": ["placeholder"]}, function (reply, status, jqxhr) {
+	var testSkills = ["mysql","Python","Javascript","c"];
+	var testClasses = ["CMPE140","CMPE124","CMPE110"];
+	post("/skillmatch", {"skills": testSkills, "classes": testClasses}, function (reply, status, jqxhr) {
 		if (status === "success") {
 			console.log("Replied: " + reply.toString());
 		} else {

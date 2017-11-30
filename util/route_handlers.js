@@ -380,13 +380,13 @@ handle_map.testUpdateOneDocHandler = function (request, response) {
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
 	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	This function handles all endpoint requests to the "/test/skillmatch" endpoint. It performs a query on the database using the Request header's data field as search criteria to determine which match results to return. The data field is expected to be a JSON object with the following format:
+	@details 	This function handles all endpoint requests to the "/skillmatch" endpoint. It performs a query on the database using the Request header's data field as search criteria to determine which match results to return. The data field is expected to be a JSON object with the following format:
 		{
 			"skills": [...],
 			"classes": [...]
 		}
-	where the "skills" parameter is an array of (case-insensitive) skill name strings to match, and "classes" is an array of (case-insensitive) class name strings to match. (They conform to the input specifications of the skillSearch() and classSearch() functions, respectively. Read their descriptions for more details on what to give the "skills" and "classes" parameters)?
-	@note 		This function assumes that the "SkillBank", "Skills", "Users", "CourseBank", and "Courses" collections exist. Invalid results will be returned if any one of these databases is non-existent
+	where the "skills" parameter is an array of (case-insensitive) skill name strings to match, and "classes" is an array of (case-insensitive) class name strings to match. They conform to the input specifications of the "search" parameter in the assignMatchPoints() function. Read the assignMatchPoints() function description for more details on what to give the "skills" and "classes" parameters.
+	@note 		This function assumes that the "users" collection exists. Invalid results will be returned if this database collection is non-existent
 */
 handle_map.skillMatchHandler = function (request, response) {
 	var handlerTag = {"src": "skillMatchHandler"};
@@ -404,17 +404,26 @@ handle_map.skillMatchHandler = function (request, response) {
 			logger.log(`Error: invalid search parameters ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria}`, handlerTag);
 			response.status(200).send("Error: invalid skillmatch parameters").end();
 		} else {
-			// Else, Acquire users with the included skills
+			// Else, acquire users with the given search criteria of skills and classes
 			logger.log(`Matching users with any of the following skills: ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
-			findDocs("users", {"skills": {"$in": searchCriteria.skills}}, function (error, list) {
+			findDocs("users",
+				{
+					"$or": [
+						{"skills": {"$in": searchCriteria.skills}},
+						{"classes": {"$in": searchCriteria.classes}}
+					]
+				}, function (error, list) {
 				if (error != null) {
 					// If error, report error
 					logger.log(`An error occurred while matching users: ${error}`, handlerTag);
 					response.status(200).send(error).end();
 				} else {
-					// Else, test
-					logger.log(`${list.length} users were found with some or all of these skills: ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
-					response.status(200).send((typeof list === "object") ? JSON.stringify(list) : list).end();
+					// Else, score users based on how many of the searched skills/classes they have
+					logger.log(`${(list.length === 1) ? "1 user" : (list.length + " users")} were found with at least one skill in ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills} or at least one class in ${typeof searchCriteria.classes} ${(typeof searchCriteria.classes === "object") ? JSON.stringify(searchCriteria.classes) : searchCriteria.classes}`, handlerTag);
+					assignMatchPoints(list, searchCriteria, function (result) {
+						logger.log(`Match points assignment complete.`, handlerTag);
+						response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+					});
 				}
 			});
 		}
@@ -823,6 +832,76 @@ function hashString(unhashed_string) {
 
 	// All done!
 	return output;
+}
+
+/*
+	@function 	assignMatchPoints
+	@parameter 	arr - the array of users found within the database that at least partially match the skillmatch skill/class criteria
+	@parameter 	search - the JSON object detailing the skills and classes to search for
+	@parameter 	callback - (optional) a callback function to run after matchpoints have been assigned. If defined, it is assigned the return value.
+	@returns 	If callback is undefined, returns an array of objects that each contain the following:
+		{
+			"name": "a matched user's name",
+			"classPoints": ...,
+			"skillPoints": ...,
+			"total": ...
+		}
+	where "classPoints" is the number of class matches that the user named "name" has, and similarly for "skillPoints". The "total" member is the sum of "classPoints" and "skillPoints". Otherwise, this array of objects is passed to the callback
+	@details 	(Intended for use within the skillMatchHandler's findDocs function callback) This function takes the resulting "list" parameter from a findDocs() document search and the JSON object provided to the skillMatchHandler's "request header data field" (i.e. an object containing {"skills": [...], "classes": [...]}) to rank how much of a match the user is to the client's query, depending on the amount of "class match points" and "skill match points" the user has. Put simply, if a user has 2 out of the 3 classes specified by the client's query, the user has 2 class points, and similarly for skill points.
+	@note 		If arr is an empty array, an empty array is returned
+*/
+function assignMatchPoints (arr, search, callback, merge) {
+	var resultArr = [];
+
+	// Iterate through the entire result list and grant each resulting user a set of match points
+	for (var k = 0; k < arr.length + 1; k++) {	// iterates through each resulting user
+		switch (k === arr.length) {
+			case true: {				
+				// On last iteration, run callback or return
+				if (typeof callback === "function") {
+					callback(resultArr);
+				} else {
+					return resultArr;
+				}
+				break;
+			}
+			default: {
+				var currentUser = arr[k];
+				resultArr[k] = {
+					"name": `${currentUser.first_name} ${currentUser.last_name}`,
+					"classPoints": 0,
+					"skillPoints": 0
+				}
+
+				// Iterate through each element in the skill search criteria
+				for (var skl = 0; skl < search.skills.length; skl++) {
+					switch(currentUser.skills.indexOf(search.skills[skl]) === -1) {
+						case false: {
+							// User has the skill; award them a skill point
+							resultArr[k].skillPoints++;
+							break;
+						}
+					}
+				}
+
+				// Iterate through each element in the skill search criteria
+				for (var cls = 0; cls < search.classes.length; cls++) {
+					switch(currentUser.classes.indexOf(search.classes[cls]) === -1) {
+						case false: {
+							// User has the class; award them a class point
+							resultArr[k].classPoints++;
+							break;
+						}
+					}
+				}
+
+				// Record total points
+				resultArr[k].total = resultArr[k].skillPoints + resultArr[k].classPoints;
+
+				break;
+			}
+		}
+	}
 }
 // END Utility Methods
 
