@@ -54,6 +54,7 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 		findCollections(null, function(error, list) {
 			var users_collection_present = false
 			var serverStarts_collection_present = false
+			var login_collection_present = false;
 			for (var i=0; i<list.length; i++) { 
 				if (list[i].name == "users") {
 					users_collection_present = true;
@@ -61,12 +62,18 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 				if (list[i].name == "serverStarts") {
 					serverStarts_collection_present = true;
 				}
+				if (list[i].name == "login") {
+					login_collection_present = true;
+				}
 			}
 			if (!users_collection_present) {
 				database.createCollection('users')
 			}
 			if (!serverStarts_collection_present) {
 				database.createCollection('serverStarts')
+			}
+			if (!login_collection_present) {
+				database.createCollection('login');
 			}
 		})
 
