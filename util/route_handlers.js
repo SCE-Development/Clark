@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			route_handlers.js
 // Date Created: 	October 26, 2017
-// Last Modified: 	November 5, 2017
+// Last Modified: 	November 5, 2017`
 // Details:
 //				 	This file abstracts all route handler functions to be used by server.js. The server.js file
 //				 	takes these and places them to their desired endpoints. This frees up the server code from
@@ -88,14 +88,15 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 		});
 
 		//test Runtime of Searching Database.
-		for (var i=1; i<5; i++) {
-			var user_size = Math.pow(10, i)
-			console.log(`Searching for ariskoumis with ${user_size} other people in DB.`)
-			for (var j=0; j<10; j++) {
-				testRuntime(i)
-			}
-			console.log('\n')
-		}
+
+		// for (var i=1; i<5; i++) {
+		// 	var user_size = Math.pow(10, i)
+		// 	console.log(`Searching for ariskoumis with ${user_size} other people in DB.`)
+		// 	for (var j=0; j<10; j++) {
+		// 		testRuntime(i)
+		// 	}
+		// 	console.log('\n')
+		// }
 		
 	}
 });
@@ -747,6 +748,7 @@ function delintRequestBody (body, callback) {
 	} else {
 		callback(newBody);
   }
+}
 
 /*
 	@function 	numerify
@@ -932,7 +934,6 @@ function assignMatchPoints (arr, search, callback, merge) {
 		}
 	}
 }
-// END Utility Methods
 
 /*
 	@function 	hashString
@@ -977,47 +978,50 @@ function hashString(unhashed_string) {
 	@returns 	nothing
 	@details 	This function tests the runtime of MongoDB's searching for multiple collection sizes.
 */
-function testRuntime(users_needed) {
-	//create array which initializes with only ariskoumis
-	var user_array = [{username: "ariskoumis"}]
+// function testRuntime(users_needed) {
+// 	//create array which initializes with only ariskoumis
+// 	var user_array = [{username: "ariskoumis"}]
 
-	//populate user_array 
-	var users_created = 0
-	while (users_created < users_needed) {
-		var temp_user = {
-			username: Math.random().toString(36).substr(2, 7)
-		}
-		user_array.push(temp_user)
-		users_created++
-	}
+// 	//populate user_array 
+// 	var users_created = 0
+// 	while (users_created < users_needed) {
+// 		var temp_user = {
+// 			username: Math.random().toString(36).substr(2, 7)
+// 		}
+// 		user_array.push(temp_user)
+// 		users_created++
+// 	}
 
-	// Check if database collection exists
-	database.collection("users", {strict: true}, function (error, result) {
-		if (error != null) {
-			console.log(error)
-		} else {
-			result.remove({})
-			// Else, no error occurred, and the database collection was found; use it to write to the database
-			result.insertMany(user_array).then(function (promiseResult) {
-				console.log("Insertion successful")
-			});
-		}
-	});
+// 	// Check if database collection exists
+// 	database.collection("users", {strict: true}, function (error, result) {
+// 		if (error != null) {
+// 			console.log(error)
+// 		} else {
+// 			result.remove({})
+// 			// Else, no error occurred, and the database collection was found; use it to write to the database
+// 			result.insertMany(user_array).then(function (promiseResult) {
+// 				console.log("Insertion successful")
+// 			});
+// 		}
+// 	});
 
-	//Find User Aris Koumis
-	console.time('searchForAris')
-	searchForAris()
-	console.timeEnd('searchForAris')
-}
+// 	//Find User Aris Koumis
+// 	console.time('searchForAris')
+// 	searchForAris()
+// 	console.timeEnd('searchForAris')
+// }
 
-searchForAris = async function() {
-	await findDocs("users", {username: "ariskoumis"}, function(error, list) {
-		if (error != null) {
-			console.log(error)
-		}
-	})
-}
+// searchForAris = async function() {
+// 	await findDocs("users", {username: "ariskoumis"}, function(error, list) {
+// 		if (error != null) {
+// 			console.log(error)
+// 		}
+// 	})
+// }
+
 // END Utility Methods
+
+
 
 module.exports = handle_map;
 // END route_handlers.js 
