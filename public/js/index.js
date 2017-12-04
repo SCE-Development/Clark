@@ -20,6 +20,7 @@
 					success: function(response) {
 						if (response.result == "success") {
 							alert(`Welcome, ${user.name}!`)	
+							window.location.href = '/home'
 						} else {
 							alert("Login failed.")
 						}
