@@ -1,160 +1,63 @@
-<!DOCTYPE>
-<html ng-app = "skillshare">
+<!DOCTYPE html>
+<html ng-app="app">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale = 1">
-    
-    <title>SkillShare Search</title>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <title>Skillshare</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://www.w3schools.com/lib/w3.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/skillshare.css">
-    <script type="text/javascript" src="js/skillshare.js"></script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/skillshare.css">
 </head>
+
 <body>
-    
-    
-    <div id="profile" ng-controller="MyController"> 
-        <h2 id="name" id="username">Profile</h2>
-        
-        <h3> Hello, {{name}}! </h4>
-        <h3> Username: {{username}} </h4>
-        
-        <input id="set" type="image" src="images/settings-icon.jpg" />
-        <!--
-        //need to put the scope controller in here that has the user name of the user from the control. 
-        
-        -->
-        
-    </div>
-        
-        <!--
-        //need to palce the scope controller value that is -->
-        
-    <div id="search" ng-controller = "My2ndController">
-        
-        <h2 id="skillsharetitle">SkillShare Search</h2>
-        <input id = "myInput" type="text"  oninput="w3.filterHTML('#myUL', 'li', this.value)" placeholder="Search for skills or courses...">   
-            <ul id="myUL">
-                <li id="classes"> <a href="#">EE97/EE98 <button id="button">SELECT</button></a> </li> 
-                <li id="classes"> <a href="#">CMPE30    <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE50    <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE102   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE110   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE124   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE125   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE126   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE130   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE131   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE140   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE142   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE148   <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE195A  <button id="button">SELECT</button></a> </li>
-                <li id="classes"> <a href="#">CMPE195B  <button id="button">SELECT</button></a> </li>
-                <li id="skill"> <a href="#">Javascript<button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Java      <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">C++       <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Python    <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Git       <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Agile Development<button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">React     <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Angular   <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Node      <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Shell Scripting<button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Computer Vision<button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Ruby      <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Perl      <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">PHP       <button id="button">SELECT</button></a> </li> 
-                <li id="skill"> <a href="#">Computer Networking<button id="button">SELECT</button></a> </li> 
-            </ul>
-    </div>
-        <!--
-        <ul>
-            <li ng-repeat="rebel in rebels">
-                {{rebel.per}} is a {{rebel.profession}} fighting with a {{rebel.weapon}}.
-            </li>
-        </ul>
-        The search doesn't work yet...-->
-        
-    <div id="searchresults" ng-controller = "My3rdController">
-        <h2 id="skillsharetitle">Results</h2>
-        <input id = "myinput" type="tex"  oninput="w3.filterHTML('#myul', 'p', this.value)" placeholder="Search for results...">
-        <div id="resultsdisplay"> 
-
-            <ul id="myul">
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>   
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>        
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>        
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>        
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>        
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>        
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>        
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-                <li>    
-                    <p>Name: </p>
-                    <p>Match Score: </p>        
-                    <p>Major: </p>
-                    <p>Graduation: </p>     
-                    <p>Skills: </p>
-                    <p>Classes: </p>
-                </li>
-            </ul>
-
+    <div ng-controller="home_page">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{name}}
+                    </a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col-sm-3 left-sidebar">
+                <div class="list-group">
+                    <h2>Desired Skills</h2>
+                    <button ng-repeat="skill in possible_skills" type="button" ng-click="toggleButton($event)" class="list-group-item list-group-item-action">{{skill}}</button>
+                    
+                </div>
+                <button>Submit</button>
+            </div>
+            <div class="col-sm-6">
+                <h2>Matches</h2>
+            </div>
+            <div class="col-sm-3">
+                <h2>Info</h2>
+                <p>To find matches for your desired skills, select skills from the left panel and press 'submit'. After that, the 'Matches' section will populate with people that are the right fit!</p>
+                <br>
+                <h2>What Next?</h2>
+                <p>After you've found someone that is sufficient for your project's needs, use the attached phone number and contact them directly! From there, you can work with them at your will.</p>
+                <br>
+                <h2>Thank you for using SkillShare!</h2>
+                {{desired_skills}}
+            </div>
         </div>
-
     </div>
-    
 </body>
+
+
+<footer>
+    <script type="text/javascript" src="js/skillshare.js"></script>
+</footer>
 </html>
 
+</html>

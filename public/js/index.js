@@ -31,7 +31,6 @@
 					}
 				})
 			}
-			
 		}
 
 		$scope.createAccount = async function(new_user) {

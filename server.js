@@ -53,6 +53,7 @@ logger.log(`\tStatic asset locations recorded...`);	// test
 */
 app.get("/", handles.rootHandler);				// GET request of the main login page
 app.get("/home", handles.homeHandler);			// Get request of the home page
+app.get("/getUsername", handles.getUsernameHandler); // GET request of username retreival method
 app.post("/login", handles.loginHandler);		// POST request: RESTful login
 app.post("/writeNewDoc", handles.testWriteNewDocHandler);	// POST request to write to the db from all pages
 app.post("/findCollections", handles.testFindCollectionsHandler);	// POST request to find and list the db's collections on all page
