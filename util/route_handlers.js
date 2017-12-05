@@ -890,9 +890,25 @@ function assignMatchPoints (arr, search, callback, merge) {
 			case true: {				
 				// On last iteration, run callback or return
 				if (typeof callback === "function") {
-					callback(resultArr);
+					callback(resultArr.sort(function (a, b) {
+						if (a.total < b.total) {
+							return 1;
+						} else if (a.total > b.total) {
+							return -1;
+						} else {
+							return 0;	// both are equal
+						}
+					}));	// Sort function usually uses introsort
 				} else {
-					return resultArr;
+					return resultArr.sort(function (a, b) {
+						if (a.total < b.total) {
+							return 1;
+						} else if (a.total > b.total) {
+							return -1;
+						} else {
+							return 0;	// both are equal
+						}
+					});
 				}
 				break;
 			}
