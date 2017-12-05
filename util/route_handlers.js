@@ -883,7 +883,7 @@ function hashString(unhashed_string) {
 */
 function assignMatchPoints (arr, search, callback, merge) {
 	var handlerTag = {"src": "assignMatchPoints"};
-	var tuner = 50;	// tuning factor
+	var tuner = 2;	// tuning factor
 	var depth = Math.ceil(Math.log10(arr.length)) * tuner;
 	var resultArr = [];
 
@@ -895,7 +895,7 @@ function assignMatchPoints (arr, search, callback, merge) {
 				logger.log(`Introsorting ${(typeof resultArr === "object") ? JSON.stringify(resultArr) : resultArr}`);
 				introSorter.introSort(resultArr, 0, resultArr.length - 1, depth, {
 					"msMode": true,
-					"reverse": true
+					"reverse": false
 				});
 				if (typeof callback === "function") {
 					callback(resultArr);
@@ -923,7 +923,7 @@ function assignMatchPoints (arr, search, callback, merge) {
 					}
 				}
 
-				// Iterate through each element in the skill search criteria
+				// Iterate through each element in the class search criteria
 				for (var cls = 0; cls < search.classes.length; cls++) {
 					switch(currentUser.classes.indexOf(search.classes[cls]) === -1) {
 						case false: {
@@ -945,7 +945,7 @@ function assignMatchPoints (arr, search, callback, merge) {
 
 /*
 	@object 	introSorter
-	@details 	This object contains code that performs introsort on our custom array of point totals
+	@details 	This object contains code that performs introsort on our custom array of objects
 */
 var introSorter = (function () {
 	/*
@@ -1023,12 +1023,12 @@ var introSorter = (function () {
 		@parameter 	start - starting index of the array/subarray
 		@parameter 	end - ending index of the array/subarray
 		@parameter 	depth - the depth at which to switch from quicksort to heapsort
-		@parameter 	options - a JSON object specifying any or all of the following special control paramters in the partition() function's options argument. Read that description for more details
+		@parameter 	options - a JSON object specifying any or all of the following special control parameters in the partition() function's options argument. Read that description for more details
 		@returns 	n/a
 		@details 	This function is called recursively to sort an array introspectively
 	*/
 	function introSort(arr, start, end, depth, options) {
-		console.log(`introsorting Array[${start}:${end}] ${arr} (${depth} lvls deep)`);
+		console.log(`introsorting Array[${start}:${end}] ${arr} (${depth} lvls above limit)`);
 		
 		if (start < end) {	// base case: if start greater than or equal to end, don't do this
 			if (depth > 0) {	// if we have yet to reach depth limit, continue with quicksort
@@ -1036,14 +1036,172 @@ var introSorter = (function () {
 				introSort(arr, start, pivotIndex - 1, depth - 1, options);
 				introSort(arr, pivotIndex + 1, end, depth - 1, options);
 			} else {
-				console.log("heapsorting");
-				// heapsort();
+				console.log("Switching to HeapSort");
+				heapSorter.heapSort(arr);
 			}
 		}
 	}
 
 	return {
 		introSort: introSort
+	};
+})();
+
+
+/*
+	@object 	heapSorter
+	@details 	This object contains code that performs a MIN heaport (to sort array in DESCENDING order) on our custom array of objects
+*/
+var heapSorter = (function() {
+	/*
+		@function 	heapSort
+		@parameter 	arr - the array to sort
+		@returns 	n/a
+		@details 	This function performs a heapsort on an array by first building a max heap, and recursively calling maxHeapify on a continuously decreasing recorded array size.
+	*/
+	function heapSort (arr) {
+		// buildMaxHeap(arr);
+		// for (var i = arr.length - 1; i >= 0; i--) {
+		// 	swap(arr, 0, i);
+		// 	maxHeapify(arr, 0, i);
+		// }
+
+		buildMinHeap(arr);
+		for (var i = arr.length - 1; i >= 0; i--) {
+			swap(arr, 0, i);
+			minHeapify(arr, 0, i);
+		}
+	}
+
+	/*
+		@function 	buildMaxHeap
+		@parameter 	arr - the array to build into a max heap
+		@returns 	n/a
+		@details	This function builds a max heap out of an array of elements
+	*/
+	function buildMaxHeap (arr) {
+		for (var i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+			maxHeapify(arr, i, arr.length);
+		}
+	}
+
+	/*
+		@function 	buildMinHeap
+		@parameter 	arr - the array to build into a min heap
+		@returns 	n/a
+		@details	This function builds a min heap out of an array of elements
+	*/
+	function buildMinHeap (arr) {
+		for (var i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+			minHeapify(arr, i, arr.length);
+		}
+	}
+
+	/*
+		@function 	maxHeapify
+		@parameter 	arr - the array to max-heapify
+		@parameter 	index - the index to start from (i.e. the root reference)
+		@parameter 	n - The last index of the arr
+		@returns 	n/a
+		@details 	?
+	*/
+	function maxHeapify (arr, index, n) {
+		var largestChildIndex = index;
+		var leftChildIndex = lchild(index);
+		var rightChildIndex = rchild(index);
+		
+		// Look for largest child between index and its left child
+		if (leftChildIndex < n && arr[leftChildIndex].total > arr[largestChildIndex].total) {
+			largestChildIndex = leftChildIndex;
+		}
+
+		// Look for largest child between the current largest and index's right child
+		if (rightChildIndex < n && arr[rightChildIndex].total > arr[largestChildIndex].total) {
+			largestChildIndex = rightChildIndex;
+		}
+
+		// Final check to see if node i is larger than its direct children
+		if (largestChildIndex !== index) {
+			swap(arr, index, largestChildIndex);
+			maxHeapify(arr, largestChildIndex, n);
+		}
+	}
+
+	/*
+		@function 	minHeapify
+		@parameter 	arr - the array to min-heapify
+		@parameter 	index - the index to start from (i.e. the root reference)
+		@parameter 	n - The last index of the arr
+		@returns 	n/a
+		@details 	?
+	*/
+	function minHeapify (arr, index, n) {
+		var smallestChildIndex = index;
+		var leftChildIndex = lchild(index);
+		var rightChildIndex = rchild(index);
+		
+		// Look for largest child between index and its left child
+		if (leftChildIndex < n && arr[leftChildIndex].total < arr[smallestChildIndex].total) {
+			smallestChildIndex = leftChildIndex;
+		}
+
+		// Look for largest child between the current largest and index's right child
+		if (rightChildIndex < n && arr[rightChildIndex].total < arr[smallestChildIndex].total) {
+			smallestChildIndex = rightChildIndex;
+		}
+
+		// Final check to see if node i is larger than its direct children
+		if (smallestChildIndex !== index) {
+			swap(arr, index, smallestChildIndex);
+			minHeapify(arr, smallestChildIndex, n);
+		}
+	}
+
+	/*
+		@function 	swap
+		@parameter 	arr - the array to sort
+		@parameter 	a - index a
+		@parameter 	b - index b
+		@returns 	n/a
+	*/
+	function swap (arr, a, b) {
+		var temp = arr[a];
+		arr[a] = arr[b];
+		arr[b] = temp;
+	}
+
+	/*
+		@function 	lchild
+		@parameter 	index - the array index of the node to acquire a left child from
+		@returns 	The index of the left child for node i
+		@details 	?
+	*/
+	function lchild (index) {
+		return 2*index + 1;
+	}
+
+	/*
+		@function 	rchild
+		@parameter 	index - the array index of the node to acquire a right child from
+		@returns 	The index of the right child for node i
+		@details 	?
+	*/
+	function rchild (index) {
+		return 2*index + 2;
+	}
+
+	/*
+		@function 	parent
+		@parameter 	index - the index to acquire a parent from
+		@returns 	The index of the parent for node i
+		@details 	?
+	*/
+	function parent (index) {
+		return Math.floor((i - 1) / 2);
+	}
+
+	return {
+		heapSort: heapSort
 	};
 })();
 // END Utility Methods
