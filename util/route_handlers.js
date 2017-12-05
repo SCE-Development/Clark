@@ -412,44 +412,57 @@ handle_map.testUpdateOneDocHandler = function (request, response) {
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
 	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	This function handles all endpoint requests to the "/test/skillmatch" endpoint. It performs a query on the database using the Request header's data field as search criteria to determine which match results to return. The data field is expected to be a JSON object with the following format:
+	@details 	This function handles all endpoint requests to the "/skillmatch" endpoint. It performs a query on the database using the Request header's data field as search criteria to determine which match results to return. The data field is expected to be a JSON object with the following format:
 		{
 			"skills": [...],
 			"classes": [...]
 		}
-	where the "skills" parameter is an array of (case-insensitive) skill name strings to match, and "classes" is an array of (case-insensitive) class name strings to match. (They conform to the input specifications of the skillSearch() and classSearch() functions, respectively. Read their descriptions for more details on what to give the "skills" and "classes" parameters)?
-	@note 		This function assumes that the "SkillBank", "Skills", "Users", "CourseBank", and "Courses" collections exist. Invalid results will be returned if any one of these databases is non-existent
+	where the "skills" parameter is an array of (case-insensitive) skill name strings to match, and "classes" is an array of (case-insensitive) class name strings to match. They conform to the input specifications of the "search" parameter in the assignMatchPoints() function. Read the assignMatchPoints() function description for more details on what to give the "skills" and "classes" parameters.
+	@note 		This function assumes that the "users" collection exists. Invalid results will be returned if this database collection is non-existent
 */
 handle_map.skillMatchHandler = function (request, response) {
-	logger.log(`Starting with ${JSON.stringify(request.body)}`, handlerTag);	// debug
 	var handlerTag = {"src": "skillMatchHandler"};
 	var hasBody = (Object.keys(request.body).length > 0);
-	logger.log(`****** TESTING Delint in SkillMatch ****** : ${delintRequestBody(request.body)}`, handlerTag)// test
-	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
-	// Log request
-	logger.log(`Client @ ip ${request.ip} is requesting to find users matching ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria} from the database`, handlerTag);
+	try {
+		var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
-	// Begin by finding skill IDs
-	if (typeof searchCriteria.classes !== "object" || typeof searchCriteria.skills !== "object") {	// if skills/classes aren't array objects
-		// If error, report it.
-		logger.log(`Error: invalid skills search parameter ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
-		response.status(200).send("Error: invalid skillmatch parameters").end();
-	} else {
-		// Acquire skill IDs
-		logger.log(`Acquiring skill IDs for ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}...`, handlerTag);
-		findDocs("skillBank", {"name": {"$in": searchCriteria.skills}}, function (error, list) {
-		// findDocs("skillBank", {"name": {"$in": ["placeholder","javascript","mysql","c"]}}, function (error, list) {
-			if (error != null) {
-				// If error, report error
-				logger.log(`An error occurred while acquiring skill ids: ${error}`, handlerTag);
-				response.status(500).send(error).end();
-			} else {
-				// Else, 
-				logger.log(`Associating skill IDs with skill names...`, handlerTag);
-				response.status(200).send((typeof list === "object") ? JSON.stringify(list) : list).end();
-			}
-		});
+		// Log request
+		logger.log(`Client @ ip ${request.ip} is requesting to find users skilled in any of ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria} from the database`, handlerTag);
+
+		// Begin by verifying valid inputs
+		if (Array.isArray(searchCriteria.classes) !== true || Array.isArray(searchCriteria.skills) !== true) {	// if skills/classes aren't array objects
+			// If error, report it.
+			logger.log(`Error: invalid search parameters ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria}`, handlerTag);
+			response.status(200).send("Error: invalid skillmatch parameters").end();
+		} else {
+			// Else, acquire users with the given search criteria of skills and classes
+			logger.log(`Matching users with any of the following skills: ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
+			findDocs("users",
+				{
+					"$or": [
+						{"skills": {"$in": searchCriteria.skills}},
+						{"classes": {"$in": searchCriteria.classes}}
+					]
+				}, function (error, list) {
+				if (error != null) {
+					// If error, report error
+					logger.log(`An error occurred while matching users: ${error}`, handlerTag);
+					response.status(200).send(error).end();
+				} else {
+					// Else, score users based on how many of the searched skills/classes they have
+					logger.log(`${(list.length === 1) ? "1 user" : (list.length + " users")} were found with at least one skill in ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills} or at least one class in ${typeof searchCriteria.classes} ${(typeof searchCriteria.classes === "object") ? JSON.stringify(searchCriteria.classes) : searchCriteria.classes}`, handlerTag);
+					assignMatchPoints(list, searchCriteria, function (result) {
+						logger.log(`Match points assignment complete.`, handlerTag);
+						response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+					});
+				}
+			});
+		}
+	} catch (err) {
+		// If error, report error
+		logger.log(`Unable to match users with skills: ${err}`, handlerTag);
+		response.status(200).send((typeof err === "object") ? JSON.stringify(err) : err).end();
 	}
 }
 // END Handler Functions
@@ -853,6 +866,129 @@ function hashString(unhashed_string) {
 }
 
 /*
+	@function 	assignMatchPoints
+	@parameter 	arr - the array of users found within the database that at least partially match the skillmatch skill/class criteria
+	@parameter 	search - the JSON object detailing the skills and classes to search for
+	@parameter 	callback - (optional) a callback function to run after matchpoints have been assigned. If defined, it is assigned the return value.
+	@returns 	If callback is undefined, returns an array of objects that each contain the following:
+		{
+			"name": "a matched user's name",
+			"classPoints": ...,
+			"skillPoints": ...,
+			"total": ...
+		}
+	where "classPoints" is the number of class matches that the user named "name" has, and similarly for "skillPoints". The "total" member is the sum of "classPoints" and "skillPoints". Otherwise, this array of objects is passed to the callback
+	@details 	(Intended for use within the skillMatchHandler's findDocs function callback) This function takes the resulting "list" parameter from a findDocs() document search and the JSON object provided to the skillMatchHandler's "request header data field" (i.e. an object containing {"skills": [...], "classes": [...]}) to rank how much of a match the user is to the client's query, depending on the amount of "class match points" and "skill match points" the user has. Put simply, if a user has 2 out of the 3 classes specified by the client's query, the user has 2 class points, and similarly for skill points.
+	@note 		If arr is an empty array, an empty array is returned
+*/
+function assignMatchPoints (arr, search, callback, merge) {
+	var resultArr = [];
+
+	// Iterate through the entire result list and grant each resulting user a set of match points
+	for (var k = 0; k < arr.length + 1; k++) {	// iterates through each resulting user
+		switch (k === arr.length) {
+			case true: {				
+				// On last iteration, run callback or return
+				if (typeof callback === "function") {
+					callback(resultArr.sort(function (a, b) {
+						if (a.total < b.total) {
+							return 1;
+						} else if (a.total > b.total) {
+							return -1;
+						} else {
+							return 0;	// both are equal
+						}
+					}));	// Sort function usually uses introsort
+				} else {
+					return resultArr.sort(function (a, b) {
+						if (a.total < b.total) {
+							return 1;
+						} else if (a.total > b.total) {
+							return -1;
+						} else {
+							return 0;	// both are equal
+						}
+					});
+				}
+				break;
+			}
+			default: {
+				var currentUser = arr[k];
+				resultArr[k] = {
+					"name": `${currentUser.first_name} ${currentUser.last_name}`,
+					"classPoints": 0,
+					"skillPoints": 0
+				}
+
+				// Iterate through each element in the skill search criteria
+				for (var skl = 0; skl < search.skills.length; skl++) {
+					switch(currentUser.skills.indexOf(search.skills[skl]) === -1) {
+						case false: {
+							// User has the skill; award them a skill point
+							resultArr[k].skillPoints++;
+							break;
+						}
+					}
+				}
+
+				// Iterate through each element in the skill search criteria
+				for (var cls = 0; cls < search.classes.length; cls++) {
+					switch(currentUser.classes.indexOf(search.classes[cls]) === -1) {
+						case false: {
+							// User has the class; award them a class point
+							resultArr[k].classPoints++;
+							break;
+						}
+					}
+				}
+
+				// Record total points
+				resultArr[k].total = resultArr[k].skillPoints + resultArr[k].classPoints;
+
+				break;
+			}
+		}
+	}
+}
+
+/*
+	@function 	hashString
+	@parameter 	string - the string needing to be encoded
+	@returns 	An encoded string used for hashing.
+	@details 	This function takes a string and encrypts it using caesars cipher. This encryption is used for hashing.
+*/
+function hashString(unhashed_string) {
+	
+	// Make an output variable
+	var output = '';
+
+	//Declare number of letters to shift by
+	var amount = 13;
+
+	// Go through each character
+	for (var i = 0; i < unhashed_string.length; i ++) {
+		// Get the character we'll be appending
+		var c = unhashed_string[i];
+		// If it's a letter...
+		if (c.match(/[a-z]/i)) {
+			// Get its code
+			var code = unhashed_string.charCodeAt(i);
+			// Uppercase letters
+			if ((code >= 65) && (code <= 90))
+				c = String.fromCharCode(((code - 65 + amount) % 26) + 65);
+			// Lowercase letters
+			else if ((code >= 97) && (code <= 122))
+				c = String.fromCharCode(((code - 97 + amount) % 26) + 97);
+		}
+		// Append
+		output += c;
+	}
+
+	// All done!
+	return output;
+}
+
+/*
 	@function 	testRuntime()
 	@parameter 	users_needed: number of users in database.
 	@returns 	nothing
@@ -900,6 +1036,8 @@ function hashString(unhashed_string) {
 // }
 
 // END Utility Methods
+
+
 
 module.exports = handle_map;
 // END route_handlers.js 
