@@ -910,33 +910,25 @@ function hashString(unhashed_string) {
 	@note 		If arr is an empty array, an empty array is returned
 */
 function assignMatchPoints (arr, search, callback, merge) {
+	var handlerTag = {"src": "assignMatchPoints"};
+	var tuner = 2;	// tuning factor
+	var depth = Math.ceil(Math.log10(arr.length)) * tuner;
 	var resultArr = [];
 
 	// Iterate through the entire result list and grant each resulting user a set of match points
 	for (var k = 0; k < arr.length + 1; k++) {	// iterates through each resulting user
 		switch (k === arr.length) {
-			case true: {				
+			case true: {
 				// On last iteration, run callback or return
+				logger.log(`Introsorting ${(typeof resultArr === "object") ? JSON.stringify(resultArr) : resultArr}`);
+				introSorter.introSort(resultArr, 0, resultArr.length - 1, depth, {
+					"msMode": true,
+					"reverse": false
+				});
 				if (typeof callback === "function") {
-					callback(resultArr.sort(function (a, b) {
-						if (a.total < b.total) {
-							return 1;
-						} else if (a.total > b.total) {
-							return -1;
-						} else {
-							return 0;	// both are equal
-						}
-					}));	// Sort function usually uses introsort
+					callback(resultArr);
 				} else {
-					return resultArr.sort(function (a, b) {
-						if (a.total < b.total) {
-							return 1;
-						} else if (a.total > b.total) {
-							return -1;
-						} else {
-							return 0;	// both are equal
-						}
-					});
+					return resultArr;
 				}
 				break;
 			}
@@ -959,7 +951,7 @@ function assignMatchPoints (arr, search, callback, merge) {
 					}
 				}
 
-				// Iterate through each element in the skill search criteria
+				// Iterate through each element in the class search criteria
 				for (var cls = 0; cls < search.classes.length; cls++) {
 					switch(currentUser.classes.indexOf(search.classes[cls]) === -1) {
 						case false: {
@@ -980,89 +972,266 @@ function assignMatchPoints (arr, search, callback, merge) {
 }
 
 /*
-	@function 	hashString
-	@parameter 	string - the string needing to be encoded
-	@returns 	An encoded string used for hashing.
-	@details 	This function takes a string and encrypts it using caesars cipher. This encryption is used for hashing.
+	@object 	introSorter
+	@details 	This object contains code that performs introsort on our custom array of objects
 */
-function hashString(unhashed_string) {
-	
-	// Make an output variable
-	var output = '';
-
-	//Declare number of letters to shift by
-	var amount = 13;
-
-	// Go through each character
-	for (var i = 0; i < unhashed_string.length; i ++) {
-		// Get the character we'll be appending
-		var c = unhashed_string[i];
-		// If it's a letter...
-		if (c.match(/[a-z]/i)) {
-			// Get its code
-			var code = unhashed_string.charCodeAt(i);
-			// Uppercase letters
-			if ((code >= 65) && (code <= 90))
-				c = String.fromCharCode(((code - 65 + amount) % 26) + 65);
-			// Lowercase letters
-			else if ((code >= 97) && (code <= 122))
-				c = String.fromCharCode(((code - 97 + amount) % 26) + 97);
-		}
-		// Append
-		output += c;
+var introSorter = (function () {
+	/*
+		@function 	swap
+		@parameter 	arr - the array to sort
+		@parameter 	a - index a
+		@parameter 	b - index b
+		@returns 	n/a
+	*/
+	function swap (arr, a, b) {
+		var temp = arr[a];
+		arr[a] = arr[b];
+		arr[b] = temp;
 	}
 
-	// All done!
-	return output;
-}
+	/*
+		@function 	partition
+		@parameter 	arr - the array to sort
+		@parameter 	low - the lower bound of the array
+		@parameter 	high - the higher bound of the array
+		@parameter 	options - (optional) a JSON object specifying any or all of the following special control paramters:
+			{
+				msMode: ...,
+				reverse: ...
+			}
+		where "msMode" is a boolean for Mean Skills Mode (performs special comparison on MeanSkills skillmatch object arrays), and "reverse" is a boolean that, if true, orders the array in DESCENDING order.
+		@returns 	The index of the pivot after partitioning occurs
+		@details	
+	*/
+	function partition(arr, low, high, options) {
+		var pivotIndex = 0;
+		var pivotValue = 0;
+		var smallIndex;
+		var ptrIndex;
+		var pivotNewIndex = low;
+
+		// Determine pseudo-random pivot index
+		pivotIndex = Math.floor(Math.random() * (high - low) + low);
+
+		// Get value of pivot
+		pivotValue = (options.msMode === true) ? arr[pivotIndex].total : arr[pivotIndex];
+
+		// console.log(`Parititioning ${((high - low + 1) % 2) ? "odd" : "even"} Arr[${low}:${high}] ${arr} @ pivotIndex ${pivotIndex}`);
+		
+		// Swap pivot with 0'th element of the (sub)array
+		swap(arr, low, pivotIndex);
+
+		// Start small index at pivot's position
+		smallIndex = pivotNewIndex;
+
+		// Paritition (sub)array into two sublists
+		for (var i = low; i <= high; i++) {
+			ptrIndex = i;
+
+			var compareVal = ((options.msMode === true) ? arr[ptrIndex].total : arr[ptrIndex]);
+
+			if ((options.reverse === true) ? (pivotValue < compareVal) : (compareVal < pivotValue)) {
+				smallIndex++;
+				swap(arr, ptrIndex, smallIndex);
+			}
+		}
+
+		// Return pivot to small Index position
+		swap(arr, low, smallIndex);
+
+		// Update new position of pivot
+		pivotNewIndex = smallIndex;
+
+		return pivotNewIndex;
+	}
+
+	/*
+		@function 	introSort
+		@parameter 	arr - the array to sort
+		@parameter 	start - starting index of the array/subarray
+		@parameter 	end - ending index of the array/subarray
+		@parameter 	depth - the depth at which to switch from quicksort to heapsort
+		@parameter 	options - a JSON object specifying any or all of the following special control parameters in the partition() function's options argument. Read that description for more details
+		@returns 	n/a
+		@details 	This function is called recursively to sort an array introspectively
+	*/
+	function introSort(arr, start, end, depth, options) {
+		console.log(`introsorting Array[${start}:${end}] ${arr} (${depth} lvls above limit)`);
+		
+		if (start < end) {	// base case: if start greater than or equal to end, don't do this
+			if (depth > 0) {	// if we have yet to reach depth limit, continue with quicksort
+				var pivotIndex = partition(arr, start, end, options);
+				introSort(arr, start, pivotIndex - 1, depth - 1, options);
+				introSort(arr, pivotIndex + 1, end, depth - 1, options);
+			} else {
+				console.log("Switching to HeapSort");
+				heapSorter.heapSort(arr);
+			}
+		}
+	}
+
+	return {
+		introSort: introSort
+	};
+})();
+
 
 /*
-	@function 	testRuntime()
-	@parameter 	users_needed: number of users in database.
-	@returns 	nothing
-	@details 	This function tests the runtime of MongoDB's searching for multiple collection sizes.
+	@object 	heapSorter
+	@details 	This object contains code that performs a MIN heaport (to sort array in DESCENDING order) on our custom array of objects
 */
-// function testRuntime(users_needed) {
-// 	//create array which initializes with only ariskoumis
-// 	var user_array = [{username: "ariskoumis"}]
+var heapSorter = (function() {
+	/*
+		@function 	heapSort
+		@parameter 	arr - the array to sort
+		@returns 	n/a
+		@details 	This function performs a heapsort on an array by first building a max heap, and recursively calling maxHeapify on a continuously decreasing recorded array size.
+	*/
+	function heapSort (arr) {
+		// buildMaxHeap(arr);
+		// for (var i = arr.length - 1; i >= 0; i--) {
+		// 	swap(arr, 0, i);
+		// 	maxHeapify(arr, 0, i);
+		// }
 
-// 	//populate user_array 
-// 	var users_created = 0
-// 	while (users_created < users_needed) {
-// 		var temp_user = {
-// 			username: Math.random().toString(36).substr(2, 7)
-// 		}
-// 		user_array.push(temp_user)
-// 		users_created++
-// 	}
+		buildMinHeap(arr);
+		for (var i = arr.length - 1; i >= 0; i--) {
+			swap(arr, 0, i);
+			minHeapify(arr, 0, i);
+		}
+	}
 
-// 	// Check if database collection exists
-// 	database.collection("users", {strict: true}, function (error, result) {
-// 		if (error != null) {
-// 			console.log(error)
-// 		} else {
-// 			result.remove({})
-// 			// Else, no error occurred, and the database collection was found; use it to write to the database
-// 			result.insertMany(user_array).then(function (promiseResult) {
-// 				console.log("Insertion successful")
-// 			});
-// 		}
-// 	});
+	/*
+		@function 	buildMaxHeap
+		@parameter 	arr - the array to build into a max heap
+		@returns 	n/a
+		@details	This function builds a max heap out of an array of elements
+	*/
+	function buildMaxHeap (arr) {
+		for (var i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+			maxHeapify(arr, i, arr.length);
+		}
+	}
 
-// 	//Find User Aris Koumis
-// 	console.time('searchForAris')
-// 	searchForAris()
-// 	console.timeEnd('searchForAris')
-// }
+	/*
+		@function 	buildMinHeap
+		@parameter 	arr - the array to build into a min heap
+		@returns 	n/a
+		@details	This function builds a min heap out of an array of elements
+	*/
+	function buildMinHeap (arr) {
+		for (var i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+			minHeapify(arr, i, arr.length);
+		}
+	}
 
-// searchForAris = async function() {
-// 	await findDocs("users", {username: "ariskoumis"}, function(error, list) {
-// 		if (error != null) {
-// 			console.log(error)
-// 		}
-// 	})
-// }
+	/*
+		@function 	maxHeapify
+		@parameter 	arr - the array to max-heapify
+		@parameter 	index - the index to start from (i.e. the root reference)
+		@parameter 	n - The last index of the arr
+		@returns 	n/a
+		@details 	?
+	*/
+	function maxHeapify (arr, index, n) {
+		var largestChildIndex = index;
+		var leftChildIndex = lchild(index);
+		var rightChildIndex = rchild(index);
+		
+		// Look for largest child between index and its left child
+		if (leftChildIndex < n && arr[leftChildIndex].total > arr[largestChildIndex].total) {
+			largestChildIndex = leftChildIndex;
+		}
 
+		// Look for largest child between the current largest and index's right child
+		if (rightChildIndex < n && arr[rightChildIndex].total > arr[largestChildIndex].total) {
+			largestChildIndex = rightChildIndex;
+		}
+
+		// Final check to see if node i is larger than its direct children
+		if (largestChildIndex !== index) {
+			swap(arr, index, largestChildIndex);
+			maxHeapify(arr, largestChildIndex, n);
+		}
+	}
+
+	/*
+		@function 	minHeapify
+		@parameter 	arr - the array to min-heapify
+		@parameter 	index - the index to start from (i.e. the root reference)
+		@parameter 	n - The last index of the arr
+		@returns 	n/a
+		@details 	?
+	*/
+	function minHeapify (arr, index, n) {
+		var smallestChildIndex = index;
+		var leftChildIndex = lchild(index);
+		var rightChildIndex = rchild(index);
+		
+		// Look for largest child between index and its left child
+		if (leftChildIndex < n && arr[leftChildIndex].total < arr[smallestChildIndex].total) {
+			smallestChildIndex = leftChildIndex;
+		}
+
+		// Look for largest child between the current largest and index's right child
+		if (rightChildIndex < n && arr[rightChildIndex].total < arr[smallestChildIndex].total) {
+			smallestChildIndex = rightChildIndex;
+		}
+
+		// Final check to see if node i is larger than its direct children
+		if (smallestChildIndex !== index) {
+			swap(arr, index, smallestChildIndex);
+			minHeapify(arr, smallestChildIndex, n);
+		}
+	}
+
+	/*
+		@function 	swap
+		@parameter 	arr - the array to sort
+		@parameter 	a - index a
+		@parameter 	b - index b
+		@returns 	n/a
+	*/
+	function swap (arr, a, b) {
+		var temp = arr[a];
+		arr[a] = arr[b];
+		arr[b] = temp;
+	}
+
+	/*
+		@function 	lchild
+		@parameter 	index - the array index of the node to acquire a left child from
+		@returns 	The index of the left child for node i
+		@details 	?
+	*/
+	function lchild (index) {
+		return 2*index + 1;
+	}
+
+	/*
+		@function 	rchild
+		@parameter 	index - the array index of the node to acquire a right child from
+		@returns 	The index of the right child for node i
+		@details 	?
+	*/
+	function rchild (index) {
+		return 2*index + 2;
+	}
+
+	/*
+		@function 	parent
+		@parameter 	index - the index to acquire a parent from
+		@returns 	The index of the parent for node i
+		@details 	?
+	*/
+	function parent (index) {
+		return Math.floor((i - 1) / 2);
+	}
+
+	return {
+		heapSort: heapSort
+	};
+})();
 // END Utility Methods
 
 /*
