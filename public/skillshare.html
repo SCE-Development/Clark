@@ -1,127 +1,76 @@
 <!DOCTYPE>
-
 <html ng-app = "skillshare">
 <head>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-    
     <meta charset="utf-8">
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale = 1">
     
-    <title>SkillShare</title>
-    
-    <style>
-        
-        body {
-            background-color: #ede7e1;
-            margin: 0;
-            padding: 0;
-            font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;   
-        }
-        
-        #profile {
-            width: 250px;
-            padding-left: 25px;
-            margin-left: 5em auto;
-            padding-top: 25px;
-            margin-top: 5em auto;
-            padding-bottom: 25px;
-            margin-bottom: 5em auto;
-            padding-right: 25px;
-            margin-right: 5em auto;
-            background-color: #eda150;
-            border-radius: 3em;
-            font-family: Arial;
-        }
-        #name{
-            padding-top: 5px;
-            padding-left: 5px;
-        }
-        #search {
-            width: 500px;
-            margin-left: 5em auto;
-            margin-top: 5em;
-            margin-bottom: 5em auto;
-            margin-right: 5em auto;
-            height: 100px;
-            
-            padding-left: 25px;
-            padding-top: 25px;
-            padding-bottom: 25px;
-            padding-right: 25px;
-            
-            background-color: #eda150;
-            border-radius: 2em;
-            font-family: Arial;
+    <title>SkillShare Search</title>
 
-        }
-        
-        .input{
-            width: 300px;
-            border-radius: 2em;
-            height: 25px;
-            margin: 2em auto;
-        }
-        
-        
-    </style>
-    
-    <script>
-    
-        angular.module('skillshare', []).controller('MyController', MyController);
-        
-        function MyController($scope) {
-            
-            $scope.name = 'Pranav';
-            
-        }
-        
-    </script>
-    
-    <!-- The search doesn't work yet..
-    <script>
-    angular.module('skillshare', []).controller('My2ndController', My2ndController);
-        
-        function My2ndController($scope) {
-            
-            $scope.rebels = [
-                  {per: 'Luke Skywalker', profession: 'Jedi', weapon: 'lightsaber', age: 19},
-                  {per: 'Ben Kenobi', profession: 'Jedi', weapon: 'lightsaber', age: 56},
-                  {per: 'Han Solo', profession: 'smuggler', weapon: 'laser blaster', age: 32},
-                  {per: 'Chewbacca', profession: 'pilot', weapon: 'bowcaster', age: 200},
-                  ];
-        } 
-    </script>
-    --> 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://www.w3schools.com/lib/w3.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/skillshare.css">
+    <script type="text/javascript" src="js/skillshare.js"></script>
     
 </head>
 <body>
     
     
     <div id="profile" ng-controller="MyController"> 
-        <h1 id="name">Profile</h1>
+        <h2 id="name" id="username">Profile</h2>
         
-        <h3> Hello, {{name}}! </h3>
-        <h4> Username: {{username}} </h4>
+        <h3> Hello, {{name}}! </h4>
+        <h3> Username: {{username}} </h4>
+        
+        <input id="set" type="image" src="images/settings-icon.jpg" />
         <!--
         //need to put the scope controller in here that has the user name of the user from the control. 
         
         -->
         
     </div>
-   
         
         <!--
         //need to palce the scope controller value that is -->
         
+    <div id="search" ng-controller = "My2ndController">
         
-        
-
-    <div id= "search" ng-controller = "My2ndController">
-        
-        <h3>SkillShare Search</h3>
-        <input class = "input" type="text" placeholder="Search for skills or courses...">     
+        <h2 id="skillsharetitle">SkillShare Search</h2>
+        <input id = "myInput" type="text"  oninput="w3.filterHTML('#myUL', 'li', this.value)" placeholder="Search for skills or courses...">   
+            <ul id="myUL">
+                <li id="classes"> <a href="#">EE97/EE98 <button id="button">SELECT</button></a> </li> 
+                <li id="classes"> <a href="#">CMPE30    <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE50    <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE102   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE110   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE124   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE125   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE126   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE130   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE131   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE140   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE142   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE148   <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE195A  <button id="button">SELECT</button></a> </li>
+                <li id="classes"> <a href="#">CMPE195B  <button id="button">SELECT</button></a> </li>
+                <li id="skill"> <a href="#">Javascript<button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Java      <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">C++       <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Python    <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Git       <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Agile Development<button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">React     <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Angular   <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Node      <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Shell Scripting<button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Computer Vision<button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Ruby      <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Perl      <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">PHP       <button id="button">SELECT</button></a> </li> 
+                <li id="skill"> <a href="#">Computer Networking<button id="button">SELECT</button></a> </li> 
+            </ul>
+    </div>
         <!--
         <ul>
             <li ng-repeat="rebel in rebels">
@@ -130,40 +79,82 @@
         </ul>
         The search doesn't work yet...-->
         
+    <div id="searchresults" ng-controller = "My3rdController">
+        <h2 id="skillsharetitle">Results</h2>
+        <input id = "myinput" type="tex"  oninput="w3.filterHTML('#myul', 'p', this.value)" placeholder="Search for results...">
+        <div id="resultsdisplay"> 
+
+            <ul id="myul">
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>   
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>        
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>        
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>        
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>        
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>        
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>        
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+                <li>    
+                    <p>Name: </p>
+                    <p>Match Score: </p>        
+                    <p>Major: </p>
+                    <p>Graduation: </p>     
+                    <p>Skills: </p>
+                    <p>Classes: </p>
+                </li>
+            </ul>
+
+        </div>
+
     </div>
     
 </body>
 </html>
-
-
-
-<!-- Old Search Design
-
-            width: 500px;
-            margin: 5em auto;
-            height: 150px;
-            padding: 100px;
-            background-color: #eda150;
-            border-radius: 2em;
-
-            
-        #search {
-        
-        width: 500px;
-            margin: 5em auto;
-            height: 100px;
-            
-            padding-left: 25px;
-            padding-top: 25px;
-            padding-bottom: 25px;
-            padding-right: 25px;
-            
-            background-color: #eda150;
-            border-radius: 2em;
-            font-family: Arial;
-            
-
-        }
-
-            -->
 
