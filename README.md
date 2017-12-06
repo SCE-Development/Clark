@@ -5,7 +5,7 @@ A web application based off of the MEAN stack that matches users with classes an
 
 ## Setup and Dependencies
 This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was built on
-- Node.js v6.9.1
+- Node.js v8.9.1
 - ExpressJS NPM package v4.16.2
 - Body-Parser NPM package v1.18.2
 - JQuery v1.12.4
@@ -24,6 +24,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 ## Execution
 #### On Linux
   To run the server on Linux command line, you can use *node server.js* in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server _**before**_ running server.js
+  Once this is done, you may simply pop open your favorite web browser and enter "localhost:8080" (or whichever port you launched the server in), and the webpage should be properly served
   
 ---
 
