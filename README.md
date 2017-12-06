@@ -11,21 +11,25 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 - JQuery v1.12.4
 - MongoDB Official Driver NPM package v2.2.33
 
-#### On Linux
+#### On Linux/Mac
   - You can acquire **Node.js** from *nodejs.org* or through the command line using *apt-get*. Verify installation using *node -v* on command line.
   - To acquire the other packages, you will need **npm** (the Node Package Manager), which comes pre-installed with Node.js. To verify its installation, you can run *npm -v* on command line.
   - Install required Node.js Packages (all listed in package.json under 'dependencies'):
   ```
   npm install
   ```
+  - Install MongoDB locally on you machine (follow the relevant installation instructions on MongoDB's website)
+
+#### On Windows
+  - You can install **Node.js** directly from their website using their installer. Afterwards, you can perform the same Linux/Mac verification and package installation steps (displayed above) by using Windows command prompt or PowerShell
 
 ---
 
 ## Application Execution
-#### On Linux
-  To run the server on Linux command line, you can use *node server.js* in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server _**before**_ running server.js
+#### On Linux/Mac/Windows
+  To run the server on Linux/Mac/Windows command line, you can use *node server.js* in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
 
-  Once this is done, you may simply pop open your favorite web browser and enter "localhost:8080" (or whichever port you launched the server in), and the webpage should be properly served
+  Once this is done, you may simply pop open your favorite web browser and enter "localhost:8080" (or whichever port you launched the server in), and the webpage should be properly displayed.
   
 ---
 
