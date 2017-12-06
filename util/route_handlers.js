@@ -921,14 +921,17 @@ function assignMatchPoints (arr, search, callback, merge) {
 			case true: {
 				// On last iteration, run callback or return
 				logger.log(`Introsorting ${(typeof resultArr === "object") ? JSON.stringify(resultArr) : resultArr}`);
+
 				// logger.log(`Starting IntroSorter`);
 				// console.time("introsortTimer");
 				introSorter.introSort(resultArr, 0, resultArr.length - 1, depth, {
 					"msMode": true,
 					"reverse": false
 				});
+
 				// console.timeEnd("introsortTimer");
 				// logger.log(`Finishing IntroSorter`);
+
 				if (typeof callback === "function") {
 					callback(resultArr);
 				} else {
