@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			route_handlers.js
 // Date Created: 	October 26, 2017
-// Last Modified: 	November 5, 2017`
+// Last Modified: 	December 8, 2017`
 // Details:
 //				 	This file abstracts all route handler functions to be used by server.js. The server.js file
 //				 	takes these and places them to their desired endpoints. This frees up the server code from
@@ -52,31 +52,14 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 
 		//Verify necessary collections are present. If not, create them
 		findCollections(null, function(error, list) {
-			var users_collection_present = false
-			var serverStarts_collection_present = false
-			var login_collection_present = false;
+			var serverDbConnLogCollectionFound = false
 			for (var i=0; i<list.length; i++) { 
-				if (list[i].name == "users") {
-					users_collection_present = true;
+				if (list[i].name == "serverDbConnLog") {	// this collection logs when server initiates DB connections
+					serverDbConnLogCollectionFound = true;
 				}
-				if (list[i].name == "serverStarts") {
-					serverStarts_collection_present = true;
-				}
-				if (list[i].name == "login") {
-					login_collection_present = true;
-				}
-			}
-			if (!users_collection_present) {
-				database.createCollection('users')
 			}
 			if (!serverStarts_collection_present) {
 				database.createCollection('serverStarts')
-			}
-			if (!login_collection_present) {
-				database.createCollection('login');
-			} else {
-				//clear login collection if already exists. This is very hacky and should be fixed later.
-				database.collection("login").removeMany()
 			}
 		})
 
@@ -89,18 +72,6 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 				logger.log("Postmark successfully written to database");
 			}
 		});
-
-		//test Runtime of Searching Database.
-
-		// for (var i=1; i<5; i++) {
-		// 	var user_size = Math.pow(10, i)
-		// 	console.log(`Searching for ariskoumis with ${user_size} other people in DB.`)
-		// 	for (var j=0; j<10; j++) {
-		// 		testRuntime(i)
-		// 	}
-		// 	console.log('\n')
-		// }
-		
 	}
 });
 
@@ -125,82 +96,6 @@ handle_map.rootHandler = function (request, response) {			// GET request on root
 			response.end();
 		}
 	});
-};
-
-/*	
-	@function	homeHandler
-	@parameter	request - the web request object provided by express.js
-	@parameter	response - the web response object provided by express.js
-	@returns	n/a
-	@details 	This function handles all requests for the home page (i.e. "/"). Used on a GET request
-*/
-handle_map.homeHandler = function (request, response) {			// GET request on root dir (login page-> index.html)
-	response.set("Content-Type", "text/html");
-	response.sendFile("skillshare.html", options, function (error) {
-		if (error) {
-			logger.log(error);
-			response.status(500).send({result: "success"}).end();
-		} else {
-			logger.log(`Sent skillshare.html to ${settings.port}`);
-			response.end();
-		}
-	});
-};
-
-/*
-	@function	loginHandler
-	@parameter	request - the web request object provided by express.js
-	@parameter	response - the web response object provided by express.js
-	@returns	n/a
-	@details 	This function handles login endpoint requests (i.e. for login). Used on a POST request
-*/
-handle_map.loginHandler = function (request, response) {			// POST request: RESTful login
-	var handlerTag = {"src": "loginHandler"};
-	logger.log(`Login request from ip ${request.ip}`, handlerTag);
-	logger.log(request.toString(), handlerTag);
-	response.set("Content-Type", "text/javascript");
-
-	var user = {
-		name: request.body.username,
-		password: request.body.password
-	}
-	
-	//Hash the password
-	var password_hash = hashString(user.password)
-
-	//Attempt to find users in the hashed password collection
-	//Retrieve all entries containing the hashed password
-	findDocs("users", {password: password_hash}, function(error, list) {
-		if (error != null) {
-			logger.log(`An error occurred`, handlerTag);
-			response.status(500).send(error).end();
-		}
-
-		//If object in collection has same username, login was successful.
-		var login_successful = false
-		if (list.length != 0) {
-			for (var i=0; i<list.length; i++) {
-				if (list[i].name == user.username) {
-					login_successful = true
-				}
-			}	
-		}
-
-		var login_result = login_successful ? "success" : "failure"
-		var html_code = login_successful ? 200 : 500
-
-		if (login_result == "success") {
-			insertDoc("login", {username: user.name}, function (error, result) {
-				if (error != null) {
-					logger.log("Adding user to login collection success");
-				} else {
-					logger.log("Login collection addition succesful.");
-				}
-			});
-		}
-
-		response.status(200).send(JSON.stringify({result: login_result})).end()		
-	})
 };
 
 /*
@@ -418,82 +313,6 @@ handle_map.testUpdateOneDocHandler = function (request, response) {
 		}
 	});
 };
-
-/*
-	@function 	skillMatchHandler
-	@parameter	request - the web request object provided by express.js
-	@parameter	response - the web response object provided by express.js
-	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	This function handles all endpoint requests to the "/skillmatch" endpoint. It performs a query on the database using the Request header's data field as search criteria to determine which match results to return. The data field is expected to be a JSON object with the following format:
-		{
-			"skills": [...],
-			"classes": [...]
-		}
-	where the "skills" parameter is an array of (case-insensitive) skill name strings to match, and "classes" is an array of (case-insensitive) class name strings to match. They conform to the input specifications of the "search" parameter in the assignMatchPoints() function. Read the assignMatchPoints() function description for more details on what to give the "skills" and "classes" parameters.
-	@note 		This function assumes that the "users" collection exists. Invalid results will be returned if this database collection is non-existent
-*/
-handle_map.skillMatchHandler = function (request, response) {
-	var handlerTag = {"src": "skillMatchHandler"};
-	var hasBody = (Object.keys(request.body).length > 0);
-
-	try {
-		var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
-
-		// Log request
-		logger.log(`Client @ ip ${request.ip} is requesting to find users skilled in any of ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria} from the database`, handlerTag);
-
-		// Begin by verifying valid inputs
-		if (Array.isArray(searchCriteria.classes) !== true || Array.isArray(searchCriteria.skills) !== true) {	// if skills/classes aren't array objects
-			// If error, report it.
-			logger.log(`Error: invalid search parameters ${typeof searchCriteria} ${(typeof searchCriteria === "object") ? JSON.stringify(searchCriteria) : searchCriteria}`, handlerTag);
-			response.status(200).send("Error: invalid skillmatch parameters").end();
-		} else {
-			// Else, acquire users with the given search criteria of skills and classes
-			logger.log(`Matching users with any of the following skills: ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills}`, handlerTag);
-			findDocs("users",
-				{
-					"$or": [
-						{"skills": {"$in": searchCriteria.skills}},
-						{"classes": {"$in": searchCriteria.classes}}
-					]
-				}, function (error, list) {
-				if (error != null) {
-					// If error, report error
-					logger.log(`An error occurred while matching users: ${error}`, handlerTag);
-					response.status(200).send(error).end();
-				} else {
-					// Else, score users based on how many of the searched skills/classes they have
-					logger.log(`${(list.length === 1) ? "1 user" : (list.length + " users")} were found with at least one skill in ${typeof searchCriteria.skills} ${(typeof searchCriteria.skills === "object") ? JSON.stringify(searchCriteria.skills) : searchCriteria.skills} or at least one class in ${typeof searchCriteria.classes} ${(typeof searchCriteria.classes === "object") ? JSON.stringify(searchCriteria.classes) : searchCriteria.classes}`, handlerTag);
-					assignMatchPoints(list, searchCriteria, function (result) {
-						logger.log(`Match points assignment complete.`, handlerTag);
-						response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
-					});
-				}
-			});
-		}
-	} catch (err) {
-		// If error, report error
-		logger.log(`Unable to match users with skills: ${err}`, handlerTag);
-		response.status(200).send((typeof err === "object") ? JSON.stringify(err) : err).end();
-	}
-}
-
-/*
-	@function 	getUsernameHandler
-	@returns 	To Client: If successful, returns a success status (200) and the user's name. Otherwise, returns a server error status (500) and populates the response header with the error's details
-*/
-handle_map.getUsernameHandler = function (request, response) {
-	var handlerTag = {"src": "getUsernameHandler"};
-	findDocs('login', {}, function(error, list) {
-		if (!error) { 
-			response.status(200).send((JSON.stringify(list[0]))).end()
-		}
-	})
-	
-	// response.status(200).send(JSON.stringify({name: username}))
-}
-
-
 // END Handler Functions
 
 
@@ -894,93 +713,6 @@ function hashString(unhashed_string) {
 }
 
 /*
-	@function 	assignMatchPoints
-	@parameter 	arr - the array of users found within the database that at least partially match the skillmatch skill/class criteria
-	@parameter 	search - the JSON object detailing the skills and classes to search for
-	@parameter 	callback - (optional) a callback function to run after matchpoints have been assigned. If defined, it is assigned the return value.
-	@returns 	If callback is undefined, returns an array of objects that each contain the following:
-		{
-			"name": "a matched user's name",
-			"classPoints": ...,
-			"skillPoints": ...,
-			"total": ...
-		}
-	where "classPoints" is the number of class matches that the user named "name" has, and similarly for "skillPoints". The "total" member is the sum of "classPoints" and "skillPoints". Otherwise, this array of objects is passed to the callback
-	@details 	(Intended for use within the skillMatchHandler's findDocs function callback) This function takes the resulting "list" parameter from a findDocs() document search and the JSON object provided to the skillMatchHandler's "request header data field" (i.e. an object containing {"skills": [...], "classes": [...]}) to rank how much of a match the user is to the client's query, depending on the amount of "class match points" and "skill match points" the user has. Put simply, if a user has 2 out of the 3 classes specified by the client's query, the user has 2 class points, and similarly for skill points.
-	@note 		If arr is an empty array, an empty array is returned
-*/
-function assignMatchPoints (arr, search, callback, merge) {
-	var handlerTag = {"src": "assignMatchPoints"};
-	var tuner = 2;	// tuning factor
-	var depth = Math.ceil(Math.log10(arr.length)) * tuner;
-	var resultArr = [];
-
-	// Iterate through the entire result list and grant each resulting user a set of match points
-	for (var k = 0; k < arr.length + 1; k++) {	// iterates through each resulting user
-		switch (k === arr.length) {
-			case true: {
-				// On last iteration, run callback or return
-				logger.log(`Introsorting ${(typeof resultArr === "object") ? JSON.stringify(resultArr) : resultArr}`);
-
-				// logger.log(`Starting IntroSorter`);
-				// console.time("introsortTimer");
-				introSorter.introSort(resultArr, 0, resultArr.length - 1, depth, {
-					"msMode": true,
-					"reverse": false
-				});
-
-				// console.timeEnd("introsortTimer");
-				// logger.log(`Finishing IntroSorter`);
-
-				if (typeof callback === "function") {
-					callback(resultArr);
-				} else {
-					return resultArr;
-				}
-				break;
-			}
-			default: {
-				var currentUser = arr[k];
-				resultArr[k] = {
-					"name": `${currentUser.first_name} ${currentUser.last_name}`,
-					"classPoints": 0,
-					"skillPoints": 0,
-					"major": `${currentUser.major}`,
-					"sid": currentUser.sid
-				}
-
-				// Iterate through each element in the skill search criteria
-				for (var skl = 0; skl < search.skills.length; skl++) {
-					switch(currentUser.skills.indexOf(search.skills[skl]) === -1) {
-						case false: {
-							// User has the skill; award them a skill point
-							resultArr[k].skillPoints++;
-							break;
-						}
-					}
-				}
-
-				// Iterate through each element in the class search criteria
-				for (var cls = 0; cls < search.classes.length; cls++) {
-					switch(currentUser.classes.indexOf(search.classes[cls]) === -1) {
-						case false: {
-							// User has the class; award them a class point
-							resultArr[k].classPoints++;
-							break;
-						}
-					}
-				}
-
-				// Record total points
-				resultArr[k].total = resultArr[k].skillPoints + resultArr[k].classPoints;
-
-				break;
-			}
-		}
-	}
-}
-
-/*
 	@object 	introSorter
 	@details 	This object contains code that performs introsort on our custom array of objects
 */
@@ -1243,54 +975,7 @@ var heapSorter = (function() {
 })();
 // END Utility Methods
 
-/*
-	@function 	testRuntime()
-	@parameter 	users_needed: number of users in database.
-	@returns 	nothing
-	@details 	This function tests the runtime of MongoDB's searching for multiple collection sizes.
-*/
-// function testRuntime(users_needed) {
-// 	//create array which initializes with only ariskoumis
-// 	var user_array = [{username: "ariskoumis"}]
 
-// 	//populate user_array 
-// 	var users_created = 0
-// 	while (users_created < users_needed) {
-// 		var temp_user = {
-// 			username: Math.random().toString(36).substr(2, 7)
-// 		}
-// 		user_array.push(temp_user)
-// 		users_created++
-// 	}
-
-// 	// Check if database collection exists
-// 	database.collection("users", {strict: true}, function (error, result) {
-// 		if (error != null) {
-// 			console.log(error)
-// 		} else {
-// 			result.remove({})
-// 			// Else, no error occurred, and the database collection was found; use it to write to the database
-// 			result.insertMany(user_array).then(function (promiseResult) {
-// 				console.log("Insertion successful")
-// 			});
-// 		}
-// 	});
-
-// 	//Find User Aris Koumis
-// 	console.time('searchForAris')
-// 	searchForAris()
-// 	console.timeEnd('searchForAris')
-// }
-
-// searchForAris = async function() {
-// 	await findDocs("users", {username: "ariskoumis"}, function(error, list) {
-// 		if (error != null) {
-// 			console.log(error)
-// 		}
-// 	})
-// }
-
-// END Utility Methods
 
 module.exports = handle_map;
 // END route_handlers.js 

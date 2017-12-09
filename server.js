@@ -2,21 +2,19 @@
 // Name: 			Rolando Javier
 // File: 			server.js
 // Date Created: 	October 17, 2017
-// Last Modified: 	November 5, 2017
+// Last Modified: 	December 8, 2017
 // Details:
 // 					This file comprises the MEAN Stack server to be used in conjunction with PROJECT: SkillMatch
 // Dependencies:
 // 					NodeJS v6.9.1
 // 					ExpressJS 4.16.2
 // 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
-// 					multer (NPM middleware req'd by ExpressJS 4.x to parse multi-length POST data parameters: "npm install --save multer")
 
 /* NodeJS+ExpressJS Server */
 "use strict"
 var http = require("http");
 var fs = require("fs");
 var bodyParser = require("body-parser");		// import POST request data parser
-// var multer = require("multer");					// import POST multi-part/form-data parser
 var logger = require("./util/logger");			// import event log system
 var settings = require("./util/settings");		// import server settings
 var handles = require("./util/route_handlers");	// import URI endpoint handlers
@@ -33,13 +31,13 @@ const app = express();
 logger.log(`\tExpressJS instance created`);	// test
 
 /* Define Static Asset Locations (i.e. includes/js/css/img files) */
-app.use(express.static(settings.root));
 app.use(bodyParser.json({							// support JSON-encoded request bodies
 	strict: true
 }));
 app.use(bodyParser.urlencoded({						// support URL-encoded request bodies
 	extended: true
 }));
+app.use(express.static(settings.root));
 app.use(express.static(settings.root + "/css"));	// location of css files
 app.use(express.static(settings.root + "/js"));		// location of js files
 logger.log(`\tStatic asset locations recorded...`);	// test
@@ -52,16 +50,12 @@ logger.log(`\tStatic asset locations recorded...`);	// test
 		- Place an app request here (i.e. "app.post([routePath], [handlerFunc])")
 */
 app.get("/", handles.rootHandler);				// GET request of the main login page
-app.get("/home", handles.homeHandler);			// Get request of the home page
-app.get("/getUsername", handles.getUsernameHandler); // GET request of username retreival method
-app.post("/login", handles.loginHandler);		// POST request: RESTful login
 app.post("/writeNewDoc", handles.testWriteNewDocHandler);	// POST request to write to the db from all pages
 app.post("/findCollections", handles.testFindCollectionsHandler);	// POST request to find and list the db's collections on all page
 app.post("/findDoc", handles.testFindDocHandler);	// POST request to find and list documents via a search
 app.post("/deleteOneDoc", handles.testDeleteOneDocHandler);	// POST request to find and delete one document
 app.post("/deleteManyDocs", handles.testDeleteManyDocsHandler);	// POST request to find and delete many documents
 app.post("/updateOneDoc", handles.testUpdateOneDocHandler);	// POST request to update one document
-app.post("/skillmatch", handles.skillMatchHandler);	// POST request to acquire the users who match your skillsearch
 
 // Test Page Endpoints (will be removed in production version)
 app.get("/test", handles.testHandler);			// GET request of the test page
