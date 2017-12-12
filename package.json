@@ -1,0 +1,31 @@
+{
+  "name": "Project_MEANskills",
+  "version": "1.0.0",
+  "description": "A web application based off of the MEAN stack that matches users with classes and skills, helping you find the optimal project team members",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rjavier441/Project_MEANskills.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rjavier441/Project_MEANskills/issues"
+  },
+  "homepage": "https://github.com/rjavier441/Project_MEANskills#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "grunt-contrib-watch": "^1.0.0",
+    "jquery": "^3.2.1",
+    "mongodb": "^2.2.33"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1"
+  }
+}
