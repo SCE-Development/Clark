@@ -58,10 +58,10 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 					serverDbConnLogCollectionFound = true;
 				}
 			}
-			if (!serverStarts_collection_present) {
-				database.createCollection('serverStarts')
+			if (!serverDbConnLogCollectionFound) {
+				database.createCollection('serverStarts');
 			}
-		})
+		});
 
 		// Then, write server connection information
 		var postmark = logger.log("Database connection established");
@@ -86,6 +86,9 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 	@details 	This function handles all requests for the server root (i.e. "/"). Used on a GET request
 */
 handle_map.rootHandler = function (request, response) {			// GET request on root dir (login page-> index.html)
+	var handlerTag = {"src": "rootHandler"};
+	logger.log(`Index.html requested from ip ${request.ip}`, handlerTag);
+	logger.log(request.toString(), handlerTag);
 	response.set("Content-Type", "text/html");
 	response.sendFile("index.html", options, function (error) {
 		if (error) {
@@ -93,7 +96,7 @@ handle_map.rootHandler = function (request, response) {			// GET request on root
 			response.status(500).end();
 		} else {
 			logger.log(`Sent index.html to ${settings.port}`);
-			response.end();
+			response.status(200).end();
 		}
 	});
 };
