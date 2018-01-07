@@ -64,4 +64,7 @@ package-lock.json
 # Ignore all server log files in the log directory
 log/*
 
+# **** PROJECT: CoreV4 Custom Ignore Options ****
+# Ignore personal files
+rj_todo.txt
 
