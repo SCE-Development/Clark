@@ -66,5 +66,6 @@ log/*
 
 # **** PROJECT: CoreV4 Custom Ignore Options ****
 # Ignore personal files
+sql/*
 rj_todo.txt
 
