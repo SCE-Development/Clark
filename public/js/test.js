@@ -23,19 +23,19 @@ function init() {
 
 	/* BEGIN testing skillmatch */
 	// Execute query
-	var testSkills = ["mysql","Python","Javascript","c"];
-	var testClasses = ["CMPE140","CMPE124","CMPE110"];
-	post("/skillmatch", {"skills": testSkills, "classes": testClasses}, function (reply, status, jqxhr) {
-		if (status === "success") {
-			console.log("Replied: " + reply.toString());
-		} else {
-			var errToLog = `Status: ${status.toString()}\nReply: ${reply.toString()}`;
-			console.log("A Problem Occurred...");
-			console.log(errToLog);
-			showError(errToLog);
-		}
-	}, true);	// run ajax() instead of post()
-	/* BEGIN testing skillmatch */
+	// var testSkills = ["mysql","Python","Javascript","c"];
+	// var testClasses = ["CMPE140","CMPE124","CMPE110"];
+	// post("/skillmatch", {"skills": testSkills, "classes": testClasses}, function (reply, status, jqxhr) {
+	// 	if (status === "success") {
+	// 		console.log("Replied: " + reply.toString());
+	// 	} else {
+	// 		var errToLog = `Status: ${status.toString()}\nReply: ${reply.toString()}`;
+	// 		console.log("A Problem Occurred...");
+	// 		console.log(errToLog);
+	// 		showError(errToLog);
+	// 	}
+	// }, true);	// run ajax() instead of post()
+	/* END testing skillmatch */
 
 	/* Setup WriteToMongoDB action */
 	$("#testMongoWrite").on("click", function (event) {
