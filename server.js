@@ -28,6 +28,8 @@ logger.log(`**** Server Starting... ****`, {"pad": 3});
 /* Create server instance */
 const express = require("express");
 const app = express();
+app.locals.title = "Core v4";
+app.locals.email = "test@test.com";
 logger.log(`\tExpressJS instance created`);	// test
 
 /* Define Static Asset Locations (i.e. includes/js/css/img files) */

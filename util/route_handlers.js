@@ -20,6 +20,9 @@ var settings = require("./settings");	// acquire system settings
 var logger = require("./logger");		// acquire main system logger
 var mdb = require("./mongoWrapper");	// acquire MongoDB API Wrappers
 var assert = require("assert");
+// BEGIN test
+var smci = require("./smci/smci");
+// END test
 
 // Global Constants
 const ALL_COLLECTIONS = null;
@@ -75,6 +78,13 @@ mongo.connect("mongodb://localhost:27017/testdb", function (err, db) {
 		});
 	}
 });
+
+
+
+// BEGIN test
+smci.testRequest();
+console.log(`Test Completed`);
+// END test
 
 
 
