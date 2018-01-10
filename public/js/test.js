@@ -63,8 +63,8 @@ function init() {
 			};
 			console.log(`Writing "${JSON.stringify(data)}" to Database...`);
 
-			// Send to database using a RESTful POST request to the "/test/write" endpoint
-			post("/test/write", data, function (reply, status, jqxhr) {
+			// Send to database using a RESTful POST request to the "/mdbi/write" endpoint
+			post("/mdbi/write", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());
 					showSingleWriteResults(reply);
@@ -84,8 +84,8 @@ function init() {
 		var data = ($("#dbCollectionNameField").val() != "") ? {"name": $("#dbCollectionNameField").val()} : null;
 		console.log(`Finding ${(data === null) ? "all collections" : JSON.stringify(data)} in database...`);
 
-		// Send the search request to database using a RESTful POST request to the "/test/find" endpoint
-		post("/test/find", data, function (reply, status, jqxhr) {
+		// Send the search request to database using a RESTful POST request to the "/mdbi/search/collections" endpoint
+		post("/mdbi/search/collections", data, function (reply, status, jqxhr) {
 			if (status === "success") {
 				console.log("Replied: " + reply.toString());
 				showCollectionResults(JSON.parse(reply));
@@ -122,7 +122,7 @@ function init() {
 				"collection": collectionName,
 				"search": searchCriteria
 			};
-			post("/test/finddoc", data, function (reply, status, jqxhr) {
+			post("/mdbi/search/documents", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());
 					showDocumentResults(JSON.parse(reply));
@@ -174,7 +174,7 @@ function init() {
 				"collection": collectionName,
 				"search": searchCriteria
 			};
-			post((deleteQuantity === "Many") ? "/test/deletemanydocs" : "/test/deletedoc", data, function (reply, status, jqxhr) {
+			post((deleteQuantity === "Many") ? "/mdbi/delete/documents" : "/mdbi/delete/document", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());
 					showSingleDeleteResults(reply);
@@ -222,7 +222,7 @@ function init() {
 				"search": searchCriteria,
 				"update": updateCriteria
 			};
-			post("/test/updatedoc", data, function (reply, status, jqxhr) {
+			post("/mdbi/update/documents", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log(`Replied: ${reply.toString()}`);
 					showSingleUpdateResults(reply);
@@ -324,9 +324,9 @@ function showCollectionResults (arr) {
 
 /*
 	@function 	showDocumentResults
-	@parameter 	arr - the array of JSON-objects comprising the documents found from the "/test/finddoc" search
+	@parameter 	arr - the array of JSON-objects comprising the documents found from the "/mdbi/search/documents" search
 	@returns 	n/a
-	@details 	This function neatly displays the documents found from the "/test/finddoc" endpoint request
+	@details 	This function neatly displays the documents found from the "/mdbi/search/documents" endpoint request
 */
 function showDocumentResults (arr) {
 	if (arr.length > 0) {
