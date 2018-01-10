@@ -2,28 +2,34 @@
 //  Name:           Rolando Javier
 //  File:           mongoWrapper.js
 //  Date Created:   January 8, 2018
-//  Last Modified:  January 8, 2018
+//  Last Modified:  January 9, 2018
 //  Details:
 //                  This file contains all MongoDB Database wrapper functions meant to execute database queries to the Mongo Server Daemon.
 //  Dependencies:
 //                  logger.js (main system logger)
 
+"use strict"
+
 // Includes
-var logger = require("./logger");
+var settings = require("../util/settings");         // import server system settings
+var logger = require(`${settings.util}/logger`);    // import event log system
 
-// Containers
-const mdb = {};             // The mongo wrapper class (singleton)
+// Container (Singleton)
+const mdb = {};             // The mongodb wrapper class
 
-// Members
+
+
+// BEGIN Members
 /*
     @member     mdb.Database
     @details    A link to our MongoDB Database; initially set to null, so you'll have to initiate a mongodb connection externally before associating this variable with a database
 */
 mdb.database = null;
+// END Members
 
 
 
-// Database Functions
+// BEGIN Database Functions
 /*
     @function   insertDoc
     @parameter  collection - the string name of the database collection to write to
@@ -258,6 +264,8 @@ mdb.updateOneDoc = function (collection, filter, update, callback) {
         }
     });
 }
+// END Database Functions
+
 
 
 module.exports = mdb;
