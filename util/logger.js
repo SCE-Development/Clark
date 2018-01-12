@@ -2,7 +2,7 @@
 // 	Name: 			Rolando Javier
 // 	File: 			logger.js
 // 	Date Created: 	October 26, 2017
-// 	Last Modified: 	October 26, 2017
+// 	Last Modified: 	January 9, 2018
 // 	Details:
 // 					This file provides server.js with a means to log events to log files in the log directory
 // 	Dependencies:
@@ -37,7 +37,7 @@ logger.fileMutex = true;
 	@member 	logger.dataQueue
 	@details 	This member is used as a queue for log data if a log was attempted while another log or process had the mutex
 */
-logger.dataQueue = [];		// queue for data to be written, if logs were requested while a logger.fileMutex was unavailable
+logger.dataQueue = ["\n****\nInitializing event log system...\n****\n"];	// queue for data to be written, if logs were requested while a logger.fileMutex was unavailable
 
 /*
 	@member 	logger.logToConsole
@@ -94,7 +94,7 @@ logger.log = function (msg, options = {
 			padding += "\n";
 		}
 	}
-	sourceTag = (typeof options.src !== "undefined") ? `<${options.src}>` : "";
+	sourceTag = (typeof options.src !== "undefined") ? `<${options.src}> ` : "";
 
 	// Place msg in log queue
 	logger.dataQueue.push(padding + timestamp + sourceTag + msg);
