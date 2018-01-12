@@ -6,9 +6,9 @@
 ### Stable Endpoint Map
   Below is a list of **_stable_** endpoints for the MDBI module (accessed using the "/mdbi" endpoint. **_Stable_** is used to define an endpoint whose functionality is not subject to much change in the near future. The endpoints below perform database CRUD operations, currently providing _unsrestricted_ access to the Core v4 System's MongoDB database (plans for securing the database are being developed).
 
-  1. [/write](#write)
+  1. [/write](#/write)
 
-#### write
+#### /write
   performs a database write to the db for all "/mdbi/write" endpoint requests. Used with a POST request, it requires that the request body be a JSON object in the following format:
   ```javascript
       {
