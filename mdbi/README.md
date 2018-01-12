@@ -1,5 +1,5 @@
 # MDBI: MongoDB Interface
-  This directory houses the MDBI module used as an ExpressJS sub-app by server.js (and all other sub-apps) to issue MongoDB database transactions. It was created within Core-v4's rj/systemRefit branch in an effort to abstract various functions away from each other, with the goal of better-structuring system software to a point where each system is individually maintainable and somewhat stand-alone. All database CRUD transactions can be performed through this sub-app via the "/mdbi/\*" endpoint, where "\*" is any one of the endpoints described in the Stable Endpoint Map below.
+  This directory houses the MDBI module used as an ExpressJS sub-app by server.js (and all other sub-apps) to issue MongoDB database transactions. It was created within Core-v4's rj/systemRefit branch in an effort to abstract various functions away from each other, with the goal of better-structuring system software to a point where each subsystem is individually maintainable and expandable. All database CRUD transactions can be performed through this sub-app via the "/mdbi/\*" endpoint, where "\*" is any one of the endpoints described in the Stable Endpoint Map below.
 
 
 ---
