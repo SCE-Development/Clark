@@ -12,6 +12,7 @@
   - [/search/documents](#searchdocuments)
   - [/delete/document](#deletedocument)
   - [/delete/documents](#deletedocuments)
+  - [/update/documents](#updatedocuments)
 
 ---
 
@@ -77,3 +78,16 @@
   where the "search" parameter is a JSON object containing the search parameters expected by the mdb.deleteManyDocs() function. Read the mdb.deleteManyDocs() description (in mongoWrapper.js) for more details on what to give the "search" parameter.
   If successful, it returns a success status (200) to the client, and an object detailing the result of the operation.
   If unsuccessful, it returns an internal server error (500) to the client, and populates the response header with the error's details.
+
+### /update/documents
+  Performs a db update operation of (currently) a single document for all "/mdbi/update/documents" endpoint requests. Used with a POST request, it performs the update using the request header's data field as search criteria to select which document to update. The data field is expected to be a JSON object with the following format:
+  ```javascript
+      {
+          "collection": "string name of collection",
+          "search": {...},
+          "update": {...}
+      }
+  ```
+  where the "search" parameter is a JSON object containing the filter parameters expected by the mdb.updateOneDoc() function, and "update" is a JSON object containing the update commands expected by the same function. Read the mdb.updateOneDoc() description (in mongoWrapper.js) for more details on what to give the "search" and "update" parameters.
+  If successful, it returns a success status (200).
+  If unsuccessful, it returns an internal server error status (500), and populates the response header with the error's details.
