@@ -2,6 +2,22 @@
 The new SCE-CORE (fork from Project-MEANserver)
 A web application based off of the MEAN stack for use with SCE
 
+Current Version: Alpha (v4.0.1)
+
+---
+
+## Table of Contents
+- [Setup and Dependencies](#setup-and-dependencies)
+  - [Linux/Mac](#on-linuxmac)
+  - [Windows](#on-windows)
+- [Application Execution](#application-execution)
+- [Directory Structure](#directory-structure)
+- [Using the MEANserver](#using-the-meanserver)
+  - [Endpoint Creation](#endpoint-creation)
+  - [Adding Webpages](#adding-webpages)
+- [Stable Endpoint Map](#stable-endpoint-map)
+- [Release Notes](#release-notes)
+
 ---
 
 ## Setup and Dependencies
@@ -90,7 +106,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 ###### "/" - Root
   - Serves requests going out to the server root (i.e. localhost:8080, if using default settings)
 
-###### "/login" - Service Login
+###### "/login" - Service Login (Coming Soon)
   - This endpoint services any login POST requests and expects the {TBD} JSON object to be passed via the request header's data section. This can be done using **utility.js**'s **post()** function (or JQuery.ajax() if you know how to use it).
 
 ###### "/test" - MongoDB Test Interface
@@ -102,4 +118,5 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 ---
 
 ## Release Notes
-  - Currently modularizing different system functions into their own sub-apps managed by server.js.
+- Alpha
+  - Currently modularizing the system by abstracting distinct system functions into their own sub-apps to be managed by server.js.
