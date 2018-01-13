@@ -36,9 +36,15 @@ var options = {
 
 
 // BEGIN test
-// var smci = require("./smci/smci");
-// smci.requestRoot();
-// console.log(`Test Completed`);
+var smci = require("../smci/smci");
+smci.getAuthorizedApps(null, function (response, error) {
+	if (error === null) {
+		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
+	} else {
+		console.log("Test Result:", "ERROR");
+	}
+});
+console.log(`Test Completed`);
 // END test
 
 
