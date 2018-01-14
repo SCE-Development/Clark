@@ -37,7 +37,7 @@ var options = {
 
 // BEGIN test
 var smci = require("../smci/smci");
-smci.getAuthorizedApps(null, function (response, error) {
+smci.subscribeToAutomationEmail("12", "1", "rjavier441@gmail.com", function (response, error) {
 	if (error === null) {
 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
 	} else {
