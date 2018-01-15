@@ -37,7 +37,21 @@ var options = {
 
 // BEGIN test
 var smci = require("../smci/smci");
-smci.subscribeToAutomationEmail("12", "1", "rjavier441@gmail.com", function (response, error) {
+// smci.campaignFolders.create("test_folder", function (response, error) {
+// 	if (error === null) {
+// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
+// 	} else {
+// 		console.log("Test Result:", "ERROR");
+// 	}
+// });
+// smci.campaignFolders.getFullList(null, function (response, error) {
+// 	if (error === null) {
+// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
+// 	} else {
+// 		console.log("Test Result:", "ERROR");
+// 	}
+// });
+smci.campaignFolders.getFolder("0a21e44b5b", null, function (response, error) {
 	if (error === null) {
 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
 	} else {
