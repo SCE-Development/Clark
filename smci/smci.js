@@ -2,10 +2,10 @@
 // 	Name: 			Rolando Javier
 // 	File: 			smci.js
 // 	Date Created: 	January 8, 2018
-// 	Last Modified: 	January 13, 2018
+// 	Last Modified: 	January 15, 2018
 // 	Details:
 // 					The Sce Mail Chimp Interface (SMCI). This file contains JavaScript wrapper functions for the MailChimp APIs that handle communication and control over the associated MailChimp account's mailing system, email campaign/subscriber lists, and various other preferences.
-//	Notes: 			ECMAscript 6 constructs can be used here (i.e. templating)
+//	Notes: 			ECMAscript 6 constructs can be used here (i.e. templating).
 // 					This file is a work in progress. The wrapper functions included in this file only cover the following MailChimp APIs:
 //						API Root:
 //							GET /
@@ -37,6 +37,8 @@
 //							POST /campaign-folders
 //							GET /campaign-folders
 //							GET /campaign-folders/{folder_id}
+//							PATCH /campaign-folders/{folder_id}
+//							DELETE /campaign-folders/{folder_id}
 // 	Dependencies:
 // 					Node.js HTTPS Module
 //					Node.js Query String Module
@@ -1127,7 +1129,7 @@ smci.batchOps.delete = function (batchID, callback) {
 };
 
 /*
-	@function 	campaignFolders.create
+	@function 	campaignFolders.createFolder
 	@parameter 	folderName - the name of the campaign folder to create
 	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
 					"response" - the response object from MailChimp's POST /campaign-folders api
@@ -1138,8 +1140,8 @@ smci.batchOps.delete = function (batchID, callback) {
 	@returns 	n/a
 	@details 	This function executes a POST request using the NodeJS https.request() api to create a new MailChimp Campaign Folder with the name specified by "folderName"
 */
-smci.campaignFolders.create = function (folderName, callback) {
-	var handlerTag = {"src": "smci/campaignFolders.create"};
+smci.campaignFolders.createFolder = function (folderName, callback) {
+	var handlerTag = {"src": "smci/campaignFolders.createFolder"};
 	var requestBody = {
 		"name": folderName
 	};
@@ -1276,6 +1278,103 @@ smci.campaignFolders.getFolder = function (folderID, qsObj, callback) {
 			callback(null, err);
 		}
 	}).end();
+};
+
+/*
+	@function 	campaignFolders.editFolder
+	@parameter  folderID - the unique id for the campaign folder to edit
+	@parameter 	newName - the new name to apply to the folder
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /campaign-folders/{folder_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJS https.request() api to edit/update a campaign folder. This function currently only allows changes to a campaign folder's name.
+*/
+smci.campaignFolders.editFolder = function (folderID, newName, callback) {
+	var handlerTag = {"src": "smci/campaignFolders.editFolder"};
+	var requestBody = {
+		"name": newName
+	};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaign-folders/${folderID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	var requestObj = https.request(options, function (response) {
+		response.on("data", function (data) {
+			logger.log(`MailChimp returned a response...`, handlerTag);
+			if (typeof callback === "function") {
+				// BEGIN test
+				try {
+					callback(JSON.parse(data.toString()), null);
+				} catch (e) {
+					logger.log(`JSON parsing failed: ${e}`, handlerTag);
+					callback(null, e);
+				}
+				// END test
+			}
+		});
+	});
+	requestObj.on("error", function (err) {
+		logger.log(`HTTPS PATCH failed: ${err}`, handlerTag);
+		if (typeof callback === "function") {
+			callback(null, err);
+		}
+	});
+	requestObj.write(JSON.stringify(requestBody));
+	requestObj.end();
+};
+
+/*
+	@function 	campaignFolders.deleteFolder
+	@parameter  folderID - the unique id for the campaign folder to edit
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's DELETE /campaign-folders/{folder_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a DELETE request using the NodeJS https.request() api to delete a campaign folder. This operation also places any campaigns within the specified folder under the "unfiled" category.
+*/
+smci.campaignFolders.deleteFolder = function (folderID, callback) {
+	var handlerTag = {"src": "smci/campaignFolders.deleteFolder"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaign-folders/${folderID}`,
+		"method": "DELETE",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	var requestObj = https.request(options, function (response) {
+		response.on("data", function (data) {
+			logger.log(`MailChimp returned a response...`, handlerTag);
+			if (typeof callback === "function") {
+				try {
+					callback(JSON.parse(data.toString()), null);
+				} catch (e) {
+					logger.log(`JSON parsing failed: ${e}`, handlerTag);
+					callback(null, e);
+				}
+			}
+		});
+	});
+	requestObj.on("error", function (err) {
+		logger.log(`HTTPS DELETE failed: ${err}`, handlerTag);
+		if (typeof callback === "function") {
+			callback(null, err);
+		}
+	});
+	requestObj.end();
 };
 // END MailChimp API Wrapper Functions
 
