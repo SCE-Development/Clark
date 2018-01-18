@@ -37,6 +37,13 @@ var options = {
 
 // BEGIN test
 var smci = require("../smci/smci");
+smci.api.getRoot(null, function (response, error) {
+	if (error === null) {
+		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
+	} else {
+		console.log("Test Result:", "ERROR");
+	}
+});
 // smci.campaignFolders.createFolder("test_folder", function (response, error) {
 // 	if (error === null) {
 // 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
@@ -65,13 +72,13 @@ var smci = require("../smci/smci");
 // 		console.log("Test Result:", "ERROR");
 // 	}
 // });
-smci.campaignFolders.deleteFolder("0a21e44b5b", function (response, error) {
-	if (error === null) {
-		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
-	} else {
-		console.log("Test Result:", "ERROR");
-	}
-});
+// smci.campaignFolders.deleteFolder("0a21e44b5b", function (response, error) {
+// 	if (error === null) {
+// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
+// 	} else {
+// 		console.log("Test Result:", "ERROR");
+// 	}
+// });
 console.log(`Test Completed`);
 // END test
 
