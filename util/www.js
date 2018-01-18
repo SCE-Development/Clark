@@ -16,7 +16,7 @@ var logger = require("./logger");		// import event log system
 
 
 
-// Container
+// Container (Singleton)
 const www = {
 	// Module Configuration Functions/Settings
 	"config": {},
@@ -49,12 +49,12 @@ www.config.silence = function () {
 				The values of the "error" and "response" arguments vary depending on the result of the request.
 				On success: "error" is null, and "response" is a JSON response object returned from the request.
 				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
-	@parameter 	(Optional) handlerTag - a string used to indicate the function issuing the request. See the logger.log() "src" option for more details on this parameter
+	@parameter 	(Optional) handlerName - a string used to indicate the function issuing the request. See the logger.log() "src" option for more details on this parameter
 	@returns 	n/a
-	@details 	This function performs a GET request using the NodeJS https.get(), but customized for use with the server.js MEANserver
+	@details 	This function performs a GET request using the NodeJS https.get() api, customized for use with the server.js MEANserver
 */
-www.https.get = function (options, callback, handlerTag) {
-	var loggerOptions = (typeof handlerTag === "string") ? {"src": handlerTag} : {"src": "www/https.get"};
+www.https.get = function (options, callback, handlerName) {
+	var loggerOptions = (typeof handlerName === "string") ? {"src": handlerName} : {"src": "www/https.get"};
 
 	// Perform parameter checks
 	if (typeof callback !== "function") {
@@ -80,7 +80,158 @@ www.https.get = function (options, callback, handlerTag) {
 			callback(null, err);
 		}).end();
 	}
-}
+};
+
+/*
+	@function 	https.post
+	@parameter 	options - the JSON object expected by the NodeJS https.request() api
+	@parameter 	requestBody - the reqeust body to send with the request. If no request body is to be sent, "null" can be passed instead.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object resulting from the request
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from the request.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@parameter 	(Optional) handlerName - a string used to indicate the function issuing the request. See the logger.log() "src" option for more details on this parameter
+	@returns 	n/a
+	@details 	This function performs a POST request using the NodeJS https.request() api, customized for use with the server.js MEANserver
+*/
+www.https.post = function (options, requestBody, callback, handlerName) {
+	var loggerOptions = (typeof handlerName === "string") ? {"src": handlerName} : {"src": "www/https.post"};
+	var responseData = null;
+	var responseError = null;
+
+	var requestObj = https.request(options, function (response) {
+		response.setEncoding("utf8");
+		response.on("data", function (data) {
+			logger.log("A response was returned...", handlerName);
+			if (typeof callback === "function") {
+				// RFC7231: expect response data on code 200
+				try {
+					responseData = JSON.parse(data.toString());
+				} catch (e) {
+					logger.log(`JSON parsing failed: ${e}`, handlerName);
+					responseError = e;
+				}
+			}
+		});
+		response.on("end", function () {
+			logger.log(`Response ended with code ${response.statusCode}...`, loggerOptions);
+			if (typeof callback === "function") {
+				callback((responseData === null) ? response : responseData, responseError);
+			}
+		});
+	});
+	requestObj.on("error", function (err) {
+		logger.log(`HTTPS POST failed: ${err}`, handlerName);
+		if (typeof callback === "function") {
+			callback(null, err);
+		}
+	});
+	if (typeof requestBody !== null) {
+		requestObj.write(JSON.stringify(requestBody));
+	}
+	requestObj.end();
+};
+
+/*
+	@function 	https.patch
+	@parameter 	options - the JSON object expected by the NodeJS https.request() api
+	@parameter 	requestBody - the reqeust body to send with the request. If no request body is to be sent, "null" can be passed instead.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object resulting from the request
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from the request.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@parameter 	(Optional) handlerName - a string used to indicate the function issuing the request. See the logger.log() "src" option for more details on this parameter
+	@returns 	n/a
+	@details 	This function performs a PATCH request using the NodeJS https.request() api, customized for use with the server.js MEANserver
+*/
+www.https.patch = function (options, requestBody, callback, handlerName) {
+	var loggerOptions = (typeof handlerName === "string") ? {"src": handlerName} : {"src": "www/https.patch"};
+	var responseData = null;
+	var responseError = null;
+
+	var requestObj = https.request(options, function (response) {
+		response.setEncoding("utf8");
+		response.on("data", function (data) {
+			logger.log("A response was returned...", loggerOptions);
+			if (typeof callback === "function") {
+				try {
+					responseData = JSON.parse(data.toString());
+				} catch (e) {
+					logger.log(`JSON parsing failed: ${e}`, loggerOptions);
+					responseError = e;
+				}
+			}
+		});
+		response.on("end", function () {
+			logger.log(`Response ended with code ${response.statusCode}...`, loggerOptions);
+			if (typeof callback === "function") {
+				callback((responseData === null) ? response : responseData, responseError);
+			}
+		});
+	});
+	requestObj.on("error", function (err) {
+		logger.log(`HTTPS PATCH failed: ${err}`, loggerOptions);
+		if (typeof callback === "function") {
+			callback(null, err);
+		}
+	});
+	if (typeof requestBody !== null) {
+		requestObj.write(JSON.stringify(requestBody));
+	}
+	requestObj.end();
+};
+
+/*
+	@function 	https.delete
+	@parameter 	options - the JSON object expected by the NodeJS https.request() api
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object resulting from the request
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from the request. This can take any of the three forms associated with the 200/202/204 status codes described in the DELETE description in RFC7231 Section 4.3.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@parameter 	(Optional) handlerName - a string used to indicate the function issuing the request. See the logger.log() "src" option for more details on this parameter
+	@returns 	n/a
+	@details 	This function performs a DELETE request using the NodeJS https.request() api, customized for use with the server.js MEANserver
+*/
+www.https.delete = function (options, callback, handlerName) {
+	var loggerOptions = (typeof handlerName === "string") ? {"src": handlerName} : {"src": "www/https.delete"};
+	var responseData = null;
+	var responseError = null;
+
+	var requestObj = https.request(options, function (response) {
+		response.setEncoding("utf8");
+		response.on("data", function (data) {
+			logger.log("A response was returned...", loggerOptions);
+			if (typeof callback === "function") {
+				// RFC7231: expect response data on code 200
+				try {
+					responseData = JSON.parse(data.toString());
+				} catch (e) {
+					logger.log(`JSON parsing failed: ${e}`, loggerOptions);
+					responseError = e;
+				}
+			}
+		});
+		response.on("end", function () {
+			logger.log(`Response ended with code ${response.statusCode}...`, loggerOptions);
+			if (typeof callback === "function") {
+				callback((responseData === null) ? response : responseData, responseError);
+			}
+		});
+	});
+	requestObj.on("error", function (err) {
+		logger.log(`HTTPS DELETE failed: ${err}`, loggerOptions);
+		if (typeof callback === "function") {
+			callback(null, err);
+		}
+	});
+	requestObj.end();
+};
 // END Member Functions
 
 module.exports = www;

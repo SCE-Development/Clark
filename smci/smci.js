@@ -128,32 +128,7 @@ smci.authorizedApps.register = function (requestBody, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					// BEGIN debug
-					// logger.log(`status: ${response.statusCode}`, handlerTag);
-					// logger.log(`headers: ${(typeof response.headers === "object") ? JSON.stringify(response.headers) : response.headers}`, handlerTag);
-					// logger.log(`response: ${data}`, handlerTag);
-					// END debug
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.write(JSON.stringify(requestBody));
-	requestObj.end();
+	www.post(options, requestBody, callback, handlerTag.src);
 };
 
 /*
@@ -309,31 +284,7 @@ smci.automations.pause = function (automationID, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					// BEGIN debug
-					// logger.log(`status: ${response.statusCode}`, handlerTag);
-					// logger.log(`headers: ${(typeof response.headers === "object") ? JSON.stringify(response.headers) : response.headers}`, handlerTag);
-					// logger.log(`response: ${data}`, handlerTag);
-					// END debug
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.end();
+	www.post(options, null, callback, handlerTag.src);
 };
 
 /*
@@ -360,31 +311,7 @@ smci.automations.start = function (automationID, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					// BEGIN debug
-					// logger.log(`status: ${response.statusCode}`, handlerTag);
-					// logger.log(`headers: ${(typeof response.headers === "object") ? JSON.stringify(response.headers) : response.headers}`, handlerTag);
-					// logger.log(`response: ${data}`, handlerTag);
-					// END debug
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.end();
+	www.post(options, null, callback, handlerTag.src);
 };
 
 /*
@@ -458,26 +385,7 @@ smci.automations.deleteEmail = function (automationID, emailID, callback) {
 		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS DELETE failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.end();
+	www.delete(options, callback, handlerTag.src);
 };
 
 /*
@@ -505,26 +413,7 @@ smci.automations.pauseEmail = function (automationID, emailID, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.end();
+	www.post(options, null, callback, handlerTag.src);
 };
 
 /*
@@ -552,26 +441,7 @@ smci.automations.startEmail = function (automationID, emailID, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.end();
+	www.post(options, null, callback, handlerTag.src);
 };
 
 /*
@@ -604,32 +474,7 @@ smci.automations.subscribeToEmail = function (automationID, emailID, recipient, 
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					// BEGIN debug
-					// logger.log(`status: ${response.statusCode}`, handlerTag);
-					// logger.log(`headers: ${(typeof response.headers === "object") ? JSON.stringify(response.headers) : response.headers}`, handlerTag);
-					// logger.log(`response: ${data}`, handlerTag);
-					// END debug
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.write(JSON.stringify(requestBody));
-	requestObj.end();
+	www.post(options, requestBody, callback, handlerTag.src);
 };
 
 /*
@@ -713,27 +558,7 @@ smci.automations.blacklistSubscriber = function (automationID, recipient, callba
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.write(JSON.stringify(requestBody));
-	requestObj.end();
+	www.post(options, requestBody, callback, handlerTag.src);
 };
 
 /*
@@ -785,27 +610,7 @@ smci.batchOps.add = function (requestBody, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.write(JSON.stringify(requestBody));
-	requestObj.end();
+	www.post(options, requestBody, callback, handlerTag.src);
 };
 
 /*
@@ -893,26 +698,7 @@ smci.batchOps.delete = function (batchID, callback) {
 		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS DELETE failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.end();
+	www.delete(options, callback, handlerTag.src);
 };
 
 /*
@@ -943,27 +729,7 @@ smci.campaignFolders.createFolder = function (folderName, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS POST failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.write(JSON.stringify(requestBody));
-	requestObj.end();
+	www.post(options, requestBody, callback, handlerTag.src);
 };
 
 /*
@@ -1058,29 +824,7 @@ smci.campaignFolders.editFolder = function (folderID, newName, callback) {
 		}
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				// BEGIN test
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-				// END test
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS PATCH failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.write(JSON.stringify(requestBody));
-	requestObj.end();
+	www.patch(options, requestBody, callback, handlerTag.src);
 };
 
 /*
@@ -1104,26 +848,7 @@ smci.campaignFolders.deleteFolder = function (folderID, callback) {
 		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
 	};
 
-	var requestObj = https.request(options, function (response) {
-		response.on("data", function (data) {
-			logger.log(`MailChimp returned a response...`, handlerTag);
-			if (typeof callback === "function") {
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerTag);
-					callback(null, e);
-				}
-			}
-		});
-	});
-	requestObj.on("error", function (err) {
-		logger.log(`HTTPS DELETE failed: ${err}`, handlerTag);
-		if (typeof callback === "function") {
-			callback(null, err);
-		}
-	});
-	requestObj.end();
+	www.delete(options, callback, handlerTag.src);
 };
 // END MailChimp API Wrapper Functions
 
