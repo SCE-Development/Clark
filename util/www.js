@@ -19,7 +19,9 @@ var logger = require("./logger");		// import event log system
 // Container (Singleton)
 const www = {
 	// Module Configuration Functions/Settings
-	"config": {},
+	"config": {
+		"logVerbosely": false
+	},
 
 	// HTTPS request wrappers
 	"https": {}
@@ -36,6 +38,17 @@ const www = {
 */
 www.config.silence = function () {
 	logger.logToConsole = false;
+}
+
+/*
+	@function 	config.verbose
+	@parameter 	n/a
+	@returns 	n/a
+	@details 	This function forces verbose logging of all transactions, INCLUDING web request content
+	@warning 	Due to the sensitivity of material that can be exchanged through web requests, this method will make all web transactions insecure, since reponses will be recorded in the logger log files. Use this function only for debugging purposes!
+*/
+www.config.verbose = function () {
+	www.config.logVerbosely = true;
 }
 
 
@@ -55,6 +68,8 @@ www.config.silence = function () {
 */
 www.https.get = function (options, callback, handlerName) {
 	var loggerOptions = (typeof handlerName === "string") ? {"src": handlerName} : {"src": "www/https.get"};
+	var responseData = null;	// will fill as data is received
+	var responseError = null;
 
 	// Perform parameter checks
 	if (typeof callback !== "function") {
@@ -65,15 +80,34 @@ www.https.get = function (options, callback, handlerName) {
 			response.setEncoding("utf8");
 			response.on("data", function (data) {
 				logger.log("A response was returned...", loggerOptions);
-				try {
-					callback(JSON.parse(data.toString()), null);
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, loggerOptions);
-					callback(null, e);
+				
+				// Verbose logging
+				if (www.config.logVerbosely) {
+					logger.log(`Raw Data: ${data.toString()}`,loggerOptions);
+				}
+
+				// Handle acquisition of partial data
+				if (responseData === null) {
+					responseData = data;
+				} else {
+					responseData += data;
 				}
 			});
 			response.on("end", function () {
 				logger.log(`Response ended with code ${response.statusCode}...`, loggerOptions);
+
+				// Data Conversion to JSON
+				try {
+					responseData = JSON.parse(responseData);
+				} catch (e) {
+					logger.log(`JSON parsing failed: ${e}`, loggerOptions);
+					responseError = e;
+				}
+
+				// Pass to callback
+				if (typeof callback === "function") {
+					callback((responseData === null) ? response : responseData, responseError);
+				}
 			});
 		}).on("error", function (err) {
 			logger.log(`HTTPS GET failed: ${err}`, loggerOptions);
@@ -105,18 +139,32 @@ www.https.post = function (options, requestBody, callback, handlerName) {
 		response.setEncoding("utf8");
 		response.on("data", function (data) {
 			logger.log("A response was returned...", handlerName);
-			if (typeof callback === "function") {
-				// RFC7231: expect response data on code 200
-				try {
-					responseData = JSON.parse(data.toString());
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, handlerName);
-					responseError = e;
-				}
+			
+			// Verbose logging
+			if (www.config.logVerbosely) {
+				logger.log(`Raw Data: ${data.toString()}`,loggerOptions);
+			}
+
+			// RFC7231: expect response data on code 200
+			// Handle acquisition of partial data
+			if (responseData === null) {
+				responseData = data;
+			} else {
+				responseData += data;
 			}
 		});
 		response.on("end", function () {
 			logger.log(`Response ended with code ${response.statusCode}...`, loggerOptions);
+
+			// Data Conversion to JSON
+			try {
+				responseData = JSON.parse(responseData);
+			} catch (e) {
+				logger.log(`JSON parsing failed: ${e}`, loggerOptions);
+				responseError = e;
+			}
+
+			// Pass to callback
 			if (typeof callback === "function") {
 				callback((responseData === null) ? response : responseData, responseError);
 			}
@@ -157,17 +205,31 @@ www.https.patch = function (options, requestBody, callback, handlerName) {
 		response.setEncoding("utf8");
 		response.on("data", function (data) {
 			logger.log("A response was returned...", loggerOptions);
-			if (typeof callback === "function") {
-				try {
-					responseData = JSON.parse(data.toString());
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, loggerOptions);
-					responseError = e;
-				}
+
+			// Verbose logging
+			if (www.config.logVerbosely) {
+				logger.log(`Raw Data: ${data.toString()}`,loggerOptions);
+			}
+
+			// Handle acquisition of partial data
+			if (responseData === null) {
+				responseData = data;
+			} else {
+				responseData += data;
 			}
 		});
 		response.on("end", function () {
 			logger.log(`Response ended with code ${response.statusCode}...`, loggerOptions);
+			
+			// Data Conversion to JSON
+			try {
+				responseData = JSON.parse(responseData);
+			} catch (e) {
+				logger.log(`JSON parsing failed: ${e}`, loggerOptions);
+				responseError = e;
+			}
+
+			// Pass to callback
 			if (typeof callback === "function") {
 				callback((responseData === null) ? response : responseData, responseError);
 			}
@@ -207,18 +269,32 @@ www.https.delete = function (options, callback, handlerName) {
 		response.setEncoding("utf8");
 		response.on("data", function (data) {
 			logger.log("A response was returned...", loggerOptions);
-			if (typeof callback === "function") {
-				// RFC7231: expect response data on code 200
-				try {
-					responseData = JSON.parse(data.toString());
-				} catch (e) {
-					logger.log(`JSON parsing failed: ${e}`, loggerOptions);
-					responseError = e;
-				}
+
+			// Verbose logging
+			if (www.config.logVerbosely) {
+				logger.log(`Raw Data: ${data.toString()}`,loggerOptions);
+			}
+
+			// RFC7231: expect response data on code 200
+			// Handle acquisition of partial data
+			if (responseData === null) {
+				responseData = data;
+			} else {
+				responseData += data;
 			}
 		});
 		response.on("end", function () {
 			logger.log(`Response ended with code ${response.statusCode}...`, loggerOptions);
+
+			// Data Conversion to JSON
+			try {
+				responseData = JSON.parse(responseData);
+			} catch (e) {
+				logger.log(`JSON parsing failed: ${e}`, loggerOptions);
+				responseError = e;
+			}
+
+			// Pass to callback
 			if (typeof callback === "function") {
 				callback((responseData === null) ? response : responseData, responseError);
 			}

@@ -2,11 +2,11 @@
 // 	Name: 			Rolando Javier
 // 	File: 			smci.js
 // 	Date Created: 	January 8, 2018
-// 	Last Modified: 	January 15, 2018
+// 	Last Modified: 	January 17, 2018
 // 	Details:
 // 					The Sce Mail Chimp Interface (SMCI). This file contains JavaScript wrapper functions for the MailChimp APIs that handle communication and control over the associated MailChimp account's mailing system, email campaign/subscriber lists, and various other preferences.
 //	Notes: 			ECMAscript 6 constructs can be used here (i.e. templating).
-// 					This file is a work in progress. The wrapper functions included in this file only cover the following MailChimp APIs:
+// 					This file is a work in progress. The completed wrapper functions included in this file only cover the following MailChimp APIs:
 //						API Root:
 //							GET /
 //						Authorized Apps:
@@ -39,6 +39,21 @@
 //							GET /campaign-folders/{folder_id}
 //							PATCH /campaign-folders/{folder_id}
 //							DELETE /campaign-folders/{folder_id}
+//						Search Campaigns (defined under campaigns):
+//							GET /search-campaigns
+//						Search Members (defined under lists):
+//							GET /search-members
+//						Lists:
+//							POST /lists
+//							GET /lists
+//							POST /lists/{list_id}
+//							GET /lists/{list_id}
+//							PATCH /lists/{list_id}
+//							DELETE /lists/{list_id}
+//							POST /lists/{list_id}/members
+//							GET /lists/{list_id}/members
+//							PATCH /lists/{list_id}/members/{subscriber_hash}
+//							DELETE /lists/{list_id}/members/{subscriber_hash}
 // 	Dependencies:
 // 					Node.js HTTPS Module
 //					Node.js Query String Module
@@ -61,12 +76,15 @@ const smci = {
 	"authorizedApps": {},
 	"automations": {},
 	"batchOps": {},
-	"campaignFolders": {}
+	"campaignFolders": {},
+	"campaigns": {},
+	"lists": {}
 };
 
 
 
 // BEGIN MailChimp API Wrapper Functions
+// BEGIN api root
 /*
 	@function 	api.getRoot
 	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET / api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
@@ -97,6 +115,33 @@ smci.api.getRoot = function (qsObj, callback) {
 	www.get(options, callback, handlerTag.src);
 };
 
+/*
+	@function 	api.ping
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns	n/a
+	@details 	This function makes a GET request to the MailChimp GET /ping api using the NodeJS https.get() api.
+*/
+smci.api.ping = function (callback) {
+	var handlerTag = {"src": "smci/api.ping"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/ping`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+// END api root
+
+
+
+// BEGIN authorized apps
 /*
 	@function 	authorizedApps.register
 	@parameter	requestBody - the JSON object representing the request body's parameters expected by the MailChimp POST /authorized-apps api. MailChimp uses these parameters to link your application with the MailChimp account that uses its services. The object must be in the following format:
@@ -193,7 +238,11 @@ smci.authorizedApps.getAppInfo = function (appID, qsObj, callback) {
 
 	www.get(options, callback, handlerTag.src);
 };
+// END authorized apps
 
+
+
+// BEGIN automations
 /*
 	@function 	automations.getFullList
 	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /automations api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
@@ -584,7 +633,11 @@ smci.automations.getBlacklist = function (automationID, callback) {
 
 	www.get(options, callback, handlerTag.src);
 };
+// END automations
 
+
+
+// BEGIN batch operations
 /*
 	@function 	batchOps.add
 	@parameter 	requestBody - a JSON object containing the request body expected by the MailChimp POST /batches api. This is used to specify what type of action(s) MailChimp needs to do for this batch operation. Read the MailChimp API reference for more details on this parameter.
@@ -700,7 +753,11 @@ smci.batchOps.delete = function (batchID, callback) {
 
 	www.delete(options, callback, handlerTag.src);
 };
+// END batch operations
 
+
+
+// BEGIN campaign folders
 /*
 	@function 	campaignFolders.createFolder
 	@parameter 	folderName - the name of the campaign folder to create
@@ -850,6 +907,405 @@ smci.campaignFolders.deleteFolder = function (folderID, callback) {
 
 	www.delete(options, callback, handlerTag.src);
 };
+// END campaign folders
+
+
+
+// BEGIN campaigns
+/*
+	@function 	campaigns.create
+	@paraemter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp POST /campaigns api. Read the MailChimp API reference for more details on this parameter.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to create a campaign.
+*/
+smci.campaigns.create = function (requestBody, callback) {
+	var handlerTag = {"src": "smci/campaigns.create"};
+	var options = {
+
+	};
+};
+
+/*
+	@function 	campaigns.search
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /search-campaigns api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, all query string parameters can be omitted, except the "query" parameter. The object is expected to be formatted as below:
+					{
+						"fields": "...",
+						"exclude_fields": "...",
+						"query": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /search-campaigns api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to search for any campaigns containing the query term in "qsObj".
+*/
+smci.campaigns.search = function (qsObj, callback) {
+	var handlerTag = {"src": "smci/campaigns.search"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/search-campaigns${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+// END campaigns
+
+
+
+// BEGIN lists
+/*
+	@function 	lists.createList
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp POST /lists api. Read the MailChimp API reference for more details on this parameter
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /lists api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to create a MailChimp mailing list.
+*/
+smci.lists.createList = function (requestBody, callback) {
+	var handlerTag = {"src": "smci/lists.createList"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.getFullList
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /lists api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
+					{
+						"fields": "...",
+						"exclude_fields": "...",
+						"count": [int],
+						"offset": [int],
+						"before_date_created": "...",
+						"since_date_created": "...",
+						"before_campaign_last_sent": "...",
+						"since_campaign_last_sent": "...",
+						"email": "...",
+						"sort_field": "...",
+						"sort_directory": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /lists api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire a full list of all MailChimp mailing lists associated with the account.
+*/
+smci.lists.getFullList = function (qsObj, callback) {
+	var handlerTag = {"src": "smci/lists.getFullList"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.batchListMembers
+	@parameter 	listID - the unique ID of the list containing the member(s) whose subscription statuses will be changed
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp POST /lists/{list_id} api. Read the MailChimp API reference for more details on this parameter
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /lists/{list_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to batch subscribe/unsubscribe members of the list.
+*/
+smci.lists.batchListMembers = function (listID, requestBody, callback) {
+	var handlerTag = {"src": "smci/lists.batchListMembers"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.getListInfo
+	@parameter 	listID - the unique ID of the list to query
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /lists/{list_id} api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
+					{
+						"fields": "...",
+						"exclude_fields": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /lists/{list_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire information about the list specified by "listID".
+*/
+smci.lists.getListInfo = function (listID, qsObj, callback) {
+	var handlerTag = {"src": "smci/lists.getListInfo"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.editListSettings
+	@parameter 	listID - the unique ID of the list to query
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp PATCH /lists/{list_id} api. Read the MailChimp API reference for more details on this parameter
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /lists/{list_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJS https.request() api to edit settings of the list specified by "listID".
+*/
+smci.lists.editListSettings = function (listID, requestBody, callback) {
+	var handlerTag = {"src": "smci/lists.editListSettings"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.patch(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.deleteList
+	@parameter 	listID - the unique id associated with the list to delete
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's DELETE /lists/{list_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a DELETE request using the NodeJS https.request() api to create a MailChimp mailing list.
+*/
+smci.lists.deleteList = function (listID, callback) {
+	var handlerTag = {"src": "smci/lists.deleteList"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}`,
+		"method": "DELETE",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.delete(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.addListMember
+	@parameter 	listID - the unique id associated with the list to add to
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp POST /lists/{list_id}/members api. Read the MailChimp API reference for more details on this parameter.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /lists/{list_id}/members api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJD https.request() api to add a new recipient to the MailChimp mailing list specified by "listID".
+*/
+smci.lists.addListMember = function (listID, requestBody, callback) {
+	var handlerTag = {"src": "smci/lists.addListMember"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}/members`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.getListMembers
+	@parameter 	listID - the unique id of the list to acquire recipients from
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /lists/{list_id}/members api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
+					{
+						"fields": "...",
+						"exclude_fields": "...",
+						"count": [int],
+						"offset": [int],
+						"email_type": "...",
+						"status": "...",
+						"since_timestamp_opt": "...",
+						"before_timestamp_opt": "...",
+						"since_last_changed": "...",
+						"before_last_changed": "...",
+						"unique_email_id": "...",
+						"vip_only": [bool],
+						"interest_category_id": "...",
+						"interest_ids": "...",
+						"interest_match": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /lists/{list_id}/members api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJD https.get() api to acquire a list of recipients of the MailChimp mailing list specified by "listID".
+*/
+smci.lists.getListMembers = function (listID, qsObj, callback) {
+	var handlerTag = {"src": "smci/lists.getListMembers"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}/members${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.editListMember
+	@parameter 	listID - the unique id of the list to acquire recipients from
+	@parameter 	subscriberID - the MD5 hash of the lowercase version of the list member's email address,
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp PATCH /lists/{list_id}/members/{subscriber_hash} api. Read the MailChimp API reference for more details on this parameter.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /lists/{list_id}/members/{subscriber_hash} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJD https.request() api to edit a recipient specified by "subscriberID" of the MailChimp mailing list specified by "listID".
+*/
+smci.lists.editListMember = function (listID, subscriberID, requestBody, callback) {
+	var handlerTag = {"src": "smci/lists.editListMember"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}/members/${subscriberID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.patch(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.removeListMember
+	@parameter 	listID - the unique id of the list remove a recipient from
+	@parameter 	subscriberID - the MD5 hash of the lowercase version of the list member's email address to remove
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's DELETE /lists/{list_id}/members/{subscriber_hash} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a DELETE request using the NodeJD https.request() api to remove a recipient specified by "subscriberID" from the MailChimp mailing list specified by "listID".
+*/
+smci.lists.removeListMember = function (listID, subscriberID, callback) {
+	var handlerTag = {"src": "smci/lists.removeListMember"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/lists/${listID}/members/${subscriberID}`,
+		"method": "DELETE",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.delete(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	lists.searchMembers
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /search-members api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, all querystring parameters except the "query" parameter can be omitted. The object is expected to take the following format:
+					{
+						"fields": "...",
+						"exclude_fields": "...",
+						"query": "...",		// REQUIRED
+						"list_id": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET search-members api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJD https.get() api to acquire a list of recipients fitting the querystring search term "query".
+*/
+smci.lists.searchMembers = function (qsObj, callback) {
+	var handlerTag = {"src": "smci/lists.searchMembers"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/search-members${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+// END lists
 // END MailChimp API Wrapper Functions
 
 

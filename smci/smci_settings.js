@@ -19,6 +19,12 @@ var smci_settings = {};
 
 // Members
 /*
+	@member 	accountEmail
+	@details 	This is the email associated with the MailChimp account used by SMCI
+*/
+smci_settings.accountEmail = "rjavier441@gmail.com";	// temporary; will replace with real credentials after testing completes
+
+/*
 	@member 	apikey
 	@details 	This is the api key I'm using to run the smci wrappers.
 */
