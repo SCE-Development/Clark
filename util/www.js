@@ -138,11 +138,11 @@ www.https.post = function (options, requestBody, callback, handlerName) {
 	var requestObj = https.request(options, function (response) {
 		response.setEncoding("utf8");
 		response.on("data", function (data) {
-			logger.log("A response was returned...", handlerName);
+			logger.log("A response was returned...", loggerOptions);
 			
 			// Verbose logging
 			if (www.config.logVerbosely) {
-				logger.log(`Raw Data: ${data.toString()}`,loggerOptions);
+				logger.log(`Raw Data: ${data.toString()}`, loggerOptions);
 			}
 
 			// RFC7231: expect response data on code 200
@@ -158,6 +158,7 @@ www.https.post = function (options, requestBody, callback, handlerName) {
 
 			// Data Conversion to JSON
 			try {
+				// console.log(responseData);	// debug
 				responseData = JSON.parse(responseData);
 			} catch (e) {
 				logger.log(`JSON parsing failed: ${e}`, loggerOptions);

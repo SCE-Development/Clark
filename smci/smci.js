@@ -28,7 +28,7 @@
 //							GET /automations/{workflow_id}/emails/{workflow_email_id}/queue/{subscriber_hash}
 //							POST /automations/{workflow_id}/removed-subscribers
 //							GET /automations/{workflow_id}/removed-subscribers
-//						Batch Opertaions:
+//						Batch Operations:
 //							POST /batches
 //							GET /batches
 //							GET /batches/{batch_id}
@@ -39,6 +39,20 @@
 //							GET /campaign-folders/{folder_id}
 //							PATCH /campaign-folders/{folder_id}
 //							DELETE /campaign-folders/{folder_id}
+//						Campaigns:
+//							POST /campaigns
+//							GET /campaigns
+//							GET /campaigns/{campaign_id}
+//							PATCH /campaigns/{campaign_id}
+//							DELETE /campaigns/{campaign_id}
+//							POST /campaigns/{campaign_id}/actions/pause
+//							POST /campaigns/{campaign_id}/actions/replicate
+//							POST /campaigns/{campaign_id}/actions/resume
+//							POST /campaigns/{campaign_id}/actions/schedule
+//							POST /campaigns/{campaign_id}/actions/send
+//							POST /campaigns/{campaign_id}/actions/test
+//							POST /campaigns/{campaign_id}/actions/unschedule
+//							GET /campaigns/{campaign_id}/send-checklist
 //						Search Campaigns (defined under campaigns):
 //							GET /search-campaigns
 //						Search Members (defined under lists):
@@ -927,8 +941,378 @@ smci.campaignFolders.deleteFolder = function (folderID, callback) {
 smci.campaigns.create = function (requestBody, callback) {
 	var handlerTag = {"src": "smci/campaigns.create"};
 	var options = {
-
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
 	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.getFullList
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /campaigns api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
+					{
+						"fields": "...",
+						"exclude_fields": "...",
+						"count": [int],
+						"offset": [int],
+						"type": "...",
+						"status": "...",
+						"before_send_time": "...",
+						"since_send_time": "...",
+						"before_create_time": "...",
+						"since_create_time": "...",
+						"list_id": "...",
+						"folder_id": "...",
+						"sort_field": "...",
+						"sort_dir": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /campaigns api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire a full list of Email Campaigns associated with the MailChimp account.
+*/
+smci.campaigns.getFullList = function (qsObj, callback) {
+	var handlerTag = {"src": "smci/campaigns.getFullList"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.getCampaignInfo
+	@parameter 	campaignID - the unique ID associated with the campaign to find
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /campaigns/{campaign_id} api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
+					{
+						"fields": "...",
+						"exclude_fields": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /campaigns/{campaign_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire information about the email campaign specified by "campaignID".
+*/
+smci.campaigns.getCampaignInfo = function (campaignID, qsObj, callback) {
+	var handlerTag = {"src": "smci/campaigns.getCampaignInfo"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.editCampaignInfo
+	@parameter 	campaignID - the unique ID associated with the campaign to edit
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp PATCH /campaigns/{campaign_id} api. Read the MailChimp API reference for more details on this parameter
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /campaigns/{campaign_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJS https.request() api to edit the settings of the email campaign specified by "campaignID".
+*/
+smci.campaigns.editCampaignInfo = function (campaignID, requestBody, callback) {
+	var handlerTag = {"src": "smci/campaigns.editCampaignInfo"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.patch(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.deleteCampaign
+	@parameter 	campaignID - the unique ID associated with the campaign to delete
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's DELETE /campaigns/{campaign_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a DELETE request using the NodeJS https.request() api delete the email campaign specified by "campaignID".
+*/
+smci.campaigns.deleteCampaign = function (campaignID, callback) {
+	var handlerTag = {"src": "smci/campaigns.deleteCampaign"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}`,
+		"method": "DELETE",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.delete(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.pauseCampaign
+	@parameter 	campaignID - the unique ID associated with the RSS campaign to pause
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns/{campaign_id}/actions/pause api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to pause the RSS email campaign specified by "campaignID".
+	@note 		This function only works with RSS (blog post driven) campaigns. Calling this function to pause any other type of campaign will return an error! It is therefore recommended that you first call smci.campaigns.getCampaignInfo() to verify that the campaign is the correct type.
+*/
+smci.campaigns.pauseCampaign = function (campaignID, callback) {
+	var handlerTag = {"src": "smci/campaigns.pauseCampaign"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/actions/pause`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	www.post(options, null, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.copyCampaign
+	@parameter 	campaignID - the unique ID associated with the campaign to replicate
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns/{campaign_id}/actions/replicate api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to copy the email campaign specified by "campaignID".
+	@note 		This function only copies campaigns that are in the "saved" or "send" status. Calling this function on any campaign with other statuses will return an error! It is therefore recommended that you first call smci.campaigns.getCampaignInfo() to verify that the campaign is in the correct status.  
+*/
+smci.campaigns.copyCampaign = function (campaignID, callback) {
+	var handlerTag = {"src": "smci/campaigns.copyCampaign"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/actions/replicate`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	www.post(options, null, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.resumeCampaign
+	@parameter 	campaignID - the unique ID associated with the RSS campaign to resume
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns/{campaign_id}/actions/resume api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to resume the RSS email campaign specified by "campaignID".
+	@note 		This function only resumes RSS (blog post driven) campaigns. Calling this function to resume any other type of campaign will return an error! It is therefore recommended that you first call smci.campaigns.getCampaignInfo() to verify that the campaign is the correct type.  
+*/
+smci.campaigns.resumeCampaign = function (campaignID, callback) {
+	var handlerTag = {"src": "smci/campaigns.resumeCampaign"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/actions/resume`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	www.post(options, null, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.scheduleCampaign
+	@parameter 	campaignID - the unique ID associated with the campaign to schedule
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp POST /campaigns/{campaign_id}/actions/schedule api. Read the MailChimp API reference for more details on this parameter
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns/{campaign_id}/actions/schedule api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to schedule the email campaign specified by "campaignID".
+	@note 		This function only works on unscheduled, fully-configured campaigns (i.e. non-draft campaigns, already setup via the MailChimp website). Current Solution: If a campaign is not fully-configured, you must first fully configure the campaign (i.e. design or designate its email template) in MailChimp's Admin portal. Use smci.campaigns.getChecklist() to see if a campaign is ready to send/schedule, or to see what needs to be done before sending it. If a campaign is already fully-configured, you must first call smci.campaigns.getCampaignInfo() to verify that the campaign's status is NOT "schedule". If the status is "schedule", then you must unschedule the campaign using smci.campaigns.unscheduleCampaign() before calling this function again on the same campaign.
+*/
+smci.campaigns.scheduleCampaign = function (campaignID, requestBody, callback) {
+	var handlerTag = {"src": "smci/campaigns.scheduleCampaign"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/actions/schedule`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.sendCampaign
+	@parameter 	campaignID - the unique ID associated with the campaign to send
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns/{campaign_id}/actions/send api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to send the email campaign specified by "campaignID".
+	@note 		This function only works on unsent, fully-configured campaigns (i.e. non-draft campaigns, already setup via the MailChimp website). Current Solution: If a campaign is not fully-configured, you must first fully configure the campaign (i.e. design or designate its email template) in MailChimp's Admin portal. Use smci.campaigns.getChecklist() to see if a campaign is ready to send, or to see what needs to be done before sending it. If already fully-configured, you must then call smci.campaigns.getCampaignInfo() to verify that the campaign status is NOT "sent". Calling this function to send a campaign that was already sent will have NO EFFECT; MailChimp WILL NOT RESEND a sent campaign.
+*/
+smci.campaigns.sendCampaign = function (campaignID, callback) {
+	var handlerTag = {"src": "smci/campaigns.sendCampaign"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/actions/send`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	www.post(options, null, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.sendTestEmail
+	@parameter 	campaignID - the unique ID of the campaign to associate the test email(s) to send
+	@parameter 	requestBody - the JSON object representing the request body's parameters expected by the MailChimp POST /campaigns/{campaign_id}/actions/test api. Read the MailChimp API reference for more details on this parameter
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns/{campaign_id}/actions/test api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to send a test email associated with the email campaign specified by "campaignID".
+*/
+smci.campaigns.sendTestEmail = function (campaignID, requestBody, callback) {
+	var handlerTag = {"src": "smci/campaigns.sendTestEmail"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/actions/test`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.unscheduleCampaign
+	@parameter 	campaignID - the unique ID associated with the campaign to unschedule
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /campaigns/{campaign_id}/actions/unschedule api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to unschedule the email campaign specified by "campaignID".
+	@note 		This function only works on unsent, fully-configured campaigns (i.e. non-draft campaigns, already setup via the MailChimp website). Current Solution: If a campaign is not fully-configured, you must first fully configure the campaign (i.e. design or designate its email template) in MailChimp's Admin portal. Use smci.campaigns.getChecklist() to see if a campaign is ready to send, or to see what needs to be done before sending it. If a campaign is already fully-configured, you must then call smci.campaigns.getCampaignInfo() to verify that the campaign has not yet been sent (i.e. status is "schedule", not "sent").
+*/
+smci.campaigns.unscheduleCampaign = function (campaignID, callback) {
+	var handlerTag = {"src": "smci/campaigns.unscheduleCampaign"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/actions/unschedule`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	www.post(options, null, callback, handlerTag.src);
+};
+
+/*
+	@function 	campaigns.getChecklist
+	@parameter 	campaignID - the unique ID associated with the campaign to check
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /campaigns/{campaign_id}/send-checklist api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
+					{
+						"fields": "...",
+						"exclude_fields": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /campaigns/{campaign_id}/send-checklist api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire a readiness checklist of the email campaign specified by "campaignID". It is useful in determining what steps remain before the campaign is ready to send/schedule, and is thus recommended for immediate use BEFORE calling any functions that perform sending/scheduling.
+*/
+smci.campaigns.getChecklist = function (campaignID, qsObj, callback) {
+	var handlerTag = {"src": "smci/campaigns.getChecklist"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/send-checklist${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
 };
 
 /*
