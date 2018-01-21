@@ -35,55 +35,6 @@ var options = {
 
 
 
-// BEGIN test
-// var smci = require("../smci/smci");
-// smci.api.getRoot(null, function (response, error) {
-// 	if (error === null) {
-// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
-// 	} else {
-// 		console.log("Test Result:", "ERROR");
-// 	}
-// });
-// smci.campaignFolders.createFolder("test_folder", function (response, error) {
-// 	if (error === null) {
-// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
-// 	} else {
-// 		console.log("Test Result:", "ERROR");
-// 	}
-// });
-// smci.campaignFolders.getFullList(null, function (response, error) {
-// 	if (error === null) {
-// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
-// 	} else {
-// 		console.log("Test Result:", "ERROR");
-// 	}
-// });
-// smci.campaignFolders.getFolder("0a21e44b5b", null, function (response, error) {
-// 	if (error === null) {
-// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
-// 	} else {
-// 		console.log("Test Result:", "ERROR");
-// 	}
-// });
-// smci.campaignFolders.editFolder("0a21e44b5b", "test_folder_with_new_name", function (response, error) {
-// 	if (error === null) {
-// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
-// 	} else {
-// 		console.log("Test Result:", "ERROR");
-// 	}
-// });
-// smci.campaignFolders.deleteFolder("0a21e44b5b", function (response, error) {
-// 	if (error === null) {
-// 		console.log("Test Result:", (typeof response !== "string") ? JSON.stringify(response) : response);
-// 	} else {
-// 		console.log("Test Result:", "ERROR");
-// 	}
-// });
-console.log(`Test Completed`);
-// END test
-
-
-
 // BEGIN Handler Functions
 /*	
 	@function	rootHandler
