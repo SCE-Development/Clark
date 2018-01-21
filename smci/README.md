@@ -35,7 +35,7 @@ The Sce Mail Chimp Interface.
 
   The SMCI module is intended for use as an ExpressJS sub-app by the main Node/Express (MEAN stack) server in server.js (i.e. the suggested use), but is a stand-alone module that can be used directly by software without going through a sub-app's restful endpoints. It is split into 9 categories that manage different elements of the MailChimp Mailing Service (described by the Forever Free Plan, above), each with their own RESTFUL api wrappers. 
 
-Below is the documentation for all SMCI MailChimp API Wrappers organized into their 9 categories (i.e. sub-modules of the SMCI). Though these API wrappers provide software applications 
+Below is the documentation for all SMCI MailChimp API Wrappers organized into their 9 categories (i.e. sub-modules of the SMCI). Though these API wrappers provide software applications the ability to manipulate the associated account's MailChimp Email System, the same operations can be done by using the [MailChimp Web Interface](https://login.mailchimp.com/)
 
   Categories listed with a _**stable**_ status are "stable", meaning that they are not expected to undergo drastic changes in the near future.
 
@@ -45,8 +45,8 @@ Below is the documentation for all SMCI MailChimp API Wrappers organized into th
 
 # API Wrapper Reference
 
-## smci.api  
-  The API module, which includes api wrappers for pinging the API health and retreiving the API root directory.
+## smci.api
+  _**(Stable)**_ The API module, which includes api wrappers for pinging the API health and retreiving the API root directory.
 
 #### api.getRoot
   - _**parameter**_ qsObj
