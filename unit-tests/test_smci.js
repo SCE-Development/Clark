@@ -27,8 +27,10 @@ var ctl = {
 	runAutomations: false,
 	runBatchOps: false,
 	runCampaignFolders: false,
-	runCampaigns: true,
-	runLists: false
+	runCampaigns: false,
+	runLists: false,
+	runTemplateFolders: false,
+	runTemplates: true
 };
 
 // Silence the web request wrapper module's console logging
@@ -800,6 +802,286 @@ describe("SMCI Unit Tests", function () {
 					smci.lists.searchMembers(qsObj, function (response, error) {
 						assert.isNull(error);
 						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+		});
+	}
+
+	// Template Folders
+	if (ctl.runAll || ctl.runTemplateFolders) {
+		describe("Template Folders", function () {
+			var createdFolderName = "SCE SMCI Test Template Folder";
+			var createdFolderNewName = "SCE SMCI Test Other Name Folder";
+			var createdFolderID = "";	// will reassign after folder creation
+
+			describe("smci.templateFolders.createFolder()", function () {
+				it("should create a folder for email templates", function (done) {
+					var expectedKeys = [
+						"name",
+						"id",
+						"count",
+						"_links"
+					];
+
+					smci.templateFolders.createFolder(createdFolderName, function (response, error) {
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						if (error === null) {
+							createdFolderID = response.id;
+						}
+						done();
+					});
+				});
+			});
+
+			describe("smci.templateFolders.getFullList()", function () {
+				it("should acquire a full list of template folders", function (done) {
+					var expectedKeys = [
+						"folders",
+						"total_items",
+						"_links"
+					];
+
+					smci.templateFolders.getFullList(null, function (response, error) {
+						console.log(JSON.stringify(response));	// debug
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templateFolders.getFolder()", function () {
+				it("should acquire info about the created folder", function (done) {
+					var expectedKeys = [
+						"name",
+						"id",
+						"count",
+						"_links"
+					];
+
+					smci.templateFolders.getFolder(createdFolderID, null, function (response, error) {
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templateFolders.editFolder()", function () {
+				it("should change the name of the created folder", function (done) {
+					var expectedKeys = [
+						"name",
+						"id",
+						"count",
+						"_links"
+					];
+
+					smci.templateFolders.editFolder(createdFolderID, createdFolderNewName, function (response, error) {
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templateFolders.deleteFolder()", function () {
+				it("should delete the folder we created", function (done) {
+					var keysOfAnErrorResponse = [
+						"type",
+						"title",
+						"status",
+						"detail",
+						"instance"
+					];
+
+					smci.templateFolders.deleteFolder(createdFolderID, function (response, error) {
+						assert.isNull(error);
+						assert.doesNotHaveAnyKeys(response, keysOfAnErrorResponse);
+						done();
+					});
+				});
+			});
+		});
+	}
+
+	// Templates
+	if (ctl.runAll || ctl.runTemplates) {
+		describe("Templates", function () {
+			var createdTemplateName = "SCE SMCI Test Template";
+			var createdTemplateID = "";	// will reassign after creation of template
+
+			describe("smci.templates.createTemplate()", function () {
+				it("should create a new email template", function (done) {
+					var expectedKeys = [
+						"id",
+						"type",
+						"name",
+						"drag_and_drop",
+						"responsive",
+						"category",
+						"date_created",
+						"created_by",
+						"active",
+						// "folder_id",	// situational
+						"thumbnail",
+						"share_url",
+						"_links"
+					];
+					var folderID = null;
+					var content = "<p>This is some random html that I've placed within the email!</p>";
+
+					smci.templates.createTemplate(createdTemplateName, folderID, content, function (response, error) {
+						// console.log(JSON.stringify(response));	// debug
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						if (error === null) {
+							createdTemplateID = response.id;
+						}
+						done();
+					});
+				});
+			});
+
+			describe("smci.templates.getFullList()", function () {
+				it("should acquire a full list of email templates", function (done) {
+					var expectedKeys = [
+						"templates",
+						"total_items",
+						"_links"
+					];
+
+					smci.templates.getFullList(null, function (response, error) {
+						// console.log(JSON.stringify(response));	// debug
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templates.getTemplateInfo()", function () {
+				it("should acquire info about the created template", function (done) {
+					var expectedKeys = [
+						"id",
+						"type",
+						"name",
+						"drag_and_drop",
+						"responsive",
+						"category",
+						"date_created",
+						"created_by",
+						"active",
+						// "folder_id",	// situational
+						"thumbnail",
+						"share_url",
+						"_links"
+					];
+
+					smci.templates.getTemplateInfo(createdTemplateID, null, function (response, error) {
+						// console.log(JSON.stringify(response));	// debug
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templates.editTemplateName()", function () {
+				it("should edit just the name of the template", function (done) {
+					var expectedKeys = [
+						"id",
+						"type",
+						"name",
+						"drag_and_drop",
+						"responsive",
+						"category",
+						"date_created",
+						"created_by",
+						"active",
+						// "folder_id",	// situational
+						"thumbnail",
+						"share_url",
+						"_links"
+					];
+
+					smci.templates.editTemplateName(createdTemplateID, "some new name", function (response, error) {
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templates.editTemplateContent()", function () {
+				it("should edit just the HTML content of the template", function (done) {
+					var expectedKeys = [
+						"id",
+						"type",
+						"name",
+						"drag_and_drop",
+						"responsive",
+						"category",
+						"date_created",
+						"created_by",
+						"active",
+						// "folder_id",	// situational
+						"thumbnail",
+						"share_url",
+						"_links"
+					];
+
+					smci.templates.editTemplateName(createdTemplateID, "<p>some new html content</p>", function (response, error) {
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templates.moveTemplate()", function () {
+				it("should change the location of the template", function (done) {
+					var expectedKeys = [
+						"id",
+						"type",
+						"name",
+						"drag_and_drop",
+						"responsive",
+						"category",
+						"date_created",
+						"created_by",
+						"active",
+						// "folder_id",	// situational
+						"thumbnail",
+						"share_url",
+						"_links"
+					];
+					var testFolderID = "ea54d3c058";	// exists as "SCE SMCI Test Templates"
+
+					smci.templates.editTemplateName(createdTemplateID, testFolderID, function (response, error) {
+						assert.isNull(error);
+						assert.containsAllKeys(response, expectedKeys);
+						done();
+					});
+				});
+			});
+
+			describe("smci.templates.deleteTemplate()", function () {
+				it("should delete the created template", function (done) {
+					var keysOfAnErrorResponse = [
+						"type",
+						"title",
+						"status",
+						"detail",
+						"instance"
+					];
+
+					smci.templates.deleteTemplate(createdTemplateID, function (response, error) {
+						// console.log(response);	// debug - do not JSON.stringify; response has a circular structure in it
+						assert.isNull(error);
+						assert.doesNotHaveAnyKeys(response, keysOfAnErrorResponse);
 						done();
 					});
 				});

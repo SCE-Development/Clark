@@ -4,7 +4,7 @@
 // 	Date Created: 	January 8, 2018
 // 	Last Modified: 	January 17, 2018
 // 	Details:
-// 					The Sce Mail Chimp Interface (SMCI). This file contains JavaScript wrapper functions for the MailChimp APIs that handle communication and control over the associated MailChimp account's mailing system, email campaign/subscriber lists, and various other preferences.
+// 					The Sce Mail Chimp Interface (SMCI). This file contains JavaScript wrapper functions for the MailChimp v3.0 APIs, which handle communication and control over the associated MailChimp account's mailing system, email campaign/subscriber lists, and various other preferences.
 //	Notes: 			ECMAscript 6 constructs can be used here (i.e. templating).
 // 					This file is a work in progress. The completed wrapper functions included in this file only cover the following MailChimp APIs:
 //						API Root:
@@ -68,6 +68,18 @@
 //							GET /lists/{list_id}/members
 //							PATCH /lists/{list_id}/members/{subscriber_hash}
 //							DELETE /lists/{list_id}/members/{subscriber_hash}
+// 						Template Folders:
+//							POST /template-folders
+//							GET /template-folders
+//							GET /template-folders/{folder_id}
+//							PATCH /template-folders/{folder_id}
+//							DELETE /template-folders/{folder_id}
+//						Templates:
+//							POST /templates
+//							GET /templates
+//							GET /templates/{template_id}
+//							PATCH /templates/{template_id}
+//							DELETE /templates/{template_id}
 // 	Dependencies:
 // 					Node.js HTTPS Module
 //					Node.js Query String Module
@@ -84,7 +96,7 @@ const smci_settings = require("./smci_settings");	// import MailChimp Settings
 
 
 
-// Container (Singleton)
+// Container (Singleton) - contains the api wrappers defined below
 const smci = {
 	"api": {},
 	"authorizedApps": {},
@@ -92,7 +104,9 @@ const smci = {
 	"batchOps": {},
 	"campaignFolders": {},
 	"campaigns": {},
-	"lists": {}
+	"lists": {},
+	"templateFolders": {},
+	"templates": {}
 };
 
 
@@ -1669,13 +1683,13 @@ smci.lists.removeListMember = function (listID, subscriberID, callback) {
 					}
 				Read the MailChimp API reference for more details on the above query string parameters.
 	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
-					"response" - the response object from MailChimp's GET search-members api
+					"response" - the response object from MailChimp's GET /search-members api
 					"error" - any error(s) that occurred while processing the request
 				The values of the "error" and "response" arguments vary depending on the result of the request.
 				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
 				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
 	@returns 	n/a
-	@details 	This function executes a GET request using the NodeJD https.get() api to acquire a list of recipients fitting the querystring search term "query".
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire a list of recipients fitting the querystring search term "query".
 */
 smci.lists.searchMembers = function (qsObj, callback) {
 	var handlerTag = {"src": "smci/lists.searchMembers"};
@@ -1690,6 +1704,390 @@ smci.lists.searchMembers = function (qsObj, callback) {
 	www.get(options, callback, handlerTag.src);
 };
 // END lists
+
+
+
+// BEGIN templateFolders
+/*
+	@function 	templateFolders.createFolder
+	@parameter 	folderName - the string name to give the folder
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /template-folders api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to create a new MailChimp email template folder.
+*/
+smci.templateFolders.createFolder = function (folderName, callback) {
+	var handlerTag = {"src": "smci/templateFolders.createFolder"};
+	var requestBody = {
+		"name": folderName
+	};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/template-folders`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	templateFolders.deleteFolder
+	@parameter 	folderID - the unique id associated with the folder to delete
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's DELETE /template-folders/{folder_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a DELETE request using the NodeJS https.request() api to delete the MailChimp email template folder specified by "folderID".
+*/
+smci.templateFolders.deleteFolder = function (folderID, callback) {
+	var handlerTag = {"src": "smci/templateFolders.deleteFolder"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/template-folders/${folderID}`,
+		"method": "DELETE",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.delete(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	templateFolders.getFullList
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /template-folders api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, ths parameter can be passed "null". Otherwise, the object is expected to take the following format:
+					{
+						"fields": "...",
+						"exclude_fields": "...",
+						"count": [int],
+						"offset": [int]
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /template-folders api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire a full list of MailChimp email template folders associated with the MailChimp account.
+*/
+smci.templateFolders.getFullList = function (qsObj, callback) {
+	var handlerTag = {"src": "smci/templateFolders.getFullList"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/template-folders/`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	templateFolders.getFolder
+	@parameter 	folderID - the unique ID associated with the template folder to query
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /template-folders/{folder_id} api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, ths parameter can be passed "null". Otherwise, the object is expected to take the following format:
+					{
+						"fields": "...",
+						"exclude_fields": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /template-folders/{folder_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire information of the MailChimp email template folder specified by "folderID".
+*/
+smci.templateFolders.getFolder = function (folderID, qsObj, callback) {
+	var handlerTag = {"src": "smci/templateFolders.getFolder"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/template-folders/${folderID}${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	templateFolders.editFolder
+	@parameter  folderID - the unique id for the template folder to edit
+	@parameter 	newName - the new name to apply to the folder
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /template-folders/{folder_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJS https.request() api to edit/update a template folder. This function currently only allows changes to a template folder's name.
+*/
+smci.templateFolders.editFolder = function (folderID, newName, callback) {
+	var handlerTag = {"src": "smci/templateFolders.editFolder"};
+	var requestBody = {
+		"name": newName
+	};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/template-folders/${folderID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.patch(options, requestBody, callback, handlerTag.src);
+};
+// END templateFolders
+
+
+
+// BEGIN templates
+/*
+	@function 	templates.createTemplate
+	@parameter 	templateName - the string name to give the email template
+	@parameter 	folderID - the unique id of the template folder to place the template it. If you don't want to file this template in a template folder, pass this parameter "null" to leave the template unfiled.
+	@parameter 	content - the html content to place in the email. Read the MailChimp Template Language Guide to know more about how to format your html email content.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's POST /templates api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a POST request using the NodeJS https.request() api to create a new MailChimp email template.
+	@note 		MailChimp only supports "Classic Templates", and the "content" parameter must be passed VALID html code. Read about MailChimp's Template Language and Classic Templates in their Knowledge Base for more information on how to format your html content.
+*/
+smci.templates.createTemplate = function (templateName, folderID, content, callback) {
+	var handlerTag = {"src": "smci/templates.createTemplate"};
+	var requestBody = {
+		"name": templateName,
+		"html": content
+	};
+	if (folderID !== null) {
+		requestBody["folder_id"] = folderID;
+	}
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/templates`,
+		"method": "POST",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	templates.getFullList
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /templates api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, ths parameter can be passed "null". Otherwise, the object is expected to take the following format:
+					{
+						"fields": "...",
+						"exclude_fields": "...",
+						"count": [int],
+						"offset": [int],
+						"created_by": "...",
+						"since_created_at": "...",
+						"before_created_at": "...",
+						"type": "...",
+						"category": "...",
+						"folder_id": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /templates api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire a full list of email templates associated with the mailchimp account.
+*/
+smci.templates.getFullList = function (qsObj, callback) {
+	var handlerTag = {"src": "smci/templates.getFullList"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/templates${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	templates.getTemplateInfo
+	@parameter 	templateID - the unique id associated with the template to query
+	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /templates/{template_id} api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, ths parameter can be passed "null". Otherwise, the object is expected to take the following format:
+					{
+						"fields": "...",
+						"exclude_fields": "..."
+					}
+				Read the MailChimp API reference for more details on the above query string parameters.
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's GET /templates/{template_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a GET request using the NodeJS https.get() api to acquire information about the email template specified by "templateID".
+*/
+smci.templates.getTemplateInfo = function (templateID, qsObj, callback) {
+	var handlerTag = {"src": "smci/templates.getTemplateInfo"};
+	var querystring = (qsObj === null) ? "" : `?${qs.stringify(qsObj)}`;
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/templates/${templateID}${querystring}`,
+		"method": "GET",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.get(options, callback, handlerTag.src);
+};
+
+/*
+	@function 	templates.editTemplateName
+	@parameter  templateID - the unique id for the template to edit
+	@parameter 	newName - the new name to apply to the template
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /templates/{template_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJS https.request() api to edit/update a template's name.
+*/
+smci.templates.editTemplateName = function (templateID, newName, callback) {
+	var handlerTag = {"src": "smci/templates.editTemplateName"};
+	var requestBody = {
+		"name": newName
+	};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/templates/${templateID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.patch(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	templates.editTemplateContent
+	@parameter  templateID - the unique id for the template to edit
+	@parameter 	newHtml - the new html content to apply to the template
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /templates/{template_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJS https.request() api to edit/update a template's content.
+*/
+smci.templates.editTemplateContent = function (templateID, newHtml, callback) {
+	var handlerTag = {"src": "smci/templates.editTemplateContent"};
+	var requestBody = {
+		"html": newHtml
+	};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/templates/${templateID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.patch(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	templates.moveTemplate
+	@parameter  templateID - the unique id for the template to edit
+	@parameter 	newFolderID - the unique id of the template folder to move the template to
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's PATCH /templates/{template_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a PATCH request using the NodeJS https.request() api to move a template to the folder specified by newFolderID.
+*/
+smci.templates.moveTemplate = function (templateID, newFolderID, callback) {
+	var handlerTag = {"src": "smci/templates.moveTemplate"};
+	var requestBody = {
+		"folder_id": newFolderID
+	};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/templates/${templateID}`,
+		"method": "PATCH",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.patch(options, requestBody, callback, handlerTag.src);
+};
+
+/*
+	@function 	templates.deleteTemplate
+	@parameter 	templateID - the unique id associated with the template to delete
+	@parameter 	callback - a callback function to run after the request is issued. It is passed two arguments:
+					"response" - the response object from MailChimp's DELETE /templates/{template_id} api
+					"error" - any error(s) that occurred while processing the request
+				The values of the "error" and "response" arguments vary depending on the result of the request.
+				On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
+				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
+	@returns 	n/a
+	@details 	This function executes a DELETE request using the NodeJS https.request() api to delete the MailChimp email template specified by "templateID".
+*/
+smci.templates.deleteTemplate = function (templateID, callback) {
+	var handlerTag = {"src": "smci/templates.deleteTemplate"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/templates/${templateID}`,
+		"method": "DELETE",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`
+	};
+
+	www.delete(options, callback, handlerTag.src);
+};
+// END templates
 // END MailChimp API Wrapper Functions
 
 
