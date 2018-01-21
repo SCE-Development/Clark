@@ -5,8 +5,7 @@
 	Date Created: 	October 18, 2017
 	Last Modified: 	November 5, 2017
 	Details:
-		This file comsists of all the common utility mothods used
-		by all pages.
+		This file comsists of all the common utility methods used by all pages (front-end).
 	Dependencies:
 		JQuery v1.12.4
 */
