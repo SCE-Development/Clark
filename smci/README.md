@@ -1,5 +1,6 @@
 # SMCI
-The Sce Mail Chimp Interface. 
+The Sce Mail Chimp Interface.
+Current Version: (1.0.0)
 
 ---
 
@@ -18,6 +19,7 @@ The Sce Mail Chimp Interface.
   - [smci.lists](#smcilists)
   - [smci.templateFolders](#smcitemplatefolders)
   - [smci.templates](#smcitemplates)
+- [Release Notes](#release-notes)
 
 ---
 
@@ -120,3 +122,8 @@ Below is the documentation for all SMCI MailChimp API Wrappers organized into th
 
 ## smci.templates
   The Email Template Management module, useful for creating, deleting, and editing email templates created by you or by MailChimp under their default templates selection. This is the primary API used to create custom email bodies with the SCE logo and style. However, care needs to be taken to adhere to MailChimp's formatting guidelines, since there are legally-binding guidelines at stake here.
+
+---
+
+# Release Notes
+  - Currently working on expanding this markdown README to include all API wrapper documentation
