@@ -81,7 +81,7 @@ Below is the documentation for all SMCI MailChimp API Wrappers organized into th
 #### api.ping
 
   - _**parameter**_ callback
-    
+  
     a callback function to run after the request is issued. It is passed two arguments:
       "response" - the response object from MailChimp
       "error" - any error(s) that occurred while processing the request
@@ -89,7 +89,7 @@ Below is the documentation for all SMCI MailChimp API Wrappers organized into th
 		On success: "error" is null, and "response" is the JSON response object returned from MailChimp.
     On failure: "error" is the object returned by the NodeJS https.get() function's "error" event, and "response" is null.
 
-	- _**returns**_
+  - _**returns**_
 
     n/a
 	
