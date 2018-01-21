@@ -7,7 +7,7 @@ The Sce Mail Chimp Interface.
 - [Description](#description)
 - [Dependencies](#dependencies)
 - [Sub-Module Reference](#sub-module-reference)
-  - [smci.api](#smci.api)
+  - [smci.api](#smci-api)
 
 ---
 
