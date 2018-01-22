@@ -44,7 +44,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 
 ## Application Execution
 #### On Linux/Mac/Windows
-  To run the server on Linux/Mac/Windows command line, you can use *node server.js* in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
+  _**BEFORE**_ starting the server, be sure to perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md). Then to run the server on Linux/Mac/Windows command line, you can use *node server.js* in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
 
   Once this is done, you may simply pop open your favorite web browser and enter "localhost:8080" (or whichever port you launched the server in), and the webpage should be properly displayed.
   
