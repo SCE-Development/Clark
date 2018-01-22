@@ -50,7 +50,7 @@ mongo.connect("mongodb://localhost:27017/testdb", mongoOptions, function (err, d
 		mdb.findCollections(null, function(error, list) {
 			var serverDbConnLogCollectionFound = false
 			for (var i=0; i<list.length; i++) { 
-				if (list[i].name == "serverDbConnLog") {	// this collection logs when server initiates DB connections
+				if (list[i].name == "serverStarts") {	// this collection logs when server initiates DB connections
 					serverDbConnLogCollectionFound = true;
 				}
 			}
