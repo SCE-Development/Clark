@@ -69,3 +69,5 @@ log/*
 sql/*
 rj_todo.txt
 
+# Ignore credential files (i.e. have the user create their own credentials)
+credentials.json
