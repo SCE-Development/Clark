@@ -35,14 +35,6 @@ var options = {
 
 
 
-// BEGIN test
-// var smci = require("./smci/smci");
-// smci.requestRoot();
-// console.log(`Test Completed`);
-// END test
-
-
-
 // BEGIN Handler Functions
 /*	
 	@function	rootHandler
