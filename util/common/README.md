@@ -51,19 +51,21 @@ The system key credential creates the "root" user (so to speak) of the SCE Core 
 ```json
 {
 	"syskey": {
-		"memberID": 0
+		"memberID": 0,
 		"firstName": "s",
 		"middleInitial": "c",
 		"lastName": "e",
-		"joinDate": (new Date(Date.now())).toISOString(),
+		"joinDate": "",
 		"userName": "sce_admin",
-		"passWord": "@sce123",	// can replace with any desired password
-		"email": "dev.sce.sjsu@gmail.com",	// can replace with any desired email
+		"passWord": "@sce123",
+		"email": "dev.sce.sjsu@gmail.com",
 		"major": "Admin",
-		"lastLogin": (new Date(Date.now())).toISOString()
+		"lastLogin": ""
 	}
 }
 ```
+
+where "userName", "passWord" and "email" can be replaced by any string value of your choosing (be wise about password complexity), and "joinDate" and "lastLogin" can be populated with the current datetime string returned by JavaScript's Date.toISOString() function.
 
 Once the JSON is created and the following MDBI instructions are completed, the MDBI module will automatically make sure that the database has this user on file as an administrator.
 
