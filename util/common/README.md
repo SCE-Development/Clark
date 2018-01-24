@@ -29,7 +29,7 @@ Read each files' setup instructions for detailed procedures on setting up both t
 
 ### credentials.json
 
-This file contains all credentials necessary for the entire system to function properly. The elements currently required in the file pertain to the MDBI module (i.e. db access credentials) and the sce admin portal (i.e. sce admin portal master key). By default, the repository does not come with this file included, and must therefore be created manually. Below are setup instructions used to properly create the credentials.json file and associate all credentials to their relevant systems (assumes you are using Ubuntu Linux).
+This file contains all credentials necessary for the entire system to function properly. The elements currently required in the file pertain to the MDBI module (i.e. db access credentials) and the sce admin portal (i.e. sce admin portal master key). By default, the repository does not come with this file included (for security purposes), and must therefore be created manually. Below are setup instructions used to properly create the credentials.json file and associate all credentials to their relevant systems (assumes you are using Ubuntu Linux).
 
 #### Credentials Setup
 
@@ -73,7 +73,7 @@ Once the JSON is created and the following MDBI instructions are completed, use 
 
 The MDBI credential should have the module name "mdbi", and should be given the following credentials as members of a JSON object:
 
-  - user - the user name for db login
+  - user - the username for db login
   - pwd - the password for db login
 
 The structure as a whole should look like this:
@@ -89,4 +89,4 @@ The structure as a whole should look like this:
 
 Once you have selected a username and password, they should be placed in the JSON structure above. Then, you must set the local MongoDB installation to enforce access control (see the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/#enable-access-control-and-enforce-authentication)). Finally, you must add this user as an administrator using the methods described by [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/).
 
-After the above steps are completed, the MDBI should automatically check that the database exists and is formatted correctly, and also make sure that your system master key exists as an admin user for the Core v4 system.
+After the above steps are completed, the MDBI should automatically check that the relevant database collections exist and are formatted correctly.
