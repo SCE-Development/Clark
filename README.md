@@ -35,7 +35,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
   ```
   npm install
   ```
-  - Install MongoDB locally on you machine (follow the relevant installation instructions on MongoDB's website)
+  - Install MongoDB locally on your machine (follow the relevant installation instructions on MongoDB's website)
 
 #### On Windows
   - You can install **Node.js** directly from their website using their installer. Afterwards, you can perform the same Linux/Mac verification and package installation steps (displayed above) by using Windows command prompt or PowerShell
