@@ -44,11 +44,11 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 
 ## Application Execution
 #### On Linux/Mac/Windows
-  _**BEFORE**_ starting the server, be sure to perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md). Then, initialize the database by running the [database setup script](./mdbi/tools/sce_db_setup_v0.js) using
+  _**BEFORE**_ starting the server, be sure to perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md). Then, initialize the database by first starting your mongo daemon with access control enabled (see [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/)), and by then running the [database setup script](./mdbi/tools/sce_db_setup_v0.js) using
   ```
   node sce_db_setup_v0.js
   ```
-  which should create the necessary collections required by the mongo database.
+  to create the necessary collections required by the mongo database.
 
   To run the server on Linux/Mac/Windows command line, you can use
   ```
