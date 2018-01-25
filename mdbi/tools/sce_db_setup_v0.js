@@ -18,6 +18,8 @@
 // Includes
 var settings = require("../../util/settings");
 var credentials = require(settings.credentials).mdbi;
+var syskey = require(settings.credentials).syskey;
+var schema = require("./schema_v0");
 var assert = require("assert");
 var arg = process.argv[2];
 var mongo_settings = require("../mongo_settings");
@@ -111,6 +113,50 @@ if (arg === "--help") {
 					break;
 				}
 
+				// Format the database
+				case "--format": {
+					console.log("WARNING: You are about to delete all records in the database! Are you sure? (Yes/No)");
+					process.stdin.on("readable", function () {
+						const chunk = process.stdin.read();
+						if (chunk !== null) {
+							var answer = chunk.slice(0, chunk.length - 1);
+							if (answer.toString().toLowerCase() === "yes") {
+								console.log("Dropping entire SCE database...");
+
+								var deletionPromises = [];
+								for (var i = 0; i < schema.collectionNames.length; i++) {
+									deletionPromises[i] = new Promise(function (resolve, reject) {
+										var target = schema.collectionNames[i];
+										db.collection(target).deleteMany({}).then(function(result) {
+											if (result.result.ok) {
+												console.log(`Deleted ${target} documents`);
+												resolve();
+											} else {
+												console.log(`Failed to delete ${target} documents`);
+												reject();
+											}
+										});
+									});
+								}
+
+								Promise.all(deletionPromises).then(function (results) {
+									console.log(`Database format complete: ${results}`);
+									process.kill(process.pid, "SIGINT");// needs to implement Promises
+								}).catch(function (error) {
+									console.log(`Failed to complete database format: ${error}`);
+									process.kill(process.pid, "SIGINT");// needs to implement Promises
+								});
+							} else if (answer.toString().toLowerCase() === "no") {
+								console.log("Aborting...");
+								process.kill(process.pid, "SIGINT");
+							} else {
+								console.log(`I didn't understand "${answer.toString()}". Please say Yes or No...`);
+							}
+						}
+					});
+					break;
+				}
+
 				// Initialize database
 				default: {
 					console.log("Initializing db to SCE specifications...");
@@ -121,6 +167,7 @@ if (arg === "--help") {
 						db.collection("serverActivations").insertOne(placeholders.serverActivations, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection serverActivations: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
@@ -130,6 +177,7 @@ if (arg === "--help") {
 						db.collection("Member").insertOne(placeholders.Member, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection Member: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
@@ -139,6 +187,7 @@ if (arg === "--help") {
 						db.collection("MembershipData").insertOne(placeholders.MembershipData, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection MembershipData: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
@@ -148,6 +197,7 @@ if (arg === "--help") {
 						db.collection("DoorCode").insertOne(placeholders.DoorCode, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection DoorCode: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
@@ -157,6 +207,7 @@ if (arg === "--help") {
 						db.collection("ClearanceLevel").insertOne(placeholders.ClearanceLevel, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection ClearanceLevel: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
@@ -166,6 +217,7 @@ if (arg === "--help") {
 						db.collection("Ability").insertOne(placeholders.Ability, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection Ability: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
@@ -175,6 +227,7 @@ if (arg === "--help") {
 						db.collection("SessionData").insertOne(placeholders.SessionData, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection SessionData: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
@@ -184,29 +237,43 @@ if (arg === "--help") {
 						db.collection("Announcement").insertOne(placeholders.Announcement, null, function (error, result) {
 							if (error) {
 								console.log(`Error creating collection Announcement: ${error}`);
+								reject();
 							} else {
 								resolve();
 							}
 						});
 					});
 
-					promiseServerActivations.then((msg) => {
-						promiseMember.then((msg) => {
-							promiseMembershipData.then((msg) => {
-								promiseDoorCode.then((msg) => {
-									promiseClearanceLevel.then((msg) => {
-										promiseAbility.then((msg) => {
-											promiseSessionData.then((msg) => {
-												promiseAnnouncement.then((msg) => {
-													console.log("Setup Complete...");
-													endSession(db);
-												});
-											});
-										});
-									});
-								});
-							});
+					var promiseAddAdminUser = new Promise(function (resolve, reject) {
+						db.collection("Member").insertOne(syskey, null, function(error, result) {
+							if (error) {
+								console.log(`Error creating syskey: ${error}`);
+								reject();
+							} else {
+								resolve();
+							}
 						});
+					});
+
+					Promise.all([
+						promiseServerActivations,
+						promiseMember,
+						promiseMembershipData,
+						promiseDoorCode,
+						promiseClearanceLevel,
+						promiseAbility,
+						promiseSessionData,
+						promiseAnnouncement
+					]).then(function (messages) {
+						console.log(`Database schema successfully applied...`);
+						promiseAddAdminUser.then((msg) => {
+							console.log(`Added default administrator ${syskey.userName}`);
+							endSession(db);
+						}).catch(function (error) {
+							console.log(`Failed to add default administrator: ${error}`);
+						});
+					}).catch(function (error) {
+						console.log(`Failed to apply database schema: ${error}`);
 					});
 					break;
 				}
@@ -257,6 +324,7 @@ function help () {
 	console.log("\t--stat\n\t\tAcquires current MongoDB database statistics for the SCE database");
 	console.log("\t--init\n\t\tThe default behavior; initializes the database to the structure described by schema_v0.js");
 	console.log("\t--help\n\t\tRuns this help prompt");
+	console.log("\t--format\n\t\tWARNING: This command does a complete wipe of the database (use only for debugging)");
 }
 // END Utility Functions
 
