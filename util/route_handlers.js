@@ -58,6 +58,29 @@ handle_map.rootHandler = function (request, response) {			// GET request on root
 		}
 	});
 };
+
+/*
+	@function 	adminPortalHandler
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns	n/a
+	@details 	This function handles all requests for the admin portal (i.e. "/core"). Used on a GET request
+*/
+handle_map.adminPortalHandler = function (request, response) {
+	var handlerTag = {"src": "adminPortalHandler"};
+	logger.log(`Admin portal requested from client @ ip ${request.ip}`, handlerTag);
+
+	response.set("Content-Type", "text/html");
+	response.sendFile("", options, function (error) {
+		if (error) {
+			logger.log(error, handlerTag);
+			response.status(500).end();
+		} else {
+			logger.log(`Sent admin portal to ${settings.port}`, handlerTag);
+			response.status(200).end();
+		}
+	});
+};
 // END Handler Functions
 
 
