@@ -1,6 +1,6 @@
 //	PROJECT: 		MEANserver
 // 	Name: 			Rolando Javier
-// 	File: 			server.js
+// 	File: 			settings.js
 // 	Date Created: 	October 26, 2017
 // 	Last Modified: 	January 9, 2018
 // 	Details:
@@ -18,4 +18,4 @@ var defaults = {
 };
 
 module.exports = defaults;
-// END server.js
+// END settings.js
