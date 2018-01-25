@@ -35,7 +35,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
   ```
   npm install
   ```
-  - Install MongoDB locally on you machine (follow the relevant installation instructions on MongoDB's website)
+  - Install MongoDB locally on your machine (follow the relevant installation instructions on MongoDB's website)
 
 #### On Windows
   - You can install **Node.js** directly from their website using their installer. Afterwards, you can perform the same Linux/Mac verification and package installation steps (displayed above) by using Windows command prompt or PowerShell
@@ -44,7 +44,17 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 
 ## Application Execution
 #### On Linux/Mac/Windows
-  To run the server on Linux/Mac/Windows command line, you can use *node server.js* in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
+  _**BEFORE**_ starting the server, be sure to perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md). Then, initialize the database by first starting your mongo daemon with access control enabled (see [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/)), and by then running the [database setup script](./mdbi/tools/sce_db_setup_v0.js) using
+  ```
+  node sce_db_setup_v0.js
+  ```
+  to create the necessary collections required by the mongo database.
+
+  To run the server on Linux/Mac/Windows command line, you can use
+  ```
+  node server.js
+  ```
+  in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
 
   Once this is done, you may simply pop open your favorite web browser and enter "localhost:8080" (or whichever port you launched the server in), and the webpage should be properly displayed.
   

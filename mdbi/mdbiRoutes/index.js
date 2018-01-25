@@ -16,8 +16,12 @@
 var express = require("express");
 var assert = require("assert");
 var router = express.Router();
-var logger = require("../../util/logger");
+var logger = require("../../util/logger");	// acquire event log system
+var settings = require("../../util/settings");	// acquire server system settings
 var mdb = require("../mongoWrapper");	// acquire MongoDB API Wrappers
+var credentials = require(settings.credentials);	// acquire db auth credentials
+var mongo_settings = require("../mongo_settings");	// acquire MongoDB settings
+var schema = require("../tools/schema_v0");	// acquire current db schema
 // END Includes
 
 
@@ -33,12 +37,16 @@ var mongo = require("mongodb").MongoClient;
 var mongoOptions = {
 	"appname": "SCE Core v4"
 };
-mongo.connect("mongodb://localhost:27017/testdb", mongoOptions, function (err, db) {
+var url = `mongodb://${encodeURIComponent(credentials.mdbi.user)}:${encodeURIComponent(credentials.mdbi.pwd)}@${mongo_settings.hostname}:${mongo_settings.port}/${mongo_settings.database}`;
+mongo.connect(url, mongoOptions, function (err, db) {
 	var handlerTag = {"src": "/mdbi"};
 
 	// Log connection status, and error (if any)
 	if (err) {
 		logger.log("Could not connect to Mongo:\n" + err, handlerTag);
+		if (db) {
+			endSession(db);
+		}
 		throw err;	// throw error only after error logging was successful
 	} else {
 		logger.log("Connected to Mongo", handlerTag);
@@ -46,27 +54,32 @@ mongo.connect("mongodb://localhost:27017/testdb", mongoOptions, function (err, d
 		// First, acquire link to database
 		mdb.database = db;
 
-		//Verify necessary collections are present. If not, create them
-		mdb.findCollections(null, function(error, list) {
-			var serverDbConnLogCollectionFound = false
-			for (var i=0; i<list.length; i++) { 
-				if (list[i].name == "serverDbConnLog") {	// this collection logs when server initiates DB connections
-					serverDbConnLogCollectionFound = true;
+		// Verify necessary collections are present. If not, throw error
+		mdb.findCollections(null, function (error, list) {
+			// Compile collection names from "list"
+			var listOfNames = [];
+			for (var i = 0; i < list.length; i++) {
+				listOfNames.push(list[i].name);
+			}
+
+			// Verify that the necessary collections are present
+			for (var i = 0; i < schema.collectionNames.length; i++) {
+				if (listOfNames.indexOf(schema.collectionNames[i]) === -1) {
+					logger.log(`Error: Collection ${schema.collectionNames[i]} not found`, handlerTag);
+					endSession(db);
+					throw new Error(`Collection ${schema.collectionNames[i]} not found`);
 				}
 			}
-			if (!serverDbConnLogCollectionFound) {
-				mdb.database.createCollection('serverStarts');
-			}
-		});
 
-		// Then, write server connection information
-		var postmark = logger.log("Database connection established", handlerTag);
-		mdb.insertDoc("serverStarts", {"login": postmark}, function (error, result) {
-			if (error != null) {
-				logger.log("Postmark not written to database", handlerTag);
-			} else {
-				logger.log("Postmark successfully written to database", handlerTag);
-			}
+			// Then, write server connection information
+			var postmark = logger.log("Database connection established", handlerTag);
+			mdb.insertDoc("serverActivations", {"login": postmark}, function (error, result) {
+				if (error != null) {
+					logger.log("Postmark not written to database", handlerTag);
+				} else {
+					logger.log("Postmark successfully written to database", handlerTag);
+				}
+			});
 		});
 	}
 });
@@ -302,6 +315,24 @@ router.use(function (err, request, response) {
 
 
 // BEGIN Utility Methods
+/*
+	@function 	endSession
+	@parameter 	mongoDatabase - the MongoDB database object returned from MongoClient.connect()
+	@parameter 	(optional) callback - a callback to run after completing the operation. This function is not passed any arguments.
+	@returns 	n/a
+	@details 	This function ends the MongoDB session by first logging out the authenticated user and closing the connection directly.
+*/
+function endSession(mongoDatabase, callback) {
+	console.log("Ending session...");
+
+	mongoDatabase.logout();
+	mongoDatabase.close();
+
+	if (typeof callback === "function") {
+		callback();
+	}
+}
+
 /*
 	@function 	delintRequestBody
 	@parameter 	body - the JSON object forming the POST request body

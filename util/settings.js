@@ -13,7 +13,8 @@ var defaults = {
 	"port": 8080,
 	"root": __dirname + "/../public",
 	"util": __dirname,
-	"logdir": __dirname + "/../log"
+	"logdir": __dirname + "/../log",
+	"credentials": __dirname + "/common/credentials.json"
 };
 
 module.exports = defaults;
