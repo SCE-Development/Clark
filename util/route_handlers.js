@@ -18,6 +18,7 @@
 // Includes
 var settings = require("./settings");				// import server system settings
 var logger = require(`${settings.util}/logger`);	// import event log system
+var www = require(`${settings.util}/www`);			// import custom https request wrappers
 var assert = require("assert");
 
 // Containers
@@ -32,6 +33,9 @@ var options = {
 		"x-sent": true
 	}
 };
+
+// Misc settings
+// www.config.silence();
 
 
 
@@ -71,7 +75,7 @@ handle_map.adminPortalHandler = function (request, response) {
 	logger.log(`Admin portal requested from client @ ip ${request.ip}`, handlerTag);
 
 	response.set("Content-Type", "text/html");
-	response.sendFile("", options, function (error) {
+	response.sendFile("core.html", options, function (error) {
 		if (error) {
 			logger.log(error, handlerTag);
 			response.status(500).end();
@@ -80,6 +84,43 @@ handle_map.adminPortalHandler = function (request, response) {
 			response.status(200).end();
 		}
 	});
+};
+
+/*
+	@function 	adminLoginHandler
+	@parameter 	request - the web request object provided by express.js
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200 with a redirection header and a session ID to validate all server operations during the session. On failure: a code 500 an error message detailing the error
+	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. If login credentials are correct, the client is then passed a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard
+*/
+handle_map.adminLoginHandler = function (request, response) {
+	console.log(`Request: ${(typeof request.body === "object") ? JSON.stringify(request.body) : request.body}`);
+	response.status(200).send("ok").end();
+	return;
+
+	var handlerTag = {"src": "adminLoginHandler"};
+	var options = {
+		"hostname": "localhost",
+		"path": "/mdbi",
+		"method": "POST",
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(request.body))
+		}
+	};
+
+	logger.log(`Submitting admin credentials from client @ ip ${request.ip}`, handlerTag);
+	response.set("Content-Type", "application/json");
+	www.https.post(options, request.body, function (reply, error) {
+		var msg = (typeof reply === "object") ? JSON.stringify(reply) : reply;
+		if (error) {
+			logger.log(`An error occurred: ${error}`, handlerTag);
+			response.status(500).send(error).end();
+		} else {
+			logger.log(`Reply: ${msg}`, handlerTag);
+			response.status(200).end();
+		}
+	}, handlerTag.src);
 };
 // END Handler Functions
 

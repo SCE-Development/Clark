@@ -63,6 +63,7 @@ app.use(express.static(settings.root + "/js"));		// location of js files
 logger.log(`Routing server endpoints...`, handlerTag);
 app.get("/", handles.rootHandler);				// GET request of the main login page
 app.get("/core", handles.adminPortalHandler);	// GET request of the administartor portal login
+app.post("/core/login", handles.adminLoginHandler);	// POST request to submit admin login info
 
 
 

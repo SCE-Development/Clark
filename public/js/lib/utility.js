@@ -113,7 +113,7 @@ function post (uri, data, callback, ajaxMode) {
 					if (callback) {
 						callback(err, status, jqxhr);
 					}
-					logDebug("post()", "ajax request result", "failure");
+					logDebug("post()", "ajax request result", `failure -> ${err}`);
 				}
 			});
 			break;
