@@ -13,16 +13,24 @@
 "use strict"
 
 /* NodeJS+ExpressJS Server */
-var http = require("http");
+var https = require("https");
 var fs = require("fs");
 var bodyParser = require("body-parser");					// import POST request data parser
 var settings = require("./util/settings");					// import server system settings
+var ssl = require(settings.security);						// import https ssl certifications
 var logger = require(`${settings.util}/logger`);			// import event log system
 var handles = require(`${settings.util}/route_handlers`);	// import URI endpoint handlers
 var port = process.argv[2];									// allow custom ports
 
 /* Globals */
 var handlerTag = {"src": "server"};
+var ssl_settings = {
+	"key": fs.readFileSync(ssl.prvkey),
+	"cert": fs.readFileSync(ssl.cert),
+	"passphrase": ssl.passphrase,
+	"requestCert": false,
+	"rejectUnauthorized": false
+};
 
 
 
@@ -63,6 +71,7 @@ app.use(express.static(settings.root + "/js"));		// location of js files
 logger.log(`Routing server endpoints...`, handlerTag);
 app.get("/", handles.rootHandler);				// GET request of the main login page
 app.get("/core", handles.adminPortalHandler);	// GET request of the administartor portal login
+app.post("/core/login", handles.adminLoginHandler);	// POST request to submit admin login info
 
 
 
@@ -88,7 +97,11 @@ if (!port) {
 	logger.log(`Using custom port ${port}`, handlerTag);
 	settings.port = port;
 }
-app.listen(port, function () {
+// app.listen(port, function () {
+// 	logger.log(`Now listening on port ${port}`, handlerTag);
+// });
+var server = https.createServer(ssl_settings, app);
+server.listen(port, function () {
 	logger.log(`Now listening on port ${port}`, handlerTag);
 });
 // END server.js 

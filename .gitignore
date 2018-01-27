@@ -71,3 +71,6 @@ rj_todo.txt
 
 # Ignore credential files (i.e. have the user create their own credentials)
 credentials.json
+util/common/trustStore/*.key
+util/common/trustStore/*.crt
+util/common/trustStore/*.csr

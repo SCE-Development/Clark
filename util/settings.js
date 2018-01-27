@@ -14,7 +14,8 @@ var defaults = {
 	"root": __dirname + "/../public",
 	"util": __dirname,
 	"logdir": __dirname + "/../log",
-	"credentials": __dirname + "/common/credentials.json"
+	"credentials": __dirname + "/common/credentials.json",
+	"security": __dirname + "/common/security.js"
 };
 
 module.exports = defaults;

@@ -2,13 +2,13 @@
 // 	Name: 			Rolando Javier
 // 	File: 			logger.js
 // 	Date Created: 	October 26, 2017
-// 	Last Modified: 	January 9, 2018
+// 	Last Modified: 	January 27, 2018
 // 	Details:
 // 					This file provides server.js with a means to log events to log files in the log directory
 // 	Dependencies:
 // 					NodeJS (using ECMAscript 6 style JS)
 //	Note:
-//					It is important to note that the idea of a "const" is JS doesn't mean "is constant", but rather, that "it can only be assigned ONCE", and thus all references to the "logger" singleton are "constant" (i.e. referencing the exact same object in memory). The logger singleton is still, therefore, not immutable.
+//					It is important to note that the idea of a "const" in JS doesn't mean "is constant", but rather, that "it can only be assigned ONCE", and thus all references to the "logger" singleton are "constant" (i.e. referencing the exact same object in memory). The logger singleton is still, therefore, not immutable, unless frozen with object.freeze().
 
 "use strict"
 var fs = require("fs");
