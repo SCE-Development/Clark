@@ -85,7 +85,7 @@ handle_map.adminPortalHandler = function (request, response) {
 	logger.log(`Admin portal requested from client @ ip ${request.ip}`, handlerTag);
 
 	response.set("Content-Type", "text/html");
-	response.sendFile("core.html", options, function (error) {
+	response.sendFile("core/core.html", options, function (error) {
 		if (error) {
 			logger.log(error, handlerTag);
 			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
@@ -102,8 +102,8 @@ handle_map.adminPortalHandler = function (request, response) {
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200 with a redirection header and a session ID to validate all server operations during the session.
 				On request failure: a code 500 and an error message detailing the error
-				On credential validation failure: a code 499 and an error message detailing the error
-				On incorrect credentials: a code 200 and an error message detailing the error
+				On credential validation failure: a code 499 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
+				On incorrect credentials: a code 200 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
 	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. If login credentials are correct, the client is then passed a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard
 */
 handle_map.adminLoginHandler = function (request, response) {

@@ -43,11 +43,11 @@
 		<!-- BEGIN title -->
 		<div class="row">
 			<div class="col-sm-12">
-				<div class="page-header portal-title centered-text">
-					<h1>
+				<div class="page-header centered-text">
+					<h1 class="portal-title">
 						Core v4
 					</h1>
-					<h4>Administrator Portal</h4>
+					<h4 class="portal-slug">Administrator Portal</h4>
 				</div>
 			</div>
 		</div>
@@ -59,9 +59,6 @@
 			<div class="col-sm-4">
 				<div id="credentialsBox" ng-controller="loginCredentials as credentials" class="box max-height wide-centered">
 					<img id="sceLogo" src="img/SCE-glow.png" alt="SCE Glow Logo">
-					<div id="submissionResponse" class="hidden alert alert-danger alert-dismissable" role="alert">
-						{{credentials.response}}
-					</div>
 					<div class="input-group">
 						<span class="input-group-addon">
 							<i class="fas fa-user-circle"></i>
@@ -80,6 +77,14 @@
 							Login
 						</button>
 					</div>
+					<div id="submissionResponse">
+						<div class="status-display">
+							{{credentials.status}}
+						</div>
+						<div class="error-display">
+							{{credentials.response}}
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="col-sm-4"></div>
@@ -93,7 +98,7 @@
 
 <!-- BEGIN footer -->
 <footer>
-	<script type="text/javascript" src="js/lib/utility.js"></script>
+	<script type="text/javascript" src="../js/lib/utility.js"></script>
 	<script type="text/javascript" src="js/core.js"></script>
 </footer>
 <!-- END footer -->

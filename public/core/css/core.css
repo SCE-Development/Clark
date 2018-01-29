@@ -1,3 +1,13 @@
+@font-face {
+	font-family: sceSyncopate;
+	src: url("../../font/Syncopate-Regular.ttf");
+}
+
+@font-face {
+	font-family: sceSyncopateBold;
+	src: url("../../font/Syncopate-Bold.ttf");
+}
+
 body {
 	background: url("../img/babu-1810144_1920.jpg");
 	width: 100%;
@@ -17,6 +27,11 @@ body {
 	text-align: center;
 }
 
+.error-display {
+	text-align: center;
+	color: red;
+}
+
 .half-square-centered {
 	height: 50%;
 	width: 50%;
@@ -31,12 +46,23 @@ body {
 	width: 100%;
 }
 
+.portal-slug {
+	color: silver;
+	font-family: sceSyncopate;
+}
+
 .portal-title {
 	color: silver;
+	font-family: sceSyncopateBold;
 }
 
 .sce-input-bar {
 	background-color: #303030;
+	color: gray;
+}
+
+.status-display {
+	text-align: center;
 	color: gray;
 }
 
