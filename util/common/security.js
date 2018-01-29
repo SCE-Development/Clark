@@ -15,7 +15,7 @@ const certificateDir = "trustStore";
 const privateKeyName = "rj_rsa.key";
 const publicKeyName = "rj_rsa_public.key";
 const certName = "rj_rsa.crt";
-const passphrase = "@sce123_gettingSchwifty"
+const passphrase = "@sce123_gettingSchwifty";
 
 
 

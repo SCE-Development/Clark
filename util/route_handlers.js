@@ -18,6 +18,7 @@
 // Includes
 var fs = require("fs");
 var https = require("https");
+var hash = require("node_hash");
 var settings = require("./settings");				// import server system settings
 var ef = require("./error_formats");				// import error formatter
 var logger = require(`${settings.util}/logger`);	// import event log system
@@ -148,7 +149,7 @@ handle_map.adminLoginHandler = function (request, response) {
 			logger.log(`A request error occurred: ${error}`, handlerTag);
 			response.send(errStr).status(500).end();
 		} else {
-			// Evaluate the database search resultes
+			// Evaluate the database search results
 			// logger.log(`Probe2: ${reply}`, handlerTag);	// debug
 			if (matchList.length === 0) {	// i.e. no match was found
 				var errStr = ef.asCommonStr(ef.struct.adminInvalid);
@@ -161,10 +162,13 @@ handle_map.adminLoginHandler = function (request, response) {
 				logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
 				response.send(errStr).status(499).end();
 			} else {	// i.e. credentials returned one match
+				var sessionSalt = (new Date(Date.now())).toISOString();
+
 				// generate session id here
+				var sessionID = hash.sha256(requestBody.search.userName, sessionSalt);
 				// submit session id to mongodb here
 				// pass session id and client redirection headers here
-				response.send(JSON.stringify({"sessionID": "0"})).status(200).end();
+				response.send(JSON.stringify({"sessionID": sessionID})).status(200).end();
 			}
 		}
 	}, handlerTag.src);
