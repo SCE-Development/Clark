@@ -35,6 +35,10 @@ error_formats.struct = {
 		"name": "ADMIN_INVALID",
 		"msg": "Invalid Admin Credentials"
 	},
+	"adminUnauthorized": {
+		"name": "ADMIN_UNAUTHORIZED",
+		"msg": "You Lack Authorization"
+	},
 	"coreErr": {
 		"name": "CORE_ERROR",
 		"msg": "An internal server error occurred"

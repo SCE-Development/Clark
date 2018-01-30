@@ -218,12 +218,12 @@ mdb.deleteManyDocs = function (collection, filter, callback) {
 
 /*
     @function   updateOneDoc
-    @parameter  collection - the string name of the collection to delete from
+    @parameter  collection - the string name of the collection to update from
     @parameter  filter - a JSON object to filter which document is updated (i.e. search criteria)
     @parameter  update - a JSON object describing how to update the document
     @parameter  callback - a callback function to run after the update is performed. It is passed two parameters:
                     error - if an error occurred, "error" is a MongoError object detailing the issue. Otherwise, it is null.
-                    result - if delete was successful, "result" is a Mongo Collection~updateWriteOpResult object. Otherwise, it is null.
+                    result - if update was successful, "result" is a Mongo Collection~updateWriteOpResult object. Otherwise, it is null.
     @returns    n/a
     @details    This function searches through the specified collection for the FIRST document matching the search criteria specified by filter. If found, it then updates the document in the way described by the update object (i.e. via various MongoDB update operators). Then, the function runs the callback, regardless of a successful or failed update operation.
     @note       See MongoDB's collection.updateOne() API doc for more information regarding the parameters 

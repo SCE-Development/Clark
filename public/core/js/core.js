@@ -21,7 +21,7 @@ function init () {
 
 
 // BEGIN Angular
-angular.module("adminPortal",[]).controller("loginCredentials", ["$scope", function ($scope) {
+angular.module("adminPortal",[]).controller("loginCredentials", ["$scope", "$window", "$location", function ($scope, $window, $location) {
 	var credentials = this;
 	credentials.user = "";
 	credentials.pwd = "";
@@ -29,7 +29,7 @@ angular.module("adminPortal",[]).controller("loginCredentials", ["$scope", funct
 	credentials.response = "";
 
 	credentials.submit = function () {
-		var uri = "https://localhost:8080/core/login"
+		var uri = "https://localhost:8080/core/login";
 
 		// Update UI with current status
 		credentials.response = "";
@@ -48,7 +48,8 @@ angular.module("adminPortal",[]).controller("loginCredentials", ["$scope", funct
 					// Show error to screen by updating model
 					credentials.response = (typeof response.emsg !== "undefined") ? response.emsg : `A problem has occurred. Please notify an sce officer! ${response.etype}`;
 				} else if (typeof response.sessionID !== "undefined") {
-					// Login succeeded. The sent redirection headers should automatically take you to the admin dashboard. No manual redirection required.
+					// Login succeeded; Enter the site with your session token
+					gotoDashboard(response.sessionID, $window, $location);
 				}
 
 				// BEGIN debug
@@ -69,6 +70,17 @@ angular.module("adminPortal",[]).controller("loginCredentials", ["$scope", funct
 
 
 // BEGIN Utility Functions
+function gotoDashboard (sessionID, ngwindow, nglocation) {
+	var dashboardUrl = "https://localhost:8080/core/dashboard";
+	var token = {
+		"sessionID": sessionID
+	};
+	// location = dashboardUrl;
+	// window.location.href = dashboardUrl;
+	window.open()
+	// post(dashboardUrl, token, function (response, status, jqxhr) {
+	// });
+}
 // END Utility Functions
 
 

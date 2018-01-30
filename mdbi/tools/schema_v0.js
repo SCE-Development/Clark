@@ -67,7 +67,8 @@ var schema = {
 		},
 		"Ability": {
 			"abilityID": "number",
-			"abilityName": "string"
+			"abilityName": "string",
+			"abilityDescription": "string"
 		},
 		"SessionData": {
 			"sessionID": "number",
