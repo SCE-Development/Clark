@@ -18,7 +18,7 @@
 // Includes
 var fs = require("fs");
 var https = require("https");
-var hash = require("node_hash");
+var crypt = require("./cryptic");					// import custom sce crypto wrappers
 var settings = require("./settings");				// import server system settings
 var ef = require("./error_formats");				// import error formatter
 var logger = require(`${settings.util}/logger`);	// import event log system
@@ -113,7 +113,7 @@ handle_map.adminLoginHandler = function (request, response) {
 		"collection": "Member",
 		"search": {
 			"userName": request.body.user,
-			"passWord": request.body.pwd
+			"passWord": crypt.hashPwd(request.body.user, request.body.pwd)
 		}
 	};
 	var options = {
@@ -162,10 +162,8 @@ handle_map.adminLoginHandler = function (request, response) {
 				logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
 				response.send(errStr).status(499).end();
 			} else {	// i.e. credentials returned one match
-				var sessionSalt = (new Date(Date.now())).toISOString();
-
 				// generate session id here
-				var sessionID = hash.sha256(requestBody.search.userName, sessionSalt);
+				var sessionID = crypt.hashSessionID(requestBody.search.userName);
 				// submit session id to mongodb here
 				// pass session id and client redirection headers here
 				response.send(JSON.stringify({"sessionID": sessionID})).status(200).end();

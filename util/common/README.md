@@ -70,7 +70,7 @@ The system key credential creates the "root" user (so to speak) of the SCE Core 
 }
 ```
 
-where "userName", "passWord" and "email" can be replaced by any string value of your choosing (be wise about password complexity), and "joinDate" and "lastLogin" can be populated with the current datetime string returned by JavaScript's Date.toISOString() function.
+where "userName" and "email" can be replaced by any string value of your choosing (be wise about password complexity), and "joinDate" and "lastLogin" can be populated with the current datetime string returned by JavaScript's Date.toISOString() function. Note that the "passWord" field _**MUST**_ be a hashed password string using [cryptic.js's](../cryptic.js) hashPwd() function. **DO NOT PUT PLAIN TEXT PASSWORDS IN THAT FIELD!!!**
 
 Once the JSON is created and the following MDBI instructions are completed, use of the database setup script will automatically ensure that the database has this user on file as an administrator.
 
