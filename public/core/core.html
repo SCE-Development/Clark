@@ -9,7 +9,7 @@
  -->
 
 <!DOCTYPE html>
-<html lang="en" ng-app="adminPortal">
+<html lang="en">
 <!-- BEGIN header -->
 <head>
 	<!-- Metadata -->
@@ -17,7 +17,7 @@
 	<meta name="description" content="SCE Core Administrator's Portal">
 	<meta name="keywords" content="SCE,core,admin,portal">
 	<meta name="author" content="R. Javier">
-	<meta name="last-modified" content="January 28, 2018">
+	<meta name="last-modified" content="January 30, 2018">
 
 	<!-- Phone Screen Compatibility -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +26,6 @@
 	<title>Core v4 Admin</title>
 
 	<!-- Standard Includes -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -38,8 +37,9 @@
 
 
 <!-- BEGIN body -->
-<body>
-	<div class="container-fluid">
+<body id="mainView">
+	<!-- BEGIN login view -->
+	<div id="pageContent" class="container-fluid">
 		<!-- BEGIN title -->
 		<div class="row">
 			<div class="col-sm-12">
@@ -57,40 +57,40 @@
 		<div class="row">
 			<div class="col-sm-4"></div>
 			<div class="col-sm-4">
-				<div id="credentialsBox" ng-controller="loginCredentials as credentials" class="box max-height wide-centered">
+				<div id="credentialsBox" class="box max-height wide-centered">
 					<img id="sceLogo" src="img/SCE-glow.png" alt="SCE Glow Logo">
 					<div class="input-group">
 						<span class="input-group-addon">
 							<i class="fas fa-user-circle"></i>
 						</span>
-						<input type="text" class="form-control sce-input-bar" ng-model="credentials.user" placeholder="username">
+						<input id="usr" type="text" class="form-control sce-input-bar" ng-model="credentials.user" placeholder="username">
 					</div>
 					<div class="input-group">
 						<span class="input-group-addon">
 							<i class="fas fa-key"></i>
 						</span>
-						<input type="password" class="form-control sce-input-bar" ng-model="credentials.pwd" placeholder="password">
+						<input id="pwd" type="password" class="form-control sce-input-bar"  placeholder="password">
 					</div>
 					<div class="btn-group max-width">
-						<button class="btn btn-success btn-block" ng-click="credentials.submit()">
+						<button id="submitBtn" class="btn btn-success btn-block">
 							<i class="fas fa-sign-in-alt"></i>
 							Login
 						</button>
 					</div>
 					<div id="submissionResponse">
-						<div class="status-display">
-							{{credentials.status}}
-						</div>
-						<div class="error-display">
-							{{credentials.response}}
-						</div>
+						<div id="statusMsg" class="status-display"></div>
+						<div id="errorMsg" class="error-display"></div>
 					</div>
+					<form id="submissionForm" action="" method="post" hidden>
+						<input id="receivedToken" name="sessionID" value="">
+					</form>
 				</div>
 			</div>
 			<div class="col-sm-4"></div>
 		</div>
 		<!-- END login prompt -->
 	</div>
+	<!-- END login view -->
 </body>
 <!-- END body -->
 
@@ -102,4 +102,4 @@
 	<script type="text/javascript" src="js/core.js"></script>
 </footer>
 <!-- END footer -->
- </html>
+</html>

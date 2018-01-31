@@ -292,8 +292,11 @@ handle_map.adminLoginHandler = function (request, response) {
 												// Give client their session id and client redirection headers here
 												console.log(`UPDATED: ${JSON.stringify(match.list)}`);
 												console.log(`Redirecting: ${redir}`);
-												var sessionStuff = {"sessionID": sessionID};
-												response.send(sessionStuff).status(200).end();
+												var sessionResponse = {
+													"sessionID": sessionID,
+													"destination": redir
+												};
+												response.send(sessionResponse).status(200).end();
 												resolve();
 											}
 										});

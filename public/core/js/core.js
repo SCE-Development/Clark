@@ -7,7 +7,8 @@
 // 					This file contains all front-end javascript for the core.html admin portal.
 // 	Dependencies:
 // 					AngularJS 1.6.7
-"use strict"
+
+"use strict";
 
 $(document).ready(init());
 
@@ -20,68 +21,81 @@ function init () {
 
 
 
-// BEGIN Angular
-angular.module("adminPortal",[]).controller("loginCredentials", ["$scope", "$window", "$location", function ($scope, $window, $location) {
-	var credentials = this;
-	credentials.user = "";
-	credentials.pwd = "";
-	credentials.status = "";
-	credentials.response = "";
-
-	credentials.submit = function () {
-		var uri = "https://localhost:8080/core/login";
-
-		// Update UI with current status
-		credentials.response = "";
-		credentials.status = "Submitting...";
-
-		// Send login credentials
-		post(uri, {"user":credentials.user, "pwd": credentials.pwd}, function (response, status, jqxhr) {
-			$scope.$apply(function () {
-				var msgAsString;
-
-				// Clear status indicator
-				credentials.status += "Done";
-
-				// Handle response
-				if (typeof response.etype !== "undefined") {
-					// Show error to screen by updating model
-					credentials.response = (typeof response.emsg !== "undefined") ? response.emsg : `A problem has occurred. Please notify an sce officer! ${response.etype}`;
-				} else if (typeof response.sessionID !== "undefined") {
-					// Login succeeded; Enter the site with your session token
-					gotoDashboard(response.sessionID, $window, $location);
-				}
-
-				// BEGIN debug
-				try {
-					msgAsString = JSON.stringify(response);
-				} catch (e) {
-					logDebug("submit()", "parseError", `Could not parse response ${response}: ${e}`);
-					msgAsString = response.toString();
-				}
-				logDebug("submit()", "reply", `Status: ${status} -> ${msgAsString}`);
-				// END debug
-			});
-		}, true);
+// BEGIN jquery controllers
+$("#submitBtn").on("click", function () {
+	var uri = "https://localhost:8080/core/login";	// change later
+	var packet = {
+		"user": $("#usr").val(),
+		"pwd": $("#pwd").val()
 	};
-}]);
-// END Angular
+
+	// Clear messages
+	setError("");
+
+	// Send login credentials
+	console.log(`Submitting...`);
+	setStatus("Submitting...");
+	post(uri, packet, function (response, status, jqxhr) {
+		var msgAsString;
+
+		// Clear status indicator
+		appendStatus("Done");
+		console.log("Done");
+
+		// Handle response
+		if (typeof response.etype !== "undefined") {
+			// Show error to screen by updating model
+			var emsg = (typeof response.emsg !== "undefined") ? response.emsg : `A problem has occurred. Please notify an sce officer! ${response.etype}`;
+			setError(emsg);
+		} else if (typeof response.sessionID !== "undefined") {
+			var redirect = response.destination;
+			var token = response.sessionID;
+			var requestBody = {
+				"sessionID": token
+			};
+
+			// Login succeeded; Enter the site with your session token
+			// post(redirect, requestBody, function (response, status, jqxhr) {
+			// 	// some stuff
+			// });
+			$("#submissionForm").attr("action", redirect);
+			$("#receivedToken").attr("value", token);
+			$("#submissionForm").submit();
+		}
+
+		// BEGIN debug
+		try {
+			msgAsString = JSON.stringify(response);
+		} catch (e) {
+			logDebug("submit()", "parseError", `Could not parse response ${response}: ${e}`);
+			msgAsString = response.toString();
+		}
+		logDebug("submit()", "reply", `Status: ${status} -> ${msgAsString}`);
+		// END debug
+	}, true);
+});
+// END jquery controllers
 
 
 
-// BEGIN Utility Functions
-function gotoDashboard (sessionID, ngwindow, nglocation) {
-	var dashboardUrl = "https://localhost:8080/core/dashboard";
-	var token = {
-		"sessionID": sessionID
-	};
-	// location = dashboardUrl;
-	// window.location.href = dashboardUrl;
-	window.open()
-	// post(dashboardUrl, token, function (response, status, jqxhr) {
-	// });
+// BEGIN utility functions
+function setStatus (str) {
+	$("#statusMsg").html(str);
 }
-// END Utility Functions
+
+function appendStatus (str) {
+	var old = $("#statusMsg").html();
+	$("#statusMsg").html(old + str);
+}
+
+function getStatus () {
+	return $("#statusMsg").html();
+}
+
+function setError (str) {
+	$("#errorMsg").html(str);
+}
+// END utility functions
 
 
 
