@@ -9,7 +9,7 @@
 }
 
 body {
-	background: url("../img/babu-1810144_1920.jpg");
+	/*background: url("../img/babu-1810144_1920.jpg");*/
 	width: 100%;
 	height: 100%;
 	background-repeat: no-repeat;
@@ -29,7 +29,7 @@ body {
 
 .error-display {
 	text-align: center;
-	/*color: red;*/
+	color: red;
 }
 
 .half-square-centered {
@@ -63,7 +63,7 @@ body {
 
 .status-display {
 	text-align: center;
-	/*color: gray;*/
+	color: gray;
 }
 
 .tall-centered {

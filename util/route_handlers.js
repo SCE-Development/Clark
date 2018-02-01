@@ -49,6 +49,30 @@ var ssl_user_agent = new https.Agent({
 
 
 // BEGIN Handler Functions
+/*
+	@function 	generalError
+	@parameter 	request - the web request object provided by express.js
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: gives the client an error page and a code 200
+				On failure: gives the client an error message and a code 500
+	@details 	This function handles all general errors that occur
+*/
+handle_map.generalError = function (request, response) {
+	var handlerTag = {"src": "generalError"};
+	
+	logger.log(`General error occurred. Sending error page to client @ ip ${request.ip}`, handlerTag);
+	response.set("Content-Type", "text/html");
+	response.sendFile("genErr.html", options, function (error) {
+		if (error) {
+			logger.log(error, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`Sent genErr.html to ${settings.port}`, handlerTag);
+			response.status(200).end();
+		}
+	});
+};
+
 /*	
 	@function	rootHandler
 	@parameter	request - the web request object provided by express.js
@@ -110,6 +134,7 @@ handle_map.adminPortalHandler = function (request, response) {
 handle_map.adminLoginHandler = function (request, response) {
 	var handlerTag = {"src": "adminLoginHandler"};
 	var timestamp = (new Date(Date.now())).toISOString();
+	var sessionStorageSupported = request.body.sessionStorageSupport;
 	var match = {
 		"list": []
 	};
@@ -127,7 +152,7 @@ handle_map.adminLoginHandler = function (request, response) {
 				"passWord": crypt.hashPwd(request.body.user, request.body.pwd)
 			}
 		};
-		var options = {
+		var queryOptions = {
 			"hostname": "localhost",
 			"path": "/mdbi/search/documents",
 			"method": "POST",
@@ -139,7 +164,7 @@ handle_map.adminLoginHandler = function (request, response) {
 		};
 
 		// Submit credentials to mdbi/search/documents and find all matches
-		www.https.post(options, requestBody, function (reply, error) {
+		www.https.post(queryOptions, requestBody, function (reply, error) {
 			match.list = reply;	// is expected to be an array
 			var matchFound = false;
 
@@ -177,7 +202,7 @@ handle_map.adminLoginHandler = function (request, response) {
 							"memberID": match.list[0].memberID
 						}
 					};
-					var options = {
+					var submissionOptions = {
 						"hostname": "localhost",
 						"path": "/mdbi/search/documents",
 						"method": "POST",
@@ -189,7 +214,7 @@ handle_map.adminLoginHandler = function (request, response) {
 					};
 
 					// Submit search criteria
-					www.https.post(options, requestBody, function (reply, error) {
+					www.https.post(submissionOptions, requestBody, function (reply, error) {
 						var membershipData = reply;	// expects an array
 
 						if (error) {
@@ -296,6 +321,11 @@ handle_map.adminLoginHandler = function (request, response) {
 													"sessionID": sessionID,
 													"destination": redir
 												};
+
+												// Cross browser support
+												if (!sessionStorageSupported) {
+													response.set("Set-Cookie", `sessionID=${sessionID}`);
+												}
 												response.send(sessionResponse).status(200).end();
 												resolve();
 											}
@@ -330,16 +360,55 @@ handle_map.adminLoginHandler = function (request, response) {
 */
 handle_map.adminDashboardHandler = function (request, response) {
 	var handlerTag = {"src": "adminDashboardHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var verificationPostBody = {
+		"collection": "SessionData",
+		"search": {
+			"sessionID": sessionID
+		}
+	};
+	var verificationPostOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/search/documents",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(verificationPostBody))
+		}
+	};
 	logger.log(`Admin dashboard request from client @ ip ${request.ip}`, handlerTag);
 
-	response.set("Content-Type", "text/html");
-	response.sendFile("core/dashboard.html", options, function (error) {
-		if (error) {
-			logger.log(error, handlerTag);
-			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+	// Check to make sure that the submitted sessionID is in the session database
+	// logger.log(JSON.stringify(request.body), handlerTag);
+	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
+		var existingSession = reply[0];
+		
+		if (existingSession) {
+			// If the search returns a database entry, grant the user access
+			// logger.log(JSON.stringify(reply), handlerTag);	// debugs
+			response.set("Content-Type", "text/html");
+			response.sendFile("core/dashboard.html", options, function (error) {
+				if (error) {
+					logger.log(error, handlerTag);
+					response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+				} else {
+					logger.log(`Valid session token. Sent admin dashboard to ${settings.port}`, handlerTag);
+					response.status(200).end();
+				}
+			});
 		} else {
-			logger.log(`Sent admin dashboard to ${settings.port}`, handlerTag);
-			response.status(200).end();
+			// Else, return them to the login page
+			response.set("Content-Type", "text/html");
+			response.sendFile("core/core.html", options, function (error) {
+				if (error) {
+					logger.log(error, handlerTag);
+					response.status(500).send(ef.asCommonStr(ef.stringify.coreErr, error)).end();
+				} else {
+					logger.log(`Invalid session token. Returning admin portal to ${settings.port}`);
+					response.status(499).end();
+				}
+			});
 		}
 	});
 };

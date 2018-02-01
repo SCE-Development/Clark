@@ -13,6 +13,7 @@
 $(document).ready(init());
 
 // BEGIN init
+var sessionStorageSupported = (storageAvailable("sessionStorage")) ? true : false;
 function init () {
 	console.log("You have launched the SCE Core v4 Admin Portal");
 	setDebug(true);	// have post() logging
@@ -26,7 +27,8 @@ $("#submitBtn").on("click", function () {
 	var uri = "https://localhost:8080/core/login";	// change later
 	var packet = {
 		"user": $("#usr").val(),
-		"pwd": $("#pwd").val()
+		"pwd": $("#pwd").val(),
+		"sessionStorageSupport": sessionStorageSupported
 	};
 
 	// Clear messages
@@ -55,9 +57,14 @@ $("#submitBtn").on("click", function () {
 			};
 
 			// Login succeeded; Enter the site with your session token
-			// post(redirect, requestBody, function (response, status, jqxhr) {
-			// 	// some stuff
-			// });
+			if (sessionStorageSupported) {
+				// Store token in session storage
+				// console.log(`Yay! Session storage is good!`);	// debug
+				sessionStorage.setItem("sessionID", token);
+			} else {
+				// Cookie should've been sent via the headers
+				// console.log(`Darn...`);	// debug
+			}
 			$("#submissionForm").attr("action", redirect);
 			$("#receivedToken").attr("value", token);
 			$("#submissionForm").submit();
@@ -79,19 +86,43 @@ $("#submitBtn").on("click", function () {
 
 
 // BEGIN utility functions
+/*
+	@function 	setStatus
+	@parameter 	str - the string to set the status message to
+	@returns	n/a
+	@details 	This function sets the UI's status message area to "str"
+*/
 function setStatus (str) {
 	$("#statusMsg").html(str);
 }
 
+/*
+	@function 	appendStatus
+	@parameter 	str - the string to append to the status message
+	@returns 	n/a
+	@details 	This function appends "str" to the UI's status message
+*/
 function appendStatus (str) {
 	var old = $("#statusMsg").html();
 	$("#statusMsg").html(old + str);
 }
 
+/*
+	@function 	getStatus
+	@parameter 	n/a
+	@returns 	n/a
+	@details 	This function acquires the html content in the status message area
+*/
 function getStatus () {
 	return $("#statusMsg").html();
 }
 
+/*
+	@function 	setError
+	@parameter 	str - the string to set the error message to
+	@returns 	n/a
+	@details 	This function sets the UI's error message to "str"
+*/
 function setError (str) {
 	$("#errorMsg").html(str);
 }

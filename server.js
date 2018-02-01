@@ -76,6 +76,7 @@ app.get("/", handles.rootHandler);				// GET request of the main login page
 app.get("/core", handles.adminPortalHandler);	// GET request of the administartor portal login
 app.post("/core/login", handles.adminLoginHandler);	// POST request to submit admin login info
 app.post("/core/dashboard", handles.adminDashboardHandler);	// POST request to access the admin dashboard
+app.get("/core/dashboard", handles.generalError);	// forbid GET requests to the dashboard
 
 
 

@@ -21,7 +21,7 @@ function init () {
 
 
 // BEGIN Angular
-// angular.module("adminDashboard",[]);
+angular.module("adminDashboard",[]);
 // END Angular
 
 
