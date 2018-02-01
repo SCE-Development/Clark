@@ -15,7 +15,8 @@ var defaults = {
 	"util": __dirname,
 	"logdir": __dirname + "/../log",
 	"credentials": __dirname + "/common/credentials.json",
-	"security": __dirname + "/common/security.js"
+	"security": __dirname + "/common/security.js",
+	"sessionIdleTime": 20 	// minutes
 };
 
 module.exports = defaults;

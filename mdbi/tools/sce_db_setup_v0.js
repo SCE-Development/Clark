@@ -73,7 +73,8 @@ var placeholders = {
 		"sessionID": -1,
 		"memberID": -1,
 		"loginTime": "placeholder",
-		"lastActivity": "placeholder"
+		"lastActivity": "placeholder",
+		"maxIdleTime": -1
 	},
 	"Announcement": {
 		"aID": -1,

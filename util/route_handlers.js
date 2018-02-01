@@ -20,6 +20,7 @@ var fs = require("fs");
 var https = require("https");
 var crypt = require("./cryptic");					// import custom sce crypto wrappers
 var settings = require("./settings");				// import server system settings
+var dt = require("./datetimes");					// import datetime utilities
 var ef = require("./error_formats");				// import error formatter
 var logger = require(`${settings.util}/logger`);	// import event log system
 var ssl = require(settings.security);				// import https ssl credentials
@@ -255,7 +256,8 @@ handle_map.adminLoginHandler = function (request, response) {
 										"sessionID": sessionID,
 										"memberID": match.list[0].memberID,
 										"loginTime": timestamp,
-										"lastActivity": timestamp
+										"lastActivity": timestamp,
+										"maxIdleTime": settings.sessionIdleTime
 									}
 								};
 								var sessionRequestOptions = {
@@ -379,12 +381,17 @@ handle_map.adminDashboardHandler = function (request, response) {
 	};
 	logger.log(`Admin dashboard request from client @ ip ${request.ip}`, handlerTag);
 
-	// Check to make sure that the submitted sessionID is in the session database
+	// Check to make sure that the submitted sessionID is in the session database, and that it has not passed its masIdleTime since its last activity
 	// logger.log(JSON.stringify(request.body), handlerTag);
 	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
 		var existingSession = reply[0];
-		
-		if (existingSession) {
+		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number";
+		var lastActiveTimestamp = new Date(existingSession.lastActivity);
+
+		// Determine remaining idle time
+		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + existingSession.maxIdleTime);
+		var tokenExpired = dt.hasPassed(lastActiveTimestamp);
+		if (validResult && !tokenExpired) {
 			// If the search returns a database entry, grant the user access
 			// logger.log(JSON.stringify(reply), handlerTag);	// debugs
 			response.set("Content-Type", "text/html");
@@ -399,7 +406,12 @@ handle_map.adminDashboardHandler = function (request, response) {
 			});
 		} else {
 			// Else, return them to the login page
+			if (tokenExpired) {
+				logger.log(`Session token has expired.`, handlerTag);
+			}
+
 			response.set("Content-Type", "text/html");
+			response.location(`https://${request.hostname}:${settings.port}/core/`);
 			response.sendFile("core/core.html", options, function (error) {
 				if (error) {
 					logger.log(error, handlerTag);

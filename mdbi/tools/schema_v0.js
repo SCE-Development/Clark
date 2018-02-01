@@ -74,7 +74,8 @@ var schema = {
 			"sessionID": "number",
 			"memberID": "number",
 			"loginTime": "string",	// datetime
-			"lastActivity": "string"	// datetime
+			"lastActivity": "string",	// datetime
+			"maxIdleTime": "number"
 		},
 		"Announcement": {
 			"aID": "number",
