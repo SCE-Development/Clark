@@ -63,7 +63,7 @@ handle_map.generalError = function (request, response) {
 	
 	logger.log(`General error occurred. Sending error page to client @ ip ${request.ip}`, handlerTag);
 	response.set("Content-Type", "text/html");
-	response.sendFile("genErr.html", options, function (error) {
+	response.sendFile("home/genErr.html", options, function (error) {
 		if (error) {
 			logger.log(error, handlerTag);
 			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();

@@ -43,7 +43,7 @@ router.get("/", function (request, response) {
 	logger.log(`Test page requested from ip ${request.ip}`, handlerTag);
 	logger.log(request.toString(), handlerTag);
 	response.set("Content-Type", "text/html");	// forces the browser to interpret the file as an interactive webpage
-	response.sendFile("test.html", options, function (error) {
+	response.sendFile("home/test.html", options, function (error) {
 		if (error) {
 			logger.log(error, handlerTag);
 			response.status(500).end();

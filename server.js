@@ -55,10 +55,11 @@ app.use(bodyParser.json({							// support JSON-encoded request bodies
 app.use(bodyParser.urlencoded({						// support URL-encoded request bodies
 	extended: true
 }));
-app.use(express.static(settings.root));				// location of html files
-app.use(express.static(settings.root + "/css"));	// location of css files
-app.use(express.static(settings.root + "/js"));		// location of js files
-app.use(express.static(`${settings.root}/core`));	// location of admin portal html
+app.use(express.static(settings.root));					// server root
+app.use(express.static(`${settings.root}/home`));		// location of html files
+app.use(express.static(`${settings.root}/home/css`));	// location of css files
+app.use(express.static(`${settings.root}/home/js`));	// location of js files
+app.use(express.static(`${settings.root}/core`));		// location of admin portal html
 app.use(express.static(`${settings.root}/core/css`));	// location of admin portal css
 app.use(express.static(`${settings.root}/core/js`));	// location of admin portal js
 

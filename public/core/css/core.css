@@ -1,11 +1,11 @@
 @font-face {
 	font-family: sceSyncopate;
-	src: url("../../font/Syncopate-Regular.ttf");
+	src: url("../../lib/font/Syncopate-Regular.ttf");
 }
 
 @font-face {
 	font-family: sceSyncopateBold;
-	src: url("../../font/Syncopate-Bold.ttf");
+	src: url("../../lib/font/Syncopate-Bold.ttf");
 }
 
 body {
