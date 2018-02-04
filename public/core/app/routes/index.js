@@ -326,6 +326,7 @@ router.post("/dashboard", function (request, response) {
 	// Check to make sure that the submitted sessionID is in the session database, and that it has not passed its masIdleTime since its last activity
 	// logger.log(JSON.stringify(request.body), handlerTag);
 	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
+		logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
 		var existingSession = reply[0];
 		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number";
 		var lastActiveTimestamp = new Date(existingSession.lastActivity);
