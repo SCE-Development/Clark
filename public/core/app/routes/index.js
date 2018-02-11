@@ -329,11 +329,11 @@ router.post("/dashboard", function (request, response) {
 	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
 		logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
 		var existingSession = reply[0];
-		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number";
-		var lastActiveTimestamp = new Date(existingSession.lastActivity);
+		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number" && typeof existingSession.lastActivity === "string";
+		var lastActiveTimestamp = new Date((validResult) ? existingSession.lastActivity : Date.now());
 
 		// Determine remaining idle time
-		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + existingSession.maxIdleTime);
+		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + ((validResult) ? existingSession.maxIdleTime : 0));
 		var tokenExpired = dt.hasPassed(lastActiveTimestamp);
 		if (validResult && !tokenExpired) {
 			// If the search returns a database entry, grant the user access
