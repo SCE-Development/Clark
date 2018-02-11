@@ -52,6 +52,8 @@ $("#submitBtn").on("click", function () {
 		} else if (typeof response.sessionID !== "undefined") {
 			var redirect = response.destination;
 			var token = response.sessionID;
+			var uname = response.username;
+			console.log(`SENDING: ${uname}\n${redirect}\n${token}`);
 			var requestBody = {
 				"sessionID": token
 			};
@@ -61,6 +63,7 @@ $("#submitBtn").on("click", function () {
 				// Store token in session storage
 				// console.log(`Yay! Session storage is good!`);	// debug
 				sessionStorage.setItem("sessionID", token);
+				sessionStorage.setItem("username", uname);
 			} else {
 				// Cookie should've been sent via the headers
 				// console.log(`Darn...`);	// debug

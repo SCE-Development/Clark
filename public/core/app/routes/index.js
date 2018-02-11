@@ -263,6 +263,7 @@ router.post("/login", function (request, response) {
 												console.log(`Redirecting: ${redir}`);
 												var sessionResponse = {
 													"sessionID": sessionID,
+													"username": match.list[0].userName,
 													"destination": redir
 												};
 
@@ -409,7 +410,7 @@ router.use(function (request, response) {
 		"status": 404,
 		"subapp": "core",
 		"err": "Non-Existent Endpoint"
-	});
+	}).end();
 });
 
 /*
@@ -425,7 +426,7 @@ router.use(function (err, request, response) {
 		"status": 500,
 		"subapp": "core",
 		"err": err.message
-	});
+	}).end();
 });
 // END Error Handling Routes
 

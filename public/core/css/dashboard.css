@@ -1,15 +1,15 @@
 @font-face {
 	font-family: sceSyncopate;
-	src: url("../../font/Syncopate-Regular.ttf");
+	src: url("../../lib/font/Syncopate-Regular.ttf");
 }
 
 @font-face {
 	font-family: sceSyncopateBold;
-	src: url("../../font/Syncopate-Bold.ttf");
+	src: url("../../lib/font/Syncopate-Bold.ttf");
 }
 
 body {
-	/*background: url("../img/babu-1810144_1920.jpg");*/
+	background: url("../img/babu-1810144_1920.jpg");
 	width: 100%;
 	height: 100%;
 	background-repeat: no-repeat;
@@ -21,6 +21,25 @@ body {
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
+}
+
+.brand-logo {
+	max-width: 150%;
+	max-height: 150%;
+}
+
+.brand-logo-container {
+	vertical-align: middle;
+	text-align: center;
+}
+
+.brand-text {
+	font-family: sceSyncopate;
+}
+
+.btn-custom {
+	color: white;
+	background-color: #303030;
 }
 
 .centered-text {
@@ -75,6 +94,15 @@ body {
 	text-align: center;
 	height: 100%;
 	width: 100%;
+}
+
+.user-option-menu {
+	background-color: #303030;
+	color: white;
+}
+
+.user-option-text {
+	color: gray;
 }
 
 .vertCenter {

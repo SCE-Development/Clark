@@ -38,8 +38,35 @@
 
 
 <!-- BEGIN body -->
-<body>
-	Dashboard
+<body ng-app="adminDashboard">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<!-- BEGIN navbar header and logo -->
+			<div class="navbar-header">
+				<a href="#" class="navbar-brand">
+					<span class="brand-text">
+						<img alt="SCE Core" src="img/SCE-glow.png" class="brand-logo">
+						Core v4
+					</span>
+				</a>
+			</div>
+			<!-- END navbar header and logo -->
+
+			<!-- BEGIN navbar misc info -->
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown" ng-controller="UserController">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						Welcome, {{username}}
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu user-option-menu">
+						<li><a href="#" ng-click="logout()"><span class="user-option-text"><i class="fas fa-sign-out-alt"></i>Logout</span></a></li>
+					</ul>
+				</li>
+			</ul>
+			<!-- END navbar misc info -->
+		</div>
+	</nav>
 </body>
 <!-- END body -->
 
