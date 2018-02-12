@@ -1,0 +1,113 @@
+@font-face {
+	font-family: sceSyncopate;
+	src: url("../../lib/font/Syncopate-Regular.ttf");
+}
+
+@font-face {
+	font-family: sceSyncopateBold;
+	src: url("../../lib/font/Syncopate-Bold.ttf");
+}
+
+body {
+	background: url("../img/babu-1810144_1920.jpg");
+	width: 100%;
+	height: 100%;
+	background-repeat: no-repeat;
+	display: block;
+}
+
+.box {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.centered-text {
+	text-align: center;
+}
+
+.error-display {
+	text-align: center;
+	/*color: red;*/
+}
+
+.half-square-centered {
+	height: 50%;
+	width: 50%;
+	text-align: center;
+}
+
+.max-height {
+	height: 100%;
+}
+
+.max-width {
+	width: 100%;
+}
+
+.portal-slug {
+	color: silver;
+	font-family: sceSyncopate;
+}
+
+.portal-title {
+	color: silver;
+	font-family: sceSyncopateBold;
+}
+
+.sce-input-bar {
+	background-color: #303030;
+	color: gray;
+}
+
+.status-display {
+	text-align: center;
+	/*color: gray;*/
+}
+
+.tall-centered {
+	text-align: center;
+	height: 100%;
+}
+
+.tall-wide-centered {
+	text-align: center;
+	height: 100%;
+	width: 100%;
+}
+
+.vertCenter {
+	vertical-align: center;
+	text-align: center;
+	width: 100%;
+	/*height: 100%;*/
+	display: inline-block;
+	position: relative;
+}
+
+.vertical-align-parent {
+	display: flex;
+	flex-direction: column;
+}
+
+.vertical-align {
+	flex: 1;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.wide-centered {
+	text-align: center;
+	width: 100%;
+}
+
+#credentialsBox {
+	margin: 20px;
+}
+
+#sceLogo {
+	margin: 20px;
+	width: 200px;
+	height: 200px;
+}

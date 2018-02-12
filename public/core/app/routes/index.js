@@ -1,36 +1,30 @@
-// PROJECT: 		MEANserver
-// Name: 			Rolando Javier
-// File: 			route_handlers.js
-// Date Created: 	October 26, 2017
-// Last Modified: 	January 9, 2018
-// Details:
-//				 	This file abstracts all MAIN route handler functions to be used by server.js. The server.js file
-//				 	takes these and places them to their desired endpoints. This frees up the server code from
-//				 	the clutter introduced by placing all route handlers in server.js. All functions defined here
-// 					are written to service requests for their corresponding endpoints (defined in server.js)
-// Dependencies:
-// 					JQuery v1.12.4
+//	PROJECT: 		Core-v4
+// 	Name: 			Rolando Javier
+// 	File: 			core/app/routes/index.js
+// 	Date Created: 	February 2, 2018
+// 	Last Modified: 	February 2, 2018
+// 	Details:
+// 					This file contains logic to service all routes requested under the the "/core" endpoint
+// 	Dependencies:
 // 					ExpressJS 4.x
 // 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
 
-"use strict"
+"use strict";
 
 // Includes
-var fs = require("fs");
+var express = require("express");
 var https = require("https");
-var crypt = require("./cryptic");					// import custom sce crypto wrappers
-var settings = require("./settings");				// import server system settings
-var dt = require("./datetimes");					// import datetime utilities
-var ef = require("./error_formats");				// import error formatter
-var logger = require(`${settings.util}/logger`);	// import event log system
+var fs = require("fs");
+var router = express.Router();
+var settings = require("../../../../util/settings");// import server system settings
+var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
+var ef = require(`${settings.util}/error_formats`);	// import error formatter
+var crypt = require(`${settings.util}/cryptic`);	// import custom sce crypto wrappers
 var ssl = require(settings.security);				// import https ssl credentials
 var www = require(`${settings.util}/www`);			// import custom https request wrappers
-var assert = require("assert");
+var logger = require(`${settings.util}/logger`);	// import event log system
 
-// Containers
-var handle_map = {};		// A map of all endpoint handlers
-
-// ExpressJS transaction options
+// Options
 var options = {
 	root: settings.root,	// Server root directory (i.e. where server.js is located)
 	dotfiles: "deny",
@@ -39,9 +33,6 @@ var options = {
 		"x-sent": true
 	}
 };
-
-// Misc settings
-// www.config.silence();
 var ssl_user_agent = new https.Agent({
 	"port": settings.port,
 	"ca": fs.readFileSync(ssl.cert)
@@ -49,64 +40,15 @@ var ssl_user_agent = new https.Agent({
 
 
 
-// BEGIN Handler Functions
+// BEGIN Core Routes
 /*
-	@function 	generalError
-	@parameter 	request - the web request object provided by express.js
-	@parameter 	response - the web response object provided by express.js
-	@returns 	On success: gives the client an error page and a code 200
-				On failure: gives the client an error message and a code 500
-	@details 	This function handles all general errors that occur
-*/
-handle_map.generalError = function (request, response) {
-	var handlerTag = {"src": "generalError"};
-	
-	logger.log(`General error occurred. Sending error page to client @ ip ${request.ip}`, handlerTag);
-	response.set("Content-Type", "text/html");
-	response.sendFile("home/genErr.html", options, function (error) {
-		if (error) {
-			logger.log(error, handlerTag);
-			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
-		} else {
-			logger.log(`Sent genErr.html to ${settings.port}`, handlerTag);
-			response.status(200).end();
-		}
-	});
-};
-
-/*	
-	@function	rootHandler
+	@endpoint	/
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns	On success: gives the client the index.html page and a code 200
-				On failure: gives the client a commonErrorObject and a code 500
-	@details 	This function handles all requests for the server root (i.e. "/"). Used on a GET request
+	@returns	n/a
+	@details 	This function serves the SCE core admin login portal on "/core" endpoint requests. Used on a GET request
 */
-handle_map.rootHandler = function (request, response) {			// GET request on root dir (login page-> index.html)
-	var handlerTag = {"src": "rootHandler"};
-	logger.log(`Server root requested from client @ ip ${request.ip}`, handlerTag);
-	logger.log(request.toString(), handlerTag);
-	response.set("Content-Type", "text/html");
-	response.sendFile("index.html", options, function (error) {
-		if (error) {
-			logger.log(error, handlerTag);
-			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
-		} else {
-			logger.log(`Sent index.html to ${settings.port}`, handlerTag);
-			response.status(200).end();
-		}
-	});
-};
-
-/*
-	@function 	adminPortalHandler
-	@parameter	request - the web request object provided by express.js
-	@parameter	response - the web response object provided by express.js
-	@returns	On success: gives the client core.html and a code 200
-				On failure: gices the 
-	@details 	This function handles all requests for the admin portal (i.e. "/core"). Used on a GET request
-*/
-handle_map.adminPortalHandler = function (request, response) {
+router.get("/", function (request, response) {
 	var handlerTag = {"src": "adminPortalHandler"};
 	logger.log(`Admin portal requested from client @ ip ${request.ip}`, handlerTag);
 
@@ -114,25 +56,25 @@ handle_map.adminPortalHandler = function (request, response) {
 	response.sendFile("core/core.html", options, function (error) {
 		if (error) {
 			logger.log(error, handlerTag);
-			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
 		} else {
 			logger.log(`Sent admin portal to ${settings.port}`, handlerTag);
 			response.status(200).end();
 		}
 	});
-};
+});
 
 /*
-	@function 	adminLoginHandler
+	@endpoint 	/login
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200 with a redirection header and a session ID to validate all server operations during the session.
 				On request failure: a code 500 and an error message detailing the error
 				On credential validation failure: a code 499 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
 				On incorrect credentials: a code 200 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
-	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. If login credentials are correct, the client is then passed a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard
+	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. This is done by performing the described POST request to the "/core/login" endpoint. If login credentials are correct, the client is then passed a redirect url and a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard from the client side using the provided url and session id.
 */
-handle_map.adminLoginHandler = function (request, response) {
+router.post("/login", function (request, response) {
 	var handlerTag = {"src": "adminLoginHandler"};
 	var timestamp = (new Date(Date.now())).toISOString();
 	var sessionStorageSupported = request.body.sessionStorageSupport;
@@ -321,6 +263,7 @@ handle_map.adminLoginHandler = function (request, response) {
 												console.log(`Redirecting: ${redir}`);
 												var sessionResponse = {
 													"sessionID": sessionID,
+													"username": match.list[0].userName,
 													"destination": redir
 												};
 
@@ -351,16 +294,78 @@ handle_map.adminLoginHandler = function (request, response) {
 	}).catch(function (e) {
 		console.log(e);
 	});
-};
+});
 
 /*
-	@function 	adminDashboardHandler
+	@endpoint 	/logout
+	@parameter 	request - the web request object provided by express.js. The request's body is expected to be a JSON object with the following parameters:
+					"sessinID"	- the session token string to logout with
+					"userName"	- the username string to logout with
+					"sessionStorageSupport" - a boolean describing the client's support of a browser's sessionStorage
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200
+				On logout failure: a code 499 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
+	@details 	This function is used to process a sessionID and username from the admin dashboard for logout of the given user. This is done by performing a POST request to the "/core/logout" endpoint and passing in the JSON object described above in the request parameter.
+*/
+router.post("/logout", function (request, response) {
+	var handlerTag = {"src": "adminLogoutHandler"};
+	var validBody = (typeof request.body.userName === "string") && (typeof request.body.sessionID === "string") && (typeof request.body.sessionStorageSupport !== "undefined");
+
+	// Check for valid request body
+	if (!validBody) {
+		response.set("Content-Type", "application/json");
+		response.status(499).send(ef.asCommonStr(ef.struct.invalidBody)).end();
+	} else {
+		// Acquire the sessionID and userName
+		var uname = (typeof request.body.userName !== "string") ? null : request.body.userName;
+		var sid = (typeof request.body.sessionID !== "string") ? null : request.body.sessionID;
+
+		// Remove session data from db and log user out
+		var requestBody = {
+			"collection": "SessionData",
+			"search": {
+				// "userName": uname,	// for now, let's just use the sessionID
+				"sessionID": sid
+			}
+		};
+		var configQuery = {
+			"hostname": "localhost",
+			"path": "/mdbi/delete/documents",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+			}
+		};
+		var queryCallback = function (reply, error) {
+			var resultJSON = reply;	// is expected to be JSON
+
+			if (error) {	// report errors
+				logger.log(`A request error occurred: ${error}`, handlerTag);
+				response.send(er.asCommonStr(er.struct.coreErr, error)).status(500).end();
+			} else {	// otherwise, log user out
+				if (resultJSON.n !== 1) {	// error occurred; either no result found, or more than one record was deleted!
+					logger.log(`ERROR: ${resultJSON.n} session data was deleted!`, handlerTag);
+				} else {	// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
+					logger.log(`Logging out ${request.body.userName} (${request.body.sessionID})`, handlerTag);
+					response.set("Content-Type", "text/html");
+					response.status(200).end();
+				}
+			}
+		};
+		www.https.post(configQuery, requestBody, queryCallback);
+	}
+});
+
+/*
+	@endpoint 	/dashboard
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js
 	@returns 	?
-	@details 	This function is used to serve all requests for the admin dashboard after a successful admin login
+	@details 	This function is used to serve all requests for the admin dashboard after a successful admin login.
 */
-handle_map.adminDashboardHandler = function (request, response) {
+router.post("/dashboard", function (request, response) {
 	var handlerTag = {"src": "adminDashboardHandler"};
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
 	var verificationPostBody = {
@@ -384,12 +389,13 @@ handle_map.adminDashboardHandler = function (request, response) {
 	// Check to make sure that the submitted sessionID is in the session database, and that it has not passed its masIdleTime since its last activity
 	// logger.log(JSON.stringify(request.body), handlerTag);
 	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
+		logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
 		var existingSession = reply[0];
-		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number";
-		var lastActiveTimestamp = new Date(existingSession.lastActivity);
+		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number" && typeof existingSession.lastActivity === "string";
+		var lastActiveTimestamp = new Date((validResult) ? existingSession.lastActivity : Date.now());
 
 		// Determine remaining idle time
-		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + existingSession.maxIdleTime);
+		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + ((validResult) ? existingSession.maxIdleTime : 0));
 		var tokenExpired = dt.hasPassed(lastActiveTimestamp);
 		if (validResult && !tokenExpired) {
 			// If the search returns a database entry, grant the user access
@@ -423,10 +429,70 @@ handle_map.adminDashboardHandler = function (request, response) {
 			});
 		}
 	});
-};
-// END Handler Functions
+});
+
+/*
+	@function 	/dashboard
+	@parameter 	request - the web request object provided by express.js
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: gives the client an error page and a code 200
+				On failure: gives the client an error message and a code 500
+	@details 	This function handles the odd case where using the url bar to enter or refresh the dashboard causes unexpected behavior. Since the dashboard requires a POST request to acquire the session ID securely, this route is used to explicitly deny access by GET request.
+*/
+router.get("/dashboard", function (request, response) {
+	var handlerTag = {"src": "generalError"};
+	
+	logger.log(`General error occurred. Sending error page to client @ ip ${request.ip}`, handlerTag);
+	response.set("Content-Type", "text/html");
+	response.sendFile("home/genErr.html", options, function (error) {
+		if (error) {
+			logger.log(error, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`Sent genErr.html to ${settings.port}`, handlerTag);
+			response.status(200).end();
+		}
+	});
+});
+// END Core Routes
 
 
 
-module.exports = handle_map;
-// END route_handlers.js 
+// BEGIN Error Handling Routes
+/*
+	@endpoint 	NOTFOUND (404)
+	@parameter 	n/a
+	@returns 	n/a
+	@details 	This function handles any endpoint requests that do not exist under the "/test" endpoint
+*/
+router.use(function (request, response) {
+	var handlerTag = {"src": "/core/NOTFOUND"};
+	logger.log(`Non-existent endpoint "${request.path}" requested from client @ ip ${request.ip}` ,handlerTag);
+	response.status(404).json({
+		"status": 404,
+		"subapp": "core",
+		"err": "Non-Existent Endpoint"
+	}).end();
+});
+
+/*
+	@endpoint 	ERROR (for any other errors)
+	@parameter 	n/a
+	@returns 	n/a
+	@details 	This function sends an error status (500) if an error occurred forcing the other methods to not run.
+*/
+router.use(function (err, request, response) {
+	var handlerTag = {"src": "/core/ERROR"};
+	logger.log(`Error occurred with request from client @ ip ${request.ip}`);
+	response.status(500).json({
+		"status": 500,
+		"subapp": "core",
+		"err": err.message
+	}).end();
+});
+// END Error Handling Routes
+
+
+
+module.exports = router;
+// END core/app/routes/index.js

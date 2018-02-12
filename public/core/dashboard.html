@@ -1,0 +1,81 @@
+<!-- 
+	PROJECT: 		Core-v4
+	Name: 			Rolando Javier
+	File: 			dashboard.html
+	Date Created: 	January 28, 2018
+	Last Modified: 	January 28, 2018
+	Details:
+		This file serves as the SCE Core Admin Dashboard
+ -->
+
+<!DOCTYPE html>
+<html lang="en" ng-app="adminDashboard">
+<!-- BEGIN header -->
+<head>
+	<!-- Metadata -->
+	<meta charset="UTF-8">
+	<meta name="description" content="SCE Core Administrator's Dashboard">
+	<meta name="keywords" content="SCE,core,admin,dashboard">
+	<meta name="author" content="R. Javier">
+	<meta name="last-modified" content="January 28, 2018">
+
+	<!-- Phone Screen Compatibility -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Tab Title -->
+	<title>Core v4 Admin Dashboard</title>
+
+	<!-- Standard Includes -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<!-- END header -->
+
+
+
+<!-- BEGIN body -->
+<body ng-app="adminDashboard">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<!-- BEGIN navbar header and logo -->
+			<div class="navbar-header">
+				<a href="#" class="navbar-brand">
+					<span class="brand-text">
+						<img alt="SCE Core" src="img/SCE-glow.png" class="brand-logo">
+						Core v4
+					</span>
+				</a>
+			</div>
+			<!-- END navbar header and logo -->
+
+			<!-- BEGIN navbar misc info -->
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown" ng-controller="UserController">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						Welcome, {{username}}
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu user-option-menu">
+						<li><a href="#" ng-click="logout()"><span class="user-option-text"><i class="fas fa-sign-out-alt"></i>Logout</span></a></li>
+					</ul>
+				</li>
+			</ul>
+			<!-- END navbar misc info -->
+		</div>
+	</nav>
+</body>
+<!-- END body -->
+
+
+
+<!-- BEGIN footer -->
+<footer>
+	<script type="text/javascript" src="../lib/utility.js"></script>
+	<script type="text/javascript" src="js/dashboard.js"></script>
+</footer>
+<!-- END footer -->
+ </html>

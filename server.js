@@ -13,16 +13,24 @@
 "use strict"
 
 /* NodeJS+ExpressJS Server */
-var http = require("http");
+var https = require("https");
 var fs = require("fs");
 var bodyParser = require("body-parser");					// import POST request data parser
 var settings = require("./util/settings");					// import server system settings
+var ssl = require(settings.security);						// import https ssl certifications
 var logger = require(`${settings.util}/logger`);			// import event log system
 var handles = require(`${settings.util}/route_handlers`);	// import URI endpoint handlers
 var port = process.argv[2];									// allow custom ports
 
 /* Globals */
 var handlerTag = {"src": "server"};
+var ssl_settings = {
+	"key": fs.readFileSync(ssl.prvkey),
+	"cert": fs.readFileSync(ssl.cert),
+	"passphrase": ssl.passphrase,
+	"requestCert": false,
+	"rejectUnauthorized": false
+};
 
 
 
@@ -47,9 +55,13 @@ app.use(bodyParser.json({							// support JSON-encoded request bodies
 app.use(bodyParser.urlencoded({						// support URL-encoded request bodies
 	extended: true
 }));
-app.use(express.static(settings.root));				// location of html files
-app.use(express.static(settings.root + "/css"));	// location of css files
-app.use(express.static(settings.root + "/js"));		// location of js files
+app.use(express.static(settings.root));					// server root
+app.use(express.static(`${settings.root}/home`));		// location of html files
+app.use(express.static(`${settings.root}/home/css`));	// location of css files
+app.use(express.static(`${settings.root}/home/js`));	// location of js files
+app.use(express.static(`${settings.root}/core`));		// location of admin portal html
+app.use(express.static(`${settings.root}/core/css`));	// location of admin portal css
+app.use(express.static(`${settings.root}/core/js`));	// location of admin portal js
 
 
 
@@ -62,6 +74,12 @@ app.use(express.static(settings.root + "/js"));		// location of js files
 */
 logger.log(`Routing server endpoints...`, handlerTag);
 app.get("/", handles.rootHandler);				// GET request of the main login page
+
+
+
+/* Initialize SCE Core Admin sub-app */
+var coreAdminApp = require("./public/core/app/app.js");
+app.use("/core", coreAdminApp);
 
 
 
@@ -87,7 +105,11 @@ if (!port) {
 	logger.log(`Using custom port ${port}`, handlerTag);
 	settings.port = port;
 }
-app.listen(port, function () {
+// app.listen(port, function () {
+// 	logger.log(`Now listening on port ${port}`, handlerTag);
+// });
+var server = https.createServer(ssl_settings, app);
+server.listen(port, function () {
 	logger.log(`Now listening on port ${port}`, handlerTag);
 });
 // END server.js 

@@ -5,11 +5,12 @@ A directory housing all common resources required by the server and all sub-apps
 
 ## Table of Contents
 - [Description](#description)
-- [Required Setup](#requiredsetup)
+- [Required Setup](#required-setup)
   - [credentials.json](#credentialsjson)
     - [Credentials Setup](#credentials-setup)
       - [System Key](#system-key)
       - [MDBI](#mdbi)
+  - [security.js](#securityjs)
 
 ---
 
@@ -20,10 +21,14 @@ A directory housing all common resources required by the server and all sub-apps
 This directory is primarily used to store system credentials (i.e. to allow db admin access). The following files need to be placed in this directory _**BEFORE**_ starting the MEANserver:
 
   - credentials.json
+  - security.js
 
 Read each files' setup instructions for detailed procedures on setting up both the files themselves and the modules they pertain to.
 
 ---
+
+
+
 
 ## Required Setup
 
@@ -37,8 +42,8 @@ The credentials.json file is a JSON object with the following format:
 
 ```json
 {
-	"moduleName": [some credentials as specified by the relevant application]
-	"module2Name": [some other credentials...]
+	"moduleName": "some credentials as specified by the relevant application",
+	"module2Name": "some other credentials..."
 }
 ```
 
@@ -65,7 +70,7 @@ The system key credential creates the "root" user (so to speak) of the SCE Core 
 }
 ```
 
-where "userName", "passWord" and "email" can be replaced by any string value of your choosing (be wise about password complexity), and "joinDate" and "lastLogin" can be populated with the current datetime string returned by JavaScript's Date.toISOString() function.
+where "userName" and "email" can be replaced by any string value of your choosing (be wise about password complexity), and "joinDate" and "lastLogin" can be populated with the current datetime string returned by JavaScript's Date.toISOString() function. Note that the "passWord" field _**MUST**_ be a hashed password string using [cryptic.js's](../cryptic.js) hashPwd() function. **DO NOT PUT PLAIN TEXT PASSWORDS IN THAT FIELD!!!**
 
 Once the JSON is created and the following MDBI instructions are completed, use of the database setup script will automatically ensure that the database has this user on file as an administrator.
 
@@ -90,3 +95,37 @@ The structure as a whole should look like this:
 Once you have selected a username and password, they should be placed in the JSON structure above. Then, you must set the local MongoDB installation to enforce access control (see the [MongoDB Security Checklist](https://docs.mongodb.com/manual/administration/security-checklist/#enable-access-control-and-enforce-authentication)). Finally, you must add this user as an administrator using the methods described by [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/).
 
 After the above steps are completed, the MDBI should automatically check that the relevant database collections exist and are formatted correctly.
+
+
+
+### security.js
+
+This file contains ssl-/tls-/https-related settings. Its primary function is to provide access to security keys and certificates to the modules that need it, all while maintaining system modularity. This justifies the need for a separate singleton solely for the aforementioned security credentials. Below is the format expected in the security.js file:
+
+```javascript
+"use strict";
+
+// Constants
+const certificateDir = "trustStore";		// the default folder storing the keys and certs below
+const privateKeyName = "your_rsa.key";		// the name of your private rsa key (for ssl/https)
+const publicKeyName = "your_rsa_public.key";	// the name of your public rsa key (for ssl/https)
+const certName = "your_rsa.crt";		// the name of your ca certificate (for ssl/https)
+const passphrase = "your_passphrase"		// your rsa passphrase (for ssl/https)
+
+
+
+// Container (Singleton)
+const security = {
+	"prvkey": `${__dirname}/${certificateDir}/${privateKeyName}`,
+	"pubkey": `${__dirname}/${certificateDir}/${publicKeyName}`,
+	"passphrase": passphrase,
+	"cert": `${__dirname}/${certificateDir}/${certName}`
+};
+Object.freeze(security);
+
+
+
+module.exports = security;
+```
+
+It is worth noting that the ```const``` settings above can be modified to suit your server installation's needs; they only serve as factory defaults and are structured in this way to allow custom key/cert storage as desired. Be sure to set these parameters before starting up the server; access to all modules will be impossible if this configuration is not correct.

@@ -67,13 +67,15 @@ var schema = {
 		},
 		"Ability": {
 			"abilityID": "number",
-			"abilityName": "string"
+			"abilityName": "string",
+			"abilityDescription": "string"
 		},
 		"SessionData": {
 			"sessionID": "number",
 			"memberID": "number",
 			"loginTime": "string",	// datetime
-			"lastActivity": "string"	// datetime
+			"lastActivity": "string",	// datetime
+			"maxIdleTime": "number"
 		},
 		"Announcement": {
 			"aID": "number",

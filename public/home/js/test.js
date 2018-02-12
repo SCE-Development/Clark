@@ -351,7 +351,7 @@ function showDocumentResults (arr) {
 								content += `<div class="col-sm-12">`;
 									content += `<ul class="list-group">`;
 									// Place a list item for each key in the first level
-									content += `<li class="list-group-item"><div><strong>Top-Level Keys:</strong> ${Object.keys(arr[i]).toString()}</div><div>${(typeof arr[i] === "object") ? JSON.stringify(arr[i]) : arr[i]}</div></li>`;
+									content += `<li class="list-group-item"><div><strong>Top-Level Keys:</strong> ${Object.keys(arr[i]).toString()}</div><code style="overflow-wrap: break-word">${(typeof arr[i] === "object") ? JSON.stringify(arr[i]) : arr[i]}</code></li>`;
 									content += `</ul>`;
 								content += `</div>`;
 							content += `</div>`;
