@@ -297,6 +297,68 @@ router.post("/login", function (request, response) {
 });
 
 /*
+	@endpoint 	/logout
+	@parameter 	request - the web request object provided by express.js. The request's body is expected to be a JSON object with the following parameters:
+					"sessinID"	- the session token string to logout with
+					"userName"	- the username string to logout with
+					"sessionStorageSupport" - a boolean describing the client's support of a browser's sessionStorage
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200
+				On logout failure: a code 499 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
+	@details 	This function is used to process a sessionID and username from the admin dashboard for logout of the given user. This is done by performing a POST request to the "/core/logout" endpoint and passing in the JSON object described above in the request parameter.
+*/
+router.post("/logout", function (request, response) {
+	var handlerTag = {"src": "adminLogoutHandler"};
+	var validBody = (typeof request.body.userName === "string") && (typeof request.body.sessionID === "string") && (typeof request.body.sessionStorageSupport !== "undefined");
+
+	// Check for valid request body
+	if (!validBody) {
+		response.set("Content-Type", "application/json");
+		response.status(499).send(ef.asCommonStr(ef.struct.invalidBody)).end();
+	} else {
+		// Acquire the sessionID and userName
+		var uname = (typeof request.body.userName !== "string") ? null : request.body.userName;
+		var sid = (typeof request.body.sessionID !== "string") ? null : request.body.sessionID;
+
+		// Remove session data from db and log user out
+		var requestBody = {
+			"collection": "SessionData",
+			"search": {
+				// "userName": uname,	// for now, let's just use the sessionID
+				"sessionID": sid
+			}
+		};
+		var configQuery = {
+			"hostname": "localhost",
+			"path": "/mdbi/delete/documents",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+			}
+		};
+		var queryCallback = function (reply, error) {
+			var resultJSON = reply;	// is expected to be JSON
+
+			if (error) {	// report errors
+				logger.log(`A request error occurred: ${error}`, handlerTag);
+				response.send(er.asCommonStr(er.struct.coreErr, error)).status(500).end();
+			} else {	// otherwise, log user out
+				if (resultJSON.n !== 1) {	// error occurred; either no result found, or more than one record was deleted!
+					logger.log(`ERROR: ${resultJSON.n} session data was deleted!`, handlerTag);
+				} else {	// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
+					logger.log(`Logging out ${request.body.userName} (${request.body.sessionID})`, handlerTag);
+					response.set("Content-Type", "text/html");
+					response.status(200).end();
+				}
+			}
+		};
+		www.https.post(configQuery, requestBody, queryCallback);
+	}
+});
+
+/*
 	@endpoint 	/dashboard
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js

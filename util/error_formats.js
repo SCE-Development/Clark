@@ -63,6 +63,10 @@ error_formats.struct = {
 		"name": "HTTPS_PUT_FAIL",
 		"msg": "HTTPS PUT failed"
 	},
+	"invalidBody": {
+		"name": "INVALID_BODY",
+		"msg": "The submitted request body is invalid, incomplete, or incorrectly formatted"
+	},
 	"unknown": {
 		"name": "UNKNOWN_ERROR",
 		"msg": "An unknown error occurred"

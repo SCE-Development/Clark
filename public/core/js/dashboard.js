@@ -39,11 +39,12 @@ var pageApp = angular.module("adminDashboard",[]);
 	@controller 	UserController
 	@details 		This controller handles actions related to the user control dropdown in the nav bar, handling all sorts of user actions (i.e. logout, profile viewing, etc.)
 */
-pageApp.controller("UserController", function userController ($scope, $http) {
+pageApp.controller("UserController", function userController ($scope, $http, $window) {
 	$scope.username = (storageOk) ? sessionStorage.getItem("username") : "User";
 	$scope.logout = function () {
 		var requestBody = {
 			"sessionID": (storageOk) ? sessionStorage.getItem("sessionID") : "Without session storage, cookies should be automatically sent to the server",
+			"userName": $scope.username,
 			"sessionStorageSupport": storageOk
 		};
 		var config = {
@@ -53,11 +54,12 @@ pageApp.controller("UserController", function userController ($scope, $http) {
 		};
 
 		logDebug("UserController", "logout", `Logging ${$scope.username} out...`);
-		$http.post(urls.logout, requestBody, config).then(function (response) {	// called when http status code is within the 200s
+		$http.post(urls.logout, requestBody, config).then((response) => {	// called when http status code is within the 200s
 			switch (response.status) {
 				case 200: {	// logout succeeded; go to core login page
+					// Redirect the user to the core portal after a succesful logout
 					logDebug("UserController", "logout", "Logout Successful");
-					$http.get(urls.corePortal);
+					$window.location.assign(urls.corePortal);
 					break;
 				}
 				default: {
