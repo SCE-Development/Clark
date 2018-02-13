@@ -2,7 +2,7 @@
 // 	Name: 			Rolando Javier
 // 	File: 			core/app/routes/index.js
 // 	Date Created: 	February 2, 2018
-// 	Last Modified: 	February 2, 2018
+// 	Last Modified: 	February 12, 2018
 // 	Details:
 // 					This file contains logic to service all routes requested under the the "/core" endpoint
 // 	Dependencies:
@@ -21,6 +21,7 @@ var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
 var ef = require(`${settings.util}/error_formats`);	// import error formatter
 var crypt = require(`${settings.util}/cryptic`);	// import custom sce crypto wrappers
 var ssl = require(settings.security);				// import https ssl credentials
+var credentials = require(settings.credentials);	// import server system credentials
 var www = require(`${settings.util}/www`);			// import custom https request wrappers
 var logger = require(`${settings.util}/logger`);	// import event log system
 
@@ -89,6 +90,7 @@ router.post("/login", function (request, response) {
 	// BEGIN promises
 	var submitCredentials = new Promise(function (resolve, reject) {
 		var requestBody = {
+			"accessToken": credentials.mdbi.accessToken,
 			"collection": "Member",
 			"search": {
 				"userName": request.body.user,
@@ -119,6 +121,10 @@ router.post("/login", function (request, response) {
 				logger.log(`A request error occurred: ${error}`, handlerTag);
 				response.send(errStr).status(500).end();
 				reject();
+			} else if (!Array.isArray(match.list)) {
+				logger.log(`Invalid value returned from mdbi/search/documents query: ${match.list}`, handlerTag);
+				response.send(ef.asCommonStr(ef.struct.unexpectedValue, match.list)).status(500).end();
+				reject();
 			} else {
 				// Evaluate the database search results
 				// logger.log(`Probe2: ${reply}`, handlerTag);	// debug
@@ -140,6 +146,7 @@ router.post("/login", function (request, response) {
 
 					// Search the MembershipData collection for the member's clearance level
 					var requestBody = {
+						"accessToken": credentials.mdbi.accessToken,
 						"collection": "MembershipData",
 						"search": {
 							"memberID": match.list[0].memberID
@@ -193,6 +200,7 @@ router.post("/login", function (request, response) {
 								// Generate session id and session data here
 								var sessionID = crypt.hashSessionID(match.list[0].userName);
 								var sessionDataBody = {
+									"accessToken": credentials.mdbi.accessToken,
 									"collection": "SessionData",
 									"data": {
 										"sessionID": sessionID,
@@ -225,6 +233,7 @@ router.post("/login", function (request, response) {
 										console.log(`GENERATED: ${JSON.stringify(match.list)}`);
 										
 										var memberUpdateBody = {
+											"accessToken": credentials.mdbi.accessToken,
 											"collection": "Member",
 											"search": {
 												"memberID": {
@@ -322,6 +331,7 @@ router.post("/logout", function (request, response) {
 
 		// Remove session data from db and log user out
 		var requestBody = {
+			"accessToken": credentials.mdbi.accessToken,
 			"collection": "SessionData",
 			"search": {
 				// "userName": uname,	// for now, let's just use the sessionID
@@ -369,6 +379,7 @@ router.post("/dashboard", function (request, response) {
 	var handlerTag = {"src": "adminDashboardHandler"};
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
 	var verificationPostBody = {
+		"accessToken": credentials.mdbi.accessToken,
 		"collection": "SessionData",
 		"search": {
 			"sessionID": sessionID
