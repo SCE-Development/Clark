@@ -2,9 +2,10 @@
 // Name: 			Rolando Javier
 // File: 			test.js
 // Date Created: 	November 3, 2017
-// Last Modified: 	November 3, 2017
+// Last Modified: 	February 12, 2018
 // Details:
 // 					This file contains the underlying javascript running the test.html page
+// Warning: 		This page is used for testing purposes ONLY! It must be disabled in the production version!
 "use strict"
 
 $(document).ready(init());
@@ -13,6 +14,7 @@ console.log("Welcome to the Server Test Page");
 
 // BEGIN Init
 function init() {
+	var mdbiAccessToken = "0d08441c35cd57bf9a639821fd7a49b6e195e4bdee642dac0478b8f994b8ec32";	// stored in credentials.json
 	setDebug(true);
 	console.log("Hello World!");
 
@@ -58,6 +60,7 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"data": newDoc
 			};
@@ -81,14 +84,23 @@ function init() {
 	/* Setup SearchFromMongoDB action */
 	$("#testMongoSearch").on("click", function (event) {
 		// Acquire data to send
-		var data = ($("#dbCollectionNameField").val() != "") ? {"name": $("#dbCollectionNameField").val()} : null;
+		var data = {
+			"name": ($("#dbCollectionNameField").val() != "") ? $("#dbCollectionNameField").val() : null,
+			"accessToken": mdbiAccessToken
+		};
+		// var data = ($("#dbCollectionNameField").val() != "") ? {"name": $("#dbCollectionNameField").val()} : null;
 		console.log(`Finding ${(data === null) ? "all collections" : JSON.stringify(data)} in database...`);
 
 		// Send the search request to database using a RESTful POST request to the "/mdbi/search/collections" endpoint
 		post("/mdbi/search/collections", data, function (reply, status, jqxhr) {
 			if (status === "success") {
 				console.log("Replied: " + reply.toString());
-				showCollectionResults(JSON.parse(reply));
+				try {
+					showCollectionResults(JSON.parse(reply));
+				} catch (err) {
+					console.log(err);
+					showError(reply);
+				}
 			} else {
 				var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
 				console.log("A problem occurred");
@@ -119,13 +131,19 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"search": searchCriteria
 			};
 			post("/mdbi/search/documents", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());
-					showDocumentResults(JSON.parse(reply));
+					try {
+						showDocumentResults(JSON.parse(reply));
+					} catch (err) {
+						console.log(err);
+						showError(reply);
+					}
 				} else {
 					var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
 					console.log("A problem occurred");
@@ -171,6 +189,7 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"search": searchCriteria
 			};
@@ -218,6 +237,7 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"search": searchCriteria,
 				"update": updateCriteria
