@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			test.js
 // Date Created: 	November 3, 2017
-// Last Modified: 	February 12, 2017
+// Last Modified: 	February 12, 2018
 // Details:
 // 					This file contains the underlying javascript running the test.html page
 // Warning: 		This page is used for testing purposes ONLY! It must be disabled in the production version!

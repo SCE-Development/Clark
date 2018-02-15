@@ -2,7 +2,7 @@
 // 	Name: 			Rolando Javier
 // 	File: 			dashboard.js
 // 	Date Created: 	January 28, 2018
-// 	Last Modified: 	January 28, 2018
+// 	Last Modified: 	February 12, 2018
 // 	Details:
 // 					This file contains all front-end javascript for the dashboard.html admin dashboard.
 // 	Dependencies:
