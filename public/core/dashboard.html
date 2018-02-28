@@ -32,6 +32,10 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/dashboard.css">
+
+	<!-- Angular Components -->
+	<script type="text/javascript" src="js/profiler/profiler.module.js"></script>
+	<script type="text/javascript" src="js/profiler/profiler.component.js"></script>
 </head>
 <!-- END header -->
 
@@ -52,21 +56,44 @@
 			</div>
 			<!-- END navbar header and logo -->
 
-			<!-- BEGIN navbar misc info -->
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown" ng-controller="UserController">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-						Welcome, {{username}}
-						<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu user-option-menu">
-						<li><a href="#" ng-click="logout()"><span class="user-option-text"><i class="fas fa-sign-out-alt"></i>Logout</span></a></li>
-					</ul>
-				</li>
-			</ul>
-			<!-- END navbar misc info -->
+			<div class="collapse navbar-collapse" id="core-navbar">
+				<ul class="nav navbar-nav">
+					<!-- BEGIN context dropdown -->
+					<li class="dropdown">
+						<a href="#" id="control-dropdown" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-caret-down"></i></a>
+						<ul class="dropdown-menu" aria-labelledby="control-dropdown" ng-controller="ContextController">
+							<li><a href="#" ng-click="showPanel('member-profiler')"><i class="fas fa-users"></i> Member Profiler</a></li>
+							<li><a href="#" ng-click="showPanel('session-manager')"><i class="fas fa-desktop"></i> Session Manager</a></li>
+							<li><a href="#">asdf</a></li>
+						</ul>
+					</li>
+					<!-- END context dropdown -->
+				</ul>
+
+				<!-- BEGIN navbar misc info -->
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown" ng-controller="UserController">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+							Welcome, {{username}}
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu user-option-menu">
+							<li><a href="#" ng-click="logout()"><span class="user-option-text"><i class="fas fa-sign-out-alt"></i>Logout</span></a></li>
+						</ul>
+					</li>
+				</ul>
+				<!-- END navbar misc info -->
+			</div>
 		</div>
 	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-12">
+				<profiler id="member-profiler"></profiler>
+			</div>
+		</div>
+	</div>
 </body>
 <!-- END body -->
 

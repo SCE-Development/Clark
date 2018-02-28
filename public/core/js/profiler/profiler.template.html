@@ -1,0 +1,70 @@
+<!-- 
+	PROJECT: 		Core-v4
+	Name: 			Rolando Javier
+	File: 			profiler.template.html
+	Date Created: 	February 16, 2018
+	Last Modified: 	February 16, 2018
+	Details:
+		This file serves as the html template for the profiler element
+ -->
+<div class="well">
+	<div class="page-header">
+		<h3 class="brand-text">
+			Member Profiler
+			<small>{{$ctrl.msg}}</small>
+		</h3>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6">
+				<!-- BEGIN search controls -->
+				<form role="search">
+					<div class="input-group">
+						<span class="input-group-btn">
+							<button class="btn btn-primary" ng-click="$ctrl.search()">
+								Search by
+							</button>
+							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								{{$ctrl.searchType}}
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#" ng-click="$ctrl.setSearchType('username')">username</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('first name')">first name</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('last name')">last name</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('join date')">join date</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('email')">email</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('major')">major</a></li>
+							</ul>
+						</span>
+						<input type="text" class="form-control" placeholder="Search" ng-model="$ctrl.searchTerm">
+					</div>
+				</form>
+				<!-- END search controls -->
+			</div>
+			<div class="col-sm-6"></div>
+		</div>
+		<div class="row" style="overflow: scroll; margin-top: 10px;">
+			<table class="table">
+				<thead>
+					<th>MemberID</th>
+					<th>Username</th>
+					<th>Name</th>
+					<th>Joined</th>
+					<th>Email</th>
+					<th>Major</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in $ctrl.results">
+						<td>{{row.memberID}}</td>
+						<td>{{row.userName}}</td>
+						<td>{{row.firstName}} {{row.middleInitial}} {{row.lastName}}</td>
+						<td>{{row.joinDate}}</td>
+						<td>{{row.email}}</td>
+						<td>{{row.major}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

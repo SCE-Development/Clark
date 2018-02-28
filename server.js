@@ -62,6 +62,7 @@ app.use(express.static(`${settings.root}/home/js`));	// location of js files
 app.use(express.static(`${settings.root}/core`));		// location of admin portal html
 app.use(express.static(`${settings.root}/core/css`));	// location of admin portal css
 app.use(express.static(`${settings.root}/core/js`));	// location of admin portal js
+app.use(express.static(`${settings.root}/core/js/profiler`));	// location of admin portal profiler component js
 
 
 
