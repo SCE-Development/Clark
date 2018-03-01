@@ -9,7 +9,7 @@
 // 					AngularJS v1.6.x
 
 angular.module("profiler").component("profiler", {
-	templateUrl: "js/profiler/profiler.template.html",	// relative to dashboard.html file
+	templateUrl: "components/profiler/profiler.template.html",	// relative to dashboard.html file
 	controller: function ($http) {
 		var ctl = this;
 		var dbgMode = true;	// changes relevant parameters when doing debugging
