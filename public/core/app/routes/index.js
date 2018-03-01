@@ -401,18 +401,25 @@ router.post("/dashboard", function (request, response) {
 	};
 	logger.log(`Admin dashboard request from client @ ip ${request.ip}`, handlerTag);
 
-	// Check to make sure that the submitted sessionID is in the session database, and that it has not passed its masIdleTime since its last activity
-	// logger.log(JSON.stringify(request.body), handlerTag);
-	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
-		logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
-		var existingSession = reply[0];
-		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number" && typeof existingSession.lastActivity === "string";
-		var lastActiveTimestamp = new Date((validResult) ? existingSession.lastActivity : Date.now());
+	// Verify session ID is valid; Check to make sure that the submitted sessionID is in the session database, and that it has not passed its masIdleTime since its last activity
+	var verifySessionCallback = function (valid, error) {
+		response.set("Content-Type", "text/html");
+		if (error || !valid) {
+			var vErr = "Verification Error. Returning admin portal to ${settings.port}";
+			var vInvalid = "Invalid Token. Returning admin portal to ${settings.port}";
 
-		// Determine remaining idle time
-		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + ((validResult) ? existingSession.maxIdleTime : 0));
-		var tokenExpired = dt.hasPassed(lastActiveTimestamp);
-		if (validResult && !tokenExpired) {
+			logger.log(`${(error === null) ? vInvalid : vErr}`, handlerTag);
+			response.location(`https://${request.hostname}:${settings.port}/core/`);
+			response.sendFile("core/core.html", options, function (error) {
+				if (error) {
+					logger.log(error, handlerTag);
+					response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+				} else {
+					logger.log(`Verfication Error. Returning admin portal to ${settings.port}`);
+					response.status(499).end();
+				}
+			});
+		} else {
 			// If the search returns a database entry, grant the user access
 			// logger.log(JSON.stringify(reply), handlerTag);	// debugs
 			response.set("Content-Type", "text/html");
@@ -425,25 +432,9 @@ router.post("/dashboard", function (request, response) {
 					response.status(200).end();
 				}
 			});
-		} else {
-			// Else, return them to the login page
-			if (tokenExpired) {
-				logger.log(`Session token has expired.`, handlerTag);
-			}
-
-			response.set("Content-Type", "text/html");
-			response.location(`https://${request.hostname}:${settings.port}/core/`);
-			response.sendFile("core/core.html", options, function (error) {
-				if (error) {
-					logger.log(error, handlerTag);
-					response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
-				} else {
-					logger.log(`Invalid session token. Returning admin portal to ${settings.port}`);
-					response.status(499).end();
-				}
-			});
 		}
-	});
+	};
+	verifySession(credentials.mdbi.accessToken, sessionID, verifySessionCallback);
 });
 
 /*
@@ -484,6 +475,8 @@ router.post("/dashboard/search/members", function (request, response) {
 		if (error) {
 			logger.log(`Error: ${error}`, handlerTag);
 			response.send(error).status(500).end();
+		} else if (!valid) {
+			logger.log(`Error: Invalid session token`, handlerTag);
 		} else {
 			var validFormat = true;
 			var searchPostBody = {
