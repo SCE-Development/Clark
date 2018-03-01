@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			route_handlers.js
 // Date Created: 	October 26, 2017
-// Last Modified: 	January 9, 2018
+// Last Modified: 	February 28, 2018
 // Details:
 //				 	This file abstracts all MAIN route handler functions to be used by server.js. The server.js file
 //				 	takes these and places them to their desired endpoints. This frees up the server code from
