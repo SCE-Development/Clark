@@ -21,6 +21,7 @@ angular.module("profiler").component("profiler", {
 		// Model Data
 		this.msg = "Add, search, and edit members here";
 		this.errmsg = "";
+		this.resultsPerPage = 10;
 		this.searchTerm = "";
 		this.searchType = "username";
 		this.results = [
@@ -44,7 +45,8 @@ angular.module("profiler").component("profiler", {
 			var requestBody = {
 				"sessionID": sessionStorage.getItem("sessionID"),
 				"searchType": ctl.searchType,
-				"searchTerm": ctl.searchTerm
+				"searchTerm": ctl.searchTerm,
+				"resultMax": ctl.resultsPerPage
 			};
 			var config = {
 				"headers": {
@@ -73,8 +75,14 @@ angular.module("profiler").component("profiler", {
 				ctl.errmsg = errResponse.data.emsg;
 			});
 		};
+		this.viewDetail = function (username) {
+			console.log(`Viewing ${username}'s details`);
+		};
 		this.setSearchType = function (type) {
 			ctl.searchType = type;
+		};
+		this.setResultsPerPage = function (num) {
+			ctl.resultsPerPage = num;
 		};
 	}
 });

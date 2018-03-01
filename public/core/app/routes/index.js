@@ -428,6 +428,7 @@ router.post("/dashboard", function (request, response) {
 					"sessionID" - the client's session token
 					"searchType" - a string defining the parameter search type
 					"searchTerm" - the term to search for
+					"resultMax" - the maximum number of results to return
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200 and a list (array) of returned search results, or null if no results were found
 				On invalid or expired session token: a code 499 and an error format object
@@ -437,6 +438,8 @@ router.post("/dashboard", function (request, response) {
 router.post("/dashboard/search/members", function (request, response) {
 	var handlerTag = {"src": "dashboardMemberSearchHandler"};
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var resultsPerPage = (typeof request.body.resultMax !== "undefined") ? request.body.resultMax : 10;	// currently, this parameter is unused, and will later format the amount of search results returned to the client
+	// logger.log(`This is the requested max results per page: ${resultsPerPage}`, handlerTag);	// debug
 
 	var mdbiSearchCallback = function (reply, error) {	// expects reply to be an array of the found matches
 		if (error) {
@@ -524,7 +527,7 @@ router.post("/dashboard/search/members", function (request, response) {
 				// Recalculate Content-Length header, now that the body length has changed
 				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
 			}
-			console.log(searchPostBody);	// debug
+			// console.log(searchPostBody);	// debug
 
 			// Execute MDBI search here...
 			if (!validFormat) {
