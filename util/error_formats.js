@@ -71,6 +71,10 @@ error_formats.struct = {
 		"name": "MDBI_ACCESS_DENIED",
 		"msg": "You do not have access rights to the MDBI system"
 	},
+	"expiredSession": {
+		"name": "CORE_SESSION_EXPIRED",
+		"msg": "Your session has expired"
+	},
 	"unexpectedValue": {
 		"name": "UNEXPECTED_VAL",
 		"msg": "An unexpected value was received"

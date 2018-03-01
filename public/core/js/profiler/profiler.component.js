@@ -20,6 +20,7 @@ angular.module("profiler").component("profiler", {
 
 		// Model Data
 		this.msg = "Add, search, and edit members here";
+		this.errmsg = "";
 		this.searchTerm = "";
 		this.searchType = "username";
 		this.results = [
@@ -54,20 +55,22 @@ angular.module("profiler").component("profiler", {
 
 			console.log(`Searching by ${ctl.searchType} for ${ctl.searchTerm}`);
 			$http.post(urls.search, requestBody, config).then((response) => {
+				console.log(response.data);	// debug
 				switch (response.status) {
 					case 200: {
-						console.log(response.data);
+						ctl.errmsg = "";
 						ctl.results = (response.data === null) ? [] : response.data;
 						break;
 					}
 					default: {
-						ctl.results = [{"firstName": "ERROR"}];
-						console.log(response.data);
+						ctl.errmsg = "Unexpected response<<<";
+						ctl.results = [];
 						break;
 					}
 				}
 			}).catch(function (errResponse) {
 				logDebug("ProfilerController", "search", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.errmsg = errResponse.data.emsg;
 			});
 		};
 		this.setSearchType = function (type) {

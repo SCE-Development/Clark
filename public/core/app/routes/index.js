@@ -330,24 +330,6 @@ router.post("/logout", function (request, response) {
 		var sid = (typeof request.body.sessionID !== "string") ? null : request.body.sessionID;
 
 		// Remove session data from db and log user out
-		var requestBody = {
-			"accessToken": credentials.mdbi.accessToken,
-			"collection": "SessionData",
-			"search": {
-				// "userName": uname,	// for now, let's just use the sessionID
-				"sessionID": sid
-			}
-		};
-		var configQuery = {
-			"hostname": "localhost",
-			"path": "/mdbi/delete/documents",
-			"method": "POST",
-			"agent": ssl_user_agent,
-			"headers": {
-				"Content-Type": "application/json",
-				"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
-			}
-		};
 		var queryCallback = function (reply, error) {
 			var resultJSON = reply;	// is expected to be JSON
 
@@ -355,16 +337,19 @@ router.post("/logout", function (request, response) {
 				logger.log(`A request error occurred: ${error}`, handlerTag);
 				response.send(er.asCommonStr(er.struct.coreErr, error)).status(500).end();
 			} else {	// otherwise, log user out
-				if (resultJSON.n !== 1) {	// error occurred; either no result found, or more than one record was deleted!
+				if (resultJSON.n > 1) {
+					// More than one record was deleted!
 					logger.log(`ERROR: ${resultJSON.n} session data was deleted!`, handlerTag);
-				} else {	// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
+					response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				} else {
+					// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
 					logger.log(`Logging out ${request.body.userName} (${request.body.sessionID})`, handlerTag);
 					response.set("Content-Type", "text/html");
 					response.status(200).end();
 				}
 			}
 		};
-		www.https.post(configQuery, requestBody, queryCallback);
+		clearSession(credentials.mdbi.accessToken, sid, queryCallback);
 	}
 });
 
@@ -445,6 +430,7 @@ router.post("/dashboard", function (request, response) {
 					"searchTerm" - the term to search for
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200 and a list (array) of returned search results, or null if no results were found
+				On invalid or expired session token: a code 499 and an error format object
 				On failure: a code 500 and JSON error-formatted details
 	@details 	This endpoint serves requests for member search queries through the sce core admin dashboard (which are performed via our custom AngularJS profiler component).
 */
@@ -474,9 +460,10 @@ router.post("/dashboard/search/members", function (request, response) {
 		response.set("Content-Type", "application/json");
 		if (error) {
 			logger.log(`Error: ${error}`, handlerTag);
-			response.send(error).status(500).end();
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
 		} else if (!valid) {
 			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
 		} else {
 			var validFormat = true;
 			var searchPostBody = {
@@ -667,6 +654,39 @@ function verifySession (token, sessionID, callback) {
 			callback(null, ef.asCommonStr(ef.struct.coreErr, error));
 		}
 	});
+}
+
+/*
+	@function 	clearSession
+	@parameter 	token - the database access token
+	@parameter 	sessionID - the session token of the user whose sesion data will be cleared
+	@parameter 	callback - a required callback function to run after attempting to clear the specified user's session data. It is passed one argument:
+					reply - if the operation was understood by the MongoDB server, this is a JSON object detailing the success of the operation
+					error - if there was no error, this parameter is "null"; otherwise, it is an object detailing the error that occurred
+	@returns 	n/a
+	@details 	This function is useful for removing a user's session data from the database when their token becomes invalid, or when the session manager is used to manually log them out.
+*/
+function clearSession (token, sessionID, callback) {
+	var handlerTag = {"src": "clearSession"};
+	var removalPostBody = {
+		"accessToken": credentials.mdbi.accessToken,
+		"collection": "SessionData",
+		"search": {
+			"sessionID": sessionID
+		}
+	};
+	var removalPostOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/delete/document",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(removalPostBody))
+		}
+	};
+
+	www.https.post(removalPostOptions, removalPostBody, callback);
 }
 // END Utility Functions
 
