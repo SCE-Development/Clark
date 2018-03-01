@@ -660,7 +660,7 @@ function verifySession (token, sessionID, callback) {
 	@function 	clearSession
 	@parameter 	token - the database access token
 	@parameter 	sessionID - the session token of the user whose sesion data will be cleared
-	@parameter 	callback - a required callback function to run after attempting to clear the specified user's session data. It is passed one argument:
+	@parameter 	callback - a required callback function to run after attempting to clear the specified user's session data. It is passed two arguments:
 					reply - if the operation was understood by the MongoDB server, this is a JSON object detailing the success of the operation
 					error - if there was no error, this parameter is "null"; otherwise, it is an object detailing the error that occurred
 	@returns 	n/a
