@@ -308,7 +308,7 @@ router.post("/login", function (request, response) {
 /*
 	@endpoint 	/logout
 	@parameter 	request - the web request object provided by express.js. The request's body is expected to be a JSON object with the following parameters:
-					"sessinID"	- the session token string to logout with
+					"sessionID"	- the session token string to logout with
 					"userName"	- the username string to logout with
 					"sessionStorageSupport" - a boolean describing the client's support of a browser's sessionStorage
 	@parameter 	response - the web response object provided by express.js
@@ -330,24 +330,6 @@ router.post("/logout", function (request, response) {
 		var sid = (typeof request.body.sessionID !== "string") ? null : request.body.sessionID;
 
 		// Remove session data from db and log user out
-		var requestBody = {
-			"accessToken": credentials.mdbi.accessToken,
-			"collection": "SessionData",
-			"search": {
-				// "userName": uname,	// for now, let's just use the sessionID
-				"sessionID": sid
-			}
-		};
-		var configQuery = {
-			"hostname": "localhost",
-			"path": "/mdbi/delete/documents",
-			"method": "POST",
-			"agent": ssl_user_agent,
-			"headers": {
-				"Content-Type": "application/json",
-				"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
-			}
-		};
 		var queryCallback = function (reply, error) {
 			var resultJSON = reply;	// is expected to be JSON
 
@@ -355,24 +337,31 @@ router.post("/logout", function (request, response) {
 				logger.log(`A request error occurred: ${error}`, handlerTag);
 				response.send(er.asCommonStr(er.struct.coreErr, error)).status(500).end();
 			} else {	// otherwise, log user out
-				if (resultJSON.n !== 1) {	// error occurred; either no result found, or more than one record was deleted!
+				if (resultJSON.n > 1) {
+					// More than one record was deleted!
 					logger.log(`ERROR: ${resultJSON.n} session data was deleted!`, handlerTag);
-				} else {	// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
+					response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				} else {
+					// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
 					logger.log(`Logging out ${request.body.userName} (${request.body.sessionID})`, handlerTag);
 					response.set("Content-Type", "text/html");
 					response.status(200).end();
 				}
 			}
 		};
-		www.https.post(configQuery, requestBody, queryCallback);
+		clearSession(credentials.mdbi.accessToken, sid, queryCallback);
 	}
 });
 
 /*
 	@endpoint 	/dashboard
-	@parameter 	request - the web request object provided by express.js
+	@parameter 	request - the web request object provided by express.js. The request's body is expected to be a JSON object with the following parameters:
+					"sessionID" - the session token string from a successful login
 	@parameter 	response - the web response object provided by express.js
-	@returns 	?
+	@returns 	On success: a code 200 and the admin dashboard html
+				On failed admin dashboard send: a code 500 and JSON error-formatted details
+				On expired token: a code 499 and the admin portal html
+				On failed token validation: a code 500 and JSON error-formatted details
 	@details 	This function is used to serve all requests for the admin dashboard after a successful admin login.
 */
 router.post("/dashboard", function (request, response) {
@@ -397,18 +386,25 @@ router.post("/dashboard", function (request, response) {
 	};
 	logger.log(`Admin dashboard request from client @ ip ${request.ip}`, handlerTag);
 
-	// Check to make sure that the submitted sessionID is in the session database, and that it has not passed its masIdleTime since its last activity
-	// logger.log(JSON.stringify(request.body), handlerTag);
-	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
-		logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
-		var existingSession = reply[0];
-		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number" && typeof existingSession.lastActivity === "string";
-		var lastActiveTimestamp = new Date((validResult) ? existingSession.lastActivity : Date.now());
+	// Verify session ID is valid; Check to make sure that the submitted sessionID is in the session database, and that it has not passed its masIdleTime since its last activity
+	var verifySessionCallback = function (valid, error) {
+		response.set("Content-Type", "text/html");
+		if (error || !valid) {
+			var vErr = "Verification Error. Returning admin portal to ${settings.port}";
+			var vInvalid = "Invalid Token. Returning admin portal to ${settings.port}";
 
-		// Determine remaining idle time
-		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + ((validResult) ? existingSession.maxIdleTime : 0));
-		var tokenExpired = dt.hasPassed(lastActiveTimestamp);
-		if (validResult && !tokenExpired) {
+			logger.log(`${(error === null) ? vInvalid : vErr}`, handlerTag);
+			response.location(`https://${request.hostname}:${settings.port}/core/`);
+			response.sendFile("core/core.html", options, function (error) {
+				if (error) {
+					logger.log(error, handlerTag);
+					response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+				} else {
+					logger.log(`Verfication Error. Returning admin portal to ${settings.port}`);
+					response.status(499).end();
+				}
+			});
+		} else {
 			// If the search returns a database entry, grant the user access
 			// logger.log(JSON.stringify(reply), handlerTag);	// debugs
 			response.set("Content-Type", "text/html");
@@ -421,25 +417,130 @@ router.post("/dashboard", function (request, response) {
 					response.status(200).end();
 				}
 			});
-		} else {
-			// Else, return them to the login page
-			if (tokenExpired) {
-				logger.log(`Session token has expired.`, handlerTag);
-			}
-
-			response.set("Content-Type", "text/html");
-			response.location(`https://${request.hostname}:${settings.port}/core/`);
-			response.sendFile("core/core.html", options, function (error) {
-				if (error) {
-					logger.log(error, handlerTag);
-					response.status(500).send(ef.asCommonStr(ef.stringify.coreErr, error)).end();
-				} else {
-					logger.log(`Invalid session token. Returning admin portal to ${settings.port}`);
-					response.status(499).end();
-				}
-			});
 		}
-	});
+	};
+	verifySession(credentials.mdbi.accessToken, sessionID, verifySessionCallback);
+});
+
+/*
+	@endpoint 	/dashboard/search/members
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following parameters:
+					"sessionID" - the client's session token
+					"searchType" - a string defining the parameter search type
+					"searchTerm" - the term to search for
+					"resultMax" - the maximum number of results to return
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200 and a list (array) of returned search results, or null if no results were found
+				On invalid or expired session token: a code 499 and an error format object
+				On failure: a code 500 and JSON error-formatted details
+	@details 	This endpoint serves requests for member search queries through the sce core admin dashboard (which are performed via our custom AngularJS profiler component).
+*/
+router.post("/dashboard/search/members", function (request, response) {
+	var handlerTag = {"src": "dashboardMemberSearchHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var resultsPerPage = (typeof request.body.resultMax !== "undefined") ? request.body.resultMax : 10;	// currently, this parameter is unused, and will later format the amount of search results returned to the client
+	// logger.log(`This is the requested max results per page: ${resultsPerPage}`, handlerTag);	// debug
+
+	var mdbiSearchCallback = function (reply, error) {	// expects reply to be an array of the found matches
+		if (error) {
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// Send the found results to the client
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length === 0) {
+				response.send(null).status(200).end();
+			} else {
+				response.send(reply).status(200).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			var validFormat = true;
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+			
+			// Determine the type of search to make
+			logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm}...`, handlerTag);
+			if (request.body.searchTerm === "" || typeof request.body.searchTerm === "undefined") {
+				// If search term is null, search for everything
+				searchPostBody.search = {};
+			} else {
+				// Determine how to format the search criteria, based on the search type
+				switch (request.body.searchType) {
+					case "username": {
+						searchPostBody.search["userName"] = request.body.searchTerm;
+						break;
+					}
+					case "first name": {
+						searchPostBody.search["firstName"] = request.body.searchTerm;
+						break;
+					}
+					case "last name": {
+						searchPostBody.search["lastName"] = request.body.searchTerm;
+						break;
+					}
+					case "join date": {
+						searchPostBody.search["joinDate"] = request.body.searchTerm;
+						break;
+					}
+					case "email": {
+						searchPostBody.search["email"] = request.body.searchTerm;
+						break;
+					}
+					case "major": {
+						searchPostBody.search["major"] = request.body.searchTerm;
+						break;
+					}
+					default: {
+						logger.log(`Invalid search type "${request.body.searchType}"!`, handlerTag);
+						validFormat = false;
+						break;
+					}
+				}
+
+				// Recalculate Content-Length header, now that the body length has changed
+				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
+			}
+			// console.log(searchPostBody);	// debug
+
+			// Execute MDBI search here...
+			if (!validFormat) {
+				logger.log(`A formatting error occurred!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.invalidBody)).end();
+			} else {
+				// Search with MDBI here...
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+			}
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 });
 
 /*
@@ -502,6 +603,95 @@ router.use(function (err, request, response) {
 	}).end();
 });
 // END Error Handling Routes
+
+
+
+// BEGIN Utility Functions
+/*
+	@function 	verifySession
+	@parameter 	token - the database access token
+	@parameter 	sessionID - the session token string to verify
+	@parameter 	callback - a callback to run after the verification operation is completed. It is passed 2 arguments:
+					"valid" - If no validation error occurred, this value is true for a valid token, false otherwise. If a validation error occurred, this value is null.
+					"error" - If no validation error occurred, this value is null. Otherwise, it contains a stringified JSON object describing the error (i.e. as given by error_formats.js)
+	@returns 	n/a
+	@details 	This function wraps the session ID verification routine into a single function call, allowing callbacks to process the operation result.
+*/
+function verifySession (token, sessionID, callback) {
+	var handlerTag = {"src": "verifySession"};
+	var verificationPostBody = {
+		"accessToken": token,
+		"collection": "SessionData",
+		"search": {
+			"sessionID": sessionID
+		}
+	};
+	var verificationPostOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/search/documents",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(verificationPostBody))
+		}
+	};
+
+	// Check to make sure that the submitted sessionID is in the session database, and that it has not passed its maxIdleTime since its last activity
+	www.https.post(verificationPostOptions, verificationPostBody, function (reply, error) {
+		logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+		var existingSession = reply[0];
+		var validResult = typeof existingSession === "object" && typeof existingSession.maxIdleTime === "number" && typeof existingSession.lastActivity === "string";
+		var lastActiveTimestamp = new Date((validResult) ? existingSession.lastActivity : Date.now());
+
+		// Determine remaining idle time
+		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + ((validResult) ? existingSession.maxIdleTime : 0));
+		var tokenExpired = dt.hasPassed(lastActiveTimestamp);
+		if (validResult && !tokenExpired) {
+			callback(true, null);
+		} else if (!validResult) {
+			callback(null, ef.asCommonStr(ef.struct.unexpectedValue));
+		} else if (tokenExpired) {
+			callback(false, null);
+		} else if (error) {
+			callback(null, ef.asCommonStr(ef.struct.coreErr, error));
+		}
+	});
+}
+
+/*
+	@function 	clearSession
+	@parameter 	token - the database access token
+	@parameter 	sessionID - the session token of the user whose sesion data will be cleared
+	@parameter 	callback - a required callback function to run after attempting to clear the specified user's session data. It is passed two arguments:
+					reply - if the operation was understood by the MongoDB server, this is a JSON object detailing the success of the operation
+					error - if there was no error, this parameter is "null"; otherwise, it is an object detailing the error that occurred
+	@returns 	n/a
+	@details 	This function is useful for removing a user's session data from the database when their token becomes invalid, or when the session manager is used to manually log them out.
+*/
+function clearSession (token, sessionID, callback) {
+	var handlerTag = {"src": "clearSession"};
+	var removalPostBody = {
+		"accessToken": credentials.mdbi.accessToken,
+		"collection": "SessionData",
+		"search": {
+			"sessionID": sessionID
+		}
+	};
+	var removalPostOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/delete/document",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(removalPostBody))
+		}
+	};
+
+	www.https.post(removalPostOptions, removalPostBody, callback);
+}
+// END Utility Functions
 
 
 

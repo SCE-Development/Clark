@@ -1,0 +1,103 @@
+<!-- 
+	PROJECT: 		Core-v4
+	Name: 			Rolando Javier
+	File: 			profiler.template.html
+	Date Created: 	February 16, 2018
+	Last Modified: 	February 16, 2018
+	Details:
+		This file serves as the html template for the profiler element
+ -->
+<div class="well">
+	<div class="page-header">
+		<h3 class="brand-text">
+			Member Profiler
+			<small>{{$ctrl.msg}}</small>
+			<div style="color: red">{{$ctrl.errmsg}}</div>
+		</h3>
+	</div>
+	<div class="container-fluid">
+		<div class="row" style="margin-bottom: 10px">
+			<div class="col-sm-6">
+				<!-- BEGIN search controls -->
+				<form role="search">
+					<div class="input-group">
+						<span class="input-group-btn">
+							<button class="btn btn-primary" ng-click="$ctrl.search()">
+								Search by
+							</button>
+							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								{{$ctrl.searchType}}
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="#" ng-click="$ctrl.setSearchType('username')">username</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('first name')">first name</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('last name')">last name</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('join date')">join date</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('email')">email</a></li>
+								<li><a href="#" ng-click="$ctrl.setSearchType('major')">major</a></li>
+							</ul>
+						</span>
+						<input type="text" class="form-control" placeholder="Search" ng-model="$ctrl.searchTerm">
+					</div>
+				</form>
+				<!-- END search controls -->
+			</div>
+			<div class="col-sm-6">
+				<!-- BEGIN filter controls -->
+				<div class="btn-group">
+					<button type="button" class="btn btn-primary">Results Per Page:</button>
+					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{{$ctrl.resultsPerPage}} <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a href="#" ng-click="$ctrl.setResultsPerPage(10)">10</a></li>
+						<li><a href="#" ng-click="$ctrl.setResultsPerPage(20)">20</a></li>
+						<li><a href="#" ng-click="$ctrl.setResultsPerPage(50)">50</a></li>
+						<li><a href="#" ng-click="$ctrl.setResultsPerPage(100)">100</a></li>
+					</ul>
+				</div>
+				<!-- END filter controls -->
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<!-- BEGIN member detail panel -->
+					<div class="panel-heading">Detail Panel</div>
+					<div class="panel-body">
+						View member details here...
+					</div>
+					<!-- END member detail panel -->
+					
+					<!-- BEGIN result set table -->
+					<table class="table" style="overflow: scroll; margin-top: 10px;">
+						<thead>
+							<th>MemberID</th>
+							<th>Username</th>
+							<th>Name</th>
+							<th>Joined</th>
+							<th>Email</th>
+							<th>Major</th>
+						</thead>
+						<tbody>
+							<tr ng-repeat="row in $ctrl.results">
+								<td>{{row.memberID}}</td>
+								<td>
+									<button type="button" class="btn btn-default" ng-click="$ctrl.viewDetail(row.userName)" data-toggle="tooltip" data-placement="left" title="View details">
+										{{row.userName}}
+									</button>
+								</td>
+								<td>{{row.firstName}} {{row.middleInitial}} {{row.lastName}}</td>
+								<td>{{row.joinDate}}</td>
+								<td>{{row.email}}</td>
+								<td>{{row.major}}</td>
+							</tr>
+						</tbody>
+					</table>
+					<!-- END result set table -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

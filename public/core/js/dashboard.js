@@ -15,6 +15,7 @@ var dbgMode = true;	// changes relevant parameters when doing debugging
 var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
 var urls = {
 	"logout": `https://${hostname}/core/logout`,
+	"search": `https://${hostname}/mdbi/search/documents`,
 	"corePortal": `https://${hostname}/core`
 };
 
@@ -29,7 +30,7 @@ function init () {
 
 
 // BEGIN AngularJS App
-var pageApp = angular.module("adminDashboard",[]);
+var pageApp = angular.module("adminDashboard",["profiler"]);
 // END AngularJS App
 
 
@@ -70,6 +71,24 @@ pageApp.controller("UserController", function userController ($scope, $http, $wi
 		}).catch(function (errResponse) {	// called when http status code is outside 200s
 			logDebug("UserController", "logout", `Error: ${JSON.stringify(errResponse.data)}`);
 		});
+	};
+});
+
+/*
+	@controller 	contextController
+	@details 		This controller handles context control, determining when certain page elements are displayed or not
+*/
+pageApp.controller("ContextController", function contextController ($scope) {
+	$scope.hideAllPanels = () => {
+		$("#member-profiler").addClass("hidden");
+	};
+	$scope.showPanel = (elementId) => {
+		console.log(`Showing ${elementId} panel`);
+		$scope.hideAllPanels();
+		$(`#${elementId}`).removeClass("hidden");
+	};
+	$scope.hidePanel = (elementId) => {
+		$(`#${elementId}`).addClass("hidden");
 	};
 });
 // END Angular Controllers
