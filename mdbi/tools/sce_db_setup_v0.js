@@ -3,6 +3,9 @@
 // 	File: 			sce_db_setup_v0.js
 // 	Date Created: 	January 22, 2018
 // 	Last Modified: 	January 22, 2018
+// 	Dependencies:
+// 					schema_v0.js (the database schema file describing the database structure)
+// 					cryptic.js (for password hashing)
 // 	Details:
 // 					This file contains the setup script for the SCE MongoDB. It creates the necessary database collections if they don't already exist.
 //					The script can be run using the command "node sce_db_setup.js", but can also be controlled manually by passing in a third argument after the file name:
@@ -18,6 +21,7 @@
 // Includes
 var settings = require("../../util/settings");
 var credentials = require(settings.credentials).mdbi;
+var cryptic = require(`${settings.util}/cryptic`);
 var syskey = require(settings.credentials).syskey;
 var schema = require("./schema_v0");
 var assert = require("assert");
@@ -175,6 +179,362 @@ var dbDefaults = {
 		}
 	]
 };
+
+// Mock Data (member ids foreign key constraint: 0-12 are the only existing memberIDs)
+var mockMembers = [
+	{
+		"memberID": 1,
+		"firstName": "John",
+		"middleInitial": "J.",
+		"lastName": "Doe",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "johnjdoe",
+		"passWord": cryptic.hashPwd("johnjdoe","johnjdoe"),
+		"email": "johnjdoe@email.com",
+		"major": "CMPE",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 2,
+		"firstName": "Jane",
+		"middleInitial": "J.",
+		"lastName": "Doe",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "janejdoe",
+		"passWord": cryptic.hashPwd("janejdoe","janejdoe"),
+		"email": "janejdoe@email.com",
+		"major": "SE",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 3,
+		"firstName": "Jack",
+		"middleInitial": "B.",
+		"lastName": "Bower",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "jackbower",
+		"passWord": cryptic.hashPwd("jackbower","jackbower"),
+		"email": "jackbower@email.com",
+		"major": "Forensic Science",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 4,
+		"firstName": "Cati",
+		"middleInitial": "A.",
+		"lastName": "Abbott",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "catiaabbott",
+		"passWord": cryptic.hashPwd("catiaabbott","catiaabbott"),
+		"email": "catiaabbott@email.com",
+		"major": "n/a",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 5,
+		"firstName": "Charles",
+		"middleInitial": "C.",
+		"lastName": "Smith",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "ccsmith",
+		"passWord": cryptic.hashPwd("ccsmith","ccsmith"),
+		"email": "charles.smith@email.com",
+		"major": "CMPE",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 6,
+		"firstName": "Chris",
+		"middleInitial": "J.",
+		"lastName": "Kringle",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "cjkringle",
+		"passWord": cryptic.hashPwd("cjkringle","christmas"),
+		"email": "kringle.cj@email.com",
+		"major": "Hospitality",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 7,
+		"firstName": "Alice",
+		"middleInitial": "D.",
+		"lastName": "Everett",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "adeverett",
+		"passWord": cryptic.hashPwd("adeverett","alice in wonderland"),
+		"email": "alice.everett@email.com",
+		"major": "Undeclared",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 8,
+		"firstName": "Robert",
+		"middleInitial": "G.",
+		"lastName": "Parr",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "mrIncredible",
+		"passWord": cryptic.hashPwd("mrIncredible","i work alone"),
+		"email": "incredibleRParr@email.com",
+		"major": "Physical Therapy",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 9,
+		"firstName": "Khalil",
+		"middleInitial": "M.",
+		"lastName": "Estell",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "kammce",
+		"passWord": cryptic.hashPwd("kammce","sleep is for the weak"),
+		"email": "kammce.corp@email.com",
+		"major": "CMPE",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 10,
+		"firstName": "John",
+		"middleInitial": "J.",
+		"lastName": "Jameson",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "jamesonsr",
+		"passWord": cryptic.hashPwd("jamesonsr","i want spiderman!"),
+		"email": "jjjameson@email.com",
+		"major": "Journalism",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 11,
+		"firstName": "Anthony",
+		"middleInitial": "E.",
+		"lastName": "Stark",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "stark5",
+		"passWord": cryptic.hashPwd("stark5","cool facial hair bros"),
+		"email": "stark.ironman@email.com",
+		"major": "CMPE",
+		"lastLogin": ""
+	},
+	{
+		"memberID": 12,
+		"firstName": "Bruce",
+		"middleInitial": "",
+		"lastName": "Wayne",
+		"joinDate": (new Date(Date.now())).toISOString(),
+		"userName": "thebatman",
+		"passWord": cryptic.hashPwd("thebatman","because i'm batman"),
+		"email": "wayne.enterprises@email.com",
+		"major": "Business",
+		"lastLogin": ""
+	}
+];
+var mockMemberData = [
+	{
+		"memberID": 1,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 2,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 3,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 4,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 5,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 6,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 7,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 8,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 9,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": false
+	},
+	{
+		"memberID": 10,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 11,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 1,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 12,
+		"startTerm": new Date(Date.now()),
+		"endTerm": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50),0 + Math.floor(Math.random() * 10 % 12))),
+		"doorCodeID": 3,
+		"gradDate": new Date(Date.UTC(2018 + Math.floor(Math.random() * 10 % 50), 5)),
+		"level": 1,
+		"membershipStatus": true
+	}
+];
+var mockAnnouncements = [
+	{
+		"aID": 0,
+		"senderID": 12,
+		"title": "Why am I awesome?",
+		"msgContent": "...because I'm <strong>BATMAAAAAAN!!!!</strong>",
+		"imgPath": ""
+	},
+	{
+		"aID": 1,
+		"senderID": 10,
+		"title": "Coldplay is awesome when LIVE! (Said no one ever... hehe)",
+		"msgContent": "I used to rule the world. Seas would rise when I gave the word. <strong>Now in the moment I sleeeeep alone</strong>. Sweep the streets I used to own. <p>*Sad Violin Solo*</p>",
+		"imgPath": ""
+	},
+	{
+		"aID": 2,
+		"senderID": 3,
+		"title": "A great poem",
+		"msgContent": "Two roads diverged in a yellow wood, and sorry I could not travel both. And be it there,.... how does the rest of it go again?",
+		"imgPath": ""
+	},
+	{
+		"aID": 3,
+		"senderID": 0,
+		"title": "Official SCE Welcome",
+		"msgContent": "<strong>Welcome</strong> to SCE's new Core-v4 site. Make sure to check out your profiles for your doorcodes and any other services available to you. Thanks, and have a great semester!!!",
+		"imgPath": ""
+	},
+	{
+		"aID": 4,
+		"senderID": 7,
+		"title": "The typical 9-5",
+		"msgContent": "<strong>Life. What is life?</strong> Is it a meaningless existence in which we do nothing but suffer the everyday burdens of morning traffic, midday tirades from our bosses, or the late-night blues of having no meaninful purpose, of not making a different, and of not even mattering? Why, then, do we exist? It certainly wasn't by our choice. But unbeknownst to many, to spend your days doing something you do not like and doesn't align to your goals warrants precisely this type of situation. Therefore, you must ask yourself this question: What do I desire?",
+		"imgPath": ""
+	},
+	{
+		"aID": 5,
+		"senderID": 8,
+		"title": "Response to The typical 9-5",
+		"msgContent": "<strong>Hey,</strong> get back to work!",
+		"imgPath": ""
+	},
+	{
+		"aID": 6,
+		"senderID": 7,
+		"title": "Response to Response to The typical 9-5",
+		"msgContent": "...yes boss...",
+		"imgPath": ""
+	},
+	{
+		"aID": 7,
+		"senderID": 3,
+		"title": "The late Chris Cornell",
+		"msgContent": "<strong>I am saddened</strong> by the loss of one of this world's greatest Rock Musicians of our time...",
+		"imgPath": ""
+	},
+	{
+		"aID": 8,
+		"senderID": 2,
+		"title": "Plans for the break",
+		"msgContent": "<strong>Hi all!</strong> As you know, the Christmas break is fast-approaching, and thus it is time to assign your hours with next year's work plan. The company is experiencing several internal changes, and we need to get all these technical action items out of the way as fast as reasonably possible! Please contact your department head to schedule your annual review meeting ASAP!",
+		"imgPath": ""
+	},
+	{
+		"aID": 9,
+		"senderID": 11,
+		"title": "Avengers Infinity War",
+		"msgContent": "<strong>Hey all,</strong> the Infinity Wars premier date has been changed to April 27th, earlier than previously expected! Yay!",
+		"imgPath": ""
+	}
+];
+var mockDoorCodes = [
+	{"dcID": 0, "code": "000-0000"},
+	{"dcID": 1, "code": "000-0001"},
+	{"dcID": 2, "code": "000-0002"},
+	{"dcID": 3, "code": "000-0003"},
+	{"dcID": 4, "code": "000-0004"},
+	{"dcID": 5, "code": "000-0005"},
+	{"dcID": 6, "code": "000-0006"},
+	{"dcID": 7, "code": "000-0007"},
+	{"dcID": 8, "code": "000-0008"},
+	{"dcID": 9, "code": "000-0009"},
+	{"dcID": 10, "code": "000-0010"},
+	{"dcID": 11, "code": "000-0011"},
+	{"dcID": 12, "code": "000-0012"},
+	{"dcID": 13, "code": "000-0013"},
+	{"dcID": 14, "code": "000-0014"},
+	{"dcID": 15, "code": "000-0015"},
+	{"dcID": 15, "code": "000-0016"},
+	{"dcID": 17, "code": "000-0017"},
+	{"dcID": 18, "code": "000-0018"},
+	{"dcID": 19, "code": "000-0019"},
+	{"dcID": 20, "code": "000-0020"},
+	{"dcID": 21, "code": "000-0021"},
+	{"dcID": 22, "code": "000-0022"},
+	{"dcID": 23, "code": "000-0023"}
+];
 var url = `mongodb://${encodeURIComponent(credentials.user)}:${encodeURIComponent(credentials.pwd)}@${mongo_settings.hostname}:${mongo_settings.port}/${mongo_settings.database}`;
 
 // BEGIN Database Client
@@ -388,6 +748,11 @@ if (arg === "--help") {
 						});
 					});
 
+					var mockInitDb = new Promise(function (resolve, reject) {
+						console.log("Mock-initializing...");
+						mockInit(db, resolve, reject);
+					});
+
 					// Create database and apply schema
 					Promise.all([
 						addServerActivations,
@@ -409,7 +774,21 @@ if (arg === "--help") {
 							addAdminMembership
 						]).then(function (messages) {
 							console.log(`Root admin ${syskey.userName} successfully added...`);
-							endSession(db);
+							if (arg === "--mock") {
+								Promise.all([
+									mockInitDb
+								]).then(function (message) {
+									console.log("Successfully initialized db with mock documents...");
+									endSession(db);
+								}).catch(function (error) {
+									console.log("Mock-initialization was unsuccessful!");
+									if (db) {
+										endSession(db);
+									}
+								});
+							} else {
+								endSession(db);
+							}
 						}).catch(function (error) {
 							console.log(`Failed to add root admin: ${error}`);
 							if (db) {
@@ -439,6 +818,51 @@ if (arg === "--help") {
 
 
 // BEGIN Utility Functions
+/*
+	@function 	mockInit
+	@parameter 	database - the mongo database object from MongoClient.connect()
+	@parameter 	resolve - the resolve object passed on by a JavaScript Promise
+	@parameter 	reject - the reject object passed on by a JavaScript Promise
+	@returns 	n/a
+	@details 	This function executes a mock initialization of the database
+*/
+function mockInit (database, resolve, reject) {
+	// Insert Mock Members
+	database.collection("Member").insertMany(mockMembers, function (err, response) {
+		if (err) {
+			console.log(`Failed to insert mock members!`);
+			reject();
+		} else {
+			// Then, insert mock Announcements
+			database.collection("Announcement").insertMany(mockAnnouncements, function (err, response) {
+				if (err) {
+					console.log("Failed to insert mock announcements!");
+					reject();
+				} else {
+					// Then, insert mock DoorCodes
+					database.collection("DoorCode").insertMany(mockDoorCodes, function (err, response) {
+						if (err) {
+							console.log("Failed to insert mock door codes!");
+							reject();
+						} else {
+							// Then, insert mock MembershipData
+							database.collection("MembershipData").insertMany(mockMemberData, function (err, response) {
+								if (err) {
+									console.log("Failed to insert mock member data!");
+									reject();
+								} else {
+									console.log("Mock-initialization complete")
+									resolve();
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	});
+}
+
 /*
 	@function 	endSession
 	@parameter 	mongoDatabase - the MongoDB database object returned from MongoClient.connect()
@@ -470,6 +894,7 @@ function help () {
 	console.log("\nOptions:");
 	console.log("\t--stat\n\t\tAcquires current MongoDB database statistics for the SCE database");
 	console.log("\t--init\n\t\tThe default behavior; initializes the database to the structure described by schema_v0.js");
+	console.log("\t--mock\n\t\tSame as the --init option, but adds numerous \"fake\" database documents for testing with a large database");
 	console.log("\t--help\n\t\tRuns this help prompt");
 	console.log("\t--format\n\t\tWARNING: This command does a complete wipe of the database (use only for debugging)");
 }
