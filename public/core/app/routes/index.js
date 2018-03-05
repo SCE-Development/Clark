@@ -394,6 +394,18 @@ router.post("/dashboard", function (request, response) {
 			var vInvalid = "Invalid Token. Returning admin portal to ${settings.port}";
 
 			logger.log(`${(error === null) ? vInvalid : vErr}`, handlerTag);
+
+			// Clear session data if token is invalid
+			if (valid === false && sessionID !== null) {
+				clearSession(credentials.mdbi.accessToken, sessionID, function (reply, err) {
+					if (err) {
+						logger.log(`Failed to clear session: ${err}`, handlerTag);
+					} else {
+						logger.log(`Session cleared successfully`, handlerTag);
+					}
+				});
+			}
+
 			response.location(`https://${request.hostname}:${settings.port}/core/`);
 			response.sendFile("core/core.html", options, function (error) {
 				if (error) {
