@@ -428,7 +428,9 @@ router.post("/dashboard", function (request, response) {
 					"sessionID" - the client's session token
 					"searchType" - a string defining the parameter search type
 					"searchTerm" - the term to search for
-					"resultMax" - the maximum number of results to return
+					"options" - an optional JSON object containing options to customize the result set returned from the search. If specified, it may contain any of the following:
+						"resultMax" - the maximum number of results to return (defaults to 100)
+						"regexMode" - a boolean specifying whether or not to interpret the "searchTerm" as a regular expression
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200 and a list (array) of returned search results, or null if no results were found
 				On invalid or expired session token: a code 499 and an error format object
@@ -438,8 +440,19 @@ router.post("/dashboard", function (request, response) {
 router.post("/dashboard/search/members", function (request, response) {
 	var handlerTag = {"src": "dashboardMemberSearchHandler"};
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
-	var resultsPerPage = (typeof request.body.resultMax !== "undefined") ? request.body.resultMax : 10;	// currently, this parameter is unused, and will later format the amount of search results returned to the client
+	var isRegex = false;
+	var resultsPerPage = 100;	// currently, this parameter is unused, and will later format the amount of search results returned to the client
 	// logger.log(`This is the requested max results per page: ${resultsPerPage}`, handlerTag);	// debug
+
+	// Acquire options, if any
+	if (typeof request.body.options !== "undefined") {
+		if (typeof request.body.options.resultMax === "number") {
+			resultsPerPage = request.body.options.resultMax;
+		}
+		if (typeof request.body.options.regexMode === "boolean") {
+			isRegex = request.body.options.regexMode;
+		}
+	}
 
 	var mdbiSearchCallback = function (reply, error) {	// expects reply to be an array of the found matches
 		if (error) {
@@ -492,29 +505,30 @@ router.post("/dashboard/search/members", function (request, response) {
 				searchPostBody.search = {};
 			} else {
 				// Determine how to format the search criteria, based on the search type
+				var stype = "invalid";
 				switch (request.body.searchType) {
 					case "username": {
-						searchPostBody.search["userName"] = request.body.searchTerm;
+						stype = "userName";
 						break;
 					}
 					case "first name": {
-						searchPostBody.search["firstName"] = request.body.searchTerm;
+						stype = "firstName";
 						break;
 					}
 					case "last name": {
-						searchPostBody.search["lastName"] = request.body.searchTerm;
+						stype = "lastName";
 						break;
 					}
 					case "join date": {
-						searchPostBody.search["joinDate"] = request.body.searchTerm;
+						stype = "joinDate";
 						break;
 					}
 					case "email": {
-						searchPostBody.search["email"] = request.body.searchTerm;
+						stype = "email";
 						break;
 					}
 					case "major": {
-						searchPostBody.search["major"] = request.body.searchTerm;
+						stype = "major";
 						break;
 					}
 					default: {
@@ -523,6 +537,15 @@ router.post("/dashboard/search/members", function (request, response) {
 						break;
 					}
 				}
+
+				// Place search term in the search post body, based on any relevant search modifiers provided
+				var objectToPlace = request.body.searchTerm;
+				if (isRegex) {
+					objectToPlace = {
+						"$regex": request.body.searchTerm
+					};
+				}
+				searchPostBody.search[stype] = objectToPlace;
 
 				// Recalculate Content-Length header, now that the body length has changed
 				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
