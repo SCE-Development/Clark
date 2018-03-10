@@ -80,3 +80,11 @@ public/core/core_legacy.html
 public/core/dashboard_legacy.html
 public/core/js/core_legacy.js
 public/core/js/dashboard_legacy.js
+
+# chio's Ignore files 
+.DS_Store
+mdbi/.DS_Store
+public/.DS_Store
+public/skeleton/.DS_Store
+util/.DS_Store
+util/common/.DS_Store
