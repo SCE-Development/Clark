@@ -135,6 +135,22 @@ function init() {
 				"collection": collectionName,
 				"search": searchCriteria
 			};
+
+			if ($("#fieldProjectionToggle")[0].checked === true && $("#fieldProjectionText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.projection = JSON.parse($("#fieldProjectionText").val());
+					console.log("Added projection");
+				} catch (err) {
+					console.log("Error: failed to parse projection JSON data \"" + $("#fieldProjectionText").val() + "\"");
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
 			post("/mdbi/search/documents", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());

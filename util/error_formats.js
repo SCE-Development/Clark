@@ -67,6 +67,10 @@ error_formats.struct = {
 		"name": "INVALID_BODY",
 		"msg": "The submitted request body is invalid, incomplete, or incorrectly formatted"
 	},
+	"invalidDataType": {
+		"name": "INVALID_DATA_TYPE",
+		"msg": "A parameter had an invalid datatype"
+	},
 	"mdbiAccessDenied": {
 		"name": "MDBI_ACCESS_DENIED",
 		"msg": "You do not have access rights to the MDBI system"

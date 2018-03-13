@@ -3,7 +3,7 @@
 	Name: 			Rolando Javier
 	File: 			test.html
 	Date Created: 	November 3, 2017
-	Last Modified: 	February 15, 2018
+	Last Modified: 	March 12, 2018
 	Details:
 		This file serves as a function test page for the MEANserver project
  -->
@@ -145,6 +145,12 @@
 												<span class="input-group-btn">
 													<!-- No button here... -->
 												</span>
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<input id="fieldProjectionToggle" type="checkbox">
+												</span>
+												<input id="fieldProjectionText" type="text" class="form-control" placeholder="Projection" data-toggle="tooltip" title='Some Examples:{"field0": 1} forces all documents in the result set to include ONLY field0, while {"field1": 0} forces all documents in the result set to exlude field1.'>
 											</div>
 											<div class="input-group">
 												<input id="dbDocRawJsonField" class="form-control" type="text" placeholder="JSON Search Criteria..." data-toggle="tooltip" title='Some Examples:{"msg":"hi"} or {"loginObj.idNestedMember":123}'>

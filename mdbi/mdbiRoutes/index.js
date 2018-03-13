@@ -174,24 +174,32 @@ router.post("/search/collections", function (request, response) {
 		{
 			"accessToken": "access token string",
 			"collection": "string name of collection",
-			"search": {...}
+			"search": {...},
+			"options": {...}
 		}
-	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), and the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function. Read the findDocs() description for more details on what to give to the "search" parameter.
+	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function (read the findDocs() description for more details on what to give to the "search" parameter), and the "options" parameter is an optional object containing result set formatting options. The "options" parameter can contain any of the following:
+		{
+			"projection": {...}	// a MongoDB Projection Specifier Object
+		}
 */
 router.post("/search/documents", function (request, response) {
 	var handlerTag = {"src": "mdbi/search/documents"};
 	var hasBody = (Object.keys(request.body).length > 0);
+	var hasOptions = (!hasBody) ? false : (typeof request.body.options === "object") ? true : false;
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};	// either the filter, or empty JSON
 
 	// Find documents
-	if (!checkAuth(request.body.accessToken)) {
+	if (!hasBody) {
+		logger.log(`Error: no request body found`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.invalidBody)).status(499).end();
+	} else if (!checkAuth(request.body.accessToken)) {
 		logger.log(`Invalid db access token`, handlerTag);
 		response.set("Content-Type", "application/json");
 		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
 	} else {
-		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
-		
-		mdb.findDocs(searchCriteria.collection, searchCriteria.search, function (error, list) {
+		var projection = (!hasOptions) ? null : (typeof request.body.options.projection === "object") ? request.body.options.projection : null;
+		var queryCallback = function (error, list) {
 			if (error != null) {
 				logger.log(`An error occurred`, handlerTag);
 				response.status(500).send(error).end();
@@ -199,7 +207,14 @@ router.post("/search/documents", function (request, response) {
 				logger.log(`A result was returned`, handlerTag);
 				response.status(200).send(JSON.stringify(list)).end();
 			}
-		});
+		};
+
+		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+		if (projection !== null) {
+			mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback);
+		} else {
+			mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback);
+		}
 	}
 });
 

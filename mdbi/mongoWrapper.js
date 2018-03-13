@@ -13,6 +13,7 @@
 // Includes
 var settings = require("../util/settings");         // import server system settings
 var logger = require(`${settings.util}/logger`);    // import event log system
+var ef = require(`${settings.util}/error_formats`); // import error formatting system
 
 // Container (Singleton)
 const mdb = {};             // The mongodb wrapper class
@@ -146,6 +147,69 @@ mdb.findDocs = function (collection, filter, callback) {
         }
     });
 }
+
+/*
+    @function   findAndProjectDocs
+    @parameter  collection - the string name of the collection to search through
+    @parameter  filter - a JSON object to filter which documents are returned (i.e. the search criteria)
+    @parameter  projection - a JSON object detailing the fields to project (analogous to the "SELECT [columnNames]" statement in SQL)
+    @parameter  (optional) callback - a callback funtion to run after the search is performed. It is passed two parameters:
+                    error - if an error occurred, "error" is an object detailing the issue. Otherwise, it is null.
+                    list - the array list of documents matching the search criteria
+    @returns    n/a
+    @details    This function is identical to findDocs(), except that it limits the number of fields (analogous to SQL columns) returned from a database query, thereby reducing data traffic and increasing speed/efficiency for queries that do not need the full set of data. The filter criteria is a JSON object which (if not empty) is expected to contain various parameters:
+        {
+            "someParam0": "criteria0",
+            ...
+            "someParamN": "criteriaN"
+        }
+    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching
+    @note       See MongoDB's Collection.find() and Cursor.project() API docs for more information regarding the parameters
+*/
+mdb.findAndProjectDocs = function (collection, filter, projection, callback) {
+    var handlerTag = {"src": "findAndProjectDocs"};
+
+    // Begin by finding the collection
+    mdb.database.collection(collection, {strict: true}, function (error, result) {
+        if (error != null) {
+            // Error? Must report it...
+            logger.log(`Error looking up collection "${collection}": ` + error.toString(), handlerTag);
+            if (typeof callback === "function") {
+                callback(error, null);
+            }
+        } else if (typeof projection !== "object") {
+            // Type error. Report it...
+            logger.log(`Invalid projection data type "${typeof projection}"`, handlerTag);
+            if (typeof callback === "function") {
+                callback(ef.asCommonStr(ef.struct.invalidDataType, {"Parameter": "projection"}), null);
+            }
+        } else {
+            // If no error, then the collection exists. We must now find the document(s)
+            logger.log(`Finding docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
+            result.find(filter).project(projection).toArray(function(err, docs) {
+                switch (err === null) {
+                    // No error; proceed normally
+                    case true: {
+                        logger.log(`Document(s) search succeeded`, handlerTag);
+                        if (typeof callback === "function") {
+                            callback(null,docs);
+                        }
+                        break;
+                    }
+
+                    // Err was present
+                    default: {
+                        logger.log(`Document(s) search failed`, handlerTag);
+                        if (typeof callback === "function") {
+                            callback(err,null);
+                        }
+                        break;
+                    }
+                }
+            });
+        }
+    });
+};
 
 /*
     @function   deleteOneDoc
