@@ -179,7 +179,9 @@ router.post("/search/collections", function (request, response) {
 		}
 	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function (read the findDocs() description for more details on what to give to the "search" parameter), and the "options" parameter is an optional object containing result set formatting options. The "options" parameter can contain any of the following:
 		{
-			"projection": {...}	// a MongoDB Projection Specifier Object
+			"projection": {...},	// a MongoDB Projection Specifier Object
+			"limit": ...,			// the max number of results you want back
+			"page": ...				// the current page of results to return
 		}
 */
 router.post("/search/documents", function (request, response) {
@@ -199,6 +201,8 @@ router.post("/search/documents", function (request, response) {
 		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
 	} else {
 		var projection = (!hasOptions) ? null : (typeof request.body.options.projection === "object") ? request.body.options.projection : null;
+		var limit = (!hasOptions) ? null : (typeof request.body.options.limit !== "undefined") ? request.body.options.limit : null;
+		var page = (!hasOptions) ? null : (typeof request.body.options.page !== "undefined") ? request.body.options.page : null;
 		var queryCallback = function (error, list) {
 			if (error != null) {
 				logger.log(`An error occurred`, handlerTag);
@@ -209,11 +213,25 @@ router.post("/search/documents", function (request, response) {
 			}
 		};
 
+		// debug
+		// logger.log(`projection: ${typeof projection} ${projection}\nlimit: ${typeof limit} ${limit}\npage: ${typeof page} ${page}\n`,handlerTag);
+
+		// Record the search request
 		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
 		if (projection !== null) {
 			mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback);
 		} else {
-			mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback);
+			// Compile constraints
+			var constraints = (limit === null) ? null : {"limit": limit};
+			if (limit !== null && page !== null) {
+				constraints.page = page;
+			}
+
+			if (constraints !== null) {
+				mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback, constraints);
+			} else {
+				mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback);
+			}
 		}
 	}
 });

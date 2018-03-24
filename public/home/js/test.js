@@ -136,6 +136,7 @@ function init() {
 				"search": searchCriteria
 			};
 
+			// Gather projection options
 			if ($("#fieldProjectionToggle")[0].checked === true && $("#fieldProjectionText").val() !== "") {
 				try {
 					if (typeof data.options === "undefined") {
@@ -151,6 +152,39 @@ function init() {
 				}
 			}
 
+			// Gather Size Limit Options
+			if ($("#resultSetLimitToggle")[0].checked === true && $("#resultSetLimitText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.limit = Number.parseInt($("#resultSetLimitText").val());
+					console.log(`Limited page size to ${data.options.limit}`);
+				} catch (err) {
+					console.log(`Error: failed to parse result set size limit \"${$("#resultSetLimitText").val()}\"`);
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Gather Page Options
+			if ($("#resultSetPageToggle")[0].checked === true && $("#resultSetPageText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.page = Number.parseInt($("#resultSetPageText").val());
+					console.log(`Requesting page number ${data.options.page}`);
+				} catch (err) {
+					console.log(`Error: failed to parse result set page number \"${$("#resultSetPageText").val()}\"`);
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Make the post request
 			post("/mdbi/search/documents", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());

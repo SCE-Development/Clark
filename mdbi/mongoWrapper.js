@@ -14,6 +14,7 @@
 var settings = require("../util/settings");         // import server system settings
 var logger = require(`${settings.util}/logger`);    // import event log system
 var ef = require(`${settings.util}/error_formats`); // import error formatting system
+var cu = require(`${settings.util}/custom_utility`);// import custom utilities
 
 // Container (Singleton)
 const mdb = {};             // The mongodb wrapper class
@@ -99,6 +100,7 @@ mdb.findCollections = function (collectionName, callback) {
     @parameter  callback - (optional) a callback function to run after the search is performed. It is passed two parameters:
                     error - if an error occurred, "error" is an object detailing the issue. Otherwise, it is null;
                     list - the array list of documents matching the search criteria
+    @parameter  constraints - (optional) a JSON object defining options to customize the search
     @returns    n/a
     @details    This function searches for documents fitting the filter criteria if given, or all documents in the collection if not (i.e. given an empty JSON object). The filter criteria is a JSON object which (if not empty) is expected to contain various parameters:
         {
@@ -106,10 +108,16 @@ mdb.findCollections = function (collectionName, callback) {
             ...
             "someParamN": "criteriaN"
         }
-    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching
+    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching.
+    If given, the "constraints" parameter is a JSON object that can take any of the following parameters:
+        {
+            "limit": ...,   // a number
+            "page": ...     // a number
+        }
+    where "limit" is the maximum number of results to return per page, and "page" is the number of the page to return. If limit is not defined, the "page" parameter is IGNORED. Specifying a "limit" of 0 has the same effect as using no limit constraint at all, and a negative "limit" number is taken as its absolute value (i.e. internally transformed by the MongoDB NodeJS driver). Page numbers are zero-indexed. If either "limit" or "page" are not number types, this function will attempt to convert them to numbers. If the conversion fails, the database query is aborted, and an error is passed to the callback if it was given.
     @note       See MongoDB's Collection.find() API doc for more information regarding the parameters
 */
-mdb.findDocs = function (collection, filter, callback) {
+mdb.findDocs = function (collection, filter, callback, constraints) {
     var handlerTag = {"src": "findDocs"};
 
     // Begin by finding the collection
@@ -121,9 +129,7 @@ mdb.findDocs = function (collection, filter, callback) {
                 callback(error, null);
             }
         } else {
-            // If no error, then the collection exists. We must now find the document(s)
-            logger.log(`Finding docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
-            result.find(filter).toArray(function(err, docs) {
+            var queryCallback = function(err, docs) {
                 switch (err === null) {
                     // No error; proceed normally
                     case true: {
@@ -143,7 +149,54 @@ mdb.findDocs = function (collection, filter, callback) {
                         break;
                     }
                 }
-            });
+            };
+
+            // If no error, then the collection exists. We must now find the document(s) by performing the query
+            if (typeof constraints === "object") {  // use given contraints
+                // Contraint Flags:
+                //      bit1: page is given
+                //      bit0: limit is given
+                var constraintFlags = 0x00;
+
+                // Determine which options are given
+                if (typeof constraints.limit !== "undefined") {
+                    constraintFlags |= (0x01 << 0);
+                }
+                if (typeof constraints.page !== "undefined") {
+                    constraintFlags |= (0x01 << 1);
+                }
+
+                // debug
+                logger.log(`Constraint Flag: ${Number.parseInt(constraintFlags, 16)}`, handlerTag);
+
+                // Handle any necessary type connversions
+                if (typeof constraints.limit === "string" || typeof constraints.page === "string") {
+                    constraints = cu.numerify(constraints);
+                }
+
+                // Perform the correct query based on the options given
+                switch (constraintFlags) {
+                    case 0x01: {    // only page limit
+                        logger.log(`Finding at most ${constraints.limit} docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
+                        result.find(filter).limit(constraints.limit).toArray(queryCallback);
+                        break;
+                    }
+                    case 0x03: {    // both page limit and page number
+                        logger.log(`Finding page ${constraints.page} of at most ${constraints.limit} docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
+                        result.find(filter).limit(constraints.limit).skip(constraints.limit * constraints.page).toArray(queryCallback);
+                        break;
+                    }
+                    default: {
+                        var errorMsg = ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "constraints"});
+                        logger.log(errorMsg, handlerTag);
+                        queryCallback(errorMsg, null);
+                        break;
+                    }
+                }
+            } else {    // perform an ordinary query with no constraints
+                logger.log(`Finding docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
+                result.find(filter).toArray(queryCallback);
+            }
         }
     });
 }

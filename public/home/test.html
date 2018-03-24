@@ -153,6 +153,18 @@
 												<input id="fieldProjectionText" type="text" class="form-control" placeholder="Projection" data-toggle="tooltip" title='Some Examples:{"field0": 1} forces all documents in the result set to include ONLY field0, while {"field1": 0} forces all documents in the result set to exlude field1.'>
 											</div>
 											<div class="input-group">
+												<span class="input-group-addon">
+													<input id="resultSetLimitToggle" type="checkbox">
+												</span>
+												<input id="resultSetLimitText" type="text" class="form-control" placeholder="Size Limit" data-toggle="tooltip" title="Limits the number of documents returned in the result. Valid inputs include all non-negative integers">
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<input id="resultSetPageToggle" type="checkbox">
+												</span>
+												<input id="resultSetPageText" type="text" class="form-control" placeholder="Page Number" data-toggle="tooltip" title="Determines which subset of size 'limit' to show within a given result set. Pages are zero-indexed">
+											</div>
+											<div class="input-group">
 												<input id="dbDocRawJsonField" class="form-control" type="text" placeholder="JSON Search Criteria..." data-toggle="tooltip" title='Some Examples:{"msg":"hi"} or {"loginObj.idNestedMember":123}'>
 												<span class="input-group-btn">
 													<button id="testMongoDocSearch" class="btn btn-success">Find</button>
