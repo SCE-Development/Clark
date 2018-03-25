@@ -218,19 +218,29 @@ router.post("/search/documents", function (request, response) {
 
 		// Record the search request
 		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
-		if (projection !== null) {
-			mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback);
-		} else {
-			// Compile constraints
-			var constraints = (limit === null) ? null : {"limit": limit};
-			if (limit !== null && page !== null) {
-				constraints.page = page;
-			}
+		// Compile constraints
+		var constraints = (limit === null) ? null : {"limit": limit};
+		if (limit !== null && page !== null) {
+			constraints.page = page;
+		}
 
-			if (constraints !== null) {
-				mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback, constraints);
-			} else {
-				mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback);
+		// Perform query
+		switch (projection !== null) {
+			case true: {
+				if (constraints !== null) {
+					mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback, constraints);
+				} else {
+					mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback);
+				}
+				break;
+			}
+			default: {
+				if (constraints !== null) {
+					mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback, constraints);
+				} else {
+					mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback);
+				}
+				break;
 			}
 		}
 	}
