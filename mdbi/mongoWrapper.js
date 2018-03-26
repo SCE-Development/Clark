@@ -2,7 +2,7 @@
 //  Name:           Rolando Javier
 //  File:           mongoWrapper.js
 //  Date Created:   January 8, 2018
-//  Last Modified:  January 9, 2018
+//  Last Modified:  March 25, 2018
 //  Details:
 //                  This file contains all MongoDB Database wrapper functions meant to execute database queries to the Mongo Server Daemon.
 //  Dependencies:
@@ -13,9 +13,17 @@
 // Includes
 var settings = require("../util/settings");         // import server system settings
 var logger = require(`${settings.util}/logger`);    // import event log system
+var ef = require(`${settings.util}/error_formats`); // import error formatting system
+var cu = require(`${settings.util}/custom_utility`);// import custom utilities
 
 // Container (Singleton)
 const mdb = {};             // The mongodb wrapper class
+
+
+
+// Constants
+const ASC = 1;
+const DESC = -1;
 
 
 
@@ -98,6 +106,7 @@ mdb.findCollections = function (collectionName, callback) {
     @parameter  callback - (optional) a callback function to run after the search is performed. It is passed two parameters:
                     error - if an error occurred, "error" is an object detailing the issue. Otherwise, it is null;
                     list - the array list of documents matching the search criteria
+    @parameter  constraints - (optional) a JSON object defining options to customize the search
     @returns    n/a
     @details    This function searches for documents fitting the filter criteria if given, or all documents in the collection if not (i.e. given an empty JSON object). The filter criteria is a JSON object which (if not empty) is expected to contain various parameters:
         {
@@ -105,10 +114,22 @@ mdb.findCollections = function (collectionName, callback) {
             ...
             "someParamN": "criteriaN"
         }
-    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching
+    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching.
+    If given, the "constraints" parameter is a JSON object that can take any of the following parameters:
+        {
+            "limit": ...,   // a number
+            "page": ...,    // a number
+            "sort": {       // an object
+                asc: [...], // an array of strings
+                desc: [...] // an array of strings
+            }
+        }
+    where "limit" is the maximum number of results to return per page, and "page" is the number of the page to return.
+    If limit is not defined, the "page" parameter is IGNORED. Specifying a "limit" of 0 has the same effect as using no limit constraint at all, and a negative "limit" number is taken as its absolute value (i.e. internally transformed by the MongoDB NodeJS driver). Page numbers are zero-indexed. If either "limit" or "page" are not number types, this function will attempt to convert them to numbers. If the conversion fails, the database query is aborted, and an error is passed to the callback if it was given.
+    If "sort" is given, it is checked for "asc" and "desc" as arrays of strings that specify fields to order by. Keys specified in "asc" will be sorted in ascending order, whereas keys specified in "desc" will be sorted in descending order. If neither asc or desc are given (or are not arrays), the database query is aborted, and an error is passed to the callback if it was given.
     @note       See MongoDB's Collection.find() API doc for more information regarding the parameters
 */
-mdb.findDocs = function (collection, filter, callback) {
+mdb.findDocs = function (collection, filter, callback, constraints) {
     var handlerTag = {"src": "findDocs"};
 
     // Begin by finding the collection
@@ -120,9 +141,7 @@ mdb.findDocs = function (collection, filter, callback) {
                 callback(error, null);
             }
         } else {
-            // If no error, then the collection exists. We must now find the document(s)
-            logger.log(`Finding docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}"`, handlerTag);
-            result.find(filter).toArray(function(err, docs) {
+            var queryCallback = function(err, docs) {
                 switch (err === null) {
                     // No error; proceed normally
                     case true: {
@@ -142,10 +161,254 @@ mdb.findDocs = function (collection, filter, callback) {
                         break;
                     }
                 }
-            });
+            };
+
+            // If no error, then the collection exists. We must now find the document(s) by performing the query
+            var queryFail = false;
+            var limitMsg = "unlimited";
+            var pageMsg = "unpaginated";
+            var cursor = result.find(filter);
+
+            // Customize the search with any specified constraints
+            if (typeof constraints === "object") {
+                // Implement result set limit constraint (and page) if specified
+                if (typeof constraints.limit !== "undefined") {
+                    // Handle any necessary type conversions
+                    constraints = cu.numerify(constraints);
+
+                    // Verify that the limit type conversion worked
+                    if (typeof constraints.limit !== "number") {
+                        queryFail = true;
+                        logger.log(`Error: failed to convert limit constraint to number`, handlerTag);
+
+                        // Pass an error to callback
+                        queryCallback(ef.asCommonStr(ef.struct.convertErr, {"parameter": "constraints.limit"}), null);
+                    } else {
+                        limitMsg = `at most ${constraints.limit}`;
+                        // Modify cursor with a limit
+                        cursor = cursor.limit(constraints.limit);
+
+                        // Verify that the page type conversion worked (if page was specified at all, that is!)
+                        var pageType = typeof constraints.page;
+                        if (pageType !== "undefined") {
+                            if (pageType !== "number") {
+                                queryFail = true;
+
+                                // Pass an error to callback
+                                logger.log(`Error: failed to convert page constraint to number`, handlerTag);
+                                queryCallback(ef.asCommonStr(ef.struct,convertErr, {"parameter": "constraints.page"}), null);
+                            } else {
+                                pageMsg = `page ${constraints.page}`;
+
+                                // Modify cursor with page (if any)
+                                cursor = cursor.skip(constraints.limit * constraints.page);
+                            }
+                        }
+                    }
+                }
+
+                // Implement result set sorting constraint if specified
+                if (typeof constraints.sort === "object") {
+                    var sortOrders = [];    // make an empty array of sort specs
+                    var ascKeys = constraints.sort.asc;
+                    var descKeys = constraints.sort.desc;
+
+                    // Verify that the sort constraint is properly formatted
+                    if (!Array.isArray(ascKeys) && !Array.isArray(descKeys)) {
+                        queryFail = true;
+
+                        // Pass error to callback
+                        logger.log(`Error: no sort order specified`, handlerTag);
+                        queryCallback(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "constraints.sort"}), null);
+                    } else {
+                        // Compile ascending sort specs
+                        if (Array.isArray(ascKeys)) {
+                            for (var i = 0; i < ascKeys.length; i++) {
+                                sortOrders.push([ascKeys[i], ASC]);
+                            }
+                        }
+
+                        // Compile descending sort specs
+                        if (Array.isArray(descKeys)) {
+                            for (var i = 0; i < descKeys.length; i++) {
+                                sortOrders.push([descKeys[i], DESC]);
+                            }
+                        }
+
+                        // Modify cursor with the sort order spec
+                        // logger.log(`order:${sortOrders.toString()}\ndlen:${(typeof descKeys !== "undefined") ? descKeys.length : 0}\nalen:${(typeof ascKeys !== "undefined") ? ascKeys.length : 0}`, handlerTag);   // debug
+                        cursor = cursor.sort(sortOrders);
+                    }
+                }
+            }
+
+            // Compile query to an array and pass to callback
+            if (!queryFail) {
+                logger.log(`Finding ${limitMsg} docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}" (${pageMsg})`, handlerTag);
+                cursor.toArray(queryCallback);
+            }
         }
     });
 }
+
+/*
+    @function   findAndProjectDocs
+    @parameter  collection - the string name of the collection to search through
+    @parameter  filter - a JSON object to filter which documents are returned (i.e. the search criteria)
+    @parameter  projection - a JSON object detailing the fields to project (analogous to the "SELECT [columnNames]" statement in SQL)
+    @parameter  (optional) callback - a callback funtion to run after the search is performed. It is passed two parameters:
+                    error - if an error occurred, "error" is an object detailing the issue. Otherwise, it is null.
+                    list - the array list of documents matching the search criteria
+    @parameter  (optional) constraints - a JSON object defining options to further customize the search
+    @returns    n/a
+    @details    This function is identical to findDocs(), except that it limits the number of fields (analogous to SQL columns) returned from a database query, thereby reducing data traffic and increasing speed/efficiency for queries that do not need the full set of data. The filter criteria is a JSON object which (if not empty) is expected to contain various parameters:
+        {
+            "someParam0": "criteria0",
+            ...
+            "someParamN": "criteriaN"
+        }
+    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching.
+    If given, the "constraints" parameter is a JSON object that can take any of the following parameters:
+        {
+            "limit": ...,   // a number
+            "page": ...,    // a number
+            "sort": {       // an object
+                asc: [...], // an array of strings
+                desc: [...] // an array of strings
+            }
+        }
+    where "limit" is the maximum number of results to return per page, and "page" is the number of the page to return.
+    If limit is not defined, the "page" parameter is IGNORED. Specifying a "limit" of 0 has the same effect as using no limit constraint at all, and a negative "limit" number is taken as its absolute value (i.e. internally transformed by the MongoDB NodeJS driver). Page numbers are zero-indexed. If either "limit" or "page" are not number types, this function will attempt to convert them to numbers. If the conversion fails, the database query is aborted, and an error is passed to the callback if it was given.
+    If "sort" is given, it is checked for "asc" and "desc" as arrays of strings that specify fields to order by. Keys specified in "asc" will be sorted in ascending order, whereas keys specified in "desc" will be sorted in descending order. If neither asc or desc are given (or are not arrays), the database query is aborted, and an error is passed to the callback if it was given.
+    @note       See MongoDB's Collection.find() and Cursor.project() API docs for more information regarding the parameters
+*/
+mdb.findAndProjectDocs = function (collection, filter, projection, callback, constraints) {
+    var handlerTag = {"src": "findAndProjectDocs"};
+
+    // Begin by finding the collection
+    mdb.database.collection(collection, {strict: true}, function (error, result) {
+        if (error != null) {
+            // Error? Must report it...
+            logger.log(`Error looking up collection "${collection}": ` + error.toString(), handlerTag);
+            if (typeof callback === "function") {
+                callback(error, null);
+            }
+        } else if (typeof projection !== "object") {
+            // Type error. Report it...
+            logger.log(`Invalid projection data type "${typeof projection}"`, handlerTag);
+            if (typeof callback === "function") {
+                callback(ef.asCommonStr(ef.struct.invalidDataType, {"Parameter": "projection"}), null);
+            }
+        } else {
+            var queryCallback = function(err, docs) {
+                switch (err === null) {
+                    // No error; proceed normally
+                    case true: {
+                        logger.log(`Document(s) search succeeded`, handlerTag);
+                        if (typeof callback === "function") {
+                            callback(null,docs);
+                        }
+                        break;
+                    }
+
+                    // Err was present
+                    default: {
+                        logger.log(`Document(s) search failed`, handlerTag);
+                        if (typeof callback === "function") {
+                            callback(err,null);
+                        }
+                        break;
+                    }
+                }
+            };
+
+            // If no error, then the collection exists. We must now find the document(s) by performing the query
+            var queryFail = false;
+            var limitMsg = "unlimited";
+            var pageMsg = "unpaginated";
+            var cursor = result.find(filter).project(projection);
+
+            // Customize the search with any specified constraints
+            if (typeof constraints === "object") {
+                // Implement result set limit constraint (and page) if specified
+                if (typeof constraints.limit !== "undefined") {
+                    // Handle any necessary type conversions
+                    constraints = cu.numerify(constraints);
+
+                    // Verify that the limit type conversion worked
+                    if (typeof constraints.limit !== "number") {
+                        queryFail = true;
+                        logger.log(`Error: failed to convert limit constraint to number`, handlerTag);
+
+                        // Pass an error to callback
+                        queryCallback(ef.asCommonStr(ef.struct.convertErr, {"parameter": "constraints.limit"}), null);
+                    } else {
+                        limitMsg = `at most ${constraints.limit}`;
+                        // Modify cursor with a limit
+                        cursor = cursor.limit(constraints.limit);
+
+                        // Verify that the page type conversion worked (if page was specified at all, that is!)
+                        var pageType = typeof constraints.page;
+                        if (pageType !== "undefined") {
+                            if (pageType !== "number") {
+                                queryFail = true;
+
+                                // Pass an error to callback
+                                logger.log(`Error: failed to convert page constraint to number`, handlerTag);
+                                queryCallback(ef.asCommonStr(ef.struct,convertErr, {"parameter": "constraints.page"}), null);
+                            } else {
+                                pageMsg = `page ${constraints.page}`;
+
+                                // Modify cursor with page (if any)
+                                cursor = cursor.skip(constraints.limit * constraints.page);
+                            }
+                        }
+                    }
+                }
+
+                // Implement result set sorting constraint if specified
+                if (typeof constraints.sort === "object") {
+                    var sortOrders = [];    // make an empty array of sort specs
+                    var ascKeys = constraints.sort.asc;
+                    var descKeys = constraints.sort.desc;
+
+                    // Verify that the sort constraint is properly formatted
+                    if (!Array.isArray(ascKeys) && !Array.isArray(descKeys)) {
+                        queryFail = true;
+
+                        // Pass error to callback
+                        logger.log(`Error: no sort order specified`, handlerTag);
+                        queryCallback(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "constraints.sort"}), null);
+                    } else {
+                        // Compile ascending sort specs
+                        if (Array.isArray(ascKeys)) {
+                            for (var i = 0; i < ascKeys.length; i++) {
+                                sortOrders.push([ascKeys[i], ASC]);
+                            }
+                        }
+
+                        // Compile descending sort specs
+                        if (Array.isArray(descKeys)) {
+                            for (var i = 0; i < descKeys.length; i++) {
+                                sortOrders.push([descKeys[i], DESC]);
+                            }
+                        }
+
+                        // Modify cursor with the sort order spec
+                        // logger.log(`order:${sortOrders.toString()}\ndlen:${(typeof descKeys !== "undefined") ? descKeys.length : 0}\nalen:${(typeof ascKeys !== "undefined") ? ascKeys.length : 0}`, handlerTag);   // debug
+                        cursor = cursor.sort(sortOrders);
+                    }
+                }
+            }
+
+            // Compile query to an array and pass to callback
+            if (!queryFail) {
+                logger.log(`Finding ${limitMsg} docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}" (${pageMsg})`, handlerTag);
+                cursor.toArray(queryCallback);
+            }
+        }
+    });
+};
 
 /*
     @function   deleteOneDoc

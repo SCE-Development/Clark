@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			mdbi/mdbiRoutes/index.js
 // Date Created: 	January 9, 2018
-// Last Modified: 	February 12, 2018
+// Last Modified: 	March 25, 2018
 // Details:
 //				 	This file abstracts all MDBI routes and places them into a ExpressJS router to be used by the mdbi subapp (accessed under the "/mdbi" endpoint from server.js) and in test/app.js.
 // Dependencies:
@@ -174,24 +174,42 @@ router.post("/search/collections", function (request, response) {
 		{
 			"accessToken": "access token string",
 			"collection": "string name of collection",
-			"search": {...}
+			"search": {...},
+			"options": {...}
 		}
-	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), and the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function. Read the findDocs() description for more details on what to give to the "search" parameter.
+	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function (read the findDocs() description for more details on what to give to the "search" parameter), and the "options" parameter is an optional object containing result set formatting options.
+	The "options" parameter can contain any of the following:
+		{
+			"projection": {...},	// a MongoDB Projection Specifier Object
+			"limit": ...,			// the max number of results you want back
+			"page": ...,			// the current page of results to return
+			"sort": {				// an object specifying fields to sort by
+				"asc": [...],		// specifies fields to sort in ascending order
+				"desc": [...]		// specifies fields to sort in descending order
+			}
+		}
 */
 router.post("/search/documents", function (request, response) {
 	var handlerTag = {"src": "mdbi/search/documents"};
 	var hasBody = (Object.keys(request.body).length > 0);
+	var hasOptions = (!hasBody) ? false : (typeof request.body.options === "object") ? true : false;
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};	// either the filter, or empty JSON
 
 	// Find documents
-	if (!checkAuth(request.body.accessToken)) {
+	if (!hasBody) {
+		logger.log(`Error: no request body found`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.invalidBody)).status(499).end();
+	} else if (!checkAuth(request.body.accessToken)) {
 		logger.log(`Invalid db access token`, handlerTag);
 		response.set("Content-Type", "application/json");
 		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
 	} else {
-		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
-		
-		mdb.findDocs(searchCriteria.collection, searchCriteria.search, function (error, list) {
+		var projection = (!hasOptions) ? null : (typeof request.body.options.projection === "object") ? request.body.options.projection : null;
+		var limit = (!hasOptions) ? null : (typeof request.body.options.limit !== "undefined") ? request.body.options.limit : null;
+		var page = (!hasOptions) ? null : (typeof request.body.options.page !== "undefined") ? request.body.options.page : null;
+		var sortSpec = (!hasOptions) ? null : (typeof request.body.options.sort !== "undefined") ? request.body.options.sort : null;
+		var queryCallback = function (error, list) {
 			if (error != null) {
 				logger.log(`An error occurred`, handlerTag);
 				response.status(500).send(error).end();
@@ -199,7 +217,46 @@ router.post("/search/documents", function (request, response) {
 				logger.log(`A result was returned`, handlerTag);
 				response.status(200).send(JSON.stringify(list)).end();
 			}
-		});
+		};
+
+		// debug
+		// logger.log(`projection: ${typeof projection} ${projection}\nlimit: ${typeof limit} ${limit}\npage: ${typeof page} ${page}\n`,handlerTag);
+
+		// Record the search request
+		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+
+		// Compile constraints
+		var constraints = (limit === null && page === null && sortSpec === null) ? null : {};
+		if (limit !== null) {
+			constraints.limit = limit;
+
+			if (page !== null) {
+				constraints.page = page;
+			}
+		}
+		if (sortSpec !== null) {
+			constraints.sort = sortSpec;
+		}
+
+		// Perform query
+		switch (projection !== null) {
+			case true: {
+				if (constraints !== null) {
+					mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback, constraints);
+				} else {
+					mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback);
+				}
+				break;
+			}
+			default: {
+				if (constraints !== null) {
+					mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback, constraints);
+				} else {
+					mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback);
+				}
+				break;
+			}
+		}
 	}
 });
 

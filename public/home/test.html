@@ -3,7 +3,7 @@
 	Name: 			Rolando Javier
 	File: 			test.html
 	Date Created: 	November 3, 2017
-	Last Modified: 	February 15, 2018
+	Last Modified: 	March 25, 2018
 	Details:
 		This file serves as a function test page for the MEANserver project
  -->
@@ -17,7 +17,7 @@
 	<meta name="description" content="MEAN Server Test: This page is a test page for PROJECT: MEAN Skills, and is used to test various server functions.">
 	<meta name="keywords" content="MEAN server test sce">
 	<meta name="author" content="R. Javier">
-	<meta name="last-modified" content="November 3, 2017">
+	<meta name="last-modified" content="March 25, 2018">
 
 	<!-- Tab Title -->
 	<title>myMEAN.test</title>
@@ -141,10 +141,38 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="input-group">
-												<input id="dbDocCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
-												<span class="input-group-btn">
-													<!-- No button here... -->
+												<span class="input-group-addon">
+													Collection Name
 												</span>
+												<input id="dbDocCollectionNameField" class="form-control" type="text" placeholder="Collection Name...">
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon">
+													Projection
+													<input id="fieldProjectionToggle" type="checkbox">
+												</span>
+												<input id="fieldProjectionText" type="text" class="form-control" placeholder="Projection" data-toggle="tooltip" title='Some Examples:{"field0": 1} forces all documents in the result set to include ONLY field0, while {"field1": 0} forces all documents in the result set to exlude field1.'>
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon">
+													Max Size
+													<input id="resultSetLimitToggle" type="checkbox">
+												</span>
+												<input id="resultSetLimitText" type="text" class="form-control" placeholder="Size Limit" data-toggle="tooltip" title="Limits the number of documents returned in the result. Valid inputs include all non-negative integers">
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon">
+													Page #
+													<input id="resultSetPageToggle" type="checkbox">
+												</span>
+												<input id="resultSetPageText" type="text" class="form-control" placeholder="Page Number" data-toggle="tooltip" title="Determines which subset of size 'limit' to show within a given result set. Pages are zero-indexed">
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon">
+													Sort Spec
+													<input id="resultSetSortToggle" type="checkbox">
+												</span>
+												<input id="resultSetSortSpec" type="text", class="form-control" placeholder="JSON Sort Options" data-toggle="tooltip" title="Example: {'asc':['field1'],'desc':['field2']} orders the result set in ascending order by field1, but descending order by field2">
 											</div>
 											<div class="input-group">
 												<input id="dbDocRawJsonField" class="form-control" type="text" placeholder="JSON Search Criteria..." data-toggle="tooltip" title='Some Examples:{"msg":"hi"} or {"loginObj.idNestedMember":123}'>
