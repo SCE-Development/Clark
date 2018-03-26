@@ -23,6 +23,7 @@ angular.module("profiler").component("profiler", {
 		this.errmsg = "";
 		this.resultsPerPage = 10;
 		this.searchTerm = "";
+		this.searchMode = "exact";
 		this.searchType = "username";
 		this.results = [
 			// {
@@ -46,7 +47,9 @@ angular.module("profiler").component("profiler", {
 				"sessionID": sessionStorage.getItem("sessionID"),
 				"searchType": ctl.searchType,
 				"searchTerm": ctl.searchTerm,
-				"resultMax": ctl.resultsPerPage
+				"options": {
+					"resultMax": ctl.resultsPerPage
+				}
 			};
 			var config = {
 				"headers": {
@@ -55,6 +58,16 @@ angular.module("profiler").component("profiler", {
 			};
 			var searchTypeStr = "";
 
+			// Process Search Customizations
+			if (ctl.searchMode !== "exact") {
+				if (ctl.searchMode === "word") {
+					// filter by text indexes here...
+				} else if (ctl.searchMode === "regex") {
+					requestBody.options["regexMode"] = true;
+				}
+			}
+
+			// Execute search
 			console.log(`Searching by ${ctl.searchType} for ${ctl.searchTerm}`);
 			$http.post(urls.search, requestBody, config).then((response) => {
 				console.log(response.data);	// debug
@@ -84,6 +97,10 @@ angular.module("profiler").component("profiler", {
 		this.setResultsPerPage = function (num) {
 			ctl.resultsPerPage = num;
 		};
+		this.setSearchMode = function (mode) {
+			console.log(`Interpreting search as ${mode}`);
+			ctl.searchMode = mode;
+		}
 	}
 });
 

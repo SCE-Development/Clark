@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			test.js
 // Date Created: 	November 3, 2017
-// Last Modified: 	February 12, 2018
+// Last Modified: 	March 25, 2018
 // Details:
 // 					This file contains the underlying javascript running the test.html page
 // Warning: 		This page is used for testing purposes ONLY! It must be disabled in the production version!
@@ -135,6 +135,71 @@ function init() {
 				"collection": collectionName,
 				"search": searchCriteria
 			};
+
+			// Gather projection options
+			if ($("#fieldProjectionToggle")[0].checked === true && $("#fieldProjectionText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.projection = JSON.parse($("#fieldProjectionText").val());
+					console.log("Added projection");
+				} catch (err) {
+					console.log("Error: failed to parse projection JSON data \"" + $("#fieldProjectionText").val() + "\"");
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Gather Size Limit Options
+			if ($("#resultSetLimitToggle")[0].checked === true && $("#resultSetLimitText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.limit = Number.parseInt($("#resultSetLimitText").val());
+					console.log(`Limited page size to ${data.options.limit}`);
+				} catch (err) {
+					console.log(`Error: failed to parse result set size limit \"${$("#resultSetLimitText").val()}\"`);
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Gather Page Options
+			if ($("#resultSetPageToggle")[0].checked === true && $("#resultSetPageText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.page = Number.parseInt($("#resultSetPageText").val());
+					console.log(`Requesting page number ${data.options.page}`);
+				} catch (err) {
+					console.log(`Error: failed to parse result set page number \"${$("#resultSetPageText").val()}\"`);
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Gather sort order options
+			if ($("#resultSetSortToggle")[0].checked === true && $("#resultSetSortSpec").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.sort = JSON.parse($("#resultSetSortSpec").val());
+					console.log("Added sort specs");
+				} catch (err) {
+					console.log(`Error: failed to parse sort spec JSON \"${$("#resultSetSortSpec").val()}\"`);
+					console.log(err);
+					showError(err);
+				}
+			}
+
+			// Make the post request
 			post("/mdbi/search/documents", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());
