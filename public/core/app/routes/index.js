@@ -453,7 +453,7 @@ router.post("/dashboard/search/members", function (request, response) {
 	var handlerTag = {"src": "dashboardMemberSearchHandler"};
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
 	var isRegex = false;
-	var resultsPerPage = 100;	// currently, this parameter is unused, and will later format the amount of search results returned to the client
+	var resultsPerPage = null;
 	// logger.log(`This is the requested max results per page: ${resultsPerPage}`, handlerTag);	// debug
 
 	// Acquire options, if any
@@ -509,7 +509,7 @@ router.post("/dashboard/search/members", function (request, response) {
 					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
 				}
 			};
-			
+
 			// Determine the type of search to make
 			logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm}...`, handlerTag);
 			if (request.body.searchTerm === "" || typeof request.body.searchTerm === "undefined") {
@@ -562,7 +562,17 @@ router.post("/dashboard/search/members", function (request, response) {
 				// Recalculate Content-Length header, now that the body length has changed
 				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
 			}
-			// console.log(searchPostBody);	// debug
+
+			// Configure search with any provided options
+			if (resultsPerPage !== null) {
+				// Add results per page as a custom option
+				searchPostBody.options = {
+					"limit": resultsPerPage
+				};
+
+				// Recalculate Content-Length header, now that the body length has changed
+				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
+			}
 
 			// Execute MDBI search here...
 			if (!validFormat) {
