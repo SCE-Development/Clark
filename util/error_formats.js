@@ -2,7 +2,7 @@
 // 	Name: 			Rolando Javier
 // 	File: 			error_formats.js
 // 	Date Created: 	January 27, 2018
-// 	Last Modified: 	February 12, 2018
+// 	Last Modified: 	March 25, 2018
 // 	Details:
 // 					This file contains a variety of error message formatting functions intended to "standardize" error handling across the entire Core-v4 project. Each one returns an error message or object, depending on the use-case (i.e. the error associated with the type of error message). By explicitly defining the format of error messages to be passed throughout the server, error messages will conform to a known structure both internally in the server and externally between the server and client(s).
 // 	Dependencies:
@@ -38,6 +38,10 @@ error_formats.struct = {
 	"adminUnauthorized": {
 		"name": "ADMIN_UNAUTHORIZED",
 		"msg": "You Lack Authorization"
+	},
+	"convertErr": {
+		"name": "CONVERT_ERROR",
+		"msg": "A conversion error occurred"
 	},
 	"coreErr": {
 		"name": "CORE_ERROR",

@@ -2,7 +2,7 @@
 // Name: 			Rolando Javier
 // File: 			test.js
 // Date Created: 	November 3, 2017
-// Last Modified: 	February 12, 2018
+// Last Modified: 	March 25, 2018
 // Details:
 // 					This file contains the underlying javascript running the test.html page
 // Warning: 		This page is used for testing purposes ONLY! It must be disabled in the production version!
@@ -181,6 +181,21 @@ function init() {
 					console.log(err);
 					showError(err);
 					return;
+				}
+			}
+
+			// Gather sort order options
+			if ($("#resultSetSortToggle")[0].checked === true && $("#resultSetSortSpec").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.sort = JSON.parse($("#resultSetSortSpec").val());
+					console.log("Added sort specs");
+				} catch (err) {
+					console.log(`Error: failed to parse sort spec JSON \"${$("#resultSetSortSpec").val()}\"`);
+					console.log(err);
+					showError(err);
 				}
 			}
 
