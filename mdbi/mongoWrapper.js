@@ -117,14 +117,17 @@ mdb.findCollections = function (collectionName, callback) {
     The parameters and criteria given in the object will vary depending on the structure of the collection you are searching.
     If given, the "constraints" parameter is a JSON object that can take any of the following parameters:
         {
-            "limit": ...,   // a number
-            "page": ...,    // a number
-            "sort": {       // an object
-                asc: [...], // an array of strings
-                desc: [...] // an array of strings
+            "limit": ...,       // a number
+            "page": ...,        // a number
+            "sort": {           // an object
+                "asc": [...],   // an array of strings
+                "desc": [...]   // an array of strings
+            },
+            "projection": {     // an object
+                ...
             }
         }
-    where "limit" is the maximum number of results to return per page, and "page" is the number of the page to return.
+    where "limit" is the maximum number of results to return per page, "page" is the number of the page to return, "sort" is an object describing the result set sorting (either ascending or descending order), and "projection" is a JSON object detailing the fields to project (analogous to the "SELECT [columnNames]" statement in SQL).
     If limit is not defined, the "page" parameter is IGNORED. Specifying a "limit" of 0 has the same effect as using no limit constraint at all, and a negative "limit" number is taken as its absolute value (i.e. internally transformed by the MongoDB NodeJS driver). Page numbers are zero-indexed. If either "limit" or "page" are not number types, this function will attempt to convert them to numbers. If the conversion fails, the database query is aborted, and an error is passed to the callback if it was given.
     If "sort" is given, it is checked for "asc" and "desc" as arrays of strings that specify fields to order by. Keys specified in "asc" will be sorted in ascending order, whereas keys specified in "desc" will be sorted in descending order. If neither asc or desc are given (or are not arrays), the database query is aborted, and an error is passed to the callback if it was given.
     @note       See MongoDB's Collection.find() API doc for more information regarding the parameters
@@ -171,18 +174,42 @@ mdb.findDocs = function (collection, filter, callback, constraints) {
 
             // Customize the search with any specified constraints
             if (typeof constraints === "object") {
+                var eobject = null;
+
+                // Implement result set projection if specified
+                if (!queryFail && typeof constraints.projection !== "undefined") {
+                    // Handle any necessary type conversions
+                    constraints.projection = cu.numerify(constraints.projection);
+
+                    // Verify that the conversion worked
+                    var keys = Object.keys(constraints.projection);
+                    for (var i = 0; i < keys.length; i++) {
+                        if (typeof constraints.projection[keys[i]] !== "number") {
+                            // Number conversion failed; reply with error
+                            logger.log(`Error: failed to convert projection values to numbers`, handlerTag);
+                            eobject = ef.asCommonStr(ef.struct.convertErr, {"parameter": "constraints.projection"});
+                            queryFail = true;
+                            break;
+                        }
+                    }
+
+                    // If no error, perform projection
+                    if (!queryFail) {
+                        cursor = cursor.project(constraints.projection);
+                    }
+                }
+
                 // Implement result set limit constraint (and page) if specified
-                if (typeof constraints.limit !== "undefined") {
+                if (!queryFail && typeof constraints.limit !== "undefined") {
                     // Handle any necessary type conversions
                     constraints = cu.numerify(constraints);
 
                     // Verify that the limit type conversion worked
                     if (typeof constraints.limit !== "number") {
-                        queryFail = true;
+                        // Conversion failed; respond with an error
                         logger.log(`Error: failed to convert limit constraint to number`, handlerTag);
-
-                        // Pass an error to callback
-                        queryCallback(ef.asCommonStr(ef.struct.convertErr, {"parameter": "constraints.limit"}), null);
+                        eobject = ef.asCommonStr(ef.struct.convertErr, {"parameter": "constraints.limit"});
+                        queryFail = true;
                     } else {
                         limitMsg = `at most ${constraints.limit}`;
                         // Modify cursor with a limit
@@ -192,11 +219,10 @@ mdb.findDocs = function (collection, filter, callback, constraints) {
                         var pageType = typeof constraints.page;
                         if (pageType !== "undefined") {
                             if (pageType !== "number") {
-                                queryFail = true;
-
-                                // Pass an error to callback
+                                // Conversion failed; respond with an error
                                 logger.log(`Error: failed to convert page constraint to number`, handlerTag);
-                                queryCallback(ef.asCommonStr(ef.struct,convertErr, {"parameter": "constraints.page"}), null);
+                                eobject = ef.asCommonStr(ef.struct,convertErr, {"parameter": "constraints.page"});
+                                queryFail = true;
                             } else {
                                 pageMsg = `page ${constraints.page}`;
 
@@ -208,18 +234,17 @@ mdb.findDocs = function (collection, filter, callback, constraints) {
                 }
 
                 // Implement result set sorting constraint if specified
-                if (typeof constraints.sort === "object") {
+                if (!queryFail && typeof constraints.sort === "object") {
                     var sortOrders = [];    // make an empty array of sort specs
                     var ascKeys = constraints.sort.asc;
                     var descKeys = constraints.sort.desc;
 
                     // Verify that the sort constraint is properly formatted
                     if (!Array.isArray(ascKeys) && !Array.isArray(descKeys)) {
+                        // Invalid sort object provided; respond with error
+                        logger.log(`Error: invalid sort order specified`, handlerTag);
+                        eobject = ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "constraints.sort"});
                         queryFail = true;
-
-                        // Pass error to callback
-                        logger.log(`Error: no sort order specified`, handlerTag);
-                        queryCallback(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "constraints.sort"}), null);
                     } else {
                         // Compile ascending sort specs
                         if (Array.isArray(ascKeys)) {
@@ -239,6 +264,12 @@ mdb.findDocs = function (collection, filter, callback, constraints) {
                         // logger.log(`order:${sortOrders.toString()}\ndlen:${(typeof descKeys !== "undefined") ? descKeys.length : 0}\nalen:${(typeof ascKeys !== "undefined") ? ascKeys.length : 0}`, handlerTag);   // debug
                         cursor = cursor.sort(sortOrders);
                     }
+                }
+
+                // Handle any query failure
+                if (queryFail) {
+                    // Pass an error to callback
+                    queryCallback(eobject, null);
                 }
             }
 
@@ -250,165 +281,6 @@ mdb.findDocs = function (collection, filter, callback, constraints) {
         }
     });
 }
-
-/*
-    @function   findAndProjectDocs
-    @parameter  collection - the string name of the collection to search through
-    @parameter  filter - a JSON object to filter which documents are returned (i.e. the search criteria)
-    @parameter  projection - a JSON object detailing the fields to project (analogous to the "SELECT [columnNames]" statement in SQL)
-    @parameter  (optional) callback - a callback funtion to run after the search is performed. It is passed two parameters:
-                    error - if an error occurred, "error" is an object detailing the issue. Otherwise, it is null.
-                    list - the array list of documents matching the search criteria
-    @parameter  (optional) constraints - a JSON object defining options to further customize the search
-    @returns    n/a
-    @details    This function is identical to findDocs(), except that it limits the number of fields (analogous to SQL columns) returned from a database query, thereby reducing data traffic and increasing speed/efficiency for queries that do not need the full set of data. The filter criteria is a JSON object which (if not empty) is expected to contain various parameters:
-        {
-            "someParam0": "criteria0",
-            ...
-            "someParamN": "criteriaN"
-        }
-    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching.
-    If given, the "constraints" parameter is a JSON object that can take any of the following parameters:
-        {
-            "limit": ...,   // a number
-            "page": ...,    // a number
-            "sort": {       // an object
-                asc: [...], // an array of strings
-                desc: [...] // an array of strings
-            }
-        }
-    where "limit" is the maximum number of results to return per page, and "page" is the number of the page to return.
-    If limit is not defined, the "page" parameter is IGNORED. Specifying a "limit" of 0 has the same effect as using no limit constraint at all, and a negative "limit" number is taken as its absolute value (i.e. internally transformed by the MongoDB NodeJS driver). Page numbers are zero-indexed. If either "limit" or "page" are not number types, this function will attempt to convert them to numbers. If the conversion fails, the database query is aborted, and an error is passed to the callback if it was given.
-    If "sort" is given, it is checked for "asc" and "desc" as arrays of strings that specify fields to order by. Keys specified in "asc" will be sorted in ascending order, whereas keys specified in "desc" will be sorted in descending order. If neither asc or desc are given (or are not arrays), the database query is aborted, and an error is passed to the callback if it was given.
-    @note       See MongoDB's Collection.find() and Cursor.project() API docs for more information regarding the parameters
-*/
-mdb.findAndProjectDocs = function (collection, filter, projection, callback, constraints) {
-    var handlerTag = {"src": "findAndProjectDocs"};
-
-    // Begin by finding the collection
-    mdb.database.collection(collection, {strict: true}, function (error, result) {
-        if (error != null) {
-            // Error? Must report it...
-            logger.log(`Error looking up collection "${collection}": ` + error.toString(), handlerTag);
-            if (typeof callback === "function") {
-                callback(error, null);
-            }
-        } else if (typeof projection !== "object") {
-            // Type error. Report it...
-            logger.log(`Invalid projection data type "${typeof projection}"`, handlerTag);
-            if (typeof callback === "function") {
-                callback(ef.asCommonStr(ef.struct.invalidDataType, {"Parameter": "projection"}), null);
-            }
-        } else {
-            var queryCallback = function(err, docs) {
-                switch (err === null) {
-                    // No error; proceed normally
-                    case true: {
-                        logger.log(`Document(s) search succeeded`, handlerTag);
-                        if (typeof callback === "function") {
-                            callback(null,docs);
-                        }
-                        break;
-                    }
-
-                    // Err was present
-                    default: {
-                        logger.log(`Document(s) search failed`, handlerTag);
-                        if (typeof callback === "function") {
-                            callback(err,null);
-                        }
-                        break;
-                    }
-                }
-            };
-
-            // If no error, then the collection exists. We must now find the document(s) by performing the query
-            var queryFail = false;
-            var limitMsg = "unlimited";
-            var pageMsg = "unpaginated";
-            var cursor = result.find(filter).project(projection);
-
-            // Customize the search with any specified constraints
-            if (typeof constraints === "object") {
-                // Implement result set limit constraint (and page) if specified
-                if (typeof constraints.limit !== "undefined") {
-                    // Handle any necessary type conversions
-                    constraints = cu.numerify(constraints);
-
-                    // Verify that the limit type conversion worked
-                    if (typeof constraints.limit !== "number") {
-                        queryFail = true;
-                        logger.log(`Error: failed to convert limit constraint to number`, handlerTag);
-
-                        // Pass an error to callback
-                        queryCallback(ef.asCommonStr(ef.struct.convertErr, {"parameter": "constraints.limit"}), null);
-                    } else {
-                        limitMsg = `at most ${constraints.limit}`;
-                        // Modify cursor with a limit
-                        cursor = cursor.limit(constraints.limit);
-
-                        // Verify that the page type conversion worked (if page was specified at all, that is!)
-                        var pageType = typeof constraints.page;
-                        if (pageType !== "undefined") {
-                            if (pageType !== "number") {
-                                queryFail = true;
-
-                                // Pass an error to callback
-                                logger.log(`Error: failed to convert page constraint to number`, handlerTag);
-                                queryCallback(ef.asCommonStr(ef.struct,convertErr, {"parameter": "constraints.page"}), null);
-                            } else {
-                                pageMsg = `page ${constraints.page}`;
-
-                                // Modify cursor with page (if any)
-                                cursor = cursor.skip(constraints.limit * constraints.page);
-                            }
-                        }
-                    }
-                }
-
-                // Implement result set sorting constraint if specified
-                if (typeof constraints.sort === "object") {
-                    var sortOrders = [];    // make an empty array of sort specs
-                    var ascKeys = constraints.sort.asc;
-                    var descKeys = constraints.sort.desc;
-
-                    // Verify that the sort constraint is properly formatted
-                    if (!Array.isArray(ascKeys) && !Array.isArray(descKeys)) {
-                        queryFail = true;
-
-                        // Pass error to callback
-                        logger.log(`Error: no sort order specified`, handlerTag);
-                        queryCallback(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "constraints.sort"}), null);
-                    } else {
-                        // Compile ascending sort specs
-                        if (Array.isArray(ascKeys)) {
-                            for (var i = 0; i < ascKeys.length; i++) {
-                                sortOrders.push([ascKeys[i], ASC]);
-                            }
-                        }
-
-                        // Compile descending sort specs
-                        if (Array.isArray(descKeys)) {
-                            for (var i = 0; i < descKeys.length; i++) {
-                                sortOrders.push([descKeys[i], DESC]);
-                            }
-                        }
-
-                        // Modify cursor with the sort order spec
-                        // logger.log(`order:${sortOrders.toString()}\ndlen:${(typeof descKeys !== "undefined") ? descKeys.length : 0}\nalen:${(typeof ascKeys !== "undefined") ? ascKeys.length : 0}`, handlerTag);   // debug
-                        cursor = cursor.sort(sortOrders);
-                    }
-                }
-            }
-
-            // Compile query to an array and pass to callback
-            if (!queryFail) {
-                logger.log(`Finding ${limitMsg} docs matching ${typeof filter} ${(typeof filter === "object") ? JSON.stringify(filter) : filter} in collection "${collection}" (${pageMsg})`, handlerTag);
-                cursor.toArray(queryCallback);
-            }
-        }
-    });
-};
 
 /*
     @function   deleteOneDoc
