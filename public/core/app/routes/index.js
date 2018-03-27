@@ -443,6 +443,7 @@ router.post("/dashboard", function (request, response) {
 					"options" - an optional JSON object containing options to customize the result set returned from the search. If specified, it may contain any of the following:
 						"resultMax" - the maximum number of results to return (defaults to 100)
 						"regexMode" - a boolean specifying whether or not to interpret the "searchTerm" as a regular expression
+						"pageNumber" - the number of the result page to display
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200 and a list (array) of returned search results, or null if no results were found
 				On invalid or expired session token: a code 499 and an error format object
@@ -454,12 +455,16 @@ router.post("/dashboard/search/members", function (request, response) {
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
 	var isRegex = false;
 	var resultsPerPage = null;
+	var pageNum = null;
 	// logger.log(`This is the requested max results per page: ${resultsPerPage}`, handlerTag);	// debug
 
 	// Acquire options, if any
 	if (typeof request.body.options !== "undefined") {
 		if (typeof request.body.options.resultMax === "number") {
 			resultsPerPage = request.body.options.resultMax;
+		}
+		if (typeof request.body.options.pageNumber === "number") {
+			pageNum = request.body.options.pageNumber;
 		}
 		if (typeof request.body.options.regexMode === "boolean") {
 			isRegex = request.body.options.regexMode;
@@ -511,7 +516,7 @@ router.post("/dashboard/search/members", function (request, response) {
 			};
 
 			// Determine the type of search to make
-			logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm}...`, handlerTag);
+			logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm} (${(pageNum === null) ? "unpaginated" : `page ${pageNum}`})...`, handlerTag);
 			if (request.body.searchTerm === "" || typeof request.body.searchTerm === "undefined") {
 				// If search term is null, search for everything
 				searchPostBody.search = {};
@@ -558,9 +563,6 @@ router.post("/dashboard/search/members", function (request, response) {
 					};
 				}
 				searchPostBody.search[stype] = objectToPlace;
-
-				// Recalculate Content-Length header, now that the body length has changed
-				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
 			}
 
 			// Configure search with any provided options
@@ -570,9 +572,14 @@ router.post("/dashboard/search/members", function (request, response) {
 					"limit": resultsPerPage
 				};
 
-				// Recalculate Content-Length header, now that the body length has changed
-				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
+				// Add page number as a custom option
+				if (pageNum !== null) {
+					searchPostBody.options.page = pageNum;
+				}
 			}
+
+			// Recalculate Content-Length header; the above options caused the body length to change!
+			searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
 
 			// Execute MDBI search here...
 			if (!validFormat) {

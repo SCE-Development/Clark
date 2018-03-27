@@ -22,7 +22,7 @@
 				<form role="search">
 					<div class="input-group">
 						<span class="input-group-btn">
-							<button class="btn btn-primary" ng-click="$ctrl.search()">
+							<button class="btn btn-primary" ng-click="$ctrl.search(1)">
 								Search by
 							</button>
 							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -56,6 +56,15 @@
 						<li><a href="#" ng-click="$ctrl.setResultsPerPage(50)">50</a></li>
 						<li><a href="#" ng-click="$ctrl.setResultsPerPage(100)">100</a></li>
 					</ul>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-primary" ng-click="$ctrl.decrementPage()">
+						<i class="fas fa-angle-left"></i>
+					</button>
+					<button type="button" class="btn btn-primary">{{1 + $ctrl.pageNumber}}</button>
+					<button type="button" class="btn btn-primary" ng-click="$ctrl.incrementPage()">
+						<i class="fas fa-angle-right"></i>
+					</button>
 				</div>
 				<div class="btn-group">
 					<button type="button" class="btn btn-primary">Match Mode:</button>

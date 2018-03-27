@@ -22,6 +22,7 @@ angular.module("profiler").component("profiler", {
 		this.msg = "Add, search, and edit members here";
 		this.errmsg = "";
 		this.resultsPerPage = 10;
+		this.pageNumber = 0;
 		this.searchTerm = "";
 		this.searchMode = "exact";
 		this.searchType = "username";
@@ -42,13 +43,14 @@ angular.module("profiler").component("profiler", {
 		this.init = function () {
 			ctl.search();
 		};
-		this.search = function () {
+		this.search = function (resetPageNumber = false) {
 			var requestBody = {
 				"sessionID": sessionStorage.getItem("sessionID"),
 				"searchType": ctl.searchType,
 				"searchTerm": ctl.searchTerm,
 				"options": {
-					"resultMax": ctl.resultsPerPage
+					"resultMax": ctl.resultsPerPage,
+					"pageNumber": ctl.pageNumber
 				}
 			};
 			var config = {
@@ -65,6 +67,10 @@ angular.module("profiler").component("profiler", {
 				} else if (ctl.searchMode === "regex") {
 					requestBody.options["regexMode"] = true;
 				}
+			}
+			if (resetPageNumber) {
+				ctl.pageNumber = 0;
+				requestBody.options.pageNumber = ctl.pageNumber;
 			}
 
 			// Execute search
@@ -100,7 +106,23 @@ angular.module("profiler").component("profiler", {
 		this.setSearchMode = function (mode) {
 			console.log(`Interpreting search as ${mode}`);
 			ctl.searchMode = mode;
-		}
+		};
+		this.incrementPage = function() {
+			// Increment page number
+			ctl.pageNumber++;
+
+			// Resubmit request with new page number
+			console.log(`Requesting Page ${ctl.pageNumber+1}`);
+			ctl.search();
+		};
+		this.decrementPage = function() {
+			// Decrement page number
+			ctl.pageNumber--;
+
+			// Resubmit request with new page number
+			console.log(`Requesting Page ${ctl.pageNumber+1}`);
+			ctl.search();
+		};
 	}
 });
 
