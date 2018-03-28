@@ -67,6 +67,19 @@ body {
 	width: 100%;
 }
 
+.member-detail-body {
+	font-family: default;
+}
+
+.member-detail-label {
+	font-family: sceSyncopate;
+	background-color: silver;
+}
+
+.member-detail-title {
+	font-family: sceSyncopate;
+}
+
 .portal-slug {
 	color: silver;
 	font-family: sceSyncopate;

@@ -596,6 +596,111 @@ router.post("/dashboard/search/members", function (request, response) {
 });
 
 /*
+	@endpoint 	/dashboard/search/memberdata
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following parameters:
+					"sessionID" - the client's session token
+					"memberID" - the member's ID number
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200 and a JSON object of the requested member's membership data in the response body (see database schema for details on what data is provided in this object). If the memberID isn't associated with any data (i.e. the memberID is non-existent), the reponse body will be an empty JSON object
+				On invalid or expired session token: a code 499 and an error format object in the response body detailing the expired session issue
+				On invalid request body/undefined memberID: a code 499 and an error-formatted object in the response body detailing the issue
+				On failure: a code 500 an JSON error-formatted details on the error
+	@details 	This endpoint serves POST requests for membership data search queries through the sce core admin dashboard (performed via our custom AngularJS profiler component).
+*/
+router.post("/dashboard/search/memberdata", function (request, response) {
+	var handlerTag = {"src": "dashboardMemberDataSearchHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// Send results to client
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length === 0) {
+				response.send(null).status(200).end();
+			} else {
+				response.send(reply).status(200).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now make sure the request body is properly formatted
+			var mID = request.body.memberID;
+			var validID = true;
+			if (typeof mID === "undefined") {
+				// No memberID? Return an error
+				logger.log(`Error: Undefined memberID`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {
+					"parameter": "memberID"
+				})).end();
+				validID = false;
+			} else if (typeof mID !== "number") {
+				// Not a number? Try to convert it
+				try {
+					mID = Number.parseInt(mID, 10);
+					if (Number.isNaN(mID)) {
+						// Still can't convert it? Report conversion error
+						response.status(499).send(ef.asCommonStr(ef.struct.convertErr, {
+							"parameter": "memberID"
+						})).end();
+						validID = false;
+					}
+				} catch (err) {
+					// Error? Report a code 500
+					logger.log(`Error: Cannot convert ${request.body.memberID} to a number`, handlerTag);
+					response.status(500).send(ef.asCommonStr(ef.struct.coreErr, err)).end();
+					validID = false;
+				}
+			}
+
+			// Only execute MDBI search if the id was valid or successfully converted
+			if (validID) {
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "MembershipData",
+					"search": {
+						"memberID": mID
+					}
+				};
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				// All good, now to actually execute the mdbi search
+				logger.log(`Authorization verified. Now acquiring membership data for ID ${typeof mID} ${mID}`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+			}
+			
+		}
+	}
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
 	@function 	/dashboard
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js

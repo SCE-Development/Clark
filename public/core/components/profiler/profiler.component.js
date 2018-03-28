@@ -15,7 +15,8 @@ angular.module("profiler").component("profiler", {
 		var dbgMode = true;	// changes relevant parameters when doing debugging
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
 		var urls = {
-			"search": `https://${hostname}/core/dashboard/search/members`
+			"search": `https://${hostname}/core/dashboard/search/members`,
+			"searchMembership": `https://${hostname}/core/dashboard/search/memberdata`
 		};
 
 		// Model Data
@@ -41,6 +42,12 @@ angular.module("profiler").component("profiler", {
 
 		// Controller Functions
 		this.init = function () {
+			// Bind actions to the modal hide event
+			$("#memberModal").on("hidden.bs.modal", function (event) {
+				ctl.clearDetail();
+			});
+
+			// Perform an initial search
 			ctl.search();
 		};
 		this.search = function (resetPageNumber = false) {
@@ -107,8 +114,65 @@ angular.module("profiler").component("profiler", {
 				ctl.errmsg = errResponse.data.emsg;
 			});
 		};
-		this.viewDetail = function (username) {
-			console.log(`Viewing ${username}'s details`);
+		this.viewDetail = function (index) {
+			var person = ctl.results[index];
+			console.log(`Viewing ${person.userName}'s details`);
+
+			// Request additional information
+			var requestBody = {
+				"sessionID": sessionStorage.getItem("sessionID"),
+				"memberID": person.memberID
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+			$http.post(urls.searchMembership, requestBody, config).then((response) => {
+				console.log(response.data);	// debug
+				switch (response.status) {
+					case 200: {
+						console.log("Yay, it worked!");
+						// Populate the modal with details
+						$("#memberUserName").val(person.userName);
+						$("#memberFirstName").val(person.firstName);
+						$("#memberMiddleInitial").val(person.middleInitial);
+						$("#memberLastName").val(person.lastName);
+						$("#memberEmail").val(person.email);
+						$("#memberJoinDate").val(person.joinDate);
+						$("#memberMajor").val(person.major);
+
+						// Open the modal
+						$("#memberModal").modal('show');
+						break;
+					}
+					case 499: {
+						console.log("Uh oh...");
+						break;
+					}
+					case 500: {
+						console.log("Double Uh oh...");
+						break;
+					}
+					default: {
+						ctl.errmsg = "Unexpected response<<<";
+						break;
+					}
+				}
+			}).catch(function (errResponse) {
+				logDebug("ProfilerController", "viewDetail", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.errmsg = errResponse.data.emsg;
+			});
+		};
+		this.clearDetail = function () {
+			console.log(`Clearing modal...`);
+			$("#memberUserName").val("");
+			$("#memberFirstName").val("");
+			$("#memberMiddleInitial").val("");
+			$("#memberLastName").val("");
+			$("#memberEmail").val("");
+			$("#memberJoinDate").val("");
+			$("#memberMajor").val("");
 		};
 		this.setSearchType = function (type) {
 			ctl.searchType = type;
@@ -143,6 +207,9 @@ angular.module("profiler").component("profiler", {
 				console.log(ctl.errmsg);
 			}
 		};
+
+		// Run controller initialization
+		ctl.init();
 	}
 });
 

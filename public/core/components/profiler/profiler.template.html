@@ -78,16 +78,92 @@
 				<!-- END filter controls -->
 			</div>
 		</div>
+		<div id="memberModal" class="modal fade" tabindex="-1" role="dialog" aria-label="Member Detail Panel">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="false">&times;</span>
+						</button>
+						<h4 class="modal-title member-detail-title">Member Details</h4>
+					</div>
+					<div class="modal-body member-detail-body">
+						<div class="row">
+							<!-- BEGIN Modal Left Pane -->
+							<div class="col-sm-6">
+								<!-- BEGIN User Thumbnail -->
+								<a href="#" class="thumbnail">
+									<img src="" alt="User's Thumbnail">
+								</a>
+								<!-- END User Thumbnail -->
+
+								<!-- BEGIN User Info Column -->
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Username
+									</span>
+									<input id="memberUserName" type="text" class="form-control" placeholder="Username">
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										First Name
+									</span>
+									<input id="memberFirstName" type="text" class="form-control" placeholder="First Name">
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Middle Initial
+									</span>
+									<input id="memberMiddleInitial" type="text" class="form-control" placeholder="Middle Initial">
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Last Name
+									</span>
+									<input id="memberLastName" type="text" class="form-control" placeholder="Last Name">
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Email
+									</span>
+									<input id="memberEmail" type="text" class="form-control" placeholder="someone@email.com">
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Joined
+									</span>
+									<input id="memberJoinDate" disabled type="text" class="form-control" placeholder="Join Date">
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Major
+									</span>
+									<input id="memberMajor" type="text" class="form-control" placeholder="Major">
+								</div>
+								<!-- END User Info Column -->
+							</div>
+							<!-- END Modal Left Pane -->
+
+							<!-- BEGIN User Stats Column -->
+							<!-- Includes things like remaining print pages, etc. -->
+							<div class="col-sm-6">
+								<div class="input-group">
+									asdfas
+								</div>
+							</div>
+							<!-- END User Stats Column -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" title="Click to discard any unsaved work and close the modal">Close</button>
+						<button id="memberUpdate" type="button" class="btn btn-success" data-toggle="tooltip" title="Click to update this member's data">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="panel panel-default">
-					<!-- BEGIN member detail panel -->
-					<div class="panel-heading">Detail Panel</div>
-					<div class="panel-body">
-						View member details here...
-					</div>
-					<!-- END member detail panel -->
-					
 					<!-- BEGIN result set table -->
 					<table class="table" style="overflow: scroll; margin-top: 10px;">
 						<thead>
@@ -102,7 +178,7 @@
 							<tr ng-repeat="row in $ctrl.results">
 								<td>{{row.memberID}}</td>
 								<td>
-									<button type="button" class="btn btn-default" ng-click="$ctrl.viewDetail(row.userName)" data-toggle="tooltip" data-placement="left" title="View details">
+									<button type="button" class="btn btn-default" ng-click="$ctrl.viewDetail($index)" data-toggle="tooltip" data-placement="left" title="View details">
 										{{row.userName}}
 									</button>
 								</td>
