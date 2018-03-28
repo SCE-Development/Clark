@@ -283,6 +283,52 @@ mdb.findDocs = function (collection, filter, callback, constraints) {
 }
 
 /*
+    @function   findDocCount
+    @parameter  collection - the string name of the collection to search from
+    @parameter  filter - a JSON object to filter which documents are returned (i.e. search criteria)
+    @parameter  callback - a callback function to run after a successful query count. It is passed two parameters
+        "error" - if no error occurred, this is null. Otherwise it is an object detailing the issue.
+        "count" - if no error occurred, this is the count of the result set from the query. Otherwise, it is null.
+    @returns    n/a
+    @details    This function acquires the count of all documents found with the given filter criteria and collection name specified. If the collection is not found in the database, the callback is passed an error.
+    The filter criteria is a JSON object which is expected to contain various parameters:
+        {
+            "someParam0": "criteria0",
+            ...
+            "someParamN": "criteriaN"
+        }
+    The parameters and criteria given in the object will vary depending on the structure of the collection you are searching.
+    @note       This function may seem redundant; you could naively count the number of elements in the array passed to the "findDocs()" callback. However, the "findDocs()" function employs the MongoDB "Cursor.toArray()" API, which can cause significant overhead (i.e. due to RAM allocation of the results) if you use it on a large result set. Thus, using the "findDocs()" function solely to count the number of results can be quite wasteful on time and resources. This function uses the MongoDB "Cursor.count()" function to acquire a result set count without RAM allocation, making it arguably faster and better-suited for result set counting than "findDocs()".
+    @note       See MongoDB's Collection.find() API doc for more information regarding the parameters
+*/
+mdb.findDocCount = function (collection, filter, callback) {
+    var handlerTag = {"src": "findDocCount"};
+    var documentCount = -1;
+
+    // Begin by finding the collection
+    mdb.database.collection(collection, {"strict": true}, function (error, result) {
+        if (error) {
+            logger.log(`Error looking up collection "${collection}"`, handlerTag);
+            if (typeof callback === "function") {
+                callback(error, null);
+            }
+        } else {
+            var cursor = result.find(filter);
+
+            cursor.count(false, null, function (err, count) {
+                if (err) {
+                    logger.log(`Error: failed to acquire count`, handlerTag);
+                    callback(err, null);
+                } else {
+                    logger.log(`Result set count is ${count}`, handlerTag);
+                    callback(null, count);
+                }
+            });
+        }
+    });
+};
+
+/*
     @function   deleteOneDoc
     @parameter  collection - the string name of the collection to delete from
     @parameter  filter - a JSON object to filter which document is deleted (i.e. search criteria)
