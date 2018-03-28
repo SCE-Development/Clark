@@ -80,7 +80,20 @@ angular.module("profiler").component("profiler", {
 				switch (response.status) {
 					case 200: {
 						ctl.errmsg = "";
-						ctl.results = (response.data === null) ? [] : response.data;
+
+						if (ctl.pageNumber === 0) {	// i.e. a click of "Search" button
+							ctl.results = (response.data === null) ? [] : response.data;
+						} else {	// i.e. a click of the "next page" button
+							if (Array.isArray(response.data) && response.data.length > 0) {
+								// Only change the result set model if the page data is valid
+								ctl.results = response.data;
+							} else {
+								// Otherwise, undo the page increment
+								ctl.errmsg = `There is no page ${ctl.pageNumber + 1}!`;
+								console.log(ctl.errmsg);
+								ctl.pageNumber--;
+							}
+						}
 						break;
 					}
 					default: {
@@ -116,12 +129,19 @@ angular.module("profiler").component("profiler", {
 			ctl.search();
 		};
 		this.decrementPage = function() {
-			// Decrement page number
-			ctl.pageNumber--;
+			ctl.errmsg = "";
 
-			// Resubmit request with new page number
-			console.log(`Requesting Page ${ctl.pageNumber+1}`);
-			ctl.search();
+			if (ctl.pageNumber > 0) {
+				// Decrement page number
+				ctl.pageNumber--;
+
+				// Resubmit request with new page number
+				console.log(`Requesting Page ${ctl.pageNumber+1}`);
+				ctl.search();
+			} else {
+				ctl.errmsg = `You can't go back further!`;
+				console.log(ctl.errmsg);
+			}
 		};
 	}
 });
