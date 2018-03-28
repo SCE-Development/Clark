@@ -239,21 +239,19 @@ router.post("/search/documents", function (request, response) {
 		}
 
 		// Perform query
-		switch (projection !== null) {
+		if (projection !== null) {
+			if (constraints === null) {
+				constraints = {}
+			}
+			constraints.projection = projection;
+		}
+		switch (constraints !== null) {
 			case true: {
-				if (constraints !== null) {
-					mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback, constraints);
-				} else {
-					mdb.findAndProjectDocs(searchCriteria.collection, searchCriteria.search, projection, queryCallback);
-				}
+				mdb.findDocs(searchCriteria.collection, searchCriteria.search,queryCallback, constraints);
 				break;
 			}
 			default: {
-				if (constraints !== null) {
-					mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback, constraints);
-				} else {
-					mdb.findDocs(searchCriteria.collection, searchCriteria.search, queryCallback);
-				}
+				mdb.findDocs(searchCriteria.collection, searchCriteria.search,queryCallback);
 				break;
 			}
 		}
