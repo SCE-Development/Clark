@@ -24,7 +24,8 @@ var schema = {
 		"ClearanceLevel",
 		"Ability",
 		"SessionData",
-		"Announcement"
+		"Announcement",
+		"MemberDossier"	// a view created by Member Left Outer Join MembershipData Left Outer Join DoorCode
 	],
 
 	/*
