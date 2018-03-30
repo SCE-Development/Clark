@@ -2,10 +2,11 @@
 // 	Name: 			Rolando Javier
 // 	File: 			sce_db_setup_v0.js
 // 	Date Created: 	January 22, 2018
-// 	Last Modified: 	January 22, 2018
+// 	Last Modified: 	March 29, 2018
 // 	Dependencies:
 // 					schema_v0.js (the database schema file describing the database structure)
 // 					cryptic.js (for password hashing)
+//					MongoDB v3.4.x or above
 // 	Details:
 // 					This file contains the setup script for the SCE MongoDB. It creates the necessary database collections if they don't already exist.
 //					The script can be run using the command "node sce_db_setup.js", but can also be controlled manually by passing in a third argument after the file name:
@@ -608,6 +609,8 @@ if (arg === "--help") {
 				// Manually create the required collections using MongoDB functions (do not use Mongo Wrappers, since they have a security feature that blocks the creation of new collections that do not exist)...
 				console.log("Initializing db to SCE specifications...");
 				mdb.database = db;
+
+				// BEGIN db schema application promises
 				var addServerActivations = new Promise (function (resolve, reject) {
 					db.collection("serverActivations").insertOne(placeholders.serverActivations, null, function (error, result) {
 						if (error) {
@@ -722,7 +725,9 @@ if (arg === "--help") {
 						}
 					});
 				});
+				// END db schema application promises
 
+				// BEGIN db defaults promises
 				var addDefaultLevels = new Promise(function (resolve, reject) {
 					try {
 						db.collection("ClearanceLevel").insertMany(dbDefaults.ClearanceLevel);
@@ -773,58 +778,77 @@ if (arg === "--help") {
 						}
 					});
 				});
+				// END db defaults promises
 
-				// Create database and apply schema
-				Promise.all([
-					addServerActivations,
-					addMember,
-					addMembershipData,
-					addDoorCode,
-					addClearanceLevel,
-					addAbility,
-					addSessionData,
-					addAnnouncement,
-					addDefaultLevels,
-					addDefaultAbilities
-				]).then(function (messages) {
+				// BEGIN db views application promises
+				var addMemberDossierView = new Promise(function (resolve, reject) {});
+				// END db views application promises
+
+				// BEGIN add mock data routine
+				var addMockData = function (messages) {
+					console.log(`Root admin ${syskey.userName} successfully added...`);
+					if (arg === "--mock") {
+						console.log("Processing Option \"--mock\"...");
+						var mockInitDb = new Promise(function (resolve, reject) {
+							console.log("Mock-initializing...");
+							mockInit(db, resolve, reject);
+						});
+						Promise.all([mockInitDb]).then(function (message) {
+							console.log("Successfully initialized db with mock documents...");
+							endSession(db);
+						}).catch(function (error) {
+							console.log("Mock-initialization was unsuccessful!");
+							if (db) {
+								endSession(db);
+							}
+						});
+					} else {
+						endSession(db);
+					}
+				};
+				// END add mock data routine
+
+				// BEGIN root user application routine
+				var applyRootUser = function (messages) {
 					console.log(`Database schema successfully applied...`);
 
 					// Add the root admin user
 					Promise.all([
 						addAdminUser,
 						addAdminMembership
-					]).then(function (messages) {
-						console.log(`Root admin ${syskey.userName} successfully added...`);
-						if (arg === "--mock") {
-							console.log("Processing Option \"--mock\"...");
-							var mockInitDb = new Promise(function (resolve, reject) {
-								console.log("Mock-initializing...");
-								mockInit(db, resolve, reject);
-							});
-							Promise.all([mockInitDb]).then(function (message) {
-								console.log("Successfully initialized db with mock documents...");
-								endSession(db);
-							}).catch(function (error) {
-								console.log("Mock-initialization was unsuccessful!");
-								if (db) {
-									endSession(db);
-								}
-							});
-						} else {
-							endSession(db);
-						}
-					}).catch(function (error) {
+					]).then(addMockData).catch(function (error) {
 						console.log(`Failed to add root admin: ${error}`);
 						if (db) {
 							endSession(db);
 						}
 					});
-				}).catch(function (error) {
-					console.log(`Failed to apply database schema: ${error}`);
-					if (db) {
-						endSession(db);
-					}
-				});
+				};
+				// END root user application routine
+
+				// BEGIN schema application routine
+				var applySchema = function () {
+					Promise.all([
+						addServerActivations,
+						addMember,
+						addMembershipData,
+						addDoorCode,
+						addClearanceLevel,
+						addAbility,
+						addSessionData,
+						addAnnouncement,
+						addDefaultLevels,
+						addDefaultAbilities
+					]).then(applyRootUser).catch(function (error) {
+						console.log(`Failed to apply database schema: ${error}`);
+						if (db) {
+							endSession(db);
+						}
+					});
+				};
+				// END schema application routine
+
+				// Create database and apply schema
+				applySchema();
 			} else {
 				help();
 				if (db) {
