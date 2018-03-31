@@ -2,7 +2,7 @@
 // 	Name: 			Rolando Javier
 // 	File: 			sce_db_setup_v0.js
 // 	Date Created: 	January 22, 2018
-// 	Last Modified: 	March 29, 2018
+// 	Last Modified: 	March 30, 2018
 // 	Dependencies:
 // 					schema_v0.js (the database schema file describing the database structure)
 // 					cryptic.js (for password hashing)
@@ -583,7 +583,7 @@ if (arg === "--help") {
 													console.log(`Failed to drop ${target} collection: ${error}`);
 													reject();
 												} else {
-													console.log(`Collection ${target} result: ${JSON.stringify(result)}`);
+													console.log(`Collection ${target} dropped?: ${JSON.stringify(result)}`);
 													resolve();
 												}
 										});
@@ -916,6 +916,51 @@ if (arg === "--help") {
 						reject();
 					}
 				});
+
+				var addCoreAccessView = new Promise(function (resolve, reject) {
+					var coreAccessCommand = {
+						"create": "CoreAccess",
+						"viewOn": "Member",
+						"pipeline": [
+							{
+								"$lookup": {
+									"from": "MembershipData",
+									"localField": "memberID",
+									"foreignField": "memberID",
+									"as": "memPlanData"
+								}
+							},
+							{
+								"$replaceRoot": {
+									"newRoot": {
+										"memberID": "$memberID",
+										"userName": "$userName",
+										"passWord": "$passWord",
+										"level": "$memPlanData.level"
+									}
+								}
+							},
+							{
+								"$unwind": "$level"
+							}
+						]
+					};
+
+					// If the user doesn't have the "readWrite" role, this operation may not be possible!
+					try {
+						db.command(coreAccessCommand, null, function (error, result) {
+							if (error) {
+								console.log(`Error creating CoreAccess view: ${error}`);
+								reject();
+							} else {
+								resolve();
+							}
+						});
+					} catch (e) {
+						console.log(`Error excuting db.command(): ${e}`);
+						reject();
+					}
+				});
 				// END db views application promises
 
 				// BEGIN add mock data routine
@@ -966,7 +1011,8 @@ if (arg === "--help") {
 					// Apply the various database views
 					Promise.all([
 						addMemberDossierView,
-						addOfficerDossierView
+						addOfficerDossierView,
+						addCoreAccessView
 					]).then(applyRootUser).catch(function (error) {
 						console.log(`Failed to create database views: ${error}`);
 						if (db) {
