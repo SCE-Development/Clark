@@ -943,6 +943,18 @@ if (arg === "--help") {
 								}
 							},
 							{
+								"$match": {
+									"$or": [
+										{
+											"memPlanData.level": 0
+										},
+										{
+											"memPlanData.level": 1
+										}
+									]
+								}
+							},
+							{
 								"$replaceRoot": {
 									"newRoot": {
 										"memberID": "$memberID",
