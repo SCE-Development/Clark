@@ -2,10 +2,11 @@
 // 	Name: 			Rolando Javier
 // 	File: 			sce_db_setup_v0.js
 // 	Date Created: 	January 22, 2018
-// 	Last Modified: 	January 22, 2018
+// 	Last Modified: 	March 30, 2018
 // 	Dependencies:
 // 					schema_v0.js (the database schema file describing the database structure)
 // 					cryptic.js (for password hashing)
+//					MongoDB v3.4.x or above
 // 	Details:
 // 					This file contains the setup script for the SCE MongoDB. It creates the necessary database collections if they don't already exist.
 //					The script can be run using the command "node sce_db_setup.js", but can also be controlled manually by passing in a third argument after the file name:
@@ -55,14 +56,14 @@ var placeholders = {
 		"memberID": -1,
 		"startTerm": "placeholder",
 		"endTerm": "placeholder",
-		"doorCodeID": "placeholder",
+		"doorCodeID": -1,
 		"gradDate": "placeholder",
 		"level": -1,
 		"membershipStatus": true
 	},
 	"DoorCode": {
 		"dcID": -1,
-		"code": "placeholder"
+		"code": "unassigned"
 	},
 	"ClearanceLevel": {
 		"cID": -1,
@@ -536,7 +537,7 @@ var mockDoorCodes = [
 	{"dcID": 22, "code": "000-0022"},
 	{"dcID": 23, "code": "000-0023"}
 ];
-var url = `mongodb://${encodeURIComponent(credentials.user)}:${encodeURIComponent(credentials.pwd)}@${mongo_settings.hostname}:${mongo_settings.port}/${mongo_settings.database}`;
+var url = `mongodb://${encodeURIComponent(credentials.user)}:${encodeURIComponent(credentials.pwd)}@${mongo_settings.hostname}:${mongo_settings.port}/${mongo_settings.database}?authSource=sce_core`;
 
 // BEGIN Database Client
 if (arg === "--help") {
@@ -577,14 +578,14 @@ if (arg === "--help") {
 								for (var i = 0; i < schema.collectionNames.length; i++) {
 									deletionPromises[i] = new Promise(function (resolve, reject) {
 										var target = schema.collectionNames[i];
-										db.collection(target).deleteMany({}).then(function(result) {
-											if (result.result.ok) {
-												console.log(`Deleted ${target} documents`);
-												resolve();
-											} else {
-												console.log(`Failed to delete ${target} documents`);
-												reject();
-											}
+										db.dropCollection(target, null, function(error, result) {
+												if (error) {
+													console.log(`Failed to drop ${target} collection: ${error}`);
+													reject();
+												} else {
+													console.log(`Collection ${target} dropped?: ${JSON.stringify(result)}`);
+													resolve();
+												}
 										});
 									});
 								}
@@ -608,6 +609,8 @@ if (arg === "--help") {
 				// Manually create the required collections using MongoDB functions (do not use Mongo Wrappers, since they have a security feature that blocks the creation of new collections that do not exist)...
 				console.log("Initializing db to SCE specifications...");
 				mdb.database = db;
+
+				// BEGIN db schema application promises
 				var addServerActivations = new Promise (function (resolve, reject) {
 					db.collection("serverActivations").insertOne(placeholders.serverActivations, null, function (error, result) {
 						if (error) {
@@ -722,7 +725,9 @@ if (arg === "--help") {
 						}
 					});
 				});
+				// END db schema application promises
 
+				// BEGIN db defaults promises
 				var addDefaultLevels = new Promise(function (resolve, reject) {
 					try {
 						db.collection("ClearanceLevel").insertMany(dbDefaults.ClearanceLevel);
@@ -773,58 +778,274 @@ if (arg === "--help") {
 						}
 					});
 				});
+				// END db defaults promises
 
-				// Create database and apply schema
-				Promise.all([
-					addServerActivations,
-					addMember,
-					addMembershipData,
-					addDoorCode,
-					addClearanceLevel,
-					addAbility,
-					addSessionData,
-					addAnnouncement,
-					addDefaultLevels,
-					addDefaultAbilities
-				]).then(function (messages) {
-					console.log(`Database schema successfully applied...`);
+				// BEGIN db views application promises
+				var addMemberDossierView = new Promise(function (resolve, reject) {
+					var memberDossierCommand = {
+						"create": "MemberDossier",
+						"viewOn": "Member",
+						"pipeline": [
+							{
+								"$lookup": {
+									"from": "MembershipData",
+									"localField": "memberID",
+									"foreignField": "memberID",
+									"as": "memPlanData"
+								}
+							},
+							{
+								"$lookup": {
+									"from": "DoorCode",
+									"localField": "memPlanData.doorCodeID",
+									"foreignField": "dcID",
+									"as": "dcInfo"
+								}
+							},
+							{
+								"$replaceRoot": {
+									"newRoot": {
+										"memberID": "$memberID",
+										"firstName": "$firstName",
+										"middleInitial": "$middleInitial",
+										"lastName": "$lastName",
+										"joinDate": "$joinDate",
+										"userName": "$userName",
+										"email": "$email",
+										"major": "$major",
+										"startTerm": "$memPlanData.startTerm",
+										"endTerm": "$memPlanData.endTerm",
+										"doorcode": "$dcInfo.code",
+										"gradDate": "$memPlanDatagradDate",
+										"membershipStatus": "$memPlanData.membershipStatus"
+									}
+								}
+							},
+							{
+								"$unwind": "$doorcode"
+							},
+							{
+								"$unwind": "$membershipStatus"
+							},
+							{
+								"$unwind": "$startTerm"
+							},
+							{
+								"$unwind": "$endTerm"
+							}
+						]
+					};
+
+					// If the user doesn't have the "readWrite" role, this operation may not be possible!
+					try {
+						db.command(memberDossierCommand, null, function (error, result) {
+							if (error) {
+								console.log(`Error creating MemberDossier view: ${error}`);
+								reject();
+							} else {
+								resolve();
+							}
+						});
+					} catch (e) {
+						console.log(`Error excuting db.command(): ${e}`);
+						reject();
+					}
+				});
+
+				var addOfficerDossierView = new Promise(function (resolve, reject) {
+					var officerDossierCommand = {
+						"create": "OfficerDossier",
+						"viewOn": "Member",
+						"pipeline": [
+							{
+								"$lookup": {
+									"from": "MembershipData",
+									"localField": "memberID",
+									"foreignField": "memberID",
+									"as": "memPlanData"
+								}
+							},
+							{
+								"$lookup": {
+									"from": "ClearanceLevel",
+									"localField": "memPlanData.level",
+									"foreignField": "cID",
+									"as": "clevel"
+								}
+							},
+							{
+								"$replaceRoot": {
+									"newRoot": {
+										"memberID": "$memberID",
+										"fullName": {
+											"$concat": ["$firstName"," ", "$middleInitial", " ", "$lastName"]
+										},
+										"userName": "$userName",
+										"email": "$email",
+										"lastLogin": "$lastLogin",
+										"level": "$clevel.cID",
+										"levelName": "$clevel.levelName",
+										"abilities": "$clevel.abilities"
+									}
+								}
+							},
+							{
+								"$unwind": "$levelName"
+							},
+							{
+								"$unwind": "$level"
+							},
+							{
+								"$unwind": "$abilities"
+							}
+						]
+					};
+
+					// If the user doesn't have the "readWrite" role, this operation may not be possible!
+					try {
+						db.command(officerDossierCommand, null, function (error, result) {
+							if (error) {
+								console.log(`Error creating OfficerDossier view: ${error}`);
+								reject();
+							} else {
+								resolve();
+							}
+						});
+					} catch (e) {
+						console.log(`Error excuting db.command(): ${e}`);
+						reject();
+					}
+				});
+
+				var addCoreAccessView = new Promise(function (resolve, reject) {
+					var coreAccessCommand = {
+						"create": "CoreAccess",
+						"viewOn": "Member",
+						"pipeline": [
+							{
+								"$lookup": {
+									"from": "MembershipData",
+									"localField": "memberID",
+									"foreignField": "memberID",
+									"as": "memPlanData"
+								}
+							},
+							{
+								"$replaceRoot": {
+									"newRoot": {
+										"memberID": "$memberID",
+										"userName": "$userName",
+										"passWord": "$passWord",
+										"level": "$memPlanData.level"
+									}
+								}
+							},
+							{
+								"$unwind": "$level"
+							}
+						]
+					};
+
+					// If the user doesn't have the "readWrite" role, this operation may not be possible!
+					try {
+						db.command(coreAccessCommand, null, function (error, result) {
+							if (error) {
+								console.log(`Error creating CoreAccess view: ${error}`);
+								reject();
+							} else {
+								resolve();
+							}
+						});
+					} catch (e) {
+						console.log(`Error excuting db.command(): ${e}`);
+						reject();
+					}
+				});
+				// END db views application promises
+
+				// BEGIN add mock data routine
+				var addMockData = function (messages) {
+					console.log(`Root admin ${syskey.userName} successfully added...`);
+					if (arg === "--mock") {
+						console.log("Processing Option \"--mock\"...");
+						var mockInitDb = new Promise(function (resolve, reject) {
+							console.log("Mock-initializing...");
+							mockInit(db, resolve, reject);
+						});
+						Promise.all([mockInitDb]).then(function (message) {
+							console.log("Successfully initialized db with mock documents...");
+							endSession(db);
+						}).catch(function (error) {
+							console.log("Mock-initialization was unsuccessful!");
+							if (db) {
+								endSession(db);
+							}
+						});
+					} else {
+						endSession(db);
+					}
+				};
+				// END add mock data routine
+
+				// BEGIN root user application routine
+				var applyRootUser = function (messages) {
+					console.log(`Database views successfully created...`);
 
 					// Add the root admin user
 					Promise.all([
 						addAdminUser,
 						addAdminMembership
-					]).then(function (messages) {
-						console.log(`Root admin ${syskey.userName} successfully added...`);
-						if (arg === "--mock") {
-							console.log("Processing Option \"--mock\"...");
-							var mockInitDb = new Promise(function (resolve, reject) {
-								console.log("Mock-initializing...");
-								mockInit(db, resolve, reject);
-							});
-							Promise.all([mockInitDb]).then(function (message) {
-								console.log("Successfully initialized db with mock documents...");
-								endSession(db);
-							}).catch(function (error) {
-								console.log("Mock-initialization was unsuccessful!");
-								if (db) {
-									endSession(db);
-								}
-							});
-						} else {
-							endSession(db);
-						}
-					}).catch(function (error) {
+					]).then(addMockData).catch(function (error) {
 						console.log(`Failed to add root admin: ${error}`);
 						if (db) {
 							endSession(db);
 						}
 					});
-				}).catch(function (error) {
-					console.log(`Failed to apply database schema: ${error}`);
-					if (db) {
-						endSession(db);
-					}
-				});
+				};
+				// END root user application routine
+
+				// BEGIN database view creation routine
+				var applyViews = function () {
+					console.log(`Database schema successfully applied...`);
+
+					// Apply the various database views
+					Promise.all([
+						addMemberDossierView,
+						addOfficerDossierView,
+						addCoreAccessView
+					]).then(applyRootUser).catch(function (error) {
+						console.log(`Failed to create database views: ${error}`);
+						if (db) {
+							endSession(db);
+						}
+					});
+				};
+				// END database view creation routine
+
+				// BEGIN schema application routine
+				var applySchema = function () {
+					Promise.all([
+						addServerActivations,
+						addMember,
+						addMembershipData,
+						addDoorCode,
+						addClearanceLevel,
+						addAbility,
+						addSessionData,
+						addAnnouncement,
+						addDefaultLevels,
+						addDefaultAbilities
+					]).then(applyViews).catch(function (error) {
+						console.log(`Failed to apply database schema: ${error}`);
+						if (db) {
+							endSession(db);
+						}
+					});
+				};
+				// END schema application routine
+
+				// Create database and apply schema
+				applySchema();
 			} else {
 				help();
 				if (db) {

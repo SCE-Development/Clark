@@ -2,7 +2,7 @@
 // 	Name: 			Rolando Javier
 // 	File: 			schema_v0.js
 // 	Date Created: 	January 23, 2018
-// 	Last Modified: 	January 23, 2018
+// 	Last Modified: 	March 30, 2018
 // 	Details:
 // 					This file contains the database schema v0 for the sce_core database. It is intended for use in verifying that a document entry (JSON object) fits the schema parameters before being added to its collection
 // 	Dependencies:
@@ -24,7 +24,10 @@ var schema = {
 		"ClearanceLevel",
 		"Ability",
 		"SessionData",
-		"Announcement"
+		"Announcement",
+		"MemberDossier",	// a view created by Member LOJ MembershipData LOJ DoorCode
+		"OfficerDossier",	// a view created by Member LOJ MembershipData LOJ ClearanceLevel
+		"CoreAccess"	// a view created by Member LOJ MembershipData
 	],
 
 	/*
