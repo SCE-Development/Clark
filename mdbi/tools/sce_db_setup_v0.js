@@ -866,6 +866,18 @@ if (arg === "--help") {
 								}
 							},
 							{
+								"$match": {
+									"$or": [
+										{
+											"memPlanData.level": 0
+										},
+										{
+											"memPlanData.level": 1
+										}
+									]
+								}
+							},
+							{
 								"$lookup": {
 									"from": "ClearanceLevel",
 									"localField": "memPlanData.level",
