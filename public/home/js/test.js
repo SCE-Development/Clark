@@ -369,6 +369,8 @@ function showCollectionResults (arr) {
 		
 		// Compile all elements into a neat-looking panel group (forgive the tabbing)
 		for (var i = 0; i < arr.length; i++) {
+			var isView = (arr[i].type === "view") ? true : false;
+
 			content += `<div id="fCR_${i}_panel" class="panel panel-default">`;
 				content += `<div id="fCR_${i}_panel_heading" class="panel-heading" role="tab">`;
 					content += `<h4 class="panel-title">`;
@@ -384,7 +386,7 @@ function showCollectionResults (arr) {
 								content += `<div class="col-sm-12">`;
 									content += `<ul class="list-group">`;
 										content += `<li class="list-group-item"><strong>Type:</strong> ${arr[i].type}</li>`;
-										content += `<li class="list-group-item"><strong>NS:</strong> ${arr[i].idIndex.ns}</li>`;
+										content += `<li class="list-group-item"><strong>NS:</strong> ${(isView) ? "n/a" : arr[i].idIndex.ns}</li>`;
 									content += `</ul>`;
 								content += `</div>`;
 							content += `</div>`;
