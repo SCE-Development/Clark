@@ -63,7 +63,7 @@ var placeholders = {
 	},
 	"DoorCode": {
 		"dcID": -1,
-		"code": "placeholder"
+		"code": "unassigned"
 	},
 	"ClearanceLevel": {
 		"cID": -1,
@@ -851,6 +851,71 @@ if (arg === "--help") {
 						reject();
 					}
 				});
+
+				var addOfficerDossierView = new Promise(function (resolve, reject) {
+					var officerDossierCommand = {
+						"create": "OfficerDossier",
+						"viewOn": "Member",
+						"pipeline": [
+							{
+								"$lookup": {
+									"from": "MembershipData",
+									"localField": "memberID",
+									"foreignField": "memberID",
+									"as": "memPlanData"
+								}
+							},
+							{
+								"$lookup": {
+									"from": "ClearanceLevel",
+									"localField": "memPlanData.level",
+									"foreignField": "cID",
+									"as": "clevel"
+								}
+							},
+							{
+								"$replaceRoot": {
+									"newRoot": {
+										"memberID": "$memberID",
+										"fullName": {
+											"$concat": ["$firstName"," ", "$middleInitial", " ", "$lastName"]
+										},
+										"userName": "$userName",
+										"email": "$email",
+										"lastLogin": "$lastLogin",
+										"level": "$clevel.cID",
+										"levelName": "$clevel.levelName",
+										"abilities": "$clevel.abilities"
+									}
+								}
+							},
+							{
+								"$unwind": "$levelName"
+							},
+							{
+								"$unwind": "$level"
+							},
+							{
+								"$unwind": "$abilities"
+							}
+						]
+					};
+
+					// If the user doesn't have the "readWrite" role, this operation may not be possible!
+					try {
+						db.command(officerDossierCommand, null, function (error, result) {
+							if (error) {
+								console.log(`Error creating OfficerDossier view: ${error}`);
+								reject();
+							} else {
+								resolve();
+							}
+						});
+					} catch (e) {
+						console.log(`Error excuting db.command(): ${e}`);
+						reject();
+					}
+				});
 				// END db views application promises
 
 				// BEGIN add mock data routine
@@ -900,7 +965,8 @@ if (arg === "--help") {
 
 					// Apply the various database views
 					Promise.all([
-						addMemberDossierView
+						addMemberDossierView,
+						addOfficerDossierView
 					]).then(applyRootUser).catch(function (error) {
 						console.log(`Failed to create database views: ${error}`);
 						if (db) {
