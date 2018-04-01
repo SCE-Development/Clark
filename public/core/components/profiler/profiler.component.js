@@ -320,7 +320,7 @@ angular.module("profiler").component("profiler", {
 						case 200: {
 							console.log("Checking Email Verification Status...");
 
-							if (response.data.length !== 1) {
+							if (response.data.length > 1) {
 								ctl.setEmailStatus("Unknown");
 								ctl.showEmailStatus();
 								ctl.showAddMemberError("Error: The email verification couldn't be checked for some reason...");
