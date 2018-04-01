@@ -41,6 +41,8 @@ angular.module("profiler").component("profiler", {
 		];
 		this.memberRegistrationStep = 0;
 		this.memberRegistrationPercent = "0%";
+		this.emailToVerify = "";
+		this.emailVerified = "Unknown";
 
 		// Controller Functions
 		this.init = function () {
@@ -227,6 +229,10 @@ angular.module("profiler").component("profiler", {
 		this.updateAddMemberModal = function () {
 			console.log(`Member Registration is at step ${ctl.memberRegistrationStep}`);
 
+			// First, clear any error messages
+			ctl.showAddMemberError("");
+
+			// Then, update the view
 			switch (ctl.memberRegistrationStep) {
 				case 0: {	// the default; all except step 0 are hidden
 					$(".registration-step").addClass("hidden");
@@ -282,10 +288,87 @@ angular.module("profiler").component("profiler", {
 			ctl.memberRegistrationPercent = `${percent}%`;
 			$("#addMemberProgress").attr("aria-valuenow", ctl.memberRegistrationPercent).css("width", ctl.memberRegistrationPercent);
 		};
+		this.setEmailStatus = function (status) {
+			ctl.emailVerified = status;
+		};
+		this.showEmailStatus = function () {
+			$("#emailStatusLabel").removeClass("hidden");
+		};
+		this.hideEmailStatus = function () {
+			$("#emailStatusLabel").addClass("hidden");
+		};
+		this.checkEmailStatus = function () {
+			var requestBody = {
+				"sessionID": sessionStorage.getItem("sessionID"),
+				"searchType": "email",
+				"searchTerm": ctl.emailToVerify
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
+			// Make a request for member data here...
+			if (ctl.emailToVerify === "") {
+				ctl.showAddMemberError("Please enter an email to check!");
+			} else {
+				$http.post(urls.search, requestBody, config).then((response) => {
+					console.log(response.data);
+
+					switch (response.status) {
+						case 200: {
+							console.log("Checking Email Verification Status...");
+
+							if (response.data.length !== 1) {
+								ctl.setEmailStatus("Unknown");
+								ctl.showEmailStatus();
+								ctl.showAddMemberError("Error: The email verification couldn't be checked for some reason...");
+							} else {
+								// check for email verification here
+								var emailWasVerified = true;
+
+								if (!emailWasVerified) {
+									ctl.setEmailStatus("Not Verified");
+									ctl.showEmailStatus();
+									ctl.showAddMemberError("So the email isn't verified... Ask the user to verify their email first!");
+								} else {
+									ctl.setEmailStatus("Verified");
+									ctl.showEmailStatus();
+								}
+							}
+							break;
+						}
+						case 499: {
+							console.log("Invalid session token");
+							ctl.showAddMemberError((typeof response.data[0].emsg === "undefined") ? "Session Token Rejected..." : response.data[0].emsg);
+							break;
+						}
+						case 500: {
+							console.log("Double Uh oh...");
+							ctl.showAddMemberError("Internal Server Error");
+							break;
+						}
+						default: {
+							ctl.showAddMemberError("Unexpected response<<<<");
+							break;
+						}
+					}
+				}).catch(function (errResponse) {
+					logDebug("ProfilerController", "checkEmailStatus", `Error: ${errResponse}`);
+					ctl.showAddMemberError((typeof errResponse.data === "undefined") ? errResponse : errResponse.data.emsg);
+				});
+			}
+		};
+		this.showAddMemberError = function (msg) {
+			$("#addMemberErrorMessage").html(msg);
+		};
 		this.clearAddMemberModal = function () {
 			console.log(`Clearing Member Registration Modal...`);
 
 			// Clear things here...
+			ctl.setEmailStatus("Unknown");
+			ctl.hideEmailStatus();
 			ctl.memberRegistrationStep = 0;
 			ctl.updateAddMemberModal();
 		};
