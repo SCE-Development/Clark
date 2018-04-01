@@ -73,7 +73,13 @@ router.get("/", function (request, response) {
 				On request failure: a code 500 and an error message detailing the error
 				On credential validation failure: a code 499 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
 				On incorrect credentials: a code 200 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
-	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. This is done by performing the described POST request to the "/core/login" endpoint. If login credentials are correct, the client is then passed a redirect url and a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard from the client side using the provided url and session id.
+	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. The request body is expected to be a JSON object with the following format:
+		{
+			"user": ...,					// string
+			"pwd": ...,						// string
+			"sessionStorageSupport": ...	// boolean
+		}
+	where "user" is the user's username string, "pwd" is the user's plain-text password, and "sessionStorageSupport" is a boolean signifying whether the client's browser supports modern sessionStorage technology (the preferred method replacement of cookies). With this information, this function determines if the user has the correct user-password combination, and that they also have access rights to SCE Core Admin Dashboard (i.e. is present in Core Access). This is done by performing a POST request to the "/core/login" endpoint. If login credentials are correct, the client is then passed a redirect url and a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard from the client side using the provided url and session id.
 */
 router.post("/login", function (request, response) {
 	var handlerTag = {"src": "adminLoginHandler"};
@@ -88,10 +94,125 @@ router.post("/login", function (request, response) {
 	response.set("Content-Type", "application/json");
 
 	// BEGIN promises
+	var grantCoreAccess = function (match, resolve, reject) {
+		console.log(`GENERATED: ${JSON.stringify(match.list)}`);
+										
+		var memberUpdateBody = {
+			"accessToken": credentials.mdbi.accessToken,
+			"collection": "Member",
+			"search": {
+				"memberID": {
+					"$eq": match.list[0].memberID
+				}
+			},
+			"update": {
+				"$set": {
+					"lastLogin": timestamp
+				}
+			}
+		};
+		var memberUpdateOptions = {
+			"hostname": "localhost",
+			"path": "/mdbi/update/documents",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(memberUpdateBody))
+			}
+		};
+
+		// Update member's last-login date here
+		www.https.post(memberUpdateOptions, memberUpdateBody, function (reply, error) {
+			if (error) {
+				var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
+
+				logger.log(`Member lastLogin update failed: ${error}`, handlerTag);
+				reject();
+			} else {
+				var redir = `https://${request.hostname}:${settings.port}/core/dashboard`;
+
+				// Give client their session id and client redirection headers here
+				console.log(`UPDATED: ${JSON.stringify(match.list)}`);
+				console.log(`Redirecting: ${redir}`);
+				var sessionResponse = {
+					"sessionID": sessionID,
+					"username": match.list[0].userName,
+					"destination": redir
+				};
+
+				// Cross browser support
+				if (!sessionStorageSupported) {
+					response.set("Set-Cookie", `sessionID=${sessionID}`);
+				}
+				response.send(sessionResponse).status(200).end();
+				resolve();
+			}
+		});
+	};
+	var generageSessionData = function (match, resolve, reject) {
+		console.log(`CLEARED: ${JSON.stringify(match.list)}`);
+
+		// Generate session id and session data here
+		sessionID = crypt.hashSessionID(match.list[0].userName);
+		var sessionDataBody = {
+			"accessToken": credentials.mdbi.accessToken,
+			"collection": "SessionData",
+			"data": {
+				"sessionID": sessionID,
+				"memberID": match.list[0].memberID,
+				"loginTime": timestamp,
+				"lastActivity": timestamp,
+				"maxIdleTime": settings.sessionIdleTime
+			}
+		};
+		var sessionRequestOptions = {
+			"hostname": "localhost",
+			"path": "/mdbi/write",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(sessionDataBody))
+			}
+		};
+
+		// Submit session id to mongodb here
+		www.https.post(sessionRequestOptions, sessionDataBody, function (reply, error) {
+			if (error) {	// report errors
+				var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
+
+				logger.log(`SessionData insert failed: ${error}` , handlerTag);
+				response.send(errStr).status(500).end();
+				reject();
+			} else {
+				grantCoreAccess(match, resolve, reject);
+			}
+		});
+	};
+	var evaluateDbResults = function (match, resolve, reject) {
+		// Evaluate the database search results
+		// logger.log(`Probe2: ${reply}`, handlerTag);	// debug
+		if (match.list.length === 0) {	// i.e. no match was found
+			var errStr = ef.asCommonStr(ef.struct.adminInvalid);
+			
+			logger.log(`Incorrect Credentials: Access Denied`, handlerTag);
+			response.send(errStr).status(499).end();
+			reject();
+		} else if (match.list.length > 1) {	// i.e. multiple accounts were returned
+			var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
+
+			logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
+			response.send(errStr).status(499).end();
+			reject();
+		} else {	// i.e. credentials returned one match
+			generageSessionData(match, resolve, reject);
+		}
+	};
 	var submitCredentials = new Promise(function (resolve, reject) {
 		var requestBody = {
 			"accessToken": credentials.mdbi.accessToken,
-			"collection": "Member",
+			"collection": "CoreAccess",
 			"search": {
 				"userName": request.body.user,
 				"passWord": crypt.hashPwd(request.body.user, request.body.pwd)
@@ -126,170 +247,7 @@ router.post("/login", function (request, response) {
 				response.send(ef.asCommonStr(ef.struct.unexpectedValue, match.list)).status(500).end();
 				reject();
 			} else {
-				// Evaluate the database search results
-				// logger.log(`Probe2: ${reply}`, handlerTag);	// debug
-				if (match.list.length === 0) {	// i.e. no match was found
-					var errStr = ef.asCommonStr(ef.struct.adminInvalid);
-					
-					logger.log(`Incorrect credentials`, handlerTag);
-					response.send(errStr).status(499).end();
-					reject();
-				} else if (match.list.length > 1) {	// i.e. multiple accounts were returned
-					var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
-
-					logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
-					response.send(errStr).status(499).end();
-					reject();
-				} else {	// i.e. credentials returned one match
-					// console.log(`SUBMITTED: ${typeof match.list} ${JSON.stringify(match.list)}`);	// debug
-					
-
-					// Search the MembershipData collection for the member's clearance level
-					var requestBody = {
-						"accessToken": credentials.mdbi.accessToken,
-						"collection": "MembershipData",
-						"search": {
-							"memberID": match.list[0].memberID
-						}
-					};
-					var submissionOptions = {
-						"hostname": "localhost",
-						"path": "/mdbi/search/documents",
-						"method": "POST",
-						"agent": ssl_user_agent,
-						"headers": {
-							"Content-Type": "application/json",
-							"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
-						}
-					};
-
-					// Submit search criteria
-					www.https.post(submissionOptions, requestBody, function (reply, error) {
-						var membershipData = reply;	// expects an array
-
-						if (error) {
-							var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
-
-							logger.log(`A request error occurred: ${error}`, handlerTag);
-							response.send(errStr).status(500).end();
-							reject();
-						} else if (membershipData.length > 1) {
-							var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
-
-							logger.log(`Ambiguous membership data`, handlerTag);
-							response.send(errStr).status(499).end();
-							reject();
-						} else if (membershipData.length < 1) {
-							var errStr = ef.asCommonStr(ef.stringify.coreErr);
-
-							logger.log(`No admin data returned`, handlerTag);
-							response.send(errStr).status(499).end();
-							reject();
-						} else {
-							// console.log(JSON.stringify(membershipData));	// debug
-							// Check if member is an officer or admin
-							if (membershipData[0].level !== 0 && membershipData[0].level !== 1) {
-								var errStr = ef.asCommonStr(ef.struct.adminUnauthorized);
-
-								logger.log(`User is not authorized`);
-								response.send(errStr).status(499).end();
-								reject();
-							} else {
-								console.log(`CLEARED: ${JSON.stringify(match.list)}`);
-
-								// Generate session id and session data here
-								var sessionID = crypt.hashSessionID(match.list[0].userName);
-								var sessionDataBody = {
-									"accessToken": credentials.mdbi.accessToken,
-									"collection": "SessionData",
-									"data": {
-										"sessionID": sessionID,
-										"memberID": match.list[0].memberID,
-										"loginTime": timestamp,
-										"lastActivity": timestamp,
-										"maxIdleTime": settings.sessionIdleTime
-									}
-								};
-								var sessionRequestOptions = {
-									"hostname": "localhost",
-									"path": "/mdbi/write",
-									"method": "POST",
-									"agent": ssl_user_agent,
-									"headers": {
-										"Content-Type": "application/json",
-										"Content-Length": Buffer.byteLength(JSON.stringify(sessionDataBody))
-									}
-								};
-
-								// Submit session id to mongodb here
-								www.https.post(sessionRequestOptions, sessionDataBody, function (reply, error) {
-									if (error) {	// report errors
-										var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
-
-										logger.log(`SessionData insert failed: ${error}` , handlerTag);
-										response.send(errStr).status(500).end();
-										reject();
-									} else {
-										console.log(`GENERATED: ${JSON.stringify(match.list)}`);
-										
-										var memberUpdateBody = {
-											"accessToken": credentials.mdbi.accessToken,
-											"collection": "Member",
-											"search": {
-												"memberID": {
-													"$eq": match.list[0].memberID
-												}
-											},
-											"update": {
-												"$set": {
-													"lastLogin": timestamp
-												}
-											}
-										};
-										var memberUpdateOptions = {
-											"hostname": "localhost",
-											"path": "/mdbi/update/documents",
-											"method": "POST",
-											"agent": ssl_user_agent,
-											"headers": {
-												"Content-Type": "application/json",
-												"Content-Length": Buffer.byteLength(JSON.stringify(memberUpdateBody))
-											}
-										};
-
-										// Update member's last-login date here
-										www.https.post(memberUpdateOptions, memberUpdateBody, function (reply, error) {
-											if (error) {
-												var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
-
-												logger.log(`Member lastLogin update failed: ${error}`, handlerTag);
-												reject();
-											} else {
-												var redir = `https://${request.hostname}:${settings.port}/core/dashboard`;
-
-												// Give client their session id and client redirection headers here
-												console.log(`UPDATED: ${JSON.stringify(match.list)}`);
-												console.log(`Redirecting: ${redir}`);
-												var sessionResponse = {
-													"sessionID": sessionID,
-													"username": match.list[0].userName,
-													"destination": redir
-												};
-
-												// Cross browser support
-												if (!sessionStorageSupported) {
-													response.set("Set-Cookie", `sessionID=${sessionID}`);
-												}
-												response.send(sessionResponse).status(200).end();
-												resolve();
-											}
-										});
-									}
-								});
-							}
-						}
-					});
-				}
+				evaluateDbResults(match, resolve, reject);
 			}
 		});
 	});
