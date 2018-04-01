@@ -210,43 +210,31 @@
 									<span class="input-group-addon member-detail-label">
 										Username
 									</span>
-									<input id="memberUserName" type="text" class="form-control" placeholder="Username">
+									<input id="memberUserName" type="text" class="form-control" placeholder="Username" disabled>
 								</div>
 								<div class="input-group">
 									<span class="input-group-addon member-detail-label">
 										First Name
 									</span>
-									<input id="memberFirstName" type="text" class="form-control" placeholder="First Name">
+									<input id="memberFirstName" type="text" class="form-control" placeholder="First Name" disabled>
 								</div>
 								<div class="input-group">
 									<span class="input-group-addon member-detail-label">
 										Middle Initial
 									</span>
-									<input id="memberMiddleInitial" type="text" class="form-control" placeholder="Middle Initial">
+									<input id="memberMiddleInitial" type="text" class="form-control" placeholder="Middle Initial" disabled>
 								</div>
 								<div class="input-group">
 									<span class="input-group-addon member-detail-label">
 										Last Name
 									</span>
-									<input id="memberLastName" type="text" class="form-control" placeholder="Last Name">
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Email
-									</span>
-									<input id="memberEmail" type="text" class="form-control" placeholder="someone@email.com">
+									<input id="memberLastName" type="text" class="form-control" placeholder="Last Name" disabled>
 								</div>
 								<div class="input-group">
 									<span class="input-group-addon member-detail-label">
 										Joined
 									</span>
 									<input id="memberJoinDate" disabled type="text" class="form-control" placeholder="Join Date">
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Major
-									</span>
-									<input id="memberMajor" type="text" class="form-control" placeholder="Major">
 								</div>
 								<!-- END User Info Column -->
 							</div>
@@ -256,7 +244,40 @@
 							<!-- Includes things like remaining print pages, etc. -->
 							<div class="col-sm-6">
 								<div class="input-group">
-									asdfas
+									<span class="input-group-addon member-detail-label">
+										Major
+									</span>
+									<input id="memberMajor" type="text" class="form-control" placeholder="Major" disabled>
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Email
+									</span>
+									<input id="memberEmail" type="text" class="form-control" placeholder="someone@email.com" disabled>
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Door Code
+									</span>
+									<input id="memberDoorCode" type="text" class="form-control" placeholder="Door Code" disabled>
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Term Start
+									</span>
+									<input id="memberStartTerm" type="text" class="form-control" placeholder="Member since..." disabled>
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Term End
+									</span>
+									<input id="memberEndTerm" type="text" class="form-control" placeholder="Member since..." disabled>
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon member-detail-label">
+										Status
+									</span>
+									<input id="memberStatus" type="text" class="form-control" placeholder="Active/Inactive" disabled>
 								</div>
 							</div>
 							<!-- END User Stats Column -->
@@ -294,7 +315,7 @@
 									</button>
 								</td>
 								<td>{{row.firstName}} {{row.middleInitial}} {{row.lastName}}</td>
-								<td>{{row.joinDate}}</td>
+								<td>{{$ctrl.beautifyDate(row.joinDate)}}</td>
 								<td>{{row.email}}</td>
 								<td>{{row.major}}</td>
 							</tr>

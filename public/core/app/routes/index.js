@@ -631,7 +631,7 @@ router.post("/dashboard/search/memberdata", function (request, response) {
 			if (validID) {
 				var searchPostBody = {
 					"accessToken": credentials.mdbi.accessToken,
-					"collection": "MembershipData",
+					"collection": "MemberDossier",
 					"search": {
 						"memberID": mID
 					}

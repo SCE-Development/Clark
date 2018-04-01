@@ -73,7 +73,8 @@ body {
 
 .member-detail-label {
 	font-family: sceSyncopate;
-	background-color: silver;
+	color: white;
+	background-color: #5388b0;
 }
 
 .member-detail-title {

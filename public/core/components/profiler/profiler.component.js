@@ -121,6 +121,17 @@ angular.module("profiler").component("profiler", {
 				ctl.errmsg = errResponse.data.emsg;
 			});
 		};
+		this.beautifyDate = function (dateString) {
+			var result = new Date(Date.parse(dateString));
+
+			if (Number.isNaN(result)) {
+				result = dateString;
+			} else {
+				result = result.toUTCString();
+			}
+
+			return result;
+		};
 
 
 
@@ -143,26 +154,40 @@ angular.module("profiler").component("profiler", {
 				console.log(response.data);	// debug
 				switch (response.status) {
 					case 200: {
-						console.log("Yay, it worked!");
+						console.log("Processing member data...");
+
+						// Compute any details that need formatting
+						var joinDate = ctl.beautifyDate(response.data[0].joinDate);
+						var startDate = ctl.beautifyDate(response.data[0].startTerm);
+						var endDate = ctl.beautifyDate(response.data[0].endTerm);
+						var memberStatus = (response.data[0].membershipStatus) ? "Active" : "Inactive";
+
 						// Populate the modal with details
-						$("#memberUserName").val(person.userName);
-						$("#memberFirstName").val(person.firstName);
-						$("#memberMiddleInitial").val(person.middleInitial);
-						$("#memberLastName").val(person.lastName);
-						$("#memberEmail").val(person.email);
-						$("#memberJoinDate").val(person.joinDate);
-						$("#memberMajor").val(person.major);
+						$("#memberUserName").val(response.data[0].userName);
+						$("#memberFirstName").val(response.data[0].firstName);
+						$("#memberMiddleInitial").val(response.data[0].middleInitial);
+						$("#memberLastName").val(response.data[0].lastName);
+						$("#memberEmail").val(response.data[0].email);
+						$("#memberJoinDate").val(joinDate);
+						$("#memberMajor").val(response.data[0].major);
+						$("#memberDoorCode").val(response.data[0].doorcode);
+						$("#memberStartTerm").val(startDate);
+						$("#memberEndTerm").val(endDate);
+						$("#memberStatus").val(memberStatus);
 
 						// Open the modal
+						console.log("Showing member details...")
 						$("#memberModal").modal('show');
 						break;
 					}
 					case 499: {
 						console.log("Uh oh...");
+						ctl.errmsg = "Uh oh...";
 						break;
 					}
 					case 500: {
 						console.log("Double Uh oh...");
+						ctl.errmsg = "Internal Server Error";
 						break;
 					}
 					default: {
@@ -172,7 +197,7 @@ angular.module("profiler").component("profiler", {
 				}
 			}).catch(function (errResponse) {
 				logDebug("ProfilerController", "viewDetail", `Error: ${JSON.stringify(errResponse)}`);
-				ctl.errmsg = errResponse.data.emsg;
+				ctl.errmsg = (typeof errResponse.data === "undefined") ? errResponse : errResponse.data.emsg;
 			});
 		};
 		this.clearDetail = function () {
