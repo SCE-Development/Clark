@@ -39,12 +39,19 @@ angular.module("profiler").component("profiler", {
 			// 	"major": "test major"
 			// }
 		];
+		this.memberRegistrationStep = 0;
+		this.memberRegistrationPercent = "0%";
 
 		// Controller Functions
 		this.init = function () {
-			// Bind actions to the modal hide event
+			// Bind actions to the member detail modal hide event
 			$("#memberModal").on("hidden.bs.modal", function (event) {
 				ctl.clearDetail();
+			});
+
+			// Bind actions to the add member modal hide event
+			$("#addMemberModal").on("hidden.bs.modal", function (event) {
+				ctl.clearAddMemberModal();
 			});
 
 			// Perform an initial search
@@ -114,6 +121,10 @@ angular.module("profiler").component("profiler", {
 				ctl.errmsg = errResponse.data.emsg;
 			});
 		};
+
+
+
+		// BEGIN member detail modal controllers
 		this.viewDetail = function (index) {
 			var person = ctl.results[index];
 			console.log(`Viewing ${person.userName}'s details`);
@@ -174,6 +185,90 @@ angular.module("profiler").component("profiler", {
 			$("#memberJoinDate").val("");
 			$("#memberMajor").val("");
 		};
+		// END member detail modal controllers
+
+
+
+		// BEGIN add member modal controllers
+		this.openAddMemberModal = function () {
+			console.log(`Activating Member Registration Modal...`);
+
+			// First, clear modal
+			ctl.clearAddMemberModal();
+
+			// Then, show
+			$("#addMemberModal").modal("show");
+		};
+		this.updateAddMemberModal = function () {
+			console.log(`Member Registration is at step ${ctl.memberRegistrationStep}`);
+
+			switch (ctl.memberRegistrationStep) {
+				case 0: {	// the default; all except step 0 are hidden
+					$(".registration-step").addClass("hidden");
+					$("#addStep0").removeClass("hidden");
+					ctl.setAddMemberProgress(0);
+					break;
+				}
+				case 1: {	// step 1: ID verification
+					$(".registration-step").addClass("hidden");
+					$("#addStep1").removeClass("hidden");
+					ctl.setAddMemberProgress(20);
+					break;
+				}
+				case 2: {	// step 2: Email verification
+					$(".registration-step").addClass("hidden");
+					$("#addStep2").removeClass("hidden");
+					ctl.setAddMemberProgress(40);
+					break;
+				}
+				case 3: {	// step 3: Payment verification
+					$(".registration-step").addClass("hidden");
+					$("#addStep3").removeClass("hidden");
+					ctl.setAddMemberProgress(60);
+					break;
+				}
+				case 4: {	// step 4: Door Code Verification
+					$(".registration-step").addClass("hidden");
+					$("#addStep4").removeClass("hidden");
+					ctl.setAddMemberProgress(80);
+					break;
+				}
+				case 5: {	// step 5: Complete!!!
+					$(".registration-step").addClass("hidden");
+					$("#addStep5").removeClass("hidden");
+					ctl.setAddMemberProgress(100);
+					break;
+				}
+				default: {
+					console.log(`Invalid member registration step ${ctl.memberRegistrationStep}`);
+					break;
+				}
+			}
+		};
+		this.addMemberNextStep = function () {
+			ctl.memberRegistrationStep++;
+			ctl.updateAddMemberModal();
+		};
+		this.addMemberPrevStep = function () {
+			ctl.memberRegistrationStep--;
+			ctl.updateAddMemberModal();
+		};
+		this.setAddMemberProgress = function (percent) {
+			ctl.memberRegistrationPercent = `${percent}%`;
+			$("#addMemberProgress").attr("aria-valuenow", ctl.memberRegistrationPercent).css("width", ctl.memberRegistrationPercent);
+		};
+		this.clearAddMemberModal = function () {
+			console.log(`Clearing Member Registration Modal...`);
+
+			// Clear things here...
+			ctl.memberRegistrationStep = 0;
+			ctl.updateAddMemberModal();
+		};
+		// END add member modal controllers
+
+
+
+		// BEGIN search result controllers
 		this.setSearchType = function (type) {
 			ctl.searchType = type;
 		};
@@ -207,6 +302,9 @@ angular.module("profiler").component("profiler", {
 				console.log(ctl.errmsg);
 			}
 		};
+		// END search result controllers
+
+		
 
 		// Run controller initialization
 		ctl.init();
