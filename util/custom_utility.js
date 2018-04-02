@@ -65,7 +65,7 @@ cutil.delintRequestBody = function  (body, callback) {
 	@returns 	The numerified JSON object
 	@details 	This function takes a JSON object and converts to numbers any (and all) string member-values whose characters are all numeric
 */
-function numerify (obj) {
+cutil.numerify = function (obj) {
 	var handlerTag = {"src": "numerify"};
 
 	try {
