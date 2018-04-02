@@ -65,8 +65,8 @@ cutil.delintRequestBody = function  (body, callback) {
 	@returns 	The numerified JSON object
 	@details 	This function takes a JSON object and converts to numbers any (and all) string member-values whose characters are all numeric
 */
-cutil.numerify = function (obj) {
-	var handlerTag = {"src": "cutil.numerify"};
+function numerify (obj) {
+	var handlerTag = {"src": "numerify"};
 
 	try {
 		// Convert obj to string first...
@@ -77,7 +77,7 @@ cutil.numerify = function (obj) {
 			(key, value) => {
 				var handlerTag = {"src": "bodyParser.json.Reviver"};
 				// Attempt to convert string into number
-				if (typeof value === "string" && Number.isNaN(Number(value)) === false) {
+				if (typeof value === "string" && Number.isNaN(Number(value)) === false && value.match(/0x.*|[bB][01]*|.*[0123456789].*/gi) !== null) {
 					logger.log(`Converting string ${value} into number ${Number(value)}`, handlerTag);
 					return Number(value);
 				} else {
@@ -91,7 +91,7 @@ cutil.numerify = function (obj) {
 		logger.log(`Unable to numerify ${typeof obj} ${JSON.stringify(obj)}:\n${err}`, handlerTag);
 		return obj;
 	}
-};
+}
 
 /*
 	@function 	extractFromObjectArray

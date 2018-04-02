@@ -49,6 +49,7 @@ var placeholders = {
 		"userName": "placeholder",
 		"passWord": "b4ba87b48a80dbad417f853fae5f6d0d809879705d575ba0673ccf3e58eb46fd",
 		"email": "placeholder",
+		"emailVerified": false,
 		"major": "placeholder",
 		"lastLogin": "placeholder"
 	},
@@ -193,6 +194,7 @@ var mockMembers = [
 		"userName": "johnjdoe",
 		"passWord": cryptic.hashPwd("johnjdoe","johnjdoe"),
 		"email": "johnjdoe@email.com",
+		"emailVerified": true,
 		"major": "CMPE",
 		"lastLogin": ""
 	},
@@ -205,6 +207,7 @@ var mockMembers = [
 		"userName": "janejdoe",
 		"passWord": cryptic.hashPwd("janejdoe","janejdoe"),
 		"email": "janejdoe@email.com",
+		"emailVerified": false,
 		"major": "SE",
 		"lastLogin": ""
 	},
@@ -217,6 +220,7 @@ var mockMembers = [
 		"userName": "jackbower",
 		"passWord": cryptic.hashPwd("jackbower","jackbower"),
 		"email": "jackbower@email.com",
+		"emailVerified": false,
 		"major": "Forensic Science",
 		"lastLogin": ""
 	},
@@ -229,6 +233,7 @@ var mockMembers = [
 		"userName": "catiaabbott",
 		"passWord": cryptic.hashPwd("catiaabbott","catiaabbott"),
 		"email": "catiaabbott@email.com",
+		"emailVerified": false,
 		"major": "n/a",
 		"lastLogin": ""
 	},
@@ -241,6 +246,7 @@ var mockMembers = [
 		"userName": "ccsmith",
 		"passWord": cryptic.hashPwd("ccsmith","ccsmith"),
 		"email": "charles.smith@email.com",
+		"emailVerified": false,
 		"major": "CMPE",
 		"lastLogin": ""
 	},
@@ -253,6 +259,7 @@ var mockMembers = [
 		"userName": "cjkringle",
 		"passWord": cryptic.hashPwd("cjkringle","christmas"),
 		"email": "kringle.cj@email.com",
+		"emailVerified": false,
 		"major": "Hospitality",
 		"lastLogin": ""
 	},
@@ -265,6 +272,7 @@ var mockMembers = [
 		"userName": "adeverett",
 		"passWord": cryptic.hashPwd("adeverett","alice in wonderland"),
 		"email": "alice.everett@email.com",
+		"emailVerified": false,
 		"major": "Undeclared",
 		"lastLogin": ""
 	},
@@ -277,6 +285,7 @@ var mockMembers = [
 		"userName": "mrIncredible",
 		"passWord": cryptic.hashPwd("mrIncredible","i work alone"),
 		"email": "incredibleRParr@email.com",
+		"emailVerified": false,
 		"major": "Physical Therapy",
 		"lastLogin": ""
 	},
@@ -289,6 +298,7 @@ var mockMembers = [
 		"userName": "kammce",
 		"passWord": cryptic.hashPwd("kammce","sleep is for the weak"),
 		"email": "kammce.corp@email.com",
+		"emailVerified": false,
 		"major": "CMPE",
 		"lastLogin": ""
 	},
@@ -301,6 +311,7 @@ var mockMembers = [
 		"userName": "jamesonsr",
 		"passWord": cryptic.hashPwd("jamesonsr","i want spiderman!"),
 		"email": "jjjameson@email.com",
+		"emailVerified": false,
 		"major": "Journalism",
 		"lastLogin": ""
 	},
@@ -313,6 +324,7 @@ var mockMembers = [
 		"userName": "stark5",
 		"passWord": cryptic.hashPwd("stark5","cool facial hair bros"),
 		"email": "stark.ironman@email.com",
+		"emailVerified": true,
 		"major": "CMPE",
 		"lastLogin": ""
 	},
@@ -325,6 +337,7 @@ var mockMembers = [
 		"userName": "thebatman",
 		"passWord": cryptic.hashPwd("thebatman","because i'm batman"),
 		"email": "wayne.enterprises@email.com",
+		"emailVerified": true,
 		"major": "Business",
 		"lastLogin": ""
 	}
@@ -812,6 +825,7 @@ if (arg === "--help") {
 										"joinDate": "$joinDate",
 										"userName": "$userName",
 										"email": "$email",
+										"emailVerified": "$emailVerified",
 										"major": "$major",
 										"startTerm": "$memPlanData.startTerm",
 										"endTerm": "$memPlanData.endTerm",
