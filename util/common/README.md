@@ -34,7 +34,7 @@ Read each files' setup instructions for detailed procedures on setting up both t
 
 ### credentials.json
 
-This file contains all credentials necessary for the entire system to function properly. The elements currently required in the file pertain to the MDBI module (i.e. db access credentials) and the sce admin portal (i.e. sce admin portal master key). By default, the repository does not come with this file included (for security purposes), and must therefore be created manually and placed in the directory described by your **settings.js** file (defaults to "\[name of project dir\]/util/common"). Below are setup instructions used to properly create the credentials.json file and associate all credentials to their relevant systems (assumes you are using Ubuntu Linux).
+This file contains all credentials necessary for the entire system to function properly. The elements currently required in the file pertain to the MDBI module (i.e. db access credentials) and the sce admin portal (i.e. sce admin portal master key). By default, the repository does not come with this file included (for security purposes), and must therefore be **created manually** and placed in the directory described by your **settings.js** file (defaults to "\[name of project dir\]/util/common"). Below are setup instructions used to properly create the credentials.json file and associate all credentials to their relevant systems (assumes you are using Ubuntu Linux).
 
 #### Credentials Setup
 
@@ -64,6 +64,7 @@ The system key credential creates the "root" user (so to speak) of the SCE Core 
 		"userName": "sce_admin",
 		"passWord": "@sce123",
 		"email": "dev.sce.sjsu@gmail.com",
+    "emailVerified": true,
 		"major": "Admin",
 		"lastLogin": ""
 	},
@@ -73,7 +74,7 @@ The system key credential creates the "root" user (so to speak) of the SCE Core 
 }
 ```
 
-where "userName" and "email" can be replaced by any string value of your choosing (be wise about password complexity), and "joinDate" and "lastLogin" can be populated with the current datetime string returned by JavaScript's Date.toISOString() function. Note that the "passWord" field _**MUST**_ be a hashed password string using [cryptic.js's](../cryptic.js) hashPwd() function. **NEVER PUT PLAIN TEXT PASSWORDS IN THE syskey.passWord FIELD!!!**
+where "userName" and "email" can be replaced by any string value of your choosing, and "joinDate" and "lastLogin" can be populated with the current datetime string returned by JavaScript's Date.toISOString() function. Note that the "passWord" field _**MUST**_ be a hashed password string using [cryptic.js's](../cryptic.js) hashPwd() function. **NEVER PUT PLAIN TEXT PASSWORDS IN THE syskey.passWord FIELD!!!** (Also, be wise about password strength.)
 
 Once the JSON is created and the following MDBI instructions are completed, use of the database setup script will automatically ensure that the database has this user on file as an administrator.
 

@@ -283,6 +283,75 @@ mdb.findDocs = function (collection, filter, callback, constraints) {
 }
 
 /*
+    @function   aggregateDocs
+    @parameter  collection - the string name of the collection to search from
+    @parameter  aggregation - the array of MongoDB JSON aggregation commands used to run the pipeline
+    @parameter  callback - a callback function to run after an aggregation attempt is executed. It is passed two parameters:
+        "error" - if no error occurred, this is null. Otherwise, it is an object detailing the issue.
+        "list" - if no error occurred, this is the list (an array) of documents resulting from the aggregation. Otherwise, it is null.
+    @parameter  agOptions - (optional) a JSON object containing parameters that customize how the aggregation is performed. See MongoDB's "Collection.aggregate()" for more info on what to provide the "agOptions" parameter
+    @returns    n/a
+    @details    This function makes use of the MongoDB Aggregation Pipeline, allowing the end user to perform custom queries without relying on a pre-determined implementation. Thus, this function offers the end user greater flexibility when search for (and performing calculations with) documents.
+    @note       A great deal of care must be taken to ensure that only authorized users have access to this function. Without being restricted by RESTful endpoint implementations, this function's query versatility is a double-edged sword between user flexibility and database integrity/security.
+*/
+mdb.aggregateDocs = function (collection, aggregation, callback, agOptions) {
+    var handlerTag = {"src": "aggregateDocs"};
+
+    // Begin by finding the collection
+    // callback(null, [{"memberID": 1}]);   // test
+    mdb.database.collection(collection, {strict: true}, function (error, result) {
+        if (error) {
+            // Error? Must report it...
+            logger.log(`Error looking up collection "${collection}": ${error.toString()}`, handlerTag);
+            if (typeof callback === "function") {
+                callback(error, null);
+            }
+        } else if (!Array.isArray(aggregation)) {
+            // Not an array? Error
+            logger.log(`Given aggregation is not an array of objects!`, handlerTag);
+            if (typeof callback === "function") {
+                var errStr = ef.asCommonStr(ef.struct.invalidDataType, {"parameter": "aggregation"});
+                callback(errStr, null);
+            }
+        } else {
+            var queryCallback = function(err, docs) {
+                switch (err === null) {
+                    // No error; proceed normally
+                    case true: {
+                        logger.log(`Document(s) aggregation succeeded`, handlerTag);
+                        if (typeof callback === "function") {
+                            callback(null,docs);
+                        }
+                        break;
+                    }
+
+                    // Err was present
+                    default: {
+                        logger.log(`Document(s) search failed`, handlerTag);
+                        if (typeof callback === "function") {
+                            callback(err,null);
+                        }
+                        break;
+                    }
+                }
+            };
+
+            // Perform aggregation
+            var customOptions = (typeof agOptions === "undefined") ? null : agOptions;
+            logger.log(`Finding docs in collection "${collection}" using the Aggregation Pipeline`, handlerTag);
+            result.aggregate(aggregation, function (err, list) {
+                if (err !== null) {
+                    logger.log(`Error performing aggregation: ${err.toString()}`, handlerTag);
+                    queryCallback(err, null);
+                } else {
+                    queryCallback(null, list);
+                }
+            });
+        }
+    });
+};
+
+/*
     @function   findDocCount
     @parameter  collection - the string name of the collection to search from
     @parameter  filter - a JSON object to filter which documents are returned (i.e. search criteria)

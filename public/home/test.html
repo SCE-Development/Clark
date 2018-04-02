@@ -263,6 +263,29 @@
 							</div>
 						</div>
 					</div>
+					<div id="aggregationPanel" class="panel panel-default centerText">
+						<div id="agPanelHeading" class="panel-heading" role="tab">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" data-parent="#operationsAccordion" href="#agPanelCollapsible" aria-expanded="true" aria-controls="someCollapsible">Aggregation</a>
+							</h4>
+						</div>
+						<div id="agPanelCollapsible" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="agPanelHeading">
+							<div class="panel-body">
+								<div class="input-group">
+									<span class="input-group-btn">
+										<button class="btn btn-primary">Collection</button>
+									</span>
+									<input id="agPanelCollection" class="form-control" type="text" placeholder="Collection name here...">
+								</div>
+								<div>
+									<textarea id="agPanelText" rows="7" style="min-width: 100%"></textarea>
+								</div>
+								<div>
+									<button id="agPanelSubmit" type="button" class="btn btn-primary">Aggregate</button>
+								</div>
+							</div>
+						</div>
+					</div>
 					<div id="somePanel" class="panel panel-default centerText">
 						<div id="someHeading" class="panel-heading" role="tab">
 							<h4 class="panel-title">

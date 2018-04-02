@@ -47,6 +47,7 @@ var schema = {
 			"userName": "string",
 			"passWord": "string",
 			"email": "string",
+			"emailVerified": "boolean",
 			"major": "string",
 			"lastLogin": "string"
 		},
