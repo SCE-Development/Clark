@@ -259,6 +259,87 @@ router.post("/search/documents", function (request, response) {
 });
 
 /*
+	@endpoint 	search/aggregation
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns 	To Client:
+				On success, a success status code (200) and the list (array) of documents resulting from the aggregation
+				On invalid/expired access token, a client error code (499) and a JSON description of the error
+				On invalid parameter(s), a client error code (499) and a JSON description of the error
+				On any other error, an internal server error code (500) and a JSON description of the error
+	@details 	This function handles all endpoint POST requests to the "mdbi/search/aggregation" endpoint. It performs a query with the given parameters, but contrary to the "mdbi/search/documents" endpoint handler, it uses the MongoDB aggregation pipeline to do so. The request header's data field is expected to be a JSON object with the following format:
+		{
+			"accessToken": "access token string",
+			"collection": "string name of collection",
+			"pipeline": "array of MongoDB Aggregation Command Specifiers",
+			"agOptions": "(optional) array of MongoDB Aggregation Options"
+		}
+	@note 		This function gives the end user complete control over how the results are processed, filtered, and returned, but requires knowledge of how to properly use MongoDB's aggregation syntax and semantics. See MongoDB's Aggregation article and API documentation for details on what to give to the "pipeline" and "agOptions" parameters
+*/
+router.post("/search/aggregation", function (request, response) {
+	var handlerTag = {"src": "mdbi/search/aggregation"};
+	
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : null;
+	var hasCollectionName = (!hasBody) ? false : (typeof searchCriteria.collection === "undefined") ? false : true;
+	var hasAgOptions = (!hasBody) ? false : (typeof searchCriteria.agOptions === "undefined") ? false : true;
+	var hasAccessToken = (!hasBody) ? false : (typeof searchCriteria.accessToken === "undefined") ? false : true;
+	var failure = false;
+	var errMsg = "";
+	var errObj = "Err";
+	var errCode = 0;
+
+	// Perform conformity checks
+	if (!hasBody) {
+		failure = true;
+		errMsg = `Error: no request body found`;
+		errObj = ef.asCommonStr(ef.struct.invalidBody, {"parameter": "*"});
+		errCode = 499;
+	} else if (!hasAccessToken) {
+		failure = true;
+		errMsg = `Error: missing access token`;
+		errObj = ef.asCommonStr(ef.struct.invalidBody, {"parameter": "accessToken"});
+		errCode = 499;
+	} else if (!hasCollectionName) {
+		failure = true;
+		errMsg = `Error: missing collection name`;
+		errObj = ef.asCommonStr(ef.struct.invalidBody, {"parameter": "collection"});
+		errCode = 499;
+	}
+
+	// Process any failure
+	response.set("Content-Type", "application/json");
+	if (failure) {
+		logger.log(`errMsg: Fails~`, handlerTag);
+		logger.log(errMsg, handlerTag);
+		response.send(errObj).status(errCode).end();
+	} else if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		var queryCallback = function (error, list) {
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send(JSON.stringify(list)).end();
+			}
+		};
+		var agOpts = (searchCriteria.agOptions === null) ? null : searchCriteria.agOptions;
+
+		// Perform query
+		try {
+			logger.log(`Client @ ip ${request.ip} is requesting to find documents via aggregation from the ${searchCriteria.collection} collection in the database`, handlerTag);
+			mdb.aggregateDocs(searchCriteria.collection, searchCriteria.pipeline, queryCallback);
+		} catch (e) {
+			logger.log(`Aggregation unsuccessful: ${e}`, handlerTag);
+			queryCallback(e, null);
+		}
+	}
+});
+
+/*
 	@endpoint 	delete/document
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
@@ -507,7 +588,7 @@ function numerify (obj) {
 			(key, value) => {
 				var handlerTag = {"src": "bodyParser.json.Reviver"};
 				// Attempt to convert string into number
-				if (typeof value === "string" && Number.isNaN(Number(value)) === false) {
+				if (typeof value === "string" && Number.isNaN(Number(value)) === false && value.match(/0x.*|[bB][01]*|.*[0123456789].*/gi) !== null) {
 					logger.log(`Converting string ${value} into number ${Number(value)}`, handlerTag);
 					return Number(value);
 				} else {

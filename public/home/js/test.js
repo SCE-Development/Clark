@@ -320,6 +320,53 @@ function init() {
 			});
 		}
 	});
+
+	/* Setup AggregateDocs action */
+	$("#agPanelSubmit").on("click", function (event) {
+		var pipeline = $("#agPanelText").val();
+		var collectionName = $("#agPanelCollection").val();
+		var searchCriteria = {};
+		
+		console.log(`Submitting pipeline ${pipeline}`);	// debug
+		if (collectionName === "") {
+			console.log("Error: You didn't enter a collection name!");
+			showError(`Error: Please enter a collection name!`);
+		} else if (pipeline === "") {
+			console.log("Error: You didn't enter anything!");
+			showError(`Error: Please enter a pipeline spec!`);
+		} else {
+			try {
+				searchCriteria = JSON.parse(pipeline);
+
+				var data = {
+					"accessToken": mdbiAccessToken,
+					"collection": collectionName,
+					"pipeline": searchCriteria
+				};
+				post("/mdbi/search/aggregation", data, function (reply, status, jqxhr) {
+					if (status === "success") {
+						try {
+							console.log("Replied: " + JSON.stringify(reply));
+							showDocumentResults(reply);
+						} catch (err) {
+							console.log(`Failed to show documents: ${err}`);
+							showError(reply);
+						}
+					} else {
+						var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
+						console.log("A problem occurred");
+						console.log(errToLog);
+						showError(errToLog);
+					}
+				});
+			} catch (err) {
+				console.log("Error: failed to parse raw JSON data \"" + pipeline + "\"");
+				console.log(err);
+				showError(err);
+				return;
+			}
+		}
+	});
 }
 // END Init
 
