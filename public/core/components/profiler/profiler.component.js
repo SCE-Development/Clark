@@ -309,7 +309,12 @@ angular.module("profiler").component("profiler", {
 				}
 			};
 
-			// Make a request for member data here...
+			// Hide email status and error messages first
+			ctl.showAddMemberError("");
+			ctl.setEmailStatus("Unknown");
+			ctl.hideEmailStatus();
+
+			// Make a request for member data
 			if (ctl.emailToVerify === "") {
 				ctl.showAddMemberError("Please enter an email to check!");
 			} else {
@@ -326,9 +331,7 @@ angular.module("profiler").component("profiler", {
 								ctl.showAddMemberError("Error: The email verification couldn't be checked for some reason...");
 							} else {
 								// check for email verification here
-								var emailWasVerified = true;
-
-								if (!emailWasVerified) {
+								if (!response.data[0].emailVerified) {
 									ctl.setEmailStatus("Not Verified");
 									ctl.showEmailStatus();
 									ctl.showAddMemberError("So the email isn't verified... Ask the user to verify their email first!");
@@ -356,6 +359,8 @@ angular.module("profiler").component("profiler", {
 					}
 				}).catch(function (errResponse) {
 					logDebug("ProfilerController", "checkEmailStatus", `Error: ${errResponse}`);
+					ctl.setEmailStatus("Unknown");
+					ctl.hideEmailStatus();
 					ctl.showAddMemberError((typeof errResponse.data === "undefined") ? errResponse : errResponse.data.emsg);
 				});
 			}
