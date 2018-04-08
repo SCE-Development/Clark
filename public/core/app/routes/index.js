@@ -653,7 +653,226 @@ router.post("/dashboard/search/memberdata", function (request, response) {
 			}
 			
 		}
-	}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/search/dc
+	@parameter 	request - the web request object provided by express.js. the request body is expected to be a JSON object with the following parameters:
+					"sessionID" - the client's session token
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200 and the full list (array) of available doorcodes
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session issue
+				On failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for door code searches on the Member Profiler (i.e. the AngularJS profiler component)
+*/
+router.post("/dashboard/search/dc", function (request, response) {
+	var handlerTag = {"src": "dashboardDoorCodeSearchHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// Send results to client
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length === 0) {
+				response.send(null).status(200).end();
+			} else {
+				response.send(reply).status(200).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now search for the door codes
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "DoorCode",
+				"search": {
+					"dcID": {
+						"$gte": 0
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Now acquiring door code data`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/edit/dc
+	@parameter 	request - the web request object provided by express.js. The request body is expected to a JSON object with the following format:
+					"sessionID" - the client's session token
+					"username" - the username of the account to edit
+					"doorcode" - the door code id number to use in the replacement
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session issue
+				On failure to edit door code: a code 499 and an error-formatted object in the response body detailing the issue
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for door code edits on the Member Profiler (i.e. the AngularJS profiler component) when adding new members via the "Add Member" Modal
+*/
+router.post("/dashboard/edit/dc", function (request, response) {
+	var handlerTag = {"src": "dashboardDoorCodeChangeHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var uname = (typeof request.body.username !== "undefined") ? request.body.username : null;
+	var dcode = (typeof request.body.doorcode !== "undefined") ? request.body.doorcode : null;
+
+	var mdbiUpdateCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1) {
+			// The MDBI wasn't able to update any document at all
+			var ineffectiveErr = ef.common("USER_UNCHANGED", "The user was unaffected by the previous query", null, true);
+			logger.log(`Error: MDBI updated nothing!`, handlerTag);
+			response.status(499).send(ineffectiveErr).end();
+		} else if (reply.nModified > 1) {
+			// DANGER: The MDBI updated several documents
+			var corruptionErr = ef.common("MULTIUSER_CORRUPTION", "Various users were unintentionally affected by the previous query", null, true);
+			logger.log(`Error: MDBI updated more than one user!`, handlerTag);
+			response.status(499).send(corruptionErr).end();
+		} else {
+			// Send success here...
+			logger.log(`User door code update success`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			// Null result set
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// We got results, let's process them
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length <= 0) {
+				// If no members are found, then the client entered a non-existent username (i.e. violated a foreign key/referential integrity constraint)
+				var noMemFoundErr = ef.common("USER_NOT_FOUND", "The entered username returned no results", null, true);
+				logger.log(`Error: The username "${uname}" returned no results!`, handlerTag);
+				response.status(499).send(noMemFoundErr).end();
+			} else if (reply.length > 1) {
+				// If more than one member was found, that's fatal; we can't decide whose door code to change. Do nothing, and return an error message to the client
+				var ambibuityErr = ef.common("USER_AMBIGUOUS", "Username is not unique", null, true);
+				logger.log(`Error: The username "${uname}" returned multiple results!`, handlerTag);
+				response.status(499).send(ambibuityErr).end();
+			} else if (typeof reply[0].memberID === "undefined") {
+				// If the member ID is not defined, we cannot identify whose door code info to change. Return an error to the client
+				logger.log(`Error: The result memberID was undefined!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "reply[0].memberID"})).end();
+			} else {
+				var currentUser = reply[0];
+				var updatePostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "MembershipData",
+					"search": {
+						"memberID": currentUser.memberID
+					},
+					"update": {
+						"$set": {
+							"doorCodeID": dcode
+						}
+					}
+				};
+				var updatePostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/update/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(updatePostBody))
+					}
+				};
+
+				// If there's only one user, then this must be the user to edit. Let's go ahead and update this user, now
+				logger.log(`Updating member "${uname}"'s door code data`, handlerTag);
+				www.https.post(updatePostOptions, updatePostBody, mdbiUpdateCallback, handlerTag.src);
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (uname === null) {
+			// No username!
+			logger.log(`Error: Undefined username`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "username"})).end();
+		} else if (dcode === null) {
+			// No doorcode!
+			logger.log(`Error: Undefined doorcode`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "doorcode"})).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": uname
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Ensuring member "${uname}" exists`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
 
 	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 });

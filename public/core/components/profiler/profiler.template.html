@@ -93,7 +93,7 @@
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="false">&times;</span>
 						</button>
-						<h4 class="modal-title member-detail-title">Add Member</h4>
+						<h4 class="modal-title member-detail-title">Add Member: {{$ctrl.newMemberUsername}}</h4>
 					</div>
 					<div class="modal-body">
 						<div class="panel panel-default">
@@ -115,10 +115,14 @@
 									<h4>Prerequesite</h4>
 									<div>
 									Has this person already registered on the website (sce.engr.sjsu.edu)?<br><br>
-									If they don't recall, you can check by going back and searching in the Member Profiler.
+									If not or if they don't recall, you can check by going back and searching in the Member Profiler.<br><br>Otherwise, enter their username here and click "Yes":
+									</div>
+									<div class="input-group" style="max-width:50%">
+										<span class="input-group-addon">Username</span>
+										<input type="text" class="form-control" id="newMemUname" aria-describedby="New Member Username">
 									</div>
 									<div class="btn-group" role="group">
-										<button id="step0yes" type="button" class="btn btn-default" ng-click="$ctrl.addMemberNextStep()">Yes</button>
+										<button id="step0yes" type="button" class="btn btn-default" ng-click="$ctrl.setMemberUsername(); $ctrl.addMemberNextStep();">Yes</button>
 										<button id="step0no" type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Tell the pending member to register online!')">No</button>
 									</div>
 								</div>
@@ -178,9 +182,28 @@
 									The member's door code should now be available in their user profile. Ask the new member to try it out now!<br><br>
 									Did it work?
 									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<div id="doorCodePanel" class="collapse">
+												<div class="panel panel-default">
+													<div class="panel-heading">
+														<h4>Door Code Re-Assignment: {{$ctrl.doorCodeList[$ctrl.selectedDoorCode].code}}</h4>
+													</div>
+													<div class="panel-body" style="overflow: scroll; max-height: 200px;">
+														<div ng-repeat="dc in $ctrl.doorCodeList">
+															<button type="button" class="btn btn-default" ng-click="$ctrl.changeDoorCode($ctrl.doorCodeList[$index].dcID)">{{dc.code}}</button>
+														</div>
+													</div>
+													<div class="panel-footer">
+														<button class="btn btn-success" ng-click="$ctrl.submitNewDoorCode()">Assign New Code</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 									<div class="btn-group" role="group">
 										<button type="button" class="btn btn-default" ng-click="$ctrl.addMemberNextStep()">Yes</button>
-										<button type="button" class="btn btn-default">No</button>
+										<button type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Please reassign that member doorcode in the panel below'); $ctrl.showDoorCodePanel()">No</button>
 									</div>
 									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Back <i class="fas fa-arrow-left"></i></button>
 								</div>

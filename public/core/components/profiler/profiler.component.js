@@ -16,7 +16,9 @@ angular.module("profiler").component("profiler", {
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
 		var urls = {
 			"search": `https://${hostname}/core/dashboard/search/members`,
-			"searchMembership": `https://${hostname}/core/dashboard/search/memberdata`
+			"searchMembership": `https://${hostname}/core/dashboard/search/memberdata`,
+			"searchDoorCodes": `https://${hostname}/core/dashboard/search/dc`,
+			"editDoorCodeInAdd": `https://${hostname}/core/dashboard/edit/dc`
 		};
 
 		// Model Data
@@ -41,8 +43,11 @@ angular.module("profiler").component("profiler", {
 		];
 		this.memberRegistrationStep = 0;
 		this.memberRegistrationPercent = "0%";
+		this.newMemberUsername = "";
 		this.emailToVerify = "";
 		this.emailVerified = "Unknown";
+		this.doorCodeList = [];
+		this.selectedDoorCode = 0;
 
 		// Controller Functions
 		this.init = function () {
@@ -284,9 +289,116 @@ angular.module("profiler").component("profiler", {
 			ctl.memberRegistrationStep--;
 			ctl.updateAddMemberModal();
 		};
+		this.setMemberUsername = function (val) {
+			ctl.newMemberUsername = (typeof val === "undefined") ? $("#newMemUname").val() : val;
+		};
 		this.setAddMemberProgress = function (percent) {
 			ctl.memberRegistrationPercent = `${percent}%`;
 			$("#addMemberProgress").attr("aria-valuenow", ctl.memberRegistrationPercent).css("width", ctl.memberRegistrationPercent);
+		};
+		this.showDoorCodePanel = function () {
+			// First, acquire the list of all DoorCodes
+			var requestBody = {
+				"sessionID": sessionStorage.getItem("sessionID")
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+			$http.post(urls.searchDoorCodes, requestBody, config).then((response) => {
+				console.log(response.data);	// debug
+				switch (response.status) {
+					case 200: {
+						// Check for the appropriate data in the list
+						if (typeof response.data === "undefined") {
+							ctl.showAddMemberError("Error: No data received");
+							ctl.clearDoorCodePanel();
+						} else if (!Array.isArray(response.data)) {
+							ctl.showAddMemberError("Error: Data is not an array");
+							ctl.clearDoorCodePanel();
+						} else {
+							ctl.doorCodeList = response.data;
+						}
+						break;
+					}
+					case 499: {
+						ctl.showAddMemberError((typeof response.data[0].emsg === "undefined") ? "Session Token Rejected..." : response.data[0].emsg);
+						ctl.clearDoorCodePanel();
+						break;
+					}
+					case 500: {
+						ctl.showAddMemberError((typeof response.data[0].emsg === "undefined") ? "Error: An internal server error occurred" : response.data[0].emsg);
+						break;
+					}
+					default: {
+						ctl.showAddMemberError("Unexpected Response<<<<");
+						ctl.clearDoorCodePanel();
+						break;
+					}
+				}
+			}).catch(function (errResponse) {
+				logDebug("ProfilerController", "showDoorCodePanel", `Error: ${errResponse}`);
+				ctl.clearDoorCodePanel();
+			});
+
+			// Then reveal the collapsible
+			$("#doorCodePanel").collapse("show");
+		};
+		this.changeDoorCode = function (dcID) {
+			ctl.selectedDoorCode = dcID;
+		};
+		this.submitNewDoorCode = function () {
+			var newDoorCode = ctl.selectedDoorCode;	// the door code ID of the new door code
+			var memberToEdit = ctl.newMemberUsername;
+			var requestBody = {
+				"sessionID": sessionStorage.getItem("sessionID"),
+				"username": memberToEdit,
+				"doorcode": newDoorCode
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
+			// Make request to change new door code
+			$http.post(urls.editDoorCodeInAdd, requestBody, config).then((response) => {
+				console.log(response.data);	// debug
+
+				switch (response.status) {
+					case 200: {
+						ctl.clearDoorCodePanel();
+						ctl.hideDoorCodePanel();
+						ctl.addMemberNextStep();
+						break;
+					}
+					case 499: {
+						ctl.showAddMemberError((typeof response.data[0].emsg === "undefined") ? "A core error occurred" : response.data[0].emsg);
+						ctl.clearDoorCodePanel();
+						break;
+					}
+					case 500: {
+						ctl.showAddMemberError((typeof response.data[0].emsg === "undefined") ? "Error: An internal server error occurred" : response.data[0].emsg);
+						break;
+					}
+					default: {
+						ctl.showAddMemberError("Unexpected Response<<<<");
+						ctl.clearDoorCodePanel();
+						break;
+					}
+				}
+			}).catch(function(errResponse) {
+				logDebug("ProfilerController", "submitNewDoorCode", `Error: ${errResponse}`);
+				ctl.showAddMemberError((typeof errResponse.data === "undefined") ? errResponse : errResponse.data.emsg);
+			});
+		};
+		this.clearDoorCodePanel = function () {
+			ctl.doorCodeList = [];
+			ctl.changeDoorCode(0);
+		};
+		this.hideDoorCodePanel = function () {
+			$("#doorCodePanel").collapse("hide");
 		};
 		this.setEmailStatus = function (status) {
 			ctl.emailVerified = status;
@@ -329,6 +441,10 @@ angular.module("profiler").component("profiler", {
 								ctl.setEmailStatus("Unknown");
 								ctl.showEmailStatus();
 								ctl.showAddMemberError("Error: The email verification couldn't be checked for some reason...");
+							} else if (typeof response.data[0] === "undefined") {
+								ctl.setEmailStatus("Unknown");
+								ctl.showEmailStatus();
+								ctl.showAddMemberError("The email you entered returned no search result data. Make sure it's correct!");
 							} else {
 								// check for email verification here
 								if (!response.data[0].emailVerified) {
@@ -374,7 +490,12 @@ angular.module("profiler").component("profiler", {
 			// Clear things here...
 			ctl.setEmailStatus("Unknown");
 			ctl.hideEmailStatus();
+			ctl.changeDoorCode(0);
+			ctl.doorCodeList = [];
+			ctl.hideDoorCodePanel();
 			ctl.memberRegistrationStep = 0;
+			ctl.newMemberUsername = "";
+			$("#newMemUname").val("");
 			ctl.updateAddMemberModal();
 		};
 		// END add member modal controllers
