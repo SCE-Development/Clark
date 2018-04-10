@@ -63,7 +63,7 @@ app.use(express.static(`${settings.root}/core`));		// location of admin portal h
 app.use(express.static(`${settings.root}/core/css`));	// location of admin portal css
 app.use(express.static(`${settings.root}/core/js`));	// location of admin portal js
 app.use(express.static(`${settings.root}/core/js/profiler`));	// location of admin portal profiler component js
-
+app.use(express.static(`${settings.root}/../files`));   // added files folder to hold images and other media
 
 
 /* Define Main Server Routes (RESTful)
@@ -74,7 +74,8 @@ app.use(express.static(`${settings.root}/core/js/profiler`));	// location of adm
 		- Place an app request here (i.e. "app.post([routePath], [handlerFunc])")
 */
 logger.log(`Routing server endpoints...`, handlerTag);
-app.get("/", handles.rootHandler);				// GET request of the main login page
+var homeApp = require("./public/home/app/app.js");
+app.use("/home", homeApp);				// GET request of the main login page
 
 
 
