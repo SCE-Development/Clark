@@ -74,7 +74,8 @@ app.use(express.static(`${settings.root}/core/js/profiler`));	// location of adm
 		- Place an app request here (i.e. "app.post([routePath], [handlerFunc])")
 */
 logger.log(`Routing server endpoints...`, handlerTag);
-app.get("/", handles.rootHandler);				// GET request of the main login page
+var homeApp = require("./public/home/app/app.js");
+app.use("/home", homeApp);				// GET request of the main login page
 
 
 
