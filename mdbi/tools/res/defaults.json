@@ -1,0 +1,91 @@
+{
+	"ClearanceLevel": [
+		{
+			"cID": 0,
+			"levelName": "Admin",
+			"abilities": [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+		},
+		{
+			"cID": 1,
+			"levelName": "Officer",
+			"abilities": [0,1,2,10,11,12,13]
+		},
+		{
+			"cID": 2,
+			"levelName": "Member",
+			"abilities": []
+		}
+	],
+	"Ability": [
+		{
+			"abilityID": 0,
+			"abilityName": "Add Members",
+			"abilityDescription": "This ability grants the user permission to add members to the SCE Member collection"
+		},
+		{
+			"abilityID": 1,
+			"abilityName": "Edit Members",
+			"abilityDescription": "This ability grants the user permission to edit members in the SCE Member collection"
+		},
+		{
+			"abilityID": 2,
+			"abilityName": "Delete Members",
+			"abilityDescription": "This ability grants the user permission to delete members from the SCE Member collection"
+		},
+		{
+			"abilityID": 3,
+			"abilityName": "Assign Officers",
+			"abilityDescription": "This ability grants the user permission to assign members to officership"
+		},
+		{
+			"abilityID": 4,
+			"abilityName": "Discharge Officers",
+			"abilityDescription": "This ability grants the user permission to discharge members from officership"
+		},
+		{
+			"abilityID": 5,
+			"abilityName": "Add Abilities",
+			"abilityDescription": "This ability grants the user permission to add new abilities to the SCE Ability collection"
+		},
+		{
+			"abilityID": 6,
+			"abilityName": "Edit Abilities",
+			"abilityDescription": "This ability grants the user permission to modify existing abilities within the SCE Ability collection"
+		},
+		{
+			"abilityID": 7,
+			"abilityName": "Delete Abilities",
+			"abilityDescription": "This ability grants the user permission to delete abilities from the SCE Ability collection"
+		},
+		{
+			"abilityID": 8,
+			"abilityName": "Grant Abilities",
+			"abilityDescription": "This ability grants the user permission to grant abilities to SCE Officers"
+		},
+		{
+			"abilityID": 9,
+			"abilityName": "Revoke Abilities",
+			"abilityDescription": "This ability grants the user permission to revoke abilities from SCE Officers"
+		},
+		{
+			"abilityID": 10,
+			"abilityName": "Post Announcements",
+			"abilityDescription": "This ability grants the user permission to post announcements to the Member Portal (and by extension, send them emails)"
+		},
+		{
+			"abilityID": 11,
+			"abilityName": "Edit Announcements",
+			"abilityDescription": "This ability grants the user permission to edit announcements in the Member Portal(note that editing a posted announcement won't send another batch of emails)"
+		},
+		{
+			"abilityID": 12,
+			"abilityName": "Draft Announcements",
+			"abilityDescription": "This ability grants the user permission to save incomplete announcements as drafts"
+		},
+		{
+			"abilityID": 13,
+			"abilityName": "Delete Announcements",
+			"abilityDescription": "This ability grants the user permission to delete announcements"
+		}
+	]
+}

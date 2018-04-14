@@ -1,0 +1,110 @@
+[
+	{
+		"memberID": 1,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 2,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 3,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 4,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 5,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 6,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 7,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 8,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 9,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": false
+	},
+	{
+		"memberID": 10,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 2,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 11,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 1,
+		"membershipStatus": true
+	},
+	{
+		"memberID": 12,
+		"startTerm": "2018-04-01T23:12:33.284Z",
+		"endTerm": "2022-02-28T13:34:02.502Z",
+		"doorCodeID": 3,
+		"gradDate": "2022-02-28T13:34:02.502Z",
+		"level": 1,
+		"membershipStatus": true
+	}
+]

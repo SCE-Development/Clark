@@ -65,6 +65,7 @@ The system key credential creates the "root" user (so to speak) of the SCE Core 
 		"passWord": "@sce123",
 		"email": "dev.sce.sjsu@gmail.com",
     "emailVerified": true,
+    "emailOptIn": true,
 		"major": "Admin",
 		"lastLogin": ""
 	},
