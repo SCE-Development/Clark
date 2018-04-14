@@ -18,7 +18,8 @@ angular.module("profiler").component("profiler", {
 			"search": `https://${hostname}/core/dashboard/search/members`,
 			"searchMembership": `https://${hostname}/core/dashboard/search/memberdata`,
 			"searchDoorCodes": `https://${hostname}/core/dashboard/search/dc`,
-			"editDoorCodeInAdd": `https://${hostname}/core/dashboard/edit/dc`
+			"editDoorCodeInAdd": `https://${hostname}/core/dashboard/edit/dc`,
+			"editMemStatus": `https://${hostname}/core/dashboard/edit/membershipstatus`
 		};
 
 		// Model Data
@@ -63,6 +64,13 @@ angular.module("profiler").component("profiler", {
 
 			// Perform an initial search
 			ctl.search();
+		};
+		this.getEmailVerifiedClassByStatus = function (isVerified, classIfTrue, classIfFalse) {
+			var outputClass = classIfFalse;
+			if (isVerified) {
+				outputClass = classIfTrue;
+			}
+			return outputClass;
 		};
 		this.search = function (resetPageNumber = false) {
 			var requestBody = {
@@ -289,8 +297,49 @@ angular.module("profiler").component("profiler", {
 			ctl.memberRegistrationStep--;
 			ctl.updateAddMemberModal();
 		};
+		this.finalizeMemberReg = function () {
+			var requestBody = {
+				"sessionID": sessionStorage.getItem("sessionID"),
+				"username": ctl.newMemberUsername,
+				"status": true
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+			$http.post(urls.editMemStatus, requestBody, config).then((response) => {
+				console.log(response.data);
+				switch (response.status) {
+					case 200: {
+						$("#cancelAddMemberBtn").click();
+						break;
+					}
+					default: {
+						console.log(`Darn... (Code ${response.status})`);
+						var msg = "Oops... The operation had an issue";
+						if (typeof response.data.emsg !== "undefined") {
+							msg += `: ${response.data.emsg}`;
+						}
+						ctl.showAddMemberError(msg);
+						break;
+					}
+				}
+			}).catch(function (errResponse) {
+				logDebug("ProfilerController", "finalizeMemberReg", `Error: ${JSON.stringify(errResponse)}`);
+				var msg = (typeof errResponse.data.etype !== "undefined") ? errResponse.data.etype : "An error occurred..."
+				ctl.showAddMemberError(msg);
+			});
+		};
 		this.setMemberUsername = function (val) {
 			ctl.newMemberUsername = (typeof val === "undefined") ? $("#newMemUname").val() : val;
+
+			ctl.showAddMemberError("");
+			if (ctl.newMemberUsername === "") {
+				ctl.showAddMemberError("Please provide a username!");
+			} else {
+				this.addMemberNextStep();
+			}
 		};
 		this.setAddMemberProgress = function (percent) {
 			ctl.memberRegistrationPercent = `${percent}%`;

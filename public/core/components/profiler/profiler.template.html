@@ -122,7 +122,7 @@
 										<input type="text" class="form-control" id="newMemUname" aria-describedby="New Member Username">
 									</div>
 									<div class="btn-group" role="group">
-										<button id="step0yes" type="button" class="btn btn-default" ng-click="$ctrl.setMemberUsername(); $ctrl.addMemberNextStep();">Yes</button>
+										<button id="step0yes" type="button" class="btn btn-default" ng-click="$ctrl.setMemberUsername();">Yes</button>
 										<button id="step0no" type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Tell the pending member to register online!')">No</button>
 									</div>
 								</div>
@@ -210,16 +210,17 @@
 								<div id="addStep5" class="registration-step">
 									<h4>Completion</h4>
 									<div>
-									Nice work! This member has been verified! You may now exit...
-									<p>Don't forget to talk about locker space (#shameless_plug) :)</p>
+									Nice work! This member has been verified! You may now Finalize their membership registration...
+									<p>P.S. Don't forget to talk about locker space (#shameless_plug) :)</p>
 									</div>
 									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Made a mistake? <i class="fas fa-arrow-left"></i></button>
+									<button class="btn btn-success" ng-click="$ctrl.finalizeMemberReg()">Finalize & Exit</button>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Exit</button>
+						<button type="button" id="cancelAddMemberBtn" class="btn btn-default" data-dismiss="modal">Cancel Registration</button>
 					</div>
 				</div>
 			</div>
@@ -357,7 +358,13 @@
 								</td>
 								<td>{{row.firstName}} {{row.middleInitial}} {{row.lastName}}</td>
 								<td>{{$ctrl.beautifyDate(row.joinDate)}}</td>
-								<td>{{row.email}}</td>
+								<td>
+									<span class="badge" style="background-color: #c0c0c0">
+										<span class="glyphicon glyphicon-envelope"></span>
+										<span class="glyphicon {{$ctrl.getEmailVerifiedClassByStatus(row.emailVerified, 'glyphicon-ok email-verified', 'glyphicon-remove email-unverified')}}"></span>
+										</span>
+									{{row.email}}
+								</td>
 								<td>{{row.major}}</td>
 							</tr>
 						</tbody>

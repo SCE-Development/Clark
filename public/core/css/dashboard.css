@@ -48,6 +48,18 @@ body {
 	text-align: center;
 }
 
+.email-icon {
+	color: gray;
+}
+
+.email-verified {
+	color: green;
+}
+
+.email-unverified {
+	color: red;
+}
+
 .error-display {
 	text-align: center;
 	color: red;
