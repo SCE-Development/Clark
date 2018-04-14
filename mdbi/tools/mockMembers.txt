@@ -1,0 +1,16 @@
+======================
+Mock Members Passwords
+======================
+
+johnjdoe:"johnjdoe"
+janejdoe:"janejdoe"
+jackbower:"jackbower"
+catiaabbott:"catiaabbott"
+ccsmith:"ccsmith"
+cjkringle:"christmas"
+adeverett:"alice in wonderland"
+mrIncredible:"i work alone"
+kammce:"sleep is for the weak"
+jamesonsr:"i want spiderman!"
+stark5:"cool facial hair bros"
+thebatman:"because i'm batman"
