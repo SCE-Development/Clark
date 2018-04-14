@@ -12,6 +12,7 @@
 		"passWord": "b4ba87b48a80dbad417f853fae5f6d0d809879705d575ba0673ccf3e58eb46fd",
 		"email": "placeholder",
 		"emailVerified": false,
+		"emailOptIn": false,
 		"major": "placeholder",
 		"lastLogin": "placeholder"
 	},

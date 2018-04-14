@@ -330,6 +330,7 @@ if (arg === "--help") {
 										"userName": "$userName",
 										"email": "$email",
 										"emailVerified": "$emailVerified",
+										"emailOptIn": "$emailOptIn",
 										"major": "$major",
 										"startTerm": "$memPlanData.startTerm",
 										"endTerm": "$memPlanData.endTerm",
