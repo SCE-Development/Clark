@@ -25,6 +25,7 @@ var schema = {
 		"Ability",
 		"SessionData",
 		"Announcement",
+		"OfficerApplication",
 		"MemberDossier",	// a view created by Member LOJ MembershipData LOJ DoorCode
 		"OfficerDossier",	// a view created by Member LOJ MembershipData LOJ ClearanceLevel
 		"CoreAccess"	// a view created by Member LOJ MembershipData
@@ -87,6 +88,17 @@ var schema = {
 			"title": "string",
 			"msgContent": "string",
 			"imgPath": "string"
+		},
+		"OfficerApplication": {
+			"appID": "number",
+			"fullName": "string",
+			"email": "string",
+			"major": "string",
+			"graduationSem": "string",
+			"reasonForOfficer": "string",
+			"committee": "string",
+			"interestedPositions": "string",	// array
+			"improvements": "string"
 		}
 	},
 

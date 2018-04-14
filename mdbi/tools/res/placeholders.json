@@ -51,5 +51,16 @@
 		"title": "placeholder",
 		"msgContent": "placeholder",
 		"imgPath": "placeholder"
+	},
+	"OfficerApplication": {
+		"appID": -1,
+		"fullName": "placeholder",
+		"email": "placeholder",
+		"major": "placeholder",
+		"graduationSem": "placeholder",
+		"reasonForOfficer": "being a placeholder",
+		"committee": "placeholder",
+		"interestedPositions": "placeholder",
+		"improvements": "placeholder"
 	}
 }

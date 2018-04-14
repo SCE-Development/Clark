@@ -232,6 +232,16 @@ if (arg === "--help") {
 						}
 					});
 				});
+				var addOfficerApplication = new Promise (function (resolve, reject) {
+					db.collection("OfficerApplication").insertOne(placeholders.OfficerApplication, null, function (error, result) {
+						if (error) {
+							console.log(`Error creating collection OfficerApplication: ${error}`);
+							reject();
+						} else {
+							resolve();
+						}
+					});
+				});
 				// END db schema application promises
 
 				// BEGIN db defaults promises
@@ -565,6 +575,7 @@ if (arg === "--help") {
 						addAbility,
 						addSessionData,
 						addAnnouncement,
+						addOfficerApplication,
 						addDefaultLevels,
 						addDefaultAbilities
 					]).then(applyViews).catch(function (error) {
