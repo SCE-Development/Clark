@@ -1,0 +1,55 @@
+{
+	"serverActivations": {
+		"login": "placeholder"
+	},
+	"Member": {
+		"memberID": -1,
+		"firstName": "placeholder",
+		"middleInitial": "p",
+		"lastName": "placeholder",
+		"joinDate": "placeholder",
+		"userName": "placeholder",
+		"passWord": "b4ba87b48a80dbad417f853fae5f6d0d809879705d575ba0673ccf3e58eb46fd",
+		"email": "placeholder",
+		"emailVerified": false,
+		"major": "placeholder",
+		"lastLogin": "placeholder"
+	},
+	"MembershipData": {
+		"memberID": -1,
+		"startTerm": "placeholder",
+		"endTerm": "placeholder",
+		"doorCodeID": -1,
+		"gradDate": "placeholder",
+		"level": -1,
+		"membershipStatus": true
+	},
+	"DoorCode": {
+		"dcID": -1,
+		"code": "unassigned"
+	},
+	"ClearanceLevel": {
+		"cID": -1,
+		"levelName": "placeholder",
+		"abilities": []
+	},
+	"Ability": {
+		"abilityID": -1,
+		"abilityName": "placeholder",
+		"abilityDescription": "placeholder"
+	},
+	"SessionData": {
+		"sessionID": -1,
+		"memberID": -1,
+		"loginTime": "placeholder",
+		"lastActivity": "placeholder",
+		"maxIdleTime": -1
+	},
+	"Announcement": {
+		"aID": -1,
+		"senderID": -1,
+		"title": "placeholder",
+		"msgContent": "placeholder",
+		"imgPath": "placeholder"
+	}
+}
