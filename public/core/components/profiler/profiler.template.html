@@ -243,84 +243,104 @@
 							<div class="col-sm-6">
 								<!-- BEGIN User Thumbnail -->
 								<a href="#" class="thumbnail">
-									<img src="" alt="User's Thumbnail">
+									<img src="img/profile-42914_1280.png" alt="User's Thumbnail" width="250px" heigth="250px" style="object-fit: cover;">
 								</a>
 								<!-- END User Thumbnail -->
 
-								<!-- BEGIN User Info Column -->
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Username
-									</span>
-									<input id="memberUserName" type="text" class="form-control" placeholder="Username" disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										First Name
-									</span>
-									<input id="memberFirstName" type="text" class="form-control" placeholder="First Name" disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Middle Initial
-									</span>
-									<input id="memberMiddleInitial" type="text" class="form-control" placeholder="Middle Initial" disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Last Name
-									</span>
-									<input id="memberLastName" type="text" class="form-control" placeholder="Last Name" disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Joined
-									</span>
-									<input id="memberJoinDate" disabled type="text" class="form-control" placeholder="Join Date">
-								</div>
-								<!-- END User Info Column -->
 							</div>
 							<!-- END Modal Left Pane -->
 
 							<!-- BEGIN User Stats Column -->
 							<!-- Includes things like remaining print pages, etc. -->
 							<div class="col-sm-6">
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Major
-									</span>
-									<input id="memberMajor" type="text" class="form-control" placeholder="Major" disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Email
-									</span>
-									<input id="memberEmail" type="text" class="form-control" placeholder="someone@email.com" disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Door Code
-									</span>
-									<input id="memberDoorCode" type="text" class="form-control" placeholder="Door Code" disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Term Start
-									</span>
-									<input id="memberStartTerm" type="text" class="form-control" placeholder="Member since..." disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Term End
-									</span>
-									<input id="memberEndTerm" type="text" class="form-control" placeholder="Member since..." disabled>
-								</div>
-								<div class="input-group">
-									<span class="input-group-addon member-detail-label">
-										Status
-									</span>
-									<input id="memberStatus" type="text" class="form-control" placeholder="Active/Inactive" disabled>
-								</div>
+								<!-- BEGIN User Info Column -->
+								<table>
+									<tbody>
+										<tr>
+											<td class="member-detail-label">Username</td>
+											<td class="member-detail-disabled-item">
+												<span id="memberUserName" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">First Name</td>
+											<td class="member-detail-item">
+												<span id="memberFirstName" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Middle Initial</td>
+											<td class="member-detail-item">
+												<span id="memberMiddleInitial" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Last Name</td>
+											<td class="member-detail-item">
+												<span id="memberLastName" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Join Date</td>
+											<td class="member-detail-item">
+												<span id="memberJoinDate" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Major</td>
+											<td class="member-detail-item">
+												<span id="memberMajor" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Email</td>
+											<td class="member-detail-item">
+												<span class="badge" style="background-color: #c0c0c0" data-toggle="tooltip" title="Email Verification Status">
+													<span class="glyphicon glyphicon-envelope"></span>
+													<span id="memberEmailVerified"></span>
+												</span>
+												<span id="memberEmail" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Door Code</td>
+											<td class="member-detail-item">
+												<span id="memberDoorCode" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Term Start</td>
+											<td class="member-detail-item">
+												<span id="memberStartTerm" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Term End</td>
+											<td class="member-detail-item">
+												<span id="memberEndTerm" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Status</td>
+											<td class="member-detail-item">
+												<span id="memberStatus" class="member-detail-field"></span>
+											</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<div class="collapse" id="editMemberDetailPanel">
+											<h4>Edit <span id="editMemberDetailFieldName"></span></h4>
+											<div class="input-group">
+												<input type="text" class="form-control" id="editMemberDetailBar" placeholder="Data Field...">
+												<span class="input-group-btn">
+													<button class="btn btn-success" ng-click="$ctrl.submitNewMemberDetail()">Save</button>
+													<button type="button" class="btn btn-default" ng-click="$ctrl.closeMemberDetailEditBar()">Cancel</button>
+												</span>
+											</div>
+										</div>
+									</tfoot>
+								</table>
+								<!-- END User Info Column -->
 							</div>
 							<!-- END User Stats Column -->
 						</div>

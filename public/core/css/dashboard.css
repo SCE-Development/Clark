@@ -83,9 +83,26 @@ body {
 	font-family: default;
 }
 
+.member-detail-disabled-item {
+	padding: 5px;
+}
+
+.member-detail-edit-btn {
+	/* nothing here... */
+}
+
+.member-detail-field {
+	/* nothing here... */
+}
+
+.member-detail-item {
+	padding: 5px;
+}
+
 .member-detail-label {
 	font-family: sceSyncopate;
 	color: white;
+	padding: 5px;
 	background-color: #5388b0;
 }
 

@@ -62,6 +62,17 @@ angular.module("profiler").component("profiler", {
 				ctl.clearAddMemberModal();
 			});
 
+			// Bind actions to member detail edit buttons
+			$(".member-detail-item").mouseenter(function () {
+				$(this).append( $("<button type='button' class='btn btn-default member-detail-edit-btn'><span class='glyphicon glyphicon-pencil'></span></button>") );
+			}).mouseleave(function () {
+				$(this).find("button:last").remove();
+			}).on("click", function (event) {
+				var fieldValue = $(this).children(".member-detail-field").html();
+				var fieldID = $(this).children(".member-detail-field").attr("id");
+				ctl.launchMemberDetailEditBar(fieldID, fieldValue);
+			});
+
 			// Perform an initial search
 			ctl.search();
 		};
@@ -178,17 +189,20 @@ angular.module("profiler").component("profiler", {
 						var memberStatus = (response.data[0].membershipStatus) ? "Active" : "Inactive";
 
 						// Populate the modal with details
-						$("#memberUserName").val(response.data[0].userName);
-						$("#memberFirstName").val(response.data[0].firstName);
-						$("#memberMiddleInitial").val(response.data[0].middleInitial);
-						$("#memberLastName").val(response.data[0].lastName);
-						$("#memberEmail").val(response.data[0].email);
-						$("#memberJoinDate").val(joinDate);
-						$("#memberMajor").val(response.data[0].major);
-						$("#memberDoorCode").val(response.data[0].doorcode);
-						$("#memberStartTerm").val(startDate);
-						$("#memberEndTerm").val(endDate);
-						$("#memberStatus").val(memberStatus);
+						$("#memberUserName").html(response.data[0].userName);
+						$("#memberFirstName").html(response.data[0].firstName);
+						$("#memberMiddleInitial").html(response.data[0].middleInitial);
+						$("#memberLastName").html(response.data[0].lastName);
+						$("#memberEmail").html(response.data[0].email);
+						$("#memberEmailVerified").addClass("glyphicon");
+						$("#memberEmailVerified").addClass((response.data[0].emailVerified === true) ? "glyphicon-ok" : "glyphicon-remove");
+						$("#memberEmailVerified").css("color", (response.data[0].emailVerified === true) ? "green" : "red");
+						$("#memberJoinDate").html(joinDate);
+						$("#memberMajor").html(response.data[0].major);
+						$("#memberDoorCode").html(response.data[0].doorcode);
+						$("#memberStartTerm").html(startDate);
+						$("#memberEndTerm").html(endDate);
+						$("#memberStatus").html(memberStatus);
 
 						// Open the modal
 						console.log("Showing member details...")
@@ -215,15 +229,47 @@ angular.module("profiler").component("profiler", {
 				ctl.errmsg = (typeof errResponse.data === "undefined") ? errResponse : errResponse.data.emsg;
 			});
 		};
+		this.launchMemberDetailEditBar = function (fieldID, fieldValue) {
+			var fieldName = fieldID.split("member");
+			
+			console.log("Launching Member Detail Edit Bar...");
+			console.log(`${fieldID} -> ${fieldValue}`);
+			$("#editMemberDetailFieldName").html(fieldName);
+			$("#editMemberDetailBar").val(fieldValue);
+			$("#editMemberDetailPanel").collapse("show");
+		};
+		this.closeMemberDetailEditBar = function () {
+			console.log("Closing Member Detail Edit Bar...");
+
+			// Clear and close bar
+			$("#editMemberDetailFieldName").html("");
+			$("#editMemberDetailBar").val("");
+			$("#editMemberDetailPanel").collapse("hide");
+		};
+		this.submitNewMemberDetail = function () {
+			console.log("Submitting updated member info...");
+
+			// Clear and close bar
+			$("#editMemberDetailFieldName").html("");
+			$("#editMemberDetailBar").val("");
+			ctl.closeMemberDetailEditBar();
+		}
 		this.clearDetail = function () {
 			console.log(`Clearing modal...`);
-			$("#memberUserName").val("");
-			$("#memberFirstName").val("");
-			$("#memberMiddleInitial").val("");
-			$("#memberLastName").val("");
-			$("#memberEmail").val("");
-			$("#memberJoinDate").val("");
-			$("#memberMajor").val("");
+			$("#memberUserName").html("");
+			$("#memberFirstName").html("");
+			$("#memberMiddleInitial").html("");
+			$("#memberLastName").html("");
+			$("#memberEmail").html("");
+			$("#memberEmailVerified").removeClass("glyphicon");
+			$("#memberEmailVerified").removeClass("glyphicon-ok");
+			$("#memberEmailVerified").removeClass("glyphicon-remove");
+			$("#memberJoinDate").html("");
+			$("#memberMajor").html("");
+			$("#memberDoorCode").html("");
+			$("#memberStartTerm").html("");
+			$("#memberEndTerm").html("");
+			$("#memberStatus").html("");
 		};
 		// END member detail modal controllers
 
