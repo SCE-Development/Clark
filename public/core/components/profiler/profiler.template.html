@@ -328,15 +328,20 @@
 										</tr>
 									</tbody>
 									<tfoot>
-										<div class="collapse" id="editMemberDetailPanel">
-											<h4>Edit <span id="editMemberDetailFieldName"></span></h4>
-											<div class="input-group">
-												<input type="text" class="form-control" id="editMemberDetailBar" placeholder="Data Field...">
-												<span class="input-group-btn">
-													<button class="btn btn-success" ng-click="$ctrl.submitNewMemberDetail()">Save</button>
-													<button type="button" class="btn btn-default" ng-click="$ctrl.closeMemberDetailEditBar()">Cancel</button>
-												</span>
+										<div class="collapse" id="memberDetailEditor">
+											<div class="row">
+												<div class="col-sm-12">
+													<h4>Edit <span id="detailEditorFieldName"></span></h4>
+													<button type="button" style="width: 100%;" class="btn btn-default" ng-click="$ctrl.closeMemberDetailEditor()">Cancel</button>
+												</div>
 											</div>
+											<div id="editorbar" class="input-group member-detail-edit-field hidden">
+												<input id="editorbarInputField" class="form-control" placeholder="New value...">
+												<div class="input-group-btn">
+													<button class="btn btn-success">Submit</button>
+												</div>
+											</div>
+											<doorcoder id="doorcoder1" class="member-detail-edit-field hidden"></doorcoder>
 										</div>
 									</tfoot>
 								</table>

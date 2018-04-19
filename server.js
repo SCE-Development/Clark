@@ -63,6 +63,7 @@ app.use(express.static(`${settings.root}/core`));		// location of admin portal h
 app.use(express.static(`${settings.root}/core/css`));	// location of admin portal css
 app.use(express.static(`${settings.root}/core/js`));	// location of admin portal js
 app.use(express.static(`${settings.root}/core/js/profiler`));	// location of admin portal profiler component js
+app.use(express.static(`${settings.root}/core/js/doorcoder`));	// location of admin portal doorcoder component js
 app.use(express.static(`${settings.root}/../files`));   // added files folder to hold images and other media
 
 

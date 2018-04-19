@@ -55,6 +55,7 @@ angular.module("profiler").component("profiler", {
 			// Bind actions to the member detail modal hide event
 			$("#memberModal").on("hidden.bs.modal", function (event) {
 				ctl.clearDetail();
+				ctl.closeMemberDetailEditor();
 			});
 
 			// Bind actions to the add member modal hide event
@@ -70,7 +71,9 @@ angular.module("profiler").component("profiler", {
 			}).on("click", function (event) {
 				var fieldValue = $(this).children(".member-detail-field").html();
 				var fieldID = $(this).children(".member-detail-field").attr("id");
-				ctl.launchMemberDetailEditBar(fieldID, fieldValue);
+				
+				// Show based on what was clicked
+				ctl.launchMemberDetailEditor(fieldID, fieldValue);
 			});
 
 			// Perform an initial search
@@ -229,30 +232,50 @@ angular.module("profiler").component("profiler", {
 				ctl.errmsg = (typeof errResponse.data === "undefined") ? errResponse : errResponse.data.emsg;
 			});
 		};
-		this.launchMemberDetailEditBar = function (fieldID, fieldValue) {
+		this.launchMemberDetailEditor = function (fieldID, fieldValue) {
 			var fieldName = fieldID.split("member");
 			
 			console.log("Launching Member Detail Edit Bar...");
 			console.log(`${fieldID} -> ${fieldValue}`);
-			$("#editMemberDetailFieldName").html(fieldName);
-			$("#editMemberDetailBar").val(fieldValue);
-			$("#editMemberDetailPanel").collapse("show");
+			$("#detailEditorFieldName").html(fieldName);
+
+			// Determine which UI elements to show for this edit
+			switch (fieldID) {
+				case "memberDoorCode": {
+					// Hide all, then show door code editor
+					$(".member-detail-edit-field").addClass("hidden");
+					$("#doorcoder1").removeClass("hidden");
+					break;
+				}
+				default: {
+					// Hide all, then show the editor bar
+					$(".member-detail-edit-field").addClass("hidden");
+					$("#editorbar").removeClass("hidden");
+					break;
+				}
+			}
+
+			// Reveal the collapsible
+			$("#memberDetailEditor").collapse("show");
 		};
-		this.closeMemberDetailEditBar = function () {
+		this.closeMemberDetailEditor = function () {
 			console.log("Closing Member Detail Edit Bar...");
 
-			// Clear and close bar
-			$("#editMemberDetailFieldName").html("");
-			$("#editMemberDetailBar").val("");
-			$("#editMemberDetailPanel").collapse("hide");
+			// Clear all internal UI elements
+			$("#editorbarInputField").val("");
+
+			// Hide all internal UI elements
+			$("#doorcoder1").addClass("hidden");
+			$("#editorbar").addClass("hidden");
+
+			// Hide the collapsible
+			$("#memberDetailEditor").collapse("hide");
 		};
 		this.submitNewMemberDetail = function () {
 			console.log("Submitting updated member info...");
 
 			// Clear and close bar
-			$("#editMemberDetailFieldName").html("");
-			$("#editMemberDetailBar").val("");
-			ctl.closeMemberDetailEditBar();
+			ctl.closeMemberDetailEditor();
 		}
 		this.clearDetail = function () {
 			console.log(`Clearing modal...`);
