@@ -79,23 +79,23 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 #### */public/*
   - This directory contains all web pages and files to be served by server.js upon request, and contains the following:
     1. skeleton/ - (used to create a new Core-v4 subapp) a subapp directory housing the minimum required set of files for a Core-v4 subapp. All other subapps are structured similarly to this directory. It takes the following structure:
-      1. \*.html - any of the subapp's main html files are stored directly in the ```skeleton/``` directory
-      1. css/ - a skeleton css directory, where your sub-app's css files go
-      1. js/ - a skeleton javascript directory, where your sub-app's js files go
-      1. img/ - a skeleton image/graphics directory, where your sub-app should look for image content
+       1. \*.html - any of the subapp's main html files are stored directly in the ```skeleton/``` directory
+       1. css/ - a skeleton css directory, where your sub-app's css files go
+       1. js/ - a skeleton javascript directory, where your sub-app's js files go
+       1. img/ - a skeleton image/graphics directory, where your sub-app should look for image content
     1. lib/ - (optional) a directory containing core or common front-end files and resources (i.e. fonts, common utilties, and common angular components). It contains the following directories:
-      1. components/ - houses various common angularjs components
-      1. fonts/ - a collection of common font files that can be used to style your webpage
-      1. utility.js - a set of handy utility functions commonly used by your subapp's html pages and javascript files.
+       1. components/ - houses various common angularjs components
+       1. fonts/ - a collection of common font files that can be used to style your webpage
+       1. utility.js - a set of handy utility functions commonly used by your subapp's html pages and javascript files.
     1. home/ - the server root's home directory, containing the main subapp and front-facing homepage files. In addition to what's inside ```skeleton/```, it contains the following:
-      1. index.html - the Core-v4 front-facing homepage (i.e. sce.engr.sjsu.edu front page)
-      1. test.html - the html file comprising the Core-v4 test application. This is the html file served the the **/test/** directory described later below.
-      1. genErr.html - a general error page that is presented when a client request results in an error (typically used for 404:NOT_FOUND errors).
+       1. index.html - the Core-v4 front-facing homepage (i.e. sce.engr.sjsu.edu front page)
+       1. test.html - the html file comprising the Core-v4 test application. This is the html file served the the **/test/** directory described later below.
+       1. genErr.html - a general error page that is presented when a client request results in an error (typically used for 404:NOT_FOUND errors).
     1. core/ - the Core-v4 administrator portal's subapp. In addition to what's inside ```skeleton/```, it contains the following:
-      1. core.html - the Core-v4 administrator portal (login) page
-      1. dashboard.html - the Core-v4 administrator dashboard page
-      1. app/ - contains the Core-v4 Admin Portal ExpressJS subapp files "app.js" and "routes/index.js" for endpoint routing
-      1. components/ - contains various AngularJS components exclusively used by the Core-v4 Admin Portal.
+       1. core.html - the Core-v4 administrator portal (login) page
+       1. dashboard.html - the Core-v4 administrator dashboard page
+       1. app/ - contains the Core-v4 Admin Portal ExpressJS subapp files "app.js" and "routes/index.js" for endpoint routing
+       1. components/ - contains various AngularJS components exclusively used by the Core-v4 Admin Portal.
   - Any added HTML files can go directly in /public
 #### */server.js*
   - This file comprises the MEAN stack webserver that will be serving all requests with the relevant endpoints.
@@ -180,8 +180,15 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
     1. Core Services (currently under development)
     1. Core Home
   - Developing the SCE Core Services application (Admin portal/dashboard, and officer tools)
+    1. ~Portal Login~ (_completed_)
+    1. ~Session Token distribution upon login~ (_completed_)
+    1. ~Implement Session Expiration~ (_complete_)
+    1. ~Member Approval (a.k.a. adding members who have registered)~ (_completed_)
+    1. Member Editing (in progress)
+    1. Officer Approval
+    1. Officer Capability Modification
   - ~Developing an error message protocol to force all modules to conform to a common error message standard~ (_completed with error_formats.js_)
-  - Adding various database tools (i.e. db setup script, db mock data insertion, etc.) (currently under development)
+  - ~Adding various database tools (i.e. db setup script, db mock data insertion, etc.)~ (_completed_)
   - Need to add Database Schema constraints to enforce BSON document conformity per collection
   - Need to integrate Core Printer Service Project to this application
-  - Need to integrate SCE POS System Project to this application
+  - Need to integrate SCE POS System Project to this application (postponed)
