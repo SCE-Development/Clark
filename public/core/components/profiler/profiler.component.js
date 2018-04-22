@@ -19,7 +19,8 @@ angular.module("profiler").component("profiler", {
 			"searchMembership": `https://${hostname}/core/dashboard/search/memberdata`,
 			"searchDoorCodes": `https://${hostname}/core/dashboard/search/dc`,
 			"editDoorCodeInAdd": `https://${hostname}/core/dashboard/edit/dc`,
-			"editMemStatus": `https://${hostname}/core/dashboard/edit/membershipstatus`
+			"editMemStatus": `https://${hostname}/core/dashboard/edit/membershipstatus`,
+			"editMemberField": `https://${hostname}/core/dashboard/edit/memberfield`
 		};
 
 		// Model Data
@@ -164,7 +165,8 @@ angular.module("profiler").component("profiler", {
 
 
 
-		// BEGIN member detail modal controllers
+		// BEGIN member detail modal controllers data model
+		this.currentField = "";
 		this.viewDetail = function (index) {
 			var person = ctl.results[index];
 			console.log(`Viewing ${person.userName}'s details`);
@@ -233,11 +235,14 @@ angular.module("profiler").component("profiler", {
 			});
 		};
 		this.launchMemberDetailEditor = function (fieldID, fieldValue) {
-			var fieldName = fieldID.split("member");
+			var fieldName = fieldID.replace("member", "");
 			
 			console.log("Launching Member Detail Edit Bar...");
 			console.log(`${fieldID} -> ${fieldValue}`);
 			$("#detailEditorFieldName").html(fieldName);
+
+			ctl.currentField = fieldName;
+			ctl.showMemberDetailError("");
 
 			// Determine which UI elements to show for this edit
 			switch (fieldID) {
@@ -267,18 +272,94 @@ angular.module("profiler").component("profiler", {
 			// Hide all internal UI elements
 			$("#doorcoder1").addClass("hidden");
 			$("#editorbar").addClass("hidden");
+			ctl.showMemberDetailError("");
 
 			// Hide the collapsible
 			$("#memberDetailEditor").collapse("hide");
 		};
 		this.submitNewMemberDetail = function () {
-			console.log("Submitting updated member info...");
+			var type = ctl.currentField;
+			var val = $("#editorbarInputField").val();
+			var success = true;
 
-			// Clear and close bar
-			ctl.closeMemberDetailEditor();
+			console.log(`Submitting ${val} as updated ${type}...`);
+
+			switch (type) {
+				case "FirstName": {
+					type = "firstName";
+					break;
+				}
+				case "MiddleInitial": {
+					type = "middleInitial";
+					break;
+				}
+				case "LastName": {
+					type = "lastName";
+					break;
+				}
+				case "Major": {
+					type = "major";
+					break;
+				}
+				// default: {
+				// 	console.log(`Error: Unexpected detail field name "${type}"`);
+				// 	ctl.showMemberDetailError(`Unable to edit "${type}"`);
+				// 	success = false;
+				// 	break;
+				// }
+			}
+
+			if (success) {
+				var requestBody = {
+					"sessionID": sessionStorage.getItem("sessionID"),
+					"username": $("#memberUserName").html(),
+					"field": type,
+					"value": val
+				};
+				var config = {
+					"headers": {
+						"Content-Type": "application/json"
+					}
+				};
+				$http.post(urls.editMemberField, requestBody, config).then((response) => {
+					console.log(response.data);
+					switch (response.status) {
+						case 200: {
+							console.log("Membership data update succeeded!");
+
+							// Clear and close bar
+							ctl.closeMemberDetailEditor();
+
+							// Close modal
+							$("#memberDetailModalCloseButton").click();
+
+							// Refresh search results
+							ctl.search();
+							break;
+						}
+						default: {
+							console.log(`Something didn't work... (Code ${response.status})`);
+							var msg = "Oops... The operation had an issue";
+							if (typeof response.data.emsg !== "undefined") {
+								msg += `: ${response.data.emsg}`;
+							}
+							ctl.showMemberDetailError(msg);
+							break;
+						}
+					}
+				}).catch(function (errResponse) {
+					logDebug("ProfilerController", "submitNewMemberDetail", `Error: ${JSON.stringify(errResponse)}`);
+					var msg = (typeof errResponse.data.emsg !== "undefined") ? errResponse.data.emsg : (typeof errResponse.data.etype !== "undefined") ? errResponse.data.etype : "An error occurred..."
+					ctl.showMemberDetailError(msg);
+				});
+			}
 		}
+		this.showMemberDetailError = function (val) {
+			$("#memberDetailErrorMessage").html(val);
+		};
 		this.clearDetail = function () {
 			console.log(`Clearing modal...`);
+			$("#editorbarInputField").val("");
 			$("#memberUserName").html("");
 			$("#memberFirstName").html("");
 			$("#memberMiddleInitial").html("");

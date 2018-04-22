@@ -878,10 +878,10 @@ router.post("/dashboard/edit/dc", function (request, response) {
 });
 
 /*
-	@function 	/dashboard/edit/membershipstatus
+	@endpoint 	/dashboard/edit/membershipstatus
 	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
 					"sessionID" - the client's session token string
-					"username" - the username string of the account whose membership status will be modifieds
+					"username" - the username string of the account whose membership status will be modified
 					"status" - the boolean value to replace the memberhip status with
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200
@@ -993,6 +993,179 @@ router.post("/dashboard/edit/membershipstatus", function (request, response) {
 			// No membership status!
 			logger.log(`Error: Undefined status`, handlerTag);
 			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "status"})).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": uname
+				},
+				"options": {
+					"projection": {
+						"memberID": 1
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Ensuring member "${uname}" exists`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/edit/memberfield
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+					"username" - the username string of the account whose membership data will be modified
+					"field" - a string representing the name of the data field to edit
+					"value" - the value to replace it with
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On illegal data modification request: a code 499 and an error-formatted object in the response body detailing the invalild operation
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for modification of data within the Member collection, using the Membership Profiler (i.e. the AngularJS profiler component) when modifying members' data via the "Member Detail" Modal
+*/
+router.post("/dashboard/edit/memberfield", function (request, response) {
+	var handlerTag = {"src": "editMemberField"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var uname = (typeof request.body.username !== "undefined") ? request.body.username : null;
+	var field = (typeof request.body.field !== "undefined") ? request.body.field : null;
+	var newval = (typeof request.body.value !== "undefined") ? request.body.value : null;
+	var validFieldNames = [
+		"firstName",
+		"middleInitial",
+		"lastName",
+		"major"
+	];
+
+	response.set("Content-Type", "application/json");
+
+	var mdbiUpdateCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1) {
+			// The MDBI wasn't able to update any document at all
+			var ineffectiveErr = ef.common("USER_UNCHANGED", "The user was unaffected by the previous query", null, true);
+			logger.log(`Error: MDBI updated nothing!`, handlerTag);
+			response.status(499).send(ineffectiveErr).end();
+		} else if (reply.nModified > 1) {
+			// DANGER: The MDBI updated several documents
+			var corruptionErr = ef.common("MULTIUSER_CORRUPTION", "Various users were unintentionally affected by the previous query", null, true);
+			logger.log(`Error: MDBI updated more than one user!`, handlerTag);
+			response.status(499).send(corruptionErr).end();
+		} else {
+			// Send success here...
+			logger.log(`User ${field} update success`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var dataSafetyCheck = function (reply, error) {
+		// Ensure that no critical fields are being modified via the dashboard
+		if (!validFieldNames.includes(field)) {
+			logger.log(`Rejecting unsafe modification of field "${field}"`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.illegalOperation, `Field "${field}" cannot be safely modified using this method`)).end();
+		} else {
+			var currentUser = reply[0];
+			var updatePostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"memberID": currentUser.memberID
+				},
+				"update": {
+					"$set": {}
+				}
+			};
+			var updatePostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/update/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": 0
+				}
+			};
+
+			// If there's only one user, then this must be the user to edit. Let's go ahead and update this user, now
+			updatePostBody.update["$set"][field] = newval;
+			updatePostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(updatePostBody));
+			logger.log(`Updating member "${uname}"'s ${field}`, handlerTag);
+			www.https.post(updatePostOptions, updatePostBody, mdbiUpdateCallback, handlerTag.src);
+		}
+	};
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			// Null result set
+			logger.log(`Search returned null`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, `${uname} returned null set`)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length <= 0) {
+				// If no members are found, then the client entered a non-existent username (i.e. violated a foreign key/referential integrity constraint)
+				var noMemFoundErr = ef.common("USER_NOT_FOUND", "The entered username returned no results", null, true);
+				logger.log(`Error: The username "${uname}" returned no results!`, handlerTag);
+				response.status(499).send(noMemFoundErr).end();
+			} else if (reply.length > 1) {
+				// If more than one member was found, that's fatal; we can't decide whose door code to change. Do nothing, and return an error message to the client
+				var ambibuityErr = ef.common("USER_AMBIGUOUS", "Username is not unique", null, true);
+				logger.log(`Error: The username "${uname}" returned multiple results!`, handlerTag);
+				response.status(499).send(ambibuityErr).end();
+			} else if (typeof reply[0].memberID === "undefined") {
+				// If the member ID is not defined, we cannot identify whose door code info to change. Return an error to the client
+				logger.log(`Error: The result memberID was undefined!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "reply[0].memberID"})).end();
+			} else {
+				dataSafetyCheck(reply, error);
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (uname === null) {
+			// No username!
+			logger.log(`Error: Undefined username`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "username"})).end();
+		} else if (field === null) {
+			// No field!
+			logger.log(`Error: ${error}`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "field"})).end();
+		} else if (newval === null) {
+			// No value!
+			logger.log(`Error: ${error}`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "value"})).end();
 		} else {
 			// Verification succeeded. Now let's make sure that the member exists before we change things
 			var searchPostBody = {
@@ -1146,7 +1319,7 @@ function verifySession (token, sessionID, callback) {
 /*
 	@function 	clearSession
 	@parameter 	token - the database access token
-	@parameter 	sessionID - the session token of the user whose sesion data will be cleared
+	@parameter 	sessionID - the session token of the user whose session data will be cleared
 	@parameter 	callback - a required callback function to run after attempting to clear the specified user's session data. It is passed two arguments:
 					reply - if the operation was understood by the MongoDB server, this is a JSON object detailing the success of the operation
 					error - if there was no error, this parameter is "null"; otherwise, it is an object detailing the error that occurred

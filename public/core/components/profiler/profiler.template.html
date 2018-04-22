@@ -319,10 +319,11 @@
 													<button type="button" style="width: 100%;" class="btn btn-default" ng-click="$ctrl.closeMemberDetailEditor()">Cancel</button>
 												</div>
 											</div>
+											<span id="memberDetailErrorMessage" style="color: red;"></span>
 											<div id="editorbar" class="input-group member-detail-edit-field hidden">
 												<input id="editorbarInputField" class="form-control" placeholder="New value...">
 												<div class="input-group-btn">
-													<button class="btn btn-success">Submit</button>
+													<button class="btn btn-success" ng-click="$ctrl.submitNewMemberDetail()">Submit</button>
 												</div>
 											</div>
 											<doorcoder id="doorcoder1" class="member-detail-edit-field hidden"></doorcoder>
@@ -335,8 +336,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" title="Click to discard any unsaved work and close the modal">Close</button>
-						<button id="memberUpdate" type="button" class="btn btn-success" data-toggle="tooltip" title="Click to update this member's data">Save</button>
+						<button id="memberDetailModalCloseButton" type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" title="Click to discard any unsaved work and close the modal">Close</button>
 					</div>
 				</div>
 			</div>
