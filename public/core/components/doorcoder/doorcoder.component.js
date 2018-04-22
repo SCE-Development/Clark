@@ -130,7 +130,7 @@ angular.module("doorcoder").component("doorcoder", {
 						console.log("Door code successfully updated!");
 						ctl.clearPanel();
 						ctl.requestDoorCodeList();
-						ctl.setErrorMessage("Success! Reopen the member detail modal to see the updates!");
+						ctl.setErrorMessage("Successfully updated!");
 						$timeout(function () {
 							// After 3000 ms, clear the error message
 							ctl.setErrorMessage("");

@@ -182,27 +182,11 @@
 									The member's door code should now be available in their user profile. Ask the new member to try it out now!<br><br>
 									Did it work?
 									</div>
-									<div class="row">
-										<div class="col-sm-6">
-											<div id="doorCodePanel" class="collapse">
-												<div class="panel panel-default">
-													<div class="panel-heading">
-														<h4>Door Code Re-Assignment: {{$ctrl.doorCodeList[$ctrl.selectedDoorCode].code}}</h4>
-													</div>
-													<div class="panel-body" style="overflow: scroll; max-height: 200px;">
-														<div ng-repeat="dc in $ctrl.doorCodeList">
-															<button type="button" class="btn btn-default" ng-click="$ctrl.changeDoorCode($ctrl.doorCodeList[$index].dcID)">{{dc.code}}</button>
-														</div>
-													</div>
-													<div class="panel-footer">
-														<button class="btn btn-success" ng-click="$ctrl.submitNewDoorCode()">Assign New Code</button>
-													</div>
-												</div>
-											</div>
-										</div>
+									<div id="doorCodePanel" class="collapse">
+										<doorcoder id="amDoorcoder"></doorcoder>
 									</div>
 									<div class="btn-group" role="group">
-										<button type="button" class="btn btn-default" ng-click="$ctrl.addMemberNextStep()">Yes</button>
+										<button type="button" class="btn btn-default" ng-click="$ctrl.hideDoorCodePanel(); $ctrl.addMemberNextStep()">Yes</button>
 										<button type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Please reassign that member doorcode in the panel below'); $ctrl.showDoorCodePanel()">No</button>
 									</div>
 									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Back <i class="fas fa-arrow-left"></i></button>
