@@ -48,8 +48,7 @@ angular.module("profiler").component("profiler", {
 		this.newMemberUsername = "";
 		this.emailToVerify = "";
 		this.emailVerified = "Unknown";
-		this.doorCodeList = [];
-		this.selectedDoorCode = 0;
+		this.currentMemberDetail = {};
 
 		// Controller Functions
 		this.init = function () {
@@ -187,6 +186,9 @@ angular.module("profiler").component("profiler", {
 					case 200: {
 						console.log("Processing member data...");
 
+						// Save current member details to model
+						ctl.currentMemberDetail = response.data[0];
+
 						// Compute any details that need formatting
 						var joinDate = ctl.beautifyDate(response.data[0].joinDate);
 						var startDate = ctl.beautifyDate(response.data[0].startTerm);
@@ -252,6 +254,24 @@ angular.module("profiler").component("profiler", {
 					$("#doorcoder1").removeClass("hidden");
 					break;
 				}
+				case "memberJoinDate": {
+					// Hide all, then show the membership_manager component
+					$(".member-detail-edit-field").addClass("hidden");
+					$("#membershipmanager").removeClass("hidden");
+					break;
+				}
+				case "memberStartTerm": {
+					// Hide all, then show the membership_manager component
+					$(".member-detail-edit-field").addClass("hidden");
+					$("#membershipmanager").removeClass("hidden");
+					break;
+				}
+				case "memberEndTerm": {
+					// Hide all, then show the membership_manager component
+					$(".member-detail-edit-field").addClass("hidden");
+					$("#membershipmanager").removeClass("hidden");
+					break;
+				}
 				default: {
 					// Hide all, then show the editor bar
 					$(".member-detail-edit-field").addClass("hidden");
@@ -270,8 +290,7 @@ angular.module("profiler").component("profiler", {
 			$("#editorbarInputField").val("");
 
 			// Hide all internal UI elements
-			$("#doorcoder1").addClass("hidden");
-			$("#editorbar").addClass("hidden");
+			$(".member-detail-edit-field").addClass("hidden");
 			ctl.showMemberDetailError("");
 
 			// Hide the collapsible
@@ -592,7 +611,6 @@ angular.module("profiler").component("profiler", {
 			// Clear things here...
 			ctl.setEmailStatus("Unknown");
 			ctl.hideEmailStatus();
-			ctl.changeDoorCode(0);
 			ctl.doorCodeList = [];
 			ctl.hideDoorCodePanel();
 			ctl.memberRegistrationStep = 0;

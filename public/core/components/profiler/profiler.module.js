@@ -8,6 +8,6 @@
 // 	Dependencies:
 // 					AngularJS v 1.6.x
 
-angular.module("profiler", ["doorcoder"]);
+angular.module("profiler", ["doorcoder", "membershipmanager"]);
 
 // END profiler.module.js

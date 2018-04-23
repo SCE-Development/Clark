@@ -1,0 +1,67 @@
+<!-- 
+	PROJECT: 		Core-v4
+	Name: 			Rolando Javier
+	File: 			membership_manager.template.html
+	Date Created: 	April 21, 2018
+	Last Modified: 	April 21, 2018
+	Details:
+		This file serves as the html template for the membership manager component
+ -->
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h4>Membership Manager</h4>
+		<h5>Username: {{$ctrl.username}}</h5>
+		<span style="color: red;">{{$ctrl.errorMessage}}</span>
+	</div>
+	<div class="panel-body">
+		<!-- BEGIN Date Editor -->
+		<div class="btn-group btn-group-justified" role="group" ng-repeat="dateData in $ctrl.dateData">
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default" disabled>{{dateData.name}}</button>
+			</div>
+			<!-- BEGIN Date Month -->
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{$ctrl.getMonthFromNumber(dateData.month)}} <span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 0)">{{$ctrl.validMonthNames[0]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 1)">{{$ctrl.validMonthNames[1]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 2)">{{$ctrl.validMonthNames[2]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 3)">{{$ctrl.validMonthNames[3]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 4)">{{$ctrl.validMonthNames[4]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 5)">{{$ctrl.validMonthNames[5]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 6)">{{$ctrl.validMonthNames[6]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 7)">{{$ctrl.validMonthNames[7]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 8)">{{$ctrl.validMonthNames[8]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 9)">{{$ctrl.validMonthNames[9]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 10)">{{$ctrl.validMonthNames[10]}}</a></li>
+					<li><a href="#" ng-click="$ctrl.setDateMonth(dateData.name, 11)">{{$ctrl.validMonthNames[11]}}</a></li>
+				</ul>
+			</div>
+			<!-- END Date Month -->
+
+			<!-- BEGIN Date Day -->
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dateData.date}} <span class="caret"></span></button>
+				<ul class="dropdown-menu" style="max-height: 200px; overflow: scroll;">
+					<li ng-repeat="day in $ctrl.getValidDays(dateData.month)"><a href="#" ng-click="$ctrl.setDateDay(dateData.name,day)">{{day}}</a></li>
+				</ul>
+			</div>
+			<!-- END Date Day -->
+
+			<!-- BEGIN Date Year -->
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dateData.year}}</button>
+			</div>
+			<!-- END Date Year -->
+		</div>
+		<!-- END Date Editor -->
+	</div>
+	<div class="panel-footer">
+		<div class="input-group">
+			<input class="form-control" ng-model="$ctrl.username" placeholder="Enter username here...">
+			<div class="input-group-btn">
+				<button class="btn btn-success">Update membership</button>
+			</div>
+		</div>
+	</div>
+</div>
