@@ -30,7 +30,7 @@ function init () {
 
 
 // BEGIN AngularJS App
-var pageApp = angular.module("adminDashboard",["profiler"]);
+var pageApp = angular.module("adminDashboard",["profiler", "officertools"]);
 // END AngularJS App
 
 
@@ -82,7 +82,7 @@ pageApp.controller("ContextController", function contextController ($scope) {
 	$scope.hideAllPanels = () => {
 		$("#member-profiler").addClass("hidden");
 		$("#session-manager").addClass("hidden");
-		$("#asdf").addClass("hidden");
+		$("#officertools").addClass("hidden");
 	};
 	$scope.showPanel = (elementId) => {
 		console.log(`Showing ${elementId} panel`);
@@ -92,6 +92,14 @@ pageApp.controller("ContextController", function contextController ($scope) {
 	$scope.hidePanel = (elementId) => {
 		$(`#${elementId}`).addClass("hidden");
 	};
+});
+
+/*
+	@controller 	UserDataController
+	@details 		This controller handls the passing of user data from the main dashboard to the officertools component (but can theoretically be used by others if placed in the right enclosing tag in the dashboard.html)
+*/
+pageApp.controller("UserDataController", function userDataController($scope) {
+	$scope.username = (storageOk) ? sessionStorage.getItem("username") : "User";
 });
 // END Angular Controllers
 

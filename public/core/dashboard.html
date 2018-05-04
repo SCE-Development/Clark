@@ -34,6 +34,8 @@
 	<link rel="stylesheet" href="css/dashboard.css">
 
 	<!-- Angular Components -->
+	<script type="text/javascript" src="components/officer_tools/officer_tools.module.js"></script>
+	<script type="text/javascript" src="components/officer_tools/officer_tools.component.js"></script>
 	<script type="text/javascript" src="components/doorcoder/doorcoder.module.js"></script>
 	<script type="text/javascript" src="components/doorcoder/doorcoder.component.js"></script>
 	<script type="text/javascript" src="components/membership_manager/membership_manager.module.js"></script>
@@ -68,7 +70,7 @@
 						<ul class="dropdown-menu" aria-labelledby="control-dropdown" ng-controller="ContextController">
 							<li><a href="#" ng-click="showPanel('member-profiler')"><i class="fas fa-users"></i> Member Profiler</a></li>
 							<li><a href="#" ng-click="showPanel('session-manager')"><i class="fas fa-desktop"></i> Session Manager</a></li>
-							<li><a href="#" ng-click="showPanel('asdf')">asdf</a></li>
+							<li><a href="#" ng-click="showPanel('officertools')">Officer Tools</a></li>
 						</ul>
 					</li>
 					<!-- END context dropdown -->
@@ -96,7 +98,9 @@
 			<div class="col-sm-12">
 				<profiler id="member-profiler"></profiler>
 				<sessionmanager id="session-manager">Some stuff here</sessionmanager>
-				<asdf id="asdf">asdf</asdf>
+				<span ng-controller="UserDataController">
+					<officertools id="officertools" currentuser="this.username">officertools</officertools>
+				</span>
 			</div>
 		</div>
 	</div>
