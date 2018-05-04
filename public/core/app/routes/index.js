@@ -1370,6 +1370,132 @@ router.post("/dashboard/edit/memberdates", function (request, response) {
 });
 
 /*
+	@endpoint 	/dashboard/export/expiredcodes
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a string of the success message
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On insufficient permissions: a code 499 and an error-formatted object in the response body detailing the user's lack of permissions
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests that ask for an export of expired member doorcodes in the database. The request must be performed by a user who is logged in and is authorized to do so, else this request fails
+*/
+router.post("/dashboard/export/expiredcodes", function (request, response) {
+	var handlerTag = {"src": "exportExpiredCodes"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+
+	response.set("Content-Type", "application/json");
+
+	var mdbiAggregateCallback = function (reply, error) {
+		if (error) {
+			logger.log(`Export failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			var list = reply;
+			var currentDate = new Date(Date.now());
+			var dateStr = dt.niceDateStr(currentDate, "_");
+			var timeStr = dt.niceTimeStr(currentDate, "_");
+			var filename = `__code_export__${dateStr}_${timeStr}.json`;
+
+			try {
+				logger.log(`Exporting ${list.length} expired member codes...`, handlerTag);
+				fs.appendFile(`${settings.util}/exports/${filename}`, JSON.stringify(list), "utf8", function (error) {
+					if (error) {
+						logger.log(`Failed to export doorcodes to file ${filename}`, handlerTag);
+						response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+					} else {
+						logger.log(`Export successful -> ${filename}`, handlerTag);
+						response.status(200).send({"status":"success"}).end();
+					}
+				});
+			} catch (e) {
+				logger.log(`Export error: ${e}`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr, e)).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var aggPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "MembershipData",
+				"pipeline": [
+					{
+						"$match": {
+							"membershipStatus":false
+						}
+					},
+					{
+						"$lookup": {
+							"from":"DoorCode",
+							"localField":"doorCodeID",
+							"foreignField":"dcID", "as":"dc"
+						}
+					},
+					{
+						"$replaceRoot": {
+							"newRoot": {
+								"code": "$dc.code",
+								"memberID": "$memberID"
+							}
+						}
+					},
+					{
+						"$unwind":"$code"
+					},
+					{
+						"$lookup": {
+							"from":"Member",
+							"localField":"memberID",
+							"foreignField":"memberID",
+							"as":"user"
+						}
+					},
+					{
+						"$replaceRoot": {
+							"newRoot": {
+								"code":"$code",
+								"memberID":"$memberID",
+								"userName":"$user.userName"
+							}
+						}
+					},
+					{
+						"$unwind":"$userName"
+					}
+				]
+			};
+			var aggPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/aggregation",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(aggPostBody))
+				}
+			};
+
+			// All good, now to acquire the list of all door codes that are assigned to expired members
+			logger.log(`Authorization verified. Acquiring codes of expired members`, handlerTag);
+			www.https.post(aggPostOptions, aggPostBody, mdbiAggregateCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
 	@function 	/dashboard
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js
