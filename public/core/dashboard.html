@@ -70,7 +70,7 @@
 						<ul class="dropdown-menu" aria-labelledby="control-dropdown" ng-controller="ContextController">
 							<li><a href="#" ng-click="showPanel('member-profiler')"><i class="fas fa-users"></i> Member Profiler</a></li>
 							<li><a href="#" ng-click="showPanel('session-manager')"><i class="fas fa-desktop"></i> Session Manager</a></li>
-							<li><a href="#" ng-click="showPanel('officertools')">Officer Tools</a></li>
+							<li><a href="#" ng-click="showPanel('officertools')"><i class="fas fa-gavel"></i> Officer Tools</a></li>
 						</ul>
 					</li>
 					<!-- END context dropdown -->
@@ -99,7 +99,7 @@
 				<profiler id="member-profiler"></profiler>
 				<sessionmanager id="session-manager">Some stuff here</sessionmanager>
 				<span ng-controller="UserDataController">
-					<officertools id="officertools" currentuser="this.username">officertools</officertools>
+					<officertools id="officertools" currentuser="this.username" sid="this.sessionID">officertools</officertools>
 				</span>
 			</div>
 		</div>

@@ -36,7 +36,37 @@ datetimes.hasPassed = function (date) {
 	}
 
 	return expired;
-}
+};
+
+/*
+	@function 	niceDateStr
+	@parameter 	date - a JavaScript date object
+	@parameter 	separator - any character or string to separate the different elements of the date (defaults to "-")
+	@returns 	a date string in the format "mm-dd-yyyy" where "-" separators can be replaced by the specified separator character
+	@details 	This generates a neat date string that is customized with any specified separator character or string 
+*/
+datetimes.niceDateStr = function (date, separator = "-") {
+	var handlerTag = {"src": "datetimes.niceDateStr"};
+	var month = (9 < date.getMonth() + 1) ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+	var day = (9 < date.getDate()) ? `0${date.getDate()}` : `${date.getDate()}`;
+	var year = `${date.getFullYear()}`;
+	return `${month}${separator}${day}${separator}${year}`;
+};
+
+/*
+	@function 	niceTimeStr
+	@parameter 	date - a JavaScript date object
+	@parameter 	separator - any character or string to separate the different elements of the time (defaults to ":")
+	@returns 	a date string in the format "hh:mm:ss" where ":" separators can be replaced by the specified separator character
+	@details 	This generates a neat date string that is customized with any specified separator character or string 
+*/
+datetimes.niceTimeStr = function (date, separator = ":") {
+	var handlerTag = {"src": "datetimes.niceTimeStr"};
+	var hour = `${date.getHours()}`;
+	var minute = `${date.getMinutes()}`;
+	var second = `${date.getSeconds()}`;
+	return `${hour}${separator}${minute}${separator}${second}`;
+};
 // END member functions
 
 

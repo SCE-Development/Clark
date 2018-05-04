@@ -8,5 +8,24 @@
 		This file serves as the html template for the officer tools component
  -->
 <div class="well">
-	Hello, {{$ctrl.currentuser}}
+	<div class="page-header">
+		<h3 class="brand-text">
+			Officer Tools
+			<small>Officer and associate resources</small>
+			<div style="color:red;">{{$ctrl.error_message}}</div>
+		</h3>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<button class="btn btn-default thumbnail" ng-click="$ctrl.exportDoorCodes()">
+					<img src="img/folder-26685_640.png" alt="Door Code Export" style="max-height:150px; max-width:150px;">
+					<div class="caption" data-toggle="tooltip" title="Export doorcodes of expired members to a separate file here!">
+						<h3>Door Code Export</h3>
+						<p>Export expired member doorcodes here</p>
+					</div>
+				</button>
+			</div>
+		</div>
+	</div>
 </div>

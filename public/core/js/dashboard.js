@@ -100,6 +100,7 @@ pageApp.controller("ContextController", function contextController ($scope) {
 */
 pageApp.controller("UserDataController", function userDataController($scope) {
 	$scope.username = (storageOk) ? sessionStorage.getItem("username") : "User";
+	$scope.sessionID = (storageOk) ? sessionStorage.getItem("sessionID") : "Without session storage, cookies should be automatically sent to the server";
 });
 // END Angular Controllers
 
