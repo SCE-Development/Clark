@@ -50,7 +50,12 @@
 
 			<!-- BEGIN Date Year -->
 			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dateData.year}}</button>
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{dateData.year}} <span class="caret"></span></button>
+				<ul class="dropdown-menu" style="max-height:200px; overflow:scroll;">
+					<li ng-repeat="year in $ctrl.getListOfYears()">
+						<a href="#" ng-click="$ctrl.setYear(dateData.name, year)">{{year}}</a>
+					</li>
+				</ul>
 			</div>
 			<!-- END Date Year -->
 		</div>

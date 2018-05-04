@@ -163,6 +163,23 @@ angular.module("membershipmanager").component("membershipmanager", {
 				return validDayArray;
 			}
 		};
+		this.getListOfYears = function () {
+			var d = new Date(Date.now());
+			var year = Number.parseInt(d.getFullYear());
+			var list = [];
+
+			// Add years as far back as 5 years ago
+			for (var i = 5; i > 0; i--) {
+				list.push(year - i);
+			}
+
+			// Then add current year and years as far as 10 years into the future
+			for (var i = 0; i < 10; i++) {
+				list.push(year + i);
+			}
+
+			return list;
+		};
 		this.getMonthFromNumber = function (number) {
 			if (number > 11 || number < 0) {
 				ctl.setErrorMessage("An invalid month number was received");
@@ -225,6 +242,32 @@ angular.module("membershipmanager").component("membershipmanager", {
 
 			if (index !== -1) {
 				ctl.dateData[index].date = number;
+			}
+		};
+		this.setYear = function (name, year) {
+			var index = -1;
+			switch (name) {
+				case "Join Date": {
+					index = 0;
+					break;
+				}
+				case "Start Term": {
+					index = 1;
+					break;
+				}
+				case "End Term": {
+					index = 2;
+					break;
+				}
+				default: {
+					ctl.setErrorMessage(`Invalid name "${name}"`);
+					console.log(`Invalid name "${name}"`);
+					break;
+				}
+			}
+
+			if (index !== -1) {
+				ctl.dateData[index].year = year;
 			}
 		};
 		// END Utility Controllers
