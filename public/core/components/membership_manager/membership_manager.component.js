@@ -17,9 +17,9 @@ angular.module("membershipmanager").component("membershipmanager", {
 		var ctl = this;
 		var dbgMode = true;
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
-		// var jdate = new Date(Date.parse(`January 1, 2000`));
-		// var sdate = new Date(Date.parse(`January 1, 2000`));
-		// var edate = new Date(Date.parse(`January 1, 2000`));
+		var urls = {
+			"editMemberDates": `https://${hostname}/core/dashboard/edit/memberdates`
+		}
 		var jdate = new Date(Date.now());
 		var sdate = new Date(Date.now());
 		var edate = new Date(Date.now());
@@ -48,16 +48,15 @@ angular.module("membershipmanager").component("membershipmanager", {
 
 		// BEGIN Main Controllers
 		this.$onInit = function () {
+			ctl.setErrorMessage("");
 			ctl.loadData();
 		};
 		this.$onChanges = function () {
+			ctl.setErrorMessage("");
 			ctl.loadData();
 		};
 		this.loadData = function () {
-			// console.log(`asdfa: "${ctl.joindate}"`);
-			// console.log(`asdfa: "${ctl.startterm}"`);
-			// console.log(`asdfa: "${ctl.endterm}"`);
-			console.log(`asdfa: "${ctl.currentmember}"`);
+			console.log(`Loading join date, term start, and term end of ${ctl.currentmember.userName}`);
 
 			jdate = new Date(Date.parse(ctl.currentmember.joinDate));
 			sdate = new Date(Date.parse(ctl.currentmember.startTerm));
@@ -84,11 +83,61 @@ angular.module("membershipmanager").component("membershipmanager", {
 				}
 			];
 		};
+		this.submitNewDateData = function () {
+			console.log(`Submitting new join date, term start, and term end of ${ctl.currentmember.userName}`);
+
+			// Clear error message
+			ctl.setErrorMessage("");
+
+			// Create new date objects
+			var newDates = {};
+			for (var i = 0; i < ctl.dateData.length; i++) {
+				var d = new Date(Date.now());
+				d.setMonth(ctl.dateData[i].month);
+				d.setDate(ctl.dateData[i].date - 1);
+				d.setFullYear(ctl.dateData[i].year);
+				newDates[ctl.dateData[i].name] = d;
+				console.log(d.toUTCString());
+			}
+
+			// Submit new dates here
+			var requestBody = {
+				"sessionID": sessionStorage.getItem("sessionID"),
+				"username": ctl.currentmember.userName,
+				"start": newDates["Start Term"],
+				"end": newDates["End Term"]
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+			$http.post(urls.editMemberDates, requestBody, config).then((response) => {
+				console.log(response.data);	// debug
+				switch (response.status) {
+					case 200: {
+						console.log("Date change successful");
+						ctl.setErrorMessage("Date Change Successful");
+						break;
+					}
+					default: {
+						ctl.setErrorMessage("Unexpected Response");
+						break;
+					}
+				}
+			}).catch(function (errResponse) {
+				var msg = (typeof errResponse.data.emsg !== "undefined") ? errResponse.data.emsg : "Oops... Something went wrong!";
+				ctl.setErrorMessage(msg);
+			});
+		};
 		// END Main Controllers
 
 
 
 		// BEGIN Utility Controllers
+		this.setErrorMessage = function (val) {
+			ctl.errorMessage = val;
+		};
 		this.getValidDays = function (month) {
 			if (month > 11 || month < 0) {
 				return [0];
@@ -116,6 +165,7 @@ angular.module("membershipmanager").component("membershipmanager", {
 		};
 		this.getMonthFromNumber = function (number) {
 			if (number > 11 || number < 0) {
+				ctl.setErrorMessage("An invalid month number was received");
 				return "Invalid";
 			} else {
 				return ctl.validMonthNames[number];
@@ -137,6 +187,7 @@ angular.module("membershipmanager").component("membershipmanager", {
 					break;
 				}
 				default: {
+					ctl.setErrorMessage(`Invalid name "${name}"`);
 					console.log(`Error: Invalid name "${name}"`);
 					break;
 				}
@@ -166,6 +217,7 @@ angular.module("membershipmanager").component("membershipmanager", {
 					break;
 				}
 				default: {
+					ctl.setErrorMessage(`Invalid name "${name}"`);
 					console.log(`Error: Invalid name "${name}"`);
 					break;
 				}

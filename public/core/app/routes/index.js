@@ -1201,6 +1201,175 @@ router.post("/dashboard/edit/memberfield", function (request, response) {
 });
 
 /*
+	@endpoint 	/dashboard/edit/memberdates
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+					"username" - the username string of the account whose membership date(s) will be modified
+					"start" - (optional) a date object of the new start term value
+					"end" - (optional) a date object of the new end term value
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and an object with the following format:
+					{
+						"status": "success",
+						"message": "some success message"
+					}
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On illegal or unsuccessful data modification: a code 499 and an error-formatted object in the response body detailing the invalid operation
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for modification of Join Date, Start Term, and End Term date data within the Membership collection, using the Membership Profiler (i.e. the AngularJS profiler component) when modifying members' data via the "Member Detail" Modal
+*/
+router.post("/dashboard/edit/memberdates", function (request, response) {
+	var handlerTag = {"src": "editMemberDates"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var uname = (typeof request.body.username !== "undefined") ? request.body.username : null;
+	var startinfo = (typeof request.body.start !== "undefined") ? request.body.start : null;
+	var endinfo = (typeof request.body.end !== "undefined") ? request.body.end : null;
+	var someDataExists = (startinfo || endinfo);
+
+	// Set the content type to json data
+	response.set("Content-Type", "application/json");
+
+	var updateCallback = function (reply, error) {
+		if (error) {
+			logger.log(`An error occurred: ${error}`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1 || reply.ok !== 1 || reply.n !== 1) {
+			logger.log(`Date modification unsuccessful`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.coreErr, reply)).end();
+		} else {
+			logger.log(`Date modification successful`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var updateDates = function (memberData) {
+		var updatePostBody = {
+			"accessToken": credentials.mdbi.accessToken,
+			"collection": "MembershipData",
+			"search": {
+				"memberID": memberData.memberID
+			},
+			"update": {
+				"$set": {}
+			}
+		};
+
+		// Fill the $set data
+		if (startinfo !== null) {
+			updatePostBody.update["$set"]["startTerm"] = startinfo
+		}
+		if (endinfo !== null) {
+			updatePostBody.update["$set"]["endTerm"] = endinfo
+		}
+
+		var updatePostOptions = {
+			"hostname": "localhost",
+			"path": "/mdbi/update/documents",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(updatePostBody))
+			}
+		};
+
+		if (someDataExists) {
+			// Member search succeeded. Now to actually perform the update
+			logger.log(`Updating member "${memberData.userName}"`, handlerTag);
+			www.https.post(updatePostOptions, updatePostBody, updateCallback);
+		} else {
+			var returnval = {
+				"status": "success",
+				"message": "operation aborted due to lack of date data"
+			};
+			logger.log(`No date data in post body; Aborting`, handlerTag);
+			response.status(200).send(returnval).end();
+		}
+	};
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			// Null result set
+			logger.log(`Search returned null`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, `${uname} returned null set`)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length <= 0) {
+				// If no members are found, then the client entered a non-existent username (i.e. violated a foreign key/referential integrity constraint)
+				var noMemFoundErr = ef.common("USER_NOT_FOUND", "The entered username returned no results", null, true);
+				logger.log(`Error: The username "${uname}" returned no results!`, handlerTag);
+				response.status(499).send(noMemFoundErr).end();
+			} else if (reply.length > 1) {
+				// If more than one member was found, that's fatal; we can't decide whose door code to change. Do nothing, and return an error message to the client
+				var ambibuityErr = ef.common("USER_AMBIGUOUS", "Username is not unique", null, true);
+				logger.log(`Error: The username "${uname}" returned multiple results!`, handlerTag);
+				response.status(499).send(ambibuityErr).end();
+			} else if (typeof reply[0].memberID === "undefined") {
+				// If the member ID is not defined, we cannot identify whose door code info to change. Return an error to the client
+				logger.log(`Error: The result memberID was undefined!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "reply[0].memberID"})).end();
+			} else {
+				updateDates(reply[0]);
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (uname === null) {
+			// No username!
+			logger.log(`Error: Undefined username`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "username"})).end();
+		} else if (startinfo === null && endinfo === null) {
+			// No data given!
+			logger.log(`Error: No data received`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": ["start", "end"]})).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": uname
+				},
+				"options": {
+					"projection": {
+						"memberID": 1
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Ensuring member "${uname}" exists`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
 	@function 	/dashboard
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js

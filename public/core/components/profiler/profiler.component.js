@@ -368,7 +368,7 @@ angular.module("profiler").component("profiler", {
 					}
 				}).catch(function (errResponse) {
 					logDebug("ProfilerController", "submitNewMemberDetail", `Error: ${JSON.stringify(errResponse)}`);
-					var msg = (typeof errResponse.data.emsg !== "undefined") ? errResponse.data.emsg : (typeof errResponse.data.etype !== "undefined") ? errResponse.data.etype : "An error occurred..."
+					var msg = (typeof errResponse.data.eobj !== "undefined") ? errResponse.data.eobj : (typeof errResponse.data.emsg !== "undefined") ? errResponse.data.emsg : (typeof errResponse.data.etype !== "undefined") ? errResponse.data.etype : "An error occurred..."
 					ctl.showMemberDetailError(msg);
 				});
 			}
