@@ -81,6 +81,8 @@ pageApp.controller("UserController", function userController ($scope, $http, $wi
 pageApp.controller("ContextController", function contextController ($scope) {
 	$scope.hideAllPanels = () => {
 		$("#member-profiler").addClass("hidden");
+		$("#session-manager").addClass("hidden");
+		$("#asdf").addClass("hidden");
 	};
 	$scope.showPanel = (elementId) => {
 		console.log(`Showing ${elementId} panel`);
