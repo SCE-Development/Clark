@@ -14,18 +14,25 @@ angular.module("officertools").component("officertools", {
 		"currentuser": "<currentuser",
 		"sessionID": "<sid"
 	},
-	"controller": function ($http) {
+	"controller": function ($http, $window) {
 		var ctl = this;
 		var dbgMode = true;
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
 		var urls = {
-			"exportExpiredCodes": `https://${hostname}/core/dashboard/export/expiredcodes`
+			"exportExpiredCodes": `https://${hostname}/core/dashboard/export/expiredcodes`,
+			"officerProcedures": `https://docs.google.com/document/d/1QSzIZJMYxSxh1gFspEfgXpe3luh0vifudv5D8a3IG18/edit`,
+			"officerTraining": `https://drive.google.com/open?id=0B4BheoHJ1lZVZ1VZNUxJVE4xRm8`,
+			"lockerSpreadsheet": `https://docs.google.com/spreadsheets/d/1oJwqrKhh2XXOJiyq0De10DJvdBHFsegZ7OmAgI5uSIQ/edit#gid=1312223330`,
+			"dreamsparkSpreadsheet": `https://docs.google.com/spreadsheets/d/1SvtXBSY5wMtHmuUTDMGFIOS1BTviAm1O4dmBm94xCK8/edit`,
+			"eodProfitForm": `https://goo.gl/vcBWma`,
+			"cashCountProcedures": `https://www.goo.gl/kA8yTE`,
+			"storeSlideshow": `https://docs.google.com/presentation/d/1iRopCuN8qT0e_easSX0t6StIwvqul-OgHZpkkA28g5o/edit#slide=id.p`
 		};
-		ctl.error_message = "";
 
 
 
 		// BEGIN Model Data
+		ctl.error_message = "";
 		// END Model Data
 
 
@@ -82,6 +89,15 @@ angular.module("officertools").component("officertools", {
 				logDebug("OfficerToolsController", "export", `Error: ${JSON.stringify(errResponse)}`);
 				ctl.setError(errResponse.data.emsg);
 			});
+		};
+		this.openNewWindow = function (urlName) {
+			ctl.setError("");
+			if (typeof urls[urlName] === "undefined") {
+				console.log(`Error: unable to open new tab to ${urlName}`);
+				ctl.setError(`Unable to perform your redirect`);
+			} else {
+				$window.open(urls[urlName], "_blank");
+			}
 		};
 		// END Utility Controllers
 	}
