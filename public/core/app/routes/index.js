@@ -1378,7 +1378,7 @@ router.post("/dashboard/edit/memberdates", function (request, response) {
 				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
 				On insufficient permissions: a code 499 and an error-formatted object in the response body detailing the user's lack of permissions
 				On any other failure: a code 500 and a JSON object detailing the issue
-	@details 	This endpoint serves POST requests that ask for an export of expired member doorcodes in the database. The request must be performed by a user who is logged in and is authorized to do so, else this request fails
+	@details 	This endpoint serves POST requests that ask for an export of expired member doorcodes in the database. The request must be performed by a user who is logged in and is authorized to do so (STILL UNIMPLEMENTED), else this request fails
 */
 router.post("/dashboard/export/expiredcodes", function (request, response) {
 	var handlerTag = {"src": "exportExpiredCodes"};
@@ -1489,6 +1489,133 @@ router.post("/dashboard/export/expiredcodes", function (request, response) {
 			// All good, now to acquire the list of all door codes that are assigned to expired members
 			logger.log(`Authorization verified. Acquiring codes of expired members`, handlerTag);
 			www.https.post(aggPostOptions, aggPostBody, mdbiAggregateCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/search/officerlist
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+					"currentUser" - the username of the current user, who will be excluded from the list
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a string of the success message
+				On invalid body: a code 499 and an error-formatted invalidBody object
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On issufficient permission: a code 499 and an error-formatted object in the response body detailing the user's lack of permissions
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests that ask for a full list of officers. The request must be performed by a user who is logged in and authorized to do so (STILL UNIMPLEMENTED), else this request fails
+*/
+router.post("/dashboard/search/officerlist", function (request, response) {
+	var handlerTag = {"src": "dashboardOfficerList"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var currentUser = (typeof request.body.currentUser !== "undefined") ? request.body.currentUser : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Officer list request returned null`;
+				logger.log(`Error: null value returned in officer list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the current user has the appropriate capabiliities before we let them change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "OfficerDossier",
+				"search": {
+					"$and": [
+						{
+							"userName": {
+								"$ne": currentUser	// exclude the current user
+							}
+						},
+						{
+							"level": {
+								"$gt": 0	// i.e. not Admin level
+							}
+						}
+					]
+				},
+				"options": {
+					"projection": {
+						"lastLogin": 0,
+						"email": 0
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to acquire the list of all door codes that are assigned to expired members
+			logger.log(`Authorization verified. Acquiring codes of expired members`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	if (currentUser === null) {
+		response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "currentUser"})).end();
+	} else {
+		verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+	}
+});
+
+/*
+	@function 	/dashboard/search/officerabilities
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
+					"sessionID" - the client's session token string
+					"officerID" - the member ID of the officer in question
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and the specified officer's ability list
+				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
+				On any other failure: a code 500, and a JSON object detailing the issue
+*/
+router.post("/dashboard/search/officerabilities", function (request, response) {
+	var handlerTag = {"src": "dashboardOfficerAbilities"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var officerID = (typeof request.body.officerID !== "undefined") ? request.body.officerID : null;
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now let's make sr
 		}
 	};
 

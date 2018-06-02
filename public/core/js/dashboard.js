@@ -30,7 +30,7 @@ function init () {
 
 
 // BEGIN AngularJS App
-var pageApp = angular.module("adminDashboard",["profiler", "officertools"]);
+var pageApp = angular.module("adminDashboard",["profiler", "officertools", "admintools"]);
 // END AngularJS App
 
 
@@ -83,6 +83,7 @@ pageApp.controller("ContextController", function contextController ($scope) {
 		$("#member-profiler").addClass("hidden");
 		$("#session-manager").addClass("hidden");
 		$("#officertools").addClass("hidden");
+		$("#admintools").addClass("hidden");
 	};
 	$scope.showPanel = (elementId) => {
 		console.log(`Showing ${elementId} panel`);
