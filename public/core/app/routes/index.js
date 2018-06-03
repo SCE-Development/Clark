@@ -1531,6 +1531,62 @@ router.post("/dashboard/search/officerlist", function (request, response) {
 		}
 	};
 
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "OfficerDossier",
+					"search": {
+						"$and": [
+							{
+								"userName": {
+									"$ne": currentUser	// exclude the current user
+								}
+							},
+							{
+								"level": {
+									"$gt": 0	// i.e. not Admin level
+								}
+							}
+						]
+					},
+					"options": {
+						"projection": {
+							"lastLogin": 0,
+							"email": 0
+						}
+					}
+				};
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				// All good, now to acquire the list of officers that aren't admins and arent the current user
+				logger.log(`Authorization verified. Acquiring codes of expired members`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
 	var verificationCallback = function (valid, error) {
 		if (error) {
 			// Some unexpected error occurred...
@@ -1542,44 +1598,7 @@ router.post("/dashboard/search/officerlist", function (request, response) {
 			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
 		} else {
 			// Verification succeeded. Now let's make sure that the current user has the appropriate capabiliities before we let them change things
-			var searchPostBody = {
-				"accessToken": credentials.mdbi.accessToken,
-				"collection": "OfficerDossier",
-				"search": {
-					"$and": [
-						{
-							"userName": {
-								"$ne": currentUser	// exclude the current user
-							}
-						},
-						{
-							"level": {
-								"$gt": 0	// i.e. not Admin level
-							}
-						}
-					]
-				},
-				"options": {
-					"projection": {
-						"lastLogin": 0,
-						"email": 0
-					}
-				}
-			};
-			var searchPostOptions = {
-				"hostname": "localhost",
-				"path": "/mdbi/search/documents",
-				"method": "POST",
-				"agent": ssl_user_agent,
-				"headers": {
-					"Content-Type": "application/json",
-					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
-				}
-			};
-
-			// All good, now to acquire the list of all door codes that are assigned to expired members
-			logger.log(`Authorization verified. Acquiring codes of expired members`, handlerTag);
-			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+			isCapable([3,4], currentUser, capabilityCallback);
 		}
 	};
 
@@ -1769,6 +1788,93 @@ function clearSession (token, sessionID, callback) {
 	};
 
 	www.https.post(removalPostOptions, removalPostBody, callback);
+}
+
+/*
+	@function 	isCapable
+	@parameter 	abilityList - an array of ability ID numbers to check for
+	@parameter 	userID - the ID number or username of the user whose abilities will be checked
+	@parameter 	callback - a required callback function to run after the capability check is executed. It is passed the following parameters:
+					result - On a successfully fulfilled match condition, this value is true. If the match condition was not fulfilled, this value is false. On an error or unexpected response, this value is -1.
+	@parameter 	matchMode - (optional) a number controlling what kind of comparison will be performed. The following are valid match modes:
+					0 - Full match: (default) user must have ALL abilities in the list
+					1 - Loose match: user must have AT LEAST ONE ability in the list
+					2 - Excluded match: user must NOT HAVE ANY of the abilities in the list
+	@returns 	n/a
+	@details 	This function is useful for determining if a user has the correct permissions for a specific feature.
+*/
+function isCapable (abilityList, userID, callback, matchMode = 0) {
+	var handlerTag = {"src": "isCapable"};
+	var status = false;
+	var checkPostBody = {
+		"accessToken": credentials.mdbi.accessToken,
+		"collection": "OfficerDossier",
+		"search": {
+			"abilities": null
+		}
+	};
+	var checkPostOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/search/documents",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	// Modify post body depending on user ID or username usage
+	if (typeof userID === "string") {
+		checkPostBody.search["userName"] = userID;
+	} else if (typeof userID === "number") {
+		checkPostBody.search["memberID"] = userID;
+	}
+
+	// Modify mdbi query based on match mode
+	switch (matchMode) {
+		case 0: {	// Full Match Mode
+			checkPostBody.search.abilities = {
+				"$all": abilityList
+			};
+			break;
+		}
+		case 1: {	// Loose Match Mode
+			checkPostBody.search.abilities = {
+				"$in": abilityList
+			};
+			break;
+		}
+		case 2: {	// Excluded Match Mode
+			checkPostBody.search.abilities = {
+				"$nin": abilityList
+			};
+			break;
+		}
+		default: {
+			status = -1;
+			break;
+		}
+	}
+
+	// Finalize content length calculation
+	checkPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(checkPostBody));
+
+	// Run database query if nothing went wrong
+	if (status !== -1) {
+		www.https.post(checkPostOptions, checkPostBody, function (reply, error) {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (error) {
+				callback(-1);
+			} else if (reply.length !== 1) {
+				callback(false);
+			} else {
+				callback(true);
+			}
+		});
+	} else {
+		callback(-1);
+	}
 }
 // END Utility Functions
 
