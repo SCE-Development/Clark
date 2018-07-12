@@ -77,7 +77,35 @@ angular.module("admintools").component("admintools", {
 		};
 		this.loadOfficerAbilities = function (index) {
 			var officer = ctl.officerList[index];
-			// do thing.
+			var requestBody = {
+				"sessionID": ctl.sessionID,
+				"officerID": officer.memberID,
+				"getInfo": true
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
+			console.log(`Loading ${ctl.officerList[index].userName}'s abilities (${JSON.stringify(ctl.officerList[index].abilities)})`);
+			$http.post(urls.getOfficerAbilities, requestBody, config).then((response) => {
+				console.log(response.data);
+				switch (response.status) {
+					case 200: {
+						console.log(`Officer data acquired`);
+						break;
+					}
+					default: {
+						logDebug("OfficerManagementController", "request officer ability names", `Unable to acquire officer abilities (${response.status})`);
+						console.log(`Unexpected response (${response.status}): ${response.data}`);
+						break;
+					}
+				}
+			}).catch(function (errResponse) {
+				logDebug("OfficerManagementController", "request officer ability names", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.setError(errResponse.data.emsg);
+			});
 		};
 		this.promoteAsOfficer = function () {
 			console.log(`Promoting officer!`);

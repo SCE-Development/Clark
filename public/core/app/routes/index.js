@@ -303,7 +303,7 @@ router.post("/logout", function (request, response) {
 					// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
 					logger.log(`Logging out ${request.body.userName} (${request.body.sessionID})`, handlerTag);
 					response.set("Content-Type", "text/html");
-					response.status(200).end();
+					response.status(200).send({"success": true, "msg": "The user has been logged out"}).end();
 				}
 			}
 		};
@@ -1506,7 +1506,7 @@ router.post("/dashboard/export/expiredcodes", function (request, response) {
 				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
 				On issufficient permission: a code 499 and an error-formatted object in the response body detailing the user's lack of permissions
 				On any other failure: a code 500 and a JSON object detailing the issue
-	@details 	This endpoint serves POST requests that ask for a full list of officers. The request must be performed by a user who is logged in and authorized to do so (STILL UNIMPLEMENTED), else this request fails
+	@details 	This endpoint serves POST requests that ask for a full list of officers. The request must be performed by a user who is logged in and authorized to do so, else this request fails
 */
 router.post("/dashboard/search/officerlist", function (request, response) {
 	var handlerTag = {"src": "dashboardOfficerList"};
@@ -1614,6 +1614,7 @@ router.post("/dashboard/search/officerlist", function (request, response) {
 	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
 					"sessionID" - the client's session token string
 					"officerID" - the member ID of the officer in question
+					"getInfo"	- (optional) a boolean specifying whether to return all abilities with their descriptions
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200, and the specified officer's ability list
 				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
@@ -1623,6 +1624,25 @@ router.post("/dashboard/search/officerabilities", function (request, response) {
 	var handlerTag = {"src": "dashboardOfficerAbilities"};
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
 	var officerID = (typeof request.body.officerID !== "undefined") ? request.body.officerID : null;
+	var getInfo = (typeof request.body.getInfo !== "undefined") ? request.body.getInfo : false;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Officer ability list request returned null`;
+				logger.log(`Error: null value returned in officer list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
 
 	var verificationCallback = function (valid, error) {
 		if (error) {
@@ -1633,8 +1653,75 @@ router.post("/dashboard/search/officerabilities", function (request, response) {
 			// Session expired, let the client know it!
 			logger.log(`Error: Invalid session token`, handlerTag);
 			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (officerID === null) {
+			// Invalid parameters with request
+			logger.log(`Error: No officerID provided`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "officerID"})).end();
 		} else {
-			// Verification succeeded. Now let's make sr
+			// Verification succeeded. Now let's find the associated officer's abilities
+			var searchPostBody = {};
+
+			// Determine relevant endpoint using the getInfo boolean 
+			if (getInfo === false) {
+				searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "OfficerDossier",
+					"search": {
+						"memberID": officerID
+					},
+					"options": {
+						"projection": {
+							"abilities": 1
+						}
+					}
+				};
+			} else {
+				searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "OfficerDossier",
+					"pipeline": [
+						{
+							"$match": {
+								"memberID": officerID
+							}
+						},
+						{
+							"$lookup": {
+								"from": "Ability",
+								"localField": "abilities",
+								"foreignField": "abilityID",
+								"as": "abilityInfo"
+							}
+						},
+						{
+							"$unwind": "$abilityInfo"
+						},
+						{
+							"$replaceRoot" : {
+								"newRoot": {
+									"abilityID": "$abilityInfo.abilityID",
+									"abilityName": "$abilityInfo.abilityName",
+									"abilityDescription": "$abilityInfo.abilityDescription"
+								}
+							}
+						}
+					]
+				};
+			}
+
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": (getInfo === null) ? "/mdbi/search/documents" : "/mdbi/search/aggregation",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			logger.log(`Authorization verified. Acquiring ability details for officer #${officerID}`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
 		}
 	};
 
