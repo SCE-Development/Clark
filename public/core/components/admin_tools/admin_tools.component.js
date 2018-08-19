@@ -94,6 +94,9 @@ angular.module("admintools").component("admintools", {
 				switch (response.status) {
 					case 200: {
 						console.log(`Officer data acquired`);
+
+						// Replace the current officer's ability data in the model
+						ctl.officerList[index].abilityInfo = response.data;
 						break;
 					}
 					default: {
@@ -110,6 +113,10 @@ angular.module("admintools").component("admintools", {
 		this.promoteAsOfficer = function () {
 			console.log(`Promoting officer!`);
 		};
+		this.revokeAbility = function (abilityObj, officerObj) {
+			console.log(`Revoking ability ID ${abilityObj.abilityID} from officer "${officerObj.userName}"`);
+			$http.post();
+		}
 		// END Main Controllers
 
 

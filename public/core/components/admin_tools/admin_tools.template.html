@@ -63,7 +63,11 @@
 													<div class="panel-heading">
 														Abilities
 													</div>
-													<div class="panel-body"></div>
+													<div class="panel-body">
+														<div ng-repeat="ability in officer.abilityInfo">
+															<h5 title="{{ability.abilityDescription}}">{{ability.abilityName}} <span style="float: right; cursor: pointer;" ng-click="$ctrl.revokeAbility(ability, officer)">&times;</span></h5>
+														</div>
+													</div>
 												</div>
 											</div>
 											<div class="col-sm-6">
