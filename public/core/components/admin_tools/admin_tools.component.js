@@ -20,7 +20,8 @@ angular.module("admintools").component("admintools", {
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
 		var urls = {
 			"getOfficerList": `https://${hostname}/core/dashboard/search/officerlist`,
-			"getOfficerAbilities": `https://${hostname}/core/dashboard/search/officerabilities`
+			"getOfficerAbilities": `https://${hostname}/core/dashboard/search/officerabilities`,
+			"editOfficerClearance": `https://${hostname}/core/dashboard/edit/officerclearance`
 		};
 
 
@@ -114,8 +115,25 @@ angular.module("admintools").component("admintools", {
 			console.log(`Promoting officer!`);
 		};
 		this.revokeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
+			var requestBody = {
+				"sessionID": ctl.sessionID,
+				"currentUser": ctl.currentuser,
+				"officerID": officerID,
+				"level": 2 				// set the officer as a member
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
 			console.log(`Revoking clearance level ${officerLevel}${officerLevelName ? " (" + officerLevelName + ")" : ""} from officer "${officerID}"`);
-			// $http.post();
+			$http.post(urls.editOfficerClearance, requestBody, config).then((response) => {
+				console.log(response.data);
+			}).catch(function (errResponse) {
+				logDebug("OfficerManagementController", "revoke officer clearance level", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.setError(errResponse.data.emsg);
+			});
 		}
 		// END Main Controllers
 

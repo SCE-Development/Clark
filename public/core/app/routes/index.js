@@ -1729,6 +1729,114 @@ router.post("/dashboard/search/officerabilities", function (request, response) {
 });
 
 /*
+	@function 	/dashboard/edit/officerclearance
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
+					"sessionID" - the client's session token string
+					"currentUser" - the username of the current user, who will be excluded from the list
+					"officerID" - the member ID of the officer in question
+					"level" 	- (optional) the clearance level number to assign to this officer
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a success message
+				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
+				On any other failure: a code 500, and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests that ask to modify the specified officer's clearance level. Since a single user (i.e. officer) may only have one clearance level at a time, the level parameter will entirely replace the specified user's clearance level, or remove it if no level is specified
+*/
+router.post("/dashboard/edit/officerclearance", function (request, response) {
+	var handlerTag = {"src": "dashboardOfficerClearance"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var currentUser = (typeof request.body.currentUser !== "undefined") ? request.body.currentUser : null;
+	var officerID = (typeof request.body.officerID !== "undefined") ? request.body.officerID : null;
+	var level = (typeof request.body.level !== "undefined") ? request.body.level : -1;
+
+	var mdbiUpdateCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1) {
+			// The MDBI wasn't able to update any document at all
+			var ineffectiveErr = ef.common("USER_UNCHANGED", "The user was unaffected by the previous query", null, true);
+			logger.log(`Error: MDBI updated nothing!`, handlerTag);
+			response.status(499).send(ineffectiveErr).end();
+		} else if (reply.nModified > 1) {
+			// DANGER: The MDBI updated several documents
+			var corruptionErr = ef.common("MULTIUSER_CORRUPTION", "Various users were unintentionally affected by the previous query", null, true);
+			logger.log(`Error: MDBI updated more than one user!`, handlerTag);
+			response.status(499).send(corruptionErr).end();
+		} else {
+			// Send success here...
+			logger.log(`User door code update success`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				var updatePostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "MembershipData",
+					"search": {
+						"memberID": officerID
+					},
+					"update": {
+						"$set": {
+							"level": level
+						}
+					}
+				};
+				var updatePostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/update/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(updatePostBody))
+					}
+				};
+
+				// All good, now to modify the clearance level of the specified officer
+				logger.log(`Authorization verified. Processing clearance level change`, handlerTag);
+				www.https.post(updatePostOptions, updatePostBody, mdbiUpdateCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (officerID === null) {
+			// Invalid parameters with request
+			logger.log(`Error: No officerID provided`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "officerID"})).end();
+		} else {
+			// Verification succeeded; let's make sure the request issuer is qualified to edit the officer
+			isCapable([8,9], currentUser, capabilityCallback);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
 	@function 	/dashboard
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js
