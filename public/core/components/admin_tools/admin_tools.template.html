@@ -57,10 +57,9 @@
 												</div>
 												<div class="panel panel-info">
 													<div class="panel-heading">
-														Clearance Level:
+														Abilities for Clearance Level:
 														<div class="badge">
 															{{officer.levelName}}
-															<span class="badge" style="cursor: pointer" ng-click="$ctrl.revokeClearance(officer.memberID, officer.level, officer.levelName)">&times;</span>
 														</div>
 													</div>
 													<div class="panel-body">
@@ -71,7 +70,8 @@
 												</div>
 											</div>
 											<div class="col-sm-6">
-												<button class="btn btn-danger" style="width:100%;" data-toggle="tooltip" title="Careful, this button demotes this person as an officer!">Demote</button>
+												<button class="btn btn-danger" style="width:100%;" data-toggle="tooltip" title="Careful, this button demotes this person as an officer!" ng-click="$ctrl.revokeClearance(officer.memberID, officer.level, officer.levelName)">Demote</button>
+												<button class="btn btn-info" style="width: 100%;" title="Click to modify a user's clearance level">Change Clearance Level</button>
 											</div>
 										</div>
 									</div>

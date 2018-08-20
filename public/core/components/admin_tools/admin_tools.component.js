@@ -114,6 +114,27 @@ angular.module("admintools").component("admintools", {
 		this.promoteAsOfficer = function () {
 			console.log(`Promoting officer!`);
 		};
+		this.changeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
+			var requestBody = {
+				"sessionID": ctl.sessionID,
+				"currentUser": ctl.currentuser,
+				"officerID": officerID,
+				"level": officerLevel
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
+			console.log(`Changing clearance level ${officerLevel}${officerLevelName ? " (" + officerLevelName + ")" : ""} from officer "${officerID}"`);
+			$http.post(urls.editOfficerClearance, requestBody, config).then((response) => {
+				console.log(response.data);
+			}).catch(function (errResponse) {
+				logDebug("OfficerManagementController", "change officer clearance level", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.setError(errResponse.data.emsg);
+			});
+		}
 		this.revokeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
 			var requestBody = {
 				"sessionID": ctl.sessionID,
@@ -134,7 +155,7 @@ angular.module("admintools").component("admintools", {
 				logDebug("OfficerManagementController", "revoke officer clearance level", `Error: ${JSON.stringify(errResponse)}`);
 				ctl.setError(errResponse.data.emsg);
 			});
-		}
+		};
 		// END Main Controllers
 
 
