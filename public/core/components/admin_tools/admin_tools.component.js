@@ -113,9 +113,9 @@ angular.module("admintools").component("admintools", {
 		this.promoteAsOfficer = function () {
 			console.log(`Promoting officer!`);
 		};
-		this.revokeAbility = function (abilityObj, officerObj) {
-			console.log(`Revoking ability ID ${abilityObj.abilityID} from officer "${officerObj.userName}"`);
-			$http.post();
+		this.revokeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
+			console.log(`Revoking clearance level ${officerLevel}${officerLevelName ? " (" + officerLevelName + ")" : ""} from officer "${officerID}"`);
+			// $http.post();
 		}
 		// END Main Controllers
 

@@ -55,17 +55,17 @@
 													<span class="input-group-addon" style="background-color:#003399;color:white;">Name</span>
 													<input type="text" class="form-control" value="{{officer.fullName}}" disabled>
 												</div>
-												<div class="input-group">
-													<span class="input-group-addon" style="background-color:#003399;color:white;">Role</span>
-													<input type="text" class="form-control" value="{{officer.levelName}}" disabled>
-												</div>
 												<div class="panel panel-info">
 													<div class="panel-heading">
-														Abilities
+														Clearance Level:
+														<div class="badge">
+															{{officer.levelName}}
+															<span class="badge" style="cursor: pointer" ng-click="$ctrl.revokeClearance(officer.memberID, officer.level, officer.levelName)">&times;</span>
+														</div>
 													</div>
 													<div class="panel-body">
 														<div ng-repeat="ability in officer.abilityInfo">
-															<h5 title="{{ability.abilityDescription}}">{{ability.abilityName}} <span style="float: right; cursor: pointer;" ng-click="$ctrl.revokeAbility(ability, officer)">&times;</span></h5>
+															<h5 title="{{ability.abilityDescription}}">{{ability.abilityName}}</h5>
 														</div>
 													</div>
 												</div>
