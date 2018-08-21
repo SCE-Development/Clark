@@ -14,7 +14,7 @@ angular.module("admintools").component("admintools", {
 		"currentuser": "<currentuser",
 		"sessionID": "<sid"
 	},
-	"controller": function ($http, $window) {
+	"controller": function ($rootScope, $http, $window) {
 		var ctl = this;
 		var dbgMode = true;
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
@@ -172,6 +172,22 @@ angular.module("admintools").component("admintools", {
 
 			// Select all div.officer-management-modal decendants in admintools tag (i.e. direct or indirect child of admintools component tag), and show them
 			$("admintools div.officer-management-modal").modal("show");
+		};
+		this.showMemberList = function (memberListID) {
+			console.log(`Firing event "showMemberListComponent"`);
+
+			// Fire event
+			$rootScope.$emit("showMemberListComponent", {
+				"memberListID": memberListID
+			});
+		};
+		this.hideMemberList = function (memberListID) {
+			console.log(`Firing event "hideMemberListComponent"`);
+
+			// Fire event
+			$rootScope.$emit("hideMemberListComponent", {
+				"memberListID": memberListID
+			});
 		};
 		// END Utility Controllers
 	}

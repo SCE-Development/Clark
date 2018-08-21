@@ -80,8 +80,10 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button id="enlistOfficerBtn" class="btn btn-success" ng-click="$ctrl.showMemberList('memberlist0')">Enlist Officer</button>
+						<button id="officerManagementModalCancel" class="btn btn-default" data-dismiss="modal" ng-click="$ctrl.hideMemberList('memberlist0')">Cancel</button>
 					</div>
+					<memberlist id="memberlist0"></memberlist>
 				</div>
 			</div>
 		</div>

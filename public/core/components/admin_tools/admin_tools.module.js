@@ -8,6 +8,6 @@
 // 	Dependencies:
 // 					AngularJS v 1.6.x
 
-angular.module("admintools", []);
+angular.module("admintools", ["memberlist"]);
 
 // END admin_tools.module.js
