@@ -68,6 +68,9 @@ angular.module("memberlist").component("memberlist", {
 
 			// Show the memberlist by revealing the collapsible
 			$("#" + args.memberListID + " > .collapse").collapse("show");
+
+			// Run an initial search
+			ctl.loadMembers();
 		});
 		$rootScope.$on("hideMemberListComponent", function (event, args) {
 			console.log(`Hiding member list...`);
