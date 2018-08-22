@@ -14,7 +14,7 @@ angular.module("admintools").component("admintools", {
 		"currentuser": "<currentuser",
 		"sessionID": "<sid"
 	},
-	"controller": function ($http, $window) {
+	"controller": function ($rootScope, $http, $window) {
 		var ctl = this;
 		var dbgMode = true;
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
@@ -111,9 +111,6 @@ angular.module("admintools").component("admintools", {
 				ctl.setError(errResponse.data.emsg);
 			});
 		};
-		this.promoteAsOfficer = function () {
-			console.log(`Promoting officer!`);
-		};
 		this.changeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
 			var requestBody = {
 				"sessionID": ctl.sessionID,
@@ -151,6 +148,7 @@ angular.module("admintools").component("admintools", {
 			console.log(`Revoking clearance level ${officerLevel}${officerLevelName ? " (" + officerLevelName + ")" : ""} from officer "${officerID}"`);
 			$http.post(urls.editOfficerClearance, requestBody, config).then((response) => {
 				console.log(response.data);
+				ctl.loadOfficerRoster();
 			}).catch(function (errResponse) {
 				logDebug("OfficerManagementController", "revoke officer clearance level", `Error: ${JSON.stringify(errResponse)}`);
 				ctl.setError(errResponse.data.emsg);
@@ -173,7 +171,54 @@ angular.module("admintools").component("admintools", {
 			// Select all div.officer-management-modal decendants in admintools tag (i.e. direct or indirect child of admintools component tag), and show them
 			$("admintools div.officer-management-modal").modal("show");
 		};
+		this.showMemberList = function (memberListID) {
+			console.log(`Firing event "showMemberListComponent"`);
+
+			// Fire event
+			$rootScope.$emit("showMemberListComponent", {
+				"memberListID": memberListID
+			});
+		};
+		this.hideMemberList = function (memberListID) {
+			console.log(`Firing event "hideMemberListComponent"`);
+
+			// Fire event
+			$rootScope.$emit("hideMemberListComponent", {
+				"memberListID": memberListID
+			});
+		};
 		// END Utility Controllers
+
+
+
+		// BEGIN Global Event Listeners
+		$rootScope.$on( "memberListSelection", function (event, arg) {
+
+			// test
+			// console.log(`Caught memberListSelection:`, arg);
+			var requestBody = {
+				"sessionID": ctl.sessionID,
+				"currentUser": ctl.currentuser,
+				"officerID": arg.selection.memberID,
+				"level": 1		// promote to officer level
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
+			// Promote the selected member to an officer
+			console.log(`Promoting "${arg.selection.userName}" clearance level to Officer...`);
+			$http.post(urls.editOfficerClearance, requestBody, config).then((response) => {
+				console.log(response.data);
+				ctl.loadOfficerRoster();
+			}).catch(function (errResponse) {
+				logDebug("OfficerManagementController", "promote officer clearance level", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.setError(errResponse.data.emsg);
+			});
+		} );
+		// END Global Event Listeners
 	}
 });
 

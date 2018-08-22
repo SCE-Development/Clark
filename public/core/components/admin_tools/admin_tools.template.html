@@ -36,11 +36,11 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">
 								&times;
 							</span>
-						</button>
+						</button> -->
 						<h4 class="modal-title">Officer Management</h4>
 					</div>
 					<div class="modal-body" style="max-height:300px; overflow:scroll;">
@@ -80,8 +80,10 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button id="enlistOfficerBtn" class="btn btn-success" ng-click="$ctrl.showMemberList('memberlist0')">Enlist Officer</button>
+						<button id="officerManagementModalCancel" class="btn btn-default" data-dismiss="modal" ng-click="$ctrl.hideMemberList('memberlist0')">Cancel</button>
 					</div>
+					<memberlist id="memberlist0" self="'memberlist0'"></memberlist>
 				</div>
 			</div>
 		</div>
