@@ -11,17 +11,23 @@
 angular.module("memberlist").component("memberlist", {
 	"templateUrl": "components/member_list/member_list.template.html",	// relative to dashboard.html file
 	"bindings": {
-		// TBD
+		"self": "<self"
 	},
 	"controller": function ($rootScope, $scope, $http, $window) {
 		var ctl = this;
 		var dbgMode = true;
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
-		var urls = {};
+		var urls = {
+			"search": `https://${hostname}/core/dashboard/search/members`
+		};
 
 
 
 		// BEGIN Model Data
+		this.searchTerm = "";
+		this.searchType = "username";
+		this.resultCount = 0;
+		this.results = [];				// container for member search results
 		// END Model Data
 
 
@@ -54,7 +60,7 @@ angular.module("memberlist").component("memberlist", {
 			// $(triggerElementShow).parent().children()[2].childNodes[2].collapse("hide");
 		};
 		this.$onChanges = function () {
-			console.log(this.bindings);
+			console.log(ctl.bindings);
 		};
 		$rootScope.$on("showMemberListComponent", function (event, args) {
 			// console.log(`Showing member list...`, args);
@@ -74,6 +80,72 @@ angular.module("memberlist").component("memberlist", {
 
 
 		// BEGIN Utility Controllers
+		this.loadMembers = function () {
+			var requestBody = {
+				"sessionID": sessionStorage.getItem("sessionID"),
+				"searchType": ctl.searchType,
+				"searchTerm": ctl.searchTerm,
+				"options": {
+					"resultMax": 50,
+					"pageNumber": 0,
+					"regexMode": true
+				}
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+			var searchTypeStr = "";
+
+			// Execute search
+			console.log(`Searching by ${ctl.searchType} for ${ctl.searchTerm}`);
+			$http.post(urls.search, requestBody, config).then((response) => {
+				console.log(response.data);	// debug
+				switch (response.status) {
+					case 200: {
+
+						// Reset the error message
+						ctl.errmsg = "";
+						ctl.results = response.data;
+
+						// Log a message if the result set is empty
+						if (ctl.results.length === 0) {
+							console.log(`No members matched your search criteria`);
+						}
+
+						// Remove the placeholder if the result set has one
+						for (var i = 0; i < ctl.results.length; i++) {
+							if (ctl.results[i].memberID === -1) {
+								ctl.results.splice(i, 1);
+								break;
+							}
+						}
+
+						// Update the result count
+						ctl.resultCount = response.data.length;
+						break;
+					}
+					default: {
+						ctl.errmsg = "Unexpected response<<<";
+						ctl.results = [];
+						break;
+					}
+				}
+			}).catch(function (errResponse) {
+				logDebug("ProfilerController", "search", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.errmsg = errResponse.data.emsg;
+			});
+		};
+		this.emitSelectionEvent = function (selection, selfID) {
+
+			// Hide member list and send the member list selection
+			console.log("SELF:", selfID);
+			$rootScope.$emit( "hideMemberListComponent", {
+				"memberListID": ctl.self
+			} );
+			$rootScope.$emit( "memberListSelection", { "selection": selection } );
+		}
 		// END Utility Controllers
 	}
 });
