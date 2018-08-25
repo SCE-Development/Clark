@@ -171,6 +171,14 @@ angular.module("admintools").component("admintools", {
 			// Select all div.officer-management-modal decendants in admintools tag (i.e. direct or indirect child of admintools component tag), and show them
 			$("admintools div.officer-management-modal").modal("show");
 		};
+		this.launchClearanceControlModal = function () {
+			console.log(`Launching clearance control modal`);
+
+			// TODO: Load the all clearance levels
+
+			// Select all div.officer-management-modal decendants in admintools tag (i.e. direct or indirect child of admintools component tag), and show them
+			$("admintools div.clearance-control-modal").modal("show");
+		};
 		this.showMemberList = function (memberListID) {
 			console.log(`Firing event "showMemberListComponent"`);
 

@@ -16,6 +16,7 @@
 		</h3>
 	</div>
 	<div class="container-fluid">
+		<!-- BEGIN Admin Tool Buttons -->
 		<div class="row">
 			<div class="col-sm-6 col-md-3 col-lg-2">
 				<div class="thumbnail">
@@ -29,7 +30,20 @@
 					</a>
 				</div>
 			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.launchClearanceControlModal()" data-toggle="tooltip" title="Manage SCE Officers here!" style="width:100%">
+							<img src="img/SCE-glow.png" alt="Folder Image" height="150px" width="150px">
+							<div class="caption">
+								<h5>Clearance Level Management</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
 		</div>
+		<!-- END Admin Tool Buttons -->
 
 		<!-- BEGIN Officer Management Modal -->
 		<div class="modal fade officer-management-modal" tabindex="-1" role="dialog">
@@ -88,5 +102,30 @@
 			</div>
 		</div>
 		<!-- END Officer Management Modal -->
+
+		<!-- BEGIN Clearance Control Modal -->
+		<div class="modal fade clearance-control-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4>Clearance Level Management</h4>
+					</div>
+					<div class="modal-body" style="max-height:300px; overflow:scroll;">
+						<div class="row">
+							<div class="col-md-6 panel panel-info">
+								<div class="panel-heading">
+									<h3 class="panel-title">Clearance Hierarchy (Desc.)</h3>
+								</div>
+							</div>
+							<div class="col-md-6"></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div class="btn btn-default" data-dismiss="modal">Cancel</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END Clearance Control Modal -->
 	</div>
 </div>
