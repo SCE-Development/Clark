@@ -21,7 +21,8 @@ angular.module("admintools").component("admintools", {
 		var urls = {
 			"getOfficerList": `https://${hostname}/core/dashboard/search/officerlist`,
 			"getOfficerAbilities": `https://${hostname}/core/dashboard/search/officerabilities`,
-			"editOfficerClearance": `https://${hostname}/core/dashboard/edit/officerclearance`
+			"editOfficerClearance": `https://${hostname}/core/dashboard/edit/officerclearance`,
+			"getClearanceLevels": `https://${hostname}/core/dashboard/search/clearancelevels`
 		};
 
 
@@ -29,6 +30,7 @@ angular.module("admintools").component("admintools", {
 		// BEGIN Model Data
 		ctl.error_message = "";
 		ctl.officerList = [];
+		ctl.clearanceLevelList = [];
 		// END Model Data
 
 
@@ -73,6 +75,30 @@ angular.module("admintools").component("admintools", {
 				}
 			}).catch(function (errResponse) {
 				logDebug("OfficerManagementController", "request officer list", `Error: ${JSON.stringify(errResponse)}`);
+				ctl.setError(errResponse.data.emsg);
+			});
+		};
+		this.loadClearanceLevels = function () {
+			var requestBody = {
+				"sessionID": ctl.sessionID,
+				"currentUser": ctl.currentuser
+			};
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
+			// TODO: Load all clearance levels
+			ctl.setError("");
+			console.log(`Loading all clearance levels...`);
+			$http.post(urls.getClearanceLevels, requestBody, config).then(function (response) {
+				console.log(response.data);
+
+				// Update clearance levels list
+				ctl.clearanceLevelList = response.data;
+			}).catch(function (errResponse) {
+				logDebug("ClearanceManagementController", "request clearance level list", `Error: ${JSON.stringify(errResponse)}`);
 				ctl.setError(errResponse.data.emsg);
 			});
 		};
@@ -175,6 +201,7 @@ angular.module("admintools").component("admintools", {
 			console.log(`Launching clearance control modal`);
 
 			// TODO: Load the all clearance levels
+			ctl.loadClearanceLevels();
 
 			// Select all div.officer-management-modal decendants in admintools tag (i.e. direct or indirect child of admintools component tag), and show them
 			$("admintools div.clearance-control-modal").modal("show");

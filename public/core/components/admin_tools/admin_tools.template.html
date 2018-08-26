@@ -7,6 +7,16 @@
 	Details:
 		This file serves as the html template for the officer tools component
  -->
+<style>
+	table.clearance-hierarchy-table {
+		display: table;
+		width: 100%;
+	}
+	table.clearance-hierarchy-table tr.clearance-level:hover {
+		background-color: lightgray;
+		cursor: pointer;
+	}
+</style>
 <div class="well">
 	<div class="page-header">
 		<h3 class="brand-text">
@@ -112,12 +122,33 @@
 					</div>
 					<div class="modal-body" style="max-height:300px; overflow:scroll;">
 						<div class="row">
-							<div class="col-md-6 panel panel-info">
-								<div class="panel-heading">
-									<h3 class="panel-title">Clearance Hierarchy (Desc.)</h3>
+							<div class="col-md-6">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<h3 class="panel-title">Clearance Hierarchy (Desc.)</h3>
+									</div>
+									<div class="panel-body">
+										<table class="clearance-hierarchy-table">
+											<thead>
+												<tr>
+													<th>Level ID</th>
+													<th>Name</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr class="clearance-level" title="Click to view details" ng-repeat="clvl in $ctrl.clearanceLevelList">
+													<td>{{clvl.cID}}</td>
+													<td>{{clvl.levelName}}</td>
+												</tr>
+											</tbody>
+											<tfoot></tfoot>
+										</table>
+									</div>
 								</div>
 							</div>
-							<div class="col-md-6"></div>
+							<div class="col-md-6">
+								TODO: Control Panel
+							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
