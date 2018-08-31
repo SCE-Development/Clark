@@ -22,7 +22,8 @@ angular.module("admintools").component("admintools", {
 			"getOfficerList": `https://${hostname}/core/dashboard/search/officerlist`,
 			"getOfficerAbilities": `https://${hostname}/core/dashboard/search/officerabilities`,
 			"editOfficerClearance": `https://${hostname}/core/dashboard/edit/officerclearance`,
-			"getClearanceLevels": `https://${hostname}/core/dashboard/search/clearancelevels`
+			"getClearanceLevels": `https://${hostname}/core/dashboard/search/clearancelevels`,
+			"getAvailableAbilities": `https://${hostname}/core/ability/getAll`
 		};
 
 
@@ -137,6 +138,27 @@ angular.module("admintools").component("admintools", {
 				ctl.setError(errResponse.data.emsg);
 			});
 		};
+		this.loadAvailableAbilities = function () {
+			var qParams = `?sessionID=${ctl.sessionID}&currentUser=${ctl.currentuser}`;
+			var config = {
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			};
+
+			ctl.setError("");
+			console.log(`Loading all available abiltiies...`);
+			$http.get( urls.getAvailableAbilities + qParams, config ).then( function (response) {
+				
+				console.log(response.data);
+			} ).catch( function (errResponse) {
+
+				// Let the user know there was an error
+				logDebug("Clearance Level Controller", "request available abiltiies", `Unable to acquire available abilities list (${response.status}): ${response.data}`);
+				console.log(`Unexpected response (${response.status}): ${response.data}`);
+				break;
+			} );
+		};
 		this.changeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
 			var requestBody = {
 				"sessionID": ctl.sessionID,
@@ -157,7 +179,7 @@ angular.module("admintools").component("admintools", {
 				logDebug("OfficerManagementController", "change officer clearance level", `Error: ${JSON.stringify(errResponse)}`);
 				ctl.setError(errResponse.data.emsg);
 			});
-		}
+		};
 		this.revokeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
 			var requestBody = {
 				"sessionID": ctl.sessionID,
@@ -205,6 +227,12 @@ angular.module("admintools").component("admintools", {
 
 			// Select all div.officer-management-modal decendants in admintools tag (i.e. direct or indirect child of admintools component tag), and show them
 			$("admintools div.clearance-control-modal").modal("show");
+		};
+		this.populateControlPanel = function (index) {
+			console.log(`Setting up control panel for clearance level ${ JSON.stringify( ctl.clearanceLevelList[ index ].levelName ) }`);
+
+			// TODO: Populate control panel
+			ctl.loadAvailableAbilities();
 		};
 		this.showMemberList = function (memberListID) {
 			console.log(`Firing event "showMemberListComponent"`);

@@ -1955,6 +1955,105 @@ router.post("/dashboard/search/clearancelevels", function (request, response) {
 });
 
 /*
+	@endpoint 	/ability/getAll
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
+					"sessionID" - the client's session token string
+					"currentUser" - the username of the current user, used to ensure that only authorized users can search clearance levels
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a full list of abilities assignable to clearance levels
+				On unauthorized action: a code 200, and an error-formatted object detailing the authorization issue
+				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
+				On any other failure: a code 500, and a JSON object detailing the issue
+	@details 	This endpoint serves GET requests that ask for a full list of abilities assignable to clearance levels
+*/
+router.get("/ability/getAll", function ( request, response ) {
+	var handlerTag = {"src": "dashboard/abilities/getAll"};
+	var sessionID = (typeof request.query.sessionID !== "undefined") ? request.query.sessionID : null;
+	var currentUser = (typeof request.query.currentUser !== "undefined") ? request.query.currentUser : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Clearance level list request returned null`;
+				logger.log(`Error: null value returned in available ability list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
+
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				// Capability Verification succeeded. Now let's get a full list of abilities
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "Ability",
+					"pipeline": [
+						{
+							"$match": {
+								"abilityID": {
+									"$ne": -1
+								}
+							}
+						}
+					]
+				};
+
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/aggregation",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				logger.log(`Authorization verified. Acquiring available ability list...`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded; let's make sure the request issuer is qualified to edit abilities
+			isCapable( [5,6,7], currentUser, capabilityCallback );
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+} );
+
+/*
 	@function 	/dashboard
 	@parameter 	request - the web request object provided by express.js
 	@parameter 	response - the web response object provided by express.js
