@@ -31,7 +31,10 @@ angular.module("admintools").component("admintools", {
 		// BEGIN Model Data
 		ctl.error_message = "";
 		ctl.officerList = [];
+		ctl.selectedClearanceLevel = {};
 		ctl.clearanceLevelList = [];
+		ctl.currentlyAssignedAbilities = {};
+		ctl.abilityList = [];
 		// END Model Data
 
 
@@ -98,6 +101,9 @@ angular.module("admintools").component("admintools", {
 
 				// Update clearance levels list
 				ctl.clearanceLevelList = response.data;
+
+				// Initialize UI with data on the first listed clearance level
+				ctl.selectClearanceLevel( 0 );
 			}).catch(function (errResponse) {
 				logDebug("ClearanceManagementController", "request clearance level list", `Error: ${JSON.stringify(errResponse)}`);
 				ctl.setError(errResponse.data.emsg);
@@ -150,13 +156,38 @@ angular.module("admintools").component("admintools", {
 			console.log(`Loading all available abiltiies...`);
 			$http.get( urls.getAvailableAbilities + qParams, config ).then( function (response) {
 				
-				console.log(response.data);
+				console.log( "response.data:", response.data );
+
+				// Determine if each ability is in the selected clearance level
+				try {
+					var i = 0;
+					response.data.forEach( (ability) => {
+
+						console.log(ability);
+						if ( ctl.searchClearanceAbilities(ctl.selectedClearanceLevel, ability.abilityID) === true ) {
+
+							// ctl.currentlyAssignedAbilities[ability.abilityName] = true;
+							response.data[i]["isInClvl"] = true;
+						} else {
+							// ctl.currentlyAssignedAbilities[ability.abilityName] = false;
+							response.data[i]["isInClvl"] = false;
+						}
+
+						i++;
+					} );
+				} catch (err) {
+					console.log(err);
+				}
+
+				// console.log(ctl.currentlyAssignedAbilities);
+
+				// Refresh available abilities UI
+				ctl.abilityList = response.data;
 			} ).catch( function (errResponse) {
 
 				// Let the user know there was an error
-				logDebug("Clearance Level Controller", "request available abiltiies", `Unable to acquire available abilities list (${response.status}): ${response.data}`);
-				console.log(`Unexpected response (${response.status}): ${response.data}`);
-				break;
+				logDebug("Clearance Level Controller", "request available abiltiies", `Unable to acquire available abilities list (${errResponse.status}): ${errResponse.data}`);
+				console.log(`Unexpected errResponse (${errResponse.status}): ${errResponse.data}`);
 			} );
 		};
 		this.changeClearance = function (officerID, officerLevel, officerLevelName = false) {	// every officer will have only one clearance level
@@ -228,10 +259,20 @@ angular.module("admintools").component("admintools", {
 			// Select all div.officer-management-modal decendants in admintools tag (i.e. direct or indirect child of admintools component tag), and show them
 			$("admintools div.clearance-control-modal").modal("show");
 		};
+		this.selectClearanceLevel = function (index) {
+
+			// Set the selected clearance level
+			ctl.selectedClearanceLevel = ctl.clearanceLevelList[ index ];
+			console.log( "Selected Clearance Level:", ctl.selectedClearanceLevel );
+
+			// Populate the clearance level control panel with this clearance level's
+			// currently-assigned abilities
+			ctl.populateControlPanel( index );
+		};
 		this.populateControlPanel = function (index) {
 			console.log(`Setting up control panel for clearance level ${ JSON.stringify( ctl.clearanceLevelList[ index ].levelName ) }`);
 
-			// TODO: Populate control panel
+			// Populate control panel
 			ctl.loadAvailableAbilities();
 		};
 		this.showMemberList = function (memberListID) {
@@ -249,6 +290,29 @@ angular.module("admintools").component("admintools", {
 			$rootScope.$emit("hideMemberListComponent", {
 				"memberListID": memberListID
 			});
+		};
+
+		// @function		searchClearanceAbilities()
+		// @description		This function searches the indicated clearance level for the
+		//					ability with the provided abilityID
+		// @parameters		(object) clearance level JSON object
+		//					(number) ability id number to search for
+		// @returns			true, if the clearance level contains the specified ability
+		//					false, otherwise
+		this.searchClearanceAbilities = function ( clvl, abilityID ) {
+			var found = false;
+
+			console.log( "clvl:", clvl );
+			console.log( "abilityID:", abilityID );
+
+			// console.log(`Searching for abilityID ${abilityID} in clearance level ${clvl.levelName} (aID: ${ JSON.stringify( clvl.abilities[0] ) } )`);
+			clvl.abilities.forEach( function (ability) {
+				if ( ability.abilityID === abilityID ) {
+					found = true;
+				}
+			} );
+
+			return found;
 		};
 		// END Utility Controllers
 

@@ -8,6 +8,7 @@
 		This file serves as the html template for the officer tools component
  -->
 <style>
+	/* Clearance Hierarchy Table Classes */
 	table.clearance-hierarchy-table {
 		display: table;
 		width: 100%;
@@ -15,6 +16,15 @@
 	table.clearance-hierarchy-table tr.clearance-level:hover {
 		background-color: lightgray;
 		cursor: pointer;
+	}
+
+	/* Clearance Info Classes */
+	div.panel.clearance-info {
+		max-height: 
+	}
+	div.panel.clearance-info table.clearance-info {
+		display: table;
+		width: 100%;
 	}
 </style>
 <div class="well">
@@ -122,7 +132,7 @@
 					<div class="modal-body" style="max-height:300px; overflow:scroll;">
 						<div class="row">
 							<div class="col-md-4">
-								<div class="panel panel-info">
+								<div class="panel panel-info clearance-info">
 									<div class="panel-heading">
 										<h3 class="panel-title">
 											Clearance Hierarchy (Desc.)
@@ -137,7 +147,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr class="clearance-level" title="Click to view details" ng-repeat="clvl in $ctrl.clearanceLevelList" ng-click="$ctrl.populateControlPanel( $index )">
+												<tr class="clearance-level" title="Click to view details" ng-repeat="clvl in $ctrl.clearanceLevelList" ng-click="$ctrl.selectClearanceLevel( $index )">
 													<td>{{clvl.cID}}</td>
 													<td>{{clvl.levelName}}</td>
 												</tr>
@@ -151,10 +161,29 @@
 								<div class="panel panel-info">
 									<div class="panel-heading">
 										<h3 class="panel-title">
-											Level Abilities
+											Level Abilities ({{$ctrl.selectedClearanceLevel.levelName}})
 										</h3>
 									</div>
 									<div class="panel-body">
+										<table class="clearance-info">
+											<thead>
+												<tr>
+													<th>Ability ID</th>
+													<th>Name</th>
+												</tr>
+											</thead>
+											<tbody id="clvlInfoTbody">
+												<tr ng-repeat="ability in $ctrl.abilityList" title="{{ability.abilityDescription}}">
+													<td>
+														<!-- <input type="checkbox" ng-checked="{{$ctrl.currentlyAssignedAbilities[ability.abilityName]}}"> -->
+														<!-- <input type="checkbox" ng-checked="{{true}}"> -->
+														<input type="checkbox" ng-checked="{{ability.isInClvl}}">
+														{{ability.abilityID}}
+													</td>
+													<td>{{ability.abilityName}}</td>
+												</tr>
+											</tbody>
+										</table>
 									</div>
 								</div>
 							</div>
