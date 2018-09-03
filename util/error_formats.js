@@ -83,6 +83,10 @@ error_formats.struct = {
 		"name": "MDBI_ACCESS_DENIED",
 		"msg": "You do not have access rights to the MDBI system"
 	},
+	"nonexistentEndpoint": {
+		"name": "CORE_NONEXISTENT_ENDPOINT",
+		"msg": "The requested API endpoint does not exist"
+	},
 	"expiredSession": {
 		"name": "CORE_SESSION_EXPIRED",
 		"msg": "Your session has expired"

@@ -63,6 +63,8 @@ var apiInfo = {
 
 
 
+// BEGIN Ability Routes
+
 // @endpoint		(GET) /ping
 // @description 	This endpoint is used to ping the Ability Module API router
 // @parameters		(object) request		The web request object provided by express.js. The
@@ -118,8 +120,8 @@ API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response 
 apiInfo.args.help = [
 	{
 		"name": "request.pretty",
-		"type": "boolean",
-		"desc": "A boolean to request a pretty HTML page of the Ability API doc"
+		"type": "~boolean",
+		"desc": "An optional boolean to request a pretty HTML page of the Ability API doc"
 	}
 ];
 apiInfo.rval.help = [
@@ -165,6 +167,65 @@ API module (Ability)", apiInfo.args.help, apiInfo.rval.help, function ( request,
 // Remove the apiInfo's references when done routing
 delete apiInfo.args;
 delete apiInfo.rval;
+
+// END Ability Routes
+
+
+
+
+
+// BEGIN Error Handling Routes
+
+// @endpoint		NOTFOUND (404)
+// @description		This endpoint handles any endpoint requests that do not exist under the
+//					"/ability" endpoint
+// @parameters		n/a
+// @returns			a code 404 and an error-formatted object
+router.use( function ( request, response ) {
+
+	var handlerTag = { "src": "/ability/notfound" };
+
+	logger.log(
+		`Non-existent endpoint "${request.path}" requested from client @ ip ${request.ip}`,
+		handlerTag
+	);
+
+	// Send 404 to client
+	response.status( 404 ).json(
+		ef.asCommonStr( ef.struct.nonexistentEndpoint, {
+			"endpoint": request.originalUrl,
+			"protocol": request.protocol,
+			"method": request.method
+		} )
+	).end();
+} );
+
+// @endpoint		ERROR (for any other errors)
+// @description		This function sends an error status (500) if an error occurred forcing the
+//					other endpoints to fail.
+// @parameters		n/a
+// @returns			a code 500 and an error-formatted object
+router.use( function ( request, response ) {
+
+	var handlerTag = { "src": "/ability/error" };
+
+	logger.log(
+		`Error occurred with request from client @ ip ${request.ip}`,
+		handlerTag
+	);
+
+	// Send 500 to client
+	response.status( 500 ).json(
+		ef.asCommonStr( ef.struct.coreErr, {
+			"endpoint": request.originalUrl,
+			"protocol": request.protocol,
+			"method": request.method
+		} )
+	).end();
+} );
+
+// END Error Handling Routes
+
 
 
 
