@@ -16,6 +16,7 @@ var defaults = {
 	"logdir": __dirname + "/../log",
 	"credentials": __dirname + "/common/credentials.json",
 	"security": __dirname + "/common/security.js",
+	"developmentMode": true,	// toggles the availability of certain development tools
 	"sessionIdleTime": 20 	// minutes
 };
 

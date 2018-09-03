@@ -1,0 +1,26 @@
+<!-- docTemplate.apiRow.ejs -->
+
+<tr class="api-endpoint-row">
+	<td><%= locals.endpoint.method %></td>
+	<td><%= locals.endpoint.name %></td>
+	<td><%= locals.endpoint.route %></td>
+	<td><%= locals.endpoint.desc %></td>
+	<td>
+		<% if ( typeof locals.endpoint.args !== "undefined" ) { %>
+			<% locals.endpoint.args.forEach( function ( argument ) { %>
+				<%- include( "./docTemplate.apiRow.argument.ejs", { "argument": argument } ) %>
+			<% } ); %>
+		<% } else { %>
+			<%= "n/a" %>
+		<% } %>
+	</td>
+	<td>
+		<% if ( typeof locals.endpoint.returnVal !== "undefined" ) { %>
+			<% locals.endpoint.returnVal.forEach( function ( rval ) { %>
+				<%- include( "./docTemplate.apiRow.returnval.ejs", { "rval": rval } ); %>
+			<% } ); %>
+		<% } else { %>
+			<%= "n/a" %>
+		<% } %>
+	</td>
+</tr>

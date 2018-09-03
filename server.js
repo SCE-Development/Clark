@@ -81,6 +81,12 @@ app.use("/home", homeApp);				// GET request of the main login page
 
 
 
+/* Initialize SCE Core API sub-app */
+var apiApp = require( "./api/app/app.js" );
+app.use( "/api", apiApp );
+
+
+
 /* Initialize SCE Core Admin sub-app */
 var coreAdminApp = require("./public/core/app/app.js");
 app.use("/core", coreAdminApp);
