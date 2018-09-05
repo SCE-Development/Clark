@@ -22,9 +22,10 @@ var al = require(`${settings.util}/api_legend.js`);		// import API Documentation
 var ef = require(`${settings.util}/error_formats`);		// import error formatter
 // var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
 var ssl = require(settings.security);					// import https ssl credentials
-// var credentials = require(settings.credentials);		// import server system credentials
-// var www = require(`${settings.util}/www`);			// import custom https request wrappers
+var credentials = require(settings.credentials);		// import server system credentials
+var www = require(`${settings.util}/www`);			// import custom https request wrappers
 var logger = require(`${settings.util}/logger`);		// import event log system
+var au = require(`${settings.util}/api_util.js`);		// import API Utility Functions
 
 // Options
 var options = {
@@ -68,18 +69,11 @@ var apiInfo = {
 // @endpoint		(GET) /ping
 // @description 	This endpoint is used to ping the Ability Module API router
 // @parameters		(object) request		The web request object provided by express.js. The
-// 											request body is expected to be a JSON object with
-// 											the following members:
-// 						(string) sessionID			the client's session token string
+// 											request body doesn't require any arguments.
 // 					(object) response 		The web response object provided by express.js
 // @returns		On success: a code 200 and a ping message
 // 				On failure: a code 499 and an error format object
 apiInfo.args.ping = [			// API Arguments
-	{
-		"name": "request.sessionID",
-		"type": "string",
-		"desc": "The client's session token string"
-	}
 ];
 apiInfo.rval.ping = [			// API Return Values
 	{
@@ -118,7 +112,7 @@ API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response 
 // @returns			On success: a code 200, and the documentation in the specified format
 //					On failure: a code 500, and an error format object
 apiInfo.args.help = [
-	{
+	{	
 		"name": "request.pretty",
 		"type": "~boolean",
 		"desc": "An optional boolean to request a pretty HTML page of the Ability API doc"
@@ -162,6 +156,147 @@ API module (Ability)", apiInfo.args.help, apiInfo.rval.help, function ( request,
 			ef.asCommonStr( ef.struct.coreErr )
 		).end();
 	}
+} );
+
+// TODO:	add verify session as a global utility function, and do the same for verification,
+//			capability check, and mdbiX callbacks. Also do this for clearaSession(), and redo
+//			the au.isCapable function
+// @endpoint		(GET) /getAll
+// @description		This endpoint is used to request a full list of abilities assignable to
+//					clearance levels
+// @parameters		(object) request		The web request objec provided by express.js. The
+//											request body is expected to be a JSON object with the
+//											following members:
+//						(string) sessionID		The client's session token string
+//						(string) currentUser	The current user's username
+//					(object) response		The web response object provided by express.js
+// @returns			On success:	a code 200, and a full list of abilities assignable to clearance
+//								levels
+// 					On unauthorized action:	a code 200, and an error-formatted object detailing
+//								the authorization issue
+// 					On invalid/expired session token: a code 499, and an error-formatted JSON
+//								object detailing the expired session issue
+// 					On any other failure: a code 500, and a JSON object detailing the issue
+apiInfo.args.getAll = [
+	{
+		"name": "request.sessionID",
+		"type": "string",
+		"desc": "The client's session token string"
+	},
+	{
+		"name": "request.currentUser",
+		"type": "string",
+		"desc": "The current user's username"
+	}
+];
+apiInfo.rval.getAll = [
+	{
+		"condition": "On success",
+		"desc": "a code 200, and a full list of abilities assignable to clearance levels"
+	},
+	{
+		"condition": "On unauthorized action",
+		"desc": "a code 200, and an error-formatted object detailing the authorization issue"
+	},
+	{
+		"condition": "On invalid/expired session token",
+		"desc": "a code 499, and an error-formatted JSON object detailing the expired session\
+		issue"
+	},
+	{
+		"condition": "On any other failure",
+		"desc": "a code 500, and a JSON object detailing the issue"
+	}
+];
+apiLegend.register ( "GetAll", "GET", "/getAll", "Gets a full list of abilities assignable to \
+clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request, response ) {
+
+	var handlerTag = { "src": "(get) /api/ability/getAll" };
+	var sessionID =	(typeof request.query.sessionID !== "undefined") ?
+					request.query.sessionID : null;
+	var currentUser =	(typeof request.query.currentUser !== "undefined") ?
+						request.query.currentUser : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Clearance level list request returned null`;
+				logger.log(`Error: null value returned in available ability list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
+
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				// Capability Verification succeeded. Now let's get a full list of abilities
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "Ability",
+					"pipeline": [
+						{
+							"$match": {
+								"abilityID": {
+									"$ne": -1
+								}
+							}
+						}
+					]
+				};
+
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/aggregation",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				logger.log(`Authorization verified. Acquiring available ability list...`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send( error ).status( 500 ).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded; let's make sure the request issuer is qualified to edit abilities
+			au.isCapable( [5,6,7], currentUser, capabilityCallback );
+		}
+	};
+
+	au.verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 } );
 
 // Remove the apiInfo's references when done routing
