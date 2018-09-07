@@ -14,6 +14,8 @@
 // Includes
 var fs = require("fs");
 var ejs = require("ejs");										// embedded javascript library
+var settings = require( "../../settings.js" );					// import server settings
+var logger = require( `${settings.util}/logger` );
 var defaultTemplate = __dirname + "/template/docTemplate.ejs";	// default ApiLegend template
 
 
@@ -74,66 +76,78 @@ class ApiLegend {
 // @returns			n/a
 ApiLegend.prototype.register = function ( name, method, route, desc, args, returnVal, cb ) {
 	
-	// Create an endpoint descriptor object
-	var endpoint = {
-		"name": name,
-		"route": route,
-		"method": method.toUpperCase(),
-		"desc": desc,
-		"args": args,
-		"returnVal": returnVal
-	};
+	var handlerTag = { "src": "ApiLegend.register" };
+	
+	try {
 
-	// Catalog the endpoint's information and resort the array by endpoint name
-	this.endpoints.push( endpoint );
-	this.endpoints.sort( function ( a, b ) {
+		// Create an endpoint descriptor object
+		var endpoint = {
+			"name": name,
+			"route": route,
+			"method": method.toUpperCase(),
+			"desc": desc,
+			"args": args,
+			"returnVal": returnVal
+		};
 
-		var nameA = a.name.toLowerCase();
-		var nameB = b.name.toLowerCase();
+		// Catalog the endpoint's information and resort the array by endpoint name
+		this.endpoints.push( endpoint );
+		this.endpoints.sort( function ( a, b ) {
 
-		// Iterate through the name strings looking for any difference in characters
-		var i = 0;
-		while ( i < nameA.length && i < nameB.length ) {
+			var nameA = a.name.toLowerCase();
+			var nameB = b.name.toLowerCase();
 
-			if ( nameA.charCodeAt( i ) < nameB.charCodeAt( i ) ) {
+			// Iterate through the name strings looking for any difference in characters
+			var i = 0;
+			while ( i < nameA.length && i < nameB.length ) {
 
-				return -1;
+				if ( nameA.charCodeAt( i ) < nameB.charCodeAt( i ) ) {
+
+					return -1;
+				}
+				if ( nameA.charCodeAt( i ) > nameB.charCodeAt( i ) ) {
+
+					return 1;
+				}
+				i++;
 			}
-			if ( nameA.charCodeAt( i ) > nameB.charCodeAt( i ) ) {
 
-				return 1;
+			return 0;
+		} );
+
+		// Register the endpoint with the router
+		switch ( endpoint.method ) {
+
+			case "GET": {
+	
+				this.router.get( endpoint.route, cb );
+				break;
+			}
+	
+			case "POST": {
+	
+				this.router.post( endpoint.route, cb );
+				break;
+			}
+	
+			case "PUT": {
+	
+				this.router.put( endpoint.route, cb );
+				break;
+			}
+	
+			case "DELETE": {
+	
+				this.router.delete( endpoint.route, cb );
+				break;
 			}
 		}
-
-		return 0;
-	} );
-
-	// Register the endpoint with the router
-	switch ( endpoint.method ) {
-
-		case "GET": {
-
-			this.router.get( endpoint.route, cb );
-			break;
-		}
-
-		case "POST": {
-
-			this.router.post( endpoint.route, cb );
-			break;
-		}
-
-		case "PUT": {
-
-			this.router.put( endpoint.route, cb );
-			break;
-		}
-
-		case "DELETE": {
-
-			this.router.delete( endpoint.route, cb );
-			break;
-		}
+		
+		// Debug
+		// logger.log( JSON.stringify( this.endpoints, ["name"], 4 ), handlerTag );
+	} catch ( exception ) {
+		
+		logger.log( exception, handlerTag );
 	}
 };
 

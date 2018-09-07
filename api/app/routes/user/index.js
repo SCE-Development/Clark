@@ -59,6 +59,41 @@ var apiInfo = {
 
 // BEGIN User Routes
 
+// @endpoint		(GET) /ping
+// @description 	This endpoint is used to ping the Ability Module API router
+// @parameters		(object) request		The web request object provided by express.js. The
+// 											request body doesn't require any arguments.
+// 					(object) response 		The web response object provided by express.js
+// @returns		On success: a code 200 and a ping message
+// 				On failure: a code 499 and an error format object
+apiInfo.args.ping = [			// API Arguments
+];
+apiInfo.rval.ping = [			// API Return Values
+	{
+		"condition": "On success",
+		"desc": "a code 200 and a ping message"
+	},
+	{
+		"condition": "On failure",
+		"desc": "a code 499 and an error format object"
+	}
+];
+api.register ( "Ping", "GET", "/ping", "This endpoint is used to ping the Ability Module \
+API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response ) {
+
+	var handlerTag = { "src": "(get) /api/ability/ping" };
+	logger.log( `Sending ping to client @ ip ${request.ip}`, handlerTag );
+
+	// Send PING packet
+	var pingPacket = {
+		"success": true,
+		"data": "ping!"
+	};
+
+	response.set( "Content-Type", "application/json" );
+	response.send( pingPacket ).status( 200 ).end();
+} );
+
 // @endpoint		(POST) /login
 // @description		This endpoint is used to request a login of the specified user with the given
 //					credentials and options from the Administrator's portal. With this info, this
@@ -77,6 +112,7 @@ var apiInfo = {
 //																(Will be) Used by this server to
 //																determine whether to use cookies
 //																or the SessionStorage mechanism
+//					(object) response		The web resposne object provided by express.js
 // @returns			On success, and valid credentials:
 //						a code 200, and a sessionID to validate all server operations during the
 //						session.
@@ -368,6 +404,134 @@ api.register(
 		} );
 	}
 );
+
+// @endpoint		(POST) /logout
+// @description		This endpoint is used to requuest a logout of the specified session for the
+//					given user
+// @parameters		(object) request		The web request object provided by express.js. The
+//											request body is expected to contain the following
+//											members:
+//							(string) sessionID		The session token of the session to log off
+//							(string) userName		The username of the user to log off
+//							(boolean) sessionStorageSuppport
+//													A boolean indicating the client browser's
+//													support of the sessionStorage technology
+//					(object) response		The web response object provided by express.js
+// @returns			On success:	a code 200 and a success message indicating the user logged out
+//								successfully
+//					On failure: a code 499 and an error format object detailing the error
+apiInfo.args.logout = [
+	{
+		"name": "request.sessionID",
+		"type": "string",
+		"desc": "The session token string of the session to log off"
+	},
+	{
+		"name": "request.userName",
+		"type": "string",
+		"desc": "The username of the user to log off"
+	},
+	{
+		"name": "request.sessionStorageSupport",
+		"type": "boolean",
+		"desc": "A boolean indicating the client browser's support of sessionStorage technology"
+	}
+];
+apiInfo.rval.logout = [
+	{
+		"condition": "On success",
+		"desc": "a code 200, and a success message indicating the user logged out successfully"
+	},
+	{
+		"condition": "On failure",
+		"desc": "a code 499, and an error format object detailing the error"
+	}
+];
+// api.register( "abcd", "POST", "/abcd", "Test", [], [], function ( request, response ) {
+// 	response.set( "Content-Type", "application/json" );
+
+// 	response.status( 500 ).send( {
+// 		"msg": "test",
+// 		"status": true
+// 	} ).end();
+// } );
+try{
+api.register(
+	"Logout",
+	"POST",
+	"/logout",
+	"This endpoint is used to request a logout of the specified session for the specified user",
+	apiInfo.args.logout,
+	apiInfo.rval.logout,
+	function ( request, response ) {
+		var handlerTag = { "src": "adminLogoutHandler" };
+		var validBody =	(typeof request.body.userName === "string") &&
+						(typeof request.body.sessionID === "string") &&
+						(typeof request.body.sessionStorageSupport !== "undefined");
+		
+		// Initialize the response content type to json
+		response.set("Content-Type", "application/json");
+
+		// Check for valid request body
+		if ( !validBody ) {
+
+			// If invalid body, send the code 499 and error format object JSON
+			response.status( 499 ).send(
+				ef.asCommonStr( ef.struct.invalidBody )
+			).end();
+		} else {
+
+			// Acquire the sessionID and userName
+			var uname = (typeof request.body.userName !== "string") ? null : request.body.userName;
+			var sid = (typeof request.body.sessionID !== "string") ? null : request.body.sessionID;
+
+			// Define a callback to evaluate the results of the logout attempt
+			var queryCallback = function (reply, error) {
+				
+				var resultJSON = reply;	// is expected to be JSON
+
+				if (error) {
+					
+					// If something unexpected happened, report any unexpected errors
+					logger.log( `A request error occurred: ${ error }`, handlerTag );
+					response.send(
+						er.asCommonStr( er.struct.coreErr, error )
+					).status( 500 ).end();
+				} else {
+					
+					// Otherwise, tell the client the result of the user logout attempt
+					if (resultJSON.n > 1) {
+						
+						// If more than one record was deleted, this is fatal! Ite means
+						// someone else's session was removed, and their username/sessionID
+						// pair was NOT unique. Reply with an error
+						logger.log( `ERROR: ${ resultJSON.n } session data was deleted!`, handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.coreErr )
+						).end();
+					} else {
+
+						// If all's good, the client no longer has valid session data and can no
+						// longer interact with the Core API (except for re-logging in). You can
+						// now signal the client to redirect to the core portal
+						logger.log( `Logging out ${ uname } (${ sid })`, handlerTag );
+						response.set( "Content-Type", "text/html" );
+						response.status( 200 ).send( {
+							"success": true,
+							"msg": "The user has been logged out"
+						} ).end();
+					}
+				}
+			};
+
+			// Remove session data from db to effectively log user out
+			au.clearSession( credentials.mdbi.accessToken, sid, queryCallback );
+		}
+	}
+);
+} catch ( exception ) {
+	logger.log( exception, handlerTag );
+}
 
 // END User Routes
 
