@@ -4,7 +4,8 @@
 // 	Date Created: 	[creationdate]
 // 	Last Modified: 	[moddate]
 // 	Details:
-// 					[Details]
+// 					This file contains routing logic to service all routes requested under the the
+//                  "[endpoint]" endpoint (a.k.a. the [moduleName] Module)
 // 	Dependencies:
 // 					[Dependencies]
 

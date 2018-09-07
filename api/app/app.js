@@ -16,7 +16,8 @@ var express = require( "express" );
 var settings = require( "../../util/settings" );	// import server system settings
 var logger = require( `${settings.util}/logger` );	// import event log system
 var bodyParser = require( "body-parser" );			// import POST request data parser
-var abilityRoutes = require( "./routes/ability" );	// import SCE Core-v4 API routes
+var abilityRoutes = require( "./routes/ability" );	// import SCE Core-v4 Ability API routes
+var userRoutes = require( "./routes/user" );		// import SCE Core-v4 User API routes
 // TODO: Add new routes here
 
 // Globals
@@ -39,6 +40,10 @@ app.use(bodyParser.urlencoded({		// support URL-encoded request bodies
 // @api				/ability
 // @descrip	ion		This API routes to the Ability module's endpoints
 app.use( "/ability", abilityRoutes );		// serves the MongoDB Test Interface page
+
+// @api				/user
+// @description		This API routes to the User module's endpoints
+app.use( "/user", userRoutes );
 
 // @api				/clevel
 // @description		This API routes to the Clearance Level module's endpoints

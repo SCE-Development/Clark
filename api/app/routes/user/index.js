@@ -1,0 +1,379 @@
+//	PROJECT: 		Core-v4
+// 	Name: 			Rolando Javier
+// 	File: 			api/routes/user/index.js
+// 	Date Created: 	September 5, 2018
+// 	Last Modified: 	September 5, 2018
+// 	Details:
+// 					This file contains routing logic to service all routes requested under the the
+//					"/api/user" endpoint (a.k.a. the User Module)
+// 	Dependencies:
+// 					ExpressJS 4.x
+// 					body-parser	(NPM middleware req'd by ExpressJS 4.x to acquire POST data
+//								parameters: "npm install --save body-parser")
+
+"use strict";
+
+// Includes (include as many as you need; the bare essentials are included here)
+var express = require("express");
+var https = require("https");
+var fs = require("fs");
+var router = express.Router();
+var settings = require("../../../../util/settings");	// import server system settings
+var al = require(`${settings.util}/api_legend.js`);		// import API Documentation Module
+var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
+var ef = require(`${settings.util}/error_formats`);		// import error formatter
+var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
+var ssl = require(settings.security);					// import https ssl credentials
+var credentials = require(settings.credentials);		// import server system credentials
+var www = require(`${settings.util}/www`);			// import custom https request wrappers
+var logger = require(`${settings.util}/logger`);		// import event log system
+
+// Required Endpoint Options
+var options = {
+	root: settings.root,	// Server root directory (i.e. where server.js is located)
+	dotfiles: "deny",
+	headers: {
+		"x-timestamp": Date.now(),
+		"x-sent": true
+	}
+};
+var ssl_user_agent = new https.Agent({
+	"port": settings.port,
+	"ca": fs.readFileSync(ssl.cert)
+});
+
+// Create an API Documentation Object
+var api = al.createLegend(
+	"Example API Name",
+	"Example API Desc",
+	router					// reference to the router object
+);
+var apiInfo = {
+	"args": {},
+	"rval": {}
+};
+
+
+
+
+
+// BEGIN User Routes
+
+// @endpoint		(POST) /login
+// @description		This endpoint is used to request a login of the specified user with the given
+//					credentials and options from the Administrator's portal. With this info, this
+//					endpoint is able to determine if the user has the correct user-password combo.
+//					However, unlike this API's predecessor, this function won't figure out whether
+//					this particular user has access to certain functions (i.e. whether they can
+//					access the administrator's portal).
+// @parameters		(object) request		The web request object provided by express.js. The
+//											request body is expected to be a JSON object with
+//											the following members:
+//							(string) username					The user's username
+//							(string) pwd						The user's password
+//							(boolean) sessionStorageSupport		A boolean signifying whether or
+//																not the client browser supports
+//																the modern SessionStorage API.
+//																(Will be) Used by this server to
+//																determine whether to use cookies
+//																or the SessionStorage mechanism
+// @returns			On success, and valid credentials:
+//						a code 200, and a sessionID to validate all server operations during the
+//						session.
+//					On success, and invalid credentials:
+//						a code 200, and an error format object detailing the invalid credentials
+//					On credential validation error:
+//						a code 499, and an error format object detailing the validation error
+//					On any other failure:
+//						a code 500, and an error format object detailing the error
+apiInfo.args.login = [
+	{
+		"name": "request.username",
+		"type": "string",
+		"desc": "The user's username"
+	},
+	{
+		"name": "request.pwd",
+		"type": "string",
+		"desc": "The user's password"
+	},
+	{
+		"name": "request.sessionStorageSupport",
+		"type": "boolean",
+		"desc": "A boolean signifying whether or not the client browser supports the modern " +
+				"SessionStorage API. (Will be) Used by this server to determine whether to use " +
+				"cookies or the SessionStorage mechanism."
+	}
+];
+apiInfo.rval.login = [
+	{
+		"condition": "On success, and valid credentials",
+		"desc": "A code 200, and a sessionID to validate all server operations during the session"
+	},
+	{
+		"condition": "On success, and invalid credentials",
+		"desc": "A code 200, and an error format object detailing the invalid credentials"
+	},
+	{
+		"condition": "On credential validation error",
+		"desc": "A code 499, and an error format object detailing the validation error"
+	},
+	{
+		"condition": "On any other failure",
+		"desc": "A code 500, and an error format object detailing the error"
+	}
+];
+api.register(
+	"Login",
+	"POST",							// http request type string
+	"/login",
+	"This endpoint is used to request a login of the specified user with the given " +
+	"credentials and options from the Administrator's portal. With this info, this " +
+	"endpoint is able to determine if the user has the correct user-password combo. " +
+	"However, unlike this API's predecessor, this function won't figure out whether " +
+	"this particular user has access to certain functions (i.e. whether they can " +
+	"access the administrator's portal).",
+	apiInfo.args.login,			// the API's request arguments (i.e. body/querystring)
+	apiInfo.rval.login,			// the API's response/return values
+	function ( request, response ) {
+
+		// TODO: make use of "sessionStorageSupported" to switch between SessionStorage API and
+		// old-fashioned cookies.
+		var handlerTag = { "src": "adminLoginHandler" };
+		var timestamp = ( new Date( Date.now() ) ).toISOString();
+		var sessionStorageSupported = request.body.sessionStorageSupport;
+		var match = {
+			"list": []
+		};
+		var sessionID = "";
+
+		// Set response content type
+		logger.log( `Submitting admin credentials from client @ ip ${request.ip}`, handlerTag );
+		response.set( "Content-Type", "application/json" );
+
+		// Use this callback function after successfully generating session data. This function
+		// will respond to the client with a unique session token, the username of the current
+		// user who's logged in (for verification puposes on the front-end), and a destination
+		// URL to redirect to after logging in.
+		var grantCoreAccess = function ( match, resolve, reject ) {
+			console.log(`GENERATED: ${JSON.stringify(match.list)}`);
+
+			// Create POST request body to update the newly-created session data with ther user's
+			// last login date
+			var memberUpdateBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"memberID": {
+						"$eq": match.list[0].memberID
+					}
+				},
+				"update": {
+					"$set": {
+						"lastLogin": timestamp
+						// TODO: add logic here to also update the user's last activity (for the
+						// server to automatically monitor and refresh your session timeout
+						// counter)
+					}
+				}
+			};
+			var memberUpdateOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/update/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(memberUpdateBody))
+				}
+			};
+	
+			// Update member's last-login date here
+			www.https.post(memberUpdateOptions, memberUpdateBody, function (reply, error) {
+				if (error) {
+					var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
+	
+					logger.log(`Member lastLogin update failed: ${error}`, handlerTag);
+					reject();
+				} else {
+					var redir = `https://${request.hostname}:${settings.port}/core/dashboard`;
+	
+					// Give client their session id and client redirection headers here
+					console.log(`UPDATED: ${JSON.stringify(match.list)}`);
+					console.log(`Redirecting: ${redir}`);
+					var sessionResponse = {
+						"sessionID": sessionID,
+						"username": match.list[0].userName,
+						"destination": redir
+					};
+	
+					// Cross browser support
+					if (!sessionStorageSupported) {
+						response.set("Set-Cookie", `sessionID=${sessionID}`);
+					}
+					response.send(sessionResponse).status(200).end();
+					resolve();
+				}
+			});
+		};
+
+		// Use this callback after a successful identity verification to generate a new
+		// session for the user
+		var generageSessionData = function (match, resolve, reject) {
+			
+			// Generate session id and session data here
+			console.log(`CLEARED: ${JSON.stringify(match.list)}`);
+			sessionID = crypt.hashSessionID(match.list[0].userName);
+			var sessionDataBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "SessionData",
+				"data": {
+					"sessionID": sessionID,
+					"memberID": match.list[0].memberID,
+					"loginTime": timestamp,
+					"lastActivity": timestamp,
+					"maxIdleTime": settings.sessionIdleTime
+				}
+			};
+			var sessionRequestOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/write",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(sessionDataBody))
+				}
+			};
+	
+			// Submit session id to mongodb here
+			www.https.post(sessionRequestOptions, sessionDataBody, function (reply, error) {
+				if (error) {	// report errors
+					var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
+	
+					logger.log(`SessionData insert failed: ${error}` , handlerTag);
+					response.send(errStr).status(500).end();
+					reject();
+				} else {
+					grantCoreAccess(match, resolve, reject);
+				}
+			});
+		};
+
+		// Use this callback function to determine if a user match was generated
+		var evaluateDbResults = function (match, resolve, reject) {
+
+			// Evaluate the database search results
+			// logger.log(`Probe2: ${reply}`, handlerTag);	// debug
+			if (match.list.length === 0) {
+
+				// If no match was found, that's an error
+				var errStr = ef.asCommonStr(ef.struct.adminInvalid);
+				
+				logger.log( `Incorrect Credentials: Access Denied`, handlerTag );
+				response.send( errStr ).status( 499 ).end();
+
+				// Reject the promise to prevent further computation
+				reject();
+			} else if (match.list.length > 1) {
+
+				// If multiple accounts were in the list, we can't tell who this user
+				// is, and that is a fatal authentication error. Treat it as such...
+				var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
+	
+				logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
+				response.send(errStr).status(499).end();
+
+				// Reject the promise to prevent further computation
+				reject();
+			} else {
+				
+				// Otherwise, if credentials returned one match, we know the username and
+				// password combination were correct, AND we have only one result (i.e.
+				// we can uniquely identify who this client is). Proceed to create a user
+				// session for this user.
+				generageSessionData(match, resolve, reject);
+			}
+		};
+
+		// Create a promise to submit credentials and search for a match in the database
+		var submitCredentials = new Promise( function ( resolve, reject ) {
+
+			// Define request parameters
+			var requestBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "CoreAccess",
+				"search": {
+					"userName": request.body.user,
+					"passWord": crypt.hashPwd(request.body.user, request.body.pwd)
+				}
+			};
+			var queryOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+				}
+			};
+	
+			// Submit credentials to mdbi/search/documents and find all matches
+			www.https.post(queryOptions, requestBody, function (reply, error) {
+
+				// Setup for the match comparison
+				match.list = reply;	// is expected to be an array
+	
+				// logger.log(`${match.list}`, handlerTag);
+				if (error) {
+
+					// Report any error
+					var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
+	
+					logger.log(`A request error occurred: ${error}`, handlerTag);
+					response.send(errStr).status(500).end();
+					reject();
+				} else if (!Array.isArray(match.list)) {
+
+					// If we didn't get an array back, let's call that an error and fail
+					logger.log(
+						`Invalid value returned from mdbi/search/documents query: ${match.list}`,
+						handlerTag
+					);
+
+					// Send the response back
+					response.send(
+						ef.asCommonStr(
+							ef.struct.unexpectedValue,
+							match.list
+						)
+					).status( 500 ).end();
+
+					// Reject the promise to end all further computation
+					reject();
+				} else {
+
+					// If no errors, proceed to evaluate the matched user list
+					evaluateDbResults(match, resolve, reject);
+				}
+			} );
+		} );
+
+		// Submit credentials first
+		submitCredentials.then( function (value) {
+			// do nothing?
+		} ).catch( function ( e ) {
+			console.log(e);
+		} );
+	}
+);
+
+// END User Routes
+
+
+
+
+
+module.exports = router;
+// END api/routes/user/index.js
