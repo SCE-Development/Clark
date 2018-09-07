@@ -18,6 +18,7 @@ var https = require("https");
 var router = express.Router();
 var settings = require("../../../../util/settings");	// import server system settings
 var al = require(`${settings.util}/api_legend.js`);		// import API Documentation Module
+var au = require(`${settings.util}/api_util.js`);		// import API Utility Functions
 // var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
 var ef = require(`${settings.util}/error_formats`);		// import error formatter
 // var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers

@@ -20,6 +20,7 @@ var fs = require("fs");
 var router = express.Router();
 var settings = require("../../../../util/settings");	// import server system settings
 var al = require(`${settings.util}/api_legend.js`);		// import API Documentation Module
+var au = require(`${settings.util}/api_util.js`);		// import API Utility Functions
 var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
 var ef = require(`${settings.util}/error_formats`);		// import error formatter
 var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
@@ -581,6 +582,246 @@ api.register(
 			// Remove session data from db to effectively log user out
 			au.clearSession( credentials.mdbi.accessToken, sid, queryCallback );
 		}
+	}
+);
+
+// @endpoint		(GET) /search
+// @description		This endpoint serves as a general way to search for one or more users given
+//					some search criteria
+// @parameters		(object) request		The web request object provided by express.js. The
+//											request body is expected to contain the following
+//											members:
+//							(string) sessionID		The client's session token
+//							(string) searchType		The type of search to execute. Currently
+//													supported search types include "username",
+//													"first name", "last name", "join date",
+//													"email", and "major"
+//							(string) searchTerm		The term to search for
+//							~(object) options		A JSON object containing options to customize
+//													the result set after it is returned from the
+//													search. If given, it may contain any or all of
+//													the following:
+//									(~number) resultMax		The maximum number of results to
+//															return. The default is 100 results.
+//									(~boolean) regexMode	A boolean specifying whether or not to
+//															interpret the searchTerm as a regular
+//															expression.
+//									(~number) pageNumber	The page number of the result page
+//															to return
+//					(object) response		The web response object provided by express.js
+// @returns			On success:
+//						a code 200, and a list (array) of returned search results, or null if no
+//						results were found
+//					On invalid or expired session token:
+//						a code 499, and an error format object
+//					On failure:
+//						a code 500 and an error format object
+apiInfo.args.search = [
+	{
+		"name": "request.sessionID",
+		"type": "string",
+		"desc": "The client's session token"
+	},
+	{
+		"name": "request.searchType",
+		"type": "string",
+		"desc":	"The type of search to execute. Currently supported search types include " +
+				'"username", "first name", "last name", "join date", "email", and "major"'
+	},
+	{
+		"name": "request.searchTerm",
+		"type": "string",
+		"desc": "The term to search for"
+	},
+	{
+		"name": "request.options",
+		"type": "~object",
+		"desc":	"An optional JSON object to customize the result set after it is returned from " +
+				"the search. If given, it may contain any or all of the following parameters:"
+	},
+	{
+		"name": "request.options.resultMax",
+		"type": "~number",
+		"desc": "The maximum number of results to return. The default is 100 results"
+	},
+	{
+		"name": "request.option.regexMode",
+		"type": "~boolean",
+		"desc":	"A boolean specifying whether or not to interpret the searchTerm as a regular " +
+				"expression"
+	},
+	{
+		"name": "request.option.pageNumber",
+		"type": "~number",
+		"desc":	"The page number of the result page to return"
+	}
+];
+apiInfo.rval.search = [
+	{
+		"condition": "On success",
+		"desc":	"a code 200, and a list (array) of returned search results, or null if no " +
+				"results were found"
+	},
+	{
+		"condition": "On invalid or expired session token",
+		"desc": "a code 499, and an error format object"
+	},
+	{
+		"condition": "On failure",
+		"desc": "a code 500 and an error format object"
+	}
+];
+api.register(
+	"Search",
+	"POST",
+	"/search",
+	"This endpoint serves as a general way to search for one or more users given some search " +
+	"criteria",
+	apiInfo.args.search,
+	apiInfo.rval.search,
+	function (request, response) {
+		var handlerTag = {"src": "dashboardMemberSearchHandler"};
+		var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+		var isRegex = false;
+		var resultsPerPage = null;
+		var pageNum = null;
+		// logger.log(`This is the requested max results per page: ${resultsPerPage}`, handlerTag);	// debug
+	
+		// Acquire options, if any
+		if (typeof request.body.options !== "undefined") {
+			if (typeof request.body.options.resultMax === "number") {
+				resultsPerPage = request.body.options.resultMax;
+			}
+			if (typeof request.body.options.pageNumber === "number") {
+				pageNum = request.body.options.pageNumber;
+			}
+			if (typeof request.body.options.regexMode === "boolean") {
+				isRegex = request.body.options.regexMode;
+			}
+		}
+	
+		var mdbiSearchCallback = function (reply, error) {	// expects reply to be an array of the found matches
+			if (error) {
+				logger.log(`MDBI search failed: ${error}`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+			} else if (reply === null) {
+				logger.log(`Search returned null`, handlerTag);
+				response.send(null).status(200).end();
+			} else {
+				// Send the found results to the client
+				logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+				if (reply.length === 0) {
+					response.send(null).status(200).end();
+				} else {
+					response.send(reply).status(200).end();
+				}
+			}
+		};
+	
+		var verificationCallback = function (valid, error) {
+			response.set("Content-Type", "application/json");
+			if (error) {
+				logger.log(`Error: ${error}`, handlerTag);
+				response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+			} else if (!valid) {
+				logger.log(`Error: Invalid session token`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+			} else {
+				var validFormat = true;
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "Member",
+					"search": {}
+				};
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+	
+				// Determine the type of search to make
+				logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm} (${(pageNum === null) ? "unpaginated" : `page ${pageNum}`})...`, handlerTag);
+				if (request.body.searchTerm === "" || typeof request.body.searchTerm === "undefined") {
+					// If search term is null, search for everything
+					searchPostBody.search = {};
+				} else {
+					// Determine how to format the search criteria, based on the search type
+					var stype = "invalid";
+					switch (request.body.searchType) {
+						case "username": {
+							stype = "userName";
+							break;
+						}
+						case "first name": {
+							stype = "firstName";
+							break;
+						}
+						case "last name": {
+							stype = "lastName";
+							break;
+						}
+						case "join date": {
+							stype = "joinDate";
+							break;
+						}
+						case "email": {
+							stype = "email";
+							break;
+						}
+						case "major": {
+							stype = "major";
+							break;
+						}
+						default: {
+							logger.log(`Invalid search type "${request.body.searchType}"!`, handlerTag);
+							validFormat = false;
+							break;
+						}
+					}
+	
+					// Place search term in the search post body, based on any relevant search modifiers provided
+					var objectToPlace = request.body.searchTerm;
+					if (isRegex) {
+						objectToPlace = {
+							"$regex": request.body.searchTerm
+						};
+					}
+					searchPostBody.search[stype] = objectToPlace;
+				}
+	
+				// Configure search with any provided options
+				if (resultsPerPage !== null) {
+					// Add results per page as a custom option
+					searchPostBody.options = {
+						"limit": resultsPerPage
+					};
+	
+					// Add page number as a custom option
+					if (pageNum !== null) {
+						searchPostBody.options.page = pageNum;
+					}
+				}
+	
+				// Recalculate Content-Length header; the above options caused the body length to change!
+				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
+	
+				// Execute MDBI search here...
+				if (!validFormat) {
+					logger.log(`A formatting error occurred!`, handlerTag);
+					response.status(499).send(ef.asCommonStr(ef.struct.invalidBody)).end();
+				} else {
+					// Search with MDBI here...
+					www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+				}
+			}
+		};
+	
+		au.verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 	}
 );
 
