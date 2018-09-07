@@ -42,10 +42,16 @@ var ssl_user_agent = new https.Agent({
 	"ca": fs.readFileSync(ssl.cert)
 });
 
+// Link api documentation path
+// Documentation Template Styling
+router.use( "/docTemplate.css", express.static(
+	`${settings.util}/class/ApiLegend/template/docTemplate.css`
+) );
+
 // Create an API Documentation Object
 var api = al.createLegend(
-	"Example API Name",
-	"Example API Desc",
+	"User",
+	"This API controls all user control modifications",
 	router					// reference to the router object
 );
 var apiInfo = {
@@ -60,7 +66,7 @@ var apiInfo = {
 // BEGIN User Routes
 
 // @endpoint		(GET) /ping
-// @description 	This endpoint is used to ping the Ability Module API router
+// @description 	This endpoint is used to ping the User Module API router
 // @parameters		(object) request		The web request object provided by express.js. The
 // 											request body doesn't require any arguments.
 // 					(object) response 		The web response object provided by express.js
@@ -78,7 +84,7 @@ apiInfo.rval.ping = [			// API Return Values
 		"desc": "a code 499 and an error format object"
 	}
 ];
-api.register ( "Ping", "GET", "/ping", "This endpoint is used to ping the Ability Module \
+api.register ( "Ping", "GET", "/ping", "This endpoint is used to ping the User Module \
 API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response ) {
 
 	var handlerTag = { "src": "(get) /api/ability/ping" };
@@ -92,6 +98,63 @@ API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response 
 
 	response.set( "Content-Type", "application/json" );
 	response.send( pingPacket ).status( 200 ).end();
+} );
+
+// @endpoint		(GET) /help
+// @description		This endpoint sends the client documentation on this API module (User)
+// @parameters		(object) request		The web request objec provided by express.js. The
+//											request body is expected to be a JSON object with the
+//											following members:
+//						~(boolean) pretty		A boolean to request a pretty HTML page of the API
+//												Module documentation
+//					(object) response		The web response object provided by express.js
+// @returns			On success: a code 200, and the documentation in the specified format
+//					On failure: a code 500, and an error format object
+apiInfo.args.help = [
+	{	
+		"name": "request.pretty",
+		"type": "~boolean",
+		"desc": "An optional boolean to request a pretty HTML page of the User API doc"
+	}
+];
+apiInfo.rval.help = [
+	{
+		"condition": "On success",
+		"desc": "a code 200, and the documentation in the specified format"
+	},
+	{
+		"condition": "On failure",
+		"desc": "a code 499, and an error format object"
+	}
+];
+api.register ( "Help", "GET", "/help", "This endpoint sends the client documentation on \
+API module (User)", apiInfo.args.help, apiInfo.rval.help, function ( request, response ) {
+
+	var handlerTag = { "src": "(get) /api/user/help"};
+	var pretty = ( typeof request.query.pretty !== "undefined" ? true : false );
+
+	try {
+
+		// Determine how to represent the API doc
+		if ( pretty ) {
+
+			logger.log( `Sending pretty API doc to client @ ip ${request.ip}`, handlerTag );
+			response.set( "Content-Type", "text/html" );
+		} else {
+
+			logger.log( `Sending API doc to client @ ip ${request.ip}`, handlerTag );
+			response.set( "Content-Type", "application/json");
+		}
+
+		// Send the API doc
+		response.send( api.getDoc( pretty ) ).status( 200 ).end();
+	} catch ( exception ) {
+		
+		response.set( "Content-Type", "application/json" );
+		response.status( 500 ).send(
+			ef.asCommonStr( ef.struct.coreErr, { "exception": exception } )
+		).end();
+	}
 } );
 
 // @endpoint		(POST) /login
@@ -175,7 +238,7 @@ api.register(
 
 		// TODO: make use of "sessionStorageSupported" to switch between SessionStorage API and
 		// old-fashioned cookies.
-		var handlerTag = { "src": "adminLoginHandler" };
+		var handlerTag = { "src": "(post) /api/user/login" };
 		var timestamp = ( new Date( Date.now() ) ).toISOString();
 		var sessionStorageSupported = request.body.sessionStorageSupport;
 		var match = {
@@ -447,15 +510,6 @@ apiInfo.rval.logout = [
 		"desc": "a code 499, and an error format object detailing the error"
 	}
 ];
-// api.register( "abcd", "POST", "/abcd", "Test", [], [], function ( request, response ) {
-// 	response.set( "Content-Type", "application/json" );
-
-// 	response.status( 500 ).send( {
-// 		"msg": "test",
-// 		"status": true
-// 	} ).end();
-// } );
-try{
 api.register(
 	"Logout",
 	"POST",
@@ -529,9 +583,6 @@ api.register(
 		}
 	}
 );
-} catch ( exception ) {
-	logger.log( exception, handlerTag );
-}
 
 // END User Routes
 

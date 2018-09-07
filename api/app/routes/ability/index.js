@@ -153,7 +153,7 @@ API module (Ability)", apiInfo.args.help, apiInfo.rval.help, function ( request,
 		
 		response.set( "Content-Type", "application/json" );
 		response.status( 500 ).send(
-			ef.asCommonStr( ef.struct.coreErr )
+			ef.asCommonStr( ef.struct.coreErr, { "exception": exception } )
 		).end();
 	}
 } );
