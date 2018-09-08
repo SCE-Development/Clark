@@ -865,6 +865,9 @@ api.register(
 	
 				// Add a lookup pipepline stage to append member data to the result set
 				searchPostBody.pipeline.push(
+
+					// Add a pipeline query to merge membership data to member data using a left
+					// outer join (i.e. $lookup)
 					{
 						"$lookup": {
 							"from": "MembershipData",
@@ -873,6 +876,28 @@ api.register(
 							"as": "memberData"
 						}
 					},
+
+					// Add pipeline queries to append the user's associated doorcode
+					{
+						"$lookup": {
+							"from": "DoorCode",
+							"localField": "memberData.doorCodeID",
+							"foreignField": "dcID",
+							"as": "doorCodeData"
+						}
+					},
+
+					// Add pipeline queries to append the user's ability data
+					{
+						"$lookup": {
+							"from": "ClearanceLevel",
+							"localField": "memberData.level",
+							"foreignField": "cID",
+							"as": "clevelData"
+						}
+					},
+
+					// Flatten membership data
 					{
 						"$replaceRoot": {
 							"newRoot": {
@@ -891,12 +916,17 @@ api.register(
 								"startTerm": "$memberData.startTerm",
 								"endTerm": "$memberData.endTerm",
 								"doorCodeID": "$memberData.doorCodeID",
+								"doorcode": "$doorCodeData.code",
 								"gradDate": "$memberData.gradDate",
 								"level": "$memberData.level",
+								"levelName": "$clevelData.levelName",
+								"abilities": "$clevelData.abilities",
 								"membershipStatus": "$memberData.membershipStatus"
 							}
 						}
 					},
+
+					// Restore membership data to top-level parameters instead of array members
 					{
 						"$unwind": {
 							"path": "$startTerm"
@@ -924,7 +954,22 @@ api.register(
 					},
 					{
 						"$unwind": {
+							"path": "$levelName"
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$abilities"
+						}
+					},
+					{
+						"$unwind": {
 							"path": "$membershipStatus"
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$doorcode"
 						}
 					}
 				);
@@ -945,11 +990,11 @@ api.register(
 						"$limit": resultsPerPage
 					} );
 				}
-	
+
 				// Recalculate Content-Length header; the above options caused the body length
 				// to change!
 				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
-	
+
 				// Execute MDBI search here...
 				if (!validFormat) {
 
@@ -962,7 +1007,7 @@ api.register(
 				}
 			}
 		};
-	
+
 		au.verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 	}
 );

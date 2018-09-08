@@ -15,9 +15,8 @@ angular.module("profiler").component("profiler", {
 		var dbgMode = true;	// changes relevant parameters when doing debugging
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
 		var urls = {
-			// "search": `https://${hostname}/core/dashboard/search/members`,
 			"search": `https://${hostname}/api/user/search`,
-			"searchMembership": `https://${hostname}/core/dashboard/search/memberdata`,
+			"searchMembership": `https://${hostname}/api/user/search`,
 			"searchDoorCodes": `https://${hostname}/core/dashboard/search/dc`,
 			"editDoorCodeInAdd": `https://${hostname}/core/dashboard/edit/dc`,
 			"editMemStatus": `https://${hostname}/core/dashboard/edit/membershipstatus`,
