@@ -519,7 +519,7 @@ api.register(
 	apiInfo.args.logout,
 	apiInfo.rval.logout,
 	function ( request, response ) {
-		var handlerTag = { "src": "adminLogoutHandler" };
+		var handlerTag = { "src": "(post) /api/user/logout" };
 		var validBody =	(typeof request.body.userName === "string") &&
 						(typeof request.body.sessionID === "string") &&
 						(typeof request.body.sessionStorageSupport !== "undefined");
@@ -587,7 +587,9 @@ api.register(
 
 // @endpoint		(GET) /search
 // @description		This endpoint serves as a general way to search for one or more users given
-//					some search criteria
+//					some search criteria. It combines legacy APIs '/dashboard/search/members'
+//					and '/dashboard/search/memberdata' into one API that acquires all info
+//					about a given user.
 // @parameters		(object) request		The web request object provided by express.js. The
 //											request body is expected to contain the following
 //											members:
@@ -595,7 +597,7 @@ api.register(
 //							(string) searchType		The type of search to execute. Currently
 //													supported search types include "username",
 //													"first name", "last name", "join date",
-//													"email", and "major"
+//													"email", "id", and "major"
 //							(string) searchTerm		The term to search for
 //							~(object) options		A JSON object containing options to customize
 //													the result set after it is returned from the
@@ -626,7 +628,7 @@ apiInfo.args.search = [
 		"name": "request.searchType",
 		"type": "string",
 		"desc":	"The type of search to execute. Currently supported search types include " +
-				'"username", "first name", "last name", "join date", "email", and "major"'
+				'"username", "first name", "last name", "join date", "email", "id" and "major"'
 	},
 	{
 		"name": "request.searchTerm",
@@ -676,11 +678,12 @@ api.register(
 	"POST",
 	"/search",
 	"This endpoint serves as a general way to search for one or more users given some search " +
-	"criteria",
+	"criteria. It combines legacy APIs '/dashboard/search/members' and '/dashboard/search/" +
+	"memberdata' into on API that acquires all info about a given user.",
 	apiInfo.args.search,
 	apiInfo.rval.search,
 	function (request, response) {
-		var handlerTag = {"src": "dashboardMemberSearchHandler"};
+		var handlerTag = {"src": "(post) /api/user/search"};
 		var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
 		var isRegex = false;
 		var resultsPerPage = null;
@@ -689,25 +692,34 @@ api.register(
 	
 		// Acquire options, if any
 		if (typeof request.body.options !== "undefined") {
+			
 			if (typeof request.body.options.resultMax === "number") {
+				
 				resultsPerPage = request.body.options.resultMax;
 			}
+			
 			if (typeof request.body.options.pageNumber === "number") {
+				
 				pageNum = request.body.options.pageNumber;
 			}
+			
 			if (typeof request.body.options.regexMode === "boolean") {
+				
 				isRegex = request.body.options.regexMode;
 			}
 		}
 	
 		var mdbiSearchCallback = function (reply, error) {	// expects reply to be an array of the found matches
 			if (error) {
+				
 				logger.log(`MDBI search failed: ${error}`, handlerTag);
 				response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
 			} else if (reply === null) {
+				
 				logger.log(`Search returned null`, handlerTag);
 				response.send(null).status(200).end();
 			} else {
+				
 				// Send the found results to the client
 				logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
 				if (reply.length === 0) {
@@ -719,23 +731,29 @@ api.register(
 		};
 	
 		var verificationCallback = function (valid, error) {
+			
 			response.set("Content-Type", "application/json");
+			
 			if (error) {
+				
 				logger.log(`Error: ${error}`, handlerTag);
 				response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
 			} else if (!valid) {
+				
 				logger.log(`Error: Invalid session token`, handlerTag);
 				response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
 			} else {
+				
 				var validFormat = true;
 				var searchPostBody = {
 					"accessToken": credentials.mdbi.accessToken,
 					"collection": "Member",
-					"search": {}
+					"pipeline": [],
+					"agOptions": {}
 				};
 				var searchPostOptions = {
 					"hostname": "localhost",
-					"path": "/mdbi/search/documents",
+					"path": "/mdbi/search/aggregation",
 					"method": "POST",
 					"agent": ssl_user_agent,
 					"headers": {
@@ -743,78 +761,202 @@ api.register(
 						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
 					}
 				};
+
 	
 				// Determine the type of search to make
 				logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm} (${(pageNum === null) ? "unpaginated" : `page ${pageNum}`})...`, handlerTag);
 				if (request.body.searchTerm === "" || typeof request.body.searchTerm === "undefined") {
-					// If search term is null, search for everything
-					searchPostBody.search = {};
+					
+					// If search term is null, tell the pipeline to search for everything
+					// searchPostBody.search = {};
+					searchPostBody.pipeline.push( {
+						"$match": {
+							"memberID": {
+								"$ne": -1
+							}
+						}
+					} );
 				} else {
+
 					// Determine how to format the search criteria, based on the search type
 					var stype = "invalid";
 					switch (request.body.searchType) {
+						
+						case "id": {
+							
+							stype = "memberID";
+							break;
+						}
+
 						case "username": {
+							
 							stype = "userName";
 							break;
 						}
+						
 						case "first name": {
+							
 							stype = "firstName";
 							break;
 						}
+						
 						case "last name": {
+							
 							stype = "lastName";
 							break;
 						}
+						
 						case "join date": {
+							
 							stype = "joinDate";
 							break;
 						}
+						
 						case "email": {
+							
 							stype = "email";
 							break;
 						}
+						
 						case "major": {
+							
 							stype = "major";
 							break;
 						}
+
 						default: {
+							
 							logger.log(`Invalid search type "${request.body.searchType}"!`, handlerTag);
 							validFormat = false;
 							break;
 						}
 					}
 	
-					// Place search term in the search post body, based on any relevant search modifiers provided
+					// Place search term in the search post body, based on any relevant search
+					// modifiers provided
 					var objectToPlace = request.body.searchTerm;
+					var pipelineStage = {
+						"$match": {
+							"$and": [
+
+								// Remove the placeholder item from the search results
+								{
+									"memberID": {
+										"$ne": -1
+									}
+								},
+								{}
+							]
+						}
+					};
+
+					// If a regular expression was submitted, tell MongoDB to parse the string as
+					// a regular expression
 					if (isRegex) {
 						objectToPlace = {
 							"$regex": request.body.searchTerm
 						};
 					}
-					searchPostBody.search[stype] = objectToPlace;
+
+					// Add the search matching pipeline stage to the pipeline queue
+					pipelineStage["$match"]["$and"][1][stype] = objectToPlace;
+					searchPostBody.pipeline.push( pipelineStage );
 				}
 	
+				// Add a lookup pipepline stage to append member data to the result set
+				searchPostBody.pipeline.push(
+					{
+						"$lookup": {
+							"from": "MembershipData",
+							"localField": "memberID",
+							"foreignField": "memberID",
+							"as": "memberData"
+						}
+					},
+					{
+						"$replaceRoot": {
+							"newRoot": {
+								"memberID": "$memberID",
+								"firstName": "$firstName",
+								"middleInitial": "$middleInitial",
+								"lastName": "$lastName",
+								"joinDate": "$joinDate",
+								"userName": "$userName",
+								"passWord": "$passWord",
+								"email": "$email",
+								"emailVerified": "$emailVerified",
+								"emailOptIn": "$emailOptIn",
+								"major": "$major",
+								"lastLogin": "$lastLogin",
+								"startTerm": "$memberData.startTerm",
+								"endTerm": "$memberData.endTerm",
+								"doorCodeID": "$memberData.doorCodeID",
+								"gradDate": "$memberData.gradDate",
+								"level": "$memberData.level",
+								"membershipStatus": "$memberData.membershipStatus"
+							}
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$startTerm"
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$endTerm"
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$doorCodeID"
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$gradDate"
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$level"
+						}
+					},
+					{
+						"$unwind": {
+							"path": "$membershipStatus"
+						}
+					}
+				);
+
 				// Configure search with any provided options
 				if (resultsPerPage !== null) {
-					// Add results per page as a custom option
-					searchPostBody.options = {
-						"limit": resultsPerPage
-					};
-	
+
 					// Add page number as a custom option
 					if (pageNum !== null) {
-						searchPostBody.options.page = pageNum;
+
+						searchPostBody.pipeline.push( {
+							"$skip": pageNum * resultsPerPage
+						} );
 					}
+					
+					// Add results per page as a custom option
+					searchPostBody.pipeline.push( {
+						"$limit": resultsPerPage
+					} );
 				}
 	
-				// Recalculate Content-Length header; the above options caused the body length to change!
+				// Recalculate Content-Length header; the above options caused the body length
+				// to change!
 				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
 	
 				// Execute MDBI search here...
 				if (!validFormat) {
+
 					logger.log(`A formatting error occurred!`, handlerTag);
 					response.status(499).send(ef.asCommonStr(ef.struct.invalidBody)).end();
 				} else {
+
 					// Search with MDBI here...
 					www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
 				}
@@ -824,6 +966,7 @@ api.register(
 		au.verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 	}
 );
+
 
 // END User Routes
 
