@@ -217,6 +217,10 @@ clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request,
 	var currentUser =	(typeof request.query.currentUser !== "undefined") ?
 						request.query.currentUser : null;
 
+	// Set the content type to be json
+	response.set( "Content-Type", "application/json" );
+
+	// Define a callback to evaluate the MDBI search results
 	var mdbiSearchCallback = function (reply, error) {
 		if (error) {
 			// Some MDBI error happened
@@ -235,6 +239,7 @@ clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request,
 		}
 	};
 
+	// Define a callback to evaluate the results of the capability check
 	var capabilityCallback = function (resultOfCheck) {
 		switch (resultOfCheck) {
 			case -1: {
@@ -281,6 +286,7 @@ clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request,
 		}
 	};
 
+	// Define a callback to evaluate the results of the session verification
 	var verificationCallback = function (valid, error) {
 		if (error) {
 			// Some unexpected error occurred...
@@ -296,6 +302,7 @@ clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request,
 		}
 	};
 
+	// Run queries
 	au.verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 } );
 
@@ -320,12 +327,14 @@ router.use( function ( request, response ) {
 
 	var handlerTag = { "src": "/ability/notfound" };
 
+	// Set content type to json
+	response.set( "Content-Type", "application/json" );
+
+	// Send 404 to client
 	logger.log(
 		`Non-existent endpoint "${request.path}" requested from client @ ip ${request.ip}`,
 		handlerTag
 	);
-
-	// Send 404 to client
 	response.status( 404 ).json(
 		ef.asCommonStr( ef.struct.nonexistentEndpoint, {
 			"endpoint": request.originalUrl,
@@ -344,12 +353,14 @@ router.use( function ( request, response ) {
 
 	var handlerTag = { "src": "/ability/error" };
 
-	logger.log(
-		`Error occurred with request from client @ ip ${request.ip}`,
-		handlerTag
-	);
-
+	// Set content type to json
+	response.set( "Content-Type", "application/json" );
+	
 	// Send 500 to client
+		logger.log(
+			`Error occurred with request from client @ ip ${request.ip}`,
+			handlerTag
+		);
 	response.status( 500 ).json(
 		ef.asCommonStr( ef.struct.coreErr, {
 			"endpoint": request.originalUrl,
