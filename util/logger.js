@@ -168,7 +168,7 @@ logger.log = function (msg, options = {
 	};
 
 	// If this message's tag is in the black list, don't log it or print it out at all!
-	var srcIsBlacklisted = logger.blacklist.contains( options.src );
+	var srcIsBlacklisted = logger.blacklist.includes( options.src );
 	if ( srcIsBlacklisted ) {
 		detailedInfo.ignored = true;
 	}
