@@ -291,7 +291,7 @@ clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request,
 		if (error) {
 			// Some unexpected error occurred...
 			logger.log(`Error: ${error}`, handlerTag);
-			response.send( error ).status( 500 ).end();
+			response.status( 500 ).send( error ).end();
 		} else if (!valid) {
 			// Session expired, let the client know it!
 			logger.log(`Error: Invalid session token`, handlerTag);
