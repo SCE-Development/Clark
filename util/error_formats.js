@@ -83,6 +83,14 @@ error_formats.struct = {
 		"name": "MDBI_ACCESS_DENIED",
 		"msg": "You do not have access rights to the MDBI system"
 	},
+	"mdbiNoEffect": {
+		"name": "MDBI_NO_EFFECT",
+		"msg": "The operation had no effect on the database"
+	},
+	"mdbiMultiEffect": {
+		"name": "MDBI_MULTI_EFFECT",
+		"msg": "The operation affected more data than intended (potential data corruption)"
+	},
 	"nonexistentEndpoint": {
 		"name": "CORE_NONEXISTENT_ENDPOINT",
 		"msg": "The requested API endpoint does not exist"

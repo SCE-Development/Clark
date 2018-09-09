@@ -21,12 +21,14 @@ var router = express.Router();
 var settings = require("../../../../util/settings");	// import server system settings
 var al = require(`${settings.util}/api_legend.js`);		// import API Documentation Module
 var au = require(`${settings.util}/api_util.js`);		// import API Utility Functions
-var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
+// var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
+var rf = require(`${settings.util}/response_formats`);	// import response formatter
 var ef = require(`${settings.util}/error_formats`);		// import error formatter
+var schema = require(`${settings.util}/../mdbi/tools/schema_v0.js`);
 var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
 var ssl = require(settings.security);					// import https ssl credentials
 var credentials = require(settings.credentials);		// import server system credentials
-var www = require(`${settings.util}/www`);			// import custom https request wrappers
+var www = require(`${settings.util}/www`);				// import custom https request wrappers
 var logger = require(`${settings.util}/logger`);		// import event log system
 
 // Required Endpoint Options
@@ -98,7 +100,7 @@ API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response 
 	};
 
 	response.set( "Content-Type", "application/json" );
-	response.send( pingPacket ).status( 200 ).end();
+	response.status( 200 ).send( pingPacket ).end();
 } );
 
 // @endpoint		(GET) /help
@@ -148,7 +150,7 @@ API module (User)", apiInfo.args.help, apiInfo.rval.help, function ( request, re
 		}
 
 		// Send the API doc
-		response.send( api.getDoc( pretty ) ).status( 200 ).end();
+		response.status( 200 ).send( api.getDoc( pretty ) ).end();
 	} catch ( exception ) {
 		
 		response.set( "Content-Type", "application/json" );
@@ -311,7 +313,7 @@ api.register(
 					if (!sessionStorageSupported) {
 						response.set("Set-Cookie", `sessionID=${sessionID}`);
 					}
-					response.send(sessionResponse).status(200).end();
+					response.status( 200 ).send(sessionResponse).end();
 					resolve();
 				}
 			});
@@ -352,7 +354,7 @@ api.register(
 					var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
 	
 					logger.log(`SessionData insert failed: ${error}` , handlerTag);
-					response.send(errStr).status(500).end();
+					response.status( 500 ).send(errStr).end();
 					reject();
 				} else {
 					grantCoreAccess(match, resolve, reject);
@@ -371,7 +373,7 @@ api.register(
 				var errStr = ef.asCommonStr(ef.struct.adminInvalid);
 				
 				logger.log( `Incorrect Credentials: Access Denied`, handlerTag );
-				response.send( errStr ).status( 499 ).end();
+				response.status( 499 ).send( errStr ).end();
 
 				// Reject the promise to prevent further computation
 				reject();
@@ -382,7 +384,7 @@ api.register(
 				var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
 	
 				logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
-				response.send(errStr).status(499).end();
+				response.status( 499 ).send(errStr).end();
 
 				// Reject the promise to prevent further computation
 				reject();
@@ -432,7 +434,7 @@ api.register(
 					var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
 	
 					logger.log(`A request error occurred: ${error}`, handlerTag);
-					response.send(errStr).status(500).end();
+					response.status(500).send(errStr).end();
 					reject();
 				} else if (!Array.isArray(match.list)) {
 
@@ -443,12 +445,12 @@ api.register(
 					);
 
 					// Send the response back
-					response.send(
+					response.status( 500 ).send(
 						ef.asCommonStr(
 							ef.struct.unexpectedValue,
 							match.list
 						)
-					).status( 500 ).end();
+					).end();
 
 					// Reject the promise to end all further computation
 					reject();
@@ -549,9 +551,9 @@ api.register(
 					
 					// If something unexpected happened, report any unexpected errors
 					logger.log( `A request error occurred: ${ error }`, handlerTag );
-					response.send(
+					response.status( 500 ).send(
 						er.asCommonStr( er.struct.coreErr, error )
-					).status( 500 ).end();
+					).end();
 				} else {
 					
 					// Otherwise, tell the client the result of the user logout attempt
@@ -570,7 +572,7 @@ api.register(
 						// longer interact with the Core API (except for re-logging in). You can
 						// now signal the client to redirect to the core portal
 						logger.log( `Logging out ${ uname } (${ sid })`, handlerTag );
-						response.set( "Content-Type", "text/html" );
+						response.set( "Content-Type", "application/json" );
 						response.status( 200 ).send( {
 							"success": true,
 							"msg": "The user has been logged out"
@@ -717,15 +719,15 @@ api.register(
 			} else if (reply === null) {
 				
 				logger.log(`Search returned null`, handlerTag);
-				response.send(null).status(200).end();
+				response.status(200).send(null).end();
 			} else {
 				
 				// Send the found results to the client
 				logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
 				if (reply.length === 0) {
-					response.send(null).status(200).end();
+					response.status(200).send(null).end();
 				} else {
-					response.send(reply).status(200).end();
+					response.status(200).send(reply).end();
 				}
 			}
 		};
@@ -737,7 +739,7 @@ api.register(
 			if (error) {
 				
 				logger.log(`Error: ${error}`, handlerTag);
-				response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
 			} else if (!valid) {
 				
 				logger.log(`Error: Invalid session token`, handlerTag);
@@ -1012,8 +1014,431 @@ api.register(
 	}
 );
 
+// @endpoint		(POST) /edit
+// @description		This endpoint enables the modification of member and membership data. It is a
+//					combination of the legacy APIs "/dashboard/edit/memberfield", "/dashboard
+//					/edit/membershipstatus", and "/dashboard/edit/dc", enabling the user to edit
+//					all of a user's primary account info, membership data, and door code(s) all
+//					with a single API
+// @parameters		(object) request		The web reqeust object provided by express.js. The
+//											request body ix expcected to contain the following
+//											members:
+//							(string) sessionID		The client's session token
+//							(string) memberID		The member id of the account to edit
+//							(object) fields			A JSON object specifying the fields to edit.
+//													The object's keys can include any of the
+//													valid field names within the Member and the
+//													MemberData collections; This endpoint will
+//													automatically determine which collection(s)
+//													your data belongs to, and update the
+//													appropriate fields.
+// @returns			On success:
+//							a code 200, and a success response (TODO: define common response
+//							object for both failures and successes)
+//					On invalid/expired session token:
+//							a code 499 and an error-formatted object in the response body
+//							detailng the expired session token issue
+//					On illegal/unsuccessful update:
+//							a code 499 and an error-formatted object in the response body
+//							detailing the invalid operation
+//					On any other failure:
+//							a code 500 and an error format object
+apiInfo.args.edit = [];
+apiInfo.rval.edit = [];
+api.register(
+	"Edit",
+	"POST",
+	"/edit",
+	'This endpoint enables the modification of member and membership data. It is a' +
+	'combination of the legacy APIs "/dashboard/edit/memberfield", "/dashboard' +
+	'/edit/membershipstatus", and "/dashboard/edit/dc", enabling the user to edit' +
+	"all of a user's primary account info, membership data, and door code(s) all" +
+	'with a single API',
+	apiInfo.args.edit,
+	apiInfo.rval.edit,
+	function ( request, response ) {
+
+		// Acquire request body arguments
+		var handlerTag = { "src": "(post) /api/user/edit" };
+		var sessionID = ( typeof request.body.sessionID !== "undefined" ) ?
+			request.body.sessionID : null;
+		var memberID = ( typeof request.body.memberID !== "undefined" ) ?
+			request.body.memberID : null;
+		var fields = ( typeof request.body.fields !== "undefined" ) ?
+			request.body.fields : null;
+		var session = null;
+
+		// Set the content type of the response to json
+		response.set( "Content-Type", "application/json" );
+
+		// Define a callback that performs the actual membership data update assuming a
+		// successful member collection update
+		var updateMembership = function ( queries ) {
+
+			// Send the membership update request
+			logger.log(
+				`Member data update complete. Updating membership data`,
+				handlerTag
+			);
+			www.https.post(
+				queries.options.MembershipData,
+				queries.body.MembershipData,
+				function ( reply, error ) {
+
+					// Check for any errors in the MembershipData collection update
+					if ( error ) {
+
+						// Some MDBI error happened
+						logger.log( `MDBI membership update failed: ${error}`, handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.coreErr, error )
+						).end();
+					} else if ( reply.nModified < 1 ) {
+
+						// the MDBI wasn't able to update any document at all
+						var efmt = ef.asCommonStr( ef.struct.mdbiNoEffect );
+						logger.log( efmt, handlerTag );
+						response.status( 499 ).send( efmt ).end();
+					} else if ( reply.nModified > 1 ) {
+
+						// FATAL: The MDBI updated several documents
+						var efmt = ef.asCommonStr( ef.struct.mdbiMultiEffect );
+						logger.log( efmt, handlerTag );
+						response.status( 499 ).send( efmt ).end();
+					} else {
+
+						// Otherwise, respond with a success message
+						var msg = `MDBI membership update complete`;
+						logger.log( msg, handlerTag );
+						response.status( 200 ).send(
+							rf.asCommonStr( true, {
+								"msg": msg
+							} )
+						).end();
+					}
+				},
+				handlerTag.src
+			);
+		};
+
+		// Define a callback that performs the actual member update assuming a successful
+		// capability check
+		var updateMember = function () {
+			
+			// Create a record of data fields to update for each relevant collection
+			var updateQueue = organizeUpdates( fields );
+
+			// Structure the update queries for both Member and MembershipData collections
+			var queries = buildEditQueries( memberID, updateQueue );
+
+			// DEBUG
+			// response.status( 200 ).send( {
+			// 		"requestbody": request.body,
+			// 		"updateQueue": updateQueue,
+			// 		"queries": queries
+			// } ).end();
+
+			// Send requests
+			logger.log(
+				`Authorization verified. Performing member data update...`,
+				handlerTag
+			);
+			www.https.post(
+				queries.options.Member,
+				queries.body.Member,
+				function ( reply, error ) {
+					
+					// Check for any errors in the Member collection update
+					if ( error ) {
+
+						// Some MDBI error happened
+						logger.log( `MDBI update failed: ${error}`, handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.coreErr, error )
+						).end();
+					} else if ( reply.nModified < 1 ) {
+
+						// the MDBI wasn't able to update any document at all
+						var efmt = ef.asCommonStr( ef.struct.mdbiNoEffect );
+						logger.log( efmt, handlerTag );
+						response.status( 499 ).send( efmt ).end();
+					} else if ( reply.nModified > 1 ) {
+
+						// FATAL: The MDBI updated several documents
+						var efmt = ef.asCommonStr( ef.struct.mdbiMultiEffect );
+						logger.log( efmt, handlerTag );
+						response.status( 499 ).send( efmt ).end();
+					} else {
+
+						// Otherwise, log the success and perform the membershipData update
+						updateMembership( queries );
+					}
+				},
+				handlerTag.src
+			);
+		};
+		
+		// Define a callback to run after running the capability check
+		var capabilityCallback = function ( result ) {
+
+			// Do different things based on the result of the capabililty check
+			switch ( result ) {
+
+				// If the permissions check failed
+				case -1: {
+
+					// Throw an error
+					logger.log( `Permissions check is incomplete`, handlerTag );
+					response.status( 499 ).send(
+						ef.asCommonStr( ef.struct.coreErr )
+					).end();
+					break;
+				}
+
+				// Else, if the user is not authorized
+				case false: {
+
+					// Report to the client that the user is not allowed to modify data
+					logger.log( `User with memberID "${session.memberID}" not permitted` +
+					" to perform member data modification", handlerTag );
+					response.status( 499 ).send(
+						ef.asCommonStr( ef.struct.adminUnauthorized )
+					).end();
+				}
+
+				// Otherwise, the user is likely authorized to perform this action
+				case true: {
+
+					// If the user is authorized, perform the update
+					updateMember();
+					break;
+				}
+
+				// If none of the above options occurred, we received an unexpected value
+				default: {
+
+					// Throw an error
+					logger.log( `Error: Unexpected value received: ${result}`, handlerTag );
+					response.status( 500 ).send(
+						ef.asCommonStr( ef.struct.unexpectedValue, {
+							"val": result
+						} )
+					).end();
+					break;
+				}
+			}
+		};
+
+		// Before sending the request, make sure this client isn't expired
+		au.verifySession( credentials.mdbi.accessToken, sessionID, function ( valid, error, sData ) {
+
+			// Store the session object that was returned
+			session = sData;
+
+			// Check for an error
+			if ( error ) {
+
+				// Tell the client about it
+				logger.log( `Error: ${error}`, handlerTag );
+				response.status( 500 ).send(
+					
+					ef.asCommonStr( ef.struct.coreErr, error )
+				).end();
+			} else if ( !valid ) {
+
+				// Session expired, let the client know it!
+				logger.log( `Error: Invalid session token`, handlerTag );
+				response.status( 499 ).send(
+					
+					ef.asCommonStr( ef.struct.expiredSession )
+				).end();
+			} else {
+
+				// If verification succeeded, let's ensure access control (i.e. check if the
+				// client has the ability to change users data)
+				au.isCapable( [1], session.memberID, capabilityCallback );
+			}
+		} );
+	}
+);
+
 
 // END User Routes
+
+// BEGIN Utility Functions specific for Users
+
+// @function		organizeUpdates()
+// @description		This function takes the object of requested field updates (see endpoint
+//					"/edit") and organizes them into their respective update queues
+// @parameters		(object) fields			The fields to update (from endpoint "/edit")
+// @returns			(object) updateQueue	A JSON object contianing the update data in their
+//											respsective collections. For example, if fields is
+//											a JSON object with keys "major" and "level", which
+//											are fields in two different collections, the resulting
+//											updateQueue will be:
+//											{
+//												"Member": [ { "major": "..." } ],
+//												"MembershipData": [ { "level": 0123... } ]
+//											}
+// @note			This function is intended solely for the "/edit" endpoint
+function organizeUpdates ( fields ) {
+
+	// Initialize an empty update queue for all possible fields that can be updated
+	var updateQueue = {
+		"Member": [],
+		"MembershipData": [],
+	};
+
+	// Determine fields that exist within each collection
+	var memberFields = Object.keys(
+		schema.collectionMembers.Member
+	);
+	var membershipDataFields = Object.keys(
+		schema.collectionMembers.MembershipData
+	);
+
+	// Determine which collections to update
+	Object.keys( fields ).forEach( function ( fieldName ) {
+
+		// Ensure that the memberID is not changed
+		if ( fieldName === "memberID" ) {
+			return;
+		}
+
+		// If this field belongs in the Member collection
+		if ( memberFields.includes( fieldName ) ) {
+
+			// Push it on the Member collection's update queue
+			var item = {};
+			item[ fieldName ] = fields[ fieldName ];
+			updateQueue.Member.push( item );
+		}
+
+		// If this field belongs in the MembershipData collection
+		if ( membershipDataFields.includes( fieldName ) ) {
+
+			// Push it on the MembershipData collection's update queue
+			var item = {};
+			item[ fieldName ] = fields[ fieldName ];
+			updateQueue.MembershipData.push( item );
+		}
+
+		// If this field is not defined in the collection, it is not part of the the schema and
+		// shouldn't be added
+		// TODO: Add specialized options to enable the addition of extra parameters for more
+		// specific document customization
+	} );
+
+	// Return the populated updateQueue
+	return updateQueue;
+}
+
+// @function		buildEditQueries()
+// @description		This function generates the member edit query post bodies and options objects
+// @parameters		(string) memberID		The member id of the member to edit
+//					(object) updateQueue	A JSON object containing the update data in their
+//											respective collections (see "organizeUpdates()")
+// @returns			(object) queries		A JSON object that contains all the update query post
+//											bodies and options needed to update both the Member
+//											and MembershipData collections, in the follwoing
+//											format:
+//											{
+//												"body": {
+//													"Member": { ... },
+//													"MembershipData": { ... }
+//												},
+//												"options": {
+//													"Member": { ... },
+//													"MembershipData": { ... }
+//												}
+//											}
+// @note			This function is intended solely for the "/edit" endpoint
+function buildEditQueries ( memberID, updateQueue ) {
+
+	// Create query for Member collection updates
+	var memberQuery = {
+		"accessToken": credentials.mdbi.accessToken,
+		"collection": "Member",
+		"search": {
+			"memberID": memberID
+		},
+		"update": {
+			"$set": {}
+		}
+	};
+	var memberQueryOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/update/documents",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	// Create query for MembershipData collection modification
+	var mdQuery = {
+		"accessToken": credentials.mdbi.accessToken,
+		"collection": "MembershipData",
+		"search": {
+			"memberID": memberID
+		},
+		"update": {
+			"$set": {}
+		}
+	};
+	var mdQueryOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/update/documents",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	// Append each new field value to the memberQuery
+	updateQueue.Member.forEach( function ( fieldObj ) {
+
+		// For each field to update, place its value into the update set
+		var fieldName = Object.keys( fieldObj )[ 0 ];
+		memberQuery.update.$set[ fieldName ] = fieldObj[ fieldName ];
+	} );
+	
+	// Append each new field value to the mdQuery
+	updateQueue.MembershipData.forEach( function ( fieldObj ) {
+
+		// For each field to update, place its value into the update set
+		var fieldName = Object.keys( fieldObj )[ 0 ];
+		mdQuery.update.$set[ fieldName ] = fieldObj[ fieldName ];
+	} );
+
+	// Calculate the memberQuery's content length
+	memberQueryOptions.headers["Content-Length"] = Buffer.byteLength(
+		JSON.stringify( memberQuery )
+	);
+	
+	// Calculate the mdQuery's content length
+	mdQueryOptions.headers["Content-Length"] = Buffer.byteLength(
+		JSON.stringify( mdQuery )
+	);
+
+	// Return the queries to the endpoint handler
+	return {
+		"body": {
+			"Member": memberQuery,
+			"MembershipData": mdQuery
+		},
+		"options": {
+			"Member": memberQueryOptions,
+			"MembershipData": mdQueryOptions
+		}
+	};
+}
+
+// END Utility Functions specific for Users
 
 
 

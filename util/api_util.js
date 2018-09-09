@@ -59,6 +59,7 @@ const apiutil = {};
 	@parameter 	callback - a callback to run after the verification operation is completed. It is passed 2 arguments:
 					"valid" - If no validation error occurred, this value is true for a valid token, false otherwise. If a validation error occurred, this value is null.
 					"error" - If no validation error occurred, this value is null. Otherwise, it contains a stringified JSON object describing the error (i.e. as given by error_formats.js)
+					"session" - Regardless of whether a validation error occurred, this value is the object returned from the session data search, which contains the sessionID, memberID, maxIdleTime, loginTime, and lastActivity timestamp.
 	@returns 	n/a
 	@details 	This function wraps the session ID verification routine into a single function call, allowing callbacks to process the operation result.
 */
@@ -93,15 +94,15 @@ apiutil.verifySession = function (token, sessionID, callback) {
 		lastActiveTimestamp.setMinutes(lastActiveTimestamp.getMinutes() + ((validResult) ? existingSession.maxIdleTime : 0));
 		var tokenExpired = dt.hasPassed(lastActiveTimestamp);
 		if (validResult && !tokenExpired) {
-			callback( true, null );
+			callback( true, null, existingSession );
 		} else if (!validResult) {
 			callback( null, ef.asCommonStr( ef.struct.unexpectedValue, {
 				"msg": "The session ID search yielded invalid results; the session doesn't exist"
-			} ) );
+			} ), existingSession );
 		} else if (tokenExpired) {
-			callback( false, null );
+			callback( false, null, existingSession );
 		} else if (error) {
-			callback( null, ef.asCommonStr( ef.struct.coreErr, error ) );
+			callback( null, ef.asCommonStr( ef.struct.coreErr, error ), existingSession );
 		}
 	});
 };
