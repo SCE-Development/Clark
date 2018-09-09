@@ -119,18 +119,25 @@ angular.module("profiler").component("profiler", {
 			// Execute search
 			console.log(`Searching by ${ctl.searchType} for ${ctl.searchTerm}`);
 			$http.post(urls.search, requestBody, config).then((response) => {
-				console.log(response.data);	// debug
+				console.log(response.data.content);	// debug
 				switch (response.status) {
 					case 200: {
 						ctl.errmsg = "";
 
-						if (ctl.pageNumber === 0) {	// i.e. a click of "Search" button
-							ctl.results = (response.data === null) ? [] : response.data;
-						} else {	// i.e. a click of the "next page" button
-							if (Array.isArray(response.data) && response.data.length > 0) {
+						if (ctl.pageNumber === 0) {
+							
+							// i.e. a click of "Search" button
+							ctl.results = (response.data.content === null) ? [] : response.data.content;
+						} else {
+							
+							// i.e. a click of the "next page" button
+							if ( Array.isArray( response.data.content ) &&
+								response.data.content.length > 0) {
+
 								// Only change the result set model if the page data is valid
-								ctl.results = response.data;
+								ctl.results = response.data.content;
 							} else {
+								
 								// Otherwise, undo the page increment
 								ctl.errmsg = `There is no page ${ctl.pageNumber + 1}!`;
 								console.log(ctl.errmsg);
@@ -173,7 +180,8 @@ angular.module("profiler").component("profiler", {
 			// Request additional information
 			var requestBody = {
 				"sessionID": sessionStorage.getItem("sessionID"),
-				"memberID": person.memberID
+				"searchTerm": person.memberID,
+				"searchType": "id"
 			};
 			var config = {
 				"headers": {
@@ -181,32 +189,32 @@ angular.module("profiler").component("profiler", {
 				}
 			};
 			$http.post(urls.searchMembership, requestBody, config).then((response) => {
-				console.log(response.data);	// debug
+				console.log(response.data.content);	// debug
 				switch (response.status) {
 					case 200: {
 						console.log("Processing member data...");
 
 						// Save current member details to model
-						ctl.currentMemberDetail = response.data[0];
+						ctl.currentMemberDetail = response.data.content[0];
 
 						// Compute any details that need formatting
-						var joinDate = ctl.beautifyDate(response.data[0].joinDate);
-						var startDate = ctl.beautifyDate(response.data[0].startTerm);
-						var endDate = ctl.beautifyDate(response.data[0].endTerm);
-						var memberStatus = (response.data[0].membershipStatus) ? "Active" : "Inactive";
+						var joinDate = ctl.beautifyDate(response.data.content[0].joinDate);
+						var startDate = ctl.beautifyDate(response.data.content[0].startTerm);
+						var endDate = ctl.beautifyDate(response.data.content[0].endTerm);
+						var memberStatus = (response.data.content[0].membershipStatus) ? "Active" : "Inactive";
 
 						// Populate the modal with details
-						$("#memberUserName").html(response.data[0].userName);
-						$("#memberFirstName").html(response.data[0].firstName);
-						$("#memberMiddleInitial").html(response.data[0].middleInitial);
-						$("#memberLastName").html(response.data[0].lastName);
-						$("#memberEmail").html(response.data[0].email);
+						$("#memberUserName").html(response.data.content[0].userName);
+						$("#memberFirstName").html(response.data.content[0].firstName);
+						$("#memberMiddleInitial").html(response.data.content[0].middleInitial);
+						$("#memberLastName").html(response.data.content[0].lastName);
+						$("#memberEmail").html(response.data.content[0].email);
 						$("#memberEmailVerified").addClass("glyphicon");
-						$("#memberEmailVerified").addClass((response.data[0].emailVerified === true) ? "glyphicon-ok" : "glyphicon-remove");
-						$("#memberEmailVerified").css("color", (response.data[0].emailVerified === true) ? "green" : "red");
+						$("#memberEmailVerified").addClass((response.data.content[0].emailVerified === true) ? "glyphicon-ok" : "glyphicon-remove");
+						$("#memberEmailVerified").css("color", (response.data.content[0].emailVerified === true) ? "green" : "red");
 						$("#memberJoinDate").html(joinDate);
-						$("#memberMajor").html(response.data[0].major);
-						$("#memberDoorCode").html(response.data[0].doorcode);
+						$("#memberMajor").html(response.data.content[0].major);
+						$("#memberDoorCode").html(response.data.content[0].doorcode);
 						$("#memberStartTerm").html(startDate);
 						$("#memberEndTerm").html(endDate);
 						$("#memberStatus").html(memberStatus);
@@ -341,7 +349,7 @@ angular.module("profiler").component("profiler", {
 					}
 				};
 				$http.post(urls.editMemberField, requestBody, config).then((response) => {
-					console.log(response.data);
+					console.log(response.data.content);
 					switch (response.status) {
 						case 200: {
 							console.log("Membership data update succeeded!");
@@ -359,8 +367,8 @@ angular.module("profiler").component("profiler", {
 						default: {
 							console.log(`Something didn't work... (Code ${response.status})`);
 							var msg = "Oops... The operation had an issue";
-							if (typeof response.data.emsg !== "undefined") {
-								msg += `: ${response.data.emsg}`;
+							if (typeof response.data.content.emsg !== "undefined") {
+								msg += `: ${response.data.content.emsg}`;
 							}
 							ctl.showMemberDetailError(msg);
 							break;
@@ -478,7 +486,7 @@ angular.module("profiler").component("profiler", {
 				}
 			};
 			$http.post(urls.editMemStatus, requestBody, config).then((response) => {
-				console.log(response.data);
+				console.log(response.data.content);
 				switch (response.status) {
 					case 200: {
 						$("#cancelAddMemberBtn").click();
@@ -487,8 +495,8 @@ angular.module("profiler").component("profiler", {
 					default: {
 						console.log(`Darn... (Code ${response.status})`);
 						var msg = "Oops... The operation had an issue";
-						if (typeof response.data.emsg !== "undefined") {
-							msg += `: ${response.data.emsg}`;
+						if (typeof response.data.content.emsg !== "undefined") {
+							msg += `: ${response.data.content.emsg}`;
 						}
 						ctl.showAddMemberError(msg);
 						break;
@@ -552,23 +560,23 @@ angular.module("profiler").component("profiler", {
 				ctl.showAddMemberError("Please enter an email to check!");
 			} else {
 				$http.post(urls.search, requestBody, config).then((response) => {
-					console.log(response.data);
+					console.log(response.data.content);
 
 					switch (response.status) {
 						case 200: {
 							console.log("Checking Email Verification Status...");
 
-							if (response.data.length > 1) {
+							if (response.data.content.length > 1) {
 								ctl.setEmailStatus("Unknown");
 								ctl.showEmailStatus();
 								ctl.showAddMemberError("Error: The email verification couldn't be checked for some reason...");
-							} else if (typeof response.data[0] === "undefined") {
+							} else if (typeof response.data.content[0] === "undefined") {
 								ctl.setEmailStatus("Unknown");
 								ctl.showEmailStatus();
 								ctl.showAddMemberError("The email you entered returned no search result data. Make sure it's correct!");
 							} else {
 								// check for email verification here
-								if (!response.data[0].emailVerified) {
+								if (!response.data.content[0].emailVerified) {
 									ctl.setEmailStatus("Not Verified");
 									ctl.showEmailStatus();
 									ctl.showAddMemberError("So the email isn't verified... Ask the user to verify their email first!");
@@ -581,7 +589,7 @@ angular.module("profiler").component("profiler", {
 						}
 						case 499: {
 							console.log("Invalid session token");
-							ctl.showAddMemberError((typeof response.data[0].emsg === "undefined") ? "Session Token Rejected..." : response.data[0].emsg);
+							ctl.showAddMemberError((typeof response.data.content[0].emsg === "undefined") ? "Session Token Rejected..." : response.data.content[0].emsg);
 							break;
 						}
 						case 500: {

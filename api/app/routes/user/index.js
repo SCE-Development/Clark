@@ -95,12 +95,13 @@ API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response 
 
 	// Send PING packet
 	var pingPacket = {
-		"success": true,
 		"data": "ping!"
 	};
 
 	response.set( "Content-Type", "application/json" );
-	response.status( 200 ).send( pingPacket ).end();
+	response.status( 200 ).send(
+		rf.asCommonStr( true, pingPacket )
+	).end();
 } );
 
 // @endpoint		(GET) /help
@@ -150,7 +151,11 @@ API module (User)", apiInfo.args.help, apiInfo.rval.help, function ( request, re
 		}
 
 		// Send the API doc
-		response.status( 200 ).send( api.getDoc( pretty ) ).end();
+		var output = pretty ? api.getDoc( true ) : rf.asCommonStr(
+			true,
+			api.getDoc( false )
+		);
+		response.status( 200 ).send( output ).end();
 	} catch ( exception ) {
 		
 		response.set( "Content-Type", "application/json" );
@@ -313,7 +318,9 @@ api.register(
 					if (!sessionStorageSupported) {
 						response.set("Set-Cookie", `sessionID=${sessionID}`);
 					}
-					response.status( 200 ).send(sessionResponse).end();
+					response.status( 200 ).send(
+						rf.asCommonStr( true, sessionResponse )
+					).end();
 					resolve();
 				}
 			});
@@ -573,10 +580,11 @@ api.register(
 						// now signal the client to redirect to the core portal
 						logger.log( `Logging out ${ uname } (${ sid })`, handlerTag );
 						response.set( "Content-Type", "application/json" );
-						response.status( 200 ).send( {
-							"success": true,
-							"msg": "The user has been logged out"
-						} ).end();
+						response.status( 200 ).send(
+							rf.asCommonStr( true, {
+								"msg": "The user has been logged out"
+							} )
+						).end();
 					}
 				}
 			};
@@ -620,6 +628,7 @@ api.register(
 //						a code 499, and an error format object
 //					On failure:
 //						a code 500 and an error format object
+// TODO: Figure out why this endpoint is generating so many aggregation logs
 apiInfo.args.search = [
 	{
 		"name": "request.sessionID",
@@ -719,15 +728,21 @@ api.register(
 			} else if (reply === null) {
 				
 				logger.log(`Search returned null`, handlerTag);
-				response.status(200).send(null).end();
+				response.status(200).send(
+					rf.asCommonStr( true, null )
+				).end();
 			} else {
 				
 				// Send the found results to the client
 				logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
 				if (reply.length === 0) {
-					response.status(200).send(null).end();
+					response.status(200).send(
+						rf.asCommonStr( true, null )
+					).end();
 				} else {
-					response.status(200).send(reply).end();
+					response.status(200).send(
+						rf.asCommonStr( true, reply )
+					).end();
 				}
 			}
 		};
@@ -1043,6 +1058,10 @@ api.register(
 //							detailing the invalid operation
 //					On any other failure:
 //							a code 500 and an error format object
+// TODO: figure out why a call to the /edit api generates an MDBI_NO_EFFECT error when
+// attempting to change "major", but actually succeeds (I think it has to do with how we are
+// checking for nModified EACH time we edit a collection, and not determine it after we've
+// completed all chahnges and acquired a total count of affected rows)
 apiInfo.args.edit = [];
 apiInfo.rval.edit = [];
 api.register(

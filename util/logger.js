@@ -155,8 +155,15 @@ logger.log = function (msg, options = {
 	}
 	sourceTag = (typeof options.src !== "undefined") ? `<${options.src}> ` : "";
 
-	// Place msg in log queue
-	logger.dataQueue.push(padding + timestamp + sourceTag + msg);
+	// Determine if the message source is in the blacklist
+	var srcIsBlacklisted = logger.blacklist.includes( options.src );
+
+	// Place msg in log queue if the log src is not blacklisted
+	if ( !srcIsBlacklisted ) {
+
+		// If the log src is not blacklisted, place the message on the queue
+		logger.dataQueue.push(padding + timestamp + sourceTag + msg);
+	}
 
 	// Set the message's detailed info
 	var detailedInfo = {
@@ -168,7 +175,6 @@ logger.log = function (msg, options = {
 	};
 
 	// If this message's tag is in the black list, don't log it or print it out at all!
-	var srcIsBlacklisted = logger.blacklist.includes( options.src );
 	if ( srcIsBlacklisted ) {
 		detailedInfo.ignored = true;
 	}

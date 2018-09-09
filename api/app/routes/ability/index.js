@@ -19,6 +19,7 @@ var router = express.Router();
 var settings = require("../../../../util/settings");	// import server system settings
 var al = require(`${settings.util}/api_legend.js`);		// import API Documentation Module
 // var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
+var rf = require(`${settings.util}/response_formats`);	// import response formatter
 var ef = require(`${settings.util}/error_formats`);		// import error formatter
 // var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
 var ssl = require(settings.security);					// import https ssl credentials
@@ -93,12 +94,13 @@ API router", apiInfo.args.ping, apiInfo.rval.ping, function ( request, response 
 
 	// Send PING packet
 	var pingPacket = {
-		"success": true,
 		"data": "ping!"
 	};
 
 	response.set( "Content-Type", "application/json" );
-	response.send( pingPacket ).status( 200 ).end();
+	response.send(
+		rf.asCommonStr( true, pingPacket )
+	).status( 200 ).end();
 } );
 
 // @endpoint		(GET) /help
@@ -148,7 +150,10 @@ API module (Ability)", apiInfo.args.help, apiInfo.rval.help, function ( request,
 		}
 
 		// Send the API doc
-		response.send( apiLegend.getDoc( pretty ) ).status( 200 ).end();
+		var output = pretty ? apiLegend.getDoc( true ) : rf.asCommonStr(
+			true, apiLegend.getDoc( false )
+		);
+		response.send( output ).status( 200 ).end();
 	} catch ( exception ) {
 		
 		response.set( "Content-Type", "application/json" );
@@ -232,9 +237,13 @@ clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request,
 				// If a null value is returned, this is unexpected
 				var msg = `Clearance level list request returned null`;
 				logger.log(`Error: null value returned in available ability list request`, handlerTag);
-				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+				response.status( 499 ).send(
+					ef.asCommonStr( ef.struct.unexpectedValue, msg )
+				).end();
 			} else {
-				response.status(200).send(reply).end();
+				response.status( 200 ).send(
+					rf.asCommonStr( true, reply )
+				).end();
 			}
 		}
 	};
@@ -295,7 +304,9 @@ clearance levels", apiInfo.args.getAll, apiInfo.rval.getAll, function ( request,
 		} else if (!valid) {
 			// Session expired, let the client know it!
 			logger.log(`Error: Invalid session token`, handlerTag);
-			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+			response.status( 499 ).send(
+				ef.asCommonStr( ef.struct.expiredSession )
+			).end();
 		} else {
 			// Verification succeeded; let's make sure the request issuer is qualified to edit abilities
 			au.isCapable( [5,6,7], currentUser, capabilityCallback );

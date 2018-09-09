@@ -47,6 +47,12 @@ app.locals.email = "test@test.com";
 
 
 
+/* Define logs to ignore */
+logger.ignore( [
+	"bodyParser.json.Reviver",
+	"delintRequestBody"
+] );
+
 /* Define Static Asset Locations (i.e. includes/js/css/img files) */
 logger.log(`Preparing static assets...`, handlerTag);
 app.use(bodyParser.json({							// support JSON-encoded request bodies
