@@ -72,11 +72,11 @@ response_formats.templates = {
 //												object
 response_formats.asCommonStr = function ( success, content, templateName = "general", misc = {} ) {
 
-	var handlerTag = { "src": "response_formats.common" };
+	var handlerTag = { "src": "response_formats.asCommonStr" };
 	var template = response_formats.templates[ templateName ];
 
 	// Check that the template name exists
-	if ( !Object.keys( this ).includes( templateName ) ) {
+	if ( !Object.keys( this.templates ).includes( templateName ) ) {
 		logger.log( `Error: Unknown template "${templateName}"`, handlerTag );
 		
 	}

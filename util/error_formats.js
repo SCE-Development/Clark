@@ -87,6 +87,10 @@ error_formats.struct = {
 		"name": "MDBI_NO_EFFECT",
 		"msg": "The operation had no effect on the database"
 	},
+	"mdbiPartialEffect": {
+		"name": "MDBI_PARTIAL_EFFECT",
+		"msg": "The operation affect only a portion of the intended documents"
+	},
 	"mdbiMultiEffect": {
 		"name": "MDBI_MULTI_EFFECT",
 		"msg": "The operation affected more data than intended (potential data corruption)"

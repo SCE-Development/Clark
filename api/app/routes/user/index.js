@@ -54,7 +54,7 @@ router.use( "/docTemplate.css", express.static(
 // Create an API Documentation Object
 var api = al.createLegend(
 	"User",
-	"This API controls all user control modifications",
+	"This API facilitates all user account modifications and controls",
 	router					// reference to the router object
 );
 var apiInfo = {
@@ -1033,46 +1033,79 @@ api.register(
 // @description		This endpoint enables the modification of member and membership data. It is a
 //					combination of the legacy APIs "/dashboard/edit/memberfield", "/dashboard
 //					/edit/membershipstatus", and "/dashboard/edit/dc", enabling the user to edit
-//					all of a user's primary account info, membership data, and door code(s) all
-//					with a single API
+//					all of a user's primary account info, membership data, and associated door
+//					code ID, all with a single API
 // @parameters		(object) request		The web reqeust object provided by express.js. The
 //											request body ix expcected to contain the following
 //											members:
 //							(string) sessionID		The client's session token
-//							(string) memberID		The member id of the account to edit
+//							(number) memberID		The member id of the account to edit
 //							(object) fields			A JSON object specifying the fields to edit.
 //													The object's keys can include any of the
 //													valid field names within the Member and the
-//													MemberData collections; This endpoint will
+//													MembershipData collections; This endpoint will
 //													automatically determine which collection(s)
 //													your data belongs to, and update the
 //													appropriate fields.
 // @returns			On success:
-//							a code 200, and a success response (TODO: define common response
-//							object for both failures and successes)
+//							a code 200, and a success response-formatted object
 //					On invalid/expired session token:
 //							a code 499 and an error-formatted object in the response body
 //							detailng the expired session token issue
 //					On illegal/unsuccessful update:
-//							a code 499 and an error-formatted object in the response body
+//							a code 200 and an error-formatted object in the response body
 //							detailing the invalid operation
 //					On any other failure:
 //							a code 500 and an error format object
-// TODO: figure out why a call to the /edit api generates an MDBI_NO_EFFECT error when
-// attempting to change "major", but actually succeeds (I think it has to do with how we are
-// checking for nModified EACH time we edit a collection, and not determine it after we've
-// completed all chahnges and acquired a total count of affected rows)
-apiInfo.args.edit = [];
-apiInfo.rval.edit = [];
+apiInfo.args.edit = [
+	{
+		"name": "request.sessionID",
+		"type": "string",
+		"desc": "The client's session token"
+	},
+	{
+		"name": "request.memberID",
+		"type": "number",
+		"desc": "The member id of the account to edit"
+	},
+	{
+		"name": "request.fields",
+		"type": "object",
+		"desc":	"A JSON object specifying the fields to edit. The object's keys can include " +
+				"any of the valid field names within the member and the MembershipData " +
+				"collections; This endpoint will automatically determine which collection(s) " +
+				"your data belongs to, and update the appropriate fields."
+	}
+];
+apiInfo.rval.edit = [
+	{
+		"condition": "On success",
+		"desc": "a code 200, and a success response-formatted object"
+	},
+	{
+		"condition": "On invalid/expired session token",
+		"desc":	"a code 499, and an error-formatted object in the response body detailing the " +
+				"expired session issue"
+	},
+	{
+		"condition": "On illegal/unsuccessful update",
+		"desc":	"a code 200, and an error-formatted object in the response body detailing the " +
+				"invalid operation"
+	},
+	{
+		"condition": "On any other failure",
+		"desc":	"a code 500, and an error-formatted object"
+	}
+];
 api.register(
 	"Edit",
 	"POST",
 	"/edit",
-	'This endpoint enables the modification of member and membership data. It is a' +
+	'This endpoint enables the modification of member and membership data. It is a ' +
 	'combination of the legacy APIs "/dashboard/edit/memberfield", "/dashboard' +
-	'/edit/membershipstatus", and "/dashboard/edit/dc", enabling the user to edit' +
-	"all of a user's primary account info, membership data, and door code(s) all" +
-	'with a single API',
+	'/edit/membershipstatus", and "/dashboard/edit/dc", enabling the user to edit ' +
+	"all of a user's primary account info, membership data, and associated door code ID, " +
+	'all with a single API',
 	apiInfo.args.edit,
 	apiInfo.rval.edit,
 	function ( request, response ) {
@@ -1090,113 +1123,182 @@ api.register(
 		// Set the content type of the response to json
 		response.set( "Content-Type", "application/json" );
 
-		// Define a callback that performs the actual membership data update assuming a
-		// successful member collection update
-		var updateMembership = function ( queries ) {
+		// Create a record of data fields to update for each relevant collection
+		var updateQueue = organizeUpdates( fields );
 
-			// Send the membership update request
-			logger.log(
-				`Member data update complete. Updating membership data`,
-				handlerTag
-			);
-			www.https.post(
-				queries.options.MembershipData,
-				queries.body.MembershipData,
-				function ( reply, error ) {
+		// Structure the update queries for both Member and MembershipData collections
+		var queries = buildEditQueries( memberID, updateQueue );
 
-					// Check for any errors in the MembershipData collection update
-					if ( error ) {
-
-						// Some MDBI error happened
-						logger.log( `MDBI membership update failed: ${error}`, handlerTag );
-						response.status( 500 ).send(
-							ef.asCommonStr( ef.struct.coreErr, error )
-						).end();
-					} else if ( reply.nModified < 1 ) {
-
-						// the MDBI wasn't able to update any document at all
-						var efmt = ef.asCommonStr( ef.struct.mdbiNoEffect );
-						logger.log( efmt, handlerTag );
-						response.status( 499 ).send( efmt ).end();
-					} else if ( reply.nModified > 1 ) {
-
-						// FATAL: The MDBI updated several documents
-						var efmt = ef.asCommonStr( ef.struct.mdbiMultiEffect );
-						logger.log( efmt, handlerTag );
-						response.status( 499 ).send( efmt ).end();
-					} else {
-
-						// Otherwise, respond with a success message
-						var msg = `MDBI membership update complete`;
-						logger.log( msg, handlerTag );
-						response.status( 200 ).send(
-							rf.asCommonStr( true, {
-								"msg": msg
-							} )
-						).end();
-					}
-				},
-				handlerTag.src
-			);
-		};
-
-		// Define a callback that performs the actual member update assuming a successful
-		// capability check
-		var updateMember = function () {
-			
-			// Create a record of data fields to update for each relevant collection
-			var updateQueue = organizeUpdates( fields );
-
-			// Structure the update queries for both Member and MembershipData collections
-			var queries = buildEditQueries( memberID, updateQueue );
-
-			// DEBUG
-			// response.status( 200 ).send( {
-			// 		"requestbody": request.body,
-			// 		"updateQueue": updateQueue,
-			// 		"queries": queries
-			// } ).end();
+		// Create a Promise to update data in the MemberCollection
+		var updateMC = new Promise( function ( resolve, reject ) {
 
 			// Send requests
 			logger.log(
 				`Authorization verified. Performing member data update...`,
 				handlerTag
 			);
-			www.https.post(
-				queries.options.Member,
-				queries.body.Member,
-				function ( reply, error ) {
-					
-					// Check for any errors in the Member collection update
-					if ( error ) {
 
-						// Some MDBI error happened
-						logger.log( `MDBI update failed: ${error}`, handlerTag );
-						response.status( 500 ).send(
-							ef.asCommonStr( ef.struct.coreErr, error )
-						).end();
-					} else if ( reply.nModified < 1 ) {
+			// If the query includes data for modifying the Member collection,
+			// we should execute the request
+			if ( queries.body.Member !== false ) {
+				
+				// Send a POST request to the MDBI to update the Member collection with any
+				// queued updates
+				www.https.post(
+					queries.options.Member,
+					queries.body.Member,
+					function ( reply, error ) {
+						
+						// Check for any errors in the Member collection update
+						if ( error ) {
+	
+							// Some MDBI error happened
+							logger.log( `MDBI update failed: ${error}`, handlerTag );
+							reject( {
+								"statusCode": 500,
+								"responseMsg": JSON.parse(
+									ef.asCommonStr( ef.struct.coreErr, error )
+								)
+							} );
+						} else if ( reply.nModified < 1 ) {
+	
+							// If updates were queued for the Member collection and the MDBI wasn't
+							// able to update any document at all for this collection, reply with an
+							// MDBI_NO_EFFECT error to the promise
+							var efmt = ef.asCommonStr( ef.struct.mdbiNoEffect, {
+								"unmodified": {
+									"collection": "Member",
+									"fields": updateQueue.Member
+								}
+							} );
+							logger.log( efmt, handlerTag );
+							resolve( {
+								"statusCode": 499,
+								"responseMsg": JSON.parse( efmt )
+							} );
+						} else if ( reply.nModified > 1 ) {
+	
+							// FATAL: The MDBI updated several documents (i.e. data corruption)
+							var efmt = ef.asCommonStr( ef.struct.mdbiMultiEffect );
+							logger.log( efmt, handlerTag );
+							reject( {
+								"statusCode": 499,
+								"responseMsg": JSON.parse( efmt )
+							} );
+						} else {
+	
+							// Otherwise, log the success
+							resolve( {
+								"statusCode": 200,
+								"responseMsg": JSON.parse(
+									rf.asCommonStr( true, {
+										"msg": "Member collection successfully updated"
+									} )
+								)
+							} );
+						}
+					},
+					handlerTag.src
+				);
+			} else {
 
-						// the MDBI wasn't able to update any document at all
-						var efmt = ef.asCommonStr( ef.struct.mdbiNoEffect );
-						logger.log( efmt, handlerTag );
-						response.status( 499 ).send( efmt ).end();
-					} else if ( reply.nModified > 1 ) {
+				// If no updates to the Member collection are requested, Simply resolve
+				resolve( {
+					"statusCode": 200,
+					"responseMsg": JSON.parse(
+						rf.asCommonStr( true, {
+							"msg": "No Member collection updates queued. Skipping..."
+						} )
+					)
+				} );
+			}
+		} );
 
-						// FATAL: The MDBI updated several documents
-						var efmt = ef.asCommonStr( ef.struct.mdbiMultiEffect );
-						logger.log( efmt, handlerTag );
-						response.status( 499 ).send( efmt ).end();
-					} else {
+		// Create a Promise to update data in the MembershipData collection
+		var updateMdC = new Promise( function ( resolve, reject ) {
 
-						// Otherwise, log the success and perform the membershipData update
-						updateMembership( queries );
-					}
-				},
-				handlerTag.src
+			// Send the membership update request
+			logger.log(
+				`Member data update complete. Updating membership data`,
+				handlerTag
 			);
-		};
-		
+
+			// Send a POST request to the MDBI to update the MembershipData Collection with any
+			// queued updates
+			if ( queries.body.MembershipData !== false ) {
+				
+				// If there are any updates requested for the MembershipData collection, then
+				// perform the updates
+				www.https.post(
+					queries.options.MembershipData,
+					queries.body.MembershipData,
+					function ( reply, error ) {
+	
+						// Check for any errors in the MembershipData collection update
+						if ( error ) {
+	
+							// Some MDBI error happened
+							logger.log( `MDBI membership update failed: ${error}`, handlerTag );
+							reject( {
+								"statusCode": 500,
+								"responseMsg": JSON.parse(
+									ef.asCommonStr( ef.struct.coreErr, error )
+								)
+							} );
+						} else if ( reply.nModified < 1 ) {
+	
+							// If updates were queued for the MembershipData collection and the
+							// MDBI wasn't able to update anything, reply with an MDBI_NO_EFFECT
+							// error to the promise
+							var efmt = ef.asCommonStr( ef.struct.mdbiNoEffect, {
+								"unmodified": {
+									"collection": "MembershipData",
+									"fields": updateQueue.MembershipData
+								}
+							} );
+							logger.log( efmt, handlerTag );
+							resolve( {
+								"statusCode": 499,
+								"responseMsg": JSON.parse( efmt )
+							} );
+						} else if ( reply.nModified > 1 ) {
+	
+							// FATAL: The MDBI updated several documents
+							var efmt = ef.asCommonStr( ef.struct.mdbiMultiEffect );
+							logger.log( efmt, handlerTag );
+							reject( {
+								"statusCode": 499,
+								"responseMsg": JSON.parse( efmt )
+							} );
+						} else {
+	
+							// Otherwise, reply with success
+							resolve( {
+								"statusCode": 200,
+								"responseMsg": JSON.parse(
+									rf.asCommonStr( true, {
+										"msg": "MembershipData collection successfully updated"
+									} )
+								)
+							} );
+						}
+					},
+					handlerTag.src
+				);
+			} else {
+
+				// Otherwise, do nothing and return the result of the operation
+				resolve( {
+					"statusCode": 200,
+					"responseMsg": JSON.parse(
+						rf.asCommonStr( true, {
+							"msg": "No MembershipData cosllection updates queued. Skipping..."
+						} )
+					)
+				} );
+			}
+		} );
+
 		// Define a callback to run after running the capability check
 		var capabilityCallback = function ( result ) {
 
@@ -1228,8 +1330,69 @@ api.register(
 				// Otherwise, the user is likely authorized to perform this action
 				case true: {
 
-					// If the user is authorized, perform the update
-					updateMember();
+					// If the user is authorized, perform the updates as Promises
+					Promise.all( [
+						updateMC,
+						updateMdC
+					] ).then( function ( valOnSuccess ) {
+
+						// If both promises resolve, then no serious errors occurred. Check for
+						// warnings
+						var warnings = [];
+						var successes = [];
+						for ( var i = 0; i < valOnSuccess.length; i++ ) {
+
+							// If any of the query results is not a code 200, it counts as an
+							// unsuccessful attempt
+							if ( valOnSuccess[i].statusCode !== 200 ) {
+
+								warnings.push( valOnSuccess[i] );
+							} else {
+
+								successes.push( valOnSuccess[i] );
+							}
+						}
+
+						// If absolutely none of our queries worked, it's a hard failure
+						if ( successes.length === 0 ) {
+
+							// Collect the unmodified
+							// On a hard failure, return a code 499 and MDBI_
+							// response.status( 200 ).send( valOnSuccess ).end();
+							response.status( 200 ).send( ef.asCommonStr(
+								ef.struct.mdbiNoEffect, {
+									"unmodified": warnings
+								}
+							) ).end();
+						} else if ( warnings.length > 0 ) {
+
+							// Otherwise, if the request didn't ENTIRELY fail, but still partially
+							// failed, send a "soft" error
+							response.status( 200 ).send( ef.asCommonStr(
+								ef.struct.mdbiPartialEffect, {
+									"unmodified": warnings,
+									"modified": successes
+								}
+							) ).end();
+						} else {
+
+							// Finally, if no warnings were generated and all our queries were
+							// successful, send a success message
+							response.status( 200 ).send( rf.asCommonStr( true, {
+								"msg": "User data successfully modified",
+								"result": successes
+							} ) );
+						}
+					}, function ( valOnFailure ) {
+
+						// If any one of the promises rejects, this is a failure. Reply to the
+						// client with the given error
+						response.status(
+							valOnFailure.statusCode
+						).send(
+							valOnFailure.responseMsg
+						).end();
+					} );
 					break;
 				}
 
@@ -1447,12 +1610,12 @@ function buildEditQueries ( memberID, updateQueue ) {
 	// Return the queries to the endpoint handler
 	return {
 		"body": {
-			"Member": memberQuery,
-			"MembershipData": mdQuery
+			"Member": updateQueue.Member.length > 0 ? memberQuery : false,
+			"MembershipData": updateQueue.MembershipData.length > 0 ? mdQuery : false
 		},
 		"options": {
-			"Member": memberQueryOptions,
-			"MembershipData": mdQueryOptions
+			"Member": updateQueue.Member.length > 0 ? memberQueryOptions : false,
+			"MembershipData": updateQueue.MembershipData.length > 0 ? mdQueryOptions : false
 		}
 	};
 }
