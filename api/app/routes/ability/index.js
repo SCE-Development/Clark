@@ -163,9 +163,6 @@ API module (Ability)", apiInfo.args.help, apiInfo.rval.help, function ( request,
 	}
 } );
 
-// TODO:	add verify session as a global utility function, and do the same for verification,
-//			capability check, and mdbiX callbacks. Also do this for clearaSession(), and redo
-//			the au.isCapable function
 // @endpoint		(GET) /getAll
 // @description		This endpoint is used to request a full list of abilities assignable to
 //					clearance levels

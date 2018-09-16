@@ -277,10 +277,8 @@ api.register(
 				},
 				"update": {
 					"$set": {
-						"lastLogin": timestamp
-						// TODO: add logic here to also update the user's last activity (for the
-						// server to automatically monitor and refresh your session timeout
-						// counter)
+						"lastLogin": timestamp,
+						"lastActivity": timestamp
 					}
 				}
 			};
@@ -628,7 +626,6 @@ api.register(
 //						a code 499, and an error format object
 //					On failure:
 //						a code 500 and an error format object
-// TODO: Figure out why this endpoint is generating so many aggregation logs
 apiInfo.args.search = [
 	{
 		"name": "request.sessionID",
