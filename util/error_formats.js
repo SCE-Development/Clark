@@ -67,6 +67,10 @@ error_formats.struct = {
 		"name": "HTTPS_PUT_FAIL",
 		"msg": "HTTPS PUT failed"
 	},
+	"illegalOperation": {
+		"name": "ILLEGAL_OPERATION",
+		"msg": "The requested operation was illegal"
+	},
 	"invalidBody": {
 		"name": "INVALID_BODY",
 		"msg": "The submitted request body is invalid, incomplete, or incorrectly formatted"
@@ -78,6 +82,22 @@ error_formats.struct = {
 	"mdbiAccessDenied": {
 		"name": "MDBI_ACCESS_DENIED",
 		"msg": "You do not have access rights to the MDBI system"
+	},
+	"mdbiNoEffect": {
+		"name": "MDBI_NO_EFFECT",
+		"msg": "The operation had no effect on the database"
+	},
+	"mdbiPartialEffect": {
+		"name": "MDBI_PARTIAL_EFFECT",
+		"msg": "The operation affect only a portion of the intended documents"
+	},
+	"mdbiMultiEffect": {
+		"name": "MDBI_MULTI_EFFECT",
+		"msg": "The operation affected more data than intended (potential data corruption)"
+	},
+	"nonexistentEndpoint": {
+		"name": "CORE_NONEXISTENT_ENDPOINT",
+		"msg": "The requested API endpoint does not exist"
 	},
 	"expiredSession": {
 		"name": "CORE_SESSION_EXPIRED",
@@ -133,6 +153,8 @@ error_formats.asCommonStr = function (typeObj, error = null) {
 	@parameter 	(optional) stringify - if true, will return the common error object as a JSON-stringified string
 	@returns 	An object with the following format:
 					{
+						"success": false,		// this is always hardcoded to false, since it's an error
+						"timestamp": "timestamp",
 						"etype": "error type",
 						"emsg": "error message or description",
 						"eobj": {
@@ -148,6 +170,8 @@ error_formats.common = function (type, msg = null, obj = null, stringify = false
 	// Format object
 	if (typeof type === "string") {
 		commonErrorObject = {
+			"success": false,
+			"timestamp": new Date( Date.now() ),
 			"etype": type
 		};
 	}

@@ -22,7 +22,7 @@
 				<form role="search">
 					<div class="input-group">
 						<span class="input-group-btn">
-							<button class="btn btn-primary" ng-click="$ctrl.search()">
+							<button class="btn btn-primary" ng-click="$ctrl.search(1)">
 								Search by
 							</button>
 							<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,6 +57,15 @@
 						<li><a href="#" ng-click="$ctrl.setResultsPerPage(100)">100</a></li>
 					</ul>
 				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-primary" ng-click="$ctrl.decrementPage()">
+						<i class="fas fa-angle-left"></i>
+					</button>
+					<button type="button" class="btn btn-primary">{{1 + $ctrl.pageNumber}}</button>
+					<button type="button" class="btn btn-primary" ng-click="$ctrl.incrementPage()">
+						<i class="fas fa-angle-right"></i>
+					</button>
+				</div>
 				<div class="btn-group">
 					<button type="button" class="btn btn-primary">Match Mode:</button>
 					<button type-"button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{$ctrl.searchMode}}</button>
@@ -67,18 +76,278 @@
 					</ul>
 				</div>
 				<!-- END filter controls -->
+
+				<!-- BEGIN add member controls -->
+				<button id="addMemberBtn" class="btn btn-success" ng-click="$ctrl.openAddMemberModal()">
+					Add User <i class="fas fa-user-plus"></i>
+				</button>
+				<!-- END add member controls -->
 			</div>
 		</div>
+
+		<!-- BEGIN add member modal -->
+		<div id="addMemberModal" class="modal fade" tabindex="-1" role="dialog" aria-label="Member Adding Panel">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="false">&times;</span>
+						</button>
+						<h4 class="modal-title member-detail-title">Add Member: {{$ctrl.newMemberUsername}}</h4>
+					</div>
+					<div class="modal-body">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<strong>
+									Registration Progress
+								</strong>
+								(Step {{$ctrl.memberRegistrationStep}} of 5)
+								<!-- BEGIN registration progress bar -->
+								<div class="progress">
+									<div id="addMemberProgress" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">{{$ctrl.memberRegistrationPercent}}
+									</div>
+								</div>
+								<!-- END registration progress bar -->
+								<span id="addMemberErrorMessage" style="color: #b28025;"></span>
+							</div>
+							<div class="panel-body">
+								<div id="addStep0" class="registration-step">
+									<h4>Prerequesite</h4>
+									<div>
+									Has this person already registered on the website (sce.engr.sjsu.edu)?<br><br>
+									If not or if they don't recall, you can check by going back and searching in the Member Profiler.<br><br>Otherwise, enter their username here and click "Yes":
+									</div>
+									<div class="input-group" style="max-width:50%">
+										<span class="input-group-addon">Username</span>
+										<input type="text" class="form-control" id="newMemUname" aria-describedby="New Member Username">
+									</div>
+									<div class="btn-group" role="group">
+										<button id="step0yes" type="button" class="btn btn-default" ng-click="$ctrl.setMemberUsername();">Yes</button>
+										<button id="step0no" type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Tell the pending member to register online!')">No</button>
+									</div>
+								</div>
+								<div id="addStep1" class="registration-step">
+									<h4>ID Verification</h4>
+									<div>
+									Ask for a SJSU ID to ensure that this person is a student.<br><br>
+									So, is this person a student here?
+									</div>
+									<div class="btn-group" role="group">
+										<button id="step1yes" type="button" class="btn btn-default" ng-click="$ctrl.addMemberNextStep()">Yes</button>
+										<button id="step1no" type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Unfortunately, only students can register as SCE members!')">No</button>
+									</div>
+									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Back <i class="fas fa-arrow-left"></i></button>
+								</div>
+								<div id="addStep2" class="registration-step">
+									<h4>Email Verification</h4>
+									<div>
+										Has this person's email been verified? You can check here:
+										<span id="emailStatusLabel" class="label label-info" hidden>{{$ctrl.emailVerified}}</span>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="input-group">
+													<span class="input-group-btn">
+														<button class="btn btn-success" ng-click="$ctrl.checkEmailStatus()">
+															Check Email
+														</button>
+													</span>
+													<input type="text" class="form-control" placeholder="Enter email here..." ng-model="$ctrl.emailToVerify">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="btn-group" role="group">
+										<button type="button" class="btn btn-default" ng-click="$ctrl.addMemberNextStep()">Yes, it's verified</button>
+										<button type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Please ask the person to click the verification email link sent to their email!')">No</button>
+									</div>
+									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Back <i class="fas fa-arrow-left"></i></button>
+								</div>
+								<div id="addStep3" class="registration-step">
+									<h4>Payment Verification</h4>
+									<div>
+									Acquire membership fee <strong>in cash</strong>. The current prices are:<br>
+									Two-Semester Membership: $30<br>
+									One-Semester Membership: $20<br><br>
+									Is payment complete?
+									</div>
+									<div class="btn-group" role="group">
+										<button type="button" class="btn btn-default" ng-click="$ctrl.addMemberNextStep()">Yes</button>
+										<button type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Unfortunately, membership can only be granted with payment!')">No</button>
+									</div>
+									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Back <i class="fas fa-arrow-left"></i></button>
+								</div>
+								<div id="addStep4" class="registration-step">
+									<h4>Door Code Verification</h4>
+									<div>
+									The member's door code should now be available in their user profile. Ask the new member to try it out now!<br><br>
+									Did it work?
+									</div>
+									<div id="doorCodePanel" class="collapse">
+										<doorcoder id="amDoorcoder"></doorcoder>
+									</div>
+									<div class="btn-group" role="group">
+										<button type="button" class="btn btn-default" ng-click="$ctrl.hideDoorCodePanel(); $ctrl.addMemberNextStep()">Yes</button>
+										<button type="button" class="btn btn-default" ng-click="$ctrl.showAddMemberError('Please reassign that member doorcode in the panel below'); $ctrl.showDoorCodePanel()">No</button>
+									</div>
+									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Back <i class="fas fa-arrow-left"></i></button>
+								</div>
+								<div id="addStep5" class="registration-step">
+									<h4>Completion</h4>
+									<div>
+									Nice work! This member has been verified! You may now Finalize their membership registration...
+									<p>P.S. Don't forget to talk about locker space (#shameless_plug) :)</p>
+									</div>
+									<button class="btn btn-danger" ng-click="$ctrl.addMemberPrevStep()">Made a mistake? <i class="fas fa-arrow-left"></i></button>
+									<button class="btn btn-success" ng-click="$ctrl.finalizeMemberReg()">Finalize & Exit</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="cancelAddMemberBtn" class="btn btn-default" data-dismiss="modal">Cancel Registration</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END add member modal -->
+
+		<!-- BEGIN member detail modal -->
+		<div id="memberModal" class="modal fade" tabindex="-1" role="dialog" aria-label="Member Detail Panel">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="false">&times;</span>
+						</button>
+						<h4 class="modal-title member-detail-title">Member Details</h4>
+					</div>
+					<div class="modal-body member-detail-body">
+						<div class="row">
+							<!-- BEGIN Modal Left Pane -->
+							<div class="col-sm-6">
+								<!-- BEGIN User Thumbnail -->
+								<a href="#" class="thumbnail">
+									<img src="img/profile-42914_1280.png" alt="User's Thumbnail" width="250px" heigth="250px" style="object-fit: cover;">
+								</a>
+								<!-- END User Thumbnail -->
+
+							</div>
+							<!-- END Modal Left Pane -->
+
+							<!-- BEGIN User Stats Column -->
+							<!-- Includes things like remaining print pages, etc. -->
+							<div class="col-sm-6">
+								<!-- BEGIN User Info Column -->
+								<table>
+									<tbody>
+										<tr>
+											<td class="member-detail-label">Username</td>
+											<td class="member-detail-disabled-item">
+												<span id="memberUserName" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">First Name</td>
+											<td class="member-detail-item">
+												<span id="memberFirstName" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Middle Initial</td>
+											<td class="member-detail-item">
+												<span id="memberMiddleInitial" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Last Name</td>
+											<td class="member-detail-item">
+												<span id="memberLastName" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Join Date</td>
+											<td class="member-detail-item">
+												<span id="memberJoinDate" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Major</td>
+											<td class="member-detail-item">
+												<span id="memberMajor" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Email</td>
+											<td class="member-detail-item">
+												<span class="badge" style="background-color: #c0c0c0" data-toggle="tooltip" title="Email Verification Status">
+													<span class="glyphicon glyphicon-envelope"></span>
+													<span id="memberEmailVerified"></span>
+												</span>
+												<span id="memberEmail" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Door Code</td>
+											<td class="member-detail-item">
+												<span id="memberDoorCode" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Term Start</td>
+											<td class="member-detail-item">
+												<span id="memberStartTerm" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Term End</td>
+											<td class="member-detail-item">
+												<span id="memberEndTerm" class="member-detail-field"></span>
+											</td>
+										</tr>
+										<tr>
+											<td class="member-detail-label">Status</td>
+											<td class="member-detail-item">
+												<span id="memberStatus" class="member-detail-field"></span>
+											</td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<div class="collapse" id="memberDetailEditor">
+											<div class="row">
+												<div class="col-sm-12">
+													<h4>Edit <span id="detailEditorFieldName"></span></h4>
+													<button type="button" style="width: 100%;" class="btn btn-default" ng-click="$ctrl.closeMemberDetailEditor()">Cancel</button>
+												</div>
+											</div>
+											<span id="memberDetailErrorMessage" style="color: red;"></span>
+											<div id="editorbar" class="input-group member-detail-edit-field hidden">
+												<input id="editorbarInputField" class="form-control" placeholder="New value...">
+												<div class="input-group-btn">
+													<button class="btn btn-success" ng-click="$ctrl.submitNewMemberDetail()">Submit</button>
+												</div>
+											</div>
+											<doorcoder id="doorcoder1" class="member-detail-edit-field hidden"></doorcoder>
+											<membershipmanager currentmember="$ctrl.currentMemberDetail" id="membershipmanager" class="member-detail-edit-field hidden"></membershipmanager>
+										</div>
+									</tfoot>
+								</table>
+								<!-- END User Info Column -->
+							</div>
+							<!-- END User Stats Column -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button id="memberDetailModalCloseButton" type="button" class="btn btn-default" data-dismiss="modal" data-toggle="tooltip" title="Click to discard any unsaved work and close the modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- BEGIN member detail modal -->
+
+		<!-- BEGIN result section -->
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="panel panel-default">
-					<!-- BEGIN member detail panel -->
-					<div class="panel-heading">Detail Panel</div>
-					<div class="panel-body">
-						View member details here...
-					</div>
-					<!-- END member detail panel -->
-					
 					<!-- BEGIN result set table -->
 					<table class="table" style="overflow: scroll; margin-top: 10px;">
 						<thead>
@@ -93,13 +362,19 @@
 							<tr ng-repeat="row in $ctrl.results">
 								<td>{{row.memberID}}</td>
 								<td>
-									<button type="button" class="btn btn-default" ng-click="$ctrl.viewDetail(row.userName)" data-toggle="tooltip" data-placement="left" title="View details">
+									<button type="button" class="btn btn-default" ng-click="$ctrl.viewDetail($index)" data-toggle="tooltip" data-placement="left" title="View details">
 										{{row.userName}}
 									</button>
 								</td>
 								<td>{{row.firstName}} {{row.middleInitial}} {{row.lastName}}</td>
-								<td>{{row.joinDate}}</td>
-								<td>{{row.email}}</td>
+								<td>{{$ctrl.beautifyDate(row.joinDate)}}</td>
+								<td>
+									<span class="badge" style="background-color: #c0c0c0">
+										<span class="glyphicon glyphicon-envelope"></span>
+										<span class="glyphicon {{$ctrl.getEmailVerifiedClassByStatus(row.emailVerified, 'glyphicon-ok email-verified', 'glyphicon-remove email-unverified')}}"></span>
+										</span>
+									{{row.email}}
+								</td>
 								<td>{{row.major}}</td>
 							</tr>
 						</tbody>
@@ -108,5 +383,6 @@
 				</div>
 			</div>
 		</div>
+		<!-- END result section -->
 	</div>
 </div>

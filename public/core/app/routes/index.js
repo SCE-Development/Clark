@@ -73,7 +73,13 @@ router.get("/", function (request, response) {
 				On request failure: a code 500 and an error message detailing the error
 				On credential validation failure: a code 499 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
 				On incorrect credentials: a code 200 and an error message detailing the error (i.e. a commonErrorObject from error_formats.js)
-	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. This is done by performing the described POST request to the "/core/login" endpoint. If login credentials are correct, the client is then passed a redirect url and a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard from the client side using the provided url and session id.
+	@details 	This function is used to submit credentials from the administrator login portal to the server for processing. The request body is expected to be a JSON object with the following format:
+		{
+			"user": ...,					// string
+			"pwd": ...,						// string
+			"sessionStorageSupport": ...	// boolean
+		}
+	where "user" is the user's username string, "pwd" is the user's plain-text password, and "sessionStorageSupport" is a boolean signifying whether the client's browser supports modern sessionStorage technology (the preferred method replacement of cookies). With this information, this function determines if the user has the correct user-password combination, and that they also have access rights to SCE Core Admin Dashboard (i.e. is present in Core Access). This is done by performing a POST request to the "/core/login" endpoint. If login credentials are correct, the client is then passed a redirect url and a session id to use in all further server correspondence. Then, a redirection occurrs to the admin dashboard from the client side using the provided url and session id.
 */
 router.post("/login", function (request, response) {
 	var handlerTag = {"src": "adminLoginHandler"};
@@ -88,10 +94,125 @@ router.post("/login", function (request, response) {
 	response.set("Content-Type", "application/json");
 
 	// BEGIN promises
+	var grantCoreAccess = function (match, resolve, reject) {
+		console.log(`GENERATED: ${JSON.stringify(match.list)}`);
+										
+		var memberUpdateBody = {
+			"accessToken": credentials.mdbi.accessToken,
+			"collection": "Member",
+			"search": {
+				"memberID": {
+					"$eq": match.list[0].memberID
+				}
+			},
+			"update": {
+				"$set": {
+					"lastLogin": timestamp
+				}
+			}
+		};
+		var memberUpdateOptions = {
+			"hostname": "localhost",
+			"path": "/mdbi/update/documents",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(memberUpdateBody))
+			}
+		};
+
+		// Update member's last-login date here
+		www.https.post(memberUpdateOptions, memberUpdateBody, function (reply, error) {
+			if (error) {
+				var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
+
+				logger.log(`Member lastLogin update failed: ${error}`, handlerTag);
+				reject();
+			} else {
+				var redir = `https://${request.hostname}:${settings.port}/core/dashboard`;
+
+				// Give client their session id and client redirection headers here
+				console.log(`UPDATED: ${JSON.stringify(match.list)}`);
+				console.log(`Redirecting: ${redir}`);
+				var sessionResponse = {
+					"sessionID": sessionID,
+					"username": match.list[0].userName,
+					"destination": redir
+				};
+
+				// Cross browser support
+				if (!sessionStorageSupported) {
+					response.set("Set-Cookie", `sessionID=${sessionID}`);
+				}
+				response.send(sessionResponse).status(200).end();
+				resolve();
+			}
+		});
+	};
+	var generageSessionData = function (match, resolve, reject) {
+		console.log(`CLEARED: ${JSON.stringify(match.list)}`);
+
+		// Generate session id and session data here
+		sessionID = crypt.hashSessionID(match.list[0].userName);
+		var sessionDataBody = {
+			"accessToken": credentials.mdbi.accessToken,
+			"collection": "SessionData",
+			"data": {
+				"sessionID": sessionID,
+				"memberID": match.list[0].memberID,
+				"loginTime": timestamp,
+				"lastActivity": timestamp,
+				"maxIdleTime": settings.sessionIdleTime
+			}
+		};
+		var sessionRequestOptions = {
+			"hostname": "localhost",
+			"path": "/mdbi/write",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(sessionDataBody))
+			}
+		};
+
+		// Submit session id to mongodb here
+		www.https.post(sessionRequestOptions, sessionDataBody, function (reply, error) {
+			if (error) {	// report errors
+				var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
+
+				logger.log(`SessionData insert failed: ${error}` , handlerTag);
+				response.send(errStr).status(500).end();
+				reject();
+			} else {
+				grantCoreAccess(match, resolve, reject);
+			}
+		});
+	};
+	var evaluateDbResults = function (match, resolve, reject) {
+		// Evaluate the database search results
+		// logger.log(`Probe2: ${reply}`, handlerTag);	// debug
+		if (match.list.length === 0) {	// i.e. no match was found
+			var errStr = ef.asCommonStr(ef.struct.adminInvalid);
+			
+			logger.log(`Incorrect Credentials: Access Denied`, handlerTag);
+			response.send(errStr).status(499).end();
+			reject();
+		} else if (match.list.length > 1) {	// i.e. multiple accounts were returned
+			var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
+
+			logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
+			response.send(errStr).status(499).end();
+			reject();
+		} else {	// i.e. credentials returned one match
+			generageSessionData(match, resolve, reject);
+		}
+	};
 	var submitCredentials = new Promise(function (resolve, reject) {
 		var requestBody = {
 			"accessToken": credentials.mdbi.accessToken,
-			"collection": "Member",
+			"collection": "CoreAccess",
 			"search": {
 				"userName": request.body.user,
 				"passWord": crypt.hashPwd(request.body.user, request.body.pwd)
@@ -126,170 +247,7 @@ router.post("/login", function (request, response) {
 				response.send(ef.asCommonStr(ef.struct.unexpectedValue, match.list)).status(500).end();
 				reject();
 			} else {
-				// Evaluate the database search results
-				// logger.log(`Probe2: ${reply}`, handlerTag);	// debug
-				if (match.list.length === 0) {	// i.e. no match was found
-					var errStr = ef.asCommonStr(ef.struct.adminInvalid);
-					
-					logger.log(`Incorrect credentials`, handlerTag);
-					response.send(errStr).status(499).end();
-					reject();
-				} else if (match.list.length > 1) {	// i.e. multiple accounts were returned
-					var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
-
-					logger.log(`FATAL ERR: Ambiguous identity!`, handlerTag);
-					response.send(errStr).status(499).end();
-					reject();
-				} else {	// i.e. credentials returned one match
-					// console.log(`SUBMITTED: ${typeof match.list} ${JSON.stringify(match.list)}`);	// debug
-					
-
-					// Search the MembershipData collection for the member's clearance level
-					var requestBody = {
-						"accessToken": credentials.mdbi.accessToken,
-						"collection": "MembershipData",
-						"search": {
-							"memberID": match.list[0].memberID
-						}
-					};
-					var submissionOptions = {
-						"hostname": "localhost",
-						"path": "/mdbi/search/documents",
-						"method": "POST",
-						"agent": ssl_user_agent,
-						"headers": {
-							"Content-Type": "application/json",
-							"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
-						}
-					};
-
-					// Submit search criteria
-					www.https.post(submissionOptions, requestBody, function (reply, error) {
-						var membershipData = reply;	// expects an array
-
-						if (error) {
-							var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
-
-							logger.log(`A request error occurred: ${error}`, handlerTag);
-							response.send(errStr).status(500).end();
-							reject();
-						} else if (membershipData.length > 1) {
-							var errStr = ef.asCommonStr(ef.struct.adminAmbiguous);
-
-							logger.log(`Ambiguous membership data`, handlerTag);
-							response.send(errStr).status(499).end();
-							reject();
-						} else if (membershipData.length < 1) {
-							var errStr = ef.asCommonStr(ef.stringify.coreErr);
-
-							logger.log(`No admin data returned`, handlerTag);
-							response.send(errStr).status(499).end();
-							reject();
-						} else {
-							// console.log(JSON.stringify(membershipData));	// debug
-							// Check if member is an officer or admin
-							if (membershipData[0].level !== 0 && membershipData[0].level !== 1) {
-								var errStr = ef.asCommonStr(ef.struct.adminUnauthorized);
-
-								logger.log(`User is not authorized`);
-								response.send(errStr).status(499).end();
-								reject();
-							} else {
-								console.log(`CLEARED: ${JSON.stringify(match.list)}`);
-
-								// Generate session id and session data here
-								var sessionID = crypt.hashSessionID(match.list[0].userName);
-								var sessionDataBody = {
-									"accessToken": credentials.mdbi.accessToken,
-									"collection": "SessionData",
-									"data": {
-										"sessionID": sessionID,
-										"memberID": match.list[0].memberID,
-										"loginTime": timestamp,
-										"lastActivity": timestamp,
-										"maxIdleTime": settings.sessionIdleTime
-									}
-								};
-								var sessionRequestOptions = {
-									"hostname": "localhost",
-									"path": "/mdbi/write",
-									"method": "POST",
-									"agent": ssl_user_agent,
-									"headers": {
-										"Content-Type": "application/json",
-										"Content-Length": Buffer.byteLength(JSON.stringify(sessionDataBody))
-									}
-								};
-
-								// Submit session id to mongodb here
-								www.https.post(sessionRequestOptions, sessionDataBody, function (reply, error) {
-									if (error) {	// report errors
-										var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
-
-										logger.log(`SessionData insert failed: ${error}` , handlerTag);
-										response.send(errStr).status(500).end();
-										reject();
-									} else {
-										console.log(`GENERATED: ${JSON.stringify(match.list)}`);
-										
-										var memberUpdateBody = {
-											"accessToken": credentials.mdbi.accessToken,
-											"collection": "Member",
-											"search": {
-												"memberID": {
-													"$eq": match.list[0].memberID
-												}
-											},
-											"update": {
-												"$set": {
-													"lastLogin": timestamp
-												}
-											}
-										};
-										var memberUpdateOptions = {
-											"hostname": "localhost",
-											"path": "/mdbi/update/documents",
-											"method": "POST",
-											"agent": ssl_user_agent,
-											"headers": {
-												"Content-Type": "application/json",
-												"Content-Length": Buffer.byteLength(JSON.stringify(memberUpdateBody))
-											}
-										};
-
-										// Update member's last-login date here
-										www.https.post(memberUpdateOptions, memberUpdateBody, function (reply, error) {
-											if (error) {
-												var errStr = ef.asCommonStr(ef.struct.httpsPostFail, error);
-
-												logger.log(`Member lastLogin update failed: ${error}`, handlerTag);
-												reject();
-											} else {
-												var redir = `https://${request.hostname}:${settings.port}/core/dashboard`;
-
-												// Give client their session id and client redirection headers here
-												console.log(`UPDATED: ${JSON.stringify(match.list)}`);
-												console.log(`Redirecting: ${redir}`);
-												var sessionResponse = {
-													"sessionID": sessionID,
-													"username": match.list[0].userName,
-													"destination": redir
-												};
-
-												// Cross browser support
-												if (!sessionStorageSupported) {
-													response.set("Set-Cookie", `sessionID=${sessionID}`);
-												}
-												response.send(sessionResponse).status(200).end();
-												resolve();
-											}
-										});
-									}
-								});
-							}
-						}
-					});
-				}
+				evaluateDbResults(match, resolve, reject);
 			}
 		});
 	});
@@ -345,7 +303,7 @@ router.post("/logout", function (request, response) {
 					// all good; the client no longer has session data and can no longer interact with the Core. You can now signal the client to redirect to the core portal
 					logger.log(`Logging out ${request.body.userName} (${request.body.sessionID})`, handlerTag);
 					response.set("Content-Type", "text/html");
-					response.status(200).end();
+					response.status(200).send({"success": true, "msg": "The user has been logged out"}).end();
 				}
 			}
 		};
@@ -394,6 +352,18 @@ router.post("/dashboard", function (request, response) {
 			var vInvalid = "Invalid Token. Returning admin portal to ${settings.port}";
 
 			logger.log(`${(error === null) ? vInvalid : vErr}`, handlerTag);
+
+			// Clear session data if token is invalid
+			if (valid === false && sessionID !== null) {
+				clearSession(credentials.mdbi.accessToken, sessionID, function (reply, err) {
+					if (err) {
+						logger.log(`Failed to clear session: ${err}`, handlerTag);
+					} else {
+						logger.log(`Session cleared successfully`, handlerTag);
+					}
+				});
+			}
+
 			response.location(`https://${request.hostname}:${settings.port}/core/`);
 			response.sendFile("core/core.html", options, function (error) {
 				if (error) {
@@ -431,6 +401,7 @@ router.post("/dashboard", function (request, response) {
 					"options" - an optional JSON object containing options to customize the result set returned from the search. If specified, it may contain any of the following:
 						"resultMax" - the maximum number of results to return (defaults to 100)
 						"regexMode" - a boolean specifying whether or not to interpret the "searchTerm" as a regular expression
+						"pageNumber" - the number of the result page to display
 	@parameter 	response - the web response object provided by express.js
 	@returns 	On success: a code 200 and a list (array) of returned search results, or null if no results were found
 				On invalid or expired session token: a code 499 and an error format object
@@ -441,13 +412,17 @@ router.post("/dashboard/search/members", function (request, response) {
 	var handlerTag = {"src": "dashboardMemberSearchHandler"};
 	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
 	var isRegex = false;
-	var resultsPerPage = 100;	// currently, this parameter is unused, and will later format the amount of search results returned to the client
+	var resultsPerPage = null;
+	var pageNum = null;
 	// logger.log(`This is the requested max results per page: ${resultsPerPage}`, handlerTag);	// debug
 
 	// Acquire options, if any
 	if (typeof request.body.options !== "undefined") {
 		if (typeof request.body.options.resultMax === "number") {
 			resultsPerPage = request.body.options.resultMax;
+		}
+		if (typeof request.body.options.pageNumber === "number") {
+			pageNum = request.body.options.pageNumber;
 		}
 		if (typeof request.body.options.regexMode === "boolean") {
 			isRegex = request.body.options.regexMode;
@@ -497,9 +472,9 @@ router.post("/dashboard/search/members", function (request, response) {
 					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
 				}
 			};
-			
+
 			// Determine the type of search to make
-			logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm}...`, handlerTag);
+			logger.log(`Authorization verified. Now checking for matches to ${typeof request.body.searchTerm} ${request.body.searchTerm} (${(pageNum === null) ? "unpaginated" : `page ${pageNum}`})...`, handlerTag);
 			if (request.body.searchTerm === "" || typeof request.body.searchTerm === "undefined") {
 				// If search term is null, search for everything
 				searchPostBody.search = {};
@@ -546,11 +521,23 @@ router.post("/dashboard/search/members", function (request, response) {
 					};
 				}
 				searchPostBody.search[stype] = objectToPlace;
-
-				// Recalculate Content-Length header, now that the body length has changed
-				searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
 			}
-			// console.log(searchPostBody);	// debug
+
+			// Configure search with any provided options
+			if (resultsPerPage !== null) {
+				// Add results per page as a custom option
+				searchPostBody.options = {
+					"limit": resultsPerPage
+				};
+
+				// Add page number as a custom option
+				if (pageNum !== null) {
+					searchPostBody.options.page = pageNum;
+				}
+			}
+
+			// Recalculate Content-Length header; the above options caused the body length to change!
+			searchPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(searchPostBody));
 
 			// Execute MDBI search here...
 			if (!validFormat) {
@@ -565,6 +552,1506 @@ router.post("/dashboard/search/members", function (request, response) {
 
 	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
 });
+
+/*
+	@endpoint 	/dashboard/search/memberdata
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following parameters:
+					"sessionID" - the client's session token
+					"memberID" - the member's ID number
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200 and a JSON object of the requested member's membership data in the response body (see database schema for details on what data is provided in this object). If the memberID isn't associated with any data (i.e. the memberID is non-existent), the reponse body will be an empty JSON object
+				On invalid or expired session token: a code 499 and an error format object in the response body detailing the expired session issue
+				On invalid request body/undefined memberID: a code 499 and an error-formatted object in the response body detailing the issue
+				On failure: a code 500 an JSON error-formatted details on the error
+	@details 	This endpoint serves POST requests for membership data search queries through the sce core admin dashboard (performed via our custom AngularJS profiler component).
+*/
+router.post("/dashboard/search/memberdata", function (request, response) {
+	var handlerTag = {"src": "dashboardMemberDataSearchHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// Send results to client
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length === 0) {
+				response.send(null).status(200).end();
+			} else {
+				response.send(reply).status(200).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now make sure the request body is properly formatted
+			var mID = request.body.memberID;
+			var validID = true;
+			if (typeof mID === "undefined") {
+				// No memberID? Return an error
+				logger.log(`Error: Undefined memberID`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {
+					"parameter": "memberID"
+				})).end();
+				validID = false;
+			} else if (typeof mID !== "number") {
+				// Not a number? Try to convert it
+				try {
+					mID = Number.parseInt(mID, 10);
+					if (Number.isNaN(mID)) {
+						// Still can't convert it? Report conversion error
+						response.status(499).send(ef.asCommonStr(ef.struct.convertErr, {
+							"parameter": "memberID"
+						})).end();
+						validID = false;
+					}
+				} catch (err) {
+					// Error? Report a code 500
+					logger.log(`Error: Cannot convert ${request.body.memberID} to a number`, handlerTag);
+					response.status(500).send(ef.asCommonStr(ef.struct.coreErr, err)).end();
+					validID = false;
+				}
+			}
+
+			// Only execute MDBI search if the id was valid or successfully converted
+			if (validID) {
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "MemberDossier",
+					"search": {
+						"memberID": mID
+					}
+				};
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				// All good, now to actually execute the mdbi search
+				logger.log(`Authorization verified. Now acquiring membership data for ID ${typeof mID} ${mID}`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+			}
+			
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/search/dc
+	@parameter 	request - the web request object provided by express.js. the request body is expected to be a JSON object with the following parameters:
+					"sessionID" - the client's session token
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200 and the full list (array) of available doorcodes
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session issue
+				On failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for door code searches on the Member Profiler (i.e. the AngularJS profiler component)
+*/
+router.post("/dashboard/search/dc", function (request, response) {
+	var handlerTag = {"src": "dashboardDoorCodeSearchHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// Send results to client
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length === 0) {
+				response.send(null).status(200).end();
+			} else {
+				response.send(reply).status(200).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now search for the door codes
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "DoorCode",
+				"search": {
+					"dcID": {
+						"$gte": 0
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Now acquiring door code data`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/edit/dc
+	@parameter 	request - the web request object provided by express.js. The request body is expected to a JSON object with the following format:
+					"sessionID" - the client's session token
+					"username" - the username of the account to edit
+					"doorcode" - the door code id number to use in the replacement
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session issue
+				On failure to edit door code: a code 499 and an error-formatted object in the response body detailing the issue
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for door code edits on the Member Profiler (i.e. the AngularJS profiler component) when adding new members via the "Add Member" Modal
+*/
+router.post("/dashboard/edit/dc", function (request, response) {
+	var handlerTag = {"src": "dashboardDoorCodeChangeHandler"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var uname = (typeof request.body.username !== "undefined") ? request.body.username : null;
+	var dcode = (typeof request.body.doorcode !== "undefined") ? request.body.doorcode : null;
+
+	var mdbiUpdateCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1) {
+			// The MDBI wasn't able to update any document at all
+			var ineffectiveErr = ef.common("USER_UNCHANGED", "The user was unaffected by the previous query", null, true);
+			logger.log(`Error: MDBI updated nothing!`, handlerTag);
+			response.status(499).send(ineffectiveErr).end();
+		} else if (reply.nModified > 1) {
+			// DANGER: The MDBI updated several documents
+			var corruptionErr = ef.common("MULTIUSER_CORRUPTION", "Various users were unintentionally affected by the previous query", null, true);
+			logger.log(`Error: MDBI updated more than one user!`, handlerTag);
+			response.status(499).send(corruptionErr).end();
+		} else {
+			// Send success here...
+			logger.log(`User door code update success`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			// Null result set
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// We got results, let's process them
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length <= 0) {
+				// If no members are found, then the client entered a non-existent username (i.e. violated a foreign key/referential integrity constraint)
+				var noMemFoundErr = ef.common("USER_NOT_FOUND", "The entered username returned no results", null, true);
+				logger.log(`Error: The username "${uname}" returned no results!`, handlerTag);
+				response.status(499).send(noMemFoundErr).end();
+			} else if (reply.length > 1) {
+				// If more than one member was found, that's fatal; we can't decide whose door code to change. Do nothing, and return an error message to the client
+				var ambibuityErr = ef.common("USER_AMBIGUOUS", "Username is not unique", null, true);
+				logger.log(`Error: The username "${uname}" returned multiple results!`, handlerTag);
+				response.status(499).send(ambibuityErr).end();
+			} else if (typeof reply[0].memberID === "undefined") {
+				// If the member ID is not defined, we cannot identify whose door code info to change. Return an error to the client
+				logger.log(`Error: The result memberID was undefined!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "reply[0].memberID"})).end();
+			} else {
+				var currentUser = reply[0];
+				var updatePostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "MembershipData",
+					"search": {
+						"memberID": currentUser.memberID
+					},
+					"update": {
+						"$set": {
+							"doorCodeID": dcode
+						}
+					}
+				};
+				var updatePostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/update/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(updatePostBody))
+					}
+				};
+
+				// If there's only one user, then this must be the user to edit. Let's go ahead and update this user, now
+				logger.log(`Updating member "${uname}"'s door code data`, handlerTag);
+				www.https.post(updatePostOptions, updatePostBody, mdbiUpdateCallback, handlerTag.src);
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (uname === null) {
+			// No username!
+			logger.log(`Error: Undefined username`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "username"})).end();
+		} else if (dcode === null) {
+			// No doorcode!
+			logger.log(`Error: Undefined doorcode`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "doorcode"})).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": uname
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Ensuring member "${uname}" exists`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/edit/membershipstatus
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+					"username" - the username string of the account whose membership status will be modified
+					"status" - the boolean value to replace the memberhip status with
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for membership finalizing within the Membership Profiler (i.e. the AngularJS profiler component) when adding new members via the "Add Member" Modal
+*/
+router.post("/dashboard/edit/membershipstatus", function (request, response) {
+	var handlerTag = {"src": "editMembershipStatus"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var uname = (typeof request.body.username !== "undefined") ? request.body.username : null;
+	var memstatus = (typeof request.body.status !== "undefined") ? request.body.status : null;
+
+	var mdbiUpdateCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1) {
+			// The MDBI wasn't able to update any document at all
+			var ineffectiveErr = ef.common("USER_UNCHANGED", "The user was unaffected by the previous query", null, true);
+			logger.log(`Error: MDBI updated nothing!`, handlerTag);
+			response.status(499).send(ineffectiveErr).end();
+		} else if (reply.nModified > 1) {
+			// DANGER: The MDBI updated several documents
+			var corruptionErr = ef.common("MULTIUSER_CORRUPTION", "Various users were unintentionally affected by the previous query", null, true);
+			logger.log(`Error: MDBI updated more than one user!`, handlerTag);
+			response.status(499).send(corruptionErr).end();
+		} else {
+			// Send success here...
+			logger.log(`User door code update success`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			// Null result set
+			logger.log(`Search returned null`, handlerTag);
+			response.send(null).status(200).end();
+		} else {
+			// We got results, let's process them
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length <= 0) {
+				// If no members are found, then the client entered a non-existent username (i.e. violated a foreign key/referential integrity constraint)
+				var noMemFoundErr = ef.common("USER_NOT_FOUND", "The entered username returned no results", null, true);
+				logger.log(`Error: The username "${uname}" returned no results!`, handlerTag);
+				response.status(499).send(noMemFoundErr).end();
+			} else if (reply.length > 1) {
+				// If more than one member was found, that's fatal; we can't decide whose door code to change. Do nothing, and return an error message to the client
+				var ambibuityErr = ef.common("USER_AMBIGUOUS", "Username is not unique", null, true);
+				logger.log(`Error: The username "${uname}" returned multiple results!`, handlerTag);
+				response.status(499).send(ambibuityErr).end();
+			} else if (typeof reply[0].memberID === "undefined") {
+				// If the member ID is not defined, we cannot identify whose door code info to change. Return an error to the client
+				logger.log(`Error: The result memberID was undefined!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "reply[0].memberID"})).end();
+			} else {
+				var currentUser = reply[0];
+				var updatePostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "MembershipData",
+					"search": {
+						"memberID": currentUser.memberID
+					},
+					"update": {
+						"$set": {
+							"membershipStatus": memstatus
+						}
+					}
+				};
+				var updatePostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/update/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(updatePostBody))
+					}
+				};
+
+				// If there's only one user, then this must be the user to edit. Let's go ahead and update this user, now
+				logger.log(`Updating member "${uname}"'s membership status`, handlerTag);
+				www.https.post(updatePostOptions, updatePostBody, mdbiUpdateCallback, handlerTag.src);
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		response.set("Content-Type", "application/json");
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (uname === null) {
+			// No username!
+			logger.log(`Error: Undefined username`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "username"})).end();
+		} else if (memstatus === null) {
+			// No membership status!
+			logger.log(`Error: Undefined status`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "status"})).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": uname
+				},
+				"options": {
+					"projection": {
+						"memberID": 1
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Ensuring member "${uname}" exists`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/edit/memberfield
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+					"username" - the username string of the account whose membership data will be modified
+					"field" - a string representing the name of the data field to edit
+					"value" - the value to replace it with
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On illegal data modification request: a code 499 and an error-formatted object in the response body detailing the invalild operation
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for modification of data within the Member collection, using the Membership Profiler (i.e. the AngularJS profiler component) when modifying members' data via the "Member Detail" Modal
+*/
+router.post("/dashboard/edit/memberfield", function (request, response) {
+	var handlerTag = {"src": "editMemberField"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var uname = (typeof request.body.username !== "undefined") ? request.body.username : null;
+	var field = (typeof request.body.field !== "undefined") ? request.body.field : null;
+	var newval = (typeof request.body.value !== "undefined") ? request.body.value : null;
+	var validFieldNames = [
+		"firstName",
+		"middleInitial",
+		"lastName",
+		"major"
+	];
+
+	response.set("Content-Type", "application/json");
+
+	var mdbiUpdateCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1) {
+			// The MDBI wasn't able to update any document at all
+			var ineffectiveErr = ef.common("USER_UNCHANGED", "The user was unaffected by the previous query", null, true);
+			logger.log(`Error: MDBI updated nothing!`, handlerTag);
+			response.status(499).send(ineffectiveErr).end();
+		} else if (reply.nModified > 1) {
+			// DANGER: The MDBI updated several documents
+			var corruptionErr = ef.common("MULTIUSER_CORRUPTION", "Various users were unintentionally affected by the previous query", null, true);
+			logger.log(`Error: MDBI updated more than one user!`, handlerTag);
+			response.status(499).send(corruptionErr).end();
+		} else {
+			// Send success here...
+			logger.log(`User ${field} update success`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var dataSafetyCheck = function (reply, error) {
+		// Ensure that no critical fields are being modified via the dashboard
+		if (!validFieldNames.includes(field)) {
+			logger.log(`Rejecting unsafe modification of field "${field}"`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.illegalOperation, `Field "${field}" cannot be safely modified using this method`)).end();
+		} else {
+			var currentUser = reply[0];
+			var updatePostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"memberID": currentUser.memberID
+				},
+				"update": {
+					"$set": {}
+				}
+			};
+			var updatePostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/update/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": 0
+				}
+			};
+
+			// If there's only one user, then this must be the user to edit. Let's go ahead and update this user, now
+			updatePostBody.update["$set"][field] = newval;
+			updatePostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(updatePostBody));
+			logger.log(`Updating member "${uname}"'s ${field}`, handlerTag);
+			www.https.post(updatePostOptions, updatePostBody, mdbiUpdateCallback, handlerTag.src);
+		}
+	};
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			// Null result set
+			logger.log(`Search returned null`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, `${uname} returned null set`)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length <= 0) {
+				// If no members are found, then the client entered a non-existent username (i.e. violated a foreign key/referential integrity constraint)
+				var noMemFoundErr = ef.common("USER_NOT_FOUND", "The entered username returned no results", null, true);
+				logger.log(`Error: The username "${uname}" returned no results!`, handlerTag);
+				response.status(499).send(noMemFoundErr).end();
+			} else if (reply.length > 1) {
+				// If more than one member was found, that's fatal; we can't decide whose door code to change. Do nothing, and return an error message to the client
+				var ambibuityErr = ef.common("USER_AMBIGUOUS", "Username is not unique", null, true);
+				logger.log(`Error: The username "${uname}" returned multiple results!`, handlerTag);
+				response.status(499).send(ambibuityErr).end();
+			} else if (typeof reply[0].memberID === "undefined") {
+				// If the member ID is not defined, we cannot identify whose door code info to change. Return an error to the client
+				logger.log(`Error: The result memberID was undefined!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "reply[0].memberID"})).end();
+			} else {
+				dataSafetyCheck(reply, error);
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (uname === null) {
+			// No username!
+			logger.log(`Error: Undefined username`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "username"})).end();
+		} else if (field === null) {
+			// No field!
+			logger.log(`Error: ${error}`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "field"})).end();
+		} else if (newval === null) {
+			// No value!
+			logger.log(`Error: ${error}`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "value"})).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": uname
+				},
+				"options": {
+					"projection": {
+						"memberID": 1
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Ensuring member "${uname}" exists`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/edit/memberdates
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+					"username" - the username string of the account whose membership date(s) will be modified
+					"start" - (optional) a date object of the new start term value
+					"end" - (optional) a date object of the new end term value
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and an object with the following format:
+					{
+						"status": "success",
+						"message": "some success message"
+					}
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On illegal or unsuccessful data modification: a code 499 and an error-formatted object in the response body detailing the invalid operation
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests for modification of Join Date, Start Term, and End Term date data within the Membership collection, using the Membership Profiler (i.e. the AngularJS profiler component) when modifying members' data via the "Member Detail" Modal
+*/
+router.post("/dashboard/edit/memberdates", function (request, response) {
+	var handlerTag = {"src": "editMemberDates"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var uname = (typeof request.body.username !== "undefined") ? request.body.username : null;
+	var startinfo = (typeof request.body.start !== "undefined") ? request.body.start : null;
+	var endinfo = (typeof request.body.end !== "undefined") ? request.body.end : null;
+	var someDataExists = (startinfo || endinfo);
+
+	// Set the content type to json data
+	response.set("Content-Type", "application/json");
+
+	var updateCallback = function (reply, error) {
+		if (error) {
+			logger.log(`An error occurred: ${error}`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1 || reply.ok !== 1 || reply.n !== 1) {
+			logger.log(`Date modification unsuccessful`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.coreErr, reply)).end();
+		} else {
+			logger.log(`Date modification successful`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var updateDates = function (memberData) {
+		var updatePostBody = {
+			"accessToken": credentials.mdbi.accessToken,
+			"collection": "MembershipData",
+			"search": {
+				"memberID": memberData.memberID
+			},
+			"update": {
+				"$set": {}
+			}
+		};
+
+		// Fill the $set data
+		if (startinfo !== null) {
+			updatePostBody.update["$set"]["startTerm"] = startinfo
+		}
+		if (endinfo !== null) {
+			updatePostBody.update["$set"]["endTerm"] = endinfo
+		}
+
+		var updatePostOptions = {
+			"hostname": "localhost",
+			"path": "/mdbi/update/documents",
+			"method": "POST",
+			"agent": ssl_user_agent,
+			"headers": {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(JSON.stringify(updatePostBody))
+			}
+		};
+
+		if (someDataExists) {
+			// Member search succeeded. Now to actually perform the update
+			logger.log(`Updating member "${memberData.userName}"`, handlerTag);
+			www.https.post(updatePostOptions, updatePostBody, updateCallback);
+		} else {
+			var returnval = {
+				"status": "success",
+				"message": "operation aborted due to lack of date data"
+			};
+			logger.log(`No date data in post body; Aborting`, handlerTag);
+			response.status(200).send(returnval).end();
+		}
+	};
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply === null) {
+			// Null result set
+			logger.log(`Search returned null`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, `${uname} returned null set`)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply.length <= 0) {
+				// If no members are found, then the client entered a non-existent username (i.e. violated a foreign key/referential integrity constraint)
+				var noMemFoundErr = ef.common("USER_NOT_FOUND", "The entered username returned no results", null, true);
+				logger.log(`Error: The username "${uname}" returned no results!`, handlerTag);
+				response.status(499).send(noMemFoundErr).end();
+			} else if (reply.length > 1) {
+				// If more than one member was found, that's fatal; we can't decide whose door code to change. Do nothing, and return an error message to the client
+				var ambibuityErr = ef.common("USER_AMBIGUOUS", "Username is not unique", null, true);
+				logger.log(`Error: The username "${uname}" returned multiple results!`, handlerTag);
+				response.status(499).send(ambibuityErr).end();
+			} else if (typeof reply[0].memberID === "undefined") {
+				// If the member ID is not defined, we cannot identify whose door code info to change. Return an error to the client
+				logger.log(`Error: The result memberID was undefined!`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, {"parameter": "reply[0].memberID"})).end();
+			} else {
+				updateDates(reply[0]);
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (uname === null) {
+			// No username!
+			logger.log(`Error: Undefined username`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "username"})).end();
+		} else if (startinfo === null && endinfo === null) {
+			// No data given!
+			logger.log(`Error: No data received`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": ["start", "end"]})).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": uname
+				},
+				"options": {
+					"projection": {
+						"memberID": 1
+					}
+				}
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// All good, now to actually execute the mdbi search
+			logger.log(`Authorization verified. Ensuring member "${uname}" exists`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/export/expiredcodes
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a string of the success message
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On insufficient permissions: a code 499 and an error-formatted object in the response body detailing the user's lack of permissions
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests that ask for an export of expired member doorcodes in the database. The request must be performed by a user who is logged in and is authorized to do so (STILL UNIMPLEMENTED), else this request fails
+*/
+router.post("/dashboard/export/expiredcodes", function (request, response) {
+	var handlerTag = {"src": "exportExpiredCodes"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+
+	response.set("Content-Type", "application/json");
+
+	var mdbiAggregateCallback = function (reply, error) {
+		if (error) {
+			logger.log(`Export failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			var list = reply;
+			var currentDate = new Date(Date.now());
+			var dateStr = dt.niceDateStr(currentDate, "_");
+			var timeStr = dt.niceTimeStr(currentDate, "_");
+			var filename = `__code_export__${dateStr}_${timeStr}.json`;
+
+			try {
+				logger.log(`Exporting ${list.length} expired member codes...`, handlerTag);
+				fs.appendFile(`${settings.util}/exports/${filename}`, JSON.stringify(list), "utf8", function (error) {
+					if (error) {
+						logger.log(`Failed to export doorcodes to file ${filename}`, handlerTag);
+						response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+					} else {
+						logger.log(`Export successful -> ${filename}`, handlerTag);
+						response.status(200).send({"status":"success"}).end();
+					}
+				});
+			} catch (e) {
+				logger.log(`Export error: ${e}`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr, e)).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the member exists before we change things
+			var aggPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "MembershipData",
+				"pipeline": [
+					{
+						"$match": {
+							"membershipStatus":false
+						}
+					},
+					{
+						"$lookup": {
+							"from":"DoorCode",
+							"localField":"doorCodeID",
+							"foreignField":"dcID", "as":"dc"
+						}
+					},
+					{
+						"$replaceRoot": {
+							"newRoot": {
+								"code": "$dc.code",
+								"memberID": "$memberID"
+							}
+						}
+					},
+					{
+						"$unwind":"$code"
+					},
+					{
+						"$lookup": {
+							"from":"Member",
+							"localField":"memberID",
+							"foreignField":"memberID",
+							"as":"user"
+						}
+					},
+					{
+						"$replaceRoot": {
+							"newRoot": {
+								"code":"$code",
+								"memberID":"$memberID",
+								"userName":"$user.userName"
+							}
+						}
+					},
+					{
+						"$unwind":"$userName"
+					}
+				]
+			};
+			var aggPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/aggregation",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(aggPostBody))
+				}
+			};
+
+			// All good, now to acquire the list of all door codes that are assigned to expired members
+			logger.log(`Authorization verified. Acquiring codes of expired members`, handlerTag);
+			www.https.post(aggPostOptions, aggPostBody, mdbiAggregateCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/dashboard/search/officerlist
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following format:
+					"sessionID" - the client's session token string
+					"currentUser" - the username of the current user, who will be excluded from the list
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a string of the success message
+				On invalid body: a code 499 and an error-formatted invalidBody object
+				On invalid/expired session token: a code 499 and an error-formatted object in the response body detailing the expired session token issue
+				On issufficient permission: a code 499 and an error-formatted object in the response body detailing the user's lack of permissions
+				On any other failure: a code 500 and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests that ask for a full list of officers. The request must be performed by a user who is logged in and authorized to do so, else this request fails
+*/
+router.post("/dashboard/search/officerlist", function (request, response) {
+	var handlerTag = {"src": "dashboardOfficerList"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var currentUser = (typeof request.body.currentUser !== "undefined") ? request.body.currentUser : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Officer list request returned null`;
+				logger.log(`Error: null value returned in officer list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
+
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "OfficerDossier",
+					"search": {
+						"$and": [
+							{
+								"userName": {
+									"$ne": currentUser	// exclude the current user
+								}
+							},
+							{
+								"level": {
+									"$gt": 0	// i.e. not Admin level
+								}
+							}
+						]
+					},
+					"options": {
+						"projection": {
+							"lastLogin": 0,
+							"email": 0
+						}
+					}
+				};
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				// All good, now to acquire the list of officers that aren't admins and arent the current user
+				logger.log(`Authorization verified. Acquiring codes of expired members`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded. Now let's make sure that the current user has the appropriate capabiliities before we let them change things
+			isCapable([3,4], currentUser, capabilityCallback);
+		}
+	};
+
+	if (currentUser === null) {
+		response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "currentUser"})).end();
+	} else {
+		verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+	}
+});
+
+/*
+	@function 	/dashboard/search/officerabilities
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
+					"sessionID" - the client's session token string
+					"officerID" - the member ID of the officer in question
+					"getInfo"	- (optional) a boolean specifying whether to return all abilities with their descriptions
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and the specified officer's ability list
+				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
+				On any other failure: a code 500, and a JSON object detailing the issue
+*/
+router.post("/dashboard/search/officerabilities", function (request, response) {
+	var handlerTag = {"src": "dashboardOfficerAbilities"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var officerID = (typeof request.body.officerID !== "undefined") ? request.body.officerID : null;
+	var getInfo = (typeof request.body.getInfo !== "undefined") ? request.body.getInfo : false;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Officer ability list request returned null`;
+				logger.log(`Error: null value returned in officer list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (officerID === null) {
+			// Invalid parameters with request
+			logger.log(`Error: No officerID provided`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "officerID"})).end();
+		} else {
+			// Verification succeeded. Now let's find the associated officer's abilities
+			var searchPostBody = {};
+
+			// Determine relevant endpoint using the getInfo boolean 
+			if (getInfo === false) {
+				searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "OfficerDossier",
+					"search": {
+						"memberID": officerID
+					},
+					"options": {
+						"projection": {
+							"abilities": 1
+						}
+					}
+				};
+			} else {
+				searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "OfficerDossier",
+					"pipeline": [
+						{
+							"$match": {
+								"memberID": officerID
+							}
+						},
+						{
+							"$lookup": {
+								"from": "Ability",
+								"localField": "abilities",
+								"foreignField": "abilityID",
+								"as": "abilityInfo"
+							}
+						},
+						{
+							"$unwind": "$abilityInfo"
+						},
+						{
+							"$replaceRoot" : {
+								"newRoot": {
+									"abilityID": "$abilityInfo.abilityID",
+									"abilityName": "$abilityInfo.abilityName",
+									"abilityDescription": "$abilityInfo.abilityDescription"
+								}
+							}
+						}
+					]
+				};
+			}
+
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": (getInfo === null) ? "/mdbi/search/documents" : "/mdbi/search/aggregation",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			logger.log(`Authorization verified. Acquiring ability details for officer #${officerID}`, handlerTag);
+			www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@function 	/dashboard/edit/officerclearance
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
+					"sessionID" - the client's session token string
+					"currentUser" - the username of the current user, who will be excluded from the list
+					"officerID" - the member ID of the officer in question
+					"level" 	- (optional) the clearance level number to assign to this officer
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a success message
+				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
+				On any other failure: a code 500, and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests that ask to modify the specified officer's clearance level. Since a single user (i.e. officer) may only have one clearance level at a time, the level parameter will entirely replace the specified user's clearance level, or remove it if no level is specified
+*/
+router.post("/dashboard/edit/officerclearance", function (request, response) {
+	var handlerTag = {"src": "dashboardOfficerClearance"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var currentUser = (typeof request.body.currentUser !== "undefined") ? request.body.currentUser : null;
+	var officerID = (typeof request.body.officerID !== "undefined") ? request.body.officerID : null;
+	var level = (typeof request.body.level !== "undefined") ? request.body.level : -1;
+
+	var mdbiUpdateCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else if (reply.nModified < 1) {
+			// The MDBI wasn't able to update any document at all
+			var ineffectiveErr = ef.common("USER_UNCHANGED", "The user was unaffected by the previous query", null, true);
+			logger.log(`Error: MDBI updated nothing!`, handlerTag);
+			response.status(499).send(ineffectiveErr).end();
+		} else if (reply.nModified > 1) {
+			// DANGER: The MDBI updated several documents
+			var corruptionErr = ef.common("MULTIUSER_CORRUPTION", "Various users were unintentionally affected by the previous query", null, true);
+			logger.log(`Error: MDBI updated more than one user!`, handlerTag);
+			response.status(499).send(corruptionErr).end();
+		} else {
+			// Send success here...
+			logger.log(`User door code update success`, handlerTag);
+			response.status(200).send({"status": "success"}).end();
+		}
+	};
+
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				var updatePostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "MembershipData",
+					"search": {
+						"memberID": officerID
+					},
+					"update": {
+						"$set": {
+							"level": level
+						}
+					}
+				};
+				var updatePostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/update/documents",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(updatePostBody))
+					}
+				};
+
+				// All good, now to modify the clearance level of the specified officer
+				logger.log(`Authorization verified. Processing clearance level change`, handlerTag);
+				www.https.post(updatePostOptions, updatePostBody, mdbiUpdateCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else if (officerID === null) {
+			// Invalid parameters with request
+			logger.log(`Error: No officerID provided`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.invalidBody, {"parameter": "officerID"})).end();
+		} else {
+			// Verification succeeded; let's make sure the request issuer is qualified to edit the officer
+			isCapable([8,9], currentUser, capabilityCallback);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@function 	/dashboard/search/clearancelevels
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
+					"sessionID" - the client's session token string
+					"currentUser" - the username of the current user, used to ensure that only authorized users can search clearance levels
+					"search" - (optional) a string used to search for a clearance level (search by name)
+	@parameter 	response - the web response object provided by express.js
+	@returns	On success: a code 200, and a full list of clearance levels (or a list of those matching the search query)
+				On unauthorized action: a code 200, and an error-formatted object detailing the authorization issue
+				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
+				On any other failure: a code 500, and a JSON object detailing the issue
+	@details 	This endpoint serves POST requests that ask for a full list of clearance levels used in the system.
+*/
+router.post("/dashboard/search/clearancelevels", function (request, response) {
+	var handlerTag = {"src": "dashboardClearanceLevelList"};
+	var sessionID = (typeof request.body.sessionID !== "undefined") ? request.body.sessionID : null;
+	var currentUser = (typeof request.body.currentUser !== "undefined") ? request.body.currentUser : null;
+	var search = (typeof request.body.level !== "undefined") ? request.body.search : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Clearance level list request returned null`;
+				logger.log(`Error: null value returned in clearance level list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
+
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				// Capability Verification succeeded. Now let's get a full list of clearance levels
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "ClearanceLevel",
+					"pipeline": [
+						{
+							"$match": {
+								"cID": {
+									"$ne": -1
+								}
+							}
+						},
+						{
+							"$lookup": {
+								"from": "Ability",
+								"localField": "abilities",
+								"foreignField": "abilityID",
+								"as": "abilityInfo"
+							}
+						},
+						{
+							"$replaceRoot" : {
+								"newRoot": {
+									"cID": "$cID",
+									"levelName": "$levelName",
+									"abilities": "$abilityInfo"
+								}
+							}
+						}
+					]
+				};
+
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/aggregation",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				logger.log(`Authorization verified. Acquiring clearance level list...`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded; let's make sure the request issuer is qualified to edit abilities
+			isCapable([5,6,7], currentUser, capabilityCallback);
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+});
+
+/*
+	@endpoint 	/ability/getAll
+	@parameter 	request - the web request object provided by express.js. The request body is expected to be a JSON object with the following:
+					"sessionID" - the client's session token string
+					"currentUser" - the username of the current user, used to ensure that only authorized users can search clearance levels
+	@parameter 	response - the web response object provided by express.js
+	@returns 	On success: a code 200, and a full list of abilities assignable to clearance levels
+				On unauthorized action: a code 200, and an error-formatted object detailing the authorization issue
+				On invalid/expired session token: a code 499, and an error-formatted JSON object detailing the expired session issue
+				On any other failure: a code 500, and a JSON object detailing the issue
+	@details 	This endpoint serves GET requests that ask for a full list of abilities assignable to clearance levels
+*/
+router.get("/ability/getAll", function ( request, response ) {
+	var handlerTag = {"src": "dashboard/abilities/getAll"};
+	var sessionID = (typeof request.query.sessionID !== "undefined") ? request.query.sessionID : null;
+	var currentUser = (typeof request.query.currentUser !== "undefined") ? request.query.currentUser : null;
+
+	var mdbiSearchCallback = function (reply, error) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Clearance level list request returned null`;
+				logger.log(`Error: null value returned in available ability list request`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.unexpectedValue, msg)).end();
+			} else {
+				response.status(200).send(reply).end();
+			}
+		}
+	};
+
+	var capabilityCallback = function (resultOfCheck) {
+		switch (resultOfCheck) {
+			case -1: {
+				logger.log(`Permissions check is incomplete`, handlerTag);
+				response.status(500).send(ef.asCommonStr(ef.struct.coreErr)).end();
+				break;
+			}
+			case false: {
+				logger.log(`User ${currentUser} not permitted to perform officer management operation`, handlerTag);
+				response.status(499).send(ef.asCommonStr(ef.struct.adminUnauthorized)).end();
+				break;
+			}
+			case true: {
+				// Capability Verification succeeded. Now let's get a full list of abilities
+				var searchPostBody = {
+					"accessToken": credentials.mdbi.accessToken,
+					"collection": "Ability",
+					"pipeline": [
+						{
+							"$match": {
+								"abilityID": {
+									"$ne": -1
+								}
+							}
+						}
+					]
+				};
+
+				var searchPostOptions = {
+					"hostname": "localhost",
+					"path": "/mdbi/search/aggregation",
+					"method": "POST",
+					"agent": ssl_user_agent,
+					"headers": {
+						"Content-Type": "application/json",
+						"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+					}
+				};
+
+				logger.log(`Authorization verified. Acquiring available ability list...`, handlerTag);
+				www.https.post(searchPostOptions, searchPostBody, mdbiSearchCallback, handlerTag.src);
+				break;
+			}
+		}
+	};
+
+	var verificationCallback = function (valid, error) {
+		if (error) {
+			// Some unexpected error occurred...
+			logger.log(`Error: ${error}`, handlerTag);
+			response.send(ef.asCommonStr(ef.struct.coreErr, error)).status(500).end();
+		} else if (!valid) {
+			// Session expired, let the client know it!
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status(499).send(ef.asCommonStr(ef.struct.expiredSession)).end();
+		} else {
+			// Verification succeeded; let's make sure the request issuer is qualified to edit abilities
+			isCapable( [5,6,7], currentUser, capabilityCallback );
+		}
+	};
+
+	verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+} );
 
 /*
 	@function 	/dashboard
@@ -685,7 +2172,7 @@ function verifySession (token, sessionID, callback) {
 /*
 	@function 	clearSession
 	@parameter 	token - the database access token
-	@parameter 	sessionID - the session token of the user whose sesion data will be cleared
+	@parameter 	sessionID - the session token of the user whose session data will be cleared
 	@parameter 	callback - a required callback function to run after attempting to clear the specified user's session data. It is passed two arguments:
 					reply - if the operation was understood by the MongoDB server, this is a JSON object detailing the success of the operation
 					error - if there was no error, this parameter is "null"; otherwise, it is an object detailing the error that occurred
@@ -713,6 +2200,93 @@ function clearSession (token, sessionID, callback) {
 	};
 
 	www.https.post(removalPostOptions, removalPostBody, callback);
+}
+
+/*
+	@function 	isCapable
+	@parameter 	abilityList - an array of ability ID numbers to check for
+	@parameter 	userID - the ID number or username of the user whose abilities will be checked
+	@parameter 	callback - a required callback function to run after the capability check is executed. It is passed the following parameters:
+					result - On a successfully fulfilled match condition, this value is true. If the match condition was not fulfilled, this value is false. On an error or unexpected response, this value is -1.
+	@parameter 	matchMode - (optional) a number controlling what kind of comparison will be performed. The following are valid match modes:
+					0 - Full match: (default) user must have ALL abilities in the list
+					1 - Loose match: user must have AT LEAST ONE ability in the list
+					2 - Excluded match: user must NOT HAVE ANY of the abilities in the list
+	@returns 	n/a
+	@details 	This function is useful for determining if a user has the correct permissions for a specific feature.
+*/
+function isCapable (abilityList, userID, callback, matchMode = 0) {
+	var handlerTag = {"src": "isCapable"};
+	var status = false;
+	var checkPostBody = {
+		"accessToken": credentials.mdbi.accessToken,
+		"collection": "OfficerDossier",
+		"search": {
+			"abilities": null
+		}
+	};
+	var checkPostOptions = {
+		"hostname": "localhost",
+		"path": "/mdbi/search/documents",
+		"method": "POST",
+		"agent": ssl_user_agent,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": 0
+		}
+	};
+
+	// Modify post body depending on user ID or username usage
+	if (typeof userID === "string") {
+		checkPostBody.search["userName"] = userID;
+	} else if (typeof userID === "number") {
+		checkPostBody.search["memberID"] = userID;
+	}
+
+	// Modify mdbi query based on match mode
+	switch (matchMode) {
+		case 0: {	// Full Match Mode
+			checkPostBody.search.abilities = {
+				"$all": abilityList
+			};
+			break;
+		}
+		case 1: {	// Loose Match Mode
+			checkPostBody.search.abilities = {
+				"$in": abilityList
+			};
+			break;
+		}
+		case 2: {	// Excluded Match Mode
+			checkPostBody.search.abilities = {
+				"$nin": abilityList
+			};
+			break;
+		}
+		default: {
+			status = -1;
+			break;
+		}
+	}
+
+	// Finalize content length calculation
+	checkPostOptions.headers["Content-Length"] = Buffer.byteLength(JSON.stringify(checkPostBody));
+
+	// Run database query if nothing went wrong
+	if (status !== -1) {
+		www.https.post(checkPostOptions, checkPostBody, function (reply, error) {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (error) {
+				callback(-1);
+			} else if (reply.length !== 1) {
+				callback(false);
+			} else {
+				callback(true);
+			}
+		});
+	} else {
+		callback(-1);
+	}
 }
 // END Utility Functions
 

@@ -10,6 +10,7 @@
 
 body {
 	background: url("../img/babu-1810144_1920.jpg");
+	background-color: black;
 	width: 100%;
 	height: 100%;
 	background-repeat: no-repeat;
@@ -47,6 +48,18 @@ body {
 	text-align: center;
 }
 
+.email-icon {
+	color: gray;
+}
+
+.email-verified {
+	color: green;
+}
+
+.email-unverified {
+	color: red;
+}
+
 .error-display {
 	text-align: center;
 	color: red;
@@ -64,6 +77,41 @@ body {
 
 .max-width {
 	width: 100%;
+}
+
+.member-detail-body {
+	font-family: default;
+}
+
+.member-detail-disabled-item {
+	padding: 5px;
+}
+
+.member-detail-edit-btn {
+	/* nothing here... */
+}
+
+.member-detail-edit-field {
+	/* nothing here... */
+}
+
+.member-detail-field {
+	/* nothing here... */
+}
+
+.member-detail-item {
+	padding: 5px;
+}
+
+.member-detail-label {
+	font-family: sceSyncopate;
+	color: white;
+	padding: 5px;
+	background-color: #5388b0;
+}
+
+.member-detail-title {
+	font-family: sceSyncopate;
 }
 
 .portal-slug {
