@@ -16,9 +16,9 @@ var express = require( "express" );
 var settings = require( "../../util/settings" );	// import server system settings
 var logger = require( `${settings.util}/logger` );	// import event log system
 var bodyParser = require( "body-parser" );			// import POST request data parser
-var abilityRoutes = require( "./routes/ability" );	// import SCE Core-v4 Ability API routes
-var userRoutes = require( "./routes/user" );		// import SCE Core-v4 User API routes
-// TODO: Add new routes here
+var autoloader = require( `${settings.util}/route_autoloader` );
+// var abilityRoutes = require( "./routes/ability" );	// import SCE Core-v4 Ability API routes
+// var userRoutes = require( "./routes/user" );		// import SCE Core-v4 User API routes
 
 // Globals
 var handlerTag = { "src": "apiRouter" };
@@ -37,13 +37,27 @@ app.use(bodyParser.urlencoded({		// support URL-encoded request bodies
 
 
 
+// Use the api route autoloader to load api routes in this file's directory
+autoloader.load( app, __dirname );
+// autoloader.load( app, [
+// 	{
+// 		"endpoint": "/user",
+// 		"indexPath": __dirname + "/routes/user"
+// 	},
+// 	{
+// 		"endpoint": "/ability",
+// 		"indexPath": __dirname + "/routes/ability"
+// 	}
+// ] );
+
+// Legacy endpoint routing:
 // @api				/ability
 // @descrip	ion		This API routes to the Ability module's endpoints
-app.use( "/ability", abilityRoutes );		// serves the MongoDB Test Interface page
+// app.use( "/ability", abilityRoutes );		// serves the MongoDB Test Interface page
 
 // @api				/user
 // @description		This API routes to the User module's endpoints
-app.use( "/user", userRoutes );
+// app.use( "/user", userRoutes );
 
 // @api				/clevel
 // @description		This API routes to the Clearance Level module's endpoints

@@ -50,7 +50,8 @@ app.locals.email = "test@test.com";
 /* Define logs to ignore */
 logger.ignore( [
 	"bodyParser.json.Reviver",
-	"delintRequestBody"
+	"delintRequestBody",
+	"error_formats.common"
 ] );
 
 /* Define Static Asset Locations (i.e. includes/js/css/img files) */

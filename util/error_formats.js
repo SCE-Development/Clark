@@ -153,6 +153,8 @@ error_formats.asCommonStr = function (typeObj, error = null) {
 	@parameter 	(optional) stringify - if true, will return the common error object as a JSON-stringified string
 	@returns 	An object with the following format:
 					{
+						"success": false,		// this is always hardcoded to false, since it's an error
+						"timestamp": "timestamp",
 						"etype": "error type",
 						"emsg": "error message or description",
 						"eobj": {
@@ -168,6 +170,8 @@ error_formats.common = function (type, msg = null, obj = null, stringify = false
 	// Format object
 	if (typeof type === "string") {
 		commonErrorObject = {
+			"success": false,
+			"timestamp": new Date( Date.now() ),
 			"etype": type
 		};
 	}
