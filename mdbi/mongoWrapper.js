@@ -62,8 +62,32 @@ mdb.insertDoc = function (collection, doc, callback) {
             // Else, no error occurred, and the database collection was found; use it to write to the database
             logger.log(`Writing new document ${typeof doc} ${(typeof doc === "object") ? JSON.stringify(doc) : doc}`, handlerTag);
             result.insertOne(doc).then(function (promiseResult) {
-                logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
-                callback(null, promiseResult);
+				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
+				
+				// auto increment this colleciton
+				mdb.database.collection( "autoIncrements", {strict: true}, function ( error, result ) {
+					if ( error !== null ) {
+						// If error, report error
+						logger.log( `Unable to auto increment entry for collection "${ collection }"!`, handlerTag );
+						if ( typeof callback === "function" ) {
+							callback( error, null );
+						}
+					} else {
+
+						// If no error, update auto increment counter
+						var query = {
+							"$inc": {}
+						};
+						query.$inc[collection] = 1;	// increment the collection aincmt by 1
+						result.updateOne( {
+							"autoIncrements": 0
+						}, query ).then( function () {
+
+							// Run callback
+							callback(null, promiseResult);
+						} );
+					}
+				} );
             });
         }
     });

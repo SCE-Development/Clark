@@ -63,5 +63,17 @@
 		"committee": "placeholder",
 		"interestedPositions": "placeholder",
 		"improvements": "placeholder"
+	},
+	"autoIncrements": {
+		"autoIncrements": 0,
+		"serverActivations": 0,
+		"Member": 0,
+		"MembershipData": 0,
+		"DoorCode": 0,
+		"clearanceLevel": 0,
+		"Ability": 0,
+		"SessionData": 0,
+		"Announcement": 0,
+		"OfficerApplication": 0
 	}
 }
