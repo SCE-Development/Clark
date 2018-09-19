@@ -12,6 +12,7 @@
 
 // Includes
 var settings = require("../util/settings");         // import server system settings
+var schema = require("./tools/schema_v0");			// import database schema
 var logger = require(`${settings.util}/logger`);    // import event log system
 var ef = require(`${settings.util}/error_formats`); // import error formatting system
 var cu = require(`${settings.util}/custom_utility`);// import custom utilities
@@ -62,8 +63,14 @@ mdb.insertDoc = function (collection, doc, callback) {
             // Else, no error occurred, and the database collection was found; use it to write to the database
             logger.log(`Writing new document ${typeof doc} ${(typeof doc === "object") ? JSON.stringify(doc) : doc}`, handlerTag);
             result.insertOne(doc).then(function (promiseResult) {
-                logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
-                callback(null, promiseResult);
+				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
+				
+				// auto increment this colleciton
+				autoIncrement( collection, function () {
+
+					// Run callback
+					callback(null, promiseResult);
+				} );
             });
         }
     });
@@ -515,6 +522,30 @@ mdb.updateOneDoc = function (collection, filter, update, callback) {
     });
 }
 // END Database Functions
+
+// BEGIN Database Utility Functions
+/*
+	@function	autoIncrement
+	@parameter	collection - the name of the MongoDB collection to auto-increment
+	@parameter	callback - a callback function to run after auto incrementing (takes no arguments)
+	@parameter	cnt - (optional) the number to increment by
+	@returns	n/a
+	@details	This function increments the specified collection by cnt, or 1 if cnt is omitted
+*/
+function autoIncrement ( collection, callback, cnt = 1 ) {
+	var query = {
+		"$inc": {}
+	};
+	query.$inc[collection] = cnt;	// increment the collection aincmt by "cnt"
+	mdb.database.collection( "autoIncrements" ).updateOne( {
+		"autoIncrements": 0
+	}, query ).then( function () {
+
+		// Run callback
+		callback();
+	} );
+}
+// END Database Utility Functions
 
 
 

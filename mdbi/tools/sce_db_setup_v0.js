@@ -116,6 +116,9 @@ if (arg === "--help") {
 				// Manually create the required collections using MongoDB functions (do not use Mongo Wrappers, since they have a security feature that blocks the creation of new collections that do not exist)...
 				console.log("Initializing db to SCE specifications...");
 				mdb.database = db;
+				var dbSchemasToApply = [];
+				var dbViewsToApply = [];
+				var dbDefaultsToApply = [];
 
 				// BEGIN db schema application promises
 				var addServerActivations = new Promise (function (resolve, reject) {
@@ -128,6 +131,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addServerActivations );
+				
 				var addMember = new Promise (function (resolve, reject) {
 					db.collection("Member").insertOne(placeholders.Member, null, function (error, result) {
 						if (error) {
@@ -156,6 +161,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addMember );
+				
 				var addMembershipData = new Promise (function (resolve, reject) {
 					db.collection("MembershipData").insertOne(placeholders.MembershipData, null, function (error, result) {
 						if (error) {
@@ -166,6 +173,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addMembershipData );
+				
 				var addDoorCode = new Promise (function (resolve, reject) {
 					db.collection("DoorCode").insertOne(placeholders.DoorCode, null, function (error, result) {
 						if (error) {
@@ -176,6 +185,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addDoorCode );
+				
 				var addClearanceLevel = new Promise (function (resolve, reject) {
 					db.collection("ClearanceLevel").insertOne(placeholders.ClearanceLevel, null, function (error, result) {
 						if (error) {
@@ -186,6 +197,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addClearanceLevel );
+				
 				var addAbility = new Promise (function (resolve, reject) {
 					db.collection("Ability").insertOne(placeholders.Ability, null, function (error, result) {
 						if (error) {
@@ -196,6 +209,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addAbility );
+				
 				var addSessionData = new Promise (function (resolve, reject) {
 					db.collection("SessionData").insertOne(placeholders.SessionData, null, function (error, result) {
 						if (error) {
@@ -206,6 +221,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addSessionData );
+				
 				var addAnnouncement = new Promise (function (resolve, reject) {
 					db.collection("Announcement").insertOne(placeholders.Announcement, null, function (error, result) {
 						if (error) {
@@ -232,6 +249,8 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addAnnouncement );
+				
 				var addOfficerApplication = new Promise (function (resolve, reject) {
 					db.collection("OfficerApplication").insertOne(placeholders.OfficerApplication, null, function (error, result) {
 						if (error) {
@@ -242,6 +261,23 @@ if (arg === "--help") {
 						}
 					});
 				});
+				dbSchemasToApply.push( addOfficerApplication );
+
+				var addAutoIncrements = new Promise ( function ( resolve, reject ) {
+					db.collection( "autoIncrements" ).insertOne(
+						placeholders.autoIncrements,
+						null,
+						function ( error, result ) {
+							if ( error ) {
+								console.log( `Error creating collection autoIncrements: ${error}` );
+								reject();
+							} else {
+								resolve();
+							}
+						}
+					);
+				} );
+				dbSchemasToApply.push( addAutoIncrements );
 				// END db schema application promises
 
 				// BEGIN db defaults promises
@@ -253,7 +289,7 @@ if (arg === "--help") {
 						console.log(`Error adding default levels: ${error}`);
 						reject();
 					}
-				});
+				}); dbDefaultsToApply.push( addDefaultLevels );
 
 				var addDefaultAbilities = new Promise(function (resolve, reject) {
 					try {
@@ -263,7 +299,7 @@ if (arg === "--help") {
 						console.log(`Error adding default abilities: ${error}`);
 						reject();
 					}
-				});
+				}); dbDefaultsToApply.push( addDefaultAbilities );
 
 				var addAdminUser = new Promise(function (resolve, reject) {
 					db.collection("Member").insertOne(syskey, null, function(error, result) {
@@ -369,7 +405,7 @@ if (arg === "--help") {
 						console.log(`Error excuting db.command(): ${e}`);
 						reject();
 					}
-				});
+				}); dbViewsToApply.push( addMemberDossierView );
 
 				var addOfficerDossierView = new Promise(function (resolve, reject) {
 					var officerDossierCommand = {
@@ -446,7 +482,7 @@ if (arg === "--help") {
 						console.log(`Error excuting db.command(): ${e}`);
 						reject();
 					}
-				});
+				}); dbViewsToApply.push( addOfficerDossierView );
 
 				var addCoreAccessView = new Promise(function (resolve, reject) {
 					var coreAccessCommand = {
@@ -503,7 +539,7 @@ if (arg === "--help") {
 						console.log(`Error excuting db.command(): ${e}`);
 						reject();
 					}
-				});
+				}); dbViewsToApply.push( addCoreAccessView );
 				// END db views application promises
 
 				// BEGIN add mock data routine
@@ -552,11 +588,7 @@ if (arg === "--help") {
 					console.log(`Database schema successfully applied...`);
 
 					// Apply the various database views
-					Promise.all([
-						addMemberDossierView,
-						addOfficerDossierView,
-						addCoreAccessView
-					]).then(applyRootUser).catch(function (error) {
+					Promise.all( dbViewsToApply ).then( applyRootUser ).catch(function (error) {
 						console.log(`Failed to create database views: ${error}`);
 						if (db) {
 							endSession(db);
@@ -567,22 +599,10 @@ if (arg === "--help") {
 
 				// BEGIN schema application routine
 				var applySchema = function () {
-					Promise.all([
-						addServerActivations,
-						addMember,
-						addMembershipData,
-						addDoorCode,
-						addClearanceLevel,
-						addAbility,
-						addSessionData,
-						addAnnouncement,
-						addOfficerApplication,
-						addDefaultLevels,
-						addDefaultAbilities
-					]).then(applyViews).catch(function (error) {
-						console.log(`Failed to apply database schema: ${error}`);
-						if (db) {
-							endSession(db);
+					Promise.all( dbSchemasToApply ).then( applyViews ).catch( function ( error ) {
+						console.log( `Failed to apply database schema: ${error}` );
+						if ( db ) {
+							endSession( db );
 						}
 					});
 				};
@@ -652,34 +672,77 @@ function mockInit (database, resolve, reject) {
 			console.log(`Failed to insert mock members!`);
 			reject();
 		} else {
-			// Then, insert mock Announcements
-			database.collection("Announcement").insertMany(mockAnnouncements, function (err, response) {
-				if (err) {
-					console.log("Failed to insert mock announcements!");
-					reject();
-				} else {
-					// Then, insert mock DoorCodes
-					database.collection("DoorCode").insertMany(mockDoorCodes, function (err, response) {
-						if (err) {
-							console.log("Failed to insert mock door codes!");
-							reject();
-						} else {
-							// Then, insert mock MembershipData
-							database.collection("MembershipData").insertMany(mockMemberData, function (err, response) {
+			// Autoincrement Member collection
+			autoIncrement( "Member", function () {
+
+				// Then, insert mock Announcements
+				database.collection("Announcement").insertMany(mockAnnouncements, function (err, response) {
+					if (err) {
+						console.log("Failed to insert mock announcements!");
+						reject();
+					} else {
+
+						// Autoincrement Announcement collection
+						autoIncrement( "Announcement", function () {
+
+							// Then, insert mock DoorCodes
+							database.collection("DoorCode").insertMany(mockDoorCodes, function (err, response) {
 								if (err) {
-									console.log("Failed to insert mock member data!");
+									console.log("Failed to insert mock door codes!");
 									reject();
 								} else {
-									console.log("Mock-initialization complete")
-									resolve();
+
+									// Autoincrement DoorCode collection
+									autoIncrement( "DoorCode", function () {
+
+										// Then, insert mock MembershipData
+										database.collection("MembershipData").insertMany(mockMemberData, function (err, response) {
+											if (err) {
+												console.log("Failed to insert mock member data!");
+												reject();
+											} else {
+
+												// Autoincrement MembershipData collection
+												autoIncrement( "MembershipData", function () {
+
+													// Complete the Promise chain
+													console.log("Mock-initialization complete")
+													resolve();
+												}, mockMemberData.length );
+											}
+										});
+									}, mockDoorCodes.length );
 								}
 							});
-						}
-					});
-				}
-			});
+						}, mockAnnouncements.length );
+					}
+				});
+			}, mockMembers.length );
+
 		}
 	});
+}
+
+/*
+	@function	autoIncrement
+	@parameter	collection - the name of the MongoDB collection to auto-increment
+	@parameter	callback - a callback function to run after auto incrementing (takes no arguments)
+	@parameter	cnt - (optional) the number to increment by
+	@returns	n/a
+	@details	This function increments the specified collection by cnt, or 1 if cnt is omitted
+*/
+function autoIncrement ( collection, callback, cnt = 1 ) {
+	var query = {
+		"$inc": {}
+	};
+	query.$inc[collection] = cnt;	// increment the collection aincmt by "cnt"
+	mdb.database.collection( "autoIncrements" ).updateOne( {
+		"autoIncrements": 0
+	}, query ).then( function () {
+
+		// Run callback
+		callback();
+	} );
 }
 
 /*

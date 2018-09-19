@@ -18,6 +18,7 @@ var schema = {
 	*/
 	"collectionNames": [
 		"serverActivations",
+		"autoIncrements",	// a collection for auto_incrementing various collection attributes
 		"Member",
 		"MembershipData",
 		"DoorCode",
@@ -28,7 +29,7 @@ var schema = {
 		"OfficerApplication",
 		"MemberDossier",	// a view created by Member LOJ MembershipData LOJ DoorCode
 		"OfficerDossier",	// a view created by Member LOJ MembershipData LOJ ClearanceLevel
-		"CoreAccess"	// a view created by Member LOJ MembershipData
+		"CoreAccess"		// a view created by Member LOJ MembershipData
 	],
 
 	/*
@@ -100,6 +101,17 @@ var schema = {
 			"committee": "string",
 			"interestedPositions": "string",	// array
 			"improvements": "string"
+		},
+		"autoIncrements": {
+			"serverActivations": "number",
+			"Member": "number",
+			"MembershipData": "number",
+			"DoorCode": "number",
+			"clearanceLevel": "number",
+			"Ability": "number",
+			"SessionData": "number",
+			"Announcement": "number",
+			"OfficerApplication": "number"
 		}
 	},
 
