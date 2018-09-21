@@ -1,5 +1,6 @@
 [
 	{
+		"__docId__": 1,
 		"memberID": 1,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -9,6 +10,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 2,
 		"memberID": 2,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -18,6 +20,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 3,
 		"memberID": 3,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -27,6 +30,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 4,
 		"memberID": 4,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -36,6 +40,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 5,
 		"memberID": 5,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -45,6 +50,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 6,
 		"memberID": 6,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -54,6 +60,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 7,
 		"memberID": 7,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -63,6 +70,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 8,
 		"memberID": 8,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -72,6 +80,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 9,
 		"memberID": 9,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -81,6 +90,7 @@
 		"membershipStatus": false
 	},
 	{
+		"__docId__": 10,
 		"memberID": 10,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -90,6 +100,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 11,
 		"memberID": 11,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",
@@ -99,6 +110,7 @@
 		"membershipStatus": true
 	},
 	{
+		"__docId__": 12,
 		"memberID": 12,
 		"startTerm": "2018-04-01T23:12:33.284Z",
 		"endTerm": "2022-02-28T13:34:02.502Z",

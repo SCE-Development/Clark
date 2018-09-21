@@ -1,5 +1,6 @@
 [
 	{
+		"__docId__": 0,
 		"aID": 0,
 		"senderID": 12,
 		"title": "Why am I awesome?",
@@ -7,6 +8,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 1,
 		"aID": 1,
 		"senderID": 10,
 		"title": "Coldplay is awesome when LIVE! (Said no one ever... hehe)",
@@ -14,6 +16,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 2,
 		"aID": 2,
 		"senderID": 3,
 		"title": "A great poem",
@@ -21,6 +24,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 3,
 		"aID": 3,
 		"senderID": 0,
 		"title": "Official SCE Welcome",
@@ -28,6 +32,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 4,
 		"aID": 4,
 		"senderID": 7,
 		"title": "The typical 9-5",
@@ -35,6 +40,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 5,
 		"aID": 5,
 		"senderID": 8,
 		"title": "Response to The typical 9-5",
@@ -42,6 +48,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 6,
 		"aID": 6,
 		"senderID": 7,
 		"title": "Response to Response to The typical 9-5",
@@ -49,6 +56,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 7,
 		"aID": 7,
 		"senderID": 3,
 		"title": "The late Chris Cornell",
@@ -56,6 +64,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 8,
 		"aID": 8,
 		"senderID": 2,
 		"title": "Plans for the break",
@@ -63,6 +72,7 @@
 		"imgPath": ""
 	},
 	{
+		"__docId__": 9,
 		"aID": 9,
 		"senderID": 11,
 		"title": "Avengers Infinity War",
