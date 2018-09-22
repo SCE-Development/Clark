@@ -76,7 +76,7 @@ util/common/trustStore/*.key
 util/common/trustStore/*.crt
 util/common/trustStore/*.csr
 
-# For now, ignore the security file so that people can name their own CSRs, Certs, etc. their way
+# For now, ignore the security file so that people can name their own CSRs, Certs, etc. their way, until after we automate the setup process
 util/common/security.js
 
 # Ignore failed project files
