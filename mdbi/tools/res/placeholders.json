@@ -1,8 +1,10 @@
 {
 	"serverActivations": {
+		"__docId__": -1,
 		"login": "placeholder"
 	},
 	"Member": {
+		"__docId__": -1,
 		"memberID": -1,
 		"firstName": "placeholder",
 		"middleInitial": "p",
@@ -17,6 +19,7 @@
 		"lastLogin": "placeholder"
 	},
 	"MembershipData": {
+		"__docId__": -1,
 		"memberID": -1,
 		"startTerm": "placeholder",
 		"endTerm": "placeholder",
@@ -26,20 +29,24 @@
 		"membershipStatus": true
 	},
 	"DoorCode": {
+		"__docId__": -1,
 		"dcID": -1,
 		"code": "unassigned"
 	},
 	"ClearanceLevel": {
+		"__docId__": -1,
 		"cID": -1,
 		"levelName": "placeholder",
 		"abilities": []
 	},
 	"Ability": {
+		"__docId__": -1,
 		"abilityID": -1,
 		"abilityName": "placeholder",
 		"abilityDescription": "placeholder"
 	},
 	"SessionData": {
+		"__docId__": -1,
 		"sessionID": -1,
 		"memberID": -1,
 		"loginTime": "placeholder",
@@ -47,6 +54,7 @@
 		"maxIdleTime": -1
 	},
 	"Announcement": {
+		"__docId__": -1,
 		"aID": -1,
 		"senderID": -1,
 		"title": "placeholder",
@@ -54,6 +62,7 @@
 		"imgPath": "placeholder"
 	},
 	"OfficerApplication": {
+		"__docId__": -1,
 		"appID": -1,
 		"fullName": "placeholder",
 		"email": "placeholder",
@@ -65,6 +74,7 @@
 		"improvements": "placeholder"
 	},
 	"autoIncrements": {
+		"__docId__": -1,
 		"autoIncrements": 0,
 		"serverActivations": 0,
 		"Member": 0,

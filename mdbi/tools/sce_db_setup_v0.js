@@ -726,22 +726,61 @@ function mockInit (database, resolve, reject) {
 /*
 	@function	autoIncrement
 	@parameter	collection - the name of the MongoDB collection to auto-increment
-	@parameter	callback - a callback function to run after auto incrementing (takes no arguments)
+	@parameter	callback - a callback function to run after auto incrementing. The callback is
+							given two arguments:
+							(object) error - An error formatted object if an error occurred;
+											otherwise, this is null.
+							(number) result - the current value of the collection's auto-increment
+											record
 	@parameter	cnt - (optional) the number to increment by
 	@returns	n/a
 	@details	This function increments the specified collection by cnt, or 1 if cnt is omitted
 */
 function autoIncrement ( collection, callback, cnt = 1 ) {
+	var handlerTag = { "src": "mongoWrapper.autoIncrement" };
 	var query = {
 		"$inc": {}
 	};
 	query.$inc[collection] = cnt;	// increment the collection aincmt by "cnt"
 	mdb.database.collection( "autoIncrements" ).updateOne( {
 		"autoIncrements": 0
-	}, query ).then( function () {
+	}, query ).then( function ( mongoResult ) {
 
-		// Run callback
-		callback();
+		// Determine what to do after the auto increment
+		if ( mongoResult.modifiedCount !== 1 ) {
+
+			// Log the error and pass it to callback
+			var emsg = `Error auto-incrementing: ${mongoResult}`;
+			logger.log( emsg, handlerTag );
+			callback( ef.asCommonStr( ef.struct.mdbiNoEffect, {
+				"msg": emsg
+			} ) , null );
+		} else {
+
+			// Acquire the value of the set number
+			mdb.database.collection( "autoIncrements" ).findOne( {
+				"autoIncrements": 0
+			} ).then( function ( result, error ) {
+
+				// Check for errors
+				if ( error ) {
+
+					// Log the error
+					var emsg = `Error acquiring autoIncrements snapshot: ${error}`;
+					logger.log( emsg , handlerTag );
+
+					// Pass it to the callback
+					callback( JSON.parse( ef.asCommonStr( ef.struct.mdbiReadError, {
+						"msg": emsg
+					} ) ), null );
+				} else {
+					
+					// Run callback and give it the new value of the auto incremented record
+					// logger.log( JSON.stringify(result), handlerTag );	// DEBUG
+					callback( null, result[ collection ] );
+				}
+			} );
+		}
 	} );
 }
 

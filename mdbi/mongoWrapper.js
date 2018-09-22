@@ -45,7 +45,7 @@ mdb.database = null;
     @parameter  doc - the JSON object to write to the DB
     @parameter  callback - (optional) a callback function to run after writing to the database. It is passed two parameters:
                     error - if an error occurred, "error" is a MongoError object detailing the issue. Otherwise, it is null.
-                    result - if insertion succeeded, "result" is a Collection~insertOneWriteOpResult object. Otherwise, it is null.
+                    result - if insertion succeeded, "result" is the current autoincrement value of the collection. Otherwise, it is null.
     @returns    n/a
     @details    This function inserts a single document to the destination collection and runs a callback indicating the status of the operation
 */
@@ -60,18 +60,40 @@ mdb.insertDoc = function (collection, doc, callback) {
                 callback(error, null);
             }
         } else {
-            // Else, no error occurred, and the database collection was found; use it to write to the database
-            logger.log(`Writing new document ${typeof doc} ${(typeof doc === "object") ? JSON.stringify(doc) : doc}`, handlerTag);
-            result.insertOne(doc).then(function (promiseResult) {
-				logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);
-				
-				// auto increment this colleciton
-				autoIncrement( collection, function () {
 
-					// Run callback
-					callback(null, promiseResult);
-				} );
-            });
+			// Auto increment this colleciton
+			autoIncrement( collection, function ( error, incrementVal ) {
+
+				// If an error occurred
+				if ( error ) {
+
+					// Log the error
+					logger.log( error, handlerTag );
+
+					// Throw an error
+					throw error;
+				} else {
+
+					// Else, no error occurred, and the database collection was found; Append the unique sequential id
+					doc[ "__docId__" ] = incrementVal;
+
+					// If a ppk is specified for this collection
+					if ( typeof schema.ppk[ collection ] !== "undefined" ) {
+
+						// Set the ppk (preferred primary key) of this document to the value of the docId
+						doc[ schema.ppk[ collection ] ] = doc[ "__docId__" ];
+					}
+					
+					// Write to the database
+					logger.log(`Writing new document ${typeof doc} ${(typeof doc === "object") ? JSON.stringify(doc) : doc}`, handlerTag);
+					result.insertOne(doc).then(function (promiseResult) {
+						
+						// Run callback
+						logger.log(`Promise Returned: ${(typeof promiseResult === "object") ? JSON.stringify(promiseResult) : promiseResult}`, handlerTag);	// DEBUG
+						callback( null, promiseResult );
+					});
+				}
+			} );
         }
     });
 }
@@ -527,22 +549,61 @@ mdb.updateOneDoc = function (collection, filter, update, callback) {
 /*
 	@function	autoIncrement
 	@parameter	collection - the name of the MongoDB collection to auto-increment
-	@parameter	callback - a callback function to run after auto incrementing (takes no arguments)
+	@parameter	callback - a callback function to run after auto incrementing. The callback is
+							given two arguments:
+							(object) error - An error formatted object if an error occurred;
+											otherwise, this is null.
+							(number) result - the current value of the collection's auto-increment
+											record
 	@parameter	cnt - (optional) the number to increment by
 	@returns	n/a
 	@details	This function increments the specified collection by cnt, or 1 if cnt is omitted
 */
 function autoIncrement ( collection, callback, cnt = 1 ) {
+	var handlerTag = { "src": "mongoWrapper.autoIncrement" };
 	var query = {
 		"$inc": {}
 	};
 	query.$inc[collection] = cnt;	// increment the collection aincmt by "cnt"
 	mdb.database.collection( "autoIncrements" ).updateOne( {
 		"autoIncrements": 0
-	}, query ).then( function () {
+	}, query ).then( function ( mongoResult ) {
 
-		// Run callback
-		callback();
+		// Determine what to do after the auto increment
+		if ( mongoResult.modifiedCount !== 1 ) {
+
+			// Log the error and pass it to callback
+			var emsg = `Error auto-incrementing: ${mongoResult}`;
+			logger.log( emsg, handlerTag );
+			callback( ef.asCommonStr( ef.struct.mdbiNoEffect, {
+				"msg": emsg
+			} ) , null );
+		} else {
+
+			// Acquire the value of the set number
+			mdb.database.collection( "autoIncrements" ).findOne( {
+				"autoIncrements": 0
+			} ).then( function ( result, error ) {
+
+				// Check for errors
+				if ( error ) {
+
+					// Log the error
+					var emsg = `Error acquiring autoIncrements snapshot: ${error}`;
+					logger.log( emsg , handlerTag );
+
+					// Pass it to the callback
+					callback( JSON.parse( ef.asCommonStr( ef.struct.mdbiReadError, {
+						"msg": emsg
+					} ) ), null );
+				} else {
+					
+					// Run callback and give it the new value of the auto incremented record
+					// logger.log( JSON.stringify(result), handlerTag );	// DEBUG
+					callback( null, result[ collection ] );
+				}
+			} );
+		}
 	} );
 }
 // END Database Utility Functions

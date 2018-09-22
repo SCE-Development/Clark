@@ -95,6 +95,22 @@ error_formats.struct = {
 		"name": "MDBI_MULTI_EFFECT",
 		"msg": "The operation affected more data than intended (potential data corruption)"
 	},
+	"mdbiReadError": {
+		"name": "MDBI_READ_ERROR",
+		"msg": "The mdbi failed to read"
+	},
+	"mdbiWriteError": {
+		"name": "MDBI_WRITE_ERROR",
+		"msg": "The mdbi failed to write"
+	},
+	"mdbiUpdateError": {
+		"name": "MDBI_UPDATE_ERROR",
+		"msg": "The mdbi failed to update"
+	},
+	"mdbiDeleteError": {
+		"name": "MDBI_DELETE_ERROR",
+		"msg": "The mdbi failed to delete"
+	},
 	"nonexistentEndpoint": {
 		"name": "CORE_NONEXISTENT_ENDPOINT",
 		"msg": "The requested API endpoint does not exist"

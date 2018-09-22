@@ -116,6 +116,21 @@ var schema = {
 	},
 
 	/*
+		@member		ppk
+		@details	This member is a JSON object detailing the ppk (preferred primary key) of each collection. If a collection's ppk is not specified, the default primary key (i.e. "__docId__") is assumed to be the ppk
+		@note		The ppk must be a specified member of the given collection. If the specified ppk is not included as a member of the specified collection's "collectionMembers" entry, use of that ppk will have undefined results
+	*/
+	"ppk": {
+		"Member": "memberID",
+		"MembershipData": "memberID",
+		"DoorCode": "dcID",
+		"ClearanceLevel": "cID",
+		"Ability": "abilityID",
+		"Announcement": "aID",
+		"OfficerApplication": "appID"
+	},
+
+	/*
 		@member 	utility
 		@details 	This member contains a set of utility functions to manage the schema
 	*/
