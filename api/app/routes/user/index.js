@@ -1188,7 +1188,7 @@ api.register(
 				logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
 				if (reply.length === 0) {
 					response.status(200).send(
-						rf.asCommonStr( true, null )
+						rf.asCommonStr( true, reply )
 					).end();
 				} else {
 					response.status(200).send(
