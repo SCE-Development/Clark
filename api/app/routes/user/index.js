@@ -622,7 +622,7 @@ api.register(
 //															Date.
 //									(~Date) gradDate		The new user's expected graduation
 //															Date. If omitted, this defaults to
-//															null
+//															false
 //									(~boolean) emailOptIn	A boolean specifying whether the user
 //															wants to receive emails from us. This
 //															defaults to false.
@@ -631,7 +631,7 @@ api.register(
 //									(~number) doorcodeId	The dcID of the new user's door code.
 //															If omitted, a doorcode will not be
 //															assigned (i.e. this value is set to
-//															null)
+//															false)
 //									(~number) levelId		The id of the clearance level to
 //															assign to the new user. If omitted,
 //															this defaults to 2 (Member)
@@ -993,9 +993,9 @@ api.register(
 						"startTerm": new Date( Date.now() ),	// set to current date
 						"endTerm": "",		// TODO: define funct to get current semester end date
 						"doorCodeID": 	typeof newUser.doorcodeID === "undefined" ?
-										null : newUser.doorcodeID,
+										false : newUser.doorcodeID,
 						"gradDate": 	typeof newUser.gradDate === "undefined" ?
-										null : newUser.gradDate,
+										false : newUser.gradDate,
 						"level": 2,					// new user; set to member level
 						"membershipStatus": false	// new user; set false until email is verified
 					};
@@ -1397,47 +1397,56 @@ api.register(
 					// Restore membership data to top-level parameters instead of array members
 					{
 						"$unwind": {
-							"path": "$startTerm"
+							"path": "$startTerm",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$endTerm"
+							"path": "$endTerm",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$doorCodeID"
+							"path": "$doorCodeID",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$gradDate"
+							"path": "$gradDate",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$level"
+							"path": "$level",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$levelName"
+							"path": "$levelName",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$abilities"
+							"path": "$abilities",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$membershipStatus"
+							"path": "$membershipStatus",
+							"preserveNullAndEmptyArrays": true
 						}
 					},
 					{
 						"$unwind": {
-							"path": "$doorcode"
+							"path": "$doorcode",
+							"preserveNullAndEmptyArrays": true
 						}
 					}
 				);
