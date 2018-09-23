@@ -49,9 +49,12 @@ mdb.database = null;
     @returns    n/a
     @details    This function inserts a single document to the destination collection and runs a callback indicating the status of the operation
 */
-mdb.insertDoc = function (collection, doc, callback) {
-    var handlerTag = {"src": "insertDoc"};
-    // Check if database collection exists
+mdb.insertDoc = function (collection, doc, callback, options = undefined) {
+
+	var handlerTag = {"src": "insertDoc"};
+	var modifiers = typeof options !== "undefined" ? options : {};
+
+	// Check if database collection exists
     mdb.database.collection(collection, {strict: true}, function (error, result) {
         if (error != null) {
             // If an error occurred, log the error and run the callback with it
@@ -78,9 +81,10 @@ mdb.insertDoc = function (collection, doc, callback) {
 					doc[ "__docId__" ] = incrementVal;
 
 					// If a ppk is specified for this collection
-					if ( typeof schema.ppk[ collection ] !== "undefined" ) {
+					if ( typeof schema.ppk[ collection ] !== "undefined" && modifiers.preserveKey !== true ) {
 
 						// Set the ppk (preferred primary key) of this document to the value of the docId
+						logger.log( `Overwriting ppk using __docId__ ${doc[ "__docId__" ]}...`, handlerTag );
 						doc[ schema.ppk[ collection ] ] = doc[ "__docId__" ];
 					}
 					

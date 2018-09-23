@@ -593,6 +593,460 @@ api.register(
 	}
 );
 
+// @endpoint		(POST) /add
+// @description		This endpoint provides the client the ability to add a user to the Core
+//					database
+// @parameters		(object) request		The web request object provided by express.js. The
+//											request body is expected to contain the following
+//											members:
+//							(string) sessionID		The client's session token
+//							(number) userID			The client's logged-in member ID for session
+//													verification purposes
+//							(object) newUser		A JSON object representing the user to add to
+//													the database. This must contain all required
+//													parameters and may contain any number of the
+//													optional (i.e. "~") parameters:
+//									(string) firstName		The new user's first name
+//									(string) middleInitial	The new user's middle initial
+//									(string) lastName		The new user's last name
+//									(string) userName		The new user's selected user name
+//									(string) passWord		The new user's password in plain text
+//									(string) email			The new user's email address
+//									(~Date) endDate			The new user's membership plan
+//															expiration date. If omitted, this
+//															defaults to the current semester's end
+//															Date.
+//									(~Date) startDate		The new user's start date for Core
+//															systems/Member systems access. If
+//															omitted, this defaults to the current
+//															Date.
+//									(~Date) gradDate		The new user's expected graduation
+//															Date. If omitted, this defaults to
+//															null
+//									(~boolean) emailOptIn	A boolean specifying whether the user
+//															wants to receive emails from us. This
+//															defaults to false.
+//									(~string) major			The new user's current major. This
+//															defaults to an empty string
+//									(~number) doorcodeId	The dcID of the new user's door code.
+//															If omitted, a doorcode will not be
+//															assigned (i.e. this value is set to
+//															null)
+//									(~number) levelId		The id of the clearance level to
+//															assign to the new user. If omitted,
+//															this defaults to 2 (Member)
+//					(object) response		The web response object provided by express.js
+// @returns			On success:
+//						a code 200 and a sucess message (response format object)
+//					On invalid or expired session token:
+//						a code 200, and an error format object describing the issue
+//					On existing user error:
+//						a code 200, and an error format object describint the existence of the
+//						user
+//					On invalid or insufficient permissions:
+//						a code 200, and an error format object describing the issue
+//					On failure:
+//						a code 500, and an error format object describing the failure
+apiInfo.args.add = [
+	{
+		"name": "request.sessionID",
+		"type": "string",
+		"desc": "The client's session token"
+	},
+	{
+		"name": "request.userID",
+		"type": "number",
+		"desc": "The client's logged-in member ID for session verification purposes"
+	},
+	{
+		"name": "request.newUser",
+		"type": "object",
+		"desc": "A JSON object representing the user to add to the database. This must contain " +
+				"all required parameters and may contain any or all of the optional (i.e. \"~\"" +
+				") parameters:"
+	},
+	{
+		"name": "request.newUser.firstName",
+		"type": "string",
+		"desc": "The new user's first name"
+	},
+	{
+		"name": "request.newUser.middleInitial",
+		"type": "string",
+		"desc": "The new user's middle initial"
+	},
+	{
+		"name": "request.newUser.lastName",
+		"type": "string",
+		"desc": "The new user's last name"
+	},
+	{
+		"name": "request.newUser.userName",
+		"type": "string",
+		"desc": "The new user's selected user name"
+	},
+	{
+		"name": "request.newUser.passWord",
+		"type": "string",
+		"desc": "The new user's password in plain text"
+	},
+	{
+		"name": "request.newUser.email",
+		"type": "string",
+		"desc": "The new user's email address"
+	},
+	{
+		"name": "request.newUser.endDate",
+		"type": "~Date",
+		"desc": "The new user's membership plan expiration date. If omitted, this defaults to " +
+				"the current semester's end Date."
+	},
+	{
+		"name": "request.newUser.startDate",
+		"type": "~Date",
+		"desc": "The new user's start date for Core systems/Member systems access. If " +
+				"omitted, this defaults to the current Date"
+	},
+	{
+		"name": "request.newUser.gradDate",
+		"type": "~Date",
+		"desc": "The new user's expected graduation date. If omitted, this defaults to null."
+	},
+	{
+		"name": "request.newUser.emailOptIn",
+		"type": "~string",
+		"desc": "A boolean specifying whether the user wants to receive emails from us. This " +
+				"defaults to false."
+	},
+	{
+		"name": "request.newUser.major",
+		"type": "~string",
+		"desc": "The new user's current major. This defaults to an empty string."
+	},
+	{
+		"name": "request.newUser.doorcodeId",
+		"type": "~number",
+		"desc": "The dcId of the new user's door code. If omitted, a doorcode will not be " +
+				"assigned (i.e. this value is set to null)."
+	},
+	{
+		"name": "request.newUser.levelId",
+		"type": "~number",
+		"desc": "The id of the clearance level to assign to the new user. If omitted, this " +
+				"defaults to 2 (Member)."
+	}
+];
+apiInfo.rval.add = [
+	{
+		"condition": "On success",
+		"desc": "A code 200 and a success message (response format object)"
+	},
+	{
+		"condition": "On invalid/expired session token",
+		"desc": "A code 200 and an error format object describing the issue"
+	},
+	{
+		"condition": "On existing user error",
+		"desc": "A code 200, and an error format object describing the the existence of the user"
+	},
+	{
+		"condition": "On failure",
+		"desc": "A code 500 and an error format object describing the failure"
+	}
+];
+api.register(
+	"Add",
+	"POST",
+	"/add",
+	"This endpoint provides the client the ability to add a user to the Core database",
+	apiInfo.args.add,
+	apiInfo.rval.add,
+	function ( request, response ) {
+
+		var handlerTag = { "src": "(post) /api/user/add" };
+		var sessionID = ( typeof request.body.sessionID !== "undefined" ) ? request.body.sessionID : null;
+		var userID = ( typeof request.body.userID !== "undefined" ) ? request.body.userID : null;
+		var newUser = ( typeof request.body.newUser !== "undefined" ) ? request.body.newUser : null;
+		var session = null;		// houses session data of the user to verify
+
+		// First, set the response content type to json
+		response.set( "Content-Type", "application/json" );
+
+		// Next, verify that the client session is valid
+		au.verifySession( credentials.mdbi.accessToken, sessionID, function ( valid, error, sessionData ) {
+
+			// Record the client's session data
+			session = sessionData;
+			// If there was a verification error
+			if ( error ) {
+
+				// Reply with an error message
+				logger.log(`Error: ${error}`, handlerTag);
+				response.status( 500 ).send(
+					ef.asCommonStr( ef.struct.coreErr, error )
+				).end();
+			} else if ( !valid ) {
+
+				// Else if the token is invalid, reply with the appropriate error
+				logger.log( `Error: Invalid session token`, handlerTag );
+				response.status( 200 ).send(
+					ef.asCommonStr( ef.struct.expiredSession )
+				).end();
+			} else {
+
+				// Otherwise, proceed to check if the user is capable of adding a user
+				au.isCapable( [0], userID, capabilityCallback );
+			}
+		} );
+
+		var capabilityCallback = function ( result ) {
+
+			// Run a capability check
+			switch ( result ) {
+				case -1: {
+
+					// If the capability check encountered an error, throw the error
+					logger.log( `Permissions check is incomplete`, handlerTag );
+					response.status( 500 ).send(
+						ef.asCommonStr( ef.struct.coreErr, {
+							"msg": "Permissions check is incomplete"
+						} )
+					).end();
+					break;
+				}
+				case false: {
+
+					// If the client doesn't have add permissions, deny their request
+					var msg = `User with memberID "${session.memberID}" not permitted` +
+					" to perform member addition";
+					logger.log( msg, handlerTag );
+					response.status( 200 ).send(
+						ef.asCommonStr( ef.struct.adminUnauthorized, { "msg": msg } )
+					).end();
+					break;
+				}
+				case true: {
+
+					// Prepare aggregation POST request options
+					var aggregationBody = {
+						"accessToken": credentials.mdbi.accessToken,
+						"collection": "Member",
+						"pipeline": [
+							{
+								"$match": {
+									"userName": {
+										"$eq": newUser.userName
+									}
+								}
+							}
+						]
+					};
+					var aggregationOptions = {
+						"hostname": "localhost",
+						"path": "/mdbi/search/aggregation",
+						"method": "POST",
+						"agent": ssl_user_agent,
+						"headers": {
+							"Content-Type": "application/json",
+							"Content-Length": Buffer.byteLength(
+								JSON.stringify( aggregationBody )
+							)
+						}
+					};
+
+					// If the user has the ability, Let's go ahead first check that the provided
+					// new user doesn't already exist in the database
+					logger.log(
+						`Authorization verified. Performing redundancy check...`,
+						handlerTag
+					);
+					www.https.post( aggregationOptions, aggregationBody, aggregationCallback );
+					break;
+				}
+			}
+		};
+
+		var aggregationCallback = function ( reply, error ) {
+
+			// Determine what to do after the aggregation completed
+			if ( error ) {
+
+				// If an error occurred,
+				logger.log( `Redundancy check failed: ${error}`, handlerTag );
+				response.status( 500 ).send(
+					ef.asCommonStr( ef.struct.coreErr, {
+						"error": error
+					} )
+				).end();
+			} else {
+
+				// Otherwise, process the data returned from the aggregation
+				var userAlreadyExists = reply.length > 0 ? true : false;
+				if ( userAlreadyExists ) {
+
+					// If user already exists, abort the operation and report the failure
+					logger.log(
+						`User "${newUser.userName}" already exists. Aborting...`,
+						handlerTag
+					);
+					response.status( 200 ).send(
+						ef.asCommonStr( ef.struct.mdbiNoEffect, {
+							"msg": `User "${newUser.userName}" already exists. Aborting...`
+						} )
+					).end();
+				} else {
+
+					// Otherwise, go ahead and add the user to the database
+					var addUserBody = {
+						"accessToken": credentials.mdbi.accessToken,
+						"collection": "Member",
+						"data": {
+							"firstName": newUser.firstName,
+							"middleInitial": newUser.middleInitial,
+							"lastName": newUser.lastName,
+							"userName": newUser.userName,
+							"passWord": crypt.hashPwd( newUser.userName, newUser.passWord ),
+							"email": newUser.email,
+							"emailVerified": false,		// new user; email is not verified yet
+							"emailOptIn": true,			// default this to true
+							"major": typeof newUser.major !== "undefined" ? newUser.major : "",
+							"lastLogin": false			// new user; they haven't logged in yet
+						}
+					};
+					var addUserOptions = {
+						"hostname": "localhost",
+						"path": "/mdbi/write",
+						"method": "POST",
+						"agent": ssl_user_agent,
+						"headers": {
+							"Content-Type": "application/json",
+							"Content-Length": Buffer.byteLength( JSON.stringify( addUserBody ) )
+						}
+					};
+
+					// Send the request to add this user to the database
+					www.https.post( addUserOptions, addUserBody, function ( reply, error ) {
+
+						// Check for errors
+						if ( error ) {
+
+							// If error, report the error
+							var errStr = ef.asCommonStr( ef.struct.httpsPostFail, error );
+							logger.log( `New user registration failed: ${ errStr }`, handlerTag );
+							response.status( 500 ).send( errStr ).end();
+						} else {
+
+							// If no error, intialize the member's membership data
+							insertionCallback();
+						}
+					} );
+
+					// // DEBUG
+					// response.status( 200 ).send(
+					// 	rf.asCommonStr( true, {
+					// 		"agReply": reply,
+					// 		"agError": error
+					// 	} )
+					// ).end();
+				}
+			}
+		};
+
+		// After a successful insertion, we next want ot populate the user's membership data
+		var insertionCallback = function () {
+
+			// Now that we have inserted the new user's Member data, we must acquire its memberID
+			// to associate with the corresponding MembershipData document
+			var body = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"userName": newUser.userName
+				}
+			};
+			var options = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/documents",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength( JSON.stringify( body ) )
+				}
+			};
+
+			// Send the request to find the member you just added
+			www.https.post( options, body, function ( reply, error ) {
+
+				// Check for errors
+				if ( error ) {
+
+					// If error, report the error
+					var errStr = ef.asCommonStr( ef.struct.httpsPostFail, error );
+					logger.log( `New user registration failed: ${ errStr }`, handlerTag );
+					response.status( 500 ).send( errStr ).end();
+				} else {
+
+					// If no error, initialize a MembershipData Document for this member
+					var newUserMembershipData = {
+						"memberID": reply[0].memberID,
+						"startTerm": new Date( Date.now() ),	// set to current date
+						"endTerm": "",		// TODO: define funct to get current semester end date
+						"doorCodeID": 	typeof newUser.doorcodeID === "undefined" ?
+										null : newUser.doorcodeID,
+						"gradDate": 	typeof newUser.gradDate === "undefined" ?
+										null : newUser.gradDate,
+						"level": 2,					// new user; set to member level
+						"membershipStatus": false	// new user; set false until email is verified
+					};
+
+					// Prepare a request to insert the new membership data
+					var body = {
+						"accessToken": credentials.mdbi.accessToken,
+						"collection": "MembershipData",
+						"data": newUserMembershipData,
+						"options": {
+							"preserveKey": true		// ensure the memberID isn't overwritten by __docId__ due to race cond.
+						}
+					};
+					var options = {
+						"hostname": "localhost",
+						"path": "/mdbi/write",
+						"method": "POST",
+						"agent": ssl_user_agent,
+						"headers": {
+							"Content-Type": "application/json",
+							"Content-Length": Buffer.byteLength( JSON.stringify( body ) )
+						}
+					};
+
+					// Send request
+					www.https.post( options, body, function ( reply, error ) {
+
+						// Check for errors
+						if ( error ) {
+
+							// If error, report error
+							var errStr = ef.asCommonStr( ef.struct.httpsPostFail, error );
+							logger.log( `Ne user membership registration failed: ${ errStr }`, handlerTag );
+							response.status( 500 ).send( errStr ).end();
+						} else {
+
+							// Otherwise, send a success message
+							// DEBUG
+							response.status( 200 ).send(
+								rf.asCommonStr( true, {
+									"reply": reply
+								} )
+							).end();
+						}
+					} );
+				}
+			} );
+		};
+	}
+);
+
 // @endpoint		(GET) /search
 // @description		This endpoint serves as a general way to search for one or more users given
 //					some search criteria. It combines legacy APIs '/dashboard/search/members'

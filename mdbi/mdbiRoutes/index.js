@@ -98,9 +98,14 @@ mongo.connect(url, mongoOptions, function (err, db) {
 		{
 			"accessToken": "access token string",
 			"collection": "string name of collection",
-			"data": {...}
+			"data": {...},
+			"options": {...}	// optional
 		}
-	where the "accessToken" parameter is the string access token located in credentials.json for security purposes (i.e. enforces local-only db access), and the "data" parameter is a JSON object containing the doc parameter expected by the insertDoc() function. Read the insertDoc() description for more deatils on what to give to the "data" parameter.
+	where the "accessToken" parameter is the string access token located in credentials.json for security purposes (i.e. enforces local-only db access), the "options" parameter is an optional JSON object specifying any or all of the following options:
+	
+		(boolean) "preserveKey"		A boolean indicating whether the ppk (preferred primary key) of the document being inserted should be preserved (i.e. not set to the insertion's "__docId__"). This defaults to false (i.e. the document will have its ppk overridden by the value of its auto-incremented "__docId__").
+	
+	and the "data" parameter is a JSON object containing the doc parameter expected by the insertDoc() function. Read the insertDoc() description for more deatils on what to give to the "data" parameter.
 */
 router.post("/write", function (request, response) {
 	var handlerTag = {"src": "mdbi/write"};
@@ -123,7 +128,7 @@ router.post("/write", function (request, response) {
 				logger.log(`A result was returned`, handlerTag);
 				response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
 			}
-		});
+		}, searchCriteria.options);
 	}
 });
 
