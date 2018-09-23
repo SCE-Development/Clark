@@ -1047,6 +1047,284 @@ api.register(
 	}
 );
 
+// @endpoint		(DELETE) /delete
+// @description		This endpoint provides a way to delete users from the database. If a deletion
+//					is requested, the user's MembershipData entry will first be deleted, followed
+//					by their actual Member entry. Since this is a delete request, there actually
+//					aren't any body parameters to send. Rather, parameters are embedded into the
+//					URL querystring after the "/delete".
+// @parameters		(object) request		The web request object provided by express.js.
+//					(object) response		The web response object provided by express.js.
+//					(string) id				The URL parameter to place after the "/delete", which
+//											represents the member ID of the member to delete. For
+//											example, making a request to the server using the URL
+//											".../api/user/delete?id=13" will delete the member
+//											whose member ID is 13
+//					(string) sessionID		The client's session token string, embedded in the
+//											URL querystring
+// @returns			On success:
+//						a code 200, and a response format object desribing the deletion success
+//					On no deletion:
+//						a code 200, and a response format object with "status" set to false and
+//						with a message describing the inability to delete
+//					On unauthorized action:
+//						a code 200, and an error format object describing your lack of permissions
+//					On failure:
+//						a code 500, and an error format object describing the failure
+apiInfo.args.delete = [
+	{
+		"name": "request",
+		"type": "object",
+		"desc": "The web request object provided by express.js"
+	},
+	{
+		"name": "response",
+		"type": "object",
+		"desc": "The web response object provided by express.js"
+	},
+	{
+		"name": "querystring.id",
+		"type": "string",
+		"desc": "The URL parameter to place after the \"/delete\", which represents the member " +
+				"ID of the member to delete. For example, making a request to the server using " +
+				"the URL \".../api/user/delete?id=13\" will delete the member whose member ID " +
+				"is 13"
+	},
+	{
+		"name": "querystring.sessionID",
+		"type": "string",
+		"desc": "The client's session token string, embedded in the URL querystring"
+	}
+];
+apiInfo.rval.delete = [
+	{
+		"condition": "On success",
+		"desc": "a code 200, and a response format object desribing the deletion success"
+	},
+	{
+		"condition": "On no deletion",
+		"desc": "a code 200, and a response format object with \"status\" set to false and " +
+				"with a message describing the inability to delete"
+	},
+	{
+		"condition": "On unauthorized action",
+		"desc": "a code 200, and an error format object describing your lack of permissions"
+	},
+	{
+		"condition": "On failure",
+		"desc": "a code 500, and an error format object describing the failure"
+	}
+];
+api.register(
+	"Delete",
+	"DELETE",
+	"/delete",
+	"This endpoint provides a way to delete users from the database. If a deletion is requested" +
+	", the user's MembershipData entry will first be deleted, followed by their actual Member " +
+	"entry. Since this is a delete request, there actually aren't any body parameters to send. " +
+	"Rather, parameters are embedded into the URL querystring after the \"/delete\".",
+	apiInfo.args.delete,
+	apiInfo.rval.delete,
+	function ( request, response ) {
+
+		// Acquire required request parameters
+		var handlerTag = { "src": "(post) /api/user/search" };
+		var sessionID = (typeof request.query.sessionID !== "undefined") ? request.query.sessionID : null;
+		var idToDelete = (typeof request.query.id !== "undefined") ? request.query.id : null;
+
+		// Set the response content type to application JSON
+		response.set("Content-Type", "application/json");
+
+		// Verify the client's session
+		au.verifySession( credentials.mdbi.accessToken, sessionID, function( valid, error, sessionData ) {
+
+			// Check if a session verification error occurred
+			if ( error ) {
+
+				// If error, report error
+				logger.log( `Error: ${error}`, handlerTag );
+				response.status( 500 ).send(
+					ef.asCommonStr( ef.struct.coreErr, error )
+				).end();
+			} else if ( !valid ) {
+
+				// If session token is invalid, report invalid session token
+				logger.log(`Error: Invalid session token`, handlerTag);
+				response.status( 200 ).send(
+					ef.asCommonStr( ef.struct.expiredSession )
+				).end();
+			} else {
+				
+				// Otherwise, check if the client is permitted to delete users
+				au.isCapable( [ 2 ], sessionData.memberID, function( result ) {
+
+					// Determine the result of the capability check
+					if ( result === -1 ) {
+
+						// If error, report error
+						var msg = `Error: Capability check failed`;
+						logger.log( msg , handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.coreErr, { "msg": msg } )
+						).end();
+					} else if ( !result ) {
+
+						// If the client is not capable, report it
+						var msg = `Member id ${sessionData.memberID} not permitted to delete users`;
+						logger.log( msg, handlerTag );
+						response.status( 200 ).send(
+							ef.asCommonStr( ef.struct.adminUnauthorized, {
+								"msg": "You are not permitted to delete users"
+							} )
+						).end();
+					} else {
+
+						// If the capability check succeeded, proceed to delete the requested user
+						deleteMembershipData( idToDelete );
+					}
+				} );
+			}
+		} );
+
+		// This callback deletes the membership data of the user specified by "userID"
+		var deleteMembershipData = function( userID ) {
+
+			// Prepare request parameters
+			var body = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "MembershipData",
+				"search": {
+					"memberID": userID
+				}
+			};
+			var options = {
+				"hostname": "localhost",
+				"path": "/mdbi/delete/document",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength( JSON.stringify( body ) )
+				}
+			};
+
+			// Send the request to delete the member's membership data
+			www.https.post( options, body, function( reply, error ) {
+
+				// Check for errors
+				if ( error ) {
+
+					// If error, report error
+					logger.log( `MembershipData delete failed: ${error}`, handlerTag );
+					response.status( 500 ).send(
+						ef.asCommonStr( ef.struct.coreErr )
+					).end();
+				} else {
+
+					// DEBUG
+					// response.status( 200 ).send(
+					// 	rf.asCommonStr( true, {
+					// 		"deleteMembershipDataReply": reply
+					// 	} )
+					// ).end();
+					// Process the results of the operation
+					if ( reply.ok === 0 ) {
+
+						// If the db didn't acknowledge your request, report it
+						logger.log( `Delete MembershipData Error: Mongo replied with NACK (${reply})`, handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.unexpectedValue, {
+								"msg": "Error: Database replied with NACK"
+							} )
+						).end();
+					} else if ( reply.n === 0 ) {
+
+						// If the delete didn't do anything, reply with an error
+						logger.log( `Delete MembershipData Error: No document was deleted`, handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.mdbiNoEffect, {
+								"msg": "No membership data document matched the deletion search"
+							} )
+						).end();
+					} else {
+
+						// Otherwise, proceed to finally delete the member's entry
+						deleteMember( userID );
+					}
+				}
+			} );
+		};
+
+		// This callback deletes a member's entry from the member collection specified by "userID"
+		var deleteMember = function( userID ) {
+
+			// Prepare request parameters
+			var body = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "Member",
+				"search": {
+					"memberID": userID
+				}
+			};
+			var options = {
+				"hostname": "localhost",
+				"path": "/mdbi/delete/document",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength( JSON.stringify( body ) )
+				}
+			};
+
+			// send the request to delete the member from the member collection
+			www.https.post( options, body, function( reply, error ) {
+
+				// Check for errors
+				if ( error ) {
+
+					// If error, report error
+					logger.log( `Member delete failed: ${error}`, handlerTag );
+					response.status( 500 ).send(
+						ef.asCommonStr( ef.struct.coreErr )
+					).end();
+				} else {
+
+					// Process the results of the operation
+					if ( reply.ok === 0 ) {
+
+						// If the db didn't acknowledge your request, report it
+						logger.log( `Delete Member Error: Mongo replied with NACK (${reply})`, handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.unexpectedValue, {
+								"msg": "Error: Database replied with NACK"
+							} )
+						).end();
+					} else if ( reply.n === 0 ) {
+
+						// If the delete didn't do anything, reply with an error
+						logger.log( `Delete Member Error: No document was deleted`, handlerTag );
+						response.status( 500 ).send(
+							ef.asCommonStr( ef.struct.mdbiNoEffect, {
+								"msg": "No member document matched the deletion search"
+							} )
+						).end();
+					} else {
+
+						// Otherwise, respond with a success message
+						logger.log( `Member ${userID} removed from database`, handlerTag );
+						response.status( 200 ).send(
+							rf.asCommonStr( true, {
+								"msg": "Member was successfully deleted"
+							} )
+						).end();
+					}
+				}
+			} );
+		};
+	}
+);
+
 // @endpoint		(GET) /search
 // @description		This endpoint serves as a general way to search for one or more users given
 //					some search criteria. It combines legacy APIs '/dashboard/search/members'
