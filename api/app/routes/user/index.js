@@ -1109,13 +1109,13 @@ apiInfo.args.search = [
 		"desc": "The maximum number of results to return. The default is 100 results"
 	},
 	{
-		"name": "request.option.regexMode",
+		"name": "request.options.regexMode",
 		"type": "~boolean",
 		"desc":	"A boolean specifying whether or not to interpret the searchTerm as a regular " +
 				"expression"
 	},
 	{
-		"name": "request.option.pageNumber",
+		"name": "request.options.pageNumber",
 		"type": "~number",
 		"desc":	"The page number of the result page to return"
 	}
