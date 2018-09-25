@@ -61,8 +61,9 @@ typings/
 package-lock.json
 
 # **** PROJECT: MEANskills Custom ignore options ****
-# Ignore all server log files in the log directory
+# Ignore all server log files in the log directory EXCEPT the placeholder
 log/*
+!log/placeholder
 
 # **** PROJECT: CoreV4 Custom Ignore Options ****
 # Ignore personal files
