@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "lts/"
+services:
+  - docker
+  - mongodb
+
+before_install:
+  - openssl genrsa -aes128 -out $PRIVATE_KEY_NAME.key 2048
+  - openssl rsa -in $PRIVATE_KEY_NAME.key -pubout -out $PUBLIC_KEY_NAME.key
+  - openssl req -new -key $PRIVATE_KEY_NAME.key -out $CERTIFICATE.csr
+  - openssl x509 -req -days 365 -in $CERTIFICATE.csr -signkey $PRIVATE_KEY_NAME.key \
+    -out $CERTIFICATE.crt -subj "/C=US/ST=California/L=San Jose/O=SCE"
+  - docker build core-v4/latest .
+  - docker run --rm -v core-v4 /bin/bash/ 
