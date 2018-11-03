@@ -27,7 +27,7 @@ angular.module("officertools").component("officertools", {
 			"eodProfitForm": `https://goo.gl/vcBWma`,
 			"cashCountProcedures": `https://www.goo.gl/kA8yTE`,
 			"storeSlideshow": `https://docs.google.com/presentation/d/1iRopCuN8qT0e_easSX0t6StIwvqul-OgHZpkkA28g5o/edit#slide=id.p`,
-			"announcement": `localhost:3000/eventManager`
+			"announcement": `https://localhost:3000/eventManager`
 			//"announcement": `https://sce.engr.sjsu.edu/wp-admin/edit.php`
 		};
 
