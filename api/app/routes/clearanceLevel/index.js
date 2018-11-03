@@ -241,8 +241,25 @@ to users", apiInfo.args.getAll, apiInfo.rval.getAll, function( request, response
 					"pipeline": [
 						{
 							"$match": {
-								"abilityID": {
+								"cID": {
 									"$ne": -1
+								}
+							}
+						},
+						{
+							"$lookup": {
+								"from": "Ability",
+								"localField": "abilities",
+								"foreignField": "abilityID",
+								"as": "abilityInfo"
+							}
+						},
+						{
+							"$replaceRoot": {
+								"newRoot": {
+									"cID": "$cID",
+									"levelName": "$levelName",
+									"abilities": "$abilityInfo"
 								}
 							}
 						}
@@ -290,6 +307,285 @@ to users", apiInfo.args.getAll, apiInfo.rval.getAll, function( request, response
 
 	// Run queries
 	au.verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback);
+} );
+
+// @endpoint		(GET) /search
+// @description		This endpoint is used to search for a list of clearance levels using the given
+//					search term and type
+// @parameters		(object) request		The web request object provided by express.js. The
+//											request body is expected to be a JSON object with the
+//											following members:
+//							(string) sessionID		The client's session token string
+//							(string) currentUser	The client user's username
+//							(string) search			The term to search for. If search type is
+//													'levelName', regular expressions are supported
+//							(string) type			The search type. Valid search types include
+//													"cID", "levelName", "abilityID"
+//					(object) response		The web response object provided by express.js
+// @returns			On success: a code 200, and the set of clearance levels satisfying the search
+//					On unauthorized action: a code 200, and an error-formatted object detailing
+//								the authorization issue.
+//					On invalid/expired session token: a code 200, and an error-formatted object
+//								detailing the expired session issue
+//					On any other failure: a code 500, and an error-formatted object detailing the
+//								issue.
+apiInfo.args.search = [
+	{
+		"name": "request.sessionID",
+		"type": "string",
+		"desc": "The client's session token string"
+	},
+	{
+		"name": "request.currentUser",
+		"type": "string",
+		"desc": "The client user's username"
+	},
+	{
+		"name": "request.search",
+		"type": "string",
+		"desc": "The term to search for. If search type is 'levelName', regular expressions are" +
+				" supported"
+	},
+	{
+		"name": "request.type",
+		"type": "string",
+		"desc": "The search type. Valid search types include 'cID', 'levelName', 'abilityID'"
+	}
+];
+apiInfo.rval.search = [
+	{
+		"condition": "On success",
+		"desc": "a code 200, and the set of clearance levels satisfying the search"
+	},
+	{
+		"condition": "On unauthorized action",
+		"desc": "a code 200, and an error-formatted object detailing the authorization issue"
+	},
+	{
+		"condition": "On invalid/expired session token",
+		"desc": "a code 200, and an error-formatted object detailing the expired session issue"
+	},
+	{
+		"condition": "On any other failure",
+		"desc": "a code 500, and an error-formatted object detailing the issue"
+	}
+];
+api.register( "Search", "GET", "/search", "Gets any clearance levels that match the search",
+apiInfo.args.search, apiInfo.rval.search, function( request, response ) {
+
+	// Initialize API
+	var handlerTag = 	{ "src": "(get) /api/clearanceLevel/getAll" };
+	var sessionID = 	( typeof request.query.sessionID !== "undefined" ) ?
+						request.query.sessionID : null;
+	var currentUser =	( typeof request.query.currentUser !== "undefined" ) ?
+						request.query.currentUser : null;
+	var search =		( typeof request.query.search !== "undefined" ) ?
+						request.query.search : null;
+	var type =			( typeof request.query.type !== "undefined" ) ?
+						request.query.type : null;
+
+	// Set the content type to be json
+	response.set( "Content-Type", "application/json" );
+
+	// Verify Session
+	au.verifySession( credentials.mdbi.accessToken, sessionID, function( valid, error ) {
+
+		// Check for errors
+		if( error ) {
+			
+			// If an unexpected error occurred, respond with error
+			logger.log( `Error: ${ error }`, handlerTag );
+			response.status( 500 ).send(
+				ef.asCommonStr( ef.struct.coreErr, error )
+			).end();
+		} else if (!valid) {
+			
+			// Else if the session is expired, let the client know it
+			logger.log(`Error: Invalid session token`, handlerTag);
+			response.status( 500 ).send(
+				ef.asCommonStr( ef.struct.expiredSession )
+			).end();
+		} else {
+
+			// Else if verification succeeded, check if the user's permissions allow them to add,
+			// edit, and delete clearance levels
+			au.isCapable( [14,15,16], currentUser, capabilityCallback );
+		}
+	} );
+
+	// Check capabilities
+	var capabilityCallback = function( result ) {
+
+		// Determine the result of the permission check
+		switch( result ) {
+
+			case -1: {
+
+				// If the permissions check was inconclusive, prevent further action and throw
+				// an error.
+				logger.log( `Permissions check is incomplete`, handlerTag );
+				response.status( 500 ).send(
+					ef.asCommonStr( ef.struct.coreErr )
+				).end();
+				break;
+			}
+
+			case false: {
+
+				// If capabilities are insufficient, notify client of insufficient permissions
+				logger.log(
+					`User ${currentUser} not permitted to perform clearance level management 
+					operation`,
+					handlerTag
+				);
+				response.status( 500 ).send( ef.asCommonStr( ef.struct.adminUnauthorized ) ).end();
+				break;
+			}
+
+			case true: {
+
+				// If capabilities are adequate, Search for the clearance levels with the given
+				// search criteria
+				searchClearanceLevels();
+			}
+		}
+	};
+
+	// Search Clearance Levels
+	var searchClearanceLevels = function() {
+
+		// Create status variables
+		var invalidType = false;
+		
+		// Determine how to fomulate pipeline query based on search type
+		var matchQuery = {
+			"$match": {}
+		};
+		switch( type ) {
+			case "cID": {
+				matchQuery.$match.$and = [ {
+					"cID": { "$ne": -1 }
+				}, {
+					"cID": { "$eq": search }
+				} ];
+				break;
+			}
+			case "levelName": {
+				matchQuery.$match.levelName = {
+					"$regex": search
+				};
+				break;
+			}
+			case "abilityID": {
+				matchQuery.$match.$and = [ {
+					"abilityID": { "$ne": -1 }
+				}, {
+					"abilityID": { "$eq": search }
+				} ];
+				break;
+			}
+			default: {
+
+				// Type is invalid
+				invalidType = true;
+				break;
+			}
+		}
+
+		// Check if the type was invalid
+		if( invalidType ) {
+
+			// Log an error message
+			var emsg = `Search type "${type}" is not valid`;
+			logger.log( emsg, handlerTag );
+
+			// Respond with an error
+			response.status( 200 ).send(
+				ef.asCommonStr(
+					ef.struct.unexpectedValue,
+					emsg
+				)
+			).end();
+		} else {
+
+			// Use aggregation to acquire the matching clearance level entries in the database
+			var searchPostBody = {
+				"accessToken": credentials.mdbi.accessToken,
+				"collection": "ClearanceLevel",
+				"pipeline": [
+					matchQuery,
+					{
+						"$lookup": {
+							"from": "Ability",
+							"localField": "abilities",
+							"foreignField": "abilityID",
+							"as": "abilityInfo"
+						}
+					},
+					{
+						"$replaceRoot": {
+							"newRoot": {
+								"cID": "$cID",
+								"levelName": "$levelName",
+								"abilities": "$abilityInfo"
+							}
+						}
+					}
+				]
+			};
+			var searchPostOptions = {
+				"hostname": "localhost",
+				"path": "/mdbi/search/aggregation",
+				"method": "POST",
+				"agent": ssl_user_agent,
+				"headers": {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(JSON.stringify(searchPostBody))
+				}
+			};
+
+			// Attempt to acquire the list of clearance levels that match the search
+			logger.log( `Authorization verified. Searching clearance levels...`, handlerTag );
+			www.https.post(
+				searchPostOptions,
+				searchPostBody,
+				mdbiSearchCallback,
+				handlerTag.src
+			);
+	
+			// // DEBUG
+			// response.status( 200 ).send(
+			// 	rf.asCommonStr( true, {
+			// 		"search": typeof search + " " + search,
+			// 		"type": typeof type + " " + type,
+			// 		"test": "Hello World"
+			// 	} )
+			// ).end();
+		}
+	};
+	
+	// Evaluate results from the search
+	var mdbiSearchCallback = function( reply, error ) {
+		if (error) {
+			// Some MDBI error happened
+			logger.log(`MDBI search failed: ${error}`, handlerTag);
+			response.status(500).send(ef.asCommonStr(ef.struct.coreErr, error)).end();
+		} else {
+			logger.log(`${reply.length} ${(reply.length === 1) ? "result" : "results"} found`, handlerTag);
+			if (reply === null) {
+				// If a null value is returned, this is unexpected
+				var msg = `Clearance level list request returned null`;
+				logger.log(`Error: null value returned in available ability list request`, handlerTag);
+				response.status( 200 ).send(
+					ef.asCommonStr( ef.struct.unexpectedValue, msg )
+				).end();
+			} else {
+				response.status( 200 ).send(
+					rf.asCommonStr( true, reply )
+				).end();
+			}
+		}
+	};
 } );
 // END Clearance Level Routes
 

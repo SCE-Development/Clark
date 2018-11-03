@@ -3,7 +3,7 @@
 		{
 			"cID": 0,
 			"levelName": "Admin",
-			"abilities": [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+			"abilities": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
 		},
 		{
 			"cID": 1,
@@ -86,6 +86,31 @@
 			"abilityID": 13,
 			"abilityName": "Delete Announcements",
 			"abilityDescription": "This ability grants the user permission to delete announcements"
+		},
+		{
+			"abilityID": 14,
+			"abilityName": "Add Clearance Levels",
+			"abilityDescription": "This ability grants the user permission to add new clearance levels to the SCE ClearanceLevel collection"
+		},
+		{
+			"abilityID": 15,
+			"abilityName": "Edit Clearance Levels",
+			"abilityDescription": "This ability grants the user permission to modify existing clearance levels within the SCE ClearanceLevel collection"
+		},
+		{
+			"abilityID": 16,
+			"abilityName": "Delete Clearance Levels",
+			"abilityDescription": "This ability grants the user permission to delete clearance levels from the SCE ClearanceLevel collection"
+		},
+		{
+			"abilityID": 17,
+			"abilityName": "Grant Clearance Levels",
+			"abilityDescription": "This ability grants the user permission to grant clearance levels to SCE Officers"
+		},
+		{
+			"abilityID": 18,
+			"abilityName": "Revoke Clearance Levels",
+			"abilityDescription": "This ability grants the user permission to revoke clearance levels from SCE Officers"
 		}
 	]
 }
