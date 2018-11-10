@@ -3,11 +3,11 @@ import {Card, Button, CardTitle, Row, Col, CardText, Nav, NavItem, NavLink } fro
 
 import "./announcementsPage.css"
 
-export default class announcementsPage extends React.Component {
+export default class AnnouncementsPage extends React.Component {
 
   render() {
     return (
-      <div className = "EventsPage">
+      <div className = "announcements">
         
         <Nav className = "NavBar">
         <h1 align="center">Announcements Page</h1>
