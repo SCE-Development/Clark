@@ -458,8 +458,26 @@ apiInfo.args.search, apiInfo.rval.search, function( request, response ) {
 		var invalidType = false;
 		
 		// Determine how to fomulate pipeline query based on search type
+		var pipeline = [];
 		var matchQuery = {
 			"$match": {}
+		};
+		var lookupQuery = {
+			"$lookup": {
+				"from": "Ability",
+				"localField": "abilities",
+				"foreignField": "abilityID",
+				"as": "abilityInfo"
+			}
+		};
+		var replaceRootQuery = {
+			"$replaceRoot": {
+				"newRoot": {
+					"cID": "$cID",
+					"levelName": "$levelName",
+					"abilities": "$abilityInfo"
+				}
+			}
 		};
 		switch( type ) {
 			case "cID": {
@@ -468,20 +486,33 @@ apiInfo.args.search, apiInfo.rval.search, function( request, response ) {
 				}, {
 					"cID": { "$eq": search }
 				} ];
+				pipeline = [ matchQuery, lookupQuery, replaceRootQuery ];
 				break;
 			}
 			case "levelName": {
-				matchQuery.$match.levelName = {
-					"$regex": search
-				};
+				matchQuery.$match.$and = [ {
+					"cID": { "$ne": -1 }
+				}, {
+					"levelName": {
+						"$regex": search
+					}
+				} ];
+				pipeline = [ matchQuery, lookupQuery, replaceRootQuery ];
 				break;
 			}
 			case "abilityID": {
-				matchQuery.$match.$and = [ {
-					"abilityID": { "$ne": -1 }
-				}, {
-					"abilityID": { "$eq": search }
-				} ];
+				matchQuery.$match.cID = {
+					"$ne": -1
+				};
+				replaceRootQuery.$replaceRoot.newRoot.abilityFound = {
+					"$setIsSubset": [ [ Number.parseInt(search) ], "$abilities" ]
+				};
+				var filterQuery = {
+					"$match": {
+						"abilityFound": true
+					}
+				};
+				pipeline = [ matchQuery, lookupQuery, replaceRootQuery, filterQuery ];
 				break;
 			}
 			default: {
@@ -512,26 +543,7 @@ apiInfo.args.search, apiInfo.rval.search, function( request, response ) {
 			var searchPostBody = {
 				"accessToken": credentials.mdbi.accessToken,
 				"collection": "ClearanceLevel",
-				"pipeline": [
-					matchQuery,
-					{
-						"$lookup": {
-							"from": "Ability",
-							"localField": "abilities",
-							"foreignField": "abilityID",
-							"as": "abilityInfo"
-						}
-					},
-					{
-						"$replaceRoot": {
-							"newRoot": {
-								"cID": "$cID",
-								"levelName": "$levelName",
-								"abilities": "$abilityInfo"
-							}
-						}
-					}
-				]
+				"pipeline": pipeline
 			};
 			var searchPostOptions = {
 				"hostname": "localhost",
