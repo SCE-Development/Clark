@@ -1,0 +1,20 @@
+[
+    {
+        "eventName" : "SJSU Eng conference1",
+        "eventDescription" : "blah",
+        "eventDate" : "10/10/10",
+        "eventTime":  "10pm",
+        "eventLocation": "SJSU",
+        "eventHost": "Hashim",
+        "eventContact": "fuck you"
+    },
+    {
+        "eventName" : "SJSU Eng conference2",
+        "eventDescription" : "blah",
+        "eventDate" : "10/10/10",
+        "eventTime":  "10pm",
+        "eventLocation": "SJSU",
+        "eventHost": "Hashim",
+        "eventContact": "fuck you"
+    }
+]

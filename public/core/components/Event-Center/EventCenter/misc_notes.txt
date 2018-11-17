@@ -1,0 +1,5 @@
+Redux is a state manager where we want our data to be kept in the front end
+//state: Data we want to display when component (think of it as file)
+//       is being rendered
+//props: Data which we GIVE to a component (read only)
+//render: Basically what we want to display; output is a REACT ELEMENT -> maps to virtual DOM element which maps to actual DOM

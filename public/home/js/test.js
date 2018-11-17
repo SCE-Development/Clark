@@ -2,9 +2,10 @@
 // Name: 			Rolando Javier
 // File: 			test.js
 // Date Created: 	November 3, 2017
-// Last Modified: 	November 3, 2017
+// Last Modified: 	March 25, 2018
 // Details:
 // 					This file contains the underlying javascript running the test.html page
+// Warning: 		This page is used for testing purposes ONLY! It must be disabled in the production version!
 "use strict"
 
 $(document).ready(init());
@@ -13,6 +14,7 @@ console.log("Welcome to the Server Test Page");
 
 // BEGIN Init
 function init() {
+	var mdbiAccessToken = "0d08441c35cd57bf9a639821fd7a49b6e195e4bdee642dac0478b8f994b8ec32";	// stored in credentials.json
 	setDebug(true);
 	console.log("Hello World!");
 
@@ -58,6 +60,7 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"data": newDoc
 			};
@@ -81,14 +84,23 @@ function init() {
 	/* Setup SearchFromMongoDB action */
 	$("#testMongoSearch").on("click", function (event) {
 		// Acquire data to send
-		var data = ($("#dbCollectionNameField").val() != "") ? {"name": $("#dbCollectionNameField").val()} : null;
+		var data = {
+			"name": ($("#dbCollectionNameField").val() != "") ? $("#dbCollectionNameField").val() : null,
+			"accessToken": mdbiAccessToken
+		};
+		// var data = ($("#dbCollectionNameField").val() != "") ? {"name": $("#dbCollectionNameField").val()} : null;
 		console.log(`Finding ${(data === null) ? "all collections" : JSON.stringify(data)} in database...`);
 
 		// Send the search request to database using a RESTful POST request to the "/mdbi/search/collections" endpoint
 		post("/mdbi/search/collections", data, function (reply, status, jqxhr) {
 			if (status === "success") {
 				console.log("Replied: " + reply.toString());
-				showCollectionResults(JSON.parse(reply));
+				try {
+					showCollectionResults(JSON.parse(reply));
+				} catch (err) {
+					console.log(err);
+					showError(reply);
+				}
 			} else {
 				var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
 				console.log("A problem occurred");
@@ -119,13 +131,84 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"search": searchCriteria
 			};
+
+			// Gather projection options
+			if ($("#fieldProjectionToggle")[0].checked === true && $("#fieldProjectionText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.projection = JSON.parse($("#fieldProjectionText").val());
+					console.log("Added projection");
+				} catch (err) {
+					console.log("Error: failed to parse projection JSON data \"" + $("#fieldProjectionText").val() + "\"");
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Gather Size Limit Options
+			if ($("#resultSetLimitToggle")[0].checked === true && $("#resultSetLimitText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.limit = Number.parseInt($("#resultSetLimitText").val());
+					console.log(`Limited page size to ${data.options.limit}`);
+				} catch (err) {
+					console.log(`Error: failed to parse result set size limit \"${$("#resultSetLimitText").val()}\"`);
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Gather Page Options
+			if ($("#resultSetPageToggle")[0].checked === true && $("#resultSetPageText").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.page = Number.parseInt($("#resultSetPageText").val());
+					console.log(`Requesting page number ${data.options.page}`);
+				} catch (err) {
+					console.log(`Error: failed to parse result set page number \"${$("#resultSetPageText").val()}\"`);
+					console.log(err);
+					showError(err);
+					return;
+				}
+			}
+
+			// Gather sort order options
+			if ($("#resultSetSortToggle")[0].checked === true && $("#resultSetSortSpec").val() !== "") {
+				try {
+					if (typeof data.options === "undefined") {
+						data.options = {};
+					}
+					data.options.sort = JSON.parse($("#resultSetSortSpec").val());
+					console.log("Added sort specs");
+				} catch (err) {
+					console.log(`Error: failed to parse sort spec JSON \"${$("#resultSetSortSpec").val()}\"`);
+					console.log(err);
+					showError(err);
+				}
+			}
+
+			// Make the post request
 			post("/mdbi/search/documents", data, function (reply, status, jqxhr) {
 				if (status === "success") {
 					console.log("Replied: " + reply.toString());
-					showDocumentResults(JSON.parse(reply));
+					try {
+						showDocumentResults(JSON.parse(reply));
+					} catch (err) {
+						console.log(err);
+						showError(reply);
+					}
 				} else {
 					var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
 					console.log("A problem occurred");
@@ -171,6 +254,7 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"search": searchCriteria
 			};
@@ -218,6 +302,7 @@ function init() {
 			}
 
 			var data = {
+				"accessToken": mdbiAccessToken,
 				"collection": collectionName,
 				"search": searchCriteria,
 				"update": updateCriteria
@@ -233,6 +318,53 @@ function init() {
 					showError(errToLog);
 				}
 			});
+		}
+	});
+
+	/* Setup AggregateDocs action */
+	$("#agPanelSubmit").on("click", function (event) {
+		var pipeline = $("#agPanelText").val();
+		var collectionName = $("#agPanelCollection").val();
+		var searchCriteria = {};
+		
+		console.log(`Submitting pipeline ${pipeline}`);	// debug
+		if (collectionName === "") {
+			console.log("Error: You didn't enter a collection name!");
+			showError(`Error: Please enter a collection name!`);
+		} else if (pipeline === "") {
+			console.log("Error: You didn't enter anything!");
+			showError(`Error: Please enter a pipeline spec!`);
+		} else {
+			try {
+				searchCriteria = JSON.parse(pipeline);
+
+				var data = {
+					"accessToken": mdbiAccessToken,
+					"collection": collectionName,
+					"pipeline": searchCriteria
+				};
+				post("/mdbi/search/aggregation", data, function (reply, status, jqxhr) {
+					if (status === "success") {
+						try {
+							console.log("Replied: " + JSON.stringify(reply));
+							showDocumentResults(reply);
+						} catch (err) {
+							console.log(`Failed to show documents: ${err}`);
+							showError(reply);
+						}
+					} else {
+						var errToLog = `Status: ${status.toString()}\n\nReply: ${reply.toString()}`;
+						console.log("A problem occurred");
+						console.log(errToLog);
+						showError(errToLog);
+					}
+				});
+			} catch (err) {
+				console.log("Error: failed to parse raw JSON data \"" + pipeline + "\"");
+				console.log(err);
+				showError(err);
+				return;
+			}
 		}
 	});
 }
@@ -284,6 +416,8 @@ function showCollectionResults (arr) {
 		
 		// Compile all elements into a neat-looking panel group (forgive the tabbing)
 		for (var i = 0; i < arr.length; i++) {
+			var isView = (arr[i].type === "view") ? true : false;
+
 			content += `<div id="fCR_${i}_panel" class="panel panel-default">`;
 				content += `<div id="fCR_${i}_panel_heading" class="panel-heading" role="tab">`;
 					content += `<h4 class="panel-title">`;
@@ -299,7 +433,7 @@ function showCollectionResults (arr) {
 								content += `<div class="col-sm-12">`;
 									content += `<ul class="list-group">`;
 										content += `<li class="list-group-item"><strong>Type:</strong> ${arr[i].type}</li>`;
-										content += `<li class="list-group-item"><strong>NS:</strong> ${arr[i].idIndex.ns}</li>`;
+										content += `<li class="list-group-item"><strong>NS:</strong> ${(isView) ? "n/a" : arr[i].idIndex.ns}</li>`;
 									content += `</ul>`;
 								content += `</div>`;
 							content += `</div>`;
@@ -351,7 +485,7 @@ function showDocumentResults (arr) {
 								content += `<div class="col-sm-12">`;
 									content += `<ul class="list-group">`;
 									// Place a list item for each key in the first level
-									content += `<li class="list-group-item"><div><strong>Top-Level Keys:</strong> ${Object.keys(arr[i]).toString()}</div><div>${(typeof arr[i] === "object") ? JSON.stringify(arr[i]) : arr[i]}</div></li>`;
+									content += `<li class="list-group-item"><div><strong>Top-Level Keys:</strong> ${Object.keys(arr[i]).toString()}</div><code style="overflow-wrap: break-word">${(typeof arr[i] === "object") ? JSON.stringify(arr[i]) : arr[i]}</code></li>`;
 									content += `</ul>`;
 								content += `</div>`;
 							content += `</div>`;

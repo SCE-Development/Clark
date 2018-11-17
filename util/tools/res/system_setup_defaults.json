@@ -1,0 +1,33 @@
+{
+	"commonResources": {
+		"credentials.json": {
+			"syskey": {
+				"memberID": 0,
+				"firstName": "s",
+				"middleInitial": "c",
+				"lastName": "e",
+				"joinDate": "",
+				"userName": "sce_admin",
+				"passWord": "@sce123",
+				"email": "dev.sce.sjsu@gmail.com",
+				"emailVerified": true,
+				"emailOptIn": true,
+				"major": "Admin",
+				"lastLogin": ""
+			},
+			"mdbi": {
+				"user": "scedb",
+				"pwd": "@sce123",
+				"accessToken": ""
+			}
+		},
+		"security.js": {
+			"certificateDir": "trustStore",
+			"privateKeyName": "sce_engr_sjsu_edu.key",
+			"publicKeyName": "sce_engr_sjsu_edu.public.key",
+			"certName": "sce_engr_sjsu_edu.crt",
+			"csrName": "sce_engr_sjsu_edu.csr",
+			"passphrase": "sce_engr_sjsu_edu_passphrase"
+		}
+	}
+}

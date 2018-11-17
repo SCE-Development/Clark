@@ -1,0 +1,134 @@
+<!--
+	PROJECT: 		Core-v4
+	Name: 			R. Javier
+	File: 			officer_tools.template.html
+	Date Created: 	May 3, 2018
+	Last Modified: 	May 3, 2018
+	Details:
+		This file serves as the html template for the officer tools component
+ -->
+<div class="well">
+	<div class="page-header">
+		<h3 class="brand-text">
+			Officer Tools
+			<small>Officer and associate resources</small>
+			<div style="color:red;">{{$ctrl.error_message}}</div>
+		</h3>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.exportDoorCodes()" data-toggle="tooltip" title="Export doorcodes of expired members to a separate file here!" style="width:100%">
+							<img src="img/folder-26685_640.png" alt="Folder Image" height="150px" width="150px">
+							<div class="caption">
+								<h5>Door Code Export</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('officerProcedures')" data-toggle="tooltip" title="Open a new tab to the SCE officer procedures document" style="width:100%">
+							<img src="img/list-147904_640.png" alt="List Image" height="150px" width="150px">
+							<div class="caption">
+								<h5>Officer Procedures</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('lockerSpreadsheet')" data-toggle="tooltip" title="Open a new tab to the SCE locker assignment spreadsheet" style="width:100%">
+							<img src="img/vault-154685_640.png" alt="Locker Image" height="150px" width="150px">
+							<div class="caption">
+								<h5>Lockers</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('dreamsparkSpreadsheet')" data-toggle="tooltip" title="Open a new tab to the Microsoft DreamSpark/Imagine registrants spreadsheet" style="width:100%">
+							<img src="img/microsoft-80660_640.png" alt="Microsoft Software" height="150px" width="150px">
+							<div class="caption">
+								<h5>DreamSpark/Imagine</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('eodProfitForm')" data-toggle="tooltip" title="Open a new tab to the End-of-Day profit count form" style="width:100%">
+							<img src="img/achievement-18134_640.jpg" alt="Profit Form" height="150px" width="150px">
+							<div class="caption">
+								<h5>End-of-Day Profit Form</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('cashCountProcedures')" data-toggle="tooltip" title="Open a new tab to see the End-of-Day profit count procedure document" style="width:100%">
+							<img src="img/cash-register-576160_640.png" alt="Procedure" height="150px" width="150px">
+							<div class="caption">
+								<h5>Cash Count Procedure</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('storeSlideshow')" data-toggle="tooltip" title="Open a new tab to edit the SCE store's jumbotron slideshow" style="width:100%">
+							<img src="img/document-148041_640.png" alt="Slideshow" height="150px" width="150px">
+							<div class="caption">
+								<h5>Slideshow</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('officerTraining')" data-toggle="tooltip" title="Open a new tab to view the SCE officer training Google Drive folder" style="width:100%">
+							<img src="img/hat-1674894_640.png" alt="Training" height="150px" width="150px">
+							<div class="caption">
+								<h5>Officer Training</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-md-3 col-lg-2">
+				<div class="thumbnail">
+					<a href="#">
+						<button class="btn btn-default" ng-click="$ctrl.openNewWindow('announcement')" data-toggle="tooltip" title="Open a announcement page" style="width:100%">
+							<img src="img/speakers-1521312_640.png" alt="Announcement" height="150px" width="150px">
+							<div class="caption">
+								<h5>Announcement</h5>
+							</div>
+						</button>
+					</a>
+				</div>
+			</div>
+
+		</div> 
+	</div>
+</div>
+<!--ng-click="#../Event-Center/EventCenter/client/src/components/eventManager" || Core-v4/public/core/components/Event-Center/EventCenter/client/src/components/eventManager-->
+<!--Users/mianhashimshah/Documents/Core-v4/public/core/components/officer_tools/officer_tools.template.html -->

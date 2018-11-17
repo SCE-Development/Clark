@@ -1,0 +1,21 @@
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h4>Selected Door Code: {{$ctrl.doorCodeList[$ctrl.selectedDoorCode].code}}</h4>
+		<h5>Username: {{$ctrl.userName}}</h5>
+		<span style="color: red;">{{$ctrl.errorMessage}}</span>
+	</div>
+	<div class="panel-body" style="overflow: scroll; max-height: 200px;">
+		<div ng-repeat="dc in $ctrl.doorCodeList">
+			<button type="button" class="btn btn-default" style="width: 100px" ng-click="$ctrl.setNewDoorCode($ctrl.doorCodeList[$index].dcID)">{{dc.code}}</button>
+		</div>
+	</div>
+	<div class="panel-footer">
+		<div class="input-group">
+			<input class="form-control" ng-model="$ctrl.userName" placeholder="Enter username here...">
+			<div class="input-group-btn">
+				<button class="btn btn-success" ng-click="$ctrl.submitNewDoorCode()">Assign New Code</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -113,7 +113,7 @@ function post (uri, data, callback, ajaxMode) {
 					if (callback) {
 						callback(err, status, jqxhr);
 					}
-					logDebug("post()", "ajax request result", "failure");
+					logDebug("post()", "ajax request result", `failure -> ${err}`);
 				}
 			});
 			break;
@@ -162,5 +162,36 @@ function serializeArray (arr, callback) {
 			}
 		}
 	}
+}
+
+/*
+	@function 	storageAvailable
+	@parameter 	type - the type of browser storage you want to check for (valid values are "sessionStorage" or "localStorage")
+	@returns 	On success: true
+				On failure: an error
+	@details 	This function was provided by MDN (mozilla developer's network) as an example of how to verify if a browser supports storage
+*/
+function storageAvailable(type) {
+    try {
+        var storage = window[type],
+            x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch(e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            storage.length !== 0;
+    }
 }
 /* END Methods */

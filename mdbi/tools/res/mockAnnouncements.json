@@ -1,0 +1,82 @@
+[
+	{
+		"__docId__": 0,
+		"aID": 0,
+		"senderID": 12,
+		"title": "Why am I awesome?",
+		"msgContent": "...because I'm <strong>BATMAAAAAAN!!!!</strong>",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 1,
+		"aID": 1,
+		"senderID": 10,
+		"title": "Coldplay is awesome when LIVE! (Said no one ever... hehe)",
+		"msgContent": "I used to rule the world. Seas would rise when I gave the word. <strong>Now in the moment I sleeeeep alone</strong>. Sweep the streets I used to own. <p>*Sad Violin Solo*</p>",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 2,
+		"aID": 2,
+		"senderID": 3,
+		"title": "A great poem",
+		"msgContent": "Two roads diverged in a yellow wood, and sorry I could not travel both. And be it there,.... how does the rest of it go again?",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 3,
+		"aID": 3,
+		"senderID": 0,
+		"title": "Official SCE Welcome",
+		"msgContent": "<strong>Welcome</strong> to SCE's new Core-v4 site. Make sure to check out your profiles for your doorcodes and any other services available to you. Thanks, and have a great semester!!!",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 4,
+		"aID": 4,
+		"senderID": 7,
+		"title": "The typical 9-5",
+		"msgContent": "<strong>Life. What is life?</strong> Is it a meaningless existence in which we do nothing but suffer the everyday burdens of morning traffic, midday tirades from our bosses, or the late-night blues of having no meaninful purpose, of not making a different, and of not even mattering? Why, then, do we exist? It certainly wasn't by our choice. But unbeknownst to many, to spend your days doing something you do not like and doesn't align to your goals warrants precisely this type of situation. Therefore, you must ask yourself this question: What do I desire?",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 5,
+		"aID": 5,
+		"senderID": 8,
+		"title": "Response to The typical 9-5",
+		"msgContent": "<strong>Hey,</strong> get back to work!",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 6,
+		"aID": 6,
+		"senderID": 7,
+		"title": "Response to Response to The typical 9-5",
+		"msgContent": "...yes boss...",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 7,
+		"aID": 7,
+		"senderID": 3,
+		"title": "The late Chris Cornell",
+		"msgContent": "<strong>I am saddened</strong> by the loss of one of this world's greatest Rock Musicians of our time...",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 8,
+		"aID": 8,
+		"senderID": 2,
+		"title": "Plans for the break",
+		"msgContent": "<strong>Hi all!</strong> As you know, the Christmas break is fast-approaching, and thus it is time to assign your hours with next year's work plan. The company is experiencing several internal changes, and we need to get all these technical action items out of the way as fast as reasonably possible! Please contact your department head to schedule your annual review meeting ASAP!",
+		"imgPath": ""
+	},
+	{
+		"__docId__": 9,
+		"aID": 9,
+		"senderID": 11,
+		"title": "Avengers Infinity War",
+		"msgContent": "<strong>Hey all,</strong> the Infinity Wars premier date has been changed to April 27th, earlier than previously expected! Yay!",
+		"imgPath": ""
+	}
+]

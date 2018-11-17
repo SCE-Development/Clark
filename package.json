@@ -29,14 +29,23 @@
   },
   "homepage": "https://github.com/SCE-Development/Core-v4#readme",
   "dependencies": {
+    "@material-ui/core": "^3.1.1",
+    "@material-ui/icons": "^3.0.1",
     "body-parser": "^1.18.2",
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
+    "ejs": "^2.6.1",
     "express": "^4.16.2",
     "grunt-contrib-watch": "^1.0.0",
     "jquery": "^3.2.1",
+    "material-ui": "^0.20.2",
+    "material-ui-icons": "^1.0.0-beta.36",
     "mocha": "^4.1.0",
-    "mongodb": "^2.2.33"
+    "mongodb": "^2.2.33",
+    "node_hash": "^0.2.0",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-scripts": "^1.1.5"
   },
   "devDependencies": {
     "grunt": "^1.0.1"

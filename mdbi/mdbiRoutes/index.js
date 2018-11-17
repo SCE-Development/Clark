@@ -2,9 +2,9 @@
 // Name: 			Rolando Javier
 // File: 			mdbi/mdbiRoutes/index.js
 // Date Created: 	January 9, 2018
-// Last Modified: 	January 9, 2018
+// Last Modified: 	March 25, 2018
 // Details:
-//				 	This file abstracts all Test Page routes and places them into a ExpressJS router to be used by the test page subapp (accessed under the "/test" endpoint from server.js) in test/app.js.
+//				 	This file abstracts all MDBI routes and places them into a ExpressJS router to be used by the mdbi subapp (accessed under the "/mdbi" endpoint from server.js) and in test/app.js.
 // Dependencies:
 // 					JQuery v1.12.4?
 // 					ExpressJS 4.x
@@ -16,8 +16,13 @@
 var express = require("express");
 var assert = require("assert");
 var router = express.Router();
-var logger = require("../../util/logger");
+var settings = require("../../util/settings");	// acquire server system settings
+var logger = require(`${settings.util}/logger`);	// acquire event log system
 var mdb = require("../mongoWrapper");	// acquire MongoDB API Wrappers
+var credentials = require(settings.credentials);	// acquire db auth credentials
+var ef = require(`${settings.util}/error_formats`);	// acquire error formatter
+var mongo_settings = require("../mongo_settings");	// acquire MongoDB settings
+var schema = require("../tools/schema_v0");	// acquire current db schema
 // END Includes
 
 
@@ -33,12 +38,16 @@ var mongo = require("mongodb").MongoClient;
 var mongoOptions = {
 	"appname": "SCE Core v4"
 };
-mongo.connect("mongodb://localhost:27017/testdb", mongoOptions, function (err, db) {
+var url = `mongodb://${encodeURIComponent(credentials.mdbi.user)}:${encodeURIComponent(credentials.mdbi.pwd)}@${mongo_settings.hostname}:${mongo_settings.port}/${mongo_settings.database}`;
+mongo.connect(url, mongoOptions, function (err, db) {
 	var handlerTag = {"src": "/mdbi"};
 
 	// Log connection status, and error (if any)
 	if (err) {
 		logger.log("Could not connect to Mongo:\n" + err, handlerTag);
+		if (db) {
+			endSession(db);
+		}
 		throw err;	// throw error only after error logging was successful
 	} else {
 		logger.log("Connected to Mongo", handlerTag);
@@ -46,27 +55,32 @@ mongo.connect("mongodb://localhost:27017/testdb", mongoOptions, function (err, d
 		// First, acquire link to database
 		mdb.database = db;
 
-		//Verify necessary collections are present. If not, create them
-		mdb.findCollections(null, function(error, list) {
-			var serverDbConnLogCollectionFound = false
-			for (var i=0; i<list.length; i++) { 
-				if (list[i].name == "serverDbConnLog") {	// this collection logs when server initiates DB connections
-					serverDbConnLogCollectionFound = true;
+		// Verify necessary collections are present. If not, throw error
+		mdb.findCollections(null, function (error, list) {
+			// Compile collection names from "list"
+			var listOfNames = [];
+			for (var i = 0; i < list.length; i++) {
+				listOfNames.push(list[i].name);
+			}
+
+			// Verify that the necessary collections are present
+			for (var i = 0; i < schema.collectionNames.length; i++) {
+				if (listOfNames.indexOf(schema.collectionNames[i]) === -1) {
+					logger.log(`Error: Collection ${schema.collectionNames[i]} not found`, handlerTag);
+					endSession(db);
+					throw new Error(`Collection ${schema.collectionNames[i]} not found`);
 				}
 			}
-			if (!serverDbConnLogCollectionFound) {
-				mdb.database.createCollection('serverStarts');
-			}
-		});
 
-		// Then, write server connection information
-		var postmark = logger.log("Database connection established", handlerTag);
-		mdb.insertDoc("serverStarts", {"login": postmark}, function (error, result) {
-			if (error != null) {
-				logger.log("Postmark not written to database", handlerTag);
-			} else {
-				logger.log("Postmark successfully written to database", handlerTag);
-			}
+			// Then, write server connection information
+			var postmark = logger.log("Database connection established", handlerTag);
+			mdb.insertDoc("serverActivations", {"login": postmark}, function (error, result) {
+				if (error != null) {
+					logger.log("Postmark not written to database", handlerTag);
+				} else {
+					logger.log("Postmark successfully written to database", handlerTag);
+				}
+			});
 		});
 	}
 });
@@ -79,109 +93,269 @@ mongo.connect("mongodb://localhost:27017/testdb", mongoOptions, function (err, d
 	@endpoint 	write
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the reponse header with the error's details
+	@returns	To Client: If successful, returns a success status (200). If access authentication fails, returns a server error 499 and a JSON description of the error. Otherwise, returns a server error status (500) and populates the reponse header with the error's details (i.e. an error_formats object)
 	@details 	This function performs a database write to the db for all "/mdbi/write" endpoint requests. Used on a POST request, it requires that the Request body be a JSON object in the following format:
 		{
+			"accessToken": "access token string",
 			"collection": "string name of collection",
-			"data": {...}
+			"data": {...},
+			"options": {...}	// optional
 		}
-	where the "data" parameter is a JSON object containing the doc parameter expected by the insertDoc() function. Read the insertDoc() description for more deatils on what to give to the "data" parameter.
+	where the "accessToken" parameter is the string access token located in credentials.json for security purposes (i.e. enforces local-only db access), the "options" parameter is an optional JSON object specifying any or all of the following options:
+	
+		(boolean) "preserveKey"		A boolean indicating whether the ppk (preferred primary key) of the document being inserted should be preserved (i.e. not set to the insertion's "__docId__"). This defaults to false (i.e. the document will have its ppk overridden by the value of its auto-incremented "__docId__").
+	
+	and the "data" parameter is a JSON object containing the doc parameter expected by the insertDoc() function. Read the insertDoc() description for more deatils on what to give to the "data" parameter.
 */
 router.post("/write", function (request, response) {
 	var handlerTag = {"src": "mdbi/write"};
 	var hasBody = (Object.keys(request.body).length > 0);
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
-	//Hash password if new user is being inserted to users collection
-	if (searchCriteria.collection == "users") {
-		searchCriteria.data.password = hashString(searchCriteria.data.password)
-	}
-
 	// Perform Write
-	logger.log(`Client @ ip ${request.ip} is requesting to write a new document of ${typeof searchCriteria.data} ${(typeof searchCriteria.data === "object") ? JSON.stringify(searchCriteria.data) : searchCriteria.data} to the ${searchCriteria.collection} collection in the database`, handlerTag);
-	mdb.insertDoc(searchCriteria.collection, searchCriteria.data, function (error, result) {	// Note: I really should validate this data before passing it to the db
-		if (error != null) {
-			logger.log(`An error occurred`, handlerTag);
-			response.status(500).send(error).end();
-		} else {
-			logger.log(`A result was returned`, handlerTag);
-			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
-		}
-	});
+	if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		logger.log(`Client @ ip ${request.ip} is requesting to write a new document of ${typeof searchCriteria.data} ${(typeof searchCriteria.data === "object") ? JSON.stringify(searchCriteria.data) : searchCriteria.data} to the ${searchCriteria.collection} collection in the database`, handlerTag);
+		mdb.insertDoc(searchCriteria.collection, searchCriteria.data, function (error, result) {
+		// Note: I really should validate this data before passing it to the db
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+			}
+		}, searchCriteria.options);
+	}
 });
 
 /*
 	@endpoint 	search/collections
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns	To Client: If successful, returns a success status (200) and the list of collections found. Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	This function serves any and all requests to the "/test/find" endpoint by performing a search of any collections matching the search parameters given in the request body's JSON data. This data is exepected to appear in the following format:
+	@returns	To Client: If successful, returns a success status (200) and the list of collections found. If access authentication fails, returns a server error 499 and a JSON description of the error. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	This function serves any and all requests to the "/mdbi/search/collections" endpoint by performing a search of any collections matching the search parameters given in the request body's JSON data. This data is exepected to appear in the following format:
 		{
+			"accessToken": "access token string",
 			"name": "string of the collection name to find"
 		}
-	If this data is given, the function will search for the collection whose name matches the object's "name" member.
+	Where "accessToken" is the string access token located in credentials.json for security purposes (i.e. enforces local-only db access). If this data is given, the function will search for the collection whose name matches the object's "name" member.
 	If the data field is not given (i.e. instead of a JSON object in the Request body, we have null), the function will return a list of all collections
 */
 router.post("/search/collections", function (request, response) {
 	var handlerTag = {"src": "mdbi/search/collections"};
 	var hasBody = (Object.keys(request.body).length > 0);
-	var searchCriteria = (hasBody) ? delintRequestBody(request.body).name : ALL_COLLECTIONS;
+	var searchCriteria = (hasBody && typeof request.body.name !== "undefined") ? delintRequestBody(request.body).name : ALL_COLLECTIONS;
 
-	logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === ALL_COLLECTIONS) ? "all collections" : ("collection " + JSON.stringify(searchCriteria))} from the database`, handlerTag);
+	// Perform collection search
+	if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === ALL_COLLECTIONS) ? "all collections" : ("collection " + JSON.stringify(searchCriteria))} from the database`, handlerTag);
 
-	mdb.findCollections(searchCriteria, function (err, list) {
-		if (err == null) {
-			logger.log(`A result was returned`, handlerTag);
-			response.status(200).send(JSON.stringify(list)).end();
-		} else {
-			logger.log(`An error occurred`, handlerTag);
-			response.status(500).send(err).end();
-		}
-	});
+		mdb.findCollections(searchCriteria, function (err, list) {
+			if (err == null) {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send(JSON.stringify(list)).end();
+			} else {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(err).end();
+			}
+		});
+	}
 });
 
 /*
 	@endpoint 	search/documents
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns	To Client: If successful, returns a success status (200) and the list of documents found. Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	(Intended for use in testing the database querying functions) This function handles all endpoint requests to the "/test/finddoc" endpoint. It performs a query on the database and returns any results matching the search criteria given by the Request header's data field. The data field is expected to be a JSON object in the following format:
+	@returns	To Client: If successful, returns a success status (200) and the list of documents found. If access authentication fails, returns a server error 499 and a JSON description of the error. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database querying functions) This function handles all endpoint requests to the "/mdbi/search/documents" endpoint. It performs a query on the database and returns any results matching the search criteria given by the Request header's data field. The data field is expected to be a JSON object in the following format:
 		{
+			"accessToken": "access token string",
 			"collection": "string name of collection",
-			"search": {...}
+			"search": {...},
+			"options": {...}
 		}
-	where the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function. Read the findDocs() description for more details on what to give to the "search" parameter.
+	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), the "search" parameter is a JSON object containing the search parameters expected by the findDocs() function (read the findDocs() description for more details on what to give to the "search" parameter), and the "options" parameter is an optional object containing result set formatting options.
+	The "options" parameter can contain any of the following:
+		{
+			"projection": {...},	// a MongoDB Projection Specifier Object
+			"limit": ...,			// the max number of results you want back
+			"page": ...,			// the current page of results to return
+			"sort": {				// an object specifying fields to sort by
+				"asc": [...],		// specifies fields to sort in ascending order
+				"desc": [...]		// specifies fields to sort in descending order
+			}
+		}
 */
 router.post("/search/documents", function (request, response) {
 	var handlerTag = {"src": "mdbi/search/documents"};
 	var hasBody = (Object.keys(request.body).length > 0);
+	var hasOptions = (!hasBody) ? false : (typeof request.body.options === "object") ? true : false;
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};	// either the filter, or empty JSON
-	// response.status(200).send(`Test: ${JSON.stringify(searchCriteria)}`).end();	// test
+
 	// Find documents
-	logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
-	
-	mdb.findDocs(searchCriteria.collection, searchCriteria.search, function (error, list) {
-		if (error != null) {
-			logger.log(`An error occurred`, handlerTag);
-			response.status(500).send(error).end();
-		} else {
-			logger.log(`A result was returned`, handlerTag);
-			response.status(200).send(JSON.stringify(list)).end();
+	if (!hasBody) {
+		logger.log(`Error: no request body found`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.invalidBody)).status(499).end();
+	} else if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		var projection = (!hasOptions) ? null : (typeof request.body.options.projection === "object") ? request.body.options.projection : null;
+		var limit = (!hasOptions) ? null : (typeof request.body.options.limit !== "undefined") ? request.body.options.limit : null;
+		var page = (!hasOptions) ? null : (typeof request.body.options.page !== "undefined") ? request.body.options.page : null;
+		var sortSpec = (!hasOptions) ? null : (typeof request.body.options.sort !== "undefined") ? request.body.options.sort : null;
+		var queryCallback = function (error, list) {
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send(JSON.stringify(list)).end();
+			}
+		};
+
+		// debug
+		// logger.log(`projection: ${typeof projection} ${projection}\nlimit: ${typeof limit} ${limit}\npage: ${typeof page} ${page}\n`,handlerTag);
+
+		// Record the search request
+		logger.log(`Client @ ip ${request.ip} is requesting to find ${(searchCriteria === {}) ? "all documents" : ("documents matching \"" + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search) + "\"")} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+
+		// Compile constraints
+		var constraints = (limit === null && page === null && sortSpec === null) ? null : {};
+		if (limit !== null) {
+			constraints.limit = limit;
+
+			if (page !== null) {
+				constraints.page = page;
+			}
 		}
-	});
+		if (sortSpec !== null) {
+			constraints.sort = sortSpec;
+		}
+
+		// Perform query
+		if (projection !== null) {
+			if (constraints === null) {
+				constraints = {}
+			}
+			constraints.projection = projection;
+		}
+		switch (constraints !== null) {
+			case true: {
+				mdb.findDocs(searchCriteria.collection, searchCriteria.search,queryCallback, constraints);
+				break;
+			}
+			default: {
+				mdb.findDocs(searchCriteria.collection, searchCriteria.search,queryCallback);
+				break;
+			}
+		}
+	}
+});
+
+/*
+	@endpoint 	search/aggregation
+	@parameter	request - the web request object provided by express.js
+	@parameter	response - the web response object provided by express.js
+	@returns 	To Client:
+				On success, a success status code (200) and the list (array) of documents resulting from the aggregation
+				On invalid/expired access token, a client error code (499) and a JSON description of the error
+				On invalid parameter(s), a client error code (499) and a JSON description of the error
+				On any other error, an internal server error code (500) and a JSON description of the error
+	@details 	This function handles all endpoint POST requests to the "mdbi/search/aggregation" endpoint. It performs a query with the given parameters, but contrary to the "mdbi/search/documents" endpoint handler, it uses the MongoDB aggregation pipeline to do so. The request header's data field is expected to be a JSON object with the following format:
+		{
+			"accessToken": "access token string",
+			"collection": "string name of collection",
+			"pipeline": "array of MongoDB Aggregation Command Specifiers",
+			"agOptions": "(optional) array of MongoDB Aggregation Options"
+		}
+	@note 		This function gives the end user complete control over how the results are processed, filtered, and returned, but requires knowledge of how to properly use MongoDB's aggregation syntax and semantics. See MongoDB's Aggregation article and API documentation for details on what to give to the "pipeline" and "agOptions" parameters
+*/
+router.post("/search/aggregation", function (request, response) {
+	var handlerTag = {"src": "mdbi/search/aggregation"};
+	
+	var hasBody = (Object.keys(request.body).length > 0);
+	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : null;
+	var hasCollectionName = (!hasBody) ? false : (typeof searchCriteria.collection === "undefined") ? false : true;
+	var hasAgOptions = (!hasBody) ? false : (typeof searchCriteria.agOptions === "undefined") ? false : true;
+	var hasAccessToken = (!hasBody) ? false : (typeof searchCriteria.accessToken === "undefined") ? false : true;
+	var failure = false;
+	var errMsg = "";
+	var errObj = "Err";
+	var errCode = 0;
+
+	// Perform conformity checks
+	if (!hasBody) {
+		failure = true;
+		errMsg = `Error: no request body found`;
+		errObj = ef.asCommonStr(ef.struct.invalidBody, {"parameter": "*"});
+		errCode = 499;
+	} else if (!hasAccessToken) {
+		failure = true;
+		errMsg = `Error: missing access token`;
+		errObj = ef.asCommonStr(ef.struct.invalidBody, {"parameter": "accessToken"});
+		errCode = 499;
+	} else if (!hasCollectionName) {
+		failure = true;
+		errMsg = `Error: missing collection name`;
+		errObj = ef.asCommonStr(ef.struct.invalidBody, {"parameter": "collection"});
+		errCode = 499;
+	}
+
+	// Process any failure
+	response.set("Content-Type", "application/json");
+	if (failure) {
+		logger.log(`errMsg: Fails~`, handlerTag);
+		logger.log(errMsg, handlerTag);
+		response.send(errObj).status(errCode).end();
+	} else if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		var queryCallback = function (error, list) {
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send(JSON.stringify(list)).end();
+			}
+		};
+		var agOpts = (searchCriteria.agOptions === null) ? null : searchCriteria.agOptions;
+
+		// Perform query
+		try {
+			logger.log(`Client @ ip ${request.ip} is requesting to find documents via aggregation from the ${searchCriteria.collection} collection in the database`, handlerTag);
+			mdb.aggregateDocs(searchCriteria.collection, searchCriteria.pipeline, queryCallback);
+		} catch (e) {
+			logger.log(`Aggregation unsuccessful: ${e}`, handlerTag);
+			queryCallback(e, null);
+		}
+	}
 });
 
 /*
 	@endpoint 	delete/document
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns 	To Client: If successful, returns a success status (200) and an object detailing the result of the operation. Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	(Intended for use in testing the database single-deleting function) This function handles all endpoint requests to the "/test/deletedoc" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
+	@returns 	To Client: If successful, returns a success status (200) and an object detailing the result of the operation. If access authentication fails, returns a server error 499 and a JSON description of the error. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database single-deleting function) This function handles all endpoint requests to the "/mdbi/delete/document" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
 		{
+			"accessToken": "access token string",
 			"collection": "string name of collection",
 			"search": {...}
 		}
-	where the "search" parameter is a JSON object containing the search parameters expected by the deleteOneDoc() function. Read the deleteOneDoc() description for more details on what to give the "search" parameter
+	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), and the "search" parameter is a JSON object containing the search parameters expected by the deleteOneDoc() function. Read the deleteOneDoc() description for more details on what to give the "search" parameter
 */
 router.post("/delete/document", function (request, response) {
 	var handlerTag = {"src": "mdbi/delete/document"};
@@ -189,29 +363,36 @@ router.post("/delete/document", function (request, response) {
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
 	// Find documents
-	logger.log(`Client @ ip ${request.ip} is requesting to delete a document matching ${(typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search} from the ${searchCriteria.collection} collection in the database`, handlerTag);
-	mdb.deleteOneDoc(searchCriteria.collection, searchCriteria.search, function (error, result) {
-		if (error != null) {
-			logger.log(`An error occurred`, handlerTag);
-			response.status(500).send(error).end();
-		} else {
-			logger.log(`A result was returned`, handlerTag);
-			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
-		}
-	});
+	if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		logger.log(`Client @ ip ${request.ip} is requesting to delete a document matching ${(typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+		mdb.deleteOneDoc(searchCriteria.collection, searchCriteria.search, function (error, result) {
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+			}
+		});
+	}
 });
 
 /*
 	@function 	delete/documents
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns 	To Client: If successful, returns a success status (200) and an object detailing the result of the operation. Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	(Intended for use in testing the database multi-deleting function) This function handles all endpoint requests to the "/test/deletemanydocs" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
+	@returns 	To Client: If successful, returns a success status (200) and an object detailing the result of the operation. If access authentication fails, returns a server error 499 and a JSON description of the error. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database multi-deleting function) This function handles all endpoint requests to the "/mdbi/delete/documents" endpoint. It performs a deletion request to the database using the Request header's data field as search criteria to select which document to delete. The data field is expected to be a JSON object with the following format:
 		{
+			"accessToken": "access token string",
 			"collection": "string name of collection",
 			"search": {...}
 		}
-	where the "search" parameter is a JSON object containing the search parameters expected by the deleteManyDocs() function. Read the deleteManyDocs() description for more details on what to give the "search" parameter
+	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), and the "search" parameter is a JSON object containing the search parameters expected by the deleteManyDocs() function. Read the deleteManyDocs() description for more details on what to give the "search" parameter
 */
 router.post("/delete/documents", function (request, response) {
 	var handlerTag = {"src": "mdbi/delete/documents"};
@@ -219,30 +400,37 @@ router.post("/delete/documents", function (request, response) {
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
 	// Find documents
-	logger.log(`Client @ ip ${request.ip} is requesting to delete all documents ${(searchCriteria.search == {}) ? "" : ("matching " + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search))} from the ${searchCriteria.collection} collection in the database`, handlerTag);
-	mdb.deleteManyDocs(searchCriteria.collection, searchCriteria.search, function (error, result) {
-		if (error != null) {
-			logger.log(`An error occurred`, handlerTag);
-			response.status(500).send(error).end();
-		} else {
-			logger.log(`A result was returned`, handlerTag);
-			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
-		}
-	});
+	if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		logger.log(`Client @ ip ${request.ip} is requesting to delete all documents ${(searchCriteria.search == {}) ? "" : ("matching " + ((typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search))} from the ${searchCriteria.collection} collection in the database`, handlerTag);
+		mdb.deleteManyDocs(searchCriteria.collection, searchCriteria.search, function (error, result) {
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+			}
+		});
+	}
 });
 
 /*
 	@function 	update/documents
 	@parameter	request - the web request object provided by express.js
 	@parameter	response - the web response object provided by express.js
-	@returns 	To Client: If successful, returns a success status (200). Otherwise, returns a server error status (500) and populates the response header with the error's details
-	@details 	(Intended for use in testing the database single-update function) This function handles all endpoint requests to the "/test/updatedoc" endpoint. It performs an update request to the database using the Request header's data field as search criteria to select which document to update. The data field is expected to be a JSON object with the following format:
+	@returns 	To Client: If successful, returns a success status (200). If access authentication fails, returns a server error 499 and a JSON description of the error. Otherwise, returns a server error status (500) and populates the response header with the error's details
+	@details 	(Intended for use in testing the database single-update function) This function handles all endpoint requests to the "/mdbi/update/documents" endpoint. It performs an update request to the database using the Request header's data field as search criteria to select which document to update. The data field is expected to be a JSON object with the following format:
 		{
+			"accessToken": "access token string",
 			"collection": "string name of collection",
 			"search": {...},
 			"update": {...}
 		}
-	where the "search" parameter is a JSON object containing the filter parameters expected by the updateOneDoc() function, and "update" is a JSON object containing the update commands expected by the updateOneDoc() function. Read the updateOneDoc() description for more details on what to give the "search" parameter
+	where "accessToken" is the string access token stored in credentials.json for security purposes (i.e. enforces local-only db access), the "search" parameter is a JSON object containing the filter parameters expected by the updateOneDoc() function, and "update" is a JSON object containing the update commands expected by the updateOneDoc() function. Read the updateOneDoc() description for more details on what to give the "search" parameter
 */
 router.post("/update/documents", function (request, response) {
 	var handlerTag = {"src": "mdbi/update/documents"};
@@ -250,16 +438,22 @@ router.post("/update/documents", function (request, response) {
 	var searchCriteria = (hasBody) ? numerify(delintRequestBody(request.body)) : {};
 
 	// Find documents
-	logger.log(`Client @ ip ${request.ip} is requesting to update a document matching ${typeof searchCriteria.search} ${(typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search} from the ${searchCriteria.collection} collection in the database using ${typeof searchCriteria.update} ${(typeof searchCriteria.update === "object") ? JSON.stringify(searchCriteria.update) : searchCriteria.update}`, handlerTag);
-	mdb.updateOneDoc(searchCriteria.collection, searchCriteria.search, searchCriteria.update, function (error, result) {
-		if (error != null) {
-			logger.log(`An error occurred`, handlerTag);
-			response.status(500).send(error).end();
-		} else {
-			logger.log(`A result was returned`, handlerTag);
-			response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
-		}
-	});
+	if (!checkAuth(request.body.accessToken)) {
+		logger.log(`Invalid db access token`, handlerTag);
+		response.set("Content-Type", "application/json");
+		response.send(ef.asCommonStr(ef.struct.mdbiAccessDenied)).status(499).end();
+	} else {
+		logger.log(`Client @ ip ${request.ip} is requesting to update a document matching ${typeof searchCriteria.search} ${(typeof searchCriteria.search === "object") ? JSON.stringify(searchCriteria.search) : searchCriteria.search} from the ${searchCriteria.collection} collection in the database using ${typeof searchCriteria.update} ${(typeof searchCriteria.update === "object") ? JSON.stringify(searchCriteria.update) : searchCriteria.update}`, handlerTag);
+		mdb.updateOneDoc(searchCriteria.collection, searchCriteria.search, searchCriteria.update, function (error, result) {
+			if (error != null) {
+				logger.log(`An error occurred`, handlerTag);
+				response.status(500).send(error).end();
+			} else {
+				logger.log(`A result was returned`, handlerTag);
+				response.status(200).send((typeof result === "object") ? JSON.stringify(result) : result).end();
+			}
+		});
+	}
 });
 // END MDBI Routes
 
@@ -302,6 +496,45 @@ router.use(function (err, request, response) {
 
 
 // BEGIN Utility Methods
+/*
+	@function 	endSession
+	@parameter 	mongoDatabase - the MongoDB database object returned from MongoClient.connect()
+	@parameter 	(optional) callback - a callback to run after completing the operation. This function is not passed any arguments.
+	@returns 	n/a
+	@details 	This function ends the MongoDB session by first logging out the authenticated user and closing the connection directly.
+*/
+function endSession(mongoDatabase, callback) {
+	console.log("Ending session...");
+
+	mongoDatabase.logout();
+	mongoDatabase.close();
+
+	if (typeof callback === "function") {
+		callback();
+	}
+}
+
+/*
+	@function 	checkAuth
+	@parameter mongoDatabase - the MongoDB database object returned from MongoClient.connect()
+	@parameter 	token - the db access token used to authenticate the mdbi user
+	@parameter 	(optional) callback - a callback to run after completing verification. It is passed one argument:
+					result - a boolean representing whether or not the mdbi user is authorized to manipulate the database
+	@returns 	A boolean representing whether or not the mdbi user is authorized to manipulate the database
+*/
+function checkAuth (token, callback) {
+	var success = false;
+
+	if (token === credentials.mdbi.accessToken) {
+		success = true;
+	}
+	if (typeof callback === "function") {
+		callback(success);
+	}
+
+	return success;
+}
+
 /*
 	@function 	delintRequestBody
 	@parameter 	body - the JSON object forming the POST request body
@@ -360,7 +593,7 @@ function numerify (obj) {
 			(key, value) => {
 				var handlerTag = {"src": "bodyParser.json.Reviver"};
 				// Attempt to convert string into number
-				if (typeof value === "string" && Number.isNaN(Number(value)) === false) {
+				if (typeof value === "string" && Number.isNaN(Number(value)) === false && value.match(/0x.*|[bB][01]*|.*[0123456789].*/gi) !== null) {
 					logger.log(`Converting string ${value} into number ${Number(value)}`, handlerTag);
 					return Number(value);
 				} else {

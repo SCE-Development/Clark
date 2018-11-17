@@ -1,0 +1,89 @@
+{
+	"serverActivations": {
+		"__docId__": -1,
+		"login": "placeholder"
+	},
+	"Member": {
+		"__docId__": -1,
+		"memberID": -1,
+		"firstName": "placeholder",
+		"middleInitial": "p",
+		"lastName": "placeholder",
+		"joinDate": "placeholder",
+		"userName": "placeholder",
+		"passWord": "b4ba87b48a80dbad417f853fae5f6d0d809879705d575ba0673ccf3e58eb46fd",
+		"email": "placeholder",
+		"emailVerified": false,
+		"emailOptIn": false,
+		"major": "placeholder",
+		"lastLogin": "placeholder"
+	},
+	"MembershipData": {
+		"__docId__": -1,
+		"memberID": -1,
+		"startTerm": "placeholder",
+		"endTerm": "placeholder",
+		"doorCodeID": -1,
+		"gradDate": "placeholder",
+		"level": -1,
+		"membershipStatus": true
+	},
+	"DoorCode": {
+		"__docId__": -1,
+		"dcID": -1,
+		"code": "unassigned"
+	},
+	"ClearanceLevel": {
+		"__docId__": -1,
+		"cID": -1,
+		"levelName": "placeholder",
+		"abilities": []
+	},
+	"Ability": {
+		"__docId__": -1,
+		"abilityID": -1,
+		"abilityName": "placeholder",
+		"abilityDescription": "placeholder"
+	},
+	"SessionData": {
+		"__docId__": -1,
+		"sessionID": -1,
+		"memberID": -1,
+		"loginTime": "placeholder",
+		"lastActivity": "placeholder",
+		"maxIdleTime": -1
+	},
+	"Announcement": {
+		"__docId__": -1,
+		"aID": -1,
+		"senderID": -1,
+		"title": "placeholder",
+		"msgContent": "placeholder",
+		"imgPath": "placeholder"
+	},
+	"OfficerApplication": {
+		"__docId__": -1,
+		"appID": -1,
+		"fullName": "placeholder",
+		"email": "placeholder",
+		"major": "placeholder",
+		"graduationSem": "placeholder",
+		"reasonForOfficer": "being a placeholder",
+		"committee": "placeholder",
+		"interestedPositions": "placeholder",
+		"improvements": "placeholder"
+	},
+	"autoIncrements": {
+		"__docId__": -1,
+		"autoIncrements": 0,
+		"serverActivations": 0,
+		"Member": 0,
+		"MembershipData": 0,
+		"DoorCode": 0,
+		"clearanceLevel": 0,
+		"Ability": 0,
+		"SessionData": 0,
+		"Announcement": 0,
+		"OfficerApplication": 0
+	}
+}

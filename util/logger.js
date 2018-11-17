@@ -2,13 +2,13 @@
 // 	Name: 			Rolando Javier
 // 	File: 			logger.js
 // 	Date Created: 	October 26, 2017
-// 	Last Modified: 	January 9, 2018
+// 	Last Modified: 	January 27, 2018
 // 	Details:
 // 					This file provides server.js with a means to log events to log files in the log directory
 // 	Dependencies:
 // 					NodeJS (using ECMAscript 6 style JS)
 //	Note:
-//					It is important to note that the idea of a "const" is JS doesn't mean "is constant", but rather, that "it can only be assigned ONCE", and thus all references to the "logger" singleton are "constant" (i.e. referencing the exact same object in memory). The logger singleton is still, therefore, not immutable.
+//					It is important to note that the idea of a "const" in JS doesn't mean "is constant", but rather, that "it can only be assigned ONCE", and thus all references to the "logger" singleton are "constant" (i.e. referencing the exact same object in memory). The logger singleton is still, therefore, not immutable, unless frozen with object.freeze().
 
 "use strict"
 var fs = require("fs");
@@ -47,9 +47,66 @@ logger.dataQueue = ["\n****\nInitializing event log system...\n****\n"];	// queu
 */
 logger.logToConsole = true;
 
+// @member			logger.blacklist
+// @details			This member is used to list which handlers' messages should be ignored
+logger.blacklist = [];
+
 
 
 // Methods
+// @function		logger.ignore()
+// @description		This function tells the logger module to ignore certain messages for logging (both to
+//					console and to log file). If an message has a handler tag with a "src" attribute
+//					whose name is specified within the tagName(s), that message is ignored and not logged
+//					This function has a contextual usage. If no arguments are given, this function returns
+//					the current blacklist. If parameter tagNames is given, the specified tagName is added to
+//					the message black list, and this function then returns the new blacklist.
+// @parameters		(~array) tagNames		An (optional) array listing the handler tag names to ignore
+// @returns			(array) blacklist		The current message tags blacklist
+logger.ignore = function ( tagNames = [] ) {
+
+	// Add tag names to the current blacklist if they don't already exist in it
+	tagNames.forEach( function ( tag ) {
+
+		// Check if the tag already exists. If not, then add it
+		if ( !logger.blacklist.includes( tag ) ) {
+
+			logger.blacklist.push( tag )
+		}
+	} );
+
+	// Return the latest version of the blacklist
+	return logger.blacklist;
+}
+
+// @function		logger.interpret()
+// @description		This function tells the logger to interpret certain messages for logging (both
+//					to console and to log file) by removing it from the blacklist (if it exists).
+// @parameter		(array) tagNames		An array listing the handler tag names to remove from
+//											the blacklist
+// @returns			n/a
+logger.interpret = function ( tagNames ) {
+
+	// If tagNames is not an array, convert it to one
+	if ( !Array.isArray( tagNames ) ) {
+
+		// Convert to an array
+		tagNames = [ tagNames ];
+	}
+
+	// Remove tagNames from the blacklist
+	tagNames.forEach( function ( tagName ) {
+
+		// Check if the tagName exists within the array
+		var index = logger.blacklist.indexOf( tagName );
+		if ( index !== -1 ) {
+
+			// Remove the index from the blacklist
+			logger.blacklist.splice( index, 1 );
+		}
+	} );
+}
+
 /*
 	@function	logger.log
 	@parameter	msg - the string message to log
@@ -98,8 +155,15 @@ logger.log = function (msg, options = {
 	}
 	sourceTag = (typeof options.src !== "undefined") ? `<${options.src}> ` : "";
 
-	// Place msg in log queue
-	logger.dataQueue.push(padding + timestamp + sourceTag + msg);
+	// Determine if the message source is in the blacklist
+	var srcIsBlacklisted = logger.blacklist.includes( options.src );
+
+	// Place msg in log queue if the log src is not blacklisted
+	if ( !srcIsBlacklisted ) {
+
+		// If the log src is not blacklisted, place the message on the queue
+		logger.dataQueue.push(padding + timestamp + sourceTag + msg);
+	}
 
 	// Set the message's detailed info
 	var detailedInfo = {
@@ -110,8 +174,13 @@ logger.log = function (msg, options = {
 		"src": options.src
 	};
 
+	// If this message's tag is in the black list, don't log it or print it out at all!
+	if ( srcIsBlacklisted ) {
+		detailedInfo.ignored = true;
+	}
+
 	// If no other process is using the file, take the file mutex so that no other log call can write. Then, flush all messages.
-	if (logger.fileMutex === true) {
+	if (logger.fileMutex === true && !srcIsBlacklisted ) {
 		// Take mutex
 		logger.fileMutex = false;
 

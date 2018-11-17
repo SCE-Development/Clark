@@ -1,0 +1,70 @@
+body {
+	background-color: darkgray;
+}
+
+
+
+/* Table styles */
+table.api-legend {
+	display: table;
+	width: 100%;
+	background-color: lightgray;
+	border: 10px solid steelblue;
+}
+
+table.api-legend > thead {
+	color: lightgray;
+	background-color: #3769ba;
+}
+
+table.api-legend > thead th {
+	padding: 1em;
+}
+
+table.api-legend tbody {
+	background-color: lightgray;
+}
+
+table.api-legend tbody > tr {
+	background-color: lightgray;
+}
+
+table.api-legend tr.api-endpoint-row > td {
+	border-bottom: 1px solid black;
+	padding-top: 10px;
+}
+
+
+
+/* Method Highlighting */
+table.api-legend tbody > tr > td:first-child {
+	color: blue;
+	font-style: oblique;
+	font-weight: bold;
+	text-align: center;
+}
+
+
+
+/* API Argument Styles */
+table.api-legend div.api-argument > div {
+	padding-bottom: 10px;
+}
+
+
+
+/* API Return Value Styles */
+table.api-legend div.api-return-value > div {
+	padding-bottom: 10px;
+}
+
+
+
+/* API Misc Data Styles */
+table.api-legend .api-data-bold {
+	font-weight: bold;
+}
+
+table.api-legend .api-data-important {
+	font-style: oblique;
+}

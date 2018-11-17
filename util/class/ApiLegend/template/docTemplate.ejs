@@ -1,0 +1,45 @@
+<!-- docTemplate.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<!-- CSS Includes -->
+		<link rel="stylesheet" href="docTemplate.css">
+	</head>
+	<!-- <style>
+		<% include( "./docTemplate.css" ) %>
+	</style> -->
+
+	<body>
+		<table class="api-legend">
+			<thead>
+				<tr>
+					<th colspan="6">
+						<h1>Core v4 API Doc: <%= locals.apiName %></h1>
+					</th>
+				</tr>
+				<tr>
+					<th colspan="6">
+						<h3><%= locals.apiDesc %></h3>
+					</th>
+				</tr>
+				<tr>
+					<th>Method</th>
+					<th>Name</th>
+					<th>Route</th>
+					<th>Description</th>
+					<th>Arguments</th>
+					<th>Return Values</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% locals.apiEndpoints.forEach( function ( endpoint ) { %>
+					<%- include( "./block/docTemplate.apiRow.ejs", { "endpoint": endpoint } ) %>
+				<% } ); %>
+			</tbody>
+		</table>
+	</body>
+
+</html>
