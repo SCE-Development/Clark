@@ -41,9 +41,12 @@ logger.log(`Initializing...`, handlerTag);
 
 /* Create server instance */
 const express = require("express");
+const cors = require("cors");
 const app = express();
 app.locals.title = "Core v4";
 app.locals.email = "test@test.com";
+
+app.use(cors()); //use CORS policy
 
 
 
@@ -129,4 +132,4 @@ var server = https.createServer(ssl_settings, app);
 server.listen(port, function () {
 	logger.log(`Now listening on port ${port}`, handlerTag);
 });
-// END server.js 
+// END server.js
