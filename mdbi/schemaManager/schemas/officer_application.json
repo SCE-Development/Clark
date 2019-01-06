@@ -1,0 +1,17 @@
+{
+	"name": "OfficerApplication",
+	"type": "collection",
+    "desc": "An optional description of the schema. Note that this.view is only required if this.type == 'view'. Note that the ppk string is optional. Note that this.textIndex is optional but is only valid if this.type == 'collection'.",
+    "members": {
+			"appID": "number",
+			"fullName": "string",
+			"email": "string",
+			"major": "string",
+			"graduationSem": "string",
+			"reasonForOfficer": "string",
+			"committee": "string",
+			"interestedPositions": "string",
+			"improvements": "string"
+    },
+    "ppk": "appID"
+}

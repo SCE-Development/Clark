@@ -1,0 +1,20 @@
+{
+	"name": "Member",
+	"type": "collection",
+    "desc": "An optional description of the schema. Note that this.view is only required if this.type == 'view'. Note that the ppk string is optional. Note that this.textIndex is optional but is only valid if this.type == 'collection'.",
+    "members": {
+			"memberID": "number",
+			"firstName": "string",
+			"middleInitial": "string",
+			"lastName": "string",
+			"joinDate": "string",
+			"userName": "string",
+			"passWord": "string",
+			"email": "string",
+			"emailVerified": "boolean",
+			"emailOptIn": "boolean",
+			"major": "string",
+			"lastLogin": "string"
+    },
+    "ppk": "memberID"
+}

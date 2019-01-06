@@ -1,0 +1,6 @@
+{
+    "config": {
+        "path": "./schemas"
+    },
+    "ignore": [ "schema_boilerplate.json" ]
+}

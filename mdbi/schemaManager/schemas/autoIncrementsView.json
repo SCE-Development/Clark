@@ -1,0 +1,17 @@
+{
+    "name": "autoIncrementsView",
+    "type": "view",
+    "view": {
+        "source": "autoIncrements",
+        "pipeline": [
+            {
+                "$project": {
+                    "Member": 1
+                }
+            }
+        ]
+    },
+    "members": {
+        "Member": "number"
+    }
+}
