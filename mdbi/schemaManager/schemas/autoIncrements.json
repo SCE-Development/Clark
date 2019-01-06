@@ -1,0 +1,10 @@
+{
+    "name": "autoIncrements",
+    "desc": "A collection that records the total number of insertions across all collections (not views)",
+    "members": {
+        "autoIncrements": "number",
+        "serverActivations": "number",
+        "sampleCollectionWithMockData": "number",
+        "sampleCollectionWithTextIndexing": "number"
+    }
+}

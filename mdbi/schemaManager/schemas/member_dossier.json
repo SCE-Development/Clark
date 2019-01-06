@@ -1,0 +1,76 @@
+{
+	"name": "MemberDossier",
+	"type": "view",
+    "desc": "An optional description of the schema. Note that this.view is only required if this.type == 'view'. Note that the ppk string is optional. Note that this.textIndex is optional but is only valid if this.type == 'collection'.",
+    "view": {
+        "source": "Member",
+        "pipeline": [
+					{
+						"$lookup": {
+							"from": "MembershipData",
+							"localField": "memberID",
+							"foreignField": "memberID",
+							"as": "memPlanData"
+						}
+					},
+					{
+						"$lookup": {
+							"from": "DoorCode",
+							"localField": "memPlanData.doorCodeID",
+							"foreignField": "dcID",
+							"as": "dcInfo"
+						}
+					},
+					{
+						"$replaceRoot": {
+							"newRoot": {
+								"memberID": "$memberID",
+								"firstName": "$firstName",
+								"middleInitial": "$middleInitial",
+								"lastName": "$lastName",
+								"joinDate": "$joinDate",
+								"userName": "$userName",
+								"email": "$email",
+								"emailVerified": "$emailVerified",
+								"emailOptIn": "$emailOptIn",
+								"major": "$major",
+								"startTerm": "$memPlanData.startTerm",
+								"endTerm": "$memPlanData.endTerm",
+								"doorcode": "$dcInfo.code",
+								"gradDate": "$memPlanDatagradDate",
+								"membershipStatus": "$memPlanData.membershipStatus"
+							}
+						}
+					},
+					{
+						"$unwind": "$doorcode"
+					},
+					{
+						"$unwind": "$membershipStatus"
+					},
+					{
+						"$unwind": "$startTerm"
+					},
+					{
+						"$unwind": "$endTerm"
+					}
+        ]
+    },
+    "members": {
+			"memberID": "number",
+			"firstName": "string",
+			"middleInitial": "string",
+			"lastName": "string",
+			"joinDate": "string",
+			"userName": "string",
+			"email": "string",
+			"emailVerified": "boolean",
+			"emailOptIn": "boolean",
+			"major": "string",
+			"startTerm": "string",
+			"endTerm": "string",
+			"doorcode": "number",
+			"gradDate": "string",
+			"membershipStatus": "boolean"
+    }
+}
