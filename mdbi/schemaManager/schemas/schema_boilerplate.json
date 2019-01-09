@@ -1,0 +1,22 @@
+{
+	"name": "nameOfCollection",
+	"type": "[collection|view]",
+    "desc": "An optional description of the schema. Note that this.view is only required if this.type == 'view'. Note that the ppk string is optional. Note that this.textIndex is optional but is only valid if this.type == 'collection'.",
+    "view": {
+        "source": "The source table with which to create the view from",
+        "pipeline": [
+            {
+                "$somePipelineOperator": "some pipeline operator value relevant to the operator"
+            }
+        ]
+    },
+    "members": {
+        "a": "a's data type",
+        "b": "b's data type"
+    },
+    "textIndex": {
+        "iname": "nameOfTextIndex",
+        "fields": [ "an", "array", "of", "indexable", "field", "names" ]
+    },
+    "ppk": "a"
+}
