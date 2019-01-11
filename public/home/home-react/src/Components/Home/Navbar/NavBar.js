@@ -82,7 +82,7 @@ class NavBar extends Component {
              </NavItem>
              {
                isLoggedIn ? (
-                 <>
+                 <React.Fragment>
                  <UncontrolledDropdown nav inNavbar>
                    <DropdownToggle nav caret>
                      Join Us!
@@ -99,7 +99,7 @@ class NavBar extends Component {
                  <NavItem>
                    <NavLink><Ionicon className="login-icon" icon="ios-radio-button-on" fontSize="20px" color="green" /></NavLink>
                  </NavItem>
-               </>
+               </React.Fragment>
                ) : (
                  <>
                  <UncontrolledDropdown nav inNavbar>
