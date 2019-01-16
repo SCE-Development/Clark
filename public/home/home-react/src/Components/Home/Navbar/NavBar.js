@@ -59,7 +59,7 @@ class NavBar extends Component {
                <NavLink href="/">Snacks & Food</NavLink>
              </NavItem>
              <NavItem>
-               <NavLink href="/">Events</NavLink>
+               <NavLink href="/events">Events</NavLink>
              </NavItem>
              <UncontrolledDropdown nav inNavbar>
                <DropdownToggle nav caret href="/">
