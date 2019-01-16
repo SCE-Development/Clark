@@ -279,7 +279,7 @@ export default class EventManager extends React.Component {
         <div >
                 <Nav className = "NavBar">
                 <h1 align = "center">Event Manager Page</h1>
-                <NavItem>
+                {/* <NavItem>
                     <NavLink activestyle = {{
                     fontWeight: "bold", 
                     color: "white" 
@@ -295,7 +295,7 @@ export default class EventManager extends React.Component {
                     }}
                     >Event Manager
                     </NavLink> 
-                </NavItem>
+                </NavItem> */}
                 </Nav>
 
           {/*the following will display the tabs*/}
