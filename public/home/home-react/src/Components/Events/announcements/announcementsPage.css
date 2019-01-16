@@ -1,0 +1,14 @@
+
+.EventsPage {
+    background-color: #c3c4d8;
+    min-height: 100vh;
+
+    flex-direction: column;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.button_center {
+    align-items: center;
+    flex-direction: column;
+}
