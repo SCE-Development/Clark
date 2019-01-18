@@ -5,6 +5,8 @@ import NavBar from '../Home/Navbar/NavBar.js';
 import Test from './Test.js';
 import Events from '../Events/announcements/announcementsPage.jsx';
 import EventManager from '../Events/manager/eventManager.jsx';
+import Benefits from '../Benefits/benefitsCode/App.js';
+
 class Router extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +24,7 @@ class Router extends Component {
           <Route exact path='/test' component = {Test}/>
           <Route exact path='/events' component = {Events}/>
           <Route exact path='/eventsManager' component = {EventManager}/>
+          <Route exact path='/benefits' component = {Benefits}/>
           <Route component={Home}/>
         </Switch>
       </div>
