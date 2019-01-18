@@ -94,7 +94,11 @@ api.register(
 		logger.log( `Sending response to client @ ip ${request.ip}`, handlerTag );
 		smci.api.getRoot(null, function(res, err) {
 			logger.log("Sending response " + JSON.stringify(res));
+<<<<<<< HEAD
 			response.status(200).send(res).end();
+=======
+			response.status(200).send(res).end;
+>>>>>>> Organize code
 		})
 	}
 );
