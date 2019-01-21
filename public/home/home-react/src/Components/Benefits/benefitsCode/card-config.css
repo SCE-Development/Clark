@@ -44,44 +44,6 @@
   border-bottom: 2px solid black;
 }
 
-#techw{
-  border-color: rgb(158, 82, 177) !important;
-}
-#after{
-  border-color: rgb(16, 208, 196) !important;
-}
-#equipm{
-  border-color: rgb(137, 194, 115) !important;
-}
-
-#shop:hover >  #ishop{
-    content:url("./img/shop.png");
-}
-#locker:hover >  #ilocker{
-    content:url("./img/locker.png");
-}
-#d2:hover >  #id2{
-    content:url("./img/printer.png");
-}
-#d3:hover >  #id3{
-    content:url("./img/3d-printer.png");
-}
-#hardware:hover >  #ihardware{
-    content:url("./img/hardware.png");
-}
-#monitor:hover >  #imonitor{
-    content:url("./img/monitor.png");
-}
-#techw:hover >  #itechw{
-  content:url("./img/techw.png");
-}
-#after:hover >  #iafter{
-  content:url("./img/clock.png");
-}
-#equipm:hover >  #iequipm{
-  content:url("./img/cart.png");
-}
-
 #text{
   text-align: left;
   margin-top: 5px;
@@ -109,41 +71,4 @@
 }
 #bequipm{
   top: 22px;
-}
-
-#bshop:hover {
-  background-color: #6c757d !important;
-  color: white !important;
-}
-#blocker:hover {
-  background-color: #007bff !important;
-  border-color: white !important;
-}
-#bd2:hover {
-  background-color: #28a745 !important;
-  border-color: white !important;
-}
-#bd3:hover {
-  background-color: #17a2b8 !important;
-  border-color: white !important;
-}
-#bhardware:hover {
-  background-color: #ffc107 !important;
-  border-color: white !important;
-}
-#bmonitor:hover {
-  background-color: #dc3545 !important;
-  border-color: white !important;
-}
-#btechw:hover {
-  background-color: rgb(158, 82, 177) !important;
-  border-color: white !important;
-}
-#bafter:hover {
-  background-color: rgb(16, 208, 196) !important;
-  border-color: white !important;
-}
-#bequipm:hover {
-  background-color: rgb(137, 194, 115) !important;
-  border-color: white !important;
 }
