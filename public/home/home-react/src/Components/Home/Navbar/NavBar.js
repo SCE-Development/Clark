@@ -78,7 +78,7 @@ class NavBar extends Component {
                </DropdownMenu>
              </UncontrolledDropdown>
              <NavItem>
-               <NavLink href="/">Benefits</NavLink>
+               <NavLink href="/benefits">Benefits</NavLink>
              </NavItem>
              {
                isLoggedIn ? (
