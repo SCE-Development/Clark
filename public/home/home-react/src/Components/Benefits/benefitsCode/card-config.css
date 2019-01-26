@@ -1,13 +1,16 @@
 .sec1{
-  background-color: #E1F5FE;
-  border: 2px solid #E1F5FE;
+  //background-color: #E1F5FE;
+  background-color: WHITE;
+  //border: 2px solid #E1F5FE;
 }
 .sec2{
-  background-color: #E1F5FE;
-  border: 2px solid #E1F5FE;
+  //background-color: #E1F5FE;
+  background-color: WHITE;
+  //border: 2px solid #E1F5FE;
 }.sec3{
   background-color: #E1F5FE;
-  border: 2px solid #E1F5FE;
+  background-color: WHITE;
+  //border: 2px solid #E1F5FE;
 }
 
 .title{
@@ -35,7 +38,8 @@
   height: 480px !important;
   height: relative !important;
   border: 2px solid rgba(0, 0, 0, 0.125) !important;
-  background-color: #E1F5FE !important;
+  //background-color: #E1F5FE !important;
+  background-color: WHITE !important;
 }
 
 .secN{
