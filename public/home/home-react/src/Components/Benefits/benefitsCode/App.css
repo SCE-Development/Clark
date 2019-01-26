@@ -1,5 +1,6 @@
 .App{
-  width: 1300px;
+  //width: 1300px;
+  width:100%;
   margin: auto ;
   padding: 100px;
   //border: 2px solid red;
