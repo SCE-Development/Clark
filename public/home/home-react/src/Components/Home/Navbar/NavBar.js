@@ -50,7 +50,7 @@ class NavBar extends Component {
                  <DropdownItem href="/">
                    2D Printing
                  </DropdownItem>
-                 <DropdownItem href="/">
+                 <DropdownItem href="/3DPrintingForm">
                    3D Printing
                  </DropdownItem>
                </DropdownMenu>
