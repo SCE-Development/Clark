@@ -1,0 +1,32 @@
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+form label{
+  font-size: 20px;
+}
+
+input[type=text], input[type=url] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  align-content: center;
+}
+
+
+select {
+  width: 50%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+}
+
+
+
+
