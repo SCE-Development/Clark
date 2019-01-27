@@ -33,37 +33,62 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 #### On Linux/Mac
 
   1) In your main directory (where you can cd into desktop or documents) you can do the following: 
+  
   1a) acquire **Node.js** from *nodejs.org* or through the command line using *apt-get*. 
+  
   2) Verify installation using *node -v* on command line.
+  
   3) Now install mongo in the main directory as well (locally on your machine).
+  
   3a) Install homebrew (if on mac) ```/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"```
+  
   3b) ```brew install mongodb```
   3c) ```mkdir -p /data/db```
       Use sudo in front of mkdir if necessary
   4) In a new terminal window, run the mongo daemon by typing this and hit enter: ```mongod```
+  
   4a) If you need to exit the daemon, type ```ctrl-c``` and press enter.
+  
   5) In a new terminal, run the mongo shell by typing this and hit enter: ```mongo```
+  
   5a) If you need to exit the shell, type ```quit()``` and press enter.
+  
   6) At this point, we assume that you already cloned the project on your local machine (if not, clone the dev branch and choose a location to put it). Example: in the documents folder.
+  
   7) Now go to the Core-v4 root directory of the project and run: ```npm install```
+  
   7a) Run ```npm -v``` to find out which version.
+  
   8) At this point you have the repository, node.js installed and mongo installed. You have the npm packages installed which are required to trun the setup.
+  
   9) Go to Core-v4 folder on terminal (open a new window if you have to)
+  
   10) Enter this in terminal: ```cd Core-v4/util/tools```
+  
   10a) Once there, run this: ```node system_setup.js all```
+  
   11) Now go to Core-v4 directory by typing this: ```cd ../..```
+  
   11a) Once you are in Core-v4 root directory, type this: ```cd Core-v4/mdbi/tools```
+  
   11b) Type ls and hit enter. Now you should see this: ```db_setup.js```
+  
   11c) Run this: ```node db_setup.js --init```
+  
   12) Once that is complete and it shows no errors, cd back to Core-v4 repository root folder by doing this: ```cd ../..```
 
   Now comes the part where you have to add the mongodb admin users.
 
   13) Close and quit the mongo shell and the mongo daemon that you have running from earlier. Instruction 4a and 5a have the commands. 
+  
   14) Now in 1 terminal window, run the following:
+  
   14a) sudo mongod --port 27017 --dbpath /data/db
+  
   14b) In another terminal window, run this: mongo --port 27017
+  
   14c) In the mongo shell prompt, run this: use admin
+  
   14d) Then type this:
     db.createUser(
       {
