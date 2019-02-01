@@ -32,50 +32,37 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 
 #### On Linux/Mac
 
-1. In your main directory (where you can cd into desktop or documents) you can do the following: 
-    - acquire **Node.js** from *nodejs.org* or through the command line using *apt-get*. 
-
-2. Verify installation using *node -v* on command line.
-
-3. Now install mongo in the main directory as well (locally on your machine).
-  
-    - Install homebrew (if on mac) ```/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"```
-  
-    - ```brew install mongodb```
-    -  ```mkdir -p /data/db``` Use sudo in front of mkdir if necessary
-4. In a new terminal window, run the mongo daemon by typing this and hit enter: ```mongod```
-
-    If you need to exit the daemon, type ```ctrl-c``` and press enter.
-  
-5. In a new terminal, run the mongo shell by typing this and hit enter: ```mongo```
-  
-    - If you need to exit the shell, type ```quit()``` and press enter.
-  
-6. At this point, we assume that you already cloned the project on your local machine (if not, clone the dev branch and choose a location to put it). Example: in the documents folder.
-  
-7. Now go to the Core-v4 root directory of the project and run: ```npm install```
-  
-    - Run ```npm -v``` to find out which version.
-  
-8. At this point you have the repository, node.js installed and mongo installed. You have the npm packages installed which are required to trun the setup.
-  
+1. In a _"main"_ directory of your choice (i.e. `cd` into `Desktop` or `Documents`), you can acquire the latest **Node.js** package in two ways:
+    - **Download** from *nodejs.org*, or
+    - **Install** through the command line using `apt-get` (or whatever package manager is supported by your OS, i.e. `yum`)
+2. Verify the installation succeeded using `node -v` on command line. You should see the version of your package printed out (e.g. `v10.14.2`).
+3. Acquire MongoDB in the main directory as well (locally on your machine).
+    - If on mac:
+      - Install Homebrew (e.g. `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`)
+      - Use Homebrew to install MongoDB (e.g. `brew install mongodb`)
+    - If on Linux or Windows:
+      - Download the package from the [MongoDB website](https://www.mongodb.com/)
+      - Follow your OS's installation instructions listed on the [MongoDB website](https://www.mongodb.com/)
+    - After installing MongoDB, initialize your database document store by creating the `/data/db` directory
+      - e.g `mkdir -p /data/db` _(Use `sudo` in front of `mkdir` if necessary)_
+4. In a new terminal window, run the mongo daemon by entering: `mongod`
+    - _If you need to exit the daemon, type `ctrl-c` and press enter_
+5. In a new terminal, run the mongo shell by entering: `mongo`
+    - _If you need to exit the shell, type `quit()` and press enter_
+6. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
+7. Install project dependencies
+    - Verify `npm` is installed using `npm -v` (should print out version info).
+    - Then, go to the Core-v4 root directory of the project and run: `npm install`
+8. At this point you should have the **repository**, **Node.js**, **MongoDB** and the **Core-v4 Packages** installed. You may now run system setup.
 9. Go to Core-v4 folder on terminal (open a new window if you have to)
-  
-10. Enter this in terminal: ```cd Core-v4/util/tools```
-  
+10. Enter this in terminal: `cd Core-v4/util/tools`
     - Once there, run this: ```node system_setup.js all```
-  
 11. Now go to Core-v4 directory by typing this: ```cd ../..```
-  
     - Once you are in Core-v4 root directory, type this: ```cd Core-v4/mdbi/tools```
-  
     - Type ls and hit enter. Now you should see this: ```db_setup.js```
-  
     - Run this: ```node db_setup.js --init```
-  
 12. Once that is complete and it shows no errors, cd back to Core-v4 repository root folder by doing this: ```cd ../..```
-
-- Now comes the part where you have to add the mongodb admin users.
+    - Now comes the part where you have to add the mongodb admin users.
 
 13. Close and quit the mongo shell and the mongo daemon that you have running from earlier. Instruction 4a and 5a have the commands. 
   
