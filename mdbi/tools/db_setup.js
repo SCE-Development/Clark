@@ -147,12 +147,13 @@ function formatDatabase() {
 		
 					// Determine action based on user's answer
 					var answer = chunk.slice( 0, chunk.length - 1 ).toString().toLowerCase();
-					if( answer === "no" ) {
+                    console.log("This is the answer:", typeof answer, answer);
+					if( answer.includes("no") ) {
 		
 						// On a no answer, don't do anything
 						console.log( "Aborting...");
 						process.kill( process.pid, "SIGINT" );
-					} else if ( answer === "yes" ) {
+					} else if ( answer.includes("yes") ) {
 						
 						// On a yes answer, acquire a list of all collection names, and use it to create
 						// promises that drop each collection
@@ -253,6 +254,9 @@ function initDatabase( mock = false ) {
 
 			// Acquire descriptions of the schemas and views to apply
 			var schemas = sm.getSchemaDefinitions();	// views are also represented as schemas
+            
+            //DEBUG
+//            console.log( "Schemas:", schemas );
 
 			// Generate schema/view initialization promises, and any pretend data insertion
 			// promises.

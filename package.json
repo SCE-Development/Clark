@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js | npm start --prefix ./public/home/home-react"
+    "start": "node server.js | npm start --prefix ./public/home/home-react",
+    "start-tasks": "npm start --prefix ./public/home/home-react"
   },
   "repository": {
     "type": "git",
