@@ -11,5 +11,16 @@
 			"level": "number",
 			"membershipStatus": "boolean"
     },
+    "mock": [
+        {
+			"memberID": 1,
+			"startTerm": "2019-02-16T04:36:45.120Z",
+			"endTerm": "2020-02-16T04:36:45.120Z",
+			"doorCodeID": "0",
+			"gradDate": "3005-02-16T04:36:45.120Z",
+			"level": 1,
+			"membershipStatus": true
+        }
+    ],
     "ppk": "memberID"
 }
