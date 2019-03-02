@@ -6,8 +6,6 @@ import "../announcements/announcementsPage.css"
 import "../announcements/announcementsPage"
 import { AvForm, AvGroup, AvInput, AvFeedback,  } from 'availity-reactstrap-validation';
 
-var smci = require("../../../smci/smci.js");			// import mailchimp interface module
-
 export default class EventManager extends React.Component {
     constructor(props) {
       super(props);
@@ -131,16 +129,31 @@ export default class EventManager extends React.Component {
         eventContact: this.state.eventContact,
       }
 
-      // test get root request from smci
-      smci.api.getRoot(null, function(response, error) {
-        console.log("izzymoriguchi");
-        console.log(response);
-      });
+      var request = require('superagent');
 
-      // Create a MailChimp campaign
-      const campaign = {
 
-      }
+      request
+          // .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/campaigns/')
+          .get('http://localhost:3000/api/mailChimp/mailchimptest')
+          .set('Content-Type', 'application/json;charset=utf-8')
+          // .set('Access-Control-Allow-Origin', 'mailchimp.com')
+          .send(
+            {
+              'type': 'plaintext',
+              'settings':
+                {
+                  'subject_line': 'Izzy Mailchimp Test 1/29/2019',
+                  'title': 'This is a test 2/5/2019'
+                }
+            })
+          .end(function(err, response) {
+                if (response && response.status < 300) {
+                  console.log('Signed Up!');
+                } else {
+                  console.log('Sign Up Failed :(');
+                }
+            });
+
 
 
       // Post to DB with the current state
