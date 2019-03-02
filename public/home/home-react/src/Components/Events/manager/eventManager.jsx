@@ -6,8 +6,6 @@ import "../announcements/announcementsPage.css"
 import "../announcements/announcementsPage"
 import { AvForm, AvGroup, AvInput, AvFeedback,  } from 'availity-reactstrap-validation';
 
-var smci = require("../../../smci/smci.js");			// import mailchimp interface module
-
 export default class EventManager extends React.Component {
     constructor(props) {
       super(props);
