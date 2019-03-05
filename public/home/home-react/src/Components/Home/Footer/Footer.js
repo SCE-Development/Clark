@@ -25,22 +25,23 @@ export default () => {
         </Col>
         */}
           <Col>
-            <b>Header1</b>
-            <p>Info goes here</p>
-            <p>More info goes here</p>
-            <p>Something else goes here</p>
+            <b>Software & Computer Engineering Society</b>
+            <p>San Jose State University</p>
+            <p>Charles W. Davidson College of Engineering</p>
+            <p>Room: ENGR 294</p>
           </Col>
           <Col>
-            <b>Header2</b>
-            <p>Info goes here</p>
-            <p>More info goes here</p>
-            <p>Something else goes here</p>
+            <b>Contact</b>
+            <p>General: <a href="mailto:asksce@gmail.com">asksce@gmail.com</a></p>
+            <p>President: <a href="mailto:pres.sce.sjsu@gmail.com">pres.sce.sjsu@gmail.com</a></p>
+            <p>Vice-President: <a href="mailto:vp.sce.sjsu@gmail.com">vp.sce.sjsu@gmail.com</a></p>
+            <p>Public Relations: <a href="mailto:pr.sce.sjsu@gmail.com">pr.sce.sjsu@gmail.com</a></p>
           </Col>
           <Col>
             <b>Header3</b>
-            <p>Info goes here</p>
-            <p>More info goes here</p>
-            <p>Something else goes here</p>
+            <p>Placeholder</p>
+            <p>Placeholder</p>
+            <p>Placeholder</p>
           </Col>
           <Col>
             <a href="https://www.linkedin.com/company/sjsu-software-computer-engineering-society/"><Ionicon icon="logo-linkedin" fontSize="35px" color="#E1F5FE"/></a>
