@@ -77,9 +77,9 @@ class NavBar extends Component {
                  </DropdownItem>
                </DropdownMenu>
              </UncontrolledDropdown>
-             <NavItem>
-               <NavLink href="/benefits">Benefits</NavLink>
-             </NavItem>
+             {/* <NavItem>
+               <NavLink href="#benefits">Benefits</NavLink>
+             </NavItem> */}
              {
                isLoggedIn ? (
                  <React.Fragment>
