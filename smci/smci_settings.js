@@ -22,19 +22,19 @@ var smci_settings = {};
 	@member 	accountEmail
 	@details 	This is the email associated with the MailChimp account used by SMCI
 */
-smci_settings.accountEmail = "rjavier441@gmail.com";	// temporary; will replace with real credentials after testing completes
+smci_settings.accountEmail = "fo.sce.sjsu@gmail.com ";	// temporary; will replace with real credentials after testing completes
 
 /*
 	@member 	apikey
 	@details 	This is the api key I'm using to run the smci wrappers.
 */
-smci_settings.apikey = "140bebdf09a48807e7e931c81777f640-us15";
+smci_settings.apikey = "696c97d46233954526986811f40bd149-us8";
 
 /*
 	@member 	apiDataCenter
 	@details 	This member signifies the data center that handles all mailchimp requests.
 */
-smci_settings.apiDataCenter = "us15";
+smci_settings.apiDataCenter = "us8";
 
 /*
 	@member 	apiVersion
@@ -46,21 +46,21 @@ smci_settings.apiVersion = "3.0";
 	@member 	anystring
 	@details 	This is a temporary signature used to identify api transactions (i.e. a username).
 */
-smci_settings.anystring = "rjavier441";
+smci_settings.anystring = "scemern";
 
 /*
 	@member 	appAccessToken
 	@details 	This is the OAuth2 Access Token given by recently linking the app to MailChimp's "rj_my_test_app"
 	@note 		Everytime you wish to re-register the SMCI with MailChimp, you must use smci.postAuthorizedApp() and replace this access token with the new one returned from MailChimp!
 */
-smci_settings.appAccessToken = "d718e6105e84ce07169577f37c92cf1f";
+smci_settings.appAccessToken = "445a93b35572469af2e66eac2b27a6ed";
 
 /*
 	@member 	appViewerToken
 	@details 	This is the OAuth2 Viewer Token given by recently linking the app to MailChimp's "rj_my_test_app"
 	@note 		Everytime you wish to re-register the SMCI with MailChimp, you must use smci.postAuthorizedApp() and replace this viewer token with the new one returned from MailChimp!
 */
-smci_settings.appViewerToken = "6c846b89f606db054c33274f4f0d7721:v";
+smci_settings.appViewerToken = "994d7d53d61f02efe90b8122c38baeac:v";
 
 
 

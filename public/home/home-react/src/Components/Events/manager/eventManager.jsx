@@ -13,7 +13,7 @@ export default class EventManager extends React.Component {
       this.state = {
         activeTab: '1',
         modal: false,
-        
+
         status: 'draft',
         eventName: '',
         eventDescription: '',
@@ -33,7 +33,7 @@ export default class EventManager extends React.Component {
     //   this.loadPublishedEventsFromServer();
     //   this.loadDraftedEventsFromServer();
     // }
-  
+
     // loadPublishedEventsFromServer = () => {
     //   axios.get('http://localhost:5000/api/form?status=published')
     //   .then(res => {
@@ -57,7 +57,7 @@ export default class EventManager extends React.Component {
     //     console.log(this.state);
     //   });
     // }
-    
+
     toggle = (tab) => {
       if (this.state.activeTab !== tab) {
         this.setState({
@@ -82,18 +82,18 @@ export default class EventManager extends React.Component {
       this.setState({
         eventDescription: e.target.value,
       });
-    } 
+    }
     onChange_eventDate= (e) => {
       this.setState({
         eventDate: e.target.value,
       });
-    } 
-    
+    }
+
     onChange_eventTime = (e) => {
       this.setState({
         eventTime: e.target.value,
       });
-    } 
+    }
 
     onChange_eventLocation = (e) => {
       this.setState({
@@ -115,7 +115,7 @@ export default class EventManager extends React.Component {
 
     // when user clicks submit in post tab
     onClickPost = (e) => {
-      e.preventDefault(); // Prevent reloading page 
+      e.preventDefault(); // Prevent reloading page
 
       // Store the state of current data into form
       const submitData = {
@@ -129,23 +129,50 @@ export default class EventManager extends React.Component {
         eventContact: this.state.eventContact,
       }
 
+      var request = require('superagent');
+
+
+      request
+          // .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/campaigns/')
+          .get('http://localhost:3000/api/mailChimp/mailchimptest')
+          .set('Content-Type', 'application/json;charset=utf-8')
+          // .set('Access-Control-Allow-Origin', 'mailchimp.com')
+          .send(
+            {
+              'type': 'plaintext',
+              'settings':
+                {
+                  'subject_line': 'Izzy Mailchimp Test 1/29/2019',
+                  'title': 'This is a test 2/5/2019'
+                }
+            })
+          .end(function(err, response) {
+                if (response && response.status < 300) {
+                  console.log('Signed Up!');
+                } else {
+                  console.log('Sign Up Failed :(');
+                }
+            });
+
+
+
       // Post to DB with the current state
       // axios.post('http://localhost:5000/api/form', submitData)
       // .then((res) => {
       //   console.log(res.data); // Log data onto console
 
       //   const form = res.data.data; // Get data from the response
-        
+
       //   // Create a copy of published and drafted arrays and store
       //   // Push it to the top of the page
-      //   const newPublished = this.state.publishedEvents.slice();  
-      //   newPublished.unshift(form); 
+      //   const newPublished = this.state.publishedEvents.slice();
+      //   newPublished.unshift(form);
 
       //   const newDrafts = this.state.draftedEvents.slice();
       //   newDrafts.unshift(form);
 
-      //   this.setState ({   
-      //     status: 'draft',     
+      //   this.setState ({
+      //     status: 'draft',
       //     eventName: '',
       //     eventDescription: '',
       //     eventDate: '',
@@ -153,7 +180,7 @@ export default class EventManager extends React.Component {
       //     eventLocation: '',
       //     eventHost: '',
       //     eventContact: '',
-  
+
       //     publishedEvents: newPublished,
       //     draftedEvents: newDrafts
       //   });
@@ -173,7 +200,7 @@ export default class EventManager extends React.Component {
       //   // Update arrays of drafts and published events
       //   const filteredDrafts = this.state.draftedEvents.filter(form => form._id !== id);
       //   const filteredPublishedEvents = this.state.publishedEvents.filter(form => form._id !== id);
-        
+
       //   // Update state
       //   const newState = {...this.state,publishedEvents: filteredPublishedEvents ,draftedEvents: filteredDrafts};
 
@@ -198,7 +225,7 @@ export default class EventManager extends React.Component {
       //   const newState = {...this.state, draftedEvents: filteredDrafts};
       //   newState.publishedEvents.unshift(event);
       //   this.setState(newState);
-        
+
       //   console.dir(this.state.draftedEvents);
 
       // })
@@ -230,12 +257,12 @@ export default class EventManager extends React.Component {
                            draftedEvents: this.state.draftedEvents
                            };
         this.setState(new_state);
-          
+
 
 
 
         console.dir(new_state);
-      
+
     } // End editEvent
 
     // when user clicks 'move to drafts' in published tab to mark event as "draft"
@@ -259,8 +286,8 @@ export default class EventManager extends React.Component {
 
     // Clear form when user hits "clear" in form
     onClickClear = () => {
-      this.setState ({   
-        status: 'draft',     
+      this.setState ({
+        status: 'draft',
         eventName: '',
         eventDescription: '',
         eventDate: '',
@@ -281,20 +308,20 @@ export default class EventManager extends React.Component {
                 <h1 align = "center">Event Manager Page</h1>
                 {/* <NavItem>
                     <NavLink activestyle = {{
-                    fontWeight: "bold", 
-                    color: "white" 
+                    fontWeight: "bold",
+                    color: "white"
                     }}
                     >Home
                     </NavLink>
                 </NavItem>
-                
+
                 <NavItem>
                     <NavLink activestyle = {{
-                    fontWeight: "bold", 
-                    color: "white" 
+                    fontWeight: "bold",
+                    color: "white"
                     }}
                     >Event Manager
-                    </NavLink> 
+                    </NavLink>
                 </NavItem> */}
                 </Nav>
 
@@ -318,7 +345,7 @@ export default class EventManager extends React.Component {
                 Drafts
               </NavLink>
             </NavItem>
-            
+
             <NavItem>
               <NavLink
                 className={classnames({ active: this.state.activeTab === '3' })}
@@ -345,14 +372,14 @@ export default class EventManager extends React.Component {
                       {/* <AvFeedback>this is invalid</AvFeedback> */}
                     </Col>
                   </FormGroup>
-                   
+
                   <FormGroup row>
                     <Label for="EventDescription" sm={2}>Event Description</Label>
                     <Col sm={10}>
                       <Input type="textarea" value={this.state.eventDescription} onChange={this.onChange_eventDescription} name="text" id="EventDescription" placeholder="enter event description"/>
                     </Col>
                   </FormGroup>
-                  
+
                   <FormGroup row>
                     <Label for="EventDate" sm={2}>Event Date</Label>
                     <Col sm={10}>
@@ -385,29 +412,29 @@ export default class EventManager extends React.Component {
                     <Label for="EventContactInfo" sm={2}>Host Email</Label>
                     <Col sm={10}>
                       <Input type="email" value={this.state.eventContact} onChange={this.onChange_eventContact} name="EventContactInfo" id="EventContactInfo" placeholder="JohnDoe@sjsu.edu" />
-                      
+
                       <Col sm = {100} style = {{paddingTop:15}}>
                       <Button color = "primary" onClick={this.onClickPost}block> Post to Drafts</Button>
                       <Button color = "danger" onClick={this.onClickClear}block> Clear </Button>
                       </Col>
                     </Col>
                   </FormGroup>
-                  </Form>                
+                  </Form>
                   </Col>
               </Row>
             </TabPane>
-          
+
             {/*Will show DRAFTS which will have list of events
                         saved but not published.
-                        Each events panel will have buttons to publish or 
+                        Each events panel will have buttons to publish or
                         edit*/}
             <TabPane tabId="2" >
-                <Col sm="12" style = {{paddingTop: 10}}> 
+                <Col sm="12" style = {{paddingTop: 10}}>
                     {this.state.draftedEvents.map( (event) => (
                       <Card body className="text-center" key={event._id}>
                         <CardTitle>{event.eventName}</CardTitle>
                         <CardText>{event.eventDescription}</CardText>
-                         
+
                           <div className = "button_center">
                             <Button color="primary" onClick = {()=>this.moveToPublished(event._id)}>Move to Published events</Button> {' '}
                             <Button color="secondary" onClick = {() => this.edit_modal_toggle()}>Edit</Button> {' '}
@@ -433,7 +460,7 @@ export default class EventManager extends React.Component {
             {/*Will show PUBLISHED events i.e. events shown on announcements page*/}
             <TabPane tabId="3">
             <Col sm="12" style = {{paddingTop: 10}}>
-              {this.state.publishedEvents.map( (event) => ( 
+              {this.state.publishedEvents.map( (event) => (
                 <Card body className="text-center" key={event._id}>
                   <CardTitle>{event.eventName}</CardTitle>
                   <CardText>{event.eventDescription}</CardText>
