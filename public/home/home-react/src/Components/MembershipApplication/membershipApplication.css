@@ -1,0 +1,37 @@
+/* BEGIN general styles */
+div.membership-application > h1.page-title {
+    text-align: center;
+    background-color: #B2EBF2;
+}
+/* END general styles */
+
+/* BEGIN form styles */
+div.membership-application > form {
+    /* background-color: lightgray; */
+    margin: 10px;
+}
+div.membership-application > form > div.form-group > label {
+    padding-top: 0.5em;
+    padding-left: 0.5em;
+}
+div.membership-application > form > div.form-group > input {
+    float: right;
+    max-width: 80%;
+}
+/* END form styles */
+
+/* BEGIN *notice styles */
+div.membership-application > div.notice {
+    vertical-align: bottom;
+    margin: 10px;
+    font-size: 72%;
+    color: lightgray;
+}
+div.membership-application > div.notice > .critical {
+    color: red;
+    font-weight: bold;
+}
+div.membership-application > div.notice > .important {
+    font-weight: bold;
+}
+/* END *notice styles */
