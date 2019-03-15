@@ -92,10 +92,43 @@ api.register(
 		// Initialize
 		var handlerTag = { "src": "(get) /api/ability/ping" };
 		logger.log( `Sending response to client @ ip ${request.ip}`, handlerTag );
-		smci.api.getRoot(null, function(res, err) {
-			logger.log("Sending response " + JSON.stringify(res));
-			response.status(200).send(res).end();
-		})
+
+		// smci.api.getRoot(null, function(res, err) {
+		// 	logger.log("Sending response " + JSON.stringify(res));
+		// 	response.status(200).send(res).end();
+		// });
+
+		smci.campaigns.create(
+			{
+				'type': 'regular',
+				'recipients': {
+					'list_id':'2f831f6fd8'
+				},
+				'settings':
+					{
+						'subject_line': 'Mailchimp Test 3/14/2019',
+						'title': 'Mailchimp Test 3/14/2019',
+						'from_name':'SCE Dev Test',
+						'reply_to':'sce.sjsu@gmail.com'
+					}
+			},
+			function(res, err) {
+				logger.log("Sending response " + JSON.stringify(res));
+				var campaignId = res.id;
+				var campaignContents = {
+					'template': {
+						'id':293933
+					}
+				};
+				smci.campaigns.setCampaignContent(campaignId, campaignContents, function(res2, err2) {
+						if (res2) {
+							smci.campaigns.sendCampaign(campaignId, function(res1, err1) {
+								response.status(200).send(res1).end();
+							});
+						}
+				});
+			}
+		);
 	}
 );
 
