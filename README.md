@@ -31,86 +31,6 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 - Node Hash NPM package v0.2.0+
 
 #### On Linux/Mac
-
-<<<<<<< HEAD
-1. In your main directory (where you can cd into desktop or documents) you can do the following: 
-    - acquire **Node.js** from *nodejs.org* or through the command line using *apt-get*. 
-
-2. Verify installation using *node -v* on command line.
-
-3. Now install mongo in the main directory as well (locally on your machine).
-  
-    - Install homebrew (if on mac) ```/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"```
-  
-    - ```brew install mongodb```
-    -  ```mkdir -p /data/db``` Use sudo in front of mkdir if necessary
-4. In a new terminal window, run the mongo daemon by typing this and hit enter: ```mongod```
-
-    If you need to exit the daemon, type ```ctrl-c``` and press enter.
-  
-5. In a new terminal, run the mongo shell by typing this and hit enter: ```mongo```
-  
-    - If you need to exit the shell, type ```quit()``` and press enter.
-  
-6. At this point, we assume that you already cloned the project on your local machine (if not, clone the dev branch and choose a location to put it). Example: in the documents folder.
-  
-7. Now go to the Core-v4 root directory of the project and run: ```npm install```
-  
-    - Run ```npm -v``` to find out which version.
-  
-8. At this point you have the repository, node.js installed and mongo installed. You have the npm packages installed which are required to trun the setup.
-  
-9. Go to Core-v4 folder on terminal (open a new window if you have to)
-  
-10. Enter this in terminal: ```cd Core-v4/util/tools```
-  
-    - Once there, run this: ```node system_setup.js all```
-  
-11. Now go to Core-v4 directory by typing this: ```cd ../..```
-  
-    - Once you are in Core-v4 root directory, type this: ```cd Core-v4/mdbi/tools```
-  
-    - Type ls and hit enter. Now you should see this: ```db_setup.js```
-  
-    - Run this: ```node db_setup.js --init```
-  
-12. Once that is complete and it shows no errors, cd back to Core-v4 repository root folder by doing this: ```cd ../..```
-
-- Now comes the part where you have to add the mongodb admin users.
-
-13. Close and quit the mongo shell and the mongo daemon that you have running from earlier. Instruction 4a and 5a have the commands. 
-  
-14. Now in 1 terminal window, run the following:
-  
-    - ```sudo mongod --port 27017 --dbpath /data/db```
-  
-    - In another terminal window, run this: mongo --port 27017
-  
-    - In the mongo shell prompt, run this: use admin
-  
-    - Then type this:
-    ```
-    db.createUser(
-      {
-        user: "admin",
-        pwd: "passwordOfYourChoice",
-        roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
-      }
-    )
-    ```
-15.
-
-
-#### On Windows
-
-  1) You should get in the habit of using linux ubuntu (or other distributions) or macOS.
-  2) Install VirtualBox, VMWare, or Parallels and get a linux distribution (aka Ubuntu or other) iso image and setup your virtual environment that will run linux on your windows machine. 
-  3) Once linux is setup (use youtube videos for help if you have to) then use the process defined in the section above.
-
-  4) Although linux or MacOS is a preferred environment for this project, you can proceed with the windows with the instructions below:
-
-    - You can install **Node.js** directly from their website using their installer. Afterwards, you can perform the same Linux/Mac verification and package installation steps (displayed above) by using Windows command prompt or PowerShell
-=======
   1. In a _"main"_ directory of your choice (i.e. `cd` into `Desktop` or `Documents`), you can acquire the latest **Node.js** package in two ways:
       - **Download** from *nodejs.org*, or
       - **Install** through the command line using `apt-get` (or whatever package manager is supported by your OS, i.e. `yum`)
@@ -204,13 +124,6 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 
 ## Application Execution
 #### On Linux/Mac/Windows
-<<<<<<< HEAD
-  _**BEFORE**_ starting the server, be sure to perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md). Then, initialize the database by first starting your mongo daemon with access control enabled (see [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/)), and by then running the [database setup script](./mdbi/tools/sce_db_setup_v0.js) using
-  ```
-  //node sce_db_setup_v0.js (DONT DO THIS)
-  ```
-  to create the necessary collections required by the mongo database.
-=======
   _**BEFORE**_ starting the server, various resources and configurations should have already been created. _**If there were no errors during system setup**_, this should have already been done for you during use of `system_setup.js` in the [Setup and Depedencies](#setup-and-dependencies) section. In the event that setup failed, attempting to start the server will result in failure, forcing you to perform some or all of these steps manually (depending on your error):
 
   1. Perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md).
