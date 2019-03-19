@@ -18,7 +18,11 @@ export default class MembershipApplication extends React.Component {
             lastName: "",
             email: "",
             username: "",
-            password: ""
+            password: "",
+            usernameAvailable: false,
+            usernameCheckClass: 'username-availability',
+            usernameCheckResult: '',
+            usernameCheckResultIcon: ''
         };
     }
 
@@ -101,6 +105,7 @@ export default class MembershipApplication extends React.Component {
     mutateUsername( e ) {
 
         // Create a copy of the current state
+        var me = this;
         var tempState = Object.assign( this.state );
 
         // Set the new state
@@ -109,17 +114,37 @@ export default class MembershipApplication extends React.Component {
 
         // Check if the username is available by querying the server
         var request = require( 'superagent' );
-        request.post('http://localhost:3000/api/user/search')
-        .set('Content-Type', 'application/json;charset=utf-8')
-        .send( {
-            'type': ''  // TODO: Create an API meant solely for checking if a username is available (making it safe for public exposure)
-        } )
+        request.get(
+            'http://' +
+            window.location.hostname +
+            ':3000/api/membershipApplication/' +
+            'username/isAvailable?username=' + tempState.username
+        ).set('Content-Type', 'application/json;charset=utf-8')
+        .send()
         .end( function( err, response ){
             
             if( response && response.status < 300 ){
 
-                // Success
-                // TODO: Check if a username was found
+                // Create a copy of the current state
+                var tempState2 = Object.assign( me.state );
+                
+                // Check if a username was found
+                if( JSON.parse( response.text ).content.isAvailable ) {
+
+                    // Show that the username is available
+                    tempState2.usernameCheckClass = 'username-availability available';
+                    tempState2.usernameCheckResult = 'Username is available';
+                    tempState2.usernameCheckResultIcon = '✔';
+                } else {
+                    
+                    // Show that the username is not available
+                    tempState2.usernameCheckClass = 'username-availability unavailable';
+                    tempState2.usernameCheckResult = 'Username is unavailable';
+                    tempState2.usernameCheckResultIcon = '✘';
+                }
+
+                // Update state
+                me.setState( tempState2 );
             } else {
                 
                 // Failure
@@ -181,6 +206,8 @@ export default class MembershipApplication extends React.Component {
                         <Label for="username">Username*</Label>
                         <Input type="text" onChange={this.mutateUsername.bind(this)} value={this.state.username} name="username" id="input_username" placeholder="(e.g. sce_user)"></Input>
                     </FormGroup>
+                    <div class={this.state.usernameCheckClass}>
+                    {this.state.usernameCheckResultIcon} &nbsp;{this.state.usernameCheckResult}</div>
                     <FormGroup>
                         <Label for="password">Password*</Label>
                         <Input type="text" onChange={this.mutatePassword.bind(this)} value={this.state.password} name="password" id="input_password" placeholder="(e.g. sce_password)"></Input>

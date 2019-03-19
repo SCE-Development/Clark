@@ -35,3 +35,22 @@ div.membership-application > div.notice > .important {
     font-weight: bold;
 }
 /* END *notice styles */
+
+/* BEGIN username availability notice styles */
+div.username-availability {
+    font-style: italic;
+    display: inline-block;
+    text-align: left;
+    width: 100%;
+    vertical-align: top;
+    padding-bottom: 1em;
+    padding-left: 1em;
+}
+div.username-availability.available {
+    color: lightgreen;
+}
+div.username-availability.unavailable {
+    color: red;
+    font-weight: 500;
+}
+/* END username availability notice styles */
