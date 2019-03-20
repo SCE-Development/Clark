@@ -9,6 +9,9 @@ services:
 
   app:
     image: 'coretest:latest'
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-serverjs
     ports:
       - '8080-8085:8080'
     restart: 'on-failure'

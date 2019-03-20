@@ -1,0 +1,20 @@
+FROM node:8.12.0-jessie
+
+RUN mkdir -p /usr/src/app
+
+COPY . /usr/src/app/
+
+WORKDIR /usr/src/app/
+
+EXPOSE 8080
+
+RUN npm install
+
+WORKDIR /usr/src/app/util/tools/
+
+RUN node system_setup.js all
+
+WORKDIR /usr/src/app/
+
+CMD node server.js --auth
+

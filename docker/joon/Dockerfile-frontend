@@ -1,0 +1,8 @@
+FROM node:latest
+RUN mkdir -p  /usr/src/app
+COPY package.json /usr/src/app/package.json
+COPY public/ /usr/src/app/public/
+WORKDIR /usr/src/app/public/home/home-react/
+RUN npm install
+EXPOSE 3000
+CMD npm start 
