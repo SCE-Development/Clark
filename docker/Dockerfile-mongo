@@ -1,9 +1,0 @@
-FROM mongo:latest
-
-VOLUME /data/db1/
-
-EXPOSE 27017
-
-CMD mongod --auth
-
-
