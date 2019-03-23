@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/SCE-Development/Core-v4#readme",
   "dependencies": {
+    "all": "0.0.0",
     "availity-reactstrap-validation": "^2.3.0",
     "body-parser": "^1.18.2",
     "bootstrap": "^4.1.3",

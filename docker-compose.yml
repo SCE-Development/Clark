@@ -1,0 +1,34 @@
+version: '3'
+services:
+  db:
+    image: 'mongo'
+    ports:
+      - '27017:27017'
+    volumes:
+      - '/data/db1:/data/db'
+    command: 'mongod --auth'
+
+  app:
+    image: 'coretest:latest'
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-serverjs
+    ports:
+      - '8080:8080'
+    restart: 'on-failure'
+    depends_on:
+      - db
+    links:
+      - db
+
+  frontend:
+    image: 'corefront:latest'
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-ScePage
+    ports:
+      - '3000:3000'
+    restart: 'on-failure'
+    command: 'npm start'
+    links:
+      - app
