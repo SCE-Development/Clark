@@ -37,7 +37,7 @@ class NavBar extends Component {
                  <DropdownItem href="/">
                    Lab Kits
                  </DropdownItem>
-                 <DropdownItem href="/">
+                 <DropdownItem href="https://docs.google.com/forms/d/e/1FAIpQLSfAKfUnblxOZ0r3BjMY6xe_0g2zC7v3OfaadyvF-Ste1eL28A/viewform">
                    Microsoft Imagine
                  </DropdownItem>
                </DropdownMenu>
