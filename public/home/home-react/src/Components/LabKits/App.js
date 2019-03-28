@@ -1,19 +1,54 @@
 import React from 'react';
-import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
+import { ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Badge, NavLink } from 'reactstrap';
+import PropTypes from 'prop-types';
 
 export default class Example extends React.Component {
   render() {
+    /*
+    ListGroup.propTypes = {
+    tag: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+    // boolean to render list group items edge-to-edge in a parent container
+    flush: PropTypes.bool,
+    className: PropTypes.string,
+    cssModule: PropTypes.object,
+    }*/
     return (
       <ListGroup>
-        <ListGroupItem>Cras justo odio</ListGroupItem>
+        <ListGroupItem>
+          <ListGroupItemHeading> Mouser Order (CMOS Chips)</ListGroupItemHeading>
+          <ListGroupItemText>
+            <ListGroupItem> Order components such as resistors, capacitors, crystals, logic chips, etc. for your CMPE 124 class.</ListGroupItem>
+            <ListGroupItem> Use this <a href="https://www.mouser.com/ProjectManager/ProjectDetail.aspx?AccessID=c54b2e8c61">link</a>, press the green order button, and follow the ordering instructions.</ListGroupItem>
+          </ListGroupItemText>
+        </ListGroupItem>
+        <ListGroupItem>
+          <ListGroupItemHeading> Amazon Order </ListGroupItemHeading>
+          <ListGroupItemText>
+            <ListGroupItem> Oscilloscope probes, banana cables, and electronics book.</ListGroupItem>
+            <ListGroupItem> Use this <a href="http://a.co/bnKDCC7">link</a>, add each item to cart, and proceed to check out.</ListGroupItem>
+            <ListGroupItem> WARNING: Purchasing “Practical Electronics for Inventors, Fourth Edition” is optional.</ListGroupItem>
+          </ListGroupItemText>
+        </ListGroupItem>
+        <ListGroupItem>
+          <ListGroupItemHeading> Circuit Specialists </ListGroupItemHeading>
+          <ListGroupItemText>
+            <ListGroupItem> Order WB-106-1+J Solderless breadboard with jumpers.</ListGroupItem>
+            <ListGroupItem> Use this <a href="https://www.circuitspecialists.com/wb-106+j.html">link</a> and add breadboard to cart and proceed to checkout.</ListGroupItem>
+          </ListGroupItemText>
+        </ListGroupItem>
+        
+      </ListGroup>
+      /*<ListGroupItem>Cras justo odio</ListGroupItem>
         <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
         <ListGroupItem>Morbi leo risus</ListGroupItem>
         <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
-        <ListGroupItem>Vestibulum at eros</ListGroupItem>
-      </ListGroup>
+        <ListGroupItem>Vestibulum at eros</ListGroupItem>*/
     );
   }
 }
+
+
+
 //export default App;
 
 

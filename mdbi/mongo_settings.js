@@ -18,8 +18,8 @@ const mongo_settings = {};
 	@member 	hostname
 	@details 	The string name of the host running the database
 */
-mongo_settings.hostname = "db";
-//mongo_settings.hostname = "localhost";
+//mongo_settings.hostname = "db";
+mongo_settings.hostname = "localhost";
 /*
 	@member 	port
 	@details 	The string representing the port number where the mongo daemon is listening in
