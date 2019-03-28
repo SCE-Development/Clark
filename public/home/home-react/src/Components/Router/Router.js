@@ -6,6 +6,7 @@ import Test from './Test.js';
 import Events from '../Events/announcements/announcementsPage.jsx';
 import EventManager from '../Events/manager/eventManager.jsx';
 import Benefits from '../Benefits/benefitsCode/App.js';
+import LabKits from '../LabKits/App.js';
 import PrintingSolids from '../3DPrinting/src/app3DPrintForm.js';
 import SolidsConsole from '../3DPrintingConsole/src/app3DConsole.js';
 
@@ -27,6 +28,7 @@ class Router extends Component {
           <Route exact path='/events' component = {Events}/>
           <Route exact path='/eventsManager' component = {EventManager}/>
           <Route exact path='/benefits' component = {Benefits}/>
+          <Route exact path='/labkits' component = {LabKits}/>
           <Route exact path='/3DPrintingForm' component = {PrintingSolids}/>
           <Route exact path='/3DConsole' component = {SolidsConsole}/>
           <Route component={Home}/>
