@@ -12,7 +12,6 @@ services:
 
   #use docker-compose up --build after changing the dockerfiles in docker folder.
   #use docker-compose up to run the container
-
   app:
     image: 'coretest:latest'
     build:
@@ -25,10 +24,10 @@ services:
       - db
     links:
       - db
+  
   #when you sping up more than 1 container, increase the ports above. Implement a port range, 8080:8085
   #when you implement a port range, window.location.hostname for the log in page. 
   #need something in front of the docker container (load balancer) in nginx container.
-  
   frontend:
     image: 'corefront:latest'
     build:
@@ -40,5 +39,4 @@ services:
     command: 'npm start'
     links:
       - app
-
   #app will ALWAYS fail until mongodb starts so when you do docker-compose up, be patient and wait a while.
