@@ -61,6 +61,10 @@ class NavBar extends Component {
              <NavItem>
                <NavLink href="/events">Events</NavLink>
              </NavItem>
+             <NavItem>
+               <NavLink href="/">SCE Team</NavLink>
+             </NavItem>
+             {/*
              <UncontrolledDropdown nav inNavbar>
                <DropdownToggle nav caret href="/">
                  The Team
@@ -76,7 +80,7 @@ class NavBar extends Component {
                    Events & PR
                  </DropdownItem>
                </DropdownMenu>
-             </UncontrolledDropdown>
+             </UncontrolledDropdown> */}
              {/* <NavItem>
                <NavLink href="#benefits">Benefits</NavLink>
              </NavItem> */}
