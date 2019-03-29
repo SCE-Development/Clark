@@ -1,15 +1,24 @@
 import React from 'react';
 import { NavbarBrand, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
-
-export default class CMPELabKits extends React.Component {
-  render() {
-    return (
-      <ListGroup>
+/*
         <ListGroupItem>
           <ListGroupItemHeading> Mouser Order (CMOS Chips)</ListGroupItemHeading>
           <ListGroupItemText>
             <ListGroupItem> Order components such as resistors, capacitors, crystals, logic chips, etc. for your CMPE 124 class.</ListGroupItem>
             <ListGroupItem> Use this <a href="https://www.mouser.com/ProjectManager/ProjectDetail.aspx?AccessID=c54b2e8c61">link</a>, press the green order button, and follow the ordering instructions.</ListGroupItem>
+          </ListGroupItemText>
+        </ListGroupItem>
+        */
+export default class CMPELabKits extends React.Component {
+  render() {
+    return (
+      <ListGroup>
+        <ListGroupItem>
+          <ListGroupItemHeading> SJTwo Board </ListGroupItemHeading>
+          <ListGroupItemText>
+            <ListGroupItem> Purchase the SJTwo board in Engineering Room 294 (SCE)</ListGroupItem>
+            <ListGroupItem> Use this <a href="https://github.com/kammce/SJSU-Dev2">link</a> to learn more about the board and its developers! </ListGroupItem>
+            <ListGroupItem> NOTE: Board cost is $50. For CMPE 127 lab, the board cost is $60 with additional components needed for the lab. </ListGroupItem>
           </ListGroupItemText>
         </ListGroupItem>
         <ListGroupItem>
