@@ -123,7 +123,14 @@ api.register(
 				smci.campaigns.setCampaignContent(campaignId, campaignContents, function(res2, err2) {
 						if (res2) {
 							smci.campaigns.sendCampaign(campaignId, function(res1, err1) {
-								response.status(200).send(res1).end();
+
+								try{
+									// console.log( res1 );
+									response.status(200).send({"success": true}).end();
+								} catch( exception ){
+									console.log( exception );
+									response.status(500).send({ "RES1": JSON.stringify( res1 ) }).end();
+								}
 							});
 						}
 				});
