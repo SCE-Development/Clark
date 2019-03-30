@@ -21,7 +21,7 @@ const aboutJumbotron = (props) => {
   return (
     <div>
       <Jumbotron>
-        <h1 className="display-3">About SCE</h1>
+        <h1 className="text-center"><h1 className="display-4">About SCE</h1> </h1>
         <p className="lead"> SJSU Software & Computer Engineering Society is a place for students interested in the fields of computer engineering and software engineering to congregate and collaborate. Operated by student volunteers, our student organization strives to offer a good environment for our future engineers to prosper. Study groups, workshops, info sessions, and social events are provided to members of the Society to help our fellow students improve their academics, develop their skill set, learn more about their disciplines, and grow alongside their colleagues. </p>
       </Jumbotron>
     </div>

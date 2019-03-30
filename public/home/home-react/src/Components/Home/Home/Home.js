@@ -4,6 +4,7 @@ import Slideshow from '../Slideshow/Slideshow.js';
 import Footer from '../Footer/Footer.js';
 import Benefits from '../../Benefits/benefitsCode/App';
 import Jumbotron from '../../Jumbotron/App.js';
+//import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 class Home extends Component {
  render() {
