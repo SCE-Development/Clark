@@ -4,3 +4,12 @@
   width: 100%;
   overflow-y: hidden;
 }
+.outer-div
+{
+     padding: 30px;
+}
+.inner-div
+{
+     margin-left: 310px;
+     width: 100px; 
+}
