@@ -11,6 +11,7 @@ import DRP from './teamPics/2018_2019/DRP.png';
 import Lorena from './teamPics/2018_2019/lorenaSilva.png';
 import Nick from './teamPics/2018_2019/nickDerry.png';
 
+
 export default class Example extends React.Component {
   constructor(props) {
     super(props);
