@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody,
-  CardTitle, CardSubtitle, Button, Row } from 'reactstrap';
+  CardTitle, CardSubtitle, Button, Row, Media, CardColumns } from 'reactstrap';
+import Iframe from 'react-iframe'
 import './App.css';
 import './card-config.css';
 import './card-settings.css';
 import {render} from 'react-dom';
 
 class App extends Component {
+  //<h1 >sce services for members</h1>
+  //href="https://calendar.google.com/calendar/embed?src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&ctz=America%2FLos_Angeles"
   render() {
     return (
-<div className="tab">
+
+    <div className="tab">
+      
       <div className="App">
 
       <div>
-      <h1 id="title">sce services for members</h1>
+      <h1 className="text-center" id="title"><h1 className="display-4">sce services for members</h1> </h1>
       </div>
 
       <div className="sec sec1">

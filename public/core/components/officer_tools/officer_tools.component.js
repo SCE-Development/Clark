@@ -18,6 +18,7 @@ angular.module("officertools").component("officertools", {
 		var ctl = this;
 		var dbgMode = true;
 		var hostname = (dbgMode) ? "localhost:8080" : "sce.engr.sjsu.edu";
+        var host = window.location.hostname;
 		var urls = {
 			"exportExpiredCodes": `https://${hostname}/core/dashboard/export/expiredcodes`,
 			"officerProcedures": `https://docs.google.com/document/d/1QSzIZJMYxSxh1gFspEfgXpe3luh0vifudv5D8a3IG18/edit`,
@@ -27,8 +28,9 @@ angular.module("officertools").component("officertools", {
 			"eodProfitForm": `https://goo.gl/vcBWma`,
 			"cashCountProcedures": `https://www.goo.gl/kA8yTE`,
 			"storeSlideshow": `https://docs.google.com/presentation/d/1iRopCuN8qT0e_easSX0t6StIwvqul-OgHZpkkA28g5o/edit#slide=id.p`,
-			"announcement": `localhost:3000/eventsManager`,
-			"3DConsole": `localhost:3000/3DConsole`
+			"announcement": `http://${host}:3000/eventsManager`,
+			"3DConsole": `http://${host}:3000/3DConsole`
+            
 			//"announcement": `https://sce.engr.sjsu.edu/wp-admin/edit.php`
 		};
 
@@ -99,7 +101,7 @@ angular.module("officertools").component("officertools", {
 				console.log(`Error: unable to open new tab to ${urlName}`);
 				ctl.setError(`Unable to perform your redirect`);
 			} else {
-				$window.open(urls[urlName], "_blank");
+				$window.open(urls[urlName], "window"); //previously it was _blank instead of window
 			}
 		};
 		// END Utility Controllers

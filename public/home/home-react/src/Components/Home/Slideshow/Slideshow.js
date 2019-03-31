@@ -48,8 +48,8 @@ const items = [
   {
     id: 6,
     src: require('../../../assets/img/resume-workshop.jpg'),
-    altText: 'Resume Workshop',
-    header: 'Resume Workshop',
+    altText: 'ReactJS Workshop',
+    header: 'ReactJS Workshop',
     caption: ''
   },
   {

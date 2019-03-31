@@ -31,34 +31,114 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 - Node Hash NPM package v0.2.0+
 
 #### On Linux/Mac
-  - You can acquire **Node.js** from *nodejs.org* or through the command line using *apt-get*. Verify installation using *node -v* on command line.
-  - To acquire the other packages, you will need **npm** (the Node Package Manager), which comes pre-installed with Node.js. To verify its installation, you can run *npm -v* on command line.
-  - Install required Node.js Packages (all listed in package.json under 'dependencies'):
-  ```
-  npm install
-  ```
-  - Install MongoDB locally on your machine (follow the relevant installation instructions on MongoDB's website)
+  1. In a _"main"_ directory of your choice (i.e. `cd` into `Desktop` or `Documents`), you can acquire the latest **Node.js** package in two ways:
+      - **Download** from *nodejs.org*, or
+      - **Install** through the command line using `apt-get` (or whatever package manager is supported by your OS, i.e. `yum`)
+  2. Verify the installation succeeded using `node -v` on command line. You should see the version of your package printed out (e.g. `v10.14.2`).
+  3. Acquire MongoDB in the main directory as well (locally on your machine).
+      - If on mac:
+        - Install Homebrew (e.g. `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`)
+        - Use Homebrew to install MongoDB (e.g. `brew install mongodb`)
+      - If on Linux or Windows:
+        - Download the package from the [MongoDB website](https://www.mongodb.com/)
+        - Follow your OS's installation instructions listed on the [MongoDB website](https://www.mongodb.com/)
+      - After installing MongoDB, initialize your database document store by creating the `/data/db` directory
+        - e.g `mkdir -p /data/db` _(Use `sudo` in front of `mkdir` if necessary)_
+  4. In a new terminal window, run the mongo daemon by entering: `mongod`
+      - _If you need to terminate the daemon, type `ctrl-c` and press enter_
+  5. In a new terminal, run the mongo shell by entering: `mongo`
+      - _If you need to exit the shell, type `quit()` and press enter_
+  6. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
+  7. Install project dependencies
+      - Verify `npm` is installed using `npm -v` (should print out version info).
+      - Then, go to the Core-v4 root directory of the project and run: `npm install`
+  8. At this point you should have the **repository**, **Node.js**, **MongoDB** and the **Core-v4 Packages** installed. You may now run system setup.
+  9. Go to the Core-v4 utility tools directory in terminal (i.e. `cd /path/to/your/.../Core-v4/util/tools`)
+  10. Run the system setup script: `node system_setup.js all`
+      - This script handles TLS key generation, certificate setup, security credential setup, and a check for MongoDB
+  11. Go to the Core-v4 MDBI tools directory in terminal (i.e. `cd /path/to/your/.../Core-v4/mdbi/tools`)
+  12. Setup the required collections for the server in one of the following ways:
+      - **Create** the relevant empty collections using `node db_setup.js --init`, or
+      - **Create and initialize** the relevant collections with sample data using `node db_setup.js --mock`
+  13. Setup MongoDB for Authentication Mode:
+      - Close the mongo shell and terminate the mongo daemon you ran from earlier _(see Instructions 4 and 5)_
+      - Open a new terminal and run the mongo daemon in insecure mode using `sudo mongod`
+        - If the terminal shows a missing `data/db` or port error, explicitly specify the data directory and port number by running `sudo mongod --port 27017 --dbpath /data/db`
+      - In another terminal window, run the mongo shell by entering `mongo`
+        - If the terminal shows a port error, explicitly specify the port number by running `mongo --port 27017`
+      - In the mongo shell, enter the administrator database by entring `use admin`
+      - Create a new user by using `db.createUser( ... )` as below:
+        ```
+        db.createUser(
+          {
+            user: "admin",
+            pwd: "passwordOfYourChoice",
+            roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+          }
+        )
+        ```
+  15. Setup your local MongoDB `sce_core` database instance:
+      - In the mongo shell, create an empty `sce_core` database by entering `use sce_core`
+      - To maintain persistent space for the database, insert a dummy document in a dummy collection by entering `db.placeholder.insertOne({placeholder:"placeholder"})`
+  16. Setup the server's MongoDB user account:
+      - Close the mongo shell and terminate the mongo daemon you ran from earlier _(see Instruction 13)_
+      - Open a new terminal and run the mongo daemon in authenticated mode using `sudo mongod --auth`
+        - If the terminal shows a missing `data/db` or port error, explicitly specify the data directory and port number by running `sudo mongod --auth --port 27017 --dbpath /data/db`
+      - In another terminal window, run the mongo shell by entering `mongo`
+        - If the terminal shows a port error, explicitly specify the port number by running `mongo --port 27017`
+      - In the mongo shell, enter the administrator database by entering `use admin`
+      - Authenticate to the database using the credentials you created _(see Instructrion 13)_:
+      ```
+      db.auth( "admin", "passwordOfYourChoice" )
+      ```
+        - If the shell responds with `1`, authentication succeeded; otherwise, your credentials are invalid or the administrator account was not setup correctly
+      - Enter the sce database by entering `use sce_core`
+      - Create the `scedb` user with readWrite roles for `sce_core` _(use the mdbi password from credentials.json)_:
+        ```
+        db.createUser(
+          {
+            user: "scedb",
+            pwd: "the password from credentials.json",
+            roles: [ { role: "readWrite", db: "sce_core" } ]
+          }
+        )
+        ```
+
+#### On a Linux VM in Windows
+
+  1. Install VirtualBox, VMWare, or Parallels
+  1. Download a linux distribution (e.g. Ubuntu) iso image
+  1. Setup your virtual environment to run linux on your windows machine
+      - For help, there are various [online guides](www.google.com) on how to do this (Google Search is your friend)
+  1. Once linux is setup, use the process defined in the section above
 
 #### On Windows
-  - You can install **Node.js** directly from their website using their installer. Afterwards, you can perform the same Linux/Mac verification and package installation steps (displayed above) by using Windows command prompt or PowerShell
+  
+  1. Although linux or MacOS is a preferred environment for this project, you can proceed with the windows with the instructions below:
+      - You can install **Node.js** directly from their website using their installer. Afterwards, you can perform the same Linux/Mac verification and package installation steps (displayed above) by using Windows command prompt or PowerShell
+>>>>>>> 68ad2ccf22a0722f96f5f8ad55f830035e540ab6
 
 ---
 
+```ALL THE BELOW INSTRUCTIONS FOR APPLICATION EXECUTION ARE INCORRECT.```
+
 ## Application Execution
 #### On Linux/Mac/Windows
-  _**BEFORE**_ starting the server, be sure to perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md). Then, initialize the database by first starting your mongo daemon with access control enabled (see [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/)), and by then running the [database setup script](./mdbi/tools/sce_db_setup_v0.js) using
-  ```
-  node sce_db_setup_v0.js
-  ```
-  to create the necessary collections required by the mongo database.
+  _**BEFORE**_ starting the server, various resources and configurations should have already been created. _**If there were no errors during system setup**_, this should have already been done for you during use of `system_setup.js` in the [Setup and Depedencies](#setup-and-dependencies) section. In the event that setup failed, attempting to start the server will result in failure, forcing you to perform some or all of these steps manually (depending on your error):
 
-  To run the server on Linux/Mac/Windows command line, you can use
-  ```
-  node server.js
-  ```
-  in the project's root directory. It runs the webserver on port 8080 by default. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
+  1. Perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md).
+  1. Initialize the database by configuring your mongo daemon with access control enabled (see [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/))
+  1. Run the mongo daemon in authenticated mode using `sudo mongod --auth` _(see [System Setup](#on-linuxmac) for more details and examples)_
+  1. Create the necessary collections required in the mongo database by running the [database setup script](./mdbi/tools/db_setup.js) using `node db_setup.js --mock`
+>>>>>>> 68ad2ccf22a0722f96f5f8ad55f830035e540ab6
 
-  Once this is done, you may simply pop open your favorite web browser and enter ```https://localhost:8080``` (or whichever port you launched the server in), and the webpage should be properly displayed.
+  _**On Successful Setup**_, run the server on Linux/Mac/Windows command line using
+  ```
+  node server.js [optional port number]
+  ```
+  in the project's root directory. It runs the webserver on port 8080 by default, unless the optional port number is specified. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
+
+  Once this is done, you may simply pop open your favorite web browser and enter ```https://localhost:8080``` (or whichever port you launched the server in), and the server should properly present you with a welcome page.
   
 ---
 

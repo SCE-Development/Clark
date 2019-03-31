@@ -9,7 +9,8 @@
         "projectType": "string",
         "projectLink": "string",
         "projectContact": "string",
-        "projectComments": "string"
+        "projectComments": "string",
+        "progress": "string"
     },
     "ppk": "3DPF"
 }

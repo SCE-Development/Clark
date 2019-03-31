@@ -34,13 +34,10 @@ class NavBar extends Component {
                  Student Resources
                </DropdownToggle>
                <DropdownMenu right>
-                 <DropdownItem href="/">
+                 <DropdownItem href="/labkits">
                    Lab Kits
                  </DropdownItem>
-                 <DropdownItem href="/membershipApplication">
-                   Membership Application
-                 </DropdownItem>
-                 <DropdownItem href="/">
+                 <DropdownItem href="https://docs.google.com/forms/d/e/1FAIpQLSfAKfUnblxOZ0r3BjMY6xe_0g2zC7v3OfaadyvF-Ste1eL28A/viewform">
                    Microsoft Imagine
                  </DropdownItem>
                </DropdownMenu>
@@ -64,6 +61,10 @@ class NavBar extends Component {
              <NavItem>
                <NavLink href="/events">Events</NavLink>
              </NavItem>
+             <NavItem>
+               <NavLink href="/theTeam">SCE Team</NavLink>
+             </NavItem>
+             {/*
              <UncontrolledDropdown nav inNavbar>
                <DropdownToggle nav caret href="/">
                  The Team
@@ -79,7 +80,7 @@ class NavBar extends Component {
                    Events & PR
                  </DropdownItem>
                </DropdownMenu>
-             </UncontrolledDropdown>
+             </UncontrolledDropdown> */}
              {/* <NavItem>
                <NavLink href="#benefits">Benefits</NavLink>
              </NavItem> */}
@@ -91,7 +92,7 @@ class NavBar extends Component {
                      Join Us!
                    </DropdownToggle>
                    <DropdownMenu right>
-                     <DropdownItem  href="/">
+                     <DropdownItem  href="/membershipApplication">
                        Membership Application
                      </DropdownItem>
                    </DropdownMenu>
