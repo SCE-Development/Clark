@@ -23,7 +23,7 @@ var au = require(`${settings.util}/api_util.js`);		// import API Utility Functio
 // var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
 var ef = require(`${settings.util}/error_formats`);		// import error formatter
 var rf = require(`${settings.util}/response_formats`);		// import response formatter
-// var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
+var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
 var ssl = require(settings.security);					// import https ssl credentials
 var credentials = require(settings.credentials);		// import server system credentials
 var www = require(`${settings.util}/www`);			// import custom https request wrappers
@@ -273,7 +273,209 @@ api.register(
 	}
 );
 
+// @endpoint		(POST) /submit
+// @description		This endpoint acquires a membership application, validates
+//					its input, and registers the user in the database.
+// @parameters		(object) request		The web request object provided by
+//											express.js. The request body is
+//											expected to be a JSON object with
+//											following members:
+//						(string) firstName		The user's first name
+//						(string) middleInitial	The user's middle initial
+//						(string) lastName		The user's last name
+//						(string) email			The user's email address
+//						(string) username		The user's chosen username
+//						(string) password		The user's chosen password
+//						(string) major			The user's major of study
+// @returns			On success: a code 200, and an object whose only member is a
+//								boolean indicating the success of the operation.
+//					On failure: a code 500, and an error format object detailing
+//								the error.
+apiInfo.args.submit = [
+	{
+		name: "request.firstName",
+		type: "string",
+		desc: "The user's first name"
+	},
+	{
+		name: "request.middleInitial",
+		type: "string",
+		desc: "The user's middle initial"
+	},
+	{
+		name: "request.lastName",
+		type: "string",
+		desc: "The user's last name"
+	},
+	{
+		name: "request.email",
+		type: "string",
+		desc: "The user's email address"
+	},
+	{
+		name: "request.username",
+		type: "string",
+		desc: "The user's chosen username"
+	},
+	{
+		name: "request.password",
+		type: "string",
+		desc: "The user's chosen password"
+	},
+	{
+		name: "request.major",
+		type: "string",
+		desc: "The user's major of study"
+	}
+];
+apiInfo.rval.submit = [
+	{
+		condition: "On success",
+		desc: "a code 200, and an object whose only member is a boolean indicating the success of the operation."
+	},
+	{
+		condition: "On failure",
+		desc: "a code 500, and an error format object detailing the error."
+	}
+];
+api.register(
+	"Submit",
+	"POST",
+	"/submit",
+	"This endpoint acquires a membership application, validates its input, " +
+	"and registers the user in the database.",
+	apiInfo.args.submit,
+	apiInfo.rval.submit,
+	function( request, response ) {
 
+		var handlerTag = { src: "(get) /api/memershipApplication/submit" };
+		response.set( "Content-Type", "application/json" );
+
+		// Attempt to process this membership application
+		try {
+			
+			var body = request.body;
+			var requiredFields = [
+				"firstName",
+				"lastName",
+				"email",
+				"username",
+				"password"
+			];
+			var missingFields = [];
+			
+			// Validate the input against a list of required fields
+			requiredFields.forEach( function( reqField ) {
+
+				// Check if this field is not defined
+				if( typeof body[reqField] === "undefined" ){
+
+					// Place this field in a list of mising fields
+					missingFields.push(reqField);
+				}
+			} );
+			
+			// Ensure all required fields a present
+			if( missingFields.length > 0 ){
+
+				// Reject input due to lack of required field(s)
+				var errStr = ef.asCommonStr(
+					ef.struct.invalidBody,
+					{ missingFields: missingFields }
+				);
+				logger.log( errStr, handlerTag );
+				response.status(500).send(errStr).end();
+			}
+
+			// Check field types
+			else if(
+				typeof body.firstName !== "string" ||
+				typeof body.lastName !== "string" ||
+				typeof body.email !== "string" ||
+				typeof body.username !== "string" ||
+				typeof body.password !== "string"
+			) {
+
+				// Reject input due to invalid type(s)
+				var errStr = ef.asCommonStr(
+					ef.struct.invalidDataType,
+					false
+				);
+				logger.log( errStr, handlerTag );
+				response.status(500).send(errStr).end();
+			}
+
+			// Commit application to Member database
+			var currentTs = new Date( Date.now() );
+			var requestBody = {
+				accessToken: credentials.mdbi.accessToken,
+				collection: "Member",
+				data: {
+					firstName: body.firstName,
+					middleInitial: body.middleInitial,
+					lastName: body.lastName,
+					joinDate: currentTs,
+					userName: body.username,
+					passWord: crypt.hashPwd(
+						body.username,
+						body.password
+					),
+					email: body.email,
+					emailVerified: false,
+					emailOptIn: true,
+					major: body.major ? body.major : "",
+					lastLogin: currentTs
+				}
+			};
+
+			var requestOptions = {
+				hostname: "localhost",
+				path: "/mdbi/write",
+				method: "POST",
+				agent: ssl_user_agent,
+				headers: {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(
+						JSON.stringify( requestBody )
+					)
+				}
+			};
+
+			www.https.post( requestOptions, requestBody, function( reply, error ) {
+
+				// Check for errors
+				if( error ){
+
+					// Report error
+					var errStr = ef.asCommonStr(
+						ef.struct.httpsPostFail,
+						error
+					);
+					logger.log( errStr, handlerTag );
+					response.status( 500 ).send( errStr ).end();
+				} else {
+
+					// Send response back
+					var data = rf.asCommonStr(
+						true,
+						"Your application has been submitted. Please visit the SCE (Engr 294) office to complete registration and membership payment."
+					);
+					logger.log( `Successfully registered un-verified user ${body.username}`, handlerTag );
+					response.status( 200 ).send( data ).end();
+				}
+			} );
+		} catch( exception ){
+
+			// Report exception
+			var errStr = ef.asCommonStr(
+				ef.struct.coreErr,
+				{ exception: exception }
+			);
+			logger.log( errStr, handlerTag );
+			response.status(500).send(errStr).end();
+		}
+	}
+);
 // END Membership Application Routes
 
 
