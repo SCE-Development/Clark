@@ -92,7 +92,7 @@ class NavBar extends Component {
                      Join Us!
                    </DropdownToggle>
                    <DropdownMenu right>
-                     <DropdownItem  href="/">
+                     <DropdownItem  href="/membershipApplication">
                        Membership Application
                      </DropdownItem>
                    </DropdownMenu>
@@ -111,7 +111,7 @@ class NavBar extends Component {
                      Join Us!
                    </DropdownToggle>
                    <DropdownMenu right>
-                     <DropdownItem  href="/">
+                     <DropdownItem  href="/membershipApplication">
                        Membership Application
                      </DropdownItem>
                    </DropdownMenu>
