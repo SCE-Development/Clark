@@ -86,6 +86,10 @@ public/core/dashboard_legacy.html
 public/core/js/core_legacy.js
 public/core/js/dashboard_legacy.js
 
+# Ignore MS Visual Studio Code files
+.vscode/*
+*.code-workspace
+
 # chio's Ignore files 
 .DS_Store
 mdbi/.DS_Store

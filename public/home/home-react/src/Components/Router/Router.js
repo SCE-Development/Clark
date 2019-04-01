@@ -9,6 +9,7 @@ import Benefits from '../Benefits/benefitsCode/App.js';
 import LabKits from '../LabKits/App.js';
 import PrintingSolids from '../3DPrinting/src/app3DPrintForm.js';
 import SolidsConsole from '../3DPrintingConsole/src/app3DConsole.js';
+import MembershipApplication from '../MembershipApplication/membershipApplication.jsx';
 import Jumbotron from '../Jumbotron/App.js';
 import TheTeam from '../TheTeam/App.js';
 
@@ -29,6 +30,7 @@ class Router extends Component {
           <Route exact path='/test' component = {Test}/>
           <Route exact path='/events' component = {Events}/>
           <Route exact path='/eventsManager' component = {EventManager}/>
+          <Route exact path='/membershipApplication' component = {MembershipApplication}/>
           <Route exact path='/benefits' component = {Benefits}/>
           <Route exact path='/jumbotron' component = {Jumbotron}/>
           <Route exact path='/theTeam' component = {TheTeam}/>
