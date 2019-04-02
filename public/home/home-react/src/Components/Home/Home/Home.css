@@ -6,10 +6,18 @@
 }
 .outer-div
 {
-     padding: 30px;
+  padding: 30px;
 }
 .inner-div
 {
-     margin-left: 310px;
-     width: 100px; 
+  margin: auto;
+  width: 80%;
+}
+
+.calendar{
+  height: auto;
+  width: 100% !important;
+  height: 800px !important;
+  position: relative !important;
+  display: initial !important;
 }
