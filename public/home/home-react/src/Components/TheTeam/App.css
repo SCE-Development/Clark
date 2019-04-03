@@ -4,12 +4,16 @@
 }
 
 .Panel{
-  padding-left: 15%;
+  padding-left: 17%;
 }
 
 .Title {
   padding-top: 30px;
   padding-left: 0;
+}
+
+.NameHead{
+  padding-left: 3px;
 }
 
 #col1{
