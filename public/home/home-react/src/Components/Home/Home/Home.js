@@ -15,7 +15,7 @@ import Iframe from 'react-iframe';
         className="myClassname"
         display="initial"
         position="relative"
-        allowFullScreen/> 
+        allowFullScreen/>
 
 
         <Iframe url="https://calendar.google.com/calendar/b/4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FLos_Angeles" style="border-width:0" width="1000" height="850" frameborder="0" scrolling="no"/>
@@ -28,19 +28,14 @@ class Home extends Component {
        <Slideshow className="slideshow"/>
        <Jumbotron/>
 
-      <h1 className="text-center"><h1 className="display-4">SCE Events Calendar</h1> </h1>	
+      <h1 className="text-center"><h1 className="display-4">SCE Events Calendar</h1> </h1>
       <p className="lead" className="text-center"> Add SCE Calendar to your own by clicking the Google Calendar icon on the bottom right side!</p>
 
-      <div class="outer-div"> 
-          <div class="inner-div">
+      <div className="outer-div">
+          <div className="inner-div">
               <Iframe url="https://calendar.google.com/calendar/b/4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FLos_Angeles"
-              width="1000px"
-              height="800px"
-              id="myId"
-              className="myClassname"
-              display="initial"
-              position="relative"
-              allowFullScreen/> 
+              className="calendar"
+              allowFullScreen/>
           </div>
       </div>
        <Benefits className="benefits"/>
