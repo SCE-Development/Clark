@@ -1,42 +1,35 @@
 import React from 'react';
+import Ionicon from 'react-ionicons'
 import { NavbarBrand, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
+import { Jumbotron, Button } from 'reactstrap';
+
+const Printing = (props) => {
+
 /*
-        <ListGroupItem>
-          <ListGroupItemHeading> Mouser Order (CMOS Chips)</ListGroupItemHeading>
-          <ListGroupItemText>
-            <ListGroupItem> Order components such as resistors, capacitors, crystals, logic chips, etc. for your CMPE 124 class.</ListGroupItem>
-            <ListGroupItem> Use this <a href="https://www.mouser.com/ProjectManager/ProjectDetail.aspx?AccessID=c54b2e8c61">link</a>, press the green order button, and follow the ordering instructions.</ListGroupItem>
-          </ListGroupItemText>
-        </ListGroupItem>
-        */
-export default class CMPELabKits extends React.Component {
-  render() {
-    return (
-      <ListGroup>
-        <ListGroupItem>
-          <ListGroupItemHeading> SJTwo Board </ListGroupItemHeading>
-          <ListGroupItemText>
-            <ListGroupItem> Purchase the SJTwo board in Engineering Room 294 (SCE)</ListGroupItem>
-            <ListGroupItem> Use this <a href="https://github.com/kammce/SJSU-Dev2">link</a> to learn more about the board and its developers! </ListGroupItem>
-            <ListGroupItem> NOTE: Board cost is $50. For CMPE 127 lab, the board cost is $60 with additional components needed for the lab. </ListGroupItem>
-          </ListGroupItemText>
-        </ListGroupItem>
-        <ListGroupItem>
-          <ListGroupItemHeading> Amazon Order </ListGroupItemHeading>
-          <ListGroupItemText>
-            <ListGroupItem> Oscilloscope probes, banana cables, and electronics book.</ListGroupItem>
-            <ListGroupItem> Use this <a href="http://a.co/bnKDCC7">link</a>, add each item to cart, and proceed to check out.</ListGroupItem>
-            <ListGroupItem> WARNING: Purchasing “Practical Electronics for Inventors, Fourth Edition” is optional.</ListGroupItem>
-          </ListGroupItemText>
-        </ListGroupItem>
-        <ListGroupItem>
-          <ListGroupItemHeading> Circuit Specialists </ListGroupItemHeading>
-          <ListGroupItemText>
-            <ListGroupItem> Order WB-106-1+J Solderless breadboard with jumpers.</ListGroupItem>
-            <ListGroupItem> Use this <a href="https://www.circuitspecialists.com/wb-106+j.html">link</a> and add breadboard to cart and proceed to checkout.</ListGroupItem>
-          </ListGroupItemText>
-        </ListGroupItem>
-      </ListGroup>
-    );
-  }
-}
+  Jumbotron.propTypes = {
+  // Pass in a Component to override default element
+  tag: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  fluid: PropTypes.bool,
+  className: PropTypes.string
+  };
+
+  <hr className="my-2"/>
+        <p> </p>
+        <p className="lead">
+          <Button color="primary">Learn More</Button>
+        </p>
+  */
+
+  return (
+    <div>
+      <Jumbotron>
+        <h1 className="text-center"><h1 className="display-4">SCE Printing System</h1> </h1>
+        <p className="text-center"><p className="lead"> Click on the icon below and upload your file </p></p>
+        <p className="text-center"><p className="lead"> Printing may take up to 5 mins </p></p>
+      </Jumbotron>
+      <Ionicon icon="md-print" fontSize="400px" color="#757575"/>
+    </div>
+  );
+};
+
+export default Printing;

@@ -47,7 +47,7 @@ class NavBar extends Component {
                  Printing
                </DropdownToggle>
                <DropdownMenu right>
-                 <DropdownItem href="https://sce.engr.sjsu.edu/printer">
+                 <DropdownItem href="/2DPrinting">
                    2D Printing
                  </DropdownItem>
                  <DropdownItem href="/3DPrintingForm">

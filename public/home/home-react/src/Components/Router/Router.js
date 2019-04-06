@@ -12,6 +12,7 @@ import SolidsConsole from '../3DPrintingConsole/src/app3DConsole.js';
 import MembershipApplication from '../MembershipApplication/membershipApplication.jsx';
 import Jumbotron from '../Jumbotron/App.js';
 import TheTeam from '../TheTeam/App.js';
+import Printing from '../2DPrinting/App.js';
 
 class Router extends Component {
   constructor(props) {
@@ -37,6 +38,7 @@ class Router extends Component {
           <Route exact path='/labkits' component = {LabKits}/>
           <Route exact path='/3DPrintingForm' component = {PrintingSolids}/>
           <Route exact path='/3DConsole' component = {SolidsConsole}/>
+          <Route exact path='/2DPrinting' component = {Printing}/>
           <Route component={Home}/>
         </Switch>
       </div>
