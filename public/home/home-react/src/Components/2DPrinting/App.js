@@ -3,7 +3,7 @@ import Ionicon from 'react-ionicons'
 import './2DPrinting.css';
 import { NavbarBrand, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
 import { Jumbotron, Button } from 'reactstrap';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
 
 import { FilePond, registerPlugin } from "react-filepond";
 
@@ -103,24 +103,25 @@ export default class Printing extends React.Component{
           </button>
           */}
 
-          <ion-item>
+
               <button clear className="ICON" onClick={this.toggle}>{this.props.buttonLabel}
-                  <Ionicon icon="md-print" fontSize="400px" color="#757575"/>
+                  <Ionicon icon="md-print" fontSize="400px" color="#757575">
+                  </Ionicon>
               </button>
-          </ion-item>
 
           {/*<Ionicon className="ICON" icon="md-print" fontSize="400px" color="#757575"/>*/}
-
           {/*<Button color="danger" onClick={this.toggle}>{this.props.buttonLabel}</Button>*/}
+
           <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-            <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+            <ModalHeader toggle={this.toggle}>Software & Computer Engineering Society</ModalHeader>
             <ModalBody>
               <FilePond
                 ref={ref => (this.pond = ref)}
                 files={this.state.files}
                 allowMultiple={true}
                 maxFiles={3}
-                server="/api"
+                maxFileSize="10MB"
+                server={this.serverOptions}
                 oninit={() => this.handleInit()}
                 onupdatefiles={fileItems => {
                   // Set currently active file objects to this.state
@@ -131,19 +132,46 @@ export default class Printing extends React.Component{
               />
 
               <br />
-              <Button color="success" onClick={this.toggleNested}>Show Nested Modal</Button>
+
+              <FormGroup>
+                {/*<Label for="exampleSelect">Number of copies</Label>*/}
+                <legend for="exampleSelect">Number of copies</legend>
+                <Input type="select" name="select" id="exampleSelect">
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </Input>
+                <legend>Type of Print</legend>
+                  <FormGroup check>
+                    <Label check>
+                      <Input type="radio" name="radio1" />{' '}
+                      Front
+                    </Label>
+                  </FormGroup>
+                  <FormGroup check>
+                    <Label check>
+                      <Input type="radio" name="radio1" />{' '} {/* add disabled if in need of option disablement */}
+                      Front & Back
+                    </Label>
+                  </FormGroup>
+              </FormGroup>
+              <Label> Note: All prints are black ink only</Label>
+
+            </ModalBody>
+            <ModalFooter>
+              {/*<Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
+              <Button color="secondary" onClick={this.toggle}>Cancel</Button> */}
+              <Button color="success" onClick={this.toggleNested}>Print!</Button>
               <Modal isOpen={this.state.nestedModal} toggle={this.toggleNested} onClosed={this.state.closeAll ? this.toggle : undefined}>
                 <ModalHeader>Nested Modal title</ModalHeader>
                 <ModalBody>Stuff and things</ModalBody>
                 <ModalFooter>
-                  <Button color="primary" onClick={this.toggleNested}>Done</Button>{' '}
-                  <Button color="secondary" onClick={this.toggleAll}>All Done</Button>
+                  <Button color="success" onClick={this.toggleNested}>Yes!</Button>{' '}
+                  <Button color="danger" onClick={this.toggleNested}>Go Back</Button>
                 </ModalFooter>
               </Modal>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
-              <Button color="secondary" onClick={this.toggle}>Cancel</Button>
             </ModalFooter>
           </Modal>
 
