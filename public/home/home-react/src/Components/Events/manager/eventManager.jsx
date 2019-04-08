@@ -130,27 +130,26 @@ export default class EventManager extends React.Component {
       }
 
       var request = require('superagent');
-
-
       request
-          // .post('https://' + mailchimpInstance + '.api.mailchimp.com/3.0/campaigns/')
           .get('http://localhost:3000/api/mailChimp/mailchimptest')
           .set('Content-Type', 'application/json;charset=utf-8')
-          // .set('Access-Control-Allow-Origin', 'mailchimp.com')
           .send(
             {
               'type': 'plaintext',
+              'recipients': {
+                'list_id':'2f831f6fd8'
+              },
               'settings':
                 {
-                  'subject_line': 'Izzy Mailchimp Test 1/29/2019',
-                  'title': 'This is a test 2/5/2019'
+                  'subject_line': 'Mailchimp Test 3/14/2019'
                 }
             })
           .end(function(err, response) {
                 if (response && response.status < 300) {
-                  console.log('Signed Up!');
+                  console.log('Campaign created!');
+                  console.log(response);
                 } else {
-                  console.log('Sign Up Failed :(');
+                  console.log('Campaign creation failed :(');
                 }
             });
 
