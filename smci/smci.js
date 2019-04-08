@@ -969,6 +969,25 @@ smci.campaigns.create = function (requestBody, callback) {
 };
 
 /*
+	Izzy adding a neccesary api call to edit a mailchimp campaign
+*/
+smci.campaigns.setCampaignContent = function (campaignID, requestBody, callback) {
+	var handlerTag = {"src": "smci/campaigns.setCampaignContent"};
+	var options = {
+		"hostname": `${smci_settings.apiDataCenter}.api.mailchimp.com`,
+		"path": `/${smci_settings.apiVersion}/campaigns/${campaignID}/content`,
+		"method": "PUT",
+		"auth": `${smci_settings.anystring}:${smci_settings.apikey}`,
+		"headers": {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(JSON.stringify(requestBody))
+		}
+	};
+
+	www.post(options, requestBody, callback, handlerTag.src);
+};
+
+/*
 	@function 	campaigns.getFullList
 	@parameter	qsObj - the JSON object representing the request's query string parameters expected by the MailChimp GET /campaigns api. MailChimp uses these parameters to determine how to format its response. If no particular control over the response is desired, this parameter can be passed "null". Otherwise, the object can contain any or all of the following:
 					{
@@ -1134,7 +1153,7 @@ smci.campaigns.pauseCampaign = function (campaignID, callback) {
 				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
 	@returns 	n/a
 	@details 	This function executes a POST request using the NodeJS https.request() api to copy the email campaign specified by "campaignID".
-	@note 		This function only copies campaigns that are in the "saved" or "send" status. Calling this function on any campaign with other statuses will return an error! It is therefore recommended that you first call smci.campaigns.getCampaignInfo() to verify that the campaign is in the correct status.  
+	@note 		This function only copies campaigns that are in the "saved" or "send" status. Calling this function on any campaign with other statuses will return an error! It is therefore recommended that you first call smci.campaigns.getCampaignInfo() to verify that the campaign is in the correct status.
 */
 smci.campaigns.copyCampaign = function (campaignID, callback) {
 	var handlerTag = {"src": "smci/campaigns.copyCampaign"};
@@ -1163,7 +1182,7 @@ smci.campaigns.copyCampaign = function (campaignID, callback) {
 				On failure: "error" is the object returned by the NodeJS https.request() function's "error" event, and "response" is null.
 	@returns 	n/a
 	@details 	This function executes a POST request using the NodeJS https.request() api to resume the RSS email campaign specified by "campaignID".
-	@note 		This function only resumes RSS (blog post driven) campaigns. Calling this function to resume any other type of campaign will return an error! It is therefore recommended that you first call smci.campaigns.getCampaignInfo() to verify that the campaign is the correct type.  
+	@note 		This function only resumes RSS (blog post driven) campaigns. Calling this function to resume any other type of campaign will return an error! It is therefore recommended that you first call smci.campaigns.getCampaignInfo() to verify that the campaign is the correct type.
 */
 smci.campaigns.resumeCampaign = function (campaignID, callback) {
 	var handlerTag = {"src": "smci/campaigns.resumeCampaign"};
