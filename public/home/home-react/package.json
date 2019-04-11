@@ -5,6 +5,7 @@
   "dependencies": {
     "ajv": "^6.8.1",
     "availity-reactstrap-validation": "^2.3.0",
+    "babel-loader": "8.0.5",
     "bootstrap": "^4.1.3",
     "filepond": "^4.3.5",
     "react": "^16.5.2",
