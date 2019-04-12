@@ -11,8 +11,9 @@ import PrintingSolids from '../3DPrinting/src/app3DPrintForm.js';
 import SolidsConsole from '../3DPrintingConsole/src/app3DConsole.js';
 import MembershipApplication from '../MembershipApplication/membershipApplication.jsx';
 import Jumbotron from '../Jumbotron/App.js';
-import TheTeam from '../TheTeam/App.js';
+import Team from '../TheTeam/App.js';
 import Printing from '../2DPrinting/App.js';
+import Gear from '../TheGear/App.js';
 
 class Router extends Component {
   constructor(props) {
@@ -34,11 +35,12 @@ class Router extends Component {
           <Route exact path='/membershipApplication' component = {MembershipApplication}/>
           <Route exact path='/benefits' component = {Benefits}/>
           <Route exact path='/jumbotron' component = {Jumbotron}/>
-          <Route exact path='/theTeam' component = {TheTeam}/>
+          <Route exact path='/Team' component = {Team}/>
           <Route exact path='/labkits' component = {LabKits}/>
           <Route exact path='/3DPrintingForm' component = {PrintingSolids}/>
           <Route exact path='/3DConsole' component = {SolidsConsole}/>
           <Route exact path='/2DPrinting' component = {Printing}/>
+          <Route exact path= '/Gear' component = {Gear}/>
           <Route component={Home}/>
         </Switch>
       </div>
