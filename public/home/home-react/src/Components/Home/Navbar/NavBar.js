@@ -47,7 +47,7 @@ class NavBar extends Component {
                  Printing
                </DropdownToggle>
                <DropdownMenu right>
-                 <DropdownItem href="https://sce.engr.sjsu.edu/printer">
+                 <DropdownItem href="/2DPrinting">
                    2D Printing
                  </DropdownItem>
                  <DropdownItem href="/3DPrintingForm">
@@ -62,7 +62,10 @@ class NavBar extends Component {
                <NavLink href="/events">Events</NavLink>
              </NavItem>
              <NavItem>
-               <NavLink href="/theTeam">SCE Team</NavLink>
+               <NavLink href="/Team">SCE Team</NavLink>
+             </NavItem>
+             <NavItem>
+               <NavLink href="/Gear">SCE Gear</NavLink>
              </NavItem>
              {/*
              <UncontrolledDropdown nav inNavbar>
@@ -80,7 +83,8 @@ class NavBar extends Component {
                    Events & PR
                  </DropdownItem>
                </DropdownMenu>
-             </UncontrolledDropdown> */}
+             </UncontrolledDropdown> 
+             */}
              {/* <NavItem>
                <NavLink href="#benefits">Benefits</NavLink>
              </NavItem> */}
