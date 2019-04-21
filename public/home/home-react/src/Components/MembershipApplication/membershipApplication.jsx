@@ -65,7 +65,7 @@ export default class MembershipApplication extends React.Component {
         tempState.middleInitial = e.target.value;
         this.setState(tempState);
     }
-    
+
     // @function        mutateLastName()
     // @description     This function handles input field changes for
     //                  the aforementioned field
@@ -82,7 +82,7 @@ export default class MembershipApplication extends React.Component {
         tempState.lastName = e.target.value;
         this.setState(tempState);
     }
-    
+
     // @function        mutateEmail()
     // @description     This function handles input field changes for
     //                  the aforementioned field
@@ -99,7 +99,7 @@ export default class MembershipApplication extends React.Component {
         tempState.email = e.target.value;
         this.setState(tempState);
     }
-    
+
     // @function        mutateUsername()
     // @description     This function handles input field changes for
     //                  the aforementioned field
@@ -127,12 +127,12 @@ export default class MembershipApplication extends React.Component {
         ).set('Content-Type', 'application/json;charset=utf-8')
         .send()
         .end( function( err, response ){
-            
+
             if( response && response.status < 300 ){
 
                 // Create a copy of the current state
                 var tempState2 = Object.assign( me.state );
-                
+
                 // Check if a username was found
                 if( JSON.parse( response.text ).content.isAvailable ) {
 
@@ -141,7 +141,7 @@ export default class MembershipApplication extends React.Component {
                     tempState2.usernameCheckResult = 'Username is available';
                     tempState2.usernameCheckResultIcon = '✔';
                 } else {
-                    
+
                     // Show that the username is not available
                     tempState2.usernameCheckClass = 'username-availability unavailable';
                     tempState2.usernameCheckResult = 'Username is unavailable';
@@ -151,13 +151,13 @@ export default class MembershipApplication extends React.Component {
                 // Update state
                 me.setState( tempState2 );
             } else {
-                
+
                 // Failure
                 // TODO: Respond with error
             }
         } );
     }
-    
+
     // @function        mutatePassword()
     // @description     This function handles input field changes for
     //                  the aforementioned field
@@ -174,7 +174,7 @@ export default class MembershipApplication extends React.Component {
         tempState.password = e.target.value;
         this.setState(tempState);
     }
-    
+
     // @function        mutateMajor()
     // @description     This function handles input field changes for
     //                  the aforementioned field
@@ -191,7 +191,7 @@ export default class MembershipApplication extends React.Component {
         tempState.major = e.target.value;
         this.setState(tempState);
     }
-    
+
     // @function        submitApplication()
     // @description     This function form submission of this member
     //                  application
@@ -204,32 +204,32 @@ export default class MembershipApplication extends React.Component {
         // Check that all required fields are populated
         var lacksRequiredFields = false;
         if( this.state.firstName.length === 0 ){
-            
+
             alert( "You must provide a first name!" );;
             lacksRequiredFields = true;
         }
         else if( this.state.lastName.length === 0 ) {
-            
+
             alert( "You must provide a last name!");
             lacksRequiredFields = true;
         }
         else if( this.state.email.length === 0 ) {
-            
+
             alert( "You must provide an email!");
             lacksRequiredFields = true;
         }
         else if( this.state.username.length === 0 ) {
-            
+
             alert( "You must provide a username!");
             lacksRequiredFields = true;
         }
         else if( this.state.password.length === 0 ) {
-            
+
             alert( "You must provide a password!");
             lacksRequiredFields = true;
         }
         else if( this.state.password.length === 0 ) {
-            
+
             alert( "You must provide a password!");
             lacksRequiredFields = true;
         }
@@ -254,7 +254,7 @@ export default class MembershipApplication extends React.Component {
                 major: this.state.major
             } )
             .end( function( err, response ){
-                
+
                 if( response && response.status < 300 ){
 
                     // Create a copy of the current state
@@ -268,7 +268,7 @@ export default class MembershipApplication extends React.Component {
                     // Set state
                     this.setState( tempState );
                 } else {
-                    
+
                     // Failure
                     // TODO: Respond with error
                     alert( "(X.X)\tA submission error occurred. Please contact the site administrator" );
@@ -283,7 +283,7 @@ export default class MembershipApplication extends React.Component {
     // @description     This function renders the membership
     //                  application form
     // @parameters      n/a
-    // @returns         (jsx) html      The generated html content 
+    // @returns         (jsx) html      The generated html content
     render() {
         return (
             <div class="membership-application">
@@ -331,7 +331,7 @@ export default class MembershipApplication extends React.Component {
                     </Form>
                     : null
                 }
-                {   this.state.successfullyApplied ? 
+                {   this.state.successfullyApplied ?
                     ( <div>
                         <h3 style={ { margin: "1em" } }>
                             Your application has been submitted!

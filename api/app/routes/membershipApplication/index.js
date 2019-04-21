@@ -124,7 +124,7 @@ api.register(
 // @returns			On success: a code 200, and the documentation in the specified format
 //					On failure: a code 500, and an error format object
 apiInfo.args.help = [
-	{	
+	{
 		"name": "request.pretty",
 		"type": "~boolean",
 		"desc": "An optional boolean to request a pretty HTML page of the Membership Application API doc"
@@ -166,7 +166,7 @@ API module (Membership Application)", apiInfo.args.help, apiInfo.rval.help, func
 		);
 		response.status( 200 ).send( output ).end();
 	} catch ( exception ) {
-		
+
 		response.set( "Content-Type", "application/json" );
 		response.status( 500 ).send(
 			ef.asCommonStr( ef.struct.coreErr, { "exception": exception } )
@@ -353,7 +353,7 @@ api.register(
 
 		// Attempt to process this membership application
 		try {
-			
+
 			var body = request.body;
 			var requiredFields = [
 				"firstName",
@@ -363,7 +363,7 @@ api.register(
 				"password"
 			];
 			var missingFields = [];
-			
+
 			// Validate the input against a list of required fields
 			requiredFields.forEach( function( reqField ) {
 
@@ -374,7 +374,7 @@ api.register(
 					missingFields.push(reqField);
 				}
 			} );
-			
+
 			// Ensure all required fields a present
 			if( missingFields.length > 0 ){
 
