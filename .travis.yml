@@ -26,12 +26,16 @@ script:
   - echo "Skipping testing"
 
 
-# Deploy, push to TreeScale for docker repo
+# Deploy, push to TreeScale for docker repo.
+# Will change one for dev and one for each repo in the future
 deploy:
-  provider: script
-  script: bash deploy_to_treescale.sh
-  on:
-    branches:
-      only:
-        - dev
-        - joon/Travis
+  - provider: script
+    script: bash deploy_to_treescale.sh
+    skip_cleanup: true
+    on:
+      branch: joon/Travis
+  - provider: script
+    script: bash deploy_to_treescale.sh
+    skip_cleanup: true
+    on:
+      branch: dev
