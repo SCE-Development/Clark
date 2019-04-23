@@ -55,10 +55,6 @@ var apiInfo = {
 };
 
 
-
-
-
-
 // BEGIN [Module] Routes
 
 // Example API route
@@ -81,22 +77,24 @@ apiInfo.rval.example = [
 	}
 ];
 
+
+//api routing for POST request
 api.register(
 	"Submit",
 	"POST",
 	"/submit",
-	"This endpoint acquires a membership application, validates its input, " +
-	"and registers the user in the database.",
+	"This endpoint recieve 3D printing forms" +
+	"and registers the requests in the database at PrintingForm3D collection.",
 	apiInfo.args.submit,
 	apiInfo.rval.submit,
 	function( request, response ) {
 
+		// src:  api / api folder name / register's parameter
 		var handlerTag = { src: "(get) /api/3DPrintingForm/submit" };
 		response.set( "Content-Type", "application/json" );
 
-		// Attempt to process this membership application
+		// Attempt to process 3D form's information
 		try {
-
 			var body = request.body;
 			var requiredFields = [
 				"name",
@@ -106,12 +104,16 @@ api.register(
 				"projectContact",
 				"projectComments"
 			];
-
-			// Commit application to Member database
+	
+			// Commit application to PrintingForm3D database
 			var currentTs = new Date( Date.now() );
 			var requestBody = {
 				accessToken: credentials.mdbi.accessToken,
 				collection: "PrintingForm3D",
+				
+				// Left : Right
+				// Left: from 3DPrintingForm schema
+				// Right: api
 				data: {
 					name: body.name,
 					color: body.color,
@@ -119,10 +121,11 @@ api.register(
 					projectLink: body.url,
 					projectContact: body.contact,
 					projectComments: body.comment,
-					lastLogin: currentTs
+					requestDate: currentTs
 				}
 			};
-
+			
+			//Post Request, followed git documentation
 			var requestOptions = {
 				hostname: "localhost",
 				path: "/mdbi/write",
@@ -135,7 +138,8 @@ api.register(
 					)
 				}
 			};
-
+			
+			//Response
 			www.https.post( requestOptions, requestBody, function( reply, error ) {
 
 				// Check for errors
