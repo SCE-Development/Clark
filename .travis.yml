@@ -31,4 +31,7 @@ deploy:
   provider: script
   script: bash deploy_to_treescale.sh
   on:
-    branch: dev
+    branches:
+      only:
+        - dev
+        - joon/Travis
