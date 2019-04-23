@@ -2,24 +2,27 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 //import './index.css';
 import { Button, Form, FormGroup, Label, Input, Container, Row, Col } from 'reactstrap';
-var fill = false;
 
+var fill = false;
 export default class Example extends React.Component {
 
   constructor(props){
     super(props);
 
+    //Variables that will be send to data base
     this.state={
       name : "",
       color : "",
       url: "",
       projectType: "",
       contact: "",
-      comment: "",
-      filled : false
+      comment: ""
     }
   }
 
+  //function (e)
+  //@parameter (e) events
+  //methods: change state's values when called
   handleNameChange(e){
     this.setState({ name: e.target.value})
   }
@@ -35,18 +38,18 @@ export default class Example extends React.Component {
   handleContactChange(e){
     this.setState({ contact: e.target.value})
   }
+  //Set comment's value = N/A when users doesn't provide any comment
   handleCommentChange(e){
     if (e.target == null){this.setState({ comment: "N/A"})}
     else{this.setState({ comment: e.target.value})}
   }
-  handlefilled(e){
-    this.setState({ filled: e}, function(){console.log(this.state.filled)})
-  }
 
+  //Handle aplication submition
   submitApplication(e){
 
   fill = true;
-
+  
+  //page is not filled if any information is not filled by the user
   if(this.state.name.length===0){
     alert( "You must provide your full name!" );
     fill = false;
@@ -68,6 +71,7 @@ export default class Example extends React.Component {
     fill = false;
   }
 
+  //if all is passed, begin submition
   if(fill==true){
     var request = require( 'superagent' );
 	            var page = this;
@@ -109,8 +113,6 @@ export default class Example extends React.Component {
 	        }
           this.setState({ filled: true})
 	        return;
-
-
   }
 
 
@@ -171,7 +173,7 @@ export default class Example extends React.Component {
           <Col><Input onChange={this.handleProjectTypeChange.bind(this)}
           type="text" name="projectType" id="projectType" placeholder="Type of Project" /></Col>
           <Col><Input onChange={this.handleUrlChange.bind(this)}
-          type="url" name="url" id="url" placeholder="Link to Project File" /></Col>
+          type="url" pattern="https://.*" name="url" id="url" placeholder="Link to Project File" /></Col>
         </Row>
 
         </FormGroup>
