@@ -9,6 +9,7 @@ node_js:
 services:
   - docker
 
+# Build in travis VM for testing
 before_install:
   - echo "Building docker images"
   - docker build -t devscesjsu/sce-core-backend-dev:staging -f ./docker/Dockerfile-serverjs
@@ -19,6 +20,7 @@ before_install:
 
 install: true
 
+# Deploy, push to TreeScale for docker repo
 deploy:
   provider: script
   script: bash deploy_to_treescale.sh
