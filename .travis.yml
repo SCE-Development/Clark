@@ -12,8 +12,8 @@ services:
 # Build in travis VM for testing
 before_install:
   - echo "Building docker images"
-  - docker build -t devscesjsu/sce-core-backend-dev:staging -f ./docker/Dockerfile-serverjs .
-  - docker build -t devscesjsu/sce-core-frontend-dev:staging -f ./docker/Dockerfile-ScePage .
+  - docker build -t repo.treescale.com/devscesjsu/sce-core-backend-dev:staging -f ./docker/Dockerfile-serverjs .
+  - docker build -t repo.treescale.com/devscesjsu/sce-core-frontend-dev:staging -f ./docker/Dockerfile-ScePage .
 
 # No testing yet.
 
