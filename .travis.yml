@@ -14,6 +14,7 @@ before_install:
   - echo "Building docker images"
   - docker build -t repo.treescale.com/devscesjsu/sce-core-backend-dev:staging -f ./docker/Dockerfile-serverjs .
   - docker build -t repo.treescale.com/devscesjsu/sce-core-frontend-dev:staging -f ./docker/Dockerfile-ScePage .
+  - echo "$DOCKER_PASSWORD" | docker login repo.treescale.com -u "$DOCKER_USERNAME" --password-stdin
 
 # No testing yet.
 
