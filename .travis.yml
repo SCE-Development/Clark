@@ -17,8 +17,14 @@ before_install:
 
 # No testing yet.
 
-
 install: true
+
+before_script:
+  - echo "Skipping testing"
+
+script:
+  - echo "Skipping testing"
+
 
 # Deploy, push to TreeScale for docker repo
 deploy:
