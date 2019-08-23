@@ -178,87 +178,97 @@ api.register(
 // END [Module] Routes
 
 //////////GET Request --- NOT WORKING
-/*apiInfo.args.ping = [
+piInfo.args.D3A = [
 	{
-		"name": "request.name",
-		"type": "~string",		// "~" = optional
-		"desc": "An optional string argument for this API"
+		name: "request.username",
+		type: "string",
+		desc: "The username to check for....."
 	}
 ];
-apiInfo.rval.ping = [
+apiInfo.rval.D3R = [
 	{
-		"condition": "On success",
-		"desc": "This function returns true"
+		condition: "On success....",
+		desc: "a code 200..., and an object whose only member is a boolean \
+		indicating the username's availability."
 	},
 	{
-		"condition": "On failure",
-		"desc": "This function returns false"
+		condition: "On failure....",
+		dsec: "a code 500...., and an error format object detailing the error."
 	}
 ];
-function( request, response ){
+api.register(
+	"Get 3D Printing Info",
+	"GET",
+	"/Print3D",
+	"This endpoint send back the 3D Printing Form in json.",
+	apiInfo.args.D3A,
+	apiInfo.rval.D3R,
+	function( request, response ){
 
-	var handlerTag = { src: "(get) /api/3DPrintingForm/ping" };
-	response.set( "Content-Type", "application/json" );
+		var handlerTag = { src: "(get) /api/3DPrintingForm/Print3D" };
+		response.set( "Content-Type", "application/json" );
 
-	try{
+		try{
 
-		// Initiate a search for the given username in the user database
-		var requestBody = {
-			accessToken: credentials.mdbi.accessToken,
-			collection: "PrintingForm3D",
-			search: {
-				userName: request.query.name
-			}
-		};
-		var requestOptions = {
-			hostname: "localhost",
-			path: "/mdbi/search/documents",
-			method: "POST",
-			agent: ssl_user_agent,
-			headers: {
-				"Content-Type": "application/json",
-				"Content-Length": Buffer.byteLength(
-					JSON.stringify( requestBody )
-				)
-			}
-		};
-		www.https.post( requestOptions, requestBody, function( reply, error ) {
+			// Initiate a search for the given username in the user database
+			var requestBody = {
+				accessToken: credentials.mdbi.accessToken,
+				collection: "PrintingForm3D",
+				search: {
+					Name: request.query.name
+				}
+			};
+			var requestOptions = {
+				hostname: "localhost",
+				path: "/mdbi/search/documents",
+				method: "POST",
+				agent: ssl_user_agent,
+				headers: {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(
+						JSON.stringify( requestBody )
+					)
+				}
+			};
+			www.https.post( requestOptions, requestBody, function( reply, error ) {
 
-			// Check for errors
-			if( error ){
+				var body = request.body;
+				console.log(body.name)
 
-				// Report error
-				var errStr = ef.asCommonStr(
-					ef.struct.httpsPostFail,
-					error
-				);
-				logger.log( errStr, handlerTag );
-				response.status( 500 ).send( errStr ).end();
-			} else {
+				// Check for errors
+				if( error ){
 
-				// Send response back
-				var data = rf.asCommonStr(
-					true,
-					{
-						(true): reply.length === 0 ? true : false
-					}
-				);
-				response.status( 200 ).send( data ).end();
-			}
-		} );
-	} catch( exception ){
+					// Report error
+					var errStr = ef.asCommonStr(
+						ef.struct.httpsPostFail,
+						error
+					);
+					logger.log( errStr, handlerTag );
+					response.status( 500 ).send( errStr ).end();
+				} else {
 
-		// Report exception
-		var errStr = ef.asCommonStr(
-			ef.struct.coreErr,
-			{ exception: exception }
-		);
-		logger.log( errStr, handlerTag );
-		response.status( 500 ).send( errStr ).end();
+					// Send response back
+					var data = rf.asCommonStr(
+						true,
+						{
+							isAvailable: reply.length === 0 ? true : false
+						}
+					);
+					response.status( 200 ).send( data ).end();
+				}
+			} );
+		} catch( exception ){
+
+			// Report exception
+			var errStr = ef.asCommonStr(
+				ef.struct.coreErr,
+				{ exception: exception }
+			);
+			logger.log( errStr, handlerTag );
+			response.status( 500 ).send( errStr ).end();
+		}
 	}
-}
 );
-*/
 
 
 

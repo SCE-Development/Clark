@@ -124,7 +124,7 @@ test( ) {
     request.get(
         'http://' +
         window.location.hostname +
-        ':3000/api/3DPrintingForm/ping'
+        ':3000/api/3DPrintingForm/Print3D'
     ).set('Content-Type', 'application/json;charset=utf-8')
     .send()
     .end( function( err, response ){
