@@ -58,7 +58,6 @@ var apiInfo = {
 // BEGIN [Module] Routes
 
 // Example API route
-
 apiInfo.args.example = [
 	{
 		"name": "API argument #1",
@@ -104,13 +103,13 @@ api.register(
 				"projectContact",
 				"projectComments"
 			];
-	
+
 			// Commit application to PrintingForm3D database
 			var currentTs = new Date( Date.now() );
 			var requestBody = {
 				accessToken: credentials.mdbi.accessToken,
 				collection: "PrintingForm3D",
-				
+
 				// Left : Right
 				// Left: from 3DPrintingForm schema
 				// Right: api
@@ -124,7 +123,7 @@ api.register(
 					requestDate: currentTs
 				}
 			};
-			
+
 			//Post Request, followed git documentation
 			var requestOptions = {
 				hostname: "localhost",
@@ -138,7 +137,7 @@ api.register(
 					)
 				}
 			};
-			
+
 			//Response
 			www.https.post( requestOptions, requestBody, function( reply, error ) {
 
@@ -178,6 +177,88 @@ api.register(
 
 // END [Module] Routes
 
+//////////GET Request --- NOT WORKING
+/*apiInfo.args.ping = [
+	{
+		"name": "request.name",
+		"type": "~string",		// "~" = optional
+		"desc": "An optional string argument for this API"
+	}
+];
+apiInfo.rval.ping = [
+	{
+		"condition": "On success",
+		"desc": "This function returns true"
+	},
+	{
+		"condition": "On failure",
+		"desc": "This function returns false"
+	}
+];
+function( request, response ){
+
+	var handlerTag = { src: "(get) /api/3DPrintingForm/ping" };
+	response.set( "Content-Type", "application/json" );
+
+	try{
+
+		// Initiate a search for the given username in the user database
+		var requestBody = {
+			accessToken: credentials.mdbi.accessToken,
+			collection: "PrintingForm3D",
+			search: {
+				userName: request.query.name
+			}
+		};
+		var requestOptions = {
+			hostname: "localhost",
+			path: "/mdbi/search/documents",
+			method: "POST",
+			agent: ssl_user_agent,
+			headers: {
+				"Content-Type": "application/json",
+				"Content-Length": Buffer.byteLength(
+					JSON.stringify( requestBody )
+				)
+			}
+		};
+		www.https.post( requestOptions, requestBody, function( reply, error ) {
+
+			// Check for errors
+			if( error ){
+
+				// Report error
+				var errStr = ef.asCommonStr(
+					ef.struct.httpsPostFail,
+					error
+				);
+				logger.log( errStr, handlerTag );
+				response.status( 500 ).send( errStr ).end();
+			} else {
+
+				// Send response back
+				var data = rf.asCommonStr(
+					true,
+					{
+						(true): reply.length === 0 ? true : false
+					}
+				);
+				response.status( 200 ).send( data ).end();
+			}
+		} );
+	} catch( exception ){
+
+		// Report exception
+		var errStr = ef.asCommonStr(
+			ef.struct.coreErr,
+			{ exception: exception }
+		);
+		logger.log( errStr, handlerTag );
+		response.status( 500 ).send( errStr ).end();
+	}
+}
+);
+*/
 
 
 

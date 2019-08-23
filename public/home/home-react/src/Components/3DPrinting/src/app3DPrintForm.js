@@ -48,7 +48,7 @@ export default class Example extends React.Component {
   submitApplication(e){
 
   fill = true;
-  
+
   //page is not filled if any information is not filled by the user
   if(this.state.name.length===0){
     alert( "You must provide your full name!" );
@@ -115,6 +115,29 @@ export default class Example extends React.Component {
 	        return;
   }
 
+
+///////GET request ---- NOT WORKING
+test( ) {
+
+    // Check if the username is available by querying the server
+    var request = require( 'superagent' );
+    request.get(
+        'http://' +
+        window.location.hostname +
+        ':3000/api/3DPrintingForm/ping'
+    ).set('Content-Type', 'application/json;charset=utf-8')
+    .send()
+    .end( function( err, response ){
+
+        if( response && response.status < 300 ){
+
+        } else {
+
+            // Failure
+            // TODO: Respond with error
+        }
+    } );
+}
 
   render() {
     return (
@@ -222,6 +245,7 @@ export default class Example extends React.Component {
 	                        </p>
 	                    </div> ) : null
 	                }
+          {this.test("")}
 </div>
     );
   }
