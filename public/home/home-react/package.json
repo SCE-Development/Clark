@@ -13,7 +13,7 @@
     "react-iframe": "^1.5.0",
     "react-ionicons": "^2.1.6",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.0.4",
+    "react-scripts": "^2.1.8",
     "reactstrap": "^6.5.0",
     "semantic-ui-react": "^0.86.0",
     "superagent": "^4.1.0"
