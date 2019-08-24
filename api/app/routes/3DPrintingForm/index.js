@@ -178,7 +178,7 @@ api.register(
 // END [Module] Routes
 
 //////////GET Request --- NOT WORKING
-piInfo.args.D3A = [
+apiInfo.args.D3A = [
 	{
 		name: "request.username",
 		type: "string",
@@ -207,7 +207,7 @@ api.register(
 
 		var handlerTag = { src: "(get) /api/3DPrintingForm/Print3D" };
 		response.set( "Content-Type", "application/json" );
-
+console.log("(get) /api/3DPrintingForm/Print3D")
 		try{
 
 			// Initiate a search for the given username in the user database
@@ -231,9 +231,6 @@ api.register(
 				}
 			};
 			www.https.post( requestOptions, requestBody, function( reply, error ) {
-
-				var body = request.body;
-				console.log(body.name)
 
 				// Check for errors
 				if( error ){
