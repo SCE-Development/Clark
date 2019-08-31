@@ -27,6 +27,7 @@ var credentials = require(settings.credentials);		// import server system creden
 var www = require(`${settings.util}/www`);			// import custom https request wrappers
 var logger = require(`${settings.util}/logger`);		// import event log system
 var rf = require(`${settings.util}/response_formats`);		// import response formatter
+var db = require("mongodb")
 
 // Required Endpoint Options
 var options = {
@@ -207,16 +208,13 @@ api.register(
 
 		var handlerTag = { src: "(get) /api/3DPrintingForm/Print3D" };
 		response.set( "Content-Type", "application/json" );
-console.log("(get) /api/3DPrintingForm/Print3D")
+
 		try{
 
 			// Initiate a search for the given username in the user database
 			var requestBody = {
 				accessToken: credentials.mdbi.accessToken,
 				collection: "PrintingForm3D",
-				search: {
-					Name: request.query.name
-				}
 			};
 			var requestOptions = {
 				hostname: "localhost",
@@ -268,6 +266,67 @@ console.log("(get) /api/3DPrintingForm/Print3D")
 );
 
 
+api.register(
+	"Get 3D Printing Info",
+	"GET",
+	"/GetForm",
+	"This endpoint send back the 3D Printing Form in json.",
+	apiInfo.args.D3A,
+	apiInfo.rval.D3R,
+	function( request, response ){
+
+		var handlerTag = { src: "(get) /api/3DPrintingForm/GetForm" };
+		response.set( "Content-Type", "application/json" );
+
+		try{
+			// Initiate a search for the given username in the user database
+			var requestBody = {
+				accessToken: credentials.mdbi.accessToken,
+				collection: "PrintingForm3D",
+			};
+			var requestOptions = {
+				hostname: "localhost",
+				path: "/mdbi/search/documents",
+				method: "POST",
+				agent: ssl_user_agent,
+				headers: {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(
+						JSON.stringify( requestBody )
+					)
+				}
+			};
+			www.https.post( requestOptions, requestBody, function( reply, error ) {
+
+				// Check for errors
+				if( error ){
+
+					// Report error
+					var errStr = ef.asCommonStr(
+						ef.struct.httpsPostFail,
+						error
+					);
+					logger.log( errStr, handlerTag );
+					response.status( 500 ).send( errStr ).end();
+				} else {
+
+					// Send response back
+					//var data = "ok?"
+					response.status( 200 ).send( reply ).end();
+				}
+			} );
+		} catch( exception ){
+
+			// Report exception
+			var errStr = ef.asCommonStr(
+				ef.struct.coreErr,
+				{ exception: exception }
+			);
+			logger.log( errStr, handlerTag );
+			response.status( 500 ).send( errStr ).end();
+		}
+	}
+);
 
 
 module.exports = router;

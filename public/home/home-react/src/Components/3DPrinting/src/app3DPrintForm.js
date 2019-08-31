@@ -3,6 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //import './index.css';
 import { Button, Form, FormGroup, Label, Input, Container, Row, Col } from 'reactstrap';
 
+import mongoose from "mongoose";
+//const mongoose = require('mongoose');
+
 var fill = false;
 export default class Example extends React.Component {
 
@@ -129,8 +132,8 @@ test( ) {
     .send()
     .end( function( err, response ){
 
-        if( response && response.status < 300 ){
-
+        if( response && response.status <= 300 ){
+          console.log(response);
         } else {
 
             // Failure
@@ -138,6 +141,7 @@ test( ) {
         }
     } );
 }
+
 
   render() {
     return (

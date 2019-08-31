@@ -7,23 +7,51 @@ export default class Example extends React.Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
-    this.state = { collapse: false };
+    this.state =
+    {
+      collapse: false,
+      forms: []
+    };
   }
 
   toggle() {
     this.setState({ collapse: !this.state.collapse });
   }
 
+  componentDidMount()
+  {
+    this.get3DForms();
+  }
+  
+    get3DForms() {
+      var request = require( 'superagent' );
+      request.get(
+          'http://' +
+          window.location.hostname +
+          ':3000/api/3DPrintingForm/Print3D'
+      ).set('Content-Type', 'application/json;charset=utf-8')
+      .send()
+      .end( function( err, response ){
+
+          if( response && response.status <= 300 ){
+            console.log(response);
+          } else {
+
+              // Failure
+              // TODO: Respond with error
+          }
+      } );
+    }
 
   render() {
     return (
       <Container>
       <Form>
       <br></br>
-      
+
       <br></br>
-        
-          
+
+
           <FormGroup>
 
           <Card id="Jane" onClick={this.toggle} body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
@@ -49,7 +77,7 @@ export default class Example extends React.Component {
             </Row>
           </CardText>
           </Card>
-          
+
           <Collapse isOpen={this.state.collapse}>
           <Card>
             <CardBody>
@@ -60,7 +88,7 @@ export default class Example extends React.Component {
             </CardBody>
           </Card>
         </Collapse>
-          
+
          </FormGroup>
 
 
@@ -89,7 +117,7 @@ export default class Example extends React.Component {
             </Row>
           </CardText>
           </Card>
-          
+
           <Collapse isOpen={this.state.collapse}>
           <Card>
             <CardBody>
@@ -100,9 +128,9 @@ export default class Example extends React.Component {
             </CardBody>
           </Card>
         </Collapse>
-          
+
          </FormGroup>
-        
+
       </Form>
       </Container>
     );
