@@ -19,7 +19,8 @@ export default class Example extends React.Component {
       url: "",
       projectType: "",
       contact: "",
-      comment: ""
+        comment: "",
+       data:""
     }
   }
 
@@ -120,26 +121,16 @@ export default class Example extends React.Component {
 
 
 ///////GET request ---- NOT WORKING
-test( ) {
+    test() {
+        //const url2 = "http://localhost:3000/api/3DPrintingForm/GetForm";
+        const url = 'http://' +
+                    window.location.hostname +
+                    ':3000/api/3DPrintingForm/GetForm'
+    fetch(url)
+      .then(response => response.json())
+        .then(datajson => this.setState({ data: datajson }));
 
-    // Check if the username is available by querying the server
-    var request = require( 'superagent' );
-    request.get(
-        'http://' +
-        window.location.hostname +
-        ':3000/api/3DPrintingForm/Print3D'
-    ).set('Content-Type', 'application/json;charset=utf-8')
-    .send()
-    .end( function( err, response ){
-
-        if( response && response.status <= 300 ){
-          console.log(response);
-        } else {
-
-            // Failure
-            // TODO: Respond with error
-        }
-    } );
+    //console.log(this.state.data);
 }
 
 
