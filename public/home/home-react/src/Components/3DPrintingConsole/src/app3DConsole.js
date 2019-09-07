@@ -10,7 +10,9 @@ export default class Example extends React.Component {
     this.state =
     {
       collapse: false,
-      forms: []
+      forms: "",
+      data: [],
+      list: [1,2,3]
     };
   }
 
@@ -22,7 +24,7 @@ export default class Example extends React.Component {
   {
     this.get3DForms();
   }
-  
+
     get3DForms() {
       var request = require( 'superagent' );
       request.get(
@@ -43,6 +45,64 @@ export default class Example extends React.Component {
       } );
     }
 
+    ///////GET request ---- NOT WORKING
+    callDatabase() {
+            //const url2 = "http://localhost:3000/api/3DPrintingForm/GetForm";
+            const url = 'http://' +
+                        window.location.hostname +
+                        ':3000/api/3DPrintingForm/GetForm'
+      fetch(url)
+          .then(response => response.json())
+            .then( datajson => this.setState({ data: datajson }) );
+        return true;
+    }
+
+  request_form(jsonObject, key)
+  {
+
+      return <FormGroup key = {key}>
+
+      <Card id="Jane" onClick={this.toggle} body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
+
+      {/*NAME*/}
+      <CardTitle>{jsonObject.name}</CardTitle>
+      <CardText>
+        <Row>
+          <Col>Username:</Col>
+          <Col>E-mail:</Col>
+          <Col>Time</Col>
+          <Col></Col>
+        </Row>
+        <Row>
+          <Col>JaneDoeSCE</Col>
+          <Col>JaneDoe1993@gmail.com</Col>
+          <Col>1/12 4:52 PM</Col>
+          <Col>
+            <ButtonGroup>
+              <Button color="primary">Pending</Button>
+              <Button color="info">In Progress</Button>
+              <Button color="secondary">Completed</Button>
+           </ButtonGroup>
+          </Col>
+        </Row>
+      </CardText>
+      </Card>
+
+      <Collapse isOpen={this.state.collapse}>
+      <Card>
+        <CardBody>
+          <Row>
+            <Col>Print Link: {jsonObject.projectLink}</Col>
+            <Col>Print Color: {jsonObject.color}</Col>
+          </Row>
+        </CardBody>
+      </Card>
+    </Collapse>
+
+     </FormGroup>
+  }
+
+
   render() {
     return (
       <Container>
@@ -50,86 +110,10 @@ export default class Example extends React.Component {
       <br></br>
 
       <br></br>
+        {this.callDatabase()}
+        {this.state.data.map((item,key)=>this.request_form(item,key))}
 
 
-          <FormGroup>
-
-          <Card id="Jane" onClick={this.toggle} body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
-          <CardTitle>Jane Doe</CardTitle>
-          <CardText>
-            <Row>
-              <Col>Username:</Col>
-              <Col>E-mail:</Col>
-              <Col>Time</Col>
-              <Col></Col>
-            </Row>
-            <Row>
-              <Col>JaneDoeSCE</Col>
-              <Col>JaneDoe1993@gmail.com</Col>
-              <Col>1/12 4:52 PM</Col>
-              <Col>
-                <ButtonGroup>
-                  <Button color="primary">Pending</Button>
-                  <Button color="info">In Progress</Button>
-                  <Button color="secondary">Completed</Button>
-               </ButtonGroup>
-              </Col>
-            </Row>
-          </CardText>
-          </Card>
-
-          <Collapse isOpen={this.state.collapse}>
-          <Card>
-            <CardBody>
-              <Row>
-                <Col>Print Link</Col>
-                <Col>Print Color</Col>
-              </Row>
-            </CardBody>
-          </Card>
-        </Collapse>
-
-         </FormGroup>
-
-
-         <FormGroup>
-
-          <Card id="John" onClick={this.toggle} body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
-          <CardTitle>John Smith</CardTitle>
-          <CardText>
-            <Row>
-              <Col>Username:</Col>
-              <Col>E-mail:</Col>
-              <Col>Time</Col>
-              <Col></Col>
-            </Row>
-            <Row>
-              <Col>JohnSmithSCE</Col>
-              <Col>JohnSmith1984@gmail.com</Col>
-              <Col>1/14 4:52 PM</Col>
-              <Col>
-                <ButtonGroup>
-                  <Button color="primary">Pending</Button>
-                  <Button color="info">In Progress</Button>
-                  <Button color="secondary">Completed</Button>
-               </ButtonGroup>
-              </Col>
-            </Row>
-          </CardText>
-          </Card>
-
-          <Collapse isOpen={this.state.collapse}>
-          <Card>
-            <CardBody>
-              <Row>
-                <Col>Print Link</Col>
-                <Col>Print Color</Col>
-              </Row>
-            </CardBody>
-          </Card>
-        </Collapse>
-
-         </FormGroup>
 
       </Form>
       </Container>

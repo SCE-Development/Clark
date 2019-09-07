@@ -119,21 +119,6 @@ export default class Example extends React.Component {
 	        return;
   }
 
-
-///////GET request ---- NOT WORKING
-    test() {
-        //const url2 = "http://localhost:3000/api/3DPrintingForm/GetForm";
-        const url = 'http://' +
-                    window.location.hostname +
-                    ':3000/api/3DPrintingForm/GetForm'
-    fetch(url)
-      .then(response => response.json())
-        .then(datajson => this.setState({ data: datajson }));
-
-    //console.log(this.state.data);
-}
-
-
   render() {
     return (
 <div>
@@ -240,7 +225,6 @@ export default class Example extends React.Component {
 	                        </p>
 	                    </div> ) : null
 	                }
-          {this.test("")}
 </div>
     );
   }
