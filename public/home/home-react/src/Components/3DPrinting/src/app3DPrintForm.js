@@ -19,8 +19,7 @@ export default class Example extends React.Component {
       url: "",
       projectType: "",
       contact: "",
-        comment: "",
-       data:""
+      comment: "",
     }
   }
 
@@ -46,6 +45,17 @@ export default class Example extends React.Component {
   handleCommentChange(e){
     if (e.target == null){this.setState({ comment: "N/A"})}
     else{this.setState({ comment: e.target.value})}
+  }
+
+  //Get current datetime
+  date()
+  {
+    let date = new Date().getDate(); //Current Date
+    let month = new Date().getMonth() + 1; //Current Month
+    let year = new Date().getFullYear(); //Current Year
+    let hours = new Date().getHours(); //Current Hours
+    let min = new Date().getMinutes(); //Current Minutes
+    return month + '/' + date + '/' + year + ' ' + hours + ':' + min;
   }
 
   //Handle aplication submition
@@ -85,12 +95,15 @@ export default class Example extends React.Component {
 	                ':3000/api/3DPrintingForm/submit'
 	            ).set('Content-Type', 'application/json;charset=utf-8')
 	            .send( {
+                  // SCHEMA : current react state
 	                name: this.state.name,
 	                color: this.state.color,
 	                comment: this.state.comment,
 	                contact: this.state.contact,
 	                projectType: this.state.projectType,
-                  url: this.state.url
+                  url: this.state.url,
+                  progress: "Pending",
+                  date: this.date()
 	            } )
 	            .end( function( err, response ){
 

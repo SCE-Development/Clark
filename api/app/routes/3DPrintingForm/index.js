@@ -106,13 +106,12 @@ api.register(
 			];
 
 			// Commit application to PrintingForm3D database
-			var currentTs = new Date( Date.now() );
 			var requestBody = {
 				accessToken: credentials.mdbi.accessToken,
 				collection: "PrintingFormFor3DPrinting",
 
 				// Left : Right
-				// Left: from 3DPrintingForm schema
+				// Left: from 3D Printing Form schema
 				// Right: api
 				data: {
 					name: body.name,
@@ -121,7 +120,8 @@ api.register(
 					projectLink: body.url,
 					projectContact: body.contact,
 					projectComments: body.comment,
-					requestDate: currentTs
+					progress: body.progress,
+					date: body.date
 				}
 			};
 
