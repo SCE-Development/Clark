@@ -20,34 +20,10 @@ export default class Example extends React.Component {
     this.setState({ collapse: !this.state.collapse });
   }
 
-  componentDidMount()
-  {
-    this.get3DForms();
-  }
 
-    get3DForms() {
-      var request = require( 'superagent' );
-      request.get(
-          'http://' +
-          window.location.hostname +
-          ':3000/api/3DPrintingForm/Print3D'
-      ).set('Content-Type', 'application/json;charset=utf-8')
-      .send()
-      .end( function( err, response ){
-
-          if( response && response.status <= 300 ){
-            console.log(response);
-          } else {
-
-              // Failure
-              // TODO: Respond with error
-          }
-      } );
-    }
-
-    ///////GET request ---- NOT WORKING
+    ///////GET request
     callDatabase() {
-            //const url2 = "http://localhost:3000/api/3DPrintingForm/GetForm";
+            //const url2 = "http://localhost:3000/api/PrintingFormFor3DPrinting/GetForm";
             const url = 'http://' +
                         window.location.hostname +
                         ':3000/api/3DPrintingForm/GetForm'

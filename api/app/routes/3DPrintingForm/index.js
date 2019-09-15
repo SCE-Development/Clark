@@ -109,7 +109,7 @@ api.register(
 			var currentTs = new Date( Date.now() );
 			var requestBody = {
 				accessToken: credentials.mdbi.accessToken,
-				collection: "PrintingForm3D",
+				collection: "PrintingFormFor3DPrinting",
 
 				// Left : Right
 				// Left: from 3DPrintingForm schema
@@ -178,94 +178,7 @@ api.register(
 
 // END [Module] Routes
 
-//////////GET Request --- NOT WORKING
-apiInfo.args.D3A = [
-	{
-		name: "request.username",
-		type: "string",
-		desc: "The username to check for....."
-	}
-];
-apiInfo.rval.D3R = [
-	{
-		condition: "On success....",
-		desc: "a code 200..., and an object whose only member is a boolean \
-		indicating the username's availability."
-	},
-	{
-		condition: "On failure....",
-		dsec: "a code 500...., and an error format object detailing the error."
-	}
-];
-api.register(
-	"Get 3D Printing Info",
-	"GET",
-	"/Print3D",
-	"This endpoint send back the 3D Printing Form in json.",
-	apiInfo.args.D3A,
-	apiInfo.rval.D3R,
-	function( request, response ){
-
-		var handlerTag = { src: "(get) /api/3DPrintingForm/Print3D" };
-		response.set( "Content-Type", "application/json" );
-
-		try{
-
-			// Initiate a search for the given username in the user database
-			var requestBody = {
-				accessToken: credentials.mdbi.accessToken,
-				collection: "PrintingForm3D",
-			};
-			var requestOptions = {
-				hostname: "localhost",
-				path: "/mdbi/search/documents",
-				method: "POST",
-				agent: ssl_user_agent,
-				headers: {
-					"Content-Type": "application/json",
-					"Content-Length": Buffer.byteLength(
-						JSON.stringify( requestBody )
-					)
-				}
-			};
-			www.https.post( requestOptions, requestBody, function( reply, error ) {
-
-				// Check for errors
-				if( error ){
-
-					// Report error
-					var errStr = ef.asCommonStr(
-						ef.struct.httpsPostFail,
-						error
-					);
-					logger.log( errStr, handlerTag );
-					response.status( 500 ).send( errStr ).end();
-				} else {
-
-					// Send response back
-					var data = rf.asCommonStr(
-						true,
-						{
-							isAvailable: reply.length === 0 ? true : false
-						}
-					);
-					response.status( 200 ).send( data ).end();
-				}
-			} );
-		} catch( exception ){
-
-			// Report exception
-			var errStr = ef.asCommonStr(
-				ef.struct.coreErr,
-				{ exception: exception }
-			);
-			logger.log( errStr, handlerTag );
-			response.status( 500 ).send( errStr ).end();
-		}
-	}
-);
-
-
+//////////GET Request
 api.register(
 	"Get 3D Printing Info",
 	"GET",
@@ -282,7 +195,7 @@ api.register(
 			// Initiate a search for the given username in the user database
 			var requestBody = {
 				accessToken: credentials.mdbi.accessToken,
-				collection: "PrintingForm3D",
+				collection: "PrintingFormFor3DPrinting",
 			};
 			var requestOptions = {
 				hostname: "localhost",
