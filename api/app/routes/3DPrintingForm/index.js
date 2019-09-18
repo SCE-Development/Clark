@@ -192,7 +192,6 @@ api.register(
 		response.set( "Content-Type", "application/json" );
 
 		try{
-			// Initiate a search for the given username in the user database
 			var requestBody = {
 				accessToken: credentials.mdbi.accessToken,
 				collection: "PrintingFormFor3DPrinting",
@@ -201,6 +200,68 @@ api.register(
 				hostname: "localhost",
 				path: "/mdbi/search/documents",
 				method: "POST",
+				agent: ssl_user_agent,
+				headers: {
+					"Content-Type": "application/json",
+					"Content-Length": Buffer.byteLength(
+						JSON.stringify( requestBody )
+					)
+				}
+			};
+			www.https.post( requestOptions, requestBody, function( reply, error ) {
+
+				// Check for errors
+				if( error ){
+
+					// Report error
+					var errStr = ef.asCommonStr(
+						ef.struct.httpsPostFail,
+						error
+					);
+					logger.log( errStr, handlerTag );
+					response.status( 500 ).send( errStr ).end();
+				} else {
+
+					// Send response back
+					//var data = "ok?"
+					response.status( 200 ).send( reply ).end();
+				}
+			} );
+		} catch( exception ){
+
+			// Report exception
+			var errStr = ef.asCommonStr(
+				ef.struct.coreErr,
+				{ exception: exception }
+			);
+			logger.log( errStr, handlerTag );
+			response.status( 500 ).send( errStr ).end();
+		}
+	}
+);
+
+//////////DELETE Request
+api.register(
+	"Get 3D Printing Info",
+	"DELETE",
+	"/Delete3DForm",
+	"This endpoint delete the data in mongo.",
+	function( request, response ){
+
+		var handlerTag = { src: "(get) /api/3DPrintingForm/Delete3DForm" };
+		response.set( "Content-Type", "application/json" );
+
+		try{
+			// Initiate a search for the given username in the user database
+			var requestBody = {
+				accessToken: credentials.mdbi.accessToken,
+				collection: "PrintingFormFor3DPrinting",
+				search: {_id: "5d7d72c5c022f81c18710447"}
+			};
+			var requestOptions = {
+				hostname: "localhost",
+				path: "/mdbi/delete/document",
+				method: "DELETE",
 				agent: ssl_user_agent,
 				headers: {
 					"Content-Type": "application/json",
