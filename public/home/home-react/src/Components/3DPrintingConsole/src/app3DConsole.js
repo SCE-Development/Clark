@@ -42,7 +42,7 @@ export default class Example extends React.Component {
       <Card id="Jane" onClick={this.toggle} body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
 
       {/*NAME*/}
-      <CardTitle>{jsonObject.name}'s Request</CardTitle>
+      <CardTitle>{jsonObject.name+"'"}s Request</CardTitle>
       <CardText>
         <Row>
           <Col>E-mail/Contact:</Col>
