@@ -1,5 +1,5 @@
 {
-	"name": "3DPrintingForm",
+	"name": "PrintingFormFor3DPrinting",
 	"type": "collection",
     "desc": "An optional description of the schema. Note that this.view is only required if this.type == 'view'. Note that the ppk string is optional. Note that this.textIndex is optional but is only valid if this.type == 'collection'.",
     "members": {
@@ -10,7 +10,8 @@
         "projectLink": "string",
         "projectContact": "string",
         "projectComments": "string",
-        "progress": "string"
+        "progress": "string",
+				"date": "string"
     },
     "ppk": "3DPF"
 }
