@@ -6,5 +6,11 @@
 			"dcID": "number",
 			"code": "string"
     },
+    "mock": [
+            {
+                "dcID": 123456,
+                "code": "567-9891"
+            }
+    ],
     "ppk": "dcID"
 }

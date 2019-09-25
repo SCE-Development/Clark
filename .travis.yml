@@ -1,15 +1,42 @@
+branches:
+  only:
+  - dev
+  - joon/Travis
+
 language: node_js
 node_js:
-  - "lts/"
+  - "lts/*"
 services:
   - docker
-  - mongodb
 
+# Build in travis VM for testing
 before_install:
-  - openssl genrsa -aes128 -out $PRIVATE_KEY_NAME.key 2048
-  - openssl rsa -in $PRIVATE_KEY_NAME.key -pubout -out $PUBLIC_KEY_NAME.key
-  - openssl req -new -key $PRIVATE_KEY_NAME.key -out $CERTIFICATE.csr
-  - openssl x509 -req -days 365 -in $CERTIFICATE.csr -signkey $PRIVATE_KEY_NAME.key \
-    -out $CERTIFICATE.crt -subj "/C=US/ST=California/L=San Jose/O=SCE"
-  - docker build core-v4/latest .
-  - docker run --rm -v core-v4 /bin/bash/ 
+  - echo "Building docker images"
+  - docker build -t repo.treescale.com/devscesjsu/sce-core-backend-dev:staging -f ./docker/Dockerfile-serverjs .
+  - docker build -t repo.treescale.com/devscesjsu/sce-core-frontend-dev:staging -f ./docker/Dockerfile-ScePage .
+  - echo "$DOCKER_PASSWORD" | docker login repo.treescale.com -u "$DOCKER_USERNAME" --password-stdin
+
+# No testing yet.
+
+install: true
+
+before_script:
+  - echo "Skipping testing"
+
+script:
+  - echo "Skipping testing"
+
+
+# Deploy, push to TreeScale for docker repo.
+# Will change one for dev and one for each repo in the future
+deploy:
+  - provider: script
+    script: bash deploy_to_treescale.sh
+    skip_cleanup: true
+    on:
+      branch: joon/Travis
+  - provider: script
+    script: bash deploy_to_treescale.sh
+    skip_cleanup: true
+    on:
+      branch: dev

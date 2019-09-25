@@ -1,4 +1,4 @@
-FROM node:8.12.0-jessie
+FROM node:lts-alpine
 
 RUN mkdir -p /usr/src/app
 
@@ -17,4 +17,3 @@ RUN node system_setup.js all
 WORKDIR /usr/src/app/
 
 CMD node server.js --auth
-
