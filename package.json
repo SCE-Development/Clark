@@ -38,7 +38,7 @@
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
     "cors": "^2.8.5",
-    "ejs": "^2.6.1",
+    "ejs": "^2.7.1",
     "express": "^4.16.2",
     "grunt-contrib-watch": "^1.0.0",
     "jquery": "^3.2.1",
