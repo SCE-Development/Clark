@@ -1,37 +1,52 @@
-import React from 'react';
-import Ionicon from 'react-ionicons'
-import { CardHeader, CardFooter, TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, Media, Card, CardBody, Button, CardTitle, CardText, CardImg } from 'reactstrap';
-import classnames from 'classnames';
-import './App.css';
-import './card-config.css';
-import Ari from './gearPics/2018_2019/arisKoumis.png';
-import Evan from './gearPics/2018_2019/evanUgarte.png';
+import React from 'react'
+// import Ionicon from 'react-ionicons'
+// import {
+//   CardHeader,
+//   CardFooter,
+//   TabContent,
+//   TabPane,
+//   Nav,
+//   NavItem,
+//   NavLink,
+//   Row,
+//   Col,
+//   Media,
+//   Card,
+//   CardBody,
+//   Button,
+//   CardTitle,
+//   CardText,
+//   CardImg
+// } from 'reactstrap'
+// import classnames from 'classnames'
+import './App.css'
+import './card-config.css'
+// import Ari from './gearPics/2018_2019/arisKoumis.png'
+// import Evan from './gearPics/2018_2019/evanUgarte.png'
 
 export default class Example extends React.Component {
+  constructor (props) {
+    super(props)
 
-  constructor(props) {
-
-    super(props);
-
-    this.toggle = this.toggle.bind(this);
+    this.toggle = this.toggle.bind(this)
     this.state = {
       activeTab: '1'
-    };
+    }
   }
 
-  toggle(tab) {
+  toggle (tab) {
     if (this.state.activeTab !== tab) {
       this.setState({
         activeTab: tab
-      });
+      })
     }
   }
-  //
-  render() {
-    return (
-      <div className = "Page">
 
-{/*-----------------Nav Bar-------------------
+  //
+  render () {
+    return (
+      <div className='Page'>
+        {/* -----------------Nav Bar-------------------
         <Nav tabs>
           <NavItem>
             <NavLink
@@ -53,10 +68,10 @@ export default class Example extends React.Component {
 
         <TabContent activeTab={this.state.activeTab}> */}
 
-{/*-----------------Panel 1-------------------
+        {/* -----------------Panel 1-------------------
           <TabPane tabId="1" id="tab1" className="Panel">
           </TabPane> */}
-{/*-----------------Panel 2-------------------
+        {/* -----------------Panel 2-------------------
 
           <TabPane tabId="2" id="tab2" className="Panel">
 
@@ -64,12 +79,10 @@ export default class Example extends React.Component {
 
         </TabContent>
         */}
-
       </div>
-    );
+    )
   }
 }
-
 
 // Tab 1
 //
@@ -169,7 +182,6 @@ export default class Example extends React.Component {
 // </TabPane>
 //
 //
-
 
 // TAB 2
 //
