@@ -92,7 +92,7 @@ const qs = require('querystring') // import NodeJS querystring module
 const settings = require('../util/settings') // import server system settings
 // const logger = require(`${settings.util}/logger`) // import event log system
 const www = require(`${settings.util}/www`).https
-const smciSettings = require('./smciSettings') // import MailChimp Settings
+const smciSettings = require('./smci_settings') // import MailChimp Settings
 
 // Container (Singleton) - contains the api wrappers defined below
 const smci = {
