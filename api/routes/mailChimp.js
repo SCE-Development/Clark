@@ -124,4 +124,3 @@ api.register(
 )
 
 module.exports = router
-// END api/routes/membershipApplication/index.js

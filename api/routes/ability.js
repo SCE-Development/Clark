@@ -15,15 +15,19 @@
 // Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
 const router = express.Router()
+const Ability = require('../models/Ability.js')
+
+const { INTERNAL_SERVER_ERROR, OK } = {
+  INTERNAL_SERVER_ERROR: 500,
+  OK: 200
+}
 
 router.post('/getAll', (req, res) => {
-  if (req.body.username) {
-    console.log(req.body.username)
-    res.sendStatus(200)
-  } else {
-    res.status(409).send({ message: 'unknown...' })
-  }
+  Ability.find({}, (error, abilities) => {
+    if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+
+    return res.status(OK).send(abilities)
+  })
 })
 
 module.exports = router
-// END api/routes/membershipApplication/index.js
