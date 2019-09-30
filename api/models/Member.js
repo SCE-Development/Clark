@@ -2,6 +2,16 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcrypt-nodejs')
 
+// TODO:
+// Create models for everything else thats needed
+// Create routes for everything else thats needed
+// Clean up commented code
+// remove _deprecated_apis
+// remove mdbi?
+// Fix the setup scripts & documentation
+// Get the second package json down to root level
+// Utilize logger.log for all the routes
+
 const MemberSchema = new Schema(
   {
     memberID: {
