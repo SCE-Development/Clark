@@ -15,15 +15,15 @@
 
 // Includes
 // const express = require('express')
-const https = require('https')
-const fs = require('fs')
+// const http = require('http')
+// const fs = require('fs')
 // const router = express.Router();
 const settings = require('./settings') // import server system settings
 // const al = require(`${settings.util}/api_legend.js`) // import API Documentation Module
 const dt = require(`${settings.util}/datetimes`) // import datetime utilities
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 // const crypt = require(`${settings.util}/cryptic`);  // import custom sce crypto wrappers
-const ssl = require(settings.security) // import https ssl credentials
+// const ssl = require(settings.security) // import https ssl credentials
 const credentials = require(settings.credentials) // import server system credentials
 const www = require(`${settings.util}/www`) // import custom https request wrappers
 const logger = require(`${settings.util}/logger`) // import event log system
@@ -37,10 +37,10 @@ const logger = require(`${settings.util}/logger`) // import event log system
 //     'x-sent': true
 //   }
 // }
-const sslUserAgent = new https.Agent({
-  port: settings.port,
-  ca: fs.readFileSync(ssl.cert)
-})
+// const sslUserAgent = new https.Agent({
+//   port: settings.port,
+//   ca: fs.readFileSync(ssl.cert)
+// })
 
 // Container (Singleton)
 const apiutil = {}
@@ -71,7 +71,7 @@ apiutil.verifySession = function (token, sessionID, callbk) {
     hostname: 'localhost',
     path: '/mdbi/search/documents',
     method: 'POST',
-    agent: sslUserAgent,
+    // agent: sslUserAgent,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(JSON.stringify(verificationPostBody))
@@ -79,7 +79,7 @@ apiutil.verifySession = function (token, sessionID, callbk) {
   }
 
   // Check to make sure that the submitted sessionID is in the session database, and that it has not passed its maxIdleTime since its last activity
-  www.https.post(verificationPostOptions, verificationPostBody, function (
+  www.http.post(verificationPostOptions, verificationPostBody, function (
     reply,
     error
   ) {
@@ -144,14 +144,14 @@ apiutil.clearSession = function (token, sessionID, callback) {
     hostname: 'localhost',
     path: '/mdbi/delete/document',
     method: 'POST',
-    agent: sslUserAgent,
+    // agent: sslUserAgent,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(JSON.stringify(removalPostBody))
     }
   }
 
-  www.https.post(removalPostOptions, removalPostBody, callback)
+  www.http.post(removalPostOptions, removalPostBody, callback)
 }
 
 /*
@@ -181,7 +181,7 @@ apiutil.isCapable = function (abilityList, userID, callbk, matchMode = 0) {
     hostname: 'localhost',
     path: '/mdbi/search/documents',
     method: 'POST',
-    agent: sslUserAgent,
+    // agent: sslUserAgent,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': 0
@@ -231,7 +231,7 @@ apiutil.isCapable = function (abilityList, userID, callbk, matchMode = 0) {
 
   // Run database query if nothing went wrong
   if (status !== -1) {
-    www.https.post(checkPostOptions, checkPostBody, function (reply, error) {
+    www.http.post(checkPostOptions, checkPostBody, function (reply, error) {
       logger.log(
         `${reply.length} ${reply.length === 1 ? 'result' : 'results'} found`,
         handlerTag

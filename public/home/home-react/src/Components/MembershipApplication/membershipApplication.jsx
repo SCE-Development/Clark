@@ -1,7 +1,10 @@
 import React from 'react'
 import './membershipApplication.css'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap'
-// import classnames from 'classnames'
+import axios from 'axios'
+
+// require('es6-promise').polyfill()
+// require('isomorphic-fetch')
 
 export default class MembershipApplication extends React.Component {
   // @ctor
@@ -101,50 +104,103 @@ export default class MembershipApplication extends React.Component {
   //                                  to this handle when the input
   //                                  changes.
   // @returns         n/a
+
+  checkIfUsernameExists () {
+    if (!this.state.username) return
+
+    axios
+      .post('/api/membershipApplication/username/isAvailable', { username: this.state.username })
+      .then(result => {
+        if (result.status >= 200 && result.status < 300) {
+            this.setState({
+              usernameCheckClass: 'username-availability available',
+              usernameCheckResult: 'Username is available',
+              usernameCheckResultIcon: '✔'
+            })
+          } else {
+            this.setState({
+              usernameCheckClass: 'username-availability unavailable',
+              usernameCheckResult: 'Username is unavailable',
+              usernameCheckResultIcon: '✘'
+            })
+          }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
   mutateUsername (e) {
     // Create a copy of the current state
-    var me = this
-    var tempState = Object.assign(this.state)
+    // var me = this
+    // var tempState = Object.assign(this.state)
 
     // Set the new state
-    tempState.username = e.target.value
-    this.setState(tempState)
+    // tempState.username = e.target.value
+    this.setState({
+      username: e.target.value
+    })
+
+    // fetch(`/api/membershipApplication/username/isAvailable?username=${tempState.username}`)
+    //   .then(response => {
+    //     if (response && response.status < 300) {
+    //       // Create a copy of the current state
+    //       var tempState2 = Object.assign(me.state)
+    //
+    //       // Check if a username was found
+    //       if (JSON.parse(response.text).content.isAvailable) {
+    //         // Show that the username is available
+    //         tempState2.usernameCheckClass = 'username-availability available'
+    //         tempState2.usernameCheckResult = 'Username is available'
+    //         tempState2.usernameCheckResultIcon = '✔'
+    //       } else {
+    //         // Show that the username is not available
+    //         tempState2.usernameCheckClass = 'username-availability unavailable'
+    //         tempState2.usernameCheckResult = 'Username is unavailable'
+    //         tempState2.usernameCheckResultIcon = '✘'
+    //       }
+    //
+    //       // Update state
+    //       me.setState(tempState2)
+    //     } else {
+    //       // Failure
+    //       // TODO: Respond with error
+    //       console.log(response.status)
+    //     }
+    //   })
 
     // Check if the username is available by querying the server
-    var request = require('superagent')
-    request.get(
-      'http://' +
-            window.location.hostname +
-            ':3000/api/membershipApplication/' +
-            'username/isAvailable?username=' + tempState.username
-    ).set('Content-Type', 'application/json;charset=utf-8')
-      .send()
-      .end(function (err, response) {
-        if (response && response.status < 300) {
-          // Create a copy of the current state
-          var tempState2 = Object.assign(me.state)
-
-          // Check if a username was found
-          if (JSON.parse(response.text).content.isAvailable) {
-            // Show that the username is available
-            tempState2.usernameCheckClass = 'username-availability available'
-            tempState2.usernameCheckResult = 'Username is available'
-            tempState2.usernameCheckResultIcon = '✔'
-          } else {
-            // Show that the username is not available
-            tempState2.usernameCheckClass = 'username-availability unavailable'
-            tempState2.usernameCheckResult = 'Username is unavailable'
-            tempState2.usernameCheckResultIcon = '✘'
-          }
-
-          // Update state
-          me.setState(tempState2)
-        } else {
-          // Failure
-          // TODO: Respond with error
-          console.log(err)
-        }
-      })
+    // var request = require('superagent')
+    // request.get(
+    //   'api/membershipApplication/username/isAvailable?username=' + tempState.username
+    // ).set('Content-Type', 'application/json;charset=utf-8')
+    //   .send()
+    //   .end(function (err, response) {
+    //     if (response && response.status < 300) {
+    //       // Create a copy of the current state
+    //       var tempState2 = Object.assign(me.state)
+    //
+    //       // Check if a username was found
+    //       if (JSON.parse(response.text).content.isAvailable) {
+    //         // Show that the username is available
+    //         tempState2.usernameCheckClass = 'username-availability available'
+    //         tempState2.usernameCheckResult = 'Username is available'
+    //         tempState2.usernameCheckResultIcon = '✔'
+    //       } else {
+    //         // Show that the username is not available
+    //         tempState2.usernameCheckClass = 'username-availability unavailable'
+    //         tempState2.usernameCheckResult = 'Username is unavailable'
+    //         tempState2.usernameCheckResultIcon = '✘'
+    //       }
+    //
+    //       // Update state
+    //       me.setState(tempState2)
+    //     } else {
+    //       // Failure
+    //       // TODO: Respond with error
+    //       console.log(err)
+    //     }
+    //   })
   }
 
   // @function        mutatePassword()
@@ -209,43 +265,66 @@ export default class MembershipApplication extends React.Component {
       lacksRequiredFields = true
     }
 
+    // Check if the username is correct / is available
+    // Should probably be built out..
+    if (this.state.usernameCheckClass !== 'username-availability available') return
+
     // Only proceed to submit if all required fields are present
     if (!lacksRequiredFields) {
-      var request = require('superagent')
-      // var page = this
-      request.post(
-        'http://' +
-                window.location.hostname +
-                ':3000/api/membershipApplication/submit'
-      ).set('Content-Type', 'application/json;charset=utf-8')
-        .send({
-          firstName: this.state.firstName,
-          middleInitial: this.state.middleInitial,
-          lastName: this.state.lastName,
-          email: this.state.email,
-          username: this.state.username,
-          password: this.state.password,
-          major: this.state.major
-        })
-        .end(function (err, response) {
-          if (response && response.status < 300) {
-            // Create a copy of the current state
-            var tempState = Object.assign(this.state)
+      // var request = require('superagent')
+      // // var page = this
+      // request.post('/api/membershipApplication/submit'
+      // ).set('Content-Type', 'application/json;charset=utf-8')
+      //   .send({
+      //     firstName: this.state.firstName,
+      //     middleInitial: this.state.middleInitial,
+      //     lastName: this.state.lastName,
+      //     email: this.state.email,
+      //     username: this.state.username,
+      //     password: this.state.password,
+      //     major: this.state.major
+      //   })
+      //   .end(function (err, response) {
+      //     if (response && response.status < 300) {
+      //       // Create a copy of the current state
+      //       var tempState = Object.assign(this.state)
+      //
+      //       // Modify state to signal a close of the form,
+      //       // and a reveal of a success message that provides the user
+      //       // with further instructions
+      //       tempState.successfullyApplied = true
+      //
+      //       // Set state
+      //       this.setState(tempState)
+      //     } else {
+      //       // Failure
+      //       // TODO: Respond with error
+      //       window.alert('(X.X)\tA submission error occurred. Please contact the site administrator')
+      //       console.error(err)
+      //     }
+      //   }.bind(this))
 
-            // Modify state to signal a close of the form,
-            // and a reveal of a success message that provides the user
-            // with further instructions
-            tempState.successfullyApplied = true
-
-            // Set state
-            this.setState(tempState)
-          } else {
-            // Failure
-            // TODO: Respond with error
-            window.alert('(X.X)\tA submission error occurred. Please contact the site administrator')
+        axios
+          .post('/api/membershipApplication/submit', {
+            firstName: this.state.firstName,
+            middleInitial: this.state.middleInitial,
+            lastName: this.state.lastName,
+            email: this.state.email,
+            username: this.state.username,
+            password: this.state.password,
+            major: this.state.major
+          })
+          .then(result => {
+            if (result.status >= 200 && result.status < 300) {
+                this.setState({
+                  successfullyApplied: true
+                })
+              }
+          })
+          .catch(err => {
+            window.alert('A submission error occurred. Please contact the site administrator')
             console.error(err)
-          }
-        }.bind(this))
+          })
     }
   }
 
@@ -256,15 +335,15 @@ export default class MembershipApplication extends React.Component {
   // @returns         (jsx) html      The generated html content
   render () {
     return (
-      <div class='membership-application'>
-        <h1 class='page-title'>Member Registration</h1>
-        <div class='notice'>
-          <span class='critical'>*</span><span class='important'> = This is a required field</span>
+      <div className='membership-application'>
+        <h1 className='page-title'>Member Registration</h1>
+        <div className='notice'>
+          <span className='critical'>*</span><span className='important'> = This is a required field</span>
         </div>
         {
           !this.state.successfullyApplied
             ? (
-              <Form class='page-form'>
+              <Form className='page-form'>
                 <h3>General Information</h3>
                 <FormGroup>
                   <Label for='firstName'>First Name*</Label>
@@ -286,9 +365,9 @@ export default class MembershipApplication extends React.Component {
                 <h3>Account Configuration</h3>
                 <FormGroup>
                   <Label for='username'>Username*</Label>
-                  <Input type='text' onChange={this.mutateUsername.bind(this)} value={this.state.username} name='username' id='input_username' placeholder='(e.g. sce_user)' />
+                  <Input type='text' onChange={this.mutateUsername.bind(this)} onBlur={this.checkIfUsernameExists.bind(this)} value={this.state.username} name='username' id='input_username' placeholder='(e.g. sce_user)' />
                 </FormGroup>
-                <div class={this.state.usernameCheckClass}>
+                <div className={this.state.usernameCheckClass}>
                   {this.state.usernameCheckResultIcon} &nbsp;{this.state.usernameCheckResult}
                 </div>
                 <FormGroup>

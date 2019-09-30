@@ -13,8 +13,8 @@
 
 // Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
-const https = require('https')
-const fs = require('fs')
+// const https = require('https')
+// const fs = require('fs')
 const router = express.Router()
 const settings = require('../../../../util/settings') // import server system settings
 const al = require(`${settings.util}/api_legend.js`) // import API Documentation Module
@@ -22,7 +22,7 @@ const al = require(`${settings.util}/api_legend.js`) // import API Documentation
 // let dt = require(`${settings.util}/datetimes`); // import datetime utilities
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 // let crypt = require(`${settings.util}/cryptic`) // import custom sce crypto wrappers
-const ssl = require(settings.security) // import https ssl credentials
+// const ssl = require(settings.security) // import https ssl credentials
 const credentials = require(settings.credentials) // import server system credentials
 const www = require(`${settings.util}/www`) // import custom https request wrappers
 const logger = require(`${settings.util}/logger`) // import event log system
@@ -39,10 +39,10 @@ const rf = require(`${settings.util}/response_formats`) // import response forma
 //   }
 // }
 
-const sslUserAgent = new https.Agent({
-  port: settings.port,
-  ca: fs.readFileSync(ssl.cert)
-})
+// const sslUserAgent = new https.Agent({
+//   port: settings.port,
+//   ca: fs.readFileSync(ssl.cert)
+// })
 
 // Example API Documentation Arguments
 
@@ -128,7 +128,7 @@ api.register(
         hostname: 'localhost',
         path: '/mdbi/write',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(requestBody))
@@ -194,7 +194,7 @@ api.register(
         hostname: 'localhost',
         path: '/mdbi/search/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(requestBody))
@@ -252,7 +252,7 @@ api.register(
         hostname: 'localhost',
         path: '/mdbi/delete/document',
         method: 'DELETE',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(requestBody))

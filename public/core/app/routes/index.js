@@ -13,14 +13,14 @@
 
 // Includes
 const express = require('express')
-const https = require('https')
+// const https = require('https')
 const fs = require('fs')
 const router = express.Router()
 const settings = require('../../../../util/settings') // import server system settings
 const dt = require(`${settings.util}/datetimes`) // import datetime utilities
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 const crypt = require(`${settings.util}/cryptic`) // import custom sce crypto wrappers
-const ssl = require(settings.security) // import https ssl credentials
+// const ssl = require(settings.security) // import https ssl credentials
 const credentials = require(settings.credentials) // import server system credentials
 const www = require(`${settings.util}/www`) // import custom https request wrappers
 const logger = require(`${settings.util}/logger`) // import event log system
@@ -34,10 +34,10 @@ const options = {
     'x-sent': true
   }
 }
-const sslUserAgent = new https.Agent({
-  port: settings.port,
-  ca: fs.readFileSync(ssl.cert)
-})
+// const sslUserAgent = new https.Agent({
+//   port: settings.port,
+//   ca: fs.readFileSync(ssl.cert)
+// })
 
 // BEGIN Core Routes
 /*
@@ -122,7 +122,7 @@ router.post('/login', function (request, response) {
       hostname: 'localhost',
       path: '/mdbi/update/documents',
       method: 'POST',
-      agent: sslUserAgent,
+      // agent: sslUserAgent,
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(JSON.stringify(memberUpdateBody))
@@ -183,7 +183,7 @@ router.post('/login', function (request, response) {
       hostname: 'localhost',
       path: '/mdbi/write',
       method: 'POST',
-      agent: sslUserAgent,
+      // agent: sslUserAgent,
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(JSON.stringify(sessionDataBody))
@@ -251,7 +251,7 @@ router.post('/login', function (request, response) {
       hostname: 'localhost',
       path: '/mdbi/search/documents',
       method: 'POST',
-      agent: sslUserAgent,
+      // agent: sslUserAgent,
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(JSON.stringify(requestBody))
@@ -573,7 +573,7 @@ router.post('/dashboard/search/members', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/search/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -809,7 +809,7 @@ router.post('/dashboard/search/memberdata', function (request, response) {
           hostname: 'localhost',
           path: '/mdbi/search/documents',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -915,7 +915,7 @@ router.post('/dashboard/search/dc', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/search/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -1089,7 +1089,7 @@ router.post('/dashboard/edit/dc', function (request, response) {
           hostname: 'localhost',
           path: '/mdbi/update/documents',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(updatePostBody))
@@ -1151,7 +1151,7 @@ router.post('/dashboard/edit/dc', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/search/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -1324,7 +1324,7 @@ router.post('/dashboard/edit/membershipstatus', function (request, response) {
           hostname: 'localhost',
           path: '/mdbi/update/documents',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(updatePostBody))
@@ -1391,7 +1391,7 @@ router.post('/dashboard/edit/membershipstatus', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/search/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -1521,7 +1521,7 @@ router.post('/dashboard/edit/memberfield', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/update/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': 0
@@ -1671,7 +1671,7 @@ router.post('/dashboard/edit/memberfield', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/search/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -1776,7 +1776,7 @@ router.post('/dashboard/edit/memberdates', function (request, response) {
       hostname: 'localhost',
       path: '/mdbi/update/documents',
       method: 'POST',
-      agent: sslUserAgent,
+      // agent: sslUserAgent,
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(JSON.stringify(updatePostBody))
@@ -1923,7 +1923,7 @@ router.post('/dashboard/edit/memberdates', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/search/documents',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -2090,7 +2090,7 @@ router.post('/dashboard/export/expiredcodes', function (request, response) {
         hostname: 'localhost',
         path: '/mdbi/search/aggregation',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(aggPostBody))
@@ -2221,7 +2221,7 @@ router.post('/dashboard/search/officerlist', function (request, response) {
           hostname: 'localhost',
           path: '/mdbi/search/documents',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -2413,7 +2413,7 @@ router.post('/dashboard/search/officerabilities', function (request, response) {
             ? '/mdbi/search/documents'
             : '/mdbi/search/aggregation',
         method: 'POST',
-        agent: sslUserAgent,
+        // agent: sslUserAgent,
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -2548,7 +2548,7 @@ router.post('/dashboard/edit/officerclearance', function (request, response) {
           hostname: 'localhost',
           path: '/mdbi/update/documents',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(updatePostBody))
@@ -2718,7 +2718,7 @@ router.post('/dashboard/search/clearancelevels', function (request, response) {
           hostname: 'localhost',
           path: '/mdbi/search/aggregation',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -2861,7 +2861,7 @@ router.get('/ability/getAll', function (request, response) {
           hostname: 'localhost',
           path: '/mdbi/search/aggregation',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
@@ -3005,7 +3005,7 @@ function verifySession (token, sessionID, callbk) {
     hostname: 'localhost',
     path: '/mdbi/search/documents',
     method: 'POST',
-    agent: sslUserAgent,
+    // agent: sslUserAgent,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(JSON.stringify(verificationPostBody))
@@ -3071,7 +3071,7 @@ function clearSession (token, sessionID, callback) {
     hostname: 'localhost',
     path: '/mdbi/delete/document',
     method: 'POST',
-    agent: sslUserAgent,
+    // agent: sslUserAgent,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(JSON.stringify(removalPostBody))
@@ -3108,7 +3108,7 @@ function isCapable (abilityList, userID, callbk, matchMode = 0) {
     hostname: 'localhost',
     path: '/mdbi/search/documents',
     method: 'POST',
-    agent: sslUserAgent,
+    // agent: sslUserAgent,
     headers: {
       'Content-Type': 'application/json',
       'Content-Length': 0

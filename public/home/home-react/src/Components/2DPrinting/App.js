@@ -46,9 +46,9 @@ export default class Printing extends React.Component {
       closeAll: false
     }
 
-    this.toggle = this.toggle.bind(this)
-    this.toggleNested = this.toggleNested.bind(this)
-    this.toggleAll = this.toggleAll.bind(this)
+    this.handleToggle = this.handleToggle.bind(this)
+    this.handleToggleNested = this.handleToggleNested.bind(this)
+    // this.toggleAll = this.toggleAll.bind(this)
   }
 
   handleToggle () {
@@ -64,12 +64,12 @@ export default class Printing extends React.Component {
     })
   }
 
-  toggleAll () {
-    this.setState({
-      nestedModal: !this.state.nestedModal,
-      closeAll: true
-    })
-  }
+  // toggleAll () {
+  //   this.setState({
+  //     nestedModal: !this.state.nestedModal,
+  //     closeAll: true
+  //   })
+  // }
 
   handleInit () {
     console.log('FilePond instance has initialised', this.pond)

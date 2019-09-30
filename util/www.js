@@ -11,7 +11,7 @@
 'use strict'
 
 // Includes
-const https = require('https')
+const http = require('http')
 const logger = require('./logger') // import event log system
 
 // Container (Singleton)
@@ -21,8 +21,8 @@ const www = {
     logVerbosely: false
   },
 
-  // HTTPS request wrappers
-  https: {}
+  // HTTP request wrappers
+  http: {}
 }
 
 // BEGIN Member Functions
@@ -60,11 +60,11 @@ www.config.verbose = function () {
  @returns  n/a
  @details  This function performs a GET request using the NodeJS https.get() api, customized for use with the server.js MEANserver
 */
-www.https.get = function (options, callback, handlerName) {
+www.http.get = function (options, callback, handlerName) {
   const loggerOptions =
     typeof handlerName === 'string'
       ? { src: handlerName }
-      : { src: 'www/https.get' }
+      : { src: 'www/http.get' }
   let responseData = null // will fill as data is received
   let responseError = null
 
@@ -73,7 +73,7 @@ www.https.get = function (options, callback, handlerName) {
     logger.log('Callback is not a function!', loggerOptions)
   } else {
     // Perform GET request
-    https
+    http
       .get(options, function (response) {
         response.setEncoding('utf8')
         response.on('data', function (data) {
@@ -115,7 +115,7 @@ www.https.get = function (options, callback, handlerName) {
         })
       })
       .on('error', function (err) {
-        logger.log(`HTTPS GET failed: ${err}`, loggerOptions)
+        logger.log(`HTTP GET failed: ${err}`, loggerOptions)
         callback(null, err)
       })
       .end()
@@ -136,15 +136,15 @@ www.https.get = function (options, callback, handlerName) {
  @returns  n/a
  @details  This function performs a POST request using the NodeJS https.request() api, customized for use with the server.js MEANserver
 */
-www.https.post = function (options, requestBody, callback, handlerName) {
+www.http.post = function (options, requestBody, callback, handlerName) {
   const loggerOptions =
     typeof handlerName === 'string'
       ? { src: handlerName }
-      : { src: 'www/https.post' }
+      : { src: 'www/http.post' }
   let responseData = null
   let responseError = null
 
-  const requestObj = https.request(options, function (response) {
+  const requestObj = http.request(options, function (response) {
     response.setEncoding('utf8')
     response.on('data', function (data) {
       logger.log('A response was returned...', loggerOptions)
@@ -184,7 +184,7 @@ www.https.post = function (options, requestBody, callback, handlerName) {
     })
   })
   requestObj.on('error', function (err) {
-    logger.log(`HTTPS POST failed: ${err}`, handlerName)
+    logger.log(`HTTP POST failed: ${err}`, handlerName)
     if (typeof callback === 'function') {
       callback(null, err)
     }
@@ -209,15 +209,15 @@ www.https.post = function (options, requestBody, callback, handlerName) {
  @returns  n/a
  @details  This function performs a PATCH request using the NodeJS https.request() api, customized for use with the server.js MEANserver
 */
-www.https.patch = function (options, requestBody, callback, handlerName) {
+www.http.patch = function (options, requestBody, callback, handlerName) {
   const loggerOptions =
     typeof handlerName === 'string'
       ? { src: handlerName }
-      : { src: 'www/https.patch' }
+      : { src: 'www/http.patch' }
   let responseData = null
   let responseError = null
 
-  const requestObj = https.request(options, function (response) {
+  const requestObj = http.request(options, function (response) {
     response.setEncoding('utf8')
     response.on('data', function (data) {
       logger.log('A response was returned...', loggerOptions)
@@ -255,7 +255,7 @@ www.https.patch = function (options, requestBody, callback, handlerName) {
     })
   })
   requestObj.on('error', function (err) {
-    logger.log(`HTTPS PATCH failed: ${err}`, loggerOptions)
+    logger.log(`HTTP PATCH failed: ${err}`, loggerOptions)
     if (typeof callback === 'function') {
       callback(null, err)
     }
@@ -279,15 +279,15 @@ www.https.patch = function (options, requestBody, callback, handlerName) {
  @returns  n/a
  @details  This function performs a DELETE request using the NodeJS https.request() api, customized for use with the server.js MEANserver
 */
-www.https.delete = function (options, callback, handlerName) {
+www.http.delete = function (options, callback, handlerName) {
   const loggerOptions =
     typeof handlerName === 'string'
       ? { src: handlerName }
-      : { src: 'www/https.delete' }
+      : { src: 'www/http.delete' }
   let responseData = null
   let responseError = null
 
-  const requestObj = https.request(options, function (response) {
+  const requestObj = http.request(options, function (response) {
     response.setEncoding('utf8')
     response.on('data', function (data) {
       logger.log('A response was returned...', loggerOptions)
@@ -326,7 +326,7 @@ www.https.delete = function (options, callback, handlerName) {
     })
   })
   requestObj.on('error', function (err) {
-    logger.log(`HTTPS DELETE failed: ${err}`, loggerOptions)
+    logger.log(`HTTP DELETE failed: ${err}`, loggerOptions)
     if (typeof callback === 'function') {
       callback(null, err)
     }

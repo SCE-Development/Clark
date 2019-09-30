@@ -13,27 +13,44 @@
 'use strict'
 
 /* NodeJS+ExpressJS Server */
-const https = require('https')
-const fs = require('fs')
+const http = require('http')
+// const fs = require('fs')
 const bodyParser = require('body-parser') // import POST request data parser
 const settings = require('./util/settings') // import server system settings
-const ssl = require(settings.security) // import https ssl certifications
+// const ssl = require(settings.security) // import https ssl certifications
 const logger = require(`${settings.util}/logger`) // import event log system
 // const handles = require(`${settings.util}/route_handlers`) // import URI endpoint handlers
 let port = process.argv[2] // allow custom ports
 
+const mongoose = require('mongoose')
+
+// require('es6-promise').polyfill()
+// require('isomorphic-fetch')
+
 /* Globals */
 const handlerTag = { src: 'server' }
-const sslSettings = {
-  key: fs.readFileSync(ssl.prvkey),
-  cert: fs.readFileSync(ssl.cert),
-  passphrase: ssl.passphrase,
-  requestCert: false,
-  rejectUnauthorized: false
-}
+// const sslSettings = {
+// key: fs.readFileSync(ssl.prvkey),
+// cert: fs.readFileSync(ssl.cert),
+// passphrase: ssl.passphrase,
+// requestCert: false,
+// rejectUnauthorized: false
+// }
 
 /* Initialize logging */
 logger.log('Initializing...', handlerTag)
+
+// Configure Mongoose
+mongoose.Promise = require('bluebird')
+mongoose
+  .connect('mongodb://localhost/sce_core', {
+    promiseLibrary: require('bluebird')
+  })
+  .then(() => {
+    console.log('MongoDB Connection Successful')
+    console.log()
+  })
+  .catch(error => console.error(error))
 
 /* Create server instance */
 const express = require('express')
@@ -89,8 +106,16 @@ const homeApp = require('./public/home/app/app.js')
 app.use('/home', homeApp) // GET request of the main login page
 
 /* Initialize SCE Core API sub-app */
-const apiApp = require('./api/app/app.js')
-app.use('/api', apiApp)
+// const apiApp = require('./api/app.js')
+// app.use('/api', apiApp)
+// const membershipApplication = require('./api/routes/membershipApplication')
+// app.use('/api/membershipApplication', membershipApplication)
+
+// console.log(require('./api/index'))
+
+require('./api/index.js').forEach(route => {
+  app.use(`/api/${route}`, require(`./api/routes/${route}`))
+})
 
 /* Initialize SCE Core Admin sub-app */
 const coreAdminApp = require('./public/core/app/app.js')
@@ -101,8 +126,8 @@ const testPageApp = require('./test/app')
 app.use('/test', testPageApp) // use a subapp to handle test page requests via the "/test" endpoint
 
 /* Initialize MongoDB Interface sub-app */
-const mdbiApp = require('./mdbi/app')
-app.use('/mdbi', mdbiApp) // use a subapp to handle database requests via the "/mdbi" endpoint
+// const mdbiApp = require('./mdbi/app')
+// app.use('/mdbi', mdbiApp) // use a subapp to handle database requests via the "/mdbi" endpoint
 
 /*
  Main Server Routine - Listen for requests on specified port
@@ -117,8 +142,18 @@ if (!port) {
 // app.listen(port, function () {
 //  logger.log(`Now listening on port ${port}`, handlerTag);
 // });
-const server = https.createServer(sslSettings, app)
+const server = http.createServer(app)
 server.listen(port, function () {
   logger.log(`Now listening on port ${port}`, handlerTag)
 })
+// const server = express()
+// app.listen(settings.port, err => {
+//   if (err) {
+//     console.log(err)
+//     logger.log(`error: ${err}`)
+//     throw err
+//   }
+//
+//   logger.log(`Listening on port: ${settings.port}`)
+// })
 // END server.js

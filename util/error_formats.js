@@ -43,25 +43,25 @@ errorFormats.struct = {
     name: 'CORE_ERROR',
     msg: 'An internal server error occurred'
   },
-  httpsDeleteFail: {
-    name: 'HTTPS_DELETE_FAIL',
-    msg: 'HTTPS DELETE failed'
+  httpDeleteFail: {
+    name: 'HTTP_DELETE_FAIL',
+    msg: 'HTTP DELETE failed'
   },
-  httpsGetFail: {
-    name: 'HTTPS_GET_FAIL',
-    msg: 'HTTPS GET failed'
+  httpGetFail: {
+    name: 'HTTP_GET_FAIL',
+    msg: 'HTTP GET failed'
   },
-  httpsPatchFail: {
-    name: 'HTTPS_PATCH_FAIL',
-    msg: 'HTTPS PATCH failed'
+  httpPatchFail: {
+    name: 'HTTP_PATCH_FAIL',
+    msg: 'HTTP PATCH failed'
   },
-  httpsPostFail: {
-    name: 'HTTPS_POST_FAIL',
-    msg: 'HTTPS POST failed'
+  httpPostFail: {
+    name: 'HTTP_POST_FAIL',
+    msg: 'HTTP POST failed'
   },
-  httpsPutFail: {
-    name: 'HTTPS_PUT_FAIL',
-    msg: 'HTTPS PUT failed'
+  httpPutFail: {
+    name: 'HTTP_PUT_FAIL',
+    msg: 'HTTP PUT failed'
   },
   illegalOperation: {
     name: 'ILLEGAL_OPERATION',
@@ -135,11 +135,11 @@ errorFormats.struct = {
 errorFormats.types = {
   adminInvalid: 'Invalid Admin Credentials',
   coreErr: 'Core v4 error',
-  httpsDeleteFail: 'HTTPS DELETE failed',
-  httpsGetFail: 'HTTPS GET failed',
-  httpsPatchFail: 'HTTPS PATCH failed',
-  httpsPostFail: 'HTTPS POST failed',
-  httpsPutFail: 'HTTPS PUT failed',
+  httpDeleteFail: 'HTTP DELETE failed',
+  httpGetFail: 'HTTP GET failed',
+  httpPatchFail: 'HTTP PATCH failed',
+  httpPostFail: 'HTTP POST failed',
+  httpPutFail: 'HTTP PUT failed',
   unknown: 'Unknown error'
 }
 // END members

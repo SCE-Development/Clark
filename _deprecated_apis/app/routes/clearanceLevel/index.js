@@ -15,8 +15,8 @@
 
 // Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
-const https = require('https')
-const fs = require('fs')
+// const https = require('https')
+// const fs = require('fs')
 const router = express.Router()
 const settings = require('../../../../util/settings') // import server system settings
 const al = require(`${settings.util}/api_legend.js`) // import API Documentation Module
@@ -25,7 +25,7 @@ const au = require(`${settings.util}/api_util.js`) // import API Utility Functio
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 const rf = require(`${settings.util}/response_formats`) // import response formatter
 // const crypt = require(`${settings.util}/cryptic`);  // import custom sce crypto wrappers
-const ssl = require(settings.security) // import https ssl credentials
+// const ssl = require(settings.security) // import https ssl credentials
 const credentials = require(settings.credentials) // import server system credentials
 const www = require(`${settings.util}/www`) // import custom https request wrappers
 const logger = require(`${settings.util}/logger`) // import event log system
@@ -39,10 +39,10 @@ const logger = require(`${settings.util}/logger`) // import event log system
 //     'x-sent': true
 //   }
 // }
-const sslUserAgent = new https.Agent({
-  port: settings.port,
-  ca: fs.readFileSync(ssl.cert)
-})
+// const sslUserAgent = new https.Agent({
+//   port: settings.port,
+//   ca: fs.readFileSync(ssl.cert)
+// })
 
 // Link api documentation path
 // Documentation Template Styling
@@ -299,7 +299,7 @@ api.register(
             hostname: 'localhost',
             path: '/mdbi/search/aggregation',
             method: 'POST',
-            agent: sslUserAgent,
+            // agent: sslUserAgent,
             headers: {
               'Content-Type': 'application/json',
               'Content-Length': Buffer.byteLength(
@@ -607,7 +607,7 @@ api.register(
           hostname: 'localhost',
           path: '/mdbi/search/aggregation',
           method: 'POST',
-          agent: sslUserAgent,
+          // agent: sslUserAgent,
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(JSON.stringify(searchPostBody))
