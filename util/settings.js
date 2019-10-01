@@ -16,8 +16,6 @@ const defaults = {
   root: path.join(__dirname, '/../public'),
   util: __dirname,
   logdir: path.join(__dirname, '/../log'),
-  credentials: path.join(__dirname, '/common/credentials.json'),
-  // security: path.join(__dirname, '/common/security.js'),
   developmentMode: true, // toggles the availability of certain development tools
   sessionIdleTime: 20 // minutes
 }

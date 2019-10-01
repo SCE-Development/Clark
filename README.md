@@ -42,8 +42,6 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
         - Use Homebrew to install MongoDB:
           - `brew tap mongodb/brew`
           - `brew install mongodb-community`
-          - `sudo mkdir -p /data/db`
-          - `sudo chown -R 'id -un' /data/db`
       - If on Linux or Windows:
         - Download the package from the [MongoDB website](https://www.mongodb.com/)
         - Follow your OS's installation instructions listed on the [MongoDB website](https://www.mongodb.com/)
@@ -53,12 +51,9 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
   4. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
   5. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
   6. Install the node dependencies: `npm install`
-  7. Go to the Core-v4 utility tools directory in terminal (i.e. `cd /path/to/your/.../Core-v4/util/tools`)
-  8. Run the system setup script: `node system_setup.js all`
-      - This script handles npm dependencies install and a check for MongoDB
-  9. In a new terminal window, run the mongo daemon by entering: `mongod`
+  7. In a new terminal window, run the mongo daemon by entering: `mongod`
       - _If you need to terminate the daemon, type `ctrl-c` and press enter_
-  10. Run the app in the root project directory using: `npm start`
+  8. Run the app in the root project directory using: `npm start`
       - The app should automatically run on port 3000 and 8080 and open in your default browser
 
 #### On a Linux VM in Windows
