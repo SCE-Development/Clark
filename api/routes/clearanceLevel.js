@@ -57,7 +57,6 @@ const au = require(`${settings.util}/../_deprecated_util/api_util.js`) // import
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 const rf = require(`${settings.util}/../_deprecated_util/response_formats`) // import response formatter
 const logger = require(`${settings.util}/logger`) // import event log system
-const credentials = require(settings.credentials) // import server system credentials
 const www = require(`${settings.util}/../_deprecated_util/www`) // import custom https request wrappers
 const api = al.createLegend(
   'Clearance Level',
@@ -180,7 +179,7 @@ api.register(
         case true: {
           // Capability Verification succeeded. Now let's get a full list of clearance levels
           const searchPostBody = {
-            accessToken: credentials.mdbi.accessToken,
+            // accessToken: credentials.mdbi.accessToken,
             collection: 'ClearanceLevel',
             pipeline: [
               {
@@ -262,7 +261,7 @@ api.register(
 
     // Run queries
     au.verifySession(
-      credentials.mdbi.accessToken,
+      // credentials.mdbi.accessToken,
       sessionID,
       verificationCallback
     )
@@ -361,10 +360,7 @@ api.register(
     response.set('Content-Type', 'application/json')
 
     // Verify Session
-    au.verifySession(credentials.mdbi.accessToken, sessionID, function (
-      valid,
-      error
-    ) {
+    au.verifySession('', sessionID, function (valid, error) {
       // Check for errors
       if (error) {
         // If an unexpected error occurred, respond with error
@@ -514,7 +510,7 @@ api.register(
       } else {
         // Use aggregation to acquire the matching clearance level entries in the database
         const searchPostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'ClearanceLevel',
           pipeline: pipeline
         }

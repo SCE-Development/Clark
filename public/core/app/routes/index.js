@@ -21,7 +21,7 @@ const dt = require(`${settings.util}/datetimes`) // import datetime utilities
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 const crypt = require(`${settings.util}/cryptic`) // import custom sce crypto wrappers
 // const ssl = require(settings.security) // import https ssl credentials
-const credentials = require(settings.credentials) // import server system credentials
+// const credentials = require(settings.credentials) // import server system credentials
 const www = require(`${settings.util}/../_deprecated_util/www`) // import custom https request wrappers
 const logger = require(`${settings.util}/logger`) // import event log system
 
@@ -105,7 +105,7 @@ router.post('/login', function (request, response) {
     console.log(`GENERATED: ${JSON.stringify(match.list)}`)
 
     const memberUpdateBody = {
-      accessToken: credentials.mdbi.accessToken,
+      // accessToken: credentials.mdbi.accessToken,
       collection: 'Member',
       search: {
         memberID: {
@@ -169,7 +169,7 @@ router.post('/login', function (request, response) {
     // Generate session id and session data here
     sessionID = crypt.hashSessionID(match.list[0].userName)
     const sessionDataBody = {
-      accessToken: credentials.mdbi.accessToken,
+      // accessToken: credentials.mdbi.accessToken,
       collection: 'SessionData',
       data: {
         sessionID: sessionID,
@@ -240,7 +240,7 @@ router.post('/login', function (request, response) {
   }
   const submitCredentials = new Promise(function (resolve, reject) {
     const requestBody = {
-      accessToken: credentials.mdbi.accessToken,
+      // accessToken: credentials.mdbi.accessToken,
       collection: 'CoreAccess',
       search: {
         userName: request.body.user,
@@ -369,7 +369,7 @@ router.post('/logout', function (request, response) {
         }
       }
     }
-    clearSession(credentials.mdbi.accessToken, sid, queryCallback)
+    clearSession('', sid, queryCallback)
   }
 })
 
@@ -423,10 +423,7 @@ router.post('/dashboard', function (request, response) {
 
       // Clear session data if token is invalid
       if (valid === false && sessionID !== null) {
-        clearSession(credentials.mdbi.accessToken, sessionID, function (
-          reply,
-          err
-        ) {
+        clearSession('', sessionID, function (reply, err) {
           if (err) {
             logger.log(`Failed to clear session: ${err}`, handlerTag)
           } else {
@@ -471,7 +468,7 @@ router.post('/dashboard', function (request, response) {
       })
     }
   }
-  verifySession(credentials.mdbi.accessToken, sessionID, verifySessionCallback)
+  verifySession('', sessionID, verifySessionCallback)
 })
 
 /*
@@ -565,7 +562,7 @@ router.post('/dashboard/search/members', function (request, response) {
     } else {
       let validFormat = true
       const searchPostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'Member',
         search: {}
       }
@@ -679,7 +676,7 @@ router.post('/dashboard/search/members', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -799,7 +796,7 @@ router.post('/dashboard/search/memberdata', function (request, response) {
       // Only execute MDBI search if the id was valid or successfully converted
       if (validID) {
         const searchPostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'MemberDossier',
           search: {
             memberID: mID
@@ -831,7 +828,7 @@ router.post('/dashboard/search/memberdata', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -903,7 +900,7 @@ router.post('/dashboard/search/dc', function (request, response) {
     } else {
       // Verification succeeded. Now search for the door codes
       const searchPostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'DoorCode',
         search: {
           dcID: {
@@ -936,7 +933,7 @@ router.post('/dashboard/search/dc', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -1074,7 +1071,7 @@ router.post('/dashboard/edit/dc', function (request, response) {
       } else {
         const currentUser = reply[0]
         const updatePostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'MembershipData',
           search: {
             memberID: currentUser.memberID
@@ -1141,7 +1138,7 @@ router.post('/dashboard/edit/dc', function (request, response) {
     } else {
       // Verification succeeded. Now let's make sure that the member exists before we change things
       const searchPostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'Member',
         search: {
           userName: uname
@@ -1172,7 +1169,7 @@ router.post('/dashboard/edit/dc', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -1309,7 +1306,7 @@ router.post('/dashboard/edit/membershipstatus', function (request, response) {
       } else {
         const currentUser = reply[0]
         const updatePostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'MembershipData',
           search: {
             memberID: currentUser.memberID
@@ -1376,7 +1373,7 @@ router.post('/dashboard/edit/membershipstatus', function (request, response) {
     } else {
       // Verification succeeded. Now let's make sure that the member exists before we change things
       const searchPostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'Member',
         search: {
           userName: uname
@@ -1412,7 +1409,7 @@ router.post('/dashboard/edit/membershipstatus', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -1508,7 +1505,7 @@ router.post('/dashboard/edit/memberfield', function (request, response) {
     } else {
       const currentUser = reply[0]
       const updatePostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'Member',
         search: {
           memberID: currentUser.memberID
@@ -1656,7 +1653,7 @@ router.post('/dashboard/edit/memberfield', function (request, response) {
     } else {
       // Verification succeeded. Now let's make sure that the member exists before we change things
       const searchPostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'Member',
         search: {
           userName: uname
@@ -1692,7 +1689,7 @@ router.post('/dashboard/edit/memberfield', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -1754,7 +1751,7 @@ router.post('/dashboard/edit/memberdates', function (request, response) {
 
   const updateDates = function (memberData) {
     const updatePostBody = {
-      accessToken: credentials.mdbi.accessToken,
+      // accessToken: credentials.mdbi.accessToken,
       collection: 'MembershipData',
       search: {
         memberID: memberData.memberID
@@ -1908,7 +1905,7 @@ router.post('/dashboard/edit/memberdates', function (request, response) {
     } else {
       // Verification succeeded. Now let's make sure that the member exists before we change things
       const searchPostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'Member',
         search: {
           userName: uname
@@ -1944,7 +1941,7 @@ router.post('/dashboard/edit/memberdates', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -2037,7 +2034,7 @@ router.post('/dashboard/export/expiredcodes', function (request, response) {
     } else {
       // Verification succeeded. Now let's make sure that the member exists before we change things
       const aggPostBody = {
-        accessToken: credentials.mdbi.accessToken,
+        // accessToken: credentials.mdbi.accessToken,
         collection: 'MembershipData',
         pipeline: [
           {
@@ -2111,7 +2108,7 @@ router.post('/dashboard/export/expiredcodes', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -2194,7 +2191,7 @@ router.post('/dashboard/search/officerlist', function (request, response) {
       }
       case true: {
         const searchPostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'OfficerDossier',
           search: {
             $and: [
@@ -2271,7 +2268,7 @@ router.post('/dashboard/search/officerlist', function (request, response) {
       .send(ef.asCommonStr(ef.struct.invalidBody, { parameter: 'currentUser' }))
       .end()
   } else {
-    verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+    verifySession('', sessionID, verificationCallback)
   }
 })
 
@@ -2361,7 +2358,7 @@ router.post('/dashboard/search/officerabilities', function (request, response) {
       // Determine relevant endpoint using the getInfo boolean
       if (getInfo === false) {
         searchPostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'OfficerDossier',
           search: {
             memberID: officerID
@@ -2374,7 +2371,7 @@ router.post('/dashboard/search/officerabilities', function (request, response) {
         }
       } else {
         searchPostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'OfficerDossier',
           pipeline: [
             {
@@ -2433,7 +2430,7 @@ router.post('/dashboard/search/officerabilities', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -2533,7 +2530,7 @@ router.post('/dashboard/edit/officerclearance', function (request, response) {
       }
       case true: {
         const updatePostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'MembershipData',
           search: {
             memberID: officerID
@@ -2599,7 +2596,7 @@ router.post('/dashboard/edit/officerclearance', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -2684,7 +2681,7 @@ router.post('/dashboard/search/clearancelevels', function (request, response) {
       case true: {
         // Capability Verification succeeded. Now let's get a full list of clearance levels
         const searchPostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'ClearanceLevel',
           pipeline: [
             {
@@ -2761,7 +2758,7 @@ router.post('/dashboard/search/clearancelevels', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -2844,7 +2841,7 @@ router.get('/ability/getAll', function (request, response) {
       case true: {
         // Capability Verification succeeded. Now let's get a full list of abilities
         const searchPostBody = {
-          accessToken: credentials.mdbi.accessToken,
+          // accessToken: credentials.mdbi.accessToken,
           collection: 'Ability',
           pipeline: [
             {
@@ -2904,7 +2901,7 @@ router.get('/ability/getAll', function (request, response) {
     }
   }
 
-  verifySession(credentials.mdbi.accessToken, sessionID, verificationCallback)
+  verifySession('', sessionID, verificationCallback)
 })
 
 /*
@@ -3061,7 +3058,7 @@ function verifySession (token, sessionID, callbk) {
 function clearSession (token, sessionID, callback) {
   // const handlerTag = { src: 'clearSession' }
   const removalPostBody = {
-    accessToken: credentials.mdbi.accessToken,
+    // accessToken: credentials.mdbi.accessToken,
     collection: 'SessionData',
     search: {
       sessionID: sessionID
@@ -3098,7 +3095,7 @@ function isCapable (abilityList, userID, callbk, matchMode = 0) {
   const handlerTag = { src: 'isCapable' }
   let status = false
   const checkPostBody = {
-    accessToken: credentials.mdbi.accessToken,
+    // accessToken: credentials.mdbi.accessToken,
     collection: 'OfficerDossier',
     search: {
       abilities: null

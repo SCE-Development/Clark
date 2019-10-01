@@ -24,7 +24,7 @@ const dt = require(`${settings.util}/datetimes`) // import datetime utilities
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 // const crypt = require(`${settings.util}/cryptic`);  // import custom sce crypto wrappers
 // const ssl = require(settings.security) // import https ssl credentials
-const credentials = require(settings.credentials) // import server system credentials
+// const credentials = require(settings.credentials) // import server system credentials
 const www = require('./www') // import custom https request wrappers
 const logger = require(`${settings.util}/logger`) // import event log system
 
@@ -61,7 +61,7 @@ const apiutil = {}
 apiutil.verifySession = function (token, sessionID, callbk) {
   const handlerTag = { src: 'verifySession' }
   const verificationPostBody = {
-    accessToken: token,
+    // accessToken: token,
     collection: 'SessionData',
     search: {
       sessionID: sessionID
@@ -134,7 +134,7 @@ apiutil.verifySession = function (token, sessionID, callbk) {
 apiutil.clearSession = function (token, sessionID, callback) {
   // const handlerTag = { src: 'clearSession' }
   const removalPostBody = {
-    accessToken: credentials.mdbi.accessToken,
+    // accessToken: credentials.mdbi.accessToken,
     collection: 'SessionData',
     search: {
       sessionID: sessionID
@@ -171,7 +171,7 @@ apiutil.isCapable = function (abilityList, userID, callbk, matchMode = 0) {
   const handlerTag = { src: 'isCapable' }
   let status = false
   const checkPostBody = {
-    accessToken: credentials.mdbi.accessToken,
+    // accessToken: credentials.mdbi.accessToken,
     collection: 'OfficerDossier',
     search: {
       abilities: null
