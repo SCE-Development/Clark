@@ -34,25 +34,31 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
   1. In a _"main"_ directory of your choice (i.e. `cd` into `Desktop` or `Documents`), you can acquire the latest **Node.js** package in two ways:
       - **Download** from *nodejs.org*, or
       - **Install** through the command line using `apt-get` (or whatever package manager is supported by your OS, i.e. `yum`)
-  2. Verify the installation succeeded using `node -v` on command line. You should see the version of your package printed out (e.g. `v10.14.2`).
+      - Verify the installation succeeded using `node -v` on command line. You should see the version of your package printed out (e.g. `v10.14.2`).
+  2. Install Homebrew (e.g. `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`)
+      - After installing, verify by running the command: `brew upgrade && brew update`
   3. Acquire MongoDB in the main directory as well (locally on your machine).
       - If on mac:
-        - Install Homebrew (e.g. `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`)
-        - Use Homebrew to install MongoDB (e.g. `brew install mongodb`)
+        - Use Homebrew to install MongoDB:
+          - `brew tap mongodb/brew`
+          - `brew install mongodb-community`
+          - `sudo mkdir -p /data/db`
+          - `sudo chown -R 'id -un' /data/db`
       - If on Linux or Windows:
         - Download the package from the [MongoDB website](https://www.mongodb.com/)
         - Follow your OS's installation instructions listed on the [MongoDB website](https://www.mongodb.com/)
       - After installing MongoDB, initialize your database document store by creating the `/data/db` directory
-        - e.g `mkdir -p /data/db` _(Use `sudo` in front of `mkdir` if necessary)_
+        - `sudo mkdir -p /data/db` _(Use `sudo` in front of `mkdir` if necessary)_
+        - `sudo chown -R 'id -un' /data/db` _(Use `sudo` in front of `chown` if necessary)_
   4. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
   5. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
   6. Install the node dependencies: `npm install`
-  5. Go to the Core-v4 utility tools directory in terminal (i.e. `cd /path/to/your/.../Core-v4/util/tools`)
-  6. Run the system setup script: `node system_setup.js all`
+  7. Go to the Core-v4 utility tools directory in terminal (i.e. `cd /path/to/your/.../Core-v4/util/tools`)
+  8. Run the system setup script: `node system_setup.js all`
       - This script handles npm dependencies install and a check for MongoDB
-  7. In a new terminal window, run the mongo daemon by entering: `mongod`
+  9. In a new terminal window, run the mongo daemon by entering: `mongod`
       - _If you need to terminate the daemon, type `ctrl-c` and press enter_
-  8. Run the app in the root project directory using: `npm start`
+  10. Run the app in the root project directory using: `npm start`
       - The app should automatically run on port 3000 and 8080 and open in your default browser
 
 #### On a Linux VM in Windows
