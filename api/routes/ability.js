@@ -16,6 +16,8 @@
 const express = require('express')
 const router = express.Router()
 const Ability = require('../models/Ability.js')
+const settings = require('../../util/settings')
+const logger = require(`${settings.util}/logger`)
 
 const { INTERNAL_SERVER_ERROR, OK } = {
   INTERNAL_SERVER_ERROR: 500,
@@ -24,7 +26,10 @@ const { INTERNAL_SERVER_ERROR, OK } = {
 
 router.post('/getAll', (req, res) => {
   Ability.find({}, (error, abilities) => {
-    if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+    if (error) {
+      logger.log(`ability /getAll error: ${error}`)
+      return res.sendStatus(INTERNAL_SERVER_ERROR)
+    }
 
     return res.status(OK).send(abilities)
   })

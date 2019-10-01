@@ -16,6 +16,11 @@
 const express = require('express')
 const router = express.Router()
 const PrintingFormFor3DPrinting = require('../models/PrintingFormFor3DPrinting.js')
+const settings = require('../../util/settings')
+const logger = require(`${settings.util}/logger`)
+
+const passport = require('passport')
+require('../../config/passport')(passport)
 
 const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND } = {
   INTERNAL_SERVER_ERROR: 500,
@@ -36,6 +41,7 @@ router.post('/submit', (req, res) => {
 
   PrintingFormFor3DPrinting.create(data, (error, post) => {
     if (error) {
+      logger.log(`3DPrinting /submit error: ${error}`)
       return res.sendStatus(INTERNAL_SERVER_ERROR)
     }
 
@@ -45,26 +51,55 @@ router.post('/submit', (req, res) => {
 
 router.post('/GetForm', (req, res) => {
   PrintingFormFor3DPrinting.find({}, (error, forms) => {
-    if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+    if (error) {
+      logger.log(`3DPrinting /GetForm error: ${error}`)
+      return res.sendStatus(INTERNAL_SERVER_ERROR)
+    }
 
     return res.status(OK).send(forms)
   })
 })
 
 // This hasn't been used yet
-router.post('/Delete3DForm', (req, res) => {
-  PrintingFormFor3DPrinting.deleteOne({ PF3D: req.body.PF3D }, function (
-    error,
-    form
-  ) {
-    if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+router.post(
+  '/Delete3DForm',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const token = getToken(req.headers)
 
-    if (form.n < 1) {
-      res.status(NOT_FOUND).send({ message: 'Form not found.' })
-    } else {
-      res.status(OK).send({ message: `${req.body.PF3D} was deleted.` })
+    if (token) {
+      PrintingFormFor3DPrinting.deleteOne({ PF3D: req.body.PF3D }, function (
+        error,
+        form
+      ) {
+        if (error) {
+          logger.log(`3DPrinting /Delete3DForm error: ${error}`)
+          return res.sendStatus(INTERNAL_SERVER_ERROR)
+        }
+
+        if (form.n < 1) {
+          logger.log(`3DPrinting /Delete3DForm error: ${error}`)
+          res.status(NOT_FOUND).send({ message: 'Form not found.' })
+        } else {
+          logger.log(`3DPrinting /Delete3DForm deleted: ${req.body.PD3D}`)
+          res.status(OK).send({ message: `${req.body.PF3D} was deleted.` })
+        }
+      })
     }
-  })
-})
+  }
+)
+
+function getToken (headers) {
+  if (headers && headers.authorization) {
+    var parted = headers.authorization.split(' ')
+    if (parted.length === 2) {
+      return parted[1]
+    } else {
+      return null
+    }
+  } else {
+    return null
+  }
+}
 
 module.exports = router

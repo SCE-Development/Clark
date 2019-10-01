@@ -16,6 +16,8 @@
 const express = require('express')
 const router = express.Router()
 const Member = require('../models/Member.js')
+const settings = require('../../util/settings')
+const logger = require(`${settings.util}/logger`)
 
 const { INTERNAL_SERVER_ERROR, CONFLICT, OK } = {
   INTERNAL_SERVER_ERROR: 500,
@@ -31,6 +33,9 @@ router.post('/username/isAvailable', (req, res) => {
     function (error, member) {
       if (error) {
         // Bad Request
+        logger.log(
+          `MembershipApplication /username/isAvailable error: ${error}`
+        )
         return res.status(400).send({ message: 'Bad Request.' })
       }
 
@@ -53,6 +58,7 @@ router.post('/submit', async (req, res) => {
     },
     (error, member) => {
       if (error) {
+        logger.log(`MembershipApplication /submit error: ${error}`)
         return res.sendStatus(INTERNAL_SERVER_ERROR)
       }
 
@@ -67,6 +73,7 @@ router.post('/submit', async (req, res) => {
 
     Member.create(member, (error, post) => {
       if (error) {
+        logger.log(`MembershipApplication /submit error: ${error}`)
         return res.sendStatus(INTERNAL_SERVER_ERROR)
       }
 

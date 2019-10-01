@@ -10,7 +10,7 @@ const bcrypt = require('bcrypt-nodejs')
 // remove mdbi?
 // Fix the setup scripts & documentation
 // Get the second package json down to root level
-// Utilize logger.log for all the routes
+// ✔ Utilize logger.log for all the routes
 // initialize jwt for auth
 
 const MemberSchema = new Schema(
