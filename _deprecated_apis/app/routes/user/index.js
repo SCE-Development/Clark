@@ -72,43 +72,43 @@ const apiInfo = {
 //      (object) response   The web response object provided by express.js
 // @returns  On success: a code 200 and a ping message
 //     On failure: a code 499 and an error format object
-apiInfo.args.ping = [
-  // API Arguments
-]
-apiInfo.rval.ping = [
-  // API Return Values
-  {
-    condition: 'On success',
-    desc: 'a code 200 and a ping message'
-  },
-  {
-    condition: 'On failure',
-    desc: 'a code 499 and an error format object'
-  }
-]
-api.register(
-  'Ping',
-  'GET',
-  '/ping',
-  'This endpoint is used to ping the User Module API router',
-  apiInfo.args.ping,
-  apiInfo.rval.ping,
-  function (request, response) {
-    const handlerTag = { src: '(get) /api/ability/ping' }
-    logger.log(`Sending ping to client @ ip ${request.ip}`, handlerTag)
-
-    // Send PING packet
-    const pingPacket = {
-      data: 'ping!'
-    }
-
-    response.set('Content-Type', 'application/json')
-    response
-      .status(200)
-      .send(rf.asCommonStr(true, pingPacket))
-      .end()
-  }
-)
+// apiInfo.args.ping = [
+//   // API Arguments
+// ]
+// apiInfo.rval.ping = [
+//   // API Return Values
+//   {
+//     condition: 'On success',
+//     desc: 'a code 200 and a ping message'
+//   },
+//   {
+//     condition: 'On failure',
+//     desc: 'a code 499 and an error format object'
+//   }
+// ]
+// api.register(
+//   'Ping',
+//   'GET',
+//   '/ping',
+//   'This endpoint is used to ping the User Module API router',
+//   apiInfo.args.ping,
+//   apiInfo.rval.ping,
+//   function (request, response) {
+//     const handlerTag = { src: '(get) /api/ability/ping' }
+//     logger.log(`Sending ping to client @ ip ${request.ip}`, handlerTag)
+//
+//     // Send PING packet
+//     const pingPacket = {
+//       data: 'ping!'
+//     }
+//
+//     response.set('Content-Type', 'application/json')
+//     response
+//       .status(200)
+//       .send(rf.asCommonStr(true, pingPacket))
+//       .end()
+//   }
+// )
 
 // @endpoint  (GET) /help
 // @description  This endpoint sends the client documentation on this API module (User)
@@ -120,65 +120,65 @@ api.register(
 //     (object) response  The web response object provided by express.js
 // @returns   On success: a code 200, and the documentation in the specified format
 //     On failure: a code 500, and an error format object
-apiInfo.args.help = [
-  {
-    name: 'request.pretty',
-    type: '~boolean',
-    desc:
-      'An optional boolean to request a pretty HTML page of the User API doc'
-  }
-]
-apiInfo.rval.help = [
-  {
-    condition: 'On success',
-    desc: 'a code 200, and the documentation in the specified format'
-  },
-  {
-    condition: 'On failure',
-    desc: 'a code 499, and an error format object'
-  }
-]
-api.register(
-  'Help',
-  'GET',
-  '/help',
-  'This endpoint sends the client documentation on API module (User)',
-  apiInfo.args.help,
-  apiInfo.rval.help,
-  function (request, response) {
-    const handlerTag = { src: '(get) /api/user/help' }
-    const pretty = typeof request.query.pretty !== 'undefined'
-
-    try {
-      // Determine how to represent the API doc
-      if (pretty) {
-        logger.log(
-          `Sending pretty API doc to client @ ip ${request.ip}`,
-          handlerTag
-        )
-        response.set('Content-Type', 'text/html')
-      } else {
-        logger.log(`Sending API doc to client @ ip ${request.ip}`, handlerTag)
-        response.set('Content-Type', 'application/json')
-      }
-
-      // Send the API doc
-      const output = pretty
-        ? api.getDoc(true)
-        : rf.asCommonStr(true, api.getDoc(false))
-      response
-        .status(200)
-        .send(output)
-        .end()
-    } catch (exception) {
-      response.set('Content-Type', 'application/json')
-      response
-        .status(500)
-        .send(ef.asCommonStr(ef.struct.coreErr, { exception: exception }))
-        .end()
-    }
-  }
-)
+// apiInfo.args.help = [
+//   {
+//     name: 'request.pretty',
+//     type: '~boolean',
+//     desc:
+//       'An optional boolean to request a pretty HTML page of the User API doc'
+//   }
+// ]
+// apiInfo.rval.help = [
+//   {
+//     condition: 'On success',
+//     desc: 'a code 200, and the documentation in the specified format'
+//   },
+//   {
+//     condition: 'On failure',
+//     desc: 'a code 499, and an error format object'
+//   }
+// ]
+// api.register(
+//   'Help',
+//   'GET',
+//   '/help',
+//   'This endpoint sends the client documentation on API module (User)',
+//   apiInfo.args.help,
+//   apiInfo.rval.help,
+//   function (request, response) {
+//     const handlerTag = { src: '(get) /api/user/help' }
+//     const pretty = typeof request.query.pretty !== 'undefined'
+//
+//     try {
+//       // Determine how to represent the API doc
+//       if (pretty) {
+//         logger.log(
+//           `Sending pretty API doc to client @ ip ${request.ip}`,
+//           handlerTag
+//         )
+//         response.set('Content-Type', 'text/html')
+//       } else {
+//         logger.log(`Sending API doc to client @ ip ${request.ip}`, handlerTag)
+//         response.set('Content-Type', 'application/json')
+//       }
+//
+//       // Send the API doc
+//       const output = pretty
+//         ? api.getDoc(true)
+//         : rf.asCommonStr(true, api.getDoc(false))
+//       response
+//         .status(200)
+//         .send(output)
+//         .end()
+//     } catch (exception) {
+//       response.set('Content-Type', 'application/json')
+//       response
+//         .status(500)
+//         .send(ef.asCommonStr(ef.struct.coreErr, { exception: exception }))
+//         .end()
+//     }
+//   }
+// )
 
 // @endpoint  (POST) /login
 // @description  This endpoint is used to request a login of the specified user with the given
