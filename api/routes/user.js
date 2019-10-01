@@ -15,61 +15,191 @@
 // Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
 const router = express.Router()
-// const settings = require('../../util/settings')
-// const logger = require(`${settings.util}/logger`)
+// const passport = require('passport')
+// require('../../config/passport')(passport)
+const settings = require('../../util/settings')
+const logger = require(`${settings.util}/logger`)
+const jwt = require('jsonwebtoken')
+const config = require('../../config/config')
+const Member = require('../models/Member.js')
 
-router.post('/login', (req, res) => {
-  if (req.body.username) {
-    console.log(req.body.username)
-    res.sendStatus(200)
-  } else {
-    res.status(409).send({ message: 'unknown...' })
-  }
+router.post('/login', function (req, res) {
+  Member.findOne(
+    {
+      username: req.body.username.toLowerCase()
+    },
+    function (error, user) {
+      if (error) {
+        // Bad Request
+        logger.log('User API bad request: ', error)
+        return res.status(400).send({ message: 'Bad Request.' })
+      }
+
+      if (!user) {
+        // Unauthorized if the username does not match any records in the database
+        logger.log("User/pass doesn't match our records: ", user)
+        res
+          .status(401)
+          .send({ message: 'Username or password does not match our records.' })
+      } else {
+        // Check if password matches database
+        user.comparePassword(req.body.password, function (error, isMatch) {
+          if (isMatch && !error) {
+            // If the username and password matches the database, assign and
+            // return a jwt token
+            const jwtOptions = {
+              expiresIn: '2h'
+            }
+            const token = jwt.sign(user.toJSON(), config.secretKey, jwtOptions)
+            res.status(200).send({ token: 'JWT ' + token })
+          } else {
+            // Unauthorized
+            logger.log("User/pass doesn't match our records: ", user)
+            res.status(401).send({
+              message: 'Username or password does not match our records.'
+            })
+          }
+        })
+      }
+    }
+  )
 })
 
-router.post('/logout', (req, res) => {
-  if (req.body.username) {
-    console.log(req.body.username)
-    res.sendStatus(200)
-  } else {
-    res.status(409).send({ message: 'unknown...' })
-  }
+// build out
+// Registers a new user if the username is unique
+router.post('/add', function (req, res) {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(401)
+    } else {
+      // Ok
+      if (req.body.username && req.body.password) {
+        const newUser = new Member({
+          username: req.body.username.toLowerCase(),
+          password: req.body.password
+        })
+
+        const testPassword = testPasswordStrength(req.body.password)
+
+        if (!testPassword.success) {
+          // Bad Request
+          return res.status(400).send({ message: testPassword.message })
+        }
+
+        newUser.save(function (error) {
+          if (error) {
+            // Confict
+            res.status(409).send({ message: 'Username already exists.' })
+          } else {
+            // Ok
+            res.sendStatus(200)
+          }
+        })
+      }
+    }
+  })
 })
 
-router.post('/add', (req, res) => {
-  if (req.body.username) {
-    console.log(req.body.username)
-    res.sendStatus(200)
-  } else {
-    res.status(409).send({ message: 'unknown...' })
-  }
-})
-
+// build out
 router.post('/delete', (req, res) => {
-  if (req.body.username) {
-    console.log(req.body.username)
-    res.sendStatus(200)
-  } else {
-    res.status(409).send({ message: 'unknown...' })
-  }
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(401)
+    } else {
+      // Ok
+      // Delete a user
+    }
+  })
 })
 
-router.post('/search', (req, res) => {
-  if (req.body.username) {
-    console.log(req.body.username)
-    res.sendStatus(200)
-  } else {
-    res.status(409).send({ message: 'unknown...' })
-  }
+// build out
+router.post('/search', function (req, res) {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(401)
+    } else {
+      // Ok
+      // Build this out to search for a user
+      res.status(200).send(decoded.username)
+    }
+  })
 })
 
+// build out
 router.post('/edit', (req, res) => {
-  if (req.body.username) {
-    console.log(req.body.username)
-    res.sendStatus(200)
-  } else {
-    res.status(409).send({ message: 'unknown...' })
-  }
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(401)
+    } else {
+      // Ok
+      // Build this out to search for a user
+      res.status(200).send(decoded.username)
+    }
+  })
 })
+
+// Verifies the users session if they have an active jwtToken.
+// Used on the inital load of root '/'
+router.post('/verify', function (req, res) {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(401)
+    } else {
+      // Ok
+      res.sendStatus(200)
+    }
+  })
+})
+
+// Helpers
+function testPasswordStrength (password) {
+  const passwordStrength = config.passwordStrength || 'strong'
+  /* eslint-disable */
+  const strongRegex = new RegExp(
+    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
+  )
+  const strongMessage =
+    'Invalid password. Requires 1 uppercase, 1 lowercase, 1 number and 1 special character: !@#$%^&'
+
+  const mediumRegex = new RegExp(
+    '^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})'
+  )
+  const mediumMessage =
+    'invalid password. Requires 1 uppercase or lowercase and 1 number'
+  /* eslint-enable */
+
+  // test the password against the strong regex & return true if it passes
+  if (passwordStrength === 'strong') {
+    return { success: strongRegex.test(password), message: strongMessage }
+  }
+
+  // allow unrestricted passwords if strength is set to weak
+  if (passwordStrength === 'weak') {
+    return { success: true, message: '' }
+  }
+
+  // test medium password by default
+  return { success: mediumRegex.test(password), message: mediumMessage }
+}
 
 module.exports = router
