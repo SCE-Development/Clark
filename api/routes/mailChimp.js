@@ -27,7 +27,7 @@ const router = express.Router()
 // })
 
 // Use the existing API until the mailchimp API gets built out
-const settings = require('../../../../util/settings')
+const settings = require('../../util/settings')
 const al = require(`${settings.util}/api_legend.js`)
 const logger = require(`${settings.util}/logger`)
 const smci = require(`${settings.util}/../smci/smci.js`)

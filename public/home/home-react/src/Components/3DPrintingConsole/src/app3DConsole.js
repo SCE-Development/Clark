@@ -1,4 +1,3 @@
-/* global fetch */
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './app3DConsole.css'
@@ -16,11 +15,12 @@ import {
   Row,
   Col
 } from 'reactstrap'
+import axios from 'axios'
 
 export default class Example extends React.Component {
   constructor (props) {
     super(props)
-    this.toggle = this.toggle.bind(this)
+    this.handleToggle = this.handleToggle.bind(this)
     this.state = {
       collapse: false,
       forms: '',
@@ -33,15 +33,22 @@ export default class Example extends React.Component {
     this.setState({ collapse: !this.state.collapse })
   }
 
-  /// ////GET request
   callDatabase () {
-    // const url2 = "http://localhost:3000/api/PrintingFormFor3DPrinting/GetForm";
-    const url =
-      'http://' + window.location.hostname + ':3000/api/3DPrintingForm/GetForm'
-    fetch(url)
-      .then(response => response.json())
-      .then(datajson => this.setState({ data: datajson }))
-    return true
+    axios
+      .post('/api/3DPrintingForm/GetForm')
+      // .then(result => {
+      // console.log(result)
+      // result.data.json()
+      // })
+      .then(result => {
+        console.log('DATA: ', result.data)
+        this.setState({
+          data: result.data
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   requestForm (jsonObject, key) {

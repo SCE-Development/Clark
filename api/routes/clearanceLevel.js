@@ -51,7 +51,7 @@ const router = express.Router()
 //        detailing the expired session issue
 //     On any other failure: a code 500, and an error-formatted object detailing the
 //        issue
-const settings = require('../../../../util/settings') // import server system settings
+const settings = require('../../util/settings') // import server system settings
 const al = require(`${settings.util}/api_legend.js`) // import API Documentation Module
 const au = require(`${settings.util}/api_util.js`) // import API Utility Functions
 const ef = require(`${settings.util}/error_formats`) // import error formatter

@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const AbilitySchema = new Schema(
+const PrintingFormFor3DPrintingSchema = new Schema(
   {
-    PF3D: {
-      type: Number,
-      required: true
-    },
+    // PF3D: {
+    //   type: Number,
+    //   required: true
+    // },
     name: {
       type: String,
       required: true
@@ -36,7 +36,10 @@ const AbilitySchema = new Schema(
       default: Date.now
     }
   },
-  { collection: 'Ability' }
+  { collection: 'PrintingFormFor3DPrinting' }
 )
 
-module.exports = mongoose.model('Ability', AbilitySchema)
+module.exports = mongoose.model(
+  'PrintingFormFor3DPrinting',
+  PrintingFormFor3DPrintingSchema
+)
