@@ -20,9 +20,9 @@ const aboutJumbotron = props => {
   return (
     <div>
       <Jumbotron>
-        <h1 className='text-center'>
+        <div className='text-center'>
           <h1 className='display-4'>About SCE</h1>{' '}
-        </h1>
+        </div>
         <p className='lead'>
           {' '}
           SJSU Software & Computer Engineering Society is a place for students

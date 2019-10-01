@@ -27,9 +27,9 @@ class Home extends Component {
         <Slideshow className='slideshow' />
         <Jumbotron />
 
-        <h1 className='text-center'>
+        <div className='text-center'>
           <h1 className='display-4'>SCE Events Calendar</h1>{' '}
-        </h1>
+        </div>
         <p className='lead text-center'>
           {' '}
           Add SCE Calendar to your own by clicking the Google Calendar icon on

@@ -95,6 +95,14 @@ class Slideshow extends Component {
     this.animating = false
   }
 
+  onNext () {
+    this.handleNext()
+  }
+
+  onPrevious () {
+    this.handlePrevious()
+  }
+
   handleNext () {
     if (this.animating) return
     const nextIndex =
@@ -153,8 +161,8 @@ class Slideshow extends Component {
         </style>
         <Carousel
           activeIndex={activeIndex}
-          next={this.next}
-          previous={this.previous}
+          next={this.onNext}
+          previous={this.onPrevious}
         >
           <CarouselIndicators
             items={items}

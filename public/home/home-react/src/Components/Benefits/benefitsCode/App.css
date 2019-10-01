@@ -21,8 +21,11 @@
   display: inline-block;
   //border: 2px solid yellow;
   margin: 20px;
-  text-align: center;
+  /* text-align: center; */
   position:fix;
+}
+.sec li {
+  text-align: left;
 }
 
 .services{

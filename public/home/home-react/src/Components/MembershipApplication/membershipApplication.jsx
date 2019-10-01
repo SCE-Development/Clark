@@ -3,9 +3,6 @@ import './membershipApplication.css'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import axios from 'axios'
 
-// require('es6-promise').polyfill()
-// require('isomorphic-fetch')
-
 export default class MembershipApplication extends React.Component {
   // @ctor
   constructor (props) {
@@ -117,15 +114,14 @@ export default class MembershipApplication extends React.Component {
               usernameCheckResult: 'Username is available',
               usernameCheckResultIcon: '✔'
             })
-          } else {
-            this.setState({
-              usernameCheckClass: 'username-availability unavailable',
-              usernameCheckResult: 'Username is unavailable',
-              usernameCheckResultIcon: '✘'
-            })
           }
       })
       .catch(err => {
+        this.setState({
+          usernameCheckClass: 'username-availability unavailable',
+          usernameCheckResult: 'Username is unavailable',
+          usernameCheckResultIcon: '✘'
+        })
         console.log(err)
       })
   }
@@ -140,67 +136,6 @@ export default class MembershipApplication extends React.Component {
     this.setState({
       username: e.target.value
     })
-
-    // fetch(`/api/membershipApplication/username/isAvailable?username=${tempState.username}`)
-    //   .then(response => {
-    //     if (response && response.status < 300) {
-    //       // Create a copy of the current state
-    //       var tempState2 = Object.assign(me.state)
-    //
-    //       // Check if a username was found
-    //       if (JSON.parse(response.text).content.isAvailable) {
-    //         // Show that the username is available
-    //         tempState2.usernameCheckClass = 'username-availability available'
-    //         tempState2.usernameCheckResult = 'Username is available'
-    //         tempState2.usernameCheckResultIcon = '✔'
-    //       } else {
-    //         // Show that the username is not available
-    //         tempState2.usernameCheckClass = 'username-availability unavailable'
-    //         tempState2.usernameCheckResult = 'Username is unavailable'
-    //         tempState2.usernameCheckResultIcon = '✘'
-    //       }
-    //
-    //       // Update state
-    //       me.setState(tempState2)
-    //     } else {
-    //       // Failure
-    //       // TODO: Respond with error
-    //       console.log(response.status)
-    //     }
-    //   })
-
-    // Check if the username is available by querying the server
-    // var request = require('superagent')
-    // request.get(
-    //   'api/membershipApplication/username/isAvailable?username=' + tempState.username
-    // ).set('Content-Type', 'application/json;charset=utf-8')
-    //   .send()
-    //   .end(function (err, response) {
-    //     if (response && response.status < 300) {
-    //       // Create a copy of the current state
-    //       var tempState2 = Object.assign(me.state)
-    //
-    //       // Check if a username was found
-    //       if (JSON.parse(response.text).content.isAvailable) {
-    //         // Show that the username is available
-    //         tempState2.usernameCheckClass = 'username-availability available'
-    //         tempState2.usernameCheckResult = 'Username is available'
-    //         tempState2.usernameCheckResultIcon = '✔'
-    //       } else {
-    //         // Show that the username is not available
-    //         tempState2.usernameCheckClass = 'username-availability unavailable'
-    //         tempState2.usernameCheckResult = 'Username is unavailable'
-    //         tempState2.usernameCheckResultIcon = '✘'
-    //       }
-    //
-    //       // Update state
-    //       me.setState(tempState2)
-    //     } else {
-    //       // Failure
-    //       // TODO: Respond with error
-    //       console.log(err)
-    //     }
-    //   })
   }
 
   // @function        mutatePassword()
@@ -271,39 +206,6 @@ export default class MembershipApplication extends React.Component {
 
     // Only proceed to submit if all required fields are present
     if (!lacksRequiredFields) {
-      // var request = require('superagent')
-      // // var page = this
-      // request.post('/api/membershipApplication/submit'
-      // ).set('Content-Type', 'application/json;charset=utf-8')
-      //   .send({
-      //     firstName: this.state.firstName,
-      //     middleInitial: this.state.middleInitial,
-      //     lastName: this.state.lastName,
-      //     email: this.state.email,
-      //     username: this.state.username,
-      //     password: this.state.password,
-      //     major: this.state.major
-      //   })
-      //   .end(function (err, response) {
-      //     if (response && response.status < 300) {
-      //       // Create a copy of the current state
-      //       var tempState = Object.assign(this.state)
-      //
-      //       // Modify state to signal a close of the form,
-      //       // and a reveal of a success message that provides the user
-      //       // with further instructions
-      //       tempState.successfullyApplied = true
-      //
-      //       // Set state
-      //       this.setState(tempState)
-      //     } else {
-      //       // Failure
-      //       // TODO: Respond with error
-      //       window.alert('(X.X)\tA submission error occurred. Please contact the site administrator')
-      //       console.error(err)
-      //     }
-      //   }.bind(this))
-
         axios
           .post('/api/membershipApplication/submit', {
             firstName: this.state.firstName,
@@ -322,8 +224,13 @@ export default class MembershipApplication extends React.Component {
               }
           })
           .catch(err => {
-            window.alert('A submission error occurred. Please contact the site administrator')
-            console.error(err)
+            if (err.response.status === 409) {
+              window.alert('Username or Email already exists in the system.')
+            } else {
+              console.error(err)
+            }
+            // window.alert('A submission error occurred. Please contact the site administrator')
+
           })
     }
   }

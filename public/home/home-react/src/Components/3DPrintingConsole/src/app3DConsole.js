@@ -29,6 +29,10 @@ export default class Example extends React.Component {
     }
   }
 
+  componentDidMount () {
+    this.callDatabase()
+  }
+
   handleToggle () {
     this.setState({ collapse: !this.state.collapse })
   }
@@ -41,7 +45,6 @@ export default class Example extends React.Component {
       // result.data.json()
       // })
       .then(result => {
-        console.log('DATA: ', result.data)
         this.setState({
           data: result.data
         })
@@ -113,8 +116,7 @@ export default class Example extends React.Component {
           <br />
 
           <br />
-          {this.callDatabase()}
-          {this.state.data.map((item, key) => this.request_form(item, key))}
+          {/* this.state.data.map((item, key) => this.request_form(item, key)) */}
         </Form>
       </Container>
     )

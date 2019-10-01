@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 const bcrypt = require('bcrypt-nodejs')
 
 // TODO:
-// Create models for everything else thats needed
+// ✔ Create models for everything else thats needed
 // Create routes for everything else thats needed
 // Clean up commented code
 // remove _deprecated_apis

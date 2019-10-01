@@ -49,7 +49,7 @@ router.post('/submit', async (req, res) => {
   // Use email to check if a user already exists
   const memberAlreadyExists = await Member.find(
     {
-      email: req.body.email
+      $or: [{ email: req.body.email }, { username: req.body.username }]
     },
     (error, member) => {
       if (error) {

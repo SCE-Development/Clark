@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Card, CardImg, CardText, CardTitle, Button } from 'reactstrap'
+import { Card, CardImg, CardTitle, Button } from 'reactstrap'
 // import Iframe from 'react-iframe'
 import './App.css'
 import './card-config.css'
@@ -14,13 +14,13 @@ class App extends Component {
       <div className='tab'>
         <div className='App'>
           <div>
-            <h1 className='text-center' id='title'>
+            <div className='text-center' id='title'>
               <h1 className='display-4'>sce services for members</h1>{' '}
-            </h1>
+            </div>
           </div>
 
           <div className='sec sec1'>
-            <h1 className='secN' />
+            {/* <h1 className='secN' /> */}
             <div className='services'>
               <Card id='shop' body outline color='secondary'>
                 <CardTitle className='title'>SCE Shop</CardTitle>
@@ -29,13 +29,11 @@ class App extends Component {
                   src={require('../img/shop.png')}
                   alt='Shop'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>Snacks and beverages</li>
-                    <li>Frozen food</li>
-                    <li>Lab supplies (ICs, Arduino Uno, wires, etc.)</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>Snacks and beverages</li>
+                  <li>Frozen food</li>
+                  <li>Lab supplies (ICs, Arduino Uno, wires, etc.)</li>
+                </ul>
                 <Button className='button' id='bshop'>
                   Shop
                 </Button>
@@ -50,12 +48,10 @@ class App extends Component {
                   src={require('../img/locker.png')}
                   alt='Locker'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>$10 per person</li>
-                    <li>3 members per locker</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>$10 per person</li>
+                  <li>3 members per locker</li>
+                </ul>
                 <Button className='button' id='blocker'>
                   Rent
                 </Button>
@@ -70,14 +66,12 @@ class App extends Component {
                   src={require('../img/techw.png')}
                   alt='technical workshop'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>Web design</li>
-                    <li>Git workshop</li>
-                    <li>linux workshop</li>
-                    <li>Bash and Shell workshop, etc.</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>Web design</li>
+                  <li>Git workshop</li>
+                  <li>linux workshop</li>
+                  <li>Bash and Shell workshop, etc.</li>
+                </ul>
                 <Button className='button' id='btechw'>
                   View
                 </Button>
@@ -86,7 +80,7 @@ class App extends Component {
           </div>
 
           <div className='sec sec2'>
-            <h1 className='secN' />
+            {/* <h1 className='secN' /> */}
             <div className='services'>
               <Card id='d2' body outline color='success'>
                 <CardTitle className='title'>2D-Printing Service</CardTitle>
@@ -95,12 +89,10 @@ class App extends Component {
                   src={require('../img/printer.png')}
                   alt='Printer-2D'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>30-pages limit per week</li>
-                    <li>Reset every Sunday</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>30-pages limit per week</li>
+                  <li>Reset every Sunday</li>
+                </ul>
                 <Button className='button' id='bd2'>
                   Print
                 </Button>
@@ -115,11 +107,9 @@ class App extends Component {
                   src={require('../img/3d-printer.png')}
                   alt='Printer-3D'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>3D print services for SCE members</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>3D print services for SCE members</li>
+                </ul>
                 <Button className='button' id='bd3'>
                   Print
                 </Button>
@@ -134,14 +124,12 @@ class App extends Component {
                   src={require('../img/clock.png')}
                   alt='after'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>
-                      Available studying room and hangout space with friends
-                    </li>
-                    <li>We also host party, movie, and game nights</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>
+                    Available studying room and hangout space with friends
+                  </li>
+                  <li>We also host party, movie, and game nights</li>
+                </ul>
                 <Button className='button' id='bafter'>
                   View
                 </Button>
@@ -150,7 +138,7 @@ class App extends Component {
           </div>
 
           <div className='sec sec3'>
-            <h1 className='secN' />
+            {/* <h1 className='secN' /> */}
             <div className='services'>
               <Card id='hardware' body outline color='warning'>
                 <CardTitle className='title'>
@@ -161,13 +149,11 @@ class App extends Component {
                   src={require('../img/hardware.png')}
                   alt='Hardware Station'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>ESD benches</li>
-                    <li>Soldering tools, Soldering irons, and fume fans</li>
-                    <li>Power supplies and multimeters</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>ESD benches</li>
+                  <li>Soldering tools, Soldering irons, and fume fans</li>
+                  <li>Power supplies and multimeters</li>
+                </ul>
                 <Button className='button' id='bhardware'>
                   Start Hacking
                 </Button>
@@ -182,12 +168,10 @@ class App extends Component {
                   src={require('../img/monitor.png')}
                   alt='Monitor'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>Every table at SCE comes with a monitor for you</li>
-                    <li>Keyboards available at request</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>Every table at SCE comes with a monitor for you</li>
+                  <li>Keyboards available at request</li>
+                </ul>
                 <Button className='button' id='bmonitor'>
                   Monitor
                 </Button>
@@ -202,14 +186,12 @@ class App extends Component {
                   src={require('../img/cart.png')}
                   alt='equipment'
                 />
-                <CardText id='text'>
-                  <ul>
-                    <li>Keyboards</li>
-                    <li>linux laptops</li>
-                    <li>Ethernet cables</li>
-                    <li>Logic analyzers, etc.</li>
-                  </ul>
-                </CardText>
+                <ul>
+                  <li>Keyboards</li>
+                  <li>linux laptops</li>
+                  <li>Ethernet cables</li>
+                  <li>Logic analyzers, etc.</li>
+                </ul>
                 <Button className='button' id='bequipm'>
                   Checkout
                 </Button>

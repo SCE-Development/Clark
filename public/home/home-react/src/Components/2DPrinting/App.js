@@ -79,18 +79,18 @@ export default class Printing extends React.Component {
     return (
       <div>
         <Jumbotron>
-          <h1 className='text-center'>
+          <div className='text-center'>
             <h1 className='display-4'>SCE Printing System</h1>{' '}
-          </h1>
-          <p className='text-center'>
+          </div>
+          <div className='text-center'>
             <p className='lead'>
               {' '}
               Click on the icon below and upload your file{' '}
             </p>
-          </p>
-          <p className='text-center'>
+          </div>
+          <div className='text-center'>
             <p className='lead'> Printing may take up to 5 mins </p>
-          </p>
+          </div>
         </Jumbotron>
 
         {/* }
@@ -99,7 +99,7 @@ export default class Printing extends React.Component {
           </button>
           */}
 
-        <button clear className='ICON' onClick={this.handleToggle}>
+        <button className='ICON' onClick={this.handleToggle}>
           {this.props.buttonLabel}
           <Ionicon icon='md-print' fontSize='400px' color='#757575' />
         </button>

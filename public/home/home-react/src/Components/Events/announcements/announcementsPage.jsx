@@ -88,8 +88,8 @@ export default class AnnouncementsPage extends React.Component {
                     <CardTitle>{event.eventName}</CardTitle>
                     <CardText>{event.eventDescription}</CardText> */}
         <Col sm='12' style={{ paddingTop: 10 }}>
-          {this.state.publishedEvents.map((event) => (
-            <Card body className='text-center' key={event._id}>
+          {this.state.publishedEvents.map((event, index) => (
+            <Card body className='text-center' key={index}>
 
               <CardTitle>{event.eventName}</CardTitle>
               <CardText>{event.eventDescription}</CardText>
