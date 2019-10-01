@@ -44,29 +44,16 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
         - Follow your OS's installation instructions listed on the [MongoDB website](https://www.mongodb.com/)
       - After installing MongoDB, initialize your database document store by creating the `/data/db` directory
         - e.g `mkdir -p /data/db` _(Use `sudo` in front of `mkdir` if necessary)_
-  4. In a new terminal window, run the mongo daemon by entering: `mongod`
-      - _If you need to terminate the daemon, type `ctrl-c` and press enter_
-  5. In a new terminal, run the mongo shell by entering: `mongo`
-      - _If you need to exit the shell, type `quit()` and press enter_
-  6. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
-  7. Go to the Core-v4 utility tools directory in terminal (i.e. `cd /path/to/your/.../Core-v4/util/tools`)
-  8. Run the system setup script: `node system_setup.js all`
+  4. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
+  5. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
+  6. Install the node dependencies: `npm install`
+  5. Go to the Core-v4 utility tools directory in terminal (i.e. `cd /path/to/your/.../Core-v4/util/tools`)
+  6. Run the system setup script: `node system_setup.js all`
       - This script handles npm dependencies install and a check for MongoDB
-  9. Setup the server's MongoDB user account:
-      - In another terminal window, run the mongo shell by entering `mongo`
-        - If the terminal shows a port error, explicitly specify the port number by running `mongo --port 27017`
-        - If the shell responds with `1`, authentication succeeded; otherwise, your credentials are invalid or the administrator account was not setup correctly
-      - Enter the sce database by entering `use sce_core`
-      - Create the `scedb` user with readWrite roles for `sce_core` _(use the mdbi password from credentials.json)_:
-        ```
-        db.createUser(
-          {
-            user: "scedb",
-            pwd: "@sce123",
-            roles: [ { role: "readWrite", db: "sce_core" } ]
-          }
-        )
-        ```
+  7. In a new terminal window, run the mongo daemon by entering: `mongod`
+      - _If you need to terminate the daemon, type `ctrl-c` and press enter_
+  8. Run the app in the root project directory using: `npm start`
+      - The app should automatically run on port 3000 and 8080 and open in your default browser
 
 #### On a Linux VM in Windows
 

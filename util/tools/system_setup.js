@@ -92,11 +92,7 @@ if (args.length <= 2) {
       } else {
         // If only the command was given, assume "default" credentials are requested and
         // run the setup scripts using prescribed defaults. First, acquire NodeJS modules
-        setupNodeModules()
-          .then(function () {
-            // If the npm install completed, then run the credentials setup
-            return setupCredentials()
-          })
+        setupCredentials()
           .then(function () {
             // If security configuration completed, run MongoDB installation
             return checkMongoDB()
@@ -201,39 +197,6 @@ function setupCredentials () {
         reject(new Error(error))
       } else {
         // Otherwise, proceed
-        if (stdout && options.verbose) console.log('STDOUT:', stdout)
-        if (stderr && options.verbose) console.log('STDERR:', stderr)
-        colorLog('COMPLETE\n', {
-          theme: 'complete',
-          append: '\n\n'
-        })
-        resolve()
-      }
-    })
-  })
-}
-
-// @function  setupNodeModules
-// @description  This function returns a Promise that runs the "npm install" command to install
-//     the required NodeJS libraries and packages
-// @parameters  n/a
-// @returns   (Promise)
-function setupNodeModules () {
-  // Return a promise
-  return new Promise(function (resolve, reject) {
-    // Run a command to install all node modules
-    colorLog('Installing NodeJS modules...\n')
-    cp.exec('npm install', function (error, stdout, stderr) {
-      // Check for errors
-      if (error) {
-        // If error, throw error
-        colorLog('FAILURE (setupNodeModules)\n', {
-          theme: 'danger',
-          style: ['bold']
-        })
-        reject(new Error(error))
-      } else {
-        // Othwerwise, proceed to create security conifg file
         if (stdout && options.verbose) console.log('STDOUT:', stdout)
         if (stderr && options.verbose) console.log('STDERR:', stderr)
         colorLog('COMPLETE\n', {
