@@ -14,7 +14,7 @@
 // Includes
 const fs = require('fs')
 const ejs = require('ejs') // embedded javascript library
-const settings = require('../../settings.js') // import server settings
+const settings = require('../../../util/settings.js') // import server settings
 const logger = require(`${settings.util}/logger`)
 const path = require('path')
 const defaultTemplate = path.join(__dirname, '/template/docTemplate.ejs') // default ApiLegend template

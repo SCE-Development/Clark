@@ -82,6 +82,8 @@ class Slideshow extends Component {
     this.state = { activeIndex: 0 }
     this.handleNext = this.handleNext.bind(this)
     this.handlePrevious = this.handlePrevious.bind(this)
+    this.onNext = this.handleNext.bind(this)
+    this.onPrevious = this.handlePrevious.bind(this)
     this.handleGoToIndex = this.handleGoToIndex.bind(this)
     this.handleOnExiting = this.handleOnExiting.bind(this)
     this.handleOnExited = this.handleOnExited.bind(this)

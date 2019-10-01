@@ -23,7 +23,7 @@ function init () {
 
 // BEGIN jquery controllers
 $('#submitBtn').on('click', function () {
-  const uri = 'https://localhost:8080/core/login' // change later
+  const uri = 'http://localhost:8080/core/login' // change later
   const packet = {
     user: $('#usr').val(),
     pwd: $('#pwd').val(),

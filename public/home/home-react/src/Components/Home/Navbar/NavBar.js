@@ -129,7 +129,7 @@ class NavBar extends Component {
                 </UncontrolledDropdown>
                 <NavItem>
                   {/* Change below to actual login page later */}
-                  <NavLink href='https://localhost:8080/core/'>Login</NavLink>
+                  <NavLink href='http://localhost:8080/core/'>Login</NavLink>
                 </NavItem>
               </>
             )}

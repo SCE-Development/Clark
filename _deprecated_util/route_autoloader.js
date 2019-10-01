@@ -18,7 +18,7 @@
 
 // Includes
 // const express = require('express')
-const settings = require('./settings.js')
+const settings = require('../util/settings.js')
 const ef = require(`${settings.util}/error_formats`)
 const logger = require(`${settings.util}/logger`)
 const fs = require('fs')

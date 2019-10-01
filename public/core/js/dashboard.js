@@ -15,9 +15,9 @@ const storageOk = storageAvailable('sessionStorage')
 const dbgMode = true // changes relevant parameters when doing debugging
 const hostname = dbgMode ? 'localhost:8080' : 'sce.engr.sjsu.edu'
 const urls = {
-  logout: `https://${hostname}/core/logout`,
-  search: `https://${hostname}/mdbi/search/documents`,
-  corePortal: `https://${hostname}/core`
+  logout: `http://${hostname}/core/logout`,
+  search: `http://${hostname}/mdbi/search/documents`,
+  corePortal: `http://${hostname}/core`
 }
 
 // BEGIN init

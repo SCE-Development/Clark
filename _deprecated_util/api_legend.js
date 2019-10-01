@@ -12,9 +12,9 @@
 'use strict'
 
 // Includes
-const settings = require('./settings')
+// const settings = require('../util/settings')
 // const logger = require(`${settings.util}/logger`)
-const ApiLegend = require(`${settings.util}/class/ApiLegend/ApiLegend.js`) // class ApiLegend
+const ApiLegend = require('./class/ApiLegend/ApiLegend.js') // class ApiLegend
 
 // Containers
 const al = {}

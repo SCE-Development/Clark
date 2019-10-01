@@ -22,7 +22,7 @@ const ef = require(`${settings.util}/error_formats`) // import error formatter
 const crypt = require(`${settings.util}/cryptic`) // import custom sce crypto wrappers
 // const ssl = require(settings.security) // import https ssl credentials
 const credentials = require(settings.credentials) // import server system credentials
-const www = require(`${settings.util}/www`) // import custom https request wrappers
+const www = require(`${settings.util}/../_deprecated_util/www`) // import custom https request wrappers
 const logger = require(`${settings.util}/logger`) // import event log system
 
 // Options
@@ -130,7 +130,7 @@ router.post('/login', function (request, response) {
     }
 
     // Update member's last-login date here
-    www.https.post(memberUpdateOptions, memberUpdateBody, function (
+    www.http.post(memberUpdateOptions, memberUpdateBody, function (
       reply,
       error
     ) {
@@ -140,7 +140,7 @@ router.post('/login', function (request, response) {
         logger.log(`Member lastLogin update failed: ${error}`, handlerTag)
         reject()
       } else {
-        const redir = `https://${request.hostname}:${settings.port}/core/dashboard`
+        const redir = `http://${request.hostname}:${settings.port}/core/dashboard`
 
         // Give client their session id and client redirection headers here
         console.log(`UPDATED: ${JSON.stringify(match.list)}`)
@@ -191,7 +191,7 @@ router.post('/login', function (request, response) {
     }
 
     // Submit session id to mongodb here
-    www.https.post(sessionRequestOptions, sessionDataBody, function (
+    www.http.post(sessionRequestOptions, sessionDataBody, function (
       reply,
       error
     ) {
@@ -259,7 +259,7 @@ router.post('/login', function (request, response) {
     }
 
     // Submit credentials to mdbi/search/documents and find all matches
-    www.https.post(queryOptions, requestBody, function (reply, error) {
+    www.http.post(queryOptions, requestBody, function (reply, error) {
       match.list = reply // is expected to be an array
       // const matchFound = false
 
@@ -435,7 +435,7 @@ router.post('/dashboard', function (request, response) {
         })
       }
 
-      response.location(`https://${request.hostname}:${settings.port}/core/`)
+      response.location(`http://${request.hostname}:${settings.port}/core/`)
       response.sendFile('core/core.html', options, function (error) {
         if (error) {
           logger.log(error, handlerTag)
@@ -669,7 +669,7 @@ router.post('/dashboard/search/members', function (request, response) {
           .end()
       } else {
         // Search with MDBI here...
-        www.https.post(
+        www.http.post(
           searchPostOptions,
           searchPostBody,
           mdbiSearchCallback,
@@ -821,7 +821,7 @@ router.post('/dashboard/search/memberdata', function (request, response) {
           `Authorization verified. Now acquiring membership data for ID ${typeof mID} ${mID}`,
           handlerTag
         )
-        www.https.post(
+        www.http.post(
           searchPostOptions,
           searchPostBody,
           mdbiSearchCallback,
@@ -927,7 +927,7 @@ router.post('/dashboard/search/dc', function (request, response) {
         'Authorization verified. Now acquiring door code data',
         handlerTag
       )
-      www.https.post(
+      www.http.post(
         searchPostOptions,
         searchPostBody,
         mdbiSearchCallback,
@@ -1098,7 +1098,7 @@ router.post('/dashboard/edit/dc', function (request, response) {
 
         // If there's only one user, then this must be the user to edit. Let's go ahead and update this user, now
         logger.log(`Updating member "${uname}"'s door code data`, handlerTag)
-        www.https.post(
+        www.http.post(
           updatePostOptions,
           updatePostBody,
           mdbiUpdateCallback,
@@ -1163,7 +1163,7 @@ router.post('/dashboard/edit/dc', function (request, response) {
         `Authorization verified. Ensuring member "${uname}" exists`,
         handlerTag
       )
-      www.https.post(
+      www.http.post(
         searchPostOptions,
         searchPostBody,
         mdbiSearchCallback,
@@ -1333,7 +1333,7 @@ router.post('/dashboard/edit/membershipstatus', function (request, response) {
 
         // If there's only one user, then this must be the user to edit. Let's go ahead and update this user, now
         logger.log(`Updating member "${uname}"'s membership status`, handlerTag)
-        www.https.post(
+        www.http.post(
           updatePostOptions,
           updatePostBody,
           mdbiUpdateCallback,
@@ -1403,7 +1403,7 @@ router.post('/dashboard/edit/membershipstatus', function (request, response) {
         `Authorization verified. Ensuring member "${uname}" exists`,
         handlerTag
       )
-      www.https.post(
+      www.http.post(
         searchPostOptions,
         searchPostBody,
         mdbiSearchCallback,
@@ -1534,7 +1534,7 @@ router.post('/dashboard/edit/memberfield', function (request, response) {
         JSON.stringify(updatePostBody)
       )
       logger.log(`Updating member "${uname}"'s ${field}`, handlerTag)
-      www.https.post(
+      www.http.post(
         updatePostOptions,
         updatePostBody,
         mdbiUpdateCallback,
@@ -1683,7 +1683,7 @@ router.post('/dashboard/edit/memberfield', function (request, response) {
         `Authorization verified. Ensuring member "${uname}" exists`,
         handlerTag
       )
-      www.https.post(
+      www.http.post(
         searchPostOptions,
         searchPostBody,
         mdbiSearchCallback,
@@ -1786,7 +1786,7 @@ router.post('/dashboard/edit/memberdates', function (request, response) {
     if (someDataExists) {
       // Member search succeeded. Now to actually perform the update
       logger.log(`Updating member "${memberData.userName}"`, handlerTag)
-      www.https.post(updatePostOptions, updatePostBody, updateCallback)
+      www.http.post(updatePostOptions, updatePostBody, updateCallback)
     } else {
       const returnval = {
         status: 'success',
@@ -1935,7 +1935,7 @@ router.post('/dashboard/edit/memberdates', function (request, response) {
         `Authorization verified. Ensuring member "${uname}" exists`,
         handlerTag
       )
-      www.https.post(
+      www.http.post(
         searchPostOptions,
         searchPostBody,
         mdbiSearchCallback,
@@ -2102,7 +2102,7 @@ router.post('/dashboard/export/expiredcodes', function (request, response) {
         'Authorization verified. Acquiring codes of expired members',
         handlerTag
       )
-      www.https.post(
+      www.http.post(
         aggPostOptions,
         aggPostBody,
         mdbiAggregateCallback,
@@ -2233,7 +2233,7 @@ router.post('/dashboard/search/officerlist', function (request, response) {
           'Authorization verified. Acquiring codes of expired members',
           handlerTag
         )
-        www.https.post(
+        www.http.post(
           searchPostOptions,
           searchPostBody,
           mdbiSearchCallback,
@@ -2424,7 +2424,7 @@ router.post('/dashboard/search/officerabilities', function (request, response) {
         `Authorization verified. Acquiring ability details for officer #${officerID}`,
         handlerTag
       )
-      www.https.post(
+      www.http.post(
         searchPostOptions,
         searchPostBody,
         mdbiSearchCallback,
@@ -2560,7 +2560,7 @@ router.post('/dashboard/edit/officerclearance', function (request, response) {
           'Authorization verified. Processing clearance level change',
           handlerTag
         )
-        www.https.post(
+        www.http.post(
           updatePostOptions,
           updatePostBody,
           mdbiUpdateCallback,
@@ -2729,7 +2729,7 @@ router.post('/dashboard/search/clearancelevels', function (request, response) {
           'Authorization verified. Acquiring clearance level list...',
           handlerTag
         )
-        www.https.post(
+        www.http.post(
           searchPostOptions,
           searchPostBody,
           mdbiSearchCallback,
@@ -2872,7 +2872,7 @@ router.get('/ability/getAll', function (request, response) {
           'Authorization verified. Acquiring available ability list...',
           handlerTag
         )
-        www.https.post(
+        www.http.post(
           searchPostOptions,
           searchPostBody,
           mdbiSearchCallback,
@@ -3013,7 +3013,7 @@ function verifySession (token, sessionID, callbk) {
   }
 
   // Check to make sure that the submitted sessionID is in the session database, and that it has not passed its maxIdleTime since its last activity
-  www.https.post(verificationPostOptions, verificationPostBody, function (
+  www.http.post(verificationPostOptions, verificationPostBody, function (
     reply,
     error
   ) {
@@ -3078,7 +3078,7 @@ function clearSession (token, sessionID, callback) {
     }
   }
 
-  www.https.post(removalPostOptions, removalPostBody, callback)
+  www.http.post(removalPostOptions, removalPostBody, callback)
 }
 
 /*
@@ -3158,7 +3158,7 @@ function isCapable (abilityList, userID, callbk, matchMode = 0) {
 
   // Run database query if nothing went wrong
   if (status !== -1) {
-    www.https.post(checkPostOptions, checkPostBody, function (reply, error) {
+    www.http.post(checkPostOptions, checkPostBody, function (reply, error) {
       logger.log(
         `${reply.length} ${reply.length === 1 ? 'result' : 'results'} found`,
         handlerTag

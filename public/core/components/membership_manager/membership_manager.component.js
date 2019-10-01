@@ -19,7 +19,7 @@ angular.module('membershipmanager').component('membershipmanager', {
     const dbgMode = true
     const hostname = dbgMode ? 'localhost:8080' : 'sce.engr.sjsu.edu'
     const urls = {
-      editMemberDates: `https://${hostname}/core/dashboard/edit/memberdates`
+      editMemberDates: `http://${hostname}/core/dashboard/edit/memberdates`
     }
     let jdate = new Date(Date.now())
     let sdate = new Date(Date.now())

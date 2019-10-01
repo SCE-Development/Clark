@@ -16,8 +16,8 @@ angular.module('doorcoder').component('doorcoder', {
     var dbgMode = true // changes relevant parameters when doing debugging
     var hostname = dbgMode ? 'localhost:8080' : 'sce.engr.sjsu.edu'
     var links = {
-      doorCodeGetAll: `https://${hostname}/core/dashboard/search/dc`,
-      doorCodeEdit: `https://${hostname}/core/dashboard/edit/dc`
+      doorCodeGetAll: `http://${hostname}/core/dashboard/search/dc`,
+      doorCodeEdit: `http://${hostname}/core/dashboard/edit/dc`
     }
 
     // BEGIN model

@@ -19,7 +19,7 @@ angular.module('memberlist').component('memberlist', {
     var dbgMode = true
     var hostname = dbgMode ? 'localhost:8080' : 'sce.engr.sjsu.edu'
     var urls = {
-      search: `https://${hostname}/core/dashboard/search/members`
+      search: `http://${hostname}/core/dashboard/search/members`
     }
 
     // BEGIN Model Data

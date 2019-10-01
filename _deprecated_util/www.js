@@ -12,7 +12,7 @@
 
 // Includes
 const http = require('http')
-const logger = require('./logger') // import event log system
+const logger = require('../util/logger') // import event log system
 
 // Container (Singleton)
 const www = {

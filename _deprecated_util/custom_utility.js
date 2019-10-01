@@ -9,7 +9,7 @@
 //      n/a
 
 'use strict'
-const settings = require('./settings')
+const settings = require('../util/settings')
 const logger = require(`${settings.util}/logger`)
 
 // Singleton Container

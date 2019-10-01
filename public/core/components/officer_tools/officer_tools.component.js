@@ -21,7 +21,7 @@ angular.module('officertools').component('officertools', {
     var hostname = dbgMode ? 'localhost:8080' : 'sce.engr.sjsu.edu'
     var host = window.location.hostname
     var urls = {
-      exportExpiredCodes: `https://${hostname}/core/dashboard/export/expiredcodes`,
+      exportExpiredCodes: `http://${hostname}/core/dashboard/export/expiredcodes`,
       officerProcedures:
         'https://docs.google.com/document/d/1QSzIZJMYxSxh1gFspEfgXpe3luh0vifudv5D8a3IG18/edit',
       officerTraining:

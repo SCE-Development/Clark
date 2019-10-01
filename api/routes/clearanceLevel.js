@@ -52,13 +52,13 @@ const router = express.Router()
 //     On any other failure: a code 500, and an error-formatted object detailing the
 //        issue
 const settings = require('../../util/settings') // import server system settings
-const al = require(`${settings.util}/api_legend.js`) // import API Documentation Module
-const au = require(`${settings.util}/api_util.js`) // import API Utility Functions
+const al = require(`${settings.util}/../_deprecated_util/api_legend.js`) // import API Documentation Module
+const au = require(`${settings.util}/../_deprecated_util/api_util.js`) // import API Utility Functions
 const ef = require(`${settings.util}/error_formats`) // import error formatter
-const rf = require(`${settings.util}/response_formats`) // import response formatter
+const rf = require(`${settings.util}/../_deprecated_util/response_formats`) // import response formatter
 const logger = require(`${settings.util}/logger`) // import event log system
 const credentials = require(settings.credentials) // import server system credentials
-const www = require(`${settings.util}/www`) // import custom https request wrappers
+const www = require(`${settings.util}/../_deprecated_util/www`) // import custom https request wrappers
 const api = al.createLegend(
   'Clearance Level',
   'This API provides control over clearance levels',
@@ -227,7 +227,7 @@ api.register(
             'Authorization verified. Acquiring available clearance level list...',
             handlerTag
           )
-          www.https.post(
+          www.http.post(
             searchPostOptions,
             searchPostBody,
             mdbiSearchCallback,
@@ -534,7 +534,7 @@ api.register(
           'Authorization verified. Searching clearance levels...',
           handlerTag
         )
-        www.https.post(
+        www.http.post(
           searchPostOptions,
           searchPostBody,
           mdbiSearchCallback,

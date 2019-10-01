@@ -19,7 +19,7 @@
 // const fs = require('fs')
 // const https = require('https')
 // const crypt = require('./cryptic') // import custom sce crypto wrappers
-const settings = require('./settings') // import server system settings
+const settings = require('../util/settings') // import server system settings
 // const dt = require('./datetimes') // import datetime utilities
 const ef = require('./error_formats') // import error formatter
 const logger = require(`${settings.util}/logger`) // import event log system

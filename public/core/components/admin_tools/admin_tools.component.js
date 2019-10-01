@@ -20,11 +20,11 @@ angular.module('admintools').component('admintools', {
     var dbgMode = true
     var hostname = dbgMode ? 'localhost:8080' : 'sce.engr.sjsu.edu'
     var urls = {
-      getOfficerList: `https://${hostname}/core/dashboard/search/officerlist`,
-      getOfficerAbilities: `https://${hostname}/core/dashboard/search/officerabilities`,
-      editOfficerClearance: `https://${hostname}/core/dashboard/edit/officerclearance`,
-      getClearanceLevels: `https://${hostname}/core/dashboard/search/clearancelevels`,
-      getAvailableAbilities: `https://${hostname}/core/ability/getAll`
+      getOfficerList: `http://${hostname}/core/dashboard/search/officerlist`,
+      getOfficerAbilities: `http://${hostname}/core/dashboard/search/officerabilities`,
+      editOfficerClearance: `http://${hostname}/core/dashboard/edit/officerclearance`,
+      getClearanceLevels: `http://${hostname}/core/dashboard/search/clearancelevels`,
+      getAvailableAbilities: `http://${hostname}/core/ability/getAll`
     }
 
     // BEGIN Model Data

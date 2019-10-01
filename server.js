@@ -14,28 +14,15 @@
 
 /* NodeJS+ExpressJS Server */
 const http = require('http')
-// const fs = require('fs')
 const bodyParser = require('body-parser') // import POST request data parser
 const settings = require('./util/settings') // import server system settings
-// const ssl = require(settings.security) // import https ssl certifications
 const logger = require(`${settings.util}/logger`) // import event log system
-// const handles = require(`${settings.util}/route_handlers`) // import URI endpoint handlers
 let port = process.argv[2] // allow custom ports
 
 const mongoose = require('mongoose')
 
-// require('es6-promise').polyfill()
-// require('isomorphic-fetch')
-
 /* Globals */
 const handlerTag = { src: 'server' }
-// const sslSettings = {
-// key: fs.readFileSync(ssl.prvkey),
-// cert: fs.readFileSync(ssl.cert),
-// passphrase: ssl.passphrase,
-// requestCert: false,
-// rejectUnauthorized: false
-// }
 
 /* Initialize logging */
 logger.log('Initializing...', handlerTag)
@@ -83,16 +70,6 @@ app.use(
   })
 )
 app.use(express.static(settings.root)) // server root
-// app.use(express.static(`${settings.root}/home`));  // location of html files
-// app.use(express.static(`${settings.root}/home/css`)); // location of css files
-// app.use(express.static(`${settings.root}/home/js`)); // location of js files
-// app.use(express.static(`${settings.root}/core`));  // location of admin portal html
-// app.use(express.static(`${settings.root}/core/css`)); // location of admin portal css
-// app.use(express.static(`${settings.root}/core/js`)); // location of admin portal js
-// app.use(express.static(`${settings.root}/core/components/profiler`)); // location of admin portal profiler component js
-// app.use(express.static(`${settings.root}/core/components/doorcoder`)); // location of admin portal doorcoder component js
-// app.use(express.static(`${settings.root}/core/components/membership_manager`)); // location of admin portal membership_manager component js
-// app.use(express.static(`${settings.root}/../files`));   // added files folder to hold images and other media
 
 /* Define Main Server Routes (RESTful)
 
@@ -105,14 +82,7 @@ logger.log('Routing server endpoints...', handlerTag)
 const homeApp = require('./public/home/app/app.js')
 app.use('/home', homeApp) // GET request of the main login page
 
-/* Initialize SCE Core API sub-app */
-// const apiApp = require('./api/app.js')
-// app.use('/api', apiApp)
-// const membershipApplication = require('./api/routes/membershipApplication')
-// app.use('/api/membershipApplication', membershipApplication)
-
-// console.log(require('./api/index'))
-
+// Initialize the routes
 require('./api/index.js').forEach(route => {
   app.use(`/api/${route}`, require(`./api/routes/${route}`))
 })
@@ -120,14 +90,6 @@ require('./api/index.js').forEach(route => {
 /* Initialize SCE Core Admin sub-app */
 const coreAdminApp = require('./public/core/app/app.js')
 app.use('/core', coreAdminApp)
-
-/* Initialize MongoDB Test Page sub-app (will remove in production version) */
-const testPageApp = require('./test/app')
-app.use('/test', testPageApp) // use a subapp to handle test page requests via the "/test" endpoint
-
-/* Initialize MongoDB Interface sub-app */
-// const mdbiApp = require('./mdbi/app')
-// app.use('/mdbi', mdbiApp) // use a subapp to handle database requests via the "/mdbi" endpoint
 
 /*
  Main Server Routine - Listen for requests on specified port
@@ -139,21 +101,8 @@ if (!port) {
   logger.log(`Using custom port ${port}`, handlerTag)
   settings.port = port
 }
-// app.listen(port, function () {
-//  logger.log(`Now listening on port ${port}`, handlerTag);
-// });
 const server = http.createServer(app)
 server.listen(port, function () {
   logger.log(`Now listening on port ${port}`, handlerTag)
 })
-// const server = express()
-// app.listen(settings.port, err => {
-//   if (err) {
-//     console.log(err)
-//     logger.log(`error: ${err}`)
-//     throw err
-//   }
-//
-//   logger.log(`Listening on port: ${settings.port}`)
-// })
 // END server.js
