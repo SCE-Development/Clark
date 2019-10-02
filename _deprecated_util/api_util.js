@@ -20,7 +20,7 @@
 // const router = express.Router();
 const settings = require('../util/settings') // import server system settings
 // const al = require(`${settings.util}/api_legend.js`) // import API Documentation Module
-const dt = require(`${settings.util}/datetimes`) // import datetime utilities
+const dt = require('./datetimes') // import datetime utilities
 const ef = require(`${settings.util}/error_formats`) // import error formatter
 // const crypt = require(`${settings.util}/cryptic`);  // import custom sce crypto wrappers
 // const ssl = require(settings.security) // import https ssl credentials
