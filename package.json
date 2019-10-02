@@ -1,6 +1,6 @@
 {
   "name": "sce_core",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Forked from Project_MEANserver, this web application is the new SCE Core, a private Github Project. Based off of the MEAN stack, the software comes packaged with a NodeJS webserver (uses ExpressJS to handle routing/request processing), the SCE organization's home/web-services page, administrator dashboard, and members portal.",
   "main": "server.js",
   "scripts": {

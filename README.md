@@ -1,8 +1,8 @@
 # Core-v4
 The new SCE-CORE (fork from Project-MEANserver)
-A web application based off of the MEAN stack for use with SCE
+A web application based off of the MERN stack for use with SCE
 
-Current Version: Alpha (v4.0.1)
+Current Version: Alpha (v4.0.2)
 
 ---
 
@@ -35,25 +35,33 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
       - **Download** from *nodejs.org*, or
       - **Install** through the command line using `apt-get` (or whatever package manager is supported by your OS, i.e. `yum`)
       - Verify the installation succeeded using `node -v` on command line. You should see the version of your package printed out (e.g. `v10.14.2`).
-  2. Install Homebrew (e.g. `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`)
-      - After installing, verify by running the command: `brew upgrade && brew update`
+  2. (MacOS/Linux) Install Homebrew (e.g. `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`)
+      - After installing, upgrade existing packages by running the command: `brew upgrade && brew update`
   3. Acquire MongoDB in the main directory as well (locally on your machine).
-      - If on mac:
+      - MacOS/Linux:
         - Use Homebrew to install MongoDB:
           - `brew tap mongodb/brew`
           - `brew install mongodb-community`
-      - If on Linux or Windows:
-        - Download the package from the [MongoDB website](https://www.mongodb.com/)
+      - Windows:
+        - Download and install the package from the [MongoDB website](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
         - Follow your OS's installation instructions listed on the [MongoDB website](https://www.mongodb.com/)
-      - After installing MongoDB, initialize your database document store by creating the `/data/db` directory
+  4. After installing MongoDB, initialize your database document store by creating the `/data/db` directory
+      - MacOS/Linux:
         - `sudo mkdir -p /data/db` _(Use `sudo` in front of `mkdir` if necessary)_
         - ``sudo chown -R `id -un` /data/db`` _(Use `sudo` in front of `chown` if necessary)_
-  4. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
-  5. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
-  6. Install the node dependencies: `npm install`
-  7. In a new terminal window, run the mongo daemon by entering: `mongod`
-      - _If you need to terminate the daemon, type `ctrl-c` and press enter_
-  8. Run the app in the root project directory using: `npm start`
+      - Windows:
+        - `cd C:\`
+        - `md "\data\db"`
+  5. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
+  6. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
+  7. Install the node dependencies: `npm install`
+  8. In a new terminal window, run the mongo daemon by entering:
+      - MacOS/Linux:
+        - `mongod`
+        - _If you need to terminate the daemon, type `ctrl-c` and press enter_
+      - Windows:
+        - `"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"`
+  9. Run the app in the root project directory using: `npm start`
       - The app should automatically run on port 3000 and 8080 and open in your default browser
 
 #### On a Linux VM in Windows
@@ -67,30 +75,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 #### On Windows
 
   1. Although linux or MacOS is a preferred environment for this project, you can proceed with the windows with the instructions below:
-      - You can install **Node.js** directly from their website using their installer. Afterwards, you can perform the same Linux/Mac verification and package installation steps (displayed above) by using Windows command prompt or PowerShell
->>>>>>> 68ad2ccf22a0722f96f5f8ad55f830035e540ab6
-
----
-
-```ALL THE BELOW INSTRUCTIONS FOR APPLICATION EXECUTION ARE INCORRECT.```
-
-## Application Execution
-#### On Linux/Mac/Windows
-  _**BEFORE**_ starting the server, various resources and configurations should have already been created. _**If there were no errors during system setup**_, this should have already been done for you during use of `system_setup.js` in the [Setup and Depedencies](#setup-and-dependencies) section. In the event that setup failed, attempting to start the server will result in failure, forcing you to perform some or all of these steps manually (depending on your error):
-
-  1. Perform necessary common resource setup described in the [Common Resources Readme](./util/common/README.md).
-  1. Initialize the database by configuring your mongo daemon with access control enabled (see [MongoDB Authentication Guide](https://docs.mongodb.com/manual/tutorial/enable-authentication/))
-  1. Run the mongo daemon in authenticated mode using `sudo mongod --auth` _(see [System Setup](#on-linuxmac) for more details and examples)_
-  1. Create the necessary collections required in the mongo database by running the [database setup script](./mdbi/tools/db_setup.js) using `node db_setup.js --mock`
->>>>>>> 68ad2ccf22a0722f96f5f8ad55f830035e540ab6
-
-  _**On Successful Setup**_, run the server on Linux/Mac/Windows command line using
-  ```
-  node server.js [optional port number]
-  ```
-  in the project's root directory. It runs the webserver on port 8080 by default, unless the optional port number is specified. The server also checks that your MongoDB server is online before running, else it throws an error and fails startup. Make sure you have started your MongoDB server (see MongoDB's website for installation instructions relevant to your system) _**before**_ running server.js.
-
-  Once this is done, you may simply pop open your favorite web browser and enter ```https://localhost:8080``` (or whichever port you launched the server in), and the server should properly present you with a welcome page.
+      - You can install **Node.js** directly from their website using their installer.
 
 ---
 
@@ -162,12 +147,6 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
   - This directory houses any unit tests that were required for testing the individual modules. Unit testing was done using the Mocha/Chai unit-testing framework
 #### */files/*
   - This directory includes various documentation-related files and images, and doesn't provide any particular function affecting the server or its use.
-
----
-
-## System Block Diagram
-
-![System Block Diagram v4.0.1](https://github.com/SCE-Development/Core-v4/blob/rj/httpsConfig/files/Core%20v4%20System%20Block%20Diagram.png)
 
 ---
 
