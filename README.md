@@ -47,7 +47,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
         - Follow your OS's installation instructions listed on the [MongoDB website](https://www.mongodb.com/)
       - After installing MongoDB, initialize your database document store by creating the `/data/db` directory
         - `sudo mkdir -p /data/db` _(Use `sudo` in front of `mkdir` if necessary)_
-        - `sudo chown -R ``id -un`` /data/db` _(Use `sudo` in front of `chown` if necessary)_
+        - ``sudo chown -R `id -un` /data/db`` _(Use `sudo` in front of `chown` if necessary)_
   4. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
   5. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
   6. Install the node dependencies: `npm install`
