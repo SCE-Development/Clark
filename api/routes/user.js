@@ -15,14 +15,21 @@
 // Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
 const router = express.Router()
-// const passport = require('passport')
-// require('../../config/passport')(passport)
+const passport = require('passport')
+require('../../config/passport')(passport)
 const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
 const config = require('../../config/config')
 const Member = require('../models/Member.js')
 
+const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND } = {
+  INTERNAL_SERVER_ERROR: 500,
+  OK: 200,
+  NOT_FOUND: 404
+}
+
+// Login
 router.post('/login', function (req, res) {
   Member.findOne(
     {
@@ -50,6 +57,21 @@ router.post('/login', function (req, res) {
             const jwtOptions = {
               expiresIn: '2h'
             }
+            // Update the Member record w/ the last login date
+            Member.updateOne(
+              { email: req.body.email },
+              { lastLogin: Date.now },
+              function (error, result) {
+                if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+
+                if (result.nModified < 1) {
+                  return res
+                    .status(NOT_FOUND)
+                    .send({ message: `${req.body.email} not found.` })
+                }
+              }
+            )
+
             const token = jwt.sign(user.toJSON(), config.secretKey, jwtOptions)
             res.status(200).send({ token: 'JWT ' + token })
           } else {
@@ -65,9 +87,8 @@ router.post('/login', function (req, res) {
   )
 })
 
-// build out
-// Registers a new user if the username is unique
-router.post('/add', function (req, res) {
+// Register a member
+router.post('/register', function (req, res) {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
 
@@ -80,7 +101,13 @@ router.post('/add', function (req, res) {
       if (req.body.username && req.body.password) {
         const newUser = new Member({
           username: req.body.username.toLowerCase(),
-          password: req.body.password
+          password: req.body.password,
+          memberID: req.body.memberID || '',
+          firstName: req.body.firstName,
+          middleInitial: req.body.middleInitial || '',
+          lastName: req.body.lastName,
+          email: req.body.email,
+          major: req.body.major || ''
         })
 
         const testPassword = testPasswordStrength(req.body.password)
@@ -104,7 +131,7 @@ router.post('/add', function (req, res) {
   })
 })
 
-// build out
+// Delete a member
 router.post('/delete', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
@@ -116,11 +143,20 @@ router.post('/delete', (req, res) => {
     } else {
       // Ok
       // Delete a user
+      Member.deleteOne({ email: req.body.email }, function (error, member) {
+        if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+
+        if (member.n < 1) {
+          res.status(NOT_FOUND).send({ message: 'Member not found.' })
+        } else {
+          res.status(OK).send({ message: `${req.body.email} was deleted.` })
+        }
+      })
     }
   })
 })
 
-// build out
+// Search for a member
 router.post('/search', function (req, res) {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
@@ -132,15 +168,39 @@ router.post('/search', function (req, res) {
     } else {
       // Ok
       // Build this out to search for a user
-      res.status(200).send(decoded.username)
+      // res.status(200).send(decoded.username)
+      Member.findOne({ email: req.body.email }, function (error, result) {
+        if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+
+        if (!result) {
+          return res
+            .status(NOT_FOUND)
+            .send({ message: `${req.body.email} not found.` })
+        }
+
+        return res.status(OK).send({ message: `Member: ${result}.` })
+      })
     }
   })
 })
 
-// build out
+// Edit/Update a member record
 router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
+  const query = { email: req.body.email }
+  const member = {
+    memberID: req.body.memberID,
+    firstName: req.body.firstName,
+    middleInitial: req.body.middleInitial,
+    lastName: req.body.lastName,
+    username: req.body.username,
+    email: req.body.email,
+    emailVerified: req.body.emailVerified,
+    emailOptIn: req.body.emailOptIn,
+    major: req.body.major,
+    lastLogin: req.body.lastLogin
+  }
 
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
@@ -149,7 +209,19 @@ router.post('/edit', (req, res) => {
     } else {
       // Ok
       // Build this out to search for a user
-      res.status(200).send(decoded.username)
+      Member.updateOne(query, { ...member }, function (error, result) {
+        if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+
+        if (result.nModified < 1) {
+          return res
+            .status(NOT_FOUND)
+            .send({ message: `${req.body.email} not found.` })
+        }
+
+        return res
+          .status(OK)
+          .send({ message: `${req.body.email} was updated.` })
+      })
     }
   })
 })
