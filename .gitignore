@@ -90,10 +90,12 @@ public/core/js/dashboard_legacy.js
 .vscode/*
 *.code-workspace
 
-# chio's Ignore files 
+# chio's Ignore files
 .DS_Store
 mdbi/.DS_Store
 public/.DS_Store
 public/skeleton/.DS_Store
 util/.DS_Store
 util/common/.DS_Store
+
+build
