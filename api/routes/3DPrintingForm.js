@@ -20,7 +20,7 @@ const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
 
 const passport = require('passport')
-require('../../config/passport')(passport)
+require('../config/passport')(passport)
 
 const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND } = {
   INTERNAL_SERVER_ERROR: 500,

@@ -20,7 +20,7 @@ require('../../config/passport')(passport)
 const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
-const config = require('../../config/config')
+const config = require('../config/config')
 const Member = require('../models/Member.js')
 
 const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND } = {

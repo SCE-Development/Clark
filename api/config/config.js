@@ -26,8 +26,5 @@ module.exports = {
 
   // weak:
   // Unrestricted passwords allowed
-  passwordStrength: 'weak',
-
-  // Public API Key
-  publicApiKey: 'C8jZqVtAtsTBQlfJ43mk3aYtYzL7Gn38KJLJzRkUVZmDKYWicx'
+  passwordStrength: 'weak'
 }
