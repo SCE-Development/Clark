@@ -8,11 +8,7 @@ Current Version: Alpha (v4.0.2)
 
 ## Table of Contents
 - [Setup and Dependencies](#setup-and-dependencies)
-  - [Linux/Mac](#on-linuxmac)
-  - [Windows](#on-windows)
-- [Application Execution](#application-execution)
 - [Directory Structure](#directory-structure)
-- [System Block Diagram](#system-block-diagram)
 - [Using the MEANserver](#using-the-meanserver)
   - [Endpoint Creation](#endpoint-creation)
   - [Adding Webpages](#adding-webpages)
@@ -30,7 +26,7 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 - MongoDB Official Driver NPM package v2.2.33+
 - Node Hash NPM package v0.2.0+
 
-#### On Linux/Mac
+#### On Mac/Linux/Windows
   1. In a _"main"_ directory of your choice (i.e. `cd` into `Desktop` or `Documents`), you can acquire the latest **Node.js** package in two ways:
       - **Download** from *nodejs.org*, or
       - **Install** through the command line using `apt-get` (or whatever package manager is supported by your OS, i.e. `yum`)
@@ -52,16 +48,19 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
       - Windows:
         - `cd C:\`
         - `md "\data\db"`
-  5. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory)
-  6. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
-  7. Install the node dependencies: `npm install`
-  8. In a new terminal window, run the mongo daemon by entering:
+  5. If you haven't already cloned the project on your local machine, clone the `dev` branch into a location of your choice (e.g. the `Documents` directory):
+      - `git clone https://github.com/SCE-Development/Core-v4`
+  6. Create your own branch to work off of:
+      - `git checkout -b [name]`
+  7. Go to the root directoery of the project (i.e. `cd /path/to/your/.../Core-v4/`
+  8. Install the node dependencies: `npm install`
+  9. In a new terminal window, run the mongo daemon by entering:
       - MacOS/Linux:
         - `mongod`
         - _If you need to terminate the daemon, type `ctrl-c` and press enter_
       - Windows:
         - `"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"`
-  9. Run the app in the root project directory using: `npm start`
+  10. Run the app in the root project directory using: `npm start`
       - The app should automatically run on port 3000 and 8080 and open in your default browser
 
 #### On a Linux VM in Windows

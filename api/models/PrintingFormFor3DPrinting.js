@@ -4,8 +4,7 @@ const Schema = mongoose.Schema
 const PrintingFormFor3DPrintingSchema = new Schema(
   {
     // PF3D: {
-    //   type: Number,
-    //   required: true
+    //   type: Number
     // },
     name: {
       type: String,

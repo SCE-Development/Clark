@@ -55,6 +55,7 @@ export default class Example extends React.Component {
   }
 
   requestForm (jsonObject, key) {
+    console.log(jsonObject)
     return (
       <FormGroup key={key}>
         <Card
@@ -116,7 +117,7 @@ export default class Example extends React.Component {
           <br />
 
           <br />
-          {/* this.state.data.map((item, key) => this.request_form(item, key)) */}
+          {this.state.data.map((item, key) => this.requestForm(item, key))}
         </Form>
       </Container>
     )
