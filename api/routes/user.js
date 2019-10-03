@@ -16,7 +16,7 @@
 const express = require('express')
 const router = express.Router()
 const passport = require('passport')
-require('../../config/passport')(passport)
+require('../config/passport')(passport)
 const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
