@@ -11,7 +11,7 @@
 'use strict'
 
 // Includes
-const settings = require('./settings')
+const settings = require('../util/settings')
 const logger = require(`${settings.util}/logger`)
 
 // Container (Singleton)

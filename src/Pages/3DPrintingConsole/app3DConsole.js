@@ -6,7 +6,6 @@ import {
   ButtonGroup,
   Card,
   CardTitle,
-  CardText,
   CardBody,
   Collapse,
   Form,
@@ -55,6 +54,45 @@ export default class Example extends React.Component {
       })
   }
 
+  deleteData (jsonObject) {
+    axios
+      .post('/api/3DPrintingForm/Delete3DForm', {
+        name: jsonObject.name,
+        color: jsonObject.color
+      })
+      .then(result => {
+        console.log(result)
+        this.callDatabase() // reload database
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  changeInput (event) {
+    this.setState({
+      input: event.target.value
+    })
+  }
+
+  editData (jsonObject) {
+    console.log('Print ', jsonObject)
+    console.log(jsonObject.name)
+    axios
+      .post('/api/3DPrintingForm/edit', {
+        name: jsonObject.name,
+        color: this.state.input
+      })
+      // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
+      .then(result => {
+        // console.log(result)
+        this.callDatabase() // reload database
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
   requestForm (jsonObject, key) {
     console.log(jsonObject)
     return (
@@ -68,7 +106,7 @@ export default class Example extends React.Component {
         >
           {/* NAME */}
           <CardTitle>{jsonObject.name + "'"}s Request</CardTitle>
-          <CardText>
+          <div>
             <Row>
               <Col>E-mail/Contact:</Col>
               <Col>Requested Date:</Col>
@@ -84,10 +122,23 @@ export default class Example extends React.Component {
                   <Button color='primary'>Pending</Button>
                   <Button color='info'>In Progress</Button>
                   <Button color='secondary'>Completed</Button>
+                  <input onChange={this.changeInput.bind(this)} />
+                  <Button
+                    color='primary'
+                    onClick={this.deleteData.bind(this, jsonObject)}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    color='primary'
+                    onClick={this.editData.bind(this, jsonObject)}
+                  >
+                    Edit
+                  </Button>
                 </ButtonGroup>
               </Col>
             </Row>
-          </CardText>
+          </div>
         </Card>
 
         <Collapse isOpen={this.state.collapse}>

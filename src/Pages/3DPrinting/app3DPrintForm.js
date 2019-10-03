@@ -12,9 +12,7 @@ import {
   Col
 } from 'reactstrap'
 import Layout from '../../Components/Layout/Layout'
-
-// import mongoose from 'mongoose'
-// const mongoose = require('mongoose');
+import axios from 'axios'
 
 let fill = false
 export default class Example extends React.Component {
@@ -101,49 +99,70 @@ export default class Example extends React.Component {
 
     // if all is passed, begin submition
     if (fill === true) {
-      var request = require('superagent')
+      // var request = require('superagent')
       // var page = this
-      request
-        .post(
-          'http://' +
-            window.location.hostname +
-            ':3000/api/3DPrintingForm/submit'
-        )
-        .set('Content-Type', 'application/json;charset=utf-8')
-        .send({
-          // SCHEMA : current react state
+      // request
+      // // axios
+      //   .post(
+      //     '/api/3DPrintingForm/submit'
+      //   )
+      //   .set('Content-Type', 'application/json;charset=utf-8')
+      //   .send({
+      //     // SCHEMA : current react state
+      //     name: this.state.name,
+      //     color: this.state.color,
+      //     comment: this.state.comment,
+      //     contact: this.state.contact,
+      //     projectType: this.state.projectType,
+      //     url: this.state.url,
+      //     progress: 'Pending',
+      //     date: this.date()
+      //   })
+      //   .end(
+      //     function (err, response) {
+      //       if (response && response.status < 300) {
+      //         // Create a copy of the current state
+      //         var tempState = Object.assign(this.state)
+      //
+      //         // Modify state to signal a close of the form,
+      //         // and a reveal of a success message that provides the user
+      //         // with further instructions
+      //         tempState.successfullyApplied = true
+      //
+      //         // Set state
+      //         this.setState(tempState)
+      //       } else {
+      //         // Failure
+      //         // TODO: Respond with error
+      //         window.alert(
+      //           '(X.X)\tA submission error occurred. Please contact the site administrator'
+      //         )
+      //         console.error(err)
+      //       }
+      //     }.bind(this)
+      //   )
+
+      axios
+        .post('/api/3DPrintingForm/submit', {
           name: this.state.name,
           color: this.state.color,
           comment: this.state.comment,
           contact: this.state.contact,
           projectType: this.state.projectType,
           url: this.state.url,
-          progress: 'Pending',
-          date: this.date()
+          progress: 'Pending'
         })
-        .end(
-          function (err, response) {
-            if (response && response.status < 300) {
-              // Create a copy of the current state
-              var tempState = Object.assign(this.state)
-
-              // Modify state to signal a close of the form,
-              // and a reveal of a success message that provides the user
-              // with further instructions
-              tempState.successfullyApplied = true
-
-              // Set state
-              this.setState(tempState)
-            } else {
-              // Failure
-              // TODO: Respond with error
-              window.alert(
-                '(X.X)\tA submission error occurred. Please contact the site administrator'
-              )
-              console.error(err)
-            }
-          }.bind(this)
-        )
+        // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
+        .then(result => {
+          // console.log(result)
+          // this.callDatabase() // reload database
+          this.setState({
+            successfullyApplied: true
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
     this.setState({ filled: true })
   }
