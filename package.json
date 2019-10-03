@@ -5,10 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js | npm start --prefix ./public/home/home-react",
-    "start-tasks": "npm start --prefix ./public/home/home-react",
-    "lint": "prettier 'utils/**/*.js' 'static/js/**/*.js' '__tests__/**/*.js' 'components/**/*.js' 'pages/**/*.js' 'public/**/*.js' '*.js' --write --single-quote --no-semi && standard --fix",
-    "precommit": "lint-staged"
+    "start": "node server.js | react-scripts start",
+    "lint": "prettier 'utils/**/*.js' 'static/js/**/*.js' '__tests__/**/*.js' 'components/**/*.js' 'pages/**/*.js' 'public/**/*.js' '*.js' --write --single-quote --no-semi && standard --fix"
   },
   "lint-staged": {
     "*.js": [
@@ -19,7 +17,8 @@
   },
   "standard": {
     "globals": [
-      "$"
+      "$",
+      "fetch"
     ],
     "parser": "babel-eslint"
   },
@@ -80,5 +79,16 @@
     "lint-staged": "^9.4.1",
     "prettier": "^1.18.2",
     "standard": "^14.3.1"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

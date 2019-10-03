@@ -190,16 +190,7 @@ router.post('/edit', (req, res) => {
   const token = req.body.token.replace(/^JWT\s/, '')
   const query = { email: req.body.email }
   const member = {
-    memberID: req.body.memberID,
-    firstName: req.body.firstName,
-    middleInitial: req.body.middleInitial,
-    lastName: req.body.lastName,
-    username: req.body.username,
-    email: req.body.email,
-    emailVerified: req.body.emailVerified,
-    emailOptIn: req.body.emailOptIn,
-    major: req.body.major,
-    lastLogin: req.body.lastLogin
+    ...req.body
   }
 
   jwt.verify(token, config.secretKey, function (error, decoded) {

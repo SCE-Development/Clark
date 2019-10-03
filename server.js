@@ -78,9 +78,9 @@ app.use(express.static(settings.root)) // server root
   - Define a handler function in util/route_handlers.js in a similar fashion the the others (i.e. "handlerFunc")
   - Place an app request here (i.e. "app.post([routePath], [handlerFunc])")
 */
-logger.log('Routing server endpoints...', handlerTag)
-const homeApp = require('./public/home/app/app.js')
-app.use('/home', homeApp) // GET request of the main login page
+// logger.log('Routing server endpoints...', handlerTag)
+// const homeApp = require('./src/home/app/app.js')
+// app.use('/home', homeApp) // GET request of the main login page
 
 // Initialize the routes
 require('./api/index.js').forEach(route => {
@@ -88,8 +88,8 @@ require('./api/index.js').forEach(route => {
 })
 
 /* Initialize SCE Core Admin sub-app */
-const coreAdminApp = require('./public/core/app/app.js')
-app.use('/core', coreAdminApp)
+// const coreAdminApp = require('./public/core/app/app.js')
+// app.use('/core', coreAdminApp)
 
 /*
  Main Server Routine - Listen for requests on specified port
