@@ -43,13 +43,33 @@ export default class extends Component {
       .post('/api/user/login', { email, password })
       .then(result => {
         window.localStorage.setItem('jwtToken', result.data.token)
+        console.log('Email: ', email)
+        console.log('Token: ', result.data.token)
+        this.updateLastLoginDate(email, result.data.token)
         this.setState({ message: '' })
-        this.props.history.push('/dashboard')
       })
       .catch(error => {
         this.setState({
           message: error.response.data.message
         })
+      })
+  }
+
+  updateLastLoginDate (email, token) {
+    console.log('Upd email: ', email)
+    console.log('Upd tkn: ', token)
+    axios
+      .post('/api/user/edit', {
+        queryEmail: email,
+        lastLogin: Date.now(),
+        // This token must be passed in for authentication
+        token: token
+      })
+      .then(() => {
+        this.props.history.push('/dashboard')
+      })
+      .catch(err => {
+        console.log(err.response.data.message)
       })
   }
 

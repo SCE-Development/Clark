@@ -46,6 +46,8 @@ const {
 
 // Login
 router.post('/login', function (req, res) {
+  console.log('login query: ', req.body)
+
   User.findOne(
     {
       email: req.body.email.toLowerCase()
@@ -72,24 +74,6 @@ router.post('/login', function (req, res) {
             const jwtOptions = {
               expiresIn: '2h'
             }
-
-            // Build this out to track the users recent login.
-            // Current it sets 2 headers in one call which throws an
-            // error
-            // Update the Member record w/ the last login date
-            // Member.updateOne(
-            //   { email: req.body.email },
-            //   { lastLogin: Date.now },
-            //   function (error, result) {
-            //     if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
-            //
-            //     if (result.nModified < 1) {
-            //       return res
-            //         .status(NOT_FOUND)
-            //         .send({ message: `${req.body.email} not found.` })
-            //     }
-            //   }
-            // )
 
             const token = jwt.sign(user.toJSON(), config.secretKey, jwtOptions)
             res.status(OK).send({ token: 'JWT ' + token })
@@ -218,10 +202,14 @@ router.post('/search', function (req, res) {
 router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
-  const query = { email: req.body.email }
+  const query = { email: req.body.queryEmail }
   const user = {
     ...req.body
   }
+
+  // Remove the auth token from the form getting edited
+  delete user.queryEmail
+  delete user.token
 
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
@@ -236,12 +224,12 @@ router.post('/edit', (req, res) => {
         if (result.nModified < 1) {
           return res
             .status(NOT_FOUND)
-            .send({ message: `${req.body.email} not found.` })
+            .send({ message: `${req.body.queryEmail} not found.` })
         }
 
         return res
           .status(OK)
-          .send({ message: `${req.body.email} was updated.` })
+          .send({ message: `${req.body.queryEmail} was updated.` })
       })
     }
   })
