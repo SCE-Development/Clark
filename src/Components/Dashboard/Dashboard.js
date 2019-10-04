@@ -35,6 +35,26 @@ export class Dashboard extends Component {
       .catch(() => {
         if (this.props.history) this.props.history.push('/login')
       })
+
+    axios
+      .post('/api/user/getUserAccessLevel', { email: 'abc@c.c', token })
+      .then(res => {
+        this.setState(
+          {
+            accessLevel: res.data.accessLevel
+          },
+          () => {
+            // If there access level is less then admin or officer, take them to
+            // their profile page
+            if (this.state.accessLevel < 1 && this.props.history) {
+              this.props.history.push('/profile')
+            }
+          }
+        )
+      })
+      .catch(() => {
+        if (this.props.history) this.props.history.push('/profile')
+      })
   }
 
   handleLogout () {
@@ -57,14 +77,16 @@ export class Dashboard extends Component {
           >
             Overview
           </NavLink>
-          <NavLink
-            title='Admin'
-            to='/admin'
-            exact
-            activeClassName='active-nav-link'
-          >
-            Admin
-          </NavLink>
+          {this.state.accessLevel >= 2 && (
+            <NavLink
+              title='Admin'
+              to='/admin'
+              exact
+              activeClassName='active-nav-link'
+            >
+              Admin
+            </NavLink>
+          )}
           <NavLink
             title='Officer Tools'
             to='/officer-tools'

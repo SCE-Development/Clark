@@ -2,7 +2,6 @@ import React from 'react'
 import './membershipApplication.css'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import axios from 'axios'
-import Layout from '../../Components/Layout/Layout'
 
 export default class MembershipApplication extends React.Component {
   // @ctor
@@ -225,62 +224,60 @@ export default class MembershipApplication extends React.Component {
   // @returns         (jsx) html      The generated html content
   render () {
     return (
-      <Layout>
-        <div className='membership-application'>
-          <h1 className='page-title'>Member Registration</h1>
-          <div className='notice'>
-            <span className='critical'>*</span><span className='important'> = This is a required field</span>
-          </div>
-          {
-            !this.state.successfullyApplied
-              ? (
-                <Form className='page-form'>
-                  <h3>General Information</h3>
-                  <FormGroup>
-                    <Label for='firstName'>First Name*</Label>
-                    <Input type='text' onChange={this.mutateFirstName.bind(this)} value={this.state.firstName} name='firstName' id='input_firstName' placeholder='(e.g. John)' />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for='middleInitial'>Middle Initial</Label>
-                    <Input type='text' onChange={this.mutateMiddleInitial.bind(this)} value={this.state.middleInitial} name='middleInitial' id='input_middleInitial' placeholder='(e.g. J)' />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for='lastName'>Last Name*</Label>
-                    <Input type='text' onChange={this.mutateLastName.bind(this)} value={this.state.lastName} name='lastName' id='input_lastName' placeholder='(e.g. Doe)' />
-                  </FormGroup>
-
-                  <h3>Account Configuration</h3>
-                  <FormGroup>
-                    <Label for='email'>Email*</Label>
-                    <Input type='email' onChange={this.mutateEmail.bind(this)} onBlur={this.checkIfUserExists.bind(this)} value={this.state.email} name='email' id='input_email' placeholder='example@email.com' />
-                  </FormGroup>
-                  <div className={this.state.usernameCheckClass}>
-                    {this.state.usernameCheckResultIcon} &nbsp;{this.state.usernameCheckResult}
-                  </div>
-                  <FormGroup>
-                    <Label for='password'>Password*</Label>
-                    <Input type='password' onChange={this.mutatePassword.bind(this)} value={this.state.password} name='password' id='input_password' placeholder='(e.g. sce_password)' />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for='major'>Major</Label>
-                    <Input type='text' onChange={this.mutateMajor.bind(this)} value={this.state.major} />
-                  </FormGroup>
-                  <Button onClick={this.submitApplication.bind(this)}>Submit</Button>
-                </Form>)
-              : null
-          }
-          {this.state.successfullyApplied
-            ? (
-              <div>
-                <h3 style={{ margin: '1em' }}>
-                                Your application has been submitted!
-                </h3>
-                <p style={{ margin: '2em' }}>
-                                To activate your membership, verify your email address by clicking the link in the email we sent, and proceed to SCE (Engr 294) to complete registration and memberhip payment. You may now return to the homepage!
-                </p>
-              </div>) : null}
+      <div className='membership-application'>
+        <h1 className='page-title'>Member Registration</h1>
+        <div className='notice'>
+          <span className='critical'>*</span><span className='important'> = This is a required field</span>
         </div>
-      </Layout>
+        {
+          !this.state.successfullyApplied
+            ? (
+              <Form className='page-form'>
+                <h3>General Information</h3>
+                <FormGroup>
+                  <Label for='firstName'>First Name*</Label>
+                  <Input type='text' onChange={this.mutateFirstName.bind(this)} value={this.state.firstName} name='firstName' id='input_firstName' placeholder='(e.g. John)' />
+                </FormGroup>
+                <FormGroup>
+                  <Label for='middleInitial'>Middle Initial</Label>
+                  <Input type='text' onChange={this.mutateMiddleInitial.bind(this)} value={this.state.middleInitial} name='middleInitial' id='input_middleInitial' placeholder='(e.g. J)' />
+                </FormGroup>
+                <FormGroup>
+                  <Label for='lastName'>Last Name*</Label>
+                  <Input type='text' onChange={this.mutateLastName.bind(this)} value={this.state.lastName} name='lastName' id='input_lastName' placeholder='(e.g. Doe)' />
+                </FormGroup>
+
+                <h3>Account Configuration</h3>
+                <FormGroup>
+                  <Label for='email'>Email*</Label>
+                  <Input type='email' onChange={this.mutateEmail.bind(this)} onBlur={this.checkIfUserExists.bind(this)} value={this.state.email} name='email' id='input_email' placeholder='example@email.com' />
+                </FormGroup>
+                <div className={this.state.usernameCheckClass}>
+                  {this.state.usernameCheckResultIcon} &nbsp;{this.state.usernameCheckResult}
+                </div>
+                <FormGroup>
+                  <Label for='password'>Password*</Label>
+                  <Input type='password' onChange={this.mutatePassword.bind(this)} value={this.state.password} name='password' id='input_password' placeholder='(e.g. sce_password)' />
+                </FormGroup>
+                <FormGroup>
+                  <Label for='major'>Major</Label>
+                  <Input type='text' onChange={this.mutateMajor.bind(this)} value={this.state.major} />
+                </FormGroup>
+                <Button onClick={this.submitApplication.bind(this)}>Submit</Button>
+              </Form>)
+            : null
+        }
+        {this.state.successfullyApplied
+          ? (
+            <div>
+              <h3 style={{ margin: '1em' }}>
+                              Your application has been submitted!
+              </h3>
+              <p style={{ margin: '2em' }}>
+                              To activate your membership, verify your email address by clicking the link in the email we sent, and proceed to SCE (Engr 294) to complete registration and memberhip payment. You may now return to the homepage!
+              </p>
+            </div>) : null}
+      </div>
     )
   }
 }

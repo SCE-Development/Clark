@@ -28,15 +28,7 @@ const jwt = require('jsonwebtoken')
 const config = require('../config/config')
 const User = require('../models/User.js')
 
-const {
-  INTERNAL_SERVER_ERROR,
-  OK,
-  NOT_FOUND,
-  UNAUTHORIZED,
-  BAD_REQUEST,
-  CONFLICT
-} = {
-  INTERNAL_SERVER_ERROR: 500,
+const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST, CONFLICT } = {
   OK: 200,
   NOT_FOUND: 404,
   UNAUTHORIZED: 401,
@@ -46,8 +38,6 @@ const {
 
 // Login
 router.post('/login', function (req, res) {
-  console.log('login query: ', req.body)
-
   User.findOne(
     {
       email: req.body.email.toLowerCase()
@@ -99,7 +89,7 @@ router.post('/checkIfUserExists', (req, res) => {
       if (error) {
         // Bad Request
         logger.log(`User /user/checkIfUserExists error: ${error}`)
-        return res.status(400).send({ message: 'Bad Request.' })
+        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
       }
 
       if (!user) {
@@ -145,6 +135,38 @@ router.post('/register', function (req, res) {
   }
 })
 
+router.post('/getUserAccessLevel', (req, res) => {
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      User.findOne(
+        {
+          email: req.body.email.toLowerCase()
+        },
+        function (error, user) {
+          if (error) {
+            // Bad Request
+            logger.log(`User /user/checkIfUserExists error: ${error}`)
+            return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
+          }
+
+          if (!user) {
+            // Member username does not exist
+            res.sendStatus(OK)
+          } else {
+            // User username does exist
+            res.status(OK).send({ accessLevel: user.accessLevel })
+          }
+        }
+      )
+    }
+  })
+})
+
 // Delete a member
 router.post('/delete', (req, res) => {
   // Strip JWT from the token
@@ -158,7 +180,8 @@ router.post('/delete', (req, res) => {
       // Ok
       // Delete a user
       User.deleteOne({ email: req.body.email }, function (error, user) {
-        if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        if (error) res.status(400).send({ message: 'Bad Request.' })
 
         if (user.n < 1) {
           res.status(NOT_FOUND).send({ message: 'User not found.' })
@@ -184,7 +207,8 @@ router.post('/search', function (req, res) {
       // Build this out to search for a user
       // res.status(200).send(decoded.username)
       User.findOne({ email: req.body.email }, function (error, result) {
-        if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        if (error) res.status(400).send({ message: 'Bad Request.' })
 
         if (!result) {
           return res
@@ -219,7 +243,8 @@ router.post('/edit', (req, res) => {
       // Ok
       // Build this out to search for a user
       User.updateOne(query, { ...user }, function (error, result) {
-        if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        if (error) res.status(400).send({ message: 'Bad Request.' })
 
         if (result.nModified < 1) {
           return res

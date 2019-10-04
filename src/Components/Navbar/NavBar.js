@@ -23,7 +23,8 @@ class NavBar extends Component {
     this.state = {
       isLoggedIn: false,
       user: {
-        name: 'Andrew'
+        name: 'Andrew',
+        accessLevel: 2
       }
     }
     this.handleLogout = this.handleLogout.bind(this)
@@ -150,7 +151,9 @@ class NavBar extends Component {
                   </DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem href='/profile'>Profile</DropdownItem>
-                    <DropdownItem href='/dashboard'>Admin</DropdownItem>
+                    {this.state.user.accessLevel >= 1 && (
+                      <DropdownItem href='/dashboard'>Admin</DropdownItem>
+                    )}
                     <DropdownItem>
                       <div onClick={this.handleLogout}>
                         <svg

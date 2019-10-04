@@ -2,7 +2,6 @@ import React from 'react'
 import { Card, CardTitle, Col, CardText } from 'reactstrap'
 // import axios from 'axios';
 // import NavBarTop from "./navBarTop.jsx";
-import Layout from '../../../Components/Layout/Layout'
 
 export default class AnnouncementsPage extends React.Component {
   constructor (props) {
@@ -81,31 +80,29 @@ export default class AnnouncementsPage extends React.Component {
 
   render () {
     return (
-      <Layout>
-        <div className='announcements'>
-          {/* <NavBarTop /> */}
+      <div className='announcements'>
+        {/* <NavBarTop /> */}
 
-          {/* Cards will display the events shown */}
-          {/* <Card body className="text-center" key={event._id}>
-                      <CardTitle>{event.eventName}</CardTitle>
-                      <CardText>{event.eventDescription}</CardText> */}
-          <Col sm='12' style={{ paddingTop: 10 }}>
-            {this.state.publishedEvents.map((event, index) => (
-              <Card body className='text-center' key={index}>
+        {/* Cards will display the events shown */}
+        {/* <Card body className="text-center" key={event._id}>
+                    <CardTitle>{event.eventName}</CardTitle>
+                    <CardText>{event.eventDescription}</CardText> */}
+        <Col sm='12' style={{ paddingTop: 10 }}>
+          {this.state.publishedEvents.map((event, index) => (
+            <Card body className='text-center' key={index}>
 
-                <CardTitle>{event.eventName}</CardTitle>
-                <CardText>{event.eventDescription}</CardText>
-                <CardText>{event.eventDate}</CardText>
-                <CardText>{event.eventTime}</CardText>
-                <CardText>{event.eventLocation}</CardText>
-                <CardText>{event.eventHost}</CardText>
-                <CardText>{event.eventContact}</CardText>
+              <CardTitle>{event.eventName}</CardTitle>
+              <CardText>{event.eventDescription}</CardText>
+              <CardText>{event.eventDate}</CardText>
+              <CardText>{event.eventTime}</CardText>
+              <CardText>{event.eventLocation}</CardText>
+              <CardText>{event.eventHost}</CardText>
+              <CardText>{event.eventContact}</CardText>
 
-              </Card>
-            ))}
-          </Col>
-        </div>
-      </Layout>
+            </Card>
+          ))}
+        </Col>
+      </div>
     )
   }
 }

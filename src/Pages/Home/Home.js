@@ -5,7 +5,6 @@ import Footer from '../../Components/Footer/Footer.js'
 import Benefits from '../../Components/Benefits/App'
 import Jumbotron from '../../Components/Jumbotron/App.js'
 import Iframe from 'react-iframe'
-import Layout from '../../Components/Layout/Layout'
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -24,33 +23,31 @@ import Layout from '../../Components/Layout/Layout'
 class Home extends Component {
   render () {
     return (
-      <Layout>
-        <div className='home'>
-          <Slideshow className='slideshow' />
-          <Jumbotron />
+      <div className='home'>
+        <Slideshow className='slideshow' />
+        <Jumbotron />
 
-          <div className='text-center'>
-            <h1 className='display-4'>SCE Events Calendar</h1>{' '}
-          </div>
-          <p className='lead text-center'>
-            {' '}
-            Add SCE Calendar to your own by clicking the Google Calendar icon on
-            the bottom right side!
-          </p>
-
-          <div className='outer-div'>
-            <div className='inner-div'>
-              <Iframe
-                url='https://calendar.google.com/calendar/b/4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FLos_Angeles'
-                className='calendar'
-                allowFullScreen
-              />
-            </div>
-          </div>
-          <Benefits className='benefits' />
-          <Footer />
+        <div className='text-center'>
+          <h1 className='display-4'>SCE Events Calendar</h1>{' '}
         </div>
-      </Layout>
+        <p className='lead text-center'>
+          {' '}
+          Add SCE Calendar to your own by clicking the Google Calendar icon on
+          the bottom right side!
+        </p>
+
+        <div className='outer-div'>
+          <div className='inner-div'>
+            <Iframe
+              url='https://calendar.google.com/calendar/b/4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FLos_Angeles'
+              className='calendar'
+              allowFullScreen
+            />
+          </div>
+        </div>
+        <Benefits className='benefits' />
+        <Footer />
+      </div>
     )
   }
 }

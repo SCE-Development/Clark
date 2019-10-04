@@ -57,7 +57,7 @@ const UserSchema = new Schema(
     // 2: Admin
     accessLevel: {
       type: Number,
-      default: 0
+      default: 2
     },
     lastLogin: {
       type: Date,

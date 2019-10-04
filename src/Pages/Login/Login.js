@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Layout from '../../Components/Layout/Layout'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
@@ -43,8 +42,6 @@ export default class extends Component {
       .post('/api/user/login', { email, password })
       .then(result => {
         window.localStorage.setItem('jwtToken', result.data.token)
-        console.log('Email: ', email)
-        console.log('Token: ', result.data.token)
         this.updateLastLoginDate(email, result.data.token)
         this.setState({ message: '' })
       })
@@ -56,8 +53,6 @@ export default class extends Component {
   }
 
   updateLastLoginDate (email, token) {
-    console.log('Upd email: ', email)
-    console.log('Upd tkn: ', token)
     axios
       .post('/api/user/edit', {
         queryEmail: email,
@@ -66,10 +61,15 @@ export default class extends Component {
         token: token
       })
       .then(() => {
+        console.log(typeof this.props.userLoggedIn)
+        // if (typeof this.props.userLoggedIn === 'function') {
+        // console.log('hit')
+        this.props.userLoggedIn(email)
+        // }
         this.props.history.push('/dashboard')
       })
       .catch(err => {
-        console.log(err.response.data.message)
+        console.log(err)
       })
   }
 
@@ -77,37 +77,35 @@ export default class extends Component {
     const { email, password, message } = this.state
 
     return (
-      <Layout>
-        <form onSubmit={this.handleSubmit}>
-          <h1>Welcome</h1>
+      <form onSubmit={this.handleSubmit}>
+        <h1>Welcome</h1>
 
-          {message !== '' && <span>{message}</span>}
+        {message !== '' && <span>{message}</span>}
 
-          <input
-            type='email'
-            name='email'
-            placeholder='Email'
-            value={email}
-            onChange={this.handleChange}
-            required
-          />
+        <input
+          type='email'
+          name='email'
+          placeholder='Email'
+          value={email}
+          onChange={this.handleChange}
+          required
+        />
 
-          <input
-            type='password'
-            name='password'
-            placeholder='Password'
-            value={password}
-            onChange={this.handleChange}
-            required
-          />
+        <input
+          type='password'
+          name='password'
+          placeholder='Password'
+          value={password}
+          onChange={this.handleChange}
+          required
+        />
 
-          <button type='submit'>Login</button>
+        <button type='submit'>Login</button>
 
-          <p>
-            <Link to='/register'>Create an account</Link>
-          </p>
-        </form>
-      </Layout>
+        <p>
+          <Link to='/register'>Create an account</Link>
+        </p>
+      </form>
     )
   }
 }

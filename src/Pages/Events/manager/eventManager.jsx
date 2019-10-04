@@ -4,7 +4,6 @@ import classnames from 'classnames'
 // import axios from 'axios';
 import '../announcements/announcementsPage.css'
 import '../announcements/announcementsPage'
-import Layout from '../../../Components/Layout/Layout'
 // import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation'
 
 export default class EventManager extends React.Component {
@@ -305,7 +304,7 @@ export default class EventManager extends React.Component {
 
     render () {
       return (
-        <Layout>
+        <div>
           <Nav className='NavBar'>
             <h1 align='center'>Event Manager Page</h1>
             {/* <NavItem>
@@ -476,7 +475,7 @@ export default class EventManager extends React.Component {
               </Col>
             </TabPane>
           </TabContent>
-        </Layout>
+        </div>
       )
     }
 }

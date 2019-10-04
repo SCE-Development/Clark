@@ -24,8 +24,23 @@ import Printing from './Pages/2DPrinting/App.js'
 import Gear from './Pages/TheGear/App.js'
 
 import Jumbotron from './Components/Jumbotron/App.js'
+import Layout from './Components/Layout/Layout'
 
 class App extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      user: null
+    }
+    // this.onLoggingIn = this.onLoggingIn.bind(this)
+  }
+
+  // onLoggingIn (user) {
+  //   this.setState({
+  //     user: user
+  //   })
+  // }
+
   render () {
     return (
       <Router>
@@ -54,24 +69,26 @@ class App extends React.Component {
             )}
           />
 
-          <Route exact path='/' component={Home} />
-          <Route exact path='/events' component={Events} />
-          {/* <Route exact path='/eventsManager' component={EventManager} /> */}
-          <Route exact path='/jumbotron' component={Jumbotron} />
-          <Route exact path='/Team' component={Team} />
-          <Route exact path='/labkits' component={LabKits} />
-          <Route exact path='/3DPrintingForm' component={PrintingSolids} />
-          <Route exact path='/2DPrinting' component={Printing} />
-          <Route exact path='/Gear' component={Gear} />
+          <Layout>
+            <Route exact path='/' component={Home} />
+            <Route exact path='/events' component={Events} />
+            {/* <Route exact path='/eventsManager' component={EventManager} /> */}
+            <Route exact path='/jumbotron' component={Jumbotron} />
+            <Route exact path='/Team' component={Team} />
+            <Route exact path='/labkits' component={LabKits} />
+            <Route exact path='/3DPrintingForm' component={PrintingSolids} />
+            <Route exact path='/2DPrinting' component={Printing} />
+            <Route exact path='/Gear' component={Gear} />
 
-          <Route exact path='/login' component={Login} />
-          <Route exact path='/register' component={MembershipApplication} />
+            <Route exact path='/login' component={Login} />
+            <Route exact path='/register' component={MembershipApplication} />
 
-          <Route
-            component={function () {
-              return <Home />
-            }}
-          />
+            <Route
+              component={() => {
+                return <Home />
+              }}
+            />
+          </Layout>
         </Switch>
       </Router>
     )
