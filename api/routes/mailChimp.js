@@ -30,7 +30,7 @@ const router = express.Router()
 const settings = require('../../util/settings')
 const al = require(`${settings.util}/../_deprecated_util/api_legend.js`)
 const logger = require(`${settings.util}/logger`)
-const smci = require(`${settings.util}/../smci/smci.js`)
+const smci = require(`${settings.util}/../util/smci/smci.js`)
 const api = al.createLegend(
   'Example API Name',
   'Example API Desc',

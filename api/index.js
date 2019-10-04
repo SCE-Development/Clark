@@ -3,7 +3,6 @@ const routes = [
   'ability',
   'clearanceLevel',
   'mailChimp',
-  'membershipApplication',
   'user'
 ]
 

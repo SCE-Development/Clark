@@ -15,7 +15,6 @@ import {
   Col
 } from 'reactstrap'
 import axios from 'axios'
-import Layout from '../../Components/Layout/Layout'
 
 export default class Example extends React.Component {
   constructor (props) {
@@ -30,6 +29,31 @@ export default class Example extends React.Component {
   }
 
   componentDidMount () {
+    const token = window.localStorage
+      ? window.localStorage.getItem('jwtToken')
+      : ''
+
+    // Immediately direct to /login if no jwtToken token present
+    if (!token) {
+      if (this.props.history) this.props.history.push('/login')
+      return
+    }
+
+    // Verify if token is valid
+    // As user persmissions are created, the verify auth should be more extensive
+    // and return views as the permissions defines
+    axios
+      .post('/api/user/verify', { token })
+      .then(res => {
+        this.setState({
+          isLoggedIn: true,
+          authToken: token
+        })
+      })
+      .catch(() => {
+        if (this.props.history) this.props.history.push('/login')
+      })
+
     this.callDatabase()
   }
 
@@ -58,7 +82,9 @@ export default class Example extends React.Component {
     axios
       .post('/api/3DPrintingForm/Delete3DForm', {
         name: jsonObject.name,
-        color: jsonObject.color
+        color: jsonObject.color,
+        // This token must be passed in for authentication
+        token: this.state.authToken
       })
       .then(result => {
         console.log(result)
@@ -81,7 +107,9 @@ export default class Example extends React.Component {
     axios
       .post('/api/3DPrintingForm/edit', {
         name: jsonObject.name,
-        color: this.state.input
+        color: this.state.input,
+        // This token must be passed in for authentication
+        token: this.state.authToken
       })
       // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
       .then(result => {
@@ -164,16 +192,14 @@ export default class Example extends React.Component {
 
   render () {
     return (
-      <Layout>
-        <Container>
-          <Form>
-            <br />
+      <Container>
+        <Form>
+          <br />
 
-            <br />
-            {this.state.data.map((item, key) => this.requestForm(item, key))}
-          </Form>
-        </Container>
-      </Layout>
+          <br />
+          {this.state.data.map((item, key) => this.requestForm(item, key))}
+        </Form>
+      </Container>
     )
   }
 }

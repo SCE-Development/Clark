@@ -18,14 +18,17 @@ const router = express.Router()
 const PrintingFormFor3DPrinting = require('../models/PrintingFormFor3DPrinting.js')
 const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
+const jwt = require('jsonwebtoken')
 
 const passport = require('passport')
 require('../config/passport')(passport)
+const config = require('../config/config')
 
-const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND } = {
+const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND, UNAUTHORIZED } = {
   INTERNAL_SERVER_ERROR: 500,
   OK: 200,
-  NOT_FOUND: 404
+  NOT_FOUND: 404,
+  UNAUTHORIZED: 401
 }
 
 router.post('/submit', (req, res) => {
@@ -61,84 +64,72 @@ router.post('/GetForm', (req, res) => {
 })
 
 /// This hasn't been used yet
-router.post(
-  '/Delete3DForm',
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    //    const token = getToken(req.headers)
+router.post('/Delete3DForm', (req, res) => {
+  const token = req.body.token.replace(/^JWT\s/, '')
 
-    // if (token) {
-    PrintingFormFor3DPrinting.deleteOne(
-      { name: req.body.name, color: req.body.color },
-      function (error, form) {
-        if (error) {
-          logger.log(`3DPrinting /Delete3DForm error: ${error}`)
-          return res.sendStatus(INTERNAL_SERVER_ERROR)
-        }
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      PrintingFormFor3DPrinting.deleteOne(
+        { name: req.body.name, color: req.body.color },
+        function (error, form) {
+          if (error) {
+            logger.log(`3DPrinting /Delete3DForm error: ${error}`)
+            return res.sendStatus(INTERNAL_SERVER_ERROR)
+          }
 
-        if (form.n < 1) {
-          logger.log(`3DPrinting /Delete3DForm error: ${error}`)
-          res.status(NOT_FOUND).send({ message: 'Form not found.' })
-        } else {
-          logger.log(`3DPrinting /Delete3DForm deleted: ${req.body.name}`)
-          res.status(OK).send({ message: `${req.body.name} was deleted.` })
+          if (form.n < 1) {
+            logger.log(`3DPrinting /Delete3DForm error: ${error}`)
+            res.status(NOT_FOUND).send({ message: 'Form not found.' })
+          } else {
+            logger.log(`3DPrinting /Delete3DForm deleted: ${req.body.name}`)
+            res.status(OK).send({ message: `${req.body.name} was deleted.` })
+          }
         }
-      }
-    )
-    // }
-  }
-)
+      )
+    }
+  })
+})
 
 // Edit/Update a member record
 router.post('/edit', (req, res) => {
   // Strip JWT from the token
-  // const token = req.body.token.replace(/^JWT\s/, '')
+  const token = req.body.token.replace(/^JWT\s/, '')
   const query = { name: req.body.name }
-  const member = {
+  const form = {
     ...req.body
   }
-  logger.log('1 ', req.body)
-  logger.log('Querry:  ', query)
-  logger.log('Member:  ', member)
-  // jwt.verify(token, config.secretKey, function (error, decoded) {
-  // if (error) {
-  // Unauthorized
-  // res.sendStatus(401)
-  // } else {
-  // Ok
-  // Build this out to search for a user
-  PrintingFormFor3DPrinting.updateOne(query, { ...member }, function (
-    error,
-    result
-  ) {
+
+  // Remove the auth token from the form getting edited
+  delete form.token
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
-      logger.log(error)
-      return res.sendStatus(INTERNAL_SERVER_ERROR)
-    }
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      // Build this out to search for a user
+      PrintingFormFor3DPrinting.updateOne(query, { ...form }, function (
+        error,
+        result
+      ) {
+        if (error) {
+          logger.log(error)
+          return res.sendStatus(INTERNAL_SERVER_ERROR)
+        }
 
-    if (result.nModified < 1) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.name} not found.` })
-    }
+        if (result.nModified < 1) {
+          return res
+            .status(NOT_FOUND)
+            .send({ message: `${req.body.name} not found.` })
+        }
 
-    return res.status(OK).send({ message: `${req.body.name} was updated.` })
+        return res.status(OK).send({ message: `${req.body.name} was updated.` })
+      })
+    }
   })
-  // }
-  // })
 })
-
-// function getToken (headers) {
-//   if (headers && headers.authorization) {
-//     var parted = headers.authorization.split(' ')
-//     if (parted.length === 2) {
-//       return parted[1]
-//     } else {
-//       return null
-//     }
-//   } else {
-//     return null
-//   }
-// }
 
 module.exports = router

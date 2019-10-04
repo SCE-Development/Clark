@@ -107,15 +107,15 @@ export default class MembershipApplication extends React.Component {
     if (!this.state.username) return
 
     axios
-      .post('/api/membershipApplication/username/isAvailable', { username: this.state.username })
+      .post('/api/user/checkIfUserExists', { username: this.state.username })
       .then(result => {
         if (result.status >= 200 && result.status < 300) {
-            this.setState({
-              usernameCheckClass: 'username-availability available',
-              usernameCheckResult: 'Username is available',
-              usernameCheckResultIcon: '✔'
-            })
-          }
+          this.setState({
+            usernameCheckClass: 'username-availability available',
+            usernameCheckResult: 'Username is available',
+            usernameCheckResultIcon: '✔'
+          })
+        }
       })
       .catch(err => {
         this.setState({
@@ -207,32 +207,31 @@ export default class MembershipApplication extends React.Component {
 
     // Only proceed to submit if all required fields are present
     if (!lacksRequiredFields) {
-        axios
-          .post('/api/membershipApplication/submit', {
-            firstName: this.state.firstName,
-            middleInitial: this.state.middleInitial,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            username: this.state.username,
-            password: this.state.password,
-            major: this.state.major
-          })
-          .then(result => {
-            if (result.status >= 200 && result.status < 300) {
-                this.setState({
-                  successfullyApplied: true
-                })
-              }
-          })
-          .catch(err => {
-            if (err.response.status === 409) {
-              window.alert('Username or Email already exists in the system.')
-            } else {
-              console.error(err)
-            }
-            // window.alert('A submission error occurred. Please contact the site administrator')
-
-          })
+      axios
+        .post('/api/user/register', {
+          firstName: this.state.firstName,
+          middleInitial: this.state.middleInitial,
+          lastName: this.state.lastName,
+          email: this.state.email,
+          username: this.state.username,
+          password: this.state.password,
+          major: this.state.major
+        })
+        .then(result => {
+          if (result.status >= 200 && result.status < 300) {
+            this.setState({
+              successfullyApplied: true
+            })
+          }
+        })
+        .catch(err => {
+          if (err.response.status === 409) {
+            window.alert('Username or Email already exists in the system.')
+          } else {
+            console.error(err)
+          }
+          // window.alert('A submission error occurred. Please contact the site administrator')
+        })
     }
   }
 

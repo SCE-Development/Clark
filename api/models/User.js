@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcrypt-nodejs')
 
-const MemberSchema = new Schema(
+const UserSchema = new Schema(
   {
     memberID: {
       type: String
@@ -52,10 +52,10 @@ const MemberSchema = new Schema(
       default: Date.now
     }
   },
-  { collection: 'Member' }
+  { collection: 'User' }
 )
 
-MemberSchema.pre('save', function (next) {
+UserSchema.pre('save', function (next) {
   const member = this
   if (this.isModified('password') || this.isNew) {
     bcrypt.genSalt(10, function (error, salt) {
@@ -77,7 +77,7 @@ MemberSchema.pre('save', function (next) {
   }
 })
 
-MemberSchema.methods.comparePassword = function (passwd, callback) {
+UserSchema.methods.comparePassword = function (passwd, callback) {
   bcrypt.compare(passwd, this.password, function (error, isMatch) {
     if (error) {
       return callback(error)
@@ -87,4 +87,4 @@ MemberSchema.methods.comparePassword = function (passwd, callback) {
   })
 }
 
-module.exports = mongoose.model('Member', MemberSchema)
+module.exports = mongoose.model('User', UserSchema)

@@ -10,6 +10,11 @@
 //  Dependencies:
 //      JavaScript ECMAscript 6
 
+// TODO:
+// Build out rest of login to include tracking last login
+// Remove "Username" in favor of email?
+// "ClearanceLevel" or access level implementation
+
 'use strict'
 
 // Includes (include as many as you need; the bare essentials are included here)
@@ -21,32 +26,42 @@ const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
-const Member = require('../models/Member.js')
+const User = require('../models/User.js')
 
-const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND } = {
+const {
+  INTERNAL_SERVER_ERROR,
+  OK,
+  NOT_FOUND,
+  UNAUTHORIZED,
+  BAD_REQUEST,
+  CONFLICT
+} = {
   INTERNAL_SERVER_ERROR: 500,
   OK: 200,
-  NOT_FOUND: 404
+  NOT_FOUND: 404,
+  UNAUTHORIZED: 401,
+  BAD_REQUEST: 400,
+  CONFLICT: 409
 }
 
 // Login
 router.post('/login', function (req, res) {
-  Member.findOne(
+  User.findOne(
     {
-      username: req.body.username.toLowerCase()
+      email: req.body.email.toLowerCase()
     },
     function (error, user) {
       if (error) {
         // Bad Request
         logger.log('User API bad request: ', error)
-        return res.status(400).send({ message: 'Bad Request.' })
+        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
       }
 
       if (!user) {
         // Unauthorized if the username does not match any records in the database
-        logger.log("User/pass doesn't match our records: ", user)
+        logger.log("User/pass doesn't match our records: ", req.body.email)
         res
-          .status(401)
+          .status(UNAUTHORIZED)
           .send({ message: 'Username or password does not match our records.' })
       } else {
         // Check if password matches database
@@ -57,27 +72,31 @@ router.post('/login', function (req, res) {
             const jwtOptions = {
               expiresIn: '2h'
             }
-            // Update the Member record w/ the last login date
-            Member.updateOne(
-              { email: req.body.email },
-              { lastLogin: Date.now },
-              function (error, result) {
-                if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
 
-                if (result.nModified < 1) {
-                  return res
-                    .status(NOT_FOUND)
-                    .send({ message: `${req.body.email} not found.` })
-                }
-              }
-            )
+            // Build this out to track the users recent login.
+            // Current it sets 2 headers in one call which throws an
+            // error
+            // Update the Member record w/ the last login date
+            // Member.updateOne(
+            //   { email: req.body.email },
+            //   { lastLogin: Date.now },
+            //   function (error, result) {
+            //     if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+            //
+            //     if (result.nModified < 1) {
+            //       return res
+            //         .status(NOT_FOUND)
+            //         .send({ message: `${req.body.email} not found.` })
+            //     }
+            //   }
+            // )
 
             const token = jwt.sign(user.toJSON(), config.secretKey, jwtOptions)
-            res.status(200).send({ token: 'JWT ' + token })
+            res.status(OK).send({ token: 'JWT ' + token })
           } else {
             // Unauthorized
             logger.log("User/pass doesn't match our records: ", user)
-            res.status(401).send({
+            res.status(UNAUTHORIZED).send({
               message: 'Username or password does not match our records.'
             })
           }
@@ -87,48 +106,61 @@ router.post('/login', function (req, res) {
   )
 })
 
-// Register a member
-router.post('/register', function (req, res) {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
+router.post('/checkIfUserExists', (req, res) => {
+  User.findOne(
+    {
+      username: req.body.username.toLowerCase()
+    },
+    function (error, user) {
+      if (error) {
+        // Bad Request
+        logger.log(`User /user/checkIfUserExists error: ${error}`)
+        return res.status(400).send({ message: 'Bad Request.' })
+      }
 
-  jwt.verify(token, config.secretKey, function (error, decoded) {
-    if (error) {
-      // Unauthorized
-      res.sendStatus(401)
-    } else {
-      // Ok
-      if (req.body.username && req.body.password) {
-        const newUser = new Member({
-          username: req.body.username.toLowerCase(),
-          password: req.body.password,
-          memberID: req.body.memberID || '',
-          firstName: req.body.firstName,
-          middleInitial: req.body.middleInitial || '',
-          lastName: req.body.lastName,
-          email: req.body.email,
-          major: req.body.major || ''
-        })
-
-        const testPassword = testPasswordStrength(req.body.password)
-
-        if (!testPassword.success) {
-          // Bad Request
-          return res.status(400).send({ message: testPassword.message })
-        }
-
-        newUser.save(function (error) {
-          if (error) {
-            // Confict
-            res.status(409).send({ message: 'Username already exists.' })
-          } else {
-            // Ok
-            res.sendStatus(200)
-          }
-        })
+      if (!user) {
+        // Member username does not exist
+        res.sendStatus(OK)
+      } else {
+        // User username does exist
+        res.sendStatus(CONFLICT)
       }
     }
-  })
+  )
+})
+
+// Register a member
+router.post('/register', function (req, res) {
+  // Ok
+  if (req.body.username && req.body.password) {
+    const newUser = new User({
+      username: req.body.username.toLowerCase(),
+      password: req.body.password,
+      memberID: req.body.memberID || '',
+      firstName: req.body.firstName,
+      middleInitial: req.body.middleInitial || '',
+      lastName: req.body.lastName,
+      email: req.body.email,
+      major: req.body.major || ''
+    })
+
+    const testPassword = testPasswordStrength(req.body.password)
+
+    if (!testPassword.success) {
+      // Bad Request
+      return res.status(BAD_REQUEST).send({ message: testPassword.message })
+    }
+
+    newUser.save(function (error) {
+      if (error) {
+        // Confict
+        res.status(CONFLICT).send({ message: 'Username already exists.' })
+      } else {
+        // Ok
+        res.sendStatus(OK)
+      }
+    })
+  }
 })
 
 // Delete a member
@@ -139,15 +171,15 @@ router.post('/delete', (req, res) => {
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
       // Unauthorized
-      res.sendStatus(401)
+      res.sendStatus(UNAUTHORIZED)
     } else {
       // Ok
       // Delete a user
-      Member.deleteOne({ email: req.body.email }, function (error, member) {
+      User.deleteOne({ email: req.body.email }, function (error, user) {
         if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
 
-        if (member.n < 1) {
-          res.status(NOT_FOUND).send({ message: 'Member not found.' })
+        if (user.n < 1) {
+          res.status(NOT_FOUND).send({ message: 'User not found.' })
         } else {
           res.status(OK).send({ message: `${req.body.email} was deleted.` })
         }
@@ -164,12 +196,12 @@ router.post('/search', function (req, res) {
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
       // Unauthorized
-      res.sendStatus(401)
+      res.sendStatus(UNAUTHORIZED)
     } else {
       // Ok
       // Build this out to search for a user
       // res.status(200).send(decoded.username)
-      Member.findOne({ email: req.body.email }, function (error, result) {
+      User.findOne({ email: req.body.email }, function (error, result) {
         if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
 
         if (!result) {
@@ -178,7 +210,7 @@ router.post('/search', function (req, res) {
             .send({ message: `${req.body.email} not found.` })
         }
 
-        return res.status(OK).send({ message: `Member: ${result}.` })
+        return res.status(OK).send({ message: `User: ${result}.` })
       })
     }
   })
@@ -189,18 +221,18 @@ router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
   const query = { email: req.body.email }
-  const member = {
+  const user = {
     ...req.body
   }
 
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
       // Unauthorized
-      res.sendStatus(401)
+      res.sendStatus(UNAUTHORIZED)
     } else {
       // Ok
       // Build this out to search for a user
-      Member.updateOne(query, { ...member }, function (error, result) {
+      User.updateOne(query, { ...user }, function (error, result) {
         if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
 
         if (result.nModified < 1) {
@@ -226,10 +258,10 @@ router.post('/verify', function (req, res) {
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
       // Unauthorized
-      res.sendStatus(401)
+      res.sendStatus(UNAUTHORIZED)
     } else {
       // Ok
-      res.sendStatus(200)
+      res.sendStatus(OK)
     }
   })
 })
