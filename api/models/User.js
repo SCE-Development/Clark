@@ -4,9 +4,6 @@ const bcrypt = require('bcrypt-nodejs')
 
 const UserSchema = new Schema(
   {
-    memberID: {
-      type: String
-    },
     firstName: {
       type: String,
       required: true
@@ -21,11 +18,6 @@ const UserSchema = new Schema(
     joinDate: {
       type: Date,
       default: Date.now
-    },
-    username: {
-      type: String,
-      unique: true,
-      required: true
     },
     password: {
       type: String,
@@ -44,8 +36,28 @@ const UserSchema = new Schema(
       type: Boolean,
       default: true
     },
+
+    // Users declared Major at SJSU
     major: {
       type: String
+    },
+
+    // Whether or not the user is an active member in SCE
+    active: {
+      type: Boolean,
+      default: true
+    },
+    doorCode: {
+      type: String
+    },
+
+    // The access level is defined as follows:
+    // 0: Member
+    // 1: Officer
+    // 2: Admin
+    accessLevel: {
+      type: Number,
+      default: 0
     },
     lastLogin: {
       type: Date,

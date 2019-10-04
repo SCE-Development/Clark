@@ -109,7 +109,7 @@ router.post('/login', function (req, res) {
 router.post('/checkIfUserExists', (req, res) => {
   User.findOne(
     {
-      username: req.body.username.toLowerCase()
+      email: req.body.email.toLowerCase()
     },
     function (error, user) {
       if (error) {
@@ -132,11 +132,9 @@ router.post('/checkIfUserExists', (req, res) => {
 // Register a member
 router.post('/register', function (req, res) {
   // Ok
-  if (req.body.username && req.body.password) {
+  if (req.body.email && req.body.password) {
     const newUser = new User({
-      username: req.body.username.toLowerCase(),
       password: req.body.password,
-      memberID: req.body.memberID || '',
       firstName: req.body.firstName,
       middleInitial: req.body.middleInitial || '',
       lastName: req.body.lastName,

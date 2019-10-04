@@ -15,7 +15,7 @@
 // Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
 const router = express.Router()
-const PrintingFormFor3DPrinting = require('../models/PrintingFormFor3DPrinting.js')
+const PrintingForm3D = require('../models/PrintingForm3D.js')
 const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
@@ -42,7 +42,7 @@ router.post('/submit', (req, res) => {
     progress: req.body.progress
   }
 
-  PrintingFormFor3DPrinting.create(data, (error, post) => {
+  PrintingForm3D.create(data, (error, post) => {
     if (error) {
       logger.log(`3DPrinting /submit error: ${error}`)
       return res.sendStatus(INTERNAL_SERVER_ERROR)
@@ -53,7 +53,7 @@ router.post('/submit', (req, res) => {
 })
 
 router.post('/GetForm', (req, res) => {
-  PrintingFormFor3DPrinting.find({}, (error, forms) => {
+  PrintingForm3D.find({}, (error, forms) => {
     if (error) {
       logger.log(`3DPrinting /GetForm error: ${error}`)
       return res.sendStatus(INTERNAL_SERVER_ERROR)
@@ -72,7 +72,7 @@ router.post('/Delete3DForm', (req, res) => {
       // Unauthorized
       res.sendStatus(UNAUTHORIZED)
     } else {
-      PrintingFormFor3DPrinting.deleteOne(
+      PrintingForm3D.deleteOne(
         { name: req.body.name, color: req.body.color },
         function (error, form) {
           if (error) {
@@ -111,10 +111,7 @@ router.post('/edit', (req, res) => {
       res.sendStatus(UNAUTHORIZED)
     } else {
       // Build this out to search for a user
-      PrintingFormFor3DPrinting.updateOne(query, { ...form }, function (
-        error,
-        result
-      ) {
+      PrintingForm3D.updateOne(query, { ...form }, function (error, result) {
         if (error) {
           logger.log(error)
           return res.sendStatus(INTERNAL_SERVER_ERROR)
