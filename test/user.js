@@ -29,9 +29,6 @@ describe('Users', () => {
 
   let token = ''
 
-  /*
-   * Test the /GET route
-   */
   describe('/POST checkIfUserExists with no users added yet', () => {
     it('Should not return statusCode 200 when an email is not provided', done => {
       const user = {}
@@ -265,7 +262,251 @@ describe('Users', () => {
     })
   })
 
-  // search
-  // edit
-  // delete
+  describe('/POST search', () => {
+    it('Should return statusCode 500 if no token is passed in', done => {
+      const user = {
+        email: 'a@b.c'
+      }
+      chai
+        .request(app)
+        .post('/api/user/search')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 if an invalid token was passed in', done => {
+      const user = {
+        email: 'a@b.c',
+        token: 'Invalid token'
+      }
+      chai
+        .request(app)
+        .post('/api/user/search')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 404 if no user was found', done => {
+      const user = {
+        email: 'invalid@b.c',
+        token: token
+      }
+      chai
+        .request(app)
+        .post('/api/user/search')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(404)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 200 and a user if the query was found', done => {
+      const user = {
+        email: 'a@b.c',
+        token: token
+      }
+      chai
+        .request(app)
+        .post('/api/user/search')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          res.body.should.be.a('object')
+          res.body.should.have.property('firstName')
+          res.body.should.have.property('middleInitial')
+          res.body.should.have.property('lastName')
+          res.body.should.have.property('email')
+          res.body.should.have.property('emailVerified')
+          res.body.should.have.property('emailOptIn')
+          res.body.should.have.property('active')
+          res.body.should.have.property('accessLevel')
+          res.body.should.have.property('major')
+          res.body.should.have.property('joinDate')
+          res.body.should.have.property('lastLogin')
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+  })
+
+  describe('/POST edit', () => {
+    it('Should return statusCode 500 if no token is passed in', done => {
+      const user = {
+        queryEmail: 'a@b.c'
+      }
+      chai
+        .request(app)
+        .post('/api/user/edit')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 if an invalid token was passed in', done => {
+      const user = {
+        queryEmail: 'a@b.c',
+        token: 'Invalid token'
+      }
+      chai
+        .request(app)
+        .post('/api/user/edit')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 404 if no user was found', done => {
+      const user = {
+        queryEmail: 'invalid@b.c',
+        token: token
+      }
+      chai
+        .request(app)
+        .post('/api/user/edit')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(404)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 200 and a message if a user was edited', done => {
+      const user = {
+        queryEmail: 'a@b.c',
+        token: token,
+        firstName: 'pinkUnicorn'
+      }
+      chai
+        .request(app)
+        .post('/api/user/edit')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          res.body.should.be.a('object')
+          res.body.should.have.property('message')
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+  })
+
+  describe('/POST delete', () => {
+    it('Should return statusCode 500 if no token is passed in', done => {
+      const user = {
+        email: 'a@b.c'
+      }
+      chai
+        .request(app)
+        .post('/api/user/delete')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 if an invalid token was passed in', done => {
+      const user = {
+        email: 'a@b.c',
+        token: 'Invalid token'
+      }
+      chai
+        .request(app)
+        .post('/api/user/delete')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 404 if no user was found', done => {
+      const user = {
+        email: 'invalid@b.c',
+        token: token
+      }
+      chai
+        .request(app)
+        .post('/api/user/delete')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(404)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 200 and a message if a user was edited', done => {
+      const user = {
+        email: 'a@b.c',
+        token: token
+      }
+      chai
+        .request(app)
+        .post('/api/user/delete')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          res.body.should.be.a('object')
+          res.body.should.have.property('message')
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+  })
 })

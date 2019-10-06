@@ -192,7 +192,20 @@ router.post('/search', function (req, res) {
             .send({ message: `${req.body.email} not found.` })
         }
 
-        return res.status(OK).send({ message: `User: ${result}.` })
+        const user = {
+          firstName: result.firstName,
+          middleInitial: result.middleInitial,
+          lastName: result.lastName,
+          email: result.email,
+          emailVerified: result.emailVerified,
+          emailOptIn: result.emailOptIn,
+          active: result.active,
+          accessLevel: result.accessLevel,
+          major: result.major,
+          joinDate: result.joinDate,
+          lastLogin: result.lastLogin
+        }
+        return res.status(OK).send(user)
       })
     }
   })
