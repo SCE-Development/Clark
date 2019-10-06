@@ -35,7 +35,10 @@ logger.log('Initializing...', handlerTag)
 mongoose.Promise = require('bluebird')
 mongoose
   .connect(`mongodb://localhost/${database}`, {
-    promiseLibrary: require('bluebird')
+    promiseLibrary: require('bluebird'),
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
   })
   .then(() => {
     console.log('MongoDB Connection Successful')

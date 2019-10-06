@@ -19,7 +19,7 @@ chai.use(chaiHttp)
 describe('Users', () => {
   before(done => {
     // Before each test we empty the database
-    User.remove({}, err => {
+    User.deleteMany({}, err => {
       if (err) {
         //
       }
