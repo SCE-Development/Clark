@@ -36,55 +36,6 @@ const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST, CONFLICT } = {
   CONFLICT: 409
 }
 
-// Login
-router.post('/login', function (req, res) {
-  User.findOne(
-    {
-      email: req.body.email.toLowerCase()
-    },
-    function (error, user) {
-      if (error) {
-        // Bad Request
-        logger.log('User API bad request: ', error)
-        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
-      }
-
-      if (!user) {
-        // Unauthorized if the username does not match any records in the database
-        logger.log("User/pass doesn't match our records: ", req.body.email)
-        res
-          .status(UNAUTHORIZED)
-          .send({ message: 'Username or password does not match our records.' })
-      } else {
-        // Check if password matches database
-        user.comparePassword(req.body.password, function (error, isMatch) {
-          if (isMatch && !error) {
-            // If the username and password matches the database, assign and
-            // return a jwt token
-            const jwtOptions = {
-              expiresIn: '2h'
-            }
-
-            // Include fields from the User model that should be passed to the JSON Web Token (JWT)
-            const userToBeSigned = {
-              name: user.firstName,
-              accessLevel: user.accessLevel
-            }
-            const token = jwt.sign(userToBeSigned, config.secretKey, jwtOptions)
-            res.status(OK).send({ token: 'JWT ' + token })
-          } else {
-            // Unauthorized
-            logger.log("User/pass doesn't match our records: ", user)
-            res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
-            })
-          }
-        })
-      }
-    }
-  )
-})
-
 router.post('/checkIfUserExists', (req, res) => {
   User.findOne(
     {
@@ -140,36 +91,56 @@ router.post('/register', function (req, res) {
   }
 })
 
-router.post('/getUserAccessLevel', (req, res) => {
-  const token = req.body.token.replace(/^JWT\s/, '')
+// Login
+router.post('/login', function (req, res) {
+  if (!req.body.email || !req.body.password) return res.sendStatus(400)
 
-  jwt.verify(token, config.secretKey, function (error, decoded) {
-    if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      User.findOne(
-        {
-          email: req.body.email.toLowerCase()
-        },
-        function (error, user) {
-          if (error) {
-            // Bad Request
-            logger.log(`User /user/checkIfUserExists error: ${error}`)
-            return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
-          }
+  User.findOne(
+    {
+      email: req.body.email.toLowerCase()
+    },
+    function (error, user) {
+      if (error) {
+        // Bad Request
+        logger.log('User API bad request: ', error)
+        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
+      }
 
-          if (!user) {
-            // Member username does not exist
-            res.sendStatus(OK)
+      if (!user) {
+        // Unauthorized if the username does not match any records in the database
+        logger.log("User/pass doesn't match our records: ", req.body.email)
+        res
+          .status(UNAUTHORIZED)
+          .send({ message: 'Username or password does not match our records.' })
+      } else {
+        // Check if password matches database
+        user.comparePassword(req.body.password, function (error, isMatch) {
+          if (isMatch && !error) {
+            // If the username and password matches the database, assign and
+            // return a jwt token
+            const jwtOptions = {
+              expiresIn: '2h'
+            }
+
+            // Include fields from the User model that should be passed to the JSON Web Token (JWT)
+            const userToBeSigned = {
+              name: user.firstName,
+              email: user.email,
+              accessLevel: user.accessLevel
+            }
+            const token = jwt.sign(userToBeSigned, config.secretKey, jwtOptions)
+            res.status(OK).send({ token: 'JWT ' + token })
           } else {
-            // User username does exist
-            res.status(OK).send({ accessLevel: user.accessLevel })
+            // Unauthorized
+            logger.log("User/pass doesn't match our records: ", user)
+            res.status(UNAUTHORIZED).send({
+              message: 'Username or password does not match our records.'
+            })
           }
-        }
-      )
+        })
+      }
     }
-  })
+  )
 })
 
 // Delete a member
@@ -267,6 +238,8 @@ router.post('/edit', (req, res) => {
 
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
+// Returns the name and accesslevel of the user w/ the given access token
+// Todo: Check the DB to ensure the access level is correct and the user exists
 router.post('/verify', function (req, res) {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
@@ -276,11 +249,6 @@ router.post('/verify', function (req, res) {
       // Unauthorized
       res.sendStatus(UNAUTHORIZED)
     } else {
-      // Ok
-      // const user = {
-      //   name: decoded.firstName,
-      //   accessLevel: decoded.accessLevel
-      // }
       res.status(OK).send(decoded)
     }
   })

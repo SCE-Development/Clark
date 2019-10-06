@@ -1,4 +1,4 @@
-/* global describe it beforeEach */
+/* global describe it before */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test'
 
@@ -17,7 +17,7 @@ chai.use(chaiHttp)
 
 // Our parent block
 describe('Users', () => {
-  beforeEach(done => {
+  before(done => {
     // Before each test we empty the database
     User.remove({}, err => {
       if (err) {
@@ -26,6 +26,8 @@ describe('Users', () => {
       done()
     })
   })
+
+  let token = ''
 
   /*
    * Test the /GET route
@@ -67,7 +69,7 @@ describe('Users', () => {
   })
 
   describe('/POST register', () => {
-    it('Should successfully register a user with at least an email and password', done => {
+    it('Should successfully register a user with email, password, firstname and lastname', done => {
       const user = {
         email: 'a@b.c',
         password: 'pass',
@@ -81,6 +83,28 @@ describe('Users', () => {
         .send(user)
         .then(function (res) {
           expect(res).to.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should not allow a second registration with the same email as a user in the database', done => {
+      const user = {
+        email: 'a@b.c',
+        password: 'pass',
+        firstName: 'first-name',
+        lastName: 'last-name'
+      }
+
+      chai
+        .request(app)
+        .post('/api/user/register')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(409)
 
           done()
         })
@@ -107,9 +131,141 @@ describe('Users', () => {
           done()
         })
         .catch(err => {
-          done()
           throw err
         })
     })
   })
+
+  describe('/POST login', () => {
+    it('Should return statusCode 400 if an email and/or password is not provided', done => {
+      const user = {}
+      chai
+        .request(app)
+        .post('/api/user/login')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(400)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 if an email/pass combo does not match a record in the DB', done => {
+      const user = {
+        email: 'nota@b.c',
+        password: 'notpass'
+      }
+      chai
+        .request(app)
+        .post('/api/user/login')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(401)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 if the email exists but password is incorrect', done => {
+      const user = {
+        email: 'a@b.c',
+        password: 'notpass'
+      }
+      chai
+        .request(app)
+        .post('/api/user/login')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(401)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 200 and a JWT token if the email/pass is correct', done => {
+      const user = {
+        email: 'a@b.c',
+        password: 'pass'
+      }
+      chai
+        .request(app)
+        .post('/api/user/login')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          res.body.should.be.a('object')
+          res.body.should.have.property('token')
+          token = res.body.token
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+  })
+
+  describe('/POST verify', () => {
+    it('Should return statusCode 401 when a token is not passed in', done => {
+      chai
+        .request(app)
+        .post('/api/user/verify')
+        .send({})
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 when an invalid token is passed in', done => {
+      chai
+        .request(app)
+        .post('/api/user/verify')
+        .send({ token: 'Invalid Token' })
+        .then(function (res) {
+          expect(res).to.have.status(401)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 200 when a valid token is passed in', done => {
+      chai
+        .request(app)
+        .post('/api/user/verify')
+        .send({ token: token })
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          res.body.should.be.a('object')
+          res.body.should.have.property('name')
+          res.body.should.have.property('email')
+          res.body.should.have.property('accessLevel')
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+  })
+
+  // search
+  // edit
+  // delete
 })
