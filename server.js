@@ -24,13 +24,17 @@ const mongoose = require('mongoose')
 /* Globals */
 const handlerTag = { src: 'server' }
 
+// Ensure a test database is ran when running End-to-End tests
+const testEnv = process.env.NODE_ENV === 'test'
+const database = testEnv ? 'sce_core_test' : 'sce_core'
+
 /* Initialize logging */
 logger.log('Initializing...', handlerTag)
 
 // Configure Mongoose
 mongoose.Promise = require('bluebird')
 mongoose
-  .connect('mongodb://localhost/sce_core', {
+  .connect(`mongodb://localhost/${database}`, {
     promiseLibrary: require('bluebird')
   })
   .then(() => {
@@ -106,3 +110,5 @@ server.listen(port, function () {
   logger.log(`Now listening on port ${port}`, handlerTag)
 })
 // END server.js
+
+module.exports = server
