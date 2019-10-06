@@ -12,6 +12,7 @@ import {
   Col
 } from 'reactstrap'
 import axios from 'axios'
+import Layout from '../../Components/Layout/Layout'
 
 let fill = false
 export default class Example extends React.Component {
@@ -168,7 +169,7 @@ export default class Example extends React.Component {
 
   render () {
     return (
-      <div>
+      <Layout>
         {fill === false ? (
           <Container>
             <Form>
@@ -325,7 +326,7 @@ export default class Example extends React.Component {
             <p style={{ margin: '2em' }}>You may now return to the homepage!</p>
           </div>
         ) : null}
-      </div>
+      </Layout>
     )
   }
 }

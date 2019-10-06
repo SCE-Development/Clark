@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import Layout from '../../Components/Layout/Layout'
 
 export default class extends Component {
   constructor () {
@@ -61,11 +62,6 @@ export default class extends Component {
         token: token
       })
       .then(() => {
-        console.log(typeof this.props.userLoggedIn)
-        // if (typeof this.props.userLoggedIn === 'function') {
-        // console.log('hit')
-        this.props.userLoggedIn(email)
-        // }
         this.props.history.push('/dashboard')
       })
       .catch(err => {
@@ -77,35 +73,37 @@ export default class extends Component {
     const { email, password, message } = this.state
 
     return (
-      <form onSubmit={this.handleSubmit}>
-        <h1>Welcome</h1>
+      <Layout>
+        <form onSubmit={this.handleSubmit}>
+          <h1>Welcome</h1>
 
-        {message !== '' && <span>{message}</span>}
+          {message !== '' && <span>{message}</span>}
 
-        <input
-          type='email'
-          name='email'
-          placeholder='Email'
-          value={email}
-          onChange={this.handleChange}
-          required
-        />
+          <input
+            type='email'
+            name='email'
+            placeholder='Email'
+            value={email}
+            onChange={this.handleChange}
+            required
+          />
 
-        <input
-          type='password'
-          name='password'
-          placeholder='Password'
-          value={password}
-          onChange={this.handleChange}
-          required
-        />
+          <input
+            type='password'
+            name='password'
+            placeholder='Password'
+            value={password}
+            onChange={this.handleChange}
+            required
+          />
 
-        <button type='submit'>Login</button>
+          <button type='submit'>Login</button>
 
-        <p>
-          <Link to='/register'>Create an account</Link>
-        </p>
-      </form>
+          <p>
+            <Link to='/register'>Create an account</Link>
+          </p>
+        </form>
+      </Layout>
     )
   }
 }

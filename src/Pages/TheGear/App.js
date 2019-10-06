@@ -23,6 +23,7 @@ import './App.css'
 import './card-config.css'
 // import Ari from './gearPics/2018_2019/arisKoumis.png'
 // import Evan from './gearPics/2018_2019/evanUgarte.png'
+import Layout from '../../Components/Layout/Layout'
 
 export default class Example extends React.Component {
   constructor (props) {
@@ -45,41 +46,43 @@ export default class Example extends React.Component {
   //
   render () {
     return (
-      <div className='Page'>
-        {/* -----------------Nav Bar-------------------
-        <Nav tabs>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === '1' })}
-              onClick={() => { this.toggle('1'); }}
-            >
-              2018 - 2019 Gear
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === '2' })}
-              onClick={() => { this.toggle('2'); }}
-            >
-              2017 - 2018 Gear
-            </NavLink>
-          </NavItem>
-        </Nav>
+      <Layout>
+        <div className='Page'>
+          {/* -----------------Nav Bar-------------------
+          <Nav tabs>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: this.state.activeTab === '1' })}
+                onClick={() => { this.toggle('1'); }}
+              >
+                2018 - 2019 Gear
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: this.state.activeTab === '2' })}
+                onClick={() => { this.toggle('2'); }}
+              >
+                2017 - 2018 Gear
+              </NavLink>
+            </NavItem>
+          </Nav>
 
-        <TabContent activeTab={this.state.activeTab}> */}
+          <TabContent activeTab={this.state.activeTab}> */}
 
-        {/* -----------------Panel 1-------------------
-          <TabPane tabId="1" id="tab1" className="Panel">
-          </TabPane> */}
-        {/* -----------------Panel 2-------------------
+          {/* -----------------Panel 1-------------------
+            <TabPane tabId="1" id="tab1" className="Panel">
+            </TabPane> */}
+          {/* -----------------Panel 2-------------------
 
-          <TabPane tabId="2" id="tab2" className="Panel">
+            <TabPane tabId="2" id="tab2" className="Panel">
 
-          </TabPane>
+            </TabPane>
 
-        </TabContent>
-        */}
-      </div>
+          </TabContent>
+          */}
+        </div>
+      </Layout>
     )
   }
 }

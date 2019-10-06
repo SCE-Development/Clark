@@ -22,10 +22,7 @@ class NavBar extends Component {
 
     this.state = {
       isLoggedIn: false,
-      user: {
-        name: 'Andrew',
-        accessLevel: 2
-      }
+      user: {}
     }
     this.handleLogout = this.handleLogout.bind(this)
   }
@@ -36,16 +33,16 @@ class NavBar extends Component {
       : ''
 
     if (token) {
-      // Verify if token is valid
-      // As user persmissions are created, the verify auth should be more extensive
-      // and return views as the permissions defines
       axios
         .post('/api/user/verify', { token })
         .then(res => {
-          this.setState({ isLoggedIn: true })
+          this.setState({
+            user: res.data,
+            isLoggedIn: true
+          })
         })
         .catch(() => {
-          // Token is no longer valid, remove it
+          // if (this.props.history) this.props.history.push('/login')
           window.localStorage.removeItem('jwtToken')
         })
     }

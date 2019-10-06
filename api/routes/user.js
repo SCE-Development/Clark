@@ -65,7 +65,12 @@ router.post('/login', function (req, res) {
               expiresIn: '2h'
             }
 
-            const token = jwt.sign(user.toJSON(), config.secretKey, jwtOptions)
+            // Include fields from the User model that should be passed to the JSON Web Token (JWT)
+            const userToBeSigned = {
+              name: user.firstName,
+              accessLevel: user.accessLevel
+            }
+            const token = jwt.sign(userToBeSigned, config.secretKey, jwtOptions)
             res.status(OK).send({ token: 'JWT ' + token })
           } else {
             // Unauthorized
@@ -272,7 +277,11 @@ router.post('/verify', function (req, res) {
       res.sendStatus(UNAUTHORIZED)
     } else {
       // Ok
-      res.sendStatus(OK)
+      // const user = {
+      //   name: decoded.firstName,
+      //   accessLevel: decoded.accessLevel
+      // }
+      res.status(OK).send(decoded)
     }
   })
 })
