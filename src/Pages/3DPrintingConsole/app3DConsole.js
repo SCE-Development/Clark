@@ -80,7 +80,7 @@ export default class Example extends React.Component {
 
   deleteData (jsonObject) {
     axios
-      .post('/api/3DPrintingForm/Delete3DForm', {
+      .post('/api/3DPrintingForm/delete', {
         name: jsonObject.name,
         color: jsonObject.color,
         // This token must be passed in for authentication

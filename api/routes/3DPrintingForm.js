@@ -24,11 +24,11 @@ const passport = require('passport')
 require('../config/passport')(passport)
 const config = require('../config/config')
 
-const { INTERNAL_SERVER_ERROR, OK, NOT_FOUND, UNAUTHORIZED } = {
-  INTERNAL_SERVER_ERROR: 500,
+const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST } = {
   OK: 200,
   NOT_FOUND: 404,
-  UNAUTHORIZED: 401
+  UNAUTHORIZED: 401,
+  BAD_REQUEST: 400
 }
 
 router.post('/submit', (req, res) => {
@@ -45,7 +45,7 @@ router.post('/submit', (req, res) => {
   PrintingForm3D.create(data, (error, post) => {
     if (error) {
       logger.log(`3DPrinting /submit error: ${error}`)
-      return res.sendStatus(INTERNAL_SERVER_ERROR)
+      return res.sendStatus(BAD_REQUEST)
     }
 
     return res.json(post)
@@ -56,7 +56,7 @@ router.post('/GetForm', (req, res) => {
   PrintingForm3D.find({}, (error, forms) => {
     if (error) {
       logger.log(`3DPrinting /GetForm error: ${error}`)
-      return res.sendStatus(INTERNAL_SERVER_ERROR)
+      return res.sendStatus(BAD_REQUEST)
     }
 
     return res.status(OK).send(forms)
@@ -64,7 +64,7 @@ router.post('/GetForm', (req, res) => {
 })
 
 /// This hasn't been used yet
-router.post('/Delete3DForm', (req, res) => {
+router.post('/delete', (req, res) => {
   const token = req.body.token.replace(/^JWT\s/, '')
 
   jwt.verify(token, config.secretKey, function (error, decoded) {
@@ -77,7 +77,7 @@ router.post('/Delete3DForm', (req, res) => {
         function (error, form) {
           if (error) {
             logger.log(`3DPrinting /Delete3DForm error: ${error}`)
-            return res.sendStatus(INTERNAL_SERVER_ERROR)
+            return res.sendStatus(BAD_REQUEST)
           }
 
           if (form.n < 1) {
@@ -114,7 +114,7 @@ router.post('/edit', (req, res) => {
       PrintingForm3D.updateOne(query, { ...form }, function (error, result) {
         if (error) {
           logger.log(error)
-          return res.sendStatus(INTERNAL_SERVER_ERROR)
+          return res.sendStatus(BAD_REQUEST)
         }
 
         if (result.nModified < 1) {

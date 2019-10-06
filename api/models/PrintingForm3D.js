@@ -3,9 +3,6 @@ const Schema = mongoose.Schema
 
 const PrintingForm3DSchema = new Schema(
   {
-    // PF3D: {
-    //   type: Number
-    // },
     name: {
       type: String,
       required: true
@@ -35,7 +32,7 @@ const PrintingForm3DSchema = new Schema(
       default: Date.now
     }
   },
-  { collection: 'PrintingForm3DSchema' }
+  { collection: 'PrintingForm3D' }
 )
 
-module.exports = mongoose.model('PrintingForm3DSchema', PrintingForm3DSchema)
+module.exports = mongoose.model('PrintingForm3D', PrintingForm3DSchema)

@@ -99,8 +99,6 @@ UserSchema.methods.comparePassword = function (passwd, callback) {
   })
 }
 
-// module.exports = mongoose.model('User', UserSchema)
-
 module.exports =
   mongoose.models && mongoose.models.User
     ? mongoose.models.User

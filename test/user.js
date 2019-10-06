@@ -488,7 +488,7 @@ describe('Users', () => {
         })
     })
 
-    it('Should return statusCode 200 and a message if a user was edited', done => {
+    it('Should return statusCode 200 and a message if a user was deleted', done => {
       const user = {
         email: 'a@b.c',
         token: token
