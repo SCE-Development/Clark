@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "react-scripts build && node server.js | react-scripts start",
+    "deploy": "pm2 stop database api app && pm2 delete database api app && pm2 start mongod --name \"database\" && npm run build && pm2 start npm --name \"app\" -- start && pm2 start npm \"app\" -- run dev",
     "lint": "prettier 'utils/**/*.js' 'static/js/**/*.js' '__tests__/**/*.js' 'components/**/*.js' 'pages/**/*.js' 'public/**/*.js' '*.js' --write --single-quote --no-semi && standard --fix"
   },
   "lint-staged": {
