@@ -23,9 +23,8 @@ export default class Example extends React.Component {
     this.handleToggle = this.handleToggle.bind(this)
     this.state = {
       collapse: false,
-      forms: '',
       data: [],
-      list: [1, 2, 3]
+      key: ''
     }
   }
 
@@ -69,19 +68,11 @@ export default class Example extends React.Component {
       })
   }
 
-  changeInput (event) {
-    this.setState({
-      input: event.target.value
-    })
-  }
-
-  editData (jsonObject) {
-    console.log('Print ', jsonObject)
-    console.log(jsonObject.name)
+  updateProgress (jsonObject, event) {
     axios
       .post('/api/3DPrintingForm/edit', {
         name: jsonObject.name,
-        color: this.state.input
+        progress: event.target.value
       })
       // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
       .then(result => {
@@ -93,14 +84,44 @@ export default class Example extends React.Component {
       })
   }
 
+  // Handle changes when need to edit (For sample not used)
+  /* changeInput (event, key) {
+    this.setState({
+      input: event.target.value
+    })
+    this.setState({
+      key: key
+    })
+    console.log(key)
+  }
+  editData (jsonObject, key) {
+    console.log('Print ')
+    console.log(jsonObject.name)
+    if (key == this.state.key){
+      axios
+        .post('/api/3DPrintingForm/edit', {
+          name: jsonObject.name,
+          color: this.state.input
+        })
+        // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
+        .then(result => {
+          // console.log(result)
+          this.callDatabase() // reload database
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  } */
+
   requestForm (jsonObject, key) {
     console.log(jsonObject)
     return (
       <FormGroup key={key}>
         <Card
           id='Jane'
-          onClick={this.handleToggle}
           body
+          onClick={this.handleToggle}
           inverse
           style={{ backgroundColor: '#333', borderColor: '#333' }}
         >
@@ -113,28 +134,60 @@ export default class Example extends React.Component {
               <Col>Progress:</Col>
               <Col />
             </Row>
+
             <Row>
               <Col>{jsonObject.projectContact}</Col>
               <Col id='secondRow'>{jsonObject.date}</Col>
               <Col id='secondRow'>{jsonObject.progress}</Col>
+
               <Col>
                 <ButtonGroup>
-                  <Button color='primary'>Pending</Button>
-                  <Button color='info'>In Progress</Button>
-                  <Button color='secondary'>Completed</Button>
-                  <input onChange={this.changeInput.bind(this)} />
+                  <Button
+                    color='primary'
+                    value='Reject'
+                    onClick={e => {
+                      this.updateProgress(jsonObject, e)
+                    }}
+                  >
+                    Reject
+                  </Button>
+
+                  <Button
+                    color='info'
+                    value='In Progress'
+                    onClick={e => {
+                      this.updateProgress(jsonObject, e)
+                    }}
+                  >
+                    In Progress
+                  </Button>
+
+                  <Button
+                    color='secondary'
+                    value='Complete'
+                    onClick={e => {
+                      this.updateProgress(jsonObject, e)
+                    }}
+                  >
+                    Completed
+                  </Button>
+
                   <Button
                     color='primary'
                     onClick={this.deleteData.bind(this, jsonObject)}
                   >
                     Delete
                   </Button>
+
+                  {/* Input + Update Json for testing not used (For Sample because it actually works)
+                  <input onChange={(e) => {this.changeInput(e,key)}} />
                   <Button
                     color='primary'
-                    onClick={this.editData.bind(this, jsonObject)}
+                    onClick={this.editData.bind(this, jsonObject, key)}
                   >
                     Edit
                   </Button>
+                  */}
                 </ButtonGroup>
               </Col>
             </Row>
