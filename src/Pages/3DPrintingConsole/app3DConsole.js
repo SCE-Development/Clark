@@ -24,7 +24,8 @@ export default class Example extends React.Component {
     this.state = {
       collapse: false,
       data: [],
-      key: ''
+      key: '',
+      search: ''
     }
   }
 
@@ -215,15 +216,26 @@ export default class Example extends React.Component {
     )
   }
 
+  search () {
+    const search = this.state.search.trim()
+    return search !== null || search !== ''
+      ? this.state.data.filter(data => data.name.includes(this.state.search))
+      : this.state.data
+  }
+
   render () {
     return (
       <Layout>
         <Container>
           <Form>
             <br />
-
+            <input
+              onChange={e => {
+                this.setState({ search: e.target.value })
+              }}
+            />
             <br />
-            {this.state.data.map((item, key) => this.requestForm(item, key))}
+            {this.search().map((item, key) => this.requestForm(item, key))}
           </Form>
         </Container>
       </Layout>
