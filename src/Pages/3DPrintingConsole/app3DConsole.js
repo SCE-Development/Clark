@@ -29,14 +29,17 @@ export default class Example extends React.Component {
     }
   }
 
+  // update Data 1 when page load
   componentDidMount () {
     this.callDatabase()
   }
 
+  // Update card's collapse option
   handleToggle () {
     this.setState({ collapse: !this.state.collapse })
   }
 
+  // Getting all data in DB
   callDatabase () {
     axios
       .post('/api/3DPrintingForm/GetForm')
@@ -45,6 +48,7 @@ export default class Example extends React.Component {
       // result.data.json()
       // })
       .then(result => {
+        // Save data from db to state.data
         this.setState({
           data: result.data
         })
@@ -54,6 +58,11 @@ export default class Example extends React.Component {
       })
   }
 
+  /*
+  Delete api
+  parameter: Json object of object to be deleted
+  Search for object in db using name and color then delete
+  */
   deleteData (jsonObject) {
     axios
       .post('/api/3DPrintingForm/Delete3DForm', {
@@ -69,20 +78,31 @@ export default class Example extends React.Component {
       })
   }
 
+  /*
+  Parameters: Json Object that will be updated and an onLick event with a value
+  Search for object in db using its name and date
+  Set new progress = event value
+  */
   updateProgress (jsonObject, event) {
     axios
       .post('/api/3DPrintingForm/edit', {
         name: jsonObject.name,
+        date: jsonObject.date,
         progress: event.target.value
       })
-      // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
       .then(result => {
-        // console.log(result)
         this.callDatabase() // reload database
       })
       .catch(err => {
         console.log(err)
       })
+  }
+
+  search () {
+    const search = this.state.search.trim().toLowerCase()
+    return search !== null || search !== ''
+      ? this.state.data.filter(data => data.name.toLowerCase().includes(search))
+      : this.state.data
   }
 
   // Handle changes when need to edit (For sample not used)
@@ -95,6 +115,12 @@ export default class Example extends React.Component {
     })
     console.log(key)
   }
+  /*
+  Parameters: Json Object that will be updated and an onLick event with a value
+  Search for object in db using its name
+  Set new color = new value
+  */
+  /*
   editData (jsonObject, key) {
     console.log('Print ')
     console.log(jsonObject.name)
@@ -104,9 +130,7 @@ export default class Example extends React.Component {
           name: jsonObject.name,
           color: this.state.input
         })
-        // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
         .then(result => {
-          // console.log(result)
           this.callDatabase() // reload database
         })
         .catch(err => {
@@ -126,7 +150,6 @@ export default class Example extends React.Component {
           inverse
           style={{ backgroundColor: '#333', borderColor: '#333' }}
         >
-          {/* NAME */}
           <CardTitle>{jsonObject.name + "'"}s Request</CardTitle>
           <div>
             <Row>
@@ -214,13 +237,6 @@ export default class Example extends React.Component {
         </Collapse>
       </FormGroup>
     )
-  }
-
-  search () {
-    const search = this.state.search.trim()
-    return search !== null || search !== ''
-      ? this.state.data.filter(data => data.name.includes(this.state.search))
-      : this.state.data
   }
 
   render () {
