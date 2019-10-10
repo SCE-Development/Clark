@@ -93,13 +93,10 @@ router.post(
 router.post('/edit', (req, res) => {
   // Strip JWT from the token
   // const token = req.body.token.replace(/^JWT\s/, '')
-  const query = { name: req.body.name }
+  const query = { name: req.body.name, date: req.body.date }
   const member = {
     ...req.body
   }
-  logger.log('1 ', req.body)
-  logger.log('Querry:  ', query)
-  logger.log('Member:  ', member)
   // jwt.verify(token, config.secretKey, function (error, decoded) {
   // if (error) {
   // Unauthorized
