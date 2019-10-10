@@ -18,7 +18,6 @@ import {
   Input
 } from 'reactstrap'
 import Layout from '../../Components/Layout/Layout'
-
 import { FilePond } from 'react-filepond'
 
 // Import FilePond styles

@@ -20,7 +20,6 @@ export default class MembershipApplication extends React.Component {
       middleInitial: '',
       lastName: '',
       email: '',
-      username: '',
       password: '',
       major: '',
       usernameAvailable: false,
@@ -103,19 +102,19 @@ export default class MembershipApplication extends React.Component {
   //                                  changes.
   // @returns         n/a
 
-  checkIfUsernameExists () {
-    if (!this.state.username) return
+  checkIfUserExists () {
+    if (!this.state.email) return
 
     axios
-      .post('/api/membershipApplication/username/isAvailable', { username: this.state.username })
+      .post('/api/user/checkIfUserExists', { email: this.state.email })
       .then(result => {
         if (result.status >= 200 && result.status < 300) {
-            this.setState({
-              usernameCheckClass: 'username-availability available',
-              usernameCheckResult: 'Username is available',
-              usernameCheckResultIcon: '✔'
-            })
-          }
+          this.setState({
+            usernameCheckClass: 'username-availability available',
+            usernameCheckResult: 'Username is available',
+            usernameCheckResultIcon: '✔'
+          })
+        }
       })
       .catch(err => {
         this.setState({
@@ -125,18 +124,6 @@ export default class MembershipApplication extends React.Component {
         })
         console.log(err)
       })
-  }
-
-  mutateUsername (e) {
-    // Create a copy of the current state
-    // var me = this
-    // var tempState = Object.assign(this.state)
-
-    // Set the new state
-    // tempState.username = e.target.value
-    this.setState({
-      username: e.target.value
-    })
   }
 
   // @function        mutatePassword()
@@ -190,9 +177,6 @@ export default class MembershipApplication extends React.Component {
     } else if (this.state.email.length === 0) {
       window.alert('You must provide an email!')
       lacksRequiredFields = true
-    } else if (this.state.username.length === 0) {
-      window.alert('You must provide a username!')
-      lacksRequiredFields = true
     } else if (this.state.password.length === 0) {
       window.alert('You must provide a password!')
       lacksRequiredFields = true
@@ -207,32 +191,30 @@ export default class MembershipApplication extends React.Component {
 
     // Only proceed to submit if all required fields are present
     if (!lacksRequiredFields) {
-        axios
-          .post('/api/membershipApplication/submit', {
-            firstName: this.state.firstName,
-            middleInitial: this.state.middleInitial,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            username: this.state.username,
-            password: this.state.password,
-            major: this.state.major
-          })
-          .then(result => {
-            if (result.status >= 200 && result.status < 300) {
-                this.setState({
-                  successfullyApplied: true
-                })
-              }
-          })
-          .catch(err => {
-            if (err.response.status === 409) {
-              window.alert('Username or Email already exists in the system.')
-            } else {
-              console.error(err)
-            }
-            // window.alert('A submission error occurred. Please contact the site administrator')
-
-          })
+      axios
+        .post('/api/user/register', {
+          firstName: this.state.firstName,
+          middleInitial: this.state.middleInitial,
+          lastName: this.state.lastName,
+          email: this.state.email,
+          password: this.state.password,
+          major: this.state.major
+        })
+        .then(result => {
+          if (result.status >= 200 && result.status < 300) {
+            this.setState({
+              successfullyApplied: true
+            })
+          }
+        })
+        .catch(err => {
+          if (err.response.status === 409) {
+            window.alert('Email already exists in the system.')
+          } else {
+            console.error(err)
+          }
+          // window.alert('A submission error occurred. Please contact the site administrator')
+        })
     }
   }
 
@@ -266,15 +248,11 @@ export default class MembershipApplication extends React.Component {
                     <Label for='lastName'>Last Name*</Label>
                     <Input type='text' onChange={this.mutateLastName.bind(this)} value={this.state.lastName} name='lastName' id='input_lastName' placeholder='(e.g. Doe)' />
                   </FormGroup>
-                  <FormGroup>
-                    <Label for='email'>Email*</Label>
-                    <Input type='email' onChange={this.mutateEmail.bind(this)} value={this.state.email} name='email' id='input_email' placeholder='example@email.com' />
-                  </FormGroup>
 
                   <h3>Account Configuration</h3>
                   <FormGroup>
-                    <Label for='username'>Username*</Label>
-                    <Input type='text' onChange={this.mutateUsername.bind(this)} onBlur={this.checkIfUsernameExists.bind(this)} value={this.state.username} name='username' id='input_username' placeholder='(e.g. sce_user)' />
+                    <Label for='email'>Email*</Label>
+                    <Input type='email' onChange={this.mutateEmail.bind(this)} onBlur={this.checkIfUserExists.bind(this)} value={this.state.email} name='email' id='input_email' placeholder='example@email.com' />
                   </FormGroup>
                   <div className={this.state.usernameCheckClass}>
                     {this.state.usernameCheckResultIcon} &nbsp;{this.state.usernameCheckResult}

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Card, CardTitle, Col, CardText } from 'reactstrap'
+import Layout from '../../../Components/Layout/Layout'
 // import axios from 'axios';
 // import NavBarTop from "./navBarTop.jsx";
-import Layout from '../../../Components/Layout/Layout'
 
 export default class AnnouncementsPage extends React.Component {
   constructor (props) {

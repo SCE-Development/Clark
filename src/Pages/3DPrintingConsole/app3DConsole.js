@@ -15,7 +15,6 @@ import {
   Col
 } from 'reactstrap'
 import axios from 'axios'
-import Layout from '../../Components/Layout/Layout'
 
 export default class Example extends React.Component {
   constructor (props) {
@@ -31,6 +30,31 @@ export default class Example extends React.Component {
 
   // update Data 1 when page load
   componentDidMount () {
+    const token = window.localStorage
+      ? window.localStorage.getItem('jwtToken')
+      : ''
+
+    // Immediately direct to /login if no jwtToken token present
+    if (!token) {
+      if (this.props.history) this.props.history.push('/login')
+      return
+    }
+
+    // Verify if token is valid
+    // As user persmissions are created, the verify auth should be more extensive
+    // and return views as the permissions defines
+    axios
+      .post('/api/user/verify', { token })
+      .then(res => {
+        this.setState({
+          isLoggedIn: true,
+          authToken: token
+        })
+      })
+      .catch(() => {
+        if (this.props.history) this.props.history.push('/login')
+      })
+
     this.callDatabase()
   }
 
@@ -65,9 +89,11 @@ export default class Example extends React.Component {
   */
   deleteData (jsonObject) {
     axios
-      .post('/api/3DPrintingForm/Delete3DForm', {
+      .post('/api/3DPrintingForm/delete', {
         name: jsonObject.name,
-        color: jsonObject.color
+        color: jsonObject.color,
+        // This token must be passed in for authentication
+        token: this.state.authToken
       })
       .then(result => {
         console.log(result)
@@ -88,7 +114,8 @@ export default class Example extends React.Component {
       .post('/api/3DPrintingForm/edit', {
         name: jsonObject.name,
         date: jsonObject.date,
-        progress: event.target.value
+        progress: event.target.value,
+        token: this.state.authToken
       })
       .then(result => {
         this.callDatabase() // reload database
@@ -241,20 +268,18 @@ export default class Example extends React.Component {
 
   render () {
     return (
-      <Layout>
-        <Container>
-          <Form>
-            <br />
-            <input
+      <Container>
+        <Form>
+          <br />
+          <input
               onChange={e => {
                 this.setState({ search: e.target.value })
               }}
             />
-            <br />
-            {this.search().map((item, key) => this.requestForm(item, key))}
-          </Form>
-        </Container>
-      </Layout>
+          <br />
+          {this.search().map((item, key) => this.requestForm(item, key))}
+        </Form>
+      </Container>
     )
   }
 }

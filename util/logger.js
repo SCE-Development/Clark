@@ -18,6 +18,8 @@ const settings = require('./settings')
 // Container (Singleton)
 const logger = {}
 
+const testEnv = process.env.NODE_ENV === 'test'
+
 // Members
 /*
  @member  logger.logHeader
@@ -41,7 +43,7 @@ logger.dataQueue = ['\n****\nInitializing event log system...\n****\n'] // queue
  @member  logger.logToConsole
  @details  If true, this member will force the logger to log its message to both the logfile and the console. Defaults to true.
 */
-logger.logToConsole = true
+logger.logToConsole = !testEnv
 
 // @member   logger.blacklist
 // @details   This member is used to list which handlers' messages should be ignored
@@ -135,6 +137,9 @@ logger.log = function (
   const timestamp = '[' + date.toTimeString() + '] '
   let padding = ''
   let sourceTag = ''
+
+  // Return if unit-tests are being performed
+  if (testEnv) return
 
   // Handle options
   msg +=

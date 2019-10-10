@@ -89,7 +89,7 @@
 // Includes
 // const https = require('https') // import NodeJS https module
 const qs = require('querystring') // import NodeJS querystring module
-const settings = require('../util/settings') // import server system settings
+const settings = require('../settings') // import server system settings
 // const logger = require(`${settings.util}/logger`) // import event log system
 const www = require(`${settings.util}/../_deprecated_util/www`).https
 const smciSettings = require('./smci_settings') // import MailChimp Settings

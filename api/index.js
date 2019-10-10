@@ -1,10 +1,3 @@
-const routes = [
-  '3DPrintingForm',
-  'ability',
-  'clearanceLevel',
-  'mailChimp',
-  'membershipApplication',
-  'user'
-]
+const routes = ['3DPrintingForm', 'mailChimp', 'user']
 
 module.exports = routes

@@ -11,8 +11,8 @@ import {
   Row,
   Col
 } from 'reactstrap'
-import Layout from '../../Components/Layout/Layout'
 import axios from 'axios'
+import Layout from '../../Components/Layout/Layout'
 
 let fill = false
 export default class Example extends React.Component {

@@ -2,11 +2,8 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcrypt-nodejs')
 
-const MemberSchema = new Schema(
+const UserSchema = new Schema(
   {
-    memberID: {
-      type: String
-    },
     firstName: {
       type: String,
       required: true
@@ -21,11 +18,6 @@ const MemberSchema = new Schema(
     joinDate: {
       type: Date,
       default: Date.now
-    },
-    username: {
-      type: String,
-      unique: true,
-      required: true
     },
     password: {
       type: String,
@@ -44,18 +36,38 @@ const MemberSchema = new Schema(
       type: Boolean,
       default: true
     },
+
+    // Users declared Major at SJSU
     major: {
       type: String
+    },
+
+    // Whether or not the user is an active member in SCE
+    active: {
+      type: Boolean,
+      default: true
+    },
+    doorCode: {
+      type: String
+    },
+
+    // The access level is defined as follows:
+    // 0: Member
+    // 1: Officer
+    // 2: Admin
+    accessLevel: {
+      type: Number,
+      default: 2
     },
     lastLogin: {
       type: Date,
       default: Date.now
     }
   },
-  { collection: 'Member' }
+  { collection: 'User' }
 )
 
-MemberSchema.pre('save', function (next) {
+UserSchema.pre('save', function (next) {
   const member = this
   if (this.isModified('password') || this.isNew) {
     bcrypt.genSalt(10, function (error, salt) {
@@ -77,7 +89,7 @@ MemberSchema.pre('save', function (next) {
   }
 })
 
-MemberSchema.methods.comparePassword = function (passwd, callback) {
+UserSchema.methods.comparePassword = function (passwd, callback) {
   bcrypt.compare(passwd, this.password, function (error, isMatch) {
     if (error) {
       return callback(error)
@@ -87,4 +99,7 @@ MemberSchema.methods.comparePassword = function (passwd, callback) {
   })
 }
 
-module.exports = mongoose.model('Member', MemberSchema)
+module.exports =
+  mongoose.models && mongoose.models.User
+    ? mongoose.models.User
+    : mongoose.model('User', UserSchema)
