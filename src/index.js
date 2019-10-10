@@ -21,9 +21,7 @@ import SolidsConsole from './Pages/3DPrintingConsole/app3DConsole.js'
 import MembershipApplication from './Pages/MembershipApplication/membershipApplication.jsx'
 import Team from './Pages/TheTeam/App.js'
 import Printing from './Pages/2DPrinting/App.js'
-import Gear from './Pages/TheGear/App.js'
-
-import Jumbotron from './Components/Jumbotron/App.js'
+//import Jumbotron from './Components/Jumbotron/App.js'
 
 class App extends React.Component {
   render () {
@@ -57,12 +55,12 @@ class App extends React.Component {
           <Route exact path='/' component={Home} />
           <Route exact path='/events' component={Events} />
           {/* <Route exact path='/eventsManager' component={EventManager} /> */}
-          <Route exact path='/jumbotron' component={Jumbotron} />
+           {/*<Route exact path='/jumbotron' component={Jumbotron} />*/}
           <Route exact path='/Team' component={Team} />
           <Route exact path='/labkits' component={LabKits} />
           <Route exact path='/3DPrintingForm' component={PrintingSolids} />
           <Route exact path='/2DPrinting' component={Printing} />
-          <Route exact path='/Gear' component={Gear} />
+            {/*<Route exact path='/Gear' component={Gear} />*/}
 
           <Route exact path='/login' component={Login} />
           <Route exact path='/register' component={MembershipApplication} />
