@@ -1,0 +1,22 @@
+
+.row{
+  width: max-content;
+  align-self: center;
+}
+.card:hover{
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.card-body{
+  width: 300px;
+  height: 200px;
+
+}
+.card{
+  margin: 20px;
+}
+
+.img{
+  height: 200px
+}

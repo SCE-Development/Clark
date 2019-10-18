@@ -3,7 +3,7 @@ import './membershipApplication.css'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import axios from 'axios'
 import Layout from '../../Components/Layout/Layout'
-
+import MembershipPlan from '../MembershipPlan/App.js'
 export default class MembershipApplication extends React.Component {
   // @ctor
   constructor (props) {
@@ -234,39 +234,54 @@ export default class MembershipApplication extends React.Component {
           {
             !this.state.successfullyApplied
               ? (
-                <Form className='page-form'>
-                  <h3>General Information</h3>
-                  <FormGroup>
-                    <Label for='firstName'>First Name*</Label>
-                    <Input type='text' onChange={this.mutateFirstName.bind(this)} value={this.state.firstName} name='firstName' id='input_firstName' placeholder='(e.g. John)' />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for='middleInitial'>Middle Initial</Label>
-                    <Input type='text' onChange={this.mutateMiddleInitial.bind(this)} value={this.state.middleInitial} name='middleInitial' id='input_middleInitial' placeholder='(e.g. J)' />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for='lastName'>Last Name*</Label>
-                    <Input type='text' onChange={this.mutateLastName.bind(this)} value={this.state.lastName} name='lastName' id='input_lastName' placeholder='(e.g. Doe)' />
-                  </FormGroup>
+                <div className = "row"> 
+                  <Form className='page-form'>
+                    <h3>General Information</h3>
+                    <FormGroup >
+                      <Label for='firstName'>First Name*</Label>
+                      <Input type='text' onChange={this.mutateFirstName.bind(this)} value={this.state.firstName} name='firstName' id='input_firstName' placeholder='(e.g. John)' />
+                    </FormGroup>
+                    <FormGroup >
+                      <Label for='middleInitial'>Middle Initial</Label>
+                      <Input type='text' onChange={this.mutateMiddleInitial.bind(this)} value={this.state.middleInitial} name='middleInitial' id='input_middleInitial' placeholder='(e.g. J)' />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for='lastName'>Last Name*</Label>
+                      <Input type='text' onChange={this.mutateLastName.bind(this)} value={this.state.lastName} name='lastName' id='input_lastName' placeholder='(e.g. Doe)' />
+                    </FormGroup>
 
-                  <h3>Account Configuration</h3>
-                  <FormGroup>
-                    <Label for='email'>Email*</Label>
-                    <Input type='email' onChange={this.mutateEmail.bind(this)} onBlur={this.checkIfUserExists.bind(this)} value={this.state.email} name='email' id='input_email' placeholder='example@email.com' />
-                  </FormGroup>
-                  <div className={this.state.usernameCheckClass}>
-                    {this.state.usernameCheckResultIcon} &nbsp;{this.state.usernameCheckResult}
+                    <h3>Account Configuration</h3>
+                    <FormGroup>
+                      <Label for='email'>Email*</Label>
+                      <Input type='email' onChange={this.mutateEmail.bind(this)} onBlur={this.checkIfUserExists.bind(this)} value={this.state.email} name='email' id='input_email' placeholder='example@email.com' />
+                    </FormGroup>
+                    <div className={this.state.usernameCheckClass}>
+                      {this.state.usernameCheckResultIcon} &nbsp;{this.state.usernameCheckResult}
+                    </div>
+                    <FormGroup>
+                      <Label for='password'>Password*</Label>
+                      <Input type='password' onChange={this.mutatePassword.bind(this)} value={this.state.password} name='password' id='input_password' placeholder='(e.g. sce_password)' />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for='major'>Major</Label>
+                      <Input type='text' onChange={this.mutateMajor.bind(this)} value={this.state.major} />
+                    </FormGroup>
+                    {/* <FormGroup>
+                      <div className= "row">
+                      <Label for='subscription' style = {{margin:"25px"}}>Subscription Type:</Label>
+                      </div>
+                    </FormGroup> */}
+                    
+                    <Button onClick={this.submitApplication.bind(this)}>Submit</Button>
+                  </Form>
+                  <div style = {{width:'40%',margin: "20px"}}>
+                  <h3>Subscription Type</h3>
+
+                  <MembershipPlan/>
                   </div>
-                  <FormGroup>
-                    <Label for='password'>Password*</Label>
-                    <Input type='password' onChange={this.mutatePassword.bind(this)} value={this.state.password} name='password' id='input_password' placeholder='(e.g. sce_password)' />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for='major'>Major</Label>
-                    <Input type='text' onChange={this.mutateMajor.bind(this)} value={this.state.major} />
-                  </FormGroup>
-                  <Button onClick={this.submitApplication.bind(this)}>Submit</Button>
-                </Form>)
+
+                  </div>
+                  )
               : null
           }
           {this.state.successfullyApplied
