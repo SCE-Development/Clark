@@ -1,5 +1,7 @@
 .carousel-images {
-  position: absolute;
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
   left: 50%;
   top: 50%;
   min-width: 100%;
@@ -9,5 +11,5 @@
 }
 
 .carousel-caption {
-  text-shadow: 2px 2px 4px #000000;
+  text-shadow: 3px 3px 5px #000000;
 }
