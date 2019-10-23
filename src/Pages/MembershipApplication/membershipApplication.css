@@ -53,15 +53,12 @@ div.username-availability.unavailable {
     color: red;
     font-weight: 500;
 }
-/* .{
-    color:red;
-} */
+
 .page-form{
     width: 45%;
     margin: 30px;
     height: 100%;
     justify-content: flex-end;
-    /* color: red */
 }/* END username availability notice styles */
 #membershipAppRow{
     display: flex;
