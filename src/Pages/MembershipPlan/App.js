@@ -47,9 +47,9 @@ componentDidMount(){
 }
  makeCard(title, img){
 
-  return <div className = "card2" id = {title} onClick ={this.cardSelected.bind(this,title)} >
+  return <div className = "card" id = {title} onClick ={this.cardSelected.bind(this,title)} >
       <img className = "img" src = {img} ></img>
-      <div className ='card2-body'>
+      <div className ='card-body'>
         <h4 style = {{alignSelf:'left'}}>{title}</h4>
         {this.getBody(title)}  
       </div>

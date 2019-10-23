@@ -3,18 +3,17 @@
   width: max-content;
   align-self: center;
 }
-.card2:hover{
+.row .card:hover{
   background-color: lightblue;
   cursor: pointer;
 }
 
-.card2-body{
+.row .card-body{
   width: 300px;
   height: 200px;
-
 }
-.card2{
-  margin: 20px;
+.row .card{
+    margin: 20px;
 }
 
 .img{
