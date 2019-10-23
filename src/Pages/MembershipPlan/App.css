@@ -1,21 +1,23 @@
 
-.row{
+.membership .row{
   width: max-content;
   align-self: center;
 }
-.row .card:hover{
+.membership .row .card:hover{
   background-color: lightblue;
   cursor: pointer;
+} 
+/* .membership .row .card-body{
+  width: 300px; 
+   height: 200px;
+} */
+.membership .row .card{
+    width: 6%;
+    height: 30%;
+    /* margin: 5px; */
 }
 
-.row .card-body{
-  width: 300px;
+.membership .row .card .img{
   height: 200px;
-}
-.row .card{
-    margin: 20px;
-}
-
-.img{
-  height: 200px
+  width: 100%;
 }

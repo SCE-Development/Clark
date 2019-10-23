@@ -71,7 +71,7 @@ componentDidMount(){
   }
 }
   render(){
-    return <div > 
+    return <div className = "membership"> 
     <div className= "row">
       
       {this.makeCard("Fall 2019",this.state.img1)}

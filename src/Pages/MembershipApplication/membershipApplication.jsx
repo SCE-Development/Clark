@@ -234,7 +234,7 @@ export default class MembershipApplication extends React.Component {
           {
             !this.state.successfullyApplied
               ? (
-                <div className = "row"> 
+                <div className = "row" id = "membershipAppRow"> 
                   <Form className='page-form'>
                     <h3>General Information</h3>
                     <FormGroup >
