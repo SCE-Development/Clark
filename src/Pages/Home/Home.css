@@ -1,9 +1,12 @@
 .slideshow {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  overflow-y: hidden;
+  max-width: auto;
+  position: relative;
+  margin: auto;
+  height: auto;
+  overflow: hidden;
+  object-fit: cover;
 }
+
 .outer-div
 {
   padding: 30px;
