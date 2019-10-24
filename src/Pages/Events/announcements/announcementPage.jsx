@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardTitle, Col, CardText } from "reactstrap";
-import "./announcementsPage.css";
+import "./announcementPage.css";
+import AnnouncementList from "./announcementList";
 import Layout from "../../../Components/Layout/Layout";
 import {
   // NavbarBrand,
@@ -54,27 +55,12 @@ export default class AnnouncementsPage extends React.Component {
   }
 
   //first load when page start
-  componentDidMount() {}
+  componentDidMount() { }
 
   render() {
     return (
-      <div id="parent">
-        <div className="lordie">haha</div>
-        <modal
-          isOpen={false}
-          contentLabel="Inline Styles Modal Example"
-          style={{
-            overlay: {
-              backgroundColor: "papayawhip"
-            },
-            content: {
-              color: "lightsteelblue"
-            }
-          }}
-        >
-          <p>Modal text!</p>
-          <button onClick={this.handleCloseModal}>Close Modal</button>
-        </modal>
+      <div>
+        <AnnouncementList />
       </div>
     );
   }

@@ -13,7 +13,7 @@ import EventManager from './Pages/EventManager/EventManager'
 import Login from './Pages/Login/Login'
 
 import Home from './Pages/Home/Home.js'
-import Events from './Pages/Events/announcements/announcementsPage.jsx'
+import Events from './Pages/Events/announcements/announcementPage.jsx'
 // import EventManager from './Pages/Events/manager/eventManager.jsx'
 import LabKits from './Pages/LabKits/App.js'
 import PrintingSolids from './Pages/3DPrinting/app3DPrintForm.js'

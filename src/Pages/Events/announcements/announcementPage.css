@@ -20,14 +20,13 @@
 
 .lordie {
   position: relative;
-  background-color: #f3ff47;
+  background-color: #77dd77;
   padding: 30px;
   border: 2px solid #333;
   border-style: dotted;
   display: center;
   font-family: courier;
   text-align: center;
-  font-size: 2rem;
-  height: 500px;
-  width: 40%;
+  font-size: 1rem;
+  width: 90%;
 }
