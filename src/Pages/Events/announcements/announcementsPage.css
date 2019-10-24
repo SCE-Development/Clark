@@ -1,14 +1,33 @@
-
 .EventsPage {
-    background-color: #c3c4d8;
-    min-height: 100vh;
+  background-color: #c3c4d8;
+  min-height: 100vh;
 
-    flex-direction: column;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
+  flex-direction: column;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .button_center {
-    align-items: center;
-    flex-direction: column;
+  align-items: center;
+  flex-direction: column;
+}
+
+#parent {
+  background-color: #af47ff;
+  padding: 30px;
+  width: 40%;
+}
+
+.lordie {
+  position: relative;
+  background-color: #f3ff47;
+  padding: 30px;
+  border: 2px solid #333;
+  border-style: dotted;
+  display: center;
+  font-family: courier;
+  text-align: center;
+  font-size: 2rem;
+  height: 500px;
+  width: 40%;
 }
