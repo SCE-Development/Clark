@@ -1,0 +1,20 @@
+
+.membership .row{
+  width: max-content;
+  align-self: center;
+}
+.membership .row .card:hover{
+  background-color: lightblue;
+  cursor: pointer;
+} 
+
+.membership .row .card{
+    width: 6%;
+    height: 30%;
+    margin: 5px;
+}
+
+.membership .row .card .img{
+  height: 200px;
+  width: 100%;
+}
