@@ -5,14 +5,14 @@ import {
   Button,
   ButtonGroup,
   Card,
-  CardTitle,
   CardBody,
   Collapse,
   Form,
   FormGroup,
   Container,
   Row,
-  Col
+  Col,
+  Table
 } from 'reactstrap'
 import axios from 'axios'
 
@@ -24,12 +24,17 @@ export default class Example extends React.Component {
       collapse: false,
       data: [],
       key: '',
-      search: ''
+      search: '',
+      width: window.innerWidth
     }
+    this.updateDimensions = this.updateDimensions.bind(this)
   }
 
   // update Data 1 when page load
   componentDidMount () {
+    // update width of browser on resize
+    window.addEventListener('resize', this.updateDimensions)
+
     const token = window.localStorage
       ? window.localStorage.getItem('jwtToken')
       : ''
@@ -133,6 +138,18 @@ export default class Example extends React.Component {
       : this.state.data
   }
 
+  // update the width state based on width of browser
+  updateDimensions () {
+    this.setState({
+      width: window.innerWidth
+    })
+  }
+
+  // check and update window size on unmount
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.updateDimensions)
+  }
+
   // Handle changes when need to edit (For sample not used)
   /* changeInput (event, key) {
     this.setState({
@@ -169,6 +186,7 @@ export default class Example extends React.Component {
 
   requestForm (jsonObject, key) {
     console.log(jsonObject)
+    console.log(window.innerWidth)
     return (
       <FormGroup key={key}>
         <Card
@@ -178,20 +196,57 @@ export default class Example extends React.Component {
           inverse
           style={{ backgroundColor: '#333', borderColor: '#333' }}
         >
-          <CardTitle>{jsonObject.name + "'"}s Request</CardTitle>
           <div>
-            <Row>
-              <Col>E-mail/Contact:</Col>
-              <Col>Requested Date:</Col>
-              <Col>Progress:</Col>
-              <Col />
-            </Row>
+            <Table dark>
+              <thead>
+                <tr>
+                  <th>User's Request:</th>
+                  <th>
+                    {this.state.width < 767 ? (
+                      <div class='popup'>
+                        {jsonObject.name.length > 26
+                          ? jsonObject.name.substring(0, 25) + '...'
+                          : jsonObject.name}
+                        <span class='popuptext' id='myPopup'>
+                          {jsonObject.name}
+                        </span>
+                      </div>
+                    ) : (
+                      jsonObject.name
+                    )}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope='row'>E-mail/Contact:</th>
+                  <td>
+                    {this.state.width < 767 ? (
+                      <div class='popup'>
+                        {jsonObject.projectContact.length > 26
+                          ? jsonObject.projectContact.substring(0, 25) + '...'
+                          : jsonObject.projectContact}
+                        <span class='popuptext' id='myPopup'>
+                          {jsonObject.projectContact}
+                        </span>
+                      </div>
+                    ) : (
+                      jsonObject.projectContact
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th scope='row'>Requested Date:</th>
+                  <td>{jsonObject.date}</td>
+                </tr>
+                <tr>
+                  <th scope='row'>Progress:</th>
+                  <td>{jsonObject.progress}</td>
+                </tr>
+              </tbody>
+            </Table>
 
             <Row>
-              <Col>{jsonObject.projectContact}</Col>
-              <Col id='secondRow'>{jsonObject.date}</Col>
-              <Col id='secondRow'>{jsonObject.progress}</Col>
-
               <Col>
                 <ButtonGroup>
                   <Button
