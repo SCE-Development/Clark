@@ -30,7 +30,7 @@ class AnnouncementList extends React.Component {
 
                 },
                 {
-                    title: "Machine Learning Tutorial",
+                    title: "Big brain time",
                     location: "ENG 292",
                     description: "boom",
                     date: "09/03/1999",
