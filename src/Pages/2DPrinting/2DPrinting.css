@@ -1,6 +1,45 @@
-.ICON{
-  height: auto;
+.filepond--root .filepond--drop-label label {
+  text-align: center;
+  transform: translateY(150px);
+  animation: fadein 1s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.filepond--root .filepond--panel-root {
+  background-color: lightgray;
+  border: 2px solid black;
+  border-radius: 20px;
+}
+
+.filepond--root:hover .filepond--panel-root {
+  background-color: #98a7ad;
+  border: 2px solid blue;
+}
+
+.filepond--root {
+  position: relative;
+  /* border: 2px solid black;
+  border-radius: 10px; */
+  max-width: 70%;
+  margin-left: 15%;
+  height: 400px;
+}
+
+.printInfo {
+  position: relative;
+  max-width: 80%;
+  word-wrap: break-word;
+  height: 60px;
   width: auto;
-  margin-left: 20%;
-  padding-left: 300px;
+  margin-left: 10%;
+  text-align: center;
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
