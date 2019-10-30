@@ -42,7 +42,7 @@ class MembershipPlan extends Component {
       <h6 style={{ margin: 5 }}>
         Access to our club room during legal building hours. Access to our
         events and news. And much more! This membership lasts a semester and
-        expires on December 20nd, 2019. Sign Up @ SCE (ENGR 294)
+        expires on December 2nd, 2019. Sign Up @ SCE (ENGR 294)
       </h6>
     )
   }
