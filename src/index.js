@@ -22,6 +22,7 @@ import SolidsConsole from './Pages/3DPrintingConsole/app3DConsole.js'
 import MembershipApplication from './Pages/MembershipApplication/membershipApplication.jsx'
 import Team from './Pages/TheTeam/App.js'
 import Printing from './Pages/2DPrinting/App.js'
+import Associates from './Pages/Associates/App.js'
 // import Jumbotron from './Components/Jumbotron/App.js'
 
 class App extends React.Component {
@@ -65,6 +66,7 @@ class App extends React.Component {
 
           <Route exact path='/login' component={Login} />
           <Route exact path='/register' component={MembershipApplication} />
+          <Route exact path='/associates' component={Associates} />
 
           <Route component={NotFoundPage} />
         </Switch>

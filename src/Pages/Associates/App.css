@@ -1,0 +1,35 @@
+.Page{
+  padding-top: 20px;
+  display: inline-block;
+}
+
+.Panel{
+  padding-left: 17%;
+}
+
+.Title {
+  padding-top: 30px;
+  padding-left: 0;
+}
+
+.NameHead{
+  padding-left: 3px;
+}
+
+#col1{
+  margin-left: 0%;
+}
+
+#col2{
+  margin-left: 10%;
+}
+
+#tab1 {
+  margin: auto;
+  padding-top: 5px;
+}
+
+#tab2 {
+  margin: auto;
+  padding-top: 5px;
+}
