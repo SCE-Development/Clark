@@ -26,7 +26,32 @@ export default class Example extends React.Component {
       url: '',
       projectType: '',
       contact: '',
-      comment: ''
+      comment: '',
+      user: {},
+      isLoggedIn: false
+    }
+  }
+
+  componentDidMount () {
+    const token = window.localStorage
+      ? window.localStorage.getItem('jwtToken')
+      : ''
+
+    if (token) {
+      axios
+        .post('/api/user/verify', { token })
+        .then(res => {
+          this.setState({
+            user: res.data,
+            isLoggedIn: true
+          })
+        })
+        .catch(() => {
+          if (this.props.history) this.props.history.push('/login')
+          window.localStorage.removeItem('jwtToken')
+        })
+    } else {
+      this.props.history.push('/login')
     }
   }
 
@@ -75,6 +100,9 @@ export default class Example extends React.Component {
   // Handle aplication submition
   submitApplication (e) {
     fill = true
+
+    // Must Login
+    if (!this.state.isLoggedIn) window.alert('Login!')
 
     // page is not filled if any information is not filled by the user
     if (this.state.name.length === 0) {

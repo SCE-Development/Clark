@@ -78,15 +78,21 @@ class NavBar extends Component {
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Printing
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem href='/2DPrinting'>2D Printing</DropdownItem>
-                <DropdownItem href='/3DPrintingForm'>3D Printing</DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
+
+            {this.state.user.accessLevel >= 1 && (
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Printing
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem href='/2DPrinting'>2D Printing</DropdownItem>
+                  <DropdownItem href='/3DPrintingForm'>
+                    3D Printing
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            )}
+
             <NavItem>
               <NavLink href='/'>Snacks & Food</NavLink>
             </NavItem>
