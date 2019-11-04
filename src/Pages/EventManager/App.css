@@ -1,0 +1,46 @@
+.event-admin-main{
+  padding: 5px;
+}
+.event-admin-actions{
+  margin: 25px;
+}
+.event-admin-actions-btn{
+  margin: 0px 5px;
+}
+.event-admin-label{
+  margin: 25px;
+}
+.event-admin-card{
+  height: fit-content;
+  border-radius: 3px;
+  box-shadow: 3px 3px 5px 2px #ccc;  
+  margin: 25px;
+  transition: ease-in 0.2s;
+}
+.event-admin-card:hover{
+  box-shadow: 3px 3px 5px 3px rgb(190, 190, 190);  
+  cursor: pointer;
+}
+.event-admin-card-content{
+  margin: 10px 0px;
+}
+.event-admin-title{
+  display: block;
+}
+.event-admin-title .title a{
+  color: black;
+  text-decoration: none;
+  padding-left: 10px;
+}
+.event-admin-title .actions{
+  visibility: hidden;
+}
+.event-admin-title .actions a{
+  color: rgb(94, 94, 94);
+  font-size: 14px;
+  padding: 0px 5px;
+}
+.event-admin-title .actions a:hover{
+  color: rgb(42, 42, 255);
+  text-decoration: underline;
+}
