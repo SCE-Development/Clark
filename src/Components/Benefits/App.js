@@ -95,8 +95,10 @@ class App extends Component {
                   alt='Printer-2D'
                 />
                 <b>Weekly</b>
-                <p>Print 30-Pages at no additional cost</p>
-                <p>(Resets every Sunday)</p>
+                <p>
+                  <b>Unlimited</b> printing at no additional cost
+                </p>
+                <p>(30-pages/week)</p>
                 <ul />
                 <Button className='button' id='bd2'>
                   Print
