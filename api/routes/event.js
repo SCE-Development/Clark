@@ -24,6 +24,7 @@ router.route('/').get(function (req, res) {
 // create event -> pushing to db (admin)
 router.post('/createEvent', (req, res) => {
   const newEvent = new Event({
+    id: req.body.id,
     title: req.body.title,
     description: req.body.description,
     location: req.body.location,
@@ -31,7 +32,7 @@ router.post('/createEvent', (req, res) => {
     datePosted: Date.now,
     startTime: req.body.startTime,
     endTime: req.body.endTime,
-    eventCategory: req.body.eventCategory || ''
+    eventCategory: req.body.eventCategory
   })
   // save the event to db
   newEvent
@@ -49,6 +50,7 @@ router.post('/editEvent', (req, res) => {
   Event.findOne({ title: req.body.title })
     .then(event => {
       // do i have to worry about if they don't change? (check for null?)
+      event.id = req.body.id
       event.title = req.body.title
       event.description = req.body.description
       event.location = req.body.location
