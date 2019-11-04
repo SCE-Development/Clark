@@ -73,7 +73,6 @@ class EventAdmin extends Component {
         a[x.name] = x.value
         return a
       }, {})
-
     axios
       .post('/api/event/createEvent', {
         id: inputObj.id,

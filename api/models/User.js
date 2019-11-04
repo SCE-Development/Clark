@@ -52,6 +52,8 @@ const UserSchema = new Schema(
     },
 
     // The access level is defined as follows:
+    // -2: Ban
+    // -1: Pending
     // 0: Member
     // 1: Officer
     // 2: Admin

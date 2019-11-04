@@ -22,19 +22,19 @@ const EventSchema = new Schema(
       required: true
     },
     eventDate: {
-      type: Date,
+      type: String,
       required: true
     },
     datePosted: {
-      type: Date,
+      type: String,
       required: true
     },
     startTime: {
-      type: Date,
+      type: String,
       required: true
     },
     endTime: {
-      type: Date,
+      type: String,
       required: true
     },
     eventCategory: {
