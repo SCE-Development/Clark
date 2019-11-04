@@ -30,6 +30,13 @@ const PrintingForm3DSchema = new Schema(
     date: {
       type: Date,
       default: Date.now
+    },
+
+    // unique id for query
+    // id = email of the user who requested
+    id: {
+      type: String,
+      required: true
     }
   },
   { collection: 'PrintingForm3D' }

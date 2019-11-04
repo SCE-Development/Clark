@@ -39,7 +39,8 @@ router.post('/submit', (req, res) => {
     projectLink: req.body.url,
     projectContact: req.body.contact,
     projectComments: req.body.comment,
-    progress: req.body.progress
+    progress: req.body.progress,
+    id: req.body.id
   }
 
   PrintingForm3D.create(data, (error, post) => {
@@ -53,7 +54,11 @@ router.post('/submit', (req, res) => {
 })
 
 router.post('/GetForm', (req, res) => {
-  PrintingForm3D.find({}, (error, forms) => {
+  // Query Criteria, query all if empty
+  let obj = {}
+  if (typeof req.body.id !== 'undefined') obj = { id: req.body.id }
+
+  PrintingForm3D.find(obj, (error, forms) => {
     if (error) {
       logger.log(`3DPrinting /GetForm error: ${error}`)
       return res.sendStatus(BAD_REQUEST)

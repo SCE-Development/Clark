@@ -66,13 +66,14 @@ export default class Example extends React.Component {
   // Getting all data in DB
   callDatabase () {
     axios
-      .post('/api/3DPrintingForm/GetForm')
+      .post('/api/3DPrintingForm/GetForm', {})
       // .then(result => {
       // console.log(result)
       // result.data.json()
       // })
       .then(result => {
         // Save data from db to state.data
+        console.log(result)
         this.setState({
           data: result.data
         })
@@ -272,10 +273,10 @@ export default class Example extends React.Component {
         <Form>
           <br />
           <input
-              onChange={e => {
-                this.setState({ search: e.target.value })
-              }}
-            />
+            onChange={e => {
+              this.setState({ search: e.target.value })
+            }}
+          />
           <br />
           {this.search().map((item, key) => this.requestForm(item, key))}
         </Form>
