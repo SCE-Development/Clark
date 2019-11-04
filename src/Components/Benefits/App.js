@@ -29,10 +29,15 @@ class App extends Component {
                   src={require('./img/shop.png')}
                   alt='Shop'
                 />
+                <b>Snack Bar</b>
                 <ul>
-                  <li>Snacks and beverages</li>
-                  <li>Frozen food</li>
-                  <li>Lab supplies (ICs, Arduino Uno, wires, etc.)</li>
+                  <li>Snacks & drinks</li>
+                  <li>Frozen meals</li>
+                </ul>
+                <b>Lab Supplies</b>
+                <ul>
+                  <li>ICs, Arduino Uno</li>
+                  <li>Wires,misc</li>
                 </ul>
                 <Button className='button' id='bshop'>
                   Shop
@@ -48,33 +53,33 @@ class App extends Component {
                   src={require('./img/locker.png')}
                   alt='Locker'
                 />
+                <b>Storage Plan:</b>
                 <ul>
-                  <li>$10 per person</li>
+                  <li>$10 fee per semester</li>
                   <li>3 members per locker</li>
                 </ul>
-                <Button className='button' id='blocker'>
+                {/* <Button className='button' id='blocker'>
                   Rent
-                </Button>
+                </Button> */}
               </Card>
             </div>
 
             <div className='services'>
               <Card id='techw' body outline color=''>
-                <CardTitle className='title'>Technical Workshop</CardTitle>
+                <CardTitle className='title'>Technical Workshops</CardTitle>
                 <CardImg
                   id='itechw'
                   src={require('./img/techw.png')}
                   alt='technical workshop'
                 />
+                <b>Come Learn: </b>
                 <ul>
+                  <li>Git</li>
+                  <li>Linux</li>
                   <li>Web design</li>
-                  <li>Git workshop</li>
-                  <li>linux workshop</li>
-                  <li>Bash and Shell workshop, etc.</li>
+                  <li>Bash, Shell, and more</li>
                 </ul>
-                <Button className='button' id='btechw'>
-                  View
-                </Button>
+                <p>See calendar for details</p>
               </Card>
             </div>
           </div>
@@ -89,30 +94,37 @@ class App extends Component {
                   src={require('./img/printer.png')}
                   alt='Printer-2D'
                 />
-                <ul>
-                  <li>30-pages limit per week</li>
-                  <li>Reset every Sunday</li>
-                </ul>
+                <b>Weekly</b>
+                <p>Print 30-Pages at no additional cost</p>
+                <p>(Resets every Sunday)</p>
+                <ul />
                 <Button className='button' id='bd2'>
                   Print
                 </Button>
               </Card>
             </div>
 
+            {/* <h1 className='secN' /> */}
             <div className='services'>
-              <Card id='d3' body outline color='info'>
-                <CardTitle className='title'>3D-Printing Service</CardTitle>
+              <Card id='hardware' body outline color='warning'>
+                <CardTitle className='title'>
+                  Hardware Hacking Station
+                </CardTitle>
                 <CardImg
-                  id='id3'
-                  src={require('./img/3d-printer.png')}
-                  alt='Printer-3D'
+                  id='ihardware'
+                  src={require('./img/hardware.png')}
+                  alt='Hardware Station'
                 />
+                <b>ESD Benches</b>
                 <ul>
-                  <li>3D print services for SCE members</li>
+                  <li>Soldering irons & tools</li>
+                  <li>Fume fans </li>
+                  <li>Power supplies</li>
+                  <li>Multimeters, etc</li>
                 </ul>
-                <Button className='button' id='bd3'>
-                  Print
-                </Button>
+                {/* <Button className='button' id='bhardware'>
+                  Start Hacking
+                </Button> */}
               </Card>
             </div>
 
@@ -130,32 +142,27 @@ class App extends Component {
                   </li>
                   <li>We also host party, movie, and game nights</li>
                 </ul>
-                <Button className='button' id='bafter'>
-                  View
-                </Button>
+                <p>See calendar for details</p>
               </Card>
             </div>
           </div>
 
           <div className='sec sec3'>
-            {/* <h1 className='secN' /> */}
             <div className='services'>
-              <Card id='hardware' body outline color='warning'>
-                <CardTitle className='title'>
-                  Hardware Hacking Station
-                </CardTitle>
+              <Card id='d3' body outline color='info'>
+                <CardTitle className='title'>3D-Printing Service</CardTitle>
                 <CardImg
-                  id='ihardware'
-                  src={require('./img/hardware.png')}
-                  alt='Hardware Station'
+                  id='id3'
+                  src={require('./img/3d-printer.png')}
+                  alt='Printer-3D'
                 />
+                <b>In-house 3D Prints</b>
                 <ul>
-                  <li>ESD benches</li>
-                  <li>Soldering tools, Soldering irons, and fume fans</li>
-                  <li>Power supplies and multimeters</li>
+                  <li>3D Prints made on our 3D printers</li>
                 </ul>
-                <Button className='button' id='bhardware'>
-                  Start Hacking
+                <p>Submit orders through our online form</p>
+                <Button className='button' id='bd3'>
+                  Print
                 </Button>
               </Card>
             </div>
@@ -172,15 +179,33 @@ class App extends Component {
                   <li>Every table at SCE comes with a monitor for you</li>
                   <li>Keyboards available at request</li>
                 </ul>
-                <Button className='button' id='bmonitor'>
+                {/* <Button className='button' id='bmonitor'>
                   Monitor
-                </Button>
+                </Button> */}
               </Card>
             </div>
 
             <div className='services'>
+              <Card id='calendar' body outline color=''>
+                <CardTitle className='title'>Professional Events</CardTitle>
+                <CardImg
+                  id='icalendar'
+                  src={require('./img/calendar.png')}
+                  alt='calendar'
+                />
+                <b>Be the first to know about:</b>
+                <ul>
+                  <li>Company Tours</li>
+                  <li>Networking Events</li>
+                  <li>Alumni Dinners</li>
+                </ul>
+                <p>See calendar for details</p>
+              </Card>
+            </div>
+
+            {/*
               <Card id='equipm' body outline color=''>
-                <CardTitle className='title'>Equipment Lending</CardTitle>
+                <CardTitle className='title'>Equipment and Lending</CardTitle>
                 <CardImg
                   id='iequipm'
                   src={require('./img/cart.png')}
@@ -196,7 +221,7 @@ class App extends Component {
                   Checkout
                 </Button>
               </Card>
-            </div>
+            */}
           </div>
         </div>
       </div>

@@ -54,16 +54,19 @@
 }
 
 #bd2{
-  top: 47px;
+  top: 17px;
+}
+#bhardware{
+  top: 1px;
 }
 #blocker{
-  top: 69px;
+  top: 26px;
 }
 #bd3{
-  top: 94px;
+  top: 9px;
 }
 #bmonitor{
-  top: 0px;
+  top: 18px;
 }
 #btechw{
   top: 22px;
@@ -73,6 +76,19 @@
   margin-top: 0px;
   border-top: 0px;
 }
-#bequipm{
+#bcalendar{
   top: 22px;
+}
+
+ul + b {
+    margin-top: -15px;
+}
+
+img + ul {
+    margin-top: 14px;
+}
+
+img + b{
+     margin-top: 15px;
+
 }

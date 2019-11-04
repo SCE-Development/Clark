@@ -58,7 +58,7 @@
   background-color: rgb(16, 208, 196) !important;
   border-color: white !important;
 }
-#bequipm:hover {
+#becalendar:hover {
   background-color: rgb(137, 194, 115) !important;
   border-color: white !important;
 }
@@ -87,6 +87,6 @@
 #after:hover >  #iafter{
   content:url("./imgC/clock.png");
 }
-#equipm:hover >  #iequipm{
-  content:url("./imgC/cart.png");
+#calendar:hover >  #icalendar{
+  content:url("./imgC/calendar.png");
 }
