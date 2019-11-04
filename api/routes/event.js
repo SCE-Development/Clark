@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const Event = require('../models/Event')
+const settings = require('../../util/settings')
+const logger = require(`${settings.util}/logger`)
 
 // const settings = require('../../util/settings')
 
@@ -11,18 +13,19 @@ const { OK, NOT_FOUND, BAD_REQUEST } = {
 }
 
 // get information about all events
-router.route('/').get(function (req, res) {
-  Event.find(function (err, events) {
-    if (err) {
-      console.log('error getting events: ' + err)
-    } else {
-      res.json(events)
+router.post('/getEvents', (req, res) => {
+  Event.find({}, (error, events) => {
+    if (error) {
+      logger.log(`Events /getEvents error: ${error}`)
+      return res.sendStatus(BAD_REQUEST)
     }
+    return res.status(OK).send(events)
   })
 })
 
 // create event -> pushing to db (admin)
 router.post('/createEvent', (req, res) => {
+  logger.log(req.body.id)
   const newEvent = new Event({
     id: req.body.id,
     title: req.body.title,
@@ -34,22 +37,21 @@ router.post('/createEvent', (req, res) => {
     endTime: req.body.endTime,
     eventCategory: req.body.eventCategory
   })
-  // save the event to db
-  newEvent
-    .save()
-    .then(event => {
-      res.status(OK).json({ event: 'event successfully added' })
-    })
-    .catch(err => {
-      res.status(BAD_REQUEST).send('adding new event failed', err)
-    })
+
+  // create an event, store it
+  Event.create(newEvent, (error, post) => {
+    if (error) {
+      logger.log(`Event /createEvent error: ${error}`)
+      return res.sendStatus(BAD_REQUEST)
+    }
+    return res.json(post)
+  })
 })
 
 // edit event -> pushing to db (admin)
 router.post('/editEvent', (req, res) => {
   Event.findOne({ title: req.body.title })
     .then(event => {
-      // do i have to worry about if they don't change? (check for null?)
       event.id = req.body.id
       event.title = req.body.title
       event.description = req.body.description
