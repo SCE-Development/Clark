@@ -13,7 +13,8 @@ import EventManager from './Pages/EventManager/EventManager'
 import Login from './Pages/Login/Login'
 
 import Home from './Pages/Home/Home.js'
-import Events from './Pages/Events/announcements/announcementPage.jsx'
+import NotFoundPage from './Pages/NotFoundPage/NotFoundPage'
+import Events from './Pages/Events/announcements/announcementsPage.jsx'
 // import EventManager from './Pages/Events/manager/eventManager.jsx'
 import LabKits from './Pages/LabKits/App.js'
 import PrintingSolids from './Pages/3DPrinting/app3DPrintForm.js'
@@ -65,11 +66,7 @@ class App extends React.Component {
           <Route exact path='/login' component={Login} />
           <Route exact path='/register' component={MembershipApplication} />
 
-          <Route
-            component={() => {
-              return <Home />
-            }}
-          />
+          <Route component={NotFoundPage} />
         </Switch>
       </Router>
     )
