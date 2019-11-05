@@ -69,7 +69,7 @@ const UserSchema = new Schema(
     },
     pagesPrinted: {
       type: Number,
-      default: 1
+      default: 0
     }
   },
   { collection: 'User' }
