@@ -25,7 +25,8 @@ const AnnouncementList = () => {
                 location: "ENG 292",
                 description: "boom",
                 date: "09/03/1999",
-                time: "4:30 PM"
+                time: "4:30 PM",
+                endTime: "3:30 PM"
 
             },
             {
@@ -33,7 +34,8 @@ const AnnouncementList = () => {
                 location: "ENG 294",
                 description: "boom",
                 date: "09/03/1999",
-                time: "4:30 PM"
+                time: "4:30 PM",
+                endTime: "3:30 PM"
 
             },
             {
@@ -41,7 +43,8 @@ const AnnouncementList = () => {
                 location: "ENG 292",
                 description: "boom",
                 date: "09/03/1999",
-                time: "4:30 PM"
+                time: "4:30 PM",
+                endTime: "3:30 PM"
 
             },
             {
@@ -50,7 +53,8 @@ const AnnouncementList = () => {
                 description: "boom asdjfhakjsdfhlkasdhfkajhsdlfkjhaskldjfh"
                     + "jshdflkjahslkdfjhalk",
                 date: "09/03/1999",
-                time: "4:30 PM"
+                time: "4:30 PM",
+                endTime: "3:30 PM"
 
             },
             {
@@ -58,7 +62,8 @@ const AnnouncementList = () => {
                 location: "Dubai",
                 description: "boom",
                 date: "09/03/1999",
-                time: "4:30 PM"
+                time: "4:30 PM",
+                endTime: "3:30 PM"
 
 
             },
@@ -83,7 +88,11 @@ const AnnouncementList = () => {
         <Container>
             {currentEvent == null ? <p /> :
                 <Modal isOpen={modal} toggle={toggle}>
-                    <ModalHeader toggle={toggle}>{currentEvent.title}</ModalHeader>
+                    <ModalHeader toggle={toggle}>
+                    {currentEvent.title}{"      "}
+                    
+                    
+                    </ModalHeader>
                     <ModalBody>
                         {currentEvent.description}
                     </ModalBody>
@@ -91,6 +100,7 @@ const AnnouncementList = () => {
                         Date: {currentEvent.date} {" "}
                         Location: {currentEvent.location} {" "}
                         Time: {currentEvent.time}{" "}
+                        End Time: {currentEvent.endTime}{" "}
 
                         <Button color="primary" onClick={toggle}>Close</Button>
                     </ModalFooter>
@@ -133,6 +143,9 @@ const AnnouncementList = () => {
                                     </Col>
                                     <Col>
                                         <b>Time:</b> {event.time}
+                                    </Col>
+                                    <Col>
+                                        <b>End Time:</b> {event.endTime}
                                     </Col>
                                 </Row>
                             </Card>
