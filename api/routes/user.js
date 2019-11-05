@@ -116,7 +116,10 @@ router.post('/login', function (req, res) {
         // Check if password matches database
         user.comparePassword(req.body.password, function (error, isMatch) {
           if (isMatch && !error) {
-            if (new Date() - user.membershipValidUntil > 0) {
+            if (
+              new Date() - user.membershipValidUntil > 0 &&
+              user.accessLevel < 2
+            ) {
               return res
                 .status(UNAUTHORIZED)
                 .send({ message: 'User membership has expired.' })
