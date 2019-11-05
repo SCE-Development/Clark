@@ -1,3 +1,13 @@
+.continue {
+  text-align: center;
+  margin-left: 15%;
+  margin-right: 15%;
+  width: 70%;
+  border-radius: 20px;
+  background-color: rgb(28, 192, 247);
+  color: black;
+}
+
 .filepond--root .filepond--drop-label label {
   text-align: center;
   transform: translateY(150px);
@@ -12,7 +22,7 @@
 }
 
 .filepond--root:hover .filepond--panel-root {
-  background-color: #98a7ad;
+  background-color: rgb(0, 172, 230);
   border: 2px solid blue;
 }
 

@@ -148,7 +148,13 @@ export default class Printing extends React.Component {
                 />
               </svg>'
         />
-        {/* <button className="continue" onClick={this.handleToggle}></button> */}
+        <Button
+          color="primary"
+          className="continue"
+          onClick={this.handleToggle}
+        >
+          continue
+        </Button>
         {/* <Ionicon className="ICON" icon="md-print" fontSize="400px" color="#757575"/> */}
         {/* <Button color="danger" onClick={this.toggle}>{this.props.buttonLabel}</Button> */}
         <Modal
@@ -221,9 +227,9 @@ export default class Printing extends React.Component {
               onClosed={this.state.closeAll ? this.toggle : undefined}
             >
               <ModalHeader toggle={this.handleToggleNested}>
-                Nested Modal title
+                Are you sure you want to print?
               </ModalHeader>
-              <ModalBody>Stuff and things</ModalBody>
+              <ModalBody>Click Yes or Go Back</ModalBody>
               <ModalFooter>
                 <Button color="success" onClick={this.handleToggleNested}>
                   Yes!
