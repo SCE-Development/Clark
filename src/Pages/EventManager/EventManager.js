@@ -15,30 +15,7 @@ import axios from 'axios'
 
 class EventAdmin extends Component {
   state = {
-    json_arr: [
-      {
-        id: '1',
-        title: 'event 1',
-        description: 'test',
-        date: '10/24/2019',
-        eventDate: '2019-10-25',
-        startTime: '14:00',
-        endTime: '17:00',
-        eventCategory: 'Workshop',
-        eventLocation: 'ENGR 69'
-      },
-      {
-        id: '2',
-        title: 'event 2',
-        description: 'test2',
-        date: '10/24/2019',
-        eventDate: '2019-10-25',
-        startTime: '14:00',
-        endTime: '17:00',
-        eventCategory: 'Social Event',
-        eventLocation: 'UR MOM'
-      }
-    ],
+    json_arr: [],
     create: false,
     edit: false,
     editIndex: null,
@@ -73,12 +50,14 @@ class EventAdmin extends Component {
         a[x.name] = x.value
         return a
       }, {})
+    console.log(inputObj)
     axios
       .post('/api/event/createEvent', {
         id: inputObj.id,
         title: inputObj.title,
         description: inputObj.description,
-        location: inputObj.location,
+        eventLocation: inputObj.eventLocation,
+        date: inputObj.date,
         eventDate: inputObj.eventDate,
         datePosted: inputObj.datePosted,
         startTime: inputObj.startTime,
@@ -152,6 +131,32 @@ class EventAdmin extends Component {
       json_arr: tempJsonArr,
       edit: false
     })
+    axios
+      .post('/api/event/createEvent', {
+        id: inputObj.id,
+        title: inputObj.title,
+        description: inputObj.description,
+        eventLocation: inputObj.eventLocation,
+        date: inputObj.date,
+        eventDate: inputObj.eventDate,
+        datePosted: inputObj.datePosted,
+        startTime: inputObj.startTime,
+        endTime: inputObj.endTime,
+        eventCategory: inputObj.eventCategory
+      })
+      .then(result => {
+        // dynamically update the frontend
+        const tempJsonArr = this.state.json_arr.slice()
+        tempJsonArr.unshift(inputObj)
+        console.log(tempJsonArr)
+        this.setState({
+          json_arr: tempJsonArr,
+          create: false
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   componentDidMount () {
@@ -166,6 +171,12 @@ class EventAdmin extends Component {
         date: d
       })
     }
+    axios.get('/api/event/getEvents').then(response => {
+      console.log(response.data)
+      this.setState({
+        json_arr: response.data
+      })
+    })
   }
 
   render () {
@@ -242,6 +253,7 @@ class EventAdmin extends Component {
               <Form.Group controlId='formTitle'>
                 <Form.Label>Event Title</Form.Label>
                 <Form.Control
+                  required
                   type='text'
                   name='title'
                   defaultValue={this.state.json_arr[this.state.editIndex].title}
@@ -250,6 +262,7 @@ class EventAdmin extends Component {
               <Form.Group controlId='formDescription'>
                 <Form.Label>Event Description</Form.Label>
                 <Form.Control
+                  required
                   as='textarea'
                   rows='3'
                   name='description'
@@ -261,6 +274,7 @@ class EventAdmin extends Component {
               <Form.Group controlId='formCategory'>
                 <Form.Label>Category</Form.Label>
                 <Form.Control
+                  required
                   as='select'
                   name='eventCategory'
                   defaultValue={
@@ -275,6 +289,7 @@ class EventAdmin extends Component {
               <Form.Group controlId='formLocation'>
                 <Form.Label>Location</Form.Label>
                 <Form.Control
+                  required
                   type='text'
                   name='eventLocation'
                   defaultValue={
@@ -285,6 +300,7 @@ class EventAdmin extends Component {
               <Form.Group controlId='formDate'>
                 <Form.Label>Date</Form.Label>
                 <Form.Control
+                  required
                   type='date'
                   name='eventDate'
                   defaultValue={
@@ -297,6 +313,7 @@ class EventAdmin extends Component {
                 <Row>
                   <Col md={6}>
                     <Form.Control
+                      required
                       type='time'
                       name='startTime'
                       defaultValue={
@@ -307,6 +324,7 @@ class EventAdmin extends Component {
                   </Col>
                   <Col md={6}>
                     <Form.Control
+                      required
                       type='time'
                       name='endTime'
                       defaultValue={
@@ -404,6 +422,7 @@ class EventAdmin extends Component {
               <Form.Group controlId='formTitle'>
                 <Form.Label>Event Title</Form.Label>
                 <Form.Control
+                  required
                   type='text'
                   name='title'
                   placeholder='Enter Event Title'
@@ -412,6 +431,7 @@ class EventAdmin extends Component {
               <Form.Group controlId='formDescription'>
                 <Form.Label>Event Description</Form.Label>
                 <Form.Control
+                  required
                   as='textarea'
                   rows='3'
                   name='description'
@@ -428,21 +448,21 @@ class EventAdmin extends Component {
               </Form.Group>
               <Form.Group controlId='formLocation'>
                 <Form.Label>Location</Form.Label>
-                <Form.Control type='text' name='eventLocation' />
+                <Form.Control required type='text' name='eventLocation' />
               </Form.Group>
               <Form.Group controlId='formDate'>
                 <Form.Label>Date</Form.Label>
-                <Form.Control type='date' name='eventDate' />
+                <Form.Control required type='date' name='eventDate' />
               </Form.Group>
               <Form.Group controlId='formTime'>
                 <Form.Label>Time</Form.Label>
                 <Row>
                   <Col md={6}>
-                    <Form.Control type='time' name='startTime' />
+                    <Form.Control required type='time' name='startTime' />
                     <Form.Text className='text-muted'>Start Time</Form.Text>
                   </Col>
                   <Col md={6}>
-                    <Form.Control type='time' name='endTime' />
+                    <Form.Control required type='time' name='endTime' />
                     <Form.Text className='text-muted'>End Time</Form.Text>
                   </Col>
                 </Row>
