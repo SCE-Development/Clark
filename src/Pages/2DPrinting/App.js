@@ -119,8 +119,8 @@ export default class Printing extends React.Component {
         <div className="printInfo">
           {/*<h1>SCE Printing System</h1>*/}
           <p>
-            Welcome to printing! Click the icon on the left and upload your
-            file. Each member can print up to 30 pages a week.
+            Welcome to printing! Click the icon below and upload your file. Each
+            member can print up to 30 pages a week.
           </p>
         </div>
 
