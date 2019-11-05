@@ -13,7 +13,7 @@ const { OK, NOT_FOUND, BAD_REQUEST } = {
 }
 
 // get information about all events
-router.post('/getEvents', (req, res) => {
+router.get('/getEvents', (req, res) => {
   Event.find({}, (error, events) => {
     if (error) {
       logger.log(`Events /getEvents error: ${error}`)
@@ -30,9 +30,9 @@ router.post('/createEvent', (req, res) => {
     id: req.body.id,
     title: req.body.title,
     description: req.body.description,
-    location: req.body.location,
+    eventLocation: req.body.eventLocation,
+    date: req.body.date,
     eventDate: req.body.eventDate,
-    datePosted: Date.now,
     startTime: req.body.startTime,
     endTime: req.body.endTime,
     eventCategory: req.body.eventCategory
@@ -55,9 +55,11 @@ router.post('/editEvent', (req, res) => {
       event.id = req.body.id
       event.title = req.body.title
       event.description = req.body.description
-      event.location = req.body.location
+      event.eventLocation = req.body.eventLocation
+      event.date = req.body.date
       event.eventDate = req.body.eventDate
-      event.startTime = req.body.endTime
+      event.startTime = req.body.startTime
+      event.endTime = req.body.endTime
       event.eventCategory = req.body.eventCategory
       // save updates
       event
