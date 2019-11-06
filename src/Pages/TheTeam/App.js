@@ -8,6 +8,7 @@ import Evan from './teamPics/2018_2019/evanUgarte.png'
 import Alisha from './teamPics/2018_2019/alishaMehndiratta.png'
 import Thenu from './teamPics/2018_2019/thenuSenthil.png'
 import Nick from './teamPics/2018_2019/nickDerry.png'
+import Sarah from './teamPics/2019_2020/sarah.png'
 import Layout from '../../Components/Layout/Layout'
 import TeamCard from './TeamCard'
 
@@ -35,6 +36,11 @@ export default class Example extends React.Component {
           name: 'Andrew Emerson',
           major: 'B.S. Computer Engineering',
           pic: Nick
+        },
+        {
+          name: 'Sarah Singh ',
+          major: 'B.S. Computer Engineering',
+          pic: Sarah
         }
       ]
     }
