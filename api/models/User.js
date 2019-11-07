@@ -45,7 +45,7 @@ const UserSchema = new Schema(
     // Whether or not the user is an active member in SCE
     active: {
       type: Boolean,
-      default: true
+      default: true // TODO: THIS SHOULD BE INITIALIZED AS FALSE
     },
     doorCode: {
       type: String

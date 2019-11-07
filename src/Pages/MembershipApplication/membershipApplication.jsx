@@ -25,7 +25,8 @@ export default class MembershipApplication extends React.Component {
       usernameAvailable: false,
       usernameCheckClass: 'username-availability',
       usernameCheckResult: '',
-      usernameCheckResultIcon: ''
+      usernameCheckResultIcon: '',
+      numberOfSemestersToSignUpFor: 2 // 1 by default
     }
   }
 
@@ -43,7 +44,7 @@ export default class MembershipApplication extends React.Component {
     // Set the new state
     tempState.firstName = e.target.value
     this.setState(tempState)
-    // console.log("Firstname:", tempState.firstName);
+    // console.log('Firstname:', tempState.firstName);
   }
 
   // @function        mutateMiddleInitial()
@@ -73,7 +74,7 @@ export default class MembershipApplication extends React.Component {
     // Create a copy of the current state
     var tempState = Object.assign(this.state)
 
-    // Set the new stateid="applicationForm"
+    // Set the new stateid='applicationForm'
     tempState.lastName = e.target.value
     this.setState(tempState)
   }
@@ -198,7 +199,8 @@ export default class MembershipApplication extends React.Component {
           lastName: this.state.lastName,
           email: this.state.email,
           password: this.state.password,
-          major: this.state.major
+          major: this.state.major,
+          numberOfSemestersToSignUpFor: this.state.numberOfSemestersToSignUpFor
         })
         .then(result => {
           if (result.status >= 200 && result.status < 300) {
@@ -225,7 +227,7 @@ export default class MembershipApplication extends React.Component {
   // @returns         (jsx) html      The generated html content
   render () {
     return (
-      <Layout>
+      <Layout>``
         <div className='membership-application'>
           <h1 className='page-title'>Member Registration</h1>
           <div className='notice'>
@@ -234,14 +236,14 @@ export default class MembershipApplication extends React.Component {
           {
             !this.state.successfullyApplied
               ? (
-                <div className = "row" id = "membershipAppRow"> 
+                <div className='row' id='membershipAppRow'>
                   <Form className='page-form'>
                     <h3>General Information</h3>
-                    <FormGroup >
+                    <FormGroup>
                       <Label for='firstName'>First Name*</Label>
                       <Input type='text' onChange={this.mutateFirstName.bind(this)} value={this.state.firstName} name='firstName' id='input_firstName' placeholder='(e.g. John)' />
                     </FormGroup>
-                    <FormGroup >
+                    <FormGroup>
                       <Label for='middleInitial'>Middle Initial</Label>
                       <Input type='text' onChange={this.mutateMiddleInitial.bind(this)} value={this.state.middleInitial} name='middleInitial' id='input_middleInitial' placeholder='(e.g. J)' />
                     </FormGroup>
@@ -267,21 +269,21 @@ export default class MembershipApplication extends React.Component {
                       <Input type='text' onChange={this.mutateMajor.bind(this)} value={this.state.major} />
                     </FormGroup>
                     {/* <FormGroup>
-                      <div className= "row">
-                      <Label for='subscription' style = {{margin:"25px"}}>Subscription Type:</Label>
+                      <div className= 'row'>
+                      <Label for='subscription' style = {{margin:'25px'}}>Subscription Type:</Label>
                       </div>
                     </FormGroup> */}
-                    
+
                     <Button onClick={this.submitApplication.bind(this)}>Submit</Button>
                   </Form>
-                  <div style = {{width:'40%',margin: "20px"}}>
-                  <h3>Subscription Type</h3>
+                  <div style={{ width: '40%', margin: '20px' }}>
+                    <h3>Subscription Type</h3>
 
-                  <MembershipPlan/>
+                    <MembershipPlan />
                   </div>
 
-                  </div>
-                  )
+                </div>
+              )
               : null
           }
           {this.state.successfullyApplied

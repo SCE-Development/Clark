@@ -72,6 +72,11 @@ router.post('/register', function (req, res) {
       major: req.body.major || ''
     })
 
+    const membershipValidUntil = getMemberValidationDate(
+      req.body.numberOfSemestersToSignUpFor
+    )
+    newUser.membershipValidUntil = membershipValidUntil
+
     const testPassword = testPasswordStrength(req.body.password)
 
     if (!testPassword.success) {
@@ -374,6 +379,54 @@ function checkIfPageCountResets (lastLogin) {
   if (lastLogin < lastSundayDate) return true
 
   return false
+}
+
+function getMemberValidationDate (numberOfSemestersToSignUpFor) {
+  const today = new Date()
+  const membershipValidationDate = new Date()
+
+  // August 1st - January 31st
+  const startOfFallMonth = 8
+  const endOfFallMonth = 1
+  const endOfFallDay = 31
+
+  // January 1st - August 31st
+  const startOfSpringMonth = 1
+  const endOfSpringMonth = 8
+  const endOfSpringDay = 31
+
+  const isFallSemester =
+    today.getMonth() >= startOfFallMonth &&
+    today.getMonth() < startOfSpringMonth + 12
+
+  if (isFallSemester) {
+    if (numberOfSemestersToSignUpFor === 1) {
+      membershipValidationDate.setMonth(endOfFallMonth - 1) // months are zero indexed??
+      membershipValidationDate.setDate(endOfFallDay)
+      membershipValidationDate.setFullYear(
+        membershipValidationDate.getFullYear() + 1
+      ) // set to next year
+    } else if (numberOfSemestersToSignUpFor === 2) {
+      membershipValidationDate.setMonth(endOfSpringMonth - 1)
+      membershipValidationDate.setDate(endOfSpringDay)
+      membershipValidationDate.setFullYear(
+        membershipValidationDate.getFullYear() + 1
+      ) // set to next year
+    }
+  } else {
+    if (numberOfSemestersToSignUpFor === 1) {
+      membershipValidationDate.setMonth(endOfSpringMonth - 1)
+      membershipValidationDate.setDate(endOfSpringDay)
+    } else if (numberOfSemestersToSignUpFor === 2) {
+      membershipValidationDate.setMonth(endOfFallMonth - 1)
+      membershipValidationDate.setDate(endOfFallDay)
+      membershipValidationDate.setFullYear(
+        membershipValidationDate.getFullYear() + 1
+      ) // set to next year
+    }
+  }
+
+  return membershipValidationDate
 }
 
 module.exports = router
