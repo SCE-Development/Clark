@@ -64,6 +64,14 @@ const UserSchema = new Schema(
     lastLogin: {
       type: Date,
       default: Date.now
+    },
+    membershipValidUntil: {
+      type: Date,
+      default: Date.now
+    },
+    pagesPrinted: {
+      type: Number,
+      default: 0
     }
   },
   { collection: 'User' }

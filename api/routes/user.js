@@ -116,10 +116,43 @@ router.post('/login', function (req, res) {
         // Check if password matches database
         user.comparePassword(req.body.password, function (error, isMatch) {
           if (isMatch && !error) {
+            if (
+              new Date() - user.membershipValidUntil > 0 &&
+              user.accessLevel < 2
+            ) {
+              return res
+                .status(UNAUTHORIZED)
+                .send({ message: 'User membership has expired.' })
+            }
             // If the username and password matches the database, assign and
             // return a jwt token
             const jwtOptions = {
               expiresIn: '2h'
+            }
+
+            // check here to see if we should reset the pagecount. If so, do it
+            if (checkIfPageCountResets(user.lastLogin)) {
+              User.updateOne(
+                // query
+                { email: user.email },
+                // update this field
+                { pagesPrinted: 0 },
+                function (error, result) {
+                  // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+                  if (error) {
+                    logger.log(
+                      'Bad request while trying to reset pageCount to 0 for ' +
+                        user.email
+                    )
+                  }
+
+                  if (result.nModified < 1) {
+                    return logger.log(
+                      `Cannot update ${user.email}, email was not found.`
+                    )
+                  }
+                }
+              )
             }
 
             // Include fields from the User model that should be passed to the JSON Web Token (JWT)
@@ -203,7 +236,9 @@ router.post('/search', function (req, res) {
           accessLevel: result.accessLevel,
           major: result.major,
           joinDate: result.joinDate,
-          lastLogin: result.lastLogin
+          lastLogin: result.lastLogin,
+          membershipValidUntil: result.membershipValidUntil,
+          pagesPrinted: result.pagesPrinted
         }
         return res.status(OK).send(user)
       })
@@ -244,6 +279,33 @@ router.post('/edit', (req, res) => {
         return res
           .status(OK)
           .send({ message: `${req.body.queryEmail} was updated.` })
+      })
+    }
+  })
+})
+
+router.post('getPagesPrintedCount', (req, res) => {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      // Ok
+      // Build this out to search for a user
+      User.findOne({ email: req.body.email }, function (error, result) {
+        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        if (error) res.status(400).send({ message: 'Bad Request.' })
+
+        if (!result) {
+          return res
+            .status(NOT_FOUND)
+            .send({ message: `${req.body.email} not found.` })
+        }
+
+        return res.status(OK).send(result.pagesPrinted)
       })
     }
   })
@@ -296,6 +358,22 @@ function testPasswordStrength (password) {
 
   // test medium password by default
   return { success: mediumRegex.test(password), message: mediumMessage }
+}
+
+function checkIfPageCountResets (lastLogin) {
+  if (!lastLogin) return false
+
+  const newDate = new Date()
+  newDate.setDate(newDate.getDate() + 1) // + 1 to account for daylight savings time
+  const amountOfDaysToLastSunday = newDate.getDate() - newDate.getDay()
+  const lastSundayDate = new Date()
+  lastSundayDate.setDate(amountOfDaysToLastSunday) // last sunday
+  lastSundayDate.setHours(23, 59, 59) // 11:59:59 PM
+
+  // If the last login is before last Sunday at 1 second before midnight, return true
+  if (lastLogin < lastSundayDate) return true
+
+  return false
 }
 
 module.exports = router
