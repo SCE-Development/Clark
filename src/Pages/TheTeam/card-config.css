@@ -1,6 +1,15 @@
- .Page .card{
+ .Page .card {
   height: auto;
-  width: auto;
+  width: 20px;
+}
+
+.wholeCard {
+  width: 480px !important;
+  margin-top: 20px;
+}
+
+.link {
+  margin-top: 18px;
 }
 
 .SubTitle {
