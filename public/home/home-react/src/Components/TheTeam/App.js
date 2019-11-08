@@ -21,7 +21,110 @@ export default class Example extends React.Component {
 
     this.toggle = this.toggle.bind(this);
     this.state = {
-      activeTab: '1'
+      activeTab: '1',
+
+      json:[
+        {
+          name: "Aris Koumis",
+          major: "B.S Computer Engineering",
+          tag: "#ArisKoumis",
+          source: Ari,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Evan Ugarte",
+          major: "B.S Software Engineering",
+          tag: "#EvanUgarte",
+          source: Evan,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Pranav Patil",
+          major: "B.S Computer Engineering",
+          tag: "#pranavPatil",
+          source: Pranav,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Keven Gallegos",
+          major: "Unknown",
+          tag: "#kevenGallegos",
+          source: Keven,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Keven Gallegos",
+          major: "B.S Mechanical Engineering",
+          tag: "#DonRobertPornaras",
+          source: DRP,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Thenu Senthil",
+          major: "B.S Computer Engineering",
+          tag: "#ThenuSenthil",
+          source: Thenu,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Alisha Mehndiratta",
+          major: "B.S Software Engineering",
+          tag: "#AlishaMehndiratta",
+          source: Alisha,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Lorena Silva",
+          major: "B.S Computer Engineering",
+          tag: "#LorenaSilva",
+          source: Lorena,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Nick Derry",
+          major: "B.S Computer Engineering",
+          tag: "#Nick Derry",
+          source: Nick,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Aris Koumis v1",
+          major: "B.S Computer Engineering",
+          tag: "#ArisKoumis",
+          source: Ari,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        },
+        {
+          name: "Aris Koumis v2",
+          major: "B.S Computer Engineering",
+          tag: "#ArisKoumis",
+          source: Ari,
+          facebook:'https://www.google.com/',
+          linkedin:'https://www.google.com/',
+          github:'https://www.google.com/'
+        }
+      ]
+
     };
   }
 
@@ -32,11 +135,53 @@ export default class Example extends React.Component {
       });
     }
   }
-  //
+
   render() {
+
+    function block(target, index) {
+      var col;
+      if(index%2 == 0) {
+         col = "col1";
+      } else {
+        col = "col2";
+      }
+      return(
+
+        <Col sm="4" id= {col}>
+          <Card body className="wholeCard">
+          {/*}<svg viewBox="0 0 24 24">
+            <path fill="#000000"
+             d="M2 17V20H10V18.11H3.9V17C3.9 16.36 7.03 14.9 10 14.9C10.96 14.91 11.91 15.04 12.83 15.28L14.35 13.76C12.95 13.29 11.5 13.03 10 13C7.33 13 2 14.33 2 17M10 4C7.79 4 6 5.79 6 8S7.79 12 10 12 14 10.21 14 8 12.21 4 10 4M10 10C8.9 10 8 9.11 8 8S8.9 6 10 6 12 6.9 12 8 11.11 10 10 10M21.7 13.35L20.7 14.35L18.65 12.35L19.65 11.35C19.86 11.14 20.21 11.14 20.42 11.35L21.7 12.63C21.91 12.84 21.91 13.19 21.7 13.4M12 18.94L18.06 12.88L20.11 14.88L14.11 20.95H12V18.94" />
+          </svg>*/}
+            <Media>
+              <Media href={target.tag} className="Pic">
+                <CardImg height="250" width="250" src={target.source}/>
+              </Media>
+              <Media body className="SubTitle">
+                <Media heading className="NameHead">
+                  <h2>{target.name}</h2>
+                  <h5>{target.major}</h5>
+                </Media>
+                <Media className="link">
+
+                <a href={target.facebook}><Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/></a>
+                <a href={target.linkedin}><Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/></a>
+                <a href={target.github}><Ionicon icon="logo-github" fontSize="35px" color="#757575"/></a>
+
+                </Media>
+              </Media>
+            </Media>
+            <Media className="description">
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
+            </Media>
+          </Card>
+        </Col>
+
+      );
+    }
+
     return (
       <div className = "Page">
-
 {/*-----------------Nav Bar-------------------*/}
         <Nav tabs>
           <NavItem>
@@ -52,7 +197,7 @@ export default class Example extends React.Component {
               className={classnames({ active: this.state.activeTab === '2' })}
               onClick={() => { this.toggle('2'); }}
             >
-              2017 - 2018 Academic Year
+              2019 - 2020 Academic Year
             </NavLink>
           </NavItem>
         </Nav>
@@ -64,599 +209,26 @@ export default class Example extends React.Component {
 
           <h1 className="Title">Leadership</h1>
 
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#ArisKoumis" className="Pic">
-                      <CardImg height="250" width="250" src={Ari}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Aris Koumis</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#EvanUgarte" className="Pic">
-                      <CardImg height="250" width="250" src={Evan}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Evan Ugarte</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#pranavPatil" className="Pic">
-                      <CardImg height="250" width="250" src={Pranav}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Pranav Patil</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#kevenGallegos" className="Pic">
-                      <CardImg height="250" width="250" src={Keven}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Keven Gallegos</h2>
-                        <h5>Unknown</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#DonRobertPornaras" className="Pic">
-                      <CardImg height="250" width="250" src={DRP}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Don Robert Pornaras</h2>
-                        <h5>B.S Mechanical Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#ThenuSenthil" className="Pic">
-                      <CardImg height="250" width="250" src={Thenu}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Thenu Senthil</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#AlishaMehndiratta" className="Pic">
-                      <CardImg height="250" width="250" src={Alisha}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Alisha Mehndiratta</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#LorenaSilva" className="Pic">
-                      <CardImg height="250" width="250" src={Lorena}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Lorena Silva</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#Nick Derry" className="Pic">
-                      <CardImg height="250" width="250" src={Nick}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Nick Derry</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
+          <Row id="rowCSS">
+          {this.state.json.map((obj,index) => block(obj,index))}
+          </Row>
 
             <h1 className="Title">Software Development Team</h1>
 
             <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#ArisKoumis" className="Pic">
-                      <CardImg height="250" width="250" src={Ari}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Aris Koumis</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#EvanUgarte" className="Pic">
-                      <CardImg height="250" width="250" src={Evan}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Evan Ugarte</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#ArisKoumis" className="Pic">
-                      <CardImg height="250" width="250" src={Ari}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Aris Koumis</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#EvanUgarte" className="Pic">
-                      <CardImg height="250" width="250" src={Evan}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Evan Ugarte</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#ArisKoumis" className="Pic">
-                      <CardImg height="250" width="250" src={Ari}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Aris Koumis</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#EvanUgarte" className="Pic">
-                      <CardImg height="250" width="250" src={Evan}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Evan Ugarte</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
+            {this.state.json.map((obj,index) => block(obj,index))}
             </Row>
 
             <h1 className="Title">Event Planning and Public Relations Team</h1>
 
             <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#ArisKoumis" className="Pic">
-                      <CardImg height="250" width="250" src={Ari}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Aris Koumis</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#EvanUgarte" className="Pic">
-                      <CardImg height="250" width="250" src={Evan}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Evan Ugarte</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-            </Row>
-
-            <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#ArisKoumis" className="Pic">
-                      <CardImg height="250" width="250" src={Ari}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Aris Koumis</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#EvanUgarte" className="Pic">
-                      <CardImg height="250" width="250" src={Evan}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Evan Ugarte</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
+            {this.state.json.map((obj,index) => block(obj,index))}
             </Row>
 
             <h1 className="Title">Associates</h1>
 
             <Row id="rowCSS">
-              <Col sm="4" id="col1">
-                <Card body className="wholeCard">
-                  <Media>
-                    <Media href="#ArisKoumis" className="Pic">
-                      <CardImg height="250" width="250" src={Ari}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Aris Koumis</h2>
-                        <h5>B.S Computer Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
-
-              <Col sm="4" id="col2">
-                <Card body>
-                  <Media>
-                    <Media href="#EvanUgarte" className="Pic">
-                      <CardImg height="250" width="250" src={Evan}/>
-                    </Media>
-                    <Media body className="SubTitle">
-                      <Media heading className="NameHead">
-                        <h2>Evan Ugarte</h2>
-                        <h5>B.S Software Engineering</h5>
-                      </Media>
-
-                      <Media className="link">
-                      <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                      <Ionicon icon="logo-github" fontSize="35px" color="#757575"/>
-                      </Media>
-                    </Media>
-                  </Media>
-                  <Media className="description">
-                  Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                  sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                  Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                  </Media>
-                </Card>
-              </Col>
+            {this.state.json.map((obj,index) => block(obj,index))}
             </Row>
 
           </TabPane>
@@ -665,230 +237,30 @@ export default class Example extends React.Component {
 
           <TabPane tabId="2" id="tab2" className="Panel">
 
-                    <h1 className="Title">Executive Leadership</h1>
+            <h1 className="Title">Executive Leadership</h1>
 
-                      <Row>
-                        <Col sm="4" id="col1">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v1</h2>
-                                  <h5> Major </h5>
-                                </Media>
+            <Row id="rowCSS">
+            {this.state.json.map((obj,index) => block(obj,index))}
+            </Row>
 
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
+            <h1 className="Title">Software Development Team</h1>
 
-                        <Col sm="4" id="col2">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v2</h2>
-                                  <h5> Major </h5>
-                                </Media>
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
+            <Row id="rowCSS">
+            {this.state.json.map((obj,index) => block(obj,index))}
+            </Row>
 
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
-                      </Row>
+            <h1 className="Title">Event Planning and Public Relations Team</h1>
 
-                      <h1 className="Title">Software Development Team</h1>
+            <Row id="rowCSS">
+            {this.state.json.map((obj,index) => block(obj,index))}
+            </Row>
 
-                      <Row>
-                        <Col sm="4" id="col1">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v1</h2>
-                                  <h5> Major </h5>
-                                </Media>
+            <h1 className="Title">Associates</h1>
 
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
+            <Row id="rowCSS">
+            {this.state.json.map((obj,index) => block(obj,index))}
+            </Row>
 
-                        <Col sm="4" id="col2">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v2</h2>
-                                  <h5> Major </h5>
-                                </Media>
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
-
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
-                      </Row>
-
-                      <h1 className="Title">Event Planning and Public Relations Team</h1>
-
-                      <Row>
-                        <Col sm="4" id="col1">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v1</h2>
-                                  <h5> Major </h5>
-                                </Media>
-
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
-
-                        <Col sm="4" id="col2">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v2</h2>
-                                  <h5> Major </h5>
-                                </Media>
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
-
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
-                      </Row>
-
-                      <h1 className="Title">Associates</h1>
-
-                      <Row>
-                        <Col sm="4" id="col1">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v1</h2>
-                                  <h5> Major </h5>
-                                </Media>
-
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
-
-                        <Col sm="4" id="col2">
-                          <Card body>
-                            <Media>
-                              <Media href="#ArisKoumis" className="Pic">
-                                <CardImg height="250" width="250" src={Ari}/>
-                              </Media>
-                              <Media body className="SubTitle">
-                                <Media heading>
-                                  <h2>Aris Koumis v2</h2>
-                                  <h5> Major </h5>
-                                </Media>
-                                <Media className="link">
-                                <Ionicon icon="logo-facebook" fontSize="35px" color="#757575"/>
-                                <Ionicon icon="logo-linkedin" fontSize="35px" color="#757575"/>
-                                </Media>
-                              </Media>
-                            </Media>
-
-                            <Media className="description">
-                            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
-                            sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-                            Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                            </Media>
-                          </Card>
-                        </Col>
-                      </Row>
-          
           </TabPane>
         </TabContent>
 
