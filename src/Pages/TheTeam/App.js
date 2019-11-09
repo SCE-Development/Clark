@@ -3,16 +3,16 @@ import Ionicon from 'react-ionicons'
 import {
   TabContent,
   TabPane,
-  Nav,
-  NavItem,
-  NavLink,
+  // Nav,
+  // NavItem,
+  // NavLink,
   Row,
   Col,
   Media,
   Card,
   CardImg
 } from 'reactstrap'
-import classnames from 'classnames'
+// import classnames from 'classnames'
 import './App.css'
 import './card-config.css'
 import Ari from './teamPics/2018_2019/arisKoumis.png'
@@ -205,7 +205,7 @@ export default class Example extends React.Component {
 
     return (
       <div className='Page'>
-        {/* -----------------Nav Bar------------------- */}
+        {/* -----------------Nav Bar-------------------
         <Nav tabs>
           <NavItem>
             <NavLink
@@ -214,7 +214,7 @@ export default class Example extends React.Component {
                 this.toggle('1')
               }}
             >
-              2018 - 2019 Academic Year
+              2019 - 2020 Academic Year
             </NavLink>
           </NavItem>
           <NavItem>
@@ -228,39 +228,11 @@ export default class Example extends React.Component {
             </NavLink>
           </NavItem>
         </Nav>
+        */}
 
         <TabContent activeTab={this.state.activeTab}>
-          {/* -----------------Panel 1------------------- */}
           <TabPane tabId='1' id='tab1' className='Panel'>
             <h1 className='Title'>Leadership</h1>
-
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
-
-            <h1 className='Title'>Software Development Team</h1>
-
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
-
-            <h1 className='Title'>Event Planning and Public Relations Team</h1>
-
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
-
-            <h1 className='Title'>Associates</h1>
-
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
-          </TabPane>
-
-          {/* -----------------Panel 2------------------- */}
-
-          <TabPane tabId='2' id='tab2' className='Panel'>
-            <h1 className='Title'>Executive Leadership</h1>
 
             <Row id='rowCSS'>
               {this.state.json.map((obj, index) => block(obj, index))}
