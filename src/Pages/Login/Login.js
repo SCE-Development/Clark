@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import Layout from '../../Components/Layout/Layout'
+import './Login.css'
 
 export default class extends Component {
   constructor () {
@@ -75,33 +76,41 @@ export default class extends Component {
     return (
       <Layout>
         <form onSubmit={this.handleSubmit}>
-          <h1>Welcome</h1>
+          <div id='body'>
+            <h1>Welcome</h1>
 
-          {message !== '' && <span>{message}</span>}
+            {message !== '' && <span>{message}</span>}
 
-          <input
-            type='email'
-            name='email'
-            placeholder='Email'
-            value={email}
-            onChange={this.handleChange}
-            required
-          />
+            <div className='txtb'>
+              <input
+                type='email'
+                name='email'
+                placeholder='Email'
+                value={email}
+                onChange={this.handleChange}
+                required
+              />
+            </div>
 
-          <input
-            type='password'
-            name='password'
-            placeholder='Password'
-            value={password}
-            onChange={this.handleChange}
-            required
-          />
+            <div className='txtb'>
+              <input
+                type='password'
+                name='password'
+                placeholder='Password'
+                value={password}
+                onChange={this.handleChange}
+                required
+              />
+            </div>
 
-          <button type='submit'>Login</button>
+            <button type='submit' id='loginBtn'>
+              Login
+            </button>
 
-          <p>
-            <Link to='/register'>Create an account</Link>
-          </p>
+            <p>
+              <Link to='/register'>Create an account</Link>
+            </p>
+          </div>
         </form>
       </Layout>
     )
