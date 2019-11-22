@@ -5,12 +5,14 @@ import Layout from '../../Components/Layout/Layout'
 import './Login.css'
 
 export default class extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.state = {
       email: '',
       password: '',
-      message: ''
+      message: '',
+      AnimationCSS1: {},
+      AnimationCSS2: {}
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -70,6 +72,26 @@ export default class extends Component {
       })
   }
 
+  updateCSS (opt) {
+    opt === 1
+      ? this.setState({
+        AnimationCSS1: {
+          top: '-5px',
+          borderBottom: '2px solid GREEN'
+        }
+      })
+      : this.setState({ AnimationCSS1: {} })
+
+    opt === 2
+      ? this.setState({
+        AnimationCSS2: {
+          top: '-5px',
+          borderBottom: '2px solid GREEN'
+        }
+      })
+      : this.setState({ AnimationCSS2: {} })
+  }
+
   render () {
     const { email, password, message } = this.state
 
@@ -77,11 +99,21 @@ export default class extends Component {
       <Layout>
         <form onSubmit={this.handleSubmit}>
           <div id='body'>
-            <h1>Welcome</h1>
+            <img id='img' src='images/SCE-glow.png' />
 
             {message !== '' && <span>{message}</span>}
 
-            <div className='txtb'>
+            <div
+              style={this.state.AnimationCSS1}
+              onFocus={() => {
+                this.updateCSS(1)
+              }}
+              onBlur={() => {
+                this.updateCSS()
+              }}
+              className='txtb'
+            >
+              <span />
               <input
                 type='email'
                 name='email'
@@ -92,7 +124,17 @@ export default class extends Component {
               />
             </div>
 
-            <div className='txtb'>
+            <div
+              style={this.state.AnimationCSS2}
+              onFocus={() => {
+                this.updateCSS(2)
+              }}
+              onBlur={() => {
+                this.updateCSS()
+              }}
+              className='txtb'
+            >
+              <span />
               <input
                 type='password'
                 name='password'
@@ -107,7 +149,7 @@ export default class extends Component {
               Login
             </button>
 
-            <p>
+            <p id='SignUp'>
               <Link to='/register'>Create an account</Link>
             </p>
           </div>

@@ -2,17 +2,16 @@
 #body
 {
   min-height: 100vh;
-  background-image: linear-gradient(130deg,WHITE,#81ecec);
 
   width:360px;
   height:580px;
   padding: 80px 40px;
   border-radius: 10px;
 
-  position: absolute;
+  position: relative;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-35%);
+  transform: translate(-50%,-5%);
 }
 
 #body h1
@@ -23,7 +22,7 @@
 
 .txtb
 {
-  border-bottom: 2px solid #adadad;
+  border-bottom: 2px solid #16CDC2;
   position: relative;
   margin: 30px 0;
 }
@@ -38,4 +37,38 @@
   background: none;
   padding: 0 5px;
   height: 40px;
+  border-color: RED;
+}
+
+#loginBtn
+{
+  display: block;
+  width: 100%;
+  height: 50px;
+  border: none;
+  background-image: linear-gradient(90deg,#16CDC2,WHITE);
+  background-size: 200%;
+  outline: none;
+  cursor: pointer;
+  transition: .5s;
+}
+#loginBtn:hover
+{
+  background-position: bottom;
+}
+
+#SignUp
+{
+  margin-top: 60px;
+  text-align: center;
+  font-size: 20px;
+}
+
+#img
+{
+  width: 300px;
+  height: 300px;
+  position: relative;
+  transform: translate(-2%,0%);
+  top: -20px;
 }
