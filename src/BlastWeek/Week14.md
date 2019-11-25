@@ -8,7 +8,7 @@ The Career Center is hosting its last LinkedIn Profile Studio of the semester. T
 When: Friday December 6 2019 from 9:00 am - 12:00pm
 Where: Career Center (ADMIN 255)
 ```
-![workshopflyer](/src/BlastWeek/images/linkedin-min.jpg)
+![workshopflyer](images/linkedin-min.jpg)
 
 
 ### Ethereum/Blockchain Workshop with Jeremy
@@ -37,13 +37,7 @@ What to bring: Rackets
 [Sign up here!](https://forms.gle/cawJDgfJ5xqjirRV6)
 
 ### ✅ Thanksgiving Potluck
-<<<<<<< Updated upstream
 ![potluck1](images/IMG_7301-min.JPG)
 ![potluck2](images/IMG_2436-min.JPG)
 ![potluck3](images/IMG_0565-min.jpg)
-=======
-![potluck2](/src/BlastWeek/images/IMG_7301-min.JPG)
-![potluck3](/src/BlastWeek/images/IMG_2436-min.JPG)
-![potluck1](/src/BlastWeek/images/IMG_0565-min.jpg)
->>>>>>> Stashed changes
 
