@@ -40,6 +40,6 @@ Sign up [HERE](https://forms.gle/cawJDgfJ5xqjirRV6)
 
 ### ✅ Thanksgiving Potluck
 ![potluck2](images/IMG_7301.JPG)
-![potluck3](images\IMG_2436.JPG)
-![potluck1](images\IMG_0565.jpg)
+![potluck3](images/IMG_2436.JPG)
+![potluck1](images/IMG_0565.jpg)
 
