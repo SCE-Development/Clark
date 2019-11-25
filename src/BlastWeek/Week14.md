@@ -34,7 +34,9 @@ Time: Tuesday November 26, 2019 from 12:00 - 2:00pm
 Where: SRAC
 What to bring: Rackets
 ``` 
-Sign up [HERE](https://forms.gle/cawJDgfJ5xqjirRV6) 
+Sign up [HERE](https://forms.gle/cawJDgfJ5xqjirRV6)
+
+<a href="https://forms.gle/cawJDgfJ5xqjirRV6" target="newtab">HERE!</a> 
 
 
 
