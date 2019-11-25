@@ -27,7 +27,7 @@ function App (props) {
     await axios
       .post('/api/user/verify', { token })
       .then(res => {
-        setUser(res.data)
+        setUser({ ...res.data, token })
         setAuthenticated(true)
       })
       .catch(err => {
