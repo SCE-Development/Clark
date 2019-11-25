@@ -12,6 +12,8 @@ import {
   Card,
   CardImg
 } from 'reactstrap'
+import Layout from '../../Components/Layout/Layout'
+
 // import classnames from 'classnames'
 import './App.css'
 import './card-config.css'
@@ -204,60 +206,39 @@ export default class Example extends React.Component {
     }
 
     return (
-      <div className='Page'>
-        {/* -----------------Nav Bar-------------------
-        <Nav tabs>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === '1' })}
-              onClick={() => {
-                this.toggle('1')
-              }}
-            >
-              2019 - 2020 Academic Year
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === '2' })}
-              onClick={() => {
-                this.toggle('2')
-              }}
-            >
-              2019 - 2020 Academic Year
-            </NavLink>
-          </NavItem>
-        </Nav>
-        */}
+      <Layout>
+        <div className='Page'>
+          <TabContent activeTab={this.state.activeTab}>
+            <TabPane tabId='1' id='tab1' className='Panel'>
+              <h1 className='Title'>Leadership</h1>
 
-        <TabContent activeTab={this.state.activeTab}>
-          <TabPane tabId='1' id='tab1' className='Panel'>
-            <h1 className='Title'>Leadership</h1>
+              <Row id='rowCSS'>
+                {this.state.json.map((obj, index) => block(obj, index))}
+              </Row>
 
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
+              <h1 className='Title'>Software Development Team</h1>
 
-            <h1 className='Title'>Software Development Team</h1>
+              <Row id='rowCSS'>
+                {this.state.json.map((obj, index) => block(obj, index))}
+              </Row>
 
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
+              <h1 className='Title'>
+                Event Planning and Public Relations Team
+              </h1>
 
-            <h1 className='Title'>Event Planning and Public Relations Team</h1>
+              <Row id='rowCSS'>
+                {this.state.json.map((obj, index) => block(obj, index))}
+              </Row>
 
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
+              <h1 className='Title'>Associates</h1>
 
-            <h1 className='Title'>Associates</h1>
-
-            <Row id='rowCSS'>
-              {this.state.json.map((obj, index) => block(obj, index))}
-            </Row>
-          </TabPane>
-        </TabContent>
-      </div>
+              <Row id='rowCSS'>
+                {this.state.json.map((obj, index) => block(obj, index))}
+              </Row>
+            </TabPane>
+          </TabContent>
+        </div>
+      </Layout>
     )
   }
 }
