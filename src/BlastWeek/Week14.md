@@ -37,7 +37,7 @@ What to bring: Rackets
 [Sign up here!](https://forms.gle/cawJDgfJ5xqjirRV6)
 
 ### ✅ Thanksgiving Potluck
-![potluck2](images/IMG_7301-min.JPG)
-![potluck3](images/IMG_2436-min.JPG)
-![potluck1](images/IMG_0565-min.jpg)
+![potluck1](images/IMG_7301-min.JPG)
+![potluck2](images/IMG_2436-min.JPG)
+![potluck3](images/IMG_0565-min.jpg)
 
