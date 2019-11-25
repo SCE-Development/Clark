@@ -283,12 +283,70 @@ describe('Users', () => {
 
     it('Should return statusCode 401 if an invalid token was passed in', done => {
       const user = {
-        email: 'a@b.c',
         token: 'Invalid token'
       }
       chai
         .request(app)
         .post('/api/user/search')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 200 and return an array of all objects in collection', done => {
+      const form = {
+        token: token
+      }
+      chai
+        .request(app)
+        .post('/api/user/search')
+        .send(form)
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          res.body.should.be.a('array')
+          expect(res.body).to.have.length(1)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+  })
+
+  describe('/POST searchFor', () => {
+    it('Should return statusCode 500 if no token is passed in', done => {
+      const user = {
+        email: 'a@b.c'
+      }
+      chai
+        .request(app)
+        .post('/api/user/searchFor')
+        .send(user)
+        .then(function (res) {
+          expect(res).to.not.have.status(200)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 if an invalid token was passed in', done => {
+      const user = {
+        email: 'a@b.c',
+        token: 'Invalid token'
+      }
+      chai
+        .request(app)
+        .post('/api/user/searchFor')
         .send(user)
         .then(function (res) {
           expect(res).to.not.have.status(200)
@@ -307,7 +365,7 @@ describe('Users', () => {
       }
       chai
         .request(app)
-        .post('/api/user/search')
+        .post('/api/user/searchFor')
         .send(user)
         .then(function (res) {
           expect(res).to.have.status(404)
@@ -326,7 +384,7 @@ describe('Users', () => {
       }
       chai
         .request(app)
-        .post('/api/user/search')
+        .post('/api/user/searchFor')
         .send(user)
         .then(function (res) {
           expect(res).to.have.status(200)

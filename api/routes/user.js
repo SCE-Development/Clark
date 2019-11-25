@@ -27,6 +27,7 @@ const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
 const User = require('../models/User.js')
+const bcrypt = require('bcrypt-nodejs')
 
 const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST, CONFLICT } = {
   OK: 200,
@@ -209,7 +210,7 @@ router.post('/delete', (req, res) => {
 })
 
 // Search for a member
-router.post('/search', function (req, res) {
+router.post('/searchFor', function (req, res) {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
 
@@ -244,9 +245,32 @@ router.post('/search', function (req, res) {
           joinDate: result.joinDate,
           lastLogin: result.lastLogin,
           membershipValidUntil: result.membershipValidUntil,
-          pagesPrinted: result.pagesPrinted
+          pagesPrinted: result.pagesPrinted,
+          doorCode: result.doorCode
         }
         return res.status(OK).send(user)
+      })
+    }
+  })
+})
+
+// Search for all members
+router.post('/search', function (req, res) {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      // Ok
+      // Build this out to search for a user
+      // res.status(200).send(decoded.username)
+      User.find({}, function (error, result) {
+        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        if (error) res.status(400).send({ message: 'Bad Request.' })
+        return res.status(OK).send(result)
       })
     }
   })
@@ -257,8 +281,17 @@ router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
   const query = { email: req.body.queryEmail }
-  const user = {
-    ...req.body
+  var salt = bcrypt.genSaltSync(10)
+  let user
+  if (typeof req.body.password === 'undefined') {
+    user = {
+      ...req.body
+    }
+  } else {
+    user = {
+      ...req.body,
+      password: bcrypt.hashSync(req.body.password, salt)
+    }
   }
 
   // Remove the auth token from the form getting edited

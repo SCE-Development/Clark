@@ -4,7 +4,7 @@ import './index.css'
 // import * as serviceWorker from './serviceWorker'
 
 import Dashboard from './Components/Dashboard/Dashboard'
-import Overview from './Pages/Overview/Overview'
+import Overview from './Pages/Overview/App'
 import Admin from './Pages/Admin/Admin'
 import OfficerTools from './Pages/OfficerTools/OfficerTools'
 import MemberManager from './Pages/MemberManager/MemberManager'
