@@ -13,7 +13,7 @@ Where: Career Center (ADMIN 255)
 
 ### Ethereum/Blockchain Workshop with Jeremy
 
-Jeremy Chau, a graduating CMPE Masters student, will be giving a workshop on the Ethereum blockchain! He is well versed in the technology as he used it for his thesis project. (last weeks Blast email had the incorrect date)
+Jeremy Chau, a graduating CMPE Masters student, will be giving a workshop on the Ethereum blockchain! He is well versed in the technology as he used it for his thesis project. (last week's Blast email had the incorrect date)
 
 Topics include:
 - Smart contracts
@@ -27,17 +27,17 @@ Where: ENGR 292
 
 ### SCE Badminton Tournament @SRAC
 
-We will be playing badminton at the rec center. Wanna play too? Go ahead and sign up at the RSVP form! There will be doubles and singles games, so don’t say you can’t come because you don’t have a partner. To add the “icing on the cake”, top 3 badminton teams/players will get a prize. 
+We will be playing badminton at the SRAC! Wanna play too? Go ahead and sign up at the RSVP form! There will be doubles and singles games, so don’t say you can’t come because you don’t have a partner. To add the “icing on the cake”, top 3 badminton teams/players will get a prize. 
 
 ```
 Time: Tuesday November 26, 2019 from 12:00 - 2:00pm
-Where: SRAC
+Where: SRAC Badminton Courts
 What to bring: Rackets
 ``` 
-Sign up [HERE](https://forms.gle/cawJDgfJ5xqjirRV6)
+[Sign up here!](https://forms.gle/cawJDgfJ5xqjirRV6)
 
 ### ✅ Thanksgiving Potluck
-![potluck2](images/IMG_7301.JPG)
-![potluck3](images/IMG_2436.JPG)
-![potluck1](images/IMG_0565.jpg)
+![potluck2](images/IMG_7301-min.JPG)
+![potluck3](images/IMG_2436-min.JPG)
+![potluck1](images/IMG_0565-min.jpg)
 
