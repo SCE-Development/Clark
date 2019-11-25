@@ -6,6 +6,7 @@
 .wholeCard {
   width: 480px !important;
   margin-top: 20px;
+  margin-left: 0px;
 }
 
 .link {
