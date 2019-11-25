@@ -8,7 +8,7 @@ The Career Center is hosting its last LinkedIn Profile Studio of the semester. T
 When: Friday December 6 2019 from 9:00 am - 12:00pm
 Where: Career Center (ADMIN 255)
 ```
-![workshopflyer](images/linkedin.jpg)
+![workshopflyer](images/linkedin-min.jpg)
 
 
 ### Ethereum/Blockchain Workshop with Jeremy
