@@ -24,7 +24,7 @@ import Team from './Pages/TheTeam/App.js'
 import Printing from './Pages/2DPrinting/App.js'
 // import Jumbotron from './Components/Jumbotron/App.js'
 
-class App extends React.Component {
+export default class App extends React.Component {
   render () {
     return (
       <Router>
@@ -74,8 +74,3 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, document.getElementById('root'))
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-// serviceWorker.unregister()
