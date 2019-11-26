@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import './index.css'
 // import * as serviceWorker from './serviceWorker'
@@ -72,5 +71,3 @@ export default class App extends React.Component {
     )
   }
 }
-
-ReactDOM.render(<App />, document.getElementById('root'))
