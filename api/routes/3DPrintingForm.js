@@ -49,7 +49,7 @@ router.post('/submit', (req, res) => {
       return res.sendStatus(BAD_REQUEST)
     }
 
-    return res.json(post)
+    return res.status(OK).send(post)
   })
 })
 
