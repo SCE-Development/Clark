@@ -48,7 +48,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'Rainbow',
-        contact: 'a@b.c'
+        contact: 'a@b.c',
+        id: "111"
       }
       chai
         .request(app)
