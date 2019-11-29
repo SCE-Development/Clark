@@ -92,8 +92,49 @@ export default class extends Component {
       : this.setState({ AnimationCSS2: {} })
   }
 
+  inputBox (field) {
+    return (
+      <div
+        style={field.style}
+        onFocus={() => {
+          this.updateCSS(field.css)
+        }}
+        onBlur={() => {
+          this.updateCSS()
+        }}
+        className='txtb'
+      >
+        <span />
+        <input
+          type={field.type}
+          name={field.type}
+          placeholder={field.placeholder}
+          value={field.value}
+          onChange={this.handleChange}
+          required
+        />
+      </div>
+    )
+  }
+
   render () {
-    const { email, password, message } = this.state
+    const { message } = this.state
+    const fields = [
+      {
+        style: this.state.AnimationCSS1,
+        css: 1,
+        value: this.state.email,
+        type: 'email',
+        placeholder: 'Email'
+      },
+      {
+        style: this.state.AnimationCSS2,
+        css: 2,
+        value: this.state.password,
+        type: 'password',
+        placeholder: 'Password'
+      }
+    ]
 
     return (
       <Layout>
@@ -103,47 +144,9 @@ export default class extends Component {
 
             {message !== '' && <span>{message}</span>}
 
-            <div
-              style={this.state.AnimationCSS1}
-              onFocus={() => {
-                this.updateCSS(1)
-              }}
-              onBlur={() => {
-                this.updateCSS()
-              }}
-              className='txtb'
-            >
-              <span />
-              <input
-                type='email'
-                name='email'
-                placeholder='Email'
-                value={email}
-                onChange={this.handleChange}
-                required
-              />
-            </div>
-
-            <div
-              style={this.state.AnimationCSS2}
-              onFocus={() => {
-                this.updateCSS(2)
-              }}
-              onBlur={() => {
-                this.updateCSS()
-              }}
-              className='txtb'
-            >
-              <span />
-              <input
-                type='password'
-                name='password'
-                placeholder='Password'
-                value={password}
-                onChange={this.handleChange}
-                required
-              />
-            </div>
+            {fields.map(field => {
+              return this.inputBox(field)
+            })}
 
             <button type='submit' id='loginBtn'>
               Login
