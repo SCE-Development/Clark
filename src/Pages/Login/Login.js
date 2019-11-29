@@ -118,19 +118,25 @@ export default class extends Component {
   }
 
   render () {
-    const { message } = this.state
+    const {
+      message,
+      email,
+      password,
+      AnimationCSS1,
+      AnimationCSS2
+    } = this.state
     const fields = [
       {
-        style: this.state.AnimationCSS1,
+        style: AnimationCSS1,
         css: 1,
-        value: this.state.email,
+        value: email,
         type: 'email',
         placeholder: 'Email'
       },
       {
-        style: this.state.AnimationCSS2,
+        style: AnimationCSS2,
         css: 2,
-        value: this.state.password,
+        value: password,
         type: 'password',
         placeholder: 'Password'
       }
