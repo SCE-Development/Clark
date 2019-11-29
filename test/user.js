@@ -39,6 +39,10 @@ describe('Users', () => {
   after(done => {
     terminateServer(done)
   })
+  after(done => {
+    closeConnection()
+    done()
+  })
 
   let token = ''
 
@@ -51,7 +55,6 @@ describe('Users', () => {
         .send(user)
         .then(function (res) {
           expect(res).to.not.have.status(200)
-
           done()
         })
         .catch(err => {

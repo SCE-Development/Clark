@@ -119,7 +119,6 @@ describe('3DPrintingForm', () => {
         .send(user)
         .then(function (res) {
           expect(res).to.have.status(200)
-
           done()
         })
         .catch(err => {
