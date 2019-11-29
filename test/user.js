@@ -39,10 +39,6 @@ describe('Users', () => {
   after(done => {
     terminateServer(done)
   })
-  after(done => {
-    closeConnection()
-    done()
-  })
 
   let token = ''
 
