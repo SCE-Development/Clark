@@ -19,7 +19,11 @@ const settings = require('./util/settings') // import server system settings
 const logger = require(`${settings.util}/logger`) // import event log system
 let port = process.argv[2] // allow custom ports
 
+// Configure Mongoose
 const mongoose = require('mongoose')
+mongoose.Promise = require('bluebird')
+const express = require('express')
+const cors = require('cors')
 
 /* Globals */
 const handlerTag = { src: 'server' }
@@ -29,89 +33,100 @@ const testEnv = process.env.NODE_ENV === 'test'
 const database = testEnv ? 'sce_core_test' : 'sce_core'
 
 /* Initialize logging */
-logger.log('Initializing...', handlerTag)
 
-// Configure Mongoose
-mongoose.Promise = require('bluebird')
-mongoose
-  .connect(`mongodb://localhost/${database}`, {
-    promiseLibrary: require('bluebird'),
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true
-  })
-  .then(() => {
-    console.log('MongoDB Connection Successful')
-    console.log()
-  })
-  .catch(error => console.error(error))
+class Server {
+  constructor () {
+    logger.log('Initializing...', handlerTag)
+    this.mongoose = mongoose
+    this.mongoose
+      .connect(`mongodb://localhost/${database}`, {
+        promiseLibrary: require('bluebird'),
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true
+      })
+      .then(() => {
+        console.log('MongoDB Connection Successful')
+        console.log()
+      })
+      .catch(error => console.error(error))
 
-/* Create server instance */
-const express = require('express')
-const cors = require('cors')
-const app = express()
-app.locals.title = 'Core v4'
-app.locals.email = 'test@test.com'
+    /* Create server instance */
+    const app = express()
+    app.locals.title = 'Core v4'
+    app.locals.email = 'test@test.com'
 
-app.use(cors()) // use CORS policy
+    app.use(cors()) // use CORS policy
 
-/* Define logs to ignore */
-logger.ignore([
-  'bodyParser.json.Reviver',
-  'delintRequestBody',
-  'error_formats.common'
-])
+    /* Define logs to ignore */
+    logger.ignore([
+      'bodyParser.json.Reviver',
+      'delintRequestBody',
+      'error_formats.common'
+    ])
 
-/* Define Static Asset Locations (i.e. includes/js/css/img files) */
-logger.log('Preparing static assets...', handlerTag)
-app.use(
-  bodyParser.json({
-    // support JSON-encoded request bodies
-    strict: true
-  })
-)
-app.use(
-  bodyParser.urlencoded({
-    // support URL-encoded request bodies
-    extended: true
-  })
-)
-app.use(express.static(settings.root)) // server root
+    /* Define Static Asset Locations (i.e. includes/js/css/img files) */
+    logger.log('Preparing static assets...', handlerTag)
+    app.use(
+      bodyParser.json({
+        // support JSON-encoded request bodies
+        strict: true
+      })
+    )
+    app.use(
+      bodyParser.urlencoded({
+        // support URL-encoded request bodies
+        extended: true
+      })
+    )
+    app.use(express.static(settings.root)) // server root
 
-/* Define Main Server Routes (RESTful)
+    /* Define Main Server Routes (RESTful)
 
- To create a new endpoint:
-  - Select a URI to associate as the new endpoint (i.e. "routePath")
-  - Define a handler function in util/route_handlers.js in a similar fashion the the others (i.e. "handlerFunc")
-  - Place an app request here (i.e. "app.post([routePath], [handlerFunc])")
-*/
-// logger.log('Routing server endpoints...', handlerTag)
-// const homeApp = require('./src/home/app/app.js')
-// app.use('/home', homeApp) // GET request of the main login page
+     To create a new endpoint:
+      - Select a URI to associate as the new endpoint (i.e. "routePath")
+      - Define a handler function in util/route_handlers.js in a similar fashion the the others (i.e. "handlerFunc")
+      - Place an app request here (i.e. "app.post([routePath], [handlerFunc])")
+    */
+    // logger.log('Routing server endpoints...', handlerTag)
+    // const homeApp = require('./src/home/app/app.js')
+    // app.use('/home', homeApp) // GET request of the main login page
 
-// Initialize the routes
-require('./api/index.js').forEach(route => {
-  app.use(`/api/${route}`, require(`./api/routes/${route}`))
-})
+    // Initialize the routes
+    require('./api/index.js').forEach(route => {
+      app.use(`/api/${route}`, require(`./api/routes/${route}`))
+    })
 
-/* Initialize SCE Core Admin sub-app */
-// const coreAdminApp = require('./public/core/app/app.js')
-// app.use('/core', coreAdminApp)
+    /* Initialize SCE Core Admin sub-app */
+    // const coreAdminApp = require('./public/core/app/app.js')
+    // app.use('/core', coreAdminApp)
 
-/*
- Main Server Routine - Listen for requests on specified port
-*/
-if (!port) {
-  logger.log(`Using default port ${settings.port}`, handlerTag)
-  port = settings.port
-} else {
-  logger.log(`Using custom port ${port}`, handlerTag)
-  settings.port = port
+    /*
+     Main Server Routine - Listen for requests on specified port
+    */
+    if (!port) {
+      logger.log(`Using default port ${settings.port}`, handlerTag)
+      port = settings.port
+    } else {
+      logger.log(`Using custom port ${port}`, handlerTag)
+      settings.port = port
+    }
+    this.server = http.createServer(app)
+    this.server.listen(port, function () {
+      logger.log(`Now listening on port ${port}`, handlerTag)
+    })
+  }
+
+  getServerInstance () {
+    return this.server
+  }
+
+  closeConnection () {
+    this.server.close()
+    this.mongoose.connection.close()
+  }
 }
-const server = http.createServer(app)
-server.listen(port, function () {
-  logger.log(`Now listening on port ${port}`, handlerTag)
-})
+
 // END server.js
 
-module.exports = server
+module.exports = { Server }

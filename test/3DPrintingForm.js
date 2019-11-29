@@ -1,28 +1,48 @@
-/* global describe it before */
+/* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test'
-
 const PrintingForm3D = require('../api/models/PrintingForm3D')
-
+const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const app = require('../server')
+const server = require('../server')
+let serverInstance = null
+let app = null
 const expect = chai.expect
 
 chai.should()
 chai.use(chaiHttp)
 
+function initializeServer () {
+  serverInstance = new server.Server()
+  app = serverInstance.getServerInstance()
+}
+
+function terminateServer () {
+  serverInstance.closeConnection()
+}
+
 // Our parent block
 describe('3DPrintingForm', () => {
   before(done => {
+    initializeServer()
     // Before each test we empty the database
     PrintingForm3D.deleteMany({}, err => {
       if (err) {
         //
       }
-      done()
     })
+    User.deleteMany({}, err => {
+      if (err) {
+        //
+      }
+    })
+    done()
+  })
+  after(done => {
+    terminateServer()
+    done()
   })
 
   let token = ''
@@ -49,7 +69,7 @@ describe('3DPrintingForm', () => {
         name: 'pinkUnicorn',
         color: 'Rainbow',
         contact: 'a@b.c',
-        id: "111"
+        id: '111'
       }
       chai
         .request(app)
