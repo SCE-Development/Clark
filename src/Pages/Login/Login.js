@@ -2,14 +2,17 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import Layout from '../../Components/Layout/Layout'
+import './Login.css'
 
 export default class extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.state = {
       email: '',
       password: '',
-      message: ''
+      message: '',
+      AnimationCSS1: {},
+      AnimationCSS2: {}
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -69,39 +72,96 @@ export default class extends Component {
       })
   }
 
+  updateCSS (opt) {
+    opt === 1
+      ? this.setState({
+        AnimationCSS1: {
+          top: '-5px',
+          borderBottom: '2px solid GREEN'
+        }
+      })
+      : this.setState({ AnimationCSS1: {} })
+
+    opt === 2
+      ? this.setState({
+        AnimationCSS2: {
+          top: '-5px',
+          borderBottom: '2px solid GREEN'
+        }
+      })
+      : this.setState({ AnimationCSS2: {} })
+  }
+
+  inputBox (field) {
+    return (
+      <div
+        style={field.style}
+        onFocus={() => {
+          this.updateCSS(field.css)
+        }}
+        onBlur={() => {
+          this.updateCSS()
+        }}
+        className='txtb'
+      >
+        <span />
+        <input
+          type={field.type}
+          name={field.type}
+          placeholder={field.placeholder}
+          value={field.value}
+          onChange={this.handleChange}
+          required
+        />
+      </div>
+    )
+  }
+
   render () {
-    const { email, password, message } = this.state
+    const {
+      message,
+      email,
+      password,
+      AnimationCSS1,
+      AnimationCSS2
+    } = this.state
+    const fields = [
+      {
+        style: AnimationCSS1,
+        css: 1,
+        value: email,
+        type: 'email',
+        placeholder: 'Email'
+      },
+      {
+        style: AnimationCSS2,
+        css: 2,
+        value: password,
+        type: 'password',
+        placeholder: 'Password'
+      }
+    ]
 
     return (
       <Layout>
         <form onSubmit={this.handleSubmit}>
-          <h1>Welcome</h1>
+          <div id='body'>
+            <img id='img' src='images/SCE-glow.png' />
 
-          {message !== '' && <span>{message}</span>}
+            {message !== '' && <span>{message}</span>}
 
-          <input
-            type='email'
-            name='email'
-            placeholder='Email'
-            value={email}
-            onChange={this.handleChange}
-            required
-          />
+            {fields.map(field => {
+              return this.inputBox(field)
+            })}
 
-          <input
-            type='password'
-            name='password'
-            placeholder='Password'
-            value={password}
-            onChange={this.handleChange}
-            required
-          />
+            <button type='submit' id='loginBtn'>
+              Login
+            </button>
 
-          <button type='submit'>Login</button>
-
-          <p>
-            <Link to='/register'>Create an account</Link>
-          </p>
+            <p id='SignUp'>
+              <Link to='/register'>Create an account</Link>
+            </p>
+          </div>
         </form>
       </Layout>
     )

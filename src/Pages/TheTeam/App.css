@@ -10,6 +10,7 @@
 .Title {
   padding-top: 30px;
   padding-left: 0;
+  margin-left: -4%;
 }
 
 .NameHead{
@@ -27,9 +28,5 @@
 #tab1 {
   margin: auto;
   padding-top: 5px;
-}
-
-#tab2 {
-  margin: auto;
-  padding-top: 5px;
+  margin-left: -6%;
 }

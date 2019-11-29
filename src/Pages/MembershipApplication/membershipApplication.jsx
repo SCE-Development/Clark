@@ -227,7 +227,7 @@ export default class MembershipApplication extends React.Component {
   // @returns         (jsx) html      The generated html content
   render () {
     return (
-      <Layout>``
+      <Layout>
         <div className='membership-application'>
           <h1 className='page-title'>Member Registration</h1>
           <div className='notice'>
