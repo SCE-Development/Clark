@@ -16,6 +16,7 @@ chai.use(chaiHttp)
 
 function initializeServer () {
   serverInstance = new server.Server()
+  serverInstance.openConnection()
   app = serverInstance.getServerInstance()
 }
 

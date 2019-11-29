@@ -1,18 +1,4 @@
-// PROJECT:   MEANserver
-// Name:    Rolando Javier
-// File:    server.js
-// Date Created:  October 17, 2017
-// Last Modified:  January 9, 2018
-// Details:
-//      This file comprises the MEAN Stack server to be used in PROJECT: Core-v4 (based on the server from PROJECT: SkillMatch and PROJECT: MEANserver)
-// Dependencies:
-//      NodeJS v6.9.1
-//      ExpressJS 4.16.2
-//      body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
-
 'use strict'
-
-/* NodeJS+ExpressJS Server */
 const http = require('http')
 const bodyParser = require('body-parser') // import POST request data parser
 const settings = require('./util/settings') // import server system settings
@@ -32,10 +18,52 @@ const handlerTag = { src: 'server' }
 const testEnv = process.env.NODE_ENV === 'test'
 const database = testEnv ? 'sce_core_test' : 'sce_core'
 
-/* Initialize logging */
-
 class Server {
   constructor () {
+    this.mongoose = mongoose
+    this.app = express()
+    this.app.locals.title = 'Core v4'
+    this.app.locals.email = 'test@test.com'
+
+    this.app.use(cors())
+
+    /* Define logs to ignore */
+    logger.ignore([
+      'bodyParser.json.Reviver',
+      'delintRequestBody',
+      'error_formats.common'
+    ])
+
+    /* Define Static Asset Locations (i.e. includes/js/css/img files) */
+    logger.log('Preparing static assets...', handlerTag)
+    this.app.use(
+      bodyParser.json({
+        // support JSON-encoded request bodies
+        strict: true
+      })
+    )
+    this.app.use(
+      bodyParser.urlencoded({
+        // support URL-encoded request bodies
+        extended: true
+      })
+    )
+    this.app.use(express.static(settings.root))
+    // Initialize the routes
+    require('./api/index.js').forEach(route => {
+      this.app.use(`/api/${route}`, require(`./api/routes/${route}`))
+    })
+    // Main Server Routine - Listen for requests on specified port
+    if (!port) {
+      logger.log(`Using default port ${settings.port}`, handlerTag)
+      port = settings.port
+    } else {
+      logger.log(`Using custom port ${port}`, handlerTag)
+      settings.port = port
+    }
+  }
+
+  openConnection () {
     logger.log('Initializing...', handlerTag)
     this.mongoose = mongoose
     this.mongoose
@@ -50,68 +78,7 @@ class Server {
         console.log()
       })
       .catch(error => console.error(error))
-
-    /* Create server instance */
-    const app = express()
-    app.locals.title = 'Core v4'
-    app.locals.email = 'test@test.com'
-
-    app.use(cors()) // use CORS policy
-
-    /* Define logs to ignore */
-    logger.ignore([
-      'bodyParser.json.Reviver',
-      'delintRequestBody',
-      'error_formats.common'
-    ])
-
-    /* Define Static Asset Locations (i.e. includes/js/css/img files) */
-    logger.log('Preparing static assets...', handlerTag)
-    app.use(
-      bodyParser.json({
-        // support JSON-encoded request bodies
-        strict: true
-      })
-    )
-    app.use(
-      bodyParser.urlencoded({
-        // support URL-encoded request bodies
-        extended: true
-      })
-    )
-    app.use(express.static(settings.root)) // server root
-
-    /* Define Main Server Routes (RESTful)
-
-     To create a new endpoint:
-      - Select a URI to associate as the new endpoint (i.e. "routePath")
-      - Define a handler function in util/route_handlers.js in a similar fashion the the others (i.e. "handlerFunc")
-      - Place an app request here (i.e. "app.post([routePath], [handlerFunc])")
-    */
-    // logger.log('Routing server endpoints...', handlerTag)
-    // const homeApp = require('./src/home/app/app.js')
-    // app.use('/home', homeApp) // GET request of the main login page
-
-    // Initialize the routes
-    require('./api/index.js').forEach(route => {
-      app.use(`/api/${route}`, require(`./api/routes/${route}`))
-    })
-
-    /* Initialize SCE Core Admin sub-app */
-    // const coreAdminApp = require('./public/core/app/app.js')
-    // app.use('/core', coreAdminApp)
-
-    /*
-     Main Server Routine - Listen for requests on specified port
-    */
-    if (!port) {
-      logger.log(`Using default port ${settings.port}`, handlerTag)
-      port = settings.port
-    } else {
-      logger.log(`Using custom port ${port}`, handlerTag)
-      settings.port = port
-    }
-    this.server = http.createServer(app)
+    this.server = http.createServer(this.app)
     this.server.listen(port, function () {
       logger.log(`Now listening on port ${port}`, handlerTag)
     })
@@ -127,6 +94,13 @@ class Server {
   }
 }
 
+// This if statement checks if the module was require()'d or if it was run
+// by node server.js. If we are not requiring it and are running it from the
+// command line, we create a server instance and start listening for requests.
+if (typeof module !== 'undefined' && !module.parent) {
+  const server = new Server()
+  server.openConnection()
+}
 // END server.js
 
 module.exports = { Server }

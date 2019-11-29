@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "api-test": "mocha",
-    "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.test.js",
+    "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js",
     "start": "react-scripts build && node server.js | react-scripts start",
     "frontend": "react-scripts start",
     "build": "react-scripts build",
