@@ -22,15 +22,7 @@ const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST } = {
 // Post Api
 router.post('/submit', (req, res) => {
   const data = {
-    name: req.body.name,
-    email: req.body.email,
-    facebook: req.body.facebook,
-    github: req.body.github,
-    instagram: req.body.instagram,
-    level: req.body.level,
-    team: req.body.team,
-    quote: req.body.quote,
-    major: req.body.major
+    ...req.body
   }
 
   Manager.create(data, (error, post) => {
