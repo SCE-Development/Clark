@@ -94,7 +94,9 @@ export default class Example extends React.Component {
         name: jsonObject.name,
         color: jsonObject.color,
         // This token must be passed in for authentication
-        token: this.state.authToken
+        token: this.state.authToken,
+        date: jsonObject.date,
+        email: jsonObject.email
       })
       .then(result => {
         console.log(result)
@@ -115,6 +117,7 @@ export default class Example extends React.Component {
       .post('/api/3DPrintingForm/edit', {
         name: jsonObject.name,
         date: jsonObject.date,
+        email: jsonObject.email,
         progress: event.target.value,
         token: this.state.authToken
       })
@@ -126,46 +129,13 @@ export default class Example extends React.Component {
       })
   }
 
+  // simply filter array by name
   search () {
     const search = this.state.search.trim().toLowerCase()
     return search !== null || search !== ''
       ? this.state.data.filter(data => data.name.toLowerCase().includes(search))
       : this.state.data
   }
-
-  // Handle changes when need to edit (For sample not used)
-  /* changeInput (event, key) {
-    this.setState({
-      input: event.target.value
-    })
-    this.setState({
-      key: key
-    })
-    console.log(key)
-  }
-  /*
-  Parameters: Json Object that will be updated and an onLick event with a value
-  Search for object in db using its name
-  Set new color = new value
-  */
-  /*
-  editData (jsonObject, key) {
-    console.log('Print ')
-    console.log(jsonObject.name)
-    if (key == this.state.key){
-      axios
-        .post('/api/3DPrintingForm/edit', {
-          name: jsonObject.name,
-          color: this.state.input
-        })
-        .then(result => {
-          this.callDatabase() // reload database
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }
-  } */
 
   requestForm (jsonObject, key) {
     console.log(jsonObject)
