@@ -40,7 +40,7 @@ router.post('/submit', (req, res) => {
     projectContact: req.body.contact,
     projectComments: req.body.comment,
     progress: req.body.progress,
-    id: req.body.id
+    email: req.body.email
   }
 
   PrintingForm3D.create(data, (error, post) => {
@@ -56,7 +56,7 @@ router.post('/submit', (req, res) => {
 router.post('/GetForm', (req, res) => {
   // Query Criteria, query all if empty
   let obj = {}
-  if (typeof req.body.id !== 'undefined') obj = { id: req.body.id }
+  if (typeof req.body.email !== 'undefined') obj = { email: req.body.email }
 
   PrintingForm3D.find(obj, (error, forms) => {
     if (error) {
@@ -78,7 +78,7 @@ router.post('/delete', (req, res) => {
       res.sendStatus(UNAUTHORIZED)
     } else {
       PrintingForm3D.deleteOne(
-        { name: req.body.name, color: req.body.color },
+        { email: req.body.email, date: req.body.date },
         function (error, form) {
           if (error) {
             logger.log(`3DPrinting /Delete3DForm error: ${error}`)
@@ -102,7 +102,7 @@ router.post('/delete', (req, res) => {
 router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
-  const query = { name: req.body.name }
+  const query = { email: req.body.email, date: req.body.date }
   const form = {
     ...req.body
   }
