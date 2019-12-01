@@ -16,6 +16,7 @@ chai.use(chaiHttp)
 
 function initializeServer () {
   serverInstance = new server.Server()
+  serverInstance.openConnection()
   app = serverInstance.getServerInstance()
 }
 
@@ -119,7 +120,6 @@ describe('3DPrintingForm', () => {
         .send(user)
         .then(function (res) {
           expect(res).to.have.status(200)
-
           done()
         })
         .catch(err => {

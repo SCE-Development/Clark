@@ -146,7 +146,7 @@ export default class extends Component {
       <Layout>
         <form onSubmit={this.handleSubmit}>
           <div id='body'>
-            <img id='img' src='images/SCE-glow.png' />
+            <img id='img' alt='sce logo' src='images/SCE-glow.png' />
 
             {message !== '' && <span>{message}</span>}
 

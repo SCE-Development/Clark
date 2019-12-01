@@ -17,6 +17,7 @@ chai.use(chaiHttp)
 
 function initializeServer () {
   serverInstance = new server.Server()
+  serverInstance.openConnection()
   app = serverInstance.getServerInstance()
 }
 
@@ -51,7 +52,6 @@ describe('Users', () => {
         .send(user)
         .then(function (res) {
           expect(res).to.not.have.status(200)
-
           done()
         })
         .catch(err => {
