@@ -4,7 +4,7 @@ import React from 'react'
 import Enzyme, { mount } from 'enzyme'
 import { expect } from 'chai'
 
-import App from '../src/App'
+import App from '../../src/App'
 import Adapter from 'enzyme-adapter-react-16'
 import { Router } from 'react-router-dom'
 

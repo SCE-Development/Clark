@@ -1,4 +1,4 @@
-/* global describe it before */
+/* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test'
 
@@ -7,22 +7,37 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const app = require('../server')
+const server = require('../server')
+let serverInstance = null
+let app = null
 const expect = chai.expect
 
 chai.should()
 chai.use(chaiHttp)
 
+function initializeServer () {
+  serverInstance = new server.Server()
+  app = serverInstance.getServerInstance()
+}
+
+function terminateServer (done) {
+  serverInstance.closeConnection(done)
+}
+
 // Our parent block
 describe('Users', () => {
   before(done => {
+    initializeServer()
     // Before each test we empty the database
     User.deleteMany({}, err => {
       if (err) {
         //
       }
-      done()
     })
+    done()
+  })
+  after(done => {
+    terminateServer(done)
   })
 
   let token = ''
