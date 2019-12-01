@@ -121,9 +121,9 @@ class Server {
     return this.server
   }
 
-  closeConnection () {
+  closeConnection (done) {
     this.server.close()
-    this.mongoose.connection.close()
+    this.mongoose.connection.close(done)
   }
 }
 

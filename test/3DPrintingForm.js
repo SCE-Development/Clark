@@ -19,8 +19,8 @@ function initializeServer () {
   app = serverInstance.getServerInstance()
 }
 
-function terminateServer () {
-  serverInstance.closeConnection()
+function terminateServer (done) {
+  serverInstance.closeConnection(done)
 }
 
 // Our parent block
@@ -41,8 +41,7 @@ describe('3DPrintingForm', () => {
     done()
   })
   after(done => {
-    terminateServer()
-    done()
+    terminateServer(done)
   })
 
   let token = ''

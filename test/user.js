@@ -20,8 +20,8 @@ function initializeServer () {
   app = serverInstance.getServerInstance()
 }
 
-function terminateServer () {
-  serverInstance.closeConnection()
+function terminateServer (done) {
+  serverInstance.closeConnection(done)
 }
 
 // Our parent block
@@ -37,8 +37,7 @@ describe('Users', () => {
     done()
   })
   after(done => {
-    terminateServer()
-    done()
+    terminateServer(done)
   })
 
   let token = ''
