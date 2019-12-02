@@ -216,34 +216,34 @@ class EventAdmin extends Component {
         >
           <Col md={2} className='event-admin-card-content event-admin-title'>
             <Row className='title'>
-              <h4>
-                <a>{event.title}</a>
-              </h4>
+              <h4>{event.title}</h4>
             </Row>
             <Row className='actions' id={event.id}>
-              <a
+              <button
                 onClick={() => {
                   this.handleViewOpen(event.id)
                 }}
               >
                 View{' '}
-              </a>{' '}
+              </button>{' '}
               |
-              <a
+              <button
+                href=''
                 onClick={() => {
                   this.handleEditOpen(event.id)
                 }}
               >
                 Edit{' '}
-              </a>{' '}
+              </button>{' '}
               |
-              <a
+              <button
+                href=''
                 onClick={() => {
                   this.handleDelete(event.id)
                 }}
               >
                 Delete{' '}
-              </a>
+              </button>
             </Row>
           </Col>
           <Col md={3} className='event-admin-card-content event-admin-comments'>

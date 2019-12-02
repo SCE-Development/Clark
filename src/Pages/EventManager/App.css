@@ -1,3 +1,10 @@
+.actions button{
+  background: none!important;
+  border: none;
+  color: #069;
+  text-decoration: none;
+  cursor: pointer;
+}
 .event-admin-main{
   padding: 5px;
 }
@@ -18,8 +25,7 @@
   transition: ease-in 0.2s;
 }
 .event-admin-card:hover{
-  box-shadow: 3px 3px 5px 3px rgb(190, 190, 190);  
-  cursor: pointer;
+  box-shadow: 3px 3px 5px 3px rgb(190, 190, 190);
 }
 .event-admin-card-content{
   margin: 10px 0px;
