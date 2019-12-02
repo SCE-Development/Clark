@@ -19,6 +19,8 @@ class EventAdmin extends Component {
     create: false,
     edit: false,
     editIndex: null,
+    view: false,
+    viewIndex: null,
     date: null
   }
 
@@ -104,6 +106,26 @@ class EventAdmin extends Component {
       })
   }
 
+  handleViewOpen = id => {
+    var index = 0
+    for (var i = 0; i < this.state.json_arr.length; i++) {
+      if (this.state.json_arr[i].id === id) {
+        index = i
+        break
+      }
+    }
+    this.setState({
+      view: true,
+      viewIndex: index
+    })
+  }
+
+  handleViewClose = () => {
+    this.setState({
+      view: false
+    })
+  }
+
   handleEditOpen = id => {
     var index = 0
     for (var i = 0; i < this.state.json_arr.length; i++) {
@@ -133,7 +155,7 @@ class EventAdmin extends Component {
         a[x.name] = x.value
         return a
       }, {})
-
+    console.log(inputObj)
     axios
       .post('/api/event/editEvent', {
         id: inputObj.id,
@@ -142,7 +164,6 @@ class EventAdmin extends Component {
         eventLocation: inputObj.eventLocation,
         date: inputObj.date,
         eventDate: inputObj.eventDate,
-        datePosted: inputObj.datePosted,
         startTime: inputObj.startTime,
         endTime: inputObj.endTime,
         eventCategory: inputObj.eventCategory
@@ -201,7 +222,14 @@ class EventAdmin extends Component {
               </h4>
             </Row>
             <Row className='actions' id={event.id}>
-              <a>View </a> |
+              <a
+                onClick={() => {
+                  this.handleViewOpen(event.id)
+                }}
+              >
+                View{' '}
+              </a>{' '}
+              |
               <a
                 onClick={() => {
                   this.handleEditOpen(event.id)
@@ -351,6 +379,111 @@ class EventAdmin extends Component {
       )
     }
 
+    let viewModal
+    if (this.state.view) {
+      viewModal = (
+        <Modal show={this.state.view} onHide={this.handleViewClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>View Event</Modal.Title>
+          </Modal.Header>
+          <Form id='edit-event-form'>
+            <Modal.Body>
+              <Form.Group controlId='formTitle'>
+                <Form.Label>Event Title</Form.Label>
+                <Form.Control
+                  disabled
+                  type='text'
+                  name='title'
+                  defaultValue={this.state.json_arr[this.state.viewIndex].title}
+                />
+              </Form.Group>
+              <Form.Group controlId='formDescription'>
+                <Form.Label>Event Description</Form.Label>
+                <Form.Control
+                  disabled
+                  as='textarea'
+                  rows='3'
+                  name='description'
+                  defaultValue={
+                    this.state.json_arr[this.state.viewIndex].description
+                  }
+                />
+              </Form.Group>
+              <Form.Group controlId='formCategory'>
+                <Form.Label>Category</Form.Label>
+                <Form.Control
+                  disabled
+                  as='select'
+                  name='eventCategory'
+                  defaultValue={
+                    this.state.json_arr[this.state.viewIndex].eventCategory
+                  }
+                >
+                  <option>Social Event</option>
+                  <option>Company Tour</option>
+                  <option>Workshop</option>
+                </Form.Control>
+              </Form.Group>
+              <Form.Group controlId='formLocation'>
+                <Form.Label>Location</Form.Label>
+                <Form.Control
+                  disabled
+                  type='text'
+                  name='eventLocation'
+                  defaultValue={
+                    this.state.json_arr[this.state.viewIndex].eventLocation
+                  }
+                />
+              </Form.Group>
+              <Form.Group controlId='formDate'>
+                <Form.Label>Date</Form.Label>
+                <Form.Control
+                  disabled
+                  type='date'
+                  name='eventDate'
+                  defaultValue={
+                    this.state.json_arr[this.state.viewIndex].eventDate
+                  }
+                />
+              </Form.Group>
+              <Form.Group controlId='formTime'>
+                <Form.Label>Time</Form.Label>
+                <Row>
+                  <Col md={6}>
+                    <Form.Control
+                      disabled
+                      type='time'
+                      name='startTime'
+                      defaultValue={
+                        this.state.json_arr[this.state.viewIndex].startTime
+                      }
+                    />
+                    <Form.Text className='text-muted'>Start Time</Form.Text>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Control
+                      disabled
+                      type='time'
+                      name='endTime'
+                      defaultValue={
+                        this.state.json_arr[this.state.viewIndex].endTime
+                      }
+                    />
+                    <Form.Text className='text-muted'>End Time</Form.Text>
+                  </Col>
+                </Row>
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant='danger' onClick={this.handleViewClose}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+      )
+    }
+
     return (
       <div>
         <Container className='event-admin-main'>
@@ -481,6 +614,7 @@ class EventAdmin extends Component {
           </Form>
         </Modal>
         {editModal}
+        {viewModal}
       </div>
     )
   }
