@@ -12,7 +12,6 @@ import {
   Card,
   CardImg
 } from 'reactstrap'
-import Layout from '../../Components/Layout/Layout'
 
 // import classnames from 'classnames'
 import './App.css'
@@ -22,15 +21,14 @@ import Evan from './teamPics/2018_2019/evanUgarte.png'
 // import Alisha from './teamPics/2018_2019/alishaMehndiratta.png'
 // import Thenu from './teamPics/2018_2019/thenuSenthil.png'
 // import Nick from './teamPics/2018_2019/nickDerry.png'
-import Sarah from './teamPics/2019-2020/sarah.png'
-import Seema from './teamPics/2019-2020/seema.png'
-import Alex from './teamPics/2019-2020/alex.png'
-import Alex2 from './teamPics/2019-2020/alex1.png'
-import Thai from './teamPics/2019-2020/thai.png'
-import Surabhi from './teamPics/2019-2020/serbi.png'
-import Nanar from './teamPics/2019-2020/nanar.png'
+// import Sarah from './teamPics/2019-2020/sarah.png'
+// import Seema from './teamPics/2019-2020/seema.png'
+// import Alex from './teamPics/2019-2020/alex.png'
+// import Alex2 from './teamPics/2019-2020/alex1.png'
+// import Thai from './teamPics/2019-2020/thai.png'
+// import Surabhi from './teamPics/2019-2020/serbi.png'
+// import Nanar from './teamPics/2019-2020/nanar.png'
 import Layout from '../../Components/Layout/Layout'
-import TeamCard from './TeamCard'
 
 export default class Example extends React.Component {
   constructor (props) {
@@ -45,7 +43,7 @@ export default class Example extends React.Component {
           name: 'Aris Koumis',
           major: 'B.S Computer Engineering',
           tag: '#ArisKoumis',
-          source: Ari,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -63,7 +61,7 @@ export default class Example extends React.Component {
           name: 'Pranav Patil',
           major: 'B.S Computer Engineering',
           tag: '#pranavPatil',
-          source: Pranav,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -72,7 +70,7 @@ export default class Example extends React.Component {
           name: 'Keven Gallegos',
           major: 'Unknown',
           tag: '#kevenGallegos',
-          source: Keven,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -81,7 +79,7 @@ export default class Example extends React.Component {
           name: 'Keven Gallegos',
           major: 'B.S Mechanical Engineering',
           tag: '#DonRobertPornaras',
-          source: DRP,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -90,7 +88,7 @@ export default class Example extends React.Component {
           name: 'Thenu Senthil',
           major: 'B.S Computer Engineering',
           tag: '#ThenuSenthil',
-          source: Thenu,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -99,7 +97,7 @@ export default class Example extends React.Component {
           name: 'Alisha Mehndiratta',
           major: 'B.S Software Engineering',
           tag: '#AlishaMehndiratta',
-          source: Alisha,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -108,7 +106,7 @@ export default class Example extends React.Component {
           name: 'Lorena Silva',
           major: 'B.S Computer Engineering',
           tag: '#LorenaSilva',
-          source: Lorena,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -117,7 +115,7 @@ export default class Example extends React.Component {
           name: 'Nick Derry',
           major: 'B.S Computer Engineering',
           tag: '#Nick Derry',
-          source: Nick,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -126,7 +124,7 @@ export default class Example extends React.Component {
           name: 'Aris Koumis v1',
           major: 'B.S Computer Engineering',
           tag: '#ArisKoumis',
-          source: Ari,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
@@ -135,7 +133,7 @@ export default class Example extends React.Component {
           name: 'Aris Koumis v2',
           major: 'B.S Computer Engineering',
           tag: '#ArisKoumis',
-          source: Ari,
+          source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/'
