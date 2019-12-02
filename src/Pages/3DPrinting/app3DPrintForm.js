@@ -9,7 +9,11 @@ import {
   Input,
   Container,
   Row,
-  Col
+  Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from 'reactstrap'
 import axios from 'axios'
 import Layout from '../../Components/Layout/Layout'
@@ -28,6 +32,7 @@ export default class Example extends React.Component {
       contact: '',
       comment: '',
       user: {},
+      modal: true,
       isLoggedIn: false
     }
   }
@@ -55,6 +60,8 @@ export default class Example extends React.Component {
     }
   }
 
+  // import modal ;
+
   // function (e)
   // @parameter (e) events
   // methods: change state's values when called
@@ -78,6 +85,14 @@ export default class Example extends React.Component {
     this.setState({ contact: e.target.value })
   }
 
+  // handleModalChange (e) {
+  //   if (true) {
+  //     this.setState({ modal: true })
+  //   } else {
+  //     this.setState({ modal: false })
+  //   }
+  // }
+
   // Set comment's value = N/A when users doesn't provide any comment
   handleCommentChange (e) {
     if (e.target == null) {
@@ -86,6 +101,10 @@ export default class Example extends React.Component {
       this.setState({ comment: e.target.value })
     }
   }
+
+  // handleModalChange (){
+  //   if
+  // }
 
   // Get current datetime
   date () {
@@ -343,6 +362,17 @@ export default class Example extends React.Component {
                   Submit
                 </Button>
               </FormGroup>
+
+              <div>
+                <Button color='primary'> Review Submission </Button>
+                <Modal isOpen={this.state.modal}>
+                  <ModalHeader>Your Submission</ModalHeader>
+                  <ModalBody>Order Submission.</ModalBody>
+                  <ModalFooter>
+                    <Button color='primary'>Cancel</Button>
+                  </ModalFooter>
+                </Modal>
+              </div>
             </Form>
           </Container>
         ) : null}
