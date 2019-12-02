@@ -52,7 +52,6 @@ router.post('/createEvent', (req, res) => {
 router.post('/editEvent', (req, res) => {
   Event.findOne({ title: req.body.title })
     .then(event => {
-      event.id = req.body.id
       event.title = req.body.title
       event.description = req.body.description
       event.eventLocation = req.body.eventLocation

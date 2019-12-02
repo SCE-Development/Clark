@@ -158,7 +158,6 @@ class EventAdmin extends Component {
     console.log(inputObj)
     axios
       .post('/api/event/editEvent', {
-        id: inputObj.id,
         title: inputObj.title,
         description: inputObj.description,
         eventLocation: inputObj.eventLocation,
