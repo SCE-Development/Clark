@@ -50,7 +50,7 @@ router.post('/createEvent', (req, res) => {
 
 // edit event -> pushing to db (admin)
 router.post('/editEvent', (req, res) => {
-  Event.findOne({ id: req.body.id })
+  Event.findOne({ title: req.body.title })
     .then(event => {
       event.id = req.body.id
       event.title = req.body.title
