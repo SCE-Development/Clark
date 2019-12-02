@@ -1,0 +1,76 @@
+h1 {
+  font-family: Times New Roman;
+  text-align: center;
+}
+.One {
+  /* dot before class*/
+  font-family: Times New Roman;
+  font-size: 25px; /*px= pixel*/
+}
+#InfoBox {
+  position: absolute;
+  top: 120px;
+  right: 100px;
+  left: 700px;
+  width: 500px;
+  /* background-color: rgb(106, 141, 206); */
+  background-color: rgb(168, 218, 218);
+  padding-bottom: 30px;
+  padding-left: 50px;
+}
+
+#title {
+  margin-bottom: 0px;
+}
+#background {
+  padding-top: 30px;
+  opacity: 100%;
+  margin-bottom: 30px;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+h1 {
+  border-style: solid dotted solid dotted;
+}
+
+.Top {
+  font-family: Times New Roman;
+  font-size: 25px;
+  text-align: left;
+  /* background-color: rgb(106, 141, 206); */
+}
+
+#name {
+  position: relative;
+  left: 260px;
+  top: 2px;
+}
+.Body {
+  font-family: Times New Roman;
+  border-style: solid solid solid solid;
+  text-align: center;
+  padding-bottom: 30px;
+  padding-left: 20px;
+}
+.column {
+  float: left;
+  width: 24%;
+  padding: 5px;
+  position: relative;
+  background-size: cover;
+}
+
+/* Clear floats after image containers */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+  background-size: cover;
+}
+
+.profilepic {
+  border-radius: 50%;
+  left: 230px;
+  position: relative;
+}
