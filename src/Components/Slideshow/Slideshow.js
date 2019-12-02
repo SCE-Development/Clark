@@ -11,66 +11,67 @@ import './Slideshow.css'
 const items = [
   {
     id: 0,
-    src: 'images/officer-photo-18.jpg',
+    src: 'images/officers2019.jpg',
     altText: 'Officers',
-    header: '',
-    caption: ''
+    header: '2019-2020 Officers',
+    caption: '',
+    top: '25%'
   },
   {
     id: 1,
-    src: 'images/officer-photo-18-silly.jpg',
+    src: 'images/funnyofficers.jpg',
     altText: 'Officers',
-    header: '',
-    caption: ''
+    header: '2019-2020 Officers',
+    caption: '',
+    top: '25%'
   },
   {
     id: 2,
-    src: './images/club-award.jpg',
-    altText: 'Academic Club of the Year',
-    header: 'Academic Club of the Year',
-    caption: ''
+    src: 'images/Tesla2.jpg',
+    altText: 'Tesla Visit',
+    header: 'Tesla Tour',
+    caption: '',
+    top: '60%'
   },
   {
     id: 3,
-    src: 'images/workshops.jpg',
-    altText: 'Workshops',
-    header: 'Workshops',
-    caption: ''
+    src: 'images/meeting2.jpg',
+    altText: 'SCE General Meeting',
+    header: 'General Meeting',
+    caption: '',
+    top: '40%'
   },
   {
     id: 4,
-    src: 'images/facebook.jpg',
-    altText: 'Facebook tour',
-    header: 'Facebook',
-    caption: ''
+    src: 'images/sap.jpg',
+    altText: 'SAP Tour',
+    header: 'Company Tour',
+    caption: '',
+    top: '65%'
   },
   {
     id: 5,
-    src: 'images/pure-storage.jpg',
-    altText: 'Pure Storage',
-    header: 'Pure Storage',
-    caption: ''
+    src: 'images/react.jpg',
+    altText: 'React Workshop',
+    header: 'React Workshop',
+    caption: '',
+    top: '40%'
   },
   {
     id: 6,
-    src: 'images/resume-workshop.jpg',
-    altText: 'ReactJS Workshop',
-    header: 'ReactJS Workshop',
-    caption: ''
+    src: 'images/chess.jpg',
+    altText: 'Game Night!',
+    header: 'Game Night',
+    caption: '',
+    top: '60%'
   },
   {
     id: 7,
-    src: 'images/sce-pancakes.jpg',
-    altText: 'Pancakes',
-    header: 'Pancakes!',
-    caption: 'Every Thursday at 10am!'
-  },
-  {
-    id: 8,
-    src: 'images/sce-thanksgiving.jpg',
-    altText: 'Thanksgiving',
-    header: 'Happy Thanksgiving from SCE!',
-    caption: ''
+    src: 'images/making-cake.jpg',
+    altText: 'Cake Team Building',
+    header: 'Cake Team Building',
+    caption: '',
+    top: '40%'
   }
   /* Can add more images below as needed, or use Facebook API in the future to auto load images */
   /* Images must be 16:9 or 4:3 with minimum width of 1000 px */
@@ -131,9 +132,10 @@ class Slideshow extends Component {
   render () {
     const { activeIndex } = this.state
 
-    const slides = items.map(item => {
+    const slides = items.map((item, index) => {
       return (
         <CarouselItem
+          id={'caption-' + index}
           className='slideshow text-center'
           tag='div'
           key={item.id}
@@ -144,6 +146,7 @@ class Slideshow extends Component {
             src={item.src}
             alt={item.altText}
             className='carousel-images img-fluid'
+            style={{ top: item.top }}
           />
           <CarouselCaption
             captionText={item.caption}
@@ -154,7 +157,7 @@ class Slideshow extends Component {
     })
 
     return (
-      <div>
+      <div id='clicker'>
         <style>
           {`.slideshow {
                 align-items: center;
