@@ -207,8 +207,6 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/edit')
         .send(form)
         .then(function (res) {
-          console.log(res.body)
-
           expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
