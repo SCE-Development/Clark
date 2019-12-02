@@ -50,7 +50,7 @@ router.post('/createEvent', (req, res) => {
 
 // edit event -> pushing to db (admin)
 router.post('/editEvent', (req, res) => {
-  Event.findOne({ title: req.body.title })
+  Event.findOne({ id: req.body.id })
     .then(event => {
       event.id = req.body.id
       event.title = req.body.title
@@ -78,7 +78,7 @@ router.post('/editEvent', (req, res) => {
 
 // delete event -> pushing to db (admin)
 router.post('/deleteEvent', (req, res) => {
-  Event.deleteOne({ title: req.body.title })
+  Event.deleteOne({ id: req.body.id })
     .then(event => {
       res.status(OK).json({ event: 'event successfully deleted' })
     })

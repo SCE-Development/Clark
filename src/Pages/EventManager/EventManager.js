@@ -80,18 +80,28 @@ class EventAdmin extends Component {
   }
 
   handleDelete = id => {
-    let index = null
-    const temp = this.state.json_arr
-    for (var i = 0; i < temp.length; i++) {
-      if (temp[i].id === id) {
-        index = i
-        break
-      }
-    }
-    temp.splice(index, 1)
-    this.setState({
-      json_arr: temp
-    })
+    axios
+      .post('/api/event/deleteEvent', {
+        id: id
+      })
+      .then(result => {
+        // dynamically update the frontend
+        let index = null
+        const temp = this.state.json_arr
+        for (var i = 0; i < temp.length; i++) {
+          if (temp[i].id === id) {
+            index = i
+            break
+          }
+        }
+        temp.splice(index, 1)
+        this.setState({
+          json_arr: temp
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   handleEditOpen = id => {
@@ -117,22 +127,15 @@ class EventAdmin extends Component {
   handleEditSubmit = e => {
     /* this.state.editIndex */
     e.preventDefault()
-    const inputObj = $('#create-event-form')
+    const inputObj = $('#edit-event-form')
       .serializeArray()
       .reduce(function (a, x) {
         a[x.name] = x.value
         return a
       }, {})
 
-    const tempJsonArr = this.state.json_arr.slice()
-    tempJsonArr[this.state.editIndex] = inputObj
-
-    this.setState({
-      json_arr: tempJsonArr,
-      edit: false
-    })
     axios
-      .post('/api/event/createEvent', {
+      .post('/api/event/editEvent', {
         id: inputObj.id,
         title: inputObj.title,
         description: inputObj.description,
@@ -147,11 +150,10 @@ class EventAdmin extends Component {
       .then(result => {
         // dynamically update the frontend
         const tempJsonArr = this.state.json_arr.slice()
-        tempJsonArr.unshift(inputObj)
-        console.log(tempJsonArr)
+        tempJsonArr[this.state.editIndex] = inputObj
         this.setState({
           json_arr: tempJsonArr,
-          create: false
+          edit: false
         })
       })
       .catch(err => {
@@ -246,7 +248,7 @@ class EventAdmin extends Component {
           <Modal.Header closeButton>
             <Modal.Title>Edit Event</Modal.Title>
           </Modal.Header>
-          <Form onSubmit={this.handleEditSubmit} id='create-event-form'>
+          <Form onSubmit={this.handleEditSubmit} id='edit-event-form'>
             <input type='hidden' name='id' defaultValue={Date.now()} />
             <input type='hidden' name='date' defaultValue={this.state.date} />
             <Modal.Body>
