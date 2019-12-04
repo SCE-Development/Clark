@@ -69,7 +69,7 @@ describe('3DPrintingForm', () => {
         name: 'pinkUnicorn',
         color: 'Rainbow',
         contact: 'a@b.c',
-        id: '111'
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -170,7 +170,8 @@ describe('3DPrintingForm', () => {
     it('Should return statusCode 401 if an invalid token was passed in', done => {
       const form = {
         name: 'pinkUnicorn',
-        token: 'Invalid token'
+        token: 'Invalid token',
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -189,7 +190,8 @@ describe('3DPrintingForm', () => {
     it('Should return statusCode 404 if no form was found', done => {
       const form = {
         name: 'invalid-name',
-        token: token
+        token: token,
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -209,7 +211,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
-        token: token
+        token: token,
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -232,7 +235,8 @@ describe('3DPrintingForm', () => {
     it('Should return statusCode 500 if no token is passed in', done => {
       const form = {
         name: 'invalid-name',
-        color: 'invalid-color'
+        color: 'invalid-color',
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -252,7 +256,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'invalid-name',
         color: 'invalid-color',
-        token: 'Invalid token'
+        token: 'Invalid token',
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -272,7 +277,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'invalid-name',
         color: 'invalid-color',
-        token: token
+        token: token,
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -292,7 +298,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
-        token: token
+        token: token,
+        email: 'a@a.com'
       }
       chai
         .request(app)
