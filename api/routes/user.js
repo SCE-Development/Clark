@@ -132,7 +132,7 @@ router.post('/login', function (req, res) {
                   if (error) {
                     logger.log(
                       'Bad request while trying to reset pageCount to 0 for ' +
-                        user.email
+                      user.email
                     )
                   }
 
@@ -283,7 +283,7 @@ router.post('/edit', (req, res) => {
   })
 })
 
-router.post('getPagesPrintedCount', (req, res) => {
+router.post('/getPagesPrintedCount', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN)
   } else if (!checkIfTokenValid(req)) {
@@ -299,8 +299,7 @@ router.post('getPagesPrintedCount', (req, res) => {
         .status(NOT_FOUND)
         .send({ message: `${req.body.email} not found.` })
     }
-
-    return res.status(OK).send(result.pagesPrinted)
+    return res.status(OK).json(result.pagesPrinted)
   })
 })
 
@@ -322,7 +321,7 @@ router.post('/verify', function (req, res) {
 })
 
 // Helpers
-function testPasswordStrength (password) {
+function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong'
   /* eslint-disable */
   const strongRegex = new RegExp(
@@ -350,7 +349,7 @@ function testPasswordStrength (password) {
   return { success: mediumRegex.test(password), message: mediumMessage }
 }
 
-function checkIfPageCountResets (lastLogin) {
+function checkIfPageCountResets(lastLogin) {
   if (!lastLogin) return false
 
   const newDate = new Date()
@@ -366,7 +365,7 @@ function checkIfPageCountResets (lastLogin) {
   return false
 }
 
-function getMemberValidationDate (numberOfSemestersToSignUpFor) {
+function getMemberValidationDate(numberOfSemestersToSignUpFor) {
   const today = new Date()
   const membershipValidationDate = new Date()
 

@@ -46,6 +46,7 @@ class Server {
     this.app.use(
       bodyParser.urlencoded({
         // support URL-encoded request bodies
+        limit: '50mb',
         extended: true
       })
     )
