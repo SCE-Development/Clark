@@ -46,6 +46,7 @@ describe('3DPrintingForm', () => {
   })
 
   let token = ''
+  let date = 0
 
   describe('/POST submit', () => {
     it('Should not return statusCode 200 when the required fields are not set', done => {
@@ -69,7 +70,7 @@ describe('3DPrintingForm', () => {
         name: 'pinkUnicorn',
         color: 'Rainbow',
         contact: 'a@b.c',
-        id: '111'
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -88,7 +89,7 @@ describe('3DPrintingForm', () => {
 
   describe('/POST GetForm', () => {
     it('Should return an object of all forms', done => {
-      const form = {}
+      const form = { email: 'a@a.com' }
       chai
         .request(app)
         .post('/api/3DPrintingForm/GetForm')
@@ -96,6 +97,7 @@ describe('3DPrintingForm', () => {
         .then(function (res) {
           expect(res).to.have.status(200)
           res.body.should.be.a('array')
+          date = res.body[0].date
 
           done()
         })
@@ -170,7 +172,8 @@ describe('3DPrintingForm', () => {
     it('Should return statusCode 401 if an invalid token was passed in', done => {
       const form = {
         name: 'pinkUnicorn',
-        token: 'Invalid token'
+        token: 'Invalid token',
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -189,7 +192,8 @@ describe('3DPrintingForm', () => {
     it('Should return statusCode 404 if no form was found', done => {
       const form = {
         name: 'invalid-name',
-        token: token
+        token: token,
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -209,7 +213,9 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
-        token: token
+        token: token,
+        email: 'a@a.com',
+        date: date
       }
       chai
         .request(app)
@@ -232,7 +238,8 @@ describe('3DPrintingForm', () => {
     it('Should return statusCode 500 if no token is passed in', done => {
       const form = {
         name: 'invalid-name',
-        color: 'invalid-color'
+        color: 'invalid-color',
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -252,7 +259,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'invalid-name',
         color: 'invalid-color',
-        token: 'Invalid token'
+        token: 'Invalid token',
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -272,7 +280,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'invalid-name',
         color: 'invalid-color',
-        token: token
+        token: token,
+        email: 'a@a.com'
       }
       chai
         .request(app)
@@ -292,7 +301,9 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
-        token: token
+        token: token,
+        email: 'a@a.com',
+        date: date
       }
       chai
         .request(app)
