@@ -46,6 +46,7 @@ describe('3DPrintingForm', () => {
   })
 
   let token = ''
+  let date = 0
 
   describe('/POST submit', () => {
     it('Should not return statusCode 200 when the required fields are not set', done => {
@@ -88,7 +89,7 @@ describe('3DPrintingForm', () => {
 
   describe('/POST GetForm', () => {
     it('Should return an object of all forms', done => {
-      const form = {}
+      const form = { email: 'a@a.com' }
       chai
         .request(app)
         .post('/api/3DPrintingForm/GetForm')
@@ -96,6 +97,7 @@ describe('3DPrintingForm', () => {
         .then(function (res) {
           expect(res).to.have.status(200)
           res.body.should.be.a('array')
+          date = res.body[0].date
 
           done()
         })
@@ -212,7 +214,8 @@ describe('3DPrintingForm', () => {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
         token: token,
-        email: 'a@a.com'
+        email: 'a@a.com',
+        date: date
       }
       chai
         .request(app)
@@ -299,7 +302,8 @@ describe('3DPrintingForm', () => {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
         token: token,
-        email: 'a@a.com'
+        email: 'a@a.com',
+        date: date
       }
       chai
         .request(app)
