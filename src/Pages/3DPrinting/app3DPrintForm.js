@@ -188,7 +188,6 @@ export default class Example extends React.Component {
       //       }
       //     }.bind(this)
       //   )
-      console.log(this.state.user.email)
       axios
         .post('/api/3DPrintingForm/submit', {
           name: this.state.name,
@@ -198,7 +197,7 @@ export default class Example extends React.Component {
           projectType: this.state.projectType,
           url: this.state.url,
           progress: 'Pending',
-          id: this.state.user.email
+          email: this.state.user.email
         })
         // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
         .then(result => {

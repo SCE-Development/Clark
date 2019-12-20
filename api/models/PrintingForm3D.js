@@ -34,7 +34,7 @@ const PrintingForm3DSchema = new Schema(
 
     // unique id for query
     // id = email of the user who requested
-    id: {
+    email: {
       type: String,
       required: true
     }

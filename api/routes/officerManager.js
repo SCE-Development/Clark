@@ -1,21 +1,9 @@
-// PROJECT:   Core-v4
-//  Name:    R. Javier
-//  File:    api/routes/membershipApplication/index.js
-//  Date Created:  March 17, 2019
-//  Last Modified:  March 17, 2019
-//  Details:
-//      This file contains routing logic to service all routes requested under the the
-//                  "/memberApplication" endpoint (a.k.a. the Membership Application Module)
-//     which is publicly exposed to allow applications from the public facing site.
-//  Dependencies:
-//      JavaScript ECMAscript 6
-
 'use strict'
 
 // Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
 const router = express.Router()
-const PrintingForm3D = require('../models/PrintingForm3D.js')
+const Manager = require('../models/OfficerManager.js')
 const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
@@ -31,21 +19,15 @@ const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST } = {
   BAD_REQUEST: 400
 }
 
+// Post Api
 router.post('/submit', (req, res) => {
   const data = {
-    name: req.body.name,
-    color: req.body.color,
-    projectType: req.body.projectType,
-    projectLink: req.body.url,
-    projectContact: req.body.contact,
-    projectComments: req.body.comment,
-    progress: req.body.progress,
-    email: req.body.email
+    ...req.body
   }
 
-  PrintingForm3D.create(data, (error, post) => {
+  Manager.create(data, (error, post) => {
     if (error) {
-      logger.log(`3DPrinting /submit error: ${error}`)
+      logger.log(`Officer Manager /submit error: ${error}`)
       return res.sendStatus(BAD_REQUEST)
     }
 
@@ -53,14 +35,15 @@ router.post('/submit', (req, res) => {
   })
 })
 
+// Find all api
 router.post('/GetForm', (req, res) => {
   // Query Criteria, query all if empty
   let obj = {}
   if (typeof req.body.email !== 'undefined') obj = { email: req.body.email }
 
-  PrintingForm3D.find(obj, (error, forms) => {
+  Manager.find(obj, (error, forms) => {
     if (error) {
-      logger.log(`3DPrinting /GetForm error: ${error}`)
+      logger.log(`Officer Manager /GetForm error: ${error}`)
       return res.sendStatus(BAD_REQUEST)
     }
 
@@ -68,7 +51,8 @@ router.post('/GetForm', (req, res) => {
   })
 })
 
-/// This hasn't been used yet
+// Delete request
+// querry by email
 router.post('/delete', (req, res) => {
   const token = req.body.token.replace(/^JWT\s/, '')
 
@@ -77,32 +61,30 @@ router.post('/delete', (req, res) => {
       // Unauthorized
       res.sendStatus(UNAUTHORIZED)
     } else {
-      PrintingForm3D.deleteOne(
-        { email: req.body.email, date: req.body.date },
-        function (error, form) {
-          if (error) {
-            logger.log(`3DPrinting /Delete3DForm error: ${error}`)
-            return res.sendStatus(BAD_REQUEST)
-          }
-
-          if (form.n < 1) {
-            logger.log(`3DPrinting /Delete3DForm error: ${error}`)
-            res.status(NOT_FOUND).send({ message: 'Form not found.' })
-          } else {
-            logger.log(`3DPrinting /Delete3DForm deleted: ${req.body.name}`)
-            res.status(OK).send({ message: `${req.body.name} was deleted.` })
-          }
+      Manager.deleteOne({ email: req.body.email }, function (error, form) {
+        if (error) {
+          logger.log(`Officer Manager /Delete3DForm error: ${error}`)
+          return res.sendStatus(BAD_REQUEST)
         }
-      )
+
+        if (form.n < 1) {
+          logger.log(`Officer Manager /Delete3DForm error: ${error}`)
+          res.status(NOT_FOUND).send({ message: 'Form not found.' })
+        } else {
+          logger.log(`Officer Manager /Delete3DForm deleted: ${req.body.name}`)
+          res.status(OK).send({ message: `${req.body.name} was deleted.` })
+        }
+      })
     }
   })
 })
 
 // Edit/Update a member record
+// querry by email
 router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
-  const query = { email: req.body.email, date: req.body.date }
+  const query = { email: req.body.email }
   const form = {
     ...req.body
   }
@@ -116,7 +98,7 @@ router.post('/edit', (req, res) => {
       res.sendStatus(UNAUTHORIZED)
     } else {
       // Build this out to search for a user
-      PrintingForm3D.updateOne(query, { ...form }, function (error, result) {
+      Manager.updateOne(query, { ...form }, function (error, result) {
         if (error) {
           logger.log(error)
           return res.sendStatus(BAD_REQUEST)
