@@ -87,14 +87,59 @@ describe('OfficerManager', () => {
         })
     })
 
-    it('Should not return statusCode 200 when the required fields are not set', done => {
-      const form = {}
+    it('Should return statusCode 400 when the required fields are not set', done => {
+      const form = { token: token }
       chai
         .request(app)
         .post('/api/officerManager/submit')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(400)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 500 when no token is submited', done => {
+      const form = {
+        name: 'pinkUnicorn',
+        email: 'test@test.com',
+        level: 2,
+        team: 'dev',
+        major: 'major'
+      }
+      chai
+        .request(app)
+        .post('/api/officerManager/submit')
+        .send(form)
+        .then(function (res) {
+          expect(res).to.have.status(500)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 when invalid token is submited', done => {
+      const form = {
+        name: 'pinkUnicorn',
+        email: 'test@test.com',
+        level: 2,
+        team: 'dev',
+        major: 'major',
+        token: 'Invalid-Token'
+      }
+      chai
+        .request(app)
+        .post('/api/officerManager/submit')
+        .send(form)
+        .then(function (res) {
+          expect(res).to.have.status(401)
 
           done()
         })
@@ -128,6 +173,43 @@ describe('OfficerManager', () => {
   })
 
   describe('/POST GetForm', () => {
+    it('Should return statusCode 500 when no token is submited', done => {
+      const form = {
+        email: 'test@test.com'
+      }
+      chai
+        .request(app)
+        .post('/api/officerManager/GetForm')
+        .send(form)
+        .then(function (res) {
+          expect(res).to.have.status(500)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('Should return statusCode 401 when invalid token is submited', done => {
+      const form = {
+        email: 'test@test.com',
+        token: 'Invalid-Token'
+      }
+      chai
+        .request(app)
+        .post('/api/officerManager/GetForm')
+        .send(form)
+        .then(function (res) {
+          expect(res).to.have.status(401)
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
     it('Should return an object of all forms', done => {
       const form = { token: token }
       chai
@@ -159,11 +241,7 @@ describe('OfficerManager', () => {
           res.body.should.be.a('array')
           // make sure all child has querries parameter
           res.body.forEach(obj => {
-            if (obj.email !== 'test@test.com') {
-              throw new Error(
-                'failed query, one or more object did not have query parameter'
-              )
-            }
+            expect(obj.email).to.be.eql('test@test.com')
           })
 
           done()
@@ -252,6 +330,27 @@ describe('OfficerManager', () => {
           throw err
         })
     })
+
+    it('The update should be reflected in the database', done => {
+      const form = {
+        token: token,
+        email: 'test@test.com'
+      }
+
+      chai
+        .request(app)
+        .post('/api/officerManager/GetForm')
+        .send(form)
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          expect(res.body[0].name).to.equal('new name')
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
   })
 
   describe('/POST delete', () => {
@@ -325,6 +424,26 @@ describe('OfficerManager', () => {
           expect(res).to.have.status(200)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
+
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+
+    it('The deleted item should be reflected in the database', done => {
+      const form = {
+        token: token,
+        email: 'test@test.com'
+      }
+      chai
+        .request(app)
+        .post('/api/officerManager/GetForm')
+        .send(form)
+        .then(function (res) {
+          expect(res).to.have.status(200)
+          expect(res.body).have.length(0)
 
           done()
         })
