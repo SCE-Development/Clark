@@ -10,6 +10,8 @@ const server = require('../server')
 let serverInstance = null
 let app = null
 const expect = chai.expect
+// tools for testing
+const tools = require('../util/testing-utils/tools.js')
 
 chai.should()
 chai.use(chaiHttp)
@@ -27,18 +29,11 @@ function terminateServer (done) {
 // Our parent block
 describe('3DPrintingForm', () => {
   before(done => {
-    initializeServer()
+    initializeServer(app)
+
     // Before each test we empty the database
-    PrintingForm3D.deleteMany({}, err => {
-      if (err) {
-        //
-      }
-    })
-    User.deleteMany({}, err => {
-      if (err) {
-        //
-      }
-    })
+    tools.emptySchema(PrintingForm3D)
+    tools.emptySchema(User)
     done()
   })
   after(done => {
@@ -69,8 +64,8 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'Rainbow',
-        contact: 'a@b.c',
-        email: 'a@a.com'
+        contact: 'b@b.c',
+        email: 'b@b.c'
       }
       chai
         .request(app)
@@ -89,7 +84,7 @@ describe('3DPrintingForm', () => {
 
   describe('/POST GetForm', () => {
     it('Should return an object of all forms', done => {
-      const form = { email: 'a@a.com' }
+      const form = { email: 'b@b.c' }
       chai
         .request(app)
         .post('/api/3DPrintingForm/GetForm')
@@ -173,7 +168,7 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'pinkUnicorn',
         token: 'Invalid token',
-        email: 'a@a.com'
+        email: 'b@b.c'
       }
       chai
         .request(app)
@@ -193,7 +188,7 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'invalid-name',
         token: token,
-        email: 'a@a.com'
+        email: 'b@b.c'
       }
       chai
         .request(app)
@@ -214,7 +209,7 @@ describe('3DPrintingForm', () => {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
         token: token,
-        email: 'a@a.com',
+        email: 'b@b.c',
         date: date
       }
       chai
@@ -239,7 +234,7 @@ describe('3DPrintingForm', () => {
       const form = {
         name: 'invalid-name',
         color: 'invalid-color',
-        email: 'a@a.com'
+        email: 'b@b.c'
       }
       chai
         .request(app)
@@ -260,7 +255,7 @@ describe('3DPrintingForm', () => {
         name: 'invalid-name',
         color: 'invalid-color',
         token: 'Invalid token',
-        email: 'a@a.com'
+        email: 'b@b.c'
       }
       chai
         .request(app)
@@ -281,7 +276,7 @@ describe('3DPrintingForm', () => {
         name: 'invalid-name',
         color: 'invalid-color',
         token: token,
-        email: 'a@a.com'
+        email: 'b@b.c'
       }
       chai
         .request(app)
@@ -302,7 +297,7 @@ describe('3DPrintingForm', () => {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
         token: token,
-        email: 'a@a.com',
+        email: 'b@b.c',
         date: date
       }
       chai
