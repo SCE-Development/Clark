@@ -21,33 +21,54 @@ const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST } = {
 
 // Post Api
 router.post('/submit', (req, res) => {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
   const data = {
     ...req.body
   }
 
-  Manager.create(data, (error, post) => {
+  jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
-      logger.log(`Officer Manager /submit error: ${error}`)
-      return res.sendStatus(BAD_REQUEST)
-    }
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      // creating a user
+      Manager.create(data, (error, post) => {
+        if (error) {
+          logger.log(`Officer Manager /submit error: ${error}`)
+          return res.sendStatus(BAD_REQUEST)
+        }
 
-    return res.status(OK).send(post)
+        return res.status(OK).send(post)
+      })
+    }
   })
 })
 
-// Find all api
+// Find all api if email is null/undefined
+// else query by email
 router.post('/GetForm', (req, res) => {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
   // Query Criteria, query all if empty
   let obj = {}
   if (typeof req.body.email !== 'undefined') obj = { email: req.body.email }
 
-  Manager.find(obj, (error, forms) => {
+  jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
-      logger.log(`Officer Manager /GetForm error: ${error}`)
-      return res.sendStatus(BAD_REQUEST)
-    }
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      // creating a user
+      Manager.find(obj, (error, forms) => {
+        if (error) {
+          logger.log(`Officer Manager /GetForm error: ${error}`)
+          return res.sendStatus(BAD_REQUEST)
+        }
 
-    return res.status(OK).send(forms)
+        return res.status(OK).send(forms)
+      })
+    }
   })
 })
 
@@ -88,9 +109,6 @@ router.post('/edit', (req, res) => {
   const form = {
     ...req.body
   }
-
-  // Remove the auth token from the form getting edited
-  delete form.token
 
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {

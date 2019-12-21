@@ -12,16 +12,13 @@ const OfficerSchema = new Schema(
       required: true
     },
     facebook: {
-      type: String,
-      required: false
+      type: String
     },
     github: {
-      type: String,
-      required: false
+      type: String
     },
     instagram: {
-      type: String,
-      required: false
+      type: String
     },
     // The access level is defined as follows:
     // -2: Ban
@@ -38,8 +35,7 @@ const OfficerSchema = new Schema(
       require: true
     },
     quote: {
-      type: String,
-      require: false
+      type: String
     },
     major: {
       type: String,
