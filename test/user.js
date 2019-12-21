@@ -11,6 +11,8 @@ const server = require('../server')
 let serverInstance = null
 let app = null
 const expect = chai.expect
+// tools for testing
+const tools = require('../util/testing-utils/tools.js')
 
 chai.should()
 chai.use(chaiHttp)
@@ -30,11 +32,7 @@ describe('Users', () => {
   before(done => {
     initializeServer()
     // Before each test we empty the database
-    User.deleteMany({}, err => {
-      if (err) {
-        //
-      }
-    })
+    tools.emptySchema(User)
     done()
   })
   after(done => {
