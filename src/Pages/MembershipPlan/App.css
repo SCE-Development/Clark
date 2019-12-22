@@ -6,10 +6,10 @@
 .membership .row .card:hover{
   background-color: lightblue;
   cursor: pointer;
-} 
+}
 
 .membership .row .card{
-    width: 6%;
+    width: 10%;
     height: 30%;
     margin: 5px;
 }
