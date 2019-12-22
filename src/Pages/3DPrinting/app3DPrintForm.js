@@ -32,7 +32,7 @@ export default class Example extends React.Component {
       contact: '',
       comment: '',
       user: {},
-      modal: true,
+      modal: false,
       isLoggedIn: false
     }
   }
