@@ -10,8 +10,8 @@ import { Table } from 'reactstrap'
 
 Enzyme.configure({ adapter: new Adapter() })
 
-describe('<Table />', () => {
-  it('Should render a <Table /> component with one child', () => {
+describe('<OfficerManager />', () => {
+  it('Should render a <OfficerManager /> component with one child', () => {
     const wrapper = mount(<OfficerManager />)
     expect(wrapper.find(Table)).to.have.lengthOf(1)
   })
