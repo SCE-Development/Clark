@@ -51,12 +51,6 @@ export default class App extends React.Component {
   render () {
     return (
       <div className='App'>
-        <link
-          rel='stylesheet'
-          href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
-          integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T'
-          crossorigin='anonymous'
-        />
         <header className='App-header'>
           <h1>Officer Page</h1>
         </header>
@@ -75,8 +69,7 @@ export default class App extends React.Component {
           <tbody>
             {this.state.people.map((person, index) => {
               return this.row(person, index)
-            })}{' '}
-            {/* returning the html */}
+            })}
           </tbody>
         </Table>
       </div>

@@ -218,7 +218,14 @@ describe('OfficerManager', () => {
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(200)
-          res.body.should.be.a('array')
+          const response = res.body
+          response.should.be.a('array')
+          expect(response).to.have.length(1)
+          expect(response[0].email).to.be.eql('test@test.com')
+          expect(response[0].name).to.be.eql('pinkUnicorn')
+          expect(response[0].level).to.be.eql(2)
+          expect(response[0].team).to.be.eql('dev')
+          expect(response[0].major).to.be.eql('major')
 
           done()
         })
