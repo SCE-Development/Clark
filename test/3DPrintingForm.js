@@ -6,8 +6,7 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const server = require('../server')
-let serverInstance = null
+
 let app = null
 const expect = chai.expect
 // tools for testing
@@ -16,20 +15,10 @@ const tools = require('../util/testing-utils/tools.js')
 chai.should()
 chai.use(chaiHttp)
 
-function initializeServer () {
-  serverInstance = new server.Server()
-  serverInstance.openConnection()
-  app = serverInstance.getServerInstance()
-}
-
-function terminateServer (done) {
-  serverInstance.closeConnection(done)
-}
-
 // Our parent block
 describe('3DPrintingForm', () => {
   before(done => {
-    initializeServer(app)
+    app = tools.initializeServer()
 
     // Before each test we empty the database
     tools.emptySchema(PrintingForm3D)
@@ -37,7 +26,7 @@ describe('3DPrintingForm', () => {
     done()
   })
   after(done => {
-    terminateServer(done)
+    tools.terminateServer(done)
   })
 
   let token = ''
