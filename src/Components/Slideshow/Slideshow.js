@@ -64,31 +64,20 @@ const items = [
 function Slideshow () {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [animating, setAnimating] = useState(false)
-  function handleOnExiting () {
-    setAnimating(true)
-  }
-
-  function handleOnExited () {
-    setAnimating(false)
-  }
-
-  function onNext () {
-    handleNext()
-  }
-
-  function onPrevious () {
-    handlePrevious()
-  }
 
   function handleNext () {
     if (animating) return
-    const nextIndex = currentSlide === items.length - 1 ? 0 : currentSlide + 1
+    const nextIndex = (currentSlide + 1) % items.length
     setCurrentSlide(nextIndex)
+  }
+
+  function positiveMod (a, b) {
+    return a < 0 ? b - 1 : a % b
   }
 
   function handlePrevious () {
     if (animating) return
-    const nextIndex = currentSlide === 0 ? items.length - 1 : currentSlide - 1
+    const nextIndex = positiveMod(currentSlide - 1, items.length)
     setCurrentSlide(nextIndex)
   }
 
@@ -99,13 +88,11 @@ function Slideshow () {
 
   return (
     <div id='clicker'>
-      <style>
-        {`.slideshow {
-                align-items: center;
-                height: 94vh;
-              }`}
-      </style>
-      <Carousel activeIndex={currentSlide} next={onNext} previous={onPrevious}>
+      <Carousel
+        activeIndex={currentSlide}
+        next={handleNext}
+        previous={handlePrevious}
+      >
         <CarouselIndicators
           items={items}
           activeIndex={currentSlide}
@@ -118,8 +105,8 @@ function Slideshow () {
               className='slideshow text-center'
               tag='div'
               key={index}
-              onExiting={handleOnExiting}
-              onExited={handleOnExited}
+              onExiting={() => setAnimating(true)}
+              onExited={() => setAnimating(false)}
             >
               <img
                 src={item.src}
@@ -145,5 +132,4 @@ function Slideshow () {
     </div>
   )
 }
-
-export default Slideshow // exposes Slideshow to other modules
+export default Slideshow

@@ -17,3 +17,8 @@
 #clicker .carousel-indicators li{
   background-color: black;
 }
+
+.slideshow{
+  align-items: center;
+  height: 94vh; 
+}
