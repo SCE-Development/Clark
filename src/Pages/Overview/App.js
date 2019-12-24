@@ -251,7 +251,7 @@ class Login extends Component {
   }
 
   render () {
-    this.callDatabase()
+    // this.callDatabase()
     return (
       <div className='layout'>
         <h1>Users Dashboard</h1>

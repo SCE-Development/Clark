@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 //import "./profile.css";
 import {
   Container,
@@ -18,142 +18,77 @@ import {
 } from "reactstrap";
 import axios from 'axios'
 
-class ProfilePage extends Component {
-  constructor(props) {
-    super(props);
+function ProfilePage(props) {
+  // first name, last name, middle initial, email, pass, door code
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [middleInitial, setMiddleInitial] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [doorCode, setDoorCode] = useState("")
+  const [user, setUser] = useState({ ...props.user })
+  const [toggle, setToggle] = useState(false)
+  const [pagesPrinted, setPagesPrinted] = useState(0)
+  const [toggleSubmit, setToggleSubmit] = useState(false)
+  const [userMembership, setuserMembership] = useState(false)
+  const [usernameCheck, setUsernameCheck] = useState(false)
 
-    this.state = {
-      user: {},
-      temp: {},
-      toggle: false,
-      toggleSubmit: false,
-      usernameCheck: false,
-    };
+  function handleToggle() {
+    setToggle(!toggle)
   }
 
-  componentWillMount(){
-    this.setState({user:{...this.props.user}},
-      this.setState({temp:{...this.props.user}})
-    )
-  }
+  async function handleSubmission() {
+    const queryEmail = user.email
+    const editedUser = {
+      firstName: firstName || user.firstName,
+      lastName: lastName || user.lastName,
+      middleInitial: middleInitial || user.middleInitial,
+      email: email || user.email,
+      password: password || user.password,
+      doorCode: doorCode || user.doorCode,
+    }
+    setUser({ ...user, ...editedUser })
+    setToggle(!toggle)
 
-  handleToggle(){
-    this.setState({temp:{...this.props.user}},
-      this.setState({toggle: !this.state.toggle})
-    )
-  }
-
-  handleSubmission(){
-    const queryEmail = this.state.user.email
-
-    this.setState({user:{...this.state.temp}},
-      this.setState({toggle:!this.state.toggle},
-        ()=>{
-          axios
-            // get all user!
-            .post('/api/user/edit', {
-              ...this.state.user,
-              queryEmail: queryEmail,
-              token: this.props.token
-            })
-            .then(result => {
-              if (result.status >= 200 && result.status < 300) {
-                this.setState({ users: result.data })
-              }
-            })
-            .catch(err => {
-              console.log(err)
-            })
-            this.handleSubmissionToggle()
+    await axios
+      // get all user!
+      .post('/api/user/edit', {
+        ...user,
+        queryEmail: queryEmail,
+        token: props.token
+      })
+      .then(result => {
+        if (result.status >= 200 && result.status < 300) {
+          // setUser(result.data)
         }
-      )
-    )
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    handleSubmissionToggle()
   }
 
-  handleSubmissionToggle()
-  {
-    if (this.state.user.email === this.state.temp.email)
-      this.setState({toggleSubmit: !this.state.toggleSubmit})
-    else
-    {
-      this.checkIfUserExists(this.state.temp.email)
+  function handleSubmissionToggle() {
+    if (user.email === email)
+      setToggleSubmit(!toggleSubmit)
+    else {
+      checkIfUserExists(email)
     }
   }
 
-  checkIfUserExists (val) {
-    axios
+  async function checkIfUserExists(val) {
+    await axios
       .post('/api/user/checkIfUserExists', { email: val })
       .then(result => {
         if (result.status >= 200 && result.status < 300) {
-          this.setState({
-            usernameCheck: true,
-            toggleSubmit: !this.state.toggleSubmit
-          })
+          setUsernameCheck(true)
+          setToggleSubmit(!toggleSubmit)
         }
       })
       .catch(err => {
         window.alert('The Email has already existed, leave it blank if you do not want to change')
         console.log(err)
       })
-  }
-
-  change(event, id) {
-    id === "firstName" &&
-      this.setState({
-        temp: {
-          ...this.state.temp,
-          firstName: event.target.value
-        }
-      });
-    id === "lastName" &&
-      this.setState({
-        temp: {
-          ...this.state.temp,
-          lastName: event.target.value
-        }
-      });
-    id === "middleInitial" &&
-      this.setState({
-        temp: {
-          ...this.state.temp,
-          middleInitial: event.target.value
-        }
-      });
-    (id === "email" && event.target.value.trim()!=='') &&
-      this.setState({
-        temp: {
-          ...this.state.temp,
-          email: event.target.value
-        }
-      });
-    (id === "password" && event.target.value.trim()!=='') &&
-      this.setState({
-        temp: {
-          ...this.state.temp,
-          password: event.target.value
-        }
-      });
-    id === "doorCode" &&
-      this.setState({
-        temp: {
-          ...this.state.temp,
-          doorCode: event.target.value
-        }
-      });
-    id === "membership" &&
-      this.setState({
-        temp: {
-          ...this.state.temp,
-          accessLevel: event.target.value
-        }
-      });
-    id === "pagesPrinted" &&
-    this.setState({
-      temp: {
-        ...this.state.temp,
-        pagesPrinted: 0
-      }
-    });
   }
 
   /*
@@ -165,7 +100,7 @@ class ProfilePage extends Component {
    1: Officer
    2: Admin
   */
-  roleTranslator (level) {
+  function roleTranslator(level) {
     switch (level) {
       case -2:
         return 'Ban'
@@ -180,50 +115,43 @@ class ProfilePage extends Component {
     }
   }
 
-  EditModalButton() {
-
-    let FormGroups=[
+  function editModalButton() {
+    let FormGroups = [
       {
         label: 'First Name',
         type: 'email',
-        name: 'email',
-        placeholder:this.state.user.firstName,
-        onChange: 'firstName'
+        placeholder: user.firstName,
+        onChange: (e) => setFirstName(e.target.value)
       },
       {
         label: 'Last Name',
         type: 'email',
-        name: 'email',
-        placeholder:this.state.user.lastName,
-        onChange: 'lastName'
+        placeholder: user.lastName,
+        onChange: (e) => setLastName(e.target.value)
       },
       {
-        label: 'Middle Name',
+        label: 'Middle Initial',
         type: 'email',
-        name: 'email',
-        placeholder:this.state.user.middleInitial,
-        onChange: 'middleInitial'
+        placeholder: user.middleInitial,
+        onChange: (e) => setMiddleInitial(e.target.value)
       },
       {
         label: 'Email',
         type: 'email',
-        name: 'email',
-        placeholder:this.state.user.email,
-        onChange: 'email'
+        placeholder: user.email,
+        onChange: (e) => setEmail(e.target.value)
       },
       {
         label: 'Password',
         type: 'password',
-        name: 'password',
-        placeholder:'make it secure',
-        onChange: 'password'
+        placeholder: 'make it secure',
+        onChange: (e) => setPassword(e.target.value)
       },
       {
-        label:'Door Code',
-        type:'email',
-        name:'Doorcode',
-        placeholder:'make it secure',
-        onChange:'doorCode'
+        label: 'Door Code',
+        type: 'email',
+        placeholder: 'make it secure',
+        onChange: (e) => setDoorCode(e.target.value)
       }
     ]
 
@@ -236,7 +164,7 @@ class ProfilePage extends Component {
      1: Officer
      2: Admin
     */
-    let memberships =[0,1,-1,2,-2]
+    let memberships = [0, 1, -1, 2, -2]
 
     return (
       <div>
@@ -247,68 +175,65 @@ class ProfilePage extends Component {
               position: 'relative',
               left: '80%'
             }}
-            onClick={() => {this.handleToggle()}}>
+            onClick={() => { handleToggle() }}>
             Edit
           </Button>
         </div>
 
-        <Modal isOpen={this.state.toggle}>
+        <Modal isOpen={toggle}>
           <ModalHeader>Modal title</ModalHeader>
           <ModalBody>
             <Form>
 
-            {FormGroups.map((group,index)=>
-              {
+              {FormGroups.map((group, index) => {
                 return <FormGroup key={index}>
                   <Label>{group.label}</Label>
                   <Input
                     type={group.type}
-                    name={group.name}
+                    name={group.type}
                     placeholder={group.placeholder}
-                    onChange={event => {
-                      this.change(event, group.onChange);
-                    }}
+                    onChange={group.onChange}
                   />
                 </FormGroup>
               })}
 
               {/*Need Improvements, not doing anything currently*/}
-              <FormGroup>
+              {/* <FormGroup>
                 <Label for="exampleFile">Upload New Profile Picture</Label>
                 <Input
                   type="file"
                   name="file"
                   id="exampleFile"
                   onChange={event => {
-                    this.change(event, "profile");
+                    change(event, "profile");
                   }}
                 />
                 <FormText color="muted">(Not Working!)</FormText>
-              </FormGroup>
+              </FormGroup> */}
 
               <Button
-              type = 'button'
-              onClick={event => {
-                this.change(event, 'pagesPrinted');
-              }}
-              color="info">
+                type='button'
+                onClick={() => {
+                  setPagesPrinted(0);
+                }}
+                color="info">
                 Reset Pages!
               </Button>
 
               <FormGroup tag="fieldset">
                 <legend>Membership Status</legend>
-                {memberships.map((membership,index)=>{
+                {memberships.map((membership, index) => {
                   return <FormGroup check key={index}>
                     <Label check>
                       <Input
                         type="radio"
                         name="radio1"
                         value={membership}
-                        onChange={event => {
-                          this.change(event, "membership");
+                        onChange={() => {
+                          setuserMembership(membership)
                         }}
                       />
-                      {this.roleTranslator(membership)}
+                      {roleTranslator(membership)}
                     </Label>
                   </FormGroup>
                 })}
@@ -320,12 +245,12 @@ class ProfilePage extends Component {
           <ModalFooter>
             <Button
               color="primary"
-            onClick={()=>{this.handleSubmissionToggle()}}>
+              onClick={() => { handleSubmissionToggle() }}>
               Submit
             </Button>
             <Button
               color="secondary"
-              onClick={() => {this.handleToggle()}}>
+              onClick={() => { handleToggle() }}>
               Cancel
             </Button>
           </ModalFooter>
@@ -335,74 +260,73 @@ class ProfilePage extends Component {
     );
   }
 
-  display()
-  {
+  function display() {
+    console.log("DDDDDDDDDDDDDDDDISPLAY", user, props.user);
+
     return <div>
-      <Badge color="primary">{this.roleTranslator(this.state.user.accessLevel)}</Badge>
+      <Badge color="primary">{roleTranslator(user.accessLevel)}</Badge>
       <h3>
-        {this.state.user.firstName[0].toUpperCase() +
-          this.state.user.firstName.slice(1, this.state.user.firstName.length) +
+        {user.firstName[0].toUpperCase() +
+          user.firstName.slice(1, user.firstName.length) +
           ' ' +
-          this.state.user.lastName[0].toUpperCase() +
-          this.state.user.lastName.slice(1, this.state.user.lastName.length)}
-        {this.state.user.middleInitial.trim() !== '' &&
-          ' ' + this.state.user.middleInitial.toUpperCase() + '.'}
+          user.lastName[0].toUpperCase() +
+          user.lastName.slice(1, user.lastName.length)}
+        {user.middleInitial.trim() !== '' &&
+          ' ' + user.middleInitial.toUpperCase() + '.'}
       </h3>
-      <h5>Doorcode: {this.state.user.doorCode}</h5>
-      <h5>Member Since (yyyy-mm-dd): {this.state.user.joinDate.slice(0,10)}</h5>
-      <h5>Expiration on (yyyy-mm-dd): {this.state.user.membershipValidUntil.slice(0,10)}</h5>
-      <h5>Email: {this.state.user.email}</h5>
-      <h5>Major: {this.state.user.major}</h5>
-        <h5>Pages Print: {this.state.user.pagesPrinted}/30</h5>
+      <h5>Doorcode: {user.doorCode}</h5>
+      <h5>Member Since (yyyy-mm-dd): {user.joinDate.slice(0, 10)}</h5>
+      <h5>Expiration on (yyyy-mm-dd): {user.membershipValidUntil.slice(0, 10)}</h5>
+      <h5>Email: {user.email}</h5>
+      <h5>Major: {user.major}</h5>
+      <h5>Pages Print: {user.pagesPrinted}/30</h5>
     </div>
   }
 
-  render() {
-    return (
+  return (
+    <div>
       <div>
-        <div>
-          <div className="center">
-            <ul className="profileInfo">
-              <Container>
-                <img
+        <div className="center">
+          <ul className="profileInfo">
+            <Container>
+              <img
                 alt='profile'
-                style={{height:'300px'}}
+                style={{ height: '300px' }}
                 src='images/SCE-glow.png' />
-              </Container>
+            </Container>
 
-              {this.display()}
+            {display()}
 
-              <Row>
-                <Col>{this.EditModalButton()}</Col>
-              </Row>
+            <Row>
+              <Col>{editModalButton()}</Col>
+            </Row>
 
-              <Modal
+            <Modal
               style={
                 {
-                  marginTop:'320px',
+                  marginTop: '320px',
                 }}
-              isOpen={this.state.toggleSubmit}>
-                <Button
-                  onClick={()=>{this.handleSubmission()}}
-                  color="primary">
-                  YES! mutate them!
+              isOpen={toggleSubmit}>
+              <Button
+                onClick={async () => { await handleSubmission() }}
+                color="primary">
+                YES! mutate them!
                 </Button>
-                <Button
-                  style={{
-                    marginTop:'10px'
-                  }}
-                  onClick={()=>this.handleSubmissionToggle()}
-                  color="danger">
-                  Nah! It's a mistake.
+              <Button
+                style={{
+                  marginTop: '10px'
+                }}
+                onClick={() => handleSubmissionToggle()}
+                color="danger">
+                Nah! It's a mistake.
                 </Button>
-              </Modal>
+            </Modal>
 
-            </ul>
-          </div>
+          </ul>
         </div>
       </div>
-    );
-  }
+    </div>
+  )
 }
 
 export default ProfilePage;
