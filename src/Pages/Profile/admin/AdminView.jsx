@@ -31,28 +31,24 @@ class ProfilePage extends Component {
     };
   }
 
-  componentWillMount()
-  {
+  componentWillMount(){
     this.setState({user:{...this.props.user}},
       this.setState({temp:{...this.props.user}})
     )
   }
 
-  handleToggle()
-  {
+  handleToggle(){
     this.setState({temp:{...this.props.user}},
       this.setState({toggle: !this.state.toggle})
     )
   }
 
-  handleSubmission()
-  {
+  handleSubmission(){
     const queryEmail = this.state.user.email
 
     this.setState({user:{...this.state.temp}},
       this.setState({toggle:!this.state.toggle},
-        ()=>
-        {
+        ()=>{
           axios
             // get all user!
             .post('/api/user/edit', {
@@ -76,12 +72,12 @@ class ProfilePage extends Component {
 
   handleSubmissionToggle()
   {
-    if (this.state.user.email===this.state.temp.email)
+    if (this.state.user.email === this.state.temp.email)
       this.setState({toggleSubmit: !this.state.toggleSubmit})
     else
     {
       this.checkIfUserExists(this.state.temp.email)
-    }  
+    }
   }
 
   checkIfUserExists (val) {
@@ -290,7 +286,7 @@ class ProfilePage extends Component {
                 <FormText color="muted">(Not Working!)</FormText>
               </FormGroup>
 
-              <Button 
+              <Button
               type = 'button'
               onClick={event => {
                 this.change(event, 'pagesPrinted');
