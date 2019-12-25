@@ -28,10 +28,9 @@ function ProfilePage(props) {
   const [doorCode, setDoorCode] = useState("")
   const [user, setUser] = useState({ ...props.user })
   const [toggle, setToggle] = useState(false)
-  const [pagesPrinted, setPagesPrinted] = useState(0)
+  const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted)
   const [toggleSubmit, setToggleSubmit] = useState(false)
-  const [userMembership, setuserMembership] = useState(false)
-  const [usernameCheck, setUsernameCheck] = useState(false)
+  const [userMembership, setuserMembership] = useState(user.accessLevel)
 
   function handleToggle() {
     setToggle(!toggle)
@@ -40,26 +39,29 @@ function ProfilePage(props) {
   async function handleSubmission() {
     const queryEmail = user.email
     const editedUser = {
+      ...user,
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
       middleInitial: middleInitial || user.middleInitial,
       email: email || user.email,
       password: password || user.password,
       doorCode: doorCode || user.doorCode,
+      pagesPrinted: pagesPrinted,
+      accessLevel: userMembership
     }
-    setUser({ ...user, ...editedUser })
+    setUser({...editedUser})
     setToggle(!toggle)
 
     await axios
       // get all user!
       .post('/api/user/edit', {
-        ...user,
+        ...editedUser,
         queryEmail: queryEmail,
         token: props.token
       })
       .then(result => {
         if (result.status >= 200 && result.status < 300) {
-          // setUser(result.data)
+          //setUser(result.data)
         }
       })
       .catch(err => {
@@ -81,7 +83,6 @@ function ProfilePage(props) {
       .post('/api/user/checkIfUserExists', { email: val })
       .then(result => {
         if (result.status >= 200 && result.status < 300) {
-          setUsernameCheck(true)
           setToggleSubmit(!toggleSubmit)
         }
       })
@@ -261,8 +262,6 @@ function ProfilePage(props) {
   }
 
   function display() {
-    console.log("DDDDDDDDDDDDDDDDISPLAY", user, props.user);
-
     return <div>
       <Badge color="primary">{roleTranslator(user.accessLevel)}</Badge>
       <h3>

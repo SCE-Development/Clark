@@ -78,6 +78,7 @@ class Login extends Component {
         { toggle: !this.state.toggle },
         this.setState({ selectedUser: { ...user } })
       )
+    this.callDatabase()
   }
 
   handleToggleDelete (user) {
@@ -251,7 +252,6 @@ class Login extends Component {
   }
 
   render () {
-    // this.callDatabase()
     return (
       <div className='layout'>
         <h1>Users Dashboard</h1>
