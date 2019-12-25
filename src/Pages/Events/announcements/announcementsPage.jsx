@@ -7,11 +7,6 @@ import Layout from '../../../Components/Layout/Layout'
 export default class AnnouncementsPage extends React.Component {
   constructor (props) {
     super(props)
-    console.log('Constructor props:')
-    console.dir(props)
-    console.log('Local storage:')
-    console.dir(window.localStorage)
-
     this.state = {
       publishedEvents: [
         {

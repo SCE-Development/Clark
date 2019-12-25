@@ -32,6 +32,7 @@ export default function Login (props) {
     axios
       .post('/api/user/login', { email, password })
       .then(result => {
+        this.props.setAuthenticated(true)
         window.localStorage.setItem('jwtToken', result.data.token)
         updateLastLoginDate(result.data.token)
       })

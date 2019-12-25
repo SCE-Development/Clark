@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavLink, withRouter } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import axios from 'axios'
 
 import './dashboard.css'
@@ -54,83 +54,81 @@ export class Dashboard extends Component {
   render () {
     return (
       <div>
-        {this.state.isLoggedIn && (
-          <div>
-            <header>
+        <div>
+          <header>
+            <NavLink
+              title='Home'
+              to='/'
+              exact
+              activeClassName='active-nav-link'
+            >
+              Home
+            </NavLink>
+            <NavLink
+              title='Overview'
+              to='/dashboard'
+              exact
+              activeClassName='active-nav-link'
+            >
+              Overview
+            </NavLink>
+            {this.state.user.accessLevel >= 2 && (
               <NavLink
-                title='Home'
-                to='/'
+                title='Admin'
+                to='/admin'
                 exact
                 activeClassName='active-nav-link'
               >
-                Home
+                Admin
               </NavLink>
-              <NavLink
-                title='Overview'
-                to='/dashboard'
-                exact
-                activeClassName='active-nav-link'
+            )}
+            <NavLink
+              title='Officer Tools'
+              to='/officer-tools'
+              exact
+              activeClassName='active-nav-link'
+            >
+              Officer Tools
+            </NavLink>
+            <NavLink
+              title='Member Manager'
+              to='/member-manager'
+              exact
+              activeClassName='active-nav-link'
+            >
+              Member Manager
+            </NavLink>
+            <NavLink
+              title='Event Manager'
+              to='/event-manager'
+              exact
+              activeClassName='active-nav-link'
+            >
+              Event Manager
+            </NavLink>
+            <NavLink
+              title='3DConsole'
+              to='/3DConsole'
+              exact
+              activeClassName='active-nav-link'
+            >
+              3DConsole
+            </NavLink>
+            <div onClick={this.handleLogout} className='nav-button'>
+              <svg
+                style={{ width: '18px', height: '18px' }}
+                viewBox='0 0 24 24'
               >
-                Overview
-              </NavLink>
-              {this.state.user.accessLevel >= 2 && (
-                <NavLink
-                  title='Admin'
-                  to='/admin'
-                  exact
-                  activeClassName='active-nav-link'
-                >
-                  Admin
-                </NavLink>
-              )}
-              <NavLink
-                title='Officer Tools'
-                to='/officer-tools'
-                exact
-                activeClassName='active-nav-link'
-              >
-                Officer Tools
-              </NavLink>
-              <NavLink
-                title='Member Manager'
-                to='/member-manager'
-                exact
-                activeClassName='active-nav-link'
-              >
-                Member Manager
-              </NavLink>
-              <NavLink
-                title='Event Manager'
-                to='/event-manager'
-                exact
-                activeClassName='active-nav-link'
-              >
-                Event Manager
-              </NavLink>
-              <NavLink
-                title='3DConsole'
-                to='/3DConsole'
-                exact
-                activeClassName='active-nav-link'
-              >
-                3DConsole
-              </NavLink>
-              <div onClick={this.handleLogout} className='nav-button'>
-                <svg
-                  style={{ width: '18px', height: '18px' }}
-                  viewBox='0 0 24 24'
-                >
-                  <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
-                </svg>
-                Logout
-              </div>
-            </header>
-            {this.props.children}
-          </div>
-        )}
+                <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
+              </svg>
+              Logout
+            </div>
+          </header>
+          {this.props.children}
+        </div>
       </div>
     )
   }
 }
 
-export default withRouter(Dashboard)
+export default Dashboard

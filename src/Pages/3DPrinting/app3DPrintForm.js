@@ -37,29 +37,6 @@ export default class Example extends React.Component {
     }
   }
 
-  componentDidMount () {
-    const token = window.localStorage
-      ? window.localStorage.getItem('jwtToken')
-      : ''
-
-    if (token) {
-      axios
-        .post('/api/user/verify', { token })
-        .then(res => {
-          this.setState({
-            user: res.data,
-            isLoggedIn: true
-          })
-        })
-        .catch(() => {
-          if (this.props.history) this.props.history.push('/login')
-          window.localStorage.removeItem('jwtToken')
-        })
-    } else {
-      this.props.history.push('/login')
-    }
-  }
-
   // import modal ;
 
   // function (e)
