@@ -31,6 +31,8 @@ function ProfilePage(props) {
   const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted)
   const [toggleSubmit, setToggleSubmit] = useState(false)
   const [userMembership, setuserMembership] = useState(user.accessLevel)
+  const [numberOfSemestersToSignUpFor, setNumberOfSemestersToSignUpFor] = useState(undefined)
+  const [membershipValidUntil, setMembershipValidUntil] = useState(user.membershipValidUntil)
 
   function handleToggle() {
     setToggle(!toggle)
@@ -38,9 +40,15 @@ function ProfilePage(props) {
 
   async function handleSubmission() {
     const queryEmail = user.email
+
+    //hash pass
     const salt = bcrypt.genSaltSync(10)
     const hashed = (password.trim()==='') ?
     user.password : bcrypt.hashSync(password, salt)
+
+    //Change term?
+    numberOfSemestersToSignUpFor===0 &&
+    setNumberOfSemestersToSignUpFor(undefined)
 
     const editedUser = {
       ...user,
@@ -51,8 +59,10 @@ function ProfilePage(props) {
       password: hashed,
       doorCode: doorCode || user.doorCode,
       pagesPrinted: pagesPrinted,
-      accessLevel: userMembership
+      accessLevel: userMembership,
+      numberOfSemestersToSignUpFor: numberOfSemestersToSignUpFor
     }
+
     setUser({...editedUser})
     setToggle(!toggle)
 
@@ -65,7 +75,7 @@ function ProfilePage(props) {
       })
       .then(result => {
         if (result.status >= 200 && result.status < 300) {
-          //setUser(result.data)
+          setMembershipValidUntil(result.data.membershipValidUntil)
         }
       })
       .catch(err => {
@@ -218,12 +228,20 @@ function ProfilePage(props) {
                 <FormText color="muted">(Not Working!)</FormText>
               </FormGroup> */}
 
+              Change validation date to
+              <select onChange={(e)=>{setNumberOfSemestersToSignUpFor(e.target.value)}}>
+                <option value={0}>Keep Same</option>
+                <option value={1}>This semester</option>
+                <option value={2}>2 semesters</option>
+              </select>
+
               <Button
                 type='button'
                 onClick={() => {
                   setPagesPrinted(0);
                 }}
-                color="info">
+                color="info"
+                style={{marginTop:'5px'}}>
                 Reset Pages!
               </Button>
 
@@ -281,7 +299,7 @@ function ProfilePage(props) {
       </h3>
       <h5>Doorcode: {user.doorCode}</h5>
       <h5>Member Since (yyyy-mm-dd): {user.joinDate.slice(0, 10)}</h5>
-      <h5>Expiration on (yyyy-mm-dd): {user.membershipValidUntil.slice(0, 10)}</h5>
+      <h5>Expiration on (yyyy-mm-dd): {membershipValidUntil.slice(0, 10)}</h5>
       <h5>Email: {user.email}</h5>
       <h5>Major: {user.major}</h5>
       <h5>Pages Print: {user.pagesPrinted}/30</h5>

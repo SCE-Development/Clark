@@ -280,16 +280,18 @@ router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
   const query = { email: req.body.queryEmail }
-  let user
-  if (typeof req.body.password === 'undefined') {
-    user = {
-      ...req.body
-    }
-  } else {
-    user = {
-      ...req.body
-    }
-  }
+  const user =
+    // check if changing membershipValidUntil
+    typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
+      ? { ...req.body }
+      : {
+        ...req.body,
+        membershipValidUntil: getMemberValidationDate(
+          parseInt(req.body.numberOfSemestersToSignUpFor)
+        )
+      }
+
+  delete user.numberOfSemestersToSignUpFor
 
   // Remove the auth token from the form getting edited
   delete user.queryEmail
@@ -312,9 +314,10 @@ router.post('/edit', (req, res) => {
             .send({ message: `${req.body.queryEmail} not found.` })
         }
 
-        return res
-          .status(OK)
-          .send({ message: `${req.body.queryEmail} was updated.` })
+        return res.status(OK).send({
+          message: `${req.body.queryEmail} was updated.`,
+          membershipValidUntil: user.membershipValidUntil
+        })
       })
     }
   })
