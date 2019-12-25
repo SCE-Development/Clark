@@ -17,6 +17,7 @@ import {
   ModalHeader
 } from "reactstrap";
 import axios from 'axios'
+const bcrypt = require('bcrypt-nodejs')
 
 function ProfilePage(props) {
   // first name, last name, middle initial, email, pass, door code
@@ -38,13 +39,17 @@ function ProfilePage(props) {
 
   async function handleSubmission() {
     const queryEmail = user.email
+    const salt = bcrypt.genSaltSync(10)
+    const hashed = (password.trim()==='') ?
+    user.password : bcrypt.hashSync(password, salt)
+
     const editedUser = {
       ...user,
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
       middleInitial: middleInitial || user.middleInitial,
       email: email || user.email,
-      password: password || user.password,
+      password: hashed,
       doorCode: doorCode || user.doorCode,
       pagesPrinted: pagesPrinted,
       accessLevel: userMembership
@@ -67,7 +72,9 @@ function ProfilePage(props) {
       .catch(err => {
         console.log(err)
       })
-    handleSubmissionToggle()
+
+    setToggle(false)
+    setToggleSubmit(false)
   }
 
   function handleSubmissionToggle() {

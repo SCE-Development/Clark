@@ -41,7 +41,7 @@ class Login extends Component {
     }
   }
 
-  componentWillMount () {
+  componentDidMount () {
     const token = window.localStorage
       ? window.localStorage.getItem('jwtToken')
       : ''

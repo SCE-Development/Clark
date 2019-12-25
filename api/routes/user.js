@@ -27,7 +27,6 @@ const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
 const User = require('../models/User.js')
-const bcrypt = require('bcrypt-nodejs')
 
 const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST, CONFLICT } = {
   OK: 200,
@@ -281,7 +280,6 @@ router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
   const query = { email: req.body.queryEmail }
-  var salt = bcrypt.genSaltSync(10)
   let user
   if (typeof req.body.password === 'undefined') {
     user = {
@@ -289,8 +287,7 @@ router.post('/edit', (req, res) => {
     }
   } else {
     user = {
-      ...req.body,
-      password: bcrypt.hashSync(req.body.password, salt)
+      ...req.body
     }
   }
 
