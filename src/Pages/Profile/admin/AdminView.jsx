@@ -17,6 +17,7 @@ import {
 } from "reactstrap";
 import axios from 'axios'
 const bcrypt = require('bcrypt-nodejs')
+const enums = require( '../../../Enums' )
 
 function ProfilePage(props) {
   // first name, last name, middle initial, email, pass, door code
@@ -106,30 +107,6 @@ function ProfilePage(props) {
         window.alert('The Email has already existed, leave it blank if you do not want to change')
         console.log(err)
       })
-  }
-
-  /*
-  translating access Level into role
-  The access level is defined as follows:
-  -2: Ban
-  -1: Pending
-   0: Member
-   1: Officer
-   2: Admin
-  */
-  function roleTranslator(level) {
-    switch (level) {
-      case -2:
-        return 'Ban'
-      case 0:
-        return 'Member'
-      case 1:
-        return 'Officer'
-      case 2:
-        return 'Admin'
-      default:
-        return 'Pending'
-    }
   }
 
   function editModalButton() {
@@ -258,7 +235,7 @@ function ProfilePage(props) {
                           setuserMembership(membership)
                         }}
                       />
-                      {roleTranslator(membership)}
+                      {enums.getKey(enums.membershipStatus,membership)}
                     </Label>
                   </FormGroup>
                 })}
@@ -287,7 +264,7 @@ function ProfilePage(props) {
 
   function display() {
     return <div>
-      <Badge color="primary">{roleTranslator(user.accessLevel)}</Badge>
+      <Badge color="primary">{enums.getKey(enums.membershipStatus,user.accessLevel)}</Badge>
       <h3>
         {user.firstName[0].toUpperCase() +
           user.firstName.slice(1, user.firstName.length) +

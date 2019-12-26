@@ -26,8 +26,9 @@ import React, { Component } from 'react'
 import './App.css'
 import InfoCard from '../Profile/admin/AdminView'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap'
-
 import axios from 'axios'
+const enums = require('../../Enums')
+
 class Login extends Component {
   constructor (props) {
     super(props)
@@ -172,30 +173,6 @@ class Login extends Component {
     )
   }
 
-  /*
-  translating access Level into role
-  The access level is defined as follows:
-  -2: Ban
-  -1: Pending
-   0: Member
-   1: Officer
-   2: Admin
-  */
-  roleTranslator (level) {
-    switch (level) {
-      case -2:
-        return 'Ban'
-      case 0:
-        return 'Member'
-      case 1:
-        return 'Officer'
-      case 2:
-        return 'Admin'
-      default:
-        return 'Pending'
-    }
-  }
-
   // displaying children of board
   display (user, index) {
     return (
@@ -216,7 +193,7 @@ class Login extends Component {
 
         <td>{this.marks(user.emailVerified)}</td>
 
-        <td>{this.roleTranslator(user.accessLevel)}</td>
+        <td>{enums.getKey(enums.membershipStatus, user.accessLevel)}</td>
 
         <td>
           <button
