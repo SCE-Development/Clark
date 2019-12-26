@@ -24,6 +24,7 @@ import MembershipApplication from '../../src/Pages/MembershipApplication/members
 import Team from '../../src/Pages/TheTeam/App.js'
 import Printing from '../../src/Pages/2DPrinting/App.js'
 import OfficerDB from '../../src/Pages/OfficerDB/App.js'
+import Overview from '../../src/Pages/Overview/Overview'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -34,22 +35,26 @@ Object.defineProperty(window, 'localStorage', {
   writable: true
 })
 
-const appProps = {
+const adminAppProps = {
   user: { accessLevel: 2 },
   authenticated: true
 }
 
-const unauthedAppProps = {
-  user: { accessLevel: 2 },
-  authenticated: false
+const officerAppProps = {
+  user: { accessLevel: 1 },
+  authenticated: true
 }
 
-const nonAdminAppProps = {
+const memberAppProps = {
   user: { accessLevel: 0 },
+  authenticated: true
+}
+
+const unauthedAppProps = {
   authenticated: false
 }
 
-function getComponentFromRoute (route, props = appProps) {
+function getComponentFromRoute (route, props = adminAppProps) {
   return mount(
     <MemoryRouter initialEntries={[route]}>
       <Routing appProps={props} />
@@ -57,8 +62,8 @@ function getComponentFromRoute (route, props = appProps) {
   )
 }
 
-describe('<Routing />', () => {
-  describe('Renders correct components for each route', () => {
+describe('<Routing /> with <PrivateRoute />', () => {
+  describe('Renders correct components for Admin user', () => {
     it('Should render a <Home /> component with the / endpoint', () => {
       const wrapper = getComponentFromRoute('/')
       expect(wrapper.find(Home)).to.have.lengthOf(1)
@@ -90,7 +95,7 @@ describe('<Routing />', () => {
       }
     )
     it(
-      'Should render a <PrintingSolids /> component with the /3DPrintingForm' +
+      'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
         'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/3DPrintingForm')
@@ -105,20 +110,24 @@ describe('<Routing />', () => {
         expect(wrapper.find(Printing)).to.have.lengthOf(1)
       }
     )
-    it('Should render a <Login /> component with the /login endpoint', () => {
-      const wrapper = getComponentFromRoute('/login')
-      expect(wrapper.find(Login)).to.have.lengthOf(1)
-    })
     it(
-      'Should render a <MembershipApplication /> component with the' +
-        ' /register endpoint',
+      'Should redirect the authenticated user to <Home /> from the' +
+        ' /login endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/register')
-        expect(wrapper.find(MembershipApplication)).to.have.lengthOf(1)
+        const wrapper = getComponentFromRoute('/login')
+        expect(wrapper.find(Home)).to.have.lengthOf(1)
       }
     )
     it(
-      'Should render a <Admin /> component with the /admin' + 'endpoint',
+      'Should redirect the authenticated user to <Home /> from the' +
+        ' /register endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/register')
+        expect(wrapper.find(Home)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should render an <Admin /> component with the /admin' + 'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/admin')
         expect(wrapper.find(Admin)).to.have.lengthOf(1)
@@ -166,57 +175,188 @@ describe('<Routing />', () => {
     )
   })
 
-  describe('<PrivateRoute /> protects authenticated components', () => {
-    it('Should redirect the <Admin /> component with the /admin endpoint', () => {
-      const wrapper = getComponentFromRoute('/admin', unauthedAppProps)
-      expect(wrapper.find(Login)).to.have.lengthOf(1)
+  describe('Renders correct component for Officer user', () => {
+    it('Should render a <Home /> component with the / endpoint', () => {
+      const wrapper = getComponentFromRoute('/', officerAppProps)
+      expect(wrapper.find(Home)).to.have.lengthOf(1)
     })
     it(
-      'Should redirect the <OfficerTools /> component with the ' +
-        '/officer-tools endpoint',
+      'Should render an <Events /> component with the /events' + ' endpoint',
       () => {
-        const wrapper = getComponentFromRoute(
-          '/officer-tools',
-          unauthedAppProps
-        )
-        expect(wrapper.find(Login)).to.have.lengthOf(1)
+        const wrapper = getComponentFromRoute('/events', officerAppProps)
+        expect(wrapper.find(Events)).to.have.lengthOf(1)
       }
     )
     it(
-      'Should redirect the <MemberManager /> component with the ' +
-        '/member-manager endpoint',
+      'Should render a <OfficerDB /> component with the /officerDB' +
+        'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/officerDB', officerAppProps)
+        expect(wrapper.find(OfficerDB)).to.have.lengthOf(1)
+      }
+    )
+    it('Should render a <Team /> component with the /team endpoint', () => {
+      const wrapper = getComponentFromRoute('/team', officerAppProps)
+      expect(wrapper.find(Team)).to.have.lengthOf(1)
+    })
+    it(
+      'Should render a <LabKits /> component with the /labkits' + 'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/labkits', officerAppProps)
+        expect(wrapper.find(LabKits)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
+        'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute(
+          '/3DPrintingForm',
+          officerAppProps
+        )
+        expect(wrapper.find(PrintingSolids)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should render a <Printing /> component with the /2DPrinting' +
+        'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/2DPrinting', officerAppProps)
+        expect(wrapper.find(Printing)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should redirect the authenticated user to <Home /> from the' +
+        ' /login endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/login', officerAppProps)
+        expect(wrapper.find(Home)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should redirect the authenticated user to <Home /> from the' +
+        ' /register endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/register', officerAppProps)
+        expect(wrapper.find(Home)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should redirect an <Admin /> component with the /admin ' +
+        'endpoint to the <Overview />',
+      () => {
+        const wrapper = getComponentFromRoute('/admin', officerAppProps)
+        expect(wrapper.find(Overview)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should render a <OfficerTools /> component with the /officer-tools' +
+        'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/officer-tools', officerAppProps)
+        expect(wrapper.find(OfficerTools)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should render a <MemberManager /> component with the /member-manager' +
+        'endpoint',
       () => {
         const wrapper = getComponentFromRoute(
           '/member-manager',
-          unauthedAppProps
+          officerAppProps
         )
-        expect(wrapper.find(Login)).to.have.lengthOf(1)
+        expect(wrapper.find(MemberManager)).to.have.lengthOf(1)
       }
     )
     it(
-      'Should redirect the <EventManager /> component with the ' +
-        '/event-manager endpoint',
-      () => {
-        const wrapper = getComponentFromRoute(
-          '/event-manager',
-          unauthedAppProps
-        )
-        expect(wrapper.find(Login)).to.have.lengthOf(1)
-      }
-    )
-    it(
-      'Should redirect the <SolidsConsole /> component with the /3DConsole' +
+      'Should render a <EventManager /> component with the /event-manager' +
         'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/3DConsole', unauthedAppProps)
-        expect(wrapper.find(Login)).to.have.lengthOf(1)
+        const wrapper = getComponentFromRoute('/event-manager', officerAppProps)
+        expect(wrapper.find(EventManager)).to.have.lengthOf(1)
+      }
+    )
+    it(
+      'Should render a <SolidsConsole /> component with the /3DConsole' +
+        'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/3DConsole', officerAppProps)
+        expect(wrapper.find(SolidsConsole)).to.have.lengthOf(1)
       }
     )
   })
 
-  describe('<PrivateRoute /> protects components with special priviledge', () => {
-    it('Should redirect the <Admin /> component with the /admin endpoint', () => {
-      const wrapper = getComponentFromRoute('/admin', nonAdminAppProps)
+  describe(
+    '<PrivateRoute /> prevents unauthorized members from viewing the' +
+      ' backend',
+    () => {
+      it('Should redirect the <Admin /> component with the /admin endpoint', () => {
+        const wrapper = getComponentFromRoute('/admin', memberAppProps)
+        expect(wrapper.find(Home)).to.have.lengthOf(1)
+      })
+      it(
+        'Should redirect the <OfficerTools /> component with the ' +
+          '/officer-tools endpoint',
+        () => {
+          const wrapper = getComponentFromRoute(
+            '/officer-tools',
+            memberAppProps
+          )
+          expect(wrapper.find(Home)).to.have.lengthOf(1)
+        }
+      )
+      it(
+        'Should redirect the <MemberManager /> component with the ' +
+          '/member-manager endpoint',
+        () => {
+          const wrapper = getComponentFromRoute(
+            '/member-manager',
+            memberAppProps
+          )
+          expect(wrapper.find(Home)).to.have.lengthOf(1)
+        }
+      )
+      it(
+        'Should redirect the <EventManager /> component with the ' +
+          '/event-manager endpoint',
+        () => {
+          const wrapper = getComponentFromRoute(
+            '/event-manager',
+            memberAppProps
+          )
+          expect(wrapper.find(Home)).to.have.lengthOf(1)
+        }
+      )
+      it(
+        'Should redirect the <SolidsConsole /> component with the /3DConsole ' +
+          'endpoint',
+        () => {
+          const wrapper = getComponentFromRoute('/3DConsole', memberAppProps)
+          expect(wrapper.find(Home)).to.have.lengthOf(1)
+        }
+      )
+    }
+  )
+
+  describe('Renders correct component for the unauthenticated user', () => {
+    it('Should render the <Login /> component with the /login endpoint', () => {
+      const wrapper = getComponentFromRoute('/login', unauthedAppProps)
+      expect(wrapper.find(Login)).to.have.lengthOf(1)
+    })
+    it(
+      'Should render the <MembershipApplication /> component with the ' +
+        '/register endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/register', unauthedAppProps)
+        expect(wrapper.find(MembershipApplication)).to.have.lengthOf(1)
+      }
+    )
+    it('Should redirect from the /2DPrinting endpoint to the /login endpoint', () => {
+      const wrapper = getComponentFromRoute('/2DPrinting', unauthedAppProps)
+      expect(wrapper.find(Login)).to.have.lengthOf(1)
+    })
+    it('Should redirect from the /3DPrintingForm endpoint to the /login endpoint', () => {
+      const wrapper = getComponentFromRoute('/3DPrintingForm', unauthedAppProps)
       expect(wrapper.find(Login)).to.have.lengthOf(1)
     })
   })

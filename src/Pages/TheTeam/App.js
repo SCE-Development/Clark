@@ -16,7 +16,6 @@ import Evan from './teamPics/2018_2019/evanUgarte.png'
 // import Thai from './teamPics/2019-2020/thai.png'
 // import Surabhi from './teamPics/2019-2020/serbi.png'
 // import Nanar from './teamPics/2019-2020/nanar.png'
-import Layout from '../../Components/Layout/Layout'
 
 export default class Example extends React.Component {
   constructor (props) {
@@ -197,7 +196,7 @@ export default class Example extends React.Component {
     // }
 
     return (
-      <Layout>
+      <>
         <div className='Page'>
           <TabContent activeTab={this.state.activeTab}>
             <TabPane tabId='1' id='tab1' className='Panel'>
@@ -229,7 +228,7 @@ export default class Example extends React.Component {
             </TabPane>
           </TabContent>
         </div>
-      </Layout>
+      </>
     )
   }
 }

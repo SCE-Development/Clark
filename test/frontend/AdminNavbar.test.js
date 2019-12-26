@@ -21,15 +21,15 @@ describe('<AdminNavbar />', () => {
       wrapper
         .find(NavbarBrand)
         .prop('children')
-        .toString() === 'Software & Computer Engineering Society  '
+        .toString() === 'Software & Computer Engineering Society'
     )
   })
-  it('Should render 6 <NavLink /> tags with officer Credentials', () => {
+  it('Should render 5 <NavLink /> tags with officer Credentials', () => {
     const wrapper = mount(<AdminNavbar />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(6)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(5)
   })
-  it('Should render 7 <NavLink /> tags with admin Credentials', () => {
+  it('Should render 6 <NavLink /> tags with admin Credentials', () => {
     const wrapper = mount(<AdminNavbar {...adminAppProps} />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(7)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(6)
   })
 })

@@ -16,7 +16,6 @@ import {
   Label,
   Input
 } from 'reactstrap'
-import Layout from '../../Components/Layout/Layout'
 import { FilePond } from 'react-filepond'
 
 // Import FilePond styles
@@ -76,7 +75,7 @@ export default class Printing extends React.Component {
 
   render () {
     return (
-      <Layout>
+      <>
         <Jumbotron>
           <div className='text-center'>
             <h1 className='display-4'>SCE Printing System</h1>{' '}
@@ -189,7 +188,7 @@ export default class Printing extends React.Component {
             </Modal>
           </ModalFooter>
         </Modal>
-      </Layout>
+      </>
     )
   }
 }

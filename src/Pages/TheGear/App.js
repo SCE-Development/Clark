@@ -23,7 +23,6 @@ import './App.css'
 import './card-config.css'
 // import Ari from './gearPics/2018_2019/arisKoumis.png'
 // import Evan from './gearPics/2018_2019/evanUgarte.png'
-import Layout from '../../Components/Layout/Layout'
 
 export default class Example extends React.Component {
   constructor (props) {
@@ -46,7 +45,7 @@ export default class Example extends React.Component {
   //
   render () {
     return (
-      <Layout>
+      <>
         <div className='Page'>
           {/* -----------------Nav Bar-------------------
           <Nav tabs>
@@ -82,7 +81,7 @@ export default class Example extends React.Component {
           </TabContent>
           */}
         </div>
-      </Layout>
+      </>
     )
   }
 }

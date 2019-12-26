@@ -49,11 +49,11 @@ describe('<UserNavbar />', () => {
     }
   )
   it(
-    'Should render four <UncontrolledDropdown /> tags for' +
+    'Should render three <UncontrolledDropdown /> tags for' +
       ' the authenticated user',
     () => {
       const wrapper = mount(<UserNavbar {...authenticatedAppProps} />)
-      expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(4)
+      expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(3)
     }
   )
   it(
@@ -65,9 +65,8 @@ describe('<UserNavbar />', () => {
       const dropdowns = wrapper.find(UncontrolledDropdown)
       expect(getDropdownDetails(dropdowns.get(0))).to.equal('Student Resources')
       expect(getDropdownDetails(dropdowns.get(1))).to.equal('Printing')
-      expect(getDropdownDetails(dropdowns.get(2))).to.equal('Join Us!')
       expect(
-        getDropdownDetails(dropdowns.get(3), 1)[0].props.children
+        getDropdownDetails(dropdowns.get(2), 1)[0].props.children
       ).to.equal('Profile')
     }
   )

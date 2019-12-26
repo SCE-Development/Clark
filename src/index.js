@@ -5,6 +5,7 @@ import './index.css'
 import axios from 'axios'
 
 import Routing from './Routing'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App (props) {
   const [authenticated, setAuthenticated] = useState(false)
@@ -17,29 +18,22 @@ function App (props) {
       ? window.localStorage.getItem('jwtToken')
       : ''
 
-    // Immediately direct to /login if no jwtToken token present
     if (!token) {
       setAuthenticated(false)
       setIsAuthenticating(false)
       return
     }
 
-    // Verify if token is valid
-    // As user persmissions are created, the verify auth should be more extensive
-    // and return views as the permissions defines
     await axios
       .post('/api/user/verify', { token })
       .then(res => {
         setUser(res.data)
         setAuthenticated(true)
-        // If the user doesn't have sufficient privilages, send them to their profile page
-        if (res.data.accessLevel < 1 && props.history) {
-          props.history.push('/profile')
-        }
       })
       .catch(err => {
         if (props.history) props.history.push('/login')
         setAuthenticated(false)
+        console.log(err)
       })
     setIsAuthenticating(false)
   }
@@ -51,8 +45,7 @@ function App (props) {
 
   return (
     !isAuthenticating && (
-      <div className='App'>
-        {/* // navbar heres */}
+      <div>
         <Routing appProps={{ authenticated, setAuthenticated, user }} />
       </div>
     )
