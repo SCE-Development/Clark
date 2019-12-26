@@ -26,6 +26,7 @@ router.post('/submit', (req, res) => {
   const data = {
     ...req.body
   }
+  delete data.token
 
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {
@@ -109,6 +110,7 @@ router.post('/edit', (req, res) => {
   const form = {
     ...req.body
   }
+  delete form.token
 
   jwt.verify(token, config.secretKey, function (error, decoded) {
     if (error) {

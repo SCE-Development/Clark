@@ -21,7 +21,7 @@ export default class Example extends React.Component {
     super(props)
     this.handleToggle = this.handleToggle.bind(this)
     this.state = {
-      collapse: false,
+      collapse: true,
       data: [],
       key: '',
       search: ''
@@ -60,7 +60,7 @@ export default class Example extends React.Component {
 
   // Update card's collapse option
   handleToggle () {
-    this.setState({ collapse: !this.state.collapse })
+    this.setState({ collapse: true })
   }
 
   // Getting all data in DB
@@ -73,7 +73,6 @@ export default class Example extends React.Component {
       // })
       .then(result => {
         // Save data from db to state.data
-        console.log(result)
         this.setState({
           data: result.data
         })
@@ -99,7 +98,6 @@ export default class Example extends React.Component {
         email: jsonObject.email
       })
       .then(result => {
-        console.log(result)
         this.callDatabase() // reload database
       })
       .catch(err => {
@@ -138,7 +136,6 @@ export default class Example extends React.Component {
   }
 
   requestForm (jsonObject, key) {
-    console.log(jsonObject)
     return (
       <FormGroup key={key}>
         <Card
@@ -242,7 +239,12 @@ export default class Example extends React.Component {
       <Container>
         <Form>
           <br />
+          Search:
           <input
+            style={{
+              marginBottom: '5px',
+              marginLeft: '5px'
+            }}
             onChange={e => {
               this.setState({ search: e.target.value })
             }}
