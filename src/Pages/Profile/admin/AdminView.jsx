@@ -2,7 +2,6 @@ import React, { useState } from "react";
 //import "./profile.css";
 import {
   Container,
-  Badge,
   Button,
   Row,
   Col,
@@ -18,6 +17,7 @@ import {
 import axios from 'axios'
 const bcrypt = require('bcrypt-nodejs')
 const enums = require( '../../../Enums' )
+const display = require ('./profile.js')
 
 function ProfilePage(props) {
   // first name, last name, middle initial, email, pass, door code
@@ -27,6 +27,7 @@ function ProfilePage(props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [doorCode, setDoorCode] = useState("")
+  const [major,setMajor] = useState("")
   const [user, setUser] = useState({ ...props.user })
   const [toggle, setToggle] = useState(false)
   const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted)
@@ -57,6 +58,7 @@ function ProfilePage(props) {
       lastName: lastName || user.lastName,
       middleInitial: middleInitial || user.middleInitial,
       email: email || user.email,
+      major: major || user.major,
       password: hashed,
       doorCode: doorCode || user.doorCode,
       pagesPrinted: pagesPrinted,
@@ -146,19 +148,14 @@ function ProfilePage(props) {
         type: 'email',
         placeholder: 'make it secure',
         onChange: (e) => setDoorCode(e.target.value)
+      },
+      {
+        label: 'Major',
+        type: 'email',
+        placeholder: user.major,
+        onChange: (e) => setMajor(e.target.value)
       }
     ]
-
-    /*
-    translating access Level into role
-    The access level is defined as follows:
-    -2: Ban
-    -1: Pending
-     0: Member
-     1: Officer
-     2: Admin
-    */
-    let memberships = [0, 1, -1, 2, -2]
 
     return (
       <div>
@@ -191,20 +188,6 @@ function ProfilePage(props) {
                 </FormGroup>
               })}
 
-              {/*Need Improvements, not doing anything currently*/}
-              {/* <FormGroup>
-                <Label for="exampleFile">Upload New Profile Picture</Label>
-                <Input
-                  type="file"
-                  name="file"
-                  id="exampleFile"
-                  onChange={event => {
-                    change(event, "profile");
-                  }}
-                />
-                <FormText color="muted">(Not Working!)</FormText>
-              </FormGroup> */}
-
               Change validation date to
               <select onChange={(e)=>{setNumberOfSemestersToSignUpFor(e.target.value)}}>
                 <option value={0}>Keep Same</option>
@@ -224,7 +207,7 @@ function ProfilePage(props) {
 
               <FormGroup tag="fieldset">
                 <legend>Membership Status</legend>
-                {memberships.map((membership, index) => {
+                {enums.getAllValues(enums.membershipStatus).map((membership, index) => {
                   return <FormGroup check key={index}>
                     <Label check>
                       <Input
@@ -262,27 +245,6 @@ function ProfilePage(props) {
     );
   }
 
-  function display() {
-    return <div>
-      <Badge color="primary">{enums.getKey(enums.membershipStatus,user.accessLevel)}</Badge>
-      <h3>
-        {user.firstName[0].toUpperCase() +
-          user.firstName.slice(1, user.firstName.length) +
-          ' ' +
-          user.lastName[0].toUpperCase() +
-          user.lastName.slice(1, user.lastName.length)}
-        {user.middleInitial.trim() !== '' &&
-          ' ' + user.middleInitial.toUpperCase() + '.'}
-      </h3>
-      <h5>Doorcode: {user.doorCode}</h5>
-      <h5>Member Since (yyyy-mm-dd): {user.joinDate.slice(0, 10)}</h5>
-      <h5>Expiration on (yyyy-mm-dd): {membershipValidUntil.slice(0, 10)}</h5>
-      <h5>Email: {user.email}</h5>
-      <h5>Major: {user.major}</h5>
-      <h5>Pages Print: {user.pagesPrinted}/30</h5>
-    </div>
-  }
-
   return (
     <div>
       <div>
@@ -295,7 +257,7 @@ function ProfilePage(props) {
                 src='images/SCE-glow.png' />
             </Container>
 
-            {display()}
+            {display.displayProfile(user, membershipValidUntil)}
 
             <Row>
               <Col>{editModalButton()}</Col>
@@ -310,7 +272,7 @@ function ProfilePage(props) {
               <Button
                 onClick={async () => { await handleSubmission() }}
                 color="primary">
-                YES! mutate them!
+                YES!
                 </Button>
               <Button
                 style={{

@@ -1,10 +1,13 @@
 import React from 'react'
-const enums = require('../../../Enums.js')
-// displaying children of member-board
+import './App.css'
+const enums = require('../../Enums.js')
 
 let toggle = false
 let toggleDelete = false
+let userToDelete = null
+let userToEdit = null
 
+// displaying children of member-board
 export function displayBoard (user, index) {
   return (
     <tr key={index}>
@@ -30,6 +33,7 @@ export function displayBoard (user, index) {
         <button
           className='delete'
           onClick={() => {
+            userToDelete = user
             togglerDelete()
           }}
         >
@@ -42,6 +46,7 @@ export function displayBoard (user, index) {
       <button
         className='delete'
         onClick={() => {
+          userToEdit = user
           toggler()
         }}
       >
@@ -77,6 +82,14 @@ export function getToggle () {
 
 export function getToggleDelete () {
   return toggleDelete
+}
+
+export function getUserToDelete () {
+  return userToDelete
+}
+
+export function getUserToEdit () {
+  return userToEdit
 }
 
 export function toggler () {

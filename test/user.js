@@ -470,7 +470,8 @@ describe('Users', () => {
       const user = {
         queryEmail: 'a@b.c',
         token: token,
-        firstName: 'pinkUnicorn'
+        firstName: 'pinkUnicorn',
+        numberOfSemestersToSignUpFor: undefined
       }
       chai
         .request(app)
