@@ -10,7 +10,7 @@ import Adapter from 'enzyme-adapter-react-16'
 
 Enzyme.configure({ adapter: new Adapter() })
 
-describe('<MemmberDashboard />', () => {
+describe('<MemberDashboard />', () => {
   Object.defineProperty(window, 'localStorage', {
     value: global.localStorage,
     configurable: true,

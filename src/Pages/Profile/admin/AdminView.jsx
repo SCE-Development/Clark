@@ -19,7 +19,7 @@ const bcrypt = require('bcrypt-nodejs')
 const enums = require( '../../../Enums' )
 const display = require ('./profile.js')
 
-function ProfilePage(props) {
+export default function Editor(props) {
   // first name, last name, middle initial, email, pass, door code
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
@@ -112,22 +112,19 @@ function ProfilePage(props) {
   }
 
   function editModalButton() {
-    let FormGroups = [
+    let formGroups = [
       {
         label: 'First Name',
-        type: 'email',
         placeholder: user.firstName,
         onChange: (e) => setFirstName(e.target.value)
       },
       {
         label: 'Last Name',
-        type: 'email',
         placeholder: user.lastName,
         onChange: (e) => setLastName(e.target.value)
       },
       {
         label: 'Middle Initial',
-        type: 'email',
         placeholder: user.middleInitial,
         onChange: (e) => setMiddleInitial(e.target.value)
       },
@@ -145,13 +142,11 @@ function ProfilePage(props) {
       },
       {
         label: 'Door Code',
-        type: 'email',
         placeholder: 'make it secure',
         onChange: (e) => setDoorCode(e.target.value)
       },
       {
         label: 'Major',
-        type: 'email',
         placeholder: user.major,
         onChange: (e) => setMajor(e.target.value)
       }
@@ -176,11 +171,11 @@ function ProfilePage(props) {
           <ModalBody>
             <Form>
 
-              {FormGroups.map((group, index) => {
+              {formGroups.map((group, index) => {
                 return <FormGroup key={index}>
                   <Label>{group.label}</Label>
                   <Input
-                    type={group.type}
+                    type={group.type || 'email'}
                     name={group.type}
                     placeholder={group.placeholder}
                     onChange={group.onChange}
@@ -188,11 +183,16 @@ function ProfilePage(props) {
                 </FormGroup>
               })}
 
-              Change validation date to
+              Change expiration date to
               <select onChange={(e)=>{setNumberOfSemestersToSignUpFor(e.target.value)}}>
-                <option value={0}>Keep Same</option>
-                <option value={1}>This semester</option>
-                <option value={2}>2 semesters</option>
+                {
+                  [{value:0, name:'Keep Same'},
+                  {value:0, name:'Expired Membership'},
+                  {value:1, name:'This semester'},
+                  {value:2, name:'2 semesters'}
+                ].map((ele, ind)=>{
+                return <option key ={ind} value={ele.value}>{ele.name}</option>
+                })}
               </select>
 
               <Button
@@ -291,4 +291,3 @@ function ProfilePage(props) {
   )
 }
 
-export default ProfilePage;

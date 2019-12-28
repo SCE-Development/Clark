@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 import './App.css'
-import InfoCard from '../Profile/admin/AdminView'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap'
 import axios from 'axios'
-const display = require('./DisplayProfile.js')
+import OverviewProfile from './OverviewProfile.js'
 
-class Login extends Component {
+export default class OverviewBoard extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -73,44 +71,31 @@ class Login extends Component {
   */
   deleteUser (user) {
     // if they decide to delete themselves: delete->logout
+    axios
+      .post('/api/user/delete', {
+        token: this.state.authToken,
+        email: user.email
+      })
+      .then(result => {
+        this.callDatabase() // reload database
+      })
+      .catch(err => {
+        console.log(err)
+      })
     if (user.email === this.state.currentUser) {
-      axios
-        .post('/api/user/delete', {
-          token: this.state.authToken,
-          email: user.email
-        })
-        .then(result => {
-          this.callDatabase() // reload database
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
       // logout
       window.localStorage.removeItem('jwtToken')
       window.location.reload()
       return window.alert('Self-deprecation is an art')
-    } else {
-      axios
-        .post('/api/user/delete', {
-          token: this.state.authToken,
-          email: user.email
-        })
-        .then(result => {
-          this.callDatabase() // reload database
-        })
-        .catch(err => {
-          console.log(err)
-        })
     }
   }
 
   // simply filter array by name
   search () {
     const search = this.state.search.trim().toLowerCase()
-    return search !== null || search !== ''
+    return search !== null && search !== ''
       ? this.state.users.filter(data =>
-        data.firstName.toLowerCase().includes(search.toLowerCase())
+        data.firstName.toLowerCase().includes(search)
       )
       : this.state.users
   }
@@ -130,13 +115,17 @@ class Login extends Component {
         <table className='content-table' id='users'>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Door Code</th>
-              <th>Printing</th>
-              <th>Email Verified</th>
-              <th>Type</th>
-              <th />
-              <th />
+              {[
+                'Name',
+                'Door Code',
+                'Printing',
+                'Email Verified',
+                'Type',
+                '',
+                ''
+              ].map((ele, ind) => {
+                return <th key={ind}>{ele}</th>
+              })}
             </tr>
           </thead>
 
@@ -145,73 +134,21 @@ class Login extends Component {
               this.forceUpdate()
             }}
           >
-            {this.search(this.state.users).map((user, index) =>
-              display.displayBoard(user, index)
-            )}
+            {this.search().map((user, index) => {
+              return (
+                <OverviewProfile
+                  key={index}
+                  user={user}
+                  index={index}
+                  token={this.state.authToken}
+                  callDatabase={this.callDatabase.bind(this)}
+                  deleteUser={this.deleteUser.bind(this)}
+                />
+              )
+            })}
           </tbody>
         </table>
-
-        <Modal isOpen={display.getToggle()}>
-          <svg
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-            onClick={() => {
-              this.callDatabase()
-              display.toggler()
-              this.forceUpdate()
-            }}
-            style={{
-              position: 'relative',
-              marginTop: '5px',
-              marginLeft: '-5px',
-              left: '95%'
-            }}
-          >
-            <path d='M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z' />
-          </svg>
-
-          <InfoCard
-            user={display.getUserToEdit()}
-            token={this.state.authToken}
-            onClick={() => {
-              display.toggler()
-              this.forceUpdate()
-            }}
-          />
-        </Modal>
-
-        <Modal isOpen={display.getToggleDelete()}>
-          <ModalHeader>ARE YOU SURE?</ModalHeader>
-          <ModalBody>
-            Are you sure you want to delete this user? They're kinda cute and
-            they'll be gone forever if you do.
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='danger'
-              onClick={() => {
-                this.deleteUser(display.getUserToDelete())
-                display.togglerDelete()
-                this.forceUpdate()
-              }}
-            >
-              Yes, they're dead to me
-            </Button>
-            <Button
-              color='light'
-              onClick={() => {
-                display.togglerDelete()
-                this.forceUpdate()
-              }}
-            >
-              No, they're chill
-            </Button>
-          </ModalFooter>
-        </Modal>
       </div>
     )
   }
 }
-
-export default Login
