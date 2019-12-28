@@ -1,22 +1,13 @@
 import React, { useState } from "react";
 //import "./profile.css";
 import {
-  Container,
   Button,
-  Row,
-  Col,
-  FormGroup,
-  Form,
-  Input,
   Modal,
-  Label,
-  ModalBody,
-  ModalFooter,
 } from "reactstrap";
 import axios from 'axios'
 import Display from './Profile.js'
+import EditForm from './EditorForm'
 const bcrypt = require('bcrypt-nodejs')
-const enums = require('../../../Enums')
 
 export default function Editor(props) {
   // first name, last name, middle initial, email, pass, door code
@@ -114,39 +105,39 @@ export default function Editor(props) {
     {
       label: 'First Name',
       placeholder: user.firstName,
-      onChange: (e) => setFirstName(e.target.value)
+      handleChange: (e) => setFirstName(e.target.value)
     },
     {
       label: 'Last Name',
       placeholder: user.lastName,
-      onChange: (e) => setLastName(e.target.value)
+      handleChange: (e) => setLastName(e.target.value)
     },
     {
       label: 'Middle Initial',
       placeholder: user.middleInitial,
-      onChange: (e) => setMiddleInitial(e.target.value)
+      handleChange: (e) => setMiddleInitial(e.target.value)
     },
     {
       label: 'Email',
       type: 'email',
       placeholder: user.email,
-      onChange: (e) => setEmail(e.target.value)
+      handleChange: (e) => setEmail(e.target.value)
     },
     {
       label: 'Password',
       type: 'password',
       placeholder: 'make it secure',
-      onChange: (e) => setPassword(e.target.value)
+      handleChange: (e) => setPassword(e.target.value)
     },
     {
       label: 'Door Code',
       placeholder: 'make it secure',
-      onChange: (e) => setDoorCode(e.target.value)
+      handleChange: (e) => setDoorCode(e.target.value)
     },
     {
       label: 'Major',
       placeholder: user.major,
-      onChange: (e) => setMajor(e.target.value)
+      handleChange: (e) => setMajor(e.target.value)
     }
   ]
 
@@ -160,101 +151,22 @@ export default function Editor(props) {
   return (
     <div className="center">
       <ul className="profileInfo">
-        <Container>
-          <img
-            alt='profile'
-            style={{ height: '300px' }}
-            src='images/SCE-glow.png' />
-        </Container>
 
-        <Display user={user} membershipValidUntil={membershipValidUntil} />
+        <Display 
+        user={user} 
+        membershipValidUntil={membershipValidUntil} 
+        />
 
-        <Row>
-          <Col>
-            <div>
-              <Button
-                color="primary"
-                style={{
-                  position: 'relative',
-                  left: '80%'
-                }}
-                onClick={() => { handleToggle() }}>
-                Edit
-                </Button>
-            </div>
-
-            <Modal isOpen={toggle}>
-              <ModalBody>
-                <Form>
-
-                  {formGroups.map((group, index) =>
-                    <FormGroup key={index}>
-                      <Label>{group.label}</Label>
-                      <Input
-                        type={group.type || 'email'}
-                        name={group.type}
-                        placeholder={group.placeholder}
-                        onChange={group.onChange}
-                      />
-                    </FormGroup>
-                  )}
-
-                  Change expiration date to
-                  <select onChange={(e) => { setNumberOfSemestersToSignUpFor(e.target.value) }}>
-                    {
-                      membership.map((ele, ind) =>
-                        <option key={ind} value={ele.value}>{ele.name}</option>
-                      )}
-                  </select>
-
-                  <Button
-                    type='button'
-                    onClick={() => {
-                      setPagesPrinted(0);
-                    }}
-                    color="info"
-                    style={{ marginTop: '5px' }}>
-                    Reset Pages!
-                  </Button>
-
-                  <FormGroup tag="fieldset">
-                    <legend>Membership Status</legend>
-                    {enums.getAllValues(enums.membershipStatus).map((membership, index) =>
-                      <FormGroup check key={index}>
-                        <Label check>
-                          <Input
-                            type="radio"
-                            name="radio1"
-                            value={membership}
-                            onChange={() => {
-                              setuserMembership(membership)
-                            }}
-                          />
-                          {enums.getKey(enums.membershipStatus, membership)}
-                        </Label>
-                      </FormGroup>
-                    )}
-                  </FormGroup>
-
-                </Form>
-              </ModalBody>
-
-              <ModalFooter>
-                <Button
-                  color="primary"
-                  onClick={() => { handleSubmissionToggle() }}>
-                  Submit
-            </Button>
-                <Button
-                  color="secondary"
-                  onClick={() => { handleToggle() }}>
-                  Cancel
-            </Button>
-              </ModalFooter>
-
-            </Modal>
-          </Col>
-        </Row>
+        <EditForm 
+        formGroups = {formGroups}
+        membership = {membership}
+        setNumberOfSemestersToSignUpFor ={ (e)=>{setNumberOfSemestersToSignUpFor(e)} }
+        setPagesPrinted = {e=>{setPagesPrinted(e)}}
+        handleSubmissionToggle = {()=>{handleSubmissionToggle()}}
+        handleToggle = {()=>{handleToggle()}}
+        setuserMembership = {(e)=>{setuserMembership(e)}}
+        toggle = {toggle} 
+        />
 
         <Modal
           style={
@@ -266,7 +178,7 @@ export default function Editor(props) {
             onClick={async () => { await handleSubmission() }}
             color="primary">
             YES!
-                </Button>
+          </Button>
           <Button
             style={{
               marginTop: '10px'
@@ -274,7 +186,7 @@ export default function Editor(props) {
             onClick={() => handleSubmissionToggle()}
             color="danger">
             Nah! It's a mistake.
-                </Button>
+          </Button>
         </Modal>
 
       </ul>

@@ -1,10 +1,22 @@
 import React from 'react'
-import { Badge } from 'reactstrap'
+import { Badge, Container } from 'reactstrap'
 const enums = require('../../../Enums.js')
 
 export default function displayProfile (props) {
   return (
     <div>
+      <Container>
+        <img
+          alt='profile'
+          style={{
+            position: 'relative',
+            height: '300px',
+            marginLeft: '10%'
+          }}
+          src='images/SCE-glow.png'
+        />
+      </Container>
+
       <Badge color='primary'>
         {enums.getKey(enums.membershipStatus, props.user.accessLevel)}
       </Badge>
