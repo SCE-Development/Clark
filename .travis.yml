@@ -4,8 +4,10 @@ node_js:
 services:
   - mongodb
 install:
+ - npm install -g codecov
  - npm install
 script:
  - npm run api-test
  - npm run frontend-test
  - npm run build
+ - bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload'
