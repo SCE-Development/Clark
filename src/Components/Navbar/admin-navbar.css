@@ -1,0 +1,26 @@
+header {
+  width: 100%;
+  height: 100%;
+  background-size:cover;
+  overflow:hidden;
+  display: flex !important;
+  justify-content: flex-end;
+  background: #EFEFEF;
+  align-items: center;
+}
+
+header a, .nav-button {
+  padding: 18px 36px;
+  color: #515151;
+  transition: color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+header a:hover {
+  color: #000000;
+}
+.active-nav-link {
+  color: #FF0000;
+}
