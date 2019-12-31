@@ -3,7 +3,7 @@ import './membershipApplication.css'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import axios from 'axios'
 import Layout from '../../Components/Layout/Layout'
-import MembershipPlan from '../MembershipPlan/App.js'
+import MembershipPlan from '../MembershipPlan/MembershipPlan.js'
 export default class MembershipApplication extends React.Component {
   // @ctor
   constructor (props) {

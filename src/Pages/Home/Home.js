@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import './Home.css'
 import Slideshow from '../../Components/Slideshow/Slideshow.js'
 import Footer from '../../Components/Footer/Footer.js'
-import Benefits from '../../Components/Benefits/App'
-import Jumbotron from '../../Components/Jumbotron/App.js'
+import Benefits from '../../Components/Benefits/Benefits.js'
+import Jumbotron from '../../Components/Jumbotron/Jumbotron.js'
 import Iframe from 'react-iframe'
-import Layout from '../../Components/Layout/Layout'
+import Layout from '../../Components/Layout/Layout.js'
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*

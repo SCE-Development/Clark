@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './App.css'
+import './MembershipPlan.css'
 import fall from './assets/fall.jpg'
 import fall2 from './assets/fall2.jpeg'
 import winter from './assets/winter.jpeg'

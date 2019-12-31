@@ -75,7 +75,7 @@
     "superagent": "^5.1.0"
   },
   "devDependencies": {
-    "@babel/register": "^7.7.4",
+    "@babel/register": "^7.7.7",
     "babel-eslint": "^10.0.3",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
