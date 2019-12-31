@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import LoginInput from './LoginInput'
-import './Login.css'
+import './login.css'
 
 export default function Login (props) {
   const [email, setEmail] = useState('')

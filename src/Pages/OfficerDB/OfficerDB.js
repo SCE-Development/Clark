@@ -1,5 +1,5 @@
 import React from 'react'
-import './App.css'
+import './officer-db.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Table } from 'reactstrap'
 

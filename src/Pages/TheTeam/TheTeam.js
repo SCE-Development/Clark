@@ -2,7 +2,7 @@ import React from 'react'
 import { TabContent, TabPane } from 'reactstrap'
 
 // import classnames from 'classnames'
-import './App.css'
+import './the-team.css'
 import './card-config.css'
 // import Ari from './teamPics/2018_2019/arisKoumis.png'
 import Evan from './teamPics/2018_2019/evanUgarte.png'
@@ -17,7 +17,7 @@ import Evan from './teamPics/2018_2019/evanUgarte.png'
 // import Surabhi from './teamPics/2019-2020/serbi.png'
 // import Nanar from './teamPics/2019-2020/nanar.png'
 
-export default class Example extends React.Component {
+export default class TheTeam extends React.Component {
   constructor (props) {
     super(props)
 

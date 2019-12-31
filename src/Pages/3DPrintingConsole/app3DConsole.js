@@ -16,7 +16,7 @@ import {
 } from 'reactstrap'
 import axios from 'axios'
 
-export default class Example extends React.Component {
+export default class PrintConsole3D extends React.Component {
   constructor (props) {
     super(props)
     this.handleToggle = this.handleToggle.bind(this)

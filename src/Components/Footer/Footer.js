@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col } from 'reactstrap'
-import './Footer.css'
+import './footer.css'
 
 export default () => {
   return (
