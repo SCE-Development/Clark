@@ -1,17 +1,11 @@
 import React from 'react'
 import { Card, CardTitle, Col, CardText } from 'reactstrap'
-import Layout from '../../../Components/Layout/Layout'
 // import axios from 'axios';
 // import NavBarTop from "./navBarTop.jsx";
 
 export default class AnnouncementsPage extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
-    console.log('Constructor props:')
-    console.dir(props)
-    console.log('Local storage:')
-    console.dir(window.localStorage)
-
     this.state = {
       publishedEvents: [
         {
@@ -79,9 +73,9 @@ export default class AnnouncementsPage extends React.Component {
   //   });
   // }
 
-  render () {
+  render() {
     return (
-      <Layout>
+      <React.Fragment>
         <div className='announcements'>
           {/* <NavBarTop /> */}
 
@@ -105,7 +99,7 @@ export default class AnnouncementsPage extends React.Component {
             ))}
           </Col>
         </div>
-      </Layout>
+      </React.Fragment>
     )
   }
 }

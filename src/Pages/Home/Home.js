@@ -5,7 +5,6 @@ import Footer from '../../Components/Footer/Footer.js'
 import Benefits from '../../Components/Benefits/App'
 import Jumbotron from '../../Components/Jumbotron/App.js'
 import Iframe from 'react-iframe'
-import Layout from '../../Components/Layout/Layout'
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -24,7 +23,7 @@ import Layout from '../../Components/Layout/Layout'
 class Home extends Component {
   render () {
     return (
-      <Layout>
+      <>
         <div className='home'>
           <Slideshow className='slideshow' />
           <Jumbotron />
@@ -50,7 +49,7 @@ class Home extends Component {
           <Benefits className='benefits' />
           <Footer />
         </div>
-      </Layout>
+      </>
     )
   }
 }

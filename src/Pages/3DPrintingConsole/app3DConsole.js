@@ -30,32 +30,11 @@ export default class Example extends React.Component {
 
   // update Data 1 when page load
   componentDidMount () {
-    const token = window.localStorage
-      ? window.localStorage.getItem('jwtToken')
-      : ''
-
-    // Immediately direct to /login if no jwtToken token present
-    if (!token) {
-      if (this.props.history) this.props.history.push('/login')
-      return
-    }
-
-    // Verify if token is valid
-    // As user persmissions are created, the verify auth should be more extensive
-    // and return views as the permissions defines
-    axios
-      .post('/api/user/verify', { token })
-      .then(res => {
-        this.setState({
-          isLoggedIn: true,
-          authToken: token
-        })
-      })
-      .catch(() => {
-        if (this.props.history) this.props.history.push('/login')
-      })
-
-    this.callDatabase()
+    this.setState({
+      isLoggedIn: true,
+      authToken: window.localStorage && window.localStorage.getItem('jwtToken')
+    })
+    if (window.localStorage) this.callDatabase()
   }
 
   // Update card's collapse option

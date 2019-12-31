@@ -21,7 +21,7 @@ function NavBarWrapper ({
       ) : (
         <UserNavbar {...appProps} handleLogout={handleLogout} />
       )}
-      <Component />
+      <Component {...appProps} />
     </div>
   )
 }

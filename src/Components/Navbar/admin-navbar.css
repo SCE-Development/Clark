@@ -1,26 +1,7 @@
-header {
-  width: 100%;
-  height: 100%;
-  background-size:cover;
-  overflow:hidden;
-  display: flex !important;
-  justify-content: flex-end;
-  background: #EFEFEF;
-  align-items: center;
-}
-
-header a, .nav-button {
-  padding: 18px 36px;
+.admin-nav, .nav-link {
   color: #515151;
   transition: color 0.2s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
 }
-header a:hover {
-  color: #000000;
-}
-.active-nav-link {
+.nav-link:hover {
   color: #FF0000;
 }

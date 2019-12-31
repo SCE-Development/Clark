@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import './navbar.css'
+import './user-navbar.css'
 import {
+  Collapse,
+  NavbarToggler,
   Navbar,
   NavbarBrand,
   Nav,
@@ -12,14 +14,13 @@ import {
   DropdownItem
 } from 'reactstrap'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-
 class UserNavBar extends Component {
   constructor (props) {
     super(props)
     this.state = {
       isLoggedIn: this.props.authenticated,
       user: this.props.user,
+      collapsed: true,
       icons: [
         {
           link: [
@@ -48,110 +49,121 @@ class UserNavBar extends Component {
       unauthedRoutes: [
         { title: 'Snacks & Food', route: '/' },
         { title: 'Events', route: '/events' },
-        { title: 'Snacks & Food', route: '/Team' }
+        { title: 'SCE Team', route: '/Team' }
       ]
     }
     this.handleLogout = this.handleLogout.bind(this)
   }
 
-  handleLogout () {
+  handleLogout = () => {
     this.props.handleLogout()
+  }
+
+  handleToggle = () => {
+    this.setState({
+      collapsed: !this.state.collapsed
+    })
   }
 
   render () {
     return (
-      <div className='sce-nav'>
+      <div className='sce-user-nav'>
         <Navbar light expand='md'>
           <NavbarBrand href='/'>
             Software & Computer Engineering Society &nbsp;
           </NavbarBrand>
-          {this.state.icons.map((icon, index) => {
-            return (
-              <a key={index} href={icon.link}>
-                <svg width='35px' height='35px' viewBox='0 0 24 24'>
-                  <path fill='#757575' d={icon.vector} />
-                </svg>
-              </a>
-            )
-          })}
-          <Nav className='ml-auto' navbar>
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Student Resources
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem href='/labkits'>Lab Kits</DropdownItem>
-                <DropdownItem href='https://docs.google.com/forms/d/e/1FAIpQLSfAKfUnblxOZ0r3BjMY6xe_0g2zC7v3OfaadyvF-Ste1eL28A/viewform'>
-                  Microsoft Imagine
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            {this.state.user && this.state.user.accessLevel >= 1 && (
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret>
-                  Printing
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem href='/2DPrinting'>2D Printing</DropdownItem>
-                  <DropdownItem href='/3DPrintingForm'>
-                    3D Printing
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            )}
-            {this.state.unauthedRoutes.map((link, index) => {
+          <NavbarToggler onClick={this.handleToggle} className='mr-2' />
+          <Collapse isOpen={!this.state.collapsed} navbar>
+            {this.state.icons.map((icon, index) => {
               return (
-                <NavItem key={index}>
-                  <NavLink href={link.route}>{link.title}</NavLink>
-                </NavItem>
+                <a key={index} href={icon.link}>
+                  <svg width='35px' height='35px' viewBox='0 0 24 24'>
+                    <path fill='#757575' d={icon.vector} />
+                  </svg>
+                </a>
               )
             })}
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Join Us!
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem href='/register'>
-                  Membership Application
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledDropdown>
-            {this.state.isLoggedIn && this.state.user ? (
+            <Nav className='ml-auto' navbar>
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
-                  <svg
-                    style={{ width: '30px', height: '30px' }}
-                    viewBox='0 0 24 24'
-                  >
-                    <path
-                      fill='#AAAAAA'
-                      d='M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z'
-                    />
-                  </svg>
-                  {this.state.user.name}
+                  Student Resources
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem href='/profile'>Profile</DropdownItem>
-                  {this.state.user.accessLevel >= 1 && (
-                    <DropdownItem href='/dashboard'>Admin</DropdownItem>
-                  )}
-                  <DropdownItem>
-                    <div onClick={this.handleLogout}>
-                      <svg
-                        style={{ width: '18px', height: '18px' }}
-                        viewBox='0 0 24 24'
-                      >
-                        <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
-                      </svg>
-                      Logout
-                    </div>
+                  <DropdownItem href='/labkits'>Lab Kits</DropdownItem>
+                  <DropdownItem href='https://docs.google.com/forms/d/e/1FAIpQLSfAKfUnblxOZ0r3BjMY6xe_0g2zC7v3OfaadyvF-Ste1eL28A/viewform'>
+                    Microsoft Imagine
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
-            ) : (
-              <NavLink href='/login'>Login</NavLink>
-            )}
-          </Nav>
+              {this.state.user && this.state.user.accessLevel >= 1 && (
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle nav caret>
+                    Printing
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem href='/2DPrinting'>2D Printing</DropdownItem>
+                    <DropdownItem href='/3DPrintingForm'>
+                      3D Printing
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              )}
+              {this.state.unauthedRoutes.map((link, index) => {
+                return (
+                  <NavItem key={index}>
+                    <NavLink href={link.route}>{link.title}</NavLink>
+                  </NavItem>
+                )
+              })}
+              {!this.props.authenticated && (
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle nav caret>
+                    Join Us!
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem href='/register'>
+                      Membership Application
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              )}
+              {this.state.isLoggedIn && this.state.user ? (
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle nav caret>
+                    <svg
+                      style={{ width: '30px', height: '30px' }}
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        fill='#AAAAAA'
+                        d='M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z'
+                      />
+                    </svg>
+                    {this.state.user.name}
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem href='/profile'>Profile</DropdownItem>
+                    {this.state.user.accessLevel >= 1 && (
+                      <DropdownItem href='/dashboard'>Admin</DropdownItem>
+                    )}
+                    <DropdownItem>
+                      <div onClick={this.handleLogout}>
+                        <svg
+                          style={{ width: '18px', height: '18px' }}
+                          viewBox='0 0 24 24'
+                        >
+                          <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
+                        </svg>
+                        Logout
+                      </div>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              ) : (
+                <NavLink href='/login'>Login</NavLink>
+              )}
+            </Nav>
+          </Collapse>
         </Navbar>
       </div>
     )

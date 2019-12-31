@@ -16,7 +16,6 @@ import {
   ModalFooter
 } from 'reactstrap'
 import axios from 'axios'
-import Layout from '../../Components/Layout/Layout'
 
 let fill = false
 export default class Example extends React.Component {
@@ -31,32 +30,9 @@ export default class Example extends React.Component {
       projectType: '',
       contact: '',
       comment: '',
-      user: {},
+      user: this.props.user,
       modal: false,
-      isLoggedIn: false
-    }
-  }
-
-  componentDidMount () {
-    const token = window.localStorage
-      ? window.localStorage.getItem('jwtToken')
-      : ''
-
-    if (token) {
-      axios
-        .post('/api/user/verify', { token })
-        .then(res => {
-          this.setState({
-            user: res.data,
-            isLoggedIn: true
-          })
-        })
-        .catch(() => {
-          if (this.props.history) this.props.history.push('/login')
-          window.localStorage.removeItem('jwtToken')
-        })
-    } else {
-      this.props.history.push('/login')
+      isLoggedIn: this.props.authenticated
     }
   }
 
@@ -216,7 +192,7 @@ export default class Example extends React.Component {
 
   render () {
     return (
-      <Layout>
+      <>
         {fill === false ? (
           <Container>
             <Form>
@@ -384,7 +360,7 @@ export default class Example extends React.Component {
             <p style={{ margin: '2em' }}>You may now return to the homepage!</p>
           </div>
         ) : null}
-      </Layout>
+      </>
     )
   }
 }

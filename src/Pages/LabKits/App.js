@@ -5,7 +5,6 @@ import {
   ListGroupItemHeading,
   ListGroupItemText
 } from 'reactstrap'
-import Layout from '../../Components/Layout/Layout'
 /*
         <ListGroupItem>
           <ListGroupItemHeading> Mouser Order (CMOS Chips)</ListGroupItemHeading>
@@ -18,7 +17,7 @@ import Layout from '../../Components/Layout/Layout'
 export default class CMPELabKits extends React.Component {
   render () {
     return (
-      <Layout>
+      <>
         <ListGroup>
           <ListGroupItemHeading> SJTwo Board </ListGroupItemHeading>
           <ListGroupItemText>
@@ -70,7 +69,7 @@ export default class CMPELabKits extends React.Component {
             </ListGroupItem>
           </ListGroupItemText>
         </ListGroup>
-      </Layout>
+      </>
     )
   }
 }

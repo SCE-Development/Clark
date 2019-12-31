@@ -2,7 +2,6 @@ import React from 'react'
 import './membershipApplication.css'
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap'
 import axios from 'axios'
-import Layout from '../../Components/Layout/Layout'
 import MembershipPlan from '../MembershipPlan/App.js'
 export default class MembershipApplication extends React.Component {
   // @ctor
@@ -227,7 +226,7 @@ export default class MembershipApplication extends React.Component {
   // @returns         (jsx) html      The generated html content
   render () {
     return (
-      <Layout>
+      <React.Fragment>
         <div className='membership-application'>
           <h1 className='page-title'>Member Registration</h1>
           <div className='notice'>
@@ -297,7 +296,7 @@ export default class MembershipApplication extends React.Component {
                 </p>
               </div>) : null}
         </div>
-      </Layout>
+      </React.Fragment>
     )
   }
 }
