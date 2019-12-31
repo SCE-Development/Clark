@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Card, CardImg, CardTitle, Button } from 'reactstrap'
 // import Iframe from 'react-iframe'
-import './Benefits.css'
+import './benefits.css'
 import './card-config.css'
 import './card-settings.css'
 // import { render } from 'react-dom'
