@@ -79,6 +79,7 @@ util/common/trustStore/*.csr
 
 # For now, ignore the security file so that people can name their own CSRs, Certs, etc. their way
 util/common/security.js
+src/APIFunctions/Firebase.js
 
 # Ignore failed project files
 public/core/core_legacy.html

@@ -13,6 +13,9 @@ export default function AdminNavbar (props) {
 
   const navbarLinks = [
     { title: 'Overview', route: '/dashboard' },
+    { title: 'Admin', route: '/admin', restricted: true },
+    { title: 'Officer Manager', route: '/officerDB' },
+    { title: 'Member Manager', route: '/member-manager' },
     { title: 'Event Manager', route: '/event-manager' },
     { title: '3DConsole', route: '/3DConsole' }
   ]

@@ -1,75 +1,115 @@
 import React from 'react'
-import './officer-db.css'
+import './OfficerDB.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { Table } from 'reactstrap'
+import { Table, Input } from 'reactstrap'
+import InfoRow from './InfoRow'
+import AdderModal from './Edits/Adder'
+import {
+  getUsers,
+  getOfficers,
+  deleteOfficer,
+  editAccessLevel
+} from '../../APIFunctions/OfficerDB'
+import { addSymbol } from './SVG'
 
-export default class App extends React.Component {
+export default class OfficerDB extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      email: '',
-      password: '',
-      message: '',
-      AnimationCSS1: {},
-      AnimationCSS2: {},
-      people: [
-        {
-          firstName: 'Surabhi',
-          lastName: 'Gupta',
-          linkedIn: '@surabhig',
-          Github: 'surabhig',
-          description: '....',
-          major: 'Software Engineering'
-        },
-        {
-          firstName: 'Zach',
-          lastName: 'Menes',
-          linkedIn: '@zachymemes',
-          Github: 'zachMenes',
-          description: '..ggg..',
-          major: 'Computer Engineering'
-        }
-      ]
+      toggleAdder: false,
+      users: [],
+      officers: [],
+      queryOfficers: []
     }
   }
 
-  // displaying each row of the map, used for mapping
-  row = (person, index) => {
-    return (
-      <tr key={index}>
-        <td>{parseInt(index) + 1}</td>
-        <td>{person.firstName}</td>
-        <td>{person.lastName}</td>
-        <td>{person.linkedIn}</td>
-        <td>{person.Github}</td>
-        <td>{person.description}</td>
-        <td>{person.major}</td>
-      </tr>
+  async componentDidMount () {
+    await this.getOfficers()
+    this.setState({ users: await getUsers(this.props.user.token) })
+  }
+
+  async getOfficers () {
+    this.setState({ officers: await getOfficers(this.props.user.token) }, () =>
+      this.queryOfficers('')
     )
+  }
+
+  async deleteOfficer (officerEmail) {
+    // delete officer!
+    await deleteOfficer(officerEmail, this.props.user.token)
+    // change user accessLevel to member-level
+    await editAccessLevel(officerEmail, 0, this.props.user.token)
+  }
+
+  setToggle () {
+    this.setState({ toggleAdder: !this.state.toggleAdder })
+  }
+
+  queryOfficers (query) {
+    query
+      ? this.setState({
+        queryOfficers: this.state.officers.filter(officer =>
+          officer.name
+            .trim()
+            .toLowerCase()
+            .includes(query)
+        )
+      })
+      : this.setState({ queryOfficers: this.state.officers })
   }
 
   render () {
     return (
       <div className='App'>
+        <Input
+          style={{ marginBottom: '10px' }}
+          onChange={event =>
+            this.queryOfficers(event.target.value.trim().toLowerCase())}
+          placeholder='Search Name'
+        />
+
         <header className='App-header'>
           <h1>Officer Page</h1>
         </header>
         <Table striped bordered hover variant='dark'>
           <thead>
             <tr>
-              <th>#</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>LinkedIn</th>
-              <th>Github</th>
-              <th>Description</th>
-              <th>Major</th>
+              {['Name', 'Role', 'LinkedIn', 'Github', 'Quote', 'Edit'].map(
+                (field, ind) => (
+                  <th key={ind}>{field}</th>
+                )
+              )}
+              <th
+                onClick={() => {
+                  this.setToggle()
+                }}
+              >
+                {addSymbol()}
+              </th>
+              <AdderModal
+                user={this.props.user}
+                users={this.state.users}
+                toggle={this.state.toggleAdder}
+                getOfficers={() => this.getOfficers()}
+                setToggle={() => {
+                  this.setToggle()
+                }}
+              />
             </tr>
           </thead>
+
           <tbody>
-            {this.state.people.map((person, index) => {
-              return this.row(person, index)
-            })}
+            {this.state.queryOfficers.map((officer, index) => (
+              <InfoRow
+                {...officer}
+                officer={officer}
+                user={this.props.user}
+                key={index}
+                getOfficers={() => this.getOfficers()}
+                deleteOfficer={emailToDelete =>
+                  this.deleteOfficer(emailToDelete)}
+              />
+            ))}
           </tbody>
         </Table>
       </div>

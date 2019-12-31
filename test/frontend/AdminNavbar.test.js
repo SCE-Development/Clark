@@ -26,10 +26,10 @@ describe('<AdminNavbar />', () => {
   })
   it('Should render 5 <NavLink /> tags with officer Credentials', () => {
     const wrapper = mount(<AdminNavbar />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(3)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(5)
   })
   it('Should render 6 <NavLink /> tags with admin Credentials', () => {
     const wrapper = mount(<AdminNavbar {...adminAppProps} />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(3)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(6)
   })
 })

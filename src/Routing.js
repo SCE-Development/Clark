@@ -18,7 +18,7 @@ import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js'
 import MembershipApplication from './Pages/MembershipApplication/membershipApplication.jsx'
 import Team from './Pages/TheTeam/TheTeam.js'
 import Printing from './Pages/2DPrinting/2DPrinting.js'
-import OfficerDB from './Pages/OfficerDB/OfficerDB.js'
+import OfficerDB from './Pages/OfficerDB/OfficerDB'
 
 export default function Routing ({ appProps }) {
   const userIsAuthenticated = appProps.authenticated
@@ -73,12 +73,17 @@ export default function Routing ({ appProps }) {
       path: '/profile',
       allowedIf: userIsAuthenticated,
       redirect: '/login'
+    },
+    {
+      Component: OfficerDB,
+      path: '/officerDB',
+      allowedIf: userIsAuthenticated,
+      redirect: '/login'
     }
   ]
   const signedOutRoutes = [
     { Component: Home, path: '/' },
     { Component: EventList, path: '/events' },
-    { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' }
   ]
   return (

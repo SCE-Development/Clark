@@ -11,13 +11,10 @@ const OfficerSchema = new Schema(
       type: String,
       required: true
     },
-    facebook: {
+    linkedIn: {
       type: String
     },
     github: {
-      type: String
-    },
-    instagram: {
       type: String
     },
     // The access level is defined as follows:
@@ -26,20 +23,18 @@ const OfficerSchema = new Schema(
     // 0: Member
     // 1: Officer
     // 2: Admin
-    level: {
+    accessLevel: {
       type: Number,
       require: true
     },
-    team: {
-      type: String,
-      require: true
+    role: {
+      type: String
+    },
+    pictureName: {
+      type: String
     },
     quote: {
       type: String
-    },
-    major: {
-      type: String,
-      require: true
     }
   },
   { collection: 'Officers' }
