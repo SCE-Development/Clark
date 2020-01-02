@@ -244,9 +244,32 @@ router.post('/search', function (req, res) {
           joinDate: result.joinDate,
           lastLogin: result.lastLogin,
           membershipValidUntil: result.membershipValidUntil,
-          pagesPrinted: result.pagesPrinted
+          pagesPrinted: result.pagesPrinted,
+          doorCode: result.doorCode
         }
         return res.status(OK).send(user)
+      })
+    }
+  })
+})
+
+// Search for all members
+router.post('/users', function (req, res) {
+  // Strip JWT from the token
+  const token = req.body.token.replace(/^JWT\s/, '')
+
+  jwt.verify(token, config.secretKey, function (error, decoded) {
+    if (error) {
+      // Unauthorized
+      res.sendStatus(UNAUTHORIZED)
+    } else {
+      // Ok
+      // Build this out to search for a user
+      // res.status(200).send(decoded.username)
+      User.find({}, function (error, result) {
+        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
+        if (error) res.status(400).send({ message: 'Bad Request.' })
+        return res.status(OK).send(result)
       })
     }
   })
@@ -257,9 +280,17 @@ router.post('/edit', (req, res) => {
   // Strip JWT from the token
   const token = req.body.token.replace(/^JWT\s/, '')
   const query = { email: req.body.queryEmail }
-  const user = {
-    ...req.body
-  }
+  const user =
+    typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
+      ? { ...req.body }
+      : {
+        ...req.body,
+        membershipValidUntil: getMemberValidationDate(
+          parseInt(req.body.numberOfSemestersToSignUpFor)
+        )
+      }
+
+  delete user.numberOfSemestersToSignUpFor
 
   // Remove the auth token from the form getting edited
   delete user.queryEmail
@@ -282,9 +313,10 @@ router.post('/edit', (req, res) => {
             .send({ message: `${req.body.queryEmail} not found.` })
         }
 
-        return res
-          .status(OK)
-          .send({ message: `${req.body.queryEmail} was updated.` })
+        return res.status(OK).send({
+          message: `${req.body.queryEmail} was updated.`,
+          membershipValidUntil: user.membershipValidUntil
+        })
       })
     }
   })

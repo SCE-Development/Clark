@@ -3,6 +3,7 @@
   width: max-content;
   align-self: center;
 }
+
 .membership .row .card:hover{
   background-color: lightblue;
   cursor: pointer;
@@ -17,4 +18,53 @@
 .membership .row .card .img{
   height: 200px;
   width: 100%;
+}
+
+.emailVerified{
+  fill:rgb(8, 185, 117);
+}
+
+.userVerified{
+  fill:red;
+  outline: none;
+  border: none;
+}
+
+.icon-button,
+.delete{
+  background-color: transparent;
+  outline: none;
+  border:none;
+  fill:grey;
+  animation: reverse;
+  padding: 5px;
+  border-radius: 20px;
+  margin: 5px
+}
+
+.delete:hover{
+  padding: 5px;
+  border-radius: 20px;
+  outline: none;
+  fill:red;
+  animation: reverse;
+  cursor:pointer;
+}
+
+.userVerified:hover{
+  fill:grey;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  cursor: pointer;
+
+}
+
+.icon-button:hover{
+  cursor:pointer;
+  padding: 5px;
+  border-radius: 20px;
+  outline: none;
+  fill:rgb(8, 185, 117);
+  animation: reverse;
 }
