@@ -1,35 +1,21 @@
-// PROJECT:   Core-v4
-//  Name:    R. Javier
-//  File:    api/routes/membershipApplication/index.js
-//  Date Created:  March 17, 2019
-//  Last Modified:  March 17, 2019
-//  Details:
-//      This file contains routing logic to service all routes requested under the the
-//                  "/memberApplication" endpoint (a.k.a. the Membership Application Module)
-//     which is publicly exposed to allow applications from the public facing site.
-//  Dependencies:
-//      JavaScript ECMAscript 6
-
 'use strict'
 
-// Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
 const router = express.Router()
 const PrintingForm3D = require('../models/PrintingForm3D.js')
 const settings = require('../../util/settings')
 const logger = require(`${settings.util}/logger`)
-const jwt = require('jsonwebtoken')
-
-const passport = require('passport')
-require('../config/passport')(passport)
-const config = require('../config/config')
-
-const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST } = {
-  OK: 200,
-  NOT_FOUND: 404,
-  UNAUTHORIZED: 401,
-  BAD_REQUEST: 400
-}
+const {
+  checkIfTokenSent,
+  checkIfTokenValid
+} = require('../../util/api-utils/token-functions')
+const {
+  OK,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND
+} = require('../constants')
 
 router.post('/submit', (req, res) => {
   const data = {
@@ -68,40 +54,38 @@ router.post('/GetForm', (req, res) => {
   })
 })
 
-/// This hasn't been used yet
 router.post('/delete', (req, res) => {
-  const token = req.body.token.replace(/^JWT\s/, '')
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN)
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
+  PrintingForm3D.deleteOne(
+    { email: req.body.email, date: req.body.date },
+    function (error, form) {
+      if (error) {
+        logger.log(`3DPrinting /Delete3DForm error: ${error}`)
+        return res.sendStatus(BAD_REQUEST)
+      }
 
-  jwt.verify(token, config.secretKey, function (error, decoded) {
-    if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      PrintingForm3D.deleteOne(
-        { email: req.body.email, date: req.body.date },
-        function (error, form) {
-          if (error) {
-            logger.log(`3DPrinting /Delete3DForm error: ${error}`)
-            return res.sendStatus(BAD_REQUEST)
-          }
-
-          if (form.n < 1) {
-            logger.log(`3DPrinting /Delete3DForm error: ${error}`)
-            res.status(NOT_FOUND).send({ message: 'Form not found.' })
-          } else {
-            logger.log(`3DPrinting /Delete3DForm deleted: ${req.body.name}`)
-            res.status(OK).send({ message: `${req.body.name} was deleted.` })
-          }
-        }
-      )
+      if (form.n < 1) {
+        logger.log(`3DPrinting /Delete3DForm error: ${error}`)
+        res.status(NOT_FOUND).send({ message: 'Form not found.' })
+      } else {
+        logger.log(`3DPrinting /Delete3DForm deleted: ${req.body.name}`)
+        res.status(OK).send({ message: `${req.body.name} was deleted.` })
+      }
     }
-  })
+  )
 })
 
 // Edit/Update a member record
 router.post('/edit', (req, res) => {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN)
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
   const query = { email: req.body.email, date: req.body.date }
   const form = {
     ...req.body
@@ -110,27 +94,19 @@ router.post('/edit', (req, res) => {
   // Remove the auth token from the form getting edited
   delete form.token
 
-  jwt.verify(token, config.secretKey, function (error, decoded) {
+  PrintingForm3D.updateOne(query, { ...form }, function (error, result) {
     if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      // Build this out to search for a user
-      PrintingForm3D.updateOne(query, { ...form }, function (error, result) {
-        if (error) {
-          logger.log(error)
-          return res.sendStatus(BAD_REQUEST)
-        }
-
-        if (result.nModified < 1) {
-          return res
-            .status(NOT_FOUND)
-            .send({ message: `${req.body.name} not found.` })
-        }
-
-        return res.status(OK).send({ message: `${req.body.name} was updated.` })
-      })
+      logger.log(error)
+      return res.sendStatus(BAD_REQUEST)
     }
+
+    if (result.nModified < 1) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.name} not found.` })
+    }
+
+    return res.status(OK).send({ message: `${req.body.name} was updated.` })
   })
 })
 

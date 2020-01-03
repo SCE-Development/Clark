@@ -7,7 +7,7 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-
+const statusCodes = require('../api/constants')
 let app = null
 const expect = chai.expect
 // tools for testing
@@ -31,14 +31,14 @@ describe('Users', () => {
   let token = ''
 
   describe('/POST checkIfUserExists with no users added yet', () => {
-    it('Should not return statusCode 200 when an email is not provided', done => {
+    it('Should return statusCode 400 when an email is not provided', done => {
       const user = {}
       chai
         .request(app)
         .post('/api/user/checkIfUserExists')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.BAD_REQUEST)
           done()
         })
         .catch(err => {
@@ -55,7 +55,7 @@ describe('Users', () => {
         .post('/api/user/checkIfUserExists')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
 
           done()
         })
@@ -79,7 +79,7 @@ describe('Users', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
 
           done()
         })
@@ -101,7 +101,7 @@ describe('Users', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(409)
+          expect(res).to.have.status(statusCodes.CONFLICT)
 
           done()
         })
@@ -123,7 +123,7 @@ describe('Users', () => {
         .post('/api/user/checkIfUserExists')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(409)
+          expect(res).to.have.status(statusCodes.CONFLICT)
 
           done()
         })
@@ -141,7 +141,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(400)
+          expect(res).to.have.status(statusCodes.BAD_REQUEST)
 
           done()
         })
@@ -160,7 +160,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(401)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -179,7 +179,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(401)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -198,7 +198,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('token')
           token = res.body.token
@@ -218,7 +218,7 @@ describe('Users', () => {
         .post('/api/user/verify')
         .send({})
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -233,7 +233,7 @@ describe('Users', () => {
         .post('/api/user/verify')
         .send({ token: 'Invalid Token' })
         .then(function (res) {
-          expect(res).to.have.status(401)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -248,7 +248,7 @@ describe('Users', () => {
         .post('/api/user/verify')
         .send({ token: token })
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('name')
           res.body.should.have.property('email')
@@ -263,7 +263,7 @@ describe('Users', () => {
   })
 
   describe('/POST search', () => {
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const user = {
         email: 'a@b.c'
       }
@@ -272,7 +272,7 @@ describe('Users', () => {
         .post('/api/user/users')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -290,7 +290,7 @@ describe('Users', () => {
         .post('/api/user/users')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -308,7 +308,7 @@ describe('Users', () => {
         .post('/api/user/users')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('array')
           expect(res.body).to.have.length(1)
 
@@ -321,7 +321,7 @@ describe('Users', () => {
   })
 
   describe('/POST searchFor', () => {
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const user = {
         email: 'a@b.c'
       }
@@ -330,7 +330,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -349,7 +349,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -368,7 +368,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
 
           done()
         })
@@ -387,7 +387,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('firstName')
           res.body.should.have.property('middleInitial')
@@ -410,7 +410,7 @@ describe('Users', () => {
   })
 
   describe('/POST edit', () => {
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const user = {
         queryEmail: 'a@b.c'
       }
@@ -419,7 +419,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -438,7 +438,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -457,7 +457,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
 
           done()
         })
@@ -478,7 +478,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 
@@ -491,7 +491,7 @@ describe('Users', () => {
   })
 
   describe('/POST delete', () => {
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const user = {
         email: 'a@b.c'
       }
@@ -500,7 +500,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -509,7 +509,7 @@ describe('Users', () => {
         })
     })
 
-    it('Should return statusCode 401 if an invalid token was passed in', done => {
+    it('Should return statusCode 403 if an invalid token was passed in', done => {
       const user = {
         email: 'a@b.c',
         token: 'Invalid token'
@@ -519,7 +519,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -538,7 +538,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
 
           done()
         })
@@ -557,7 +557,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 

@@ -1,23 +1,5 @@
-// PROJECT:   Core-v4
-//  Name:    R. Javier
-//  File:    api/routes/membershipApplication/index.js
-//  Date Created:  March 17, 2019
-//  Last Modified:  March 17, 2019
-//  Details:
-//      This file contains routing logic to service all routes requested under the the
-//                  "/memberApplication" endpoint (a.k.a. the Membership Application Module)
-//     which is publicly exposed to allow applications from the public facing site.
-//  Dependencies:
-//      JavaScript ECMAscript 6
-
-// TODO:
-// Build out rest of login to include tracking last login
-// Remove "Username" in favor of email?
-// "ClearanceLevel" or access level implementation
-
 'use strict'
 
-// Includes (include as many as you need; the bare essentials are included here)
 const express = require('express')
 const router = express.Router()
 const passport = require('passport')
@@ -27,23 +9,30 @@ const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
 const User = require('../models/User.js')
-
-const { OK, NOT_FOUND, UNAUTHORIZED, BAD_REQUEST, CONFLICT } = {
-  OK: 200,
-  NOT_FOUND: 404,
-  UNAUTHORIZED: 401,
-  BAD_REQUEST: 400,
-  CONFLICT: 409
-}
+const {
+  checkIfTokenSent,
+  checkIfTokenValid
+} = require('../../util/api-utils/token-functions')
+const {
+  OK,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+  CONFLICT
+} = require('../constants')
 
 router.post('/checkIfUserExists', (req, res) => {
+  const { email } = req.body
+  if (!email) {
+    return res.sendStatus(BAD_REQUEST)
+  }
   User.findOne(
     {
-      email: req.body.email.toLowerCase()
+      email: email.toLowerCase()
     },
     function (error, user) {
       if (error) {
-        // Bad Request
         logger.log(`User /user/checkIfUserExists error: ${error}`)
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
       }
@@ -61,7 +50,6 @@ router.post('/checkIfUserExists', (req, res) => {
 
 // Register a member
 router.post('/register', function (req, res) {
-  // Ok
   if (req.body.email && req.body.password) {
     const newUser = new User({
       password: req.body.password,
@@ -86,19 +74,18 @@ router.post('/register', function (req, res) {
 
     newUser.save(function (error) {
       if (error) {
-        // Confict
         res.status(CONFLICT).send({ message: 'Username already exists.' })
       } else {
-        // Ok
         res.sendStatus(OK)
       }
     })
   }
 })
 
-// Login
 router.post('/login', function (req, res) {
-  if (!req.body.email || !req.body.password) return res.sendStatus(400)
+  if (!req.body.email || !req.body.password) {
+    return res.sendStatus(BAD_REQUEST)
+  }
 
   User.findOne(
     {
@@ -106,13 +93,11 @@ router.post('/login', function (req, res) {
     },
     function (error, user) {
       if (error) {
-        // Bad Request
         logger.log('User API bad request: ', error)
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
       }
 
       if (!user) {
-        // Unauthorized if the username does not match any records in the database
         logger.log("User/pass doesn't match our records: ", req.body.email)
         res
           .status(UNAUTHORIZED)
@@ -184,101 +169,85 @@ router.post('/login', function (req, res) {
 
 // Delete a member
 router.post('/delete', (req, res) => {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN)
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
 
-  jwt.verify(token, config.secretKey, function (error, decoded) {
+  User.deleteOne({ email: req.body.email }, function (error, user) {
     if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      // Ok
-      // Delete a user
-      User.deleteOne({ email: req.body.email }, function (error, user) {
-        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
-        if (error) res.status(400).send({ message: 'Bad Request.' })
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
+    }
 
-        if (user.n < 1) {
-          res.status(NOT_FOUND).send({ message: 'User not found.' })
-        } else {
-          res.status(OK).send({ message: `${req.body.email} was deleted.` })
-        }
-      })
+    if (user.n < 1) {
+      res.status(NOT_FOUND).send({ message: 'User not found.' })
+    } else {
+      res.status(OK).send({ message: `${req.body.email} was deleted.` })
     }
   })
 })
 
 // Search for a member
 router.post('/search', function (req, res) {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
-
-  jwt.verify(token, config.secretKey, function (error, decoded) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN)
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
+  User.findOne({ email: req.body.email }, function (error, result) {
     if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      // Ok
-      // Build this out to search for a user
-      // res.status(200).send(decoded.username)
-      User.findOne({ email: req.body.email }, function (error, result) {
-        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
-        if (error) res.status(400).send({ message: 'Bad Request.' })
-
-        if (!result) {
-          return res
-            .status(NOT_FOUND)
-            .send({ message: `${req.body.email} not found.` })
-        }
-
-        const user = {
-          firstName: result.firstName,
-          middleInitial: result.middleInitial,
-          lastName: result.lastName,
-          email: result.email,
-          emailVerified: result.emailVerified,
-          emailOptIn: result.emailOptIn,
-          active: result.active,
-          accessLevel: result.accessLevel,
-          major: result.major,
-          joinDate: result.joinDate,
-          lastLogin: result.lastLogin,
-          membershipValidUntil: result.membershipValidUntil,
-          pagesPrinted: result.pagesPrinted,
-          doorCode: result.doorCode
-        }
-        return res.status(OK).send(user)
-      })
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
     }
+
+    if (!result) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.email} not found.` })
+    }
+
+    const user = {
+      firstName: result.firstName,
+      middleInitial: result.middleInitial,
+      lastName: result.lastName,
+      email: result.email,
+      emailVerified: result.emailVerified,
+      emailOptIn: result.emailOptIn,
+      active: result.active,
+      accessLevel: result.accessLevel,
+      major: result.major,
+      joinDate: result.joinDate,
+      lastLogin: result.lastLogin,
+      membershipValidUntil: result.membershipValidUntil,
+      pagesPrinted: result.pagesPrinted,
+      doorCode: result.doorCode
+    }
+    return res.status(OK).send(user)
   })
 })
 
 // Search for all members
 router.post('/users', function (req, res) {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
-
-  jwt.verify(token, config.secretKey, function (error, decoded) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN)
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
+  User.find({}, function (error, result) {
     if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      // Ok
-      // Build this out to search for a user
-      // res.status(200).send(decoded.username)
-      User.find({}, function (error, result) {
-        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
-        if (error) res.status(400).send({ message: 'Bad Request.' })
-        return res.status(OK).send(result)
-      })
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
     }
+    return res.status(OK).send(result)
   })
 })
 
 // Edit/Update a member record
 router.post('/edit', (req, res) => {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN)
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
   const query = { email: req.body.queryEmail }
   const user =
     typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
@@ -296,56 +265,42 @@ router.post('/edit', (req, res) => {
   delete user.queryEmail
   delete user.token
 
-  jwt.verify(token, config.secretKey, function (error, decoded) {
+  User.updateOne(query, { ...user }, function (error, result) {
     if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      // Ok
-      // Build this out to search for a user
-      User.updateOne(query, { ...user }, function (error, result) {
-        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
-        if (error) res.status(400).send({ message: 'Bad Request.' })
-
-        if (result.nModified < 1) {
-          return res
-            .status(NOT_FOUND)
-            .send({ message: `${req.body.queryEmail} not found.` })
-        }
-
-        return res.status(OK).send({
-          message: `${req.body.queryEmail} was updated.`,
-          membershipValidUntil: user.membershipValidUntil
-        })
-      })
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
     }
+
+    if (result.nModified < 1) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.queryEmail} not found.` })
+    }
+
+    return res.status(OK).send({
+      message: `${req.body.queryEmail} was updated.`,
+      membershipValidUntil: user.membershipValidUntil
+    })
   })
 })
 
 router.post('getPagesPrintedCount', (req, res) => {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
-
-  jwt.verify(token, config.secretKey, function (error, decoded) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN)
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
+  User.findOne({ email: req.body.email }, function (error, result) {
     if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      // Ok
-      // Build this out to search for a user
-      User.findOne({ email: req.body.email }, function (error, result) {
-        // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
-        if (error) res.status(400).send({ message: 'Bad Request.' })
-
-        if (!result) {
-          return res
-            .status(NOT_FOUND)
-            .send({ message: `${req.body.email} not found.` })
-        }
-
-        return res.status(OK).send(result.pagesPrinted)
-      })
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
     }
+
+    if (!result) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.email} not found.` })
+    }
+
+    return res.status(OK).send(result.pagesPrinted)
   })
 })
 
@@ -354,17 +309,16 @@ router.post('getPagesPrintedCount', (req, res) => {
 // Returns the name and accesslevel of the user w/ the given access token
 // Todo: Check the DB to ensure the access level is correct and the user exists
 router.post('/verify', function (req, res) {
-  // Strip JWT from the token
-  const token = req.body.token.replace(/^JWT\s/, '')
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
 
-  jwt.verify(token, config.secretKey, function (error, decoded) {
-    if (error) {
-      // Unauthorized
-      res.sendStatus(UNAUTHORIZED)
-    } else {
-      res.status(OK).send(decoded)
-    }
-  })
+  const decoded = checkIfTokenValid(req)
+  if (decoded) {
+    res.status(OK).send(decoded)
+  } else {
+    res.sendStatus(UNAUTHORIZED)
+  }
 })
 
 // Helpers

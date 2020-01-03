@@ -6,6 +6,7 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
+const statusCodes = require('../api/constants')
 
 let app = null
 const expect = chai.expect
@@ -45,7 +46,7 @@ describe('OfficerManager', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
 
           done()
         })
@@ -64,7 +65,7 @@ describe('OfficerManager', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('token')
           token = res.body.token
@@ -83,7 +84,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/submit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(400)
+          expect(res).to.have.status(statusCodes.BAD_REQUEST)
 
           done()
         })
@@ -92,7 +93,7 @@ describe('OfficerManager', () => {
         })
     })
 
-    it('Should return statusCode 500 when no token is submited', done => {
+    it('Should return statusCode 403 when no token is submited', done => {
       const form = {
         name: 'pinkUnicorn',
         email: 'test@test.com',
@@ -105,7 +106,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/submit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(500)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -128,7 +129,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/submit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(401)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -151,7 +152,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/submit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
 
           done()
         })
@@ -162,7 +163,7 @@ describe('OfficerManager', () => {
   })
 
   describe('/POST GetForm', () => {
-    it('Should return statusCode 500 when no token is submited', done => {
+    it('Should return statusCode 403 when no token is submited', done => {
       const form = {
         email: 'test@test.com'
       }
@@ -171,7 +172,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/GetForm')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(500)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -190,7 +191,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/GetForm')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(401)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -206,7 +207,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/GetForm')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           const response = res.body
           response.should.be.a('array')
           expect(response).to.have.length(1)
@@ -233,7 +234,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/GetForm')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('array')
           // make sure all child has querries parameter
           res.body.forEach(obj => {
@@ -249,7 +250,7 @@ describe('OfficerManager', () => {
   })
 
   describe('/POST edit', () => {
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const form = {
         name: 'pinkUnicorn'
       }
@@ -258,7 +259,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -277,7 +278,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -296,7 +297,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
 
           done()
         })
@@ -316,7 +317,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 
@@ -338,7 +339,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/GetForm')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           expect(res.body[0].name).to.equal('new name')
 
           done()
@@ -350,7 +351,7 @@ describe('OfficerManager', () => {
   })
 
   describe('/POST delete', () => {
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const form = {
         name: 'invalid-name',
         email: 'test@test.com'
@@ -360,7 +361,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -379,7 +380,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -398,7 +399,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
 
           done()
         })
@@ -417,7 +418,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 
@@ -438,7 +439,7 @@ describe('OfficerManager', () => {
         .post('/api/officerManager/GetForm')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           expect(res.body).have.length(0)
 
           done()

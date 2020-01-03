@@ -6,6 +6,7 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
+const statusCodes = require('../api/constants')
 
 let app = null
 const expect = chai.expect
@@ -40,7 +41,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/submit')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.BAD_REQUEST)
 
           done()
         })
@@ -61,7 +62,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/submit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
 
           done()
         })
@@ -79,7 +80,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/GetForm')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('array')
           date = res.body[0].date
 
@@ -105,7 +106,7 @@ describe('3DPrintingForm', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           done()
         })
         .catch(err => {
@@ -123,7 +124,7 @@ describe('3DPrintingForm', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('token')
           token = res.body.token
@@ -135,7 +136,7 @@ describe('3DPrintingForm', () => {
         })
     })
 
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const form = {
         name: 'pinkUnicorn'
       }
@@ -144,7 +145,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -164,7 +165,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -184,7 +185,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
 
           done()
         })
@@ -196,7 +197,7 @@ describe('3DPrintingForm', () => {
     it('Should return statusCode 200 and a message if a form was edited', done => {
       const form = {
         name: 'pinkUnicorn',
-        color: 'NeonGhost',
+        color: 'something else',
         token: token,
         email: 'b@b.c',
         date: date
@@ -206,7 +207,9 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/edit')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          console.log(res.body)
+
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 
@@ -219,7 +222,7 @@ describe('3DPrintingForm', () => {
   })
 
   describe('/POST delete', () => {
-    it('Should return statusCode 500 if no token is passed in', done => {
+    it('Should return statusCode 403 if no token is passed in', done => {
       const form = {
         name: 'invalid-name',
         color: 'invalid-color',
@@ -230,7 +233,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.FORBIDDEN)
 
           done()
         })
@@ -251,7 +254,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.not.have.status(200)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
 
           done()
         })
@@ -272,7 +275,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
 
           done()
         })
@@ -294,7 +297,7 @@ describe('3DPrintingForm', () => {
         .post('/api/3DPrintingForm/delete')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 
