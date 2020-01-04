@@ -1,0 +1,63 @@
+.membership-form {
+  width: 40%;
+}
+
+#membership-plan-btn {
+  align-items: center;
+  justify-content: center;
+}
+
+.transition-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.unavailable {
+  color: red;
+  font-weight: 500;
+}
+
+#name-field-row{
+  justify-content: space-between;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.membership-card {
+  max-width: 35%;
+  text-align: center;
+}
+
+.membership-plan-row {
+  justify-content: space-evenly;
+}
+
+.active-plan {
+  background-color: rgb(188, 255, 186);
+}
+
+.email-input {
+  width: 100%;
+}
+
+#email-input-container {
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.membership {
+  display: inline-block;
+}
+
+.membership-card:hover{
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.img{
+  height: 200px;
+  width: 100%;
+}

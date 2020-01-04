@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './membership-plan.css'
+import './register-page.css'
 import fall from './assets/fall.jpg'
 import fall2 from './assets/fall2.jpeg'
 import winter from './assets/winter.jpeg'
@@ -8,33 +8,39 @@ import summer from './assets/summer.jpeg'
 import summer2 from './assets/summer2.jpeg'
 import spring from './assets/spring.jpg'
 import spring2 from './assets/spring2.jpeg'
+import { Container, Button, Row } from 'reactstrap'
+import { memberApplicationState, membershipPlans } from '../../Enums'
+
 class MembershipPlan extends Component {
   constructor (props) {
     super(props)
     this.state = {
       img1: winter,
-      img2: winter2
+      img2: winter2,
+      activeId: undefined,
+      planSelected: false
     }
   }
 
   cardSelected (id) {
-    if (id === 'Fall 2019') {
-      document.getElementById(id).style.backgroundColor = 'rgb(188, 255, 186)'
-      document.getElementById('Full Year (2019-2020)').style.backgroundColor =
-        ''
-    } else {
-      document.getElementById(id).style.backgroundColor = 'rgb(188, 255, 186)'
-      document.getElementById('Fall 2019').style.backgroundColor = ''
+    if (id === 'Spring and Fall 2020') {
+      this.props.setSelectedPlan(membershipPlans.YEAR)
+    } else if (id === 'Spring 2020') {
+      this.props.setSelectedPlan(membershipPlans.SEMESTER)
     }
+    this.setState({
+      activeId: id,
+      planSelected: true
+    })
   }
 
   getBody (title) {
-    if (title === 'Full Year (2019-2020)') {
+    if (title === 'Spring and Fall 2020') {
       return (
         <h6 style={{ margin: 5 }}>
           Access to our club room during legal building hours. Access to our
           events and news. And much more! This membership lasts a full year and
-          expires on May 20th, 2020. Sign Up @ SCE (ENGR 294){' '}
+          expires on December 20th, 2020. Sign Up @ SCE (ENGR 294){' '}
         </h6>
       )
     }
@@ -42,7 +48,7 @@ class MembershipPlan extends Component {
       <h6 style={{ margin: 5 }}>
         Access to our club room during legal building hours. Access to our
         events and news. And much more! This membership lasts a semester and
-        expires on December 2nd, 2019. Sign Up @ SCE (ENGR 294)
+        expires on May 20th, 2020. Sign Up @ SCE (ENGR 294)
       </h6>
     )
   }
@@ -54,7 +60,11 @@ class MembershipPlan extends Component {
   makeCard (title, img) {
     return (
       <div
-        className='card'
+        className={
+          title === this.state.activeId
+            ? 'card membership-card active-plan'
+            : 'card membership-card'
+        }
         id={title}
         onClick={this.cardSelected.bind(this, title)}
       >
@@ -69,7 +79,6 @@ class MembershipPlan extends Component {
 
   changeSeason () {
     var month = new Date().getMonth() + 1
-
     if (month === 12 || month === 1 || month === 2) {
       this.setState({ img1: winter, img2: winter2 })
     } else if (month >= 3 && month <= 5) {
@@ -83,12 +92,24 @@ class MembershipPlan extends Component {
 
   render () {
     return (
-      <div className='membership'>
-        <div className='row'>
-          {this.makeCard('Fall 2019', this.state.img1)}
-          {this.makeCard('Full Year (2019-2020)', this.state.img2)}
+      <Container>
+        <h1>Hi! We're glad you're here.</h1>
+        <div className='membership'>
+          <Row className='membership-plan-row'>
+            {this.makeCard('Spring 2020', this.state.img1)}
+            {this.makeCard('Spring and Fall 2020', this.state.img2)}
+          </Row>
         </div>
-      </div>
+        <Row className='transition-button-wrapper' id='membership-plan-btn'>
+          <Button
+            disabled={!this.state.planSelected}
+            onClick={() =>
+              this.props.setMembershipState(memberApplicationState.FORM_INFO)}
+          >
+            Add account information
+          </Button>
+        </Row>
+      </Container>
     )
   }
 }

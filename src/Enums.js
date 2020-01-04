@@ -1,3 +1,24 @@
+export const memberApplicationState = {
+  SELECT_MEMBERSHIP_PLAN: 0,
+  FORM_INFO: 1,
+  CONFIRMATION: 2
+}
+
+export const membershipPlans = {
+  YEAR: 1,
+  SEMESTER: 2
+}
+
+export function memberShipPlanToString (key) {
+  let str = ''
+  if (key === membershipPlans.YEAR) {
+    str = 'Spring and Fall 2020'
+  } else if (key === membershipPlans.SEMESTER) {
+    str = 'Spring 2020'
+  }
+  return str
+}
+
 export const membershipStatus = [
   { key: 'Ban', value: -2 },
   { key: 'Pending', value: -1 },
