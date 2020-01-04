@@ -19,12 +19,12 @@ import React from 'react'
 //   CardImg
 // } from 'reactstrap'
 // import classnames from 'classnames'
-import './App.css'
+import './the-gear.css'
 import './card-config.css'
 // import Ari from './gearPics/2018_2019/arisKoumis.png'
 // import Evan from './gearPics/2018_2019/evanUgarte.png'
 
-export default class Example extends React.Component {
+export default class TheGear extends React.Component {
   constructor (props) {
     super(props)
 

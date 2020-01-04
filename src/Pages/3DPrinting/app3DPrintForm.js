@@ -18,7 +18,7 @@ import {
 import axios from 'axios'
 
 let fill = false
-export default class Example extends React.Component {
+export default class PrintForm3D extends React.Component {
   constructor (props) {
     super(props)
 
