@@ -6,6 +6,7 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
+const statusCodes = require('../api/constants')
 let app = null
 
 const expect = chai.expect
@@ -43,7 +44,7 @@ describe('Event', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           done()
         })
         .catch(err => {
@@ -60,7 +61,7 @@ describe('Event', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           res.body.should.be.a('object')
           res.body.should.have.property('token')
           token = res.body.token
@@ -79,7 +80,7 @@ describe('Event', () => {
         .post('/api/event/createEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(403)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
           done()
         })
         .catch(err => {
@@ -95,7 +96,7 @@ describe('Event', () => {
         .post('/api/event/createEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(400)
+          expect(res).to.have.status(statusCodes.BAD_REQUEST)
           done()
         })
         .catch(err => {
@@ -116,7 +117,7 @@ describe('Event', () => {
         .post('/api/event/createEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           done()
         })
         .catch(err => {
@@ -131,7 +132,7 @@ describe('Event', () => {
         .request(app)
         .get('/api/event/getEvents')
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           const getEventsResponse = res.body
           getEventsResponse.should.be.a('array')
           expect(getEventsResponse).to.have.length(1)
@@ -157,7 +158,7 @@ describe('Event', () => {
         .post('/api/event/editEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(403)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
           done()
         })
         .catch(err => {
@@ -174,7 +175,7 @@ describe('Event', () => {
         .post('/api/event/editEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(404)
+          expect(res).to.have.status(statusCodes.NOT_FOUND)
           done()
         })
         .catch(err => {
@@ -193,7 +194,7 @@ describe('Event', () => {
         .post('/api/event/editEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           done()
         })
         .catch(err => {
@@ -205,7 +206,7 @@ describe('Event', () => {
         .request(app)
         .get('/api/event/getEvents')
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           const getEventsResponse = res.body
           expect(getEventsResponse).to.have.length(1)
           expect(getEventsResponse[0].title).to.equal('ros masters divided') // ===
@@ -229,7 +230,7 @@ describe('Event', () => {
         .post('/api/event/deleteEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(403)
+          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
           done()
         })
         .catch(err => {
@@ -246,7 +247,7 @@ describe('Event', () => {
         .post('/api/event/deleteEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(400)
+          expect(res).to.have.status(statusCodes.BAD_REQUEST)
           done()
         })
         .catch(err => {
@@ -263,7 +264,7 @@ describe('Event', () => {
         .post('/api/event/deleteEvent')
         .send(event)
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           done()
         })
         .catch(err => {
@@ -275,7 +276,7 @@ describe('Event', () => {
         .request(app)
         .get('/api/event/getEvents')
         .then(function (res) {
-          expect(res).to.have.status(200)
+          expect(res).to.have.status(statusCodes.OK)
           const getEventsResponse = res.body
           getEventsResponse.should.be.a('array')
           expect(getEventsResponse).to.have.length(0)

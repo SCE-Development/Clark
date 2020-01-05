@@ -15,6 +15,8 @@ import {
 } from 'reactstrap'
 
 export default function UserNavBar (props) {
+  console.log(props)
+
   const [collapsed, setCollapsed] = useState(true)
   const icons = [
     {
@@ -131,7 +133,7 @@ export default function UserNavBar (props) {
                     <DropdownItem href='/dashboard'>Admin</DropdownItem>
                   )}
                   <DropdownItem>
-                    <div onClick={() => props.handleLogout}>
+                    <div onClick={() => props.handleLogout()}>
                       <svg
                         style={{ width: '18px', height: '18px' }}
                         viewBox='0 0 24 24'
