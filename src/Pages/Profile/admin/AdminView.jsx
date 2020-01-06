@@ -12,10 +12,10 @@ export default function Editor(props) {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [middleInitial, setMiddleInitial] = useState("")
-  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [doorCode, setDoorCode] = useState("")
   const [major, setMajor] = useState("")
+  const [email, setEmail] = useState("")
   const [user, setUser] = useState({ ...props.user })
   const [toggle, setToggle] = useState(false)
   const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted)
@@ -37,7 +37,7 @@ export default function Editor(props) {
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
       middleInitial: middleInitial || user.middleInitial,
-      email: email || user.email,
+      email: email || queryEmail,
       major: major || user.major,
       password: hashed,
       doorCode: doorCode || user.doorCode,
@@ -70,7 +70,7 @@ export default function Editor(props) {
   }
 
   function handleSubmissionToggle() {
-    if (user.email === email)
+    if (user.email === email || email.trim()==='')
       setToggleSubmit(!toggleSubmit)
     else {
       checkIfUserExists(email)
