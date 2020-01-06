@@ -1,4 +1,4 @@
- .Page .card {
+.Page .card {
   height: auto;
   width: 20px;
 }
@@ -26,4 +26,8 @@
 #rowCSS{
 	padding-top: 20px;
 	padding-bottom: 10px;
+}
+
+.icon-row{
+  margin-left: -6px;
 }

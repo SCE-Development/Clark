@@ -1,13 +1,16 @@
 import React from 'react'
-import { TabContent, TabPane } from 'reactstrap'
+import { TabContent, TabPane, Row } from 'reactstrap'
 
 // import classnames from 'classnames'
 import './the-team.css'
 import './card-config.css'
-// import Ari from './teamPics/2018_2019/arisKoumis.png'
 import Evan from './teamPics/2018_2019/evanUgarte.png'
+import OfficerCard from './OfficerCard'
+
+// import Layout from '../../Components/Layout/Layout'
+
 // import Alisha from './teamPics/2018_2019/alishaMehndiratta.png'
-// import Thenu from './teamPics/2018_2019/thenuSenthil.png'
+// import Thenu from './teamPics2018_2019/thenuSenthil.png'
 // import Nick from './teamPics/2018_2019/nickDerry.png'
 // import Sarah from './teamPics/2019-2020/sarah.png'
 // import Seema from './teamPics/2019-2020/seema.png'
@@ -17,7 +20,7 @@ import Evan from './teamPics/2018_2019/evanUgarte.png'
 // import Surabhi from './teamPics/2019-2020/serbi.png'
 // import Nanar from './teamPics/2019-2020/nanar.png'
 
-export default class TheTeam extends React.Component {
+export default class Example extends React.Component {
   constructor (props) {
     super(props)
 
@@ -202,15 +205,17 @@ export default class TheTeam extends React.Component {
             <TabPane tabId='1' id='tab1' className='Panel'>
               <h1 className='Title'>Leadership</h1>
 
-              {/* <Row id='rowCSS'>
-                {this.state.json.map((obj, index) => block(obj, index))}
+              <Row id='rowCSS'>
+                {this.state.json.map((obj, index) => (
+                  <OfficerCard key={index} target={obj} index={index} />
+                ))}
               </Row>
+
+              {/* <Row id='rowCSS'>
 
               <h1 className='Title'>Software Development Team</h1>
 
-              <Row id='rowCSS'>
                 {this.state.json.map((obj, index) => block(obj, index))}
-              </Row>
 
               <h1 className='Title'>
                 Event Planning and Public Relations Team
