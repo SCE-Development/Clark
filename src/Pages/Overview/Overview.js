@@ -41,7 +41,7 @@ export default class OverviewBoard extends Component {
           this.setState({ users: result.data })
         }
       })
-      .catch(err => {})
+      .catch()
   }
 
   updateQuery (event) {
@@ -70,8 +70,7 @@ export default class OverviewBoard extends Component {
       .then(result => {
         this.callDatabase() // reload database
       })
-      .catch(err => {
-      })
+      .catch()
     if (user.email === this.state.currentUser) {
       // logout
       window.localStorage.removeItem('jwtToken')
