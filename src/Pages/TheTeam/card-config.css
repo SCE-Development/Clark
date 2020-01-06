@@ -22,3 +22,7 @@
 .card-container:hover{
   transform:scale(1.05);
 }
+
+.icon-row{
+  margin-left: -6px;
+}
