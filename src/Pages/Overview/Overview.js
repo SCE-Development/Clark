@@ -41,9 +41,7 @@ export default class OverviewBoard extends Component {
           this.setState({ users: result.data })
         }
       })
-      .catch(err => {
-        console.log(err)
-      })
+      .catch(err => {})
   }
 
   updateQuery (event) {
@@ -73,7 +71,6 @@ export default class OverviewBoard extends Component {
         this.callDatabase() // reload database
       })
       .catch(err => {
-        console.log(err)
       })
     if (user.email === this.state.currentUser) {
       // logout

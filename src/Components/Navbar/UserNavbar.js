@@ -15,8 +15,6 @@ import {
 } from 'reactstrap'
 
 export default function UserNavBar (props) {
-  console.log(props)
-
   const [collapsed, setCollapsed] = useState(true)
   const icons = [
     {
