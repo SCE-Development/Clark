@@ -10,5 +10,4 @@ import { CarouselItem, Carousel } from 'reactstrap'
 
 Enzyme.configure({ adapter: new Adapter() })
 
-describe('<MemberTable />', () => {
-})
+describe('<MemberTable />', () => {})
