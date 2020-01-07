@@ -1,6 +1,6 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './app3DConsole.css'
+import './3D-console.css'
 import {
   Button,
   ButtonGroup,
