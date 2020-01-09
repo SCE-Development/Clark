@@ -11,6 +11,7 @@ import OfficerTools from './Pages/OfficerTools/OfficerTools'
 import MemberManager from './Pages/MemberManager/MemberManager'
 import EventManager from './Pages/EventManager/EventManager'
 import Login from './Pages/Login/Login'
+import Profile from './Pages/Profile/MemberView/Profile'
 
 import Home from './Pages/Home/Home.js'
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage'
@@ -90,6 +91,12 @@ export default function Routing ({ appProps }) {
       path: '/register',
       allowedIf: !userIsAuthenticated,
       redirect: '/'
+    },
+    {
+      Component: Profile,
+      path: '/profile',
+      allowedIf: userIsAuthenticated,
+      redirect: '/login'
     }
   ]
   const signedOutRoutes = [
@@ -121,7 +128,8 @@ export default function Routing ({ appProps }) {
                     enableAdminNavbar={
                       userIsOfficer &&
                       path !== '/2DPrinting' &&
-                      path !== '/3DPrintingForm'
+                      path !== '/3DPrintingForm' &&
+                      path !== '/profile'
                     }
                     {...props}
                   />

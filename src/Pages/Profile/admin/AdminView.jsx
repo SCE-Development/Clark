@@ -61,9 +61,7 @@ export default function Editor(props) {
           setMembershipValidUntil(result.data.membershipValidUntil)
         }
       })
-      .catch(err => {
-        console.log(err)
-      })
+      .catch(err => {})
 
     setToggle(false)
     setToggleSubmit(false)
@@ -87,7 +85,6 @@ export default function Editor(props) {
       })
       .catch(err => {
         window.alert('The Email has already existed, leave it blank if you do not want to change')
-        console.log(err)
       })
   }
 

@@ -1,0 +1,49 @@
+#enclose { 
+  text-align: center;
+}
+
+#title {
+  font-weight: bold;
+}
+
+#profileBox {
+  position: absolute;
+  background-color: white;
+  width: 40%;
+  top: 40%;
+  left: 30%;
+  border: thick double #4385ac;
+  border-radius: 50px;
+}
+
+#innerTextTop{
+  margin-left: 5%;
+  margin-top: 2%;
+  margin-right: 5%;
+  text-align: left;
+}
+
+#clip {
+  position: relative;
+  width: 40%;
+  height: 40%;
+  display: inline-block;
+  clip-path: polygon(0 0, 0% 100%, 100% 0);
+}
+
+#clip2 {
+  position: relative;
+  width: 40%;
+  height: 40%;
+  right: 5%;
+  display: inline-block;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+#profileLogo {
+  position: absolute;
+  height: 35%;
+  top: 25%;
+  left: 58%;
+  z-index: 1;
+}
