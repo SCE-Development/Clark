@@ -7,7 +7,6 @@ import {
   Collapse,
   NavbarToggler
 } from 'reactstrap'
-import './admin-navbar.css'
 
 export default function AdminNavbar (props) {
   const [collapsed, setCollapsed] = useState(true)
@@ -31,7 +30,7 @@ export default function AdminNavbar (props) {
         className='mr-2'
       />
       <Collapse isOpen={!collapsed} navbar>
-        <Nav className='ml-auto' navbar>
+        <Nav className='ml-auto sce-nav' navbar>
           {navbarLinks.map((link, index) => {
             const navlink = (
               <NavLink key={index} title={link.title} href={link.route}>

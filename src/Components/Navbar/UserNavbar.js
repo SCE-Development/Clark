@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './user-navbar.css'
 import {
   Collapse,
   NavbarToggler,
@@ -48,7 +47,7 @@ export default function UserNavBar (props) {
   ]
 
   return (
-    <div className='sce-user-nav'>
+    <div className='user-nav'>
       <Navbar light expand='md'>
         <NavbarBrand href='/'>
           Software & Computer Engineering Society &nbsp;
@@ -67,7 +66,7 @@ export default function UserNavBar (props) {
               </a>
             )
           })}
-          <Nav className='ml-auto' navbar>
+          <Nav className='ml-auto sce-nav' navbar>
             <UncontrolledDropdown nav inNavbar>
               <DropdownToggle nav caret>
                 Student Resources
