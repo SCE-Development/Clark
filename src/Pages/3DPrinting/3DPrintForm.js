@@ -1,6 +1,5 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-// import './index.css';
 import {
   Button,
   Form,
@@ -15,7 +14,7 @@ import {
   ModalBody,
   ModalFooter
 } from 'reactstrap'
-import axios from 'axios'
+import { submit3DPrintRequest } from '../../APIFunctions/3DPrinting'
 
 let fill = false
 export default class PrintForm3D extends React.Component {
@@ -32,11 +31,10 @@ export default class PrintForm3D extends React.Component {
       comment: '',
       user: this.props.user,
       modal: false,
-      isLoggedIn: this.props.authenticated
+      isLoggedIn: this.props.authenticated,
+      fill: false
     }
   }
-
-  // import modal ;
 
   // function (e)
   // @parameter (e) events
@@ -61,14 +59,6 @@ export default class PrintForm3D extends React.Component {
     this.setState({ contact: e.target.value })
   }
 
-  // handleModalChange (e) {
-  //   if (true) {
-  //     this.setState({ modal: true })
-  //   } else {
-  //     this.setState({ modal: false })
-  //   }
-  // }
-
   // Set comment's value = N/A when users doesn't provide any comment
   handleCommentChange (e) {
     if (e.target == null) {
@@ -77,10 +67,6 @@ export default class PrintForm3D extends React.Component {
       this.setState({ comment: e.target.value })
     }
   }
-
-  // handleModalChange (){
-  //   if
-  // }
 
   // Get current datetime
   date () {
@@ -92,14 +78,8 @@ export default class PrintForm3D extends React.Component {
     return month + '/' + date + '/' + year + ' ' + hours + ':' + min
   }
 
-  // Handle aplication submition
-  submitApplication (e) {
+  checkIfFormFilled () {
     fill = true
-
-    // Must Login
-    if (!this.state.isLoggedIn) window.alert('Login!')
-
-    // page is not filled if any information is not filled by the user
     if (this.state.name.length === 0) {
       window.alert('You must provide your full name!')
       fill = false
@@ -119,78 +99,33 @@ export default class PrintForm3D extends React.Component {
       window.alert('You must provide a contact')
       fill = false
     }
+    return fill
+  }
 
-    // if all is passed, begin submition
-    if (fill === true) {
-      // var request = require('superagent')
-      // var page = this
-      // request
-      // // axios
-      //   .post(
-      //     '/api/3DPrintingForm/submit'
-      //   )
-      //   .set('Content-Type', 'application/json;charset=utf-8')
-      //   .send({
-      //     // SCHEMA : current react state
-      //     name: this.state.name,
-      //     color: this.state.color,
-      //     comment: this.state.comment,
-      //     contact: this.state.contact,
-      //     projectType: this.state.projectType,
-      //     url: this.state.url,
-      //     progress: 'Pending',
-      //     date: this.date()
-      //   })
-      //   .end(
-      //     function (err, response) {
-      //       if (response && response.status < 300) {
-      //         // Create a copy of the current state
-      //         var tempState = Object.assign(this.state)
-      //
-      //         // Modify state to signal a close of the form,
-      //         // and a reveal of a success message that provides the user
-      //         // with further instructions
-      //         tempState.successfullyApplied = true
-      //
-      //         // Set state
-      //         this.setState(tempState)
-      //       } else {
-      //         // Failure
-      //         // TODO: Respond with error
-      //         window.alert(
-      //           '(X.X)\tA submission error occurred. Please contact the site administrator'
-      //         )
-      //         console.error(err)
-      //       }
-      //     }.bind(this)
-      //   )
-      axios
-        .post('/api/3DPrintingForm/submit', {
-          name: this.state.name,
-          color: this.state.color,
-          comment: this.state.comment,
-          contact: this.state.contact,
-          projectType: this.state.projectType,
-          url: this.state.url,
-          progress: 'Pending',
-          email: this.state.user.email
-        })
-        // .post('/api/3DPrintingForm/edit', { name: jsonObject.name, color: this.state.input })
-        .then(result => {
-          // console.log(result)
-          // this.callDatabase() // reload database
-          this.setState({
-            successfullyApplied: true
-          })
-        })
-        .catch(err => {
-          console.log(err)
-        })
+  async submitApplication () {
+    console.log('we in this')
+
+    if (this.checkIfFormFilled()) {
+      console.log('we in this agin')
+      const request = {
+        name: this.state.name,
+        color: this.state.color,
+        comment: this.state.comment,
+        contact: this.state.contact,
+        projectType: this.state.projectType,
+        url: this.state.url,
+        progress: 'Pending',
+        email: this.state.user.email
+      }
+      await submit3DPrintRequest(request)
+      this.setState({ fill: true })
     }
-    this.setState({ filled: true })
   }
 
   render () {
+    const { fill } = this.state
+    console.log(fill)
+
     return (
       <>
         {fill === false ? (
@@ -316,7 +251,7 @@ export default class PrintForm3D extends React.Component {
               <FormGroup>
                 <Label for='comments'>
                   {' '}
-                  Do yo have any special comments or requests we should know
+                  Do you have any special comments or requests we should know
                   about?
                 </Label>
                 <Input
