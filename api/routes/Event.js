@@ -37,7 +37,6 @@ router.post('/createEvent', (req, res) => {
     title: req.body.title,
     description: req.body.description,
     eventLocation: req.body.eventLocation,
-    date: req.body.date,
     eventDate: req.body.eventDate,
     startTime: req.body.startTime,
     endTime: req.body.endTime,
