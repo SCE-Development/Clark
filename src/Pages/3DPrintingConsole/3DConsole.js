@@ -14,7 +14,11 @@ import {
   Row,
   Col
 } from 'reactstrap'
-import axios from 'axios'
+import {
+  getAll3DPrintRequests,
+  delete3DPrintRequest,
+  update3DPrintRequestProgress
+} from '../../APIFunctions/3DPrinting'
 
 export default class PrintConsole3D extends React.Component {
   constructor (props) {
@@ -28,11 +32,10 @@ export default class PrintConsole3D extends React.Component {
     }
   }
 
-  // update Data 1 when page load
   componentDidMount () {
     this.setState({
-      isLoggedIn: true,
-      authToken: window.localStorage && window.localStorage.getItem('jwtToken')
+      isLoggedIn: this.props.authenticated,
+      authToken: this.props.user.token
     })
     if (window.localStorage) this.callDatabase()
   }
@@ -43,22 +46,11 @@ export default class PrintConsole3D extends React.Component {
   }
 
   // Getting all data in DB
-  callDatabase () {
-    axios
-      .post('/api/3DPrintingForm/GetForm', {})
-      // .then(result => {
-      // console.log(result)
-      // result.data.json()
-      // })
-      .then(result => {
-        // Save data from db to state.data
-        this.setState({
-          data: result.data
-        })
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  async callDatabase () {
+    const data = await getAll3DPrintRequests()
+    this.setState({
+      data
+    })
   }
 
   /*
@@ -66,22 +58,9 @@ export default class PrintConsole3D extends React.Component {
   parameter: Json object of object to be deleted
   Search for object in db using name and color then delete
   */
-  deleteData (jsonObject) {
-    axios
-      .post('/api/3DPrintingForm/delete', {
-        name: jsonObject.name,
-        color: jsonObject.color,
-        // This token must be passed in for authentication
-        token: this.state.authToken,
-        date: jsonObject.date,
-        email: jsonObject.email
-      })
-      .then(result => {
-        this.callDatabase() // reload database
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  async deleteData (jsonObject) {
+    await delete3DPrintRequest(jsonObject, this.state.authToken)
+    this.callDatabase() // reload database
   }
 
   /*
@@ -89,21 +68,16 @@ export default class PrintConsole3D extends React.Component {
   Search for object in db using its name and date
   Set new progress = event value
   */
-  updateProgress (jsonObject, event) {
-    axios
-      .post('/api/3DPrintingForm/edit', {
-        name: jsonObject.name,
-        date: jsonObject.date,
-        email: jsonObject.email,
-        progress: event.target.value,
-        token: this.state.authToken
-      })
-      .then(result => {
-        this.callDatabase() // reload database
-      })
-      .catch(err => {
-        console.log(err)
-      })
+  async updateProgress (jsonObject, event) {
+    const newProgress = event.target.value
+    if (newProgress === jsonObject.progress) return
+    const updateRequest = {
+      progress: newProgress,
+      email: jsonObject.email,
+      date: jsonObject.date
+    }
+    await update3DPrintRequestProgress(updateRequest, this.state.authToken)
+    this.callDatabase() // reload database
   }
 
   // simply filter array by name
@@ -176,16 +150,6 @@ export default class PrintConsole3D extends React.Component {
                   >
                     Delete
                   </Button>
-
-                  {/* Input + Update Json for testing not used (For Sample because it actually works)
-                  <input onChange={(e) => {this.changeInput(e,key)}} />
-                  <Button
-                    color='primary'
-                    onClick={this.editData.bind(this, jsonObject, key)}
-                  >
-                    Edit
-                  </Button>
-                  */}
                 </ButtonGroup>
               </Col>
             </Row>
