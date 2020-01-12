@@ -15,7 +15,7 @@ import Profile from './Pages/Profile/MemberView/Profile'
 
 import Home from './Pages/Home/Home.js'
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage'
-import Events from './Pages/Events/announcements/announcementsPage.jsx'
+import EventList from './Pages/Events/EventList'
 import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js'
 import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js'
 import MembershipApplication from './Pages/MembershipApplication/membershipApplication.jsx'
@@ -100,7 +100,7 @@ export default function Routing ({ appProps }) {
   ]
   const signedOutRoutes = [
     { Component: Home, path: '/' },
-    { Component: Events, path: '/events' },
+    { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' }
   ]
