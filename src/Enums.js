@@ -1,3 +1,8 @@
+export const eventModalState = {
+  SUBMIT: 0,
+  EDIT: 1
+}
+
 export const memberApplicationState = {
   SELECT_MEMBERSHIP_PLAN: 0,
   FORM_INFO: 1,

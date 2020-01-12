@@ -7,6 +7,7 @@ import { expect } from 'chai'
 import EventInfoModal from '../../src/Pages/Events/EventInfoModal'
 import Adapter from 'enzyme-adapter-react-16'
 import { Container, Row, Col } from 'reactstrap'
+import { getDateWithSlashes } from '../../src/APIFunctions/Event'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -15,7 +16,7 @@ describe('<EventInfoModal />', () => {
     title: 'Big brain time',
     eventLocation: 'ENGR 292',
     description: 'boom',
-    eventDate: '09/03/1999',
+    eventDate: '1999-09-03',
     startTime: '3:30 PM',
     endTime: '4:30 PM'
   }
@@ -39,8 +40,9 @@ describe('<EventInfoModal />', () => {
         .props.children.slice(1)
         .join('')
     ).to.equal(
-      `${currentEvent.eventDate} ${currentEvent.startTime} - ` +
-        `${currentEvent.endTime}`
+      `${getDateWithSlashes(currentEvent.eventDate)} ${
+        currentEvent.startTime
+      } - ` + `${currentEvent.endTime}`
     )
   })
   it('Should render the location of the event', () => {

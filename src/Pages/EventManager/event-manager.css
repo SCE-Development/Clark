@@ -1,0 +1,20 @@
+.event-input-group {
+  padding-bottom: 10px;
+}
+
+.create-event {
+  background-color: rgb(2, 107, 126) !important;
+  color: white !important;
+}
+
+.modal-image-container {
+  margin-top: 10px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.modal-image-container > img {
+  max-width: 13rem;
+  max-height: 13rem;
+  object-fit: contain;
+}

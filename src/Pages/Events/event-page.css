@@ -48,8 +48,8 @@
   padding:20px; 
 }
 
-p > img {
-  max-width: 17rem;
-  max-height: 17rem; 
+.image-container > img {
+  max-width: 7rem;
+  max-height: 7rem;
   object-fit: contain;
 }

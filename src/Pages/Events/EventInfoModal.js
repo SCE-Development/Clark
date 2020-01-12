@@ -9,6 +9,7 @@ import {
   ModalFooter,
   Button
 } from 'reactstrap'
+import { getDateWithSlashes } from '../../APIFunctions/Event'
 import Ionicon from 'react-ionicons'
 
 function EventInfoModal (props) {
@@ -23,8 +24,8 @@ function EventInfoModal (props) {
           <Col>
             <Row className='event-date'>
               <Ionicon icon='md-time' fontSize='1.5rem' color='#0098ab' />
-              {currentEvent.eventDate} {currentEvent.startTime} -{' '}
-              {currentEvent.endTime}
+              {getDateWithSlashes(currentEvent.eventDate.slice(0, 10))}{' '}
+              {currentEvent.startTime} - {currentEvent.endTime}
             </Row>
           </Col>
           <Col>

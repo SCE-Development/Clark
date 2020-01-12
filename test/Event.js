@@ -35,7 +35,7 @@ describe('Event', () => {
   const VALID_NEW_EVENT = {
     title: 'ros masters united',
     eventLocation: 'SU 4A',
-    eventDate: '5/25/20',
+    eventDate: new Date('5/25/20'),
     startTime: '12:00',
     endTime: '13:00',
     eventCategory: 'workshop'
@@ -44,7 +44,7 @@ describe('Event', () => {
     token: 'invalid'
   }
   const EVENT_WITHOUT_REQUIRED_FIELDS = {
-    eventDate: '5/25/20'
+    eventDate: new Date('5/25/20')
   }
   const EVENT_WITH_INVALID_ID = {
     id: 'strawberry'
@@ -52,7 +52,7 @@ describe('Event', () => {
   const UPDATED_EVENT = {
     title: 'ros masters divided',
     eventLocation: 'SU 4B',
-    eventDate: '5/27/20',
+    eventDate: new Date('5/27/20'),
     startTime: '13:00',
     endTime: '14:00',
     eventCategory: 'game night',
@@ -155,7 +155,7 @@ describe('Event', () => {
             VALID_NEW_EVENT.eventLocation
           )
           expect(getEventsResponse[0].eventDate).to.equal(
-            VALID_NEW_EVENT.eventDate
+            VALID_NEW_EVENT.eventDate.toISOString()
           )
           expect(getEventsResponse[0].startTime).to.equal(
             VALID_NEW_EVENT.startTime
@@ -227,7 +227,7 @@ describe('Event', () => {
             UPDATED_EVENT.eventLocation
           )
           expect(getEventsResponse[0].eventDate).to.equal(
-            UPDATED_EVENT.eventDate
+            UPDATED_EVENT.eventDate.toISOString()
           )
           expect(getEventsResponse[0].startTime).to.equal(
             UPDATED_EVENT.startTime
