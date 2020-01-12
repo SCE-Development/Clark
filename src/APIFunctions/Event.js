@@ -7,7 +7,7 @@ import axios from 'axios'
 export async function getAllEvents () {
   let allEvents = []
   await axios
-    .post('/event/getEvents')
+    .get('api/event/getEvents')
     .then(res => {
       allEvents = res.data
     })
@@ -29,6 +29,8 @@ export async function getAllEvents () {
  * @param {string} newEvent.endTime - The end time of the new event
  * @param {(string|undefined)} newEvent.eventCategory - The category of the new
  * event
+ * @param {(string|undefined)} newEvent.imageURL - A URL of the image of the
+ * event
  * @param {string} token - The user's jwt token for authentication
  */
 export async function createNewEvent (newEvent, token) {
@@ -40,10 +42,11 @@ export async function createNewEvent (newEvent, token) {
     eventDate: newEvent.eventDate,
     startTime: newEvent.startTime,
     endTime: newEvent.endTime,
-    eventCategory: newEvent.eventCategory
+    eventCategory: newEvent.eventCategory,
+    imageURL: newEvent.imageURL
   }
   await axios
-    .post('/event/createEvent', { token, ...eventToAdd })
+    .post('api/event/createEvent', { token, ...eventToAdd })
     .then(res => {
       eventCreated = true
     })
@@ -56,7 +59,7 @@ export async function createNewEvent (newEvent, token) {
 /**
  * Add a new event.
  * @param {Object} eventToUpdate - The event that is to be updated
- * @param {string} newEvent.id - The unique MongoDB id of the event
+ * @param {string} eventToUpdate._id - The unique MongoDB id of the event
  * @param {(string|undefined)} eventToUpdate.title - The updated title of the
  * event
  * @param {(string|undefined)} eventToUpdate.description - The updated
@@ -71,22 +74,25 @@ export async function createNewEvent (newEvent, token) {
  * the event
  * @param {(string|undefined)} eventToUpdate.eventCategory - The updated
  * eventCategory of the event
+ * @param {(string|undefined)} eventToUpdate.imageURL - An updated image URL of
+ * the event
  * @param {string} token - The user's jwt token for authentication
  */
 export async function editEvent (eventToUpdate, token) {
   let eventUpdated = false
   const eventToEdit = {
-    id: eventToUpdate.id,
+    id: eventToUpdate._id,
     title: eventToUpdate.title,
     description: eventToUpdate.description,
     eventLocation: eventToUpdate.eventLocation,
     eventDate: eventToUpdate.eventDate,
     startTime: eventToUpdate.startTime,
     endTime: eventToUpdate.endTime,
-    eventCategory: eventToUpdate.eventCategory
+    eventCategory: eventToUpdate.eventCategory,
+    imageURL: eventToUpdate.imageURL
   }
   await axios
-    .post('/event/editEvent', { token, ...eventToEdit })
+    .post('api/event/editEvent', { token, ...eventToEdit })
     .then(res => {
       eventUpdated = true
     })
@@ -99,14 +105,14 @@ export async function editEvent (eventToUpdate, token) {
 /**
  * Add a new event.
  * @param {Object} eventToDelete - The event that is to be added
- * @param {string} eventToDelete.id - The unique MongoDB id of the event that is to
+ * @param {string} eventToDelete._id - The unique MongoDB id of the event that is to
  * be added
  * @param {string} token - The user's jwt token for authentication
  */
 export async function deleteEvent (eventToDelete, token) {
   let eventDeleted = false
   await axios
-    .post('/event/deleteEvent', { token, id: eventToDelete.id })
+    .post('/api/event/deleteEvent', { token, id: eventToDelete._id })
     .then(res => {
       eventDeleted = true
     })
