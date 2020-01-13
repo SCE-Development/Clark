@@ -4,6 +4,7 @@ import { Container, Row, FormGroup, Label, Input, Button } from 'reactstrap'
 import { memberApplicationState, memberShipPlanToString } from '../../Enums'
 import MajorDropdown from './MajorDropdown'
 import { registerUser, checkIfUserExists } from '../../APIFunctions/User'
+import { sendVerificationEmail } from '../../APIFunctions/Profile'
 
 export default function MembershipForm (props) {
   const [firstName, setFirstName] = useState('')
@@ -64,6 +65,7 @@ export default function MembershipForm (props) {
       numberOfSemestersToSignUpFor: props.selectedPlan
     })
     if (!registrationStatus.error) {
+      sendVerificationEmail(email, firstName)
       props.setMembershipState(memberApplicationState.CONFIRMATION)
     } else {
       if (registrationStatus.responseData.status === 409) {
@@ -126,7 +128,7 @@ export default function MembershipForm (props) {
           onClick={() =>
             props.setMembershipState(
               memberApplicationState.SELECT_MEMBERSHIP_PLAN
-          )}
+            )}
         >
           Change membership plan
         </Button>

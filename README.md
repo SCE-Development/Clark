@@ -63,6 +63,22 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
   10. Run the app in the root project directory using: `npm start`
       - The app should automatically run on port 3000 and 8080 and open in your default browser
 
+#### Set up mailer
+  1. Move config.example.js to config.js in /api/config/
+  1. Obtain the client secret and ID keys from [https://console.cloud.google.com/](https://console.cloud.google.com/) under the API Credentials section
+  1. Login into the Oauth2 playground at: https://developers.google.com/oauthplayground/
+  1. Select GMAIL API v1 -> https://mail.google.com and press Authorize APIs. It will prompt you to login to the sce.sjsu@gmail.com to authorize the API
+  1. When the view changes to the second step, click the gear icon and then the checkbox for "Use your own auth credentials"
+  1. Paste in the client ID and client secret and submit it
+  1. Copy the Refresh Token into the REFRESH_TOKEN area in config.js
+  1. In a terminal window use the command `npm run build && NODE_ENV=production node server.js`
+  1. A link will be pasted into the terminal output above the logger information, open the URL in a browser
+  1. Copy the Authorization code listed on the URL after logging in to the sce.sjsu@gmail.com account and paste it into the terminal window
+  10. A token.json file should be created under /api/config/ and you're now good to go
+
+- Note: you need access into the sce.sjsu@gmail.com email account in order to set this up.
+- Note: If you need to repeat this process, delete any existing token.js file.
+
 #### On a Linux VM in Windows
 
   1. Install VirtualBox, VMWare, or Parallels

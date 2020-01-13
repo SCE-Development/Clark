@@ -23,6 +23,9 @@ const {
 } = require('../constants').STATUS_CODES
 const membershipState = require('../../src/Enums').membershipState
 
+const validateVerificationEmail = require('../mailer/auth')
+  .validateVerificationEmail
+
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body
   if (!email) {
@@ -283,7 +286,50 @@ router.post('/edit', (req, res) => {
   })
 })
 
-router.post('/getPagesPrintedCount', (req, res) => {
+router.post('/validateEmail', function (req, res) {
+  User.findOne({ email: req.body.email }, async function (error, result) {
+    if (error) {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
+    }
+
+    if (!result) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.email} not found.` })
+    }
+
+    const validated = await validateVerificationEmail(
+      req.body.email,
+      req.body.hashedId
+    )
+    if (validated) return res.sendStatus(OK)
+
+    return res.sendStatus(BAD_REQUEST)
+  })
+})
+
+// Edit/Update a member record
+router.post('/setEmailToVerified', (req, res) => {
+  const query = { email: req.body.email }
+
+  User.updateOne(query, { emailVerified: true }, function (error, result) {
+    if (error) {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
+    }
+
+    if (result.nModified < 1) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.queryEmail} not found.` })
+    }
+
+    return res.status(OK).send({
+      message: `${req.body.queryEmail} was updated.`
+    })
+  })
+})
+
+router.post('getPagesPrintedCount', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN)
   } else if (!checkIfTokenValid(req)) {

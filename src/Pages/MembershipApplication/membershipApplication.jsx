@@ -3,14 +3,14 @@ import './register-page.css'
 import MembershipPlan from './MembershipPlan.js'
 import { memberApplicationState } from '../../Enums'
 import MembershipForm from './MembershipForm'
-import ConfrimationPage from './ConfrimationPage'
+import ConfirmationPage from './ConfirmationPage'
 
-export default function MembershipApplication() {
+export default function MembershipApplication () {
   const [membershipState, setMembershipState] =
     useState(memberApplicationState.SELECT_MEMBERSHIP_PLAN)
   const [selectedPlan, setSelectedPlan] = useState()
 
-  function renderCorrectComponent() {
+  function renderCorrectComponent () {
     const appProps = {
       setMembershipState,
       selectedPlan,
@@ -22,9 +22,9 @@ export default function MembershipApplication() {
       case memberApplicationState.FORM_INFO:
         return <MembershipForm {...appProps} />
       case memberApplicationState.CONFIRMATION:
-        return <ConfrimationPage />
+        return <ConfirmationPage />
       default:
-        break;
+        break
     }
   }
 
