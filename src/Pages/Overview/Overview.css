@@ -62,7 +62,7 @@ thead.td{
   background-color: #f3f3f3;
 }
 
-input, select {
+.input-overview{
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0px;
@@ -72,17 +72,6 @@ input, select {
   box-sizing: border-box;
   font-size: 16px;
   initial-letter-align: left
-}
-
-input[type=submit] {
-  width: 100%;
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 .submit-button{

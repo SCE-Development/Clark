@@ -86,6 +86,7 @@ export default class OverviewBoard extends Component {
 
         <h6>Search by first-name</h6>
         <input
+          className='input-overview'
           onChange={e => {
             this.updateQuery(e)
           }}
