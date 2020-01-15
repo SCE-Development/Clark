@@ -26,7 +26,7 @@ describe('<UserNavbar />', () => {
   })
   it('Should render four <NavLink /> tags for unauthenticated routes', () => {
     const wrapper = mount(<UserNavbar />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(4)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(3)
     expect(wrapper.find(Nav).children()).to.have.lengthOf(1)
   })
   it(
