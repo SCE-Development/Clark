@@ -45,11 +45,7 @@ export default function MembershipForm (props) {
   ]
 
   async function submitApplication () {
-    console.log(await checkIfUserExists())
-
     if (await checkIfUserExists()) return
-    console.log('why are we here')
-
     await axios
       .post('/api/user/register', {
         firstName,
