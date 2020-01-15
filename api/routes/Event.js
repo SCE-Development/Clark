@@ -13,7 +13,7 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND
-} = require('../constants')
+} = require('../constants').STATUS_CODES
 
 router.get('/getEvents', (req, res) => {
   Event.find({}, (error, events) => {

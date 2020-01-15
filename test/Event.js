@@ -6,7 +6,9 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const statusCodes = require('../api/constants')
+const constants = require('../api/constants')
+const { OK, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND } = constants.STATUS_CODES
+const { DEFAULT_PHOTO_URL } = constants
 let app = null
 
 const expect = chai.expect
@@ -36,8 +38,7 @@ describe('Event', () => {
     eventDate: '5/25/20',
     startTime: '12:00',
     endTime: '13:00',
-    eventCategory: 'workshop',
-    imageURL: 'https://link.to/image'
+    eventCategory: 'workshop'
   }
   const EVENT_WITH_INVALID_TOKEN = {
     token: 'invalid'
@@ -71,7 +72,7 @@ describe('Event', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           done()
         })
         .catch(err => {
@@ -88,7 +89,7 @@ describe('Event', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('token')
           token = res.body.token
@@ -104,7 +105,7 @@ describe('Event', () => {
         .post('/api/event/createEvent')
         .send(EVENT_WITH_INVALID_TOKEN)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
           done()
         })
         .catch(err => {
@@ -117,7 +118,7 @@ describe('Event', () => {
         .post('/api/event/createEvent')
         .send({ token, ...EVENT_WITHOUT_REQUIRED_FIELDS })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.BAD_REQUEST)
+          expect(res).to.have.status(BAD_REQUEST)
           done()
         })
         .catch(err => {
@@ -130,7 +131,7 @@ describe('Event', () => {
         .post('/api/event/createEvent')
         .send({ token, ...VALID_NEW_EVENT })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           done()
         })
         .catch(err => {
@@ -145,7 +146,7 @@ describe('Event', () => {
         .request(app)
         .get('/api/event/getEvents')
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           const getEventsResponse = res.body
           getEventsResponse.should.be.a('array')
           expect(getEventsResponse).to.have.length(1)
@@ -163,9 +164,7 @@ describe('Event', () => {
           expect(getEventsResponse[0].eventCategory).to.equal(
             VALID_NEW_EVENT.eventCategory
           )
-          expect(getEventsResponse[0].imageURL).to.equal(
-            VALID_NEW_EVENT.imageURL
-          )
+          expect(getEventsResponse[0].imageURL).to.equal(DEFAULT_PHOTO_URL)
           eventId = getEventsResponse[0]._id
           done()
         })
@@ -182,7 +181,7 @@ describe('Event', () => {
         .post('/api/event/editEvent')
         .send({ eventId, ...EVENT_WITH_INVALID_TOKEN })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
           done()
         })
         .catch(err => {
@@ -195,7 +194,7 @@ describe('Event', () => {
         .post('/api/event/editEvent')
         .send({ token, ...EVENT_WITH_INVALID_ID })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.NOT_FOUND)
+          expect(res).to.have.status(NOT_FOUND)
           done()
         })
         .catch(err => {
@@ -208,7 +207,7 @@ describe('Event', () => {
         .post('/api/event/editEvent')
         .send({ token, id: eventId, ...UPDATED_EVENT })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           done()
         })
         .catch(err => {
@@ -220,7 +219,7 @@ describe('Event', () => {
         .request(app)
         .get('/api/event/getEvents')
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           const getEventsResponse = res.body
           expect(getEventsResponse).to.have.length(1)
           expect(getEventsResponse[0].title).to.equal(UPDATED_EVENT.title)
@@ -253,7 +252,7 @@ describe('Event', () => {
         .post('/api/event/deleteEvent')
         .send(EVENT_WITH_INVALID_TOKEN)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
           done()
         })
         .catch(err => {
@@ -266,7 +265,7 @@ describe('Event', () => {
         .post('/api/event/deleteEvent')
         .send({ token, ...EVENT_WITH_INVALID_ID })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.BAD_REQUEST)
+          expect(res).to.have.status(BAD_REQUEST)
           done()
         })
         .catch(err => {
@@ -279,7 +278,7 @@ describe('Event', () => {
         .post('/api/event/deleteEvent')
         .send({ token, id: eventId })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           done()
         })
         .catch(err => {
@@ -291,7 +290,7 @@ describe('Event', () => {
         .request(app)
         .get('/api/event/getEvents')
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           const getEventsResponse = res.body
           getEventsResponse.should.be.a('array')
           expect(getEventsResponse).to.have.length(0)

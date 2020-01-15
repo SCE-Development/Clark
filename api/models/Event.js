@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const DEFAULT_PHOTO_URL =
-  'https://sce.engr.sjsu.edu/wp-content/uploads/2016/04/SCE_sq.png'
+const { DEFAULT_PHOTO_URL } = require('../constants')
 
 const EventSchema = new Schema(
   {

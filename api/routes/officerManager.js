@@ -17,7 +17,7 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND
-} = require('../constants')
+} = require('../constants').STATUS_CODES
 
 router.post('/submit', (req, res) => {
   if (!checkIfTokenSent(req)) {
