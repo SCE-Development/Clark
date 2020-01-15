@@ -16,7 +16,6 @@ import Profile from './Pages/Profile/MemberView/Profile'
 import Home from './Pages/Home/Home.js'
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage'
 import Events from './Pages/Events/announcements/announcementsPage.jsx'
-import LabKits from './Pages/LabKits/LabKits.js'
 import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js'
 import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js'
 import MembershipApplication from './Pages/MembershipApplication/membershipApplication.jsx'
@@ -103,8 +102,7 @@ export default function Routing ({ appProps }) {
     { Component: Home, path: '/' },
     { Component: Events, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
-    { Component: Team, path: '/team' },
-    { Component: LabKits, path: '/labkits' }
+    { Component: Team, path: '/team' }
   ]
   return (
     <Router>

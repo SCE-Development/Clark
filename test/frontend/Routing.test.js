@@ -17,7 +17,6 @@ import Login from '../../src/Pages/Login/Login'
 import Home from '../../src/Pages/Home/Home.js'
 import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage'
 import Events from '../../src/Pages/Events/announcements/announcementsPage.jsx'
-import LabKits from '../../src/Pages/LabKits/LabKits.js'
 import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js'
 import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js'
 import MembershipApplication from '../../src/Pages/MembershipApplication/membershipApplication.jsx'
@@ -87,13 +86,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       const wrapper = getComponentFromRoute('/team')
       expect(wrapper.find(Team)).to.have.lengthOf(1)
     })
-    it(
-      'Should render a <LabKits /> component with the /labkits' + 'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/labkits')
-        expect(wrapper.find(LabKits)).to.have.lengthOf(1)
-      }
-    )
     it(
       'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
         'endpoint',
@@ -199,13 +191,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       const wrapper = getComponentFromRoute('/team', officerAppProps)
       expect(wrapper.find(Team)).to.have.lengthOf(1)
     })
-    it(
-      'Should render a <LabKits /> component with the /labkits' + 'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/labkits', officerAppProps)
-        expect(wrapper.find(LabKits)).to.have.lengthOf(1)
-      }
-    )
     it(
       'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
         'endpoint',
