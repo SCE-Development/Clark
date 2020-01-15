@@ -41,7 +41,6 @@ export default function UserNavBar (props) {
     }
   ]
   const unauthedRoutes = [
-    { title: 'Snacks & Food', route: '/' },
     { title: 'Events', route: '/events' },
     { title: 'SCE Team', route: '/Team' }
   ]
