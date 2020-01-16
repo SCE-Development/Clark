@@ -16,7 +16,7 @@ import Login from '../../src/Pages/Login/Login'
 
 import Home from '../../src/Pages/Home/Home.js'
 import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage'
-import Events from '../../src/Pages/Events/announcements/announcementsPage.jsx'
+import Events from '../../src/Pages/Events/EventList'
 import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js'
 import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js'
 import MembershipApplication from '../../src/Pages/MembershipApplication/membershipApplication.jsx'
