@@ -13,7 +13,7 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND
-} = require('../constants')
+} = require('../constants').STATUS_CODES
 
 router.get('/getEvents', (req, res) => {
   Event.find({}, (error, events) => {
@@ -25,7 +25,6 @@ router.get('/getEvents', (req, res) => {
   })
 })
 
-// create event -> pushing to db (admin)
 router.post('/createEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN)
@@ -40,10 +39,10 @@ router.post('/createEvent', (req, res) => {
     eventDate: req.body.eventDate,
     startTime: req.body.startTime,
     endTime: req.body.endTime,
-    eventCategory: req.body.eventCategory
+    eventCategory: req.body.eventCategory,
+    imageURL: req.body.imageURL
   })
 
-  // create an event, store it
   Event.create(newEvent, (error, post) => {
     if (error) {
       logger.log(`Event /createEvent error: ${error}`)
@@ -53,7 +52,6 @@ router.post('/createEvent', (req, res) => {
   })
 })
 
-// edit event -> pushing to db (admin)
 router.post('/editEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN)
@@ -67,7 +65,8 @@ router.post('/editEvent', (req, res) => {
     eventDate,
     startTime,
     endTime,
-    eventCategory
+    eventCategory,
+    imageURL
   } = req.body
   Event.findOne({ _id: req.body.id })
     .then(event => {
@@ -78,7 +77,7 @@ router.post('/editEvent', (req, res) => {
       event.startTime = startTime || event.startTime
       event.endTime = endTime || event.endTime
       event.eventCategory = eventCategory || event.eventCategory
-      // save updates
+      event.imageURL = imageURL || event.imageURL
       event
         .save()
         .then(ret => {
@@ -96,7 +95,6 @@ router.post('/editEvent', (req, res) => {
     })
 })
 
-// delete event -> pushing to db (admin)
 router.post('/deleteEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN)

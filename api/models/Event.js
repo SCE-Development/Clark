@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const { DEFAULT_PHOTO_URL } = require('../constants')
 
 const EventSchema = new Schema(
   {
@@ -28,6 +29,10 @@ const EventSchema = new Schema(
     },
     eventCategory: {
       type: String
+    },
+    imageURL: {
+      type: String,
+      default: DEFAULT_PHOTO_URL
     }
   },
   { collection: 'Event' }

@@ -20,7 +20,7 @@ const {
   FORBIDDEN,
   NOT_FOUND,
   CONFLICT
-} = require('../constants')
+} = require('../constants').STATUS_CODES
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body

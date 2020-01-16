@@ -7,7 +7,11 @@ const {
   checkIfTokenSent,
   checkIfTokenValid
 } = require('../../util/api-utils/token-functions')
-const { UNAUTHORIZED, FORBIDDEN, CONFLICT } = require('../constants')
+const {
+  UNAUTHORIZED,
+  FORBIDDEN,
+  CONFLICT
+} = require('../constants').STATUS_CODES
 
 /**
  * Prints a given file, assuming the server is on the correct network.

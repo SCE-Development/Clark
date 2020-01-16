@@ -7,7 +7,14 @@ const User = require('../api/models/User')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const statusCodes = require('../api/constants')
+const {
+  OK,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  NOT_FOUND,
+  CONFLICT,
+  FORBIDDEN
+} = require('../api/constants').STATUS_CODES
 let app = null
 const expect = chai.expect
 // tools for testing
@@ -38,7 +45,7 @@ describe('Users', () => {
         .post('/api/user/checkIfUserExists')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.BAD_REQUEST)
+          expect(res).to.have.status(BAD_REQUEST)
           done()
         })
         .catch(err => {
@@ -55,7 +62,7 @@ describe('Users', () => {
         .post('/api/user/checkIfUserExists')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
 
           done()
         })
@@ -79,7 +86,7 @@ describe('Users', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
 
           done()
         })
@@ -101,7 +108,7 @@ describe('Users', () => {
         .post('/api/user/register')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.CONFLICT)
+          expect(res).to.have.status(CONFLICT)
 
           done()
         })
@@ -123,7 +130,7 @@ describe('Users', () => {
         .post('/api/user/checkIfUserExists')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.CONFLICT)
+          expect(res).to.have.status(CONFLICT)
 
           done()
         })
@@ -141,7 +148,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.BAD_REQUEST)
+          expect(res).to.have.status(BAD_REQUEST)
 
           done()
         })
@@ -160,7 +167,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -179,7 +186,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -198,7 +205,7 @@ describe('Users', () => {
         .post('/api/user/login')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('token')
           token = res.body.token
@@ -218,7 +225,7 @@ describe('Users', () => {
         .post('/api/user/verify')
         .send({})
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -233,7 +240,7 @@ describe('Users', () => {
         .post('/api/user/verify')
         .send({ token: 'Invalid Token' })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -248,7 +255,7 @@ describe('Users', () => {
         .post('/api/user/verify')
         .send({ token: token })
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('name')
           res.body.should.have.property('email')
@@ -272,7 +279,7 @@ describe('Users', () => {
         .post('/api/user/users')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.FORBIDDEN)
+          expect(res).to.have.status(FORBIDDEN)
 
           done()
         })
@@ -290,7 +297,7 @@ describe('Users', () => {
         .post('/api/user/users')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -308,7 +315,7 @@ describe('Users', () => {
         .post('/api/user/users')
         .send(form)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           res.body.should.be.a('array')
           expect(res.body).to.have.length(1)
 
@@ -330,7 +337,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.FORBIDDEN)
+          expect(res).to.have.status(FORBIDDEN)
 
           done()
         })
@@ -349,7 +356,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -368,7 +375,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.NOT_FOUND)
+          expect(res).to.have.status(NOT_FOUND)
 
           done()
         })
@@ -387,7 +394,7 @@ describe('Users', () => {
         .post('/api/user/search')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('firstName')
           res.body.should.have.property('middleInitial')
@@ -419,7 +426,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.FORBIDDEN)
+          expect(res).to.have.status(FORBIDDEN)
 
           done()
         })
@@ -438,7 +445,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -457,7 +464,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.NOT_FOUND)
+          expect(res).to.have.status(NOT_FOUND)
 
           done()
         })
@@ -478,7 +485,7 @@ describe('Users', () => {
         .post('/api/user/edit')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 
@@ -500,7 +507,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.FORBIDDEN)
+          expect(res).to.have.status(FORBIDDEN)
 
           done()
         })
@@ -519,7 +526,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.UNAUTHORIZED)
+          expect(res).to.have.status(UNAUTHORIZED)
 
           done()
         })
@@ -538,7 +545,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.NOT_FOUND)
+          expect(res).to.have.status(NOT_FOUND)
 
           done()
         })
@@ -557,7 +564,7 @@ describe('Users', () => {
         .post('/api/user/delete')
         .send(user)
         .then(function (res) {
-          expect(res).to.have.status(statusCodes.OK)
+          expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
 
