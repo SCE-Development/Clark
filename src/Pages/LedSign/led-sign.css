@@ -1,0 +1,17 @@
+.sign-wrapper {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+.sign-status {
+  width: 100%;
+}
+
+.sign-available {
+  color: green;
+}
+
+.sign-unavailable {
+  color: red;
+}

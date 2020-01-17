@@ -1,4 +1,4 @@
-/* global describe it before after */
+/* global describe it before after afterEach */
 const sinon = require('sinon')
 const chai = require('chai')
 const expect = chai.expect
