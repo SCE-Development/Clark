@@ -8,9 +8,6 @@ import Routing from '../../src/Routing'
 import Adapter from 'enzyme-adapter-react-16'
 import { MemoryRouter } from '../mocks/react-router-dom'
 
-import Admin from '../../src/Pages/Admin/Admin'
-import OfficerTools from '../../src/Pages/OfficerTools/OfficerTools'
-import MemberManager from '../../src/Pages/MemberManager/MemberManager'
 import EventManager from '../../src/Pages/EventManager/EventManager'
 import Login from '../../src/Pages/Login/Login'
 
@@ -119,29 +116,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       }
     )
     it(
-      'Should render an <Admin /> component with the /admin' + 'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/admin')
-        expect(wrapper.find(Admin)).to.have.lengthOf(1)
-      }
-    )
-    it(
-      'Should render a <OfficerTools /> component with the /officer-tools' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/officer-tools')
-        expect(wrapper.find(OfficerTools)).to.have.lengthOf(1)
-      }
-    )
-    it(
-      'Should render a <MemberManager /> component with the /member-manager' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/member-manager')
-        expect(wrapper.find(MemberManager)).to.have.lengthOf(1)
-      }
-    )
-    it(
       'Should render a <EventManager /> component with the /event-manager' +
         'endpoint',
       () => {
@@ -227,30 +201,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       }
     )
     it(
-      'Should redirect an <Admin /> component with the /admin ' +
-        'endpoint to the <Overview />',
+      'Should render a <Overveiw /> component with the /dashboard' + 'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/admin', officerAppProps)
+        const wrapper = getComponentFromRoute('/dashboard', officerAppProps)
         expect(wrapper.find(Overview)).to.have.lengthOf(1)
-      }
-    )
-    it(
-      'Should render a <OfficerTools /> component with the /officer-tools' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/officer-tools', officerAppProps)
-        expect(wrapper.find(OfficerTools)).to.have.lengthOf(1)
-      }
-    )
-    it(
-      'Should render a <MemberManager /> component with the /member-manager' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute(
-          '/member-manager',
-          officerAppProps
-        )
-        expect(wrapper.find(MemberManager)).to.have.lengthOf(1)
       }
     )
     it(
@@ -275,32 +229,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
     '<PrivateRoute /> prevents unauthorized members from viewing the' +
       ' backend',
     () => {
-      it('Should redirect the <Admin /> component with the /admin endpoint', () => {
-        const wrapper = getComponentFromRoute('/admin', memberAppProps)
-        expect(wrapper.find(Home)).to.have.lengthOf(1)
-      })
-      it(
-        'Should redirect the <OfficerTools /> component with the ' +
-          '/officer-tools endpoint',
-        () => {
-          const wrapper = getComponentFromRoute(
-            '/officer-tools',
-            memberAppProps
-          )
-          expect(wrapper.find(Home)).to.have.lengthOf(1)
-        }
-      )
-      it(
-        'Should redirect the <MemberManager /> component with the ' +
-          '/member-manager endpoint',
-        () => {
-          const wrapper = getComponentFromRoute(
-            '/member-manager',
-            memberAppProps
-          )
-          expect(wrapper.find(Home)).to.have.lengthOf(1)
-        }
-      )
       it(
         'Should redirect the <EventManager /> component with the ' +
           '/event-manager endpoint',
@@ -309,6 +237,14 @@ describe('<Routing /> with <PrivateRoute />', () => {
             '/event-manager',
             memberAppProps
           )
+          expect(wrapper.find(Home)).to.have.lengthOf(1)
+        }
+      )
+      it(
+        'Should redirect the <Overview /> component with the ' +
+          '/dashboard endpoint',
+        () => {
+          const wrapper = getComponentFromRoute('/dashboard', memberAppProps)
           expect(wrapper.find(Home)).to.have.lengthOf(1)
         }
       )
