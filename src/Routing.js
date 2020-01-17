@@ -6,9 +6,6 @@ import PrivateRoute from './Components/Routing/PrivateRoute'
 import NavBarWrapper from './Components/Navbar/NavBarWrapper'
 
 import Overview from './Pages/Overview/Overview'
-import Admin from './Pages/Admin/Admin'
-import OfficerTools from './Pages/OfficerTools/OfficerTools'
-import MemberManager from './Pages/MemberManager/MemberManager'
 import EventManager from './Pages/EventManager/EventManager'
 import Login from './Pages/Login/Login'
 import Profile from './Pages/Profile/MemberView/Profile'
@@ -27,31 +24,11 @@ export default function Routing ({ appProps }) {
   const userIsAuthenticated = appProps.authenticated
   const userIsOfficer =
     userIsAuthenticated && appProps.user && appProps.user.accessLevel > 0
-  const userIsAdmin =
-    userIsAuthenticated && appProps.user && appProps.user.accessLevel === 2
 
   const signedInRoutes = [
     {
       Component: Overview,
       path: '/dashboard',
-      allowedIf: userIsOfficer,
-      redirect: '/'
-    },
-    {
-      Component: Admin,
-      path: '/admin',
-      allowedIf: userIsAdmin,
-      redirect: '/dashboard'
-    },
-    {
-      Component: OfficerTools,
-      path: '/officer-tools',
-      allowedIf: userIsOfficer,
-      redirect: '/'
-    },
-    {
-      Component: MemberManager,
-      path: '/member-manager',
       allowedIf: userIsOfficer,
       redirect: '/'
     },
