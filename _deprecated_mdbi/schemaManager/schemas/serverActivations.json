@@ -1,7 +1,0 @@
-{
-    "name": "serverActivations",
-    "desc": "A collection that records server uptimes",
-    "members": {
-        "login": "string"
-    }
-}
