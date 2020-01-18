@@ -1,4 +1,4 @@
-.Page{
+  .Page{
   padding-top: 20px;
   display: inline-block;
 }
@@ -29,4 +29,10 @@
   margin: auto;
   padding-top: 5px;
   margin-left: -6%;
+}
+
+@media (max-width: 1200px) {
+  .icon-row {
+      display: none !important;
+  }
 }
