@@ -184,6 +184,7 @@ export default class PrintConsole3D extends React.Component {
           <br />
           Search:
           <input
+            placeholder='By Name'
             style={{
               marginBottom: '5px',
               marginLeft: '5px'
