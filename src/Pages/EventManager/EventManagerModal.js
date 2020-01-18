@@ -1,0 +1,241 @@
+import React, { useState } from 'react'
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  Input,
+  InputGroup,
+  Col,
+  Label,
+  Row,
+  InputGroupAddon
+} from 'reactstrap'
+import { eventModalState } from '../../Enums'
+import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event'
+import { validateImageURL } from '../../APIFunctions/Image.js'
+
+function EventManagerModal (props) {
+  const NOT_FOUND_PNG =
+    'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG'
+  const { modal, toggle, modalState } = props
+  const [title, setTitle] = useState()
+  const [confirmationModal, setConfirmationModal] = useState(false)
+  const [description, setDescription] = useState()
+  const [eventLocation, setEventLocation] = useState()
+  const [eventDate, setEventDate] = useState()
+  const [startTime, setStartTime] = useState()
+  const [endTime, setEndTime] = useState()
+  const [eventCategory, setEventCategory] = useState()
+  const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG)
+
+  const inputMatrix = [
+    [
+      {
+        addon: 'Event Title*',
+        type: 'text',
+        defaultValue: props.title,
+        placeholder: 'e.g. Python Workshop',
+        handleChange: e => setTitle(e.target.value)
+      },
+      {
+        addon: 'Event Date*',
+        type: 'date',
+        defaultValue: props.eventDate ? props.eventDate.slice(0, 10) : '',
+        handleChange: e => setEventDate(e.target.value)
+      }
+    ],
+    [
+      {
+        addon: 'Event Location*',
+        type: 'text',
+        defaultValue: props.eventLocation,
+        placeholder: 'e.g. ENGR 294',
+        handleChange: e => setEventLocation(e.target.value)
+      },
+      {
+        addon: 'Event Category',
+        type: 'select',
+        defaultValue: props.eventCategory,
+        children: (
+          <>
+            <option />
+            <option>Social Event</option>
+            <option>Company Tour</option>
+            <option>Workshop</option>
+          </>
+        ),
+        handleChange: e => setEventCategory(e.target.value)
+      }
+    ],
+    [
+      {
+        addon: 'Start Time*',
+        type: 'time',
+        defaultValue: convertTime12to24(props.startTime),
+        handleChange: e => setStartTime(e.target.value)
+      },
+      {
+        addon: 'End Time*',
+        type: 'time',
+        defaultValue: convertTime12to24(props.endTime),
+        handleChange: e => setEndTime(e.target.value)
+      }
+    ]
+  ]
+
+  async function handleDeletion () {
+    await props.handleDelete({ _id: props._id })
+    await props.populateEventList()
+    toggleConfirmationModal()
+    props.toggle()
+  }
+
+  function toggleConfirmationModal () {
+    setConfirmationModal(!confirmationModal)
+  }
+
+  async function handleSubmission () {
+    const eventFields = {
+      title,
+      description,
+      eventLocation,
+      eventDate: new Date(eventDate),
+      startTime: convertTime24to12(startTime),
+      endTime: convertTime24to12(endTime),
+      eventCategory,
+      imageURL: imagePreviewURL === NOT_FOUND_PNG ? undefined : imagePreviewURL
+    }
+    await props.handleSubmit({ _id: props._id, ...eventFields })
+    await props.populateEventList()
+    props.toggle()
+  }
+
+  async function handleURLChange (url) {
+    let urlValid = false
+    await validateImageURL(url)
+      .then(() => (urlValid = true))
+      .catch(() => (urlValid = false))
+    setImagePreviewURL(urlValid ? url : NOT_FOUND_PNG)
+  }
+
+  function requiredFieldsFilledIn () {
+    if (props.modalState === eventModalState.EDIT) {
+      return (
+        title !== '' &&
+        eventDate !== '' &&
+        startTime !== '' &&
+        endTime !== '' &&
+        eventLocation !== ''
+      )
+    } else if (props.modalState === eventModalState.SUBMIT) {
+      return (
+        title !== undefined &&
+        eventDate !== undefined &&
+        startTime !== undefined &&
+        endTime !== undefined &&
+        eventLocation !== undefined
+      )
+    }
+    return false
+  }
+
+  return (
+    <div>
+      <Modal isOpen={confirmationModal} toggle={toggleConfirmationModal}>
+        <ModalHeader>Delete "{props.title}"?</ModalHeader>
+        <ModalFooter>
+          <Button onClick={toggleConfirmationModal}>Cancel</Button>
+          <Button color='danger' onClick={handleDeletion}>
+            Yes, delete
+          </Button>
+        </ModalFooter>
+      </Modal>
+      <Modal isOpen={modal} size='lg' toggle={toggle}>
+        <ModalHeader>
+          {modalState === eventModalState.SUBMIT ? 'Create New ' : 'Edit '}
+          Event
+        </ModalHeader>
+        <ModalBody>
+          <span>
+            <span color='red'>*</span>= This is a required field
+          </span>
+          {inputMatrix.map((row, index) => {
+            return (
+              <Row key={index}>
+                {row.map((input, index) => {
+                  return (
+                    <Col key={index}>
+                      <InputGroup className='event-input-group'>
+                        <InputGroupAddon addonType='prepend'>
+                          {input.addon}
+                        </InputGroupAddon>
+                        <Input
+                          type={input.type}
+                          defaultValue={input.defaultValue}
+                          placeholder={input.placeholder}
+                          onChange={input.handleChange}
+                          children={input.children}
+                        />
+                      </InputGroup>
+                    </Col>
+                  )
+                })}
+              </Row>
+            )
+          })}
+          <Row className='container'>
+            <Label>Event Description</Label>
+            <Input
+              type='textarea'
+              rows={5}
+              placeholder='Enter Event Description'
+              defaultValue={props.description}
+              onChange={e => setDescription(e.target.value)}
+            />
+          </Row>
+          <Row className='event-image'>
+            <Label>Event Image + Preview</Label>
+            <Input
+              type='text'
+              placeholder='Enter URL Here'
+              defaultValue={props.imageURL}
+              onChange={e => handleURLChange(e.target.value)}
+            />
+            <p className='modal-image-container'>
+              <img
+                id='event-img'
+                src={props.imageURL || imagePreviewURL}
+                alt='event visual'
+              />
+            </p>
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <Button color='secondary' onClick={toggle}>
+            Cancel
+          </Button>
+          {modalState === eventModalState.EDIT ? (
+            <Button color='danger' onClick={toggleConfirmationModal}>
+              Delete Event
+            </Button>
+          ) : (
+            <></>
+          )}
+          <Button
+            color='primary'
+            onClick={handleSubmission}
+            disabled={!requiredFieldsFilledIn()}
+          >
+            {modalState === eventModalState.SUBMIT
+              ? 'Create New Event'
+              : 'Submit Changes'}
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </div>
+  )
+}
+
+export default EventManagerModal

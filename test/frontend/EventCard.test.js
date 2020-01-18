@@ -7,6 +7,7 @@ import { expect } from 'chai'
 import EventCard from '../../src/Pages/Events/EventCard'
 import Adapter from 'enzyme-adapter-react-16'
 import { Row } from 'reactstrap'
+import { getDateWithSlashes } from '../../src/APIFunctions/Event'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -15,7 +16,7 @@ describe('<EventCard />', () => {
     title: 'Big brain time',
     eventLocation: 'ENGR 292',
     description: 'boom',
-    eventDate: '09/03/1999',
+    eventDate: '1999-03-29',
     startTime: '3:30 PM',
     endTime: '4:30 PM',
     imageURL: 'link.to/image'
@@ -32,7 +33,8 @@ describe('<EventCard />', () => {
         .get(1)
         .props.children.join('')
     ).to.equal(
-      `${appProps.eventDate} ${appProps.startTime} - ` + `${appProps.endTime}`
+      `${getDateWithSlashes(appProps.eventDate)} ${appProps.startTime} - ` +
+        `${appProps.endTime}`
     )
   })
   it('Should render the location of the event', () => {

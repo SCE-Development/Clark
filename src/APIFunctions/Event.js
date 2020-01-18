@@ -40,8 +40,8 @@ export async function createNewEvent (newEvent, token) {
     description: newEvent.description,
     eventLocation: newEvent.eventLocation,
     eventDate: newEvent.eventDate,
-    startTime: newEvent.startTime,
-    endTime: newEvent.endTime,
+    startTime: handleMidnightTime(newEvent.startTime),
+    endTime: handleMidnightTime(newEvent.endTime),
     eventCategory: newEvent.eventCategory,
     imageURL: newEvent.imageURL
   }
@@ -86,8 +86,8 @@ export async function editEvent (eventToUpdate, token) {
     description: eventToUpdate.description,
     eventLocation: eventToUpdate.eventLocation,
     eventDate: eventToUpdate.eventDate,
-    startTime: eventToUpdate.startTime,
-    endTime: eventToUpdate.endTime,
+    startTime: handleMidnightTime(eventToUpdate.startTime),
+    endTime: handleMidnightTime(eventToUpdate.endTime),
     eventCategory: eventToUpdate.eventCategory,
     imageURL: eventToUpdate.imageURL
   }
@@ -120,4 +120,68 @@ export async function deleteEvent (eventToDelete, token) {
       eventDeleted = false
     })
   return eventDeleted
+}
+
+/**
+ * Convert a 12 hour time to 24 hour time
+ * @param {string} time12h A value in 12 hour format e.g. 3:00 PM
+ * @returns {string} A time formatted in 24 hours
+ */
+export function convertTime12to24 (time12h) {
+  if (!time12h) return
+  const [time, modifier] = time12h.split(' ')
+  let [hours, minutes] = time.split(':')
+  if (hours === '12') {
+    hours = '00'
+  }
+  if (modifier === 'PM') {
+    hours = parseInt(hours, 10) + 12
+  } else if (parseInt(hours) < 10 && parseInt(hours) > 0) {
+    hours = '0' + String(hours)
+  }
+  return `${hours}:${minutes}`
+}
+
+/**
+ * Convert 24 hour time to 12 hour time
+ * @param {string} time24h A value in 24 hour format e.g. 15:00
+ */
+export function convertTime24to12 (time24h) {
+  if (!time24h) return
+  const [hour, minute] = time24h.split(':')
+  const suffix = parseInt(hour) - 12 > 0 ? 'PM' : 'AM'
+  return `${parseInt(hour) % 12}:${minute} ${suffix}`
+}
+
+/**
+ * Handles the edge case of a time being at midnight and must be converted
+ * from 0:20 AM for example.
+ * @param {string} time a time to be added to an event
+ */
+function handleMidnightTime (time) {
+  const [hour, suffix] = time.split(':')
+  if (hour === '0') return `12:${suffix}`
+  return time
+}
+
+/**
+ * Format a given string to be rendered in an input of type date
+ * @param {string} unformattedDate A date separated by slashes e.g. 02/28/1992
+ * @returns {string} A formatted date with dashes e.g. 1992-02-28
+ */
+export function getDateWithDashes (unformattedDate) {
+  if (!unformattedDate) return
+  const [month, day, year] = unformattedDate.split('/')
+  return [year, month, day].join('-')
+}
+
+/**
+ * Format a given string to be rendered in an input of type date
+ * @param {string} unformattedDate A date separated by dashes e.g. 1992-02-28
+ * @returns {string} A formatted date with slashes e.g. 02/28/1992
+ */
+export function getDateWithSlashes (unformattedDate) {
+  if (!unformattedDate) return
+  const [year, month, day] = unformattedDate.split('-')
+  return [month, day, year].join('/')
 }

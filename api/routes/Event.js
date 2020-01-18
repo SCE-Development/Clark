@@ -16,13 +16,9 @@ const {
 } = require('../constants').STATUS_CODES
 
 router.get('/getEvents', (req, res) => {
-  Event.find({}, (error, events) => {
-    if (error) {
-      logger.log(`Events /getEvents error: ${error}`)
-      return res.sendStatus(BAD_REQUEST)
-    }
-    return res.status(OK).send(events)
-  })
+  Event.find()
+    .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
+    .then(items => res.status(OK).send(items))
 })
 
 router.post('/createEvent', (req, res) => {
