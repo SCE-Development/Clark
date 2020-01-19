@@ -1,5 +1,4 @@
 import React from 'react'
-import { TabContent, TabPane, Row } from 'reactstrap'
 
 import './the-team.css'
 import './card-config.css'
@@ -10,7 +9,7 @@ export default class Example extends React.Component {
   constructor (props) {
     super(props)
 
-    this.toggle = this.toggle.bind(this)
+    // this.toggle = this.toggle.bind(this)
     this.state = {
       activeTab: '1',
 
@@ -118,31 +117,21 @@ export default class Example extends React.Component {
     }
   }
 
-  toggle (tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab
-      })
-    }
-  }
+  // toggle(tab) {
+  //   if (this.state.activeTab !== tab) {
+  //     this.setState({
+  //       activeTab: tab
+  //     })
+  //   }
+  // }
 
   render () {
     return (
       <>
-        <div className='Page'>
-          <TabContent activeTab={this.state.activeTab}>
-            <TabPane tabId='1' id='tab1' className='Panel'>
-              <h1 className='Title'>Leadership</h1>
-
-              <Row id='rowCSS'>
-                {this.state.json.map((obj, index) => (
-                  <OfficerCard key={index} {...obj} index={index} />
-                ))}
-              </Row>
-
-              {}
-            </TabPane>
-          </TabContent>
+        <div className='card-list'>
+          {this.state.json.map((obj, index) => (
+            <OfficerCard key={index} {...obj} index={index} />
+          ))}
         </div>
       </>
     )

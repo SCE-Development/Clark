@@ -17,22 +17,8 @@
   padding-left: 3px;
 }
 
-#col1{
-  margin-left: 0%;
-}
-
-#col2{
-  margin-left: 12%;
-}
-
-#tab1 {
+ #tab1 {
   margin: auto;
   padding-top: 5px;
   margin-left: -6%;
-}
-
-@media (max-width: 1200px) {
-  .icon-row {
-      display: none !important;
-  }
-}
+} 

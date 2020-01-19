@@ -1,33 +1,24 @@
-.Page .card {
-  height: auto;
-  width: 20px;
+.card-list {
+  width: 85vw;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px
 }
 
-.wholeCard {
-  width: 480px !important;
-  margin-top: 20px;
-  margin-left: 0px;
+.card-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 25px;
+  cursor: pointer;
+  -mox-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: transform 0.25s ease-out;
 }
 
-.link {
-  margin-top: 18px;
-}
-
-.SubTitle {
-  padding-top: 0px;
-  padding-left: 20px;
-}
-
-.description {
-  padding-top: 5px;
-  padding-left: 7px;
-}
-
-#rowCSS{
-	padding-top: 20px;
-	padding-bottom: 10px;
-}
-
-.icon-row{
-  margin-left: -6px;
+.card-container:hover{
+  transform:scale(1.05);
 }
