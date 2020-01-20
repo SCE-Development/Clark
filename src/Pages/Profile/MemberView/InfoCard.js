@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { Input, Button } from 'reactstrap'
 import './profile-modifier.css'
+import Footer from '../../../Components/Footer/Footer.js'
 import axios from 'axios'
+import PrintRequest from './PrintRequest'
 
 const pic = require('./getPicBySeason')
 const bcrypt = require('bcrypt-nodejs')
@@ -54,13 +56,13 @@ export default function ProfileCard (props) {
     <div id='enclose'>
       <img id='clip' alt='side' src={pic.getPictureByMonth()} />
       <img id='clip2' alt='side' src={pic.getPictureByMonth()} />
-      <div id='profileBox'>
+      <div id='profile-box'>
         {props.fields.map((field, ind) => (
-          <h3 key={ind} id='innerTextTop'>
+          <h3 key={ind} id='inner-text-top'>
             <b>{field.title}:</b> {field.value}
           </h3>
         ))}
-        <h3 id='innerTextTop'>
+        <h3 id='inner-text-top'>
           New Password:{' '}
           <Input
             onChange={e => {
@@ -70,7 +72,7 @@ export default function ProfileCard (props) {
             type='password'
           />
         </h3>
-        <h3 id='innerTextTop'>
+        <h3 id='inner-text-top'>
           Confirm Password:{' '}
           <Input
             onChange={e => {
@@ -89,8 +91,10 @@ export default function ProfileCard (props) {
           >
             Change Password
           </Button>
+          <PrintRequest email={props.user.email} />
         </h3>
       </div>
+      <Footer />
     </div>
   )
 }

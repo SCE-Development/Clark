@@ -116,3 +116,23 @@ export async function update3DPrintRequestProgress (requestToUpdate, token) {
     })
   return isUpdated
 }
+
+/**
+ * Search a specified 3D print request by it's email.
+ * @param {string} email - The requesting user's email.
+ * @returns {(Object[]|string)} - If the request was sucessfully, return array of requests.
+ */
+export async function search3DPrintRequests (email) {
+  let array = []
+  await axios
+    .post('/api/3DPrintingForm/GetForm', {
+      email
+    })
+    .then(result => {
+      array = result.data
+    })
+    .catch(() => {
+      array = []
+    })
+  return array
+}

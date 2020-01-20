@@ -8,11 +8,7 @@ import {
   Input,
   Container,
   Row,
-  Col,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
+  Col
 } from 'reactstrap'
 import { submit3DPrintRequest } from '../../APIFunctions/3DPrinting'
 
@@ -30,7 +26,6 @@ export default class PrintForm3D extends React.Component {
       contact: '',
       comment: '',
       user: this.props.user,
-      modal: false,
       isLoggedIn: this.props.authenticated,
       fill: false
     }
@@ -272,17 +267,6 @@ export default class PrintForm3D extends React.Component {
                   Submit
                 </Button>
               </FormGroup>
-
-              <div>
-                <Button color='primary'> Review Submission </Button>
-                <Modal isOpen={this.state.modal}>
-                  <ModalHeader>Your Submission</ModalHeader>
-                  <ModalBody>Order Submission.</ModalBody>
-                  <ModalFooter>
-                    <Button color='primary'>Cancel</Button>
-                  </ModalFooter>
-                </Modal>
-              </div>
             </Form>
           </Container>
         ) : null}

@@ -6,7 +6,7 @@
   font-weight: bold;
 }
 
-#profileBox {
+#profile-box {
   position: absolute;
   background-color: white;
   width: 40%;
@@ -14,9 +14,10 @@
   left: 30%;
   border: thick double #4385ac;
   border-radius: 50px;
+  z-index: 1;
 }
 
-#innerTextTop{
+#inner-text-top{
   margin-left: 5%;
   margin-top: 2%;
   margin-right: 5%;
@@ -40,10 +41,54 @@
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
-#profileLogo {
+#profile-logo {
   position: absolute;
   height: 35%;
   top: 25%;
   left: 58%;
-  z-index: 1;
+  z-index: 2;
+}
+
+#printing-request-button {
+  margin-top: 10px;
+  margin-left: 10%;
+}
+
+@media screen and (max-width: 1200px) {
+  #profile-logo {
+    height: 15%;
+    left: 60%;
+  }
+
+  #inner-text-top{
+    font-size: 20px;
+  }
+
+  #profile-box {
+    width: 40%;
+    top: 30%;
+    left: 30%;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  #profile-logo {
+    height: 0%;
+  }
+
+  #inner-text-top{
+    font-size: 20px;
+  }
+
+  #profile-box {
+    position: relative;
+    width: 100%;
+    top: 0%;
+    left: 0%;
+  }
+
+  #clip, #clip2 {
+    height: 0%;
+    width: 0%;
+  }
 }
