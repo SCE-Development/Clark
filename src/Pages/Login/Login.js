@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import { Link } from 'react-router-dom'
 import LoginInput from './LoginInput'
+import { loginUser } from '../../APIFunctions/User'
 import './login.css'
 
 export default function Login (props) {
@@ -11,33 +11,16 @@ export default function Login (props) {
 
   async function handleSubmit (e) {
     e.preventDefault()
-    await axios
-      .post('/api/user/login', { email, password })
-      .then(async result => {
-        props.setAuthenticated(true)
-        window.localStorage.setItem('jwtToken', result.data.token)
-        await updateLastLoginDate(result.data.token)
-        window.location.reload()
-      })
-      .catch(error => {
-        setErrorMsg(error.response && error.response.data.message)
-      })
-  }
-
-  async function updateLastLoginDate (token) {
-    await axios
-      .post('/api/user/edit', {
-        queryEmail: email,
-        lastLogin: Date.now(),
-        // This token must be passed in for authentication
-        token: token
-      })
-      .then(() => {
-        props.history.push('/dashboard')
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    const loginStatus = await loginUser(email, password)
+    if (!loginStatus.error) {
+      props.setAuthenticated(true)
+      window.localStorage.setItem('jwtToken', loginStatus.token)
+      window.location.reload()
+    } else {
+      setErrorMsg(
+        loginStatus.responseData && loginStatus.responseData.data.message
+      )
+    }
   }
 
   const fields = [

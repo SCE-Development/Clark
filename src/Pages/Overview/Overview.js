@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './Overview.css'
-import axios from 'axios'
 import OverviewProfile from './OverviewProfile.js'
+import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User'
 
 export default class OverviewBoard extends Component {
   constructor (props) {
@@ -29,19 +29,9 @@ export default class OverviewBoard extends Component {
     }
   }
 
-  callDatabase () {
-    axios
-      // get all user!
-      .post('/api/user/users', {
-        // don't need email
-        token: this.state.authToken
-      })
-      .then(result => {
-        if (result.status >= 200 && result.status < 300) {
-          this.setState({ users: result.data })
-        }
-      })
-      .catch(() => {})
+  async callDatabase () {
+    const apiResponse = await getAllUsers(this.state.authToken)
+    if (!apiResponse.error) this.setState({ users: apiResponse.responseData })
   }
 
   updateQuery (event) {
@@ -60,17 +50,8 @@ export default class OverviewBoard extends Component {
   Delete api
   parameter: Json object of object to be deleted
   */
-  deleteUser (user) {
-    // if they decide to delete themselves: delete->logout
-    axios
-      .post('/api/user/delete', {
-        token: this.state.authToken,
-        email: user.email
-      })
-      .then(result => {
-        this.callDatabase() // reload database
-      })
-      .catch(() => {})
+  async deleteUser (user) {
+    await deleteUserByEmail(user.email, this.state.authToken)
     if (user.email === this.state.currentUser) {
       // logout
       window.localStorage.removeItem('jwtToken')

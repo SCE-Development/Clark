@@ -2,9 +2,8 @@ import React, { useState } from 'react'
 import { Input, Button } from 'reactstrap'
 import './profile-modifier.css'
 import Footer from '../../../Components/Footer/Footer.js'
-import axios from 'axios'
 import PrintRequest from './PrintRequest'
-
+import { editUser } from '../../../APIFunctions/User'
 const pic = require('./getPicBySeason')
 const bcrypt = require('bcrypt-nodejs')
 
@@ -20,20 +19,15 @@ export default function ProfileCard (props) {
       password.trim() === '' ? user.password : bcrypt.hashSync(password, salt)
 
     if (password === confirmPass) {
-      axios
-        .post('/api/user/edit', {
-          ...user,
-          password: hashedPassword,
-          queryEmail: user.email,
-          token: user.token
-        })
-        .then(result => {
-          if (result.status >= 200 && result.status < 300) {
-            setPassword('')
-            window.alert('Success!!')
-          }
-        })
-        .catch(() => {})
+      const apiResponse = await editUser({
+        ...user,
+        password: hashedPassword,
+        token: user.token
+      })
+      if (!apiResponse.error) {
+        setPassword('')
+        window.alert('Success!!')
+      }
     }
   }
 
