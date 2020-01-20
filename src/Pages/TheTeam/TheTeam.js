@@ -6,7 +6,7 @@ import './card-config.css'
 import Evan from './teamPics/2018_2019/evanUgarte.png'
 import OfficerCard from './OfficerCard'
 
-export default class Example extends React.Component {
+export default class TheTeam extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -120,7 +120,7 @@ export default class Example extends React.Component {
     return (
       <>
         <TabContent activeTab={this.state.activeTab}>
-          <h1 className='Title'>Leadership</h1>
+          <h1 className='officer-title'>Leadership</h1>
 
           <div className='card-list'>
             {this.state.json.map((obj, index) => (
