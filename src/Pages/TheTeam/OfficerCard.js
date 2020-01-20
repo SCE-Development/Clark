@@ -26,7 +26,12 @@ function OfficerCard (props) {
       <div className='card-container'>
         <Media>
           <Media href={props.tag} className='Pic'>
-            <CardImg height='250' width='250' src={props.source} />
+            <CardImg
+              className='officer-picture'
+              height='250'
+              width='250'
+              src={props.source}
+            />
           </Media>
           <Media body className='SubTitle'>
             <Container>
