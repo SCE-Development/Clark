@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './profile-modifier.css';
 import axios from 'axios'
-import Footer from '../../../Components/Footer/Footer.js'
 import InfoCard from './InfoCard.js'
 
 export default class Profile extends Component {
@@ -63,13 +62,11 @@ export default class Profile extends Component {
       <div id='app'>
         <h1 id='title'> SCE Member Profile </h1>
 
-        <img id='profileLogo' alt='sce logo'
+        <img id='profile-logo' alt='sce logo'
           src='images/SCE-glow.png' />
 
         <InfoCard fields={fields} 
         user={{...this.state.user, token: this.props.user.token}} />
-
-        <Footer />
       </div>
     );
   }
