@@ -27,8 +27,8 @@ class MembershipPlan extends Component {
 
   cardSelected (id) {
     if (
-      id === 'Spring and Fall ' + this.state.year ||
-      id === 'Fall ' + this.state.year + 'Spring ' + this.state.year++
+      id.includes('Spring and Fall') ||
+      id.includes('Fall ' + this.state.year + ' and')
     ) {
       this.props.setSelectedPlan(membershipPlans.YEAR)
     } else {
