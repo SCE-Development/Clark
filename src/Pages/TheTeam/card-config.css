@@ -16,6 +16,7 @@
   transform: translateZ(0);
   transition: transform 0.25s ease-out;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .link {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { TabContent } from 'reactstrap'
-
+import Footer from '../../Components/Footer/Footer'
 import './the-team.css'
 import './card-config.css'
 import Evan from './teamPics/2018_2019/evanUgarte.png'
@@ -73,6 +73,7 @@ export default class TheTeam extends React.Component {
               ))}
           </div>
         </TabContent>
+        <Footer style={{ marginTop: '100px' }} />
       </>
     )
   }
