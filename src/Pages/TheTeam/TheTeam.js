@@ -5,6 +5,7 @@ import './the-team.css'
 import './card-config.css'
 import Evan from './teamPics/2018_2019/evanUgarte.png'
 import OfficerCard from './OfficerCard'
+import { officerRole, chairRole } from '../../Enums'
 
 export default class TheTeam extends React.Component {
   constructor (props) {
@@ -17,7 +18,7 @@ export default class TheTeam extends React.Component {
           name: 'Aris Koumis',
           major: 'B.S Computer Engineering',
           role: 'President',
-          source: Evan,
+          picture: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/',
@@ -27,8 +28,8 @@ export default class TheTeam extends React.Component {
         {
           name: 'Evan Ugarte',
           major: 'B.S Software Engineering',
-          role: 'Dev Chair',
-          source: Evan,
+          role: 'Development Chair',
+          picture: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/',
@@ -37,8 +38,8 @@ export default class TheTeam extends React.Component {
         {
           name: 'Pranav Patil',
           major: 'B.S Computer Engineering',
-          role: 'Dev',
-          source: Evan,
+          role: 'Development',
+          picture: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
           github: 'https://www.google.com/',
@@ -56,10 +57,7 @@ export default class TheTeam extends React.Component {
 
           <div className='card-list'>
             {this.state.json
-              .filter(
-                obj =>
-                  obj.role.includes('President') || obj.role.includes('Chair')
-              )
+              .filter(obj => Object.values(chairRole).includes(obj.role))
               .map((obj, index) => (
                 <OfficerCard key={index} {...obj} index={index} />
               ))}
@@ -69,10 +67,7 @@ export default class TheTeam extends React.Component {
 
           <div className='card-list'>
             {this.state.json
-              .filter(
-                obj =>
-                  !obj.role.includes('President') && !obj.role.includes('Chair')
-              )
+              .filter(obj => Object.values(officerRole).includes(obj.role))
               .map((obj, index) => (
                 <OfficerCard key={index} {...obj} index={index} />
               ))}

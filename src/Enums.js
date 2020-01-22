@@ -32,6 +32,23 @@ export const membershipStatus = [
   { key: 'Admin', value: 2 }
 ]
 
+export const officerRole = {
+  DEVELOPMENT: 'Development',
+  PUBLIC_RELATIONs: 'Public Relations',
+  EVENT_PLANNING: 'Event Planning',
+  PRINTING: '3D-Printing'
+}
+
+export const chairRole = {
+  PRESIDENT: 'President',
+  VICE_PRESIDENT: 'Vice President',
+  TREASURER: 'Treasurer',
+  DEVELOPMENT_CHAIR: 'Development Chair',
+  EVENT_PLANNING_CHAIR: 'Event Planning Chair',
+  STORE_MANAGER: 'Store Manager',
+  PRINTING_SPECIALIST: '3D-Printing/Hacking Station Chair'
+}
+
 export function getKey (enumArray, value) {
   return enumArray.filter(e => e.value === value)[0].key
 }

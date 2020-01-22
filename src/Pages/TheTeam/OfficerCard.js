@@ -30,7 +30,7 @@ function OfficerCard (props) {
               className='officer-picture'
               height='250'
               width='250'
-              src={props.source}
+              src={props.picture}
             />
           </Media>
           <Media body className='SubTitle'>
