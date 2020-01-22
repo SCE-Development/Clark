@@ -39,6 +39,7 @@ class Server {
     this.app.use(
       bodyParser.json({
         // support JSON-encoded request bodies
+        limit: '50mb',
         strict: true
       })
     )
