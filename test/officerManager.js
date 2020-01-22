@@ -18,6 +18,11 @@ let app = null
 const expect = chai.expect
 // tools for testing
 const tools = require('../util/testing-utils/tools.js')
+const {
+  setReturnOfTokenValidMock,
+  resetMock,
+  restoreMock
+} = require('./mocks/TokenValidFunctions')
 
 chai.should()
 chai.use(chaiHttp)
@@ -26,65 +31,28 @@ chai.use(chaiHttp)
 describe('OfficerManager', () => {
   before(done => {
     app = tools.initializeServer()
-
     // Before each test we empty the database
     tools.emptySchema(OfficerManager)
     tools.emptySchema(User)
     done()
   })
   after(done => {
+    restoreMock()
     tools.terminateServer(done)
   })
+  beforeEach(() => {
+    setReturnOfTokenValidMock(false)
+  })
+  afterEach(() => {
+    resetMock()
+  })
 
-  let token = ''
+  const token = ''
 
   describe('/POST submit', () => {
-    it('Should register a user', done => {
-      const user = {
-        email: 'test@test.com',
-        password: 'Passw0rd',
-        firstName: 'first-name',
-        lastName: 'last-name'
-      }
-
-      chai
-        .request(app)
-        .post('/api/user/register')
-        .send(user)
-        .then(function (res) {
-          expect(res).to.have.status(OK)
-
-          done()
-        })
-        .catch(err => {
-          throw err
-        })
-    })
-
-    it('Should log a user in and get a token', done => {
-      const user = {
-        email: 'test@test.com',
-        password: 'Passw0rd'
-      }
-      chai
-        .request(app)
-        .post('/api/user/login')
-        .send(user)
-        .then(function (res) {
-          expect(res).to.have.status(OK)
-          res.body.should.be.a('object')
-          res.body.should.have.property('token')
-          token = res.body.token
-
-          done()
-        })
-        .catch(err => {
-          throw err
-        })
-    })
-
     it('Should return statusCode 400 when the required fields are not set', done => {
       const form = { token: token }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/submit')
@@ -153,6 +121,7 @@ describe('OfficerManager', () => {
         major: 'major',
         token: token
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/submit')
@@ -208,6 +177,7 @@ describe('OfficerManager', () => {
 
     it('Should return an object of all forms', done => {
       const form = { token: token }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/GetForm')
@@ -235,6 +205,7 @@ describe('OfficerManager', () => {
         email: 'test@test.com',
         token: token
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/GetForm')
@@ -298,6 +269,7 @@ describe('OfficerManager', () => {
         token: token,
         email: 'invalid-email'
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/edit')
@@ -318,6 +290,7 @@ describe('OfficerManager', () => {
         email: 'test@test.com',
         name: 'new name'
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/edit')
@@ -339,7 +312,7 @@ describe('OfficerManager', () => {
         token: token,
         email: 'test@test.com'
       }
-
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/GetForm')
@@ -400,6 +373,7 @@ describe('OfficerManager', () => {
         token: token,
         email: 'fsefvsf@dsges.csadw'
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/delete')
@@ -419,6 +393,7 @@ describe('OfficerManager', () => {
         token: token,
         email: 'test@test.com'
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/delete')
@@ -440,6 +415,7 @@ describe('OfficerManager', () => {
         token: token,
         email: 'test@test.com'
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/officerManager/GetForm')

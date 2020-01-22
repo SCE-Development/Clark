@@ -2,7 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test'
 const PrintingForm3D = require('../api/models/PrintingForm3D')
-const User = require('../api/models/User')
+const tokenValidMocker = require('./mocks/TokenValidFunctions')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -18,6 +18,11 @@ let app = null
 const expect = chai.expect
 // tools for testing
 const tools = require('../util/testing-utils/tools.js')
+const {
+  setReturnOfTokenValidMock,
+  resetMock,
+  restoreMock
+} = require('./mocks/TokenValidFunctions')
 
 chai.should()
 chai.use(chaiHttp)
@@ -26,21 +31,28 @@ chai.use(chaiHttp)
 describe('3DPrintingForm', () => {
   before(done => {
     app = tools.initializeServer()
-
-    // Before each test we empty the database
     tools.emptySchema(PrintingForm3D)
-    tools.emptySchema(User)
     done()
   })
+
   after(done => {
+    restoreMock()
     tools.terminateServer(done)
   })
 
-  let token = ''
+  beforeEach(() => {
+    setReturnOfTokenValidMock(false)
+  })
+
+  afterEach(() => {
+    resetMock()
+  })
+
+  const token = 'token'
   let date = 0
 
   describe('/POST submit', () => {
-    it('Should not return statusCode 200 when the required fields are not set', done => {
+    it('Should return statusCode 401 when the required fields are not set', done => {
       const form = {}
       chai
         .request(app)
@@ -55,7 +67,6 @@ describe('3DPrintingForm', () => {
           throw err
         })
     })
-
     it('Should return statusCode 200 when all required fields are filled in', done => {
       const form = {
         name: 'pinkUnicorn',
@@ -69,7 +80,6 @@ describe('3DPrintingForm', () => {
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(OK)
-
           done()
         })
         .catch(err => {
@@ -89,7 +99,6 @@ describe('3DPrintingForm', () => {
           expect(res).to.have.status(OK)
           res.body.should.be.a('array')
           date = res.body[0].date
-
           done()
         })
         .catch(err => {
@@ -97,51 +106,7 @@ describe('3DPrintingForm', () => {
         })
     })
   })
-
   describe('/POST edit', () => {
-    it('Should register a user', done => {
-      const user = {
-        email: 'b@b.c',
-        password: 'Passw0rd',
-        firstName: 'first-name',
-        lastName: 'last-name'
-      }
-
-      chai
-        .request(app)
-        .post('/api/user/register')
-        .send(user)
-        .then(function (res) {
-          expect(res).to.have.status(OK)
-          done()
-        })
-        .catch(err => {
-          throw err
-        })
-    })
-
-    it('Should log a user in and get a token', done => {
-      const user = {
-        email: 'b@b.c',
-        password: 'Passw0rd'
-      }
-      chai
-        .request(app)
-        .post('/api/user/login')
-        .send(user)
-        .then(function (res) {
-          expect(res).to.have.status(OK)
-          res.body.should.be.a('object')
-          res.body.should.have.property('token')
-          token = res.body.token
-
-          done()
-        })
-        .catch(err => {
-          throw err
-        })
-    })
-
     it('Should return statusCode 403 if no token is passed in', done => {
       const form = {
         name: 'pinkUnicorn'
@@ -152,14 +117,12 @@ describe('3DPrintingForm', () => {
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(FORBIDDEN)
-
           done()
         })
         .catch(err => {
           throw err
         })
     })
-
     it('Should return statusCode 401 if an invalid token was passed in', done => {
       const form = {
         name: 'pinkUnicorn',
@@ -172,7 +135,6 @@ describe('3DPrintingForm', () => {
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(UNAUTHORIZED)
-
           done()
         })
         .catch(err => {
@@ -186,20 +148,19 @@ describe('3DPrintingForm', () => {
         token: token,
         email: 'b@b.c'
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/edit')
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(NOT_FOUND)
-
           done()
         })
         .catch(err => {
           throw err
         })
     })
-
     it('Should return statusCode 200 and a message if a form was edited', done => {
       const form = {
         name: 'pinkUnicorn',
@@ -208,6 +169,7 @@ describe('3DPrintingForm', () => {
         email: 'b@b.c',
         date: date
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/edit')
@@ -216,7 +178,6 @@ describe('3DPrintingForm', () => {
           expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
-
           done()
         })
         .catch(err => {
@@ -238,14 +199,12 @@ describe('3DPrintingForm', () => {
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(FORBIDDEN)
-
           done()
         })
         .catch(err => {
           throw err
         })
     })
-
     it('Should return statusCode 401 if an invalid token was passed in', done => {
       const form = {
         name: 'invalid-name',
@@ -259,7 +218,6 @@ describe('3DPrintingForm', () => {
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(UNAUTHORIZED)
-
           done()
         })
         .catch(err => {
@@ -274,13 +232,13 @@ describe('3DPrintingForm', () => {
         token: token,
         email: 'b@b.c'
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/delete')
         .send(form)
         .then(function (res) {
           expect(res).to.have.status(NOT_FOUND)
-
           done()
         })
         .catch(err => {
@@ -296,6 +254,7 @@ describe('3DPrintingForm', () => {
         email: 'b@b.c',
         date: date
       }
+      setReturnOfTokenValidMock(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/delete')
@@ -304,7 +263,6 @@ describe('3DPrintingForm', () => {
           expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('message')
-
           done()
         })
         .catch(err => {

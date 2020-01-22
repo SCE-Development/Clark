@@ -53,7 +53,8 @@ export default function ProfileCard (props) {
       <div id='profile-box'>
         {props.fields.map((field, ind) => (
           <h3 key={ind} id='inner-text-top'>
-            <b>{field.title}:</b> {field.value}
+            <b>{field.title}:</b>{' '}
+            <nobr dangerouslySetInnerHTML={{ __html: field.value }} />
           </h3>
         ))}
         <h3 id='inner-text-top'>

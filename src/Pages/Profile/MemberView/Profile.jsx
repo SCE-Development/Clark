@@ -40,7 +40,9 @@ export default class Profile extends Component {
           { title: 'Door Code', value: this.state.user.doorCode },
           { title: 'Joined Date', value: this.state.user.joinDate.slice(0, 10) },
           { title: 'Email', value: this.state.user.email },
-          { title: 'Membership Expiration', value: this.state.user.membershipValidUntil.slice(0, 10) },
+          { title: 'Membership Expiration', value: (this.props.user.accessLevel<0)? 
+          "<font color='red'>Not Valid</font>, please see us at Engr294" :
+          this.state.user.membershipValidUntil.slice(0, 10) },
         ] :
         [
           { title: '.', value: '' },
