@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
-import { Card, CardImg, CardTitle, Button } from 'reactstrap'
-// import Iframe from 'react-iframe'
+import { Card, CardImg, CardTitle } from 'reactstrap'
 import './benefits.css'
 import './card-config.css'
 import './card-settings.css'
-// import { render } from 'react-dom'
 
 class App extends Component {
-  // <h1 >sce services for members</h1>
-  // href="https://calendar.google.com/calendar/embed?src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&ctz=America%2FLos_Angeles"
   render () {
     return (
       <div className='tab'>
@@ -20,7 +16,6 @@ class App extends Component {
           </div>
 
           <div className='sec sec1'>
-            {/* <h1 className='secN' /> */}
             <div className='services'>
               <Card id='shop' body outline color='secondary'>
                 <CardTitle className='title'>SCE Shop</CardTitle>
@@ -39,9 +34,6 @@ class App extends Component {
                   <li>ICs, Arduino Uno</li>
                   <li>Wires,misc</li>
                 </ul>
-                <Button className='button' id='bshop'>
-                  Shop
-                </Button>
               </Card>
             </div>
 
@@ -58,9 +50,6 @@ class App extends Component {
                   <li>$10 fee per semester</li>
                   <li>3 members per locker</li>
                 </ul>
-                {/* <Button className='button' id='blocker'>
-                  Rent
-                </Button> */}
               </Card>
             </div>
 
@@ -85,7 +74,6 @@ class App extends Component {
           </div>
 
           <div className='sec sec2'>
-            {/* <h1 className='secN' /> */}
             <div className='services'>
               <Card id='d2' body outline color='success'>
                 <CardTitle className='title'>2D-Printing Service</CardTitle>
@@ -100,13 +88,9 @@ class App extends Component {
                 </p>
                 <p>(30-pages/week)</p>
                 <ul />
-                <Button className='button' id='bd2'>
-                  Print
-                </Button>
               </Card>
             </div>
 
-            {/* <h1 className='secN' /> */}
             <div className='services'>
               <Card id='hardware' body outline color='warning'>
                 <CardTitle className='title'>
@@ -124,9 +108,6 @@ class App extends Component {
                   <li>Power supplies</li>
                   <li>Multimeters, etc</li>
                 </ul>
-                {/* <Button className='button' id='bhardware'>
-                  Start Hacking
-                </Button> */}
               </Card>
             </div>
 
@@ -163,9 +144,6 @@ class App extends Component {
                   <li>3D Prints made on our 3D printers</li>
                 </ul>
                 <p>Submit orders through our online form</p>
-                <Button className='button' id='bd3'>
-                  Print
-                </Button>
               </Card>
             </div>
 
@@ -181,9 +159,6 @@ class App extends Component {
                   <li>Every table at SCE comes with a monitor for you</li>
                   <li>Keyboards available at request</li>
                 </ul>
-                {/* <Button className='button' id='bmonitor'>
-                  Monitor
-                </Button> */}
               </Card>
             </div>
 
@@ -204,26 +179,6 @@ class App extends Component {
                 <p>See calendar for details</p>
               </Card>
             </div>
-
-            {/*
-              <Card id='equipm' body outline color=''>
-                <CardTitle className='title'>Equipment and Lending</CardTitle>
-                <CardImg
-                  id='iequipm'
-                  src={require('./img/cart.png')}
-                  alt='equipment'
-                />
-                <ul>
-                  <li>Keyboards</li>
-                  <li>linux laptops</li>
-                  <li>Ethernet cables</li>
-                  <li>Logic analyzers, etc.</li>
-                </ul>
-                <Button className='button' id='bequipm'>
-                  Checkout
-                </Button>
-              </Card>
-            */}
           </div>
         </div>
       </div>
