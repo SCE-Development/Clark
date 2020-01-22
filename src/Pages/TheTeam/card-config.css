@@ -7,22 +7,25 @@
 }
 
 .card-container {
-  display: flex;
   flex-direction: column;
   border: 1px solid black;
   border-radius: 5px;
   padding: 25px;
-  cursor: pointer;
   -mox-osx-font-smoothing: grayscale;
   backface-visibility: hidden;
   transform: translateZ(0);
   transition: transform 0.25s ease-out;
+  margin-top: 10px;
 }
 
-.card-container:hover{
-  transform:scale(1.05);
+.link {
+  margin-left: 10px;
 }
 
-.icon-row{
-  margin-left: -6px;
+#quote {
+  margin-top: 10px;;
+}
+
+@media screen and (max-width: 1000px) {
+  .card-list { display: block; }  /* show it on small screens */
 }

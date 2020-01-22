@@ -16,101 +16,33 @@ export default class TheTeam extends React.Component {
         {
           name: 'Aris Koumis',
           major: 'B.S Computer Engineering',
-          tag: '#ArisKoumis',
+          role: 'President',
           source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
+          github: 'https://www.google.com/',
+          quote:
+            'sdsf jvkdjsf jvsdv sdjvi kcvmsms ijsdojvs vmvlsjcmc  sijois vjosjc jowecj'
         },
         {
           name: 'Evan Ugarte',
           major: 'B.S Software Engineering',
-          tag: '#EvanUgarte',
+          role: 'Dev Chair',
           source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
+          github: 'https://www.google.com/',
+          quote: 'vs vmvlsjcmc  sijois vjosjc jowecj'
         },
         {
           name: 'Pranav Patil',
           major: 'B.S Computer Engineering',
-          tag: '#pranavPatil',
+          role: 'Dev',
           source: Evan,
           facebook: 'https://www.google.com/',
           linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Keven Gallegos',
-          major: 'Unknown',
-          tag: '#kevenGallegos',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Keven Gallegos',
-          major: 'B.S Mechanical Engineering',
-          tag: '#DonRobertPornaras',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Thenu Senthil',
-          major: 'B.S Computer Engineering',
-          tag: '#ThenuSenthil',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Alisha Mehndiratta',
-          major: 'B.S Software Engineering',
-          tag: '#AlishaMehndiratta',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Lorena Silva',
-          major: 'B.S Computer Engineering',
-          tag: '#LorenaSilva',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Nick Derry',
-          major: 'B.S Computer Engineering',
-          tag: '#Nick Derry',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Aris Koumis v1',
-          major: 'B.S Computer Engineering',
-          tag: '#ArisKoumis',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
-        },
-        {
-          name: 'Aris Koumis v2',
-          major: 'B.S Computer Engineering',
-          tag: '#ArisKoumis',
-          source: Evan,
-          facebook: 'https://www.google.com/',
-          linkedin: 'https://www.google.com/',
-          github: 'https://www.google.com/'
+          github: 'https://www.google.com/',
+          quote: ''
         }
       ]
     }
@@ -123,9 +55,27 @@ export default class TheTeam extends React.Component {
           <h1 className='officer-title'>Leadership</h1>
 
           <div className='card-list'>
-            {this.state.json.map((obj, index) => (
-              <OfficerCard key={index} {...obj} index={index} />
-            ))}
+            {this.state.json
+              .filter(
+                obj =>
+                  obj.role.includes('President') || obj.role.includes('Chair')
+              )
+              .map((obj, index) => (
+                <OfficerCard key={index} {...obj} index={index} />
+              ))}
+          </div>
+
+          <h1 className='officer-title'>Officers</h1>
+
+          <div className='card-list'>
+            {this.state.json
+              .filter(
+                obj =>
+                  !obj.role.includes('President') && !obj.role.includes('Chair')
+              )
+              .map((obj, index) => (
+                <OfficerCard key={index} {...obj} index={index} />
+              ))}
           </div>
         </TabContent>
       </>

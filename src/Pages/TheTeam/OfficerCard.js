@@ -5,17 +5,17 @@ import { Media, CardImg, Row, Container } from 'reactstrap'
 const socialMedia = [
   {
     icon: 'logo-facebook',
-    fontSize: '35px',
+    fontSize: '45px',
     color: '#757575'
   },
   {
     icon: 'logo-linkedin',
-    fontSize: '35px',
+    fontSize: '45px',
     color: '#757575'
   },
   {
     icon: 'logo-github',
-    fontSize: '35px',
+    fontSize: '45px',
     color: '#757575'
   }
 ]
@@ -25,7 +25,7 @@ function OfficerCard (props) {
     <>
       <div className='card-container'>
         <Media>
-          <Media href={props.tag} className='Pic'>
+          <Media className='Pic'>
             <CardImg
               className='officer-picture'
               height='250'
@@ -53,10 +53,7 @@ function OfficerCard (props) {
             </Container>
           </Media>
         </Media>
-        <Media>
-          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus
-          scelerisque ante
-        </Media>
+        <Media id='quote'>{props.quote}</Media>
       </div>
     </>
   )

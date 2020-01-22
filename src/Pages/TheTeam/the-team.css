@@ -4,17 +4,3 @@
   padding-left: 0;
   margin-left: -4%;
 }
-
- #tab1 {
-  margin: auto;
-  padding-top: 5px;
-  margin-left: -6%;
-}
-
-@media screen and (min-width: 0px) and (max-width: 400px) {
-  #my-content { display: block; }  /* show it on small screens */
-}
-
-@media screen and (min-width: 401px) and (max-width: 1024px) {
-  #my-content { display: none; }   /* hide it elsewhere */
-}
