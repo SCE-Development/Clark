@@ -37,6 +37,7 @@ function OfficerCard (props) {
             <Container>
               <h2 className='name-title'>{props.name}</h2>
               <h5 className='major-title'>{props.major}</h5>
+              <h5 className='major-title'>{props.role}</h5>
               <Row className='icon-row'>
                 {socialMedia.map((item, num) => {
                   return (
