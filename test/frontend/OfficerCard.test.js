@@ -12,14 +12,14 @@ Enzyme.configure({ adapter: new Adapter() })
 describe('<OfficerCard />', () => {
   const officerInfo = {
     name: 'Evan ',
-    source: 'link',
+    picture: 'link',
     major: 'Software Engineering'
   }
 
   const wrapper = mount(<OfficerCard {...officerInfo} />)
   it('Should render the pictures of the officers', () => {
     expect(wrapper.find('.officer-picture').get(0).props.src).to.equal(
-      officerInfo.source
+      officerInfo.picture
     )
   })
 

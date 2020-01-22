@@ -103,8 +103,7 @@ describe('OfficerManager', () => {
       const form = {
         name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: 2,
-        team: 'dev',
+        role: 'dev',
         major: 'major'
       }
       chai
@@ -125,8 +124,7 @@ describe('OfficerManager', () => {
       const form = {
         name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: 2,
-        team: 'dev',
+        role: 'dev',
         major: 'major',
         token: 'Invalid-Token'
       }
@@ -148,8 +146,7 @@ describe('OfficerManager', () => {
       const form = {
         name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: 2,
-        team: 'dev',
+        role: 'dev',
         major: 'major',
         token: token
       }
@@ -219,8 +216,7 @@ describe('OfficerManager', () => {
           expect(response).to.have.length(1)
           expect(response[0].email).to.be.eql('test@test.com')
           expect(response[0].name).to.be.eql('pinkUnicorn')
-          expect(response[0].level).to.be.eql(2)
-          expect(response[0].team).to.be.eql('dev')
+          expect(response[0].role).to.be.eql('dev')
           expect(response[0].major).to.be.eql('major')
 
           done()
