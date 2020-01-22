@@ -10,6 +10,7 @@ import spring from './assets/spring.jpg'
 import spring2 from './assets/spring2.jpeg'
 import { Container, Button, Row } from 'reactstrap'
 import { memberApplicationState, membershipPlans } from '../../Enums'
+import { getSemesterPlan, getYearPlan } from './GetPlans'
 
 class MembershipPlan extends Component {
   constructor (props) {
@@ -19,9 +20,9 @@ class MembershipPlan extends Component {
       img2: winter2,
       activeId: undefined,
       planSelected: false,
-      yearPlan: '',
+      yearPlan: getYearPlan(),
       year: new Date().getFullYear(),
-      semester: ''
+      semester: getSemesterPlan()
     }
   }
 
@@ -64,30 +65,6 @@ class MembershipPlan extends Component {
 
   componentDidMount () {
     this.changeSeason()
-    this.getSemesterPlan()
-    this.getYearPlan()
-  }
-
-  getSemesterPlan () {
-    const month = new Date().getMonth()
-
-    if (month <= 4) {
-      this.setState({ semester: 'Spring ' + this.state.year })
-    } else {
-      this.setState({ semester: 'Fall ' + this.state.year })
-    }
-  }
-
-  getYearPlan () {
-    const month = new Date().getMonth()
-
-    if (month <= 4) {
-      this.setState({ yearPlan: 'Spring and Fall ' + this.state.year })
-    } else {
-      this.setState({
-        yearPlan: 'Fall ' + this.state.year + 'Spring ' + this.state.year
-      })
-    }
   }
 
   makeCard (title, img) {

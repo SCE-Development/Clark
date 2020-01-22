@@ -15,11 +15,12 @@ export const membershipPlans = {
 }
 
 export function memberShipPlanToString (key) {
+  const plans = require('./Pages/MembershipApplication/GetPlans')
   let str = ''
   if (key === membershipPlans.YEAR) {
-    str = 'Spring and Fall 2020'
+    str = plans.getYearPlan()
   } else if (key === membershipPlans.SEMESTER) {
-    str = 'Spring 2020'
+    str = plans.getSemesterPlan()
   }
   return str
 }
