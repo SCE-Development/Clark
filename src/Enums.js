@@ -10,8 +10,8 @@ export const memberApplicationState = {
 }
 
 export const membershipPlans = {
-  YEAR: 1,
-  SEMESTER: 2
+  YEAR: 2,
+  SEMESTER: 1
 }
 
 export function memberShipPlanToString (key) {

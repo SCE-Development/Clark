@@ -18,14 +18,20 @@ class MembershipPlan extends Component {
       img1: winter,
       img2: winter2,
       activeId: undefined,
-      planSelected: false
+      planSelected: false,
+      yearPlan: '',
+      year: new Date().getFullYear(),
+      semester: ''
     }
   }
 
   cardSelected (id) {
-    if (id === 'Spring and Fall 2020') {
+    if (
+      id === 'Spring and Fall ' + this.state.year ||
+      id === 'Fall ' + this.state.year + 'Spring ' + this.state.year++
+    ) {
       this.props.setSelectedPlan(membershipPlans.YEAR)
-    } else if (id === 'Spring 2020') {
+    } else {
       this.props.setSelectedPlan(membershipPlans.SEMESTER)
     }
     this.setState({
@@ -35,12 +41,15 @@ class MembershipPlan extends Component {
   }
 
   getBody (title) {
-    if (title === 'Spring and Fall 2020') {
+    if (
+      title === 'Spring and Fall ' + this.state.year ||
+      title === 'Fall ' + this.state.year
+    ) {
       return (
         <h6 style={{ margin: 5 }}>
           Access to our club room during legal building hours. Access to our
           events and news. And much more! This membership lasts a full year and
-          expires on December 20th, 2020. Sign Up @ SCE (ENGR 294){' '}
+          expires on December 20th, {this.state.year}. Sign Up @ SCE (ENGR 294){' '}
         </h6>
       )
     }
@@ -48,13 +57,37 @@ class MembershipPlan extends Component {
       <h6 style={{ margin: 5 }}>
         Access to our club room during legal building hours. Access to our
         events and news. And much more! This membership lasts a semester and
-        expires on May 20th, 2020. Sign Up @ SCE (ENGR 294)
+        expires on May 20th, {this.state.year}. Sign Up @ SCE (ENGR 294)
       </h6>
     )
   }
 
   componentDidMount () {
     this.changeSeason()
+    this.getSemesterPlan()
+    this.getYearPlan()
+  }
+
+  getSemesterPlan () {
+    const month = new Date().getMonth()
+
+    if (month <= 4) {
+      this.setState({ semester: 'Spring ' + this.state.year })
+    } else {
+      this.setState({ semester: 'Fall ' + this.state.year })
+    }
+  }
+
+  getYearPlan () {
+    const month = new Date().getMonth()
+
+    if (month <= 4) {
+      this.setState({ yearPlan: 'Spring and Fall ' + this.state.year })
+    } else {
+      this.setState({
+        yearPlan: 'Fall ' + this.state.year + 'Spring ' + this.state.year
+      })
+    }
   }
 
   makeCard (title, img) {
@@ -78,7 +111,7 @@ class MembershipPlan extends Component {
   }
 
   changeSeason () {
-    var month = new Date().getMonth() + 1
+    const month = new Date().getMonth() + 1
     if (month === 12 || month === 1 || month === 2) {
       this.setState({ img1: winter, img2: winter2 })
     } else if (month >= 3 && month <= 5) {
@@ -96,8 +129,8 @@ class MembershipPlan extends Component {
         <h1>Hi! We're glad you're here.</h1>
         <div className='membership'>
           <Row className='membership-plan-row'>
-            {this.makeCard('Spring 2020', this.state.img1)}
-            {this.makeCard('Spring and Fall 2020', this.state.img2)}
+            {this.makeCard(this.state.semester, this.state.img1)}
+            {this.makeCard(this.state.yearPlan, this.state.img2)}
           </Row>
         </div>
         <Row className='transition-button-wrapper' id='membership-plan-btn'>
