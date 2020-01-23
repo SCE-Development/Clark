@@ -2,12 +2,12 @@
 import 'jsdom-global/register'
 import React from 'react'
 import Enzyme, { mount } from 'enzyme'
-import sinon from 'sinon'
 import { expect } from 'chai'
 import 'regenerator-runtime/runtime'
 
 import UserProfile from '../../src/Pages/Profile/MemberView/Profile'
 import InfoCard from '../../src/Pages/Profile/MemberView/InfoCard'
+import {mockMonth, revertClock} from '../mocks/Date'
 import Adapter from 'enzyme-adapter-react-16'
 
 import winter from '../../src/Pages/Profile/MemberView/Image/winter'
@@ -16,14 +16,6 @@ import summer from '../../src/Pages/Profile/MemberView/Image/summer'
 import spring from '../../src/Pages/Profile/MemberView/Image/spring'
 
 Enzyme.configure({ adapter: new Adapter() })
-
-let clock = null
-function mockMonth (month) {
-  clock = sinon.useFakeTimers(new Date(2019, month))
-}
-function revertClock () {
-  if (clock) clock.restore()
-}
 
 describe('<UserProfile />', () => {
   after(done => {

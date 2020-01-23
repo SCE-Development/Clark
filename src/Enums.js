@@ -10,19 +10,19 @@ export const memberApplicationState = {
 }
 
 export const membershipPlans = {
-  YEAR: 2,
-  SEMESTER: 1
+  SEMESTER: 1,
+  YEAR: 2
 }
 
 export function memberShipPlanToString (key) {
   const plans = require('./Pages/MembershipApplication/GetPlans')
-  let str = ''
+  let correctPlan = ''
   if (key === membershipPlans.YEAR) {
-    str = plans.getYearPlan()
+    correctPlan = plans.getYearPlan()
   } else if (key === membershipPlans.SEMESTER) {
-    str = plans.getSemesterPlan()
+    correctPlan = plans.getSemesterPlan()
   }
-  return str
+  return correctPlan
 }
 
 export const membershipStatus = [

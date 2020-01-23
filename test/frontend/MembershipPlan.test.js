@@ -1,7 +1,6 @@
 /* global describe it */
 import 'jsdom-global/register'
 import React from 'react'
-import sinon from 'sinon'
 import Enzyme, { mount, shallow } from 'enzyme'
 import { expect } from 'chai'
 import { Button } from 'reactstrap'
@@ -9,22 +8,11 @@ import { membershipPlans } from '../../src/Enums'
 
 import MembershipPlan from '../../src/Pages/MembershipApplication/MembershipPlan'
 import Adapter from 'enzyme-adapter-react-16'
-import {
-  getSemesterPlan,
-  getYearPlan
-} from '../../src/Pages/MembershipApplication/GetPlans'
+import {mockMonth, revertClock} from '../mocks/Date'
 
 Enzyme.configure({ adapter: new Adapter() })
 
 describe('<MembershipPlan />', () => {
-  const year = new Date().getFullYear()
-  let clock = null
-  function mockMonth (month) {
-    clock = sinon.useFakeTimers(new Date(year, month))
-  }
-  function revertClock () {
-    if (clock) clock.restore()
-  }
 
   after(done => {
     // get rid of the stub
@@ -32,34 +20,29 @@ describe('<MembershipPlan />', () => {
     done()
   })
 
-  let SEMESTER_MEMBERSHIP
-  let YEAR_MEMBERSHIP
+  const year = new Date().getFullYear()
+  const SEMESTER_MEMBERSHIP_FALL = 'Fall '+year
+  const YEAR_MEMBERSHIP_FALL = 'Fall '+year+' and Spring '+(year+1)
+  const SEMESTER_MEMBERSHIP_SPRING = 'Spring '+year
+  const YEAR_MEMBERSHIP_SPRING = 'Spring and Fall '+year
 
   it('Should render two card components', () => {
     const wrapper = mount(<MembershipPlan />)
     expect(wrapper.find('.card')).to.have.lengthOf(2)
   })
 
-  it('Should display a membership plan on each card', () => {
-    let wrapper
-
+  it('Should display a membership plan on each card for spring', () => {
     mockMonth(1)
-    SEMESTER_MEMBERSHIP = getSemesterPlan()
-    YEAR_MEMBERSHIP = getYearPlan()
-    wrapper = mount(<MembershipPlan />)
-    expect(wrapper.find('.card').get(0).props.id).to.equal(SEMESTER_MEMBERSHIP)
-    expect(wrapper.find('.card').get(1).props.id).to.equal(YEAR_MEMBERSHIP)
+    const wrapper = mount(<MembershipPlan />)
+    expect(wrapper.find('.card').get(0).props.id).to.equal(SEMESTER_MEMBERSHIP_SPRING)
+    expect(wrapper.find('.card').get(1).props.id).to.equal(YEAR_MEMBERSHIP_SPRING)
+  })
 
+  it('Should display a membership plan on each card for fall', () => {
     mockMonth(8)
-    SEMESTER_MEMBERSHIP = getSemesterPlan()
-    YEAR_MEMBERSHIP = getYearPlan()
-    wrapper = mount(<MembershipPlan />)
-    console.log(
-      wrapper.find('.card').get(0).props.id,
-      wrapper.find('.card').get(1).props.id
-    )
-    expect(wrapper.find('.card').get(0).props.id).to.equal(SEMESTER_MEMBERSHIP)
-    expect(wrapper.find('.card').get(1).props.id).to.equal(YEAR_MEMBERSHIP)
+    const wrapper = mount(<MembershipPlan />)
+    expect(wrapper.find('.card').get(0).props.id).to.equal(SEMESTER_MEMBERSHIP_FALL)
+    expect(wrapper.find('.card').get(1).props.id).to.equal(YEAR_MEMBERSHIP_FALL)
   })
 
   it('Should disable continuing when a membership plan is not selected', () => {
@@ -73,31 +56,33 @@ describe('<MembershipPlan />', () => {
     expect(wrapper.find(Button).get(0).props.disabled).to.equal(false)
   })
 
-  it('Should the selected membership plan with the cardSelected function', () => {
+  it('Should the selected membership plan with the cardSelected function for spring', () => {
+    mockMonth(1)
     let currentPlan
-    let wrapper
     const appProps = {
       setSelectedPlan: id => {
         currentPlan = id
       }
     }
-
-    mockMonth(1)
-    wrapper = shallow(<MembershipPlan {...appProps} />)
-    SEMESTER_MEMBERSHIP = getSemesterPlan()
-    YEAR_MEMBERSHIP = getYearPlan()
-    wrapper.instance().cardSelected(SEMESTER_MEMBERSHIP)
+    const wrapper = shallow(<MembershipPlan {...appProps} />)
+    wrapper.instance().cardSelected(SEMESTER_MEMBERSHIP_SPRING)
     expect(currentPlan).to.equal(membershipPlans.SEMESTER)
-    wrapper.instance().cardSelected(YEAR_MEMBERSHIP)
+    wrapper.instance().cardSelected(YEAR_MEMBERSHIP_SPRING)
     expect(currentPlan).to.equal(membershipPlans.YEAR)
+  })
 
+  it('Should the selected membership plan with the cardSelected function for fall', () => {
     mockMonth(8)
-    wrapper = shallow(<MembershipPlan {...appProps} />)
-    SEMESTER_MEMBERSHIP = getSemesterPlan()
-    YEAR_MEMBERSHIP = getYearPlan()
-    wrapper.instance().cardSelected(SEMESTER_MEMBERSHIP)
+    let currentPlan
+    const appProps = {
+      setSelectedPlan: id => {
+        currentPlan = id
+      }
+    }
+    const wrapper = shallow(<MembershipPlan {...appProps} />)
+    wrapper.instance().cardSelected(SEMESTER_MEMBERSHIP_SPRING)
     expect(currentPlan).to.equal(membershipPlans.SEMESTER)
-    wrapper.instance().cardSelected(YEAR_MEMBERSHIP)
+    wrapper.instance().cardSelected(YEAR_MEMBERSHIP_SPRING)
     expect(currentPlan).to.equal(membershipPlans.YEAR)
   })
 })
