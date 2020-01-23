@@ -7,8 +7,8 @@ let clock = null
  * @param {Number} month - month to mock
  */
 export function mockMonth (month) {
-    const year = new Date().getFullYear()
-    clock = sinon.useFakeTimers(new Date(year, month))
+  const year = new Date().getFullYear()
+  clock = sinon.useFakeTimers(new Date(year, month))
 }
 
 /**

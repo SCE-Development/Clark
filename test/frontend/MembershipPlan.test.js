@@ -8,12 +8,11 @@ import { membershipPlans } from '../../src/Enums'
 
 import MembershipPlan from '../../src/Pages/MembershipApplication/MembershipPlan'
 import Adapter from 'enzyme-adapter-react-16'
-import {mockMonth, revertClock} from '../mocks/Date'
+import { mockMonth, revertClock } from '../mocks/Date'
 
 Enzyme.configure({ adapter: new Adapter() })
 
 describe('<MembershipPlan />', () => {
-
   after(done => {
     // get rid of the stub
     revertClock()
@@ -21,10 +20,10 @@ describe('<MembershipPlan />', () => {
   })
 
   const year = new Date().getFullYear()
-  const SEMESTER_MEMBERSHIP_FALL = 'Fall '+year
-  const YEAR_MEMBERSHIP_FALL = 'Fall '+year+' and Spring '+(year+1)
-  const SEMESTER_MEMBERSHIP_SPRING = 'Spring '+year
-  const YEAR_MEMBERSHIP_SPRING = 'Spring and Fall '+year
+  const SEMESTER_MEMBERSHIP_FALL = 'Fall ' + year
+  const YEAR_MEMBERSHIP_FALL = 'Fall ' + year + ' and Spring ' + (year + 1)
+  const SEMESTER_MEMBERSHIP_SPRING = 'Spring ' + year
+  const YEAR_MEMBERSHIP_SPRING = 'Spring and Fall ' + year
 
   it('Should render two card components', () => {
     const wrapper = mount(<MembershipPlan />)
@@ -34,14 +33,20 @@ describe('<MembershipPlan />', () => {
   it('Should display a membership plan on each card for spring', () => {
     mockMonth(1)
     const wrapper = mount(<MembershipPlan />)
-    expect(wrapper.find('.card').get(0).props.id).to.equal(SEMESTER_MEMBERSHIP_SPRING)
-    expect(wrapper.find('.card').get(1).props.id).to.equal(YEAR_MEMBERSHIP_SPRING)
+    expect(wrapper.find('.card').get(0).props.id).to.equal(
+      SEMESTER_MEMBERSHIP_SPRING
+    )
+    expect(wrapper.find('.card').get(1).props.id).to.equal(
+      YEAR_MEMBERSHIP_SPRING
+    )
   })
 
   it('Should display a membership plan on each card for fall', () => {
     mockMonth(8)
     const wrapper = mount(<MembershipPlan />)
-    expect(wrapper.find('.card').get(0).props.id).to.equal(SEMESTER_MEMBERSHIP_FALL)
+    expect(wrapper.find('.card').get(0).props.id).to.equal(
+      SEMESTER_MEMBERSHIP_FALL
+    )
     expect(wrapper.find('.card').get(1).props.id).to.equal(YEAR_MEMBERSHIP_FALL)
   })
 

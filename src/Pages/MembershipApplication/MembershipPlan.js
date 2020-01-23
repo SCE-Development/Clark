@@ -46,8 +46,8 @@ class MembershipPlan extends Component {
     if (
       plan.includes('Fall ' + this.state.year) ||
       plan.includes('Spring and Fall ' + this.state.year)
-    ) { 
-      return `May 20th, ${this.state.year}` 
+    ) {
+      return `May 20th, ${this.state.year}`
     }
     return `December 20th, ${this.state.year}`
   }
