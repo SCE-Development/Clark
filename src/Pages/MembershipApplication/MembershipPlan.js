@@ -10,83 +10,76 @@ import spring from './assets/spring.jpg'
 import spring2 from './assets/spring2.jpeg'
 import { Container, Button, Row } from 'reactstrap'
 import { memberApplicationState, membershipPlans } from '../../Enums'
+import { getSemesterPlan, getYearPlan } from './GetPlans'
 
 class MembershipPlan extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      img1: winter,
-      img2: winter2,
+      yearPicture: winter2,
+      semesterPicture: winter,
       activeId: undefined,
-      planSelected: false
+      planSelected: false,
+      yearPlan: getYearPlan(),
+      year: new Date().getFullYear(),
+      semesterPlan: getSemesterPlan(),
+      planType: []
     }
   }
 
-  cardSelected (id) {
-    if (id === 'Spring and Fall 2020') {
+  cardSelected (plan) {
+    if (
+      plan.includes('Spring and Fall') ||
+      plan.includes('Fall ' + this.state.year + ' and')
+    ) {
       this.props.setSelectedPlan(membershipPlans.YEAR)
-    } else if (id === 'Spring 2020') {
+    } else {
       this.props.setSelectedPlan(membershipPlans.SEMESTER)
     }
     this.setState({
-      activeId: id,
+      activeId: plan,
       planSelected: true
     })
   }
 
-  getBody (title) {
-    if (title === 'Spring and Fall 2020') {
-      return (
-        <h6 style={{ margin: 5 }}>
-          Access to our club room during legal building hours. Access to our
-          events and news. And much more! This membership lasts a full year and
-          expires on December 20th, 2020. Sign Up @ SCE (ENGR 294){' '}
-        </h6>
-      )
+  getExpirationDate (plan) {
+    if (
+      plan.includes('Fall ' + this.state.year) ||
+      plan.includes('Spring and Fall ' + this.state.year)
+    ) {
+      return `May 20th, ${this.state.year}`
     }
-    return (
-      <h6 style={{ margin: 5 }}>
-        Access to our club room during legal building hours. Access to our
-        events and news. And much more! This membership lasts a semester and
-        expires on May 20th, 2020. Sign Up @ SCE (ENGR 294)
-      </h6>
-    )
+    return `December 20th, ${this.state.year}`
   }
 
   componentDidMount () {
     this.changeSeason()
-  }
-
-  makeCard (title, img) {
-    return (
-      <div
-        className={
-          title === this.state.activeId
-            ? 'card membership-card active-plan'
-            : 'card membership-card'
+    this.setState({
+      planType: [
+        {
+          plan: this.state.semesterPlan,
+          img: this.state.semesterPicture,
+          expire: this.getExpirationDate(this.state.semesterPlan)
+        },
+        {
+          plan: this.state.yearPlan,
+          img: this.state.yearPicture,
+          expire: this.getExpirationDate(this.state.yearPlan)
         }
-        id={title}
-        onClick={this.cardSelected.bind(this, title)}
-      >
-        <img className='img' alt='card' src={img} />
-        <div className='card-body'>
-          <h4 style={{ alignSelf: 'left' }}>{title}</h4>
-          {this.getBody(title)}
-        </div>
-      </div>
-    )
+      ]
+    })
   }
 
   changeSeason () {
-    var month = new Date().getMonth() + 1
+    const month = new Date().getMonth() + 1
     if (month === 12 || month === 1 || month === 2) {
-      this.setState({ img1: winter, img2: winter2 })
+      this.setState({ semesterPicture: winter, yearPicture: winter2 })
     } else if (month >= 3 && month <= 5) {
-      this.setState({ img1: spring, img2: spring2 })
+      this.setState({ semesterPicture: spring, yearPicture: spring2 })
     } else if (month >= 6 && month <= 8) {
-      this.setState({ img1: summer, img2: summer2 })
+      this.setState({ semesterPicture: summer, yearPicture: summer2 })
     } else {
-      this.setState({ img1: fall, img2: fall2 })
+      this.setState({ semesterPicture: fall, yearPicture: fall2 })
     }
   }
 
@@ -96,8 +89,29 @@ class MembershipPlan extends Component {
         <h1>Hi! We're glad you're here.</h1>
         <div className='membership'>
           <Row className='membership-plan-row'>
-            {this.makeCard('Spring 2020', this.state.img1)}
-            {this.makeCard('Spring and Fall 2020', this.state.img2)}
+            {this.state.planType.map((type, ind) => (
+              <div
+                className={
+                  type.plan === this.state.activeId
+                    ? 'card membership-card active-plan'
+                    : 'card membership-card'
+                }
+                id={type.plan}
+                key={ind}
+                onClick={this.cardSelected.bind(this, type.plan)}
+              >
+                <img className='img' alt='card' src={type.img} />
+                <div className='card-body'>
+                  <h4 style={{ alignSelf: 'left' }}>{type.plan}</h4>
+                  <h6 style={{ margin: 5 }}>
+                    Access to our club room during legal building hours. Access
+                    to our events and news. And much more! This membership lasts
+                    a semester and expires on {type.expire}. Sign Up @ SCE (ENGR
+                    294)
+                  </h6>
+                </div>
+              </div>
+            ))}
           </Row>
         </div>
         <Row className='transition-button-wrapper' id='membership-plan-btn'>
