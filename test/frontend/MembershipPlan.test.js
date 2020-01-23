@@ -20,10 +20,10 @@ describe('<MembershipPlan />', () => {
   })
 
   const year = new Date().getFullYear()
-  const SEMESTER_MEMBERSHIP_FALL = 'Fall ' + year
-  const YEAR_MEMBERSHIP_FALL = 'Fall ' + year + ' and Spring ' + (year + 1)
-  const SEMESTER_MEMBERSHIP_SPRING = 'Spring ' + year
-  const YEAR_MEMBERSHIP_SPRING = 'Spring and Fall ' + year
+  const FALL_SEMESTER_MEMBERSHIP = 'Fall ' + year
+  const FALL_YEAR_MEMBERSHIP = 'Fall ' + year + ' and Spring ' + (year + 1)
+  const SPRING_SEMESTER_MEMBERSHIP = 'Spring ' + year
+  const SPRING_YEAR_MEMBERSHIP = 'Spring and Fall ' + year
 
   it('Should render two card components', () => {
     const wrapper = mount(<MembershipPlan />)
@@ -34,10 +34,10 @@ describe('<MembershipPlan />', () => {
     mockMonth(1)
     const wrapper = mount(<MembershipPlan />)
     expect(wrapper.find('.card').get(0).props.id).to.equal(
-      SEMESTER_MEMBERSHIP_SPRING
+      SPRING_SEMESTER_MEMBERSHIP
     )
     expect(wrapper.find('.card').get(1).props.id).to.equal(
-      YEAR_MEMBERSHIP_SPRING
+      SPRING_YEAR_MEMBERSHIP
     )
   })
 
@@ -45,9 +45,9 @@ describe('<MembershipPlan />', () => {
     mockMonth(8)
     const wrapper = mount(<MembershipPlan />)
     expect(wrapper.find('.card').get(0).props.id).to.equal(
-      SEMESTER_MEMBERSHIP_FALL
+      FALL_SEMESTER_MEMBERSHIP
     )
-    expect(wrapper.find('.card').get(1).props.id).to.equal(YEAR_MEMBERSHIP_FALL)
+    expect(wrapper.find('.card').get(1).props.id).to.equal(FALL_YEAR_MEMBERSHIP)
   })
 
   it('Should disable continuing when a membership plan is not selected', () => {
@@ -70,9 +70,9 @@ describe('<MembershipPlan />', () => {
       }
     }
     const wrapper = shallow(<MembershipPlan {...appProps} />)
-    wrapper.instance().cardSelected(SEMESTER_MEMBERSHIP_SPRING)
+    wrapper.instance().cardSelected(SPRING_SEMESTER_MEMBERSHIP)
     expect(currentPlan).to.equal(membershipPlans.SEMESTER)
-    wrapper.instance().cardSelected(YEAR_MEMBERSHIP_SPRING)
+    wrapper.instance().cardSelected(SPRING_YEAR_MEMBERSHIP)
     expect(currentPlan).to.equal(membershipPlans.YEAR)
   })
 
@@ -85,9 +85,9 @@ describe('<MembershipPlan />', () => {
       }
     }
     const wrapper = shallow(<MembershipPlan {...appProps} />)
-    wrapper.instance().cardSelected(SEMESTER_MEMBERSHIP_SPRING)
+    wrapper.instance().cardSelected(FALL_SEMESTER_MEMBERSHIP)
     expect(currentPlan).to.equal(membershipPlans.SEMESTER)
-    wrapper.instance().cardSelected(YEAR_MEMBERSHIP_SPRING)
+    wrapper.instance().cardSelected(FALL_YEAR_MEMBERSHIP)
     expect(currentPlan).to.equal(membershipPlans.YEAR)
   })
 })
