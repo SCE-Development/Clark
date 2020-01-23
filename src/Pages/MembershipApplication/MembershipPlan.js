@@ -20,9 +20,7 @@ class MembershipPlan extends Component {
       semesterPicture: winter,
       activeId: undefined,
       planSelected: false,
-      yearPlan: getYearPlan(),
       year: new Date().getFullYear(),
-      semesterPlan: getSemesterPlan(),
       planType: []
     }
   }
@@ -57,14 +55,14 @@ class MembershipPlan extends Component {
     this.setState({
       planType: [
         {
-          plan: this.state.semesterPlan,
+          plan: getSemesterPlan(),
           img: this.state.semesterPicture,
-          expire: this.getExpirationDate(this.state.semesterPlan)
+          expire: this.getExpirationDate(getSemesterPlan())
         },
         {
-          plan: this.state.yearPlan,
+          plan: getYearPlan(),
           img: this.state.yearPicture,
-          expire: this.getExpirationDate(this.state.yearPlan)
+          expire: this.getExpirationDate(getYearPlan())
         }
       ]
     })
