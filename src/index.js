@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { withRouter } from 'react-router-dom'
 import './index.css'
-import axios from 'axios'
 
 import Routing from './Routing'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { checkIfUserIsSignedIn } from './APIFunctions/User'
 
 function App (props) {
   const [authenticated, setAuthenticated] = useState(false)
@@ -14,27 +14,9 @@ function App (props) {
 
   async function getAuthStatus () {
     setIsAuthenticating(true)
-    const token = window.localStorage
-      ? window.localStorage.getItem('jwtToken')
-      : ''
-
-    if (!token) {
-      setAuthenticated(false)
-      setIsAuthenticating(false)
-      return
-    }
-
-    await axios
-      .post('/api/user/verify', { token })
-      .then(res => {
-        setUser({ ...res.data, token })
-        setAuthenticated(true)
-      })
-      .catch(err => {
-        if (props.history) props.history.push('/login')
-        setAuthenticated(false)
-        console.log(err)
-      })
+    const authStatus = await checkIfUserIsSignedIn()
+    setAuthenticated(!authStatus.error)
+    setUser({ token: authStatus.token, ...authStatus.responseData })
     setIsAuthenticating(false)
   }
 

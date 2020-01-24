@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import './register-page.css'
 import { Container, Row, FormGroup, Label, Input, Button } from 'reactstrap'
 import { memberApplicationState, memberShipPlanToString } from '../../Enums'
-import axios from 'axios'
 import MajorDropdown from './MajorDropdown'
+import { registerUser, checkIfUserExists } from '../../APIFunctions/User'
 
 export default function MembershipForm (props) {
   const [firstName, setFirstName] = useState('')
@@ -45,37 +45,28 @@ export default function MembershipForm (props) {
   ]
 
   async function submitApplication () {
-    if (await checkIfUserExists()) return
-    await axios
-      .post('/api/user/register', {
-        firstName,
-        lastName,
-        email,
-        password,
-        major,
-        numberOfSemestersToSignUpFor: props.selectedPlan
-      })
-      .then(result => {
-        if (result.status >= 200 && result.status < 300) {
-          props.setMembershipState(memberApplicationState.CONFIRMATION)
-        }
-      })
-      .catch(err => {
-        if (err.response.status === 409) {
-          window.alert('Email already exists in the system.')
-        } else {
-          console.error(err)
-        }
-      })
-  }
-
-  async function checkIfUserExists () {
-    let userExists = false
-    await axios.post('/api/user/checkIfUserExists', { email }).catch(() => {
+    if (await checkIfUserExists(email)) {
       setUsernameAvailable(false)
-      userExists = true
+      return
+    }
+    const registrationStatus = await registerUser({
+      firstName,
+      lastName,
+      email,
+      password,
+      major,
+      numberOfSemestersToSignUpFor: props.selectedPlan
     })
-    return userExists
+    if (!registrationStatus.error) {
+      props.setMembershipState(memberApplicationState.CONFIRMATION)
+    } else {
+      if (registrationStatus.responseData.status === 409) {
+        window.alert('Email already exists in the system.')
+      } else {
+        // handle password strength here
+        window.alert('An error occurred, please try again.')
+      }
+    }
   }
 
   function requiredFieldsEmpty () {

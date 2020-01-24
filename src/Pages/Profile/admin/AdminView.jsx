@@ -3,9 +3,9 @@ import {
   Button,
   Modal,
 } from "reactstrap";
-import axios from 'axios'
 import Display from './Profile.js'
 import EditForm from './EditorForm'
+import { editUser, checkIfUserExists } from "../../../APIFunctions/User.js";
 const bcrypt = require('bcrypt-nodejs')
 
 export default function Editor(props) {
@@ -48,44 +48,25 @@ export default function Editor(props) {
 
     setUser({ ...editedUser })
     setToggle(!toggle)
-
-    await axios
-      // get all user!
-      .post('/api/user/edit', {
-        ...editedUser,
-        queryEmail: queryEmail,
-        token: props.token
-      })
-      .then(result => {
-        if (result.status >= 200 && result.status < 300) {
-          setMembershipValidUntil(result.data.membershipValidUntil)
-        }
-      })
-      .catch(err => {})
-
+    const apiResponse = await editUser({ ...editedUser }, props.token)
+    if (apiResponse.error) {
+      setMembershipValidUntil(apiResponse.responseData.membershipValidUntil)
+    }
     setToggle(false)
     setToggleSubmit(false)
   }
 
-  function handleSubmissionToggle() {
-    if (user.email === email || email.trim()==='')
+  async function handleSubmissionToggle() {
+    if (user.email === email || email.trim() === '')
       setToggleSubmit(!toggleSubmit)
     else {
-      checkIfUserExists(email)
-    }
-  }
-
-  async function checkIfUserExists(val) {
-    await axios
-      .post('/api/user/checkIfUserExists', { email: val })
-      .then(result => {
-        if (result.status >= 200 && result.status < 300) {
-          setToggleSubmit(!toggleSubmit)
-        }
-      })
-      .catch(err => {
+      // checkIfUserExists(email)
+      if (await checkIfUserExists(user.email)) {
         window.alert('The Email has already existed, leave it blank if you do not want to change')
-      })
+      } else {
+        setToggleSubmit(!toggleSubmit)
+      }
+    }
   }
 
   const formGroups = [
@@ -139,20 +120,20 @@ export default function Editor(props) {
     <div className="center">
       <ul className="profileInfo">
 
-        <Display 
-        user={user} 
-        membershipValidUntil={membershipValidUntil} 
+        <Display
+          user={user}
+          membershipValidUntil={membershipValidUntil}
         />
 
-        <EditForm 
-        formGroups = {formGroups}
-        membership = {membership}
-        setNumberOfSemestersToSignUpFor ={ (onChangeEvent)=>{setNumberOfSemestersToSignUpFor(onChangeEvent)} }
-        setPagesPrinted = {onChangeEvent=>{setPagesPrinted(onChangeEvent)}}
-        handleSubmissionToggle = {()=>{handleSubmissionToggle()}}
-        handleToggle = {()=>{setToggle(!toggle)}}
-        setuserMembership = {(onChangeEvent)=>{setuserMembership(onChangeEvent)}}
-        toggle = {toggle} 
+        <EditForm
+          formGroups={formGroups}
+          membership={membership}
+          setNumberOfSemestersToSignUpFor={(onChangeEvent) => { setNumberOfSemestersToSignUpFor(onChangeEvent) }}
+          setPagesPrinted={onChangeEvent => { setPagesPrinted(onChangeEvent) }}
+          handleSubmissionToggle={async () => { await handleSubmissionToggle() }}
+          handleToggle={() => { setToggle(!toggle) }}
+          setuserMembership={(onChangeEvent) => { setuserMembership(onChangeEvent) }}
+          toggle={toggle}
         />
 
         <Modal

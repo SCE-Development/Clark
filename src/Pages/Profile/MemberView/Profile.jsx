@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './profile-modifier.css';
-import axios from 'axios'
 import InfoCard from './InfoCard.js'
+import { searchUserByEmail } from '../../../APIFunctions/User';
 
 export default class Profile extends Component {
 
@@ -15,29 +15,21 @@ export default class Profile extends Component {
     }
   }
 
-  componentDidMount() {
-    axios
-      // get user
-      .post('/api/user/search', {
-        // don't need email
-        token: this.props.user.token,
-        email: this.props.user.email
+  async componentDidMount() {
+    const response = await searchUserByEmail(this.props.user.email,
+      this.props.user.token)
+      if (!response.error) {
+      //concat user to full name
+      this.setState({ user: response.responseData }, () => {
+        const name = this.state.user.firstName[0].toUpperCase() +
+          this.state.user.firstName.slice(1, this.state.user.firstName.length) +
+          " " +
+          this.state.user.lastName[0].toUpperCase() +
+          this.state.user.lastName.slice(1, this.state.user.lastName.length)
+
+        this.setState({ fullName: name })
       })
-      .then(result => {
-        if (result.status >= 200 && result.status < 300) {
-
-          //concat user to full name
-          this.setState({ user: result.data }, () => {
-            const name = this.state.user.firstName[0].toUpperCase() +
-              this.state.user.firstName.slice(1, this.state.user.firstName.length) +
-              " " +
-              this.state.user.lastName[0].toUpperCase() +
-              this.state.user.lastName.slice(1, this.state.user.lastName.length)
-
-            this.setState({ fullName: name })
-          })
-        }
-      }).catch(()=>{})
+    }
   }
 
   render() {

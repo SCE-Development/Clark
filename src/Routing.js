@@ -24,7 +24,6 @@ export default function Routing ({ appProps }) {
   const userIsAuthenticated = appProps.authenticated
   const userIsOfficer =
     userIsAuthenticated && appProps.user && appProps.user.accessLevel > 0
-
   const signedInRoutes = [
     {
       Component: Overview,
