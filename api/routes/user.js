@@ -68,7 +68,6 @@ router.post('/register', function (req, res) {
     const testPassword = testPasswordStrength(req.body.password)
 
     if (!testPassword.success) {
-      // Bad Request
       return res.status(BAD_REQUEST).send({ message: testPassword.message })
     }
 
@@ -331,11 +330,9 @@ function testPasswordStrength (password) {
   const strongMessage =
     'Invalid password. Requires 1 uppercase, 1 lowercase, 1 number and 1 special character: !@#$%^&'
 
-  const mediumRegex = new RegExp(
-    '^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})'
-  )
+  const mediumRegex = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])')
   const mediumMessage =
-    'invalid password. Requires 1 uppercase or lowercase and 1 number'
+    'Password requires one uppercase character and one number.'
   /* eslint-enable */
 
   // test the password against the strong regex & return true if it passes

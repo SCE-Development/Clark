@@ -76,7 +76,7 @@ describe('Users', () => {
     it('Should successfully register a user with email, password, firstname and lastname', done => {
       const user = {
         email: 'a@b.c',
-        password: 'pass',
+        password: 'Passw0rd',
         firstName: 'first-name',
         lastName: 'last-name'
       }
@@ -98,7 +98,7 @@ describe('Users', () => {
     it('Should not allow a second registration with the same email as a user in the database', done => {
       const user = {
         email: 'a@b.c',
-        password: 'pass',
+        password: 'Passw0rd',
         firstName: 'first-name',
         lastName: 'last-name'
       }
@@ -116,6 +116,50 @@ describe('Users', () => {
           throw err
         })
     })
+  })
+
+  it('Should not allow registration with a password without a number', done => {
+    const user = {
+      email: 'd@e.f',
+      password: 'Password',
+      firstName: 'first-name',
+      lastName: 'last-name'
+    }
+
+    chai
+      .request(app)
+      .post('/api/user/register')
+      .send(user)
+      .then(function (res) {
+        expect(res).to.have.status(BAD_REQUEST)
+
+        done()
+      })
+      .catch(err => {
+        throw err
+      })
+  })
+
+  it('Should not allow registration with a password without an uppercase character', done => {
+    const user = {
+      email: 'd@e.f',
+      password: 'password1',
+      firstName: 'first-name',
+      lastName: 'last-name'
+    }
+
+    chai
+      .request(app)
+      .post('/api/user/register')
+      .send(user)
+      .then(function (res) {
+        expect(res).to.have.status(BAD_REQUEST)
+
+        done()
+      })
+      .catch(err => {
+        throw err
+      })
   })
 
   // Failing. Right now if this test is included, then it removes the user from the database?
@@ -160,7 +204,7 @@ describe('Users', () => {
     it('Should return statusCode 401 if an email/pass combo does not match a record in the DB', done => {
       const user = {
         email: 'nota@b.c',
-        password: 'notpass'
+        password: 'Passwd'
       }
       chai
         .request(app)
@@ -179,7 +223,7 @@ describe('Users', () => {
     it('Should return statusCode 401 if the email exists but password is incorrect', done => {
       const user = {
         email: 'a@b.c',
-        password: 'notpass'
+        password: 'password'
       }
       chai
         .request(app)
@@ -198,7 +242,7 @@ describe('Users', () => {
     it('Should return statusCode 200 and a JWT token if the email/pass is correct', done => {
       const user = {
         email: 'a@b.c',
-        password: 'pass'
+        password: 'Passw0rd'
       }
       chai
         .request(app)
