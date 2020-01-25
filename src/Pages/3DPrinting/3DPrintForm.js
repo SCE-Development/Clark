@@ -98,10 +98,7 @@ export default class PrintForm3D extends React.Component {
   }
 
   async submitApplication () {
-    console.log('we in this')
-
     if (this.checkIfFormFilled()) {
-      console.log('we in this agin')
       const request = {
         name: this.state.name,
         color: this.state.color,
@@ -119,8 +116,6 @@ export default class PrintForm3D extends React.Component {
 
   render () {
     const { fill } = this.state
-    console.log(fill)
-
     return (
       <>
         {fill === false ? (

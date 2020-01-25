@@ -102,7 +102,7 @@ describe('3DPrintingForm', () => {
     it('Should register a user', done => {
       const user = {
         email: 'b@b.c',
-        password: 'pass',
+        password: 'Passw0rd',
         firstName: 'first-name',
         lastName: 'last-name'
       }
@@ -123,7 +123,7 @@ describe('3DPrintingForm', () => {
     it('Should log a user in and get a token', done => {
       const user = {
         email: 'b@b.c',
-        password: 'pass'
+        password: 'Passw0rd'
       }
       chai
         .request(app)

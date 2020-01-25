@@ -40,7 +40,9 @@ describe('<MembershipForm />', () => {
     it('Should render password label & input fields', () => {
       const currentLabel = labelArray.get(3).props
       const currentInput = inputArray.get(3).props
-      expect(currentLabel.children[0]).to.equal('Password')
+      expect(currentLabel.children[0]).to.equal(
+        'Password (8 or more characters)'
+      )
       expect(currentInput.type).to.equal('password')
       expect(currentLabel.for).to.equal(currentInput.id)
     })

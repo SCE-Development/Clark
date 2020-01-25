@@ -42,7 +42,7 @@ describe('OfficerManager', () => {
     it('Should register a user', done => {
       const user = {
         email: 'test@test.com',
-        password: 'pass',
+        password: 'Passw0rd',
         firstName: 'first-name',
         lastName: 'last-name'
       }
@@ -64,7 +64,7 @@ describe('OfficerManager', () => {
     it('Should log a user in and get a token', done => {
       const user = {
         email: 'test@test.com',
-        password: 'pass'
+        password: 'Passw0rd'
       }
       chai
         .request(app)

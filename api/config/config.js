@@ -26,5 +26,5 @@ module.exports = {
 
   // weak:
   // Unrestricted passwords allowed
-  passwordStrength: 'weak'
+  passwordStrength: 'medium'
 }

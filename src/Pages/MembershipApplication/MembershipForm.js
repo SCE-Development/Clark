@@ -12,6 +12,7 @@ export default function MembershipForm (props) {
   const [password, setPassword] = useState('')
   const [major, setMajor] = useState('')
   const [usernameAvailable, setUsernameAvailable] = useState(true)
+  const [passwordValid, setPasswordValid] = useState(true)
   const nameFields = [
     {
       label: 'First Name',
@@ -37,9 +38,14 @@ export default function MembershipForm (props) {
       handleChange: e => setEmail(e.target.value)
     },
     {
-      label: 'Password',
+      label: 'Password (8 or more characters)',
       class: 'account-input',
       type: 'password',
+      addon: !passwordValid && (
+        <p className='unavailable'>
+          Password requires one uppercase character and one number.
+        </p>
+      ),
       handleChange: e => setPassword(e.target.value)
     }
   ]
@@ -62,15 +68,14 @@ export default function MembershipForm (props) {
     } else {
       if (registrationStatus.responseData.status === 409) {
         window.alert('Email already exists in the system.')
-      } else {
-        // handle password strength here
-        window.alert('An error occurred, please try again.')
+      } else if (registrationStatus.responseData.status === 400) {
+        setPasswordValid(false)
       }
     }
   }
 
   function requiredFieldsEmpty () {
-    return firstName && lastName && email && password
+    return firstName && lastName && email && password.length >= 8
   }
 
   return (
