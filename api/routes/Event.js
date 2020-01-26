@@ -29,7 +29,7 @@ router.post('/createEvent', (req, res) => {
   }
   const newEvent = new Event({
     title: req.body.title,
-    description: req.body.dcheckIfTokenValidescription,
+    description: req.body.description,
     eventLocation: req.body.eventLocation,
     eventDate: req.body.eventDate,
     startTime: req.body.startTime,
