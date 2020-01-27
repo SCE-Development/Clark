@@ -18,7 +18,7 @@ export default function displayProfile (props) {
       </Container>
 
       <Badge color='primary'>
-        {enums.getKey(enums.membershipStatus, props.user.accessLevel)}
+        {enums.membershipStateToString(props.user.accessLevel)}
       </Badge>
       <h3>
         {props.user.firstName[0].toUpperCase() +

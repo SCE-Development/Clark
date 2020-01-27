@@ -7,6 +7,7 @@ import { expect } from 'chai'
 import Overview from '../../src/Pages/Overview/Overview'
 import Adapter from 'enzyme-adapter-react-16'
 import OverviewProfile from '../../src/Pages/Overview/OverviewProfile'
+import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -19,7 +20,7 @@ describe('<App />', () => {
 
   it('Should render a <OverviewProfile /> component with 2 children', () => {
     const user = {
-      accessLevel: 2,
+      accessLevel: membershipState.ADMIN,
       firstName: 'First',
       lastName: 'Last',
       middleInitial: 'I',

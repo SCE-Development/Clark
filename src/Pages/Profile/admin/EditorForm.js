@@ -70,9 +70,8 @@ export default function EditForm (props) {
               </Button>
               <FormGroup tag='fieldset'>
                 <legend>Membership Status</legend>
-                {enums
-                  .getAllValues(enums.membershipStatus)
-                  .map((membership, index) => (
+                {Object.values(enums.membershipState).map(
+                  (membership, index) => (
                     <FormGroup check key={index}>
                       <Label check>
                         <Input
@@ -83,10 +82,11 @@ export default function EditForm (props) {
                             props.setuserMembership(membership)
                           }}
                         />
-                        {enums.getKey(enums.membershipStatus, membership)}
+                        {enums.membershipStateToString(membership)}
                       </Label>
                     </FormGroup>
-                  ))}
+                  )
+                )}
               </FormGroup>
             </Form>
           </ModalBody>

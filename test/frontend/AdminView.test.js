@@ -9,12 +9,13 @@ import AdminViewEditor from '../../src/Pages/Profile/admin/AdminView'
 import AdminEditorForm from '../../src/Pages/Profile/admin/EditorForm'
 import AdminProfileEditor from '../../src/Pages/Profile/admin/Profile'
 import Adapter from 'enzyme-adapter-react-16'
+import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
 describe('<AdminViewEditor />', () => {
   const user = {
-    accessLevel: 2,
+    accessLevel: membershipState.ADMIN,
     firstName: 'First',
     lastName: 'Last',
     middleInitial: 'I',

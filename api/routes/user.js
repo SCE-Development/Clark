@@ -21,6 +21,7 @@ const {
   NOT_FOUND,
   CONFLICT
 } = require('../constants').STATUS_CODES
+const membershipState = require('../../src/Enums').membershipState
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body
@@ -107,7 +108,7 @@ router.post('/login', function (req, res) {
           if (isMatch && !error) {
             if (
               new Date() - user.membershipValidUntil > 0 &&
-              user.accessLevel < 2
+              user.accessLevel < membershipState.ADMIN
             ) {
               return res
                 .status(UNAUTHORIZED)

@@ -3,7 +3,7 @@
 process.env.NODE_ENV = 'test'
 const OfficerManager = require('../api/models/OfficerManager')
 const User = require('../api/models/User')
-// Require the dev-dependencies
+const membershipState = require('../src/Enums').membershipState
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const {
@@ -103,7 +103,7 @@ describe('OfficerManager', () => {
       const form = {
         name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: 2,
+        level: membershipState.ADMIN,
         team: 'dev',
         major: 'major'
       }
@@ -125,7 +125,7 @@ describe('OfficerManager', () => {
       const form = {
         name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: 2,
+        level: membershipState.ADMIN,
         team: 'dev',
         major: 'major',
         token: 'Invalid-Token'
@@ -148,7 +148,7 @@ describe('OfficerManager', () => {
       const form = {
         name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: 2,
+        level: membershipState.ADMIN,
         team: 'dev',
         major: 'major',
         token: token
@@ -219,7 +219,7 @@ describe('OfficerManager', () => {
           expect(response).to.have.length(1)
           expect(response[0].email).to.be.eql('test@test.com')
           expect(response[0].name).to.be.eql('pinkUnicorn')
-          expect(response[0].level).to.be.eql(2)
+          expect(response[0].level).to.be.eql(membershipState.ADMIN)
           expect(response[0].team).to.be.eql('dev')
           expect(response[0].major).to.be.eql('major')
 

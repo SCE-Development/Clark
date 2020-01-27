@@ -7,6 +7,7 @@ import {
   Collapse,
   NavbarToggler
 } from 'reactstrap'
+import { membershipState } from '../../Enums'
 
 export default function AdminNavbar (props) {
   const [collapsed, setCollapsed] = useState(true)
@@ -38,7 +39,9 @@ export default function AdminNavbar (props) {
             // condition that the user has admin priviledge. Otherwise,
             // just return the link.
             return link.restricted
-              ? props.user && props.user.accessLevel === 2 && navlink
+              ? props.user &&
+                  props.user.accessLevel === membershipState.ADMIN &&
+                  navlink
               : navlink
           })}
           <div onClick={props.handleLogout} className='nav-button nav-link'>
