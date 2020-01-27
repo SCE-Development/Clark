@@ -9,7 +9,7 @@ const {
 
 const jwt = require('jsonwebtoken')
 const {
-  setReturnOfTokenValidMock,
+  setTokenStatus,
   resetMock,
   restoreMock
 } = require('./mocks/TokenValidFunctions')
@@ -51,12 +51,12 @@ describe('checkIfTokenValid', () => {
     resetMock()
   })
   it('Should return the decoded response ', done => {
-    setReturnOfTokenValidMock('decoded response')
+    setTokenStatus('decoded response')
     expect(checkIfTokenValid(requestWithToken)).to.equal('decoded response')
     done()
   })
   it('Should return false if a token field does not exist in the request', done => {
-    setReturnOfTokenValidMock(false)
+    setTokenStatus(false)
     expect(checkIfTokenValid(requestWithToken)).to.equal(false)
     done()
   })

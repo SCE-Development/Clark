@@ -22,8 +22,8 @@ function resetMock () {
  * @param {any} returnValue: value to be return back by the function 'checkIfTokenValid'
  * @returns return parameter (above)
  */
-function setReturnOfTokenValidMock (returnValue) {
+function setTokenStatus (returnValue) {
   checkifTokenValidMock.onCall(0).returns(returnValue)
 }
 
-module.exports = { setReturnOfTokenValidMock, resetMock, restoreMock }
+module.exports = { setTokenStatus, resetMock, restoreMock }

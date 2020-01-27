@@ -19,7 +19,7 @@ const expect = chai.expect
 // tools for testing
 const tools = require('../util/testing-utils/tools.js')
 const {
-  setReturnOfTokenValidMock,
+  setTokenStatus,
   resetMock,
   restoreMock
 } = require('./mocks/TokenValidFunctions')
@@ -41,7 +41,7 @@ describe('3DPrintingForm', () => {
   })
 
   beforeEach(() => {
-    setReturnOfTokenValidMock(false)
+    setTokenStatus(false)
   })
 
   afterEach(() => {
@@ -148,7 +148,7 @@ describe('3DPrintingForm', () => {
         token: token,
         email: 'b@b.c'
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/edit')
@@ -169,7 +169,7 @@ describe('3DPrintingForm', () => {
         email: 'b@b.c',
         date: date
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/edit')
@@ -232,7 +232,7 @@ describe('3DPrintingForm', () => {
         token: token,
         email: 'b@b.c'
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/delete')
@@ -254,7 +254,7 @@ describe('3DPrintingForm', () => {
         email: 'b@b.c',
         date: date
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/3DPrintingForm/delete')

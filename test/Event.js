@@ -17,7 +17,7 @@ const expect = chai.expect
 // tools for testing
 const tools = require('../util/testing-utils/tools.js')
 const {
-  setReturnOfTokenValidMock,
+  setTokenStatus,
   resetMock,
   restoreMock
 } = require('./mocks/TokenValidFunctions')
@@ -40,7 +40,7 @@ describe('Event', () => {
   })
 
   beforeEach(() => {
-    setReturnOfTokenValidMock(false)
+    setTokenStatus(false)
   })
 
   afterEach(() => {
@@ -91,7 +91,7 @@ describe('Event', () => {
         })
     })
     it("Should return 400 when the required fields aren't filled in", done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/createEvent')
@@ -105,7 +105,7 @@ describe('Event', () => {
         })
     })
     it('Should return statusCode 200 when all required fields are filled in', done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/createEvent')
@@ -122,7 +122,7 @@ describe('Event', () => {
 
   describe('/GET getEvents', () => {
     it('Should return an object of all events', done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .get('/api/event/getEvents')
@@ -170,7 +170,7 @@ describe('Event', () => {
         })
     })
     it("Should return 404 when an event by an invalid id isn't found", done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/editEvent')
@@ -184,7 +184,7 @@ describe('Event', () => {
         })
     })
     it('Should return 200 when an event is sucessfully updated', done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/editEvent')
@@ -198,7 +198,7 @@ describe('Event', () => {
         })
     })
     it('The update should be reflected in the database', done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .get('/api/event/getEvents')
@@ -244,7 +244,7 @@ describe('Event', () => {
         })
     })
     it('Should return 400 when an event is unsucessfully deleted', done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/deleteEvent')
@@ -258,7 +258,7 @@ describe('Event', () => {
         })
     })
     it('Should return 200 when an event is sucessfully deleted', done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/deleteEvent')
@@ -272,7 +272,7 @@ describe('Event', () => {
         })
     })
     it('The deleted item should be reflected in the database', done => {
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .get('/api/event/getEvents')

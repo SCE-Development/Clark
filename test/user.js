@@ -20,7 +20,7 @@ const expect = chai.expect
 // tools for testing
 const tools = require('../util/testing-utils/tools.js')
 const {
-  setReturnOfTokenValidMock,
+  setTokenStatus,
   resetMock,
   restoreMock
 } = require('./mocks/TokenValidFunctions')
@@ -43,14 +43,14 @@ describe('Users', () => {
   })
 
   beforeEach(() => {
-    setReturnOfTokenValidMock(false)
+    setTokenStatus(false)
   })
 
   afterEach(() => {
     resetMock()
   })
 
-  let token = ''
+  const token = ''
 
   describe('/POST checkIfUserExists with no users added yet', () => {
     it('Should return statusCode 400 when an email is not provided', done => {
@@ -313,7 +313,7 @@ describe('Users', () => {
     })
 
     it('Should return statusCode 200 when a valid token is passed in', done => {
-      setReturnOfTokenValidMock({
+      setTokenStatus({
         name: 'name',
         email: 'email',
         accessLevel: 'accessLevel'
@@ -378,7 +378,7 @@ describe('Users', () => {
       const form = {
         token: token
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/user/users')
@@ -439,7 +439,7 @@ describe('Users', () => {
         email: 'invalid@b.c',
         token: token
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/user/search')
@@ -459,7 +459,7 @@ describe('Users', () => {
         email: 'a@b.c',
         token: token
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/user/search')
@@ -530,7 +530,7 @@ describe('Users', () => {
         queryEmail: 'invalid@b.c',
         token: token
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/user/edit')
@@ -552,7 +552,7 @@ describe('Users', () => {
         firstName: 'pinkUnicorn',
         numberOfSemestersToSignUpFor: undefined
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/user/edit')
@@ -613,7 +613,7 @@ describe('Users', () => {
         email: 'invalid@b.c',
         token: token
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/user/delete')
@@ -633,7 +633,7 @@ describe('Users', () => {
         email: 'a@b.c',
         token: token
       }
-      setReturnOfTokenValidMock(true)
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/user/delete')
