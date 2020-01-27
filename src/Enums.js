@@ -1,20 +1,20 @@
-export const eventModalState = {
+const eventModalState = {
   SUBMIT: 0,
   EDIT: 1
 }
 
-export const memberApplicationState = {
+const memberApplicationState = {
   SELECT_MEMBERSHIP_PLAN: 0,
   FORM_INFO: 1,
   CONFIRMATION: 2
 }
 
-export const membershipPlans = {
+const membershipPlans = {
   SEMESTER: 1,
   YEAR: 2
 }
 
-export function memberShipPlanToString (key) {
+function memberShipPlanToString (key) {
   const plans = require('./Pages/MembershipApplication/GetPlans')
   let correctPlan = ''
   if (key === membershipPlans.YEAR) {
@@ -25,34 +25,33 @@ export function memberShipPlanToString (key) {
   return correctPlan
 }
 
-export const membershipStatus = [
-  { key: 'Ban', value: -2 },
-  { key: 'Pending', value: -1 },
-  { key: 'Member', value: 0 },
-  { key: 'Officer', value: 1 },
-  { key: 'Admin', value: 2 }
+const membershipState = {
+  BANNED: -2,
+  PENDING: -1,
+  NON_MEMBER: 0,
+  MEMBER: 1,
+  OFFICER: 2,
+  ADMIN: 3
+}
+
+const membershipStatusArray = [
+  'Ban',
+  'Pending',
+  'Nonmember',
+  'Member',
+  'Officer',
+  'Admin'
 ]
 
-export function getKey (enumArray, value) {
-  return enumArray.filter(e => e.value === value)[0].key
+function membershipStateToString (index) {
+  return membershipStatusArray[index + 2]
 }
 
-export function getValue (enumArray, key) {
-  return enumArray.filter(e => e.key === key)[0].value
-}
-
-export function getAllKeys (enumArray) {
-  const array = []
-  enumArray.forEach(e => {
-    array.push(e.key)
-  })
-  return array
-}
-
-export function getAllValues (enumArray) {
-  const array = []
-  enumArray.forEach(e => {
-    array.push(e.value)
-  })
-  return array
+module.exports = {
+  eventModalState,
+  memberApplicationState,
+  membershipPlans,
+  memberShipPlanToString,
+  membershipState,
+  membershipStateToString
 }

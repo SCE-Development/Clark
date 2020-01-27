@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownItem
 } from 'reactstrap'
+import { membershipState } from '../../Enums'
 
 export default function UserNavBar (props) {
   const [collapsed, setCollapsed] = useState(true)
@@ -77,7 +78,7 @@ export default function UserNavBar (props) {
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
-            {props.user && props.user.accessLevel >= 1 && (
+            {props.user && props.user.accessLevel >= membershipState.OFFICER && (
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   Printing
@@ -125,7 +126,7 @@ export default function UserNavBar (props) {
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem href='/profile'>Profile</DropdownItem>
-                  {props.user.accessLevel >= 1 && (
+                  {props.user.accessLevel >= membershipState.OFFICER && (
                     <DropdownItem href='/dashboard'>Admin</DropdownItem>
                   )}
                   <DropdownItem>

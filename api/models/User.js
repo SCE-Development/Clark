@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcrypt-nodejs')
+const membershipState = require('../../src/Enums').membershipState
 
 const UserSchema = new Schema(
   {
@@ -51,15 +52,9 @@ const UserSchema = new Schema(
       type: String
     },
 
-    // The access level is defined as follows:
-    // -2: Ban
-    // -1: Pending
-    // 0: Member
-    // 1: Officer
-    // 2: Admin
     accessLevel: {
       type: Number,
-      default: 2
+      default: membershipState.ADMIN
     },
     lastLogin: {
       type: Date,

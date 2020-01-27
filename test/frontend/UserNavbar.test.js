@@ -7,12 +7,13 @@ import { expect } from 'chai'
 import UserNavbar from '../../src/Components/Navbar/UserNavbar'
 import Adapter from 'enzyme-adapter-react-16'
 import { Navbar, Nav, NavLink, UncontrolledDropdown } from 'reactstrap'
+import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
 const authenticatedAppProps = {
   authenticated: true,
-  user: { accessLevel: 2 }
+  user: { accessLevel: membershipState.ADMIN }
 }
 
 function getDropdownDetails (dropdown, index = 0) {

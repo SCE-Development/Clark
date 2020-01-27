@@ -7,11 +7,12 @@ import { expect } from 'chai'
 import AdminNavbar from '../../src/Components/Navbar/AdminNavbar'
 import Adapter from 'enzyme-adapter-react-16'
 import { NavbarBrand, NavLink } from 'reactstrap'
+import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
 const adminAppProps = {
-  user: { accessLevel: 2 }
+  user: { accessLevel: membershipState.ADMIN }
 }
 
 describe('<AdminNavbar />', () => {

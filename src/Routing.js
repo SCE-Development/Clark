@@ -19,28 +19,31 @@ import MembershipApplication from './Pages/MembershipApplication/membershipAppli
 import Team from './Pages/TheTeam/TheTeam.js'
 import Printing from './Pages/2DPrinting/2DPrinting.js'
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js'
+import { membershipState } from './Enums'
 
 export default function Routing ({ appProps }) {
   const userIsAuthenticated = appProps.authenticated
-  const userIsOfficer =
-    userIsAuthenticated && appProps.user && appProps.user.accessLevel > 0
+  const userIsOfficerOrAdmin =
+    userIsAuthenticated &&
+    appProps.user &&
+    appProps.user.accessLevel >= membershipState.OFFICER
   const signedInRoutes = [
     {
       Component: Overview,
       path: '/dashboard',
-      allowedIf: userIsOfficer,
+      allowedIf: userIsOfficerOrAdmin,
       redirect: '/'
     },
     {
       Component: EventManager,
       path: '/event-manager',
-      allowedIf: userIsOfficer,
+      allowedIf: userIsOfficerOrAdmin,
       redirect: '/'
     },
     {
       Component: SolidsConsole,
       path: '/3DConsole',
-      allowedIf: userIsOfficer,
+      allowedIf: userIsOfficerOrAdmin,
       redirect: '/'
     },
     {
@@ -100,7 +103,7 @@ export default function Routing ({ appProps }) {
                   <NavBarWrapper
                     component={Component}
                     enableAdminNavbar={
-                      userIsOfficer &&
+                      userIsOfficerOrAdmin &&
                       path !== '/2DPrinting' &&
                       path !== '/3DPrintingForm' &&
                       path !== '/profile'

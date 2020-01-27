@@ -8,6 +8,7 @@ import 'regenerator-runtime/runtime'
 import Profile from '../../src/Pages/Profile/admin/Profile'
 import Adapter from 'enzyme-adapter-react-16'
 import { Badge, Container } from 'reactstrap'
+import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -15,7 +16,7 @@ describe('<Profile />', () => {
   const enums = require('../../src/Enums')
 
   const user = {
-    accessLevel: 2,
+    accessLevel: membershipState.ADMIN,
     firstName: 'First',
     lastName: 'Last',
     middleInitial: 'I',
@@ -34,7 +35,7 @@ describe('<Profile />', () => {
   it('Should render a <Badge /> component with one child', () => {
     expect(wrapper.find(Badge)).to.have.lengthOf(1)
     expect(wrapper.find(Badge).get(0).props.children).equal(
-      enums.getKey(enums.membershipStatus, user.accessLevel)
+      enums.membershipStateToString(user.accessLevel)
     )
   })
 

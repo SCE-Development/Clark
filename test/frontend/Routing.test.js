@@ -21,6 +21,7 @@ import Team from '../../src/Pages/TheTeam/TheTeam.js'
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js'
 import OfficerDB from '../../src/Pages/OfficerDB/OfficerDB.js'
 import Overview from '../../src/Pages/Overview/Overview'
+import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -32,17 +33,17 @@ Object.defineProperty(window, 'localStorage', {
 })
 
 const adminAppProps = {
-  user: { accessLevel: 2 },
+  user: { accessLevel: membershipState.ADMIN },
   authenticated: true
 }
 
 const officerAppProps = {
-  user: { accessLevel: 1 },
+  user: { accessLevel: membershipState.OFFICER },
   authenticated: true
 }
 
 const memberAppProps = {
-  user: { accessLevel: 0 },
+  user: { accessLevel: membershipState.MEMBER },
   authenticated: true
 }
 

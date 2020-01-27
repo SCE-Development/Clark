@@ -1,3 +1,5 @@
+const membershipState = require('../../src/Enums').membershipState
+
 module.exports = [
   {
     firstName: 'Joe',
@@ -7,7 +9,7 @@ module.exports = [
     email: 'jdoe@abc.com',
     major: 'Computer Science',
     doorCode: '065-0715',
-    accessLevel: 2
+    accessLevel: membershipState.ADMIN
   },
   {
     firstName: 'Jane',
@@ -17,7 +19,7 @@ module.exports = [
     email: 'jsmith@abc.com',
     major: 'Software Engineering',
     doorCode: '236-2368',
-    accessLevel: 1
+    accessLevel: membershipState.OFFICER
   },
   {
     firstName: 'JJ',
@@ -27,6 +29,6 @@ module.exports = [
     email: 'jdirte@abc.com',
     major: 'Computer Engineering',
     doorCode: '098-2356',
-    accessLevel: 0
+    accessLevel: membershipState.MEMBER
   }
 ]
