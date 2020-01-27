@@ -4,6 +4,8 @@ node_js:
 services:
   - mongodb
 install:
+ - echo $ENCODED_CONFIG > .temp
+ - base64 --decode .temp > api/config/config.js
  - npm install
 script:
  - npm run api-test
