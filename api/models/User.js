@@ -54,7 +54,7 @@ const UserSchema = new Schema(
 
     accessLevel: {
       type: Number,
-      default: membershipState.ADMIN
+      default: membershipState.PENDING
     },
     lastLogin: {
       type: Date,
