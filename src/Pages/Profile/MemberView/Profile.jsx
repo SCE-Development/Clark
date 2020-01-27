@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './profile-modifier.css';
 import InfoCard from './InfoCard.js'
 import { searchUserByEmail } from '../../../APIFunctions/User';
+const membershipStatus = require('../../../Enums').membershipState
 
 export default class Profile extends Component {
 
@@ -40,7 +41,9 @@ export default class Profile extends Component {
           { title: 'Door Code', value: this.state.user.doorCode },
           { title: 'Joined Date', value: this.state.user.joinDate.slice(0, 10) },
           { title: 'Email', value: this.state.user.email },
-          { title: 'Membership Expiration', value: this.state.user.membershipValidUntil.slice(0, 10) },
+          { title: 'Membership Expiration', value: (this.props.user.accessLevel<membershipStatus.MEMBER)? 
+          "Not Valid" :
+          this.state.user.membershipValidUntil.slice(0, 10) },
         ] :
         [
           { title: '.', value: '' },

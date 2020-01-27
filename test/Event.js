@@ -3,17 +3,24 @@
 process.env.NODE_ENV = 'test'
 const Event = require('../api/models/Event')
 const User = require('../api/models/User')
+const tokenValidMocker = require('./mocks/TokenValidFunctions')
 // Require the dev-dependencies
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const constants = require('../api/constants')
 const { OK, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND } = constants.STATUS_CODES
 const { DEFAULT_PHOTO_URL } = constants
+
 let app = null
 
 const expect = chai.expect
 // tools for testing
 const tools = require('../util/testing-utils/tools.js')
+const {
+  setTokenStatus,
+  resetMock,
+  restoreMock
+} = require('./mocks/TokenValidFunctions')
 
 chai.should()
 chai.use(chaiHttp)
@@ -26,11 +33,21 @@ describe('Event', () => {
     tools.emptySchema(User)
     done()
   })
+
   after(done => {
+    restoreMock()
     tools.terminateServer(done)
   })
 
-  let token = ''
+  beforeEach(() => {
+    setTokenStatus(false)
+  })
+
+  afterEach(() => {
+    resetMock()
+  })
+
+  const token = ''
   let eventId = ''
   const VALID_NEW_EVENT = {
     title: 'ros masters united',
@@ -60,45 +77,6 @@ describe('Event', () => {
   }
 
   describe('/POST createEvent', () => {
-    it('Should register a user', done => {
-      const user = {
-        email: 'b@b.c',
-        password: 'Passw0rd',
-        firstName: 'first-name',
-        lastName: 'last-name'
-      }
-      chai
-        .request(app)
-        .post('/api/user/register')
-        .send(user)
-        .then(function (res) {
-          expect(res).to.have.status(OK)
-          done()
-        })
-        .catch(err => {
-          throw err
-        })
-    })
-    it('Should log a user in and get a token', done => {
-      const user = {
-        email: 'b@b.c',
-        password: 'Passw0rd'
-      }
-      chai
-        .request(app)
-        .post('/api/user/login')
-        .send(user)
-        .then(function (res) {
-          expect(res).to.have.status(OK)
-          res.body.should.be.a('object')
-          res.body.should.have.property('token')
-          token = res.body.token
-          done()
-        })
-        .catch(err => {
-          throw err
-        })
-    })
     it('Should return 403 when an invalid token is supplied', done => {
       chai
         .request(app)
@@ -113,6 +91,7 @@ describe('Event', () => {
         })
     })
     it("Should return 400 when the required fields aren't filled in", done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/createEvent')
@@ -126,6 +105,7 @@ describe('Event', () => {
         })
     })
     it('Should return statusCode 200 when all required fields are filled in', done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/createEvent')
@@ -142,6 +122,7 @@ describe('Event', () => {
 
   describe('/GET getEvents', () => {
     it('Should return an object of all events', done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .get('/api/event/getEvents')
@@ -189,6 +170,7 @@ describe('Event', () => {
         })
     })
     it("Should return 404 when an event by an invalid id isn't found", done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/editEvent')
@@ -202,6 +184,7 @@ describe('Event', () => {
         })
     })
     it('Should return 200 when an event is sucessfully updated', done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/editEvent')
@@ -215,6 +198,7 @@ describe('Event', () => {
         })
     })
     it('The update should be reflected in the database', done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .get('/api/event/getEvents')
@@ -260,6 +244,7 @@ describe('Event', () => {
         })
     })
     it('Should return 400 when an event is unsucessfully deleted', done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/deleteEvent')
@@ -273,6 +258,7 @@ describe('Event', () => {
         })
     })
     it('Should return 200 when an event is sucessfully deleted', done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .post('/api/event/deleteEvent')
@@ -286,6 +272,7 @@ describe('Event', () => {
         })
     })
     it('The deleted item should be reflected in the database', done => {
+      setTokenStatus(true)
       chai
         .request(app)
         .get('/api/event/getEvents')

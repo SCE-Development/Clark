@@ -108,7 +108,7 @@ router.post('/login', function (req, res) {
           if (isMatch && !error) {
             if (
               new Date() - user.membershipValidUntil > 0 &&
-              user.accessLevel < membershipState.ADMIN
+              user.accessLevel < membershipState.PENDING
             ) {
               return res
                 .status(UNAUTHORIZED)

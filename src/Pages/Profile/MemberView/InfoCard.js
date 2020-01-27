@@ -53,7 +53,16 @@ export default function ProfileCard (props) {
       <div id='profile-box'>
         {props.fields.map((field, ind) => (
           <h3 key={ind} id='inner-text-top'>
-            <b>{field.title}:</b> {field.value}
+            <b>{field.title}:</b>{' '}
+            {
+              <span
+                className={
+                  field.value && field.value.includes('Valid') ? 'invalid' : ''
+                }
+              >
+                {field.value}
+              </span>
+            }
           </h3>
         ))}
         <h3 id='inner-text-top'>

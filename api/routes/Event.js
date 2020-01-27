@@ -27,7 +27,6 @@ router.post('/createEvent', (req, res) => {
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED)
   }
-  logger.log(req.body.id)
   const newEvent = new Event({
     title: req.body.title,
     description: req.body.description,
