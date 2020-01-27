@@ -11,7 +11,7 @@ import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
-describe('<App />', () => {
+describe('<Overview />', () => {
   const wrapper = mount(<Overview />)
 
   it('Should render a <table /> component with one child', () => {
@@ -39,19 +39,20 @@ describe('<App />', () => {
     expect(wrapper.find(OverviewProfile)).to.have.lengthOf(2)
   })
 
-  it('Should render a <tr /> component with 7 children', () => {
+  it('Should render a <tr /> component with 8 children', () => {
     const component = wrapper.find('th')
     const shouldRenderedtr = [
       'Name',
       'Door Code',
       'Printing',
       'Email Verified',
-      'Type',
+      'Membership Plan',
+      'Membership Type',
       '',
       ''
     ]
 
-    expect(component).to.have.lengthOf(7)
+    expect(component).to.have.lengthOf(8)
     for (let i = 0; i < shouldRenderedtr.length; i++) {
       expect(component.get(i).props.children).equals(shouldRenderedtr[i])
     }
