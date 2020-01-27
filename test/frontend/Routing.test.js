@@ -47,6 +47,11 @@ const memberAppProps = {
   authenticated: true
 }
 
+const nonMemberAppProps = {
+  user: { accessLevel: membershipState.NON_MEMBER },
+  authenticated: true
+}
+
 const unauthedAppProps = {
   authenticated: false
 }
@@ -280,6 +285,19 @@ describe('<Routing /> with <PrivateRoute />', () => {
     it('Should redirect from the /3DPrintingForm endpoint to the /login endpoint', () => {
       const wrapper = getComponentFromRoute('/3DPrintingForm', unauthedAppProps)
       expect(wrapper.find(Login)).to.have.lengthOf(1)
+    })
+  })
+  describe('Renders correct component for the non member user', () => {
+    it('Should redirect from the /2DPrinting endpoint to the / endpoint', () => {
+      const wrapper = getComponentFromRoute('/2DPrinting', nonMemberAppProps)
+      expect(wrapper.find(Home)).to.have.lengthOf(1)
+    })
+    it('Should redirect from the /3DPrintingForm endpoint to the / endpoint', () => {
+      const wrapper = getComponentFromRoute(
+        '/3DPrintingForm',
+        nonMemberAppProps
+      )
+      expect(wrapper.find(Home)).to.have.lengthOf(1)
     })
   })
 })
