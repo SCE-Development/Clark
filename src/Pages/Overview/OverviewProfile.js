@@ -34,6 +34,8 @@ export default function OverviewProfile (props) {
 
       <td>{enums.memberShipPlanToString(props.user.accessLevel)}</td>
 
+      <td>{enums.membershipStateToString(props.user.accessLevel)}</td>
+
       <td>
         <button
           className='delete'

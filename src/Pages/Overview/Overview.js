@@ -81,7 +81,8 @@ export default class OverviewBoard extends Component {
                 'Door Code',
                 'Printing',
                 'Email Verified',
-                'Type',
+                'Membership Plan',
+                'Membership Type',
                 '',
                 ''
               ].map((ele, ind) => {
