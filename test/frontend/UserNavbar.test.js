@@ -11,9 +11,14 @@ import { membershipState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })
 
-const authenticatedAppProps = {
+const adminAppProps = {
   authenticated: true,
   user: { accessLevel: membershipState.ADMIN }
+}
+
+const nonMemberAppProps = {
+  authenticated: true,
+  user: { accessLevel: membershipState.NON_MEMBER }
 }
 
 function getDropdownDetails (dropdown, index = 0) {
@@ -30,6 +35,14 @@ describe('<UserNavbar />', () => {
     expect(wrapper.find(NavLink)).to.have.lengthOf(3)
     expect(wrapper.find(Nav).children()).to.have.lengthOf(1)
   })
+  it(
+    'Should render two <NavLink /> components for' +
+      " the user who isn't a member",
+    () => {
+      const wrapper = mount(<UserNavbar {...nonMemberAppProps} />)
+      expect(wrapper.find(NavLink)).to.have.lengthOf(2)
+    }
+  )
   it(
     'Should render two <UncontrolledDropdown /> tags for' +
       ' the unauthenticated user',
@@ -53,7 +66,7 @@ describe('<UserNavbar />', () => {
     'Should render three <UncontrolledDropdown /> tags for' +
       ' the authenticated user',
     () => {
-      const wrapper = mount(<UserNavbar {...authenticatedAppProps} />)
+      const wrapper = mount(<UserNavbar {...adminAppProps} />)
       expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(3)
     }
   )
@@ -62,7 +75,7 @@ describe('<UserNavbar />', () => {
       ' authenticated users should be for student resources, printing, ' +
       'to join sce and a drop down of account options',
     () => {
-      const wrapper = mount(<UserNavbar {...authenticatedAppProps} />)
+      const wrapper = mount(<UserNavbar {...adminAppProps} />)
       const dropdowns = wrapper.find(UncontrolledDropdown)
       expect(getDropdownDetails(dropdowns.get(0))).to.equal('Student Resources')
       expect(getDropdownDetails(dropdowns.get(1))).to.equal('Printing')

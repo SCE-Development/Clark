@@ -78,7 +78,7 @@ export default function UserNavBar (props) {
                 </DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
-            {props.user && props.user.accessLevel >= membershipState.OFFICER && (
+            {props.user && props.user.accessLevel >= membershipState.MEMBER && (
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   Printing

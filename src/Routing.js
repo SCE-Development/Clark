@@ -23,6 +23,10 @@ import { membershipState } from './Enums'
 
 export default function Routing ({ appProps }) {
   const userIsAuthenticated = appProps.authenticated
+  const userIsMember =
+    userIsAuthenticated &&
+    appProps.user &&
+    appProps.user.accessLevel === membershipState.MEMBER
   const userIsOfficerOrAdmin =
     userIsAuthenticated &&
     appProps.user &&
@@ -49,13 +53,13 @@ export default function Routing ({ appProps }) {
     {
       Component: PrintingSolids,
       path: '/3DPrintingForm',
-      allowedIf: userIsAuthenticated,
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
       redirect: '/login'
     },
     {
       Component: Printing,
       path: '/2DPrinting',
-      allowedIf: userIsAuthenticated,
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
       redirect: '/login'
     },
     {
