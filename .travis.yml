@@ -3,6 +3,9 @@ node_js:
  - "lts/*"
 services:
   - mongodb
+sudo: required
+before_install:
+  - ./setup.sh
 install:
  - echo $ENCODED_CONFIG > .temp
  - base64 --decode .temp > api/config/config.js
