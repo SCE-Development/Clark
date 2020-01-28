@@ -12,6 +12,7 @@ function install_rpc_server(){
 }
 
 # clone printingRPC repository
+rm -rf printingRPC/
 git clone https://github.com/jerrylee17/printingRPC.git
 install_rpc_client
 install_rpc_server
