@@ -19,11 +19,13 @@ export default function ProfileCard (props) {
       password.trim() === '' ? user.password : bcrypt.hashSync(password, salt)
 
     if (password === confirmPass) {
-      const apiResponse = await editUser({
-        ...user,
-        password: hashedPassword,
-        token: user.token
-      })
+      const apiResponse = await editUser(
+        {
+          ...user,
+          password: hashedPassword
+        },
+        user.token
+      )
       if (!apiResponse.error) {
         setPassword('')
         window.alert('Success!!')

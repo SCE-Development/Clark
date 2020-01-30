@@ -5,7 +5,7 @@ import {
 } from "reactstrap";
 import Display from './Profile.js'
 import EditForm from './EditorForm'
-import { editUser, checkIfUserExists } from "../../../APIFunctions/User.js";
+import { editUser } from "../../../APIFunctions/User.js";
 const bcrypt = require('bcrypt-nodejs')
 
 export default function Editor(props) {
@@ -15,7 +15,6 @@ export default function Editor(props) {
   const [password, setPassword] = useState("")
   const [doorCode, setDoorCode] = useState("")
   const [major, setMajor] = useState("")
-  const [email, setEmail] = useState("")
   const [user, setUser] = useState({ ...props.user })
   const [toggle, setToggle] = useState(false)
   const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted)
@@ -25,8 +24,6 @@ export default function Editor(props) {
   const [membershipValidUntil, setMembershipValidUntil] = useState(user.membershipValidUntil)
 
   async function handleSubmission() {
-    const queryEmail = user.email
-
     //hash pass
     const salt = bcrypt.genSaltSync(10)
     const hashed = (password.trim() === '') ?
@@ -37,7 +34,7 @@ export default function Editor(props) {
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
       middleInitial: middleInitial || user.middleInitial,
-      email: email || queryEmail,
+      email: user.email,
       major: major || user.major,
       password: hashed,
       doorCode: doorCode || user.doorCode,
@@ -49,24 +46,11 @@ export default function Editor(props) {
     setUser({ ...editedUser })
     setToggle(!toggle)
     const apiResponse = await editUser({ ...editedUser }, props.token)
-    if (apiResponse.error) {
+    if (!apiResponse.error) {
       setMembershipValidUntil(apiResponse.responseData.membershipValidUntil)
     }
     setToggle(false)
     setToggleSubmit(false)
-  }
-
-  async function handleSubmissionToggle() {
-    if (user.email === email || email.trim() === '')
-      setToggleSubmit(!toggleSubmit)
-    else {
-      // checkIfUserExists(email)
-      if (await checkIfUserExists(user.email)) {
-        window.alert('The Email has already existed, leave it blank if you do not want to change')
-      } else {
-        setToggleSubmit(!toggleSubmit)
-      }
-    }
   }
 
   const formGroups = [
@@ -84,12 +68,6 @@ export default function Editor(props) {
       label: 'Middle Initial',
       placeholder: user.middleInitial,
       handleChange: (e) => setMiddleInitial(e.target.value)
-    },
-    {
-      label: 'Email',
-      type: 'email',
-      placeholder: user.email,
-      handleChange: (e) => setEmail(e.target.value)
     },
     {
       label: 'Password',
@@ -121,8 +99,7 @@ export default function Editor(props) {
       <ul className="profileInfo">
 
         <Display
-          user={user}
-          membershipValidUntil={membershipValidUntil}
+          user={{...user,membershipValidUntil}}
         />
 
         <EditForm
@@ -130,7 +107,7 @@ export default function Editor(props) {
           membership={membership}
           setNumberOfSemestersToSignUpFor={(onChangeEvent) => { setNumberOfSemestersToSignUpFor(onChangeEvent) }}
           setPagesPrinted={onChangeEvent => { setPagesPrinted(onChangeEvent) }}
-          handleSubmissionToggle={async () => { await handleSubmissionToggle() }}
+          handleSubmissionToggle={() => { setToggleSubmit(!toggleSubmit) }}
           handleToggle={() => { setToggle(!toggle) }}
           setuserMembership={(onChangeEvent) => { setuserMembership(onChangeEvent) }}
           toggle={toggle}
@@ -141,6 +118,7 @@ export default function Editor(props) {
             {
               marginTop: '320px',
             }}
+          toggle={()=>setToggleSubmit(!toggleSubmit)}
           isOpen={toggleSubmit}>
           <Button
             onClick={async () => { await handleSubmission() }}
@@ -151,7 +129,7 @@ export default function Editor(props) {
             style={{
               marginTop: '10px'
             }}
-            onClick={() => handleSubmissionToggle()}
+            onClick={() => { setToggleSubmit(!toggleSubmit) }}
             color="danger">
             Nah! It's a mistake.
           </Button>

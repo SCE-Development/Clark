@@ -28,9 +28,7 @@ describe('<Profile />', () => {
     pagesPrinted: 20
   }
 
-  const wrapper = mount(
-    <Profile user={user} membershipValidUntil={user.membershipValidUntil} />
-  )
+  const wrapper = mount(<Profile user={user} />)
 
   it('Should render a <Badge /> component with one child', () => {
     expect(wrapper.find(Badge)).to.have.lengthOf(1)
@@ -55,7 +53,7 @@ describe('<Profile />', () => {
     expect(component).to.have.lengthOf(6)
     expect(component.get(0).props.children[1]).equal(user.doorCode)
     expect(component.get(1).props.children[1]).equal(user.joinDate.slice(0, 10))
-    expect(component.get(2).props.children[1]).equal(
+    expect(component.get(2).props.children[2]).equal(
       user.membershipValidUntil.slice(0, 10)
     )
     expect(component.get(3).props.children[1]).equal(user.email)

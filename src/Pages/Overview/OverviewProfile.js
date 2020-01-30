@@ -58,14 +58,25 @@ export default function OverviewProfile (props) {
         </button>
       </td>
 
-      <Modal isOpen={toggle}>
+      <Modal
+        isOpen={toggle}
+        toggle={() => {
+          props.callDatabase()
+          setToggle(!toggle)
+          props.updateQuery()
+        }}
+      >
         {svg.cancelEditSymbol(props.callDatabase, () => {
+          props.updateQuery()
           setToggle(!toggle)
         })}
         <InfoCard user={props.user} token={props.token} />
       </Modal>
 
-      <Modal isOpen={toggleDelete}>
+      <Modal
+        isOpen={toggleDelete}
+        toggle={() => setToggleDelete(!toggleDelete)}
+      >
         <ModalHeader>ARE YOU SURE?</ModalHeader>
         <ModalBody>
           Are you sure you want to delete this user? They're kinda cute and

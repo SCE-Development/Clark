@@ -2,6 +2,13 @@ import React, { Component } from 'react'
 import './Overview.css'
 import OverviewProfile from './OverviewProfile.js'
 import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User'
+import {
+  ButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from 'reactstrap'
+import { membershipState } from '../../Enums'
 
 export default class OverviewBoard extends Component {
   constructor (props) {
@@ -9,8 +16,10 @@ export default class OverviewBoard extends Component {
     this.state = {
       // All users array, update by callDatabase
       users: [],
-      query: '',
-      queryResult: []
+      queryResult: [],
+      toggle: false,
+      currentQueryType: 'All',
+      queryTypes: ['All', 'Pending', 'Officer', 'Admin']
     }
   }
 
@@ -34,16 +43,44 @@ export default class OverviewBoard extends Component {
     if (!apiResponse.error) this.setState({ users: apiResponse.responseData })
   }
 
-  updateQuery (event) {
-    let { value } = event.target
+  updateQuery (value) {
+    // taking care of empty values
+    value = typeof value === 'undefined' ? '' : value
     value = value.trim().toLowerCase()
-    this.setState({ query: value })
 
-    if (!value) return
-    const queryResult = this.state.users.filter(data =>
-      data.firstName.toLowerCase().includes(value)
-    )
+    const userExists = user => {
+      return (
+        user.firstName.toLowerCase().includes(value) ||
+        user.lastName.toLowerCase().includes(value) ||
+        user.email.toLowerCase().includes(value)
+      )
+    }
+
+    const { currentQueryType } = this.state
+    const filteredUsersByLevel = this.filterUserByAccessLevel(currentQueryType)
+    const searchResult = filteredUsersByLevel.filter(data => userExists(data))
+    const queryResult = searchResult.length ? searchResult : filteredUsersByLevel
+
     this.setState({ queryResult })
+  }
+
+  filterUserByAccessLevel (accessLevel) {
+    switch (accessLevel) {
+      case 'Officer':
+        return this.state.users.filter(
+          data => data.accessLevel === membershipState.OFFICER
+        )
+      case 'Admin':
+        return this.state.users.filter(
+          data => data.accessLevel === membershipState.ADMIN
+        )
+      case 'Pending':
+        return this.state.users.filter(
+          data => data.accessLevel === membershipState.PENDING
+        )
+      default:
+        return this.state.users
+    }
   }
 
   /*
@@ -58,6 +95,18 @@ export default class OverviewBoard extends Component {
       window.location.reload()
       return window.alert('Self-deprecation is an art')
     }
+    this.setState({
+      users: this.state.users.filter(child => !child.email.includes(user.email))
+    })
+    this.setState({
+      queryResult: this.state.queryResult.filter(
+        child => !child.email.includes(user.email)
+      )
+    })
+  }
+
+  handleToggle () {
+    this.setState({ toggle: !this.state.toggle })
   }
 
   render () {
@@ -65,11 +114,34 @@ export default class OverviewBoard extends Component {
       <div className='layout'>
         <h1>Users Dashboard</h1>
 
-        <h6>Search by first-name</h6>
+        <h6 id='search-tag'>Search </h6>
+        <ButtonDropdown
+          isOpen={this.state.toggle}
+          toggle={() => {
+            this.handleToggle()
+          }}
+        >
+          <DropdownToggle caret>{this.state.currentQueryType}</DropdownToggle>
+          <DropdownMenu>
+            {this.state.queryTypes.map((type, ind) => (
+              <DropdownItem
+                key={ind}
+                onClick={() =>
+                  this.setState({ currentQueryType: type }, () =>
+                    this.updateQuery('#InvalidSearch#')
+                  )}
+              >
+                {type}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </ButtonDropdown>
+
         <input
           className='input-overview'
-          onChange={e => {
-            this.updateQuery(e)
+          placeholder="search by 'first name, last name, or email'"
+          onChange={event => {
+            this.updateQuery(event.target.value)
           }}
         />
 
@@ -92,7 +164,7 @@ export default class OverviewBoard extends Component {
           </thead>
 
           <tbody>
-            {this.state.query
+            {this.state.queryResult.length > 0
               ? this.state.queryResult.map((user, index) => {
                 return (
                   <OverviewProfile
@@ -102,6 +174,12 @@ export default class OverviewBoard extends Component {
                     token={this.state.authToken}
                     callDatabase={this.callDatabase.bind(this)}
                     deleteUser={this.deleteUser.bind(this)}
+                    updateQuery={() => {
+                      this.setState(
+                        { currentQueryType: 'All', queryResult: [] },
+                        this.updateQuery('#InvalidSearch#')
+                      )
+                    }}
                   />
                 )
               })
@@ -114,6 +192,12 @@ export default class OverviewBoard extends Component {
                     token={this.state.authToken}
                     callDatabase={this.callDatabase.bind(this)}
                     deleteUser={this.deleteUser.bind(this)}
+                    updateQuery={() => {
+                      this.setState(
+                        { currentQueryType: 'All', queryResult: [] },
+                        this.updateQuery('#InvalidSearch#')
+                      )
+                    }}
                   />
                 )
               })}

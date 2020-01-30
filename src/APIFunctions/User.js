@@ -185,7 +185,7 @@ export async function editUser (userToEdit, token) {
     .post('/api/user/edit', {
       firstName,
       lastName,
-      queryEmail: email,
+      email,
       password,
       major,
       numberOfSemestersToSignUpFor,

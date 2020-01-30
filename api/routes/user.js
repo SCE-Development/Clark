@@ -135,7 +135,7 @@ router.post('/login', function (req, res) {
                   if (error) {
                     logger.log(
                       'Bad request while trying to reset pageCount to 0 for ' +
-                      user.email
+                        user.email
                     )
                   }
 
@@ -236,12 +236,12 @@ router.post('/users', function (req, res) {
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED)
   }
-  User.find({}, function (error, result) {
-    if (error) {
+  User.find()
+    .sort({ joinDate: -1 })
+    .then(items => res.status(OK).send(items))
+    .catch(() => {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' })
-    }
-    return res.status(OK).send(result)
-  })
+    })
 })
 
 // Edit/Update a member record
@@ -251,7 +251,7 @@ router.post('/edit', (req, res) => {
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED)
   }
-  const query = { email: req.body.queryEmail }
+  const query = { email: req.body.email }
   const user =
     typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
       ? { ...req.body }
@@ -265,7 +265,6 @@ router.post('/edit', (req, res) => {
   delete user.numberOfSemestersToSignUpFor
 
   // Remove the auth token from the form getting edited
-  delete user.queryEmail
   delete user.token
 
   User.updateOne(query, { ...user }, function (error, result) {
@@ -276,11 +275,11 @@ router.post('/edit', (req, res) => {
     if (result.nModified < 1) {
       return res
         .status(NOT_FOUND)
-        .send({ message: `${req.body.queryEmail} not found.` })
+        .send({ message: `${query.email} not found.` })
     }
 
     return res.status(OK).send({
-      message: `${req.body.queryEmail} was updated.`,
+      message: `${query.email} was updated.`,
       membershipValidUntil: user.membershipValidUntil
     })
   })
@@ -367,7 +366,7 @@ router.post('/verify', function (req, res) {
 })
 
 // Helpers
-function testPasswordStrength(password) {
+function testPasswordStrength (password) {
   const passwordStrength = config.passwordStrength || 'strong'
   /* eslint-disable */
   const strongRegex = new RegExp(
@@ -395,7 +394,7 @@ function testPasswordStrength(password) {
   return { success: mediumRegex.test(password), message: mediumMessage }
 }
 
-function checkIfPageCountResets(lastLogin) {
+function checkIfPageCountResets (lastLogin) {
   if (!lastLogin) return false
 
   const newDate = new Date()
@@ -411,7 +410,7 @@ function checkIfPageCountResets(lastLogin) {
   return false
 }
 
-function getMemberValidationDate(numberOfSemestersToSignUpFor) {
+function getMemberValidationDate (numberOfSemestersToSignUpFor) {
   const today = new Date()
   const membershipValidationDate = new Date()
 
