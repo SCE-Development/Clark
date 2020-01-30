@@ -9,7 +9,7 @@ import Adapter from 'enzyme-adapter-react-16'
 
 import MembershipPlan from '../../src/Pages/MembershipApplication/MembershipPlan'
 import MembershipForm from '../../src/Pages/MembershipApplication/MembershipForm'
-import ConfrimationPage from '../../src/Pages/MembershipApplication/ConfrimationPage'
+import ConfrimationPage from '../../src/Pages/MembershipApplication/ConfirmationPage'
 import { memberApplicationState } from '../../src/Enums'
 
 Enzyme.configure({ adapter: new Adapter() })

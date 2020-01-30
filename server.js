@@ -5,6 +5,8 @@ const settings = require('./util/settings') // import server system settings
 const logger = require(`${settings.util}/logger`) // import event log system
 let port = process.argv[2] // allow custom ports
 
+const mailer = require('./api/mailer/mailer')
+
 // Configure Mongoose
 const mongoose = require('mongoose')
 mongoose.Promise = require('bluebird')
@@ -55,6 +57,19 @@ class Server {
     require('./api/index.js').forEach(route => {
       this.app.use(`/api/${route}`, require(`./api/routes/${route}`))
     })
+
+    // Initialize the mailer routes
+    this.app.post('/api/mailer', (req, res) => {
+      mailer
+        .send({ ...req.body })
+        .then(() => {
+          res.sendStatus(200)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    })
+
     // Main Server Routine - Listen for requests on specified port
     if (!port) {
       logger.log(`Using default port ${settings.port}`, handlerTag)

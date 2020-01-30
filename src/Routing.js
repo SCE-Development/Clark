@@ -16,6 +16,7 @@ import EventList from './Pages/Events/EventList'
 import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js'
 import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js'
 import MembershipApplication from './Pages/MembershipApplication/membershipApplication.jsx'
+import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js'
 import Team from './Pages/TheTeam/TheTeam.js'
 import Printing from './Pages/2DPrinting/2DPrinting.js'
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js'
@@ -85,7 +86,8 @@ export default function Routing ({ appProps }) {
     { Component: Home, path: '/' },
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
-    { Component: Team, path: '/team' }
+    { Component: Team, path: '/team' },
+    { Component: VerifyEmailPage, path: '/verify' }
   ]
   return (
     <Router>
