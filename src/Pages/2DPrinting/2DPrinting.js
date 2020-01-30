@@ -1,11 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './2D-printing.css'
 import {
-  // NavbarBrand,
-  // ListGroup,
-  // ListGroupItem,
-  // ListGroupItemHeading,
-  // ListGroupItemText
   Jumbotron,
   Button,
   Modal,
@@ -14,181 +9,359 @@ import {
   ModalFooter,
   FormGroup,
   Label,
-  Input
+  Input,
+  Col,
+  Row
 } from 'reactstrap'
-import { FilePond } from 'react-filepond'
-
-// Import FilePond styles
+import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
+import FilePondPluginFileEncode from 'filepond-plugin-file-encode'
+import { PDFDocument } from 'pdf-lib'
+import {
+  range,
+  parseRange,
+  printPage,
+  getPagesPrinted
+} from '../../APIFunctions/2DPrinting'
+import { editUser } from '../../APIFunctions/User'
 
-export default class Printing extends React.Component {
-  constructor (props) {
-    super(props)
+registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode)
 
-    this.state = {
-      // Set initial files, type 'local' means this is a file
-      // that has already been uploaded to the server (see docs)
-      files: [
-        {
-          source: 'index.html',
-          options: {
-            type: 'local'
-          }
-        }
-      ]
-    }
-
-    this.state = {
-      modal: false,
-      nestedModal: false,
-      closeAll: false
-    }
-
-    this.handleToggle = this.handleToggle.bind(this)
-    this.handleToggleNested = this.handleToggleNested.bind(this)
-    // this.toggleAll = this.toggleAll.bind(this)
+export default function Printing (props) {
+  const [files, setFiles] = useState([])
+  const [continueButn, setContinue] = useState(false)
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [pages, setPages] = useState(false)
+  const [previewModal, setPreviewModal] = useState(false)
+  const [dataURI, setDataURI] = useState('')
+  const [encodedFile, setEncodedFile] = useState()
+  const [copies, setCopies] = useState(1)
+  const [sides, setSides] = useState('one-sided')
+  const [pageRanges, setPageRanges] = useState('NA')
+  const [numPages, setNumPages] = useState(0)
+  const [usedPages, setUsedPages] = useState([])
+  const [canPrint, setCanPrint] = useState(false)
+  const [displayPagesLeft, setDisplayPagesLeft] = useState(
+    props.user.pagesPrinted
+  )
+  const [previewDisplay, setPreviewDisplay] = useState('')
+  const previewLabels = {
+    copies: 'Number of Copies',
+    sides: 'Type of print',
+    pages: 'Pages'
   }
 
-  handleToggle () {
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }))
-  }
-
-  handleToggleNested () {
-    this.setState({
-      nestedModal: !this.state.nestedModal,
-      closeAll: false
+  async function updateEmbed (totalPages) {
+    const pdf = await PDFDocument.load(dataURI)
+    const display = await PDFDocument.create()
+    const copiedPages = await display.copyPages(
+      pdf,
+      Array.from(totalPages).map(x => x - 1)
+    )
+    copiedPages.forEach(element => {
+      display.addPage(element)
     })
+    const data = await display.saveAsBase64({ dataUri: true })
+    setPreviewDisplay(data)
   }
 
-  // toggleAll () {
-  //   this.setState({
-  //     nestedModal: !this.state.nestedModal,
-  //     closeAll: true
-  //   })
-  // }
-
-  handleInit () {
-    console.log('FilePond instance has initialised', this.pond)
+  async function handleCanPrint (totalPages, copy) {
+    const result = await getPagesPrinted(
+      props.user.email,
+      props.user.token,
+      totalPages,
+      copy
+    )
+    setCanPrint(result[0])
+    setDisplayPagesLeft(result[1])
+    updateEmbed(totalPages)
   }
 
-  render () {
-    return (
-      <>
+  async function handleUpdate (file) {
+    setDataURI(file.getFileEncodeDataURL())
+    setPreviewDisplay(file.getFileEncodeDataURL())
+    setEncodedFile(file)
+    setContinue(true)
+    const pdf = await PDFDocument.load(file.getFileEncodeDataURL())
+    setNumPages(pdf.getPages().length)
+    var tmp = new Set(range(1, pdf.getPages().length + 1))
+    setUsedPages(tmp)
+  }
+
+  function handlePrinting (file) {
+    const raw = file.getFileEncodeBase64String()
+    const destination = 'HP-LaserJet-p2015dn'
+    var data = {
+      raw,
+      pageRanges: pageRanges.replace(/\s/g, ''),
+      sides,
+      copies,
+      destination
+    }
+    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft)
+
+    editUser({ ...props.user, pagesPrinted }, props.user.token)
+    printPage(data)
+
+    setConfirmModal(!confirmModal)
+    setPreviewModal(false)
+    setFiles([])
+    setContinue(false)
+    setPages(false)
+  }
+
+  return (
+    <div>
+      <div>
         <Jumbotron>
           <div className='text-center'>
             <h1 className='display-4'>SCE Printing System</h1>{' '}
           </div>
-          <div className='text-center'>
-            <p className='lead'>
-              {' '}
-              Click on the icon below and upload your file{' '}
-            </p>
-          </div>
-          <div className='text-center'>
-            <p className='lead'> Printing may take up to 5 mins </p>
-          </div>
         </Jumbotron>
 
-        {/* }
-          <button item-right clear onClick={this.toggle}>{this.props.buttonLabel}>
-                  <ion-icon name="close-circle"></ion-icon>
-          </button>
-          */}
+        <div className='printInfo'>
+          <p>
+            Welcome to printing! Click the icon below and upload your file. Each
+            member can print up to 30 pages a week.
+          </p>
+        </div>
 
-        <button className='ICON' onClick={this.handleToggle}>
-          {this.props.buttonLabel}
-
-          <svg width='200px' height='200px' viewBox='0 0 24 24'>
+        <FilePond
+          files={files}
+          allowMultiple={false}
+          acceptedFileTypes={['application/pdf']}
+          maxFileSize='10MB'
+          onupdatefiles={fileItems => {
+            const tmp = fileItems.map(fileItem => fileItem.file)
+            setFiles(tmp)
+          }}
+          onaddfile={async (err, file) => {
+            if (!err) await handleUpdate(file)
+          }}
+          onremovefile={err => {
+            setContinue(false)
+            setPages(false)
+            if (!err) setFiles([])
+          }}
+          labelIdle="Drag & Drop or Touch Here <br />
+          <svg aria-hidden='true' viewBox='0 0 512 512' width='40%'>
             <path
-              fill='#757575'
-              d='M4.93,3.92L6.34,5.33C9.46,2.2 14.53,2.2 17.66,5.33L19.07,3.92C15.17,0 8.84,0 4.93,3.92M7.76,6.75L9.17,8.16C10.73,6.6 13.26,6.6 14.83,8.16L16.24,6.75C13.9,4.41 10.1,4.41 7.76,6.75M19,14A1,1 0 0,1 18,13A1,1 0 0,1 19,12A1,1 0 0,1 20,13A1,1 0 0,1 19,14M16,20H8V15H16V20M19,10H5A3,3 0 0,0 2,13V18H6V22H18V18H22V13A3,3 0 0,0 19,10Z'
+              d='M399.95 160h-287.9C76.824 160 48 188.803 48
+            224v138.667h79.899V448H384.1v-85.333H464V224c0-35.197-28.825-64-64.05-64zM352
+            416H160V288h192v128zm32.101-352H127.899v80H384.1V64z'
             />
-          </svg>
-        </button>
+          </svg>"
+        />
 
-        {/* <Ionicon className="ICON" icon="md-print" fontSize="400px" color="#757575"/> */}
-        {/* <Button color="danger" onClick={this.toggle}>{this.props.buttonLabel}</Button> */}
-
-        <Modal
-          isOpen={this.state.modal}
-          toggle={this.toggle}
-          className={this.props.className}
+        <Button
+          color='primary'
+          className='continue'
+          hidden={!continueButn}
+          onClick={() => {
+            handleCanPrint(usedPages, copies)
+            setPreviewModal(true)
+          }}
         >
-          <ModalHeader toggle={this.toggle}>
-            Software & Computer Engineering Society
+          continue
+        </Button>
+        <Modal
+          isOpen={previewModal}
+          toggle={() => {
+            setPreviewModal(!previewModal)
+          }}
+          size='xl'
+        >
+          <ModalHeader
+            toggle={() => {
+              setPreviewModal(!previewModal)
+            }}
+          >
+            Confirm
           </ModalHeader>
           <ModalBody>
-            <FilePond
-              ref={ref => (this.pond = ref)}
-              files={this.state.files}
-              allowMultiple
-              maxFiles={3}
-              maxFileSize='10MB'
-              server={this.serverOptions}
-              oninit={() => this.handleInit()}
-              onupdatefiles={fileItems => {
-                // Set currently active file objects to this.state
-                this.setState({
-                  files: fileItems.map(fileItem => fileItem.file)
-                })
-              }}
-            />
-
-            <br />
-
-            <FormGroup>
-              {/* <Label for="exampleSelect">Number of copies</Label> */}
-              <legend for='exampleSelect'>Number of copies</legend>
-              <Input type='select' name='select' id='exampleSelect'>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-              </Input>
-              <legend>Type of Print</legend>
-              <FormGroup check>
-                <Label check>
-                  <Input type='radio' name='radio1' /> Front
-                </Label>
-              </FormGroup>
-              <FormGroup check>
-                <Label check>
-                  <Input type='radio' name='radio1' />{' '}
-                  {/* add disabled if in need of option disablement */}
-                  Front & Back
-                </Label>
-              </FormGroup>
-            </FormGroup>
-            <Label> Note: All prints are black ink only</Label>
+            <Row>
+              <Col sm={{ size: 8 }}>
+                <iframe
+                  src={files[0] && previewDisplay}
+                  title='Preview'
+                  width='100%'
+                  height='100%'
+                />
+              </Col>
+              <Col>
+                <div
+                  style={{
+                    marginRight: '10%'
+                  }}
+                >
+                  <br />
+                  <FormGroup>
+                    <font size='4' color='red'>
+                      <b>You have {displayPagesLeft} pages left</b>
+                    </font>
+                    <legend className='center-blocks' htmlFor='numcopy'>
+                      {previewLabels.copies}
+                    </legend>
+                    <Input
+                      className='center-blocks'
+                      type='number'
+                      name='numbers'
+                      min='1'
+                      max='30'
+                      id='numcopy'
+                      defaultValue='1'
+                      onChange={e => {
+                        setCopies(e.target.value)
+                        handleCanPrint(usedPages, e.target.value)
+                      }}
+                    />
+                    <legend className='center-blocks'>
+                      {previewLabels.sides}{' '}
+                    </legend>
+                    <FormGroup check>
+                      <Label check>
+                        <Input
+                          type='radio'
+                          name='pType'
+                          onChange={e => {
+                            setSides('one-sided')
+                          }}
+                          defaultChecked
+                        />{' '}
+                        Front
+                      </Label>
+                    </FormGroup>
+                    <FormGroup check>
+                      <Label check>
+                        <Input
+                          type='radio'
+                          name='pType'
+                          onChange={e => {
+                            setSides('two-sided-long-edge')
+                          }}
+                        />{' '}
+                        Front & Back
+                      </Label>
+                    </FormGroup>
+                    <legend className='center-blocks'>
+                      {previewLabels.pages}{' '}
+                    </legend>
+                    <FormGroup check>
+                      <Label check>
+                        <Input
+                          type='radio'
+                          name='Pages'
+                          onChange={() => {
+                            setPages(false)
+                            setPageRanges('NA')
+                            handleCanPrint(
+                              new Set(range(1, numPages + 1)),
+                              copies
+                            )
+                          }}
+                          defaultChecked
+                        />
+                        All
+                      </Label>
+                    </FormGroup>
+                    <FormGroup check>
+                      <Label check>
+                        <Input
+                          type='radio'
+                          name='Pages'
+                          checked={pages}
+                          onChange={() => {
+                            setPages(true)
+                            handleCanPrint(usedPages, copies)
+                          }}
+                        />
+                        <Input
+                          type='text'
+                          disabled={!pages}
+                          placeholder='1-5, 7, 9-11'
+                          onChange={async e => {
+                            setPageRanges(e.target.value)
+                            const x = await parseRange(e.target.value, numPages)
+                            setUsedPages(x)
+                            handleCanPrint(x, copies)
+                          }}
+                        />
+                      </Label>
+                    </FormGroup>
+                  </FormGroup>
+                  <Label className='center-blocks'>
+                    Note: All prints are black ink only
+                  </Label>
+                  <br />
+                </div>
+              </Col>
+            </Row>
           </ModalBody>
           <ModalFooter>
-            {/* <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
-              <Button color="secondary" onClick={this.toggle}>Cancel</Button> */}
-            <Button color='success' onClick={this.handleToggleNested}>
+            <Button
+              color='danger'
+              style={{
+                float: 'left'
+              }}
+              onClick={() => {
+                setPreviewModal(false)
+                setPages(false)
+                var arr = new Set(range(1, numPages + 1))
+                setUsedPages(arr)
+              }}
+            >
+              Back
+            </Button>
+            <Button
+              color='success'
+              style={{
+                float: 'right'
+              }}
+              onClick={() => {
+                setConfirmModal(!confirmModal)
+              }}
+              disabled={!canPrint}
+            >
               Print!
             </Button>
-            <Modal
-              isOpen={this.state.nestedModal}
-              toggle={this.toggleNested}
-              onClosed={this.state.closeAll ? this.toggle : undefined}
-            >
-              <ModalHeader>Nested Modal title</ModalHeader>
-              <ModalBody>Stuff and things</ModalBody>
-              <ModalFooter>
-                <Button color='success' onClick={this.handleToggleNested}>
-                  Yes!
-                </Button>{' '}
-                <Button color='danger' onClick={this.handleToggleNested}>
-                  Go Back
-                </Button>
-              </ModalFooter>
-            </Modal>
           </ModalFooter>
+
+          <Modal
+            isOpen={confirmModal}
+            toggle={() => {
+              setConfirmModal(!confirmModal)
+            }}
+          >
+            <ModalHeader
+              toggle={() => {
+                setConfirmModal(!confirmModal)
+              }}
+            >
+              Are you sure you want to print?
+            </ModalHeader>
+            <ModalBody>Click Yes or Go Back</ModalBody>
+            <ModalFooter>
+              <Button
+                color='success'
+                onClick={() => {
+                  handlePrinting(encodedFile)
+                }}
+              >
+                Yes!
+              </Button>{' '}
+              <Button
+                color='danger'
+                onClick={() => {
+                  setConfirmModal(!confirmModal)
+                }}
+              >
+                Go Back
+              </Button>
+            </ModalFooter>
+          </Modal>
         </Modal>
-      </>
-    )
-  }
+      </div>
+    </div>
+  )
 }

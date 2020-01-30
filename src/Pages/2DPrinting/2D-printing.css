@@ -1,6 +1,77 @@
-.ICON{
+.center-blocks {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.modal-header {
+  display: flex;
+  text-align: center;
+}
+
+.continue {
+  display: block;
+  width: 20%;
+  max-width: 100px;
+  text-align: center;
+  margin: auto;
+  border-radius: 20px;
+  background-color: rgb(28, 192, 247);
+  color: black;
+  margin-bottom: 50px;
+}
+
+.filepond--root .filepond--drop-label {
+  transform:translate3d(0px, 0px, 0);
+  opacity: 1;
+  height: 100%;
+}
+
+.filepond--root .filepond--drop-label label {
+  flex:1 1 auto;
+  line-height: 100px;
+  height: 100%;
+  transform: translateZ(0px);
+  animation: fade-in 1s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.filepond--root .filepond--panel-root {
+  background-color: lightgray;
+  border: 2px solid black;
+  border-radius: 20px;
+}
+
+.filepond--root:hover .filepond--panel-root {
+  background-color: rgb(134, 215, 241);
+  border: 2px solid blue;
+} 
+
+.filepond--root {
+  display:flex;
+  position: relative;
+  width: 70%;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 500px;
+}
+
+.printInfo {
+  position: relative;
+  max-width: 80%;
+  word-wrap: break-word;
   height: auto;
   width: auto;
-  margin-left: 20%;
-  padding-left: 300px;
+  margin: auto;
+  text-align: center;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
