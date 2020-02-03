@@ -65,6 +65,7 @@ export async function checkIfUserIsSignedIn () {
       status.token = token
     })
     .catch(err => {
+      status.error = true
       status.responseData = err
     })
   return status
