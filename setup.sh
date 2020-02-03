@@ -7,7 +7,7 @@ function install_rpc_client(){
 
 function install_rpc_server(){
     cd "printingRPC/"
-    pip3 install -r requirements.txt
+    pip3 install -r requirements.txt --user
     cd ..
 }
 
