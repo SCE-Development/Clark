@@ -547,7 +547,7 @@ describe('Users', () => {
 
     it('Should return statusCode 200 and a message if a user was edited', done => {
       const user = {
-        queryEmail: 'a@b.c',
+        email: 'a@b.c',
         token: token,
         firstName: 'pinkUnicorn',
         numberOfSemestersToSignUpFor: undefined

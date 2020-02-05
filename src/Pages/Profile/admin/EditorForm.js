@@ -32,7 +32,7 @@ export default function EditForm (props) {
           </Button>
         </div>
 
-        <Modal isOpen={props.toggle}>
+        <Modal isOpen={props.toggle} toggle={() => props.handleToggle()}>
           <ModalBody>
             <Form>
               {props.formGroups.map((group, index) => (

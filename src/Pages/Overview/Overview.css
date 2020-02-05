@@ -121,3 +121,7 @@ thead.td{
   color:rgb(8, 185, 117);
   animation: reverse;
 }
+
+#search-tag {
+  display: inline;
+}
