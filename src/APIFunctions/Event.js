@@ -159,11 +159,9 @@ export function convertTime24to12 (time24h) {
  * @param {string} time a time to be added to an event
  */
 function handleMidnightTime (time) {
-  if (time) {
-    const [hour, suffix] = time.split(':')
-    if (hour === '0') return `12:${suffix}`
-    return time
-  }
+  const [hour, suffix] = time.split(':')
+  if (hour === '0') return `12:${suffix}`
+  return time
 }
 
 /**
