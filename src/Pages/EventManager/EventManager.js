@@ -56,16 +56,18 @@ export default function EventManager (props) {
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event
         </Button>
-        <EventManagerModal
-          modal={modal}
-          toggle={toggle}
-          handleDelete={event => deleteEvent(event, props.user.token)}
-          handleSubmit={handleSubmit}
-          modalState={modalState}
-          populateEventList={populateEventList}
-          token={props.user.token}
-          {...event}
-        />
+        {modal && (
+          <EventManagerModal
+            modal={modal}
+            toggle={toggle}
+            handleDelete={event => deleteEvent(event, props.user.token)}
+            handleSubmit={handleSubmit}
+            modalState={modalState}
+            populateEventList={populateEventList}
+            token={props.user.token}
+            {...event}
+          />
+        )}
         {eventList.length ? (
           <h4>Click on an event below to edit or delete it</h4>
         ) : null}

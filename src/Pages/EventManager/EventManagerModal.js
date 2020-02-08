@@ -20,16 +20,15 @@ function EventManagerModal (props) {
   const NOT_FOUND_PNG =
     'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG'
   const { modal, toggle, modalState } = props
-  const [title, setTitle] = useState()
+  const [title, setTitle] = useState(props.title)
   const [confirmationModal, setConfirmationModal] = useState(false)
-  const [description, setDescription] = useState()
-  const [eventLocation, setEventLocation] = useState()
-  const [eventDate, setEventDate] = useState()
-  const [startTime, setStartTime] = useState()
-  const [endTime, setEndTime] = useState()
-  const [eventCategory, setEventCategory] = useState()
+  const [description, setDescription] = useState(props.description)
+  const [eventLocation, setEventLocation] = useState(props.eventLocation)
+  const [eventDate, setEventDate] = useState(props.eventDate)
+  const [startTime, setStartTime] = useState(props.startTime)
+  const [endTime, setEndTime] = useState(props.endTime)
+  const [eventCategory, setEventCategory] = useState(props.eventCategory)
   const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG)
-
   const inputMatrix = [
     [
       {
@@ -102,11 +101,15 @@ function EventManagerModal (props) {
       description,
       eventLocation,
       eventDate: new Date(eventDate),
-      startTime: convertTime24to12(startTime),
-      endTime: convertTime24to12(endTime),
+      startTime:
+        props.startTime === startTime
+          ? startTime
+          : convertTime24to12(startTime),
+      endTime: props.endTime === endTime ? endTime : convertTime24to12(endTime),
       eventCategory,
       imageURL: imagePreviewURL === NOT_FOUND_PNG ? undefined : imagePreviewURL
     }
+
     await props.handleSubmit({ _id: props._id, ...eventFields })
     await props.populateEventList()
     props.toggle()
