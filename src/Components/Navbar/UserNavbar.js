@@ -72,7 +72,6 @@ export default function UserNavBar (props) {
                 Student Resources
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href='/labkits'>Lab Kits</DropdownItem>
                 <DropdownItem href='https://docs.google.com/forms/d/e/1FAIpQLSfAKfUnblxOZ0r3BjMY6xe_0g2zC7v3OfaadyvF-Ste1eL28A/viewform'>
                   Microsoft Imagine
                 </DropdownItem>
