@@ -9,6 +9,7 @@ import Overview from './Pages/Overview/Overview'
 import EventManager from './Pages/EventManager/EventManager'
 import Login from './Pages/Login/Login'
 import Profile from './Pages/Profile/MemberView/Profile'
+import LedSign from './Pages/LedSign/LedSign'
 
 import Home from './Pages/Home/Home.js'
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage'
@@ -48,6 +49,12 @@ export default function Routing ({ appProps }) {
     {
       Component: SolidsConsole,
       path: '/3DConsole',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/'
+    },
+    {
+      Component: LedSign,
+      path: '/led-sign',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/'
     },
