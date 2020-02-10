@@ -26,8 +26,6 @@ export default function displayProfile (props) {
           ' ' +
           props.user.lastName[0].toUpperCase() +
           props.user.lastName.slice(1, props.user.lastName.length)}
-        {props.user.middleInitial.trim() !== '' &&
-          ' ' + props.user.middleInitial.toUpperCase() + '.'}
       </h3>
       <h5>Doorcode: {props.user.doorCode}</h5>
       <h5>Member Since (yyyy-mm-dd): {props.user.joinDate.slice(0, 10)}</h5>

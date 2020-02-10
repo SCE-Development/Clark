@@ -22,8 +22,6 @@ export default function OverviewProfile (props) {
           ' ' +
           props.user.lastName[0].toUpperCase() +
           props.user.lastName.slice(1, props.user.lastName.length)}
-        {props.user.middleInitial.trim() !== '' &&
-          ' ' + props.user.middleInitial.toUpperCase() + '.'}
       </td>
 
       <td>{props.user.doorCode}</td>

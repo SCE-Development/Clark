@@ -11,7 +11,6 @@ const bcrypt = require('bcrypt-nodejs')
 export default function Editor(props) {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
-  const [middleInitial, setMiddleInitial] = useState("")
   const [password, setPassword] = useState("")
   const [doorCode, setDoorCode] = useState("")
   const [major, setMajor] = useState("")
@@ -33,7 +32,6 @@ export default function Editor(props) {
       ...user,
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
-      middleInitial: middleInitial || user.middleInitial,
       email: user.email,
       major: major || user.major,
       password: hashed,
@@ -63,11 +61,6 @@ export default function Editor(props) {
       label: 'Last Name',
       placeholder: user.lastName,
       handleChange: (e) => setLastName(e.target.value)
-    },
-    {
-      label: 'Middle Initial',
-      placeholder: user.middleInitial,
-      handleChange: (e) => setMiddleInitial(e.target.value)
     },
     {
       label: 'Password',

@@ -19,7 +19,6 @@ describe('<Profile />', () => {
     accessLevel: membershipState.ADMIN,
     firstName: 'First',
     lastName: 'Last',
-    middleInitial: 'I',
     joinDate: '12-32-2012htzs342',
     membershipValidUntil: '12-32-2012htzs342',
     email: 'email',
@@ -44,8 +43,7 @@ describe('<Profile />', () => {
   it('Should render a <h3 /> component with one child', () => {
     const component = wrapper.find('h3')
     expect(component).to.have.lengthOf(1)
-    expect(component.get(0).props.children[0]).equal('First Last')
-    expect(component.get(0).props.children[1]).equal(' I.')
+    expect(component.get(0).props.children).equal('First Last')
   })
 
   it('Should render a <h5 /> component with 6 children', () => {
