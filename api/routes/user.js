@@ -109,13 +109,10 @@ router.post('/login', function (req, res) {
         // Check if password matches database
         user.comparePassword(req.body.password, function (error, isMatch) {
           if (isMatch && !error) {
-            if (
-              new Date() - user.membershipValidUntil > 0 &&
-              user.accessLevel < membershipState.PENDING
-            ) {
+            if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: 'User membership has expired.' })
+                .send({ message: 'User is banned.' })
             }
             // If the username and password matches the database, assign and
             // return a jwt token
