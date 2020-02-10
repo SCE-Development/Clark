@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -6,36 +6,37 @@ import {
   Nav,
   Collapse,
   NavbarToggler
-} from 'reactstrap'
-import { membershipState } from '../../Enums'
+} from "reactstrap";
+import { membershipState } from "../../Enums";
 
-export default function AdminNavbar (props) {
-  const [collapsed, setCollapsed] = useState(true)
+export default function AdminNavbar(props) {
+  const [collapsed, setCollapsed] = useState(true);
 
   const navbarLinks = [
-    { title: 'Overview', route: '/dashboard' },
-    { title: 'Event Manager', route: '/event-manager' },
-    { title: 'LED Sign', route: '/led-sign' },
-    { title: '3DConsole', route: '/3DConsole' }
-  ]
+    { title: "home", route: "/" },
+    { title: "Overview", route: "/dashboard" },
+    { title: "Event Manager", route: "/event-manager" },
+    { title: "LED Sign", route: "/led-sign" },
+    { title: "3DConsole", route: "/3DConsole" }
+  ];
 
   return (
-    <Navbar light className='admin-nav navbar-expand-md'>
-      <NavbarBrand href='/'>
+    <Navbar light className="admin-nav navbar-expand-md">
+      <NavbarBrand href="/">
         Software & Computer Engineering Society
       </NavbarBrand>
       <NavbarToggler
         onClick={() => setCollapsed(!collapsed)}
-        className='mr-2'
+        className="mr-2"
       />
       <Collapse isOpen={!collapsed} navbar>
-        <Nav className='ml-auto sce-nav' navbar>
+        <Nav className="ml-auto sce-nav" navbar>
           {navbarLinks.map((link, index) => {
             const navlink = (
               <NavLink key={index} title={link.title} href={link.route}>
                 {link.title}
               </NavLink>
-            )
+            );
             // If the link has restricted access, return it based on the
             // condition that the user has admin priviledge. Otherwise,
             // just return the link.
@@ -43,16 +44,16 @@ export default function AdminNavbar (props) {
               ? props.user &&
                   props.user.accessLevel === membershipState.ADMIN &&
                   navlink
-              : navlink
+              : navlink;
           })}
-          <div onClick={props.handleLogout} className='nav-button nav-link'>
-            <svg style={{ width: '18px', height: '18px' }} viewBox='0 0 24 24'>
-              <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
+          <div onClick={props.handleLogout} className="nav-button nav-link">
+            <svg style={{ width: "18px", height: "18px" }} viewBox="0 0 24 24">
+              <path d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z" />
             </svg>
             Logout
           </div>
         </Nav>
       </Collapse>
     </Navbar>
-  )
+  );
 }
