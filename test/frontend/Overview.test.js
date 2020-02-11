@@ -46,13 +46,12 @@ describe('<Overview />', () => {
       'Door Code',
       'Printing',
       'Email Verified',
-      'Membership Plan',
       'Membership Type',
       '',
       ''
     ]
 
-    expect(component).to.have.lengthOf(8)
+    expect(component).to.have.lengthOf(7)
     for (let i = 0; i < shouldRenderedtr.length; i++) {
       expect(component.get(i).props.children).equals(shouldRenderedtr[i])
     }
