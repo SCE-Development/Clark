@@ -59,7 +59,9 @@ export default class OverviewBoard extends Component {
     const { currentQueryType } = this.state
     const filteredUsersByLevel = this.filterUserByAccessLevel(currentQueryType)
     const searchResult = filteredUsersByLevel.filter(data => userExists(data))
-    const queryResult = searchResult.length ? searchResult : filteredUsersByLevel
+    const queryResult = searchResult.length
+      ? searchResult
+      : filteredUsersByLevel
 
     this.setState({ queryResult })
   }
@@ -153,7 +155,6 @@ export default class OverviewBoard extends Component {
                 'Door Code',
                 'Printing',
                 'Email Verified',
-                'Membership Plan',
                 'Membership Type',
                 '',
                 ''

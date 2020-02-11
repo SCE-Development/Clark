@@ -30,8 +30,6 @@ export default function OverviewProfile (props) {
 
       <td>{mark(props.user.emailVerified)}</td>
 
-      <td>{enums.memberShipPlanToString(props.user.accessLevel)}</td>
-
       <td>{enums.membershipStateToString(props.user.accessLevel)}</td>
 
       <td>
