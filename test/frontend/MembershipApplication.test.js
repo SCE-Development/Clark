@@ -1,7 +1,7 @@
 /* global describe it */
 import 'jsdom-global/register'
 import React from 'react'
-import Enzyme, { mount, shallow } from 'enzyme'
+import Enzyme, { shallow } from 'enzyme'
 import { expect } from 'chai'
 
 import MembershipApplication from '../../src/Pages/MembershipApplication/membershipApplication'
@@ -9,8 +9,9 @@ import Adapter from 'enzyme-adapter-react-16'
 
 import MembershipPlan from '../../src/Pages/MembershipApplication/MembershipPlan'
 import MembershipForm from '../../src/Pages/MembershipApplication/MembershipForm'
-import ConfrimationPage from '../../src/Pages/MembershipApplication/ConfirmationPage'
+import ConfirmationPage from '../../src/Pages/MembershipApplication/ConfirmationPage'
 import { memberApplicationState } from '../../src/Enums'
+import { CSSTransition } from 'react-transition-group'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -31,6 +32,10 @@ describe('<MembershipApplication />', () => {
     const wrapper = shallow(<MembershipApplication />)
     const f = wrapper.find(MembershipPlan).get(0).props.setMembershipState
     f(memberApplicationState.CONFIRMATION)
-    expect(wrapper.find(ConfrimationPage)).to.have.lengthOf(1)
+    expect(wrapper.find(ConfirmationPage)).to.have.lengthOf(1)
+  })
+  it('Should render 3 <CSSTransition /> Componenets', () => {
+    const wrapper = shallow(<MembershipApplication />)
+    expect(wrapper.find(CSSTransition)).to.have.lengthOf(3)
   })
 })
