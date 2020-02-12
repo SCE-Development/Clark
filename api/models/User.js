@@ -9,9 +9,6 @@ const UserSchema = new Schema(
       type: String,
       required: true
     },
-    middleInitial: {
-      type: String
-    },
     lastName: {
       type: String,
       required: true
@@ -43,11 +40,6 @@ const UserSchema = new Schema(
       type: String
     },
 
-    // Whether or not the user is an active member in SCE
-    active: {
-      type: Boolean,
-      default: true // TODO: THIS SHOULD BE INITIALIZED AS FALSE
-    },
     doorCode: {
       type: String
     },

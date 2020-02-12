@@ -1,4 +1,4 @@
-/* global describe it before after */
+/* global describe it before after beforeEach afterEach */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test'
 
@@ -468,12 +468,10 @@ describe('Users', () => {
           expect(res).to.have.status(OK)
           res.body.should.be.a('object')
           res.body.should.have.property('firstName')
-          res.body.should.have.property('middleInitial')
           res.body.should.have.property('lastName')
           res.body.should.have.property('email')
           res.body.should.have.property('emailVerified')
           res.body.should.have.property('emailOptIn')
-          res.body.should.have.property('active')
           res.body.should.have.property('accessLevel')
           res.body.should.have.property('major')
           res.body.should.have.property('joinDate')
