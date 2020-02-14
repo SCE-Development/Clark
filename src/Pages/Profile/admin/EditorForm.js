@@ -58,7 +58,30 @@ export default function EditForm (props) {
                   </option>
                 ))}
               </select>
-              <Button
+              <FormGroup check inline style={{ marginTop: '5px' }}>
+                <Label check style={{ marginRight: '5px' }} id='resetPages2'>
+                  Reset Pages!
+                </Label>
+                <Input
+                  type='checkbox'
+                  id='resetPages'
+                  onClick={() => {
+                    if (document.getElementById('resetPages').value === 1) {
+                      document
+                        .getElementById('resetPages')
+                        .setAttribute('value', 0)
+                    } else {
+                      document
+                        .getElementById('resetPages')
+                        .setAttribute('value', 1)
+                    }
+                  }}
+                  // onClick={() => {
+                  //   props.setPagesPrinted(0)
+                  //   }}
+                />
+              </FormGroup>
+              {/* <Button
                 type='button'
                 onClick={() => {
                   props.setPagesPrinted(0)
@@ -67,7 +90,7 @@ export default function EditForm (props) {
                 style={{ marginTop: '5px' }}
               >
                 Reset Pages!
-              </Button>
+              </Button> */}
               <FormGroup tag='fieldset'>
                 <legend>Membership Status</legend>
                 {Object.values(enums.membershipState).map(
@@ -95,6 +118,9 @@ export default function EditForm (props) {
             <Button
               color='primary'
               onClick={() => {
+                if (document.getElementById('resetPages').value === 1) {
+                  props.setPagesPrinted(0)
+                }
                 props.handleSubmissionToggle()
               }}
             >
