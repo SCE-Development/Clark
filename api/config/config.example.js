@@ -36,5 +36,7 @@ module.exports = {
     REDIRECT_URIS: ['https://developers.google.com/oauthplayground'],
     USER: 'sce.sjsu@gmail.com',
     REFRESH_TOKEN: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-  }
+  },
+  // The ip address of the sign. You can find it by running `ifconfig` on the pi
+  ledSignIp: '192.168.4.1'
 }
