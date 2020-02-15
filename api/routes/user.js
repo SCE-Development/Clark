@@ -325,7 +325,7 @@ router.post('/setEmailToVerified', (req, res) => {
   })
 })
 
-router.post('getPagesPrintedCount', (req, res) => {
+router.post('/getPagesPrintedCount', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN)
   } else if (!checkIfTokenValid(req)) {
