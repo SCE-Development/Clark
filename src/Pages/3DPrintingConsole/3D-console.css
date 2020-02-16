@@ -21,8 +21,22 @@
 .App-link {
   color: #61dafb;
 }
+.request-card {
+  background-color: #333;
+}
+.request-label-2 {
+  display: none;
+}
 
-#secondRow
-{
-  margin-left: 35px !important;
+@media only screen and (max-width: 1090px) {
+  .request-label-1 {
+    display: none;
+  }
+  .request-label-2 {
+    display: block;
+    margin-top: 10px;
+  }
+  #request-buttons {
+    margin-top: 10px;
+  }
 }
