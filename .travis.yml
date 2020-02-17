@@ -5,7 +5,7 @@ services:
   - mongodb
 sudo: required
 before_install:
-  - ./setup.sh
+  - python setup.py
 install:
  - echo $ENCODED_CONFIG > .temp
  - base64 --decode .temp > api/config/config.js
