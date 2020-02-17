@@ -1,61 +1,68 @@
-import React, { Component } from "react";
-import "./profileModifier.css";
+import React, { Component } from 'react';
+import './profile-modifier.css';
+import InfoCard from './InfoCard.js'
+import { searchUserByEmail } from '../../../APIFunctions/User';
+const membershipStatus = require('../../../Enums').membershipState
 
 export default class Profile extends Component {
+
+  constructor(props) {
+    super(props)
+
+    // Variables that will be send to data base
+    this.state = {
+      user: '',
+      fullName: ''
+    }
+  }
+
+  async componentDidMount() {
+    const response = await searchUserByEmail(this.props.user.email,
+      this.props.user.token)
+      if (!response.error) {
+      //concat user to full name
+      this.setState({ user: response.responseData }, () => {
+        const name = this.state.user.firstName[0].toUpperCase() +
+          this.state.user.firstName.slice(1, this.state.user.firstName.length) +
+          " " +
+          this.state.user.lastName[0].toUpperCase() +
+          this.state.user.lastName.slice(1, this.state.user.lastName.length)
+
+        this.setState({ fullName: name })
+      })
+    }
+  }
+
   render() {
+    const fields =
+      (this.state.user) ?
+        [
+          { title: 'Name', value: this.state.fullName },
+          { title: 'Door Code', value: this.state.user.doorCode },
+          { title: 'Joined Date', value: this.state.user.joinDate.slice(0, 10) },
+          { title: 'Email', value: this.state.user.email },
+          { title: 'Membership Expiration', value: (this.props.user.accessLevel<membershipStatus.MEMBER)? 
+          "Not Valid" :
+          this.state.user.membershipValidUntil.slice(0, 10) },
+        ] :
+        [
+          { title: '.', value: '' },
+          { title: 'Door Code', value: '' },
+          { title: 'Joined Date', value: '' },
+          { title: 'Email', value: '' },
+          { title: 'Membership Expiration', value: '' },
+        ]
+
     return (
-      <div id="Yolo">
-        <h1 id="title"> SCE Member Profile Page </h1>
-        <div className="Top">
-          <div
-            id="background"
-            background="./Image/water.jpeg"
-            class="background"
-          >
-            <img
-              src="./Image/AnnabelBoat.jpg"
-              height="320"
-              width="320"
-              alt="Avatar"
-              className="profilepic"
-            />
-            <div className="Top">
-              <font color="black" id="name">
-                <b>Name: Annabel Kusumo</b>
-              </font>
-              <div id="InfoBox">
-                <h2 className="Top">Member Info: </h2>
-                <section className="One">Username: YOLO1234</section>
-                <section className="One">Email: example@gmail.com</section>
-                <section className="One">
-                  Password: <input type="password " name="password "></input>
-                  <button>Change Password?</button>
-                </section>
-                <section className="One">Year joined: 2019</section>
-                <section className="One">Membership type: 2019-2020</section>
-                <section className="One">Door Code: h3ll0fr13nd</section>
-                <section className="One"> </section>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="Body"></div>
-        <div class="row">
-          <div class="column">
-            <img src="./Image/socialmedia.jpeg" height="350" width="360"></img>
-          </div>
-          <div class="column">
-            <img src="./Image/hardware.jpeg" height="350" width="360"></img>
-          </div>
-          <div class="column">
-            <img src="./Image/yougotthis.jpeg" height="350" width="360"></img>
-          </div>
-          <div class="column">
-            <img src="./Image/compstuff.jpeg" height="350" width="360"></img>
-          </div>
-        </div>
+      <div id='app'>
+        <h1 id='title'> SCE Member Profile </h1>
+
+        <img id='profile-logo' alt='sce logo'
+          src='images/SCE-glow.png' />
+
+        <InfoCard fields={fields} 
+        user={{...this.state.user, token: this.props.user.token}} />
       </div>
     );
-    //return <h2>Hello there</h2>;
   }
 }
