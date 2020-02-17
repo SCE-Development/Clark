@@ -1,19 +1,8 @@
 import React from 'react'
+import RequestForm from './RequestForm'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './3D-console.css'
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  CardTitle,
-  CardBody,
-  Collapse,
-  Form,
-  FormGroup,
-  Container,
-  Row,
-  Col
-} from 'reactstrap'
+import { Form, Container } from 'reactstrap'
 import {
   getAll3DPrintRequests,
   delete3DPrintRequest,
@@ -58,26 +47,35 @@ export default class PrintConsole3D extends React.Component {
   parameter: Json object of object to be deleted
   Search for object in db using name and color then delete
   */
-  async deleteData (jsonObject) {
-    await delete3DPrintRequest(jsonObject, this.state.authToken)
-    this.callDatabase() // reload database
+  handleDeleteData = async requestToDelete => {
+    await delete3DPrintRequest(requestToDelete, this.state.authToken)
+    this.setState({
+      data: this.state.data.filter(
+        request => !request._id.includes(requestToDelete._id)
+      )
+    })
   }
 
   /*
-  Parameters: Json Object that will be updated and an onLick event with a value
+  Parameters: Json Object that will be updated and an onClick event with a value
   Search for object in db using its name and date
   Set new progress = event value
   */
-  async updateProgress (jsonObject, event) {
+  handleUpdateProgress = async (requestToUpdate, event) => {
     const newProgress = event.target.value
-    if (newProgress === jsonObject.progress) return
+    if (newProgress === requestToUpdate.progress) return
     const updateRequest = {
       progress: newProgress,
-      email: jsonObject.email,
-      date: jsonObject.date
+      email: requestToUpdate.email,
+      date: requestToUpdate.date
     }
     await update3DPrintRequestProgress(updateRequest, this.state.authToken)
-    this.callDatabase() // reload database
+    var updateIndex = this.state.data.findIndex(
+      request => request._id === requestToUpdate._id
+    )
+    const newData = [...this.state.data]
+    newData[updateIndex].progress = newProgress
+    this.setState({ data: newData })
   }
 
   // simply filter array by name
@@ -86,95 +84,6 @@ export default class PrintConsole3D extends React.Component {
     return search !== null || search !== ''
       ? this.state.data.filter(data => data.name.toLowerCase().includes(search))
       : this.state.data
-  }
-
-  requestForm (jsonObject, key) {
-    return (
-      <FormGroup key={key}>
-        <Card
-          id='Jane'
-          body
-          onClick={this.handleToggle}
-          inverse
-          style={{ backgroundColor: '#333', borderColor: '#333' }}
-        >
-          <CardTitle>{jsonObject.name + "'"}s Request</CardTitle>
-          <div>
-            <Row>
-              <Col>E-mail/Contact:</Col>
-              <Col>Requested Date:</Col>
-              <Col>Progress:</Col>
-              <Col />
-            </Row>
-
-            <Row>
-              <Col>{jsonObject.projectContact}</Col>
-              <Col id='secondRow'>{jsonObject.date}</Col>
-              <Col id='secondRow'>{jsonObject.progress}</Col>
-
-              <Col>
-                <ButtonGroup>
-                  <Button
-                    color='primary'
-                    value='Reject'
-                    onClick={e => {
-                      this.updateProgress(jsonObject, e)
-                    }}
-                  >
-                    Reject
-                  </Button>
-
-                  <Button
-                    color='info'
-                    value='In Progress'
-                    onClick={e => {
-                      this.updateProgress(jsonObject, e)
-                    }}
-                  >
-                    In Progress
-                  </Button>
-
-                  <Button
-                    color='secondary'
-                    value='Complete'
-                    onClick={e => {
-                      this.updateProgress(jsonObject, e)
-                    }}
-                  >
-                    Completed
-                  </Button>
-
-                  <Button
-                    color='primary'
-                    onClick={this.deleteData.bind(this, jsonObject)}
-                  >
-                    Delete
-                  </Button>
-                </ButtonGroup>
-              </Col>
-            </Row>
-          </div>
-        </Card>
-
-        <Collapse isOpen={this.state.collapse}>
-          <Card>
-            <CardBody>
-              <Row>
-                <Col xs='6' sm='4'>
-                  Print Link: {jsonObject.projectLink}
-                </Col>
-                <Col xs='6' sm='3'>
-                  Print Color: {jsonObject.color}
-                </Col>
-                <Col xs='6' sm='4'>
-                  Comments: {jsonObject.projectComments}
-                </Col>
-              </Row>
-            </CardBody>
-          </Card>
-        </Collapse>
-      </FormGroup>
-    )
   }
 
   render () {
@@ -194,7 +103,16 @@ export default class PrintConsole3D extends React.Component {
             }}
           />
           <br />
-          {this.search().map((item, key) => this.requestForm(item, key))}
+          {this.search().map((item, key) => (
+            <RequestForm
+              item={item}
+              key={key}
+              handleToggle={this.handleToggle}
+              handleUpdateProgress={this.handleUpdateProgress}
+              handleDeleteData={this.handleDeleteData}
+              collapse={this.state.collapse}
+            />
+          ))}
         </Form>
       </Container>
     )
