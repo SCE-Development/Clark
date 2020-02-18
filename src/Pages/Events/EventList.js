@@ -23,7 +23,8 @@ function AnnouncementList () {
   }, [])
 
   async function populateEventList () {
-    setEventList(await getAllEvents())
+    const eventResponse = await getAllEvents()
+    if (!eventResponse.error) setEventList(eventResponse.responseData)
   }
 
   function handleClick (clickedEvent) {

@@ -42,7 +42,7 @@ export default class VerifyEmail extends React.Component {
   validateVerificationEmail () {
     validateVerificationEmail(this.state.email, this.state.hashedId)
       .then(emailValidated => {
-        if (emailValidated) {
+        if (!emailValidated.error) {
           this.setState({
             emailVerified: true,
             componentLoaded: true

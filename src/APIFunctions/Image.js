@@ -1,3 +1,5 @@
+/* Global Image */
+
 /**
  * Checks if the given url is a valid link to an image.
  * @param {string} url A URL to an image

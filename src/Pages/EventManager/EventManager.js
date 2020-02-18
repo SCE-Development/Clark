@@ -22,7 +22,8 @@ export default function EventManager (props) {
   }, [])
 
   async function populateEventList () {
-    setEventList(await getAllEvents())
+    const eventData = await getAllEvents()
+    if (!eventData.error) setEventList(eventData.responseData)
   }
 
   function toggleEditEvent (event) {

@@ -1,30 +1,24 @@
 import axios from 'axios'
-
-class ApiResponse {
-  constructor () {
-    this.error = false
-    this.responseData = null
-  }
-}
+import { ApiResponse } from './ApiResponses'
 
 /**
  * Checks to see if the sign is accepting requests. This is done
  * before any requests to update the sign can be made.
  * @param {string} officerName The name of the officer requesting the sign
- * @returns {Object} An object containing a boolean
+ * @returns {Object} ApiResponse Object containing the response data
  */
 export async function healthCheck (officerName) {
-  let signResponse = new ApiResponse()
+  let status = new ApiResponse()
   await axios
     .post('api/LedSign/healthCheck', { officerName })
     .then(res => {
-      signResponse.responseData = res.data
+      status.responseData = res.data
     })
     .catch(err => {
-      signResponse.responseData = err
-      signResponse.error = true
+      status.responseData = err
+      status.error = true
     })
-  return signResponse
+  return status
 }
 
 /**
@@ -42,17 +36,19 @@ export async function healthCheck (officerName) {
  * @param {(string|undefined)} newEvent.imageURL - A URL of the image of the
  * event
  * @param {string} token - The user's jwt token for authentication
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
  */
 export async function updateSignText (signData) {
-  let signResponse = new ApiResponse()
+  let status = new ApiResponse()
   await axios
     .post('api/LedSign/updateSignText', { ...signData })
     .then(res => {
-      signResponse = res.data
+      status = res.data
     })
     .catch(err => {
-      signResponse.responseData = err
-      signResponse.error = true
+      status.responseData = err
+      status.error = true
     })
-  return signResponse
+  return status
 }

@@ -8,9 +8,10 @@ export default function PrintRequest (props) {
   const [requests, setRequests] = useState([])
 
   async function updateRequests () {
-    await search3DPrintRequests(props.email).then(values => {
-      setRequests(values)
-    })
+    const requestResult = await search3DPrintRequests(props.email)
+    if (!requestResult.error) {
+      setRequests(requestResult.responseData)
+    }
   }
 
   return (

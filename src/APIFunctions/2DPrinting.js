@@ -1,12 +1,5 @@
 import axios from 'axios'
-
-class PrintApiResponse {
-  constructor () {
-    this.error = false
-    this.canPrint = false
-    this.remainingPages = 0
-  }
-}
+import { PrintApiResponse } from './ApiResponses'
 
 /**
  * Return an array similar to python's range() function
@@ -53,7 +46,7 @@ export function parseRange (pages, maxPages) {
  * @returns {PrintApiResponse}  Containing information for if the page is printing
  */
 export async function printPage (data) {
-  const status = new PrintApiResponse()
+  let status = new PrintApiResponse()
   await axios.post('/api/print/submit', data).catch(() => {
     status.error = true
   })
@@ -70,7 +63,7 @@ export async function printPage (data) {
  *                                  user can print, and total pages left
  */
 export async function getPagesPrinted (email, token, totalPages, copies) {
-  const status = new PrintApiResponse()
+  let status = new PrintApiResponse()
   await axios
     .post('api/user/getPagesPrintedCount', {
       email,

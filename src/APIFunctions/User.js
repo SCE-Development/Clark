@@ -1,29 +1,14 @@
 import axios from 'axios'
-
-/**
- * Class to hold the server responses
- * @member {bool} error - Lets us know if there was any error regarding
- * the API call. This variable should be false if there was no error.
- * @member {any} responseData - Contains anything we would like to return
- * from the API call (e.g. object array or error data)
- * @member {string|null} token - An authentication token
- */
-class ApiResponse {
-  constructor () {
-    this.error = false
-    this.responseData = null
-    this.token = null
-  }
-}
+import { UserApiResponse } from './ApiResponses'
 
 /**
  * Queries the database for all users.
  * @param {string} token The jwt token for verification
- * @returns {ApiResponse} Containing any error information or the array of
+ * @returns {UserApiResponse} Containing any error information or the array of
  * users.
  */
 export async function getAllUsers (token) {
-  const status = new ApiResponse()
+  let status = new UserApiResponse()
   await axios
     // get all user!
     .post('/api/user/users', {
@@ -41,11 +26,11 @@ export async function getAllUsers (token) {
 
 /**
  * Checks if the user is signed in by evaluating a jwt token in local storage.
- * @returns {ApiResponse} Containing information for whether the user is signed
+ * @returns {UserApiResponse} Containing information for whether the user is signed
  * in or not
  */
 export async function checkIfUserIsSignedIn () {
-  const status = new ApiResponse()
+  let status = new UserApiResponse()
 
   const token = window.localStorage
     ? window.localStorage.getItem('jwtToken')
@@ -82,9 +67,10 @@ export async function checkIfUserIsSignedIn () {
  * frontend
  * @param {(string|undefined)} userToRegister.major
  * @param {(string|undefined)} userToRegister.numberOfSemestersToSignUpFor
+ * @returns {UserApiResponse} containing if the search was successful or error data
  */
 export async function registerUser (userToRegister) {
-  const status = new ApiResponse()
+  let status = new UserApiResponse()
   const {
     firstName,
     lastName,
@@ -102,8 +88,8 @@ export async function registerUser (userToRegister) {
       major,
       numberOfSemestersToSignUpFor
     })
-    .then(result => {
-      status.responseData = result
+    .then(res => {
+      status.responseData = res.data
     })
     .catch(err => {
       status.error = true
@@ -126,10 +112,10 @@ async function updateLastLoginDate (email, token) {
  * date for the user.
  * @param {string} email The email of the user
  * @param {string} password The password of the user
- * @returns {ApiResponse} Contains the generated JWT token or any error data
+ * @returns {UserApiResponse} Contains the generated JWT token or any error data
  */
 export async function loginUser (email, password) {
-  const status = new ApiResponse()
+  let status = new UserApiResponse()
   await axios
     .post('/api/user/login', { email, password })
     .then(async result => {
@@ -166,9 +152,10 @@ export async function loginUser (email, password) {
  * @param {(string|undefined)} userToEdit.lastLogin - The updated password of
  * the user
  * @param {string} token - The jwt token for authentication
+ * @returns {UserApiResponse} containing if the search was successful
  */
 export async function editUser (userToEdit, token) {
-  const status = new ApiResponse()
+  let status = new UserApiResponse()
   const {
     firstName,
     lastName,
@@ -196,7 +183,6 @@ export async function editUser (userToEdit, token) {
       token
     })
     .then(result => {
-      status.error = false
       status.responseData = result.data
     })
     .catch(err => {
@@ -210,30 +196,30 @@ export async function editUser (userToEdit, token) {
  * Deletes a user by an email
  * @param {string} email The email of the user to delete
  * @param {string} token jwt token to authorize deletion
- * @returns {boolean} if the deletion was successful
+ * @returns {UserApiResponse} containing if the search was successful
  */
 export async function deleteUserByEmail (email, token) {
-  let deleteSuccessful = false
+  let status = new UserApiResponse()
   axios
     .post('/api/user/delete', {
       token,
       email
     })
-    .then(() => {
-      deleteSuccessful = true
+    .catch(() => {
+      status.error = true
     })
-  return deleteSuccessful
+  return status
 }
 
 /**
  * Finds a user by a specific email
  * @param {string} email the email to search a user by
  * @param {string} token the jwt token to authorize the search
- * @returns {ApiResponse} containing if the search was successfult and the
+ * @returns {UserApiResponse} containing if the search was successful and the
  * data of a user if found.
  */
 export async function searchUserByEmail (email, token) {
-  const status = new ApiResponse()
+  let status = new UserApiResponse()
   await axios
     .post('/api/user/search', {
       token,
@@ -252,17 +238,12 @@ export async function searchUserByEmail (email, token) {
  * This function checks the user database to see if a given email already
  * exists or not.
  * @param {string} email The email value to check
- * @returns {boolean} true if email does exist, false if not
+ * @returns {UserApiResponse} containing if the search was successful
  */
 export async function checkIfUserExists (email) {
-  let userExists = false
-  await axios
-    .post('/api/user/checkIfUserExists', { email })
-    .then(() => {
-      userExists = false
-    })
-    .catch(() => {
-      userExists = true
-    })
-  return userExists
+  let status = new UserApiResponse()
+  await axios.post('/api/user/checkIfUserExists', { email }).catch(() => {
+    status.error = true
+  })
+  return status
 }

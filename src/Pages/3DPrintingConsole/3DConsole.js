@@ -37,9 +37,9 @@ export default class PrintConsole3D extends React.Component {
   // Getting all data in DB
   async callDatabase () {
     const data = await getAll3DPrintRequests()
-    this.setState({
-      data
-    })
+    if (!data.error) {
+      this.setState({ data: data.responseData })
+    }
   }
 
   /*
@@ -48,12 +48,17 @@ export default class PrintConsole3D extends React.Component {
   Search for object in db using name and color then delete
   */
   handleDeleteData = async requestToDelete => {
-    await delete3DPrintRequest(requestToDelete, this.state.authToken)
-    this.setState({
-      data: this.state.data.filter(
-        request => !request._id.includes(requestToDelete._id)
-      )
-    })
+    const deleteResponse = await delete3DPrintRequest(
+      requestToDelete,
+      this.state.authToken
+    )
+    if (!deleteResponse.error) {
+      this.setState({
+        data: this.state.data.filter(
+          request => !request._id.includes(requestToDelete._id)
+        )
+      })
+    }
   }
 
   /*
@@ -69,13 +74,18 @@ export default class PrintConsole3D extends React.Component {
       email: requestToUpdate.email,
       date: requestToUpdate.date
     }
-    await update3DPrintRequestProgress(updateRequest, this.state.authToken)
-    var updateIndex = this.state.data.findIndex(
-      request => request._id === requestToUpdate._id
+    const requestProgressResult = await update3DPrintRequestProgress(
+      updateRequest,
+      this.state.authToken
     )
-    const newData = [...this.state.data]
-    newData[updateIndex].progress = newProgress
-    this.setState({ data: newData })
+    if (!requestProgressResult.error) {
+      var updateIndex = this.state.data.findIndex(
+        request => request._id === requestToUpdate._id
+      )
+      const newData = [...this.state.data]
+      newData[updateIndex].progress = newProgress
+      this.setState({ data: newData })
+    }
   }
 
   // simply filter array by name

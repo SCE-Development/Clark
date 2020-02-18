@@ -1,20 +1,23 @@
 import axios from 'axios'
+import { ApiResponse } from './ApiResponses'
 
 /**
  * Retrieve all signs.
- * @returns {Object[]} an array of all sign logs.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
  */
 export async function getAllSignLogs () {
-  let allSignLogs = []
+  const result = new ApiResponse()
   await axios
     .get('api/SignLog/getSignLogs')
     .then(res => {
-      allSignLogs = res.data
+      result.responseData = res.data
     })
     .catch(err => {
-      allSignLogs = err
+      result.error = true
+      result.responseData = err
     })
-  return allSignLogs
+  return result
 }
 
 /**
@@ -26,10 +29,10 @@ export async function getAllSignLogs () {
  * @param {(string)} newSign.email - The email of the person that posted the sign
  */
 export async function addSignLog (newSign) {
-  let signCreated = true
-
-  await axios.post('api/SignLog/addSignLog', { ...newSign }).catch(() => {
-    signCreated = false
+  const result = new ApiResponse()
+  await axios.post('api/SignLog/addSignLog', { ...newSign }).catch(err => {
+    result.error = true
+    result.responseData = err
   })
-  return signCreated
+  return result
 }

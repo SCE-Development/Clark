@@ -6,6 +6,7 @@ import { expect } from 'chai'
 import * as EventAPI from '../../src/APIFunctions/Event'
 import sinon from 'sinon'
 
+import { ApiResponse } from '../../src/APIFunctions/ApiResponses'
 import EventList from '../../src/Pages/Events/EventList'
 import EventCard from '../../src/Pages/Events/EventCard'
 import Adapter from 'enzyme-adapter-react-16'
@@ -15,7 +16,7 @@ Enzyme.configure({ adapter: new Adapter() })
 
 describe('<EventList />', () => {
   var stub = null
-  const RENDERED_EVENTS = [
+  const RENDERED_EVENTS = new ApiResponse(false, [
     {
       title: 'Big brain time',
       eventLocation: 'ENGR 292',
@@ -24,7 +25,7 @@ describe('<EventList />', () => {
       startTime: '4:30 PM',
       endTime: '3:30 PM'
     }
-  ]
+  ])
 
   before(done => {
     stub = sinon.stub(EventAPI, 'getAllEvents')
@@ -51,7 +52,9 @@ describe('<EventList />', () => {
       returnEventArray()
       const wrapper = await mount(<EventList />)
       wrapper.update()
-      expect(wrapper.find(EventCard)).to.have.lengthOf(RENDERED_EVENTS.length)
+      expect(wrapper.find(EventCard)).to.have.lengthOf(
+        RENDERED_EVENTS.responseData.length
+      )
     }
   )
   it('Should render a title if no events are returned', async () => {
