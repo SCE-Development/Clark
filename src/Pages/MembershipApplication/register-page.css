@@ -79,3 +79,15 @@
   opacity: 0;
   transition: opacity 200ms ease-in;
 }
+
+#change-and-select-btns {
+  background-color: #e1f5fe;
+  border-color: black;
+  color: black;
+}
+
+#submit-btn {
+  background-color: #8fdcff;
+  border-color: black;
+  color: black;
+}

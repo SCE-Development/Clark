@@ -6,7 +6,7 @@ import MajorDropdown from './MajorDropdown'
 import { registerUser, checkIfUserExists } from '../../APIFunctions/User'
 import { sendVerificationEmail } from '../../APIFunctions/Profile'
 
-export default function MembershipForm (props) {
+export default function MembershipForm(props) {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
@@ -51,7 +51,7 @@ export default function MembershipForm (props) {
     }
   ]
 
-  async function submitApplication () {
+  async function submitApplication() {
     if (await checkIfUserExists(email)) {
       setUsernameAvailable(false)
       return
@@ -76,7 +76,7 @@ export default function MembershipForm (props) {
     }
   }
 
-  function requiredFieldsEmpty () {
+  function requiredFieldsEmpty() {
     return firstName && lastName && email && password.length >= 8
   }
 
@@ -125,6 +125,7 @@ export default function MembershipForm (props) {
       </div>
       <div className='transition-button-wrapper'>
         <Button
+          id='change-and-select-btns'
           onClick={() =>
             props.setMembershipState(
               memberApplicationState.SELECT_MEMBERSHIP_PLAN
@@ -133,6 +134,7 @@ export default function MembershipForm (props) {
           Change membership plan
         </Button>
         <Button
+          id='submit-btn'
           disabled={!requiredFieldsEmpty()}
           color='primary'
           onClick={submitApplication}
