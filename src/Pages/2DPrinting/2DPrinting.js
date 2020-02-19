@@ -73,8 +73,8 @@ export default function Printing (props) {
       totalPages,
       copy
     )
-    setCanPrint(result[0])
-    setDisplayPagesLeft(result[1])
+    setCanPrint(result.canPrint)
+    setDisplayPagesLeft(result.remainingPages)
     updateEmbed(totalPages)
   }
 

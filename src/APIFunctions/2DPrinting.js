@@ -1,5 +1,13 @@
 import axios from 'axios'
 
+class PrintApiResponse {
+  constructor () {
+    this.error = false
+    this.canPrint = false
+    this.remainingPages = 0
+  }
+}
+
 /**
  * Return an array similar to python's range() function
  * @param {Number} start
@@ -41,19 +49,15 @@ export function parseRange (pages, maxPages) {
 
 /**
  * Print the page
- * @param {Object} data   Encoded file
+ * @param {Object} data         Encoded file
+ * @returns {PrintApiResponse}  Containing information for if the page is printing
  */
 export async function printPage (data) {
-  let pagesPrinted = false
-  await axios
-    .post('/api/print/submit', data)
-    .then(() => {
-      pagesPrinted = true
-    })
-    .catch(() => {
-      pagesPrinted = false
-    })
-  return pagesPrinted
+  const status = new PrintApiResponse()
+  await axios.post('/api/print/submit', data).catch(() => {
+    status.error = true
+  })
+  return status
 }
 
 /**
@@ -62,21 +66,22 @@ export async function printPage (data) {
  * @param {string} token            token of the current user
  * @param {Set(Number)} totalPages  set of all pages to be printed
  * @param {Number} copies           number of copies to be printed
+ * @returns {PrintApiResponse}      Returns if user can print, number of pages
+ *                                  user can print, and total pages left
  */
 export async function getPagesPrinted (email, token, totalPages, copies) {
-  var result = []
+  const status = new PrintApiResponse()
   await axios
     .post('api/user/getPagesPrintedCount', {
       email,
       token
     })
     .then(res => {
-      result.push(copies * totalPages.size + res.data <= 30)
-      result.push(30 - res.data)
-      result.push(totalPages)
+      status.canPrint = copies * totalPages.size + res.data <= 30
+      status.remainingPages = 30 - res.data
     })
     .catch(() => {
-      return [false, 0, 0]
+      status.error = true
     })
-  return result
+  return status
 }
