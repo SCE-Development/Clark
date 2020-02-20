@@ -66,7 +66,11 @@ export default function EditForm (props) {
                   type='checkbox'
                   id='resetPages'
                   onClick={() => {
-                    if (document.getElementById('resetPages').value === 1) {
+                    console.log(document.getElementById('resetPages').value)
+                    if (
+                      parseInt(document.getElementById('resetPages').value) ===
+                      1
+                    ) {
                       document
                         .getElementById('resetPages')
                         .setAttribute('value', 0)
@@ -76,21 +80,8 @@ export default function EditForm (props) {
                         .setAttribute('value', 1)
                     }
                   }}
-                  // onClick={() => {
-                  //   props.setPagesPrinted(0)
-                  //   }}
                 />
               </FormGroup>
-              {/* <Button
-                type='button'
-                onClick={() => {
-                  props.setPagesPrinted(0)
-                }}
-                color='info'
-                style={{ marginTop: '5px' }}
-              >
-                Reset Pages!
-              </Button> */}
               <FormGroup tag='fieldset'>
                 <legend>Membership Status</legend>
                 {Object.values(enums.membershipState).map(
