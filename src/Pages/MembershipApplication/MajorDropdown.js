@@ -25,14 +25,13 @@ export default function MajorDropdown (props) {
     <>
       <p>Major</p>
       <ButtonDropdown
-        id='h'
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
-        <DropdownToggle caret>
+        <DropdownToggle caret id='change-and-select-btns'>
           {!inputEnable ? major || 'Select major' : 'Other'}
         </DropdownToggle>
-        <DropdownMenu>
+        <DropdownMenu id='change-and-select-btns'>
           {options.map((option, index) => {
             return (
               <DropdownItem
