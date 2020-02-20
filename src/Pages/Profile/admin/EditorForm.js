@@ -118,7 +118,9 @@ export default function EditForm (props) {
             <Button
               color='primary'
               onClick={() => {
-                if (document.getElementById('resetPages').value === 1) {
+                if (
+                  parseInt(document.getElementById('resetPages').value) === 1
+                ) {
                   props.setPagesPrinted(0)
                 }
                 props.handleSubmissionToggle()
