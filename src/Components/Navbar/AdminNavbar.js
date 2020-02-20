@@ -9,7 +9,7 @@ import {
 } from 'reactstrap'
 import { membershipState } from '../../Enums'
 
-export default function AdminNavbar (props) {
+export default function AdminNavbar(props) {
   const [collapsed, setCollapsed] = useState(true)
 
   const navbarLinks = [
@@ -41,8 +41,8 @@ export default function AdminNavbar (props) {
             // just return the link.
             return link.restricted
               ? props.user &&
-                  props.user.accessLevel === membershipState.ADMIN &&
-                  navlink
+              props.user.accessLevel === membershipState.ADMIN &&
+              navlink
               : navlink
           })}
           <div onClick={props.handleLogout} className='nav-button nav-link'>
