@@ -76,10 +76,8 @@ export default function EditForm (props) {
                   type='checkbox'
                   id='resetPages'
                   onClick={() => {
-                    console.log(document.getElementById('resetPages').value)
                     if (
-                      parseInt(document
-                        .getElementById('resetPages').value) ===
+                      parseInt(document.getElementById('resetPages').value) ===
                       1
                     ) {
                       document
