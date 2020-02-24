@@ -37,7 +37,7 @@ describe('<UserNavbar />', () => {
   })
   it(
     'Should render two <NavLink /> components for' +
-    " the user who isn't a member",
+    ' the user who isn\'t a member',
     () => {
       const wrapper = mount(<UserNavbar {...nonMemberAppProps} />)
       expect(wrapper.find(NavLink)).to.have.lengthOf(1)
