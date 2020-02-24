@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Collapse,
   NavbarToggler,
@@ -11,11 +11,11 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem
-} from 'reactstrap';
-import { membershipState } from '../../Enums';
+} from 'reactstrap'
+import { membershipState } from '../../Enums'
 
 export default function UserNavBar(props) {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(true)
   const icons = [
     {
       link: [
@@ -40,17 +40,16 @@ export default function UserNavBar(props) {
         '2V21H15V14H18V11H15V9A1,1 0 0,1 16,8H18V5Z'
       ].join('')
     }
-  ];
+  ]
   const unauthedRoutes = [
     { title: 'Events', route: '/events' }
-    //{ title: 'SCE Team', route: '/Team' }
-  ];
+  ]
 
   return (
     <div className='user-nav'>
       <Navbar light expand='md'>
         <NavbarBrand href='/'>
-          Software & Computer Engineering Society &nbsp;
+          Software & Computer Engineering Society &nbsp
         </NavbarBrand>
         <NavbarToggler
           onClick={() => setCollapsed(!collapsed)}
@@ -64,7 +63,7 @@ export default function UserNavBar(props) {
                   <path fill='#757575' d={icon.vector} />
                 </svg>
               </a>
-            );
+            )
           })}
           <Nav className='ml-auto sce-nav' navbar>
             <UncontrolledDropdown nav inNavbar>
@@ -95,7 +94,7 @@ export default function UserNavBar(props) {
                 <NavItem key={index}>
                   <NavLink href={link.route}>{link.title}</NavLink>
                 </NavItem>
-              );
+              )
             })}
             {!props.authenticated && (
               <UncontrolledDropdown nav inNavbar>
@@ -148,5 +147,5 @@ export default function UserNavBar(props) {
         </Collapse>
       </Navbar>
     </div>
-  );
+  )
 }
