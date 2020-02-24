@@ -22,6 +22,7 @@ import Team from './Pages/TheTeam/TheTeam.js'
 import Printing from './Pages/2DPrinting/2DPrinting.js'
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js'
 import { membershipState } from './Enums'
+import Store from './Pages/Store/Store.js'
 
 export default function Routing ({ appProps }) {
   const userIsAuthenticated = appProps.authenticated
@@ -94,7 +95,8 @@ export default function Routing ({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' }
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: Store, path: '/store' }
   ]
   return (
     <Router>
