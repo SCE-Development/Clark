@@ -21,7 +21,7 @@ const nonMemberAppProps = {
   user: { accessLevel: membershipState.NON_MEMBER }
 }
 
-function getDropdownDetails (dropdown, index = 0) {
+function getDropdownDetails(dropdown, index = 0) {
   return dropdown.props.children[index].props.children
 }
 
@@ -32,20 +32,20 @@ describe('<UserNavbar />', () => {
   })
   it('Should render four <NavLink /> tags for unauthenticated routes', () => {
     const wrapper = mount(<UserNavbar />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(3)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(2)
     expect(wrapper.find(Nav).children()).to.have.lengthOf(1)
   })
   it(
     'Should render two <NavLink /> components for' +
-      " the user who isn't a member",
+    " the user who isn't a member",
     () => {
       const wrapper = mount(<UserNavbar {...nonMemberAppProps} />)
-      expect(wrapper.find(NavLink)).to.have.lengthOf(2)
+      expect(wrapper.find(NavLink)).to.have.lengthOf(1)
     }
   )
   it(
     'Should render two <UncontrolledDropdown /> tags for' +
-      ' the unauthenticated user',
+    ' the unauthenticated user',
     () => {
       const wrapper = mount(<UserNavbar />)
       expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(2)
@@ -53,8 +53,8 @@ describe('<UserNavbar />', () => {
   )
   it(
     'The two <UncontrolledDropdown /> tags for' +
-      ' the unauthenticated user should be for student resources and ' +
-      'to join sce',
+    ' the unauthenticated user should be for student resources and ' +
+    'to join sce',
     () => {
       const wrapper = mount(<UserNavbar />)
       const dropdowns = wrapper.find(UncontrolledDropdown)
@@ -64,7 +64,7 @@ describe('<UserNavbar />', () => {
   )
   it(
     'Should render three <UncontrolledDropdown /> tags for' +
-      ' the authenticated user',
+    ' the authenticated user',
     () => {
       const wrapper = mount(<UserNavbar {...adminAppProps} />)
       expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(3)
@@ -72,8 +72,8 @@ describe('<UserNavbar />', () => {
   )
   it(
     'The four <UncontrolledDropdown /> tags for' +
-      ' authenticated users should be for student resources, printing, ' +
-      'to join sce and a drop down of account options',
+    ' authenticated users should be for student resources, printing, ' +
+    'to join sce and a drop down of account options',
     () => {
       const wrapper = mount(<UserNavbar {...adminAppProps} />)
       const dropdowns = wrapper.find(UncontrolledDropdown)

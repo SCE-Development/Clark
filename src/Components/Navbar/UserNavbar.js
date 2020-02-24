@@ -14,7 +14,7 @@ import {
 } from 'reactstrap'
 import { membershipState } from '../../Enums'
 
-export default function UserNavBar (props) {
+export default function UserNavBar(props) {
   const [collapsed, setCollapsed] = useState(true)
   const icons = [
     {
@@ -42,15 +42,14 @@ export default function UserNavBar (props) {
     }
   ]
   const unauthedRoutes = [
-    { title: 'Events', route: '/events' },
-    { title: 'SCE Team', route: '/Team' }
+    { title: 'Events', route: '/events' }
   ]
 
   return (
     <div className='user-nav'>
       <Navbar light expand='md'>
         <NavbarBrand href='/'>
-          Software & Computer Engineering Society &nbsp;
+          Software & Computer Engineering Society &nbsp
         </NavbarBrand>
         <NavbarToggler
           onClick={() => setCollapsed(!collapsed)}
@@ -142,8 +141,8 @@ export default function UserNavBar (props) {
                 </DropdownMenu>
               </UncontrolledDropdown>
             ) : (
-              <NavLink href='/login'>Login</NavLink>
-            )}
+                <NavLink href='/login'>Login</NavLink>
+              )}
           </Nav>
         </Collapse>
       </Navbar>
