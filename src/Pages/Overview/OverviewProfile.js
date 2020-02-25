@@ -3,10 +3,10 @@ import './Overview.css'
 import { Modal } from 'reactstrap'
 import InfoCard from '../Profile/admin/AdminView'
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js'
+import { formatFirstAndLastName } from '../../APIFunctions/Profile'
 const enums = require('../../Enums.js')
 const svg = require('./SVG')
 
-// displaying children of member-board
 export default function OverviewProfile (props) {
   const [toggle, setToggle] = useState(false)
   const [toggleDelete, setToggleDelete] = useState(false)
@@ -31,11 +31,7 @@ export default function OverviewProfile (props) {
   return (
     <tr>
       <td>
-        {props.user.firstName[0].toUpperCase() +
-          props.user.firstName.slice(1, props.user.firstName.length) +
-          ' ' +
-          props.user.lastName[0].toUpperCase() +
-          props.user.lastName.slice(1, props.user.lastName.length)}
+        <div className='name'>{formatFirstAndLastName(props.user)}</div>
       </td>
 
       <td>{props.user.doorCode}</td>

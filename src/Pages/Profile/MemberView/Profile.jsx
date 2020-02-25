@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './profile-modifier.css';
 import InfoCard from './InfoCard.js'
 import { searchUserByEmail } from '../../../APIFunctions/User';
+import { formatFirstAndLastName } from '../../../APIFunctions/Profile';
 const membershipStatus = require('../../../Enums').membershipState
 
 export default class Profile extends Component {
@@ -22,11 +23,7 @@ export default class Profile extends Component {
       if (!response.error) {
       //concat user to full name
       this.setState({ user: response.responseData }, () => {
-        const name = this.state.user.firstName[0].toUpperCase() +
-          this.state.user.firstName.slice(1, this.state.user.firstName.length) +
-          " " +
-          this.state.user.lastName[0].toUpperCase() +
-          this.state.user.lastName.slice(1, this.state.user.lastName.length)
+        const name = formatFirstAndLastName(this.props.user)
 
         this.setState({ fullName: name })
       })
