@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiUrl } from '../config/config';
 import { UserApiResponse } from './ApiResponses';
 
 /**
@@ -11,7 +12,7 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post('/api/user/users', {
+    .post(`${apiUrl}/api/user/users`, {
       // don't need email
       token
     })
@@ -45,7 +46,7 @@ export async function checkIfUserIsSignedIn() {
   }
 
   await axios
-    .post('/api/user/verify', { token })
+    .post(`${apiUrl}/api/user/verify`, { token })
     .then(res => {
       status.responseData = res.data;
       status.token = token;
@@ -82,7 +83,7 @@ export async function registerUser(userToRegister) {
     numberOfSemestersToSignUpFor
   } = userToRegister;
   await axios
-    .post('/api/user/register', {
+    .post(`${apiUrl}/api/user/register`, {
       firstName,
       lastName,
       email,
@@ -119,7 +120,7 @@ async function updateLastLoginDate(email, token) {
 export async function loginUser(email, password) {
   let status = new UserApiResponse();
   await axios
-    .post('/api/user/login', { email, password })
+    .post(`${apiUrl}/api/user/login`, { email, password })
     .then(async result => {
       status.token = result.data.token;
       await updateLastLoginDate(email, result.data.token);
@@ -171,7 +172,7 @@ export async function editUser(userToEdit, token) {
     lastLogin
   } = userToEdit;
   await axios
-    .post('/api/user/edit', {
+    .post(`${apiUrl}/api/user/edit`, {
       firstName,
       lastName,
       email,
@@ -203,7 +204,7 @@ export async function editUser(userToEdit, token) {
 export async function deleteUserByEmail(email, token) {
   let status = new UserApiResponse();
   axios
-    .post('/api/user/delete', {
+    .post(`${apiUrl}/api/user/delete`, {
       token,
       email
     })
@@ -223,7 +224,7 @@ export async function deleteUserByEmail(email, token) {
 export async function searchUserByEmail(email, token) {
   let status = new UserApiResponse();
   await axios
-    .post('/api/user/search', {
+    .post(`${apiUrl}/api/user/search`, {
       token,
       email
     })
@@ -244,8 +245,9 @@ export async function searchUserByEmail(email, token) {
  */
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
-  await axios.post('/api/user/checkIfUserExists', { email }).catch(() => {
-    status.error = true;
-  });
+  await axios.post(`${apiUrl}/api/user/checkIfUserExists`, { email })
+    .catch(() => {
+      status.error = true;
+    });
   return status;
 }

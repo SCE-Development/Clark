@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiUrl } from '../config/config';
 import { ApiResponse } from './ApiResponses';
 
 /**
@@ -11,7 +12,7 @@ import { ApiResponse } from './ApiResponses';
 export async function sendVerificationEmail(email, firstName) {
   let status = new ApiResponse();
   await axios
-    .post('/api/mailer', {
+    .post(`${apiUrl}/api/mailer`, {
       templateType: 'verification',
       recipientEmail: email,
       recipientName: firstName
@@ -26,7 +27,7 @@ export async function sendVerificationEmail(email, firstName) {
 export async function validateVerificationEmail(email, hashedId) {
   let status = new ApiResponse();
   await axios
-    .post('/api/user/validateEmail', {
+    .post(`${apiUrl}/api/user/validateEmail`, {
       email,
       hashedId
     })
@@ -46,7 +47,7 @@ export async function validateVerificationEmail(email, hashedId) {
 export async function setEmailToVerified(email) {
   let status = new ApiResponse();
   await axios
-    .post('/api/user/setEmailToVerified', {
+    .post(`${apiUrl}/api/user/setEmailToVerified`, {
       email
     })
     .catch(err => {

@@ -20,6 +20,7 @@ const handlerTag = { src: 'server' }
 const testEnv = process.env.NODE_ENV === 'test'
 const database = testEnv ? 'sce_core_test' : 'sce_core'
 const TESTING_PORT = 5001
+const databaseUrl = process.env.DOCKER ? 'db:27017' : 'localhost'
 
 class Server {
   constructor () {
@@ -85,7 +86,7 @@ class Server {
     logger.log('Initializing...', handlerTag)
     this.mongoose = mongoose
     this.mongoose
-      .connect(`mongodb://localhost/${database}`, {
+      .connect(`mongodb://${databaseUrl}/${database}`, {
         promiseLibrary: require('bluebird'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
