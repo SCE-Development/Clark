@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiUrl } from '../config/config';
 import { PrintApiResponse } from './ApiResponses';
 
 /**
@@ -48,7 +49,7 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data) {
   let status = new PrintApiResponse();
-  await axios.post('/api/print/submit', data).catch(() => {
+  await axios.post(`${apiUrl}/api/print/submit`, data).catch(() => {
     status.error = true;
   });
   return status;
@@ -66,7 +67,7 @@ export async function printPage(data) {
 export async function getPagesPrinted(email, token, totalPages, copies) {
   let status = new PrintApiResponse();
   await axios
-    .post('api/user/getPagesPrintedCount', {
+    .post(`${apiUrl}/api/user/getPagesPrintedCount`, {
       email,
       token
     })

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { apiUrl } from '../config/config';
 import { ApiResponse } from './ApiResponses';
 
 /**
@@ -10,7 +11,7 @@ import { ApiResponse } from './ApiResponses';
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
   await axios
-    .post('api/LedSign/healthCheck', { officerName })
+    .post(`${apiUrl}/api/LedSign/healthCheck`, { officerName })
     .then(res => {
       status.responseData = res.data;
     })
@@ -29,7 +30,7 @@ export async function healthCheck(officerName) {
 export async function getAllSignLogs() {
   let result = new ApiResponse();
   await axios
-    .get('api/LedSign/getSignLogs')
+    .get(`${apiUrl}/api/LedSign/getSignLogs`)
     .then(res => {
       result.responseData = res.data;
     })
@@ -61,7 +62,7 @@ export async function getAllSignLogs() {
 export async function updateSignText(signData) {
   let status = new ApiResponse();
   await axios
-    .post('api/LedSign/updateSignText', { ...signData })
+    .post(`${apiUrl}/api/LedSign/updateSignText`, { ...signData })
     .then(res => {
       status = res.data;
     })

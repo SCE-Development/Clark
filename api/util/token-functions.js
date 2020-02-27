@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const config = require('../../api/config/config');
+const config = require('../config/config');
 const passport = require('passport');
-require('../../api/config/passport')(passport);
+require('../config/passport')(passport);
 
 /**
  * Check if the request body contains a token
