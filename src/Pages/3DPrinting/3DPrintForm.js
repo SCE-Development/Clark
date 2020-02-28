@@ -1,5 +1,6 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './3D-print-form.css'
 import {
   Button,
   Form,
@@ -19,15 +20,16 @@ export default class PrintForm3D extends React.Component {
 
     // Variables that will be send to data base
     this.state = {
-      name: '',
+      name: this.props.user.name,
       color: '',
       url: '',
       projectType: '',
-      contact: '',
+      contact: this.props.user.email,
       comment: '',
       user: this.props.user,
       isLoggedIn: this.props.authenticated,
-      fill: false
+      fill: false,
+      error: ''
     }
   }
 
@@ -76,38 +78,48 @@ export default class PrintForm3D extends React.Component {
   checkIfFormFilled () {
     fill = true
     if (this.state.name.length === 0) {
-      window.alert('You must provide your full name!')
+      this.setState({ error: 'You must provide your full name!' })
       fill = false
     } else if (
       this.state.color.length === 0 ||
       this.state.color === 'Select Color'
     ) {
-      window.alert('You must provide a color')
-      fill = false
-    } else if (this.state.url.length === 0) {
-      window.alert('You must provide a url')
+      this.setState({ error: 'You must provide a color' })
       fill = false
     } else if (this.state.projectType.length === 0) {
-      window.alert('You must provide your type of project')
+      this.setState({ error: 'You must provide your type of project' })
       fill = false
-    } else if (this.state.contact.length === 0) {
-      window.alert('You must provide a contact')
+    } else if (this.state.url.length === 0) {
+      this.setState({ error: 'You must provide a url' })
       fill = false
+    }
+    if (!fill) {
+      this.displayErrorMessage()
     }
     return fill
   }
 
+  // Displays error message if a form input is empty
+  displayErrorMessage () {
+    document.getElementById('error-message').style.display = 'block' // Show
+    setTimeout(() => {
+      document.getElementById('error-message').style.display = 'none' // Hide
+    }, 2000)
+  }
+
   async submitApplication () {
     if (this.checkIfFormFilled()) {
+      const { name } = this.props.user
+      const { email } = this.props.user
       const request = {
-        name: this.state.name,
+        name: name,
         color: this.state.color,
         comment: this.state.comment,
         contact: this.state.contact,
         projectType: this.state.projectType,
         url: this.state.url,
         progress: 'Pending',
-        email: this.state.user.email
+        email: email
       }
       await submit3DPrintRequest(request)
       this.setState({ fill: true })
@@ -116,6 +128,22 @@ export default class PrintForm3D extends React.Component {
 
   render () {
     const { fill } = this.state
+    const printingColors = [
+      'Select Color',
+      'Any Color',
+      'Black',
+      'Blue',
+      'Brown',
+      'Green',
+      'Grey',
+      'Orange',
+      'Red',
+      'Pink',
+      'Purple',
+      'Yellow',
+      'White',
+      'Clear'
+    ]
     return (
       <>
         {fill === false ? (
@@ -146,6 +174,7 @@ export default class PrintForm3D extends React.Component {
                       id='name'
                       placeholder='Enter Full Name'
                       onChange={this.handleNameChange.bind(this)}
+                      value={this.state.name}
                     />
                   </Col>
 
@@ -156,20 +185,9 @@ export default class PrintForm3D extends React.Component {
                       id='colors'
                       onChange={this.handleColorChange.bind(this)}
                     >
-                      <option>Select Color</option>
-                      <option>Any Color</option>
-                      <option>Black</option>
-                      <option>Blue</option>
-                      <option>Brown</option>
-                      <option>Green</option>
-                      <option>Grey</option>
-                      <option>Orange</option>
-                      <option>Red</option>
-                      <option>Pink</option>
-                      <option>Purple</option>
-                      <option>Yellow</option>
-                      <option>White</option>
-                      <option>Clear</option>
+                      {printingColors.map((color, itr) => {
+                        return <option key={itr}>{color}</option>
+                      })}
                     </Input>
                   </Col>
                 </Row>
@@ -214,30 +232,6 @@ export default class PrintForm3D extends React.Component {
                   </Col>
                 </Row>
               </FormGroup>
-
-              <FormGroup>
-                <Row>
-                  <Col>
-                    <Label for='contact'>
-                      How would you like to be contacted? (Phone number, email,
-                      etc)
-                    </Label>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col>
-                    <Input
-                      onChange={this.handleContactChange.bind(this)}
-                      type='text'
-                      name='contact'
-                      id='contact'
-                      placeholder='Contact Information'
-                    />
-                  </Col>
-                </Row>
-              </FormGroup>
-
               <FormGroup>
                 <Label for='comments'>
                   {' '}
@@ -262,16 +256,15 @@ export default class PrintForm3D extends React.Component {
                   Submit
                 </Button>
               </FormGroup>
+              <p id='error-message'>Error: {this.state.error}</p>
             </Form>
           </Container>
         ) : null}
 
         {fill === true ? (
           <div>
-            <h3 style={{ margin: '1em' }}>
-              Your application has been submitted!
-            </h3>
-            <p style={{ margin: '2em' }}>You may now return to the homepage!</p>
+            <h3 id='submit-label-1'>Your application has been submitted!</h3>
+            <p id='submit-label-2'>You may now return to the homepage!</p>
           </div>
         ) : null}
       </>
