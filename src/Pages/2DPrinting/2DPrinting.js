@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './2D-printing.css'
+import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js'
 import {
   Jumbotron,
   Button,
@@ -50,6 +51,20 @@ export default function Printing (props) {
     copies: 'Number of Copies',
     sides: 'Type of print',
     pages: 'Pages'
+  }
+  const confirmModalProps = {
+    headerText: 'Are you sure you want to print?',
+    bodyText: 'Click Yes or Go Back',
+    confirmText: 'Yes!',
+    cancelText: 'Go Back',
+    confirmColor: 'success',
+    toggle: () => {
+      setConfirmModal(!confirmModal)
+    },
+    handleConfirmation: () => {
+      handlePrinting(encodedFile)
+    },
+    open: confirmModal
   }
 
   async function updateEmbed (totalPages) {
@@ -327,39 +342,7 @@ export default function Printing (props) {
             </Button>
           </ModalFooter>
 
-          <Modal
-            isOpen={confirmModal}
-            toggle={() => {
-              setConfirmModal(!confirmModal)
-            }}
-          >
-            <ModalHeader
-              toggle={() => {
-                setConfirmModal(!confirmModal)
-              }}
-            >
-              Are you sure you want to print?
-            </ModalHeader>
-            <ModalBody>Click Yes or Go Back</ModalBody>
-            <ModalFooter>
-              <Button
-                color='success'
-                onClick={() => {
-                  handlePrinting(encodedFile)
-                }}
-              >
-                Yes!
-              </Button>{' '}
-              <Button
-                color='danger'
-                onClick={() => {
-                  setConfirmModal(!confirmModal)
-                }}
-              >
-                Go Back
-              </Button>
-            </ModalFooter>
-          </Modal>
+          <ConfirmationModal {...confirmModalProps} />
         </Modal>
       </div>
     </div>

@@ -15,6 +15,7 @@ import {
 import { eventModalState } from '../../Enums'
 import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event'
 import { validateImageURL } from '../../APIFunctions/Image.js'
+import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js'
 
 function EventManagerModal (props) {
   const NOT_FOUND_PNG =
@@ -29,6 +30,13 @@ function EventManagerModal (props) {
   const [endTime, setEndTime] = useState(props.endTime)
   const [eventCategory, setEventCategory] = useState(props.eventCategory)
   const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG)
+  const confirmModalProps = {
+    headerText: `Delete ${props.title} ?`,
+    bodyText: 'The event will be gone forever if you do this.',
+    toggle: toggleConfirmationModal,
+    handleConfirmation: handleDeletion,
+    open: confirmationModal
+  }
   const inputMatrix = [
     [
       {
@@ -146,15 +154,7 @@ function EventManagerModal (props) {
 
   return (
     <div>
-      <Modal isOpen={confirmationModal} toggle={toggleConfirmationModal}>
-        <ModalHeader>Delete "{props.title}"?</ModalHeader>
-        <ModalFooter>
-          <Button onClick={toggleConfirmationModal}>Cancel</Button>
-          <Button color='danger' onClick={handleDeletion}>
-            Yes, delete
-          </Button>
-        </ModalFooter>
-      </Modal>
+      <ConfirmationModal {...confirmModalProps} />
       <Modal isOpen={modal} size='lg' toggle={toggle}>
         <ModalHeader>
           {modalState === eventModalState.SUBMIT ? 'Create New ' : 'Edit '}
