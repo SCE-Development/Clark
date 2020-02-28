@@ -1,3 +1,11 @@
-const routes = ['3DPrintingForm', 'Event', 'officerManager', 'user', 'print', 'LedSign']
+const routes = [
+  '3DPrintingForm',
+  'Event',
+  'ErrorLog',
+  'officerManager',
+  'user',
+  'print',
+  'LedSign'
+]
 
 module.exports = routes

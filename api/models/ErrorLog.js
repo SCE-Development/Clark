@@ -11,7 +11,7 @@ const ErrorLogSchema = new Schema(
       required: true,
       default: Date.now
     },
-    query: {
+    apiEndpoint: {
       type: String,
       required: true
     },
