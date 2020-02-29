@@ -21,7 +21,7 @@ export default class PrintForm3D extends React.Component {
     // Variables that will be send to data base
     this.state = {
       name: this.props.user.name,
-      color: '',
+      color: 'Any Color',
       url: '',
       projectType: '',
       contact: this.props.user.email,
@@ -80,12 +80,6 @@ export default class PrintForm3D extends React.Component {
     if (this.state.name.length === 0) {
       this.setState({ error: 'You must provide your full name!' })
       fill = false
-    } else if (
-      this.state.color.length === 0 ||
-      this.state.color === 'Select Color'
-    ) {
-      this.setState({ error: 'You must provide a color' })
-      fill = false
     } else if (this.state.projectType.length === 0) {
       this.setState({ error: 'You must provide your type of project' })
       fill = false
@@ -101,25 +95,22 @@ export default class PrintForm3D extends React.Component {
 
   // Displays error message if a form input is empty
   displayErrorMessage () {
-    document.getElementById('error-message').style.display = 'block' // Show
-    setTimeout(() => {
-      document.getElementById('error-message').style.display = 'none' // Hide
-    }, 2000)
+    document.getElementById('error-message').style.display = 'block' // Show error message
   }
 
   async submitApplication () {
     if (this.checkIfFormFilled()) {
-      const { name } = this.props.user
-      const { email } = this.props.user
+      const { name, email } = this.props.user
+      const { color, comment, contact, projectType, url } = this.state
       const request = {
-        name: name,
-        color: this.state.color,
-        comment: this.state.comment,
-        contact: this.state.contact,
-        projectType: this.state.projectType,
-        url: this.state.url,
-        progress: 'Pending',
-        email: email
+        name,
+        color,
+        comment,
+        contact,
+        projectType,
+        url,
+        email,
+        progress: 'Pending'
       }
       await submit3DPrintRequest(request)
       this.setState({ fill: true })
@@ -129,7 +120,6 @@ export default class PrintForm3D extends React.Component {
   render () {
     const { fill } = this.state
     const printingColors = [
-      'Select Color',
       'Any Color',
       'Black',
       'Blue',
