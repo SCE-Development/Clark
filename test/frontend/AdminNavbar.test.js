@@ -25,12 +25,12 @@ describe('<AdminNavbar />', () => {
         .toString() === 'Software & Computer Engineering Society'
     )
   })
-  it('Should render 4 <NavLink /> tags with officer Credentials', () => {
+  it('Should render 5 <NavLink /> tags with officer Credentials', () => {
     const wrapper = mount(<AdminNavbar />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(4)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(5)
   })
-  it('Should render 4 <NavLink /> tags with admin Credentials', () => {
+  it('Should render 5 <NavLink /> tags with admin Credentials', () => {
     const wrapper = mount(<AdminNavbar {...adminAppProps} />)
-    expect(wrapper.find(NavLink)).to.have.lengthOf(4)
+    expect(wrapper.find(NavLink)).to.have.lengthOf(5)
   })
 })
