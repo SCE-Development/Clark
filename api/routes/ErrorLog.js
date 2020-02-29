@@ -3,7 +3,6 @@ const router = express.Router()
 const ErrorLog = require('../models/ErrorLog')
 const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES
 
-// first param, the api "endpoint"
 router.post('/addErrorLog', (req, res) => {
   const newError = new ErrorLog({
     userEmail: req.body.userEmail,
