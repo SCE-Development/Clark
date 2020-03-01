@@ -10,7 +10,6 @@ const { OK, BAD_REQUEST } = constants.STATUS_CODES
 let app = null
 
 const expect = chai.expect
-
 const tools = require('../util/testing-utils/tools.js')
 chai.should()
 chai.use(chaiHttp)
