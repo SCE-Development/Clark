@@ -5,7 +5,7 @@ import Footer from '../../../Components/Footer/Footer.js'
 import PrintRequest from './PrintRequest'
 import { editUser } from '../../../APIFunctions/User'
 const pic = require('./getPicBySeason')
-const bcrypt = require('bcrypt-nodejs')
+const bcrypt = require('bcryptjs')
 
 export default function ProfileCard (props) {
   const [password, setPassword] = useState('New Password')

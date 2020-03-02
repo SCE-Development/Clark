@@ -1,11 +1,11 @@
 'use strict'
 const http = require('http')
 const bodyParser = require('body-parser') // import POST request data parser
-const settings = require('./util/settings') // import server system settings
+const settings = require('../util/settings') // import server system settings
 const logger = require(`${settings.util}/logger`) // import event log system
 let port = process.argv[2] // allow custom ports
 
-const mailer = require('./api/mailer/mailer')
+const mailer = require('./mailer/mailer')
 
 // Configure Mongoose
 const mongoose = require('mongoose')
@@ -54,8 +54,8 @@ class Server {
     )
     this.app.use(express.static(settings.root))
     // Initialize the routes
-    require('./api/index.js').forEach(route => {
-      this.app.use(`/api/${route}`, require(`./api/routes/${route}`))
+    require('./index.js').forEach(route => {
+      this.app.use(`/api/${route}`, require(`./routes/${route}`))
     })
 
     // Initialize the mailer routes

@@ -57,19 +57,10 @@ typings/
 # dotenv environment variables file
 .env
 
-# npm package-lock file
-package-lock.json
-
 # **** PROJECT: MEANskills Custom ignore options ****
 # Ignore all server log files in the log directory EXCEPT the placeholder
 log/*
 !log/placeholder
-
-# **** PROJECT: CoreV4 Custom Ignore Options ****
-# Ignore personal files
-sql/*
-rj_todo.txt
-util/exports/__*f
 
 # Ignore credential files (i.e. have the user create their own credentials)
 credentials.json
@@ -80,23 +71,9 @@ util/common/trustStore/*.csr
 # For now, ignore the security file so that people can name their own CSRs, Certs, etc. their way
 util/common/security.js
 
-# Ignore failed project files
-public/core/core_legacy.html
-public/core/dashboard_legacy.html
-public/core/js/core_legacy.js
-public/core/js/dashboard_legacy.js
-
-# Ignore MS Visual Studio Code files
 .vscode/*
 *.code-workspace
-
-# chio's Ignore files
 .DS_Store
-mdbi/.DS_Store
-public/.DS_Store
-public/skeleton/.DS_Store
-util/.DS_Store
-util/common/.DS_Store
 
 build
 

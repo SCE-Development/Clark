@@ -3,7 +3,7 @@ const router = express.Router()
 const {
   healthCheck,
   updateSignText
-} = require('../../printingRPC/client/ledsign/led_sign_client')
+} = require('../printingRPC/client/ledsign/led_sign_client')
 const { OK, NOT_FOUND, BAD_REQUEST } = require('../constants').STATUS_CODES
 const { ledSignIp } = require('../config/config')
 
