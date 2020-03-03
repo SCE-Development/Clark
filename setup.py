@@ -17,5 +17,5 @@ elif user_os == 'Windows':
 if setup_status == 0:
     print('\nSetup successful! Bye!\n')
 else:
-    print('\nAn error occured somewhere during the process. Ask on #development\
-on Slack for help.\n')
+    print('\nAn error occured somewhere during the process. Post in the \
+#development channel on Slack for help.\n')
