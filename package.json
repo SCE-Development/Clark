@@ -26,10 +26,6 @@
     ],
     "parser": "babel-eslint"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rjavier441/Project_MEANskills.git"
-  },
   "keywords": [
     "sce_core",
     "SCE",
@@ -41,12 +37,8 @@
     "Computer",
     "Engineering"
   ],
-  "author": "rjavier441",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/SCE-Development/Core-v4/issues"
-  },
-  "homepage": "https://github.com/SCE-Development/Core-v4#readme",
+  "author": "SCE Development Officers",
+  "license": "MIT",
   "dependencies": {
     "@grpc/proto-loader": "^0.5.3",
     "availity-reactstrap-validation": "^2.3.0",
