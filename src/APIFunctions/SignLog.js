@@ -25,7 +25,6 @@ export async function getAllSignLogs () {
  * @param {string} newSign.signTitle - The sign that was posted
  * @param {(string)} newSign.email - The email of the person that posted the sign
  */
-
 export async function addSignLog (newSign) {
   let signCreated = true
 

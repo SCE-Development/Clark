@@ -3,7 +3,7 @@ const router = express.Router()
 const SignLog = require('../models/SignLog')
 const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES
 
-router.post('/addSignLogs', (req, res) => {
+router.post('/addSignLog', (req, res) => {
   const newSign = new SignLog({
     signTitle: req.body.signTitle,
     firstName: req.body.firstName,
