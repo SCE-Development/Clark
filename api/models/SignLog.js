@@ -14,6 +14,11 @@ const SignLogSchema = new Schema(
     email: {
       type: String,
       required: true
+    },
+    timeOfPosting: {
+      type: Date,
+      required: true,
+      default: Date.now
     }
   },
   { collection: 'SignLogs' }
