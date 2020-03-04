@@ -4,8 +4,7 @@ import axios from 'axios'
  * Retrieve all signs.
  * @returns {Object[]} an array of all sign logs.
  */
-
-export async function getSignLogs () {
+export async function getAllSignLogs () {
   let allSignLogs = []
   await axios
     .get('api/SignLog/getSignLogs')

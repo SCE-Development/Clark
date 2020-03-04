@@ -8,7 +8,8 @@ const SignLogSchema = new Schema(
       required: true
     },
     firstName: {
-      type: String
+      type: String,
+      required: true
     },
     email: {
       type: String,

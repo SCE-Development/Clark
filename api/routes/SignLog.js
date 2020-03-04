@@ -11,8 +11,8 @@ router.post('/addSignLogs', (req, res) => {
     timeOfPosting: req.body.timeOfPosting
   })
 
-  newSign.save(function (sign) {
-    if (sign) {
+  newSign.save(function (error) {
+    if (error) {
       res.sendStatus(BAD_REQUEST)
     } else {
       res.sendStatus(OK)
