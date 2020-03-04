@@ -14,6 +14,12 @@ const membershipPlans = {
   YEAR: 2
 }
 
+const itemCategories = {
+  DRINK: 'DRINK',
+  SNACK: 'SNACK',
+  ELECTRONICS: 'ELECTRONICS'
+}
+
 function memberShipPlanToString (key) {
   const plans = require('./Pages/MembershipApplication/GetPlans')
   let correctPlan = ''
@@ -53,5 +59,6 @@ module.exports = {
   membershipPlans,
   memberShipPlanToString,
   membershipState,
-  membershipStateToString
+  membershipStateToString,
+  itemCategories
 }
