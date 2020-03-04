@@ -5,7 +5,8 @@ const routes = [
   'officerManager',
   'user',
   'print',
-  'LedSign'
+  'LedSign',
+  'SignLog'
 ]
 
 module.exports = routes
