@@ -40,7 +40,7 @@ describe('SignLog', () => {
     it('Should return 400 when required fields are not filled in ', done => {
       chai
         .request(app)
-        .post('/api/SignLog/addSignLogs')
+        .post('/api/SignLog/addSignLog')
         .send(INVALID_SIGN_LOG)
         .then(function (res) {
           expect(res).to.have.status(BAD_REQUEST)
@@ -53,7 +53,7 @@ describe('SignLog', () => {
     it('Should return statusCode 200 when all required fields are filled in ', done => {
       chai
         .request(app)
-        .post('/api/SignLog/addSignLogs')
+        .post('/api/SignLog/addSignLog')
         .send(VALID_SIGN_LOG)
         .then(function (res) {
           expect(res).to.have.status(OK)
