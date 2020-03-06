@@ -44,17 +44,18 @@ function LedSign (props) {
     {
       title: 'Brightness:',
       defaultValue: '50',
-      min: '0',
-      max: '100',
+      min: '25',
+      max: '75',
       step: '1',
       type: 'range',
       onChange: e => setBrightness(e.target.value)
     },
     {
       title: 'Scroll Speed:',
-      defaultValue: '50',
+      id: "scroll-speed",
+      defaultValue: '25',
       min: '0',
-      max: '100',
+      max: '50',
       step: '1',
       type: 'range',
       onChange: e => setScrollSpeed(e.target.value)
