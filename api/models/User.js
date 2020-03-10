@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const bcrypt = require('bcrypt-nodejs')
+const bcrypt = require('bcryptjs')
 const membershipState = require('../../src/Enums').membershipState
 
 const UserSchema = new Schema(

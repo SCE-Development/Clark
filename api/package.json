@@ -1,0 +1,42 @@
+{
+  "name": "sce-backend",
+  "version": "1.0.0",
+  "description": "contains all the APIs used by the SCE website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SCE-Development/Core-v4.git"
+  },
+  "keywords": [
+    "node",
+    "gmail",
+    "mongodb",
+    "express"
+  ],
+  "author": "SCE Development Team Officers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SCE-Development/Core-v4/issues"
+  },
+  "homepage": "https://github.com/SCE-Development/Core-v4#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.7.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "google-protobuf": "^3.11.4",
+    "googleapis": "^47.0.0",
+    "grpc": "^1.24.2",
+    "http": "0.0.0",
+    "mongoose": "^5.9.2",
+    "nodemailer": "^6.4.4",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "path": "^0.12.7",
+    "readline": "^1.3.0"
+  }
+}

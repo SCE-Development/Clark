@@ -1,5 +1,5 @@
 const User = require('../models/User.js')
-const bcrypt = require('bcrypt-nodejs')
+const bcrypt = require('bcryptjs')
 
 /*
  * This file contains the methods necessary to encrypt a User's unique _id

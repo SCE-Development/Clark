@@ -6,7 +6,7 @@ function emptySchema (schema) {
   })
 }
 
-const server = require('../../server')
+const server = require('../../api/server')
 let serverInstance = null
 
 function initializeServer () {

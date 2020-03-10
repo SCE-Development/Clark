@@ -6,7 +6,7 @@ import {
 import Display from './Profile.js'
 import EditForm from './EditorForm'
 import { editUser } from "../../../APIFunctions/User.js";
-const bcrypt = require('bcrypt-nodejs')
+const bcrypt = require('bcryptjs')
 
 export default function Editor(props) {
   const [firstName, setFirstName] = useState("")
