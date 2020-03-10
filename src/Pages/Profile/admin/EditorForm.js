@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import './editor-form.css'
 import {
   Button,
   Row,
@@ -14,6 +15,14 @@ import {
 const enums = require('../../../Enums.js')
 
 export default function EditForm (props) {
+  const [resetPages, setResetPages] = useState(false)
+  function submitClicked () {
+    if (resetPages) {
+      props.setPagesPrinted(0)
+    }
+    props.handleSubmissionToggle()
+  }
+
   return (
     <Row>
       <Col>
@@ -58,16 +67,16 @@ export default function EditForm (props) {
                   </option>
                 ))}
               </select>
-              <Button
-                type='button'
-                onClick={() => {
-                  props.setPagesPrinted(0)
-                }}
-                color='info'
-                style={{ marginTop: '5px' }}
-              >
-                Reset Pages!
-              </Button>
+              <FormGroup className='reset-pages-group' check inline>
+                <Label check id='reset-pages-label'>
+                  Reset Pages!
+                </Label>
+                <Input
+                  type='checkbox'
+                  id='reset-pages'
+                  onClick={event => setResetPages(event.target.checked)}
+                />
+              </FormGroup>
               <FormGroup tag='fieldset'>
                 <legend>Membership Status</legend>
                 {Object.values(enums.membershipState).map(
@@ -92,12 +101,7 @@ export default function EditForm (props) {
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              color='primary'
-              onClick={() => {
-                props.handleSubmissionToggle()
-              }}
-            >
+            <Button color='primary' onClick={event => submitClicked()}>
               Submit
             </Button>
             <Button
