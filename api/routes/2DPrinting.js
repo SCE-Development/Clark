@@ -6,7 +6,7 @@ const passport = require('passport')
 require('../config/passport')(passport)
 const {
   sendPrintRequest
-} = require('../printingRPC/client/printing/print_client')
+} = require('../../printingRPC/client/printing/print_client')
 const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES
 
 router.post('/submit', async (req, res) => {
