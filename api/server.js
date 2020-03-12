@@ -1,7 +1,7 @@
 'use strict'
 const http = require('http')
 const bodyParser = require('body-parser') // import POST request data parser
-const settings = require('../util/settings') // import server system settings
+const settings = require('./util/settings') // import server system settings
 const logger = require(`${settings.util}/logger`) // import event log system
 let port = process.argv[2] // allow custom ports
 

@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const passport = require('passport')
 require('../config/passport')(passport)
-const settings = require('../../util/settings')
+const settings = require('../util/settings')
 const logger = require(`${settings.util}/logger`)
 const jwt = require('jsonwebtoken')
 const config = require('../config/config')
@@ -12,7 +12,7 @@ const User = require('../models/User.js')
 const {
   checkIfTokenSent,
   checkIfTokenValid
-} = require('../../util/api-utils/token-functions')
+} = require('../util/token-functions')
 const {
   OK,
   BAD_REQUEST,
@@ -21,7 +21,7 @@ const {
   NOT_FOUND,
   CONFLICT
 } = require('../constants').STATUS_CODES
-const membershipState = require('../../src/Enums').membershipState
+const membershipState = require('../constants').MEMBERSHIP_STATE
 
 const validateVerificationEmail = require('../mailer/auth')
   .validateVerificationEmail

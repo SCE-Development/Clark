@@ -3,12 +3,12 @@
 const express = require('express')
 const router = express.Router()
 const PrintingForm3D = require('../models/PrintingForm3D.js')
-const settings = require('../../util/settings')
+const settings = require('../util/settings')
 const logger = require(`${settings.util}/logger`)
 const {
   checkIfTokenSent,
   checkIfTokenValid
-} = require('../../util/api-utils/token-functions')
+} = require('../util/token-functions')
 const {
   OK,
   BAD_REQUEST,
