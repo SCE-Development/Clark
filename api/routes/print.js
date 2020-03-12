@@ -7,12 +7,17 @@ require('../config/passport')(passport)
 const {
   sendPrintRequest
 } = require('../printingRPC/client/printing/print_client')
-const { OK } = require('../constants').STATUS_CODES
+const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES
 
-router.post('/submit', (req, res) => {
+router.post('/submit', async (req, res) => {
   const { raw, pageRanges, sides, copies, destination } = req.body
-  sendPrintRequest(raw, copies, sides, pageRanges, destination)
-  return res.sendStatus(OK)
+  await sendPrintRequest(raw, copies, sides, pageRanges, destination)
+    .then(response => {
+      return res.status(OK).send({ ...response })
+    })
+    .catch(err => {
+      return res.status(BAD_REQUEST).send({ ...err })
+    })
 })
 
 module.exports = router
