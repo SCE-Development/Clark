@@ -71,14 +71,13 @@ UserSchema.pre('save', function (next) {
       if (error) {
         return next(error)
       }
-
-      bcrypt.hash(member.password, salt, null, function (error, hash) {
+      bcrypt.hash(member.password, salt, function (error, hash) {
         if (error) {
           return next(error)
         }
 
         member.password = hash
-        next()
+        return next()
       })
     })
   } else {

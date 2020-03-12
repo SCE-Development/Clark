@@ -52,7 +52,7 @@ function LedSign (props) {
     },
     {
       title: 'Scroll Speed:',
-      id: "scroll-speed",
+      id: 'scroll-speed',
       defaultValue: '25',
       min: '0',
       max: '50',
@@ -91,7 +91,7 @@ function LedSign (props) {
   useEffect(() => {
     async function checkSignHealth () {
       setLoading(true)
-      const status = await healthCheck(props.user.name)
+      const status = await healthCheck(props.user.firstName)
       if (status && !status.error) {
         setSignHealthy(true)
       } else {
@@ -99,7 +99,7 @@ function LedSign (props) {
       }
       setLoading(false)
     }
-    checkSignHealth(props.user.name)
+    checkSignHealth(props.user.firstName)
     // eslint-disable-next-line
   }, [])
 

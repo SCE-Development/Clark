@@ -147,7 +147,8 @@ router.post('/login', function (req, res) {
 
             // Include fields from the User model that should be passed to the JSON Web Token (JWT)
             const userToBeSigned = {
-              name: user.firstName,
+              firstName: user.firstName,
+              lastName: user.lastName,
               email: user.email,
               accessLevel: user.accessLevel,
               pagesPrinted: user.pagesPrinted
