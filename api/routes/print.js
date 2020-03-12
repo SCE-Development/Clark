@@ -13,7 +13,7 @@ router.post('/submit', async (req, res) => {
   const { raw, pageRanges, sides, copies, destination } = req.body
   await sendPrintRequest(raw, copies, sides, pageRanges, destination)
     .then(response => {
-      return res.sendStatus(OK).send({ ...response })
+      return res.status(OK).send({ ...response })
     })
     .catch(err => {
       return res.status(BAD_REQUEST).send({ ...err })

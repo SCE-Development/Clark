@@ -57,10 +57,8 @@ describe('2DPrinting', () => {
           throw err
         })
     })
-  })
-  describe('/POST submit', () => {
     it('Should return statuscode 400 when there is an error', done => {
-      sendPrintRequestMock.resolves(ERROR_MESSAGE)
+      sendPrintRequestMock.rejects(ERROR_MESSAGE)
       chai
         .request(app)
         .post('/api/print/submit')
