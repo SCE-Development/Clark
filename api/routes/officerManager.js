@@ -107,9 +107,9 @@ router.post('/edit', (req, res) => {
     if (result.nModified < 1) {
       return res
         .status(NOT_FOUND)
-        .send({ message: `${req.body.name} not found.` });
+        .send({ message: `${req.body.email} not found.` });
     }
-    return res.status(OK).send({ message: `${req.body.name} was updated.` });
+    return res.status(OK).send({ message: `${req.body.email} was updated.` });
   });
 });
 

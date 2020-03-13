@@ -3,7 +3,6 @@
 process.env.NODE_ENV = 'test';
 const OfficerManager = require('../api/models/OfficerManager');
 const User = require('../api/models/User');
-const membershipState = require('../api/constants').MEMBERSHIP_STATE;
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const {
@@ -23,7 +22,7 @@ const {
   resetMock,
   restoreMock
 } = require('./mocks/TokenValidFunctions');
-
+const { DEFAULT_PHOTO_URL } = require('../api/constants');
 chai.should();
 chai.use(chaiHttp);
 
@@ -70,11 +69,8 @@ describe('OfficerManager', () => {
 
     it('Should return statusCode 403 when no token is submited', done => {
       const form = {
-        name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: membershipState.ADMIN,
-        team: 'dev',
-        major: 'major'
+        team: 'dev'
       };
       chai
         .request(app)
@@ -92,11 +88,8 @@ describe('OfficerManager', () => {
 
     it('Should return statusCode 401 when invalid token is submited', done => {
       const form = {
-        name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: membershipState.ADMIN,
         team: 'dev',
-        major: 'major',
         token: 'Invalid-Token'
       };
       chai
@@ -116,11 +109,13 @@ describe('OfficerManager', () => {
     it('Should return statusCode 200 when all required ' +
        'fields are filled in', done => {
       const form = {
-        name: 'pinkUnicorn',
         email: 'test@test.com',
-        level: membershipState.ADMIN,
         team: 'dev',
-        major: 'major',
+        facebook: 'facebooklink',
+        github: 'githublink',
+        linkedin: 'linkedinlink',
+        quote: 'aquote',
+        picture: DEFAULT_PHOTO_URL,
         token: token
       };
       setTokenStatus(true);
@@ -190,11 +185,12 @@ describe('OfficerManager', () => {
           response.should.be.a('array');
           expect(response).to.have.length(1);
           expect(response[0].email).to.be.eql('test@test.com');
-          expect(response[0].name).to.be.eql('pinkUnicorn');
-          expect(response[0].level).to.be.eql(membershipState.ADMIN);
           expect(response[0].team).to.be.eql('dev');
-          expect(response[0].major).to.be.eql('major');
-
+          expect(response[0].facebook).to.be.eql('facebooklink');
+          expect(response[0].github).to.be.eql('githublink');
+          expect(response[0].linkedin).to.be.eql('linkedinlink');
+          expect(response[0].quote).to.be.eql('aquote');
+          expect(response[0].picture).to.be.eql(DEFAULT_PHOTO_URL);
           done();
         })
         .catch(err => {
@@ -292,7 +288,7 @@ describe('OfficerManager', () => {
       const form = {
         token: token,
         email: 'test@test.com',
-        name: 'new name'
+        team: 'event'
       };
       setTokenStatus(true);
       chai
@@ -323,8 +319,7 @@ describe('OfficerManager', () => {
         .send(form)
         .then(function(res) {
           expect(res).to.have.status(OK);
-          expect(res.body[0].name).to.equal('new name');
-
+          expect(res.body[0].team).to.equal('event');
           done();
         })
         .catch(err => {
