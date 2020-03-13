@@ -20,7 +20,7 @@ export default class PrintForm3D extends React.Component {
 
     // Variables that will be send to data base
     this.state = {
-      name: this.props.user.name,
+      name: this.props.user.firstName + ' ' + this.props.user.lastName,
       color: 'Any Color',
       url: '',
       projectType: '',

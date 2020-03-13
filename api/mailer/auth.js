@@ -28,8 +28,7 @@ function generateHashedId (email) {
       }
 
       // Use the unique _id from the User schema
-      let hashedId = result._id
-
+      let hashedId = String(result._id)
       // Generate a salt and created a hashed value of the _id using
       // bcrypts library
       bcrypt.genSalt(10, function (error, salt) {
