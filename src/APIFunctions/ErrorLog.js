@@ -1,20 +1,22 @@
 import axios from 'axios'
+import { ApiResponse } from './ApiResponses'
 
 /**
  * Retrieve all errors.
- * @returns {Object[]} an array of all errors
+ * @returns {ApiResponse} containing the logs or error information
  */
-export async function getAllErrorLogs() {
-  let allErrorLogs = []
+export async function getAllErrorLogs () {
+  let status = new ApiResponse()
   await axios
     .get('api/ErrorLog/getErrorLogs')
     .then(res => {
-      allErrorLogs = res.data
+      status.responseData = res.data
     })
     .catch(err => {
-      allErrorLogs = err
+      status.responseData = err.data
+      status.error = true
     })
-  return allErrorLogs
+  return status
 }
 
 /**
@@ -25,12 +27,11 @@ export async function getAllErrorLogs() {
  * @param {string} newError.apiEndpoint - The location of the error
  * @param {string} newError.errordescription - The description of the error
  */
-export async function addErrorLog(newError) {
-  let errorCreated = true
-
-  await axios.post('api/ErrorLog/addErrorLog', { ...newError })
-    .catch(() => {
-      errorCreated = false
-    })
-  return errorCreated
+export async function addErrorLog (newError) {
+  let status = new ApiResponse()
+  await axios.post('api/ErrorLog/addErrorLog', { ...newError }).catch(err => {
+    status.error = true
+    status.responseData = err
+  })
+  return status
 }

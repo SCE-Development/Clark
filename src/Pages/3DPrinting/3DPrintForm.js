@@ -112,8 +112,10 @@ export default class PrintForm3D extends React.Component {
         email,
         progress: 'Pending'
       }
-      await submit3DPrintRequest(request)
-      this.setState({ fill: true })
+      const submitStatus = await submit3DPrintRequest(request)
+      if (!submitStatus.error) {
+        this.setState({ fill: true })
+      }
     }
   }
 

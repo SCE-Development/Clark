@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ApiResponse } from './ApiResponses'
 
 /**
  * Submit a user's print request.
@@ -12,10 +13,10 @@ import axios from 'axios'
  * @param {string} printRequest.projectType - e.g. Personal, School.
  * @param {string} printRequest.url - e.g. URL to the print file.
  * @param {string} printRequest.email - Any comments left on the request.
- * @returns {boolean} - If the request was successfully submitted or not.
+ * @returns {ApiResponse} - Containing any error information related to the request.
  */
 export async function submit3DPrintRequest (printRequest) {
-  let isSubmitted = false
+  let status = new ApiResponse()
   const {
     name,
     color,
@@ -36,30 +37,29 @@ export async function submit3DPrintRequest (printRequest) {
       progress: 'Pending',
       email
     })
-    .then(result => {
-      isSubmitted = true
-    })
     .catch(() => {
-      isSubmitted = false
+      status.error = true
     })
-  return isSubmitted
+  return status
 }
 
 /**
  * Query the database for all 3D print requests.
- * @returns {(Object[]|string)} - The list of requests or error from the API.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or list of requests
  */
 export async function getAll3DPrintRequests () {
-  let allRequests = []
+  let status = new ApiResponse()
   await axios
     .post('/api/3DPrintingForm/GetForm', {})
     .then(result => {
-      allRequests = result.data
+      status.responseData = result.data
     })
     .catch(err => {
-      allRequests = err
+      status.error = true
+      status.responseData = err
     })
-  return allRequests
+  return status
 }
 
 /**
@@ -69,10 +69,11 @@ export async function getAll3DPrintRequests () {
  * @param {string} requestToDelete.date - The date the request was created.
  * @param {string} requestToDelete.email - The requesting user's email.
  * @param {string} token - The user's authentication token.
- * @returns {boolean} - If the request was sucessfully deleted or not.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
  */
 export async function delete3DPrintRequest (requestToDelete, token) {
-  let isDeleted = false
+  let status = new ApiResponse()
   const { date, email } = requestToDelete
   await axios
     .post('/api/3DPrintingForm/delete', {
@@ -80,13 +81,10 @@ export async function delete3DPrintRequest (requestToDelete, token) {
       date,
       email
     })
-    .then(result => {
-      isDeleted = true
-    })
     .catch(() => {
-      isDeleted = false
+      status.error = true
     })
-  return isDeleted
+  return status
 }
 
 /**
@@ -96,10 +94,11 @@ export async function delete3DPrintRequest (requestToDelete, token) {
  * @param {string} requestToUpdate.date - The date the request was created.
  * @param {string} requestToUpdate.email - The requesting user's email.
  * @param {string} token - The user's authentication token.
- * @returns {boolean} - If the request was sucessfully deleted or not.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the search result
  */
 export async function update3DPrintRequestProgress (requestToUpdate, token) {
-  let isUpdated = false
+  let status = new ApiResponse()
   const { date, email, progress } = requestToUpdate
   await axios
     .post('/api/3DPrintingForm/edit', {
@@ -108,31 +107,28 @@ export async function update3DPrintRequestProgress (requestToUpdate, token) {
       progress,
       token
     })
-    .then(result => {
-      isUpdated = true
-    })
     .catch(() => {
-      isUpdated = false
+      status.error = true
     })
-  return isUpdated
+  return status
 }
 
 /**
  * Search a specified 3D print request by it's email.
  * @param {string} email - The requesting user's email.
- * @returns {(Object[]|string)} - If the request was sucessfully, return array of requests.
+ * @returns {ApiResponse} - If the request was sucessfully, return array of requests.
  */
 export async function search3DPrintRequests (email) {
-  let array = []
+  let status = new ApiResponse()
   await axios
     .post('/api/3DPrintingForm/GetForm', {
       email
     })
     .then(result => {
-      array = result.data
+      status.responseData = result.data
     })
     .catch(() => {
-      array = []
+      status.err = true
     })
-  return array
+  return status
 }

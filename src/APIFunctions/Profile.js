@@ -1,51 +1,59 @@
 import axios from 'axios'
+import { ApiResponse } from './ApiResponses'
 
+/**
+ * Invoke the gmail API to send an email to verify a user.
+ * @param {string} email - The user's email
+ * @param {string} firstName - The user's first name
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
+ */
 export async function sendVerificationEmail (email, firstName) {
-  let emailSent = false
+  let status = new ApiResponse()
   await axios
     .post('/api/mailer', {
       templateType: 'verification',
       recipientEmail: email,
       recipientName: firstName
     })
-    .then(() => {
-      emailSent = true
-    })
     .catch(error => {
-      console.log(error)
+      status.error = true
+      status.responseData = error
     })
-  return emailSent
+  return status
 }
 
 export async function validateVerificationEmail (email, hashedId) {
-  let emailValidated = false
+  let status = new ApiResponse()
   await axios
     .post('/api/user/validateEmail', {
-      email: email,
-      hashedId: hashedId
-    })
-    .then(() => {
-      emailValidated = true
+      email,
+      hashedId
     })
     .catch(err => {
-      console.log(err)
+      status.responseData = err
+      status.error = true
     })
-  return emailValidated
+  return status
 }
 
+/**
+ * Set a user's account to be verified
+ * @param {string} email - The user's email
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
+ */
 export async function setEmailToVerified (email) {
-  let emailSetToVerified = false
+  let status = new ApiResponse()
   await axios
     .post('/api/user/setEmailToVerified', {
-      email: email
-    })
-    .then(() => {
-      emailSetToVerified = true
+      email
     })
     .catch(err => {
-      console.log(err)
+      status.responseData = err
+      status.error = true
     })
-  return emailSetToVerified
+  return status
 }
 
 /**

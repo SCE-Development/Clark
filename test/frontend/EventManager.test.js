@@ -6,6 +6,7 @@ import { expect } from 'chai'
 import * as EventAPI from '../../src/APIFunctions/Event'
 import sinon from 'sinon'
 
+import { ApiResponse } from '../../src/APIFunctions/ApiResponses'
 import EventList from '../../src/Pages/Events/EventList'
 import EventCard from '../../src/Pages/Events/EventCard'
 import Adapter from 'enzyme-adapter-react-16'
@@ -16,7 +17,7 @@ Enzyme.configure({ adapter: new Adapter() })
 
 describe('<EventManager />', () => {
   var stub = null
-  const RENDERED_EVENTS = [
+  const RENDERED_EVENTS = new ApiResponse(false, [
     {
       title: 'Big brain time',
       eventLocation: 'ENGR 292',
@@ -25,7 +26,7 @@ describe('<EventManager />', () => {
       startTime: '4:30 PM',
       endTime: '3:30 PM'
     }
-  ]
+  ])
   const APP_PROPS = {
     user: { token: 'hi' }
   }
@@ -45,7 +46,7 @@ describe('<EventManager />', () => {
   }
 
   function returnEmptyArray () {
-    if (stub) stub.returns([])
+    if (stub) stub.returns(new ApiResponse(false, []))
   }
 
   it(
@@ -55,7 +56,9 @@ describe('<EventManager />', () => {
       returnEventArray()
       const wrapper = await mount(<EventManager {...APP_PROPS} />)
       wrapper.update()
-      expect(wrapper.find(EventCard)).to.have.lengthOf(RENDERED_EVENTS.length)
+      expect(wrapper.find(EventCard)).to.have.lengthOf(
+        RENDERED_EVENTS.responseData.length
+      )
     }
   )
   it('Should render a title if no events are returned', async () => {

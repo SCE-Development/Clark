@@ -40,6 +40,8 @@ export default class OverviewBoard extends Component {
 
   async callDatabase () {
     const apiResponse = await getAllUsers(this.state.authToken)
+    console.log(apiResponse)
+
     if (!apiResponse.error) this.setState({ users: apiResponse.responseData })
   }
 
@@ -90,21 +92,28 @@ export default class OverviewBoard extends Component {
   parameter: Json object of object to be deleted
   */
   async deleteUser (user) {
-    await deleteUserByEmail(user.email, this.state.authToken)
-    if (user.email === this.state.currentUser) {
-      // logout
-      window.localStorage.removeItem('jwtToken')
-      window.location.reload()
-      return window.alert('Self-deprecation is an art')
+    const deleteEmailResponse = await deleteUserByEmail(
+      user.email,
+      this.state.authToken
+    )
+    if (!deleteEmailResponse.error) {
+      if (user.email === this.state.currentUser) {
+        // logout
+        window.localStorage.removeItem('jwtToken')
+        window.location.reload()
+        return window.alert('Self-deprecation is an art')
+      }
+      this.setState({
+        users: this.state.users.filter(
+          child => !child.email.includes(user.email)
+        )
+      })
+      this.setState({
+        queryResult: this.state.queryResult.filter(
+          child => !child.email.includes(user.email)
+        )
+      })
     }
-    this.setState({
-      users: this.state.users.filter(child => !child.email.includes(user.email))
-    })
-    this.setState({
-      queryResult: this.state.queryResult.filter(
-        child => !child.email.includes(user.email)
-      )
-    })
   }
 
   handleToggle () {
@@ -131,7 +140,7 @@ export default class OverviewBoard extends Component {
                 onClick={() =>
                   this.setState({ currentQueryType: type }, () =>
                     this.updateQuery('#InvalidSearch#')
-                  )}
+                )}
               >
                 {type}
               </DropdownItem>
