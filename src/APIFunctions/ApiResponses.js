@@ -7,9 +7,9 @@
  * @member {string|null} token - An authentication token
  */
 export class ApiResponse {
-  constructor (error = false, responseData = null) {
-    this.error = error
-    this.responseData = responseData
+  constructor(error = false, responseData = null) {
+    this.error = error;
+    this.responseData = responseData;
   }
 }
 
@@ -19,9 +19,9 @@ export class ApiResponse {
  * @member {string|null} token - An authentication token
  */
 export class UserApiResponse extends ApiResponse {
-  constructor (error = false, responseData = null) {
-    super(error, responseData)
-    this.token = null
+  constructor(error = false, responseData = null) {
+    super(error, responseData);
+    this.token = null;
   }
 }
 
@@ -34,9 +34,9 @@ export class UserApiResponse extends ApiResponse {
  * to print
  */
 export class PrintApiResponse extends ApiResponse {
-  constructor (error = false, responseData = null) {
-    super(error, responseData)
-    this.canPrint = false
-    this.remainingPages = 0
+  constructor(error = false, responseData = null) {
+    super(error, responseData);
+    this.canPrint = false;
+    this.remainingPages = 0;
   }
 }

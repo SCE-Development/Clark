@@ -7,18 +7,18 @@
 //      This file contains all global server.js system settings
 //  Dependencies:
 //      NodeJS (using ECMAscript 6 style JS)
-'use strict'
 
-const path = require('path')
+const path = require('path');
 
 const defaults = {
   port: 8080,
   root: path.join(__dirname, '/../public'),
   util: __dirname,
   logdir: path.join(__dirname, '/../log'),
-  developmentMode: true, // toggles the availability of certain development tools
+  // toggles the availability of certain development tools
+  developmentMode: true, 
   sessionIdleTime: 20 // minutes
-}
+};
 
-module.exports = defaults
+module.exports = defaults;
 // END settings.js

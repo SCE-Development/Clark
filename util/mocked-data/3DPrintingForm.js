@@ -23,4 +23,4 @@ module.exports = [
     projectContact: 'ssmith@abc.com',
     projectComments: 'Look, a piece of candy!'
   }
-]
+];

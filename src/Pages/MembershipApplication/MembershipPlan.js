@@ -1,20 +1,20 @@
-import React, { Component } from 'react'
-import './register-page.css'
-import fall from './assets/fall.jpg'
-import fall2 from './assets/fall2.jpeg'
-import winter from './assets/winter.jpeg'
-import winter2 from './assets/winter2.jpeg'
-import summer from './assets/summer.jpeg'
-import summer2 from './assets/summer2.jpeg'
-import spring from './assets/spring.jpg'
-import spring2 from './assets/spring2.jpeg'
-import { Container, Button, Row } from 'reactstrap'
-import { memberApplicationState, membershipPlans } from '../../Enums'
-import { getSemesterPlan, getYearPlan } from './GetPlans'
+import React, { Component } from 'react';
+import './register-page.css';
+import fall from './assets/fall.jpg';
+import fall2 from './assets/fall2.jpeg';
+import winter from './assets/winter.jpeg';
+import winter2 from './assets/winter2.jpeg';
+import summer from './assets/summer.jpeg';
+import summer2 from './assets/summer2.jpeg';
+import spring from './assets/spring.jpg';
+import spring2 from './assets/spring2.jpeg';
+import { Container, Button, Row } from 'reactstrap';
+import { memberApplicationState, membershipPlans } from '../../Enums';
+import { getSemesterPlan, getYearPlan } from './GetPlans';
 
 class MembershipPlan extends Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       yearPicture: winter2,
       semesterPicture: winter,
@@ -22,36 +22,36 @@ class MembershipPlan extends Component {
       planSelected: false,
       year: new Date().getFullYear(),
       planType: []
-    }
+    };
   }
 
-  cardSelected (plan) {
+  cardSelected(plan) {
     if (
       plan.includes('Spring and Fall') ||
       plan.includes('Fall ' + this.state.year + ' and')
     ) {
-      this.props.setSelectedPlan(membershipPlans.YEAR)
+      this.props.setSelectedPlan(membershipPlans.YEAR);
     } else {
-      this.props.setSelectedPlan(membershipPlans.SEMESTER)
+      this.props.setSelectedPlan(membershipPlans.SEMESTER);
     }
     this.setState({
       activeId: plan,
       planSelected: true
-    })
+    });
   }
 
-  getExpirationDate (plan) {
+  getExpirationDate(plan) {
     if (
       plan.includes('Fall ' + this.state.year) ||
       plan.includes('Spring and Fall ' + this.state.year)
     ) {
-      return `December 20th, ${this.state.year}`
+      return `December 20th, ${this.state.year}`;
     }
-    return `May 20th, ${this.state.year}`
+    return `May 20th, ${this.state.year}`;
   }
 
-  componentDidMount () {
-    this.changeSeason()
+  componentDidMount() {
+    this.changeSeason();
     this.setState({
       planType: [
         {
@@ -65,23 +65,23 @@ class MembershipPlan extends Component {
           expire: this.getExpirationDate(getYearPlan())
         }
       ]
-    })
+    });
   }
 
-  changeSeason () {
-    const month = new Date().getMonth() + 1
+  changeSeason() {
+    const month = new Date().getMonth() + 1;
     if (month === 12 || month === 1 || month === 2) {
-      this.setState({ semesterPicture: winter, yearPicture: winter2 })
+      this.setState({ semesterPicture: winter, yearPicture: winter2 });
     } else if (month >= 3 && month <= 5) {
-      this.setState({ semesterPicture: spring, yearPicture: spring2 })
+      this.setState({ semesterPicture: spring, yearPicture: spring2 });
     } else if (month >= 6 && month <= 8) {
-      this.setState({ semesterPicture: summer, yearPicture: summer2 })
+      this.setState({ semesterPicture: summer, yearPicture: summer2 });
     } else {
-      this.setState({ semesterPicture: fall, yearPicture: fall2 })
+      this.setState({ semesterPicture: fall, yearPicture: fall2 });
     }
   }
 
-  render () {
+  render() {
     return (
       <Container>
         <h1>Hi! We're glad you're here.</h1>
@@ -122,8 +122,8 @@ class MembershipPlan extends Component {
           </Button>
         </Row>
       </Container>
-    )
+    );
   }
 }
 
-export default MembershipPlan
+export default MembershipPlan;

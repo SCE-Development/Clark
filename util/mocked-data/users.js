@@ -1,4 +1,4 @@
-const membershipState = require('../../src/Enums').membershipState
+const membershipState = require('../../src/Enums').membershipState;
 
 module.exports = [
   {
@@ -31,4 +31,4 @@ module.exports = [
     doorCode: '098-2356',
     accessLevel: membershipState.MEMBER
   }
-]
+];

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const ErrorLogSchema = new Schema(
   {
@@ -21,6 +21,6 @@ const ErrorLogSchema = new Schema(
     }
   },
   { collection: 'ErrorLogs' }
-)
+);
 
-module.exports = mongoose.model('ErrorLog', ErrorLogSchema)
+module.exports = mongoose.model('ErrorLog', ErrorLogSchema);

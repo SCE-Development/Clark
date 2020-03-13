@@ -1,7 +1,7 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-const bcrypt = require('bcryptjs')
-const membershipState = require('../constants').MEMBERSHIP_STATE
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const bcrypt = require('bcryptjs');
+const membershipState = require('../constants').MEMBERSHIP_STATE;
 
 const UserSchema = new Schema(
   {
@@ -62,40 +62,40 @@ const UserSchema = new Schema(
     }
   },
   { collection: 'User' }
-)
+);
 
-UserSchema.pre('save', function (next) {
-  const member = this
+UserSchema.pre('save', function(next) {
+  const member = this;
   if (this.isModified('password') || this.isNew) {
-    bcrypt.genSalt(10, function (error, salt) {
+    bcrypt.genSalt(10, function(error, salt) {
       if (error) {
-        return next(error)
+        return next(error);
       }
-      bcrypt.hash(member.password, salt, function (error, hash) {
+      bcrypt.hash(member.password, salt, function(error, hash) {
         if (error) {
-          return next(error)
+          return next(error);
         }
 
-        member.password = hash
-        return next()
-      })
-    })
+        member.password = hash;
+        return next();
+      });
+    });
   } else {
-    return next()
+    return next();
   }
-})
+});
 
-UserSchema.methods.comparePassword = function (passwd, callback) {
-  bcrypt.compare(passwd, this.password, function (error, isMatch) {
+UserSchema.methods.comparePassword = function(passwd, callback) {
+  bcrypt.compare(passwd, this.password, function(error, isMatch) {
     if (error) {
-      return callback(error)
+      return callback(error);
     }
 
-    callback(null, isMatch)
-  })
-}
+    callback(null, isMatch);
+  });
+};
 
 module.exports =
   mongoose.models && mongoose.models.User
     ? mongoose.models.User
-    : mongoose.model('User', UserSchema)
+    : mongoose.model('User', UserSchema);

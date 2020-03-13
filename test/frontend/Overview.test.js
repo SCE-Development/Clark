@@ -1,22 +1,22 @@
 /* global describe it */
-import 'jsdom-global/register'
-import React from 'react'
-import Enzyme, { mount } from 'enzyme'
-import { expect } from 'chai'
+import 'jsdom-global/register';
+import React from 'react';
+import Enzyme, { mount } from 'enzyme';
+import { expect } from 'chai';
 
-import Overview from '../../src/Pages/Overview/Overview'
-import Adapter from 'enzyme-adapter-react-16'
-import OverviewProfile from '../../src/Pages/Overview/OverviewProfile'
-import { membershipState } from '../../src/Enums'
+import Overview from '../../src/Pages/Overview/Overview';
+import Adapter from 'enzyme-adapter-react-16';
+import OverviewProfile from '../../src/Pages/Overview/OverviewProfile';
+import { membershipState } from '../../src/Enums';
 
-Enzyme.configure({ adapter: new Adapter() })
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('<Overview />', () => {
-  const wrapper = mount(<Overview />)
+  const wrapper = mount(<Overview />);
 
   it('Should render a <table /> component with one child', () => {
-    expect(wrapper.find('table')).to.have.lengthOf(1)
-  })
+    expect(wrapper.find('table')).to.have.lengthOf(1);
+  });
 
   it('Should render a <OverviewProfile /> component with 2 children', () => {
     const user = {
@@ -30,17 +30,17 @@ describe('<Overview />', () => {
       major: 'major',
       doorCode: '123',
       pagesPrinted: 20
-    }
+    };
     // before setState
-    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(0)
+    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(0);
     // setState
-    wrapper.setState({ users: [user, user] })
+    wrapper.setState({ users: [user, user] });
     // after setState
-    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(2)
-  })
+    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(2);
+  });
 
   it('Should render a <tr /> component with 8 children', () => {
-    const component = wrapper.find('th')
+    const component = wrapper.find('th');
     const shouldRenderedtr = [
       'Name',
       'Door Code',
@@ -49,11 +49,11 @@ describe('<Overview />', () => {
       'Membership Type',
       '',
       ''
-    ]
+    ];
 
-    expect(component).to.have.lengthOf(7)
+    expect(component).to.have.lengthOf(7);
     for (let i = 0; i < shouldRenderedtr.length; i++) {
-      expect(component.get(i).props.children).equals(shouldRenderedtr[i])
+      expect(component.get(i).props.children).equals(shouldRenderedtr[i]);
     }
-  })
-})
+  });
+});

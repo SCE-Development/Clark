@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-export default function ConfrimationPage () {
+export default function ConfrimationPage() {
   return (
     <div>
       <h3 style={{ margin: '1em' }}>Your application has been submitted!</h3>
@@ -10,5 +10,5 @@ export default function ConfrimationPage () {
         registration and memberhip payment. You may now return to the homepage!
       </p>
     </div>
-  )
+  );
 }

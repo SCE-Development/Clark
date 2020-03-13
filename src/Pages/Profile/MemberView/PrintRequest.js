@@ -1,24 +1,24 @@
-import React, { useState } from 'react'
-import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap'
-import './profile-modifier.css'
-import { search3DPrintRequests } from '../../../APIFunctions/3DPrinting'
+import React, { useState } from 'react';
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
+import './profile-modifier.css';
+import { search3DPrintRequests } from '../../../APIFunctions/3DPrinting';
 
-export default function PrintRequest (props) {
-  const [toggle, setToggle] = useState(false)
-  const [requests, setRequests] = useState([])
+export default function PrintRequest(props) {
+  const [toggle, setToggle] = useState(false);
+  const [requests, setRequests] = useState([]);
 
-  async function updateRequests () {
-    const requestResult = await search3DPrintRequests(props.email)
+  async function updateRequests() {
+    const requestResult = await search3DPrintRequests(props.email);
     if (!requestResult.error) {
-      setRequests(requestResult.responseData)
+      setRequests(requestResult.responseData);
     }
   }
 
   return (
     <Button
-      onClick={async () => {
-        await updateRequests()
-        setToggle(!toggle)
+      onClick={async() => {
+        await updateRequests();
+        setToggle(!toggle);
       }}
       color='primary'
       id='printing-request-button'
@@ -44,7 +44,7 @@ export default function PrintRequest (props) {
         <ModalFooter>
           <Button
             onClick={() => {
-              setToggle(!toggle)
+              setToggle(!toggle);
             }}
           >
             Close
@@ -52,5 +52,5 @@ export default function PrintRequest (props) {
         </ModalFooter>
       </Modal>
     </Button>
-  )
+  );
 }

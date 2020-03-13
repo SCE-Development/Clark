@@ -1,8 +1,8 @@
-import React from 'react'
-import { Badge, Container } from 'reactstrap'
-const enums = require('../../../Enums.js')
+import React from 'react';
+import { Badge, Container } from 'reactstrap';
+const enums = require('../../../Enums.js');
 
-export default function displayProfile (props) {
+export default function displayProfile(props) {
   return (
     <div>
       <Container>
@@ -38,5 +38,5 @@ export default function displayProfile (props) {
       <h5>Major: {props.user.major}</h5>
       <h5>Pages Print: {props.user.pagesPrinted}/30</h5>
     </div>
-  )
+  );
 }

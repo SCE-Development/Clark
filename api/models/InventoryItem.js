@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const InventoryItemSchema = new Schema(
   {
@@ -22,6 +22,6 @@ const InventoryItemSchema = new Schema(
     }
   },
   { collection: 'InventoryItem' }
-)
+);
 
-module.exports = mongoose.model('InventoryItem', InventoryItemSchema)
+module.exports = mongoose.model('InventoryItem', InventoryItemSchema);

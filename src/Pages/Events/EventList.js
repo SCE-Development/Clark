@@ -1,39 +1,39 @@
-import React, { useState, useEffect } from 'react'
-import { Container } from 'reactstrap'
-import './event-page.css'
-import { getAllEvents } from '../../APIFunctions/Event'
-import EventCard from './EventCard'
-import EventInfoModal from './EventInfoModal'
+import React, { useState, useEffect } from 'react';
+import { Container } from 'reactstrap';
+import './event-page.css';
+import { getAllEvents } from '../../APIFunctions/Event';
+import EventCard from './EventCard';
+import EventInfoModal from './EventInfoModal';
 
-function AnnouncementList () {
-  const [modal, setModal] = useState(false)
-  const [currentEvent, setEvent] = useState(null)
-  const [eventList, setEventList] = useState()
+function AnnouncementList() {
+  const [modal, setModal] = useState(false);
+  const [currentEvent, setEvent] = useState(null);
+  const [eventList, setEventList] = useState();
   const modalProps = {
     currentEvent,
     modal,
     toggle
-  }
+  };
 
   useEffect(() => {
-    async function fetchData () {
-      await populateEventList()
+    async function fetchData() {
+      await populateEventList();
     }
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
-  async function populateEventList () {
-    const eventResponse = await getAllEvents()
-    if (!eventResponse.error) setEventList(eventResponse.responseData)
+  async function populateEventList() {
+    const eventResponse = await getAllEvents();
+    if (!eventResponse.error) setEventList(eventResponse.responseData);
   }
 
-  function handleClick (clickedEvent) {
-    setEvent(clickedEvent)
-    toggle()
+  function handleClick(clickedEvent) {
+    setEvent(clickedEvent);
+    toggle();
   }
 
-  async function toggle () {
-    setModal(!modal)
+  async function toggle() {
+    setModal(!modal);
   }
 
   return (
@@ -48,14 +48,14 @@ function AnnouncementList () {
                 handleClick={() => handleClick(event)}
                 {...event}
               />
-            )
+            );
           })
         ) : (
           <h1>No events yet!</h1>
         )}
       </Container>
     </div>
-  )
+  );
 }
 
-export default AnnouncementList
+export default AnnouncementList;

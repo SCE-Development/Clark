@@ -1,34 +1,34 @@
 const eventModalState = {
   SUBMIT: 0,
   EDIT: 1
-}
+};
 
 const memberApplicationState = {
   SELECT_MEMBERSHIP_PLAN: 0,
   FORM_INFO: 1,
   CONFIRMATION: 2
-}
+};
 
 const membershipPlans = {
   SEMESTER: 1,
   YEAR: 2
-}
+};
 
 const itemCategories = {
   DRINK: 'DRINK',
   SNACK: 'SNACK',
   ELECTRONICS: 'ELECTRONICS'
-}
+};
 
-function memberShipPlanToString (key) {
-  const plans = require('./Pages/MembershipApplication/GetPlans')
-  let correctPlan = ''
+function memberShipPlanToString(key) {
+  const plans = require('./Pages/MembershipApplication/GetPlans');
+  let correctPlan = '';
   if (key === membershipPlans.YEAR) {
-    correctPlan = plans.getYearPlan()
+    correctPlan = plans.getYearPlan();
   } else if (key === membershipPlans.SEMESTER) {
-    correctPlan = plans.getSemesterPlan()
+    correctPlan = plans.getSemesterPlan();
   }
-  return correctPlan
+  return correctPlan;
 }
 
 const membershipState = {
@@ -38,7 +38,7 @@ const membershipState = {
   MEMBER: 1,
   OFFICER: 2,
   ADMIN: 3
-}
+};
 
 const membershipStatusArray = [
   'Ban',
@@ -47,10 +47,10 @@ const membershipStatusArray = [
   'Member',
   'Officer',
   'Admin'
-]
+];
 
-function membershipStateToString (index) {
-  return membershipStatusArray[index + 2]
+function membershipStateToString(index) {
+  return membershipStatusArray[index + 2];
 }
 
 module.exports = {
@@ -61,4 +61,4 @@ module.exports = {
   membershipState,
   membershipStateToString,
   itemCategories
-}
+};

@@ -29,7 +29,9 @@ module.exports = {
   // Configuration for the mailer client
   // The secret and ID is found in the google account API services
   // The refresh token is created at the OAuth2 Playground
-  // Example for how to generate: https://medium.com/@nickroach_50526/sending-emails-with-node-js-using-smtp-gmail-and-oauth2-316fe9c790a1
+  // Example for how to generate: 
+  // https://medium.com/@nickroach_50526/sending-emails-
+  // with-node-js-using-smtp-gmail-and-oauth2-316fe9c790a1
   mailer: {
     CLIENT_SECRET: 'XXXXXXXXXXXXXXXXXXXX',
     CLIENT_ID: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
@@ -39,4 +41,4 @@ module.exports = {
   },
   // The ip address of the sign. You can find it by running `ifconfig` on the pi
   ledSignIp: '192.168.4.1'
-}
+};

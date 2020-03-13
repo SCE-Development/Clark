@@ -1,7 +1,7 @@
-import React from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
 
-export default function PrivateRoute ({
+export default function PrivateRoute({
   component: Component,
   appProps,
   ...params
@@ -23,7 +23,7 @@ export default function PrivateRoute ({
               />
             )}
           />
-      )}
+        )}
     />
-  )
+  );
 }

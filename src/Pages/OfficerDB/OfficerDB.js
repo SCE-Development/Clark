@@ -1,11 +1,11 @@
-import React from 'react'
-import './officer-db.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { Table } from 'reactstrap'
+import React from 'react';
+import './officer-db.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Table } from 'reactstrap';
 
 export default class App extends React.Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       email: '',
       password: '',
@@ -30,7 +30,7 @@ export default class App extends React.Component {
           major: 'Computer Engineering'
         }
       ]
-    }
+    };
   }
 
   // displaying each row of the map, used for mapping
@@ -45,10 +45,10 @@ export default class App extends React.Component {
         <td>{person.description}</td>
         <td>{person.major}</td>
       </tr>
-    )
+    );
   }
 
-  render () {
+  render() {
     return (
       <div className='App'>
         <header className='App-header'>
@@ -68,11 +68,11 @@ export default class App extends React.Component {
           </thead>
           <tbody>
             {this.state.people.map((person, index) => {
-              return this.row(person, index)
+              return this.row(person, index);
             })}
           </tbody>
         </Table>
       </div>
-    )
+    );
   }
 }

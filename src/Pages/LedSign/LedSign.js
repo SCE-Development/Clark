@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { healthCheck, updateSignText } from '../../APIFunctions/LedSign'
-import { Spinner, Input, Button, Container } from 'reactstrap'
-import './led-sign.css'
+import React, { useState, useEffect } from 'react';
+import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
+import { Spinner, Input, Button, Container } from 'reactstrap';
+import './led-sign.css';
 
-function LedSign (props) {
-  const [signHealthy, setSignHealthy] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [text, setText] = useState('')
-  const [brightness, setBrightness] = useState(50)
-  const [scrollSpeed, setScrollSpeed] = useState(50)
-  const [backgroundColor, setBackgroundColor] = useState('#0000ff')
-  const [textColor, setTextColor] = useState('#00ff00')
-  const [borderColor, setBorderColor] = useState('#ff0000')
-  const [awaitingSignResponse, setAwaitingSignResponse] = useState(false)
-  const [requestSuccessful, setRequestSuccessful] = useState()
+function LedSign(props) {
+  const [signHealthy, setSignHealthy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [text, setText] = useState('');
+  const [brightness, setBrightness] = useState(50);
+  const [scrollSpeed, setScrollSpeed] = useState(50);
+  const [backgroundColor, setBackgroundColor] = useState('#0000ff');
+  const [textColor, setTextColor] = useState('#00ff00');
+  const [borderColor, setBorderColor] = useState('#ff0000');
+  const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
+  const [requestSuccessful, setRequestSuccessful] = useState();
 
   const inputArray = [
     {
@@ -60,10 +60,10 @@ function LedSign (props) {
       type: 'range',
       onChange: e => setScrollSpeed(e.target.value)
     }
-  ]
+  ];
 
-  async function handleSend () {
-    setAwaitingSignResponse(true)
+  async function handleSend() {
+    setAwaitingSignResponse(true);
     const signResponse = await updateSignText({
       text,
       brightness,
@@ -71,45 +71,45 @@ function LedSign (props) {
       backgroundColor,
       textColor,
       borderColor
-    })
-    setRequestSuccessful(!signResponse.error)
-    setAwaitingSignResponse(false)
+    });
+    setRequestSuccessful(!signResponse.error);
+    setAwaitingSignResponse(false);
   }
 
-  function renderRequestStatus () {
+  function renderRequestStatus() {
     if (awaitingSignResponse || requestSuccessful === undefined) {
-      return <></>
+      return <></>;
     } else if (requestSuccessful) {
-      return <p className='sign-available'>Sign successfully updated!</p>
+      return <p className='sign-available'>Sign successfully updated!</p>;
     } else {
       return (
         <p className='sign-unavailable'>The request failed. Try again later.</p>
-      )
+      );
     }
   }
 
   useEffect(() => {
-    async function checkSignHealth () {
-      setLoading(true)
-      const status = await healthCheck(props.user.firstName)
+    async function checkSignHealth() {
+      setLoading(true);
+      const status = await healthCheck(props.user.firstName);
       if (status && !status.error) {
-        setSignHealthy(true)
+        setSignHealthy(true);
       } else {
-        setSignHealthy(false)
+        setSignHealthy(false);
       }
-      setLoading(false)
+      setLoading(false);
     }
-    checkSignHealth(props.user.firstName)
+    checkSignHealth(props.user.firstName);
     // eslint-disable-next-line
   }, [])
 
-  function renderSignHealth () {
+  function renderSignHealth() {
     if (loading) {
-      return <Spinner />
+      return <Spinner />;
     } else if (signHealthy) {
-      return <span className='sign-available'> Sign is up.</span>
+      return <span className='sign-available'> Sign is up.</span>;
     } else {
-      return <span className='sign-unavailable'> Sign is down!</span>
+      return <span className='sign-unavailable'> Sign is down!</span>;
     }
   }
 
@@ -127,7 +127,7 @@ function LedSign (props) {
             <label>{input.title}</label>
             <Input disabled={loading || !signHealthy} {...input} />
           </div>
-        )
+        );
       })}
       <Button
         id='led-sign-send'
@@ -138,7 +138,7 @@ function LedSign (props) {
       </Button>
       {renderRequestStatus()}
     </div>
-  )
+  );
 }
 
-export default LedSign
+export default LedSign;
