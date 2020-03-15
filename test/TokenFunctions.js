@@ -5,7 +5,7 @@ const expect = chai.expect
 const {
   checkIfTokenSent,
   checkIfTokenValid
-} = require('../util/api-utils/token-functions')
+} = require('../api/util/token-functions')
 
 const jwt = require('jsonwebtoken')
 const {

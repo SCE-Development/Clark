@@ -1,4 +1,4 @@
-const TokenFunctions = require('../../util/api-utils/token-functions')
+const TokenFunctions = require('../../api/util/token-functions')
 const sinon = require('sinon')
 
 const checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid')

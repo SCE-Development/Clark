@@ -3,14 +3,14 @@
 const express = require('express')
 const router = express.Router()
 const Manager = require('../models/OfficerManager.js')
-const settings = require('../../util/settings')
+const settings = require('../util/settings')
 const logger = require(`${settings.util}/logger`)
 const passport = require('passport')
 require('../config/passport')(passport)
 const {
   checkIfTokenSent,
   checkIfTokenValid
-} = require('../../util/api-utils/token-functions')
+} = require('../util/token-functions')
 const {
   OK,
   BAD_REQUEST,

@@ -1,9 +1,9 @@
-/* global describe it before after */
+/* global describe it before after beforeEach afterEach */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test'
 const OfficerManager = require('../api/models/OfficerManager')
 const User = require('../api/models/User')
-const membershipState = require('../src/Enums').membershipState
+const membershipState = require('../api/constants').MEMBERSHIP_STATE
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const {
