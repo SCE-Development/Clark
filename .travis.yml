@@ -1,16 +1,41 @@
 language: node_js
 node_js:
- - "lts/*"
-services:
-  - mongodb
-sudo: required
-before_install:
-  - python setup.py
-install:
- - echo $ENCODED_CONFIG > .temp
- - base64 --decode .temp > api/config/config.js
- - npm install
-script:
- - npm run api-test
- - npm run frontend-test
- - npm run build
+- "lts/*"
+matrix:
+    include:
+        - os: linux
+          sudo: required
+          services:
+            - mongodb
+          dist: bionic
+          sudo: required
+          before_install:
+            - python setup.py
+          install:
+            - echo $ENCODED_CONFIG > .temp
+            - base64 --decode .temp > api/config/config.js
+            - npm install
+          script:
+            - npm run api-test
+            - npm run frontend-test
+            - npm run build
+        - os: osx
+          before_install:
+            - python setup.py
+            - if [[ $TRAVIS_OS_NAME = 'osx' ]]; then
+                echo "Updating homebrew"
+                brew update;
+                echo "Installing and starting mongodb";
+                brew tap mongodb/brew;
+                brew install mongodb-community@4.2;
+                sudo mkdir -p /data/db;
+                brew services start mongodb-community@4.2;
+              fi
+          install:
+            - echo $ENCODED_CONFIG > .temp
+            - base64 --decode .temp > api/config/config.js
+            - npm install
+          script:
+            - npm run api-test
+            - npm run frontend-test
+            - npm run build
