@@ -9,6 +9,7 @@ const { OK, BAD_REQUEST, NOT_FOUND } = constants.STATUS_CODES
 const tools = require('../util/testing-utils/tools.js')
 const LedSignFunctions = require('../api/printingRPC/client/ledsign/led_sign_client')
 const sinon = require('sinon')
+const SignLog = require('../api/models/SignLog')
 
 let app = null
 const expect = chai.expect
@@ -17,13 +18,25 @@ chai.should()
 chai.use(chaiHttp)
 const SUCCESS_MESSAGE = 'success'
 const ERROR_MESSAGE = 'error'
-const TEXT_REQUEST = {
-  text: 'Hi thai',
+
+const INVALID_SIGN_REQUEST = {
+  text: 'Big Oof',
   brightness: 50,
   scrollSpeed: 50,
   backgroundColor: '#00FF00',
   textColor: '#FF0000',
-  borderColor: '#0000FF'
+  borderColor: '#0000FF',
+  email: 'bigoof@gmail.com'
+}
+const VALID_SIGN_REQUEST = {
+  text: 'Big Oof',
+  brightness: 50,
+  scrollSpeed: 50,
+  backgroundColor: '#00FF00',
+  textColor: '#FF0000',
+  borderColor: '#0000FF',
+  firstName: 'John Doe',
+  email: 'bigoof@gmail.com'
 }
 
 describe('LedSign', () => {
@@ -32,6 +45,7 @@ describe('LedSign', () => {
 
   before(done => {
     app = tools.initializeServer()
+    tools.emptySchema(SignLog)
     done()
   })
 
@@ -81,7 +95,7 @@ describe('LedSign', () => {
       chai
         .request(app)
         .post('/api/LedSign/updateSignText')
-        .send(TEXT_REQUEST)
+        .send(VALID_SIGN_REQUEST)
         .then(function (res) {
           expect(res).to.have.status(OK)
           done()
@@ -97,6 +111,43 @@ describe('LedSign', () => {
         .post('/api/LedSign/updateSignText')
         .then(function (res) {
           expect(res).to.have.status(BAD_REQUEST)
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+    it('Should return 400 when required fields are not filled in ', done => {
+      updateSignTextMock.resolves(SUCCESS_MESSAGE)
+      chai
+        .request(app)
+        .post('/api/LedSign/updateSignText')
+        .send(INVALID_SIGN_REQUEST)
+        .then(function (res) {
+          expect(res).to.have.status(BAD_REQUEST)
+          done()
+        })
+        .catch(err => {
+          throw err
+        })
+    })
+  })
+
+  describe('/GET getSignLogs', () => {
+    it('Should return an object of all events', done => {
+      chai
+        .request(app)
+        .get('/api/LedSign/getSignLogs')
+        .then(function (res) {
+          expect(res).to.have.status(OK)
+          const getSignResponse = res.body
+          getSignResponse.should.be.a('array')
+          expect(getSignResponse).to.have.length(1)
+          expect(getSignResponse[0].signTitle).to.equal(VALID_SIGN_REQUEST.text)
+          expect(getSignResponse[0].firstName).to.equal(
+            VALID_SIGN_REQUEST.firstName
+          )
+          expect(getSignResponse[0].email).to.equal(VALID_SIGN_REQUEST.email)
           done()
         })
         .catch(err => {
