@@ -45,6 +45,33 @@ export async function submit3DPrintRequest(printRequest) {
 }
 
 /**
+ * Sends a user's 3D print request to the printer.
+ * @param {Object} printRequest - The request containing all of the project's
+ * information.
+ * @param {string} printRequest.raw - The raw STL file of the model.
+ * @param {string} printRequest.name - The user's full name.
+ * @param {string} printRequest.volume - The volume of the print in cubic cm.
+ * @param {string} printRequest.copies - How many copies the user wants.
+ * @returns {ApiResponse} - Containing any error information
+ *                          related to the request.
+ */
+export async function print3DModel(printRequest) {
+  const status = ApiResponse();
+  const { raw, name, volume, copies } = printRequest;
+  await axios
+    .post('/api/routes/3Dprinter/submit3D', {
+      raw,
+      name,
+      volume,
+      copies
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+/**
  * Query the database for all 3D print requests.
  * @returns {ApiResponse} Containing any error information related to the
  * request or list of requests

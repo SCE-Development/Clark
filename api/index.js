@@ -5,7 +5,8 @@ const routes = [
   'officerManager',
   'user',
   'print',
-  'LedSign'
+  'LedSign',
+  '3DPrinter'
 ]
 
 module.exports = routes;
