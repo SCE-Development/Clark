@@ -5,7 +5,7 @@ import { ApiResponse } from './ApiResponses'
  * Checks to see if the sign is accepting requests. This is done
  * before any requests to update the sign can be made.
  * @param {string} officerName The name of the officer requesting the sign
- * @returns {Object} ApiResponse Object containing the response data
+ * @returns {ApiResponse} ApiResponse Object containing the response data
  */
 export async function healthCheck (officerName) {
   let status = new ApiResponse()
@@ -22,7 +22,25 @@ export async function healthCheck (officerName) {
 }
 
 /**
- * Add a new event.
+ * Retrieve all sign logs.
+ * @returns {ApiResponse} Containing any error information related to the requests.
+ */
+export async function getAllSignLogs () {
+  let result = new ApiResponse()
+  await axios
+    .get('api/LedSign/getSignLogs')
+    .then(res => {
+      result.responseData = res.data
+    })
+    .catch(err => {
+      result.responseData = err
+      result.error = true
+    })
+  return result
+}
+
+/**
+ * Add a new sign log.
  * @param {Object} newEvent - The event that is to be added
  * @param {string} newEvent.title - The title of the new event
  * @param {(string|undefined)} newEvent.description - The description of the
