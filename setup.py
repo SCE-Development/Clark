@@ -8,10 +8,14 @@ print('Detected OS: {}'.format(user_os))
 if user_os == 'Darwin' or user_os == 'Linux':
     if os.path.exists("api/config/config.js") == False:
         os.system("cp api/config/config.example.js  api/config/config.js")
+    if os.path.exists("src/config/config.js") == False:
+        os.system("cp src/config/config.example.js  src/config/config.js")
     setup_status = os.system('./util/setup-scripts/setup.sh')
 elif user_os == 'Windows':
     if os.path.exists("api\config\config.js") == False:
         os.system("copy api\config\config.example.js  api\config\config.js")
+    if os.path.exists("src\config\config.js") == False:
+        os.system("copy src\config\config.example.js  src\config\config.js")
     setup_status = os.system('util\setup-scripts\setup.bat')
 
 if setup_status == 0:
