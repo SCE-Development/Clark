@@ -45,3 +45,19 @@ matrix:
             - npm run api-test
             - npm run frontend-test
             - npm run build
+        - os: windows
+          before_install:
+            - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
+                choco install mongodb --version=4.0.11;
+              fi
+            - echo $ENCODED_CONFIG > .temp
+            - certutil -decode .temp api/config/config.js
+            - echo $ENCODED_CONFIG_SRC > .temp
+            - certutil -decode .temp src/config/config.js
+          install:
+            - python setup.py
+            - npm install
+          script:
+            - npm run api-test
+            - npm run frontend-test
+            - npm run build
