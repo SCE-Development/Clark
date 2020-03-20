@@ -1,9 +1,9 @@
-import React from 'react'
-import { Container, Row, Col } from 'reactstrap'
-import Ionicon from 'react-ionicons'
-import { getDateWithSlashes } from '../../APIFunctions/Event'
+import React from 'react';
+import { Container, Row, Col } from 'reactstrap';
+import Ionicon from 'react-ionicons';
+import { getDateWithSlashes } from '../../APIFunctions/Event';
 
-function EventCard (props) {
+function EventCard(props) {
   const {
     title,
     description,
@@ -13,13 +13,13 @@ function EventCard (props) {
     endTime,
     handleClick,
     imageURL
-  } = props
+  } = props;
 
   return (
     <Container
       className='event-container'
       onClick={() => {
-        handleClick()
+        handleClick();
       }}
     >
       <Row className='card-row'>
@@ -47,7 +47,7 @@ function EventCard (props) {
         </Col>
       </Row>
     </Container>
-  )
+  );
 }
 
-export default EventCard
+export default EventCard;

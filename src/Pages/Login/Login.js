@@ -1,25 +1,25 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import LoginInput from './LoginInput'
-import { loginUser } from '../../APIFunctions/User'
-import './login.css'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import LoginInput from './LoginInput';
+import { loginUser } from '../../APIFunctions/User';
+import './login.css';
 
-export default function Login (props) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [errorMsg, setErrorMsg] = useState('')
+export default function Login(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  async function handleSubmit (e) {
-    e.preventDefault()
-    const loginStatus = await loginUser(email, password)
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const loginStatus = await loginUser(email, password);
     if (!loginStatus.error) {
-      props.setAuthenticated(true)
-      window.localStorage.setItem('jwtToken', loginStatus.token)
-      window.location.reload()
+      props.setAuthenticated(true);
+      window.localStorage.setItem('jwtToken', loginStatus.token);
+      window.location.reload();
     } else {
       setErrorMsg(
         loginStatus.responseData && loginStatus.responseData.data.message
-      )
+      );
     }
   }
 
@@ -34,7 +34,7 @@ export default function Login (props) {
       placeholder: 'Password',
       handleChange: e => setPassword(e.target.value)
     }
-  ]
+  ];
 
   return (
     <form onSubmit={handleSubmit}>
@@ -42,7 +42,7 @@ export default function Login (props) {
         <img id='img' alt='sce logo' src='images/SCE-glow.png' />
         {errorMsg && <span>{errorMsg}</span>}
         {fields.map((field, index) => {
-          return <LoginInput key={index} field={field} />
+          return <LoginInput key={index} field={field} />;
         })}
         <button type='submit' id='loginBtn'>
           Login
@@ -52,5 +52,5 @@ export default function Login (props) {
         </p>
       </div>
     </form>
-  )
+  );
 }

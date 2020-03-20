@@ -1,5 +1,5 @@
-import axios from 'axios'
-import { ApiResponse } from './ApiResponses'
+import axios from 'axios';
+import { ApiResponse } from './ApiResponses';
 
 /**
  * Checks to see if the sign is accepting requests. This is done
@@ -7,36 +7,37 @@ import { ApiResponse } from './ApiResponses'
  * @param {string} officerName The name of the officer requesting the sign
  * @returns {ApiResponse} ApiResponse Object containing the response data
  */
-export async function healthCheck (officerName) {
-  let status = new ApiResponse()
+export async function healthCheck(officerName) {
+  let status = new ApiResponse();
   await axios
     .post('api/LedSign/healthCheck', { officerName })
     .then(res => {
-      status.responseData = res.data
+      status.responseData = res.data;
     })
     .catch(err => {
-      status.responseData = err
-      status.error = true
-    })
-  return status
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
 }
 
 /**
  * Retrieve all sign logs.
- * @returns {ApiResponse} Containing any error information related to the requests.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request.
  */
-export async function getAllSignLogs () {
-  let result = new ApiResponse()
+export async function getAllSignLogs() {
+  let result = new ApiResponse();
   await axios
     .get('api/LedSign/getSignLogs')
     .then(res => {
-      result.responseData = res.data
+      result.responseData = res.data;
     })
     .catch(err => {
-      result.responseData = err
-      result.error = true
-    })
-  return result
+      result.responseData = err;
+      result.error = true;
+    });
+  return result;
 }
 
 /**
@@ -57,16 +58,16 @@ export async function getAllSignLogs () {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function updateSignText (signData) {
-  let status = new ApiResponse()
+export async function updateSignText(signData) {
+  let status = new ApiResponse();
   await axios
     .post('api/LedSign/updateSignText', { ...signData })
     .then(res => {
-      status = res.data
+      status = res.data;
     })
     .catch(err => {
-      status.responseData = err
-      status.error = true
-    })
-  return status
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
 }

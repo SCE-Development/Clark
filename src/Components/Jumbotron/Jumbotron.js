@@ -1,5 +1,5 @@
-import React from 'react'
-import { Jumbotron } from 'reactstrap'
+import React from 'react';
+import { Jumbotron } from 'reactstrap';
 
 const aboutJumbotron = props => {
   /*
@@ -37,7 +37,7 @@ const aboutJumbotron = props => {
         </p>
       </Jumbotron>
     </div>
-  )
-}
+  );
+};
 
-export default aboutJumbotron
+export default aboutJumbotron;

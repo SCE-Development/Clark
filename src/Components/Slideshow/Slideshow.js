@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   Carousel,
   CarouselItem,
   CarouselCaption,
   CarouselControl,
   CarouselIndicators
-} from 'reactstrap'
-import './slideshow.css'
+} from 'reactstrap';
+import './slideshow.css';
 
 const items = [
   {
@@ -57,33 +57,34 @@ const items = [
     header: 'Cake Team Building',
     top: '40%'
   }
-  /* Can add more images below as needed, or use Facebook API in the future to auto load images */
+  /* Can add more images below as needed, or use Facebook
+   API in the future to auto load images */
   /* Images must be 16:9 or 4:3 with minimum width of 1000 px */
-]
+];
 
-function Slideshow () {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [animating, setAnimating] = useState(false)
+function Slideshow() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [animating, setAnimating] = useState(false);
 
-  function handleNext () {
-    if (animating) return
-    const nextIndex = (currentSlide + 1) % items.length
-    setCurrentSlide(nextIndex)
+  function handleNext() {
+    if (animating) return;
+    const nextIndex = (currentSlide + 1) % items.length;
+    setCurrentSlide(nextIndex);
   }
 
-  function positiveMod (a, b) {
-    return a < 0 ? b - 1 : a % b
+  function positiveMod(a, b) {
+    return a < 0 ? b - 1 : a % b;
   }
 
-  function handlePrevious () {
-    if (animating) return
-    const nextIndex = positiveMod(currentSlide - 1, items.length)
-    setCurrentSlide(nextIndex)
+  function handlePrevious() {
+    if (animating) return;
+    const nextIndex = positiveMod(currentSlide - 1, items.length);
+    setCurrentSlide(nextIndex);
   }
 
-  function handleGoToIndex (newIndex) {
-    if (animating) return
-    setCurrentSlide(newIndex)
+  function handleGoToIndex(newIndex) {
+    if (animating) return;
+    setCurrentSlide(newIndex);
   }
 
   return (
@@ -116,7 +117,7 @@ function Slideshow () {
               />
               <CarouselCaption captionText=' ' captionHeader={item.header} />
             </CarouselItem>
-          )
+          );
         })}
         <CarouselControl
           direction='prev'
@@ -130,6 +131,6 @@ function Slideshow () {
         />
       </Carousel>
     </div>
-  )
+  );
 }
-export default Slideshow
+export default Slideshow;

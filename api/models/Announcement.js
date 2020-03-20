@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const AnnouncementSchema = new Schema(
   {
@@ -24,6 +24,6 @@ const AnnouncementSchema = new Schema(
     }
   },
   { collection: 'Announcement' }
-)
+);
 
-module.exports = mongoose.model('Announcement', AnnouncementSchema)
+module.exports = mongoose.model('Announcement', AnnouncementSchema);

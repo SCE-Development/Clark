@@ -1,4 +1,4 @@
-module.exports = function (user, recipient, name) {
+module.exports = function(user, recipient, name) {
   return {
     from: user,
     to: recipient,
@@ -8,5 +8,5 @@ module.exports = function (user, recipient, name) {
       Hi ${name},<br />
       <p>This is a friendly test.</p>
     `
-  }
-}
+  };
+};

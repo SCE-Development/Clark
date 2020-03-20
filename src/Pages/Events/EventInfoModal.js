@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   Modal,
   ModalHeader,
@@ -8,12 +8,12 @@ import {
   Col,
   ModalFooter,
   Button
-} from 'reactstrap'
-import { getDateWithSlashes } from '../../APIFunctions/Event'
-import Ionicon from 'react-ionicons'
+} from 'reactstrap';
+import { getDateWithSlashes } from '../../APIFunctions/Event';
+import Ionicon from 'react-ionicons';
 
-function EventInfoModal (props) {
-  const { modal, toggle, currentEvent } = props
+function EventInfoModal(props) {
+  const { modal, toggle, currentEvent } = props;
   return (
     <Modal isOpen={modal} toggle={toggle}>
       <ModalHeader toggle={toggle}>
@@ -46,7 +46,7 @@ function EventInfoModal (props) {
         </Button>
       </ModalFooter>
     </Modal>
-  )
+  );
 }
 
-export default EventInfoModal
+export default EventInfoModal;

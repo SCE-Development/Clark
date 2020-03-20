@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   Collapse,
   NavbarToggler,
@@ -11,11 +11,11 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem
-} from 'reactstrap'
-import { membershipState } from '../../Enums'
+} from 'reactstrap';
+import { membershipState } from '../../Enums';
 
-export default function UserNavBar (props) {
-  const [collapsed, setCollapsed] = useState(true)
+export default function UserNavBar(props) {
+  const [collapsed, setCollapsed] = useState(true);
   const icons = [
     {
       link: [
@@ -40,8 +40,8 @@ export default function UserNavBar (props) {
         '2V21H15V14H18V11H15V9A1,1 0 0,1 16,8H18V5Z'
       ].join('')
     }
-  ]
-  const unauthedRoutes = [{ title: 'Events', route: '/events' }]
+  ];
+  const unauthedRoutes = [{ title: 'Events', route: '/events' }];
 
   return (
     <div className='user-nav'>
@@ -61,7 +61,7 @@ export default function UserNavBar (props) {
                   <path fill='#757575' d={icon.vector} />
                 </svg>
               </a>
-            )
+            );
           })}
           <Nav className='ml-auto sce-nav' navbar>
             <UncontrolledDropdown nav inNavbar>
@@ -69,7 +69,8 @@ export default function UserNavBar (props) {
                 Student Resources
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem href='https://docs.google.com/forms/d/e/1FAIpQLSfAKfUnblxOZ0r3BjMY6xe_0g2zC7v3OfaadyvF-Ste1eL28A/viewform'>
+                <DropdownItem href='https://docs.google.com/forms/d/e/1FAIpQ
+                LSfAKfUnblxOZ0r3BjMY6xe_0g2zC7v3OfaadyvF-Ste1eL28A/viewform'>
                   Microsoft Imagine
                 </DropdownItem>
               </DropdownMenu>
@@ -92,7 +93,7 @@ export default function UserNavBar (props) {
                 <NavItem key={index}>
                   <NavLink href={link.route}>{link.title}</NavLink>
                 </NavItem>
-              )
+              );
             })}
             {!props.authenticated && (
               <UncontrolledDropdown nav inNavbar>
@@ -115,7 +116,11 @@ export default function UserNavBar (props) {
                   >
                     <path
                       fill='#AAAAAA'
-                      d='M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z'
+                      d='M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,
+                      12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,
+                      19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,
+                      8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,
+                      22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z'
                     />
                   </svg>
                   {props.user.firstName}
@@ -131,7 +136,9 @@ export default function UserNavBar (props) {
                         style={{ width: '18px', height: '18px' }}
                         viewBox='0 0 24 24'
                       >
-                        <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
+                        <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,
+                        17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,
+                        2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
                       </svg>
                       Logout
                     </div>
@@ -145,5 +152,5 @@ export default function UserNavBar (props) {
         </Collapse>
       </Navbar>
     </div>
-  )
+  );
 }

@@ -8,4 +8,4 @@ const routes = [
   'LedSign'
 ]
 
-module.exports = routes
+module.exports = routes;

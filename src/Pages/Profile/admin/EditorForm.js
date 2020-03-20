@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import './editor-form.css'
+import React, { useState } from 'react';
+import './editor-form.css';
 import {
   Button,
   Row,
@@ -11,16 +11,16 @@ import {
   Label,
   ModalBody,
   ModalFooter
-} from 'reactstrap'
-const enums = require('../../../Enums.js')
+} from 'reactstrap';
+const enums = require('../../../Enums.js');
 
-export default function EditForm (props) {
-  const [resetPages, setResetPages] = useState(false)
-  function submitClicked () {
+export default function EditForm(props) {
+  const [resetPages, setResetPages] = useState(false);
+  function submitClicked() {
     if (resetPages) {
-      props.setPagesPrinted(0)
+      props.setPagesPrinted(0);
     }
-    props.handleSubmissionToggle()
+    props.handleSubmissionToggle();
   }
 
   return (
@@ -34,7 +34,7 @@ export default function EditForm (props) {
               left: '80%'
             }}
             onClick={() => {
-              props.handleToggle()
+              props.handleToggle();
             }}
           >
             Edit
@@ -58,7 +58,7 @@ export default function EditForm (props) {
               Change expiration date to
               <select
                 onChange={event => {
-                  props.setNumberOfSemestersToSignUpFor(event.target.value)
+                  props.setNumberOfSemestersToSignUpFor(event.target.value);
                 }}
               >
                 {props.membership.map((x, ind) => (
@@ -88,7 +88,7 @@ export default function EditForm (props) {
                           name='radio1'
                           value={membership}
                           onChange={() => {
-                            props.setuserMembership(membership)
+                            props.setuserMembership(membership);
                           }}
                         />
                         {enums.membershipStateToString(membership)}
@@ -107,7 +107,7 @@ export default function EditForm (props) {
             <Button
               color='secondary'
               onClick={() => {
-                props.handleToggle()
+                props.handleToggle();
               }}
             >
               Cancel
@@ -116,5 +116,5 @@ export default function EditForm (props) {
         </Modal>
       </Col>
     </Row>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const PrintingForm3DSchema = new Schema(
   {
@@ -40,6 +40,6 @@ const PrintingForm3DSchema = new Schema(
     }
   },
   { collection: 'PrintingForm3D' }
-)
+);
 
-module.exports = mongoose.model('PrintingForm3D', PrintingForm3DSchema)
+module.exports = mongoose.model('PrintingForm3D', PrintingForm3DSchema);

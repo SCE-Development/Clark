@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-const { DEFAULT_PHOTO_URL } = require('../constants')
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const { DEFAULT_PHOTO_URL } = require('../constants');
 
 const EventSchema = new Schema(
   {
@@ -36,6 +36,6 @@ const EventSchema = new Schema(
     }
   },
   { collection: 'Event' }
-)
+);
 
-module.exports = mongoose.model('Event', EventSchema)
+module.exports = mongoose.model('Event', EventSchema);

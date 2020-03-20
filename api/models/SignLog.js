@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const SignLogSchema = new Schema(
   {
@@ -22,6 +22,6 @@ const SignLogSchema = new Schema(
     }
   },
   { collection: 'SignLogs' }
-)
+);
 
-module.exports = mongoose.model('SignLog', SignLogSchema)
+module.exports = mongoose.model('SignLog', SignLogSchema);

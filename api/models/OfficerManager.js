@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const OfficerSchema = new Schema(
   {
@@ -43,6 +43,6 @@ const OfficerSchema = new Schema(
     }
   },
   { collection: 'Officers' }
-)
+);
 
-module.exports = mongoose.model('Officers', OfficerSchema)
+module.exports = mongoose.model('Officers', OfficerSchema);

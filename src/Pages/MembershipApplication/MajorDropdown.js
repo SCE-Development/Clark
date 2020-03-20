@@ -1,25 +1,25 @@
-import React, { useState } from 'react'
-import './register-page.css'
+import React, { useState } from 'react';
+import './register-page.css';
 import {
   ButtonDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
   Input
-} from 'reactstrap'
+} from 'reactstrap';
 
-export default function MajorDropdown (props) {
-  const [inputEnable, setInputEnable] = useState(props.inputEnable)
-  const [major, setMajor] = useState()
-  const [dropdownOpen, setDropdownOpen] = useState()
+export default function MajorDropdown(props) {
+  const [inputEnable, setInputEnable] = useState(props.inputEnable);
+  const [major, setMajor] = useState();
+  const [dropdownOpen, setDropdownOpen] = useState();
 
-  function handleMajorChange (e) {
-    props.setMajor(e.target.value)
-    setMajor(e.target.value)
-    setInputEnable(e.target.value === 'Other')
+  function handleMajorChange(e) {
+    props.setMajor(e.target.value);
+    setMajor(e.target.value);
+    setInputEnable(e.target.value === 'Other');
   }
 
-  const options = ['Computer Engineering', 'Software Engineering', 'Other']
+  const options = ['Computer Engineering', 'Software Engineering', 'Other'];
 
   return (
     <>
@@ -41,7 +41,7 @@ export default function MajorDropdown (props) {
               >
                 {option}
               </DropdownItem>
-            )
+            );
           })}
         </DropdownMenu>
       </ButtonDropdown>
@@ -52,5 +52,5 @@ export default function MajorDropdown (props) {
         />
       ) : null}
     </>
-  )
+  );
 }

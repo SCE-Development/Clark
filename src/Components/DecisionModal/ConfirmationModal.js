@@ -1,12 +1,12 @@
-import React from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap'
+import React from 'react';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
-export default function ConfirmationModal (props) {
-  const { headerText, bodyText, handleConfirmation, open, toggle } = props
+export default function ConfirmationModal(props) {
+  const { headerText, bodyText, handleConfirmation, open, toggle } = props;
 
-  const confirmText = props.confirmText || 'Confirm'
-  const cancelText = props.cancelText || 'Cancel'
-  const confirmButtonColor = props.confirmColor || 'danger'
+  const confirmText = props.confirmText || 'Confirm';
+  const cancelText = props.cancelText || 'Cancel';
+  const confirmButtonColor = props.confirmColor || 'danger';
 
   return (
     <Modal isOpen={open} toggle={toggle}>
@@ -19,5 +19,5 @@ export default function ConfirmationModal (props) {
         <Button onClick={toggle}>{cancelText}</Button>
       </ModalFooter>
     </Modal>
-  )
+  );
 }

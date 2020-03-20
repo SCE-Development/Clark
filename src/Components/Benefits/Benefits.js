@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
-import { Card, CardImg, CardTitle } from 'reactstrap'
-import './benefits.css'
-import './card-config.css'
-import './card-settings.css'
+import React, { Component } from 'react';
+import { Card, CardImg, CardTitle } from 'reactstrap';
+import './benefits.css';
+import './card-config.css';
+import './card-settings.css';
 
 class App extends Component {
-  render () {
+  render() {
     return (
       <div className='tab'>
         <div className='App'>
@@ -182,8 +182,8 @@ class App extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default App
+export default App;

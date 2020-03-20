@@ -1,31 +1,33 @@
-import React from 'react'
+import React from 'react';
 import {
   sendVerificationEmail,
   validateVerificationEmail,
   setEmailToVerified
-} from '../../APIFunctions/Profile'
+} from '../../APIFunctions/Profile';
 
 export default class VerifyEmail extends React.Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       emailVerified: false,
       componentLoaded: false,
       email: '',
       hashedId: ''
-    }
+    };
   }
 
-  componentDidMount () {
-    let querystring = this.props.location.search
-    querystring = querystring.substring(querystring.indexOf('?') + 1).split('&')
-    const params = {}
-    let pair
-    const d = decodeURIComponent
+  componentDidMount() {
+    let querystring = this.props.location.search;
+    querystring = querystring.substring(
+      querystring.indexOf('?') + 1
+    ).split('&');
+    const params = {};
+    let pair;
+    const d = decodeURIComponent;
 
-    for (var i = querystring.length - 1; i >= 0; i--) {
-      pair = querystring[i].split('=')
-      params[d(pair[0])] = d(pair[1] || '')
+    for (let i = querystring.length - 1; i >= 0; i--) {
+      pair = querystring[i].split('=');
+      params[d(pair[0])] = d(pair[1] || '');
     }
 
     this.setState(
@@ -34,37 +36,37 @@ export default class VerifyEmail extends React.Component {
         hashedId: params.id
       },
       () => {
-        this.validateVerificationEmail()
+        this.validateVerificationEmail();
       }
-    )
+    );
   }
 
-  validateVerificationEmail () {
+  validateVerificationEmail() {
     validateVerificationEmail(this.state.email, this.state.hashedId)
       .then(emailValidated => {
         if (!emailValidated.error) {
           this.setState({
             emailVerified: true,
             componentLoaded: true
-          })
+          });
 
-          setEmailToVerified(this.state.email)
+          setEmailToVerified(this.state.email);
         } else {
           this.setState({
             componentLoaded: true
-          })
+          });
         }
       })
       .catch(error => {
-        console.log(error)
-      })
+        console.error(error);
+      });
   }
 
-  resendVerificationEmail () {
-    sendVerificationEmail(this.state.email)
+  resendVerificationEmail() {
+    sendVerificationEmail(this.state.email);
   }
 
-  render () {
+  render() {
     return (
       <div>
         {!this.state.componentLoaded ? (
@@ -92,6 +94,6 @@ export default class VerifyEmail extends React.Component {
           </div>
         )}
       </div>
-    )
+    );
   }
 }

@@ -1,7 +1,7 @@
-const express = require('express')
-const router = express.Router()
-const ErrorLog = require('../models/ErrorLog')
-const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES
+const express = require('express');
+const router = express.Router();
+const ErrorLog = require('../models/ErrorLog');
+const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES;
 
 router.post('/addErrorLog', (req, res) => {
   const newError = new ErrorLog({
@@ -9,21 +9,21 @@ router.post('/addErrorLog', (req, res) => {
     errorTime: req.body.errorTime,
     apiEndpoint: req.body.apiEndpoint,
     errorDescription: req.body.errorDescription
-  })
+  });
 
-  newError.save(function (error) {
+  newError.save(function(error) {
     if (error) {
-      res.sendStatus(BAD_REQUEST)
+      res.sendStatus(BAD_REQUEST);
     } else {
-      res.sendStatus(OK)
+      res.sendStatus(OK);
     }
-  })
-})
+  });
+});
 
 router.get('/getErrorLogs', (req, res) => {
   ErrorLog.find()
     .sort({ errorTime: -1 })
-    .then(errorLogs => res.status(OK).send(errorLogs))
-})
+    .then(errorLogs => res.status(OK).send(errorLogs));
+});
 
-module.exports = router
+module.exports = router;

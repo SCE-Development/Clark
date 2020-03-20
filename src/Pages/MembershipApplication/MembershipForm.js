@@ -1,21 +1,21 @@
-import React, { useState } from 'react'
-import './register-page.css'
-import { Container, Row, FormGroup, Label, Input, Button } from 'reactstrap'
-import { memberApplicationState, memberShipPlanToString } from '../../Enums'
-import MajorDropdown from './MajorDropdown'
-import { registerUser, checkIfUserExists } from '../../APIFunctions/User'
-import { sendVerificationEmail } from '../../APIFunctions/Profile'
-import GoogleRecaptcha from './GoogleRecaptcha'
+import React, { useState } from 'react';
+import './register-page.css';
+import { Container, Row, FormGroup, Label, Input, Button } from 'reactstrap';
+import { memberApplicationState, memberShipPlanToString } from '../../Enums';
+import MajorDropdown from './MajorDropdown';
+import { registerUser, checkIfUserExists } from '../../APIFunctions/User';
+import { sendVerificationEmail } from '../../APIFunctions/Profile';
+import GoogleRecaptcha from './GoogleRecaptcha';
 
-export default function MembershipForm (props) {
-  const [verified, setVerified] = useState(false)
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [major, setMajor] = useState('')
-  const [usernameAvailable, setUsernameAvailable] = useState(true)
-  const [passwordValid, setPasswordValid] = useState(true)
+export default function MembershipForm(props) {
+  const [verified, setVerified] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [major, setMajor] = useState('');
+  const [usernameAvailable, setUsernameAvailable] = useState(true);
+  const [passwordValid, setPasswordValid] = useState(true);
   const nameFields = [
     {
       label: 'First Name',
@@ -29,7 +29,7 @@ export default function MembershipForm (props) {
       type: 'text',
       handleChange: e => setLastName(e.target.value)
     }
-  ]
+  ];
   const accountFields = [
     {
       label: 'Email',
@@ -51,13 +51,13 @@ export default function MembershipForm (props) {
       ),
       handleChange: e => setPassword(e.target.value)
     }
-  ]
+  ];
 
-  async function submitApplication () {
-    const userResponse = await checkIfUserExists(email)
+  async function submitApplication() {
+    const userResponse = await checkIfUserExists(email);
     if (userResponse.error) {
-      setUsernameAvailable(false)
-      return
+      setUsernameAvailable(false);
+      return;
     }
     const registrationStatus = await registerUser({
       firstName,
@@ -66,21 +66,21 @@ export default function MembershipForm (props) {
       password,
       major,
       numberOfSemestersToSignUpFor: props.selectedPlan
-    })
+    });
     if (!registrationStatus.error) {
-      sendVerificationEmail(email, firstName)
-      props.setMembershipState(memberApplicationState.CONFIRMATION)
+      sendVerificationEmail(email, firstName);
+      props.setMembershipState(memberApplicationState.CONFIRMATION);
     } else {
       if (registrationStatus.responseData.status === 409) {
-        window.alert('Email already exists in the system.')
+        window.alert('Email already exists in the system.');
       } else if (registrationStatus.responseData.status === 400) {
-        setPasswordValid(false)
+        setPasswordValid(false);
       }
     }
   }
 
-  function requiredFieldsEmpty () {
-    return verified && firstName && lastName && email && password.length >= 8
+  function requiredFieldsEmpty() {
+    return verified && firstName && lastName && email && password.length >= 8;
   }
 
   return (
@@ -104,7 +104,7 @@ export default function MembershipForm (props) {
                 id={input.id}
               />
             </FormGroup>
-          )
+          );
         })}
       </Row>
 
@@ -123,7 +123,7 @@ export default function MembershipForm (props) {
                 {input.addon}
               </FormGroup>
             </div>
-          )
+          );
         })}
         <MajorDropdown setMajor={setMajor} />
       </div>
@@ -148,5 +148,5 @@ export default function MembershipForm (props) {
         </Button>
       </div>
     </Container>
-  )
+  );
 }

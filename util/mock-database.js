@@ -2,16 +2,16 @@
 // Use Mongoose to put the data in
 
 //
-const mongoose = require('mongoose')
-const User = require('../api/models/user')
-const PrintingForm3D = require('../api/models/PrintingForm3D')
+const mongoose = require('mongoose');
+const User = require('../api/models/user');
+const PrintingForm3D = require('../api/models/PrintingForm3D');
 
-const users = require('./mocked-data/users')
-const forms = require('./mocked-data/3DPrintingForm')
+const users = require('./mocked-data/users');
+const forms = require('./mocked-data/3DPrintingForm');
 
-function connectToDatabase () {
+function connectToDatabase() {
   return new Promise((resolve, reject) => {
-    mongoose.Promise = require('bluebird')
+    mongoose.Promise = require('bluebird');
     mongoose
       .connect('mongodb://localhost/sce_core', {
         promiseLibrary: require('bluebird'),
@@ -20,22 +20,21 @@ function connectToDatabase () {
         useCreateIndex: true
       })
       .then(() => {
-        console.log('MongoDB Connection Successful')
-        console.log()
-        resolve()
+        /// console.log('MongoDB Connection Successful');
+        resolve();
       })
-      .catch(error => reject(new Error(error)))
-  })
+      .catch(error => reject(new Error(error)));
+  });
 }
 
-function disconnectFromDatabase () {
-  console.log('Disconnecting from MongoDB')
-  mongoose.connection.close()
+function disconnectFromDatabase() {
+  // console.log('Disconnecting from MongoDB');
+  mongoose.connection.close();
 }
 
-function createUsers () {
-  const promises = []
-  console.log('Creating Users...')
+function createUsers() {
+  const promises = [];
+  // console.log('Creating Users...');
 
   promises.push(
     new Promise((resolve, reject) => {
@@ -45,64 +44,64 @@ function createUsers () {
           firstName: users[user].firstName,
           lastName: users[user].lastName,
           email: users[user].email
-        })
+        });
 
-        newUser.save(function (error) {
+        newUser.save(function(error) {
           if (error) {
-            reject(error)
-            return
+            reject(error);
+            return;
           }
-          resolve()
-        })
+          resolve();
+        });
       }
     })
-  )
+  );
 
-  return Promise.all(promises)
+  return Promise.all(promises);
 }
 
-function create3DForms () {
-  const promises = []
-  console.log('Creating 3DPrintingForms...')
+function create3DForms() {
+  const promises = [];
+  // console.log('Creating 3DPrintingForms...');
 
   promises.push(
     new Promise((resolve, reject) => {
       for (const form in forms) {
         PrintingForm3D.create(forms[form], (error, post) => {
           if (error) {
-            reject(error)
-            return
+            reject(error);
+            return;
           }
 
-          resolve()
-        })
+          resolve();
+        });
       }
     })
-  )
+  );
 
-  return Promise.all(promises)
+  return Promise.all(promises);
 }
 
-function inputData () {
+function inputData() {
   return new Promise((resolve, reject) => {
     createUsers()
       .then(() => {
-        console.log('Successfully added Users\n')
-        return create3DForms()
+        // console.log('Successfully added Users\n');
+        return create3DForms();
       })
       .then(() => {
-        console.log('Successfully added 3DPrintingForms\n')
-        resolve()
+        // console.log('Successfully added 3DPrintingForms\n');
+        resolve();
       })
-      .catch(err => reject(err))
-  })
+      .catch(err => reject(err));
+  });
 }
 
 connectToDatabase()
   .then(() => {
-    return inputData()
+    return inputData();
   })
   .then(() => {
-    return disconnectFromDatabase()
+    return disconnectFromDatabase();
   })
-  .catch(err => console.log(err))
+  .catch(err => reject(err));

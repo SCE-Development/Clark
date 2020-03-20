@@ -1,22 +1,22 @@
-import React, { useState } from 'react'
-import { Input, Button } from 'reactstrap'
-import './profile-modifier.css'
-import Footer from '../../../Components/Footer/Footer.js'
-import PrintRequest from './PrintRequest'
-import { editUser } from '../../../APIFunctions/User'
-const pic = require('./getPicBySeason')
-const bcrypt = require('bcryptjs')
+import React, { useState } from 'react';
+import { Input, Button } from 'reactstrap';
+import './profile-modifier.css';
+import Footer from '../../../Components/Footer/Footer.js';
+import PrintRequest from './PrintRequest';
+import { editUser } from '../../../APIFunctions/User';
+const pic = require('./getPicBySeason');
+const bcrypt = require('bcryptjs');
 
-export default function ProfileCard (props) {
-  const [password, setPassword] = useState('New Password')
-  const [confirmPass, setConfirmPass] = useState('Confirming New Password')
-  const [user, setUser] = useState('')
+export default function ProfileCard(props) {
+  const [password, setPassword] = useState('New Password');
+  const [confirmPass, setConfirmPass] = useState('Confirming New Password');
+  const [user, setUser] = useState('');
 
-  async function changePassword () {
+  async function changePassword() {
     // hash pass
-    const salt = bcrypt.genSaltSync(10)
+    const salt = bcrypt.genSaltSync(10);
     const hashedPassword =
-      password.trim() === '' ? user.password : bcrypt.hashSync(password, salt)
+      password.trim() === '' ? user.password : bcrypt.hashSync(password, salt);
 
     if (password === confirmPass) {
       const apiResponse = await editUser(
@@ -25,16 +25,16 @@ export default function ProfileCard (props) {
           password: hashedPassword
         },
         user.token
-      )
+      );
       if (!apiResponse.error) {
-        setPassword('')
-        window.alert('Success!!')
+        setPassword('');
+        window.alert('Success!!');
       }
     }
   }
 
-  function buttonStyle () {
-    let style = { marginTop: '10px' }
+  function buttonStyle() {
+    let style = { marginTop: '10px' };
     password === confirmPass
       ? (style = {
         ...style,
@@ -44,8 +44,8 @@ export default function ProfileCard (props) {
         ...style,
         color: 'grey',
         cursor: 'not-allowed'
-      })
-    return style
+      });
+    return style;
   }
 
   return (
@@ -71,8 +71,8 @@ export default function ProfileCard (props) {
           New Password:{' '}
           <Input
             onChange={e => {
-              setUser(props.user)
-              setPassword(e.target.value)
+              setUser(props.user);
+              setPassword(e.target.value);
             }}
             type='password'
           />
@@ -81,8 +81,8 @@ export default function ProfileCard (props) {
           Confirm Password:{' '}
           <Input
             onChange={e => {
-              setUser(props.user)
-              setConfirmPass(e.target.value)
+              setUser(props.user);
+              setConfirmPass(e.target.value);
             }}
             type='password'
           />
@@ -91,7 +91,7 @@ export default function ProfileCard (props) {
             color='info'
             style={buttonStyle()}
             onClick={() => {
-              changePassword()
+              changePassword();
             }}
           >
             Change Password
@@ -101,5 +101,5 @@ export default function ProfileCard (props) {
       </div>
       <Footer />
     </div>
-  )
+  );
 }

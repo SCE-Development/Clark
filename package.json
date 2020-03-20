@@ -5,27 +5,13 @@
   "scripts": {
     "api-test": "mocha",
     "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js",
-    "start": "react-scripts start && node server.js | react-scripts start",
+    "start": "npm run server | react-scripts start",
     "server": "npm start --prefix api",
     "server-install": "npm install --prefix api",
     "frontend": "react-scripts start",
     "build": "react-scripts build",
     "deploy": "git pull && npm install && pm2 stop database api app && pm2 delete database api app && pm2 start mongod --name \"database\" && npm run build && pm2 start npm --name \"app\" -- start && pm2 start npm \"app\" -- run dev",
-    "lint": "prettier 'utils/**/*.js' 'static/js/**/*.js' '__tests__/**/*.js' 'components/**/*.js' 'pages/**/*.js' 'public/**/*.js' '*.js' --write --single-quote --no-semi && standard --fix"
-  },
-  "lint-staged": {
-    "*.js": [
-      "prettier --write --single-quote --no-semi",
-      "standard --fix",
-      "git add"
-    ]
-  },
-  "standard": {
-    "globals": [
-      "$",
-      "fetch"
-    ],
-    "parser": "babel-eslint"
+    "lint": "./node_modules/.bin/eslint src/ api/models/ api/mailer/ api/routes/ api/util util/ test/"
   },
   "keywords": [
     "sce_core",
@@ -70,7 +56,6 @@
     "chai-http": "^4.3.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "husky": "^3.0.8",
     "ignore-styles": "^5.0.1",
     "jsdom": "^15.2.1",
     "jsdom-global": "^3.0.2",
@@ -86,10 +71,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "proxy": "http://localhost:8080/"
 }

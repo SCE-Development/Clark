@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   Button,
   Modal,
@@ -11,32 +11,33 @@ import {
   Label,
   Row,
   InputGroupAddon
-} from 'reactstrap'
-import { eventModalState } from '../../Enums'
-import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event'
-import { validateImageURL } from '../../APIFunctions/Image.js'
-import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js'
+} from 'reactstrap';
+import { eventModalState } from '../../Enums';
+import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event';
+import { validateImageURL } from '../../APIFunctions/Image.js';
+import ConfirmationModal from 
+  '../../Components/DecisionModal/ConfirmationModal.js';
 
-function EventManagerModal (props) {
+function EventManagerModal(props) {
   const NOT_FOUND_PNG =
-    'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG'
-  const { modal, toggle, modalState } = props
-  const [title, setTitle] = useState(props.title)
-  const [confirmationModal, setConfirmationModal] = useState(false)
-  const [description, setDescription] = useState(props.description)
-  const [eventLocation, setEventLocation] = useState(props.eventLocation)
-  const [eventDate, setEventDate] = useState(props.eventDate)
-  const [startTime, setStartTime] = useState(props.startTime)
-  const [endTime, setEndTime] = useState(props.endTime)
-  const [eventCategory, setEventCategory] = useState(props.eventCategory)
-  const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG)
+    'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG';
+  const { modal, toggle, modalState } = props;
+  const [title, setTitle] = useState(props.title);
+  const [confirmationModal, setConfirmationModal] = useState(false);
+  const [description, setDescription] = useState(props.description);
+  const [eventLocation, setEventLocation] = useState(props.eventLocation);
+  const [eventDate, setEventDate] = useState(props.eventDate);
+  const [startTime, setStartTime] = useState(props.startTime);
+  const [endTime, setEndTime] = useState(props.endTime);
+  const [eventCategory, setEventCategory] = useState(props.eventCategory);
+  const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG);
   const confirmModalProps = {
     headerText: `Delete ${props.title} ?`,
     bodyText: 'The event will be gone forever if you do this.',
     toggle: toggleConfirmationModal,
     handleConfirmation: handleDeletion,
     open: confirmationModal
-  }
+  };
   const inputMatrix = [
     [
       {
@@ -90,20 +91,20 @@ function EventManagerModal (props) {
         handleChange: e => setEndTime(e.target.value)
       }
     ]
-  ]
+  ];
 
-  async function handleDeletion () {
-    await props.handleDelete({ _id: props._id })
-    await props.populateEventList()
-    toggleConfirmationModal()
-    props.toggle()
+  async function handleDeletion() {
+    await props.handleDelete({ _id: props._id });
+    await props.populateEventList();
+    toggleConfirmationModal();
+    props.toggle();
   }
 
-  function toggleConfirmationModal () {
-    setConfirmationModal(!confirmationModal)
+  function toggleConfirmationModal() {
+    setConfirmationModal(!confirmationModal);
   }
 
-  async function handleSubmission () {
+  async function handleSubmission() {
     const eventFields = {
       title,
       description,
@@ -116,22 +117,22 @@ function EventManagerModal (props) {
       endTime: props.endTime === endTime ? endTime : convertTime24to12(endTime),
       eventCategory,
       imageURL: imagePreviewURL === NOT_FOUND_PNG ? undefined : imagePreviewURL
-    }
+    };
 
-    await props.handleSubmit({ _id: props._id, ...eventFields })
-    await props.populateEventList()
-    props.toggle()
+    await props.handleSubmit({ _id: props._id, ...eventFields });
+    await props.populateEventList();
+    props.toggle();
   }
 
-  async function handleURLChange (url) {
-    let urlValid = false
+  async function handleURLChange(url) {
+    let urlValid = false;
     await validateImageURL(url)
       .then(() => (urlValid = true))
-      .catch(() => (urlValid = false))
-    setImagePreviewURL(urlValid ? url : NOT_FOUND_PNG)
+      .catch(() => (urlValid = false));
+    setImagePreviewURL(urlValid ? url : NOT_FOUND_PNG);
   }
 
-  function requiredFieldsFilledIn () {
+  function requiredFieldsFilledIn() {
     if (props.modalState === eventModalState.EDIT) {
       return (
         title !== '' &&
@@ -139,7 +140,7 @@ function EventManagerModal (props) {
         startTime !== '' &&
         endTime !== '' &&
         eventLocation !== ''
-      )
+      );
     } else if (props.modalState === eventModalState.SUBMIT) {
       return (
         title !== undefined &&
@@ -147,9 +148,9 @@ function EventManagerModal (props) {
         startTime !== undefined &&
         endTime !== undefined &&
         eventLocation !== undefined
-      )
+      );
     }
-    return false
+    return false;
   }
 
   return (
@@ -183,10 +184,10 @@ function EventManagerModal (props) {
                         />
                       </InputGroup>
                     </Col>
-                  )
+                  );
                 })}
               </Row>
-            )
+            );
           })}
           <Row className='container'>
             <Label>Event Description</Label>
@@ -238,7 +239,7 @@ function EventManagerModal (props) {
         </ModalFooter>
       </Modal>
     </div>
-  )
+  );
 }
 
-export default EventManagerModal
+export default EventManagerModal;

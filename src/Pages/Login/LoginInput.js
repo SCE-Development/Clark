@@ -1,20 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-export default function InputBox (props) {
-  const [style, setStyle] = useState({})
+export default function InputBox(props) {
+  const [style, setStyle] = useState({});
   const animatedCSS = {
     top: '-5px',
     borderBottom: '2px solid GREEN'
-  }
+  };
 
   return (
     <div
       style={style}
       onFocus={() => {
-        setStyle(animatedCSS)
+        setStyle(animatedCSS);
       }}
       onBlur={() => {
-        setStyle({})
+        setStyle({});
       }}
       className='txtb'
     >
@@ -28,5 +28,5 @@ export default function InputBox (props) {
         required
       />
     </div>
-  )
+  );
 }

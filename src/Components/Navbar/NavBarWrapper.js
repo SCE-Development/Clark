@@ -1,17 +1,17 @@
-import React from 'react'
-import './navbar.css'
-import UserNavbar from './UserNavbar'
-import AdminNavbar from './AdminNavbar'
+import React from 'react';
+import './navbar.css';
+import UserNavbar from './UserNavbar';
+import AdminNavbar from './AdminNavbar';
 
-function NavBarWrapper ({
+function NavBarWrapper({
   enableAdminNavbar = false,
   component: Component,
   ...appProps
 }) {
-  function handleLogout () {
-    appProps.setAuthenticated(false)
-    window.localStorage.removeItem('jwtToken')
-    window.location.reload()
+  function handleLogout() {
+    appProps.setAuthenticated(false);
+    window.localStorage.removeItem('jwtToken');
+    window.location.reload();
   }
 
   return (
@@ -23,7 +23,7 @@ function NavBarWrapper ({
       )}
       <Component {...appProps} />
     </div>
-  )
+  );
 }
 
-export default NavBarWrapper
+export default NavBarWrapper;
