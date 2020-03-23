@@ -59,7 +59,7 @@
     "ignore-styles": "^5.0.1",
     "jsdom": "^15.2.1",
     "jsdom-global": "^3.0.2",
-    "lint-staged": "^9.4.1",
+    "lint-staged": "^10.0.8",
     "mocha": "^6.2.1",
     "prettier": "^1.18.2",
     "sinon": "^7.5.0",
