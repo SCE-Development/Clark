@@ -46,7 +46,7 @@
     "react-iframe": "^1.8.0",
     "react-ionicons": "2.1.6",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "^3.3.0",
+    "react-scripts": "^3.4.1",
     "reactstrap": "^8.2.0"
   },
   "devDependencies": {
