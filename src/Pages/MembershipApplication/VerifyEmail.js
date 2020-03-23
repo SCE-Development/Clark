@@ -58,7 +58,7 @@ export default class VerifyEmail extends React.Component {
         }
       })
       .catch(error => {
-        console.error(error);
+        console.debug(error);
       });
   }
 
