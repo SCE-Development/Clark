@@ -39,7 +39,7 @@
     "jsonwebtoken": "^8.5.1",
     "passport": "^0.4.1",
     "pdf-lib": "^1.4.1",
-    "react": "^16.10.1",
+    "react": "^16.13.1",
     "react-dom": "^16.10.1",
     "react-filepond": "^7.0.1",
     "react-google-recaptcha": "^2.0.1",
