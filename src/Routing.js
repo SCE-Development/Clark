@@ -39,25 +39,29 @@ export default function Routing({ appProps }) {
       Component: Overview,
       path: '/dashboard',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: '/'
+      redirect: '/',
+      inAdminNavbar: true
     },
     {
       Component: EventManager,
       path: '/event-manager',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: '/'
+      redirect: '/',
+      inAdminNavbar: true
     },
     {
       Component: SolidsConsole,
       path: '/3DConsole',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: '/'
+      redirect: '/',
+      inAdminNavbar: true
     },
     {
       Component: LedSign,
       path: '/led-sign',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: '/'
+      redirect: '/',
+      inAdminNavbar: true
     },
     {
       Component: PrintingSolids,
@@ -101,7 +105,7 @@ export default function Routing({ appProps }) {
     <Router>
       <Switch>
         {signedInRoutes.map(
-          ({ path, Component, allowedIf, redirect }, index) => {
+          ({ path, Component, allowedIf, redirect, inAdminNavbar }, index) => {
             return (
               <PrivateRoute
                 key={index}
@@ -116,12 +120,7 @@ export default function Routing({ appProps }) {
                 component={props => (
                   <NavBarWrapper
                     component={Component}
-                    enableAdminNavbar={
-                      userIsOfficerOrAdmin &&
-                      path !== '/2DPrinting' &&
-                      path !== '/3DPrintingForm' &&
-                      path !== '/profile'
-                    }
+                    enableAdminNavbar={inAdminNavbar}
                     {...props}
                   />
                 )}
