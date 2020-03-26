@@ -60,7 +60,7 @@ router.post('/register', function(req, res) {
       firstName: req.body.firstName,
       middleInitial: req.body.middleInitial || '',
       lastName: req.body.lastName,
-      email: req.body.email,
+      email: req.body.email.toLowerCase(),
       major: req.body.major || ''
     });
 
