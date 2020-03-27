@@ -48,7 +48,7 @@ describe('<EventList />', () => {
   it(
     'Should render an <EventCard /> component for every element in the event' +
       ' array',
-    async() => {
+    async () => {
       returnEventArray();
       const wrapper = await mount(<EventList />);
       wrapper.update();
@@ -57,7 +57,7 @@ describe('<EventList />', () => {
       );
     }
   );
-  it('Should render a title if no events are returned', async() => {
+  it('Should render a title if no events are returned', async () => {
     returnEmptyArray();
     const wrapper = await mount(<EventList />);
     wrapper.update();
@@ -69,7 +69,7 @@ describe('<EventList />', () => {
         .get(0).props.children[1].props.children
     ).to.equal('No events yet!');
   });
-  it('Should initially hide an <EventInfoModal /> component', async() => {
+  it('Should initially hide an <EventInfoModal /> component', async () => {
     returnEventArray();
     const wrapper = await mount(<EventList />);
     wrapper.update();

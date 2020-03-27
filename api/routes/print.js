@@ -7,7 +7,7 @@ const {
 } = require('../printingRPC/client/printing/print_client');
 const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES;
 
-router.post('/submit', async(req, res) => {
+router.post('/submit', async (req, res) => {
   const { raw, pageRanges, sides, copies, destination } = req.body;
   await sendPrintRequest(raw, copies, sides, pageRanges, destination)
     .then(response => {

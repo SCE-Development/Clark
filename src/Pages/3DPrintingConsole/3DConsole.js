@@ -66,7 +66,7 @@ export default class PrintConsole3D extends React.Component {
   Search for object in db using its name and date
   Set new progress = event value
   */
-  handleUpdateProgress = async(requestToUpdate, event) => {
+  handleUpdateProgress = async (requestToUpdate, event) => {
     const newProgress = event.target.value;
     if (newProgress === requestToUpdate.progress) return;
     const updateRequest = {
