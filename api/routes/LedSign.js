@@ -8,18 +8,25 @@ const { OK, NOT_FOUND, BAD_REQUEST } = require('../constants').STATUS_CODES;
 const { ledSignIp } = require('../config/config');
 const SignLog = require('../models/SignLog');
 
-router.post('/updateSignText', async (req, res) => {
+async function saveSignLog(req) {
+  let saveSuccessful = true;
   const newSign = new SignLog({
     signTitle: req.body.text,
     firstName: req.body.firstName,
     email: req.body.email
   });
 
-  newSign.save(function(error) {
-    if (error) {
-      return res.sendStatus(BAD_REQUEST);
-    }
-  });
+  await newSign.save()
+    .catch(_ => {
+      saveSuccessful = false;
+    });
+  return saveSuccessful;
+}
+
+router.post('/updateSignText', async (req, res) => {
+  if (!await saveSignLog(req)) {
+    return res.sendStatus(BAD_REQUEST);
+  }
   await updateSignText(req.body, ledSignIp)
     .then(response => {
       return res.status(OK).send({ ...response });
