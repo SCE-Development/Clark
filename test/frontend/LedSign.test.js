@@ -43,7 +43,7 @@ describe('<LedSign />', () => {
     const wrapper = mount(<LedSign {...appProps} />);
     expect(wrapper.find(Spinner)).to.have.lengthOf(1);
   });
-  it('Should alert the user if the sign is down', async() => {
+  it('Should alert the user if the sign is down', async () => {
     healthCheckWillReturn(signUnhealthy);
     const wrapper = await mount(<LedSign {...appProps} />);
     expect(wrapper.find('.sign-status').text()).to.equal(
@@ -57,14 +57,14 @@ describe('<LedSign />', () => {
       expect(element.props().disabled).to.equal(true);
     });
   });
-  it('Should display if the sign is up', async() => {
+  it('Should display if the sign is up', async () => {
     healthCheckWillReturn(signHealthy);
     const wrapper = await mount(<LedSign {...appProps} />);
     expect(wrapper.find('.sign-status').text()).to.equal(
       'Sign Status: Sign is up.'
     );
   });
-  it('Should enable all <Input /> components when sign is up', async() => {
+  it('Should enable all <Input /> components when sign is up', async () => {
     healthCheckWillReturn(signHealthy);
     const wrapper = await mount(<LedSign {...appProps} />);
     await Promise.all([healthCheckWillReturn]);

@@ -56,10 +56,11 @@
         ],
         "no-extra-semi": "error",
         "eol-last": 2,
-        "space-before-function-paren": [
-            2,
-            "never"
-        ],
+        "space-before-function-paren": ["error", {
+          "anonymous": "never",
+          "named": "never",
+          "asyncArrow": "always"
+        }],
         "no-warning-comments": [
             2,
             {

@@ -16,7 +16,7 @@ export default function PrintRequest(props) {
 
   return (
     <Button
-      onClick={async() => {
+      onClick={async () => {
         await updateRequests();
         setToggle(!toggle);
       }}

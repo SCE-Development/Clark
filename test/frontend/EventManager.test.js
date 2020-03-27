@@ -52,7 +52,7 @@ describe('<EventManager />', () => {
   it(
     'Should render an <EventCard /> component for every element in the event' +
       ' array',
-    async() => {
+    async () => {
       returnEventArray();
       const wrapper = await mount(<EventManager {...APP_PROPS} />);
       wrapper.update();
@@ -61,7 +61,7 @@ describe('<EventManager />', () => {
       );
     }
   );
-  it('Should render a title if no events are returned', async() => {
+  it('Should render a title if no events are returned', async () => {
     returnEmptyArray();
     const wrapper = await mount(<EventManager {...APP_PROPS} />);
     wrapper.update();
@@ -70,7 +70,7 @@ describe('<EventManager />', () => {
       'No events yet!'
     );
   });
-  it('Should initially hide an <EventManagerModal /> component', async() => {
+  it('Should initially hide an <EventManagerModal /> component', async () => {
     returnEventArray();
     const wrapper = await mount(<EventList />);
     wrapper.update();

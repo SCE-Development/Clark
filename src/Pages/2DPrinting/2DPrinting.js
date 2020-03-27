@@ -152,7 +152,7 @@ export default function Printing(props) {
             const tmp = fileItems.map(fileItem => fileItem.file);
             setFiles(tmp);
           }}
-          onaddfile={async(err, file) => {
+          onaddfile={async (err, file) => {
             if (!err) await handleUpdate(file);
           }}
           onremovefile={err => {

@@ -120,11 +120,11 @@ function sendVerificationEmail(mailTemplate, token) {
 }
 
 const send = ({ templateType, recipientEmail, recipientName }) => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     getMailTemplate(templateType, recipientEmail, recipientName)
       .then(
         async mailTemplate => {
-          fs.readFile(TOKEN_PATH, async(err, token) => {
+          fs.readFile(TOKEN_PATH, async (err, token) => {
             if (err) {
               reject(err);
             }

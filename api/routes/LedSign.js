@@ -8,7 +8,7 @@ const { OK, NOT_FOUND, BAD_REQUEST } = require('../constants').STATUS_CODES;
 const { ledSignIp } = require('../config/config');
 const SignLog = require('../models/SignLog');
 
-router.post('/updateSignText', async(req, res) => {
+router.post('/updateSignText', async (req, res) => {
   const newSign = new SignLog({
     signTitle: req.body.text,
     firstName: req.body.firstName,
@@ -29,7 +29,7 @@ router.post('/updateSignText', async(req, res) => {
     });
 });
 
-router.post('/healthCheck', async(req, res) => {
+router.post('/healthCheck', async (req, res) => {
   const { officerName } = req.body;
   await healthCheck(officerName, ledSignIp)
     .then(response => {
