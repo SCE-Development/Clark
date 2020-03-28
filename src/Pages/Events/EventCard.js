@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import Ionicon from 'react-ionicons';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
+import { mapPinSymbol, clockSymbol} from '../Overview/SVG';
 
 function EventCard(props) {
   const {
@@ -25,11 +25,12 @@ function EventCard(props) {
       <Row className='card-row'>
         <Col>
           <Row className='event-date'>
+            {clockSymbol()}{'  '}
             {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} - {endTime}
           </Row>
           <Row className='event-title'>{title}</Row>
           <Row className='event-location'>
-            <Ionicon icon='md-pin' fontSize='1.5rem' color='#414141bd' />
+            {mapPinSymbol()}
             {eventLocation}
           </Row>
           <Row className='event-desc d-none d-xl-block'>

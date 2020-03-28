@@ -8,6 +8,7 @@ import EventInfoModal from '../../src/Pages/Events/EventInfoModal';
 import Adapter from 'enzyme-adapter-react-16';
 import { Container, Row, Col } from 'reactstrap';
 import { getDateWithSlashes } from '../../src/APIFunctions/Event';
+import {clockSymbol, mapPinSymbol} from '../../src/Pages/Overview/SVG.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -37,10 +38,10 @@ describe('<EventInfoModal />', () => {
       wrapper
         .find(Row)
         .get(0)
-        .props.children.slice(1)
+        .props.children
         .join('')
     ).to.equal(
-      `${getDateWithSlashes(currentEvent.eventDate)} ${
+      `${clockSymbol()}  ` + ` ${getDateWithSlashes(currentEvent.eventDate)}  ${
         currentEvent.startTime
       } - ` + `${currentEvent.endTime}`
     );
@@ -51,9 +52,10 @@ describe('<EventInfoModal />', () => {
       wrapper
         .find(Row)
         .get(1)
-        .props.children.slice(1)
+        .props.children
         .join('')
-    ).to.equal(currentEvent.eventLocation);
+    ).to.equal(
+      `${mapPinSymbol()}` + currentEvent.eventLocation);
   });
   it('Should render the description of the event', () => {
     const wrapper = mount(<EventInfoModal {...appProps} />);
