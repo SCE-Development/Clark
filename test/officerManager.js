@@ -115,7 +115,7 @@ describe('OfficerManager', () => {
         github: 'githublink',
         linkedin: 'linkedinlink',
         quote: 'aquote',
-        picture: DEFAULT_PHOTO_URL,
+        pictureUrl: DEFAULT_PHOTO_URL,
         token: token
       };
       setTokenStatus(true);
@@ -190,7 +190,7 @@ describe('OfficerManager', () => {
           expect(response[0].github).to.be.eql('githublink');
           expect(response[0].linkedin).to.be.eql('linkedinlink');
           expect(response[0].quote).to.be.eql('aquote');
-          expect(response[0].picture).to.be.eql(DEFAULT_PHOTO_URL);
+          expect(response[0].pictureUrl).to.be.eql(DEFAULT_PHOTO_URL);
           done();
         })
         .catch(err => {

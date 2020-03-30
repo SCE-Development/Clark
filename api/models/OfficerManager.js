@@ -24,7 +24,7 @@ const OfficerSchema = new Schema(
     quote: {
       type: String
     },
-    picture: {
+    pictureUrl: {
       type: String,
       default: DEFAULT_PHOTO_URL
     }
