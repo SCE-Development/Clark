@@ -16,11 +16,12 @@ import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import EventList from './Pages/Events/EventList';
 import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js';
-import MembershipApplication from 
+import MembershipApplication from
   './Pages/MembershipApplication/membershipApplication.jsx';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Team from './Pages/TheTeam/TheTeam.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
+import Store from './Pages/Store/Store.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import { membershipState } from './Enums';
 
@@ -90,6 +91,12 @@ export default function Routing({ appProps }) {
     {
       Component: Profile,
       path: '/profile',
+      allowedIf: userIsAuthenticated,
+      redirect: '/login'
+    },
+    {
+      Component: Store,
+      path: '/store',
       allowedIf: userIsAuthenticated,
       redirect: '/login'
     }
