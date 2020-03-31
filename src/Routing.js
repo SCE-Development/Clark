@@ -23,6 +23,7 @@ import Team from './Pages/TheTeam/TheTeam.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import { membershipState } from './Enums';
+import InventoryDashboard from './Pages/InventoryItem/InventoryTable';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -92,6 +93,13 @@ export default function Routing({ appProps }) {
       path: '/profile',
       allowedIf: userIsAuthenticated,
       redirect: '/login'
+    },
+    {
+      Component: InventoryDashboard,
+      path: '/inventory',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/login',
+      inAdminNavbar: true
     }
   ];
   const signedOutRoutes = [

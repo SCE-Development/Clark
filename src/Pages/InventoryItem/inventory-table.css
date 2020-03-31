@@ -1,0 +1,100 @@
+.inventoryTable{
+  border-collapse: collapse;
+  margin: 25px;
+  font-size: 0.9em;
+  border-bottom: black;
+  display: inline-block;
+}
+
+.inventoryTable thead tr{
+  background-color:#ff5e5e;
+  color: #ffffff;
+  text-align: center;
+  font-weight: bold;
+  height: 30px;
+}
+
+.inventory-heading th{
+  width: 140px
+}
+
+.inventoryTable tr:nth-of-type(even){
+  background-color: #f3f3f3;
+}
+  
+.inventoryTable tr td{ 
+  width: 140px;
+  text-align: center;
+}
+
+.inventoryTable tbody tr{
+  height: 100px;
+}
+.inventoryLayout{
+  text-align: center;
+}
+
+h1{
+  font-weight: 400;
+}
+
+.searchBar{
+  width: 800px;
+  border-radius: 10px;
+  border-color: lightblue;
+  outline: transparent;
+  padding: 5px;
+  margin: 10px
+}
+
+.addItemButton{
+  fill: grey;
+  border-radius: 60px;
+  border-color:transparent;
+  background-color: transparent; 
+  outline: transparent;
+  padding-top: 5px;
+  margin:5px;
+  height: 29px;
+}
+
+.addItemButton :hover{
+  cursor: pointer;
+  fill: green;
+  
+}
+
+.search-add-container{
+  display: flex;
+  justify-content: center;
+
+}
+
+.categoryDropdown{
+  border-radius: 10px;
+  background-color: lightblue;
+  outline: transparent;
+}
+
+.add-item-body{
+  inline-size: min-content;
+
+}
+.add-item-body input{
+  width: 450px;
+  border-radius: 7px;
+  outline: transparent; 
+  padding: 5px;
+  background-color: aliceblue; 
+}
+
+.edit-button{
+  background-color: transparent;
+  outline: transparent;
+  border-color: transparent;
+  fill: green;
+}
+
+.categoryDropdown option{
+  border-radius: 10px;
+}
