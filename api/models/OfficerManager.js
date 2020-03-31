@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const { DEFAULT_PHOTO_URL } = require('../constants');
 
 const OfficerSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true
-    },
     email: {
       type: String,
       required: true
@@ -17,18 +14,8 @@ const OfficerSchema = new Schema(
     github: {
       type: String
     },
-    instagram: {
+    linkedin: {
       type: String
-    },
-    // The access level is defined as follows:
-    // -2: Ban
-    // -1: Pending
-    // 0: Member
-    // 1: Officer
-    // 2: Admin
-    level: {
-      type: Number,
-      require: true
     },
     team: {
       type: String,
@@ -37,9 +24,9 @@ const OfficerSchema = new Schema(
     quote: {
       type: String
     },
-    major: {
+    pictureUrl: {
       type: String,
-      require: true
+      default: DEFAULT_PHOTO_URL
     }
   },
   { collection: 'Officers' }
