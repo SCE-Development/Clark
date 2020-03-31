@@ -3,7 +3,6 @@
 process.env.NODE_ENV = 'test';
 const Event = require('../api/models/Event');
 const User = require('../api/models/User');
-const tokenValidMocker = require('./mocks/TokenValidFunctions');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
