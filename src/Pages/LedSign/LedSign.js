@@ -20,7 +20,8 @@ function LedSign(props) {
       placeholder: 'Enter Text',
       value: text,
       type: 'text',
-      onChange: e => setText(e.target.value)
+      onChange: e => setText(e.target.value),
+      maxLength: '50'
     },
     {
       title: 'Background Color',
