@@ -8,42 +8,41 @@ function LedSign(props) {
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [brightness, setBrightness] = useState(50);
-  const [scrollSpeed, setScrollSpeed] = useState(50);
+  const [scrollSpeed, setScrollSpeed] = useState(25);
   const [backgroundColor, setBackgroundColor] = useState('#0000ff');
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
-
   const inputArray = [
     {
       title: 'Sign Text:',
       placeholder: 'Enter Text',
-      defaultValue: '',
+      value: text,
       type: 'text',
       onChange: e => setText(e.target.value)
     },
     {
       title: 'Background Color',
-      defaultValue: '#0000ff',
+      value: backgroundColor,
       type: 'color',
       onChange: e => setBackgroundColor(e.target.value)
     },
     {
       title: 'Text Color',
-      defaultValue: '#00ff00',
+      value: textColor,
       type: 'color',
       onChange: e => setTextColor(e.target.value)
     },
     {
       title: 'Border Color',
-      defaultValue: '#ff0000',
+      value: borderColor,
       type: 'color',
       onChange: e => setBorderColor(e.target.value)
     },
     {
       title: 'Brightness:',
-      defaultValue: '50',
+      value: brightness,
       min: '25',
       max: '75',
       step: '1',
@@ -53,7 +52,7 @@ function LedSign(props) {
     {
       title: 'Scroll Speed:',
       id: 'scroll-speed',
-      defaultValue: '25',
+      value: scrollSpeed,
       min: '0',
       max: '50',
       step: '1',
@@ -70,7 +69,9 @@ function LedSign(props) {
       scrollSpeed,
       backgroundColor,
       textColor,
-      borderColor
+      borderColor,
+      email: props.user.email,
+      firstName: props.user.firstName
     });
     setRequestSuccessful(!signResponse.error);
     setAwaitingSignResponse(false);
@@ -87,13 +88,29 @@ function LedSign(props) {
       );
     }
   }
-
   useEffect(() => {
     async function checkSignHealth() {
       setLoading(true);
       const status = await healthCheck(props.user.firstName);
       if (status && !status.error) {
         setSignHealthy(true);
+        const { responseData } = status;
+        if(responseData && responseData.text) {
+          const { 
+            text, 
+            brightness, 
+            scrollSpeed, 
+            backgroundColor, 
+            textColor,
+            borderColor 
+          } = responseData;
+          setText(text);
+          setBrightness(brightness);
+          setScrollSpeed(scrollSpeed);
+          setBackgroundColor(backgroundColor);
+          setTextColor(textColor);
+          setBorderColor(borderColor);
+        }
       } else {
         setSignHealthy(false);
       }

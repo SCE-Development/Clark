@@ -40,7 +40,15 @@ router.post('/healthCheck', async (req, res) => {
   const { officerName } = req.body;
   await healthCheck(officerName, ledSignIp)
     .then(response => {
-      return res.status(OK).send({ ...response });
+      const { message } = response;
+      return res.status(OK).send({ 
+        text: message.getText(),
+        brightness: message.getBrightness(),
+        scrollSpeed: message.getScrollSpeed(),
+        backgroundColor: message.getBackgroundColor(),
+        textColor: message.getTextColor(),
+        borderColor: message.getBorderColor()
+      });
     })
     .catch(err => {
       return res.status(NOT_FOUND).send({ ...err });
