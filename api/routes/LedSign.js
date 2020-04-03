@@ -41,7 +41,7 @@ router.post('/healthCheck', async (req, res) => {
   await healthCheck(officerName, ledSignIp)
     .then(response => {
       const { message } = response;
-      return res.status(OK).send({ 
+      return res.status(OK).send({
         text: message.getText(),
         brightness: message.getBrightness(),
         scrollSpeed: message.getScrollSpeed(),

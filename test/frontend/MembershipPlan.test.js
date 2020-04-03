@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import { Button } from 'reactstrap';
 import { membershipPlans } from '../../src/Enums';
 
-import MembershipPlan from 
+import MembershipPlan from
   '../../src/Pages/MembershipApplication/MembershipPlan';
 import Adapter from 'enzyme-adapter-react-16';
 import { mockMonth, revertClock } from '../mocks/Date';

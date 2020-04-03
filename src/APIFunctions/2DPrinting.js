@@ -43,7 +43,7 @@ export function parseRange(pages, maxPages) {
 /**
  * Print the page
  * @param {Object} data         Encoded file
- * @returns {PrintApiResponse}  Containing information for if 
+ * @returns {PrintApiResponse}  Containing information for if
  *                              the page is printing
  */
 export async function printPage(data) {

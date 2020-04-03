@@ -133,7 +133,7 @@ describe('<EventManagerModal />', () => {
     it('Should render 3 buttons in the edit state', () => {
       expect(editButtonArray).to.have.lengthOf(3);
     });
-    it('Should render a cancel delete and submit ' + 
+    it('Should render a cancel delete and submit ' +
        'button in the submit state', () => {
       expect(editButtonArray.get(0).props.children).to.equal('Cancel');
       expect(editButtonArray.get(1).props.children).to.equal('Delete Event');

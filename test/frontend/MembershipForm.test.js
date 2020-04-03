@@ -5,7 +5,7 @@ import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import { Label, Input } from 'reactstrap';
 
-import MembershipForm from 
+import MembershipForm from
   '../../src/Pages/MembershipApplication/MembershipForm';
 import Adapter from 'enzyme-adapter-react-16';
 import MajorDropdown from '../../src/Pages/MembershipApplication/MajorDropdown';

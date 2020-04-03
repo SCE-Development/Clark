@@ -112,7 +112,7 @@ export async function editEvent(eventToUpdate, token) {
 /**
  * Add a new event.
  * @param {Object} eventToDelete - The event that is to be added
- * @param {string} eventToDelete._id - The unique MongoDB 
+ * @param {string} eventToDelete._id - The unique MongoDB
  *                                     id of the event that is to
  * be added
  * @param {string} token - The user's jwt token for authentication

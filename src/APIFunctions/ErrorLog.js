@@ -22,7 +22,7 @@ export async function getAllErrorLogs() {
 /**
  * Add a new error.
  * @param {Object} newError - The error that is to be added
- * @param {(string|undefined)} newError.userEmail - The email of the user 
+ * @param {(string|undefined)} newError.userEmail - The email of the user
  *                                                  who has sent this error
  * @param {(string|undefined)} newError.errorTime- The time the error occured
  * @param {string} newError.apiEndpoint - The location of the error

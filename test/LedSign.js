@@ -39,12 +39,24 @@ const VALID_SIGN_REQUEST = {
 };
 const SUCCESS_MESSAGE = {
   message: {
-    getText:  () => {return VALID_SIGN_REQUEST.text;},
-    getBrightness: () => {return VALID_SIGN_REQUEST.brightness;},
-    getScrollSpeed: () => {return VALID_SIGN_REQUEST.scrollSpeed;},
-    getBackgroundColor: () => {return VALID_SIGN_REQUEST.backgroundColor;},
-    getTextColor: () => {return VALID_SIGN_REQUEST.textColor;}, 
-    getBorderColor: () => {return VALID_SIGN_REQUEST.borderColor;}
+    getText: () => {
+      return VALID_SIGN_REQUEST.text;
+    },
+    getBrightness: () => {
+      return VALID_SIGN_REQUEST.brightness;
+    },
+    getScrollSpeed: () => {
+      return VALID_SIGN_REQUEST.scrollSpeed;
+    },
+    getBackgroundColor: () => {
+      return VALID_SIGN_REQUEST.backgroundColor;
+    },
+    getTextColor: () => {
+      return VALID_SIGN_REQUEST.textColor;
+    },
+    getBorderColor: () => {
+      return VALID_SIGN_REQUEST.borderColor;
+    }
   }
 };
 const ERROR_MESSAGE = 'error';

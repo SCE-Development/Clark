@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 /*
  * This file contains the methods necessary to encrypt a User's unique _id
  * to be utilized in at least an email verification link and to compare that
- * hashed ID to the unique users _id 
+ * hashed ID to the unique users _id
  * with the intention to ensure it's that associated
  * user utilizing the link
  */

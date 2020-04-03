@@ -68,7 +68,7 @@ describe('3DPrintingForm', () => {
           throw err;
         });
     });
-    it('Should return statusCode 200 when all ' + 
+    it('Should return statusCode 200 when all ' +
        'required fields are filled in', done => {
       const form = {
         name: 'pinkUnicorn',
@@ -164,7 +164,7 @@ describe('3DPrintingForm', () => {
           throw err;
         });
     });
-    it('Should return statusCode 200 and a message ' + 
+    it('Should return statusCode 200 and a message ' +
        'if a form was edited', done => {
       const form = {
         name: 'pinkUnicorn',

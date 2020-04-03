@@ -4,7 +4,7 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 
-import ConfirmationModal from 
+import ConfirmationModal from
   '../../src/Components/DecisionModal/ConfirmationModal.js';
 import Adapter from 'enzyme-adapter-react-16';
 import { Button, ModalHeader, ModalBody, Modal } from 'reactstrap';

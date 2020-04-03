@@ -19,7 +19,7 @@ function resetMock() {
 
 /**
  *
- * @param {any} returnValue: value to be return back 
+ * @param {any} returnValue: value to be return back
  *                           by the function 'checkIfTokenValid'
  * @returns return parameter (above)
  */
