@@ -17,8 +17,6 @@ const expect = chai.expect;
 
 chai.should();
 chai.use(chaiHttp);
-const SUCCESS_MESSAGE = 'success';
-const ERROR_MESSAGE = 'error';
 
 const INVALID_SIGN_REQUEST = {
   text: 'Big Oof',
@@ -39,6 +37,17 @@ const VALID_SIGN_REQUEST = {
   firstName: 'John Doe',
   email: 'bigoof@gmail.com'
 };
+const SUCCESS_MESSAGE = {
+  message: {
+    getText:  () => {return VALID_SIGN_REQUEST.text;},
+    getBrightness: () => {return VALID_SIGN_REQUEST.brightness;},
+    getScrollSpeed: () => {return VALID_SIGN_REQUEST.scrollSpeed;},
+    getBackgroundColor: () => {return VALID_SIGN_REQUEST.backgroundColor;},
+    getTextColor: () => {return VALID_SIGN_REQUEST.textColor;}, 
+    getBorderColor: () => {return VALID_SIGN_REQUEST.borderColor;}
+  }
+};
+const ERROR_MESSAGE = 'error';
 
 describe('LedSign', () => {
   const healthCheckMock = sinon.stub(LedSignFunctions, 'healthCheck');
@@ -62,18 +71,31 @@ describe('LedSign', () => {
   });
 
   describe('/POST healthCheck', () => {
+    let signResponse = null;
     it('Should return statusCode 200 when the sign is up', done => {
       healthCheckMock.resolves(SUCCESS_MESSAGE);
       chai
         .request(app)
         .post('/api/LedSign/healthCheck')
         .then(function(res) {
+          signResponse = res.body;
           expect(res).to.have.status(OK);
           done();
         })
         .catch(err => {
           throw err;
         });
+    });
+    it('Should return the correct values when modified', done => {
+      healthCheckMock.resolves(SUCCESS_MESSAGE);
+      expect(signResponse.text).to.equal(VALID_SIGN_REQUEST.text);
+      expect(signResponse.brightness).to.equal(VALID_SIGN_REQUEST.brightness);
+      expect(signResponse.scrollSpeed).to.equal(VALID_SIGN_REQUEST.scrollSpeed);
+      expect(signResponse.backgroundColor)
+        .to.equal(VALID_SIGN_REQUEST.backgroundColor);
+      expect(signResponse.textColor).to.equal(VALID_SIGN_REQUEST.textColor);
+      expect(signResponse.borderColor).to.equal(VALID_SIGN_REQUEST.borderColor);
+      done();
     });
     it('Should return statusCode 404 when the sign is down', done => {
       healthCheckMock.rejects(ERROR_MESSAGE);
