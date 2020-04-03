@@ -30,7 +30,7 @@ describe('InventoryItem', () => {
     done()
   })
 
-  //What does these do
+  // What does these do
   after(done => {
     restoreMock()
     tools.terminateServer(done)
@@ -58,7 +58,7 @@ describe('InventoryItem', () => {
     token: 'invalid'
   }
   const ITEM_WITHOUT_REQUIRED_FIELDS = {
-    name: "chocolate"
+    name: 'chocolate'
   }
   const ITEM_WITH_INVALID_NAME = {
     name: 'bob'
@@ -76,7 +76,7 @@ describe('InventoryItem', () => {
     it('Should return 403 when an invalid token is supplied', done => {
       chai
         .request(app)
-        //can you explain this routing
+        // can you explain this routing
         .post('/api/InventoryItem/addItem')
         .send(ITEM_WITH_INVALID_TOKEN)
         .then(function (res) {
@@ -129,15 +129,9 @@ describe('InventoryItem', () => {
           getItemsResponse.should.be.a('array')
           expect(getItemsResponse).to.have.length(1)
           expect(getItemsResponse[0].name).to.equal(VALID_NEW_ITEM.name)
-          expect(getItemsResponse[0].price).to.equal(
-            VALID_NEW_ITEM.price
-          )
-          expect(getItemsResponse[0].stock).to.equal(
-            VALID_NEW_ITEM.stock
-          )
-          expect(getItemsResponse[0].category).to.equal(
-            VALID_NEW_ITEM.category
-          )
+          expect(getItemsResponse[0].price).to.equal(VALID_NEW_ITEM.price)
+          expect(getItemsResponse[0].stock).to.equal(VALID_NEW_ITEM.stock)
+          expect(getItemsResponse[0].category).to.equal(VALID_NEW_ITEM.category)
           expect(getItemsResponse[0].picture).to.equal(VALID_NEW_ITEM.picture)
           expect(getItemsResponse[0].description).to.equal(
             VALID_NEW_ITEM.description
@@ -203,20 +197,14 @@ describe('InventoryItem', () => {
           const getItemsResponse = res.body
           expect(getItemsResponse).to.have.length(1)
           expect(getItemsResponse[0].name).to.equal(UPDATED_ITEM.name)
-          expect(getItemsResponse[0].price).to.equal(
-            UPDATED_ITEM.price
+          expect(getItemsResponse[0].price).to.equal(UPDATED_ITEM.price)
+          expect(getItemsResponse[0].stock).to.equal(UPDATED_ITEM.stock)
+          expect(getItemsResponse[0].category).to.equal(UPDATED_ITEM.category)
+          expect(getItemsResponse[0].description).to.equal(
+            UPDATED_ITEM.description
           )
-          expect(getItemsResponse[0].stock).to.equal(
-            UPDATED_ITEM.stock
-          )
-          expect(getItemsResponse[0].category).to.equal(
-            UPDATED_ITEM.category
-          )
-          expect(getItemsResponse[0].description).to.equal(UPDATED_ITEM.description)
-          expect(getItemsResponse[0].picture).to.equal(
-            UPDATED_ITEM.picture
-          )
-          
+          expect(getItemsResponse[0].picture).to.equal(UPDATED_ITEM.picture)
+
           done()
         })
         .catch(err => {
