@@ -128,7 +128,7 @@ const send = ({ templateType, recipientEmail, recipientName }) => {
             if (err) {
               reject(err);
             }
-            // This needs a .then or async statement so 
+            // This needs a .then or async statement so
             // it doesnt move until a new access token is created
             if (checkIfTokenIsExpired(JSON.parse(token))) {
               await refreshAccessToken();

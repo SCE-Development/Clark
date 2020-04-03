@@ -13,7 +13,7 @@ import { ApiResponse } from './ApiResponses';
  * @param {string} printRequest.projectType - e.g. Personal, School.
  * @param {string} printRequest.url - e.g. URL to the print file.
  * @param {string} printRequest.email - Any comments left on the request.
- * @returns {ApiResponse} - Containing any error information 
+ * @returns {ApiResponse} - Containing any error information
  *                          related to the request.
  */
 export async function submit3DPrintRequest(printRequest) {
@@ -117,7 +117,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
 /**
  * Search a specified 3D print request by it's email.
  * @param {string} email - The requesting user's email.
- * @returns {ApiResponse} - If the request was sucessfully, 
+ * @returns {ApiResponse} - If the request was sucessfully,
  *                          return array of requests.
  */
 export async function search3DPrintRequests(email) {

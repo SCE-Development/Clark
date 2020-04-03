@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Overview.css';
 import { Modal } from 'reactstrap';
 import InfoCard from '../Profile/admin/AdminView';
-import ConfirmationModal from 
+import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 const enums = require('../../Enums.js');

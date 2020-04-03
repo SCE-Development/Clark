@@ -16,7 +16,7 @@ import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage';
 import Events from '../../src/Pages/Events/EventList';
 import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js';
-import MembershipApplication from 
+import MembershipApplication from
   '../../src/Pages/MembershipApplication/membershipApplication.jsx';
 import Team from '../../src/Pages/TheTeam/TheTeam.js';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
@@ -281,7 +281,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
         expect(wrapper.find(MembershipApplication)).to.have.lengthOf(1);
       }
     );
-    it('Should redirect from the /2DPrinting endpoint ' + 
+    it('Should redirect from the /2DPrinting endpoint ' +
        'to the /login endpoint', () => {
       const wrapper = getComponentFromRoute('/2DPrinting', unauthedAppProps);
       expect(wrapper.find(Login)).to.have.lengthOf(1);

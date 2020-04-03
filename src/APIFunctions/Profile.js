@@ -57,9 +57,9 @@ export async function setEmailToVerified(email) {
 }
 
 /**
- * Formats the first and last name by making sure the 
+ * Formats the first and last name by making sure the
  * first letter of both are uppercase
- * @param {Object} user - The object contianing all 
+ * @param {Object} user - The object contianing all
  *                        of the user data fetched from mangoDB
  * @param {String} user.firstName - The first name of the user
  * @param {String} user.lastName - The last name of the user

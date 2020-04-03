@@ -27,7 +27,7 @@ function RequestForm(props) {
     { lgSize: '3', title: 'Requested Date:', value: item.date },
     { lgSize: '2', title: 'Progress:', value: item.progress }
   ];
-  
+
   const consoleButtons = [
     {
       color: 'primary',

@@ -180,7 +180,7 @@ describe('Users', () => {
       });
   });
 
-  // Failing. Right now if this test is included, then 
+  // Failing. Right now if this test is included, then
   // it removes the user from the database?
   // If this is commented out, then the user created above persists?
   describe('/POST checkIfUserExists with a user added', () => {
@@ -262,11 +262,11 @@ describe('Users', () => {
     });
 
     /**
-     * failing because user's default acesslevel is NOW -1 
+     * failing because user's default acesslevel is NOW -1
      * (pending), user can't login until verify email
      * fix this when email-verify-module is working
      */
-    // it('Should return statusCode 200 and a JWT token 
+    // it('Should return statusCode 200 and a JWT token
     // if the email/pass is correct', done => {
     //   const user = {
     //     email: 'a@b.c',

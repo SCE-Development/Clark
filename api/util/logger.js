@@ -4,16 +4,16 @@
 //  Date Created:  October 26, 2017
 //  Last Modified:  January 27, 2018
 //  Details:
-//      This file provides server.js with a means to log 
+//      This file provides server.js with a means to log
 //      events to log files in the log directory
 //  Dependencies:
 //      NodeJS (using ECMAscript 6 style JS)
 // Note:
-//     It is important to note that the idea of a 
-//     "const" in JS doesn't mean "is constant", but rather, 
-//     that "it can only be assigned ONCE", and thus all references 
-//     to the "logger" singleton are "constant" (i.e. referencing the 
-//     exact same object in memory). The logger singleton is still, 
+//     It is important to note that the idea of a
+//     "const" in JS doesn't mean "is constant", but rather,
+//     that "it can only be assigned ONCE", and thus all references
+//     to the "logger" singleton are "constant" (i.e. referencing the
+//     exact same object in memory). The logger singleton is still,
 //     therefore, not immutable, unless frozen with object.freeze().
 
 const fs = require('fs');
@@ -28,7 +28,7 @@ const testEnv = process.env.NODE_ENV === 'test';
 // Members
 /*
  @member  logger.logHeader
- @details  This member defines the heading 
+ @details  This member defines the heading
  prepended to each logfile's filename.
 */
 logger.logHeader = '__scelog__';
@@ -41,41 +41,41 @@ logger.fileMutex = true;
 
 /*
  @member  logger.dataQueue
- @details  This member is used as a queue for log data if a log was 
+ @details  This member is used as a queue for log data if a log was
  attempted while another log or process had the mutex
 */
-// queue for data to be written, if logs were requested 
+// queue for data to be written, if logs were requested
 // while a logger.fileMutex was unavailable
 logger.dataQueue = ['\n****\nInitializing event log system...\n****\n'];
 
 
 /*
  @member  logger.logToConsole
- @details  If true, this member will force the logger 
+ @details  If true, this member will force the logger
  to log its message to both the logfile and the console. Defaults to true.
 */
 logger.logToConsole = !testEnv;
 
 // @member   logger.blacklist
-// @details   This member is used to list which 
+// @details   This member is used to list which
 // handlers' messages should be ignored
 logger.blacklist = [];
 
 // Methods
 // @function  logger.ignore()
-// @description  This function tells the logger module to 
+// @description  This function tells the logger module to
 //     ignore certain messages for logging (both to
-//     console and to log file). If an message has a handler 
+//     console and to log file). If an message has a handler
 //     tag with a "src" attribute
-//     whose name is specified within the tagName(s), that 
+//     whose name is specified within the tagName(s), that
 //     message is ignored and not logged
-//     This function has a contextual usage. If no arguments 
+//     This function has a contextual usage. If no arguments
 //     are given, this function returns
-//     the current blacklist. If parameter tagNames is 
+//     the current blacklist. If parameter tagNames is
 //     given, the specified tagName is added to
-//     the message black list, and this function then 
+//     the message black list, and this function then
 //     returns the new blacklist.
-// @parameters  (~array) tagNames  An (optional) array 
+// @parameters  (~array) tagNames  An (optional) array
 // listing the handler tag names to ignore
 // @returns   (array) blacklist  The current message tags blacklist
 logger.ignore = function(tagNames = []) {
@@ -92,11 +92,11 @@ logger.ignore = function(tagNames = []) {
 };
 
 // @function  logger.interpret()
-// @description  This function tells the logger to 
+// @description  This function tells the logger to
 //   interpret certain messages for logging (both
-//     to console and to log file) by removing it 
+//     to console and to log file) by removing it
 //     from the blacklist (if it exists).
-// @parameter  (array) tagNames  An array listing 
+// @parameter  (array) tagNames  An array listing
 // the handler tag names to remove from
 //           the blacklist
 // @returns   n/a
@@ -121,9 +121,9 @@ logger.interpret = function(tagNames) {
 /*
  @function logger.log
  @parameter msg - the string message to log
- @parameter options - (optional) JSON object of 
+ @parameter options - (optional) JSON object of
  formatting options to customize how @parameter msg is written to the logfile
- @returns An object detailing the message that was 
+ @returns An object detailing the message that was
  logged (i.e. placed in log queue), and its log settings:
     {
      "timestamp": [message's timestamp],
@@ -133,26 +133,26 @@ logger.interpret = function(tagNames) {
      "src": [message's source]
     }
  @details
-    This function is used to record server events in daily 
-    logfiles within the log directory (defined in settings.js). 
-    The function places the messages in a queue and processes 
-    them as they come along. As previously implied, this function 
-    will store the message in the log file corresponding to current 
-    date that @function logger.log was called. If a logfile with today's 
-    date does not exist, that log file will be automatically created and 
+    This function is used to record server events in daily
+    logfiles within the log directory (defined in settings.js).
+    The function places the messages in a queue and processes
+    them as they come along. As previously implied, this function
+    will store the message in the log file corresponding to current
+    date that @function logger.log was called. If a logfile with today's
+    date does not exist, that log file will be automatically created and
     piped the message.
-    Whenever @function log is called, it automatically tags @parameter 
-    msg with a timestamp in front, and places it at the end of the 
-    logfile. If options is specified, it may contain any or 
+    Whenever @function log is called, it automatically tags @parameter
+    msg with a timestamp in front, and places it at the end of the
+    logfile. If options is specified, it may contain any or
     all of the following:
 
      {
-      "addNL": [true | false], // if true, automatically appends 
+      "addNL": [true | false], // if true, automatically appends
       newline to @parameter msg; defaults to true
-      "pad": [unsigned int], // if > 0, adds the specified amount of 
-      newlines before writing the timestamp and msg; 
+      "pad": [unsigned int], // if > 0, adds the specified amount of
+      newlines before writing the timestamp and msg;
       useful for placing separators in the logfile. Max is 50.
-      "src": [string] // if defined, adds this string before writing the 
+      "src": [string] // if defined, adds this string before writing the
       msg; useful for indicating where the message is being logged from
      }
  @notes
@@ -208,13 +208,13 @@ logger.log = function(
     src: options.src
   };
 
-  // If this message's tag is in the black list, 
+  // If this message's tag is in the black list,
   // don't log it or print it out at all!
   if (srcIsBlacklisted) {
     detailedInfo.ignored = true;
   }
 
-  // If no other process is using the file, take the file mutex so 
+  // If no other process is using the file, take the file mutex so
   // that no other log call can write. Then, flush all messages.
   if (logger.fileMutex === true && !srcIsBlacklisted) {
     // Take mutex

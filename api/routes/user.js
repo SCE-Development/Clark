@@ -104,8 +104,8 @@ router.post('/login', function(req, res) {
         logger.log('User/pass doesn\'t match our records: ', req.body.email);
         res
           .status(UNAUTHORIZED)
-          .send({ 
-            message: 'Username or password does not match our records.' 
+          .send({
+            message: 'Username or password does not match our records.'
           });
       } else {
         // Check if password matches database
@@ -401,13 +401,13 @@ function checkIfPageCountResets(lastLogin) {
 
   const newDate = new Date();
   // + 1 to account for daylight savings time
-  newDate.setDate(newDate.getDate() + 1); 
+  newDate.setDate(newDate.getDate() + 1);
   const amountOfDaysToLastSunday = newDate.getDate() - newDate.getDay();
   const lastSundayDate = new Date();
   lastSundayDate.setDate(amountOfDaysToLastSunday); // last sunday
   lastSundayDate.setHours(23, 59, 59); // 11:59:59 PM
 
-  // If the last login is before last Sunday 
+  // If the last login is before last Sunday
   // at 1 second before midnight, return true
   if (lastLogin < lastSundayDate) return true;
 

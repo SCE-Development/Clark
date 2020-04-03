@@ -15,7 +15,7 @@ import {
 import { eventModalState } from '../../Enums';
 import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event';
 import { validateImageURL } from '../../APIFunctions/Image.js';
-import ConfirmationModal from 
+import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
 function EventManagerModal(props) {

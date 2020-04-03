@@ -26,7 +26,7 @@ export async function getAllUsers(token) {
 
 /**
  * Checks if the user is signed in by evaluating a jwt token in local storage.
- * @returns {UserApiResponse} Containing information for 
+ * @returns {UserApiResponse} Containing information for
  *                            whether the user is signed
  * in or not
  */
@@ -68,7 +68,7 @@ export async function checkIfUserIsSignedIn() {
  * frontend
  * @param {(string|undefined)} userToRegister.major
  * @param {(string|undefined)} userToRegister.numberOfSemestersToSignUpFor
- * @returns {UserApiResponse} containing if the search 
+ * @returns {UserApiResponse} containing if the search
  *                            was successful or error data
  */
 export async function registerUser(userToRegister) {

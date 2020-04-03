@@ -16,7 +16,7 @@ const defaults = {
   util: __dirname,
   logdir: path.join(__dirname, '/../log'),
   // toggles the availability of certain development tools
-  developmentMode: true, 
+  developmentMode: true,
   sessionIdleTime: 20 // minutes
 };
 

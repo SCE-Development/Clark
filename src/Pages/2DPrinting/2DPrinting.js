@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './2D-printing.css';
-import ConfirmationModal from 
+import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 import {
   Jumbotron,
