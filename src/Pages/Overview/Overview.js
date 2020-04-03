@@ -14,7 +14,6 @@ export default class OverviewBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // All users array, update by callDatabase
       users: [],
       queryResult: [],
       toggle: false,
@@ -43,6 +42,10 @@ export default class OverviewBoard extends Component {
     // console.log(apiResponse);
 
     if (!apiResponse.error) this.setState({ users: apiResponse.responseData });
+  }
+
+  updateUserState(users) {
+    this.setState({ users });
   }
 
   updateQuery(value) {
@@ -179,10 +182,10 @@ export default class OverviewBoard extends Component {
                 return (
                   <OverviewProfile
                     key={index}
+                    users={this.state.users}
                     user={user}
                     index={index}
                     token={this.state.authToken}
-                    callDatabase={this.callDatabase.bind(this)}
                     deleteUser={this.deleteUser.bind(this)}
                     updateQuery={() => {
                       this.setState(
@@ -190,6 +193,7 @@ export default class OverviewBoard extends Component {
                         this.updateQuery('#InvalidSearch#')
                       );
                     }}
+                    updateUserState={this.updateUserState}
                   />
                 );
               })
@@ -197,10 +201,10 @@ export default class OverviewBoard extends Component {
                 return (
                   <OverviewProfile
                     key={index}
+                    users={this.state.users}
                     user={user}
                     index={index}
                     token={this.state.authToken}
-                    callDatabase={this.callDatabase.bind(this)}
                     deleteUser={this.deleteUser.bind(this)}
                     updateQuery={() => {
                       this.setState(
@@ -208,6 +212,7 @@ export default class OverviewBoard extends Component {
                         this.updateQuery('#InvalidSearch#')
                       );
                     }}
+                    updateUserState={this.updateUserState.bind(this)}
                   />
                 );
               })}

@@ -29,7 +29,6 @@ export default function OverviewProfile(props) {
   function mark(bool) {
     return bool ? svg.checkMark() : svg.xMark();
   }
-
   return (
     <tr>
       <td>
@@ -46,7 +45,7 @@ export default function OverviewProfile(props) {
 
       <td>
         <button
-          className='delete'
+          className='overview-icon'
           onClick={() => {
             setToggleDelete(!toggleDelete);
           }}
@@ -57,7 +56,7 @@ export default function OverviewProfile(props) {
 
       <td>
         <button
-          className='delete'
+          className='overview-icon'
           onClick={() => {
             setToggle(!toggle);
           }}
@@ -69,16 +68,17 @@ export default function OverviewProfile(props) {
       <Modal
         isOpen={toggle}
         toggle={() => {
-          props.callDatabase();
           setToggle(!toggle);
           props.updateQuery();
         }}
       >
-        {svg.cancelEditSymbol(props.callDatabase, () => {
+        {svg.cancelEditSymbol(() => {
           props.updateQuery();
           setToggle(!toggle);
         })}
-        <InfoCard user={props.user} token={props.token} />
+        <InfoCard updateUserState={props.updateUserState}
+          users={props.users} user={props.user}
+          token={props.token} />
       </Modal>
 
       <ConfirmationModal {...confirmModalProps} />

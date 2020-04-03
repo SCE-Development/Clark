@@ -25,7 +25,8 @@ describe('<AdminViewEditor />', () => {
     major: 'major',
     pagesPrinted: 20
   };
-  const wrapper = mount(<AdminViewEditor user={user} token='token' />);
+  const wrapper = mount(<AdminViewEditor updateUserState={() => { }}
+    users={[]} user={user} token='token' />);
 
   it('Should render a <AdminProfileEditor /> component with one child', () => {
     expect(wrapper.find(AdminProfileEditor)).to.have.lengthOf(1);

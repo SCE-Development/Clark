@@ -78,7 +78,7 @@ thead.td{
 }
 
 .icon-button,
-.delete{
+.overview-icon{
 
   background-color: transparent;
   outline: none;
@@ -90,7 +90,7 @@ thead.td{
   margin: 5px
 }
 
-.delete:hover{
+.overview-icon:hover{
   padding: 5px;
   border-radius: 20px;
 
