@@ -1,4 +1,4 @@
-
+/* 
 #body
 {
   min-height: 100vh;
@@ -12,7 +12,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%,-5%);
-}
+} */
 
 #body h1
 {
@@ -52,6 +52,7 @@
   cursor: pointer;
   transition: .5s;
 }
+
 #loginBtn:hover
 {
   background-position: bottom;
@@ -69,6 +70,27 @@
   width: 300px;
   height: 300px;
   position: relative;
-  transform: translate(-2%,0%);
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
   top: -20px;
+}
+
+.form-card-login {
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 20%;
+  min-width: 400px;
+  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 20px;
+  padding: 1.5rem;
+  background: white;
+  flex: none;
+
+  margin: 0;
+  justify-content: center;
 }

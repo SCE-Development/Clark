@@ -11,7 +11,8 @@
     "frontend": "react-scripts start",
     "build": "react-scripts build",
     "deploy": "git pull && npm install && pm2 stop database api app && pm2 delete database api app && pm2 start mongod --name \"database\" && npm run build && pm2 start npm --name \"app\" -- start && pm2 start npm \"app\" -- run dev",
-    "lint": "./node_modules/.bin/eslint src/ api/models/ api/mailer/ api/routes/ api/util util/ test/"
+    "lint": "./node_modules/.bin/eslint src/ api/models/ api/mailer/ api/routes/ api/util util/ test/",
+    "meme": "mocha --require @babel/register test/APIfunctions/*.js"
   },
   "keywords": [
     "sce_core",
@@ -51,7 +52,12 @@
   },
   "devDependencies": {
     "@babel/register": "^7.9.0",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.1.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "enzyme": "^3.11.0",
