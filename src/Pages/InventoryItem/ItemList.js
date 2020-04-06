@@ -2,7 +2,6 @@ import React from 'react';
 import Item from './Item'
 const ItemList = (props) =>{
     return(
-         
         props.items.filter((ele)=>{
             return (ele.name.toLocaleLowerCase().includes(props.search.toLowerCase()) 
             ||props.search === "")
@@ -19,11 +18,8 @@ const ItemList = (props) =>{
                     stock = {ele.stock}
                     cat = {ele.cat}
                     pic = {ele.pic}                            
-                />
-
-                
-            )
-        
+                />    
+            )    
         })
     )
 }

@@ -2,10 +2,9 @@
     border-collapse: collapse;
     margin: 25px;
     font-size: 0.9em;
-    /* max-width: 1000px;
-    min-width: 1000px; */
     min-width: 1000px;
     border-bottom: black;
+    display: inline;    
 }
 
 .inventoryTable thead tr{
@@ -23,14 +22,15 @@
     
 .inventoryTable tr td{ 
     width: 150px;
-    /* text-align: left; */
+    text-align: center;
 }
 
 .inventoryTable tbody tr{
     height: 100px;
 }
 .inventoryLayout{
-    display: inline-block;
+    text-align: center;
+    width:100%;
 }
 
 h1{
@@ -43,6 +43,7 @@ h1{
     border-color: lightblue;
     outline: transparent;
     padding: 5px;
+    margin: 10px
 }
 
 .categoryDropdown{

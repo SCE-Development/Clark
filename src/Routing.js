@@ -98,7 +98,8 @@ export default function Routing({ appProps }) {
       Component: InventoryDashboard,
       path: '/inventory',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: '/login'
+      redirect: '/login',
+      inAdminNavbar: true
     }
   ];
   const signedOutRoutes = [
