@@ -5,7 +5,8 @@ const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES;
 const { addErrorLog } = require('../util/errorLog-function');
 
 router.post('/addErrorLog', async (req, res) => {
-  if (!await addErrorLog(req)) {
+  if (!await addErrorLog(req.body.userEmail, req.body.errorTime,
+    req.body.apiEndpoint, req.body.errorDescription)) {
     return res.sendStatus(BAD_REQUEST);
   } else {
     res.sendStatus(OK);
