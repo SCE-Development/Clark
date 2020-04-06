@@ -12,10 +12,10 @@ const ErrorLog = require('../models/ErrorLog');
 async function addErrorLog(userEmail, errorTime, apiEndpoint, errorDescription){
   let errorSaved = true;
   const newError = new ErrorLog({
-    userEmail: userEmail,
-    errorTime: errorTime,
-    apiEndpoint: apiEndpoint,
-    errorDescription: errorDescription
+    userEmail,
+    errorTime,
+    apiEndpoint,
+    errorDescription
   });
   await newError.save()
     .catch(_ => {
