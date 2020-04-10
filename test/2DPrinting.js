@@ -10,8 +10,10 @@ const tools = require('./util/tools/tools.js');
 const PrintFunctions =
 require('../api/printingRPC/client/printing/print_client');
 const sinon = require('sinon');
+const SceApiTester = require('../test/util/tools/SceApiTester');
 
 let app = null;
+let test = null;
 const expect = chai.expect;
 
 chai.should();
@@ -25,12 +27,14 @@ const TEXT_REQUEST = {
   sides: 'one-sided',
   destination: 'HP-LaserJet-p2015dn'
 };
+const INVALID_REQUEST = {copies: 1};
 
 describe('2DPrinting', () => {
   const sendPrintRequestMock = sinon.stub(PrintFunctions, 'sendPrintRequest');
 
   before(done => {
     app = tools.initializeServer(__dirname + '/../api/routes/print.js');
+    test = new SceApiTester(app);
     done();
   });
 
@@ -44,32 +48,17 @@ describe('2DPrinting', () => {
   });
 
   describe('/POST submit', () => {
-    it('Should return statuscode 200 when it prints', done => {
+    it('Should return statuscode 200 when it prints', async () => {
       sendPrintRequestMock.resolves(SUCCESS_MESSAGE);
-      chai
-        .request(app)
-        .post('/api/print/submit')
-        .send(TEXT_REQUEST)
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequest(
+        '/api/print/submit', TEXT_REQUEST);
+      expect(result).to.have.status(OK);
     });
-    it('Should return statuscode 400 when there is an error', done => {
+    it('Should return statuscode 400 when there is an error', async () => {
       sendPrintRequestMock.rejects(ERROR_MESSAGE);
-      chai
-        .request(app)
-        .post('/api/print/submit')
-        .then(function(res) {
-          expect(res).to.have.status(BAD_REQUEST);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequest(
+        '/api/print/submit', INVALID_REQUEST);
+      expect(result).to.have.status(BAD_REQUEST);
     });
   });
 });
