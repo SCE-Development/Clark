@@ -4,7 +4,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const constants = require('../api/constants');
 const { OK, BAD_REQUEST } = constants.STATUS_CODES;
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 const send3dPrintRequest =
   require('../api/printingRPC/client/printing_3d/print_3d_client');
 const sinon = require('sinon');
