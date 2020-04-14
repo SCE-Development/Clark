@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { UserApiResponse } from './ApiResponses';
+import { membershipState, userFilterType } from '../Enums';
 
 /**
  * Queries the database for all users.
@@ -150,4 +151,32 @@ export async function checkIfUserExists(email) {
     status.error = true;
   });
   return status;
+}
+
+/**
+ * This function takes in a list of current users and returns a
+ * filtered user list that is determined by the filter id.
+ * @param {array} users array of all registered users
+ * @param {integer} filterID represents what to filter email by
+ * @returns {array} filtered array of users
+ */
+export function filterUsers(users, filterID) {
+  let filteredUsers = users.filter((user) => {
+    const d = new Date();
+    if(filterID === userFilterType.VALID){
+      if(user.accessLevel >= membershipState.MEMBER &&
+             user.membershipValidUntil > d.toISOString()){
+        return user;
+      }
+    } else if(filterID === userFilterType.NON_VALID){
+      if(user.accessLevel === membershipState.NON_MEMBER ||
+        user.accessLevel === membershipState.PENDING){
+        return user;
+      }
+    } else{
+      return user;
+    }
+    return '';
+  });
+  return filteredUsers;
 }

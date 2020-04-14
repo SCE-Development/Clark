@@ -6,7 +6,8 @@ import {
   ButtonDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  Button
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
 import Header from '../../Components/Header/Header';
@@ -130,7 +131,7 @@ export default class OverviewBoard extends Component {
   render() {
     return (
       <div>
-        <Header {...this.headerProps} />
+        <Header {...this.headerProps}/>
         <div className='layout'>
           <h6 id='search-tag'>Search </h6>
           <ButtonDropdown
@@ -154,6 +155,10 @@ export default class OverviewBoard extends Component {
               ))}
             </DropdownMenu>
           </ButtonDropdown>
+
+          <a href="/email-list">
+            <Button outline id="view-email-button">View Emails</Button>
+          </a>
 
           <input
             className='input-overview'

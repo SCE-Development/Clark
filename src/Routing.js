@@ -6,6 +6,7 @@ import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
 import Overview from './Pages/Overview/Overview';
+import EmailPage from './Pages/EmailList/EmailPage';
 import EventManager from './Pages/EventManager/EventManager';
 import Login from './Pages/Login/Login';
 import Profile from './Pages/Profile/MemberView/Profile';
@@ -38,6 +39,13 @@ export default function Routing({ appProps }) {
     {
       Component: Overview,
       path: '/dashboard',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    },
+    {
+      Component: EmailPage,
+      path: '/email-list',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true

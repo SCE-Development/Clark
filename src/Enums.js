@@ -49,6 +49,12 @@ const membershipStatusArray = [
   'Admin'
 ];
 
+const userFilterType = {
+  VALID: 0,
+  NON_VALID: 1,
+  ALL: 2
+};
+
 function membershipStateToString(index) {
   return membershipStatusArray[index + 2];
 }
@@ -60,5 +66,6 @@ module.exports = {
   memberShipPlanToString,
   membershipState,
   membershipStateToString,
-  itemCategories
+  itemCategories,
+  userFilterType
 };
