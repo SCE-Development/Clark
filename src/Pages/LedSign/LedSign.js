@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { Spinner, Input, Button, Container } from 'reactstrap';
 import './led-sign.css';
+import Header from '../../Components/Header/Header';
 
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
@@ -61,6 +62,9 @@ function LedSign(props) {
       onChange: e => setScrollSpeed(e.target.value)
     }
   ];
+  const headerProps = {
+    title: 'LED Sign'
+  };
 
   async function handleSend() {
     setAwaitingSignResponse(true);
@@ -124,29 +128,32 @@ function LedSign(props) {
   }
 
   return (
-    <div className='sign-wrapper'>
-      <Container>
-        <h1 className='sign-status'>
-          Sign Status:
-          {renderSignHealth()}
-        </h1>
-      </Container>
-      {inputArray.map((input, index) => {
-        return (
-          <div key={index} className='full-width'>
-            <label>{input.title}</label>
-            <Input disabled={loading || !signHealthy} {...input} />
-          </div>
-        );
-      })}
-      <Button
-        id='led-sign-send'
-        onClick={handleSend}
-        disabled={loading || !signHealthy || awaitingSignResponse}
-      >
-        {awaitingSignResponse ? <Spinner /> : 'Send'}
-      </Button>
-      {renderRequestStatus()}
+    <div>
+      <Header {...headerProps} />
+      <div className='sign-wrapper'>
+        <Container>
+          <h1 className='sign-status'>
+            Sign Status:
+            {renderSignHealth()}
+          </h1>
+        </Container>
+        {inputArray.map((input, index) => {
+          return (
+            <div key={index} className='full-width'>
+              <label>{input.title}</label>
+              <Input disabled={loading || !signHealthy} {...input} />
+            </div>
+          );
+        })}
+        <Button
+          id='led-sign-send'
+          onClick={handleSend}
+          disabled={loading || !signHealthy || awaitingSignResponse}
+        >
+          {awaitingSignResponse ? <Spinner /> : 'Send'}
+        </Button>
+        {renderRequestStatus()}
+      </div>
     </div>
   );
 }
