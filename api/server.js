@@ -74,7 +74,7 @@ class Server {
     // Main Server Routine - Listen for requests on specified port
     if (!port) {
       logger.log(`Using default port ${settings.port}`, handlerTag)
-      testEnv ? port = TESTING_PORT : port = settings.port 
+      port = testEnv ? TESTING_PORT : port = settings.port 
     } else {
       logger.log(`Using custom port ${port}`, handlerTag)
       settings.port = port
