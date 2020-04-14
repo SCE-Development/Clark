@@ -10,7 +10,7 @@ import {
   Button
 } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
-import Ionicon from 'react-ionicons';
+import { clockSymbol, mapPinSymbol} from '../Overview/SVG';
 
 function EventInfoModal(props) {
   const { modal, toggle, currentEvent } = props;
@@ -23,14 +23,14 @@ function EventInfoModal(props) {
         <Container className='center'>
           <Col>
             <Row className='event-date'>
-              <Ionicon icon='md-time' fontSize='1.5rem' color='#0098ab' />
-              {getDateWithSlashes(currentEvent.eventDate.slice(0, 10))}{' '}
+              {clockSymbol()}{'   '}
+              {getDateWithSlashes(currentEvent.eventDate.slice(0, 10))}{'  '}
               {currentEvent.startTime} - {currentEvent.endTime}
             </Row>
           </Col>
           <Col>
             <Row className='event-location'>
-              <Ionicon icon='md-pin' fontSize='1.5rem' color='#414141bd' />
+              {mapPinSymbol()}
               {currentEvent.eventLocation}
             </Row>
           </Col>

@@ -8,6 +8,7 @@ import EventCard from '../../src/Pages/Events/EventCard';
 import Adapter from 'enzyme-adapter-react-16';
 import { Row } from 'reactstrap';
 import { getDateWithSlashes } from '../../src/APIFunctions/Event';
+import {clockSymbol, mapPinSymbol} from '../../src/Pages/Overview/SVG.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -33,14 +34,20 @@ describe('<EventCard />', () => {
         .get(1)
         .props.children.join('')
     ).to.equal(
+      `${clockSymbol()}` + '  ' +
       `${getDateWithSlashes(appProps.eventDate)} ${appProps.startTime} - ` +
         `${appProps.endTime}`
     );
   });
   it('Should render the location of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find(Row).get(3).props.children[1]).to.equal(
-      appProps.eventLocation
+    expect(
+      wrapper
+        .find(Row)
+        .get(3)
+        .props.children.join('')
+    ).to.equal(
+      `${mapPinSymbol()}` + '' + appProps.eventLocation
     );
   });
   it('Should render the description of the event', () => {
