@@ -114,3 +114,14 @@ thead.td{
 #search-tag {
   display: inline;
 }
+
+#view-email-button {
+  border-color: rgb(2, 107, 126) ;
+  color: rgb(2, 107, 126) ;
+  margin-left: 8px;
+}
+
+#view-email-button:hover {
+  background-color: rgb(2, 107, 126);
+  color: white;
+}

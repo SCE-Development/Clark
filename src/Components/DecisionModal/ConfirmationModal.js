@@ -7,16 +7,26 @@ export default function ConfirmationModal(props) {
   const confirmText = props.confirmText || 'Confirm';
   const cancelText = props.cancelText || 'Cancel';
   const confirmButtonColor = props.confirmColor || 'danger';
-
+  const confirmButtonCSS = props.confirmButtonCSS || '';
+  const cancelButtonCSS = props.cancelButtonCSS || '';
   return (
     <Modal isOpen={open} toggle={toggle}>
       <ModalHeader toggle={toggle}>{headerText}</ModalHeader>
       <ModalBody>{bodyText}</ModalBody>
       <ModalFooter>
-        <Button color={confirmButtonColor} onClick={handleConfirmation}>
+        <Button
+          color={confirmButtonColor}
+          onClick={handleConfirmation}
+          id={confirmButtonCSS}
+        >
           {confirmText}
         </Button>
-        <Button onClick={toggle}>{cancelText}</Button>
+        <Button
+          onClick={toggle}
+          id={cancelButtonCSS}
+        >
+          {cancelText}
+        </Button>
       </ModalFooter>
     </Modal>
   );
