@@ -19,6 +19,7 @@ const handlerTag = { src: 'server' }
 // Ensure a test database is ran when running End-to-End tests
 const testEnv = process.env.NODE_ENV === 'test'
 const database = testEnv ? 'sce_core_test' : 'sce_core'
+const TESTING_PORT = 5001
 
 class Server {
   constructor () {
@@ -73,7 +74,7 @@ class Server {
     // Main Server Routine - Listen for requests on specified port
     if (!port) {
       logger.log(`Using default port ${settings.port}`, handlerTag)
-      port = settings.port
+      port = testEnv ? TESTING_PORT : port = settings.port 
     } else {
       logger.log(`Using custom port ${port}`, handlerTag)
       settings.port = port
