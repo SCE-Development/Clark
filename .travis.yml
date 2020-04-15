@@ -58,6 +58,7 @@ matrix:
             - python setup.py
             - npm install
           script:
+            - npm run lint
             - npm run api-test
             - npm run frontend-test
             - npm run build
