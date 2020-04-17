@@ -92,7 +92,7 @@ export default function Routing({ appProps }) {
       path: '/profile',
       allowedIf: userIsAuthenticated,
       redirect: '/login'
-    }
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

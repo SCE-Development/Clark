@@ -7,7 +7,8 @@ const routes = [
   'print',
   'LedSign',
   '3DPrinter',
-  'Advertisement'
+  'Advertisement',
+  'InventoryItem'
 ]
 
 module.exports = routes;
