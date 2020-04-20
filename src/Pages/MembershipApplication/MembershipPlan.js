@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './register-page.css';
+import './MembershipPlan.css';
 import fall from './assets/fall.jpg';
 import fall2 from './assets/fall2.jpeg';
 import winter from './assets/winter.jpeg';
@@ -21,7 +21,29 @@ class MembershipPlan extends Component {
       activeId: undefined,
       planSelected: false,
       year: new Date().getFullYear(),
-      planType: []
+      planType: [],
+      blocks: [
+        {
+          className: 'how-to-join-block',
+          title: 'HOW TO JOIN',
+          details: [
+            '1️⃣ SELECT a plan below',
+            '2️⃣ CLICK on "Add Account Information"',
+            '3️⃣ Sign Up @ SCE (ENGR 294)'
+          ],
+        },
+        {
+          className: 'why-join-block',
+          title: 'WHY JOIN',
+          details: [
+            '🌱 Free Paper Printing 🖨️ Free 3D Printing',
+            '🏢 Company Tours 💯 Access to Workshops',
+            '👕 Free Club T-Shirt 🏠 Free Door Code',
+            'Club Bonding Events: Potlucks, Game Nights'
+          ],
+        }
+      ],
+
     };
   }
 
@@ -45,7 +67,7 @@ class MembershipPlan extends Component {
       plan.includes('Fall ' + this.state.year) ||
       plan.includes('Spring and Fall ' + this.state.year)
     ) {
-      return `December 20th, ${this.state.year}`;
+      return `Dec. 20th, ${this.state.year}`;
     }
     return `May 20th, ${this.state.year}`;
   }
@@ -56,13 +78,17 @@ class MembershipPlan extends Component {
       planType: [
         {
           plan: getSemesterPlan(),
+          header: 'SEMESTER PLAN',
           img: this.state.semesterPicture,
-          expire: this.getExpirationDate(getSemesterPlan())
+          expire: this.getExpirationDate(getSemesterPlan()),
+          price: '💵$20'
         },
         {
           plan: getYearPlan(),
+          header: 'ANNUAL PLAN',
           img: this.state.yearPicture,
-          expire: this.getExpirationDate(getYearPlan())
+          expire: this.getExpirationDate(getYearPlan()),
+          price: '💵$30'
         }
       ]
     });
@@ -83,45 +109,60 @@ class MembershipPlan extends Component {
 
   render() {
     return (
-      <Container>
-        <h1>Hi! We're glad you're here.</h1>
-        <div className='membership'>
-          <Row className='membership-plan-row'>
-            {this.state.planType.map((type, ind) => (
-              <div
-                className={
-                  type.plan === this.state.activeId
-                    ? 'card membership-card active-plan'
-                    : 'card membership-card'
-                }
-                id={type.plan}
-                key={ind}
-                onClick={this.cardSelected.bind(this, type.plan)}
+      <div className='background'>
+        <Container id='container-membership-plan'>
+          <h1 className='greet'>Welcome</h1>
+          <div className='card'>
+            <div className='membership'>
+              <Container className='top-chunk'>
+                <Row className='benefit-block grid'>
+                  {this.state.blocks.map((type, ind) => (
+                    <div key={ind} className={type.className}>
+                      {type.title}
+                      {type.details.map((text, index) =>
+                        (<p className='deets' key={index}>{text}</p>))}
+                    </div>
+                  ))
+                  }
+                </Row>
+              </Container>
+              <Row className='membership-plan-row'>
+                {this.state.planType.map((type, ind) => (
+                  <div
+                    className={
+                      type.plan === this.state.activeId
+                        ? 'membership-card active-plan'
+                        : 'membership-card'
+                    }
+                    id={type.plan}
+                    key={ind}
+                    onClick={this.cardSelected.bind(this, type.plan)}
+                  >
+                    <div className='membership-heading'>{type.header}</div>
+                    <h3 className='membership-price'>{type.price}
+                      <p className='expiration'>*Expires on {type.expire}.</p>
+                    </h3>
+                  </div>
+                ))}
+              </Row>
+              <Row
+                className='transition-button-wrapper'
+                id='membership-plan-btn'
               >
-                <img className='img' alt='card' src={type.img} />
-                <div className='card-body'>
-                  <h4 style={{ alignSelf: 'left' }}>{type.plan}</h4>
-                  <h6 style={{ margin: 5 }}>
-                    Access to our club room during legal building hours. Access
-                    to our events and news. And much more! This membership lasts
-                    a semester and expires on {type.expire}. Sign Up @ SCE (ENGR
-                    294)
-                  </h6>
-                </div>
-              </div>
-            ))}
-          </Row>
-        </div>
-        <Row className='transition-button-wrapper' id='membership-plan-btn'>
-          <Button
-            disabled={!this.state.planSelected}
-            onClick={() =>
-              this.props.setMembershipState(memberApplicationState.FORM_INFO)}
-          >
-            Add account information
-          </Button>
-        </Row>
-      </Container>
+                <Button className='add-acc' style={{ marginBottom: '30px' }}
+                  disabled={!this.state.planSelected}
+                  onClick={() =>
+                    this.props
+                      .setMembershipState(memberApplicationState.FORM_INFO)
+                  }
+                >
+                  Add Account Information
+                </Button>
+              </Row>
+            </div>
+          </div>
+        </Container>
+      </div>
     );
   }
 }
