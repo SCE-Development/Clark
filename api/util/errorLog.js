@@ -9,13 +9,13 @@ const ErrorLog = require('../models/ErrorLog');
  * @param {string} req.body.apiEndpoint - The location of the error
  * @param {string} req.body.errordescription - The description of the error
  */
-async function addErrorLog(req){
+async function addErrorLog(userEmail, errorTime, apiEndpoint, errorDescription){
   let errorSaved = true;
   const newError = new ErrorLog({
-    userEmail: req.userEmail,
-    errorTime: req.errorTime,
-    apiEndpoint:req.apiEndpoint,
-    errorDescription: req.errorDescription
+    userEmail,
+    errorTime,
+    apiEndpoint,
+    errorDescription
   });
   await newError.save()
     .catch(_ => {

@@ -14,21 +14,11 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
-const addErrorLog = require ('../util/errorLog');
 
 router.get('/getEvents', (req, res) => {
   Event.find()
     .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
-    .then(items => res.status(OK).send(items))
-    .catch(err => {
-      const info = {
-        errorTime: new Date(),
-        apiEndpoint: 'Event/getEvents',
-        errorDescription: 'error'
-      };
-      addErrorLog(info);
-      res.status(BAD_REQUEST).send({ err, message: 'deleting event failed' });
-    });
+    .then(items => res.status(OK).send(items));
 });
 
 router.post('/createEvent', (req, res) => {
