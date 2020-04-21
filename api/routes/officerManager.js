@@ -18,7 +18,6 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
-const addErrorLog = require('../util/errorLog');
 
 router.post('/submit', (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -54,13 +53,7 @@ router.post('/GetForm', (req, res) => {
 
   Manager.find(obj, (error, forms) => {
     if (error) {
-      const info = {
-        userEmail:req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: 'officerManager/GetForm',
-        errorDescription: 'error'
-      };
-      addErrorLog(info);
+      logger.log(`Officer Manager /GetForm error: ${error}`);
       return res.sendStatus(BAD_REQUEST);
     }
 
@@ -78,13 +71,7 @@ router.post('/delete', (req, res) => {
   }
   Manager.deleteOne({ email: req.body.email }, function(error, form) {
     if (error) {
-      const info = {
-        userEmail: req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: 'officerManager/delete',
-        errorDescription: 'error'
-      };
-      addErrorLog(info);
+      logger.log(`Officer Manager /Delete3DForm error: ${error}`);
       return res.sendStatus(BAD_REQUEST);
     }
 
@@ -114,13 +101,7 @@ router.post('/edit', (req, res) => {
 
   Manager.updateOne(query, { ...form }, function(error, result) {
     if (error) {
-      const info = {
-        userEmail:req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: 'officerManager/edit',
-        errorDescription: 'error'
-      };
-      addErrorLog(info);
+      logger.log(error);
       return res.sendStatus(BAD_REQUEST);
     }
     if (result.nModified < 1) {

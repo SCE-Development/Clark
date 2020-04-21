@@ -14,7 +14,6 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
-const addErrorLog = require('../util/errorLog');
 
 router.post('/getItems', (req, res) => {
   const category = req.body.category ? { category: req.body.category } : {};
@@ -89,12 +88,6 @@ router.post('/deleteItem', (req, res) => {
   }
   InventoryItem.deleteOne({ name: req.body.name }, (error, form) => {
     if (error) {
-      const info = {
-        errorTime: new Date(),
-        apiEndpoint: 'InventoryItem/deleteItem',
-        errorDescription: 'error'
-      };
-      addErrorLog(info);
       return res.sendStatus(BAD_REQUEST);
     }
     if (form.n < 1) {

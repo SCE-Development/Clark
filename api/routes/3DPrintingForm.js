@@ -16,7 +16,6 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
-const addErrorLog = require('../util/errorLog');
 
 router.post('/submit', (req, res) => {
   const data = {
@@ -46,13 +45,7 @@ router.post('/GetForm', (req, res) => {
 
   PrintingForm3D.find(obj, (error, forms) => {
     if (error) {
-      const info = {
-        userEmail: req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: '3DPrintingForm/GetForm',
-        errorDescription: 'error'
-      };
-      addErrorLog(info);
+      logger.log(`3DPrinting /GetForm error: ${error}`);
       return res.sendStatus(BAD_REQUEST);
     }
 
