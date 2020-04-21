@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES;
 const Advertisement = require('../models/Advertisement');
+const addErrorLog = require('../util/errorLog');
 
 router.post('/addAdvertisement', (req, res) => {
   const newAd = new Advertisement({
