@@ -14,6 +14,7 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
+const addErrorLog = require('../util/errorLog');
 
 router.post('/getItems', (req, res) => {
   const category = req.body.category ? { category: req.body.category } : {};
@@ -44,15 +45,15 @@ router.post('/editItem', (req, res) => {
             .status(OK)
             .json({ ret, item: 'Inventory item updated successfully' });
         })
-        .catch(err => {
+        .catch(error => {
           res.status(BAD_REQUEST).send({
-            err,
+            error,
             message: 'Inventory item was not updated'
           });
         });
     })
-    .catch(err => {
-      res.status(NOT_FOUND).send({ err, message: 'item not found' });
+    .catch(error => {
+      res.status(NOT_FOUND).send({ error, message: 'item not found' });
     });
 });
 
@@ -88,6 +89,12 @@ router.post('/deleteItem', (req, res) => {
   }
   InventoryItem.deleteOne({ name: req.body.name }, (error, form) => {
     if (error) {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'InventoryItem/deleteItem',
+        errorDescription: error
+      };
+      addErrorLog(info);
       return res.sendStatus(BAD_REQUEST);
     }
     if (form.n < 1) {
