@@ -58,7 +58,7 @@
     "ignore-styles": "^5.0.1",
     "jsdom": "^16.2.2",
     "jsdom-global": "^3.0.2",
-    "mocha": "^7.1.1",
+    "mocha": "^7.1.2",
     "sinon": "^9.0.2",
     "standard": "^14.3.3"
   },
