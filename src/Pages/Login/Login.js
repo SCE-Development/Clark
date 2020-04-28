@@ -1,27 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Row, Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/User';
 import './login.css';
 
-import spring from '../MembershipApplication/assets/spring.jpg';
-import fall from '../MembershipApplication/assets/fall2.jpeg';
-
 export default function Login(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [semesterImage, setSemesterImage] = useState({
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundImage: `url(${spring})`,
-    backgroundPosition: 'center',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'noRepeat',
-    minHeight: '680px'
-  });
   const fields = [
     {
       type: 'email',
@@ -49,22 +36,8 @@ export default function Login(props) {
     }
   }
 
-  function getSemesterImage() {
-    const month = new Date().getMonth() + 1;
-    if (month >= 6) {
-      setSemesterImage({
-        ...semesterImage,
-        backgroundImage: `url(${fall})`
-      });
-    }
-  }
-
-  useEffect(() => {
-    getSemesterImage();
-  });
-
   return (
-    <Container fluid style={semesterImage}>
+    <Container fluid className='background'>
       <Row className='form-card-login'>
         <form onSubmit={handleSubmit}>
           <img id='img' alt='sce logo' src='images/SCE-glow.png' />

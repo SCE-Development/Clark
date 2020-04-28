@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './register-page.css';
 import { Row, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
@@ -6,9 +6,6 @@ import MajorDropdown from './MajorDropdown';
 import { registerUser, checkIfUserExists } from '../../APIFunctions/User';
 import { sendVerificationEmail } from '../../APIFunctions/Profile';
 import GoogleRecaptcha from './GoogleRecaptcha';
-
-import spring from './assets/spring.jpg';
-import fall from './assets/fall2.jpeg';
 
 export default function MembershipForm(props) {
   const [verified, setVerified] = useState(false);
@@ -55,16 +52,6 @@ export default function MembershipForm(props) {
       handleChange: e => setPassword(e.target.value)
     }
   ];
-  const [semesterImage, setSemesterImage] = useState({
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundImage: `url(${spring})`,
-    backgroundPosition: 'center',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'noRepeat',
-    minHeight: '850px'
-  });
 
   async function submitApplication() {
     const userResponse = await checkIfUserExists(email);
@@ -96,22 +83,8 @@ export default function MembershipForm(props) {
     return verified && firstName && lastName && email && password.length >= 8;
   }
 
-  function getSemesterImage() {
-    const month = new Date().getMonth() + 1;
-    if (month >= 6) {
-      setSemesterImage({
-        ...semesterImage,
-        backgroundImage: `url(${fall})`
-      });
-    }
-  }
-
-  useEffect(() => {
-    getSemesterImage();
-  });
-
   return (
-    <Container id='membership' fluid style={semesterImage}>
+    <Container className='background' fluid>
       <div className='form-card'>
         <h1>Membership Application</h1>
         <hr />
