@@ -54,10 +54,10 @@ matrix:
             - certutil -decode .temp api/config/config.js
             - echo $ENCODED_CONFIG_SRC > .temp
             - certutil -decode .temp src/config/config.js
-            - npm config delete target
           install:
             - python setup.py
-            - npm install --build-from-source
+            - npm install
+            - npm install grpc
           script:
             - npm run lint
             - npm run api-test
