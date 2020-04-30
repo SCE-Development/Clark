@@ -57,7 +57,7 @@ matrix:
             - npm config delete target
           install:
             - python setup.py
-            - npm install
+            - npm install --build-from-source
           script:
             - npm run lint
             - npm run api-test
