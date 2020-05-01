@@ -57,6 +57,7 @@ matrix:
           install:
             - python setup.py
             - npm install
+            - npm install grpc
           script:
             - npm run lint
             - npm run api-test
