@@ -31,8 +31,8 @@ router.post('/updateSignText', async (req, res) => {
     .then(response => {
       return res.status(OK).send({ ...response });
     })
-    .catch(err => {
-      return res.status(BAD_REQUEST).send({ ...err });
+    .catch(error => {
+      return res.status(BAD_REQUEST).send({ ...error });
     });
 });
 
@@ -50,8 +50,8 @@ router.post('/healthCheck', async (req, res) => {
         borderColor: message.getBorderColor()
       });
     })
-    .catch(err => {
-      return res.status(NOT_FOUND).send({ ...err });
+    .catch(error => {
+      return res.status(NOT_FOUND).send({ ...error });
     });
 });
 

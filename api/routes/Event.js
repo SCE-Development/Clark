@@ -14,11 +14,21 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
+const addErrorLog = require ('../util/errorLog');
 
 router.get('/getEvents', (req, res) => {
   Event.find()
     .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
-    .then(items => res.status(OK).send(items));
+    .then(items => res.status(OK).send(items))
+    .catch(error => {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'Event/getEvents',
+        errorDescription: error
+      };
+      addErrorLog(info);
+      res.status(BAD_REQUEST).send({ error, message: 'Getting event failed' });
+    });
 });
 
 router.post('/createEvent', (req, res) => {
@@ -78,15 +88,15 @@ router.post('/editEvent', (req, res) => {
         .then(ret => {
           res.status(OK).json({ ret, event: 'event updated successfully' });
         })
-        .catch(err => {
+        .catch(error => {
           res.status(BAD_REQUEST).send({
-            err,
+            error,
             message: 'event was not updated'
           });
         });
     })
-    .catch(err => {
-      res.status(NOT_FOUND).send({ err, message: 'event not found' });
+    .catch(error => {
+      res.status(NOT_FOUND).send({ error, message: 'event not found' });
     });
 });
 
@@ -100,8 +110,8 @@ router.post('/deleteEvent', (req, res) => {
     .then(event => {
       res.status(OK).json({ event: 'event successfully deleted' });
     })
-    .catch(err => {
-      res.status(BAD_REQUEST).send({ err, message: 'deleting event failed' });
+    .catch(error => {
+      res.status(BAD_REQUEST).send({ error, message: 'deleting event failed' });
     });
 });
 
