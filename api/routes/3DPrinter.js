@@ -11,8 +11,8 @@ router.post('/submit3D', async (req, res) => {
     .then(response => {
       return res.status(OK).send({ ...response });
     })
-    .catch(err => {
-      return res.status(BAD_REQUEST).send({ ...err });
+    .catch(error => {
+      return res.status(BAD_REQUEST).send({ ...error });
     });
 });
 

@@ -22,6 +22,7 @@ const {
   CONFLICT
 } = require('../constants').STATUS_CODES;
 const membershipState = require('../constants').MEMBERSHIP_STATE;
+const addErrorLog = require ('../util/errorLog');
 
 const validateVerificationEmail = require('../mailer/auth')
   .validateVerificationEmail;
@@ -183,6 +184,13 @@ router.post('/delete', (req, res) => {
 
   User.deleteOne({ email: req.body.email }, function(error, user) {
     if (error) {
+      const info = {
+        userEmail: req.body.email,
+        errorTime: new Date(),
+        apiEndpoint: 'user/delete',
+        errorDescription: error
+      };
+      addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -272,6 +280,12 @@ router.post('/edit', (req, res) => {
 
   User.updateOne(query, { ...user }, function(error, result) {
     if (error) {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'user/edit',
+        errorDescription: error
+      };
+      addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -291,6 +305,13 @@ router.post('/edit', (req, res) => {
 router.post('/validateEmail', function(req, res) {
   User.findOne({ email: req.body.email }, async function(error, result) {
     if (error) {
+      const info = {
+        userEmail: req.body.email,
+        errorTime: new Date(),
+        apiEndpoint: 'user/validateEmail',
+        errorDescription: err
+      };
+      addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -316,6 +337,13 @@ router.post('/setEmailToVerified', (req, res) => {
 
   User.updateOne(query, { emailVerified: true }, function(error, result) {
     if (error) {
+      const info = {
+        userEmail: req.body.email,
+        errorTime: new Date(),
+        apiEndpoint: 'user/setEmailToVerified',
+        errorDescription: error
+      };
+      addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -339,6 +367,12 @@ router.post('/getPagesPrintedCount', (req, res) => {
   }
   User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'user/PagesPrintedCount',
+        errorDescription: error
+      };
+      addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 

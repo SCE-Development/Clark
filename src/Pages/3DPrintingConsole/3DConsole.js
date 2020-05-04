@@ -88,7 +88,6 @@ export default class PrintConsole3D extends React.Component {
     }
   }
 
-  // simply filter array by name
   search() {
     const search = this.state.search.trim().toLowerCase();
     return search !== null || search !== ''
