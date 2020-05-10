@@ -89,31 +89,31 @@ class MembershipPlan extends Component {
 
   render() {
     return (
-      <div className = 'background'>
-        <Container id = 'container-membership-plan'>
-          <h1 className = 'greet' style={{ color: 'white' }}>Welcome</h1>
+      <div className='background'>
+        <Container id='container-membership-plan'>
+          <h1 className='greet' style={{ color: 'white' }}>Welcome</h1>
 
-          <div className= 'card' >
+          <div className='card' >
             <div className='membership'>
-              <Container className = 'top-chunk'>
-                <Row className = 'benefit-block grid'> 
-                  <Col className = 'col'>
-                    <div className= 'how-to-join-block'>HOW TO JOIN:
-                      <p>1️⃣ SELECT a plan below (plan's color will change)</p>
+              <Container className='top-chunk'>
+                <Row className='benefit-block grid'>
+                  <Col className='col'>
+                    <div className='how-to-join-block'>HOW TO JOIN:
+                      <p>1️⃣ SELECT a plan below</p>
                       <p>2️⃣ CLICK on "Add Account Information"</p>
                       <p>3️⃣ Sign Up @ SCE (ENGR 294)</p>
-               
+
                     </div>
-                  </Col> 
-                  <Col className = 'col'>
-                    <div> 
-                      <h3 className='why-join-block'>WHY JOIN?  
+                  </Col>
+                  <Col className='col'>
+                    <div>
+                      <h3 className='why-join-block'>WHY JOIN?
                         <p>🌱 Free Paper Printing 🖨️ Free 3D Printing</p>
                         <p>🏢 Company Tours 💯 Access to Workshops</p>
                         <p>👕 Free Club T-Shirt 🏠 Free Door Code</p>
                         <p>Club Bonding Events: Potlucks, Game Nights</p>
                       </h3>
-                    </div> 
+                    </div>
                   </Col>
                 </Row>
               </Container>
@@ -129,31 +129,31 @@ class MembershipPlan extends Component {
                     key={ind}
                     onClick={this.cardSelected.bind(this, type.plan)}
                   >
-                    <div className= 'membership-heading'>SEMESTER PLAN</div>
-                    <h3 className='membership-price'>{type.price} 
-                      <p className = 'expiration'>*Expires on {type.expire}.</p>
+                    <div className='membership-heading'>SEMESTER PLAN</div>
+                    <h3 className='membership-price'>{type.price}
+                      <p className='expiration'>*Expires on {type.expire}.</p>
                     </h3>
                   </div>
                 ))}
               </Row>
-            
-              <Row 
-                className='transition-button-wrapper' 
+
+              <Row
+                className='transition-button-wrapper'
                 id='membership-plan-btn'
               >
-                <Button className = 'add-acc' style = {{marginBottom: '30px'}}
+                <Button className='add-acc' style={{ marginBottom: '30px' }}
                   disabled={!this.state.planSelected}
                   onClick={() =>
                     this.props
                       .setMembershipState(memberApplicationState.FORM_INFO)
                   }
-            
+
                 >
-            Add Account Information
-            
+                  Add Account Information
+
                 </Button>
               </Row>
-          
+
             </div>
           </div>
 
