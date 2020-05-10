@@ -16,7 +16,7 @@ const {
 } = require('../constants').STATUS_CODES;
 const addErrorLog = require('../util/errorLog');
 
-router.post('/getItems', (req, res) => {
+router.get('/getItems', (req, res) => {
   const category = req.body.category ? { category: req.body.category } : {};
   InventoryItem.find(category).then(items => res.status(OK).send(items));
 });
