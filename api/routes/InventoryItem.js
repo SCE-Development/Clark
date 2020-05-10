@@ -14,9 +14,8 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
-const addErrorLog = require('../util/errorLog');
 
-router.post('/getItems', (req, res) => {
+router.get('/getItems', (req, res) => {
   const category = req.body.category ? { category: req.body.category } : {};
   InventoryItem.find(category).then(items => res.status(OK).send(items));
 });
@@ -45,15 +44,26 @@ router.post('/editItem', (req, res) => {
             .status(OK)
             .json({ ret, item: 'Inventory item updated successfully' });
         })
+<<<<<<< HEAD
         .catch(error => {
           res.status(BAD_REQUEST).send({
             error,
+=======
+        .catch(err => {
+          res.status(BAD_REQUEST).send({
+            err,
+>>>>>>> 5cf5e85... added InventoryItem api, routing, and testing
             message: 'Inventory item was not updated'
           });
         });
     })
+<<<<<<< HEAD
     .catch(error => {
       res.status(NOT_FOUND).send({ error, message: 'item not found' });
+=======
+    .catch(err => {
+      res.status(NOT_FOUND).send({ err, message: 'item not found' });
+>>>>>>> 5cf5e85... added InventoryItem api, routing, and testing
     });
 });
 
@@ -89,12 +99,15 @@ router.post('/deleteItem', (req, res) => {
   }
   InventoryItem.deleteOne({ name: req.body.name }, (error, form) => {
     if (error) {
+<<<<<<< HEAD
       const info = {
         errorTime: new Date(),
         apiEndpoint: 'InventoryItem/deleteItem',
         errorDescription: error
       };
       addErrorLog(info);
+=======
+>>>>>>> 5cf5e85... added InventoryItem api, routing, and testing
       return res.sendStatus(BAD_REQUEST);
     }
     if (form.n < 1) {

@@ -121,7 +121,7 @@ describe('InventoryItem', () => {
       setTokenStatus(true);
       chai
         .request(app)
-        .post('/api/InventoryItem/getItems')
+        .get('/api/InventoryItem/getItems')
         .then(function(res) {
           expect(res).to.have.status(OK);
           const getItemsResponse = res.body;
@@ -191,7 +191,7 @@ describe('InventoryItem', () => {
       setTokenStatus(true);
       chai
         .request(app)
-        .post('/api/InventoryItem/getItems')
+        .get('/api/InventoryItem/getItems')
         .then(function(res) {
           expect(res).to.have.status(OK);
           const getItemsResponse = res.body;
@@ -259,7 +259,7 @@ describe('InventoryItem', () => {
       setTokenStatus(true);
       chai
         .request(app)
-        .post('/api/InventoryItem/getItems')
+        .get('/api/InventoryItem/getItems')
         .then(function(res) {
           expect(res).to.have.status(OK);
           const getItemsResponse = res.body;

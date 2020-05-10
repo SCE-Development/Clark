@@ -9,6 +9,7 @@ const logger = require(`${settings.util}/logger`);
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const User = require('../models/User.js');
+const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid
@@ -54,35 +55,18 @@ router.post('/checkIfUserExists', (req, res) => {
 });
 
 // Register a member
-router.post('/register', function(req, res) {
-  if (req.body.email && req.body.password) {
-    const newUser = new User({
-      password: req.body.password,
-      firstName: req.body.firstName,
-      middleInitial: req.body.middleInitial || '',
-      lastName: req.body.lastName,
-      email: req.body.email.toLowerCase(),
-      major: req.body.major || ''
-    });
-
-    const membershipValidUntil = getMemberValidationDate(
-      req.body.numberOfSemestersToSignUpFor
-    );
-    newUser.membershipValidUntil = membershipValidUntil;
-
-    const testPassword = testPasswordStrength(req.body.password);
-
-    if (!testPassword.success) {
-      return res.status(BAD_REQUEST).send({ message: testPassword.message });
+router.post('/register', async (req, res) => {
+  const registrationStatus = await registerUser(req.body);
+  if(!registrationStatus.userSaved) {
+    if(registrationStatus.status === 'BAD_REQUEST') {
+      return res.status(BAD_REQUEST).send({
+        message: registrationStatus.message
+      });
+    } else {
+      res.status(CONFLICT).send({ message: registrationStatus.message });
     }
-
-    newUser.save(function(error) {
-      if (error) {
-        res.status(CONFLICT).send({ message: 'Username already exists.' });
-      } else {
-        res.sendStatus(OK);
-      }
-    });
+  } else {
+    res.sendStatus(OK);
   }
 });
 
@@ -401,35 +385,6 @@ router.post('/verify', function(req, res) {
   }
 });
 
-// Helpers
-function testPasswordStrength(password) {
-  const passwordStrength = config.passwordStrength || 'strong';
-  /* eslint-disable */
-  const strongRegex = new RegExp(
-    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-  )
-  const strongMessage =
-    'Invalid password. Requires 1 uppercase, 1 lowercase, 1 number and 1 special character: !@#$%^&'
-
-  const mediumRegex = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])')
-  const mediumMessage =
-    'Password requires one uppercase character and one number.'
-  /* eslint-enable */
-
-  // test the password against the strong regex & return true if it passes
-  if (passwordStrength === 'strong') {
-    return { success: strongRegex.test(password), message: strongMessage };
-  }
-
-  // allow unrestricted passwords if strength is set to weak
-  if (passwordStrength === 'weak') {
-    return { success: true, message: '' };
-  }
-
-  // test medium password by default
-  return { success: mediumRegex.test(password), message: mediumMessage };
-}
-
 function checkIfPageCountResets(lastLogin) {
   if (!lastLogin) return false;
 
@@ -446,55 +401,6 @@ function checkIfPageCountResets(lastLogin) {
   if (lastLogin < lastSundayDate) return true;
 
   return false;
-}
-
-function getMemberValidationDate(numberOfSemestersToSignUpFor) {
-  const today = new Date();
-  const membershipValidationDate = new Date();
-
-  // August 1st - January 31st
-  const startOfFallMonth = 8;
-  const endOfFallMonth = 1;
-  const endOfFallDay = 31;
-
-  // January 1st - August 31st
-  const startOfSpringMonth = 1;
-  const endOfSpringMonth = 8;
-  const endOfSpringDay = 31;
-
-  const isFallSemester =
-    today.getMonth() >= startOfFallMonth &&
-    today.getMonth() < startOfSpringMonth + 12;
-
-  if (isFallSemester) {
-    if (numberOfSemestersToSignUpFor === 1) {
-      // months are zero indexed??
-      membershipValidationDate.setMonth(endOfFallMonth - 1);
-      membershipValidationDate.setDate(endOfFallDay);
-      membershipValidationDate.setFullYear(
-        membershipValidationDate.getFullYear() + 1
-      ); // set to next year
-    } else if (numberOfSemestersToSignUpFor === 2) {
-      membershipValidationDate.setMonth(endOfSpringMonth - 1);
-      membershipValidationDate.setDate(endOfSpringDay);
-      membershipValidationDate.setFullYear(
-        membershipValidationDate.getFullYear() + 1
-      ); // set to next year
-    }
-  } else {
-    if (numberOfSemestersToSignUpFor === 1) {
-      membershipValidationDate.setMonth(endOfSpringMonth - 1);
-      membershipValidationDate.setDate(endOfSpringDay);
-    } else if (numberOfSemestersToSignUpFor === 2) {
-      membershipValidationDate.setMonth(endOfFallMonth - 1);
-      membershipValidationDate.setDate(endOfFallDay);
-      membershipValidationDate.setFullYear(
-        membershipValidationDate.getFullYear() + 1
-      ); // set to next year
-    }
-  }
-
-  return membershipValidationDate;
 }
 
 module.exports = router;
