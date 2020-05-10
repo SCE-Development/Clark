@@ -65,8 +65,8 @@
   justify-content: space-evenly;
 }
 
-.active-plan {
-  background-color: rgb(241, 225, 180);
+.active-plan .membership-price {
+  background-color: rgb(96, 122, 121);
 }
 
 .email-input {
@@ -81,10 +81,11 @@
 
 .membership {
   display: inline-block;
+  padding: 30px;
 }
 
-.membership-card:hover .membership-benefits {
-  background-color: rgb(146, 154, 194);
+.membership-card:hover .membership-price {
+  background-color: rgb(163, 166, 179);
   cursor: pointer;
 }
 

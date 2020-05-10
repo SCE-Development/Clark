@@ -28,16 +28,16 @@ describe('<MembershipPlan />', () => {
 
   it('Should render two card components', () => {
     const wrapper = mount(<MembershipPlan />);
-    expect(wrapper.find('.card')).to.have.lengthOf(2);
+    expect(wrapper.find('.membership-card')).to.have.lengthOf(2);
   });
 
   it('Should display a membership plan on each card for spring', () => {
     mockMonth(1);
     const wrapper = mount(<MembershipPlan />);
-    expect(wrapper.find('.card').get(0).props.id).to.equal(
+    expect(wrapper.find('.membership-card').get(0).props.id).to.equal(
       SPRING_SEMESTER_MEMBERSHIP
     );
-    expect(wrapper.find('.card').get(1).props.id).to.equal(
+    expect(wrapper.find('.membership-card').get(1).props.id).to.equal(
       SPRING_YEAR_MEMBERSHIP
     );
   });
@@ -45,10 +45,10 @@ describe('<MembershipPlan />', () => {
   it('Should display a membership plan on each card for fall', () => {
     mockMonth(8);
     const wrapper = mount(<MembershipPlan />);
-    expect(wrapper.find('.card').get(0).props.id).to.equal(
+    expect(wrapper.find('.membership-card').get(0).props.id).to.equal(
       FALL_SEMESTER_MEMBERSHIP
     );
-    expect(wrapper.find('.card').get(1).props.id).to.equal(
+    expect(wrapper.find('.membership-card').get(1).props.id).to.equal(
       FALL_YEAR_MEMBERSHIP
     );
   });
@@ -65,7 +65,7 @@ describe('<MembershipPlan />', () => {
   });
 
   it('Should the selected membership plan with the ' +
-     'cardSelected function for spring', () => {
+    'cardSelected function for spring', () => {
     mockMonth(1);
     let currentPlan;
     const appProps = {
@@ -81,7 +81,7 @@ describe('<MembershipPlan />', () => {
   });
 
   it('Should the selected membership plan with ' +
-     'the cardSelected function for fall', () => {
+    'the cardSelected function for fall', () => {
     mockMonth(8);
     let currentPlan;
     const appProps = {
