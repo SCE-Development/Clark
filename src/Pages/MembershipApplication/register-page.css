@@ -1,5 +1,39 @@
-.membership-form {
+#membership {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.form-card {
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 35%;
+  min-width: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 20px;
+  padding: 1.5rem;
+  background: white;
+  flex: none;
+  overflow: hidden;
+}
+
+.membership-info {
   width: 40%;
+  float: left;
+  min-width: 625px;
+  font-size: 500%;
+  color: white;
+  background-color: rgba(173, 169, 169, 0.3);
+  text-align: left;
+  top: 50%;
+  left: 50%;
+  transform: translate(0, 50%);
+  height: 50%;
+  vertical-align: middle;
+  padding: 2rem;
+  padding-bottom: 0rem;
 }
 
 #membership-plan-btn {
@@ -9,8 +43,8 @@
 
 .transition-button-wrapper {
   display: flex;
+  justify-content: space-evenly;
   align-items: center;
-  justify-content: space-between;
   margin-top: 30px;
 }
 
@@ -19,10 +53,12 @@
   font-weight: 500;
 }
 
-#name-field-row{
-  justify-content: space-between;
-  margin-left: 0px;
-  margin-right: 0px;
+#name-field-row {
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  margin: auto;
+  margin-top: 10px;
 }
 
 .membership-card {
@@ -57,7 +93,7 @@
   cursor: pointer;
 }
 
-.img{
+.img {
   height: 200px;
   width: 100%;
 }
@@ -80,6 +116,10 @@
   transition: opacity 200ms ease-in;
 }
 
+.recaptcha {
+  margin: 20px 20px 0px 0px;
+}
+
 #change-and-select-btns {
   background-color: #e1f5fe;
   border-color: black;
@@ -90,4 +130,21 @@
   background-color: #8fdcff;
   border-color: black;
   color: black;
+}
+
+#login {
+  width: 100%;
+  display: inline-block;
+  text-align: center;
+}
+
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:url('./assets/background.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: noRepeat;
+  min-height: 850px;
 }

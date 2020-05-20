@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './register-page.css';
-import { Container, Row, FormGroup, Label, Input, Button } from 'reactstrap';
+import { Row, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
 import { registerUser, checkIfUserExists } from '../../APIFunctions/User';
@@ -84,68 +84,78 @@ export default function MembershipForm(props) {
   }
 
   return (
-    <Container className='membership-form'>
-      <h1>Account Information</h1>
-      <Row className='transition-button-wrapper '>
-        <p>Selected plan: {memberShipPlanToString(props.selectedPlan)}</p>
+    <Container className='background' fluid>
+      <div className='form-card'>
+        <h1>Membership Application</h1>
+        <hr />
+        <p>
+          Selected Membership Plan: {memberShipPlanToString(props.selectedPlan)}
+        </p>
         <span>
-          <span color='red'>*</span>= This is a required field
+          <span color='red'>*</span>= Required field
         </span>
-      </Row>
-      <Row id='name-field-row'>
-        {nameFields.map((input, index) => {
-          return (
-            <FormGroup key={index}>
-              <Label for={input.id}>{input.label}*</Label>
-              <Input
-                className='name-input membership-input'
-                type={input.type}
-                onChange={input.handleChange}
-                id={input.id}
-              />
-            </FormGroup>
-          );
-        })}
-      </Row>
-
-      <div id='email-input-container'>
-        {accountFields.map((input, index) => {
-          return (
-            <div key={index} className={input.class}>
-              <FormGroup>
-                <Label for={input.id}>{input.label}*</Label>
+        <Row id='name-field-row'>
+          {nameFields.map((input, index) => {
+            return (
+              <FormGroup key={index}>
                 <Input
-                  className='membership-input email-input'
+                  className='name-input membership-input'
                   type={input.type}
                   onChange={input.handleChange}
                   id={input.id}
+                  placeholder={`${input.label}*`}
                 />
-                {input.addon}
               </FormGroup>
-            </div>
-          );
-        })}
-        <MajorDropdown setMajor={setMajor} />
-      </div>
-      <GoogleRecaptcha setVerified={setVerified} />
-      <div className='transition-button-wrapper'>
-        <Button
-          id='change-and-select-btns'
-          onClick={() =>
-            props.setMembershipState(
-              memberApplicationState.SELECT_MEMBERSHIP_PLAN
-            )}
-        >
-          Change membership plan
-        </Button>
-        <Button
-          id='submit-btn'
-          disabled={!requiredFieldsEmpty()}
-          color='primary'
-          onClick={submitApplication}
-        >
-          Submit application
-        </Button>
+            );
+          })}
+        </Row>
+        <div id='email-input-container'>
+          {accountFields.map((input, index) => {
+            return (
+              <div key={index} className={input.class}>
+                <FormGroup>
+                  <Input
+                    className='membership-input email-input'
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={`${input.label}*`}
+                  />
+                  {input.addon}
+                </FormGroup>
+              </div>
+            );
+          })}
+          <MajorDropdown setMajor={setMajor} />
+        </div>
+        <div className='recaptcha'>
+          <GoogleRecaptcha setVerified={setVerified} />
+        </div>
+        <div className='transition-button-wrapper'>
+          <Button
+            id='change-and-select-btns'
+            onClick={() =>
+              props.setMembershipState(
+                memberApplicationState.SELECT_MEMBERSHIP_PLAN
+              )}
+          >
+            Change membership plan
+          </Button>
+          <Button
+            id='submit-btn'
+            disabled={!requiredFieldsEmpty()}
+            color='primary'
+            onClick={submitApplication}
+          >
+            Submit application
+          </Button>
+        </div>
+        <hr />
+        <p id='login'>
+          <a href='/login' style={{ fontSize: '120%' }}>
+            Switch to Login
+          </a>
+        </p>
       </div>
     </Container>
   );
