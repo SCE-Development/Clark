@@ -8,7 +8,7 @@ import summer from './assets/summer.jpeg';
 import summer2 from './assets/summer2.jpeg';
 import spring from './assets/spring.jpg';
 import spring2 from './assets/spring2.jpeg';
-import { Container, Button, Row, Col, CardTitle } from 'reactstrap';
+import { Container, Button, Row, Col } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
 
