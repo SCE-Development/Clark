@@ -33,7 +33,6 @@ export default function MembershipForm(props) {
   const accountFields = [
     {
       label: 'Email',
-      class: 'account-input',
       type: 'email',
       addon: !usernameAvailable && (
         <p className='unavailable'>User already exists!</p>
@@ -42,7 +41,6 @@ export default function MembershipForm(props) {
     },
     {
       label: 'Password (8 or more characters)',
-      class: 'account-input',
       type: 'password',
       addon: !passwordValid && (
         <p className='unavailable'>
@@ -94,62 +92,62 @@ export default function MembershipForm(props) {
         <span>
           <span color='red'>*</span>= Required field
         </span>
-        <Row id='name-field-row'>
-          {nameFields.map((input, index) => {
-            return (
-              <FormGroup key={index}>
-                <Input
-                  className='name-input membership-input'
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={`${input.label}*`}
-                />
-              </FormGroup>
-            );
-          })}
-        </Row>
-        <div id='email-input-container'>
-          {accountFields.map((input, index) => {
-            return (
-              <div key={index} className={input.class}>
-                <FormGroup>
+          <Row id='name-field-row'>
+            {nameFields.map((input, index) => {
+              return (
+                <FormGroup key={index}>
                   <Input
-                    className='membership-input email-input'
+                    className='name-input membership-input'
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={`${input.label}*`}
                   />
-                  {input.addon}
                 </FormGroup>
-              </div>
-            );
-          })}
-          <MajorDropdown setMajor={setMajor} />
-        </div>
-        <div className='recaptcha'>
-          <GoogleRecaptcha setVerified={setVerified} />
-        </div>
-        <div className='transition-button-wrapper'>
-          <Button
-            id='change-and-select-btns'
-            onClick={() =>
-              props.setMembershipState(
-                memberApplicationState.SELECT_MEMBERSHIP_PLAN
-              )}
-          >
-            Change membership plan
+              );
+            })}
+          </Row>
+          <div id='email-input-container'>
+            {accountFields.map((input, index) => {
+              return (
+                <div key={index} className='account-input'>
+                  <FormGroup>
+                    <Input
+                      className='membership-input email-input'
+                      type={input.type}
+                      onChange={input.handleChange}
+                      id={input.id}
+                      placeholder={`${input.label}*`}
+                    />
+                    {input.addon}
+                  </FormGroup>
+                </div>
+              );
+            })}
+            <MajorDropdown setMajor={setMajor} />
+          </div>
+          <div className='recaptcha'>
+            <GoogleRecaptcha setVerified={setVerified} />
+          </div>
+          <div className='transition-button-wrapper'>
+            <Button
+              id='change-and-select-btns'
+              onClick={() =>
+                props.setMembershipState(
+                  memberApplicationState.SELECT_MEMBERSHIP_PLAN
+                )}
+            >
+              Change membership plan
           </Button>
-          <Button
-            id='submit-btn'
-            disabled={!requiredFieldsEmpty()}
-            color='primary'
-            onClick={submitApplication}
-          >
-            Submit application
+            <Button
+              id='submit-btn'
+              disabled={!requiredFieldsEmpty()}
+              color='primary'
+              onClick={submitApplication}
+            >
+              Submit application
           </Button>
-        </div>
+          </div>
         <hr />
         <p id='login'>
           <a href='/login' style={{ fontSize: '120%' }}>

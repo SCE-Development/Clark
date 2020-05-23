@@ -121,15 +121,24 @@
 }
 
 #change-and-select-btns {
-  background-color: #e1f5fe;
-  border-color: black;
+  background-color: #aecfe2;
+  border: none;
   color: black;
 }
 
+#change-and-select-btns:hover {
+  background-color: #87b0c7;
+  color: white;
+}
+
 #submit-btn {
-  background-color: #8fdcff;
-  border-color: black;
+  background-color: #6592ac;
+  border: none;
   color: black;
+}
+
+#submit-btn:hover:enabled{
+  color: white;
 }
 
 #login {
@@ -145,6 +154,6 @@
   background-image:url('./assets/background.png');
   background-position: center;
   background-size: cover;
-  background-repeat: noRepeat;
+  background-repeat: no-repeat;
   min-height: 850px;
 }
