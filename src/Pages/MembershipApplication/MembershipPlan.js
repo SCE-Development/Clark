@@ -124,7 +124,8 @@ class MembershipPlan extends Component {
                   {this.state.blocks.map((type, index) => (
                     <Col key={index} className='col'>
                       <div className={type.className}>{type.title}
-                        {type.details.map((text, index) => (<p key={index}>{text}</p>))}
+                        {type.details.map((text, index) =>
+                          (<p key={index}>{text}</p>))}
                       </div>
                     </Col>
                   ))
