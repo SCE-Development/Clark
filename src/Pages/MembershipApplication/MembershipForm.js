@@ -92,62 +92,62 @@ export default function MembershipForm(props) {
         <span>
           <span color='red'>*</span>= Required field
         </span>
-          <Row id='name-field-row'>
-            {nameFields.map((input, index) => {
-              return (
-                <FormGroup key={index}>
+        <Row id='name-field-row'>
+          {nameFields.map((input, index) => {
+            return (
+              <FormGroup key={index}>
+                <Input
+                  className='name-input membership-input'
+                  type={input.type}
+                  onChange={input.handleChange}
+                  id={input.id}
+                  placeholder={`${input.label}*`}
+                />
+              </FormGroup>
+            );
+          })}
+        </Row>
+        <div id='email-input-container'>
+          {accountFields.map((input, index) => {
+            return (
+              <div key={index} className='account-input'>
+                <FormGroup>
                   <Input
-                    className='name-input membership-input'
+                    className='membership-input email-input'
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={`${input.label}*`}
                   />
+                  {input.addon}
                 </FormGroup>
-              );
-            })}
-          </Row>
-          <div id='email-input-container'>
-            {accountFields.map((input, index) => {
-              return (
-                <div key={index} className='account-input'>
-                  <FormGroup>
-                    <Input
-                      className='membership-input email-input'
-                      type={input.type}
-                      onChange={input.handleChange}
-                      id={input.id}
-                      placeholder={`${input.label}*`}
-                    />
-                    {input.addon}
-                  </FormGroup>
-                </div>
-              );
-            })}
-            <MajorDropdown setMajor={setMajor} />
-          </div>
-          <div className='recaptcha'>
-            <GoogleRecaptcha setVerified={setVerified} />
-          </div>
-          <div className='transition-button-wrapper'>
-            <Button
-              id='change-and-select-btns'
-              onClick={() =>
-                props.setMembershipState(
-                  memberApplicationState.SELECT_MEMBERSHIP_PLAN
-                )}
-            >
+              </div>
+            );
+          })}
+          <MajorDropdown setMajor={setMajor} />
+        </div>
+        <div className='recaptcha'>
+          <GoogleRecaptcha setVerified={setVerified} />
+        </div>
+        <div className='transition-button-wrapper'>
+          <Button
+            id='change-and-select-btns'
+            onClick={() =>
+              props.setMembershipState(
+                memberApplicationState.SELECT_MEMBERSHIP_PLAN
+              )}
+          >
               Change membership plan
           </Button>
-            <Button
-              id='submit-btn'
-              disabled={!requiredFieldsEmpty()}
-              color='primary'
-              onClick={submitApplication}
-            >
+          <Button
+            id='submit-btn'
+            disabled={!requiredFieldsEmpty()}
+            color='primary'
+            onClick={submitApplication}
+          >
               Submit application
           </Button>
-          </div>
+        </div>
         <hr />
         <p id='login'>
           <a href='/login' style={{ fontSize: '120%' }}>
