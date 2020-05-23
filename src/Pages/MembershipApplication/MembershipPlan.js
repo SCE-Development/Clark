@@ -8,7 +8,7 @@ import summer from './assets/summer.jpeg';
 import summer2 from './assets/summer2.jpeg';
 import spring from './assets/spring.jpg';
 import spring2 from './assets/spring2.jpeg';
-import { Container, Button, Row, Col } from 'reactstrap';
+import { Container, Button, Row, Col, CardTitle } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
 
@@ -23,9 +23,33 @@ class MembershipPlan extends Component {
       planSelected: false,
       year: new Date().getFullYear(),
       planType: [],
-      benefits: ['🌱 Free Paper Printing 🖨️ Free 3D PRINTER ',
-        '🏢 Company Tours 💯 Access to Workshops', '👕 Free Shirt 🏠 Door Code',
-        '🍕 Club Bonding Events']
+      instructions: ['1️⃣ SELECT a plan below',
+        '2️⃣ CLICK on "Add Account Information"',
+        '3️⃣ Sign Up @ SCE (ENGR 294)'],
+      benefits: [
+        '🌱 Free Paper Printing 🖨️ Free 3D Printing',
+        '🏢 Company Tours 💯 Access to Workshops',
+        '👕 Free Club T-Shirt 🏠 Free Door Code',
+        'Club Bonding Events: Potlucks, Game Nights'],
+      blocks: [
+        {
+          className: 'how-to-join-block',
+          title: 'HOW TO JOIN',
+          details: ['1️⃣ SELECT a plan below',
+            '2️⃣ CLICK on "Add Account Information"',
+            '3️⃣ Sign Up @ SCE (ENGR 294)'],
+        },
+        {
+          className: 'why-join-block',
+          title: 'WHY JOIN',
+          details: [
+            '🌱 Free Paper Printing 🖨️ Free 3D Printing',
+            '🏢 Company Tours 💯 Access to Workshops',
+            '👕 Free Club T-Shirt 🏠 Free Door Code',
+            'Club Bonding Events: Potlucks, Game Nights'],
+        }
+      ],
+
     };
   }
 
@@ -49,7 +73,7 @@ class MembershipPlan extends Component {
       plan.includes('Fall ' + this.state.year) ||
       plan.includes('Spring and Fall ' + this.state.year)
     ) {
-      return `Dec 20th, ${this.state.year}`;
+      return `Dec. 20th, ${this.state.year}`;
     }
     return `May 20th, ${this.state.year}`;
   }
@@ -92,29 +116,20 @@ class MembershipPlan extends Component {
       <div className='background'>
         <Container id='container-membership-plan'>
           <h1 className='greet' style={{ color: 'white' }}>Welcome</h1>
-
           <div className='card' >
             <div className='membership'>
               <Container className='top-chunk'>
                 <Row className='benefit-block grid'>
-                  <Col className='col'>
-                    <div className='how-to-join-block'>HOW TO JOIN:
-                      <p>1️⃣ SELECT a plan below</p>
-                      <p>2️⃣ CLICK on "Add Account Information"</p>
-                      <p>3️⃣ Sign Up @ SCE (ENGR 294)</p>
 
-                    </div>
-                  </Col>
-                  <Col className='col'>
-                    <div>
-                      <h3 className='why-join-block'>WHY JOIN?
-                        <p>🌱 Free Paper Printing 🖨️ Free 3D Printing</p>
-                        <p>🏢 Company Tours 💯 Access to Workshops</p>
-                        <p>👕 Free Club T-Shirt 🏠 Free Door Code</p>
-                        <p>Club Bonding Events: Potlucks, Game Nights</p>
-                      </h3>
-                    </div>
-                  </Col>
+                  {this.state.blocks.map((type, index) => (
+                    <Col key={index} className='col'>
+                      <div className={type.className}>{type.title}
+                        {type.details.map((text, index) => (<p key={index}>{text}</p>))}
+                      </div>
+                    </Col>
+                  ))
+                  }
+
                 </Row>
               </Container>
               <Row className='membership-plan-row'>
@@ -136,7 +151,6 @@ class MembershipPlan extends Component {
                   </div>
                 ))}
               </Row>
-
               <Row
                 className='transition-button-wrapper'
                 id='membership-plan-btn'
@@ -147,16 +161,12 @@ class MembershipPlan extends Component {
                     this.props
                       .setMembershipState(memberApplicationState.FORM_INFO)
                   }
-
                 >
                   Add Account Information
-
                 </Button>
               </Row>
-
             </div>
           </div>
-
         </Container>
       </div>
     );
