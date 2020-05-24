@@ -6,7 +6,7 @@ const constants = require('../api/constants');
 const { OK, BAD_REQUEST } = constants.STATUS_CODES;
 const tools = require('../util/testing-utils/tools.js');
 const send3dPrintRequest =
-  require('../api/printingRPC/client/printing3d/print_3d_client');
+  require('../api/printingRPC/client/printing_3d/print_3d_client');
 const sinon = require('sinon');
 
 let app = null;
