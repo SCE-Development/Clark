@@ -82,7 +82,7 @@ export default function MembershipForm(props) {
   }
 
   return (
-    <Container className='background' fluid>
+    <Container id='background' fluid>
       <div className='form-card'>
         <h1>Membership Application</h1>
         <hr />
@@ -137,7 +137,7 @@ export default function MembershipForm(props) {
                 memberApplicationState.SELECT_MEMBERSHIP_PLAN
               )}
           >
-              Change membership plan
+            Change membership plan
           </Button>
           <Button
             id='submit-btn'
@@ -145,7 +145,7 @@ export default function MembershipForm(props) {
             color='primary'
             onClick={submitApplication}
           >
-              Submit application
+            Submit application
           </Button>
         </div>
         <hr />

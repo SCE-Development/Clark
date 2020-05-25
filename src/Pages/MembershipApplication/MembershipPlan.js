@@ -12,7 +12,6 @@ import { Container, Button, Row, Col } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
 
-
 class MembershipPlan extends Component {
   constructor(props) {
     super(props);

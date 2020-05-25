@@ -143,7 +143,7 @@
   text-align: center;
 }
 
-.background {
+#background {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -153,3 +153,9 @@
   background-repeat: no-repeat;
   min-height: 850px;
 }
+
+/* 
+.membership-card {
+  max-width: 35%;
+  text-align: center;
+} */
