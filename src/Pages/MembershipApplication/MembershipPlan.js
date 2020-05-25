@@ -115,7 +115,8 @@ class MembershipPlan extends Component {
               <Container className='top-chunk'>
                 <Row className='benefit-block grid'>
                   {this.state.blocks.map((type, index) => (
-                    <div key={index} className='col' className={type.className}>{type.title}
+                    <div key={index} className='col' className={type.className}>
+                      {type.title}
                       {type.details.map((text, index) =>
                         (<p className='deets' key={index}>{text}</p>))}
                     </div>
