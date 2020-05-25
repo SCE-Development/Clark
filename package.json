@@ -60,7 +60,7 @@
     "jsdom-global": "^3.0.2",
     "mocha": "^7.1.2",
     "sinon": "^9.0.2",
-    "standard": "^14.3.3"
+    "standard": "^14.3.4"
   },
   "browserslist": [
     ">0.2%",
