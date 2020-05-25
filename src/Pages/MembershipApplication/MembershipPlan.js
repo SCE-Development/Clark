@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './register-page.css';
+import './MembershipPlan.css';
 import fall from './assets/fall.jpg';
 import fall2 from './assets/fall2.jpeg';
 import winter from './assets/winter.jpeg';
@@ -83,7 +83,7 @@ class MembershipPlan extends Component {
         },
         {
           plan: getYearPlan(),
-          header: 'YEARLY PLAN',
+          header: 'ANNUAL PLAN',
           img: this.state.yearPicture,
           expire: this.getExpirationDate(getYearPlan()),
           price: '💵$30'
@@ -117,7 +117,7 @@ class MembershipPlan extends Component {
                   {this.state.blocks.map((type, index) => (
                     <div key={index} className='col' className={type.className}>{type.title}
                       {type.details.map((text, index) =>
-                        (<p key={index}>{text}</p>))}
+                        (<p className='deets' key={index}>{text}</p>))}
                     </div>
                   ))
                   }
