@@ -23,14 +23,6 @@ class MembershipPlan extends Component {
       planSelected: false,
       year: new Date().getFullYear(),
       planType: [],
-      instructions: ['1️⃣ SELECT a plan below',
-        '2️⃣ CLICK on "Add Account Information"',
-        '3️⃣ Sign Up @ SCE (ENGR 294)'],
-      benefits: [
-        '🌱 Free Paper Printing 🖨️ Free 3D Printing',
-        '🏢 Company Tours 💯 Access to Workshops',
-        '👕 Free Club T-Shirt 🏠 Free Door Code',
-        'Club Bonding Events: Potlucks, Game Nights'],
       blocks: [
         {
           className: 'how-to-join-block',
@@ -84,12 +76,14 @@ class MembershipPlan extends Component {
       planType: [
         {
           plan: getSemesterPlan(),
+          header: 'SEMESTER PLAN',
           img: this.state.semesterPicture,
           expire: this.getExpirationDate(getSemesterPlan()),
           price: '💵$20'
         },
         {
           plan: getYearPlan(),
+          header: 'YEARLY PLAN',
           img: this.state.yearPicture,
           expire: this.getExpirationDate(getYearPlan()),
           price: '💵$30'
@@ -115,22 +109,18 @@ class MembershipPlan extends Component {
     return (
       <div className='background'>
         <Container id='container-membership-plan'>
-          <h1 className='greet' style={{ color: 'white' }}>Welcome</h1>
-          <div className='card' >
+          <h1 className='greet'>Welcome</h1>
+          <div className='card'>
             <div className='membership'>
               <Container className='top-chunk'>
                 <Row className='benefit-block grid'>
-
                   {this.state.blocks.map((type, index) => (
-                    <Col key={index} className='col'>
-                      <div className={type.className}>{type.title}
-                        {type.details.map((text, index) =>
-                          (<p key={index}>{text}</p>))}
-                      </div>
-                    </Col>
+                    <div key={index} className='col' className={type.className}>{type.title}
+                      {type.details.map((text, index) =>
+                        (<p key={index}>{text}</p>))}
+                    </div>
                   ))
                   }
-
                 </Row>
               </Container>
               <Row className='membership-plan-row'>
@@ -145,7 +135,7 @@ class MembershipPlan extends Component {
                     key={ind}
                     onClick={this.cardSelected.bind(this, type.plan)}
                   >
-                    <div className='membership-heading'>SEMESTER PLAN</div>
+                    <div className='membership-heading'>{type.header}</div>
                     <h3 className='membership-price'>{type.price}
                       <p className='expiration'>*Expires on {type.expire}.</p>
                     </h3>

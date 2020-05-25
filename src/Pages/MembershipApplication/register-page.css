@@ -81,7 +81,7 @@
 
 .membership {
   display: inline-block;
-  padding: 30px;
+  padding: 5px;
 }
 
 .membership-card:hover .membership-price {
