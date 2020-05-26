@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
 .user-nav {
   font-size: 18px;
   background-color: #E1F5FE;
@@ -6,16 +8,32 @@
 }
 
 .login-icon {
-  margin-bottom: 5px;
+  margin-bottom: 20px;
 }
 
-.admin-nav, .nav-link {
-  color: #515151;
-  transition: color 0.2s;
+.nav-button{
+  padding: 9px 20px;
+  border-radius: 50px;
+  background-color: #96bdf0af;
+  fill: white;
 }
+
 .nav-link:hover {
-  color: #FF0000;
+  color: rgb(191, 227, 241);
 }
+ 
+.admin-nav{
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  background-color:#648cc0;
+  color: rgba(255, 255, 255);
+  text-decoration: none;
+}
+
+.nav-admin-link{
+  color: white!important;
+  fill: white;
+} 
 
 .sce-nav {
   flex-flow: row wrap;
