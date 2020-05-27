@@ -8,7 +8,7 @@ import summer from './assets/summer.jpeg';
 import summer2 from './assets/summer2.jpeg';
 import spring from './assets/spring.jpg';
 import spring2 from './assets/spring2.jpeg';
-import { Container, Button, Row, Col } from 'reactstrap';
+import { Container, Button, Row } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
 
@@ -113,8 +113,8 @@ class MembershipPlan extends Component {
             <div className='membership'>
               <Container className='top-chunk'>
                 <Row className='benefit-block grid'>
-                  {this.state.blocks.map((type, index) => (
-                    <div key={index} className='col' className={type.className}>
+                  {this.state.blocks.map((type, ind) => (
+                    <div key={ind} className={type.className}>
                       {type.title}
                       {type.details.map((text, index) =>
                         (<p className='deets' key={index}>{text}</p>))}
