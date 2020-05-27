@@ -16,7 +16,7 @@ chai.use(chaiHttp);
 
 describe('ErrorLog', () => {
   before(done => {
-    app = tools.initializeServer();
+    app = tools.initializeServer(__dirname + '/../api/routes/ErrorLog.js');
     tools.emptySchema(ErrorLog);
     done();
   });

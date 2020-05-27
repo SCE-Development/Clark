@@ -21,7 +21,8 @@ const tools = require('../util/testing-utils/tools.js');
 const {
   setTokenStatus,
   resetMock,
-  restoreMock
+  restoreMock,
+  initializeMock
 } = require('./mocks/TokenValidFunctions');
 
 chai.should();
@@ -30,7 +31,9 @@ chai.use(chaiHttp);
 // Our parent block
 describe('3DPrintingForm', () => {
   before(done => {
-    app = tools.initializeServer();
+    initializeMock();
+    app = tools.initializeServer(
+      __dirname + '/../api/routes/3DPrintingForm.js');
     tools.emptySchema(PrintingForm3D);
     done();
   });

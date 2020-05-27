@@ -1,3 +1,7 @@
+const { SceHttpServer } = require('../../api/SceHttpServer');
+
+let serverInstance = null;
+
 function emptySchema(schema) {
   schema.deleteMany({}, err => {
     if (err) {
@@ -6,11 +10,9 @@ function emptySchema(schema) {
   });
 }
 
-const server = require('../../api/server');
-let serverInstance = null;
-
-function initializeServer() {
-  serverInstance = new server.Server();
+function initializeServer(path, port = 7999) {
+  serverInstance = new SceHttpServer(path, port);
+  serverInstance.initializeEndpoints();
   serverInstance.openConnection();
   return serverInstance.getServerInstance();
 }
@@ -21,7 +23,7 @@ function terminateServer(done) {
 
 // Exporting functions
 module.exports = {
-  emptySchema: emptySchema,
-  initializeServer: initializeServer,
-  terminateServer: terminateServer
+  emptySchema,
+  initializeServer,
+  terminateServer
 };
