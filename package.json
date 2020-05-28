@@ -33,7 +33,7 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.1.3",
     "express": "^4.16.2",
-    "filepond": "^4.13.6",
+    "filepond": "^4.13.7",
     "filepond-plugin-file-encode": "^2.1.5",
     "filepond-plugin-file-validate-type": "^1.2.5",
     "jsonwebtoken": "^8.5.1",
