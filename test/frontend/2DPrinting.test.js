@@ -23,8 +23,4 @@ describe('<Printing2D />', () => {
     const wrapper = mount(<Printing2D user={user} />);
     expect(wrapper.find(FilePond)).to.have.lengthOf(1);
   });
-  it('Should render a title SCE Printing System', () => {
-    const wrapper = mount(<Printing2D user={user} />);
-    expect(wrapper.find('.display-4').text()).to.be.eql('SCE Printing System');
-  });
 });

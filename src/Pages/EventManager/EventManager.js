@@ -10,12 +10,16 @@ import { Button, Container } from 'reactstrap';
 import EventManagerModal from './EventManagerModal';
 import { eventModalState } from '../../Enums';
 import EventCard from '../Events/EventCard';
+import Header from '../../Components/Header/Header';
 
 export default function EventManager(props) {
   const [modal, setModal] = useState(false);
   const [event, setEvent] = useState();
   const [modalState, setModalState] = useState(eventModalState.SUBMIT);
   const [eventList, setEventList] = useState([]);
+  const headerProps = {
+    title: 'Event Manager'
+  };
 
   useEffect(() => {
     populateEventList();
@@ -52,7 +56,7 @@ export default function EventManager(props) {
 
   return (
     <div className='event-background'>
-      <h1>Event Manager</h1>
+      <Header {...headerProps} />
       <Container>
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event

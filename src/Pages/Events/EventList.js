@@ -4,6 +4,7 @@ import './event-page.css';
 import { getAllEvents } from '../../APIFunctions/Event';
 import EventCard from './EventCard';
 import EventInfoModal from './EventInfoModal';
+import Header from '../../Components/Header/Header';
 
 function AnnouncementList() {
   const [modal, setModal] = useState(false);
@@ -13,6 +14,10 @@ function AnnouncementList() {
     currentEvent,
     modal,
     toggle
+  };
+
+  const headerProps = {
+    title: 'SCE Event Page'
   };
 
   useEffect(() => {
@@ -38,6 +43,7 @@ function AnnouncementList() {
 
   return (
     <div className='event-background'>
+      <Header {...headerProps} />
       <Container className='event-list'>
         {currentEvent === null ? <></> : <EventInfoModal {...modalProps} />}
         {eventList && eventList.length ? (

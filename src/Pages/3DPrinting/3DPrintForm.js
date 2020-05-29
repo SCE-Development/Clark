@@ -12,6 +12,8 @@ import {
   Col
 } from 'reactstrap';
 import { submit3DPrintRequest } from '../../APIFunctions/3DPrinting';
+import Header from
+  '../../Components/Header/Header.js';
 
 let fill = false;
 export default class PrintForm3D extends React.Component {
@@ -104,7 +106,7 @@ export default class PrintForm3D extends React.Component {
       const { email } = this.props.user;
       const { color, comment, contact, projectType, url } = this.state;
       const request = {
-        name: this.props.user.firstName + ' ' +  this.props.user.lastName,
+        name: this.props.user.firstName + ' ' + this.props.user.lastName,
         color,
         comment,
         contact,
@@ -137,8 +139,12 @@ export default class PrintForm3D extends React.Component {
       'White',
       'Clear'
     ];
+    const headerProps = {
+      title: '3D Printing'
+    };
     return (
       <>
+        <Header {...headerProps} />
         {fill === false ? (
           <Container>
             <Form>

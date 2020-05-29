@@ -8,6 +8,7 @@ import {
   delete3DPrintRequest,
   update3DPrintRequestProgress
 } from '../../APIFunctions/3DPrinting';
+import Header from '../../Components/Header/Header';
 
 export default class PrintConsole3D extends React.Component {
   constructor(props) {
@@ -18,6 +19,9 @@ export default class PrintConsole3D extends React.Component {
       data: [],
       key: '',
       search: ''
+    };
+    this.headerProps = {
+      title: '3D Console'
     };
   }
 
@@ -97,33 +101,36 @@ export default class PrintConsole3D extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Form>
-          <br />
+      <div>
+        <Header {...this.headerProps} />
+        <Container>
+          <Form>
+            <br />
           Search:
-          <input
-            placeholder='By Name'
-            style={{
-              marginBottom: '5px',
-              marginLeft: '5px'
-            }}
-            onChange={e => {
-              this.setState({ search: e.target.value });
-            }}
-          />
-          <br />
-          {this.search().map((item, key) => (
-            <RequestForm
-              item={item}
-              key={key}
-              handleToggle={this.handleToggle}
-              handleUpdateProgress={this.handleUpdateProgress}
-              handleDeleteData={this.handleDeleteData}
-              collapse={this.state.collapse}
+            <input
+              placeholder='By Name'
+              style={{
+                marginBottom: '5px',
+                marginLeft: '5px'
+              }}
+              onChange={e => {
+                this.setState({ search: e.target.value });
+              }}
             />
-          ))}
-        </Form>
-      </Container>
+            <br />
+            {this.search().map((item, key) => (
+              <RequestForm
+                item={item}
+                key={key}
+                handleToggle={this.handleToggle}
+                handleUpdateProgress={this.handleUpdateProgress}
+                handleDeleteData={this.handleDeleteData}
+                collapse={this.state.collapse}
+              />
+            ))}
+          </Form>
+        </Container>
+      </div>
     );
   }
 }
