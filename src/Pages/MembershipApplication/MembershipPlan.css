@@ -48,7 +48,7 @@
 
 .fade-enter.fade-enter-active {
     opacity: 1;
-    transition: opacity 200ms ease-in;
+    transition: opacity 0ms;
 }
 
 .fade-leave {
@@ -57,7 +57,7 @@
 
 .fade-leave.fade-leave-active {
     opacity: 0;
-    transition: opacity 200ms ease-in;
+    transition: opacity 0ms;
 }
 
 #change-and-select-btns .membership-price {
@@ -198,7 +198,6 @@
 }
 
 .grid {
-    /* grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); */
     display: grid;
     color: black;
     gap: 2rem;

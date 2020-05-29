@@ -26,9 +26,11 @@ class MembershipPlan extends Component {
         {
           className: 'how-to-join-block',
           title: 'HOW TO JOIN',
-          details: ['1️⃣ SELECT a plan below',
+          details: [
+            '1️⃣ SELECT a plan below',
             '2️⃣ CLICK on "Add Account Information"',
-            '3️⃣ Sign Up @ SCE (ENGR 294)'],
+            '3️⃣ Sign Up @ SCE (ENGR 294)'
+          ],
         },
         {
           className: 'why-join-block',
@@ -37,7 +39,8 @@ class MembershipPlan extends Component {
             '🌱 Free Paper Printing 🖨️ Free 3D Printing',
             '🏢 Company Tours 💯 Access to Workshops',
             '👕 Free Club T-Shirt 🏠 Free Door Code',
-            'Club Bonding Events: Potlucks, Game Nights'],
+            'Club Bonding Events: Potlucks, Game Nights'
+          ],
         }
       ],
 
