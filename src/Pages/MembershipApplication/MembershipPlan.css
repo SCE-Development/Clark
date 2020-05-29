@@ -198,10 +198,10 @@
 }
 
 .grid {
+    /* grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); */
     display: grid;
     color: black;
     gap: 2rem;
     text-align: center;
     position: center;
-    /* grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); */
 }
