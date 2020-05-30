@@ -32,7 +32,7 @@ module.exports = {
   // Example for how to generate: 
   // https://medium.com/@nickroach_50526/sending-emails-
   // with-node-js-using-smtp-gmail-and-oauth2-316fe9c790a1
-  mailer: {
+  googleApiKeys: {
     CLIENT_SECRET: 'XXXXXXXXXXXXXXXXXXXX',
     CLIENT_ID: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     REDIRECT_URIS: ['https://developers.google.com/oauthplayground'],
