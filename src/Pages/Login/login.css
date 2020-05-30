@@ -1,4 +1,4 @@
-.background {
+#background {
   background-image: url('../MembershipApplication/assets/background.png');
   min-width: 100%;
   min-height: 100%;
@@ -33,8 +33,8 @@
 }
 
 #loginBtn:hover {
-    background-color: #6592ac;
-    color: white;
+  background-color: #6592ac;
+  color: white;
 }
 
 #SignUp {
@@ -58,7 +58,7 @@
   position: relative;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   width: 20%;
   min-width: 400px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
