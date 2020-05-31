@@ -2,7 +2,6 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
 const Event = require('../api/models/Event');
-const User = require('../api/models/User');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -18,7 +17,8 @@ const tools = require('../util/testing-utils/tools.js');
 const {
   setTokenStatus,
   resetMock,
-  restoreMock
+  restoreMock,
+  initializeMock
 } = require('./mocks/TokenValidFunctions');
 
 chai.should();
@@ -26,10 +26,9 @@ chai.use(chaiHttp);
 
 describe('Event', () => {
   before(done => {
-    app = tools.initializeServer();
-    // Before each test we empty the database
+    initializeMock();
+    app = tools.initializeServer(__dirname + '/../api/routes/Event.js');
     tools.emptySchema(Event);
-    tools.emptySchema(User);
     done();
   });
 
@@ -46,7 +45,7 @@ describe('Event', () => {
     resetMock();
   });
 
-  const token = '';
+  const token = 'token';
   let eventId = '';
   const VALID_NEW_EVENT = {
     title: 'ros masters united',

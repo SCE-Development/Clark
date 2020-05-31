@@ -16,7 +16,7 @@ chai.use(chaiHttp);
 
 describe('Advertisement', () => {
   before(done => {
-    app = tools.initializeServer();
+    app = tools.initializeServer(__dirname + '/../api/routes/Advertisement.js');
     tools.emptySchema(Advertisement);
     done();
   });
