@@ -11,7 +11,6 @@ import { membershipState } from '../../Enums';
 
 export default function AdminNavbar(props) {
   const [collapsed, setCollapsed] = useState(true);
-
   const navbarLinks = [
     { title: 'Home', route: '/' },
     { title: 'Overview', route: '/dashboard' },
@@ -21,14 +20,20 @@ export default function AdminNavbar(props) {
   ];
 
   return (
-    <Navbar light className='admin-nav navbar-expand-md'>
+    <Navbar dark className='admin-nav admin-dark navbar-expand-md' navbar>
       <NavbarBrand href='/'>
-        Software & Computer Engineering Society
+      Admin Dashboard
       </NavbarBrand>
       <NavbarToggler
         onClick={() => setCollapsed(!collapsed)}
         className='mr-2'
       />
+      <div class="menu-btn">
+        <div class="menu-btn_burger"></div>
+      </div>
+
+      <script src="AdminNavbar.js"></script>
+
       <Collapse isOpen={!collapsed} navbar>
         <Nav className='ml-auto sce-nav' navbar>
           {navbarLinks.map((link, index) => {
