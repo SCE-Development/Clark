@@ -11,7 +11,6 @@ import spring2 from './assets/spring2.jpeg';
 import { Container, Button, Row, Col } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
-import { sendVerificationEmail } from '../../APIFunctions/mailer';
 
 class MembershipPlan extends Component {
   constructor(props) {
@@ -163,11 +162,6 @@ class MembershipPlan extends Component {
             </div>
           </div>
         </Container>
-        <Button onClick={() => {
-          sendVerificationEmail('evanuxd@gmail.com', 'evan');
-        }}>
-          do it
-        </Button>
       </div>
     );
   }

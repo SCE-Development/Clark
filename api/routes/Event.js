@@ -14,7 +14,7 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../constants').STATUS_CODES;
-const addErrorLog = require ('../util/errorLog');
+const addErrorLog = require ('../util/logging-helpers');
 
 router.get('/getEvents', (req, res) => {
   Event.find()
