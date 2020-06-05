@@ -118,10 +118,18 @@ class SceHttpServer {
 // by node server.js. If we are not requiring it and are running it from the
 // command line, we create a server instance and start listening for requests.
 if (typeof module !== 'undefined' && !module.parent) {
-  const server = new SceHttpServer(__dirname + '/routes/', 8080)
-  server.initializeEndpoints().then(() => {
-    server.openConnection()
-  })
+  const generalApiEndpoints = __dirname + '/routes/';
+  const mailerApiEndpoints = __dirname + '/mailer/mailer.js';
+
+  const generalServer = new SceHttpServer(generalApiEndpoints, 8080);
+  const mailerServer = new SceHttpServer(mailerApiEndpoints, 8082);
+
+  generalServer.initializeEndpoints().then(() => {
+    generalServer.openConnection();
+  });
+  mailerServer.initializeEndpoints().then(() => {
+    mailerServer.openConnection();
+  });
 }
 
 module.exports = { SceHttpServer }
