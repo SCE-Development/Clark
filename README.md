@@ -65,16 +65,17 @@ This project was built in the Ubuntu Xenial 16.04 LTS Linux environment, and was
 
 #### Set up mailer
   1. Move config.example.js to config.js in /api/config/
-  1. Obtain the client secret and ID keys from [https://console.cloud.google.com/](https://console.cloud.google.com/) under the API Credentials section
+  1. Obtain the client secret and ID keys from [https://console.cloud.google.com/](https://console.cloud.google.com/) under the API Credentials section ![api-credentials](https://user-images.githubusercontent.com/36345325/83360935-d2018600-a339-11ea-8650-a28bc4c18ba7.png)
   1. Login into the Oauth2 playground at: https://developers.google.com/oauthplayground/
-  1. Select GMAIL API v1 -> https://mail.google.com and press Authorize APIs. It will prompt you to login to the sce.sjsu@gmail.com to authorize the API
-  1. When the view changes to the second step, click the gear icon and then the checkbox for "Use your own auth credentials"
+  1. Select GMAIL API v1 -> https://mail.google.com and press Authorize APIs. It will prompt you to login to the sce.sjsu@gmail.com to authorize the API  ![authorize-gmail-api](https://user-images.githubusercontent.com/36345325/83360953-fc534380-a339-11ea-99bb-8dcb63fe5396.png)
+  1. When the view changes to the second step, click the gear icon and then the checkbox for "Use your own auth credentials" ![own-credentials](https://user-images.githubusercontent.com/36345325/83360994-39b7d100-a33a-11ea-9d73-7921e456bf7e.png)
   1. Paste in the client ID and client secret and submit it
   1. Copy the Refresh Token into the REFRESH_TOKEN area in config.js
   1. In a terminal window use the command `npm run build && NODE_ENV=production node server.js`
-  1. A link will be pasted into the terminal output above the logger information, open the URL in a browser
-  1. Copy the Authorization code listed on the URL after logging in to the sce.sjsu@gmail.com account and paste it into the terminal window
-  10. A token.json file should be created under /api/config/ and you're now good to go
+  1. Create an account with a fake email. ![fake-email](https://user-images.githubusercontent.com/36345325/83361021-68ce4280-a33a-11ea-8c4b-ab12140fab6c.png)
+  1. After submitting the application, go back to your running server instance and visit the link it prompts you to ![server-prompt](https://user-images.githubusercontent.com/36345325/83361192-b8613e00-a33b-11ea-9fe3-4c22752df856.png)
+  1. Copy the value in this text input, and paste it into the server terminal and hit enter. ![image](https://user-images.githubusercontent.com/36345325/83361205-d6c73980-a33b-11ea-8d69-24b1fa0898e8.png)
+  1. A token.json file should be created under /api/config/ and you're now good to go
 
 - Note: you need access into the sce.sjsu@gmail.com email account in order to set this up.
 - Note: If you need to repeat this process, delete any existing token.js file.

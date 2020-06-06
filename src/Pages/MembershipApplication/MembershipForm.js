@@ -4,7 +4,7 @@ import { Row, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
 import { registerUser, checkIfUserExists } from '../../APIFunctions/User';
-import { sendVerificationEmail } from '../../APIFunctions/Profile';
+import { sendVerificationEmail } from '../../APIFunctions/mailer';
 import GoogleRecaptcha from './GoogleRecaptcha';
 
 export default function MembershipForm(props) {
