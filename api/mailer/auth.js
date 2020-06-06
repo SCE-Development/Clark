@@ -17,7 +17,7 @@ const bcrypt = require('bcryptjs');
 function generateHashedId(email) {
   return new Promise((resolve, reject) => {
     // Find a user in the DB
-    User.findOne({ email: email }, function(error, result) {
+    User.findOne({ email }, function(error, result) {
       // Return an error if there's a problem (e.g. email is null)
       if (error) {
         reject(new Error('Bad request'));
@@ -34,15 +34,14 @@ function generateHashedId(email) {
       // bcrypts library
       bcrypt.genSalt(10, function(error, salt) {
         if (error) {
-          // return new Error('Bcrypt failed')
+          // reject('Bcrypt failed')
           reject(new Error('Bcrypt failed'));
         }
 
-        bcrypt.hash(hashedId, salt, null, function(error, hash) {
+        bcrypt.hash(hashedId, salt, function(error, hash) {
           if (error) {
             reject(new Error('Bcrypt failed'));
           }
-
           hashedId = hash;
           resolve(hashedId);
         });
@@ -59,34 +58,44 @@ function generateHashedId(email) {
  */
 async function validateVerificationEmail(email, hashedId) {
   // Find the user in the DB
-  let verifucationSucessful = false;
-  await User.findOne({ email: email }, async function(error, result) {
-    // Return an error if there's a problem (e.g. email is null)
-    if (error) {
-      return new Error('Bad request');
-    }
-
-    // Return an error if there is no user found
-    if (!result) {
-      return new Error('User not found');
-    }
-
-    // Compare the hashed parameter with the resultant _id value
-    await bcrypt.compare(String(result._id), hashedId, async function(
-      error,
-      isMatch
-    ) {
-      // Return an error if the ID's do not match
+  return new Promise(async (resolve, reject) => {
+    await User.findOne({ email: email }, async function(error, result) {
+      // Return an error if there's a problem (e.g. email is null)
       if (error) {
-        return new Error('Id and hashedId\'s do not match');
+        reject('Bad request');
       }
-      verifucationSucessful = isMatch;
+      // Return an error if there is no user found
+      if (!result) {
+        reject('User not found');
+      }
+      // Compare the hashed parameter with the resultant _id value
+      await bcrypt.compare(String(result._id), hashedId, async function(
+        error,
+        isMatch
+      ) {
+        // Return an error if the ID's do not match
+        if (error) {
+          reject('Id and hashedId\'s do not match');
+        }
+        if (isMatch) {
+          result.emailVerified = true;
+          await result
+            .save()
+            .then(_ => {
+              resolve(true);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        } else {
+          reject(false);
+        }
+      });
     });
   });
-  return verifucationSucessful;
 }
 
 module.exports = {
-  generateHashedId: generateHashedId,
-  validateVerificationEmail: validateVerificationEmail
+  generateHashedId,
+  validateVerificationEmail
 };

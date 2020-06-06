@@ -1,9 +1,8 @@
 import React from 'react';
 import {
   sendVerificationEmail,
-  validateVerificationEmail,
-  setEmailToVerified
-} from '../../APIFunctions/Profile';
+  validateVerificationEmail
+} from '../../APIFunctions/mailer';
 
 export default class VerifyEmail extends React.Component {
   constructor(props) {
@@ -49,8 +48,6 @@ export default class VerifyEmail extends React.Component {
             emailVerified: true,
             componentLoaded: true
           });
-
-          setEmailToVerified(this.state.email);
         } else {
           this.setState({
             componentLoaded: true
