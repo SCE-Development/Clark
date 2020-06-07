@@ -12,13 +12,13 @@ let app = null;
 
 const expect = chai.expect;
 // tools for testing
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
   resetMock,
   restoreMock,
   initializeMock
-} = require('./mocks/TokenValidFunctions');
+} = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
