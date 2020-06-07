@@ -16,7 +16,8 @@ const tools = require('../util/testing-utils/tools.js');
 const {
   setTokenStatus,
   resetMock,
-  restoreMock
+  restoreMock,
+  initializeMock
 } = require('./mocks/TokenValidFunctions');
 
 chai.should();
@@ -24,7 +25,9 @@ chai.use(chaiHttp);
 
 describe('InventoryItem', () => {
   before(done => {
-    app = tools.initializeServer();
+    initializeMock();
+    app = tools.initializeServer(
+      __dirname + '/../api/routes/InventoryItem.js');
     // Before each test we empty the database
     tools.emptySchema(InventoryItem);
     done();
@@ -121,7 +124,7 @@ describe('InventoryItem', () => {
       setTokenStatus(true);
       chai
         .request(app)
-        .post('/api/InventoryItem/getItems')
+        .get('/api/InventoryItem/getItems')
         .then(function(res) {
           expect(res).to.have.status(OK);
           const getItemsResponse = res.body;
@@ -191,7 +194,7 @@ describe('InventoryItem', () => {
       setTokenStatus(true);
       chai
         .request(app)
-        .post('/api/InventoryItem/getItems')
+        .get('/api/InventoryItem/getItems')
         .then(function(res) {
           expect(res).to.have.status(OK);
           const getItemsResponse = res.body;
@@ -259,7 +262,7 @@ describe('InventoryItem', () => {
       setTokenStatus(true);
       chai
         .request(app)
-        .post('/api/InventoryItem/getItems')
+        .get('/api/InventoryItem/getItems')
         .then(function(res) {
           expect(res).to.have.status(OK);
           const getItemsResponse = res.body;

@@ -22,7 +22,7 @@ describe('<AdminNavbar />', () => {
       wrapper
         .find(NavbarBrand)
         .prop('children')
-        .toString() === 'Software & Computer Engineering Society'
+        .toString() === 'Admin Dashboard'
     );
   });
   it('Should render 5 <NavLink /> tags with officer Credentials', () => {

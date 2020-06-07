@@ -62,11 +62,13 @@ const SUCCESS_MESSAGE = {
 const ERROR_MESSAGE = 'error';
 
 describe('LedSign', () => {
-  const healthCheckMock = sinon.stub(LedSignFunctions, 'healthCheck');
-  const updateSignTextMock = sinon.stub(LedSignFunctions, 'updateSignText');
+  let healthCheckMock;
+  let updateSignTextMock;
 
   before(done => {
-    app = tools.initializeServer();
+    healthCheckMock = sinon.stub(LedSignFunctions, 'healthCheck');
+    updateSignTextMock = sinon.stub(LedSignFunctions, 'updateSignText');
+    app = tools.initializeServer(__dirname + '/../api/routes/LedSign.js');
     tools.emptySchema(SignLog);
     done();
   });
@@ -74,6 +76,7 @@ describe('LedSign', () => {
   after(done => {
     healthCheckMock.restore();
     updateSignTextMock.restore();
+    sinon.restore();
     tools.terminateServer(done);
   });
 

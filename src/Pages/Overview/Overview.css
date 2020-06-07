@@ -7,24 +7,26 @@
 
 .layout{
   margin: 10px auto;
-  width:700px
+  width:700px;
 }
 
-h1{
+.title{
+  min-height: 100%;
+  min-width: 100%;
   text-align: center;
-  font-weight: 300
+  font-weight: 300;
+  font-variant-caps: all-small-caps;
 }
 
 .content-table{
   border-collapse: collapse;
-  margin: 25px;
   font-size: 0.9em;
   max-width: 700px;
   min-width: 700px;
 }
 
 .content-table thead tr{
-  background-color:#328ba8;
+  background-color:#3a5f7f;
   color: #ffffff;
   text-align: left;
   font-weight: bold;
@@ -54,11 +56,11 @@ thead.td{
   padding: 12px 20px;
   margin: 8px 0px;
   display: inline-block;
-  border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  font-size: 16px;
-  initial-letter-align: left
+  initial-letter-align: left;
+  font-size: smaller;
+  font-style: italic;
 }
 
 .submit-button{

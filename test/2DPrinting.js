@@ -30,7 +30,7 @@ describe('2DPrinting', () => {
   const sendPrintRequestMock = sinon.stub(PrintFunctions, 'sendPrintRequest');
 
   before(done => {
-    app = tools.initializeServer();
+    app = tools.initializeServer(__dirname + '/../api/routes/print.js');
     done();
   });
 
