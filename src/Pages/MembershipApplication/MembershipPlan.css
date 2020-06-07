@@ -117,9 +117,9 @@
 }
 
 .membership-card {
-    display: table-cell;
-    min-width: 40%;
-    width: 46%;
+    width: 50%;
+    padding: 30px;
+    text-align: center;
 }
 
 .membership-heading {
