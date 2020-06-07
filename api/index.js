@@ -9,6 +9,7 @@ const routes = [
   '3DPrinter',
   'Advertisement',
   'InventoryItem'
+
 ]
 
 module.exports = routes;

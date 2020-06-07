@@ -16,7 +16,7 @@ const AdvertisementSchema = new Schema(
       type: Date
     }
   },
-  { collection: 'Advertisements' }
+  { collection: 'Advertisement' }
 );
 
 module.exports = mongoose.model('Advertisement', AdvertisementSchema);
