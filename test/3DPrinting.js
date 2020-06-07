@@ -28,7 +28,7 @@ describe('3DPrinting', () => {
     .stub(send3dPrintRequest, 'send3dPrintRequest');
 
   before(done => {
-    app = tools.initializeServer();
+    app = tools.initializeServer(__dirname + '/../api/routes/3DPrinter.js');
     done();
   });
 

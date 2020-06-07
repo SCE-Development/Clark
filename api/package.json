@@ -2,8 +2,9 @@
   "name": "sce-backend",
   "version": "1.0.0",
   "description": "contains all the APIs used by the SCE website",
-  "main": "index.js",
+  "main": "SceHttpServer.js",
   "scripts": {
+    "start": "node SceHttpServer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

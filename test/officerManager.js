@@ -20,7 +20,8 @@ const tools = require('../util/testing-utils/tools.js');
 const {
   setTokenStatus,
   resetMock,
-  restoreMock
+  restoreMock,
+  initializeMock
 } = require('./mocks/TokenValidFunctions');
 const { DEFAULT_PHOTO_URL } = require('../api/constants');
 chai.should();
@@ -29,7 +30,9 @@ chai.use(chaiHttp);
 // Our parent block
 describe('OfficerManager', () => {
   before(done => {
-    app = tools.initializeServer();
+    initializeMock();
+    app = tools.initializeServer(
+      __dirname + '/../api/routes/officerManager.js');
     // Before each test we empty the database
     tools.emptySchema(OfficerManager);
     tools.emptySchema(User);
