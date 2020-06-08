@@ -25,9 +25,6 @@ const {
 const membershipState = require('../constants').MEMBERSHIP_STATE;
 const addErrorLog = require ('../util/errorLog');
 
-const validateVerificationEmail = require('../mailer/auth')
-  .validateVerificationEmail;
-
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -283,35 +280,6 @@ router.post('/edit', (req, res) => {
       message: `${query.email} was updated.`,
       membershipValidUntil: user.membershipValidUntil
     });
-  });
-});
-
-router.post('/validateEmail', function(req, res) {
-  User.findOne({ email: req.body.email }, async function(error, result) {
-    if (error) {
-      const info = {
-        userEmail: req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: 'user/validateEmail',
-        errorDescription: err
-      };
-      addErrorLog(info);
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
-
-    if (!result) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.email} not found.` });
-    }
-
-    const validated = await validateVerificationEmail(
-      req.body.email,
-      req.body.hashedId
-    );
-    if (validated) return res.sendStatus(OK);
-
-    return res.sendStatus(BAD_REQUEST);
   });
 });
 

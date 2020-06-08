@@ -9,6 +9,7 @@ import {
   DropdownItem
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
+import Header from '../../Components/Header/Header';
 
 export default class OverviewBoard extends Component {
   constructor(props) {
@@ -19,6 +20,9 @@ export default class OverviewBoard extends Component {
       toggle: false,
       currentQueryType: 'All',
       queryTypes: ['All', 'Pending', 'Officer', 'Admin']
+    };
+    this.headerProps = {
+      title: 'Users Dashboard'
     };
   }
 
@@ -125,99 +129,100 @@ export default class OverviewBoard extends Component {
 
   render() {
     return (
-      <div className='layout'>
-        <h1>Users Dashboard</h1>
+      <div>
+        <Header {...this.headerProps} />
+        <div className='layout'>
+          <h6 id='search-tag'>Search </h6>
+          <ButtonDropdown
+            isOpen={this.state.toggle}
+            toggle={() => {
+              this.handleToggle();
+            }}
+          >
+            <DropdownToggle caret>{this.state.currentQueryType}</DropdownToggle>
+            <DropdownMenu>
+              {this.state.queryTypes.map((type, ind) => (
+                <DropdownItem
+                  key={ind}
+                  onClick={() =>
+                    this.setState({ currentQueryType: type }, () =>
+                      this.updateQuery('#InvalidSearch#')
+                    )}
+                >
+                  {type}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </ButtonDropdown>
 
-        <h6 id='search-tag'>Search </h6>
-        <ButtonDropdown
-          isOpen={this.state.toggle}
-          toggle={() => {
-            this.handleToggle();
-          }}
-        >
-          <DropdownToggle caret>{this.state.currentQueryType}</DropdownToggle>
-          <DropdownMenu>
-            {this.state.queryTypes.map((type, ind) => (
-              <DropdownItem
-                key={ind}
-                onClick={() =>
-                  this.setState({ currentQueryType: type }, () =>
-                    this.updateQuery('#InvalidSearch#')
-                  )}
-              >
-                {type}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </ButtonDropdown>
+          <input
+            className='input-overview'
+            placeholder="search by 'first name, last name, or email'"
+            onChange={event => {
+              this.updateQuery(event.target.value);
+            }}
+          />
 
-        <input
-          className='input-overview'
-          placeholder="search by 'first name, last name, or email'"
-          onChange={event => {
-            this.updateQuery(event.target.value);
-          }}
-        />
+          <table className='content-table' id='users'>
+            <thead>
+              <tr>
+                {[
+                  'Name',
+                  'Door Code',
+                  'Printing',
+                  'Email Verified',
+                  'Membership Type',
+                  '',
+                  ''
+                ].map((ele, ind) => {
+                  return <th key={ind}>{ele}</th>;
+                })}
+              </tr>
+            </thead>
 
-        <table className='content-table' id='users'>
-          <thead>
-            <tr>
-              {[
-                'Name',
-                'Door Code',
-                'Printing',
-                'Email Verified',
-                'Membership Type',
-                '',
-                ''
-              ].map((ele, ind) => {
-                return <th key={ind}>{ele}</th>;
-              })}
-            </tr>
-          </thead>
-
-          <tbody>
-            {this.state.queryResult.length > 0
-              ? this.state.queryResult.map((user, index) => {
-                return (
-                  <OverviewProfile
-                    key={index}
-                    users={this.state.users}
-                    user={user}
-                    index={index}
-                    token={this.state.authToken}
-                    deleteUser={this.deleteUser.bind(this)}
-                    updateQuery={() => {
-                      this.setState(
-                        { currentQueryType: 'All', queryResult: [] },
-                        this.updateQuery('#InvalidSearch#')
-                      );
-                    }}
-                    updateUserState={this.updateUserState}
-                  />
-                );
-              })
-              : this.state.users.map((user, index) => {
-                return (
-                  <OverviewProfile
-                    key={index}
-                    users={this.state.users}
-                    user={user}
-                    index={index}
-                    token={this.state.authToken}
-                    deleteUser={this.deleteUser.bind(this)}
-                    updateQuery={() => {
-                      this.setState(
-                        { currentQueryType: 'All', queryResult: [] },
-                        this.updateQuery('#InvalidSearch#')
-                      );
-                    }}
-                    updateUserState={this.updateUserState.bind(this)}
-                  />
-                );
-              })}
-          </tbody>
-        </table>
+            <tbody>
+              {this.state.queryResult.length > 0
+                ? this.state.queryResult.map((user, index) => {
+                  return (
+                    <OverviewProfile
+                      key={index}
+                      users={this.state.users}
+                      user={user}
+                      index={index}
+                      token={this.state.authToken}
+                      deleteUser={this.deleteUser.bind(this)}
+                      updateQuery={() => {
+                        this.setState(
+                          { currentQueryType: 'All', queryResult: [] },
+                          this.updateQuery('#InvalidSearch#')
+                        );
+                      }}
+                      updateUserState={this.updateUserState}
+                    />
+                  );
+                })
+                : this.state.users.map((user, index) => {
+                  return (
+                    <OverviewProfile
+                      key={index}
+                      users={this.state.users}
+                      user={user}
+                      index={index}
+                      token={this.state.authToken}
+                      deleteUser={this.deleteUser.bind(this)}
+                      updateQuery={() => {
+                        this.setState(
+                          { currentQueryType: 'All', queryResult: [] },
+                          this.updateQuery('#InvalidSearch#')
+                        );
+                      }}
+                      updateUserState={this.updateUserState.bind(this)}
+                    />
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }

@@ -2,7 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
 const PrintingForm3D = require('../api/models/PrintingForm3D');
-const tokenValidMocker = require('./mocks/TokenValidFunctions');
+const tokenValidMocker = require('./util/mocks/TokenValidFunctions');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -17,12 +17,13 @@ const {
 let app = null;
 const expect = chai.expect;
 // tools for testing
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
   resetMock,
-  restoreMock
-} = require('./mocks/TokenValidFunctions');
+  restoreMock,
+  initializeMock
+} = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
@@ -30,7 +31,9 @@ chai.use(chaiHttp);
 // Our parent block
 describe('3DPrintingForm', () => {
   before(done => {
-    app = tools.initializeServer();
+    initializeMock();
+    app = tools.initializeServer(
+      __dirname + '/../api/routes/3DPrintingForm.js');
     tools.emptySchema(PrintingForm3D);
     done();
   });

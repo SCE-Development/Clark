@@ -10,13 +10,13 @@ let app = null;
 
 const expect = chai.expect;
 
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 chai.should();
 chai.use(chaiHttp);
 
 describe('Advertisement', () => {
   before(done => {
-    app = tools.initializeServer();
+    app = tools.initializeServer(__dirname + '/../api/routes/Advertisement.js');
     tools.emptySchema(Advertisement);
     done();
   });

@@ -16,12 +16,13 @@ const {
 let app = null;
 const expect = chai.expect;
 // tools for testing
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
   resetMock,
-  restoreMock
-} = require('./mocks/TokenValidFunctions');
+  restoreMock,
+  initializeMock
+} = require('./util/mocks/TokenValidFunctions');
 const { DEFAULT_PHOTO_URL } = require('../api/constants');
 chai.should();
 chai.use(chaiHttp);
@@ -29,7 +30,9 @@ chai.use(chaiHttp);
 // Our parent block
 describe('OfficerManager', () => {
   before(done => {
-    app = tools.initializeServer();
+    initializeMock();
+    app = tools.initializeServer(
+      __dirname + '/../api/routes/officerManager.js');
     // Before each test we empty the database
     tools.emptySchema(OfficerManager);
     tools.emptySchema(User);

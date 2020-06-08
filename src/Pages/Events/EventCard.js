@@ -33,7 +33,7 @@ function EventCard(props) {
             {mapPinSymbol()}
             {eventLocation}
           </Row>
-          <Row className='event-desc d-none d-xl-block'>
+          <Row className='event-desc'>
             {description && description.length > 250 ? (
               <span>{description.substring(0, 250)} ...</span>
             ) : (

@@ -10,13 +10,13 @@ const { OK, BAD_REQUEST } = constants.STATUS_CODES;
 let app = null;
 
 const expect = chai.expect;
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 chai.should();
 chai.use(chaiHttp);
 
 describe('ErrorLog', () => {
   before(done => {
-    app = tools.initializeServer();
+    app = tools.initializeServer(__dirname + '/../api/routes/ErrorLog.js');
     tools.emptySchema(ErrorLog);
     done();
   });

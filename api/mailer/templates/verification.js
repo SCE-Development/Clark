@@ -4,6 +4,8 @@ module.exports = function(user, recipient, name) {
   return new Promise((resolve, reject) => {
     generateHashedId(recipient)
       .then(hashedId => {
+        const verifyLink =
+          `https://sce.engr.sjsu.edu/verify?id=${hashedId}&user=${recipient}`;
         return resolve({
           from: user,
           to: recipient,
@@ -13,8 +15,7 @@ module.exports = function(user, recipient, name) {
             Hi ${name || ''},<br />
             <p>Thanks for signing up!
             Please verify your email by clicking below.</p>
-            <a href='https://sce.engr.sjsu.edu/
-            verify?id=${hashedId}&user=${recipient}'>Verify Email</a>
+            <a href='${verifyLink}'>Verify Email</a>
           `
         });
       })

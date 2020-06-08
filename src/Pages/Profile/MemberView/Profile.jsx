@@ -3,6 +3,7 @@ import './profile-modifier.css';
 import InfoCard from './InfoCard.js'
 import { searchUserByEmail } from '../../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../../APIFunctions/Profile';
+import Header from '../../../Components/Header/Header'
 const membershipStatus = require('../../../Enums').membershipState
 
 export default class Profile extends Component {
@@ -15,12 +16,15 @@ export default class Profile extends Component {
       user: '',
       fullName: ''
     }
+    this.headerProps = {
+      title: 'SCE Member Profile'
+    };
   }
 
   async componentDidMount() {
     const response = await searchUserByEmail(this.props.user.email,
       this.props.user.token)
-      if (!response.error) {
+    if (!response.error) {
       //concat user to full name
       this.setState({ user: response.responseData }, () => {
         const name = formatFirstAndLastName(this.props.user)
@@ -38,9 +42,11 @@ export default class Profile extends Component {
           { title: 'Door Code', value: this.state.user.doorCode },
           { title: 'Joined Date', value: this.state.user.joinDate.slice(0, 10) },
           { title: 'Email', value: this.state.user.email },
-          { title: 'Membership Expiration', value: (this.props.user.accessLevel<membershipStatus.MEMBER)? 
-          "Not Valid" :
-          this.state.user.membershipValidUntil.slice(0, 10) },
+          {
+            title: 'Membership Expiration', value: (this.props.user.accessLevel < membershipStatus.MEMBER) ?
+              "Not Valid" :
+              this.state.user.membershipValidUntil.slice(0, 10)
+          },
         ] :
         [
           { title: '.', value: '' },
@@ -52,13 +58,13 @@ export default class Profile extends Component {
 
     return (
       <div id='app'>
-        <h1 id='title'> SCE Member Profile </h1>
+        <Header {...this.headerProps} />
 
         <img id='profile-logo' alt='sce logo'
           src='images/SCE-glow.png' />
 
-        <InfoCard fields={fields} 
-        user={{...this.state.user, token: this.props.user.token}} />
+        <InfoCard fields={fields}
+          user={{ ...this.state.user, token: this.props.user.token }} />
       </div>
     );
   }

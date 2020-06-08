@@ -61,17 +61,12 @@
   margin-top: 10px;
 }
 
-.membership-card {
-  max-width: 35%;
-  text-align: center;
-}
-
 .membership-plan-row {
   justify-content: space-evenly;
 }
 
-.active-plan {
-  background-color: rgb(188, 255, 186);
+.active-plan .membership-price {
+  background-color: rgb(96, 122, 121);
 }
 
 .email-input {
@@ -86,34 +81,17 @@
 
 .membership {
   display: inline-block;
+  padding: 5px;
 }
 
-.membership-card:hover {
-  background-color: lightblue;
+.membership-card:hover .membership-price {
+  background-color: rgb(163, 166, 179);
   cursor: pointer;
 }
 
 .img {
   height: 200px;
   width: 100%;
-}
-
-.fade-enter {
-  opacity: 0;
-}
-
-.fade-enter.fade-enter-active {
-  opacity: 1;
-  transition: opacity 200ms ease-in;
-}
-
-.fade-leave {
-  opacity: 1;
-}
-
-.fade-leave.fade-leave-active {
-  opacity: 0;
-  transition: opacity 200ms ease-in;
 }
 
 .recaptcha {
@@ -137,7 +115,7 @@
   color: black;
 }
 
-#submit-btn:hover:enabled{
+#submit-btn:hover:enabled {
   color: white;
 }
 
@@ -147,11 +125,11 @@
   text-align: center;
 }
 
-.background {
+#background {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image:url('./assets/background.png');
+  background-image: url('./assets/background.png');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
