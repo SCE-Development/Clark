@@ -8,7 +8,7 @@ import summer from './assets/summer.jpeg';
 import summer2 from './assets/summer2.jpeg';
 import spring from './assets/spring.jpg';
 import spring2 from './assets/spring2.jpeg';
-import { Container, Button, Row } from 'reactstrap';
+import { Container, Button, Row, Col } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
 
@@ -138,7 +138,7 @@ class MembershipPlan extends Component {
                     key={ind}
                     onClick={this.cardSelected.bind(this, type.plan)}
                   >
-                    <div className='membership-heading'>{type.header}</div>
+                    <Col className='membership-heading'>{type.header}</Col>
                     <h3 className='membership-price'>{type.price}
                       <p className='expiration'>*Expires on {type.expire}.</p>
                     </h3>
