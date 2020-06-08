@@ -6,7 +6,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const constants = require('../api/constants');
 const { OK, BAD_REQUEST, NOT_FOUND } = constants.STATUS_CODES;
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 const LedSignFunctions =
   require('../api/printingRPC/client/ledsign/led_sign_client');
 const sinon = require('sinon');

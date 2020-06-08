@@ -6,7 +6,7 @@ import { expect } from 'chai';
 
 import Routing from '../../src/Routing';
 import Adapter from 'enzyme-adapter-react-16';
-import { MemoryRouter } from '../mocks/react-router-dom';
+import { MemoryRouter } from '../util/mocks/react-router-dom';
 
 import EventManager from '../../src/Pages/EventManager/EventManager';
 import Login from '../../src/Pages/Login/Login';
