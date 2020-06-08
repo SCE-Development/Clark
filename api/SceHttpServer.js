@@ -1,8 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser')
-const settings = require('./util/settings')
+const bodyParser = require('body-parser');
+const settings = require('./util/settings');
 const cors = require('cors');
-const http = require('http')
+const http = require('http');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
@@ -70,16 +70,16 @@ class SceHttpServer {
     this.server = http.createServer(this.app);
     this.connectToMongoDb();
     const { port } = this;
-    this.server.listen(port, function () {
+    this.server.listen(port, function() {
       console.debug(`Now listening on port ${port}`);
-    })
+    });
   }
 
   /**
    * Initialize a connection to MongoDB.
    */
   connectToMongoDb() {
-    this.mongoose = mongoose
+    this.mongoose = mongoose;
     this.mongoose
       .connect(`mongodb://localhost/${this.database}`, {
         promiseLibrary: require('bluebird'),
@@ -87,11 +87,10 @@ class SceHttpServer {
         useUnifiedTopology: true,
         useCreateIndex: true
       })
-      .then(() => {
-        console.log('MongoDB Connection Successful')
-        console.log()
-      })
-      .catch(error => console.error(error))
+      .then(() => {})
+      .catch(error => {
+        throw error;
+      });
   }
 
   /**
@@ -132,4 +131,4 @@ if (typeof module !== 'undefined' && !module.parent) {
   });
 }
 
-module.exports = { SceHttpServer }
+module.exports = { SceHttpServer };
