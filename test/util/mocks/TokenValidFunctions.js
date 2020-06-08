@@ -1,4 +1,4 @@
-const TokenFunctions = require('../../api/util/token-functions');
+const TokenFunctions = require('../../../api/util/token-functions');
 const sinon = require('sinon');
 
 let checkifTokenValidMock = null;

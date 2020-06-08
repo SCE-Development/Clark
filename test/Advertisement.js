@@ -10,7 +10,7 @@ let app = null;
 
 const expect = chai.expect;
 
-const tools = require('../util/testing-utils/tools.js');
+const tools = require('./util/tools/tools.js');
 chai.should();
 chai.use(chaiHttp);
 
