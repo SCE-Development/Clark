@@ -32,7 +32,7 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "google-protobuf": "^3.11.4",
-    "googleapis": "^47.0.0",
+    "googleapis": "^52.1.0",
     "grpc": "^1.24.2",
     "http": "0.0.0",
     "mongoose": "^5.9.2",
