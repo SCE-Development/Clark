@@ -7,8 +7,10 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const constants = require('../api/constants');
 const { OK, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND } = constants.STATUS_CODES;
+const SceApiTester = require('../test/util/tools/SceApiTester');
 
 let app = null;
+let test = null;
 
 const expect = chai.expect;
 // tools for testing
@@ -28,6 +30,7 @@ describe('InventoryItem', () => {
     initializeMock();
     app = tools.initializeServer(
       __dirname + '/../api/routes/InventoryItem.js');
+    test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(InventoryItem);
     done();
@@ -75,120 +78,66 @@ describe('InventoryItem', () => {
   };
 
   describe('/POST addItem', () => {
-    it('Should return 403 when an invalid token is supplied', done => {
-      chai
-        .request(app)
-        .post('/api/InventoryItem/addItem')
-        .send(ITEM_WITH_INVALID_TOKEN)
-        .then(function(res) {
-          expect(res).to.have.status(UNAUTHORIZED);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+    it('Should return 403 when an invalid token is supplied', async () => {
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/InventoryItem/addItem', ITEM_WITH_INVALID_TOKEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
-    it('Should return 400 when the required fields aren\'t filled in', done => {
-      setTokenStatus(true);
-      chai
-        .request(app)
-        .post('/api/InventoryItem/addItem')
-        .send({ token, ...ITEM_WITHOUT_REQUIRED_FIELDS })
-        .then(function(res) {
-          expect(res).to.have.status(BAD_REQUEST);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
-    });
-    it('Should return statusCode 200 when all required fields are filled in',
-      done => {
+    it('Should return 400 when the required fields aren\'t filled in',
+      async () => {
         setTokenStatus(true);
-        chai
-          .request(app)
-          .post('/api/InventoryItem/addItem')
-          .send({ token, ...VALID_NEW_ITEM })
-          .then(function(res) {
-            expect(res).to.have.status(OK);
-            done();
-          })
-          .catch(err => {
-            throw err;
-          });
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/InventoryItem/addItem', ITEM_WITHOUT_REQUIRED_FIELDS);
+        expect(result).to.have.status(BAD_REQUEST);
+      });
+    it('Should return statusCode 200 when all required fields are filled in',
+      async () => {
+        setTokenStatus(true);
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/InventoryItem/addItem', VALID_NEW_ITEM);
+        expect(result).to.have.status(OK);
       });
   });
 
   describe('/GET getItems', () => {
-    it('Should return an object of all items', done => {
+    it('Should return an object of all items', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .get('/api/InventoryItem/getItems')
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          const getItemsResponse = res.body;
-          getItemsResponse.should.be.a('array');
-          expect(getItemsResponse).to.have.length(1);
-          expect(getItemsResponse[0].name).to.equal(VALID_NEW_ITEM.name);
-          expect(getItemsResponse[0].price).to.equal(VALID_NEW_ITEM.price);
-          expect(getItemsResponse[0].stock).to.equal(VALID_NEW_ITEM.stock);
-          expect(getItemsResponse[0].category).to
-            .equal(VALID_NEW_ITEM.category);
-          expect(getItemsResponse[0].picture).to.equal(VALID_NEW_ITEM.picture);
-          expect(getItemsResponse[0].description).to.equal(
-            VALID_NEW_ITEM.description
-          );
-          itemName = getItemsResponse[0].name;
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendGetRequest(
+        '/api/InventoryItem/getItems');
+      expect(result).to.have.status(OK);
+      const getItemsResponse = result.body;
+      getItemsResponse.should.be.a('array');
+      expect(getItemsResponse).to.have.length(1);
+      expect(getItemsResponse[0].name).to.equal(VALID_NEW_ITEM.name);
+      expect(getItemsResponse[0].price).to.equal(VALID_NEW_ITEM.price);
+      expect(getItemsResponse[0].stock).to.equal(VALID_NEW_ITEM.stock);
+      expect(getItemsResponse[0].category).to
+        .equal(VALID_NEW_ITEM.category);
+      expect(getItemsResponse[0].picture).to.equal(VALID_NEW_ITEM.picture);
+      expect(getItemsResponse[0].description).to.equal(
+        VALID_NEW_ITEM.description);
+      itemName = getItemsResponse[0].name;
     });
   });
 
   describe('/POST editItem', () => {
-    it('Should return 403 when an invalid token is supplied', done => {
-      chai
-        .request(app)
-        .post('/api/InventoryItem/editItem')
-        .send({ itemId: itemName, ...ITEM_WITH_INVALID_TOKEN })
-        .then(function(res) {
-          expect(res).to.have.status(UNAUTHORIZED);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+    it('Should return 403 when an invalid token is supplied', async () => {
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/InventoryItem/editItem', ITEM_WITH_INVALID_TOKEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
-    it('Should return 404 when an item by an invalid id isn\'t found', done => {
+    it('Should return 404 when an item by an invalid id isn\'t found',
+      async () => {
+        setTokenStatus(true);
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/InventoryItem/editItem', ITEM_WITH_INVALID_NAME);
+        expect(result).to.have.status(NOT_FOUND);
+      });
+    it('Should return 200 when an item is sucessfully updated', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .post('/api/InventoryItem/editItem')
-        .send({ token, ...ITEM_WITH_INVALID_NAME })
-        .then(function(res) {
-          expect(res).to.have.status(NOT_FOUND);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
-    });
-    it('Should return 200 when an item is sucessfully updated', done => {
-      setTokenStatus(true);
-      chai
-        .request(app)
-        .post('/api/InventoryItem/editItem')
-        .send({ token, name: itemName, ...UPDATED_ITEM })
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/InventoryItem/editItem', UPDATED_ITEM);
+      expect(result).to.have.status(OK);
     });
     it('The update should be reflected in the database', done => {
       setTokenStatus(true);
@@ -217,46 +166,22 @@ describe('InventoryItem', () => {
   });
 
   describe('/POST deleteItem', () => {
-    it('Should return 403 when an invalid token is supplied', done => {
-      chai
-        .request(app)
-        .post('/api/InventoryItem/deleteItem')
-        .send(ITEM_WITH_INVALID_TOKEN)
-        .then(function(res) {
-          expect(res).to.have.status(UNAUTHORIZED);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+    it('Should return 403 when an invalid token is supplied', async () => {
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/InventoryItem/deleteItem', ITEM_WITH_INVALID_TOKEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
-    it('Should return 404 when an item is not found', done => {
+    it('Should return 404 when an item is not found', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .post('/api/InventoryItem/deleteItem')
-        .send({ token, ...ITEM_WITH_INVALID_NAME })
-        .then(function(res) {
-          expect(res).to.have.status(NOT_FOUND);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/InventoryItem/deleteItem', ITEM_WITH_INVALID_NAME);
+      expect(result).to.have.status(NOT_FOUND);
     });
-    it('Should return 200 when an item is sucessfully deleted', done => {
+    it('Should return 200 when an item is sucessfully deleted', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .post('/api/InventoryItem/deleteItem')
-        .send({ token, name: itemName })
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/InventoryItem/deleteItem', {name: itemName});
+      expect(result).to.have.status(OK);
     });
     it('The deleted item should be reflected in the database', done => {
       setTokenStatus(true);

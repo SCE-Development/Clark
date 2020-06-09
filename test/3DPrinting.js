@@ -8,8 +8,10 @@ const tools = require('./util/tools/tools.js');
 const send3dPrintRequest =
   require('../api/printingRPC/client/printing_3d/print_3d_client');
 const sinon = require('sinon');
+const SceApiTester = require('./util/tools/SceApiTester');
 
 let app = null;
+let test = null;
 const expect = chai.expect;
 
 chai.should();
@@ -22,6 +24,7 @@ const TEXT_REQUEST = {
   volume: 1,
   copies: 1
 };
+const INVALID_REQUEST = {copies: 1};
 
 describe('3DPrinting', () => {
   const send3DPrintRequestMock = sinon
@@ -29,6 +32,7 @@ describe('3DPrinting', () => {
 
   before(done => {
     app = tools.initializeServer(__dirname + '/../api/routes/3DPrinter.js');
+    test = new SceApiTester(app);
     done();
   });
 
@@ -42,32 +46,17 @@ describe('3DPrinting', () => {
   });
 
   describe('/POST submit3D', () => {
-    it('Should return statuscode 200 when request is completed', done => {
+    it('Should return statuscode 200 when request is completed', async () => {
       send3DPrintRequestMock.resolves(SUCCESS_MESSAGE);
-      chai
-        .request(app)
-        .post('/api/3DPrinter/submit3D')
-        .send(TEXT_REQUEST)
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequest(
+        '/api/3DPrinter/submit3D', TEXT_REQUEST);
+      expect(result).to.have.status(OK);
     });
-    it('Should return statuscode 400 if the RPC fails', done => {
+    it('Should return statuscode 400 if the RPC fails', async () => {
       send3DPrintRequestMock.rejects(ERROR_MESSAGE);
-      chai
-        .request(app)
-        .post('/api/3DPrinter/submit3D')
-        .then(function(res) {
-          expect(res).to.have.status(BAD_REQUEST);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequest(
+        '/api/3DPrinter/submit3D', INVALID_REQUEST);
+      expect(result).to.have.status(BAD_REQUEST);
     });
   });
 });

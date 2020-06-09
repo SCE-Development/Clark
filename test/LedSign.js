@@ -11,8 +11,10 @@ const LedSignFunctions =
   require('../api/printingRPC/client/ledsign/led_sign_client');
 const sinon = require('sinon');
 const SignLog = require('../api/models/SignLog');
+const SceApiTester = require('./util/tools/SceApiTester');
 
 let app = null;
+let test = null;
 const expect = chai.expect;
 
 chai.should();
@@ -69,6 +71,7 @@ describe('LedSign', () => {
     healthCheckMock = sinon.stub(LedSignFunctions, 'healthCheck');
     updateSignTextMock = sinon.stub(LedSignFunctions, 'updateSignText');
     app = tools.initializeServer(__dirname + '/../api/routes/LedSign.js');
+    test = new SceApiTester(app);
     tools.emptySchema(SignLog);
     done();
   });
@@ -87,19 +90,13 @@ describe('LedSign', () => {
 
   describe('/POST healthCheck', () => {
     let signResponse = null;
-    it('Should return statusCode 200 when the sign is up', done => {
+    let officer = 'thai';
+    it('Should return statusCode 200 when the sign is up', async () => {
       healthCheckMock.resolves(SUCCESS_MESSAGE);
-      chai
-        .request(app)
-        .post('/api/LedSign/healthCheck')
-        .then(function(res) {
-          signResponse = res.body;
-          expect(res).to.have.status(OK);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const response = await test.sendPostRequest(
+        '/api/LedSign/healthCheck', officer);
+      signResponse = response.body;
+      expect(response).to.have.status(OK);
     });
     it('Should return the correct values when modified', done => {
       healthCheckMock.resolves(SUCCESS_MESSAGE);
