@@ -53,4 +53,16 @@ router.post('/validateVerificationEmail', async (req, res) => {
     });
 });
 
+router.post('/getCalendarEvents', async (req, res) => {
+  let calendarID = req.query.calendarID;
+  const numOfEvents = req.query.numOfEvents;
+  if (typeof calendarID === 'undefined') {
+    res.sendStatus(BAD_REQUEST);
+  } else if (numOfEvents < 0) {
+    res.sendStatus(BAD_REQUEST);
+  }
+  const calendarEvents = await getEventsFromCalendar(calendarID, numOfEvents);
+  res.status(OK).send({ calendarEvents });
+});
+
 module.exports = router;

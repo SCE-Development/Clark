@@ -147,6 +147,29 @@ class SceGoogleApiHandler {
       }
     });
   }
-}
 
-module.exports = { SceGoogleApiHandler };
+  /**
+   * Grabs all the events for a given calendar by its id.
+   * will log the next 10 events into the console.
+   * @param calendarId {string} calendar id for which calendar to pull from
+   * @returns {{Array<Object>|Error)} The calendar events from Google or an
+   * error.
+   */
+  getEventsFromCalendar(calendarId, numOfEvents) {
+    // creates a const calendar for use in this method
+    const calendar =
+      google.calendar({ version: 'v3', auth: this.oAuth2Client });
+    // lists the next 10 events in the current calendar
+    calendar.events.list({
+      calendarId: calendarId,
+      timeMin: (new Date()).toISOString(),
+      maxResults: numOfEvents,
+      singleEvents: true,
+      orderBy: 'startTime',
+    }, (err, res) => {
+      if (err) return ('The API returned an error: ' + err);
+      const events = res.data.items;
+      return events;
+    });
+  }
+}
