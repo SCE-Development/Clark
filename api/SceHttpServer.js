@@ -118,13 +118,18 @@ class SceHttpServer {
 // command line, we create a server instance and start listening for requests.
 if (typeof module !== 'undefined' && !module.parent) {
   const generalApiEndpoints = __dirname + '/routes/';
+  const loggingApiEndpoints = __dirname + '/logging/';
   const mailerApiEndpoints = __dirname + '/mailer/mailer.js';
 
   const generalServer = new SceHttpServer(generalApiEndpoints, 8080);
+  const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081);
   const mailerServer = new SceHttpServer(mailerApiEndpoints, 8082);
 
   generalServer.initializeEndpoints().then(() => {
     generalServer.openConnection();
+  });
+  loggingServer.initializeEndpoints().then(() => {
+    loggingServer.openConnection();
   });
   mailerServer.initializeEndpoints().then(() => {
     mailerServer.openConnection();

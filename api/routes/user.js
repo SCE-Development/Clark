@@ -23,7 +23,7 @@ const {
   CONFLICT
 } = require('../constants').STATUS_CODES;
 const membershipState = require('../constants').MEMBERSHIP_STATE;
-const addErrorLog = require ('../util/errorLog');
+const addErrorLog = require ('../util/logging-helpers');
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;

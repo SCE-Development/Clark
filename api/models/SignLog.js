@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const SignLogSchema = new Schema(
   {
-    signTitle: {
+    signText: {
       type: String,
       required: true
     },

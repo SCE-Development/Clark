@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/SCE-Development/Core-v4#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",

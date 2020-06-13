@@ -17,7 +17,7 @@ chai.use(chaiHttp);
 
 describe('ErrorLog', () => {
   before(done => {
-    app = tools.initializeServer(__dirname + '/../api/routes/ErrorLog.js');
+    app = tools.initializeServer(__dirname + '/../api/logging/ErrorLog.js');
     test = new SceApiTester(app);
     tools.emptySchema(ErrorLog);
     done();

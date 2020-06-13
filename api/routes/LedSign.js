@@ -5,26 +5,11 @@ const {
   updateSignText
 } = require('../printingRPC/client/ledsign/led_sign_client');
 const { OK, NOT_FOUND, BAD_REQUEST } = require('../constants').STATUS_CODES;
+const { addSignLog } = require('../util/logging-helpers');
 const { ledSignIp } = require('../config/config');
-const SignLog = require('../models/SignLog');
-
-async function saveSignLog(req) {
-  let saveSuccessful = true;
-  const newSign = new SignLog({
-    signTitle: req.body.text,
-    firstName: req.body.firstName,
-    email: req.body.email
-  });
-
-  await newSign.save()
-    .catch(_ => {
-      saveSuccessful = false;
-    });
-  return saveSuccessful;
-}
 
 router.post('/updateSignText', async (req, res) => {
-  if (!await saveSignLog(req)) {
+  if (!await addSignLog(req.body)) {
     return res.sendStatus(BAD_REQUEST);
   }
   await updateSignText(req.body, ledSignIp)
@@ -53,12 +38,6 @@ router.post('/healthCheck', async (req, res) => {
     .catch(error => {
       return res.status(NOT_FOUND).send({ ...error });
     });
-});
-
-router.get('/getSignLogs', (req, res) => {
-  SignLog.find()
-    .sort({ timeOfPosting: -1 })
-    .then(signLogs => res.status(OK).send(signLogs));
 });
 
 module.exports = router;

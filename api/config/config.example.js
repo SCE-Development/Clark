@@ -1,5 +1,13 @@
 // Copy the contents of this file into a config.js in this same directory
 
+// This variable keeps track if the current environment is being
+// tested or not
+const TEST_ENV = process.env.NODE_ENV === 'test';
+// This variable holds an empty string and is assigned to URL values
+// below as if we are testing, we don't need to fully write out the
+// path.
+const TEST_URL = '';
+
 module.exports = {
   // secretKey is used to generate a unique jwtToken
   // This key should be changed from it's default to a mix of
@@ -29,7 +37,7 @@ module.exports = {
   // Configuration for the mailer client
   // The secret and ID is found in the google account API services
   // The refresh token is created at the OAuth2 Playground
-  // Example for how to generate: 
+  // Example for how to generate:
   // https://medium.com/@nickroach_50526/sending-emails-
   // with-node-js-using-smtp-gmail-and-oauth2-316fe9c790a1
   googleApiKeys: {
@@ -40,5 +48,9 @@ module.exports = {
     REFRESH_TOKEN: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
   },
   // The ip address of the sign. You can find it by running `ifconfig` on the pi
-  ledSignIp: '192.168.4.1'
+  ledSignIp: '192.168.4.1',
+  TEST_ENV: process.env.NODE_ENV === 'test',
+  GENERAL_API_URL: TEST_ENV ? TEST_URL : 'http://localhost:8080/',
+  LOGGING_API_URL: TEST_ENV ? TEST_URL : 'http://localhost:8081/',
+  MAILER_API_URL: TEST_ENV ? TEST_URL : 'http://localhost:8082/'
 };

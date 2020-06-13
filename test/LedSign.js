@@ -12,6 +12,10 @@ const LedSignFunctions =
 const sinon = require('sinon');
 const SignLog = require('../api/models/SignLog');
 const SceApiTester = require('./util/tools/SceApiTester');
+const {
+  initializeLoggingMocks,
+  restoreLoggingMocks
+} = require('./mocks/mock-logging');
 
 let app = null;
 let test = null;
@@ -62,21 +66,27 @@ const SUCCESS_MESSAGE = {
   }
 };
 const ERROR_MESSAGE = 'error';
+const SERVER_ENDPOINTS = [
+  __dirname + '/../api/routes/LedSign.js',
+  __dirname + '/../api/logging/SignLog.js'
+];
 
 describe('LedSign', () => {
   let healthCheckMock;
   let updateSignTextMock;
 
   before(done => {
+    initializeLoggingMocks();
     healthCheckMock = sinon.stub(LedSignFunctions, 'healthCheck');
     updateSignTextMock = sinon.stub(LedSignFunctions, 'updateSignText');
-    app = tools.initializeServer(__dirname + '/../api/routes/LedSign.js');
+    app = tools.initializeServer(SERVER_ENDPOINTS);
     test = new SceApiTester(app);
     tools.emptySchema(SignLog);
     done();
   });
 
   after(done => {
+    restoreLoggingMocks();
     healthCheckMock.restore();
     updateSignTextMock.restore();
     sinon.restore();
@@ -172,13 +182,13 @@ describe('LedSign', () => {
     it('Should return an object of all events', done => {
       chai
         .request(app)
-        .get('/api/LedSign/getSignLogs')
+        .get('/api/SignLog/getSignLogs')
         .then(function(res) {
           expect(res).to.have.status(OK);
           const getSignResponse = res.body;
           getSignResponse.should.be.a('array');
           expect(getSignResponse).to.have.length(1);
-          expect(getSignResponse[0].signTitle)
+          expect(getSignResponse[0].signText)
             .to.equal(VALID_SIGN_REQUEST.text);
           expect(getSignResponse[0].firstName)
             .to.equal(VALID_SIGN_REQUEST.firstName);
