@@ -34,7 +34,7 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
     "express": "^4.16.2",
-    "filepond": "^4.14.0",
+    "filepond": "^4.17.1",
     "filepond-plugin-file-encode": "^2.1.6",
     "filepond-plugin-file-validate-type": "^1.2.5",
     "grpc": "^1.24.3",
