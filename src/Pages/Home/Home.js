@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './home.css';
 import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-import Benefits from '../../Components/Benefits/Benefits.js';
 import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 import Iframe from 'react-iframe';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
@@ -55,7 +54,6 @@ class Home extends Component {
               />
             </div>
           </div>
-          <Benefits className='benefits' />
           <Footer />
         </div>
       </>
