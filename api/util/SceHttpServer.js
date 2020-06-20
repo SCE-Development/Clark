@@ -37,14 +37,14 @@ class SceHttpServer {
       bodyParser.json({
         // support JSON-encoded request bodies
         limit: '50mb',
-        strict: true
+        strict: true,
       })
     );
     this.app.use(
       bodyParser.urlencoded({
         // support URL-encoded request bodies
         limit: '50mb',
-        extended: true
+        extended: true,
       })
     );
   }
@@ -55,7 +55,7 @@ class SceHttpServer {
    */
   async initializeEndpoints() {
     const requireList = await PathParser.parsePath(this.pathToEndpoints);
-    requireList.map(route => {
+    requireList.map((route) => {
       this.app.use(this.prefix + route.endpointName, require(route.filePath));
     });
   }
@@ -83,10 +83,10 @@ class SceHttpServer {
         promiseLibrary: require('bluebird'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        useCreateIndex: true
+        useCreateIndex: true,
       })
       .then(() => {})
-      .catch(error => {
+      .catch((error) => {
         throw error;
       });
   }

@@ -1,0 +1,38 @@
+table {
+  width: 100%;
+  text-align: center;
+  border-spacing: 15% 15%;
+  margin-top: 5%;
+}
+
+tr:nth-child(even) {
+  background-color: #cfcfcf;
+}
+
+th, td {
+  text-align: center;
+  padding: 1em 0%;
+}
+
+.graph-compartment {
+  margin: auto;
+  width: 80%;
+  height: 80%;
+}
+
+.date-picker-compartment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1em auto;
+}
+
+.date-picker {
+  text-align: center;
+  margin-left: 0.5em;
+}
+
+.select-date-text {
+  display: flex;
+  align-items: center;
+}

@@ -26,6 +26,7 @@ import {
   range,
   parseRange,
   printPage,
+  logPrintRequest,
   getPagesPrinted
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
@@ -223,14 +224,18 @@ export default function Printing(props) {
   async function handlePrinting(file) {
     const raw = file.getFileEncodeBase64String();
     const destination = 'HP-LaserJet-p2015dn';
+    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
+    const memberName = props.user.firstName + ' ' + props.user.lastName;
     let data = {
       raw,
       pageRanges: pageRanges.replace(/\s/g, ''),
       sides,
       copies,
-      destination
+      destination,
+      printedDate: new Date().toISOString(),
+      pagesPrinted,
+      memberName
     };
-    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
 
     let status = await printPage(data);
     if (!status.error) {
