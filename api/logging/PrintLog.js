@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const PrintingLog = require('../models/PrintingLog');
+const PrintLog = require('../models/PrintLog');
 const { OK, BAD_REQUEST } = require('../constants').STATUS_CODES;
 
 router.post('/addPrintLog', (req, res) => {
-  const newPrint = new PrintingLog({
+  const newPrint = new PrintLog({
     numPages: req.body.numPages,
     chosenPrinter: req.body.chosenPrinter,
     printedDate: req.body.printedDate,
-    memberName: req.body.memberName,
+    memberName: req.body.memberName
   });
 
   newPrint.save(function (error) {
@@ -20,10 +20,10 @@ router.post('/addPrintLog', (req, res) => {
   });
 });
 
-router.get('getPrintLogs', (req, res) => {
-  PrintingLog.find()
+router.get('/getPrintLogs', (req, res) => {
+  PrintLog.find()
     .sort({ printedDate: -1 })
-    .then((printingLogs) => res.status(OK).send(printingLogs));
+    .then((printLogs) => res.status(OK).send(printLogs));
 });
 
 module.exports = router;

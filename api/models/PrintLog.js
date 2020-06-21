@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const PrintingLogSchema = new Schema(
+const PrintLogSchema = new Schema(
   {
     numPages: {
       type: Number,
@@ -21,7 +21,7 @@ const PrintingLogSchema = new Schema(
       required: true
     }
   },
-  { collection: 'PrintingLogs' }
+  { collection: 'PrintLogs' }
 );
 
-module.exoprts = mongoose.model('PrintingLog', PrintingLogSchema);
+module.exports = mongoose.model('PrintLog', PrintLogSchema);
