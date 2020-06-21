@@ -11,7 +11,7 @@ router.post('/addPrintLog', (req, res) => {
     memberName: req.body.memberName
   });
 
-  newPrint.save(function (error) {
+  newPrint.save(function(error) {
     if (error) {
       res.sendStatus(BAD_REQUEST);
     } else {
@@ -23,7 +23,7 @@ router.post('/addPrintLog', (req, res) => {
 router.get('/getPrintLogs', (req, res) => {
   PrintLog.find()
     .sort({ printedDate: -1 })
-    .then((printLogs) => res.status(OK).send(printLogs));
+    .then(printLogs => res.status(OK).send(printLogs));
 });
 
 module.exports = router;
