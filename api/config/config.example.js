@@ -47,7 +47,6 @@ module.exports = {
     USER: 'sce.sjsu@gmail.com',
     REFRESH_TOKEN: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
   },
-
   googleCalendarIds: {
     PRIMARY_CAL: 'primary',
     SCE_EVENTS_CAL: 'XXXXXXXXXXXXXXXXXXXXXXXXXXX'
