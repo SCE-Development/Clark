@@ -52,7 +52,7 @@
     "reactstrap": "^8.2.0"
   },
   "devDependencies": {
-    "@babel/register": "^7.10.1",
+    "@babel/register": "^7.10.3",
     "babel-eslint": "^10.0.3",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
