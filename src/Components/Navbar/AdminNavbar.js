@@ -20,20 +20,16 @@ export default function AdminNavbar(props) {
   ];
 
   return (
-    <Navbar dark className='admin-nav admin-dark navbar-expand-md' navbar>
-      <NavbarBrand href='/'>
-      Admin Dashboard
-      </NavbarBrand>
+    <Navbar
+      dark
+      className='admin-nav admin-dark navbar-expand-md'
+      navbar='true'
+    >
+      <NavbarBrand href='/'>Admin Dashboard</NavbarBrand>
       <NavbarToggler
         onClick={() => setCollapsed(!collapsed)}
         className='mr-2'
       />
-      <div class="menu-btn">
-        <div class="menu-btn_burger"></div>
-      </div>
-
-      <script src="AdminNavbar.js"></script>
-
       <Collapse isOpen={!collapsed} navbar>
         <Nav className='ml-auto sce-nav' navbar>
           {navbarLinks.map((link, index) => {
@@ -53,9 +49,11 @@ export default function AdminNavbar(props) {
           })}
           <div onClick={props.handleLogout} className='nav-button nav-link'>
             <svg style={{ width: '18px', height: '18px' }} viewBox='0 0 24 24'>
-              <path d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,
+              <path
+                d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,
               2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,
-              2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z' />
+              2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"
+              />
             </svg>
             Logout
           </div>
