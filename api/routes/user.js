@@ -208,6 +208,7 @@ router.post('/search', function(req, res) {
       email: result.email,
       emailVerified: result.emailVerified,
       emailOptIn: result.emailOptIn,
+      discordID: result.discordID,
       active: result.active,
       accessLevel: result.accessLevel,
       major: result.major,
