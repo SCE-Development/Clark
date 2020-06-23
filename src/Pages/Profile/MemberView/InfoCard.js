@@ -6,6 +6,8 @@ import PrintRequest from './PrintRequest';
 import { editUser } from '../../../APIFunctions/User';
 const pic = require('./getPicBySeason');
 const bcrypt = require('bcryptjs');
+const DiscordStrategy = require('passport-discord').Strategy;
+const passport = require('passport');
 
 export default function ProfileCard(props) {
   const [password, setPassword] = useState('New Password');
@@ -48,6 +50,18 @@ export default function ProfileCard(props) {
     return style;
   }
 
+  function connectToDiscord() {
+    console.log('works');
+    passport.use(new DiscordStrategy({
+      clientID: '722960714771202159',
+      clientSecret: 'AsZgZXnq65vmxf7G2yaESnTtYzvdVHKH',
+      callbackURL: 'https://google.com',
+      scope: ['identify', 'guilds']
+    }, async (accessToken, refreshToken, profile, done) => { console.log(profile) }
+    ))
+    passport.authenticate('discord');
+  }
+
   return (
     <div id='enclose'>
       <img id='clip' alt='side' src={pic.getPictureByMonth()} />
@@ -67,6 +81,11 @@ export default function ProfileCard(props) {
             }
           </h3>
         ))}
+        <Button
+          className='discord-button'
+          onClick={connectToDiscord}>
+          Connect your account to Discord!
+        </Button>
         <h3 id='inner-text-top'>
           New Password:{' '}
           <Input

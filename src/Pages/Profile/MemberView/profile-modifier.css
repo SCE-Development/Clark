@@ -54,6 +54,10 @@
   margin-left: 10%;
 }
 
+.discord-button {
+  background-color: blue
+}
+
 .invalid {
   color:red !important
 }
