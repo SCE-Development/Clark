@@ -14,14 +14,16 @@ const {
   NOT_FOUND,
   FORBIDDEN
 } = require('../api/util/constants').STATUS_CODES;
+const sinon = require('sinon');
 const SceApiTester = require('./util/tools/SceApiTester');
+const discordModule = require('../api/main_endpoints/util/discord-connection');
 
 
 let app = null;
 let test = null;
+let sandbox = sinon.createSandbox();
 
 const expect = chai.expect;
-// tools for testing
 const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
@@ -172,6 +174,7 @@ describe('User', () => {
       result.body.should.have.property('major');
       result.body.should.have.property('joinDate');
       result.body.should.have.property('lastLogin');
+      result.body.should.have.property('discordID');
     });
   });
 
@@ -234,7 +237,7 @@ describe('User', () => {
       expect(result).to.have.status(FORBIDDEN);
     });
 
-    it('Should return statusCode 403 if an invalid' +
+    it('Should return statusCode 403 if an invalid ' +
        'token was passed in', async () => {
       const user = {
         email: 'a@b.c',
@@ -256,7 +259,7 @@ describe('User', () => {
       expect(result).to.have.status(NOT_FOUND);
     });
 
-    it('Should return statusCode 200 and a message' +
+    it('Should return statusCode 200 and a message ' +
        'if a user was deleted', async () => {
       const user = {
         email: 'a@b.c',
@@ -268,6 +271,67 @@ describe('User', () => {
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
       result.body.should.have.property('message');
+    });
+  });
+
+  describe('/POST connectToDiscord', () => {
+    it('Should return statusCode 403 if no token was passed in', async () => {
+      const user = {
+        email: 'a@b.c'
+      };
+      const result = await test.sendPostRequest(
+        '/api/user/connectToDiscord', user);
+      expect(result).to.have.status(FORBIDDEN);
+    });
+    it('Should return statusCode 401 if an invalid ' +
+      'token was passed in', async () => {
+      const user = {
+        email: 'a@b.c',
+        token: 'Invalid token'
+      };
+      const result = await test.sendPostRequest(
+        '/api/user/connectToDiscord', user);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+    it('Should return statusCode 400 if an incorrect or no ' +
+      'email was used', async () => {
+      const user = {
+        token
+      };
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/user/connectToDiscord', user);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+    it('Should return statusCode 200 ' +
+      'if Discord connection was successful', async () => {
+      const user = {
+        email: 'a@b.c',
+        token
+      };
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/user/connectToDiscord', user);
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/GET callback', () => {
+    let discordStub = sandbox.stub(discordModule,
+      'loginWithDiscord');
+    it('Should return statusCode 200 if connection is true', async () => {
+      discordStub.resolves(true);
+      const result = await test.sendGetRequest('/api/user/callback');
+      expect(result).to.have.status(OK);
+      expect(result.redirects).to.have.lengthOf(1);
+      expect(result.redirects[0]).to
+        .equal('https://discord.com/oauth2/authorized');
+    });
+    it('Should return statusCode 404 if connection is false', async () => {
+      discordStub.rejects({});
+      const result = await test.sendGetRequest('/api/user/callback');
+      expect(result).to.have.status(NOT_FOUND);
+      expect(result.text).to.equal('Authorization unsuccessful!');
     });
   });
 });

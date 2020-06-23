@@ -24,6 +24,7 @@ export default class Profile extends Component {
   async componentDidMount() {
     const response = await searchUserByEmail(this.props.user.email,
       this.props.user.token)
+      console.log(response);
     if (!response.error) {
       //concat user to full name
       this.setState({ user: response.responseData }, () => {
@@ -42,6 +43,7 @@ export default class Profile extends Component {
           { title: 'Door Code', value: this.state.user.doorCode },
           { title: 'Joined Date', value: this.state.user.joinDate.slice(0, 10) },
           { title: 'Email', value: this.state.user.email },
+          { title: 'Discord', value: (this.state.user.discordUsername !== '') ? this.state.user.discordUsername + '#' + this.state.user.discordDiscrim : 'Not Linked'},
           {
             title: 'Membership Expiration', value: (this.props.user.accessLevel < membershipStatus.MEMBER) ?
               "Not Valid" :
@@ -53,6 +55,7 @@ export default class Profile extends Component {
           { title: 'Door Code', value: '' },
           { title: 'Joined Date', value: '' },
           { title: 'Email', value: '' },
+          { title: 'Discord', value: ''},
           { title: 'Membership Expiration', value: '' },
         ]
 

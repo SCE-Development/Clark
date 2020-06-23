@@ -35,6 +35,7 @@ export default function Routing({ appProps }) {
     appProps.user &&
     appProps.user.accessLevel >= membershipState.OFFICER;
   const signedInRoutes = [
+
     {
       Component: Overview,
       path: '/dashboard',
