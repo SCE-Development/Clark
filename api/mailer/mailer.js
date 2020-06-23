@@ -53,4 +53,19 @@ router.post('/validateVerificationEmail', async (req, res) => {
     });
 });
 
+router.get('/getCalendarEvents', async (req, res) => {
+  const calendarID = req.query.calendarID || 'primary';
+  const numOfEvents = req.query.numOfEvents;
+  if (numOfEvents < 0) {
+    res.sendStatus(BAD_REQUEST);
+  }
+  getEventsFromCalendar(calendarID, numOfEvents)
+    .then(calendarEvents => {
+      res.status(OK).send({ calendarEvents });
+    })
+    .catch(_ => {
+      res.sendStatus(NOT_FOUND);
+    });
+});
+
 module.exports = router;
