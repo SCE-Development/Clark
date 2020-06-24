@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { PrintApiResponse } from './ApiResponses';
+import { RPC_API_URL } from '../config/config';
 
 /**
  * Return an array similar to python's range() function
@@ -48,9 +49,10 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data) {
   let status = new PrintApiResponse();
-  await axios.post('/api/print/submit', data).catch(() => {
-    status.error = true;
-  });
+  await axios.post(RPC_API_URL + '/SceRpcApi/Printer/sendPrintRequest', data)
+    .catch(() => {
+      status.error = true;
+    });
   return status;
 }
 

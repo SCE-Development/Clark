@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
+import { RPC_API_URL } from '../config/config';
 
 /**
  * Submit a user's print request.
@@ -59,7 +60,7 @@ export async function print3DModel(printRequest) {
   const status = ApiResponse();
   const { raw, name, volume, copies } = printRequest;
   await axios
-    .post('/api/routes/3Dprinter/submit3D', {
+    .post(RPC_API_URL + '/SceRpcApi/3dPrinter/print3dModel', {
       raw,
       name,
       volume,
