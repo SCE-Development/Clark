@@ -156,22 +156,22 @@ class SceGoogleApiHandler {
    * error.
    */
   getEventsFromCalendar(calendarId, numOfEvents) {
-    const calendar =
-      google.calendar({ version: 'v3', auth: this.oAuth2Client });
-    calendar.events.list({
-      calendarId: calendarId,
-      timeMin: (new Date()).toISOString(),
-      maxResults: numOfEvents,
-      singleEvents: true,
-      orderBy: 'startTime',
-    }, (err, res) => {
-      return new Promise((resolve, reject) => {
-        if (err) return reject (false);
+    return new Promise((resolve, reject) => {
+      const calendar =
+        google.calendar({ version: 'v3', auth: this.oAuth2Client });
+      calendar.events.list({
+        calendarId: calendarId,
+        timeMin: (new Date()).toISOString(),
+        maxResults: numOfEvents,
+        singleEvents: true,
+        orderBy: 'startTime',
+      }, (err, res) => {
+        if (err) return reject(false);
         const events = res.data.items;
         if (events.length) {
-          reject (false);
-        } else {
           resolve(events);
+        } else {
+          reject(false);
         }
       });
     });
