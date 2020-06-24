@@ -1,6 +1,9 @@
 language: node_js
 node_js:
 - "lts/*"
+cache:
+  directories:
+    - "$HOME/.npm"
 matrix:
     include:
         - os: linux
@@ -10,21 +13,12 @@ matrix:
           dist: bionic
           sudo: required
           before_install:
-            - python setup.py
-          install:
             - echo $ENCODED_CONFIG > .temp
             - base64 --decode .temp > api/config/config.js
             - echo $ENCODED_CONFIG_SRC > .temp
             - base64 --decode .temp > src/config/config.js
-            - npm install
-          script:
-            - npm run lint
-            - npm run api-test
-            - npm run frontend-test
-            - npm run build
         - os: osx
           before_install:
-            - python setup.py
             - if [[ $TRAVIS_OS_NAME = 'osx' ]]; then
                 echo "Updating homebrew"
                 brew update;
@@ -34,17 +28,10 @@ matrix:
                 sudo mkdir -p /data/db;
                 brew services start mongodb-community@4.2;
               fi
-          install:
             - echo $ENCODED_CONFIG > .temp
             - base64 --decode .temp > api/config/config.js
             - echo $ENCODED_CONFIG_SRC > .temp
             - base64 --decode .temp > src/config/config.js
-            - npm install
-          script:
-            - npm run lint
-            - npm run api-test
-            - npm run frontend-test
-            - npm run build
         - os: windows
           before_install:
             - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
@@ -54,11 +41,13 @@ matrix:
             - certutil -decode .temp api/config/config.js
             - echo $ENCODED_CONFIG_SRC > .temp
             - certutil -decode .temp src/config/config.js
-          install:
-            - python setup.py
-            - npm install
-          script:
-            - npm run lint
-            - npm run api-test
-            - npm run frontend-test
-            - npm run build
+install:
+  - npm ci
+  - cd api
+  - npm ci
+  - cd ..
+script:
+  - npm run lint
+  - npm run api-test
+  - npm run frontend-test
+  - npm run build
