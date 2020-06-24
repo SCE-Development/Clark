@@ -1,10 +1,10 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const PrintLog = require('../api/models/PrintLog');
+const PrintLog = require('../api/logging_api/models/PrintLog');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const constants = require('../api/constants');
+const constants = require('../api/util/constants');
 const { OK, BAD_REQUEST } = constants.STATUS_CODES;
 const SceApiTester = require('../test/util/tools/SceApiTester');
 
@@ -17,7 +17,8 @@ chai.use(chaiHttp);
 
 describe('PrintLog', () => {
   before(done => {
-    app = tools.initializeServer(__dirname + '/../api/logging/PrintLog.js');
+    app = tools.initializeServer(
+      __dirname + '/../api/logging_api/routes/PrintLog.js');
     test = new SceApiTester(app);
     tools.emptySchema(PrintLog);
     done();

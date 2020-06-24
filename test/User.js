@@ -2,7 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
 
-const User = require('../api/models/User');
+const User = require('../api/main_endpoints/models/User');
 
 // Require the dev-dependencies
 const chai = require('chai');
@@ -12,9 +12,8 @@ const {
   BAD_REQUEST,
   UNAUTHORIZED,
   NOT_FOUND,
-  CONFLICT,
   FORBIDDEN
-} = require('../api/constants').STATUS_CODES;
+} = require('../api/util/constants').STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
 
 
@@ -39,8 +38,8 @@ describe('User', () => {
   before(done => {
     initializeMock();
     app = tools.initializeServer([
-      __dirname + '/../api/routes/User.js',
-      __dirname + '/../api/routes/Auth.js'
+      __dirname + '/../api/main_endpoints/routes/User.js',
+      __dirname + '/../api/main_endpoints/routes/Auth.js'
     ]);
     test = new SceApiTester(app);
     // Before each test we empty the database

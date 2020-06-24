@@ -1,6 +1,6 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
-const User = require('../api/models/User');
+const User = require('../api/main_endpoints/models/User');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -9,7 +9,7 @@ const {
   BAD_REQUEST,
   UNAUTHORIZED,
   CONFLICT
-} = require('../api/constants').STATUS_CODES;
+} = require('../api/util/constants').STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
 
 let app = null;
@@ -31,7 +31,8 @@ chai.use(chaiHttp);
 describe('Auth', () => {
   before(done => {
     initializeMock();
-    app = tools.initializeServer(__dirname + '/../api/routes/Auth.js');
+    app = tools.initializeServer(__dirname +
+      '/../api/main_endpoints/routes/Auth.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
