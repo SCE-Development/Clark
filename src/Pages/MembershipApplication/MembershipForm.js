@@ -3,7 +3,8 @@ import './register-page.css';
 import { Row, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
-import { registerUser, checkIfUserExists } from '../../APIFunctions/User';
+import { checkIfUserExists } from '../../APIFunctions/User';
+import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/mailer';
 import GoogleRecaptcha from './GoogleRecaptcha';
 

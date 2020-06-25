@@ -22,24 +22,3 @@ export async function sendVerificationEmail(email, firstName) {
     });
   return status;
 }
-
-/**
- * Verify a user's email after the visiting the link sent to their email.
- * @param {string} email - The user's email
- * @param {string} hashedId - A hashed value of the user's mongoDB _id field
- * @returns {ApiResponse} Containing any error information related to the
- * request
- */
-export async function validateVerificationEmail(email, hashedId) {
-  let status = new ApiResponse();
-  await axios
-    .post(MAILER_API_URL + '/api/mailer/validateVerificationEmail', {
-      email,
-      hashedId
-    })
-    .catch(err => {
-      status.responseData = err;
-      status.error = true;
-    });
-  return status;
-}

@@ -44,7 +44,9 @@ class SceGoogleApiHandler {
    */
   checkIfTokenFileExists() {
     return new Promise((resolve, reject) => {
-      if (!this.runningInProduction) resolve(false);
+      if (!this.runningInProduction){
+        resolve(false);
+      }
       fs.readFile(this.tokenPath, (err, token) => {
         if (err) {
           resolve(false);

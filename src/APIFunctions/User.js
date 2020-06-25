@@ -25,112 +25,14 @@ export async function getAllUsers(token) {
 }
 
 /**
- * Checks if the user is signed in by evaluating a jwt token in local storage.
- * @returns {UserApiResponse} Containing information for
- *                            whether the user is signed
- * in or not
- */
-export async function checkIfUserIsSignedIn() {
-  let status = new UserApiResponse();
-
-  const token = window.localStorage
-    ? window.localStorage.getItem('jwtToken')
-    : '';
-
-  // If there is not token in local storage,
-  // we cant do anything and return
-  if (!token) {
-    status.error = true;
-    return status;
-  }
-
-  await axios
-    .post('/api/User/verify', { token })
-    .then(res => {
-      status.responseData = res.data;
-      status.token = token;
-    })
-    .catch(err => {
-      status.error = true;
-      status.responseData = err;
-    });
-  return status;
-}
-
-/**
- * Add a new user to the database.
- * @param {Object} userToRegister - The object containing all of the user's
- * information
- * @param {(string|undefined)} userToRegister.firstName
- * @param {(string|undefined)} userToRegister.lastName
- * @param {(string|undefined)} userToRegister.email
- * @param {(string|undefined)} userToRegister.password - This is hashed in the
- * frontend
- * @param {(string|undefined)} userToRegister.major
- * @param {(string|undefined)} userToRegister.numberOfSemestersToSignUpFor
- * @returns {UserApiResponse} containing if the search
- *                            was successful or error data
- */
-export async function registerUser(userToRegister) {
-  let status = new UserApiResponse();
-  const {
-    firstName,
-    lastName,
-    email,
-    password,
-    major,
-    numberOfSemestersToSignUpFor
-  } = userToRegister;
-  await axios
-    .post('/api/User/register', {
-      firstName,
-      lastName,
-      email,
-      password,
-      major,
-      numberOfSemestersToSignUpFor
-    })
-    .then(res => {
-      status.responseData = res.data;
-    })
-    .catch(err => {
-      status.error = true;
-      status.responseData = err.response;
-    });
-  return status;
-}
-
-/**
  * Updates the user's last login date when they log in.
  * @param {string} email The email of the user
  * @param {string} token The JWT token to allow the user to be edited
  */
-async function updateLastLoginDate(email, token) {
+export async function updateLastLoginDate(email, token) {
   await editUser({ email, lastLogin: Date.now() }, token);
 }
 
-/**
- * Logs in the user with their email and password. Also updates the last login
- * date for the user.
- * @param {string} email The email of the user
- * @param {string} password The password of the user
- * @returns {UserApiResponse} Contains the generated JWT token or any error data
- */
-export async function loginUser(email, password) {
-  let status = new UserApiResponse();
-  await axios
-    .post('/api/User/login', { email, password })
-    .then(async result => {
-      status.token = result.data.token;
-      await updateLastLoginDate(email, result.data.token);
-      window.location.reload();
-    })
-    .catch(error => {
-      status.error = true;
-      status.responseData = error.response;
-    });
-  return status;
-}
 
 /**
  * Edit an existing users

@@ -5,7 +5,7 @@ import './index.css';
 
 import Routing from './Routing';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { checkIfUserIsSignedIn } from './APIFunctions/User';
+import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
 
 function App(props) {
   const [authenticated, setAuthenticated] = useState(false);

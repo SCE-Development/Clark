@@ -1,4 +1,4 @@
-const generateHashedId = require('../auth').generateHashedId;
+const generateHashedId = require('../Util').generateHashedId;
 
 module.exports = function(user, recipient, name) {
   return new Promise((resolve, reject) => {
