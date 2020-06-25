@@ -178,6 +178,13 @@ class SceGoogleApiHandler {
       });
     });
   }
+
+  /**
+   * 
+   */
+  addEventsToCalendar(calendarId, newEvent) {
+
+  }
 }
 
 module.exports = { SceGoogleApiHandler };
