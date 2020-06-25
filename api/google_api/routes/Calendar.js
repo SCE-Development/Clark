@@ -8,7 +8,7 @@ const {
 
 router.get('/getCalendarEvents', async (req, res) => {
   const scopes = ['https://calendar.google.com/'];
-  const pathToToken = __dirname + '/../config/token.json';
+  const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(
     scopes, pathToToken);
   const calendarID = req.query.calendarID || 'primary';

@@ -21,7 +21,7 @@ router.post('/sendVerificationEmail', async (req, res) => {
       apiHandler.refreshToken();
     }
   } else {
-    apiHandler.getNewToken();
+    apiHandler.getNewToken(false);
   }
 
   await verification(
