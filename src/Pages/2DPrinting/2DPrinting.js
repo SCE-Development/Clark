@@ -28,6 +28,10 @@ import {
   getPagesPrinted
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
+import {
+  PrintIcon,
+  PrintInfo
+} from './2DComponents';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
 
@@ -49,13 +53,84 @@ export default function Printing(props) {
     props.user.pagesPrinted
   );
   const [previewDisplay, setPreviewDisplay] = useState('');
+
   const previewLabels = {
     copies: 'Number of Copies',
     sides: 'Type of print',
     pages: 'Pages'
   };
+
   const headerProps = {
     title: 'Printing'
+  };
+
+  const continueButtonProps = {
+    color: 'primary',
+    className: 'continue',
+    hidden: !continueButn,
+    onClick: () => {
+      handleCanPrint(usedPages, copies);
+      setPreviewModal(true);
+    },
+    text: 'Continue'
+  };
+
+  const backButtonProps = {
+    color: 'danger',
+    onClick: () => {
+      setPreviewModal(false);
+      setPages(false);
+      let arr = new Set(range(1, numPages + 1));
+      setUsedPages(arr);
+    },
+    text: 'Back'
+  };
+
+  const printButtonProps = {
+    color: 'success',
+    onClick: () => {
+      setConfirmModal(!confirmModal);
+    },
+    disabled: !canPrint,
+    text: 'Print!'
+  };
+
+  const previewModalProps = {
+    isOpen: previewModal,
+    toggle: () => {
+      setPreviewModal(!previewModal);
+    },
+    size: 'xl'
+  };
+
+  const iframePreviewProps = {
+    src: files[0] && previewDisplay,
+    width: '100%',
+    height: '100%',
+  };
+
+  const copyInputProps = {
+    className: 'center-blocks',
+    type: 'number',
+    name: 'numbers',
+    min: '1',
+    max: '30',
+    id: 'numcopy',
+    defaultValue: '1',
+    onChange: (e) => {
+      setCopies(e.target.value);
+      handleCanPrint(usedPages, e.target.value);
+    }
+  };
+
+  const sidesInputProps = {
+    type: 'radio',
+    name: 'pType'
+  };
+
+  const pagesInputProps = {
+    type: 'radio',
+    name: 'Pages',
   };
 
   const confirmModalProps = {
@@ -138,8 +213,7 @@ export default function Printing(props) {
 
       <div className='printInfo'>
         <p>
-          Welcome to printing! Click the icon below and upload your file. Each
-          member can print up to 30 pages a week.
+          {PrintInfo}
         </p>
       </div>
 
@@ -160,191 +234,115 @@ export default function Printing(props) {
           setPages(false);
           if (!err) setFiles([]);
         }}
-        /* eslint-disable */
-        labelIdle="Drag & Drop or Touch Here <br />
-          <svg aria-hidden='true' viewBox='0 0 512 512' width='40%'>
-            <path
-              d='M399.95 160h-287.9C76.824 160 48 188.803 48
-            224v138.667h79.899V448H384.1v-85.333H464V224c0-35.197-28.825-64-64.05-64zM352
-            416H160V288h192v128zm32.101-352H127.899v80H384.1V64z'
-            />
-          </svg>"
-      /* eslint-enable */
+        labelIdle={PrintIcon}
       />
 
-      <Button
-        color='primary'
-        className='continue'
-        hidden={!continueButn}
-        onClick={() => {
-          handleCanPrint(usedPages, copies);
-          setPreviewModal(true);
-        }}
-      >
-        continue
-      </Button>
-      <Modal
-        isOpen={previewModal}
-        toggle={() => {
-          setPreviewModal(!previewModal);
-        }}
-        size='xl'
-      >
-        <ModalHeader
-          toggle={() => {
-            setPreviewModal(!previewModal);
-          }}
-        >
+      <Button {...continueButtonProps}> Continue </Button>
+
+      <Modal {...previewModalProps}>
+        <ModalHeader {...previewModalProps}>
           Confirm
         </ModalHeader>
         <ModalBody>
           <Row>
             <Col sm={{ size: 8 }}>
               <iframe
-                src={files[0] && previewDisplay}
                 title='Preview'
-                width='100%'
-                height='100%'
+                {...iframePreviewProps}
               />
             </Col>
             <Col>
-              <div
-                style={{
-                  marginRight: '10%'
-                }}
-              >
-                <br />
-                <FormGroup>
-                  <font size='4' color='red'>
-                    <b>You have {displayPagesLeft} pages left</b>
-                  </font>
-                  <legend className='center-blocks' htmlFor='numcopy'>
-                    {previewLabels.copies}
-                  </legend>
-                  <Input
-                    className='center-blocks'
-                    type='number'
-                    name='numbers'
-                    min='1'
-                    max='30'
-                    id='numcopy'
-                    defaultValue='1'
-                    onChange={e => {
-                      setCopies(e.target.value);
-                      handleCanPrint(usedPages, e.target.value);
-                    }}
-                  />
-                  <legend className='center-blocks'>
-                    {previewLabels.sides}{' '}
-                  </legend>
-                  <FormGroup check>
-                    <Label check>
-                      <Input
-                        type='radio'
-                        name='pType'
-                        onChange={e => {
-                          setSides('one-sided');
-                        }}
-                        defaultChecked
-                      />{' '}
+              <br />
+              <FormGroup>
+                <font size='4' color='red'>
+                  <b>You have {displayPagesLeft} pages left</b>
+                </font>
+                <legend className='center-blocks' htmlFor='numcopy'>
+                  {previewLabels.copies}
+                </legend>
+                <Input {...copyInputProps} />
+                <legend className='center-blocks'>
+                  {previewLabels.sides}{' '}
+                </legend>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      onChange={e => {
+                        setSides('one-sided');
+                      }}
+                      defaultChecked
+                      {...sidesInputProps}
+                    />
                         Front
-                    </Label>
-                  </FormGroup>
-                  <FormGroup check>
-                    <Label check>
-                      <Input
-                        type='radio'
-                        name='pType'
-                        onChange={e => {
-                          setSides('two-sided-long-edge');
-                        }}
-                      />{' '}
-                        Front & Back
-                    </Label>
-                  </FormGroup>
-                  <legend className='center-blocks'>
-                    {previewLabels.pages}{' '}
-                  </legend>
-                  <FormGroup check>
-                    <Label check>
-                      <Input
-                        type='radio'
-                        name='Pages'
-                        onChange={() => {
-                          setPages(false);
-                          setPageRanges('NA');
-                          handleCanPrint(
-                            new Set(range(1, numPages + 1)),
-                            copies
-                          );
-                        }}
-                        defaultChecked
-                      />
-                        All
-                    </Label>
-                  </FormGroup>
-                  <FormGroup check>
-                    <Label check>
-                      <Input
-                        type='radio'
-                        name='Pages'
-                        checked={pages}
-                        onChange={() => {
-                          setPages(true);
-                          handleCanPrint(usedPages, copies);
-                        }}
-                      />
-                      <Input
-                        type='text'
-                        disabled={!pages}
-                        placeholder='1-5, 7, 9-11'
-                        onChange={async e => {
-                          setPageRanges(e.target.value);
-                          const x = await parseRange(
-                            e.target.value, numPages
-                          );
-                          setUsedPages(x);
-                          handleCanPrint(x, copies);
-                        }}
-                      />
-                    </Label>
-                  </FormGroup>
+                  </Label>
                 </FormGroup>
-                <Label className='center-blocks'>
-                  Note: All prints are black ink only
-                </Label>
-                <br />
-              </div>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      onChange={e => {
+                        setSides('two-sided-long-edge');
+                      }}
+                      {...sidesInputProps}
+                    />
+                      Front & Back
+                  </Label>
+                </FormGroup>
+                <legend className='center-blocks'>
+                  {previewLabels.pages}{' '}
+                </legend>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      onChange={() => {
+                        setPages(false);
+                        setPageRanges('NA');
+                        handleCanPrint(
+                          new Set(range(1, numPages + 1)),
+                          copies
+                        );
+                      }}
+                      {...pagesInputProps}
+                      defaultChecked
+                    />
+                        All
+                  </Label>
+                </FormGroup>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      checked={pages}
+                      onChange={() => {
+                        setPages(true);
+                        handleCanPrint(usedPages, copies);
+                      }}
+                      {...pagesInputProps}
+                    />
+                    <Input
+                      type='text'
+                      disabled={!pages}
+                      placeholder='1-5, 7, 9-11'
+                      onChange={async e => {
+                        setPageRanges(e.target.value);
+                        const x = await parseRange(
+                          e.target.value, numPages
+                        );
+                        setUsedPages(x);
+                        handleCanPrint(x, copies);
+                      }}
+                    />
+                  </Label>
+                </FormGroup>
+              </FormGroup>
+              <Label className='center-blocks'>
+                Note: All prints are black ink only
+              </Label>
+              <br />
             </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
-          <Button
-            color='danger'
-            style={{
-              float: 'left'
-            }}
-            onClick={() => {
-              setPreviewModal(false);
-              setPages(false);
-              let arr = new Set(range(1, numPages + 1));
-              setUsedPages(arr);
-            }}
-          >
-            Back
-          </Button>
-          <Button
-            color='success'
-            style={{
-              float: 'right'
-            }}
-            onClick={() => {
-              setConfirmModal(!confirmModal);
-            }}
-            disabled={!canPrint}
-          >
-            Print!
-          </Button>
+          <Button {...backButtonProps}> Back </Button>
+          <Button {...printButtonProps}> Print! </Button>
         </ModalFooter>
 
         <ConfirmationModal {...confirmModalProps} />
