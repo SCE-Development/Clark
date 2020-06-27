@@ -14,7 +14,8 @@ import {
   Label,
   Input,
   Col,
-  Row
+  Row,
+  Spinner
 } from 'reactstrap';
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
@@ -53,6 +54,7 @@ export default function Printing(props) {
     props.user.pagesPrinted
   );
   const [previewDisplay, setPreviewDisplay] = useState('');
+  const [loadPreview, setLoadPreview] = useState(true);
 
   const previewLabels = {
     copies: 'Number of Copies',
@@ -80,6 +82,7 @@ export default function Printing(props) {
     onClick: () => {
       setPreviewModal(false);
       setPages(false);
+      // Reset the pages selection to "All"
       let arr = new Set(range(1, numPages + 1));
       setUsedPages(arr);
     },
@@ -240,14 +243,33 @@ export default function Printing(props) {
       <Button {...continueButtonProps}> Continue </Button>
 
       <Modal {...previewModalProps}>
-        <ModalHeader {...previewModalProps}>
+        <ModalHeader
+          toggle={() => {
+            setPreviewModal(!previewModal);
+          }}
+        >
           Confirm
         </ModalHeader>
         <ModalBody>
           <Row>
             <Col sm={{ size: 8 }}>
+              {loadPreview ? (
+                <div className='spinner-wrapper'>
+                  <Spinner
+                    className='loading-spinner'
+                    animation='border'
+                    variant='primary'
+                  />
+                </div>
+              ) : null}
               <iframe
+                hidden={loadPreview}
                 title='Preview'
+                onLoad={() =>
+                  setTimeout(() => {
+                    setLoadPreview(false);
+                  }, 300)
+                }
                 {...iframePreviewProps}
               />
             </Col>
@@ -300,6 +322,7 @@ export default function Printing(props) {
                           new Set(range(1, numPages + 1)),
                           copies
                         );
+                        setLoadPreview(true);
                       }}
                       {...pagesInputProps}
                       defaultChecked
@@ -314,6 +337,7 @@ export default function Printing(props) {
                       onChange={() => {
                         setPages(true);
                         handleCanPrint(usedPages, copies);
+                        setLoadPreview(true);
                       }}
                       {...pagesInputProps}
                     />
@@ -328,6 +352,7 @@ export default function Printing(props) {
                         );
                         setUsedPages(x);
                         handleCanPrint(x, copies);
+                        setLoadPreview(true);
                       }}
                     />
                   </Label>
