@@ -15,7 +15,7 @@ const {
   CONFLICT,
   FORBIDDEN
 } = require('../api/constants').STATUS_CODES;
-const SceApiTester = require('../test/util/tools/SceApiTester');
+const SceApiTester = require('./util/tools/SceApiTester');
 
 
 let app = null;
@@ -35,10 +35,10 @@ chai.should();
 chai.use(chaiHttp);
 
 // Our parent block
-describe('Users', () => {
+describe('User', () => {
   before(done => {
     initializeMock();
-    app = tools.initializeServer(__dirname + '/../api/routes/user.js');
+    app = tools.initializeServer(__dirname + '/../api/routes/User.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
@@ -65,7 +65,7 @@ describe('Users', () => {
      'provided', async () => {
       const user = {};
       const result = await test.sendPostRequest(
-        '/api/user/checkIfUserExists', user);
+        '/api/User/checkIfUserExists', user);
       expect(result).to.have.status(BAD_REQUEST);
     });
 
@@ -74,7 +74,7 @@ describe('Users', () => {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
-        '/api/user/checkIfUserExists', user);
+        '/api/User/checkIfUserExists', user);
       expect(result).to.have.status(OK);
     });
   });
@@ -89,7 +89,7 @@ describe('Users', () => {
         lastName: 'last-name'
       };
       const result = await test.sendPostRequest(
-        '/api/user/register', user);
+        '/api/User/register', user);
       expect(result).to.have.status(OK);
     });
 
@@ -102,7 +102,7 @@ describe('Users', () => {
         lastName: 'last-name'
       };
       const result = await test.sendPostRequest(
-        '/api/user/register', user);
+        '/api/User/register', user);
       expect(result).to.have.status(CONFLICT);
     });
   });
@@ -116,7 +116,7 @@ describe('Users', () => {
       lastName: 'last-name'
     };
     const result = await test.sendPostRequest(
-      '/api/user/register', user);
+      '/api/User/register', user);
     expect(result).to.have.status(BAD_REQUEST);
   });
 
@@ -129,7 +129,7 @@ describe('Users', () => {
       lastName: 'last-name'
     };
     const result = await test.sendPostRequest(
-      '/api/user/register', user);
+      '/api/User/register', user);
     expect(result).to.have.status(BAD_REQUEST);
   });
 
@@ -142,7 +142,7 @@ describe('Users', () => {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
-        '/api/user/checkIfUserExists', user);
+        '/api/User/checkIfUserExists', user);
       expect(result).to.have.status(CONFLICT);
     });
   });
@@ -152,7 +152,7 @@ describe('Users', () => {
        'password is not provided', async () => {
       const user = {};
       const result = await test.sendPostRequest(
-        '/api/user/login', user);
+        '/api/User/login', user);
       expect(result).to.have.status(BAD_REQUEST);
     });
 
@@ -163,7 +163,7 @@ describe('Users', () => {
         password: 'Passwd'
       };
       const result = await test.sendPostRequest(
-        '/api/user/login', user);
+        '/api/User/login', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -174,7 +174,7 @@ describe('Users', () => {
         password: 'password'
       };
       const result = await test.sendPostRequest(
-        '/api/user/login', user);
+        '/api/User/login', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -191,7 +191,7 @@ describe('Users', () => {
     //   }
     //   chai
     //     .request(app)
-    //     .post('/api/user/login')
+    //     .post('/api/User/login')
     //     .send(user)
     //     .then(function (res) {
     //       expect(res).to.have.status(OK)
@@ -211,14 +211,14 @@ describe('Users', () => {
     it('Should return statusCode 401 when a token is not passed in',
       async () => {
         const result = await test.sendPostRequestWithToken(
-          token, '/api/user/verify', null);
+          token, '/api/User/verify', null);
         expect(result).to.have.status(UNAUTHORIZED);
       });
 
     it('Should return statusCode 401 when an invalid ' +
         'token is passed in', async () => {
       const result = await test.sendPostRequest(
-        '/api/user/verify', { token: 'Invalid Token' });
+        '/api/User/verify', { token: 'Invalid Token' });
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -230,7 +230,7 @@ describe('Users', () => {
         accessLevel: 'accessLevel'
       });
       const result = await test.sendPostRequest(
-        '/api/user/verify', { token: token });
+        '/api/User/verify', { token: token });
       expect(result).to.have.status(OK);
     });
   });
@@ -241,7 +241,7 @@ describe('Users', () => {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
-        '/api/user/users', user);
+        '/api/User/users', user);
       expect(result).to.have.status(FORBIDDEN);
     });
 
@@ -251,7 +251,7 @@ describe('Users', () => {
         token: 'Invalid token'
       };
       const result = await test.sendPostRequest(
-        '/api/user/users', user);
+        '/api/User/users', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -262,7 +262,7 @@ describe('Users', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/user/users', form);
+        token, '/api/User/users', form);
       expect(result).to.have.status(OK);
     });
   });
@@ -273,7 +273,7 @@ describe('Users', () => {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
-        '/api/user/search', user);
+        '/api/User/search', user);
       expect(result).to.have.status(FORBIDDEN);
     });
 
@@ -284,7 +284,7 @@ describe('Users', () => {
         token: 'Invalid token'
       };
       const result = await test.sendPostRequest(
-        '/api/user/search', user);
+        '/api/User/search', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -295,7 +295,7 @@ describe('Users', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/user/search', user);
+        token, '/api/User/search', user);
       expect(result).to.have.status(NOT_FOUND);
     });
 
@@ -307,7 +307,7 @@ describe('Users', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/user/search', user);
+        token, '/api/User/search', user);
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
       result.body.should.have.property('firstName');
@@ -328,7 +328,7 @@ describe('Users', () => {
         queryEmail: 'a@b.c'
       };
       const result = await test.sendPostRequest(
-        '/api/user/edit', user);
+        '/api/User/edit', user);
       expect(result).to.have.status(FORBIDDEN);
     });
 
@@ -339,7 +339,7 @@ describe('Users', () => {
         token: 'Invalid token'
       };
       const result = await test.sendPostRequest(
-        '/api/user/edit', user);
+        '/api/User/edit', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -350,7 +350,7 @@ describe('Users', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/user/edit', user);
+        token, '/api/User/edit', user);
       expect(result).to.have.status(NOT_FOUND);
     });
 
@@ -364,7 +364,7 @@ describe('Users', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/user/edit', user);
+        token, '/api/User/edit', user);
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
       result.body.should.have.property('message');
@@ -377,7 +377,7 @@ describe('Users', () => {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
-        '/api/user/delete', user);
+        '/api/User/delete', user);
       expect(result).to.have.status(FORBIDDEN);
     });
 
@@ -388,7 +388,7 @@ describe('Users', () => {
         token: 'Invalid token'
       };
       const result = await test.sendPostRequest(
-        '/api/user/delete', user);
+        '/api/User/delete', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -399,7 +399,7 @@ describe('Users', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/user/delete', user);
+        token, '/api/User/delete', user);
       expect(result).to.have.status(NOT_FOUND);
     });
 
@@ -411,7 +411,7 @@ describe('Users', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/user/delete', user);
+        token, '/api/User/delete', user);
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
       result.body.should.have.property('message');
