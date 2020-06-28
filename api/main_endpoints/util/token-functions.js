@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const config = require('../../config/config');
+const { secretKey } = require('../../config/config.json');
 const passport = require('passport');
 require('./passport')(passport);
 
@@ -23,7 +23,7 @@ function checkIfTokenSent(request) {
 function checkIfTokenValid(request) {
   const userToken = request.body.token.replace(/^JWT\s/, '');
   let decodedResponse;
-  jwt.verify(userToken, config.secretKey, function(error, decoded) {
+  jwt.verify(userToken, secretKey, function(error, decoded) {
     decodedResponse = !error && decoded;
   });
   return decodedResponse;

@@ -80,5 +80,6 @@ build
 # RPC repository that will be cloned
 printingRPC/
 # Config files
-config.js
+config.js 
+config.json
 token.json

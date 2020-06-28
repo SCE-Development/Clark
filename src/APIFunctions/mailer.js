@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { MAILER_API_URL } from '../config/config';
 import { ApiResponse } from './ApiResponses';
+import { MAILER_API_URL } from '../config/config.json';
 
 /**
  * Invoke the gmail API to send an email to verify a user.

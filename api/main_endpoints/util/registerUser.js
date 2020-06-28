@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const config = require('../../config/config');
+const config = require('../../config/config.json');
 
 /**
  * Register a new user.

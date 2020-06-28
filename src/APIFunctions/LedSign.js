@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { RPC_API_URL } from '../config/config';
+import { RPC_API_URL } from '../config/config.json';
 
 /**
  * Checks to see if the sign is accepting requests. This is done

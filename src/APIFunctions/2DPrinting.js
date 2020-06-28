@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { PrintApiResponse } from './ApiResponses';
-import { RPC_API_URL } from '../config/config';
+import { RPC_API_URL } from '../config/config.json';
 
 /**
  * Return an array similar to python's range() function

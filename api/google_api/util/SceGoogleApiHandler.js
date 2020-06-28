@@ -1,13 +1,13 @@
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
-const config = require('../../config/config');
+const { googleApiKeys } = require('../../config/config.json');
 const nodemailer = require('nodemailer');
 
 const {
   CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS,
   USER, REFRESH_TOKEN
-} = config.googleApiKeys;
+} = googleApiKeys;
 
 /**
  * Handles our website's backend to interace with various Google APIs. It also
@@ -107,7 +107,7 @@ class SceGoogleApiHandler {
     if (!this.runningInProduction) return;
     this.oAuth2Client.setCredentials({
       // eslint-disable-next-line
-      refresh_token: config.googleApiKeys.REFRESH_TOKEN
+      refresh_token: REFRESH_TOKEN
     });
 
     this.oAuth2Client.getAccessToken().then(token => {

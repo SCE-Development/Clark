@@ -12,11 +12,6 @@ matrix:
             - mongodb
           dist: bionic
           sudo: required
-          before_install:
-            - echo $ENCODED_CONFIG > .temp
-            - base64 --decode .temp > api/config/config.js
-            - echo $ENCODED_CONFIG_SRC > .temp
-            - base64 --decode .temp > src/config/config.js
         - os: osx
           before_install:
             - if [[ $TRAVIS_OS_NAME = 'osx' ]]; then
@@ -27,21 +22,14 @@ matrix:
                 brew install mongodb-community@4.2;
                 sudo mkdir -p /data/db;
                 brew services start mongodb-community@4.2;
-              fi
-            - echo $ENCODED_CONFIG > .temp
-            - base64 --decode .temp > api/config/config.js
-            - echo $ENCODED_CONFIG_SRC > .temp
-            - base64 --decode .temp > src/config/config.js
+              fi 
         - os: windows
           before_install:
             - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
                 choco install mongodb --version=4.0.11;
               fi
-            - echo $ENCODED_CONFIG > .temp
-            - certutil -decode .temp api/config/config.js
-            - echo $ENCODED_CONFIG_SRC > .temp
-            - certutil -decode .temp src/config/config.js
 install:
+  - python setup.py
   - npm ci
   - cd api
   - npm ci

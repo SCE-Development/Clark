@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { RPC_API_URL } from '../config/config';
+import { RPC_API_URL } from '../config/config.json';
 
 /**
  * Submit a user's print request.
