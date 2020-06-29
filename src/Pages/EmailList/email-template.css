@@ -1,23 +1,23 @@
 .email-template {
-    margin-top: 20px;
-    padding: 0 15px;
-    width: 100%;
+  margin-top: 20px;
+  padding: 0 15px;
+  width: 100%;
 }
 
 #email-message {
-    border-radius: 6px;
-    background-color: white;
-    margin-top: 15px;
-    padding: 15px 25px;
-    height: 65vh;
-    overflow-y: auto;
+  border-radius: 6px;
+  background-color: white;
+  margin-top: 15px;
+  padding: 15px 25px;
+  height: 65vh;
+  overflow-y: auto;
 }
 #email-message p {
-    display: inline-block;
+  display: inline-block;
 }
 
 #copy-notification2 {
-    display: none;
-    padding-top: 10px;
-    color: rgb(2, 107, 126);
+  display: none;
+  padding-top: 10px;
+  color: rgb(2, 107, 126);
 }

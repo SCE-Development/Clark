@@ -1,40 +1,46 @@
 .email {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 #email-filter-button {
-    background-color: rgb(2, 107, 126);
-    color: white;
+  background-color: rgb(2, 107, 126);
+  color: white;
 }
 
 #email-copy-button {
-    border-color: rgb(2, 107, 126);
-    color: rgb(2, 107, 126);
+  border-color: rgb(2, 107, 126);
+  color: rgb(2, 107, 126);
 }
 
 #email-copy-button:hover {
-    background-color: rgb(2, 107, 126);
-    color: white;
+  background-color: rgb(2, 107, 126);
+  color: white;
 }
 
 #email-list-filter button {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
 #email-list {
-    border-radius: 6px;
-    background-color: white;
-    margin-top: 15px;
-    padding: 15px 25px;
-    height: 65vh;
-    overflow-y: auto;
+  border-radius: 6px;
+  background-color: white;
+  margin-top: 15px;
+  padding: 15px 25px;
+  height: 65vh;
+  overflow-y: auto;
 }
 #email-list p {
-    display: inline-block;
+  display: inline-block;
 }
 
 #copy-notification1 {
-    display: none;
-    padding-top: 10px;
-    color: rgb(2, 107, 126);
+  display: none;
+  padding-top: 10px;
+  color: rgb(2, 107, 126);
+}
+
+#email-template-button {
+  background-color: rgb(2, 107, 126);
+  color: white;
+  margin-right: 8px;
 }
