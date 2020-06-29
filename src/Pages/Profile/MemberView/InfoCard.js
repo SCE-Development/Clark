@@ -4,6 +4,8 @@ import './profile-modifier.css';
 import Footer from '../../../Components/Footer/Footer.js';
 import PrintRequest from './PrintRequest';
 import { editUser } from '../../../APIFunctions/User';
+import { Link } from 'react-router-dom';
+import { connectToDiscord } from '../../../APIFunctions/User';
 const pic = require('./getPicBySeason');
 const bcrypt = require('bcryptjs');
 const DiscordStrategy = require('passport-discord').Strategy;
@@ -50,17 +52,18 @@ export default function ProfileCard(props) {
     return style;
   }
 
-  function connectToDiscord() {
-    console.log('works');
-    passport.use(new DiscordStrategy({
-      clientID: '722960714771202159',
-      clientSecret: 'AsZgZXnq65vmxf7G2yaESnTtYzvdVHKH',
-      callbackURL: 'https://google.com',
-      scope: ['identify', 'guilds']
-    }, async (accessToken, refreshToken, profile, done) => { console.log(profile) }
-    ))
-    passport.authenticate('discord');
-  }
+  // function connectToDiscord() {
+  //   console.log('works');
+  //   passport.use(new DiscordStrategy({
+  //     clientID: '722960714771202159',
+  //     clientSecret: 'AsZgZXnq65vmxf7G2yaESnTtYzvdVHKH',
+  //     callbackURL: 'https://google.com',
+  //     scope: ['identify', 'guilds']
+  //   }, async (accessToken, refreshToken, profile, done) => { console.log(profile) }
+  //   ))
+  //   passport.authenticate('discord');
+
+  // }
 
   return (
     <div id='enclose'>

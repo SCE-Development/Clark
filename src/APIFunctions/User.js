@@ -132,6 +132,11 @@ export async function loginUser(email, password) {
   return status;
 }
 
+export async function connectToDiscord() {
+  axios.post('api/user/discord').then((res) => console.log(res));
+  console.log('close')
+}
+
 /**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated

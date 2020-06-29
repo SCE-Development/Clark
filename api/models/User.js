@@ -34,7 +34,9 @@ const UserSchema = new Schema(
       type: Boolean,
       default: true
     },
-
+    discordID: {
+      type: String,
+    },
     // Users declared Major at SJSU
     major: {
       type: String
