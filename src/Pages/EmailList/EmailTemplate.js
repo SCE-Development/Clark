@@ -14,8 +14,8 @@ export default class EmailTemplate extends Component {
       submittedRecipients: "",
       submittedSubject: "",
       submittedContent: "",
-      content: "",
-      loadedContentBoolean: false,
+      content: "preload",
+      loadContentButtonPressCount: 0,
     };
   }
 
@@ -87,7 +87,6 @@ export default class EmailTemplate extends Component {
   //'loadedContent' is what's in the text area
   handleEditorChange = (e) => {
     this.setState({ loadedContent: e });
-    // console.log("Handle Editor Change", this.state.loadedContent);
   };
 
   //Clear Button 'onClick'
@@ -115,15 +114,20 @@ export default class EmailTemplate extends Component {
 
   //Load Template Button 'Disabled' prop boolean
   checkLoadedContent = () => {
-    return (
-      this.state.loadedContentBoolean &&
-      this.state.loadedContent.valueOf() === this.state.content.valueOf()
-    );
+    return this.state.loadedContent === this.state.content;
   };
 
+  //'Load Template' Button onClick
   handleLoadContent = async () => {
-    let events = await getAllEvents();
+    if (this.state.loadContentButtonPressCount === 0) {
+      await this.setState({ loadContentButtonPressCount: 1 });
+      await this.storeContent();
+    }
+    this.setState({ loadedContent: this.state.content });
+  };
 
+  //handleLoadContent() special case (first press to load content to 'content')
+  storeContent = async () => {
     const mailHeader =
       '<p><span style="font-size: 10pt; font-family: Arial;"><strong>Hello SCE G4NG,</strong></span></p>' +
       '\n<p><span style="font-size: 10pt; font-family: Arial;"><strong>This is our newsletter, please read ty.</strong></span></p>\n';
@@ -136,7 +140,9 @@ export default class EmailTemplate extends Component {
       '<a href="https://www.facebook.com/sjsusce/">@scesjsu</a><br />Instagram:' +
       '<a href="https://www.instagram.com/sjsusce/">@scesjsu</a><br />CmpE Slack:' +
       '<a href="https://cmpesjsu.slack.com/?redir=%2Fmessages%2FCH6TTGXLG#/">#sce</a></span></p>';
-    // console.log("Test: ", events);
+
+    let events = await getAllEvents();
+
     try {
       var x = 0;
       var data = undefined;
@@ -145,17 +151,7 @@ export default class EmailTemplate extends Component {
         let eventDateFormatted = this.returnProperFormattedDate(
           responseData.eventDate.toString().substring(0, 10)
         );
-        // console.log("---------------------- START HERE ----------------------");
-        // console.log("YEP Clicked Modal Toggle Button", events);
-        // console.log("Response Data:", events.responseData);
-        // console.log("title: ", responseData.title);
-        // console.log("description: ", responseData.description);
-        // console.log("space here");
-        // console.log("startTime: ", responseData.startTime);
-        // console.log("endTime: ", responseData.endTime);
-        // console.log("eventLocation: ", responseData.eventLocation);
-        // console.log("edited event date: ", eventDateEdit);
-        // console.log("---------------------- END HERE ------------------------");
+
         const dataSingle =
           '<p><br /><span style="font-size: 14pt; color: #0055a2;"><strong>' +
           responseData.title +
@@ -185,12 +181,10 @@ export default class EmailTemplate extends Component {
         data +
         "<p>𝔁𝓾𝓮🥶𝓱𝓾𝓪🧚𝓹𝓲𝓪𝓸😻𝓹𝓲𝓪𝓸🗿𝓫𝓮𝓲👺𝓯𝓮𝓷𝓰🤩𝔁𝓲𝓪𝓸😼𝔁𝓲𝓪𝓸👣</p>\n<p>&nbsp;</p>\n" +
         mailFooter;
-      this.updateContent(data);
-      this.setState({ loadedContent: this.state.content });
-      this.setState({ loadedContentBoolean: true });
     } catch (error) {
       console.log("Something's up", error);
     }
+    this.updateContent(data);
   };
 
   //Used by handleLoadContent() to format the dates from getAllEvents() to MM/DD/YYYY format
@@ -262,10 +256,7 @@ export default class EmailTemplate extends Component {
         <div id="email-message">
           {/* {emailMessages} */}
           <BlastMailForm
-            // handleData={this.handleBlastMailData}
             handleEditorChange={this.handleEditorChange}
-            // handleLoadContent={this.handleLoadContent}
-            // handleClear={this.handleClear}
             recipients={this.state.recipients}
             updateRecipients={this.updateRecipients}
             subject={this.state.subject}
