@@ -11,6 +11,7 @@ export default class EmailTemplate extends Component {
       events: [],
       recipients: "",
       subject: "",
+      loadedContent: "",
       submittedRecipients: "",
       submittedSubject: "",
       submittedContent: "",
