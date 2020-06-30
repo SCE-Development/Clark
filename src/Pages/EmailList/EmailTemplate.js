@@ -49,9 +49,9 @@ export default class EmailTemplate extends Component {
       '<p><strong><span style="color: #236fa1; font-size: 10pt;">Software and Computer Engineering</span>' +
       '<span style="color: #236fa1; font-size: 10pt;"> Society<br /></span></strong>' +
       '<span style="font-size: 10pt;">Website: <a href="http://sce.engr.sjsu.edu">http://sce.engr.sjsu.edu</a>' +
-      '<br />Contact: <a href="mailto:sce.sjsu@gmail.com">sce.sjsu@gmail.com</a><br />Facebook:' +
-      '<a href="https://www.facebook.com/sjsusce/">@scesjsu</a><br />Instagram:' +
-      '<a href="https://www.instagram.com/sjsusce/">@scesjsu</a><br />CmpE Slack:' +
+      '<br />Contact: <a href="mailto:sce.sjsu@gmail.com">sce.sjsu@gmail.com</a><br />Facebook: ' +
+      '<a href="https://www.facebook.com/sjsusce/">@scesjsu</a><br />Instagram: ' +
+      '<a href="https://www.instagram.com/sjsusce/">@scesjsu</a><br />CmpE Slack: ' +
       '<a href="https://cmpesjsu.slack.com/?redir=%2Fmessages%2FCH6TTGXLG#/">#sce</a></span></p>';
 
     try {
