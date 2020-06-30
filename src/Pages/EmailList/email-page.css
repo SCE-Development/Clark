@@ -1,40 +1,41 @@
+/*Justin: changed height from 120vh to 123vh */
 .email-page {
-    background-color: #ecebeb;
-    height: 120vh;
+  background-color: #ecebeb;
+  height: 123vh;
 }
 
 #email-tabs {
-    margin: 0 15%;
-    color: rgb(2, 107, 126);
+  margin: 0 15%;
+  color: rgb(2, 107, 126);
 }
 
 .nav-tabs {
-    border-bottom: 1.5px solid rgb(0, 140, 165) !important;
+  border-bottom: 1.5px solid rgb(0, 140, 165) !important;
 }
 
 .email-tab:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .tab-active {
-    font-size: 20px;
-    font-weight: 450;
-    border-top: 1.5px solid rgb(0, 140, 165) !important;
-    border-left: 1.5px solid rgb(0, 140, 165) !important;
-    border-right: 1.5px solid rgb(0, 140, 165) !important;
-    border-bottom: 1.5px solid #ecebeb !important;
+  font-size: 20px;
+  font-weight: 450;
+  border-top: 1.5px solid rgb(0, 140, 165) !important;
+  border-left: 1.5px solid rgb(0, 140, 165) !important;
+  border-right: 1.5px solid rgb(0, 140, 165) !important;
+  border-bottom: 1.5px solid #ecebeb !important;
 }
 
 .tab-nonactive {
-    font-size: 20px;
-    font-weight: 450;
+  font-size: 20px;
+  font-weight: 450;
 }
 
 .tab-active:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .tab-nonactive:hover {
-    cursor: pointer;
-    border-bottom: 1px solid rgb(0, 140, 165) !important;
+  cursor: pointer;
+  border-bottom: 1px solid rgb(0, 140, 165) !important;
 }

@@ -7,7 +7,7 @@ export default function TextEditor(props) {
         apiKey="3q3vjb0bbtg3jx437evqdsttkyz77mwas325effmyrxwrk33"
         initialValue={props.loadedContent}
         init={{
-          height: 490,
+          height: 500,
           menubar: false,
           plugins: [
             "print preview paste importcss searchreplace autolink autosave save directionality code",

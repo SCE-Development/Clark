@@ -15,120 +15,32 @@ export default class EmailTemplate extends Component {
       submittedRecipients: "",
       submittedSubject: "",
       submittedContent: "",
-      content: "preload",
+      content: "",
       loadContentButtonPressCount: 0,
     };
   }
 
+  //perform getEvents() when the page loads
   componentDidMount() {
     this.getEvents();
   }
 
+  //grab data from database and perform 'storeContent(events)' if apiResponse is not empty
   getEvents = async () => {
     const apiResponse = await getAllEvents();
     if (!apiResponse.error) {
-      this.setState({
-        events: apiResponse.responseData,
-      });
+      // this.setState({
+      //   events: apiResponse.responseData,
+      // });
+      this.storeContent(apiResponse);
     } else {
       let errorMessage = "Unable to retrieve events.";
       this.setState({ events: [errorMessage] });
     }
   };
 
-  // Copies all emails onto clipboard
-  handleCopyEmails = () => {
-    let range = document.createRange();
-    range.selectNode(document.getElementById("email-message"));
-    window.getSelection().removeAllRanges(); // clear current selection
-    window.getSelection().addRange(range); // to select text
-    document.execCommand("copy");
-    window.getSelection().removeAllRanges(); // to deselect
-    document.getElementById("copy-notification2").style.display = "block";
-  };
-
-  handleBlastMailData = () => {
-    this.setState(
-      {
-        submittedRecipients: this.state.recipients,
-        submittedSubject: this.state.subject,
-        submittedContent: this.state.loadedContent,
-        recipients: "",
-        subject: "",
-        loadedContent: "",
-      },
-      this.checkConsole
-    );
-  };
-
-  //Used in testing handleBlastMailData()
-  checkConsole = () => {
-    console.log("------------ Submit ------------");
-    console.log("Submitted Recipients: ", this.state.submittedRecipients);
-    // console.log("Recipients: ", this.state.recipients);
-    console.log("Submitted Subject:", this.state.submittedSubject);
-    // console.log("Subject:", this.state.subject);
-    console.log("Submitted Content: ", this.state.submittedContent);
-    // console.log("Content: ", this.state.loadedContent);
-  };
-
-  updateSubject = (e) => {
-    this.setState({ subject: e });
-  };
-
-  updateRecipients = (e) => {
-    this.setState({ recipients: e });
-  };
-
-  //'content' is where the template created is originally stored
-  updateContent = (e) => {
-    this.setState({ content: e });
-  };
-
-  //'loadedContent' is what's in the text area
-  handleEditorChange = (e) => {
-    this.setState({ loadedContent: e });
-  };
-
-  //Clear Button 'onClick'
-  handleClear = () => {
-    this.setState({ loadedContent: "", subject: "", recipients: "" });
-  };
-
-  //Clear Button 'Disabled' prop boolean
-  checkEmpty = () => {
-    return (
-      this.state.loadedContent === "" &&
-      this.state.subject === "" &&
-      this.state.recipients === ""
-    );
-  };
-
-  //Send Button 'Disabled' prop boolean
-  checkEmptyInputs = () => {
-    return (
-      this.state.recipients !== "" &&
-      this.state.subject !== "" &&
-      this.state.loadedContent !== ""
-    );
-  };
-
-  //Load Template Button 'Disabled' prop boolean
-  checkLoadedContent = () => {
-    return this.state.loadedContent === this.state.content;
-  };
-
-  //'Load Template' Button onClick
-  handleLoadContent = async () => {
-    if (this.state.loadContentButtonPressCount === 0) {
-      await this.setState({ loadContentButtonPressCount: 1 });
-      await this.storeContent();
-    }
-    this.setState({ loadedContent: this.state.content });
-  };
-
-  //handleLoadContent() special case (first press to load content to 'content')
-  storeContent = async () => {
+  //customize data with html, append header/footer, and store that to 'content'
+  storeContent = async (events) => {
     const mailHeader =
       '<p><span style="font-size: 10pt; font-family: Arial;"><strong>Hello SCE G4NG,</strong></span></p>' +
       '\n<p><span style="font-size: 10pt; font-family: Arial;"><strong>This is our newsletter, please read ty.</strong></span></p>\n';
@@ -141,8 +53,6 @@ export default class EmailTemplate extends Component {
       '<a href="https://www.facebook.com/sjsusce/">@scesjsu</a><br />Instagram:' +
       '<a href="https://www.instagram.com/sjsusce/">@scesjsu</a><br />CmpE Slack:' +
       '<a href="https://cmpesjsu.slack.com/?redir=%2Fmessages%2FCH6TTGXLG#/">#sce</a></span></p>';
-
-    let events = await getAllEvents();
 
     try {
       var x = 0;
@@ -198,6 +108,96 @@ export default class EmailTemplate extends Component {
     }
   };
 
+  //Update 'subject' state
+  updateSubject = (e) => {
+    this.setState({ subject: e });
+  };
+
+  //Update 'recipients' state
+  updateRecipients = (e) => {
+    this.setState({ recipients: e });
+  };
+
+  //Update 'content' state. 'content' is where the template created is stored.
+  updateContent = (e) => {
+    this.setState({ content: e });
+  };
+
+  //Clear Button 'Disabled' prop boolean
+  checkEmpty = () => {
+    return (
+      this.state.loadedContent === "" &&
+      this.state.subject === "" &&
+      this.state.recipients === ""
+    );
+  };
+
+  //Send Button 'Disabled' prop boolean
+  checkEmptyInputs = () => {
+    return (
+      this.state.recipients !== "" &&
+      this.state.subject !== "" &&
+      this.state.loadedContent !== ""
+    );
+  };
+
+  //Load Template Button 'Disabled' prop boolean
+  checkLoadedContent = () => {
+    return this.state.loadedContent === this.state.content;
+  };
+
+  //Used by TinyMCE text area to update it. 'loadedContent' is what's in the text area.
+  handleEditorChange = (e) => {
+    this.setState({ loadedContent: e });
+  };
+
+  //'Load Template' Button onClick
+  handleLoadContent = async () => {
+    this.setState({ loadedContent: this.state.content });
+  };
+
+  //'Clear' Button onClick
+  handleClear = () => {
+    this.setState({ loadedContent: "", subject: "", recipients: "" });
+  };
+
+  //'Send' Button onClick
+  handleSend = () => {
+    this.setState(
+      {
+        submittedRecipients: this.state.recipients,
+        submittedSubject: this.state.subject,
+        submittedContent: this.state.loadedContent,
+        recipients: "",
+        subject: "",
+        loadedContent: "",
+      },
+      this.checkConsole
+    );
+  };
+
+  //Used in testing handleSend()
+  checkConsole = () => {
+    console.log("------------ Submit ------------");
+    console.log("Submitted Recipients: ", this.state.submittedRecipients);
+    // console.log("Recipients: ", this.state.recipients);
+    console.log("Submitted Subject:", this.state.submittedSubject);
+    // console.log("Subject:", this.state.subject);
+    console.log("Submitted Content: ", this.state.submittedContent);
+    // console.log("Content: ", this.state.loadedContent);
+  };
+
+  // Copies all emails onto clipboard
+  handleCopyEmails = () => {
+    let range = document.createRange();
+    range.selectNode(document.getElementById("email-message"));
+    window.getSelection().removeAllRanges(); // clear current selection
+    window.getSelection().addRange(range); // to select text
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges(); // to deselect
+    document.getElementById("copy-notification2").style.display = "block";
+  };
+
   render() {
     // let emailMessages = this.state.events.map((event, i) => {
     //   let currentDate = new Date().toJSON();
@@ -247,7 +247,7 @@ export default class EmailTemplate extends Component {
           <Button
             id="email-template-button"
             onClick={async () => {
-              this.handleBlastMailData();
+              this.handleSend();
             }}
             disabled={!this.checkEmptyInputs()}
           >
