@@ -1,3 +1,31 @@
+import React from 'react';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+
+export function StatusModal(props) {
+  const {
+    headerText,
+    bodyText,
+    handleConfirmation,
+    open,
+    toggle,
+    confirmText,
+    cancelText
+  } = props;
+
+  return (
+    <Modal isOpen={open} toggle={toggle}>
+      <ModalHeader toggle={toggle}>{headerText}</ModalHeader>
+      <ModalBody>{bodyText}</ModalBody>
+      <ModalFooter>
+        <Button color='success' onClick={handleConfirmation}>
+          {confirmText}
+        </Button>
+        <Button onClick={toggle}>{cancelText}</Button>
+      </ModalFooter>
+    </Modal>
+  );
+}
+
 export const PrintIcon = `Drag & Drop or Touch Here <br />
 <svg aria-hidden='true' viewBox='0 0 512 512' width='40%'>
 <path

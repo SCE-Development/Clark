@@ -31,7 +31,8 @@ import {
 import { editUser } from '../../APIFunctions/User';
 import {
   PrintIcon,
-  PrintInfo
+  PrintInfo,
+  StatusModal
 } from './2DComponents';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
@@ -55,6 +56,8 @@ export default function Printing(props) {
   );
   const [previewDisplay, setPreviewDisplay] = useState('');
   const [loadPreview, setLoadPreview] = useState(true);
+  const [statusModal, setStatusModal] = useState(false);
+  const [printStatus, setPrintStatus] = useState('');
 
   const previewLabels = {
     copies: 'Number of Copies',
@@ -151,18 +154,40 @@ export default function Printing(props) {
     open: confirmModal
   };
 
+  const statusModalProps = {
+    headerText: 'Printing Status',
+    bodyText: printStatus,
+    confirmText: 'Finish!',
+    cancelText: 'Go Back',
+    confirmColor: 'success',
+    toggle: () => {
+      setStatusModal(!statusModal);
+      setConfirmModal(false);
+    },
+    handleConfirmation: () => {
+      finishPrinting();
+      setStatusModal(!statusModal);
+    },
+    open: statusModal
+  };
+
   async function updateEmbed(totalPages) {
-    const pdf = await PDFDocument.load(dataURI);
-    const display = await PDFDocument.create();
-    const copiedPages = await display.copyPages(
-      pdf,
-      Array.from(totalPages).map(x => x - 1)
-    );
-    copiedPages.forEach(element => {
-      display.addPage(element);
-    });
-    const data = await display.saveAsBase64({ dataUri: true });
-    setPreviewDisplay(data);
+    try {
+      const pdf = await PDFDocument.load(dataURI);
+      const display = await PDFDocument.create();
+      const copiedPages = await display.copyPages(
+        pdf,
+        Array.from(totalPages).map(x => x - 1)
+      );
+      copiedPages.forEach(element => {
+        display.addPage(element);
+      });
+      const data = await display.saveAsBase64({ dataUri: true });
+      setPreviewDisplay(data);
+    } catch {
+      setStatusModal(true);
+      setPrintStatus('Cannot print encrypted PDF');
+    }
   }
 
   async function handleCanPrint(totalPages, copy) {
@@ -178,17 +203,22 @@ export default function Printing(props) {
   }
 
   async function handleUpdate(file) {
-    setDataURI(file.getFileEncodeDataURL());
-    setPreviewDisplay(file.getFileEncodeDataURL());
-    setEncodedFile(file);
-    setContinue(true);
-    const pdf = await PDFDocument.load(file.getFileEncodeDataURL());
-    setNumPages(pdf.getPages().length);
-    let tmp = new Set(range(1, pdf.getPages().length + 1));
-    setUsedPages(tmp);
+    try {
+      setDataURI(file.getFileEncodeDataURL());
+      setPreviewDisplay(file.getFileEncodeDataURL());
+      setEncodedFile(file);
+      setContinue(true);
+      const pdf = await PDFDocument.load(file.getFileEncodeDataURL());
+      setNumPages(pdf.getPages().length);
+      let tmp = new Set(range(1, pdf.getPages().length + 1));
+      setUsedPages(tmp);
+    } catch {
+      setStatusModal(true);
+      setPrintStatus('Cannot print encrypted PDF');
+    }
   }
 
-  function handlePrinting(file) {
+  async function handlePrinting(file) {
     const raw = file.getFileEncodeBase64String();
     const destination = 'HP-LaserJet-p2015dn';
     let data = {
@@ -200,9 +230,17 @@ export default function Printing(props) {
     };
     const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
 
-    editUser({ ...props.user, pagesPrinted }, props.user.token);
-    printPage(data);
+    let status = await printPage(data);
+    if (!status.error) {
+      editUser({ ...props.user, pagesPrinted }, props.user.token);
+      setPrintStatus('Printing succeeded');
+    } else {
+      setPrintStatus('Failed to print');
+    }
+    setStatusModal(true);
+  }
 
+  function finishPrinting() {
     setConfirmModal(!confirmModal);
     setPreviewModal(false);
     setFiles([]);
@@ -372,6 +410,7 @@ export default function Printing(props) {
 
         <ConfirmationModal {...confirmModalProps} />
       </Modal>
+      <StatusModal {...statusModalProps} />
     </div>
   );
 }
