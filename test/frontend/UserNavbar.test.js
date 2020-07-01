@@ -30,7 +30,7 @@ describe('<UserNavbar />', () => {
     const wrapper = mount(<UserNavbar />);
     expect(wrapper.find(Navbar)).to.have.lengthOf(1);
   });
-  it('Should render four <NavLink /> tags for unauthenticated routes', () => {
+  it('Should render two <NavLink /> tags for unauthenticated routes', () => {
     const wrapper = mount(<UserNavbar />);
     expect(wrapper.find(NavLink)).to.have.lengthOf(2);
     expect(wrapper.find(Nav).children()).to.have.lengthOf(1);
@@ -40,52 +40,44 @@ describe('<UserNavbar />', () => {
     ' the user who isn\'t a member',
     () => {
       const wrapper = mount(<UserNavbar {...nonMemberAppProps} />);
-      expect(wrapper.find(NavLink)).to.have.lengthOf(1);
+      expect(wrapper.find(NavLink)).to.have.lengthOf(2);
+    }
+  );
+  it(
+    'Should render one <UncontrolledDropdown /> tag for' +
+    ' the unauthenticated user',
+    () => {
+      const wrapper = mount(<UserNavbar />);
+      expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(1);
+    }
+  );
+  it(
+    'The one <UncontrolledDropdown /> tags for' +
+    ' the unauthenticated user should be to join sce ',
+    () => {
+      const wrapper = mount(<UserNavbar />);
+      const dropdowns = wrapper.find(UncontrolledDropdown);
+      expect(getDropdownDetails(dropdowns.get(0))).to.equal('Join Us!');
     }
   );
   it(
     'Should render two <UncontrolledDropdown /> tags for' +
-    ' the unauthenticated user',
+    ' the authenticated user',
     () => {
-      const wrapper = mount(<UserNavbar />);
+      const wrapper = mount(<UserNavbar {...adminAppProps} />);
       expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(2);
     }
   );
   it(
     'The two <UncontrolledDropdown /> tags for' +
-    ' the unauthenticated user should be for student resources and ' +
-    'to join sce',
-    () => {
-      const wrapper = mount(<UserNavbar />);
-      const dropdowns = wrapper.find(UncontrolledDropdown);
-      expect(getDropdownDetails(dropdowns.get(0))).to.equal(
-        'Student Resources'
-      );
-      expect(getDropdownDetails(dropdowns.get(1))).to.equal('Join Us!');
-    }
-  );
-  it(
-    'Should render three <UncontrolledDropdown /> tags for' +
-    ' the authenticated user',
-    () => {
-      const wrapper = mount(<UserNavbar {...adminAppProps} />);
-      expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(3);
-    }
-  );
-  it(
-    'The four <UncontrolledDropdown /> tags for' +
-    ' authenticated users should be for student resources, printing, ' +
-    'to join sce and a drop down of account options',
+    ' authenticated users should be printing and a ' +
+    'drop down of account options',
     () => {
       const wrapper = mount(<UserNavbar {...adminAppProps} />);
       const dropdowns = wrapper.find(UncontrolledDropdown);
-      expect(getDropdownDetails(dropdowns.get(0))).to.equal(
-        'Student Resources'
-      );
-      expect(getDropdownDetails(dropdowns.get(1))).to.equal('Printing');
-      expect(
-        getDropdownDetails(dropdowns.get(2), 1)[0].props.children
-      ).to.equal('Profile');
+      expect(getDropdownDetails(dropdowns.get(0))).to.equal('Printing');
+      expect(getDropdownDetails(dropdowns.get(1), 1)[0].props.children)
+        .to.equal('Profile');
     }
   );
 });

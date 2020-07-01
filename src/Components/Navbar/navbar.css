@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
 
 .user-nav {
   font-size: 18px;
-  background-color: #E1F5FE;
-  width:100%;
-  height:100%;
+  background-color: #87b0c7;
+  width: 100%;
+  z-index: 4;
 }
 
 .login-icon {
   margin-bottom: 20px;
 }
 
-.nav-button{
+.nav-button {
   padding: 9px 20px;
   border-radius: 50px;
   background-color: #96bdf0af;
@@ -21,20 +21,93 @@
 .nav-link:hover {
   color: rgb(191, 227, 241);
 }
- 
-.admin-nav{
-  font-family: 'Poppins', sans-serif;
+
+.admin-nav {
+  font-family: "Poppins", sans-serif;
   font-weight: 500;
-  background-color:#648cc0;
+  background-color: #648cc0;
   color: rgba(255, 255, 255);
   text-decoration: none;
 }
 
-.nav-admin-link{
-  color: white!important;
+.nav-admin-link {
+  color: white !important;
   fill: white;
-} 
+}
 
 .sce-nav {
   flex-flow: row wrap;
+}
+
+.icon-images {
+  width: 20px;
+  height: 20px;
+}
+
+#navlink-text {
+  color: white;
+  font-weight: bold;
+}
+
+#logo-image {
+  width: 50px;
+  margin-top: -5;
+  margin-bottom: -5;
+  margin-left: 10;
+}
+
+.logout-image {
+  width: 18px;
+  height: 18px;
+}
+
+.profile-image {
+  width: 30px;
+  height: 30px;
+}
+
+#btndrp-text {
+  color: gray;
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center !important;
+}
+
+.drp-item.active, .drp-item:active {
+  background-color:#d3d3d3 !important;
+  outline: none !important;
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.drp-menu {
+  display: none !important;
+  position: absolute;
+  transform: translate(-100%, 0px) !important;
+}
+
+.dropdown-submenu:hover .drp-menu{
+  display: block !important;
+}
+
+.navbar-toggler {
+  padding: 0 !important;
+  border: none !important;
+}
+
+.border {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 1px;
+  width: 30px;
+  background:	#00008B;
+}
+
+.hamburger-button {
+  background-color: #4e6fa16c !important;
+  border-color: #ffffff00 !important;
+  border-radius: 4px !important;
 }
