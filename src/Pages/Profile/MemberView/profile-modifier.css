@@ -55,7 +55,18 @@
 }
 
 .discord-button {
-  background-color: blue
+  background-color: #7289da !important;
+  align-items: center !important;
+}
+
+.discord-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.center-text {
+  padding: 5px;
+  align-items: center
 }
 
 .invalid {

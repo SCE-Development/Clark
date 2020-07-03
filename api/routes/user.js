@@ -354,10 +354,15 @@ router.post('/verify', function (req, res) {
   }
 });
 
+router.post('/callback', function (req, res) {
+  res.send('http://localhost:8080/api/user/callback');
+  console.log(res.body)
+});
+
 router.post('/discord', function (req, res) {
-  res.redirect('https://discord.com/api/oauth2/authorize?client_id=722960714771202159&redirect_uri=https%3A%2F%2Fgoogle.com&response_type=code&scope=identify');
-  res.send('hi')
-})
+  res.send('https://discord.com/api/oauth2/authorize?client_id=722960714771202159&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify');
+  console.log(res.body)
+});
 
 function checkIfPageCountResets(lastLogin) {
   if (!lastLogin) return false;
