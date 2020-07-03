@@ -135,7 +135,7 @@ export async function loginUser(email, password) {
 export async function connectToDiscord() {
   let status = new UserApiResponse();
   await axios.post('api/user/discord').then((res) => {
-    status.responseData = res.data
+    status.responseData = res.data;
   });
   return status;
 }

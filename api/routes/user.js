@@ -34,7 +34,7 @@ router.post('/checkIfUserExists', (req, res) => {
     {
       email: email.toLowerCase()
     },
-    function (error, user) {
+    function(error, user) {
       if (error) {
         logger.log(`User /user/checkIfUserExists error: ${error}`);
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
@@ -67,7 +67,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', function (req, res) {
+router.post('/login', function(req, res) {
   if (!req.body.email || !req.body.password) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -76,7 +76,7 @@ router.post('/login', function (req, res) {
     {
       email: req.body.email.toLowerCase()
     },
-    function (error, user) {
+    function(error, user) {
       if (error) {
         logger.log('User API bad request: ', error);
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
@@ -91,7 +91,7 @@ router.post('/login', function (req, res) {
           });
       } else {
         // Check if password matches database
-        user.comparePassword(req.body.password, function (error, isMatch) {
+        user.comparePassword(req.body.password, function(error, isMatch) {
           if (isMatch && !error) {
             if (user.accessLevel === membershipState.BANNED) {
               return res
@@ -111,7 +111,7 @@ router.post('/login', function (req, res) {
                 { email: user.email },
                 // update this field
                 { pagesPrinted: 0 },
-                function (error, result) {
+                function(error, result) {
                   // if (error) return res.sendStatus(INTERNAL_SERVER_ERROR)
                   if (error) {
                     logger.log(
@@ -163,7 +163,7 @@ router.post('/delete', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  User.deleteOne({ email: req.body.email }, function (error, user) {
+  User.deleteOne({ email: req.body.email }, function(error, user) {
     if (error) {
       const info = {
         userEmail: req.body.email,
@@ -184,13 +184,13 @@ router.post('/delete', (req, res) => {
 });
 
 // Search for a member
-router.post('/search', function (req, res) {
+router.post('/search', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function (error, result) {
+  User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
@@ -223,7 +223,7 @@ router.post('/search', function (req, res) {
 });
 
 // Search for all members
-router.post('/users', function (req, res) {
+router.post('/users', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -260,7 +260,7 @@ router.post('/edit', (req, res) => {
   // Remove the auth token from the form getting edited
   delete user.token;
 
-  User.updateOne(query, { ...user }, function (error, result) {
+  User.updateOne(query, { ...user }, function(error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
@@ -288,7 +288,7 @@ router.post('/edit', (req, res) => {
 router.post('/setEmailToVerified', (req, res) => {
   const query = { email: req.body.email };
 
-  User.updateOne(query, { emailVerified: true }, function (error, result) {
+  User.updateOne(query, { emailVerified: true }, function(error, result) {
     if (error) {
       const info = {
         userEmail: req.body.email,
@@ -318,7 +318,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function (error, result) {
+  User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
@@ -341,7 +341,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
-router.post('/verify', function (req, res) {
+router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -354,14 +354,12 @@ router.post('/verify', function (req, res) {
   }
 });
 
-router.post('/callback', function (req, res) {
+router.post('/callback', function(req, res) {
   res.send('http://localhost:8080/api/user/callback');
-  console.log(res.body)
 });
 
-router.post('/discord', function (req, res) {
-  res.send('https://discord.com/api/oauth2/authorize?client_id=722960714771202159&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify');
-  console.log(res.body)
+router.post('/discord', function(req, res) {
+  res.send('https://discord.com/api/oauth2/authorize?client_id=722960714771202159&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify'); // eslint-disable-line
 });
 
 function checkIfPageCountResets(lastLogin) {

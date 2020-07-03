@@ -35,11 +35,7 @@ export default function Routing({ appProps }) {
     appProps.user &&
     appProps.user.accessLevel >= membershipState.OFFICER;
   const signedInRoutes = [
-    // {
-      // path: '/discord',
-      // allowedIf: userIsAuthenticated,
-      // redirect: 'https://discord.com/api/oauth2/authorize?client_id=722960714771202159&redirect_uri=https%3A%2F%2Fgoogle.com&response_type=code&scope=identify'
-    // },
+
     {
       Component: Overview,
       path: '/dashboard',

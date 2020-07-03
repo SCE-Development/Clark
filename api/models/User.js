@@ -67,7 +67,7 @@ const UserSchema = new Schema(
   { collection: 'User' }
 );
 
-UserSchema.pre('save', function (next) {
+UserSchema.pre('save', function(next) {
   const member = this;
   let emailRegExp = new RegExp(['^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0',
     '-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61',
@@ -76,11 +76,11 @@ UserSchema.pre('save', function (next) {
     return next('Bad email tried to be save (email format is: example@domain)');
   }
   if (this.isModified('password') || this.isNew) {
-    bcrypt.genSalt(10, function (error, salt) {
+    bcrypt.genSalt(10, function(error, salt) {
       if (error) {
         return next(error);
       }
-      bcrypt.hash(member.password, salt, function (error, hash) {
+      bcrypt.hash(member.password, salt, function(error, hash) {
         if (error) {
           return next(error);
         }
@@ -94,8 +94,8 @@ UserSchema.pre('save', function (next) {
   }
 });
 
-UserSchema.methods.comparePassword = function (passwd, callback) {
-  bcrypt.compare(passwd, this.password, function (error, isMatch) {
+UserSchema.methods.comparePassword = function(passwd, callback) {
+  bcrypt.compare(passwd, this.password, function(error, isMatch) {
     if (error) {
       return callback(error);
     }
