@@ -38,7 +38,10 @@ chai.use(chaiHttp);
 describe('User', () => {
   before(done => {
     initializeMock();
-    app = tools.initializeServer(__dirname + '/../api/routes/User.js');
+    app = tools.initializeServer([
+      __dirname + '/../api/routes/User.js',
+      __dirname + '/../api/routes/Auth.js'
+    ]);
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
@@ -73,164 +76,15 @@ describe('User', () => {
       const user = {
         email: 'a@b.c'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/checkIfUserExists', user);
-      expect(result).to.have.status(OK);
-    });
-  });
-
-  describe('/POST register', () => {
-    it('Should successfully register a user with email, ' +
-       'password, firstname and lastname', async () => {
-      const user = {
+      const addUser = {
         email: 'a@b.c',
         password: 'Passw0rd',
         firstName: 'first-name',
         lastName: 'last-name'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/register', user);
-      expect(result).to.have.status(OK);
-    });
-
-    it('Should not allow a second registration with the same ' +
-       'email as a user in the database', async () => {
-      const user = {
-        email: 'a@b.c',
-        password: 'Passw0rd',
-        firstName: 'first-name',
-        lastName: 'last-name'
-      };
-      const result = await test.sendPostRequest(
-        '/api/User/register', user);
-      expect(result).to.have.status(CONFLICT);
-    });
-  });
-
-  it('Should not allow registration with a password without' +
-      'a number', async () => {
-    const user = {
-      email: 'd@e.f',
-      password: 'Password',
-      firstName: 'first-name',
-      lastName: 'last-name'
-    };
-    const result = await test.sendPostRequest(
-      '/api/User/register', user);
-    expect(result).to.have.status(BAD_REQUEST);
-  });
-
-  it('Should not allow registration with a password without ' +
-     'an uppercase character', async () => {
-    const user = {
-      email: 'd@e.f',
-      password: 'password1',
-      firstName: 'first-name',
-      lastName: 'last-name'
-    };
-    const result = await test.sendPostRequest(
-      '/api/User/register', user);
-    expect(result).to.have.status(BAD_REQUEST);
-  });
-
-  // Failing. Right now if this test is included, then
-  // it removes the user from the database?
-  // If this is commented out, then the user created above persists?
-  describe('/POST checkIfUserExists with a user added', () => {
-    it('Should return statusCode 409 when a user already exists', async () => {
-      const user = {
-        email: 'a@b.c'
-      };
+      test.sendPostRequest('/api/Auth/register', addUser);
       const result = await test.sendPostRequest(
         '/api/User/checkIfUserExists', user);
-      expect(result).to.have.status(CONFLICT);
-    });
-  });
-
-  describe('/POST login', () => {
-    it('Should return statusCode 400 if an email and/or ' +
-       'password is not provided', async () => {
-      const user = {};
-      const result = await test.sendPostRequest(
-        '/api/User/login', user);
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
-    it('Should return statusCode 401 if an email/pass combo ' +
-       'does not match a record in the DB', async () => {
-      const user = {
-        email: 'nota@b.c',
-        password: 'Passwd'
-      };
-      const result = await test.sendPostRequest(
-        '/api/User/login', user);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
-    it('Should return statusCode 401 if the email exists ' +
-       'but password is incorrect', async () => {
-      const user = {
-        email: 'a@b.c',
-        password: 'password'
-      };
-      const result = await test.sendPostRequest(
-        '/api/User/login', user);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
-    /**
-     * failing because user's default acesslevel is NOW -1
-     * (pending), user can't login until verify email
-     * fix this when email-verify-module is working
-     */
-    // it('Should return statusCode 200 and a JWT token
-    // if the email/pass is correct', done => {
-    //   const user = {
-    //     email: 'a@b.c',
-    //     password: 'Passw0rd'
-    //   }
-    //   chai
-    //     .request(app)
-    //     .post('/api/User/login')
-    //     .send(user)
-    //     .then(function (res) {
-    //       expect(res).to.have.status(OK)
-    //       res.body.should.be.a('object')
-    //       res.body.should.have.property('token')
-    //       token = res.body.token
-
-    //       done()
-    //     })
-    //     .catch(err => {
-    //       throw err
-    //     })
-    // })
-  });
-
-  describe('/POST verify', () => {
-    it('Should return statusCode 401 when a token is not passed in',
-      async () => {
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/User/verify', null);
-        expect(result).to.have.status(UNAUTHORIZED);
-      });
-
-    it('Should return statusCode 401 when an invalid ' +
-        'token is passed in', async () => {
-      const result = await test.sendPostRequest(
-        '/api/User/verify', { token: 'Invalid Token' });
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
-    it('Should return statusCode 200 when a valid' +
-        'token is passed in', async () => {
-      setTokenStatus({
-        name: 'name',
-        email: 'email',
-        accessLevel: 'accessLevel'
-      });
-      const result = await test.sendPostRequest(
-        '/api/User/verify', { token: token });
       expect(result).to.have.status(OK);
     });
   });

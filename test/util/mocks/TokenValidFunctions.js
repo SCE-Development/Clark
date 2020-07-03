@@ -31,7 +31,7 @@ function resetMock() {
  * @returns return parameter (above)
  */
 function setTokenStatus(returnValue) {
-  checkifTokenValidMock.onCall(0).returns(returnValue);
+  checkifTokenValidMock.returns(returnValue);
 }
 
 module.exports = {
