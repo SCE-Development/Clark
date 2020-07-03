@@ -1,8 +1,8 @@
 /* global describe it before after beforeEach afterEach */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const OfficerManager = require('../api/models/OfficerManager');
-const User = require('../api/models/User');
+const OfficerManager = require('../api/main_endpoints/models/OfficerManager');
+const User = require('../api/main_endpoints/models/User');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const {
@@ -11,7 +11,7 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   FORBIDDEN
-} = require('../api/constants').STATUS_CODES;
+} = require('../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../test/util/tools/SceApiTester');
 
 let app = null;
@@ -25,7 +25,7 @@ const {
   restoreMock,
   initializeMock
 } = require('./util/mocks/TokenValidFunctions');
-const { DEFAULT_PHOTO_URL } = require('../api/constants');
+const { DEFAULT_PHOTO_URL } = require('../api/util/constants');
 chai.should();
 chai.use(chaiHttp);
 
@@ -34,7 +34,7 @@ describe('OfficerManager', () => {
   before(done => {
     initializeMock();
     app = tools.initializeServer(
-      __dirname + '/../api/routes/officerManager.js');
+      __dirname + '/../api/main_endpoints/routes/officerManager.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(OfficerManager);

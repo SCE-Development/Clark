@@ -1,11 +1,11 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const InventoryItem = require('../api/models/InventoryItem');
+const InventoryItem = require('../api/main_endpoints/models/InventoryItem');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const constants = require('../api/constants');
+const constants = require('../api/util/constants');
 const { OK, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND } = constants.STATUS_CODES;
 const SceApiTester = require('../test/util/tools/SceApiTester');
 
@@ -29,7 +29,7 @@ describe('InventoryItem', () => {
   before(done => {
     initializeMock();
     app = tools.initializeServer(
-      __dirname + '/../api/routes/InventoryItem.js');
+      __dirname + '/../api/main_endpoints/routes/InventoryItem.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(InventoryItem);
