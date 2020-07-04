@@ -60,13 +60,14 @@
 }
 
 .discord-button img {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
 }
 
 .center-text {
   padding: 5px;
-  align-items: center
+  align-items: center;
 }
 
 .invalid {
