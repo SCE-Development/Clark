@@ -44,3 +44,16 @@
   color: white;
   margin-right: 8px;
 }
+
+#email-template-button:hover:enabled {
+  background-color: rgb(2, 118, 138);
+}
+
+#email-conf-button {
+  background-color: rgb(2, 107, 126);
+  color: white;
+}
+
+#email-conf-button:hover {
+  background-color: rgb(4, 126, 148);
+}

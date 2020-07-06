@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import "./email-template.css";
 import { getAllEvents } from "../../APIFunctions/Event";
 import { Button } from "reactstrap";
 import BlastMailForm from "./BlastMailForm.jsx";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default class EmailTemplate extends Component {
   constructor(props) {
@@ -244,7 +245,7 @@ export default class EmailTemplate extends Component {
           >
             Load Template
           </Button>
-          <Button
+          {/* <Button
             id="email-template-button"
             onClick={async () => {
               this.handleSend();
@@ -252,7 +253,11 @@ export default class EmailTemplate extends Component {
             disabled={!this.checkEmptyInputs()}
           >
             Send
-          </Button>
+          </Button> */}
+          <ConfirmationModal
+            handleSend={this.handleSend}
+            checkEmptyInputs={this.checkEmptyInputs}
+          />
         </div>
         <div id="email-message">
           {/* {emailMessages} */}
