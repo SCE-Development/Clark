@@ -6,20 +6,14 @@ user_os = platform.system()
 print('Detected OS: {}'.format(user_os))
 
 if user_os == 'Darwin' or user_os == 'Linux':
-    if os.path.exists("api/config/config.js") == False:
-        os.system("cp api/config/config.example.js  api/config/config.js")
-    if os.path.exists("src/config/config.js") == False:
-        os.system("cp src/config/config.example.js  src/config/config.js")
-    setup_status = os.system('./util/setup-scripts/setup.sh')
+    if os.path.exists("api/config/config.json") == False:
+        os.system("cp api/config/config.example.json  api/config/config.json")
+    if os.path.exists("src/config/config.json") == False:
+        os.system("cp src/config/config.example.json  src/config/config.json")
 elif user_os == 'Windows':
-    if os.path.exists("api\config\config.js") == False:
-        os.system("copy api\config\config.example.js  api\config\config.js")
-    if os.path.exists("src\config\config.js") == False:
-        os.system("copy src\config\config.example.js  src\config\config.js")
-    setup_status = os.system('util\setup-scripts\setup.bat')
+    if os.path.exists("api\config\config.json") == False:
+        os.system("copy api\config\config.example.json  api\config\config.json")
+    if os.path.exists("src\config\config.json") == False:
+        os.system("copy src\config\config.example.json  src\config\config.json")
 
-if setup_status == 0:
-    print('\nSetup successful! Bye!\n')
-else:
-    print('\nAn error occured somewhere during the process. Post in the \
-#development channel on Slack for help.\n')
+print('\nSetup complete! Bye!\n')

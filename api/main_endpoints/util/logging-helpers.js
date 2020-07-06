@@ -1,4 +1,4 @@
-const { LOGGING_API_URL } = require('../../config/config');
+const { LOGGING_API_URL } = require('../../config/config.json');
 const axios = require('axios');
 
 /**
