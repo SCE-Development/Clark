@@ -49,7 +49,7 @@
     "react-iframe": "^1.8.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.3.0",
-    "reactstrap": "^8.2.0"
+    "reactstrap": "^8.5.1"
   },
   "devDependencies": {
     "@babel/register": "^7.10.4",
