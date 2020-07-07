@@ -38,6 +38,7 @@
     "http": "0.0.0",
     "mongoose": "^5.9.2",
     "nodemailer": "^6.4.4",
+    "nodemon": "^2.0.4",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
