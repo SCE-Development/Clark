@@ -3,7 +3,7 @@ const router = express.Router();
 const { SceGoogleApiHandler } = require('../util/SceGoogleApiHandler');
 const {
   OK,
-  BAD_REQUEST
+  NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 
 router.get('/getCalendarEvents', async (req, res) => {

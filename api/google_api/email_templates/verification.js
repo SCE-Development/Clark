@@ -1,6 +1,6 @@
 const generateHashedId = require('../util/auth').generateHashedId;
 
-module.exports = function(user, recipient, name) {
+function verification(user, recipient, name) {
   return new Promise((resolve, reject) => {
     generateHashedId(recipient)
       .then(hashedId => {
@@ -23,4 +23,6 @@ module.exports = function(user, recipient, name) {
         reject(error);
       });
   });
-};
+}
+
+module.exports = { verification };
