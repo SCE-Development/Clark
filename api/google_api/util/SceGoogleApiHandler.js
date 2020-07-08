@@ -163,8 +163,7 @@ class SceGoogleApiHandler {
     return new Promise((resolve, reject) => {
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
-        resolve(calendar);
-        calendar.events.list({
+      calendar.events.list({
         calendarId: calendarId,
         timeMin: (new Date()).toISOString(),
         maxResults: numOfEvents,
@@ -191,19 +190,20 @@ class SceGoogleApiHandler {
     return new Promise((resolve, reject) => {
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
-      resolve(calendar);
       var eventToAdd = this.translateEvent(newEvent);
+      // this should get any events that would conflict with the event we would add
       calendar.freebusy.query({
         resource: {
           timeMin: eventToAdd.start.dateTime,
           timeMax: eventToAdd.end.dateTime,
           timeZone: eventToAdd.start.timeZone,
-          items: [{ id: calendarId }],
+          items: [{ id: 'primary' }],
         },
       },
       (err, res) => {
         if(err) 
           reject(false);
+        // array of events that would conflict with the event we add
         const eventsArr = res.data.calendars.primary.busy;
         if(eventsArr.length === 0)
           calendar.events.insert(
@@ -225,7 +225,7 @@ class SceGoogleApiHandler {
    * @returns {Object} A Google Calendar formatted event
    */
   translateEvent(eventToAdd) {
-    //var attendees = filterUsers(getAllUsers(), eventToAdd.filterID);
+    // var attendees = filterUsers(getAllUsers(), eventToAdd.filterID);
     var jsonEmails = [];
     // attendees.map((email) => {
     //   var jsonEmail = {'email': email};
