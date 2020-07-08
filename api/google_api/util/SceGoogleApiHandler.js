@@ -1,3 +1,5 @@
+//import { getAllUsers, filterUsers } from '../../src/APIFunctions/User.js';
+
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
@@ -161,7 +163,8 @@ class SceGoogleApiHandler {
     return new Promise((resolve, reject) => {
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
-      calendar.events.list({
+        resolve(calendar);
+        calendar.events.list({
         calendarId: calendarId,
         timeMin: (new Date()).toISOString(),
         maxResults: numOfEvents,
@@ -180,10 +183,111 @@ class SceGoogleApiHandler {
   }
 
   /**
-   * 
+   * Adds an event to a given calendar by its id.
+   * @param calendarId {string} calendar id for which calendar to pull from
+   * @param newEvent {Event} event to translate and add to Google Calendar
    */
-  addEventsToCalendar(calendarId, newEvent) {
+  addEventToCalendar(calendarId, newEvent) {
+    return new Promise((resolve, reject) => {
+      const calendar =
+        google.calendar({ version: 'v3', auth: this.oAuth2Client });
+      resolve(calendar);
+      var eventToAdd = this.translateEvent(newEvent);
+      calendar.freebusy.query({
+        resource: {
+          timeMin: eventToAdd.start.dateTime,
+          timeMax: eventToAdd.end.dateTime,
+          timeZone: eventToAdd.start.timeZone,
+          items: [{ id: calendarId }],
+        },
+      },
+      (err, res) => {
+        if(err) 
+          reject(false);
+        const eventsArr = res.data.calendars.primary.busy;
+        if(eventsArr.length === 0)
+          calendar.events.insert(
+            { auth: this.oAuth2Client, calendarId: calendarId, resource: eventToAdd },
+            err => {
+              if(err) 
+                reject(false);
+              resolve(eventToAdd);
+            }
+          );
+        reject(false);
+      });
+    });
+  }
 
+  /**
+   * Convert SCE events to Google Calendar Events
+   * @param {Object} eventToAdd An SCE Event
+   * @returns {Object} A Google Calendar formatted event
+   */
+  translateEvent(eventToAdd) {
+    //var attendees = filterUsers(getAllUsers(), eventToAdd.filterID);
+    var jsonEmails = [];
+    // attendees.map((email) => {
+    //   var jsonEmail = {'email': email};
+    //    jsonEmails.push(jsonEmail);
+    // });
+    
+    var event = {
+      'summary': eventToAdd.title,
+      'location': eventToAdd.eventLocation,
+      'description': eventToAdd.description,
+      'start': {
+          'dateTime': this.dash(eventToAdd.eventDate) + 'T' + this.to24(eventToAdd.startTime) + ':00-07:00',
+          'timeZone': 'America/Los_Angeles'
+      },
+      'end': {
+          'dateTime': this.dash(eventToAdd.eventDate) + 'T' + this.to24(eventToAdd.endTime) + ':00-07:00',
+          'timeZone': 'America/Los_Angeles'
+      },
+      'recurrence': [
+          'RRULE:FREQ=DAILY;COUNT=1'
+      ],
+      'attendees': jsonEmails,
+      'reminders': {
+          'useDefault': false,
+          'overrides': [
+              {'method': 'email', 'minutes': 24 * 60},
+              {'method': 'popup', 'minutes': 10}
+          ]
+      }
+    };
+    return event;
+  }
+
+  /**
+   * Convert date in slash format to a date in dash format
+   * @param {string} date in slash format
+   */
+  dash(slashDate) {
+    const date = new Date(slashDate);
+    if (!date) return;
+    var MyDateString = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-'
+       + ('0' + (date.getDate() + 1)).slice(-2);
+    return MyDateString; 
+  }
+
+  /**
+   * Convert time in 12 hr format to a time in 24 hr format
+   * @param {*} time12h in 12 hr format
+   */
+  to24(time12h) {
+    if (!time12h) return;
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    if (hours === '12') {
+      hours = '00';
+    }
+    if (modifier === 'PM') {
+      hours = parseInt(hours, 10) + 12;
+    } else if (parseInt(hours) < 10 && parseInt(hours) > 0) {
+      hours = '0' + String(hours);
+    }
+    return `${hours}:${minutes}`;
   }
 }
 
