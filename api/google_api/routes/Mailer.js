@@ -6,7 +6,7 @@ const {
   OK,
   BAD_REQUEST
 } = require('../../util/constants').STATUS_CODES;
-const { googleApiKeys } = require('../config/config.json');
+const { googleApiKeys } = require('../../config/config.json');
 const { USER } = googleApiKeys;
 
 router.post('/sendVerificationEmail', async (req, res) => {

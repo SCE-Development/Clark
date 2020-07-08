@@ -12,7 +12,7 @@ import { MAILER_API_URL } from '../config/config.json';
 export async function sendVerificationEmail(email, firstName) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/api/mailer/sendVerificationEmail', {
+    .post(MAILER_API_URL + '/api/Mailer/sendVerificationEmail', {
       recipientEmail: email,
       recipientName: firstName
     })
