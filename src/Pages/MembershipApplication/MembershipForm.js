@@ -5,7 +5,7 @@ import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
-import { sendVerificationEmail } from '../../APIFunctions/mailer';
+import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 import GoogleRecaptcha from './GoogleRecaptcha';
 
 export default function MembershipForm(props) {
