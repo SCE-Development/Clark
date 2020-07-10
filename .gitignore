@@ -83,3 +83,8 @@ printingRPC/
 config.js 
 config.json
 token.json
+
+# CSR
+*.csr
+*.key
+
