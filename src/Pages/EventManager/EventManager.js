@@ -5,7 +5,7 @@ import {
   getAllEvents,
   deleteEvent
 } from '../../APIFunctions/Event';
-import { addEventToCalendar } from '../../APIFunctions/mailer';
+import { addEventToCalendar } from '../../APIFunctions/Mailer';
 import './event-manager.css';
 import { Button, Container } from 'reactstrap';
 import EventManagerModal from './EventManagerModal';
@@ -51,8 +51,9 @@ export default function EventManager(props) {
     if (modalState === eventModalState.SUBMIT) {
       const res = await createNewEvent(event, props.user.token);
       if(res.error === false) {
-        console.log("CALLED");
-        await addEventToCalendar(event, props.user.token);
+        const addEventRes = await addEventToCalendar(event, props.user.token);
+        if(addEventRes.responseData === 'Event Conflict!')
+          alert('Cannot add event to Google Calendar due to Event conflict!');
       }
     } else if (modalState === eventModalState.EDIT) {
       await editEvent(event, props.user.token);

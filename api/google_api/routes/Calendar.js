@@ -25,4 +25,22 @@ router.get('/getCalendarEvents', async (req, res) => {
     });
 });
 
+router.post('/addEventToCalendar', async (req, res) => {
+  const scopes = ['https://calendar.google.com/'];
+  const pathToToken = __dirname + '/../config/token.json';
+  const apiHandler = new SceGoogleApiHandler(
+    scopes, pathToToken);
+  const calendarID = req.query.calendarID || 'primary';
+  const event = req.body.newEvent;
+  apiHandler.addEventToCalendar(calendarID, event)
+    .then(event => {
+      res.status(OK).send(event);
+    })
+    .catch(err => {
+      if(err) {
+        res.status(BAD_REQUEST).send({ err, message: 'Getting event failed' });
+      }
+    });
+});
+
 module.exports = router;

@@ -1,4 +1,4 @@
-//import { getAllUsers, filterUsers } from '../../src/APIFunctions/User.js';
+// import { getAllUsers, filterUsers } from '../../src/APIFunctions/User.js';
 
 const fs = require('fs');
 const readline = require('readline');
@@ -190,8 +190,7 @@ class SceGoogleApiHandler {
     return new Promise((resolve, reject) => {
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
-      var eventToAdd = this.translateEvent(newEvent);
-      // this should get any events that would conflict with the event we would add
+      let eventToAdd = this.translateEvent(newEvent);
       calendar.freebusy.query({
         resource: {
           timeMin: eventToAdd.start.dateTime,
@@ -201,20 +200,17 @@ class SceGoogleApiHandler {
         },
       },
       (err, res) => {
-        if(err) 
-          reject(false);
-        // array of events that would conflict with the event we add
+        if(err) resolve(err);
         const eventsArr = res.data.calendars.primary.busy;
-        if(eventsArr.length === 0)
-          calendar.events.insert(
-            { auth: this.oAuth2Client, calendarId: calendarId, resource: eventToAdd },
-            err => {
-              if(err) 
-                reject(false);
-              resolve(eventToAdd);
-            }
-          );
-        reject(false);
+        if(eventsArr.length === 0) {
+          const response = calendar.events.insert({
+            auth: this.oAuth2Client,
+            calendarId: calendarId,
+            resource: eventToAdd
+          });
+          resolve(response.status);
+        }
+        resolve('Event Conflict!');
       });
     });
   }
@@ -226,34 +222,36 @@ class SceGoogleApiHandler {
    */
   translateEvent(eventToAdd) {
     // var attendees = filterUsers(getAllUsers(), eventToAdd.filterID);
-    var jsonEmails = [];
+    let jsonEmails = [];
     // attendees.map((email) => {
     //   var jsonEmail = {'email': email};
     //    jsonEmails.push(jsonEmail);
     // });
-    
-    var event = {
+
+    let event = {
       'summary': eventToAdd.title,
       'location': eventToAdd.eventLocation,
       'description': eventToAdd.description,
       'start': {
-          'dateTime': this.dash(eventToAdd.eventDate) + 'T' + this.to24(eventToAdd.startTime) + ':00-07:00',
-          'timeZone': 'America/Los_Angeles'
+        'dateTime': this.dash(eventToAdd.eventDate) + 'T'
+        + this.to24(eventToAdd.startTime) + ':00-07:00',
+        'timeZone': 'America/Los_Angeles'
       },
       'end': {
-          'dateTime': this.dash(eventToAdd.eventDate) + 'T' + this.to24(eventToAdd.endTime) + ':00-07:00',
-          'timeZone': 'America/Los_Angeles'
+        'dateTime': this.dash(eventToAdd.eventDate) + 'T'
+        + this.to24(eventToAdd.endTime) + ':00-07:00',
+        'timeZone': 'America/Los_Angeles'
       },
       'recurrence': [
-          'RRULE:FREQ=DAILY;COUNT=1'
+        'RRULE:FREQ=DAILY;COUNT=1'
       ],
       'attendees': jsonEmails,
       'reminders': {
-          'useDefault': false,
-          'overrides': [
-              {'method': 'email', 'minutes': 24 * 60},
-              {'method': 'popup', 'minutes': 10}
-          ]
+        'useDefault': false,
+        'overrides': [
+          {'method': 'email', 'minutes': 24 * 60},
+          {'method': 'popup', 'minutes': 10}
+        ]
       }
     };
     return event;
@@ -266,9 +264,10 @@ class SceGoogleApiHandler {
   dash(slashDate) {
     const date = new Date(slashDate);
     if (!date) return;
-    var MyDateString = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-'
-       + ('0' + (date.getDate() + 1)).slice(-2);
-    return MyDateString; 
+    let MyDateString = date.getFullYear() + '-'
+      + ('0' + (date.getMonth() + 1)).slice(-2) + '-'
+      + ('0' + (date.getDate() + 1)).slice(-2);
+    return MyDateString;
   }
 
   /**
