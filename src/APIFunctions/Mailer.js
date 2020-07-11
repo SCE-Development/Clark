@@ -22,3 +22,37 @@ export async function sendVerificationEmail(email, firstName) {
     });
   return status;
 }
+
+/**
+ * Add a new event.
+ * @param {Object} newEvent - The event that is to be added
+ * @param {string} newEvent.title - The title of the new event
+ * @param {(string|undefined)} newEvent.description - The description of the
+ * new event
+ * @param {string} newEvent.eventLocation - The location of the new event
+ * @param {string} newEvent.eventDate - The late of the new event
+ * @param {string} newEvent.startTime - The start time of the new event
+ * @param {string} newEvent.endTime - The end time of the new event
+ * @param {(string|undefined)} newEvent.eventCategory - The category of the new
+ * event
+ * @param {(string|undefined)} newEvent.imageURL - A URL of the image of the
+ * event
+ * @param {string} token - The user's jwt token for authentication
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
+export async function addEventToCalendar(newEvent, token) {
+  let status = new ApiResponse();
+  const firstAPI = axios.create({
+    baseURL: MAILER_API_URL
+  });
+  await firstAPI
+    .post('api/Calendar/addEventToCalendar', { token, newEvent })
+    .then(res => {
+      status.responseData = res.data;
+    })
+    .catch((error) => {
+      status.error = true;
+    });
+  return status;
+}
