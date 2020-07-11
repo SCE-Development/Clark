@@ -32,7 +32,8 @@ import { editUser } from '../../APIFunctions/User';
 import {
   PrintIcon,
   PrintInfo,
-  StatusModal
+  StatusModal,
+  failPrintStatus
 } from './2DComponents';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
@@ -141,7 +142,7 @@ export default function Printing(props) {
 
   const confirmModalProps = {
     headerText: 'Are you sure you want to print?',
-    bodyText: 'Click Yes or Go Back',
+    bodyText: '',
     confirmText: 'Yes!',
     cancelText: 'Go Back',
     confirmColor: 'success',
@@ -158,7 +159,6 @@ export default function Printing(props) {
     headerText: 'Printing Status',
     bodyText: printStatus,
     confirmText: 'Finish!',
-    cancelText: 'Go Back',
     confirmColor: 'success',
     toggle: () => {
       setStatusModal(!statusModal);
@@ -186,6 +186,7 @@ export default function Printing(props) {
       setPreviewDisplay(data);
     } catch {
       setStatusModal(true);
+      setCanPrint(false);
       setPrintStatus('Cannot print encrypted PDF');
     }
   }
@@ -214,6 +215,7 @@ export default function Printing(props) {
       setUsedPages(tmp);
     } catch {
       setStatusModal(true);
+      setCanPrint(false);
       setPrintStatus('Cannot print encrypted PDF');
     }
   }
@@ -233,15 +235,15 @@ export default function Printing(props) {
     let status = await printPage(data);
     if (!status.error) {
       editUser({ ...props.user, pagesPrinted }, props.user.token);
-      setPrintStatus('Printing succeeded');
+      setPrintStatus('Printing succeeded!');
     } else {
-      setPrintStatus('Failed to print');
+      setPrintStatus(failPrintStatus);
     }
     setStatusModal(true);
   }
 
   function finishPrinting() {
-    setConfirmModal(!confirmModal);
+    setConfirmModal(false);
     setPreviewModal(false);
     setFiles([]);
     setContinue(false);

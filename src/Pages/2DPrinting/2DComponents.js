@@ -9,7 +9,7 @@ export function StatusModal(props) {
     open,
     toggle,
     confirmText,
-    cancelText
+    buttonColor
   } = props;
 
   return (
@@ -17,10 +17,9 @@ export function StatusModal(props) {
       <ModalHeader toggle={toggle}>{headerText}</ModalHeader>
       <ModalBody>{bodyText}</ModalBody>
       <ModalFooter>
-        <Button color='success' onClick={handleConfirmation}>
+        <Button color={buttonColor} onClick={handleConfirmation}>
           {confirmText}
         </Button>
-        <Button onClick={toggle}>{cancelText}</Button>
       </ModalFooter>
     </Modal>
   );
@@ -37,3 +36,6 @@ export const PrintIcon = `Drag & Drop or Touch Here <br />
 
 export const PrintInfo = `Welcome to printing! Click the icon below 
 and upload your file. Each member can print up to 30 pages a week.`;
+
+export const failPrintStatus = `Sorry! Our printing system is down 
+at the moment. Please see an officer or try again later`;
