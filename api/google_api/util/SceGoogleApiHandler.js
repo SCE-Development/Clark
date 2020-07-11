@@ -1,5 +1,3 @@
-// import { getAllUsers, filterUsers } from '../../src/APIFunctions/User.js';
-
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
@@ -221,13 +219,6 @@ class SceGoogleApiHandler {
    * @returns {Object} A Google Calendar formatted event
    */
   translateEvent(eventToAdd) {
-    // var attendees = filterUsers(getAllUsers(), eventToAdd.filterID);
-    let jsonEmails = [];
-    // attendees.map((email) => {
-    //   var jsonEmail = {'email': email};
-    //    jsonEmails.push(jsonEmail);
-    // });
-
     let event = {
       'summary': eventToAdd.title,
       'location': eventToAdd.eventLocation,
@@ -245,7 +236,7 @@ class SceGoogleApiHandler {
       'recurrence': [
         'RRULE:FREQ=DAILY;COUNT=1'
       ],
-      'attendees': jsonEmails,
+      'attendees': [],
       'reminders': {
         'useDefault': false,
         'overrides': [
