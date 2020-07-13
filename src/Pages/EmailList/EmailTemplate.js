@@ -4,6 +4,10 @@ import { getAllEvents } from "../../APIFunctions/Event";
 import { Button } from "reactstrap";
 import BlastMailForm from "./BlastMailForm.jsx";
 import ConfirmationModal from "./ConfirmationModal";
+import {
+  sendVerificationEmail,
+  sendBlastEmail,
+} from "../../APIFunctions/Mailer";
 
 export default class EmailTemplate extends Component {
   constructor(props) {
@@ -164,6 +168,12 @@ export default class EmailTemplate extends Component {
 
   //'Send' Button onClick
   handleSend = () => {
+    sendBlastEmail(
+      "justin.zhu@sjsu.edu",
+      this.state.subject,
+      this.state.loadedContent
+    );
+
     this.setState(
       {
         submittedRecipients: this.state.recipients,
@@ -197,6 +207,12 @@ export default class EmailTemplate extends Component {
     document.execCommand("copy");
     window.getSelection().removeAllRanges(); // to deselect
     document.getElementById("copy-notification2").style.display = "block";
+  };
+
+  // //Used with 'Send Verification Test' button to test the sending function, no longer needed
+  testAPI = () => {
+    // console.log("email:");
+    sendVerificationEmail("justin.zhu@sjsu.edu", "Justin");
   };
 
   render() {
@@ -258,6 +274,7 @@ export default class EmailTemplate extends Component {
             handleSend={this.handleSend}
             checkEmptyInputs={this.checkEmptyInputs}
           />
+          <Button onClick={this.testAPI}>Send Verification Test</Button>
         </div>
         <div id="email-message">
           {/* {emailMessages} */}

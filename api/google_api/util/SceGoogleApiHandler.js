@@ -1,12 +1,15 @@
-const fs = require('fs');
-const readline = require('readline');
-const { google } = require('googleapis');
-const { googleApiKeys } = require('../../config/config.json');
-const nodemailer = require('nodemailer');
+const fs = require("fs");
+const readline = require("readline");
+const { google } = require("googleapis");
+const { googleApiKeys } = require("../../config/config.json");
+const nodemailer = require("nodemailer");
 
 const {
-  CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS,
-  USER, REFRESH_TOKEN
+  CLIENT_SECRET,
+  CLIENT_ID,
+  REDIRECT_URIS,
+  USER,
+  REFRESH_TOKEN,
 } = googleApiKeys;
 
 /**
@@ -22,7 +25,7 @@ class SceGoogleApiHandler {
    * Google.
    */
   constructor(scopes, tokenPath) {
-    this.runningInProduction = (process.env.NODE_ENV === 'production');
+    this.runningInProduction = process.env.NODE_ENV === "production";
     this.scopes = scopes;
     this.tokenPath = tokenPath;
     this.oAuth2Client = new google.auth.OAuth2(
@@ -32,7 +35,7 @@ class SceGoogleApiHandler {
     );
     this.oAuth2Client.setCredentials({
       // eslint-disable-next-line
-      refresh_token: REFRESH_TOKEN
+      refresh_token: REFRESH_TOKEN,
     });
   }
 
@@ -44,7 +47,7 @@ class SceGoogleApiHandler {
    */
   checkIfTokenFileExists() {
     return new Promise((resolve, reject) => {
-      if (!this.runningInProduction){
+      if (!this.runningInProduction) {
         resolve(false);
       }
       fs.readFile(this.tokenPath, (err, token) => {
@@ -67,26 +70,26 @@ class SceGoogleApiHandler {
 
     const authUrl = this.oAuth2Client.generateAuthUrl({
       // eslint-disable-next-line
-      access_type: 'offline',
-      scope: this.scopes
+      access_type: "offline",
+      scope: this.scopes,
     });
-    console.debug('Authorize this app by visiting this url:', authUrl);
+    console.debug("Authorize this app by visiting this url:", authUrl);
 
     const rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
-    rl.question('Enter the code from that page here: ', code => {
+    rl.question("Enter the code from that page here: ", (code) => {
       rl.close();
 
       this.oAuth2Client.getToken(code, (err, token) => {
-        if (err) return console.debug('Error retrieving access token', err);
+        if (err) return console.debug("Error retrieving access token", err);
         this.oAuth2Client.setCredentials(token);
         // Store the token to disk for later program executions
-        fs.writeFile(this.tokenPath, JSON.stringify(token), err => {
-          if (err) return console.debug('ERR', err);
-          console.debug('Token stored to', this.tokenPath);
+        fs.writeFile(this.tokenPath, JSON.stringify(token), (err) => {
+          if (err) return console.debug("ERR", err);
+          console.debug("Token stored to", this.tokenPath);
         });
       });
     });
@@ -107,11 +110,11 @@ class SceGoogleApiHandler {
     if (!this.runningInProduction) return;
     this.oAuth2Client.setCredentials({
       // eslint-disable-next-line
-      refresh_token: REFRESH_TOKEN
+      refresh_token: REFRESH_TOKEN,
     });
 
-    this.oAuth2Client.getAccessToken().then(token => {
-      fs.writeFile(this.tokenPath, JSON.stringify(token.res.data), err => {
+    this.oAuth2Client.getAccessToken().then((token) => {
+      fs.writeFile(this.tokenPath, JSON.stringify(token.res.data), (err) => {
         if (err) return console.debug(err);
       });
     });
@@ -130,15 +133,15 @@ class SceGoogleApiHandler {
       const tokenJson = await this.checkIfTokenFileExists();
       if (tokenJson) {
         const smtpTransport = nodemailer.createTransport({
-          service: 'gmail',
+          service: "gmail",
           auth: {
-            type: 'OAuth2',
+            type: "OAuth2",
             user: USER,
             clientId: CLIENT_ID,
             clientSecret: CLIENT_SECRET,
             refreshToken: REFRESH_TOKEN,
-            accessToken: tokenJson.access_token
-          }
+            accessToken: tokenJson.access_token,
+          },
         });
         smtpTransport.sendMail(mailTemplate, (error, response) => {
           error ? reject(error) : resolve(response);
@@ -159,22 +162,59 @@ class SceGoogleApiHandler {
    */
   getEventsFromCalendar(calendarId, numOfEvents) {
     return new Promise((resolve, reject) => {
-      const calendar =
-        google.calendar({ version: 'v3', auth: this.oAuth2Client });
-      calendar.events.list({
-        calendarId: calendarId,
-        timeMin: (new Date()).toISOString(),
-        maxResults: numOfEvents,
-        singleEvents: true,
-        orderBy: 'startTime',
-      }, (err, res) => {
-        if (err) return reject(false);
-        const events = res.data.items;
-        if (events.length) {
-          resolve(events);
-        } else {
-          reject(false);
+      const calendar = google.calendar({
+        version: "v3",
+        auth: this.oAuth2Client,
+      });
+      calendar.events.list(
+        {
+          calendarId: calendarId,
+          timeMin: new Date().toISOString(),
+          maxResults: numOfEvents,
+          singleEvents: true,
+          orderBy: "startTime",
+        },
+        (err, res) => {
+          if (err) return reject(false);
+          const events = res.data.items;
+          if (events.length) {
+            resolve(events);
+          } else {
+            reject(false);
+          }
         }
+      );
+    });
+  }
+
+  //Justin's send email function
+  async justinSendEmail(mailTemplate) {
+    return new Promise(async (resolve, reject) => {
+      if (!this.runningInProduction) {
+        resolve();
+      }
+      const smtpTransport = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          type: "OAuth2",
+          user: USER,
+          clientId: CLIENT_ID,
+          clientSecret: CLIENT_SECRET,
+          refreshToken: REFRESH_TOKEN,
+        },
+      });
+
+      //Dummy template
+      // let template = {
+      // from: '"New Name👻" <justin.zhu1018@gmail.com>', // sender address
+      //   to: "justin.zhu@sjsu.edu", // list of receivers
+      //   subject: "Hello ✔", // Subject line
+      //   html: "<b>Test email working fine?!</b>", // html body
+      // };
+
+      smtpTransport.sendMail(mailTemplate, (error, response) => {
+        error ? reject(error) : resolve(response);
+        smtpTransport.close();
       });
     });
   }
