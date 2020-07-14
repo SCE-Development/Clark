@@ -75,3 +75,16 @@
     opacity: 1;
   }
 }
+
+.spinner-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+}
+
+.spinner-border {
+  color: blue;
+  width: 5rem;
+  height: 5rem;
+  border-width: 0.45em;
+}
