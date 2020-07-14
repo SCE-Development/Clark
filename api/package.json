@@ -8,6 +8,7 @@
     "main-endpoints": "npm start --prefix main_endpoints",
     "google-api": "npm start --prefix google_api",
     "logging-api": "npm start --prefix logging_api",
+    "github-api": "npm start --prefix github_api",
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-user": "node ./util/CreateUserScript.js",
     "generate-token": "node ./util/GenerateTokenScript.js"

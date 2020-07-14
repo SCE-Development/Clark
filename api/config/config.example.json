@@ -1,6 +1,10 @@
 {
   "secretKey": "super duper secret key",
   "passwordStrength": "medium",
+  "githubApiKeys": {
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX"
+  },
   "googleApiKeys": {
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXX",
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -22,7 +26,7 @@
   "ledSignIp": "192.168.4.1",
   "GENERAL_API_URL": "http://localhost:8080/",
   "LOGGING_API_URL": "http://localhost:8081/",
-  "MAILER_API_URL": "http://localhost:8082/",
+  "CLOUD_API_URL": "http://localhost:8082/",
   "discordApiKeys": {
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXX",
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXX",

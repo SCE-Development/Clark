@@ -117,11 +117,11 @@ class SceHttpServer {
 if (typeof module !== 'undefined' && !module.parent) {
   const generalApiEndpoints = __dirname + '/../main_endpoints/routes/';
   const loggingApiEndpoints = __dirname + '/../logging_api/routes/';
-  const mailerApiEndpoints = __dirname + '/../cloud_api/routes/';
+  const cloudApiEndpoints = __dirname + '/../cloud_api/routes/';
 
   const generalServer = new SceHttpServer(generalApiEndpoints, 8080);
   const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081);
-  const mailerServer = new SceHttpServer(mailerApiEndpoints, 8082);
+  const cloudServer = new SceHttpServer(cloudApiEndpoints, 8082);
 
   generalServer.initializeEndpoints().then(() => {
     generalServer.openConnection();
@@ -129,8 +129,8 @@ if (typeof module !== 'undefined' && !module.parent) {
   loggingServer.initializeEndpoints().then(() => {
     loggingServer.openConnection();
   });
-  mailerServer.initializeEndpoints().then(() => {
-    mailerServer.openConnection();
+  cloudServer.initializeEndpoints().then(() => {
+    cloudServer.openConnection();
   });
 }
 
