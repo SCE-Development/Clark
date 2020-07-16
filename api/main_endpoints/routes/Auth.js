@@ -1,34 +1,34 @@
-'use strict';
-const bcrypt = require('bcryptjs');
-const express = require('express');
+"use strict";
+const bcrypt = require("bcryptjs");
+const express = require("express");
 const router = express.Router();
-const passport = require('passport');
-require('../util/passport')(passport);
-const config = require('../../config/config');
-const User = require('../models/User.js');
-const { registerUser } = require('../util/registerUser');
+const passport = require("passport");
+require("../util/passport")(passport);
+const config = require("../../config/config");
+const User = require("../models/User.js");
+const { registerUser } = require("../util/registerUser");
 const {
   checkIfTokenSent,
-  checkIfTokenValid
-} = require('../util/token-functions');
-const jwt = require('jsonwebtoken');
+  checkIfTokenValid,
+} = require("../util/token-functions");
+const jwt = require("jsonwebtoken");
 const {
   OK,
   BAD_REQUEST,
   UNAUTHORIZED,
   NOT_FOUND,
-  CONFLICT
-} = require('../../util/constants').STATUS_CODES;
-const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const addErrorLog = require ('../util/logging-helpers');
+  CONFLICT,
+} = require("../../util/constants").STATUS_CODES;
+const membershipState = require("../../util/constants").MEMBERSHIP_STATE;
+const addErrorLog = require("../util/logging-helpers");
 
 // Register a member
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   const registrationStatus = await registerUser(req.body);
-  if(!registrationStatus.userSaved) {
-    if(registrationStatus.status === 'BAD_REQUEST') {
+  if (!registrationStatus.userSaved) {
+    if (registrationStatus.status === "BAD_REQUEST") {
       return res.status(BAD_REQUEST).send({
-        message: registrationStatus.message
+        message: registrationStatus.message,
       });
     } else {
       res.status(CONFLICT).send({ message: registrationStatus.message });
@@ -39,39 +39,37 @@ router.post('/register', async (req, res) => {
 });
 
 // User Login
-router.post('/login', function(req, res) {
+router.post("/login", function (req, res) {
   if (!req.body.email || !req.body.password) {
     return res.sendStatus(BAD_REQUEST);
   }
 
   User.findOne(
     {
-      email: req.body.email.toLowerCase()
+      email: req.body.email.toLowerCase(),
     },
-    function(error, user) {
+    function (error, user) {
       if (error) {
-        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+        return res.status(BAD_REQUEST).send({ message: "Bad Request." });
       }
 
       if (!user) {
-        res
-          .status(UNAUTHORIZED)
-          .send({
-            message: 'Username or password does not match our records.'
-          });
+        res.status(UNAUTHORIZED).send({
+          message: "Username or password does not match our records.",
+        });
       } else {
         // Check if password matches database
-        user.comparePassword(req.body.password, function(error, isMatch) {
+        user.comparePassword(req.body.password, function (error, isMatch) {
           if (isMatch && !error) {
             if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: 'User is banned.' });
+                .send({ message: "User is banned." });
             }
             // If the username and password matches the database, assign and
             // return a jwt token
             const jwtOptions = {
-              expiresIn: '2h'
+              expiresIn: "2h",
             };
 
             // check here to see if we should reset the pagecount. If so, do it
@@ -80,16 +78,16 @@ router.post('/login', function(req, res) {
                 // query
                 { email: user.email },
                 // update this field
-                { pagesPrinted: 0 },
-                function(error, result) {
-                  if (error) {
-                    return res.sendStatus(BAD_REQUEST);
-                  }
+                { pagesPrinted: 0 }
+                // function(error, result) {
+                //   if (error) {
+                //     return res.sendStatus(BAD_REQUEST);
+                //   }
 
-                  if (result.nModified < 1) {
-                    return res.sendStatus(NOT_FOUND);
-                  }
-                }
+                //   if (result.nModified < 1) {
+                //     return res.sendStatus(NOT_FOUND);
+                //   }
+                // }
               );
             }
 
@@ -100,15 +98,17 @@ router.post('/login', function(req, res) {
               lastName: user.lastName,
               email: user.email,
               accessLevel: user.accessLevel,
-              pagesPrinted: user.pagesPrinted
+              pagesPrinted: user.pagesPrinted,
             };
             const token = jwt.sign(
-              userToBeSigned, config.secretKey, jwtOptions
+              userToBeSigned,
+              config.secretKey,
+              jwtOptions
             );
-            res.status(OK).send({ token: 'JWT ' + token });
+            res.status(OK).send({ token: "JWT " + token });
           } else {
             res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
+              message: "Username or password does not match our records.",
             });
           }
         });
@@ -118,19 +118,19 @@ router.post('/login', function(req, res) {
 });
 
 // Edit/Update a member record
-router.post('/setEmailToVerified', (req, res) => {
+router.post("/setEmailToVerified", (req, res) => {
   const query = { email: req.body.email };
 
-  User.updateOne(query, { emailVerified: true }, function(error, result) {
+  User.updateOne(query, { emailVerified: true }, function (error, result) {
     if (error) {
       const info = {
         userEmail: req.body.email,
         errorTime: new Date(),
-        apiEndpoint: 'user/setEmailToVerified',
-        errorDescription: error
+        apiEndpoint: "user/setEmailToVerified",
+        errorDescription: error,
       };
       addErrorLog(info);
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      res.status(BAD_REQUEST).send({ message: "Bad Request." });
     }
 
     if (result.nModified < 1) {
@@ -140,7 +140,7 @@ router.post('/setEmailToVerified', (req, res) => {
     }
 
     return res.status(OK).send({
-      message: `${req.body.queryEmail} was updated.`
+      message: `${req.body.queryEmail} was updated.`,
     });
   });
 });
@@ -148,7 +148,7 @@ router.post('/setEmailToVerified', (req, res) => {
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
-router.post('/verify', function(req, res) {
+router.post("/verify", function (req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -177,24 +177,24 @@ function checkIfPageCountResets(lastLogin) {
 
   return false;
 }
-router.post('/generateHashedId', async (req, res) => {
-  User.findOne({ email: req.body.email }, function(error, result) {
-    if (error){
+router.post("/generateHashedId", async (req, res) => {
+  User.findOne({ email: req.body.email }, function (error, result) {
+    if (error) {
       return res.sendStatus(BAD_REQUEST);
     }
-    if (!result){
+    if (!result) {
       return res.sendStatus(NOT_FOUND);
     }
     let hashedId = String(result._id);
     // Generate a salt and created a hashed value of the _id using
     // bcrypts library
-    bcrypt.genSalt(10, function(error, salt) {
+    bcrypt.genSalt(10, function (error, salt) {
       if (error) {
         // reject('Bcrypt failed')
         res.sendStatus(BAD_REQUEST);
       }
 
-      bcrypt.hash(hashedId, salt, function(error, hash) {
+      bcrypt.hash(hashedId, salt, function (error, hash) {
         if (error) {
           res.sendStatus(BAD_REQUEST);
         }
@@ -205,18 +205,19 @@ router.post('/generateHashedId', async (req, res) => {
   });
 });
 
-router.post('/validateVerificationEmail', async (req, res) =>{
-  User.findOne({ email: req.body.email}, async function(error, result){
-    if (error){
+router.post("/validateVerificationEmail", async (req, res) => {
+  User.findOne({ email: req.body.email }, async function (error, result) {
+    if (error) {
       res.sendStatus(BAD_REQUEST);
     }
-    if (!result){
+    if (!result) {
       res.sendStatus(NOT_FOUND);
     }
 
-    bcrypt.compare(String(result._id), req.body.hashedId, async function(
+    bcrypt.compare(String(result._id), req.body.hashedId, async function (
       error,
-      isMatch) {
+      isMatch
+    ) {
       if (error) {
         res.sendStatus(BAD_REQUEST);
       }
@@ -224,10 +225,10 @@ router.post('/validateVerificationEmail', async (req, res) =>{
         result.emailVerified = true;
         await result
           .save()
-          .then(_ => {
+          .then((_) => {
             res.sendStatus(OK);
           })
-          .catch(err => {
+          .catch((err) => {
             res.sendStatus(BAD_REQUEST);
           });
       } else {

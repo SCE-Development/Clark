@@ -39,12 +39,6 @@ export default function BlastMailForm(props) {
               Regular Spacing: Use Shift+Enter. | | Wider Spacing: Use Enter.
             </FormText>
           </Label>
-          {/* <Input
-            type="textarea"
-            name="text"
-            value={props.data}
-            onChange={(e) => props.updateData(e.target.value)}
-          /> */}
           <TextEditor
             content={props.content}
             loadedContent={props.loadedContent}

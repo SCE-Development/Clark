@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { UserApiResponse } from './ApiResponses';
-import { membershipState, userFilterType } from '../Enums';
+import axios from "axios";
+import { UserApiResponse } from "./ApiResponses";
+import { membershipState, userFilterType } from "../Enums";
 
 /**
  * Queries the database for all users.
@@ -12,11 +12,11 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post('/api/User/users', {
+    .post("/api/User/users", {
       // don't need email
-      token
+      token,
     })
-    .then(result => {
+    .then((result) => {
       status.responseData = result.data;
     })
     .catch(() => {
@@ -33,7 +33,6 @@ export async function getAllUsers(token) {
 export async function updateLastLoginDate(email, token) {
   await editUser({ email, lastLogin: Date.now() }, token);
 }
-
 
 /**
  * Edit an existing users
@@ -71,10 +70,10 @@ export async function editUser(userToEdit, token) {
     doorCode,
     pagesPrinted,
     accessLevel,
-    lastLogin
+    lastLogin,
   } = userToEdit;
   await axios
-    .post('/api/User/edit', {
+    .post("/api/User/edit", {
       firstName,
       lastName,
       email,
@@ -85,12 +84,12 @@ export async function editUser(userToEdit, token) {
       pagesPrinted,
       accessLevel,
       lastLogin,
-      token
+      token,
     })
-    .then(result => {
+    .then((result) => {
       status.responseData = result.data;
     })
-    .catch(err => {
+    .catch((err) => {
       status.error = true;
       status.responseData = err.response;
     });
@@ -106,9 +105,9 @@ export async function editUser(userToEdit, token) {
 export async function deleteUserByEmail(email, token) {
   let status = new UserApiResponse();
   axios
-    .post('/api/User/delete', {
+    .post("/api/User/delete", {
       token,
-      email
+      email,
     })
     .catch(() => {
       status.error = true;
@@ -126,11 +125,11 @@ export async function deleteUserByEmail(email, token) {
 export async function searchUserByEmail(email, token) {
   let status = new UserApiResponse();
   await axios
-    .post('/api/User/search', {
+    .post("/api/User/search", {
       token,
-      email
+      email,
     })
-    .then(result => {
+    .then((result) => {
       status.responseData = result.data;
     })
     .catch(() => {
@@ -147,7 +146,7 @@ export async function searchUserByEmail(email, token) {
  */
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
-  await axios.post('/api/User/checkIfUserExists', { email }).catch(() => {
+  await axios.post("/api/User/checkIfUserExists", { email }).catch(() => {
     status.error = true;
   });
   return status;
@@ -162,21 +161,25 @@ export async function checkIfUserExists(email) {
  */
 export function filterUsers(users, filterID) {
   let filteredUsers = users.filter((user) => {
-    const d = new Date();
-    if(filterID === userFilterType.VALID){
-      if(user.accessLevel >= membershipState.MEMBER &&
-             user.membershipValidUntil > d.toISOString()){
+    // const d = new Date();
+    if (filterID === userFilterType.VALID) {
+      if (
+        user.accessLevel >= membershipState.MEMBER
+        // && user.membershipValidUntil > d.toISOString()
+      ) {
         return user;
       }
-    } else if(filterID === userFilterType.NON_VALID){
-      if(user.accessLevel === membershipState.NON_MEMBER ||
-        user.accessLevel === membershipState.PENDING){
+    } else if (filterID === userFilterType.NON_VALID) {
+      if (
+        user.accessLevel === membershipState.NON_MEMBER ||
+        user.accessLevel === membershipState.PENDING
+      ) {
         return user;
       }
-    } else{
+    } else {
       return user;
     }
-    return '';
+    return "";
   });
   return filteredUsers;
 }

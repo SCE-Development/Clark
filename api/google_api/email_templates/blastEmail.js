@@ -4,7 +4,7 @@ function blastEmail(user, recipient, subject, content) {
     return resolve({
       from: sender,
       to: recipient,
-      subject: subject || "not working",
+      subject: subject,
       generateTextFromHTML: true,
       html: `
            ${content}

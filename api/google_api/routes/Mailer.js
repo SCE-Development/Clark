@@ -37,6 +37,7 @@ const { blastEmail } = require("../email_templates/blastEmail");
 //     });
 // });
 
+//New /sendVerificationEmail post, removed function used to refresh the token
 router.post("/sendVerificationEmail", async (req, res) => {
   const scopes = ["https://mail.google.com/"];
   const pathToToken = __dirname + "/../../config/token.json";
@@ -58,6 +59,7 @@ router.post("/sendVerificationEmail", async (req, res) => {
     });
 });
 
+///sendBlastEmail post, used in sending email blasts/blast emails
 router.post("/sendBlastEmail", async (req, res) => {
   const scopes = ["https://mail.google.com/"];
   const pathToToken = __dirname + "/../../config/token.json";

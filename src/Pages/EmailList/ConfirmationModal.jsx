@@ -5,9 +5,13 @@ import "./email-template.css";
 export default function ConfirmationModal(props) {
   const [toggle, setToggle] = useState(false);
 
+  //setTimeout used to make sure modal is fully toggled before sending email
+  //to ensure that alert pop-up doesn't interrupt modal toggle
   async function handleSendButton() {
-    props.handleSend();
     setToggle(!toggle);
+    setTimeout(() => {
+      props.handleSend();
+    }, 300);
   }
   return (
     <React.Fragment>

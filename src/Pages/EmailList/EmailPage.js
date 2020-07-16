@@ -48,7 +48,7 @@ export default class EmailPage extends Component {
                   this.state.activeTab === "2" ? "tab-active" : "tab-nonactive"
                 }
               >
-                Email Template
+                Send Emails
               </NavLink>
             </NavItem>
           </Nav>
@@ -58,7 +58,7 @@ export default class EmailPage extends Component {
             </TabPane>
             <TabPane tabId="2">
               <Row>
-                <EmailTemplate />
+                <EmailTemplate user={this.props.user} />
               </Row>
             </TabPane>
           </TabContent>

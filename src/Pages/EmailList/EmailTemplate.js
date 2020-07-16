@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import "./email-template.css";
 import { getAllEvents } from "../../APIFunctions/Event";
 import { Button } from "reactstrap";
@@ -8,6 +8,7 @@ import {
   sendVerificationEmail,
   sendBlastEmail,
 } from "../../APIFunctions/Mailer";
+import { getAllUsers, filterUsers } from "../../APIFunctions/User";
 
 export default class EmailTemplate extends Component {
   constructor(props) {
@@ -21,22 +22,68 @@ export default class EmailTemplate extends Component {
       submittedSubject: "",
       submittedContent: "",
       content: "",
-      loadContentButtonPressCount: 0,
+      users: "",
+      memberEmail: [],
+      officerEmail: [],
+      allEmail: [],
     };
   }
 
-  //perform getEvents() when the page loads
+  //When page loads, perform getUsers() for email lists && getEvents() for events in template
   componentDidMount() {
+    if (this.props.user) {
+      this.getUsers();
+    }
     this.getEvents();
   }
+
+  //get user emails from DB
+  getUsers = async () => {
+    let apiResponse = await getAllUsers(this.props.user.token);
+    if (!apiResponse.error) {
+      this.setState(
+        { users: apiResponse.responseData }
+        //, console.log(apiResponse)
+      );
+    }
+    //after getting api response, store them in state vars with getFilteredUsers()
+    this.getFilteredUsers();
+  };
+
+  //Store emails to different state variables depending on their role
+  getFilteredUsers = () => {
+    let allUsers = filterUsers(this.state.users, 0);
+    var officerEmail = [],
+      memberEmail = [],
+      allEmail = [];
+    //forEach loop to push emails to their respective arrays
+    allUsers.forEach(
+      function (item) {
+        //Access level >=2 is officers+, Access level >=0 but <2 are members
+        if (item.accessLevel >= 2) {
+          allEmail.push(item.email);
+          officerEmail.push(item.email);
+        } else if (item.accessLevel >= 0) {
+          allEmail.push(item.email);
+          memberEmail.push(item.email);
+        }
+      },
+      this.setState({ officerEmail, memberEmail, allEmail })
+      // , console.log(
+      //   "officers: ",
+      //   this.state.officerEmail,
+      //   "members:",
+      //   this.state.memberEmail,
+      //   "everyone:",
+      //   this.state.allEmail
+      // )
+    );
+  };
 
   //grab data from database and perform 'storeContent(events)' if apiResponse is not empty
   getEvents = async () => {
     const apiResponse = await getAllEvents();
     if (!apiResponse.error) {
-      // this.setState({
-      //   events: apiResponse.responseData,
-      // });
       this.storeContent(apiResponse);
     } else {
       let errorMessage = "Unable to retrieve events.";
@@ -168,12 +215,20 @@ export default class EmailTemplate extends Component {
 
   //'Send' Button onClick
   handleSend = () => {
-    sendBlastEmail(
-      "justin.zhu@sjsu.edu",
-      this.state.subject,
-      this.state.loadedContent
-    );
+    //Since recipients is a list of emails, need to load a certain list
+    //of emails depending on the recipients dropdown value
+    let recipients = undefined;
+    if (this.state.recipients === "Members") {
+      recipients = this.state.memberEmail;
+    } else if (this.state.recipients === "Officers") {
+      recipients = this.state.officerEmail;
+    } else if (this.state.recipients === "Everyone") {
+      recipients = this.state.allEmail;
+    }
+    // console.log(recipients);
+    sendBlastEmail(recipients, this.state.subject, this.state.loadedContent);
 
+    //Clear form (submitted... vars are used more for testing. not used otherwise)
     this.setState(
       {
         submittedRecipients: this.state.recipients,
@@ -182,8 +237,8 @@ export default class EmailTemplate extends Component {
         recipients: "",
         subject: "",
         loadedContent: "",
-      },
-      this.checkConsole
+      }
+      // this.checkConsole
     );
   };
 
@@ -209,9 +264,8 @@ export default class EmailTemplate extends Component {
     document.getElementById("copy-notification2").style.display = "block";
   };
 
-  // //Used with 'Send Verification Test' button to test the sending function, no longer needed
+  // //Used with 'Send Verification Test' button to test the sending function, no longer used
   testAPI = () => {
-    // console.log("email:");
     sendVerificationEmail("justin.zhu@sjsu.edu", "Justin");
   };
 
@@ -261,20 +315,11 @@ export default class EmailTemplate extends Component {
           >
             Load Template
           </Button>
-          {/* <Button
-            id="email-template-button"
-            onClick={async () => {
-              this.handleSend();
-            }}
-            disabled={!this.checkEmptyInputs()}
-          >
-            Send
-          </Button> */}
           <ConfirmationModal
             handleSend={this.handleSend}
             checkEmptyInputs={this.checkEmptyInputs}
           />
-          <Button onClick={this.testAPI}>Send Verification Test</Button>
+          {/* <Button onClick={this.testAPI}>Send Verification Test</Button> */}
         </div>
         <div id="email-message">
           {/* {emailMessages} */}
