@@ -1,32 +1,32 @@
-"use strict";
-const bcrypt = require("bcryptjs");
-const express = require("express");
+'use strict';
+const bcrypt = require('bcryptjs');
+const express = require('express');
 const router = express.Router();
-const passport = require("passport");
-require("../util/passport")(passport);
-const config = require("../../config/config");
-const User = require("../models/User.js");
-const { registerUser } = require("../util/registerUser");
+const passport = require('passport');
+require('../util/passport')(passport);
+const config = require('../../config/config');
+const User = require('../models/User.js');
+const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-} = require("../util/token-functions");
-const jwt = require("jsonwebtoken");
+} = require('../util/token-functions');
+const jwt = require('jsonwebtoken');
 const {
   OK,
   BAD_REQUEST,
   UNAUTHORIZED,
   NOT_FOUND,
   CONFLICT,
-} = require("../../util/constants").STATUS_CODES;
-const membershipState = require("../../util/constants").MEMBERSHIP_STATE;
-const addErrorLog = require("../util/logging-helpers");
+} = require('../../util/constants').STATUS_CODES;
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const addErrorLog = require('../util/logging-helpers');
 
 // Register a member
-router.post("/register", async (req, res) => {
+router.post('/register', async (req, res) => {
   const registrationStatus = await registerUser(req.body);
   if (!registrationStatus.userSaved) {
-    if (registrationStatus.status === "BAD_REQUEST") {
+    if (registrationStatus.status === 'BAD_REQUEST') {
       return res.status(BAD_REQUEST).send({
         message: registrationStatus.message,
       });
@@ -39,7 +39,7 @@ router.post("/register", async (req, res) => {
 });
 
 // User Login
-router.post("/login", function (req, res) {
+router.post('/login', function (req, res) {
   if (!req.body.email || !req.body.password) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -50,12 +50,12 @@ router.post("/login", function (req, res) {
     },
     function (error, user) {
       if (error) {
-        return res.status(BAD_REQUEST).send({ message: "Bad Request." });
+        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
 
       if (!user) {
         res.status(UNAUTHORIZED).send({
-          message: "Username or password does not match our records.",
+          message: 'Username or password does not match our records.',
         });
       } else {
         // Check if password matches database
@@ -64,12 +64,12 @@ router.post("/login", function (req, res) {
             if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: "User is banned." });
+                .send({ message: 'User is banned.' });
             }
             // If the username and password matches the database, assign and
             // return a jwt token
             const jwtOptions = {
-              expiresIn: "2h",
+              expiresIn: '2h',
             };
 
             // check here to see if we should reset the pagecount. If so, do it
@@ -105,10 +105,10 @@ router.post("/login", function (req, res) {
               config.secretKey,
               jwtOptions
             );
-            res.status(OK).send({ token: "JWT " + token });
+            res.status(OK).send({ token: 'JWT ' + token });
           } else {
             res.status(UNAUTHORIZED).send({
-              message: "Username or password does not match our records.",
+              message: 'Username or password does not match our records.',
             });
           }
         });
@@ -118,7 +118,7 @@ router.post("/login", function (req, res) {
 });
 
 // Edit/Update a member record
-router.post("/setEmailToVerified", (req, res) => {
+router.post('/setEmailToVerified', (req, res) => {
   const query = { email: req.body.email };
 
   User.updateOne(query, { emailVerified: true }, function (error, result) {
@@ -126,11 +126,11 @@ router.post("/setEmailToVerified", (req, res) => {
       const info = {
         userEmail: req.body.email,
         errorTime: new Date(),
-        apiEndpoint: "user/setEmailToVerified",
+        apiEndpoint: 'user/setEmailToVerified',
         errorDescription: error,
       };
       addErrorLog(info);
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (result.nModified < 1) {
@@ -148,7 +148,7 @@ router.post("/setEmailToVerified", (req, res) => {
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
-router.post("/verify", function (req, res) {
+router.post('/verify', function (req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -177,7 +177,7 @@ function checkIfPageCountResets(lastLogin) {
 
   return false;
 }
-router.post("/generateHashedId", async (req, res) => {
+router.post('/generateHashedId', async (req, res) => {
   User.findOne({ email: req.body.email }, function (error, result) {
     if (error) {
       return res.sendStatus(BAD_REQUEST);
@@ -205,7 +205,7 @@ router.post("/generateHashedId", async (req, res) => {
   });
 });
 
-router.post("/validateVerificationEmail", async (req, res) => {
+router.post('/validateVerificationEmail', async (req, res) => {
   User.findOne({ email: req.body.email }, async function (error, result) {
     if (error) {
       res.sendStatus(BAD_REQUEST);

@@ -1,6 +1,6 @@
-import axios from "axios";
-import { ApiResponse } from "./ApiResponses";
-import { MAILER_API_URL } from "../config/config.json";
+import axios from 'axios';
+import { ApiResponse } from './ApiResponses';
+import { MAILER_API_URL } from '../config/config.json';
 
 /**
  * Invoke the gmail API to send an email to verify a user.
@@ -12,17 +12,16 @@ import { MAILER_API_URL } from "../config/config.json";
 export async function sendVerificationEmail(email, firstName) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + "/api/Mailer/sendVerificationEmail", {
+    .post(MAILER_API_URL + '/api/Mailer/sendVerificationEmail', {
       recipientEmail: email,
       recipientName: firstName,
     })
     .then((response) => {
-      console.log("Response? ", response.data);
+      status.responseData = response;
     })
     .catch((error) => {
       status.error = true;
       status.responseData = error;
-      console.log("Wrong: ", error);
     });
   return status;
 }
@@ -38,20 +37,17 @@ export async function sendVerificationEmail(email, firstName) {
 export async function sendBlastEmail(emailList, subject, content) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + "/api/Mailer/sendBlastEmail", {
+    .post(MAILER_API_URL + '/api/Mailer/sendBlastEmail', {
       recipientEmail: emailList,
       blastSubject: subject,
       blastContent: content,
     })
     .then((response) => {
-      console.log("Response? ", response.data);
-      alert("Everything went well! Your email has been sent!");
+      status.responseData = response;
     })
     .catch((error) => {
       status.error = true;
       status.responseData = error;
-      console.log("Wrong: ", error);
-      alert("Uh oh, looks like there were issues.");
     });
   return status;
 }

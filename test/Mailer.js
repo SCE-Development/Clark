@@ -6,10 +6,10 @@ const sinon = require('sinon');
 const constants = require('../api/util/constants');
 const { OK, BAD_REQUEST } = constants.STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
-const { SceGoogleApiHandler } =
-  require('../api/google_api/util/SceGoogleApiHandler');
-const verificationTemplate =
-  require('../api/google_api/email_templates/verification');
+const {
+  SceGoogleApiHandler,
+} = require('../api/google_api/util/SceGoogleApiHandler');
+const verificationTemplate = require('../api/google_api/email_templates/verification');
 
 let app = null;
 let test = null;
@@ -23,16 +23,17 @@ chai.use(chaiHttp);
 describe('Mailer', () => {
   let sendEmailStub = null;
   let verificationStub = null;
-  before(done => {
+  before((done) => {
     sendEmailStub = sandbox.stub(SceGoogleApiHandler.prototype, 'sendEmail');
     verificationStub = sandbox.stub(verificationTemplate, 'verification');
     app = tools.initializeServer(
-      __dirname + '/../api/google_api/routes/Mailer.js');
+      __dirname + '/../api/google_api/routes/Mailer.js'
+    );
     test = new SceApiTester(app);
     done();
   });
 
-  after(done => {
+  after((done) => {
     if (sendEmailStub) sendEmailStub.restore();
     if (verificationStub) verificationStub.restore();
     sandbox.restore();
@@ -41,7 +42,7 @@ describe('Mailer', () => {
 
   const VALID_EMAIL_REQUEST = {
     recipientEmail: 'a@a.com',
-    recipientName: 'test'
+    recipientName: 'test',
   };
 
   describe('/POST sendVerificationEmail', () => {
@@ -49,7 +50,9 @@ describe('Mailer', () => {
       sendEmailStub.resolves({});
       verificationStub.resolves({});
       const result = await test.sendPostRequest(
-        '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
+        '/api/Mailer/sendVerificationEmail',
+        VALID_EMAIL_REQUEST
+      );
       expect(result).to.have.status(OK);
     });
 
@@ -57,14 +60,39 @@ describe('Mailer', () => {
       sendEmailStub.resolves({});
       verificationStub.rejects({});
       const result = await test.sendPostRequest(
-        '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
+        '/api/Mailer/sendVerificationEmail',
+        VALID_EMAIL_REQUEST
+      );
       expect(result).to.have.status(BAD_REQUEST);
     });
 
     it('Should return 400 when sending an email fails', async () => {
       sendEmailStub.rejects({});
       const result = await test.sendPostRequest(
-        '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
+        '/api/Mailer/sendVerificationEmail',
+        VALID_EMAIL_REQUEST
+      );
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+  });
+
+  describe('/POST sendBlastEmail', () => {
+    it('Should return 200 when an email is successfully sent', async () => {
+      sendEmailStub.resolves({});
+      verificationStub.resolves({});
+      const result = await test.sendPostRequest(
+        '/api/Mailer/sendBlastEmail',
+        VALID_EMAIL_REQUEST
+      );
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return 400 when sending an email fails', async () => {
+      sendEmailStub.rejects({});
+      const result = await test.sendPostRequest(
+        '/api/Mailer/sendBlastEmail',
+        VALID_EMAIL_REQUEST
+      );
       expect(result).to.have.status(BAD_REQUEST);
     });
   });

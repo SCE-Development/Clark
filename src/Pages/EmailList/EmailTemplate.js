@@ -1,28 +1,22 @@
-import React, { Component } from "react";
-import "./email-template.css";
-import { getAllEvents } from "../../APIFunctions/Event";
-import { Button } from "reactstrap";
-import BlastMailForm from "./BlastMailForm.jsx";
-import ConfirmationModal from "./ConfirmationModal";
-import {
-  sendVerificationEmail,
-  sendBlastEmail,
-} from "../../APIFunctions/Mailer";
-import { getAllUsers, filterUsers } from "../../APIFunctions/User";
+import React, { Component } from 'react';
+import './email-template.css';
+import { getAllEvents } from '../../APIFunctions/Event';
+import { Button } from 'reactstrap';
+import BlastMailForm from './BlastMailForm.js';
+import ConfirmationModal from './ConfirmationModal.js';
+import { sendBlastEmail } from '../../APIFunctions/Mailer';
+import { getAllUsers, filterUsers } from '../../APIFunctions/User';
 
 export default class EmailTemplate extends Component {
   constructor(props) {
     super(props);
     this.state = {
       events: [],
-      recipients: "",
-      subject: "",
-      loadedContent: "",
-      submittedRecipients: "",
-      submittedSubject: "",
-      submittedContent: "",
-      content: "",
-      users: "",
+      recipients: '',
+      subject: '',
+      loadedContent: '',
+      content: '',
+      users: '',
       memberEmail: [],
       officerEmail: [],
       allEmail: [],
@@ -57,27 +51,16 @@ export default class EmailTemplate extends Component {
       memberEmail = [],
       allEmail = [];
     //forEach loop to push emails to their respective arrays
-    allUsers.forEach(
-      function (item) {
-        //Access level >=2 is officers+, Access level >=0 but <2 are members
-        if (item.accessLevel >= 2) {
-          allEmail.push(item.email);
-          officerEmail.push(item.email);
-        } else if (item.accessLevel >= 0) {
-          allEmail.push(item.email);
-          memberEmail.push(item.email);
-        }
-      },
-      this.setState({ officerEmail, memberEmail, allEmail })
-      // , console.log(
-      //   "officers: ",
-      //   this.state.officerEmail,
-      //   "members:",
-      //   this.state.memberEmail,
-      //   "everyone:",
-      //   this.state.allEmail
-      // )
-    );
+    allUsers.forEach(function (item) {
+      //Access level >=2 is officers+, Access level >=0 but <2 are members
+      if (item.accessLevel >= 2) {
+        allEmail.push(item.email);
+        officerEmail.push(item.email);
+      } else if (item.accessLevel >= 0) {
+        allEmail.push(item.email);
+        memberEmail.push(item.email);
+      }
+    }, this.setState({ officerEmail, memberEmail, allEmail }));
   };
 
   //grab data from database and perform 'storeContent(events)' if apiResponse is not empty
@@ -86,7 +69,7 @@ export default class EmailTemplate extends Component {
     if (!apiResponse.error) {
       this.storeContent(apiResponse);
     } else {
-      let errorMessage = "Unable to retrieve events.";
+      let errorMessage = 'Unable to retrieve events.';
       this.setState({ events: [errorMessage] });
     }
   };
@@ -120,13 +103,13 @@ export default class EmailTemplate extends Component {
           responseData.title +
           '</strong></span><br /><span style="font-size: 10pt;">' +
           responseData.description +
-          "</span><br /><br />" +
+          '</span><br /><br />' +
           '<span style="font-size: 10pt;"><strong>When:</strong>&nbsp;' +
           eventDateFormatted +
-          "&nbsp;at&nbsp;" +
-          responseData.startTime.replace(/ /g, "") +
-          "-" +
-          responseData.endTime.replace(/ /g, "") +
+          '&nbsp;at&nbsp;' +
+          responseData.startTime.replace(/ /g, '') +
+          '-' +
+          responseData.endTime.replace(/ /g, '') +
           '</span><br /><span style="font-size: 10pt;"><strong>Where:</strong>&nbsp;' +
           responseData.eventLocation +
           '</span></p>\n<p><img style="max-height: 192px; max-width: 192px;" src="' +
@@ -142,7 +125,7 @@ export default class EmailTemplate extends Component {
       data =
         mailHeader +
         data +
-        "<p>𝔁𝓾𝓮🥶𝓱𝓾𝓪🧚𝓹𝓲𝓪𝓸😻𝓹𝓲𝓪𝓸🗿𝓫𝓮𝓲👺𝓯𝓮𝓷𝓰🤩𝔁𝓲𝓪𝓸😼𝔁𝓲𝓪𝓸👣</p>\n<p>&nbsp;</p>\n" +
+        '<p>𝔁𝓾𝓮🥶𝓱𝓾𝓪🧚𝓹𝓲𝓪𝓸😻𝓹𝓲𝓪𝓸🗿𝓫𝓮𝓲👺𝓯𝓮𝓷𝓰🤩𝔁𝓲𝓪𝓸😼𝔁𝓲𝓪𝓸👣</p>\n<p>&nbsp;</p>\n' +
         mailFooter;
     } catch (error) {
       console.log("Something's up", error);
@@ -154,7 +137,7 @@ export default class EmailTemplate extends Component {
   returnProperFormattedDate = (date) => {
     if (date !== null) {
       var year = date.substring(0, 4);
-      return date.substring(5, date.length) + "-" + year;
+      return date.substring(5, date.length) + '-' + year;
     } else {
       return null;
     }
@@ -178,18 +161,18 @@ export default class EmailTemplate extends Component {
   //Clear Button 'Disabled' prop boolean
   checkEmpty = () => {
     return (
-      this.state.loadedContent === "" &&
-      this.state.subject === "" &&
-      this.state.recipients === ""
+      this.state.loadedContent === '' &&
+      this.state.subject === '' &&
+      this.state.recipients === ''
     );
   };
 
   //Send Button 'Disabled' prop boolean
   checkEmptyInputs = () => {
     return (
-      this.state.recipients !== "" &&
-      this.state.subject !== "" &&
-      this.state.loadedContent !== ""
+      this.state.recipients !== '' &&
+      this.state.subject !== '' &&
+      this.state.loadedContent !== ''
     );
   };
 
@@ -210,97 +193,54 @@ export default class EmailTemplate extends Component {
 
   //'Clear' Button onClick
   handleClear = () => {
-    this.setState({ loadedContent: "", subject: "", recipients: "" });
+    this.setState({ loadedContent: '', subject: '', recipients: '' });
   };
 
   //'Send' Button onClick
-  handleSend = () => {
+  handleSend = async () => {
     //Since recipients is a list of emails, need to load a certain list
     //of emails depending on the recipients dropdown value
     let recipients = undefined;
-    if (this.state.recipients === "Members") {
+    if (this.state.recipients === 'Members') {
       recipients = this.state.memberEmail;
-    } else if (this.state.recipients === "Officers") {
+    } else if (this.state.recipients === 'Officers') {
       recipients = this.state.officerEmail;
-    } else if (this.state.recipients === "Everyone") {
+    } else if (this.state.recipients === 'Everyone') {
       recipients = this.state.allEmail;
     }
-    // console.log(recipients);
-    sendBlastEmail(recipients, this.state.subject, this.state.loadedContent);
-
-    //Clear form (submitted... vars are used more for testing. not used otherwise)
-    this.setState(
-      {
-        submittedRecipients: this.state.recipients,
-        submittedSubject: this.state.subject,
-        submittedContent: this.state.loadedContent,
-        recipients: "",
-        subject: "",
-        loadedContent: "",
-      }
-      // this.checkConsole
+    var status = await sendBlastEmail(
+      recipients,
+      this.state.subject,
+      this.state.loadedContent
     );
-  };
-
-  //Used in testing handleSend()
-  checkConsole = () => {
-    console.log("------------ Submit ------------");
-    console.log("Submitted Recipients: ", this.state.submittedRecipients);
-    // console.log("Recipients: ", this.state.recipients);
-    console.log("Submitted Subject:", this.state.submittedSubject);
-    // console.log("Subject:", this.state.subject);
-    console.log("Submitted Content: ", this.state.submittedContent);
-    // console.log("Content: ", this.state.loadedContent);
+    if (status.error) {
+      alert('Uh oh, looks like there were issues sending the email.');
+    } else {
+      alert('Everything went well! Your email has been sent!');
+    }
+    //Clear form
+    this.setState({
+      recipients: '',
+      subject: '',
+      loadedContent: '',
+    });
   };
 
   // Copies all emails onto clipboard
   handleCopyEmails = () => {
     let range = document.createRange();
-    range.selectNode(document.getElementById("email-message"));
+    range.selectNode(document.getElementById('email-message'));
     window.getSelection().removeAllRanges(); // clear current selection
     window.getSelection().addRange(range); // to select text
-    document.execCommand("copy");
+    document.execCommand('copy');
     window.getSelection().removeAllRanges(); // to deselect
-    document.getElementById("copy-notification2").style.display = "block";
-  };
-
-  // //Used with 'Send Verification Test' button to test the sending function, no longer used
-  testAPI = () => {
-    sendVerificationEmail("justin.zhu@sjsu.edu", "Justin");
+    document.getElementById('copy-notification2').style.display = 'block';
   };
 
   render() {
-    // let emailMessages = this.state.events.map((event, i) => {
-    //   let currentDate = new Date().toJSON();
-    //   if (event.eventDate >= currentDate) {
-    //     return (
-    //       <div key={i}>
-    //         Title: {event.title}
-    //         <br />
-    //         Date: {event.eventDate.substring(0, 10)}
-    //         <br />
-    //         Time: {event.startTime} - {event.endTime}
-    //         <br />
-    //         Description: {event.description}
-    //         <br />
-    //         <br />
-    //       </div>
-    //     );
-    //   }
-    //   return "";
-    // });
-
     return (
       <div className="email-template">
         <div>
-          {/* <Button
-            outline
-            id="email-copy-button"
-            onClick={this.handleCopyEmails}
-          >
-            Copy to Clipboard
-          </Button>
-          <p id="copy-notification2">Copied message to clipboard! :)</p> */}
           <Button
             id="email-template-button"
             onClick={this.handleClear}
@@ -319,10 +259,8 @@ export default class EmailTemplate extends Component {
             handleSend={this.handleSend}
             checkEmptyInputs={this.checkEmptyInputs}
           />
-          {/* <Button onClick={this.testAPI}>Send Verification Test</Button> */}
         </div>
         <div id="email-message">
-          {/* {emailMessages} */}
           <BlastMailForm
             handleEditorChange={this.handleEditorChange}
             recipients={this.state.recipients}
