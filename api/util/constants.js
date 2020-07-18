@@ -34,9 +34,18 @@ const teamType = {
   PRINTING_3D_CHAIR: '3D Printing/Hacking Station Specialist'
 };
 
+const consoleColors = {
+  redColor: '\x1b[31m',
+  greenColor: '\x1b[32m',
+  blueColor: '\x1b[34m',
+  yellowColor: '\x1b[33m',
+  defaultColor: '\x1b[0m',
+};
+
 module.exports = {
   STATUS_CODES,
   DEFAULT_PHOTO_URL,
   MEMBERSHIP_STATE,
-  teamType
+  teamType,
+  consoleColors,
 };

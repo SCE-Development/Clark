@@ -5,11 +5,14 @@ const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 let membershipState = require('../../src/Enums.js');
 membershipState = membershipState.membershipState;
+const { consoleColors } = require('../util/constants');
 
-const redColor = '\x1b[31m';
-const greenColor = '\x1b[32m';
-const blueColor = '\x1b[34m';
-const defaultColor = '\x1b[0m';
+const {
+  redColor,
+  greenColor,
+  blueColor,
+  defaultColor
+} = consoleColors;
 
 console.debug(blueColor, 'Welcome to the SCE User Creation CLI!', defaultColor);
 inquirer

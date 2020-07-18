@@ -3,11 +3,18 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const { googleApiKeys } = require('../../config/config.json');
 const nodemailer = require('nodemailer');
+const { consoleColors } = require('../../util/constants');
 
 const {
   CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS,
   USER, REFRESH_TOKEN
 } = googleApiKeys;
+
+const {
+  redColor,
+  greenColor,
+  defaultColor,
+} = consoleColors;
 
 /**
  * Handles our website's backend to interace with various Google APIs. It also
@@ -61,35 +68,41 @@ class SceGoogleApiHandler {
    * This function prompts the user to visit the OAuth playground on Google
    * Cloud's website to supply an authorization code to it. After recieving the
    * code the function writes a JSON token the token file path;
+   * @param {boolean} isDevScript toggles this functions context: true for
+   * DevOps purposes, false for API endpoints.
    */
-  getNewToken() {
-    if (!this.runningInProduction) return;
+  getNewToken(isDevScript) {
+    if (!this.runningInProduction && !isDevScript) return;
 
     const authUrl = this.oAuth2Client.generateAuthUrl({
-      // eslint-disable-next-line
+      /* eslint-disable-next-line */
       access_type: 'offline',
-      scope: this.scopes
+      scope: this.scopes,
     });
-    console.debug('Authorize this app by visiting this url:', authUrl);
+    console.debug('\nAuthorize this app by visiting this URL:\n' + authUrl);
 
     const rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
-    rl.question('Enter the code from that page here: ', code => {
-      rl.close();
+    rl.question('\nPlease enter the \'Authorization Code\' from the URL here: ',
+      authCode => {
+        rl.close();
+        this.oAuth2Client.getToken(authCode, (err, token) => {
+          if(err) console.debug(redColor +
+            'Error generating token', err + defaultColor
+          );
+          this.oAuth2Client.setCredentials(token);
 
-      this.oAuth2Client.getToken(code, (err, token) => {
-        if (err) return console.debug('Error retrieving access token', err);
-        this.oAuth2Client.setCredentials(token);
-        // Store the token to disk for later program executions
-        fs.writeFile(this.tokenPath, JSON.stringify(token), err => {
-          if (err) return console.debug('ERR', err);
-          console.debug('Token stored to', this.tokenPath);
+          // Store the token to disk for later program executions
+          console.debug(`\nGenerating token.js file to ${this.tokenPath}...`);
+          fs.writeFileSync(this.tokenPath, JSON.stringify(token));
+          console.debug(greenColor +
+            'Done! You are ready to use GCP!' + defaultColor
+          );
         });
       });
-    });
   }
 
   /**

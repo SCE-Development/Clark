@@ -11,7 +11,8 @@
     "server-install": "npm install --prefix api",
     "build": "react-scripts build",
     "lint": "./node_modules/.bin/eslint ./",
-    "create-user": "npm run create-user --prefix api"
+    "create-user": "npm run create-user --prefix api",
+    "generate-token": "npm run generate-token --prefix api"
   },
   "keywords": [
     "sce_core",
