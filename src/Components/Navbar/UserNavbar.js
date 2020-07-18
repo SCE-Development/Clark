@@ -81,7 +81,8 @@ export default function UserNavBar(props) {
       ].join('')
     }
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events' }];
+  const unauthedRoutes = [{ title: 'Events', route: '/events' }, {title: 'Officer Application', route:'/officerApplication'}];
+
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };

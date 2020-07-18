@@ -25,6 +25,7 @@ import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
+import OfficerApplication from './Pages/OfficerApplication/OfficerApplication';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -110,6 +111,12 @@ export default function Routing({ appProps }) {
       redirect: '/',
       inAdminNavbar: true
     },
+    {
+      Component: OfficerApplication,
+      path: '/officerApplication',
+      allowedIf: userIsMember,
+      redirect: '/'
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

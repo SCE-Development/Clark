@@ -1,0 +1,58 @@
+*{
+    box-sizing: border-box;
+}
+
+#wrapper{
+    width: 600px;
+    margin: 5% auto;
+    padding: 1.9rem;
+    border-radius: 20px;
+    box-shadow: 0 0 10px #808080; 
+}
+
+#wrapper h2{
+    text-align: center;
+    margin-top: 1em;
+}
+
+#form-area{
+    display: flex;
+    border-radius: 25px;
+    padding: 1.9rem;
+    order: 1;
+    margin-right: 2em;
+    flex-direction: column;
+}
+
+#form-area input{
+    width: 100%;
+    background: transparent;
+}
+
+#form-area input, #form-area button {
+    padding: 1em;
+    margin-bottom: 1em;
+    border-radius: 7px;
+
+}
+
+#form-area label{
+    font-size: 20px;
+    text-align: left;
+}
+
+#form-area h5{
+    text-align: left;
+    margin: 5px 0px;
+    font-weight: lighter;
+}
+
+#form-area button{
+    padding: 15px 50px;
+    border-radius: 7px;
+    text-transform: uppercase;
+}
+
+.upload{
+    font-size: medium;
+}
