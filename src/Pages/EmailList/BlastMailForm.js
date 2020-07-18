@@ -1,7 +1,7 @@
-import React from "react";
-import { Form, FormGroup, FormText, Label, Input } from "reactstrap";
-import "./blast-mail.css";
-import TextEditor from "./TextEditor";
+import React from 'react';
+import {Form, FormGroup, FormText, Label, Input} from 'reactstrap';
+import './blast-mail.css';
+import TextEditor from './TextEditor';
 
 export default function BlastMailForm(props) {
   return (

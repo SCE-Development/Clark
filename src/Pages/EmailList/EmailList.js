@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import "./email-list.css";
-import { getAllUsers, filterUsers } from "../../APIFunctions/User";
+import React, { Component } from 'react';
+import './email-list.css';
+import { getAllUsers, filterUsers } from '../../APIFunctions/User';
 import {
   Button,
   ButtonDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-} from "reactstrap";
+} from 'reactstrap';
 
 export default class EmailList extends Component {
   constructor(props) {
@@ -40,12 +40,12 @@ export default class EmailList extends Component {
   // Copies all emails onto clipboard
   handleCopyEmails = () => {
     let range = document.createRange();
-    range.selectNode(document.getElementById("email-list"));
+    range.selectNode(document.getElementById('email-list'));
     window.getSelection().removeAllRanges(); // clear current selection
     window.getSelection().addRange(range); // to select text
-    document.execCommand("copy");
+    document.execCommand('copy');
     window.getSelection().removeAllRanges(); // to deselect
-    document.getElementById("copy-notification1").style.display = "block";
+    document.getElementById('copy-notification1').style.display = 'block';
   };
 
   getFilteredUsers = (filterID) => {
@@ -55,9 +55,9 @@ export default class EmailList extends Component {
 
   render() {
     let filterItems = [
-      { filterID: 0, label: "Valid Members" },
-      { filterID: 1, label: "Non-Valid Members" },
-      { filterID: 2, label: "Everyone" },
+      { filterID: 0, label: 'Valid Members' },
+      { filterID: 1, label: 'Non-Valid Members' },
+      { filterID: 2, label: 'Everyone' },
     ];
     return (
       <div className="email">
@@ -91,34 +91,30 @@ export default class EmailList extends Component {
           >
             Copy to Clipboard
           </Button>
-          Number of Emails:{" "}
+          Number of Emails:{' '}
           {this.state.filtered
             ? this.state.filteredUsers.length
             : this.state.users.length}
           <p id="copy-notification1">Copied emails to clipboard! :)</p>
         </div>
         <div id="email-list">
-          {this.state.filtered
-            ? this.state.filteredUsers.map((user, i) => {
-                return (
-                  <p key={i}>
-                    {user.email}
-                    {i === this.state.filteredUsers.length - 1 ? (
-                      ""
-                    ) : (
-                      <>,&nbsp;</>
-                    )}
-                  </p>
-                );
-              })
+          {this.state.filtered ? this.state.filteredUsers.map((user, i) => {
+            return (
+              <p key={i}>
+                {user.email}
+                {i === this.state.filteredUsers.length - 1 ? (
+                  ''
+                ) : (<>,&nbsp;</>)}</p>
+            );
+          })
             : this.state.users.map((user, i) => {
-                return (
-                  <p key={i}>
-                    {user.email}
-                    {i === this.state.users.length - 1 ? "" : <>,&nbsp;</>}
-                  </p>
-                );
-              })}
+              return (
+                <p key={i}>
+                  {user.email}
+                  {i === this.state.users.length - 1 ? '' : <>,&nbsp;</>}
+                </p>
+              );
+            })}
         </div>
       </div>
     );

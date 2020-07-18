@@ -9,7 +9,8 @@ const SceApiTester = require('./util/tools/SceApiTester');
 const {
   SceGoogleApiHandler,
 } = require('../api/google_api/util/SceGoogleApiHandler');
-const verificationTemplate = require('../api/google_api/email_templates/verification');
+const verificationTemplate
+  = require('../api/google_api/email_templates/verification');
 
 let app = null;
 let test = null;

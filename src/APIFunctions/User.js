@@ -1,6 +1,6 @@
-import axios from "axios";
-import { UserApiResponse } from "./ApiResponses";
-import { membershipState, userFilterType } from "../Enums";
+import axios from 'axios';
+import {UserApiResponse} from './ApiResponses';
+import {membershipState, userFilterType} from '../Enums';
 
 /**
  * Queries the database for all users.
@@ -12,7 +12,7 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post("/api/User/users", {
+    .post('/api/User/users', {
       // don't need email
       token,
     })
@@ -31,7 +31,7 @@ export async function getAllUsers(token) {
  * @param {string} token The JWT token to allow the user to be edited
  */
 export async function updateLastLoginDate(email, token) {
-  await editUser({ email, lastLogin: Date.now() }, token);
+  await editUser({email, lastLogin: Date.now()}, token);
 }
 
 /**
@@ -73,7 +73,7 @@ export async function editUser(userToEdit, token) {
     lastLogin,
   } = userToEdit;
   await axios
-    .post("/api/User/edit", {
+    .post('/api/User/edit', {
       firstName,
       lastName,
       email,
@@ -105,7 +105,7 @@ export async function editUser(userToEdit, token) {
 export async function deleteUserByEmail(email, token) {
   let status = new UserApiResponse();
   axios
-    .post("/api/User/delete", {
+    .post('/api/User/delete', {
       token,
       email,
     })
@@ -125,7 +125,7 @@ export async function deleteUserByEmail(email, token) {
 export async function searchUserByEmail(email, token) {
   let status = new UserApiResponse();
   await axios
-    .post("/api/User/search", {
+    .post('/api/User/search', {
       token,
       email,
     })
@@ -146,7 +146,7 @@ export async function searchUserByEmail(email, token) {
  */
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
-  await axios.post("/api/User/checkIfUserExists", { email }).catch(() => {
+  await axios.post('/api/User/checkIfUserExists', {email}).catch(() => {
     status.error = true;
   });
   return status;
@@ -179,7 +179,7 @@ export function filterUsers(users, filterID) {
     } else {
       return user;
     }
-    return "";
+    return '';
   });
   return filteredUsers;
 }

@@ -1,25 +1,25 @@
-import React, { Component } from "react";
-import "./email-page.css";
-import EmailList from "./EmailList";
-import EmailTemplate from "./EmailTemplate";
-import Header from "../../Components/Header/Header";
-import { Row, TabContent, TabPane, Nav, NavItem, NavLink } from "reactstrap";
+import React, {Component} from 'react';
+import './email-page.css';
+import EmailList from './EmailList';
+import EmailTemplate from './EmailTemplate';
+import Header from '../../Components/Header/Header';
+import {Row, TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap';
 
 export default class EmailPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeTab: "1",
+      activeTab: '1',
     };
   }
 
   handleActiveTab = (activeTab) => {
-    this.setState({ activeTab });
+    this.setState({activeTab});
   };
 
   render() {
     const headerProps = {
-      title: "Email Page",
+      title: 'Email Page',
     };
 
     return (
@@ -30,10 +30,10 @@ export default class EmailPage extends Component {
             <NavItem>
               <NavLink
                 onClick={() => {
-                  this.handleActiveTab("1");
+                  this.handleActiveTab('1');
                 }}
                 className={
-                  this.state.activeTab === "1" ? "tab-active" : "tab-nonactive"
+                  this.state.activeTab === '1' ? 'tab-active' : 'tab-nonactive'
                 }
               >
                 Email List
@@ -42,10 +42,10 @@ export default class EmailPage extends Component {
             <NavItem>
               <NavLink
                 onClick={() => {
-                  this.handleActiveTab("2");
+                  this.handleActiveTab('2');
                 }}
                 className={
-                  this.state.activeTab === "2" ? "tab-active" : "tab-nonactive"
+                  this.state.activeTab === '2' ? 'tab-active' : 'tab-nonactive'
                 }
               >
                 Send Emails

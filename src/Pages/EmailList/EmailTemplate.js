@@ -23,7 +23,8 @@ export default class EmailTemplate extends Component {
     };
   }
 
-  //When page loads, perform getUsers() for email lists && getEvents() for events in template
+  // When page loads, perform getUsers() for email lists && getEvents() for
+  // events in template
   componentDidMount() {
     if (this.props.user) {
       this.getUsers();
@@ -31,28 +32,25 @@ export default class EmailTemplate extends Component {
     this.getEvents();
   }
 
-  //get user emails from DB
+  // get user emails from DB
   getUsers = async () => {
     let apiResponse = await getAllUsers(this.props.user.token);
     if (!apiResponse.error) {
-      this.setState(
-        { users: apiResponse.responseData }
-        //, console.log(apiResponse)
-      );
+      this.setState({ users: apiResponse.responseData });
     }
-    //after getting api response, store them in state vars with getFilteredUsers()
+    // after getting api response, store them in state vars with function
     this.getFilteredUsers();
   };
 
-  //Store emails to different state variables depending on their role
+  // Store emails to different state variables depending on their role
   getFilteredUsers = () => {
     let allUsers = filterUsers(this.state.users, 0);
-    var officerEmail = [],
+    let officerEmail = [],
       memberEmail = [],
       allEmail = [];
-    //forEach loop to push emails to their respective arrays
-    allUsers.forEach(function (item) {
-      //Access level >=2 is officers+, Access level >=0 but <2 are members
+    // forEach loop to push emails to their respective arrays
+    allUsers.forEach(function(item) {
+      // Access level >=2 is officers+, Access level >=0 but <2 are members
       if (item.accessLevel >= 2) {
         allEmail.push(item.email);
         officerEmail.push(item.email);
@@ -63,7 +61,8 @@ export default class EmailTemplate extends Component {
     }, this.setState({ officerEmail, memberEmail, allEmail }));
   };
 
-  //grab data from database and perform 'storeContent(events)' if apiResponse is not empty
+  // grab data from database and perform 'storeContent(events)' if apiResponse
+  // is not empty
   getEvents = async () => {
     const apiResponse = await getAllEvents();
     if (!apiResponse.error) {
@@ -74,24 +73,29 @@ export default class EmailTemplate extends Component {
     }
   };
 
-  //customize data with html, append header/footer, and store that to 'content'
+  // customize data with html, append header/footer, and store that to 'content'
   storeContent = async (events) => {
     const mailHeader =
-      '<p><span style="font-size: 10pt; font-family: Arial;"><strong>Hello SCE G4NG,</strong></span></p>' +
-      '\n<p><span style="font-size: 10pt; font-family: Arial;"><strong>This is our newsletter, please read ty.</strong></span></p>\n';
+      '<p><span style="font-size: 10pt; font-family: Arial;">' +
+      '<strong>Hello SCE G4NG,</strong></span></p>' +
+      '\n<p><span style="font-size: 10pt; font-family: Arial;">' +
+      '<strong>This is our newsletter, please read ty.</strong></span></p>\n';
 
     const mailFooter =
-      '<p><strong><span style="color: #236fa1; font-size: 10pt;">Software and Computer Engineering</span>' +
-      '<span style="color: #236fa1; font-size: 10pt;"> Society<br /></span></strong>' +
-      '<span style="font-size: 10pt;">Website: <a href="http://sce.engr.sjsu.edu">http://sce.engr.sjsu.edu</a>' +
-      '<br />Contact: <a href="mailto:sce.sjsu@gmail.com">sce.sjsu@gmail.com</a><br />Facebook: ' +
-      '<a href="https://www.facebook.com/sjsusce/">@scesjsu</a><br />Instagram: ' +
-      '<a href="https://www.instagram.com/sjsusce/">@scesjsu</a><br />CmpE Slack: ' +
-      '<a href="https://cmpesjsu.slack.com/?redir=%2Fmessages%2FCH6TTGXLG#/">#sce</a></span></p>';
+      '<p><strong><span style="color: #236fa1; font-size: 10pt;">Software ' +
+      'and Computer Engineering</span><span style="color: #236fa1; ' +
+      'font-size: 10pt;"> Society<br /></span></strong>' +
+      '<span style="font-size: 10pt;">Website: ' +
+      '<a href="http://sce.engr.sjsu.edu">http://sce.engr.sjsu.edu</a><br />' +
+      'Contact: <a href="mailto:sce.sjsu@gmail.com">sce.sjsu@gmail.com</a>' +
+      '<br />Facebook: <a href="https://www.facebook.com/sjsusce/">@scesjsu' +
+      '</a><br />Instagram: <a href="https://www.instagram.com/sjsusce/">' +
+      '@scesjsu</a><br />CmpE Slack: <a href="https://cmpesjsu.slack.com/?' +
+      'redir=%2Fmessages%2FCH6TTGXLG#/">#sce</a></span></p>';
+    let data = undefined;
 
     try {
-      var x = 0;
-      var data = undefined;
+      let x = 0;
       for (x = 0; x < events.responseData.length; x++) {
         let responseData = events.responseData[x];
         let eventDateFormatted = this.returnProperFormattedDate(
@@ -110,9 +114,11 @@ export default class EmailTemplate extends Component {
           responseData.startTime.replace(/ /g, '') +
           '-' +
           responseData.endTime.replace(/ /g, '') +
-          '</span><br /><span style="font-size: 10pt;"><strong>Where:</strong>&nbsp;' +
+          '</span><br /><span style="font-size: 10pt;"><strong>Where: ' +
+          '</strong>&nbsp;' +
           responseData.eventLocation +
-          '</span></p>\n<p><img style="max-height: 192px; max-width: 192px;" src="' +
+          '</span></p>\n<p><img style="max-height: 192px;' +
+          ' max-width: 192px;" src="' +
           responseData.imageURL +
           '" /></p>\n';
 
@@ -125,40 +131,42 @@ export default class EmailTemplate extends Component {
       data =
         mailHeader +
         data +
-        '<p>𝔁𝓾𝓮🥶𝓱𝓾𝓪🧚𝓹𝓲𝓪𝓸😻𝓹𝓲𝓪𝓸🗿𝓫𝓮𝓲👺𝓯𝓮𝓷𝓰🤩𝔁𝓲𝓪𝓸😼𝔁𝓲𝓪𝓸👣</p>\n<p>&nbsp;</p>\n' +
+        '<p>𝔁𝓾𝓮🥶𝓱𝓾𝓪🧚𝓹𝓲𝓪𝓸😻𝓹𝓲𝓪𝓸🗿𝓫𝓮𝓲👺𝓯𝓮𝓷𝓰🤩' +
+        '𝔁𝓲𝓪𝓸😼𝔁𝓲𝓪𝓸👣</p>\n<p>&nbsp;</p>\n' +
         mailFooter;
     } catch (error) {
-      console.log("Something's up", error);
+      return error;
     }
     this.updateContent(data);
   };
 
-  //Used by handleLoadContent() to format the dates from getAllEvents() to MM/DD/YYYY format
+  // Used by handleLoadContent() to format the dates from getAllEvents()
+  // to MM/DD/YYYY format
   returnProperFormattedDate = (date) => {
     if (date !== null) {
-      var year = date.substring(0, 4);
+      let year = date.substring(0, 4);
       return date.substring(5, date.length) + '-' + year;
     } else {
       return null;
     }
   };
 
-  //Update 'subject' state
+  // Update 'subject' state
   updateSubject = (e) => {
     this.setState({ subject: e });
   };
 
-  //Update 'recipients' state
+  // Update 'recipients' state
   updateRecipients = (e) => {
     this.setState({ recipients: e });
   };
 
-  //Update 'content' state. 'content' is where the template created is stored.
+  // Update 'content' state. 'content' is where the template created is stored.
   updateContent = (e) => {
     this.setState({ content: e });
   };
 
-  //Clear Button 'Disabled' prop boolean
+  // Clear Button 'Disabled' prop boolean
   checkEmpty = () => {
     return (
       this.state.loadedContent === '' &&
@@ -167,7 +175,7 @@ export default class EmailTemplate extends Component {
     );
   };
 
-  //Send Button 'Disabled' prop boolean
+  // Send Button 'Disabled' prop boolean
   checkEmptyInputs = () => {
     return (
       this.state.recipients !== '' &&
@@ -176,30 +184,31 @@ export default class EmailTemplate extends Component {
     );
   };
 
-  //Load Template Button 'Disabled' prop boolean
+  // Load Template Button 'Disabled' prop boolean
   checkLoadedContent = () => {
     return this.state.loadedContent === this.state.content;
   };
 
-  //Used by TinyMCE text area to update it. 'loadedContent' is what's in the text area.
+  // Used by TinyMCE text area to update it. 'loadedContent' is
+  // what's in the text area.
   handleEditorChange = (e) => {
     this.setState({ loadedContent: e });
   };
 
-  //'Load Template' Button onClick
+  // 'Load Template' Button onClick
   handleLoadContent = async () => {
     this.setState({ loadedContent: this.state.content });
   };
 
-  //'Clear' Button onClick
+  // 'Clear' Button onClick
   handleClear = () => {
     this.setState({ loadedContent: '', subject: '', recipients: '' });
   };
 
-  //'Send' Button onClick
+  // 'Send' Button onClick
   handleSend = async () => {
-    //Since recipients is a list of emails, need to load a certain list
-    //of emails depending on the recipients dropdown value
+    // Since recipients is a list of emails, need to load a certain list
+    // of emails depending on the recipients dropdown value
     let recipients = undefined;
     if (this.state.recipients === 'Members') {
       recipients = this.state.memberEmail;
@@ -208,22 +217,28 @@ export default class EmailTemplate extends Component {
     } else if (this.state.recipients === 'Everyone') {
       recipients = this.state.allEmail;
     }
-    var status = await sendBlastEmail(
+    let status = await sendBlastEmail(
       recipients,
       this.state.subject,
       this.state.loadedContent
     );
-    if (status.error) {
-      alert('Uh oh, looks like there were issues sending the email.');
-    } else {
-      alert('Everything went well! Your email has been sent!');
-    }
-    //Clear form
+
+    // Clear form
     this.setState({
       recipients: '',
       subject: '',
       loadedContent: '',
     });
+
+    // Alerts to notify user whether or not the email was successfully sent
+    // setTimeout is used to make sure form is cleared before alert pops up
+    window.setTimeout(function() {
+      if (status.error) {
+        alert('Uh oh, looks like there were issues sending the email.');
+      } else {
+        alert('Everything went well! Your email has been sent!');
+      }
+    }, 100);
   };
 
   // Copies all emails onto clipboard

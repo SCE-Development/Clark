@@ -13,6 +13,15 @@ router.post('/sendVerificationEmail', async (req, res) => {
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
+  const tokenJson = await apiHandler.checkIfTokenFileExists();
+
+  if (tokenJson) {
+    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
+      apiHandler.refreshToken();
+    }
+  } else {
+    apiHandler.getNewToken();
+  }
 
   await verification(USER, req.body.recipientEmail, req.body.recipientName)
     .then((template) => {

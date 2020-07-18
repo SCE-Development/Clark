@@ -80,19 +80,22 @@ class SceGoogleApiHandler {
       output: process.stdout,
     });
 
-    rl.question('Enter the code from that page here: ', (code) => {
-      rl.close();
+    rl.question(
+      'Enter the authorization code(under "Step 2") from that page here: ',
+      (code) => {
+        rl.close();
 
-      this.oAuth2Client.getToken(code, (err, token) => {
-        if (err) return console.debug('Error retrieving access token', err);
-        this.oAuth2Client.setCredentials(token);
-        // Store the token to disk for later program executions
-        fs.writeFile(this.tokenPath, JSON.stringify(token), (err) => {
-          if (err) return console.debug('ERR', err);
-          console.debug('Token stored to', this.tokenPath);
+        this.oAuth2Client.getToken(code, (err, token) => {
+          if (err) return console.debug('Error retrieving access token', err);
+          this.oAuth2Client.setCredentials(token);
+          // Store the token to disk for later program executions
+          fs.writeFile(this.tokenPath, JSON.stringify(token), (err) => {
+            if (err) return console.debug('ERR', err);
+            console.debug('Token stored to', this.tokenPath);
+          });
         });
-      });
-    });
+      }
+    );
   }
 
   /**

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from "reactstrap";
-import "./email-template.css";
+import React, {useState} from 'react';
+import {Button, Modal, ModalBody, ModalHeader, ModalFooter} from 'reactstrap';
+import './email-template.css';
 
 export default function ConfirmationModal(props) {
   const [toggle, setToggle] = useState(false);
 
-  //setTimeout used to make sure modal is fully toggled before sending email
-  //to ensure that alert pop-up doesn't interrupt modal toggle
+  // setTimeout used to make sure modal is fully toggled before sending email
+  // to ensure that alert pop-up doesn't interrupt modal toggle
   async function handleSendButton() {
     setToggle(!toggle);
     setTimeout(() => {
