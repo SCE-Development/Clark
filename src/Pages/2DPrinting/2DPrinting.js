@@ -222,13 +222,11 @@ export default function Printing(props) {
 
   async function handlePrinting(file) {
     const raw = file.getFileEncodeBase64String();
-    const destination = 'HP-LaserJet-p2015dn';
     let data = {
       raw,
       pageRanges: pageRanges.replace(/\s/g, ''),
       sides,
-      copies,
-      destination
+      copies
     };
     const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
 
