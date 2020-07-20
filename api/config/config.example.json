@@ -4,13 +4,20 @@
   "googleApiKeys": {
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXX",
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "REDIRECT_URIS": ["https://developers.google.com/oauthplayground"],
+    "REDIRECT_URIS": [
+      "https://developers.google.com/oauthplayground"
+    ],
     "USER": "sce.sjsu@gmail.com",
     "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
   "googleCalendarIds": {
     "PRIMARY_CAL": "primary",
     "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  },
+  "S3Bucket": {
+    "AWSACCESSKEYID": "XXXXXXXXXXXXXXXXXXXX",
+    "AWSSECRETKEY": "XXXXXXXXXXXXXXXXXXXXXXXX",
+    "BUCKET": "XXXXXXXXXXXXX"
   },
   "ledSignIp": "192.168.4.1",
   "GENERAL_API_URL": "http://localhost:8080/",
