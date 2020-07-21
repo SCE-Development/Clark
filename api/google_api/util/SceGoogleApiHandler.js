@@ -51,7 +51,7 @@ class SceGoogleApiHandler {
    */
   checkIfTokenFileExists() {
     return new Promise((resolve, reject) => {
-      if (!this.runningInProduction){
+      if (!this.runningInProduction) {
         resolve(false);
       }
       fs.readFile(this.tokenPath, (err, token) => {
@@ -90,7 +90,7 @@ class SceGoogleApiHandler {
       authCode => {
         rl.close();
         this.oAuth2Client.getToken(authCode, (err, token) => {
-          if(err) console.debug(redColor +
+          if (err) console.debug(redColor +
             'Error generating token', err + defaultColor
           );
           this.oAuth2Client.setCredentials(token);
@@ -127,39 +127,6 @@ class SceGoogleApiHandler {
       fs.writeFile(this.tokenPath, JSON.stringify(token.res.data), err => {
         if (err) return console.debug(err);
       });
-    });
-  }
-
-  /**
-   * Sends an email from sce.sjsu@gmail.com. The parameter defines recipient,
-   * subject and email body.
-   * @param {nodemailer.envelope} mailTemplate The email template to send.
-   */
-  async sendEmail(mailTemplate) {
-    return new Promise(async (resolve, reject) => {
-      if (!this.runningInProduction) {
-        resolve();
-      }
-      const tokenJson = await this.checkIfTokenFileExists();
-      if (tokenJson) {
-        const smtpTransport = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            type: 'OAuth2',
-            user: USER,
-            clientId: CLIENT_ID,
-            clientSecret: CLIENT_SECRET,
-            refreshToken: REFRESH_TOKEN,
-            accessToken: tokenJson.access_token
-          }
-        });
-        smtpTransport.sendMail(mailTemplate, (error, response) => {
-          error ? reject(error) : resolve(response);
-          smtpTransport.close();
-        });
-      } else {
-        reject();
-      }
     });
   }
 
@@ -327,6 +294,34 @@ class SceGoogleApiHandler {
           resolve(eventToAdd);
         }
         reject(false);
+      });
+    });
+  }
+
+  /**
+ * Sends an email from sce.sjsu@gmail.com. The parameter defines recipient,
+ * subject and email body.
+ * @param {nodemailer.envelope} mailTemplate The email template to send.
+ */
+  async sendEmail(mailTemplate) {
+    return new Promise(async (resolve, reject) => {
+      if (!this.runningInProduction) {
+        resolve();
+      }
+      const smtpTransport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: USER,
+          clientId: CLIENT_ID,
+          clientSecret: CLIENT_SECRET,
+          refreshToken: REFRESH_TOKEN,
+        },
+      });
+
+      smtpTransport.sendMail(mailTemplate, (error, response) => {
+        error ? reject(error) : resolve(response);
+        smtpTransport.close();
       });
     });
   }
