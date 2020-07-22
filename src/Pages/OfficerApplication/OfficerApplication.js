@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 //import SubmissionPage from './SubmissionPage.js';
 import './OfficerApplication.css';
-//import 'semantic-ui-css/semantic.min.css';
+
 //import addToSpreadsheet from '../../'
+//date time library --> 
 
 class OfficerApplication extends Component {
     constructor(props) {
@@ -87,8 +88,8 @@ class OfficerApplication extends Component {
             submitted: false
         })
     }
-
-	render() {
+    
+	render() { 
         return (
             <div className="ui equal width form" id="wrapper" onSubmit={this.handleSubmit}>
                 <h2>SCE Officer Application 2020-21</h2>

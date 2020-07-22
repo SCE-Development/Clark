@@ -81,7 +81,7 @@ export default function UserNavBar(props) {
       ].join('')
     }
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events' }, {title: 'Officer Application', route:'/officerApplication'}];
+  const unauthedRoutes = [{ title: 'Events', route: '/events', month: null }, {title: 'Officer Application', route:'/officerApplication', month: [8,9,10] }];
 
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
@@ -162,16 +162,17 @@ export default function UserNavBar(props) {
                 </DropdownItem>
               )}
               {unauthedRoutes.map((link, index) => {
-                return (
-                  <DropdownItem className='drp-item' key={index}>
-                    <NavItem>
-                      <NavLink id='btndrp-text' href={link.route}>
-                        {link.title}
-                      </NavLink>
-                    </NavItem>
-
-                  </DropdownItem>
-                );
+                if (link.month === null || new Date().getMonth() in link.month){
+                  return (
+                      <DropdownItem className='drp-item' key={index}>
+                        <NavItem>  
+                          <NavLink id='btndrp-text' href={link.route}>
+                            {link.title}
+                          </NavLink>
+                        </NavItem>
+                      </DropdownItem>
+                  );
+                }
               })}
               {props.authenticated && props.user ? (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
@@ -259,13 +260,15 @@ export default function UserNavBar(props) {
               </UncontrolledDropdown>
             )}
             {unauthedRoutes.map((link, index) => {
-              return (
-                <NavItem key={index}>
-                  <NavLink id='navlink-text' href={link.route}>
-                    {link.title}
-                  </NavLink>
-                </NavItem>
-              );
+              if (link.month === null || new Date().getMonth() in link.month){
+                return(
+                  <NavItem key={index}>
+                    <NavLink id='navlink-text' href={link.route}>
+                      {link.title}
+                    </NavLink>
+                  </NavItem>
+                );
+              }
             })}
             {props.authenticated && props.user ? (
               <UncontrolledDropdown nav inNavbar>
