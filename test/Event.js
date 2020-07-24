@@ -145,19 +145,11 @@ describe('Event', () => {
         token, '/api/event/editEvent', EVENT_WITH_INVALID_ID);
       expect(result).to.have.status(NOT_FOUND);
     });
-    it('Should return 200 when an event is sucessfully updated', done => {
+    it('Should return 200 when an event is sucessfully updated', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .post('/api/event/editEvent')
-        .send({ token, id: eventId, ...UPDATED_EVENT })
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/event/editEvent', {id: eventId, ...UPDATED_EVENT});
+      expect(result).to.have.status(OK);
     });
     it('The update should be reflected in the database', async () => {
       setTokenStatus(true);
