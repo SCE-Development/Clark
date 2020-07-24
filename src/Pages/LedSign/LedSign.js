@@ -3,6 +3,7 @@ import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { Spinner, Input, Button, Container } from 'reactstrap';
 import './led-sign.css';
 import Header from '../../Components/Header/Header';
+import LedSignMessage from './LedSignMessage';
 
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
@@ -127,10 +128,39 @@ function LedSign(props) {
     }
   }
 
+  const fakeMessages = [
+    {
+      text: 'Big Oof',
+      brightness: 50,
+      scrollSpeed: 50,
+      backgroundColor: '#00FF00',
+      textColor: '#FF0000',
+      borderColor: '#0000FF',
+    },
+    {
+      text: 'kzv',
+      brightness: 50,
+      scrollSpeed: 50,
+      backgroundColor: '#00FF00',
+      textColor: '#FF0000',
+      borderColor: '#0000FF',
+    },
+    {
+      text: 'shoutout taline',
+      brightness: 50,
+      scrollSpeed: 50,
+      backgroundColor: '#00FF00',
+      textColor: '#FF0000',
+      borderColor: '#0000FF',
+    },
+  ];
   return (
     <div>
       <Header {...headerProps} />
-      <div className='sign-wrapper'>
+      {fakeMessages.map((fakeMessage) => (
+        <LedSignMessage {...fakeMessage} />
+      ))}
+      {/* <div className='sign-wrapper'>
         <Container>
           <h1 className='sign-status'>
             Sign Status:
@@ -153,7 +183,7 @@ function LedSign(props) {
           {awaitingSignResponse ? <Spinner /> : 'Send'}
         </Button>
         {renderRequestStatus()}
-      </div>
+      </div> */}
     </div>
   );
 }

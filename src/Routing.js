@@ -68,13 +68,6 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true
     },
     {
-      Component: LedSign,
-      path: '/led-sign',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
-    {
       Component: PrintingSolids,
       path: '/3DPrintingForm',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
@@ -123,6 +116,10 @@ export default function Routing({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
+    {
+      Component: LedSign,
+      path: '/led-sign',
+    },
     { Component: VerifyEmailPage, path: '/verify' }
   ];
   return (
