@@ -59,7 +59,7 @@ export async function createNewEvent(newEvent, token) {
     startTime: handleMidnightTime(newEvent.startTime),
     endTime: handleMidnightTime(newEvent.endTime),
     eventCategory: newEvent.eventCategory,
-    imageURL: newEvent.imageURL
+    imageURL: handleImageURL(newEvent.imageURL)
   };
   await axios
     .post('api/event/createEvent', { token, ...eventToAdd })
@@ -172,6 +172,28 @@ export function convertTime24to12(time24h) {
   const [hour, minute] = time24h.split(':');
   const suffix = parseInt(hour) - 12 > 0 ? 'PM' : 'AM';
   return `${parseInt(hour) % 12}:${minute} ${suffix}`;
+}
+
+/**
+ * Handles the edge case of a time being at midnight and must be converted
+ * from 0:20 AM for example.
+ * @param {string} time a time to be added to an event
+ */
+function handleMidnightTime(time) {
+  const [hour, suffix] = time.split(':');
+  if (hour === '0') return `12:${suffix}`;
+  return time;
+}
+
+/**
+ * Handles the case in which the image URL is not valid
+ * @param {string} url an image url to be added to an event
+ */
+function handleImageURL(url) {
+  if(url !== null) {
+    return url
+  }
+  return 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG'
 }
 
 /**

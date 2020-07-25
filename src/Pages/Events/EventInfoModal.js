@@ -7,7 +7,7 @@ import {
   Row,
   Col,
   ModalFooter,
-  Button,
+  Button
 } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
 import { clockSymbol, mapPinSymbol } from '../Overview/SVG';

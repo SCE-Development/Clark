@@ -11,8 +11,7 @@ function EventCard(props) {
     startTime,
     endTime,
     handleClick,
-    imageURL,
-    noImageURL = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
+    imageURL
   } = props;
 
   return (
@@ -23,32 +22,26 @@ function EventCard(props) {
           handleClick();
         }}
       >
-        {imageURL !== null ? (
-          <img
-            id='event-image'
-            className='event-image'
-            src={imageURL} alt=''
-          />
-        ) : (
+        <tbody>
+          <td>
             <img id='event-image'
               className='event-image'
-              src={noImageURL} alt=''
+              src={imageURL} alt=''
             />
-          )}
-
-        <Row className='event-title'>{title.slice(0, 24)}</Row>
-        <Row className='event-date'>
-          {clockSymbol()}
-          {'  '}
-          {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
+          </td>
+          <Row className='event-title'>{title.slice(0, 24)}</Row>
+          <Row className='event-date'>
+            {clockSymbol()}
+            {'  '}
+            {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
                   {' '}
-          {endTime}
-        </Row>
-        <Row className='event-location'>
-          {mapPinSymbol()}
-          {eventLocation.slice(0, 28)}
-        </Row>
-
+            {endTime}
+          </Row>
+          <Row className='event-location'>
+            {mapPinSymbol()}
+            {eventLocation.slice(0, 28)}
+          </Row>
+        </tbody>
       </button>
     </React.Fragment>
   );
