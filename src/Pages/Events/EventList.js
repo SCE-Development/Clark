@@ -18,11 +18,11 @@ function AnnouncementList() {
   const modalProps = {
     currentEvent,
     modal,
-    toggle,
+    toggle
   };
 
   const headerProps = {
-    title: 'SCE Event Page',
+    title: 'SCE Event Page'
   };
 
   async function populateEventList() {

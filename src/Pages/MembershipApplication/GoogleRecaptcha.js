@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { sitekey } from '../../config/config';
+import { sitekey } from '../../config/config.json';
 
 class GoogleRecaptcha extends Component {
   constructor(props, ...args) {
