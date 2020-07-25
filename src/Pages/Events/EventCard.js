@@ -29,17 +29,17 @@ function EventCard(props) {
               src={imageURL} alt=''
             />
           </td>
-          <Row className='event-title'>{title.slice(0, 24)}</Row>
+          <Row className='event-title'>{title}</Row>
           <Row className='event-date'>
             {clockSymbol()}
             {'  '}
             {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
-                  {' '}
+            {' '}
             {endTime}
           </Row>
           <Row className='event-location'>
             {mapPinSymbol()}
-            {eventLocation.slice(0, 28)}
+            {eventLocation}
           </Row>
         </tbody>
       </button>

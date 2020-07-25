@@ -55,6 +55,7 @@ function EventManagerModal(props) {
       {
         addon: 'Event Title*',
         type: 'text',
+        maxLength: '24',
         defaultValue: props.title,
         placeholder: 'e.g. Python Workshop',
         handleChange: e => setTitle(e.target.value)
@@ -72,6 +73,7 @@ function EventManagerModal(props) {
       {
         addon: 'Event Location*',
         type: 'text',
+        maxLength: '28',
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
         handleChange: e => setEventLocation(e.target.value),
@@ -184,6 +186,7 @@ function EventManagerModal(props) {
                         </InputGroupAddon>
                         <Input
                           type={input.type}
+                          maxLength={input.maxLength}
                           defaultValue={input.defaultValue}
                           placeholder={input.placeholder}
                           onChange={input.handleChange}
