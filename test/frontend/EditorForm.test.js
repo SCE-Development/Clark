@@ -51,10 +51,11 @@ describe('<AdminEditorForm />', () => {
 
   it('Should render a <Button /> component with 3 children', () => {
     const component = wrapper.find(Button);
-    expect(component).to.have.lengthOf(3);
+    expect(component).to.have.lengthOf(4);
     expect(component.get(0).props.children).equals('Edit');
-    expect(component.get(1).props.children).equals('Submit');
-    expect(component.get(2).props.children).equals('Cancel');
+    expect(component.get(1).props.children).equals('Assign Door Code');
+    expect(component.get(2).props.children).equals('Submit');
+    expect(component.get(3).props.children).equals('Cancel');
   });
 
   it('Should render a <FormGroup /> component with 10 children', () => {

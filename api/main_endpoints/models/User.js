@@ -50,10 +50,6 @@ const UserSchema = new Schema(
       type: String
     },
 
-    doorCode: {
-      type: String
-    },
-
     accessLevel: {
       type: Number,
       default: membershipState.PENDING

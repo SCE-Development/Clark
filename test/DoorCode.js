@@ -52,17 +52,17 @@ describe('DoorCode', () => {
   const VALID_NEW_CODE = {
     doorCode: '050-9463',
     doorCodeValidUntil: new Date('12/25/20'),
-    usersAssigned: 1,
+    userEmails: ['pal@g.com'],
   };
   const CODE_WITH_MORE_ASSIGNED = {
     doorCode: '054-9463',
     doorCodeValidUntil: new Date('12/25/20'),
-    usersAssigned: 2,
+    userEmails: ['uuuuuuu@g.com', 'jas@g.com'],
   };
   const REPEATED_CODE = {
     doorCode: '050-9463',
     doorCodeValidUntil: new Date('12/27/20'),
-    usersAssigned: 1,
+    userEmails: ['uuuu@g.com'],
   };
   const CODE_WITH_INVALID_ID = {
     id: 'invalid',
@@ -74,17 +74,23 @@ describe('DoorCode', () => {
   const EDITED_CODE = {
     doorCode: '051-4451',
     doorCodeValidUntil: new Date('12/25/20'),
-    usersAssigned: 1,
+    userEmails: ['pal@g.com'],
   };
   const CODE_WITH_BAD_FORMAT = {
     doorCode: '05121-44514211',
     doorCodeValidUntil: new Date('12/25/20'),
-    usersAssigned: 1,
+    userEmails: ['pal@g.com'],
   };
   const CODE_WITH_BAD_FORMAT_TWO = {
     doorCode: '05121-44514211',
     doorCodeValidUntil: new Date('12/25/20'),
-    usersAssigned: 1,
+    userEmails: ['pal@g.com'],
+  };
+  const VALID_EMAIL = {
+    email: 'pal@g.com',
+  };
+  const INVALID_EMAIL = {
+    email: 'notfound@g.com',
   };
 
   describe('/POST addCode', () => {
@@ -182,10 +188,43 @@ describe('DoorCode', () => {
       expect(getEventsResponse.doorCodeValidUntil).to.equal(
         VALID_NEW_CODE.doorCodeValidUntil.toISOString()
       );
-      expect(getEventsResponse.usersAssigned).to.equal(
-        VALID_NEW_CODE.usersAssigned
+      expect(getEventsResponse.userEmails[0]).to.equal(
+        VALID_NEW_CODE.userEmails[0]
       );
       codeId = getEventsResponse._id;
+    });
+  });
+
+  describe('/POST getPersonsDoorCode', () => {
+    it('Should return 403 when an invalid token is supplied', async () => {
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/editCode',
+        CODE_WITH_INVALID_TOKEN
+      );
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+    it('Should return a 404 when email has no code', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/getPersonsDoorCode',
+        INVALID_EMAIL
+      );
+      expect(result).to.have.status(NOT_FOUND);
+    });
+    it('Should return an object of only one door code', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/getPersonsDoorCode',
+        VALID_EMAIL
+      );
+      expect(result).to.have.status(OK);
+      const getEventsResponse = result.body;
+      expect(getEventsResponse.doorCode.doorCode).to.equal(
+        VALID_NEW_CODE.doorCode
+      );
     });
   });
 
@@ -227,8 +266,8 @@ describe('DoorCode', () => {
       expect(getEventsResponse.doorCodeValidUntil).to.equal(
         EDITED_CODE.doorCodeValidUntil.toISOString()
       );
-      expect(getEventsResponse.usersAssigned).to.equal(
-        EDITED_CODE.usersAssigned
+      expect(getEventsResponse.userEmails[0]).to.equal(
+        EDITED_CODE.userEmails[0]
       );
     });
   });

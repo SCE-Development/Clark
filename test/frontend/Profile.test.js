@@ -49,7 +49,6 @@ describe('<Profile />', () => {
   it('Should render a <h5 /> component with 6 children', () => {
     const component = wrapper.find('h5');
     expect(component).to.have.lengthOf(6);
-    expect(component.get(0).props.children[1]).equal(user.doorCode);
     expect(component.get(1).props.children[1]).equal(
       user.joinDate.slice(0, 10)
     );
