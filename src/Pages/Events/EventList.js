@@ -10,6 +10,11 @@ function AnnouncementList() {
   const [modal, setModal] = useState(false);
   const [currentEvent, setEvent] = useState(null);
   const [eventList, setEventList] = useState();
+
+  async function toggle() {
+    setModal(!modal);
+  }
+
   const modalProps = {
     currentEvent,
     modal,
@@ -20,6 +25,11 @@ function AnnouncementList() {
     title: 'SCE Event Page'
   };
 
+  async function populateEventList() {
+    const eventResponse = await getAllEvents();
+    if (!eventResponse.error) setEventList(eventResponse.responseData);
+  }
+
   useEffect(() => {
     async function fetchData() {
       await populateEventList();
@@ -27,18 +37,9 @@ function AnnouncementList() {
     fetchData();
   }, []);
 
-  async function populateEventList() {
-    const eventResponse = await getAllEvents();
-    if (!eventResponse.error) setEventList(eventResponse.responseData);
-  }
-
   function handleClick(clickedEvent) {
     setEvent(clickedEvent);
     toggle();
-  }
-
-  async function toggle() {
-    setModal(!modal);
   }
 
   return (

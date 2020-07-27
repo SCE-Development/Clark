@@ -25,16 +25,6 @@ export async function getAllUsers(token) {
 }
 
 /**
- * Updates the user's last login date when they log in.
- * @param {string} email The email of the user
- * @param {string} token The JWT token to allow the user to be edited
- */
-export async function updateLastLoginDate(email, token) {
-  await editUser({ email, lastLogin: Date.now() }, token);
-}
-
-
-/**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated
  * @param {(string|undefined)} userToEdit.firstName - The updated first name of
@@ -94,6 +84,15 @@ export async function editUser(userToEdit, token) {
       status.responseData = err.response;
     });
   return status;
+}
+
+/**
+ * Updates the user's last login date when they log in.
+ * @param {string} email The email of the user
+ * @param {string} token The JWT token to allow the user to be edited
+ */
+export async function updateLastLoginDate(email, token) {
+  await editUser({ email, lastLogin: Date.now() }, token);
 }
 
 /**

@@ -31,6 +31,18 @@ function EventManagerModal(props) {
   const [endTime, setEndTime] = useState(props.endTime);
   const [eventCategory, setEventCategory] = useState(props.eventCategory);
   const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG);
+
+  function toggleConfirmationModal() {
+    setConfirmationModal(!confirmationModal);
+  }
+
+  async function handleDeletion() {
+    await props.handleDelete({ _id: props._id });
+    await props.populateEventList();
+    toggleConfirmationModal();
+    props.toggle();
+  }
+
   const confirmModalProps = {
     headerText: `Delete ${props.title} ?`,
     bodyText: 'The event will be gone forever if you do this.',
@@ -92,17 +104,6 @@ function EventManagerModal(props) {
       }
     ]
   ];
-
-  async function handleDeletion() {
-    await props.handleDelete({ _id: props._id });
-    await props.populateEventList();
-    toggleConfirmationModal();
-    props.toggle();
-  }
-
-  function toggleConfirmationModal() {
-    setConfirmationModal(!confirmationModal);
-  }
 
   async function handleSubmission() {
     const eventFields = {

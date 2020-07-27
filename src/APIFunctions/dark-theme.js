@@ -1,3 +1,4 @@
+/* eslint no-use-before-define: 0 */
 import Cookies from 'universal-cookie';
 // What is this code doing here you wonder? Well if we unconditionally
 // import darkreader, our frontend tests break because aren't in a

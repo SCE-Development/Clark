@@ -21,13 +21,17 @@ export default function EventManager(props) {
     title: 'Event Manager'
   };
 
+  async function populateEventList() {
+    const eventData = await getAllEvents();
+    if (!eventData.error) setEventList(eventData.responseData);
+  }
+
   useEffect(() => {
     populateEventList();
   }, []);
 
-  async function populateEventList() {
-    const eventData = await getAllEvents();
-    if (!eventData.error) setEventList(eventData.responseData);
+  function toggle() {
+    setModal(!modal);
   }
 
   function toggleEditEvent(event) {
@@ -39,10 +43,6 @@ export default function EventManager(props) {
   function toggleNewEvent() {
     setEvent();
     setModalState(eventModalState.SUBMIT);
-    setModal(!modal);
-  }
-
-  function toggle() {
     setModal(!modal);
   }
 

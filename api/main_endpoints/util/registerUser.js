@@ -1,58 +1,6 @@
 const User = require('../models/User');
 const config = require('../../config/config.json');
 
-/**
- * Register a new user.
- * @param {Object} newUser - The user that is to be registered along with
- *                           information about them.
- * @returns {Object} result - Contains three values that inform the requester
- *                            whether or not the request to register was
- *                            successful or not.
- */
-async function registerUser(userToAdd){
-  let result = {
-    userSaved: true,
-    message: '',
-    status: 'OK'
-  };
-  if (userToAdd.email && userToAdd.password) {
-    const newUser = new User({
-      password: userToAdd.password,
-      firstName: userToAdd.firstName,
-      middleInitial: userToAdd.middleInitial || '',
-      lastName: userToAdd.lastName,
-      email: userToAdd.email.toLowerCase(),
-      major: userToAdd.major || ''
-    });
-
-    const membershipValidUntil = getMemberValidationDate(
-      userToAdd.numberOfSemestersToSignUpFor
-    );
-    newUser.membershipValidUntil = membershipValidUntil;
-
-    const testPassword = testPasswordStrength(userToAdd.password);
-
-    if (!testPassword.success) {
-      result.userSaved = false;
-      result.message = testPassword.message;
-      result.status = 'BAD_REQUEST';
-      return result;
-    }
-
-    await newUser.save()
-      .catch(_ => {
-        result.userSaved = false;
-        result.message = 'Username already exists.';
-        result.status = 'CONFLICT';
-      });
-  } else {
-    result.userSaved = false;
-    result.message = 'Missing email and password.';
-    result.status = 'BAD_REQUEST';
-  }
-  return result;
-}
-
 function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong';
   /* eslint-disable */
@@ -129,5 +77,58 @@ function getMemberValidationDate(numberOfSemestersToSignUpFor) {
 
   return membershipValidationDate;
 }
+
+/**
+ * Register a new user.
+ * @param {Object} newUser - The user that is to be registered along with
+ *                           information about them.
+ * @returns {Object} result - Contains three values that inform the requester
+ *                            whether or not the request to register was
+ *                            successful or not.
+ */
+async function registerUser(userToAdd){
+  let result = {
+    userSaved: true,
+    message: '',
+    status: 'OK'
+  };
+  if (userToAdd.email && userToAdd.password) {
+    const newUser = new User({
+      password: userToAdd.password,
+      firstName: userToAdd.firstName,
+      middleInitial: userToAdd.middleInitial || '',
+      lastName: userToAdd.lastName,
+      email: userToAdd.email.toLowerCase(),
+      major: userToAdd.major || ''
+    });
+
+    const membershipValidUntil = getMemberValidationDate(
+      userToAdd.numberOfSemestersToSignUpFor
+    );
+    newUser.membershipValidUntil = membershipValidUntil;
+
+    const testPassword = testPasswordStrength(userToAdd.password);
+
+    if (!testPassword.success) {
+      result.userSaved = false;
+      result.message = testPassword.message;
+      result.status = 'BAD_REQUEST';
+      return result;
+    }
+
+    await newUser.save()
+      .catch(_ => {
+        result.userSaved = false;
+        result.message = 'Username already exists.';
+        result.status = 'CONFLICT';
+      });
+  } else {
+    result.userSaved = false;
+    result.message = 'Missing email and password.';
+    result.status = 'BAD_REQUEST';
+  }
+  return result;
+}
+
 
 module.exports = {registerUser};
