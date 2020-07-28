@@ -80,16 +80,7 @@ router.post('/login', function(req, res) {
                 // query
                 { email: user.email },
                 // update this field
-                { pagesPrinted: 0 },
-                function(error, result) {
-                  if (error) {
-                    return res.sendStatus(BAD_REQUEST);
-                  }
-
-                  if (result.nModified < 1) {
-                    return res.sendStatus(NOT_FOUND);
-                  }
-                }
+                { pagesPrinted: 0 }
               );
             }
 
