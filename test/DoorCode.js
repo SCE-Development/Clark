@@ -210,19 +210,11 @@ describe('DoorCode', () => {
         expect(result).to.have.status(NOT_FOUND);
       }
     );
-    it('Should return 200 when a code is sucessfully updated', (done) => {
+    it('Should return 200 when a code is sucessfully updated', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .post('/api/DoorCode/editCode')
-        .send({ token, id: codeId, ...EDITED_CODE })
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          done();
-        })
-        .catch((err) => {
-          throw err;
-        });
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/DoorCode/editCode', {id: codeId, ...EDITED_CODE}
+      );
     });
     it('The update should be reflected in the database', async () => {
       setTokenStatus(true);

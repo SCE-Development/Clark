@@ -139,29 +139,20 @@ describe('InventoryItem', () => {
         token, '/api/InventoryItem/editItem', UPDATED_ITEM);
       expect(result).to.have.status(OK);
     });
-    it('The update should be reflected in the database', done => {
+    it('The update should be reflected in the database', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .get('/api/InventoryItem/getItems')
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          const getItemsResponse = res.body;
-          expect(getItemsResponse).to.have.length(1);
-          expect(getItemsResponse[0].name).to.equal(UPDATED_ITEM.name);
-          expect(getItemsResponse[0].price).to.equal(UPDATED_ITEM.price);
-          expect(getItemsResponse[0].stock).to.equal(UPDATED_ITEM.stock);
-          expect(getItemsResponse[0].category).to.equal(UPDATED_ITEM.category);
-          expect(getItemsResponse[0].description).to.equal(
-            UPDATED_ITEM.description
-          );
-          expect(getItemsResponse[0].picture).to.equal(UPDATED_ITEM.picture);
-
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendGetRequest('/api/InventoryItem/getItems');
+      expect(result).to.have.status(OK);
+      const getItemsResponse = result.body;
+      expect(getItemsResponse).to.have.length(1);
+      expect(getItemsResponse[0].name).to.equal(UPDATED_ITEM.name);
+      expect(getItemsResponse[0].price).to.equal(UPDATED_ITEM.price);
+      expect(getItemsResponse[0].stock).to.equal(UPDATED_ITEM.stock);
+      expect(getItemsResponse[0].category).to.equal(UPDATED_ITEM.category);
+      expect(getItemsResponse[0].description).to.equal(
+        UPDATED_ITEM.description
+      );
+      expect(getItemsResponse[0].picture).to.equal(UPDATED_ITEM.picture);
     });
   });
 
@@ -183,21 +174,13 @@ describe('InventoryItem', () => {
         token, '/api/InventoryItem/deleteItem', {name: itemName});
       expect(result).to.have.status(OK);
     });
-    it('The deleted item should be reflected in the database', done => {
+    it('The deleted item should be reflected in the database', async () => {
       setTokenStatus(true);
-      chai
-        .request(app)
-        .get('/api/InventoryItem/getItems')
-        .then(function(res) {
-          expect(res).to.have.status(OK);
-          const getItemsResponse = res.body;
-          getItemsResponse.should.be.a('array');
-          expect(getItemsResponse).to.have.length(0);
-          done();
-        })
-        .catch(err => {
-          throw err;
-        });
+      const result = await test.sendGetRequest('/api/InventoryItem/getItems');
+      expect(result).to.have.status(OK);
+      const getItemsResponse = result.body;
+      getItemsResponse.should.be.a('array');
+      expect(getItemsResponse).to.have.length(0);
     });
   });
 });
