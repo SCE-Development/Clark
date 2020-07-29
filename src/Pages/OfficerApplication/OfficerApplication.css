@@ -2,6 +2,10 @@
     box-sizing: border-box;
 }
 
+p{
+    text-align: center;
+}
+
 #wrapper{
     width: 600px;
     margin: 5% auto;

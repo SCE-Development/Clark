@@ -81,7 +81,7 @@ export default function UserNavBar(props) {
       ].join('')
     }
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events', month: null }, {title: 'Officer Application', route:'/officerApplication', month: [8,9,10] }];
+  const unauthedRoutes = [{ title: 'Events', route: '/events', month: null }, {title: 'Officer Application', route:'/officerApplication', month: [7,8,9] }];
 
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
@@ -162,7 +162,7 @@ export default function UserNavBar(props) {
                 </DropdownItem>
               )}
               {unauthedRoutes.map((link, index) => {
-                if (link.month === null || new Date().getMonth() in link.month){
+                if (link.month === null || link.month.includes(new Date().getMonth())){
                   return (
                       <DropdownItem className='drp-item' key={index}>
                         <NavItem>  
@@ -173,6 +173,7 @@ export default function UserNavBar(props) {
                       </DropdownItem>
                   );
                 }
+                return null;
               })}
               {props.authenticated && props.user ? (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
@@ -260,7 +261,7 @@ export default function UserNavBar(props) {
               </UncontrolledDropdown>
             )}
             {unauthedRoutes.map((link, index) => {
-              if (link.month === null || new Date().getMonth() in link.month){
+              if (link.month === null || link.month.includes(new Date().getMonth())){
                 return(
                   <NavItem key={index}>
                     <NavLink id='navlink-text' href={link.route}>
@@ -269,6 +270,7 @@ export default function UserNavBar(props) {
                   </NavItem>
                 );
               }
+              return null;
             })}
             {props.authenticated && props.user ? (
               <UncontrolledDropdown nav inNavbar>
