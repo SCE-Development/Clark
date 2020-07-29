@@ -43,9 +43,15 @@ export function parseRange(pages, maxPages) {
 
 /**
  * Print the page
- * @param {Object} data         Encoded file
- * @returns {PrintApiResponse}  Containing information for if
- *                              the page is printing
+ * @param {Object} data - Encoded file and its configurations
+ * @param {String|undefined} data.raw - Encoded file
+ * @param {Number|undefined} data.copies - Number of copies
+ * @param {String|undefined} data.sides - Sides to print:
+ * one-sided or two-sided
+ * @param {String|undefined} data.pageRanges - Pages to print:
+ * 1-2, 5, 7-10
+ * @returns {PrintApiResponse} - Containing information for if
+ * the page successfully printed
  */
 export async function printPage(data) {
   let status = new PrintApiResponse();
