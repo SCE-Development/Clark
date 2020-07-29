@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Cookies from 'universal-cookie';
 import {
   ButtonDropdown,
   Collapse,
+  CustomInput,
   NavbarToggler,
   Navbar,
   NavbarBrand,
@@ -15,9 +17,13 @@ import {
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
 import logo from '../Navbar/sce_logo.png';
+import { toggleDarkTheme } from '../../APIFunctions/dark-theme';
+import { sunIcon, moonIcon } from '../../Pages/Overview/SVG';
+
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [darkTheme, setDarkTheme] = useState(true);
   const icons = [
     {
       link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -76,10 +82,32 @@ export default function UserNavBar(props) {
     }
   ];
   const unauthedRoutes = [{ title: 'Events', route: '/events' }];
-
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
+
+  function createCookie() {
+    if (document.body.className === 'light') {
+      setDarkTheme(true);
+    } else {
+      setDarkTheme(false);
+    }
+    toggleDarkTheme();
+  }
+
+  function keepState() {
+    const cookie = new Cookies();
+    if (cookie.get('dark') === 'true') {
+      setDarkTheme(true);
+    } else {
+      setDarkTheme(false);
+    }
+  }
+
+  useEffect(() => {
+    keepState();
+    // eslint-disable-next-line
+  }, [])
 
   return (
     <div className='user-nav'>
@@ -89,6 +117,12 @@ export default function UserNavBar(props) {
             <img id='logo-image' src={logo} alt={'sce logo'} />
           </div>
         </NavbarBrand>
+        <div style={{ width: '0.7rem', height: '1.9rem' }} >{sunIcon()}</div>
+        <div style={{ width: '1.2rem' }} />
+        <CustomInput onChange={createCookie} className='darkToggle'
+          type='switch' id='exampleCustomSwitch' name='customSwitch'
+          checked={darkTheme} />
+        <div style={{ width: '1.1rem', height: '1.9rem' }} >{moonIcon()}</div>
         <NavbarToggler tag='h1'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
             <DropdownToggle className='hamburger-button'>
@@ -111,17 +145,17 @@ export default function UserNavBar(props) {
                 </NavItem>
               </DropdownItem>
               {props.user && props.user.accessLevel >=
-              membershipState.MEMBER && (
+                membershipState.MEMBER && (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                    Printing
+                      Printing
                   </DropdownItem>
                   <DropdownMenu className='drp-menu'>
                     <DropdownItem className='drp-item' href='/2DPrinting'>
-                      2D Printing
+                        2D Printing
                     </DropdownItem>
                     <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                      3D Printing
+                        3D Printing
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownItem>
@@ -134,6 +168,7 @@ export default function UserNavBar(props) {
                         {link.title}
                       </NavLink>
                     </NavItem>
+
                   </DropdownItem>
                 );
               })}
@@ -179,14 +214,14 @@ export default function UserNavBar(props) {
               ) : (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                    Join Us!
+                      Join Us!
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
                     <DropdownItem className='drp-item' href='/register'>
-                      Membership Application
+                        Membership Application
                     </DropdownItem>
                     <DropdownItem className='drp-item' href='/login'>
-                      Login
+                        Login
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownItem>
@@ -272,14 +307,14 @@ export default function UserNavBar(props) {
             ) : (
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle id='navlink-text' nav caret>
-                  Join Us!
+                    Join Us!
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem className='drp-item' href='/register'>
-                    Membership Application
+                      Membership Application
                   </DropdownItem>
                   <DropdownItem className='drp-item' href='/login'>
-                    Login
+                      Login
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>

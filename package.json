@@ -33,6 +33,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
+    "darkreader": "^4.9.15",
     "express": "^4.16.2",
     "filepond": "^4.18.0",
     "filepond-plugin-file-encode": "^2.1.6",
@@ -49,7 +50,8 @@
     "react-iframe": "^1.8.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.3.0",
-    "reactstrap": "^8.5.1"
+    "reactstrap": "^8.2.0",
+    "universal-cookie": "^4.0.3"
   },
   "devDependencies": {
     "@babel/register": "^7.10.5",
