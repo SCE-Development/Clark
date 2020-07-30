@@ -73,7 +73,11 @@ export async function printPage(data) {
 /**
  * Log the print request
  * @param {Object} data         Encoded file
+<<<<<<< HEAD
  * @returns {ApiResponse}  Containing information for if
+=======
+ * @returns {PrintApiResponse}  Containing information for if
+>>>>>>> c34ea9d... Add PrintingAnalytics page
  *                              the page is printing
  */
 export async function logPrintRequest(data) {

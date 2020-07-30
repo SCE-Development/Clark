@@ -33,15 +33,8 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "darkreader": "^4.9.15",
-=======
     "chart.js": "^2.9.3",
->>>>>>> c34ea9d... Add PrintingAnalytics page
-=======
-    "chart.js": "^2.9.3",
->>>>>>> c34ea9d... Add PrintingAnalytics page
     "express": "^4.16.2",
     "filepond": "^4.18.0",
     "filepond-plugin-file-encode": "^2.1.6",
