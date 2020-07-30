@@ -5,7 +5,9 @@ import {
   NavLink,
   Nav,
   Collapse,
-  NavbarToggler
+  NavbarToggler,
+  DropdownItem,
+  DropdownMenu
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
 
@@ -16,7 +18,8 @@ export default function AdminNavbar(props) {
     { title: 'Overview', route: '/dashboard' },
     { title: 'Event Manager', route: '/event-manager' },
     { title: 'LED Sign', route: '/led-sign' },
-    { title: '3DConsole', route: '/3DConsole' }
+    { title: '3DConsole', route: '/3DConsole' },
+    { title: '2D Printing Analytics', route: '/printing-analytics' }
   ];
 
   return (
@@ -30,7 +33,7 @@ export default function AdminNavbar(props) {
         onClick={() => setCollapsed(!collapsed)}
         className='mr-2'
       />
-      <Collapse isOpen={!collapsed} navbar>
+      <Collapse isOpen={!collapsed} navbar> 
         <Nav className='ml-auto sce-nav' navbar>
           {navbarLinks.map((link, index) => {
             const navlink = (
