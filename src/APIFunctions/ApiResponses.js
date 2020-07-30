@@ -40,15 +40,3 @@ export class PrintApiResponse extends ApiResponse {
     this.remainingPages = 0;
   }
 }
-
-/**
- * Class to hold the server responses
- * @extends {ApiResponse}
- * @member {object} data - The print logs in the database
- */
-export class PrintLogApiResponse extends ApiResponse {
-  constructor(error = false, responseData = null) {
-    super(error, responseData);
-    this.data = [];
-  }
-}

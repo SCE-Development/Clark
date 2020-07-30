@@ -107,7 +107,7 @@ export default function Analytics() {
   useEffect(() => {
     async function fetchPrintLogs() {
       const fetchedLogs = await getAllLogs();
-      setPrintLogs(fetchedLogs.data);
+      setPrintLogs(fetchedLogs.responseData);
     }
     fetchPrintLogs();
   }, []);
