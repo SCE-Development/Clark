@@ -1,8 +1,7 @@
 import axios from 'axios';
 import {
   PrintApiResponse,
-  ApiResponse,
-  PrintLogApiResponse } from './ApiResponses';
+  ApiResponse } from './ApiResponses';
 import { RPC_API_URL, LOGGING_API_URL } from '../config/config.json';
 
 /**
@@ -85,7 +84,7 @@ export async function logPrintRequest(data) {
  * @returns {}  Containing all print logs
  */
 export async function getAllLogs() {
-  let status = new PrintLogApiResponse();
+  let status = new ApiResponse();
   await axios.get(LOGGING_API_URL + '/api/PrintLog/getPrintLogs')
     .then(response => {
       status.data = response.data;
