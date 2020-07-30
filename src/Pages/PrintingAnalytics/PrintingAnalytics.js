@@ -120,10 +120,10 @@ export default function Analytics() {
 
     for (let i = 0; i < printLogs.length; i++) {
       let dateAndTime = printLogs[i].printedDate.split('T');
-      
+
       // BUG: selected date is a day behind desired
       // console.log(selectedDate.toISOString().split('T')[0]);
-      console.log(dateAndTime[0].to);
+      // console.log(dateAndTime[0].to);
       if (dateAndTime[0] === selectedDate.toISOString().split('T')[0]) {
         let time = dateAndTime[1].split(':');
         let hour = parseInt(time[0]);
