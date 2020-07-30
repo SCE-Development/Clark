@@ -1,0 +1,56 @@
+table {
+  width: 100%;
+  text-align: center;
+  border-spacing: 15% 15%;
+}
+
+.table-scroll {
+  height: 20em;
+  overflow: auto;
+}
+
+.table-component {
+  margin-top: 5em;
+  position: relative;
+}
+
+tr:nth-child(even) {
+  background-color: #cfcfcf;
+}
+
+th, td {
+  text-align: center;
+  padding: 1em 0%;
+}
+
+.line-graph {
+  padding-left: 2%;
+  width: 50%;
+}
+
+.date-picker-component {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1em auto;
+}
+
+.date-picker {
+  text-align: center;
+  margin-left: 0.5em;
+}
+
+.select-date-text {
+  display: flex;
+  align-items: center;
+}
+
+.pie-chart {
+  padding-left: 2%;
+  width: 50%;
+}
+
+.visualizations {
+  display: flex;
+  justify-content: center;
+}

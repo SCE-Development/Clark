@@ -26,7 +26,8 @@ import {
   range,
   parseRange,
   printPage,
-  getPagesPrinted
+  getPagesPrinted,
+  logPrintRequest
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 import {
@@ -222,20 +223,33 @@ export default function Printing(props) {
 
   async function handlePrinting(file) {
     const raw = file.getFileEncodeBase64String();
+    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
+    const memberName = props.user.firstName + ' ' + props.user.lastName;
     let data = {
       raw,
       pageRanges: pageRanges.replace(/\s/g, ''),
       sides,
       copies
     };
-    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
 
     let status = await printPage(data);
     if (!status.error) {
       editUser({ ...props.user, pagesPrinted }, props.user.token);
       setPrintStatus('Printing succeeded!');
+      logPrintRequest({
+        pagesPrinted,
+        destination: 'Right',
+        printedDate: new Date().toISOString(),
+        memberName
+      });
     } else {
       setPrintStatus(failPrintStatus);
+      logPrintRequest({
+        pagesPrinted,
+        destination: 'Fail',
+        printedDate: new Date().toISOString(),
+        memberName
+      });
     }
     setStatusModal(true);
   }
