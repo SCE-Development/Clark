@@ -33,7 +33,7 @@ export default function AdminNavbar(props) {
         onClick={() => setCollapsed(!collapsed)}
         className='mr-2'
       />
-      <Collapse isOpen={!collapsed} navbar> 
+      <Collapse isOpen={!collapsed} navbar>
         <Nav className='ml-auto sce-nav' navbar>
           {navbarLinks.map((link, index) => {
             const navlink = (
