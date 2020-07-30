@@ -34,8 +34,8 @@ describe('PrintLog', () => {
 
   const VALID_PRINT_LOG = {
     numPages: 2,
-    chosenPrinter: 'HP-LaserJet-p2015dn-right',
-    printedDate: new Date('06/21/2020'),
+    destination: 'HP-LaserJet-p2015dn-right',
+    printedDate: new Date(),
     memberName: 'Bob',
   };
 
@@ -67,7 +67,7 @@ describe('PrintLog', () => {
       expect(getEventsResponse).to.have.length(1);
       expect(getEventsResponse[0].numPages).to.equal(VALID_PRINT_LOG.numPages);
       expect(getEventsResponse[0].chosenPrinter).to.equal(
-        VALID_PRINT_LOG.chosenPrinter
+        VALID_PRINT_LOG.destination
       );
       expect(getEventsResponse[0].printedDate).to.equal(
         VALID_PRINT_LOG.printedDate.toISOString()

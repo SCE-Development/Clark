@@ -23,6 +23,7 @@ import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Team from './Pages/TheTeam/TheTeam.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
+import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
 
 export default function Routing({ appProps }) {
@@ -101,6 +102,13 @@ export default function Routing({ appProps }) {
       path: '/profile',
       allowedIf: userIsAuthenticated,
       redirect: '/login'
+    },
+    {
+      Component: PrintingAnalytics,
+      path: '/printing-analytics',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
     },
   ];
   const signedOutRoutes = [
