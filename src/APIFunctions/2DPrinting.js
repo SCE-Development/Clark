@@ -81,13 +81,13 @@ export async function logPrintRequest(data) {
 
 /**
  * Retrieves all print logs
- * @returns {}  Containing all print logs
+ * @returns {ApiResponse}  Containing all print logs
  */
 export async function getAllLogs() {
   let status = new ApiResponse();
   await axios.get(LOGGING_API_URL + '/api/PrintLog/getPrintLogs')
     .then(response => {
-      status.data = response.data;
+      status.responseData = response.data;
     })
     .catch(() => {
       status.error = true;
