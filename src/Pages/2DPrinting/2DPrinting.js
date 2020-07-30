@@ -26,7 +26,8 @@ import {
   range,
   parseRange,
   printPage,
-  getPagesPrinted
+  getPagesPrinted,
+  logPrintRequest
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 import {
@@ -174,22 +175,33 @@ export default function Printing(props) {
 
   async function handlePrinting(file) {
     const raw = file.getFileEncodeBase64String();
-    const destination = 'HP-LaserJet-p2015dn';
+    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
+    const memberName = props.user.firstName + ' ' + props.user.lastName;
     let data = {
       raw,
       pageRanges: pageRanges.replace(/\s/g, ''),
       sides,
-      copies,
-      destination
+      copies
     };
-    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
 
     let status = await printPage(data);
     if (!status.error) {
       editUser({ ...props.user, pagesPrinted }, props.user.token);
       setPrintStatus('Printing succeeded!');
+      logPrintRequest({
+        numPages: numPages * copies,
+        destination: status.responseData,
+        printedDate: new Date(),
+        memberName
+      });
     } else {
       setPrintStatus(failPrintStatus);
+      logPrintRequest({
+        numPages: numPages * copies,
+        destination: 'Fail',
+        printedDate: new Date(),
+        memberName
+      });
     }
     setStatusModal(true);
   }
@@ -248,6 +260,48 @@ export default function Printing(props) {
       setCanPrint(false);
       setPrintStatus('Cannot print encrypted PDF');
     }
+  }
+
+
+  async function handlePrinting(file) {
+    const raw = file.getFileEncodeBase64String();
+    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
+    const memberName = props.user.firstName + ' ' + props.user.lastName;
+    let data = {
+      raw,
+      pageRanges: pageRanges.replace(/\s/g, ''),
+      sides,
+      copies
+    };
+
+    let status = await printPage(data);
+    if (!status.error) {
+      editUser({ ...props.user, pagesPrinted }, props.user.token);
+      setPrintStatus('Printing succeeded!');
+      logPrintRequest({
+        pagesPrinted,
+        destination: 'Right',
+        printedDate: new Date().toISOString(),
+        memberName
+      });
+    } else {
+      setPrintStatus(failPrintStatus);
+      logPrintRequest({
+        pagesPrinted,
+        destination: 'Fail',
+        printedDate: new Date().toISOString(),
+        memberName
+      });
+    }
+    setStatusModal(true);
+  }
+
+  function finishPrinting() {
+    setConfirmModal(false);
+    setPreviewModal(false);
+    setFiles([]);
+    setContinue(false);
+    setPages(false);
   }
 
   return (
