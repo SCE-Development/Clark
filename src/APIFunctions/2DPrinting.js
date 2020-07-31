@@ -199,6 +199,37 @@ export async function getAllLogs() {
 }
 
 /**
+ * Log the print request
+ * @param {Object} data         Encoded file
+ * @returns {ApiResponse}  Containing information for if
+ *                              the page is printing
+ */
+export async function logPrintRequest(data) {
+  let status = new ApiResponse();
+  await axios.post(LOGGING_API_URL + '/api/PrintLog/addPrintLog', data)
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+/**
+ * Retrieves all print logs
+ * @returns {}  Containing all print logs
+ */
+export async function getAllLogs() {
+  let status = new ApiResponse();
+  await axios.get(LOGGING_API_URL + '/api/PrintLog/getPrintLogs')
+    .then(response => {
+      status.responseData = response.data;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+/**
  * Return the number of pages the current user has printed
  * @param {string} email            email of the current user
  * @param {string} token            token of the current user
