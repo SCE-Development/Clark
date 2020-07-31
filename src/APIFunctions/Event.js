@@ -2,6 +2,17 @@ import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
 /**
+ * Handles the edge case of a time being at midnight and must be converted
+ * from 0:20 AM for example.
+ * @param {string} time a time to be added to an event
+ */
+function handleMidnightTime(time) {
+  const [hour, suffix] = time.split(':');
+  if (hour === '0') return `12:${suffix}`;
+  return time;
+}
+
+/**
  * Retrieve all events.
  * @returns {ApiResponse} Containing any error information related to the
  * request or the list of events
@@ -161,17 +172,6 @@ export function convertTime24to12(time24h) {
   const [hour, minute] = time24h.split(':');
   const suffix = parseInt(hour) - 12 > 0 ? 'PM' : 'AM';
   return `${parseInt(hour) % 12}:${minute} ${suffix}`;
-}
-
-/**
- * Handles the edge case of a time being at midnight and must be converted
- * from 0:20 AM for example.
- * @param {string} time a time to be added to an event
- */
-function handleMidnightTime(time) {
-  const [hour, suffix] = time.split(':');
-  if (hour === '0') return `12:${suffix}`;
-  return time;
 }
 
 /**

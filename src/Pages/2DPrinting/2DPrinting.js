@@ -70,12 +70,44 @@ export default function Printing(props) {
     title: 'Printing'
   };
 
+  async function updateEmbed(totalPages) {
+    try {
+      const pdf = await PDFDocument.load(dataURI);
+      const display = await PDFDocument.create();
+      const copiedPages = await display.copyPages(
+        pdf,
+        Array.from(totalPages).map(x => x - 1)
+      );
+      copiedPages.forEach(element => {
+        display.addPage(element);
+      });
+      const data = await display.saveAsBase64({ dataUri: true });
+      setPreviewDisplay(data);
+    } catch {
+      setStatusModal(true);
+      setCanPrint(false);
+      setPrintStatus('Cannot print encrypted PDF');
+    }
+  }
+
+  async function handleCanPrint(totalPages, copy) {
+    const result = await getPagesPrinted(
+      props.user.email,
+      props.user.token,
+      totalPages,
+      copy
+    );
+    setCanPrint(result.canPrint);
+    setDisplayPagesLeft(result.remainingPages);
+    updateEmbed(totalPages);
+  }
+
   const continueButtonProps = {
     color: 'primary',
     className: 'continue',
     hidden: !continueButn,
     onClick: () => {
-      handleCanPrint(usedPages, copies);
+      handleCanPrint(usedPages, copies); // ->
       setPreviewModal(true);
     },
     text: 'Continue'
@@ -140,6 +172,28 @@ export default function Printing(props) {
     name: 'Pages',
   };
 
+  async function handlePrinting(file) {
+    const raw = file.getFileEncodeBase64String();
+    const destination = 'HP-LaserJet-p2015dn';
+    let data = {
+      raw,
+      pageRanges: pageRanges.replace(/\s/g, ''),
+      sides,
+      copies,
+      destination
+    };
+    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
+
+    let status = await printPage(data);
+    if (!status.error) {
+      editUser({ ...props.user, pagesPrinted }, props.user.token);
+      setPrintStatus('Printing succeeded!');
+    } else {
+      setPrintStatus(failPrintStatus);
+    }
+    setStatusModal(true);
+  }
+
   const confirmModalProps = {
     headerText: 'Are you sure you want to print?',
     bodyText: '',
@@ -154,6 +208,14 @@ export default function Printing(props) {
     },
     open: confirmModal
   };
+
+  function finishPrinting() {
+    setConfirmModal(false);
+    setPreviewModal(false);
+    setFiles([]);
+    setContinue(false);
+    setPages(false);
+  }
 
   const statusModalProps = {
     headerText: 'Printing Status',
@@ -171,38 +233,6 @@ export default function Printing(props) {
     open: statusModal
   };
 
-  async function updateEmbed(totalPages) {
-    try {
-      const pdf = await PDFDocument.load(dataURI);
-      const display = await PDFDocument.create();
-      const copiedPages = await display.copyPages(
-        pdf,
-        Array.from(totalPages).map(x => x - 1)
-      );
-      copiedPages.forEach(element => {
-        display.addPage(element);
-      });
-      const data = await display.saveAsBase64({ dataUri: true });
-      setPreviewDisplay(data);
-    } catch {
-      setStatusModal(true);
-      setCanPrint(false);
-      setPrintStatus('Cannot print encrypted PDF');
-    }
-  }
-
-  async function handleCanPrint(totalPages, copy) {
-    const result = await getPagesPrinted(
-      props.user.email,
-      props.user.token,
-      totalPages,
-      copy
-    );
-    setCanPrint(result.canPrint);
-    setDisplayPagesLeft(result.remainingPages);
-    updateEmbed(totalPages);
-  }
-
   async function handleUpdate(file) {
     try {
       setDataURI(file.getFileEncodeDataURL());
@@ -218,34 +248,6 @@ export default function Printing(props) {
       setCanPrint(false);
       setPrintStatus('Cannot print encrypted PDF');
     }
-  }
-
-  async function handlePrinting(file) {
-    const raw = file.getFileEncodeBase64String();
-    let data = {
-      raw,
-      pageRanges: pageRanges.replace(/\s/g, ''),
-      sides,
-      copies
-    };
-    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
-
-    let status = await printPage(data);
-    if (!status.error) {
-      editUser({ ...props.user, pagesPrinted }, props.user.token);
-      setPrintStatus('Printing succeeded!');
-    } else {
-      setPrintStatus(failPrintStatus);
-    }
-    setStatusModal(true);
-  }
-
-  function finishPrinting() {
-    setConfirmModal(false);
-    setPreviewModal(false);
-    setFiles([]);
-    setContinue(false);
-    setPages(false);
   }
 
   return (
