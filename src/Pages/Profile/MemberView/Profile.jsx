@@ -6,6 +6,7 @@ import { formatFirstAndLastName } from '../../../APIFunctions/Profile';
 import Header from '../../../Components/Header/Header';
 import PrintRequest from './PrintRequest';
 import ChangePassword from './ChangePassword';
+
 const membershipStatus = require('../../../Enums').membershipState;
 
 export default class Profile extends Component {
@@ -37,21 +38,26 @@ export default class Profile extends Component {
 	render() {
 		const fields = this.state.user
 			? [
-					{ title: 'Welcome', value: this.state.fullName },
-					{ title: 'Door Code', value: this.state.user.doorCode },
-					{ title: 'Joined Date', value: this.state.user.joinDate.slice(0, 10) },
-					{ title: 'Email', value: this.state.user.email },
+					{ title: `Welcome, ${this.state.fullName}!`, value: '', style: '4rem' },
+					{ title: 'Door Code', value: this.state.user.doorCode, icon: <i class="fas fa-door-open" /> },
+					{
+						title: 'Joined Date',
+						value: this.state.user.joinDate.slice(0, 10),
+						icon: <i class="fas fa-calendar-day" />
+					},
+					{ title: `${this.state.user.email}`, value: '', style: '2.5rem' },
 					{
 						title: 'Membership Expiration',
 						value:
 							this.props.user.accessLevel < membershipStatus.MEMBER
 								? 'Not Valid'
-								: this.state.user.membershipValidUntil.slice(0, 10)
+								: this.state.user.membershipValidUntil.slice(0, 10),
+						icon: <i class="fas fa-exclamation-triangle" />
 					},
-					{ title: '2D Prints', value: '' },
-					{ title: 'Request 3D Printing', value: <PrintRequest /> },
-					{ title: 'Sign-in with Discord', value: '' },
-					{ title: 'Change Password', value: <ChangePassword /> }
+					{ title: '2D Prints', value: '', icon: <i class="fas fa-print" /> },
+					{ title: 'Request 3D Printing', value: <PrintRequest />, icon: <i class="fas fa-cubes" /> },
+					{ title: 'Connect with Discord', value: '', icon: <i class="fab fa-discord" /> },
+					{ title: 'Change Password', value: <ChangePassword />, icon: <i class="fas fa-lock" /> }
 				]
 			: [
 					{ title: '', value: '' },
