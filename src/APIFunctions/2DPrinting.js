@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {
   PrintApiResponse,
-  ApiResponse } from './ApiResponses';
+  ApiResponse
+} from './ApiResponses';
 import { RPC_API_URL, LOGGING_API_URL } from '../config/config.json';
 
 /**
