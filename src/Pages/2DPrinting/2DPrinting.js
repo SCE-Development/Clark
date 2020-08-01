@@ -261,7 +261,7 @@ export default function Printing(props) {
       setPrintStatus('Cannot print encrypted PDF');
     }
   }
-  
+
   return (
     <div>
       <Header {...headerProps} />
