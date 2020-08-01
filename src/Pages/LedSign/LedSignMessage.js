@@ -1,22 +1,56 @@
 import React, { useState } from "react";
-import { Spinner, Input, Button, Container } from 'reactstrap';
-import './led-sign-message.css';
+import { CardImg, Card, CardBody, CardTitle, Input } from "reactstrap";
+import "./led-sign-message.css";
+import pencil from "./pencil.png";
+import trash from "./trash.png";
 
 export default function LedSignMessage(props) {
-  const [backgroundColor, setBackgroundColor] = useState("#0000ff");
-  const [textColor, setTextColor] = useState("#00ff00");
-  const [borderColor, setBorderColor] = useState("#ff0000");
+  const [deleted, setIsDeleted] = useState("displayed");
 
+  const deleteMessage = () => {
+    setIsDeleted("notDisplayed");
+  };
   return (
     <React.Fragment>
-      <h1>{props.text}</h1>
-      <p>Brightness: {props.brightness}</p>
-      <p>Scroll Speed: {props.scrollSpeed}</p>
-      <p>Background Color: {props.backgroundColor}</p>
-      <Input className='input-bar' />
-      <p>Text Color: {props.textColor}</p>
-      <Input className='input-bar' />
-      <p>Border Color: <Input className='input-bar' {...props.borderColor} /></p>
+      <Card deleted={deleted} className="card-wrapper">
+        <CardBody>
+          <CardImg className="img-dim" src={pencil} alt="pencil-pic" />
+          <CardImg
+            onClick={() => deleteMessage()}
+            className="img-dim"
+            src={trash}
+            alt="trash-pic"
+          />
+          <CardTitle>
+            <h1>{props.text}</h1>
+          </CardTitle>
+          <div className="card-words">
+            <p>Brightness: {props.brightness}</p>
+            <p>Scroll Speed: {props.scrollSpeed}</p>
+            <p className='color-form'>
+              Background Color:{" "}
+              <div
+                className="color-bar"
+                style={{ backgroundColor: props.backgroundColor }}
+              />
+            </p>
+            <p className='color-form'>
+              Text Color:{" "}
+              <div
+                className="color-bar"
+                style={{ backgroundColor: props.backgroundColor }}
+              />
+            </p>
+            <p className='color-form'>
+              Border Color:{" "}
+              <div
+                className="color-bar"
+                style={{ backgroundColor: props.backgroundColor }}
+              />
+            </p>
+          </div>
+        </CardBody>
+      </Card>
     </React.Fragment>
   );
 }

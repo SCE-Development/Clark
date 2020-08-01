@@ -1,70 +1,70 @@
-import React, { useState, useEffect } from 'react';
-import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-import { Spinner, Input, Button, Container } from 'reactstrap';
-import './led-sign.css';
-import Header from '../../Components/Header/Header';
-import LedSignMessage from './LedSignMessage';
+import React, { useState, useEffect } from "react";
+import { healthCheck, updateSignText } from "../../APIFunctions/LedSign";
+import { Spinner, Input, Button, Container } from "reactstrap";
+import "./led-sign.css";
+import Header from "../../Components/Header/Header";
+import LedSignMessage from "./LedSignMessage";
 
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [brightness, setBrightness] = useState(50);
   const [scrollSpeed, setScrollSpeed] = useState(25);
-  const [backgroundColor, setBackgroundColor] = useState('#0000ff');
-  const [textColor, setTextColor] = useState('#00ff00');
-  const [borderColor, setBorderColor] = useState('#ff0000');
+  const [backgroundColor, setBackgroundColor] = useState("#0000ff");
+  const [textColor, setTextColor] = useState("#00ff00");
+  const [borderColor, setBorderColor] = useState("#ff0000");
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const inputArray = [
     {
-      title: 'Sign Text:',
-      placeholder: 'Enter Text',
+      title: "Sign Text:",
+      placeholder: "Enter Text",
       value: text,
-      type: 'text',
+      type: "text",
       onChange: e => setText(e.target.value),
-      maxLength: '50'
+      maxLength: "50"
     },
     {
-      title: 'Background Color',
+      title: "Background Color",
       value: backgroundColor,
-      type: 'color',
+      type: "color",
       onChange: e => setBackgroundColor(e.target.value)
     },
     {
-      title: 'Text Color',
+      title: "Text Color",
       value: textColor,
-      type: 'color',
+      type: "color",
       onChange: e => setTextColor(e.target.value)
     },
     {
-      title: 'Border Color',
+      title: "Border Color",
       value: borderColor,
-      type: 'color',
+      type: "color",
       onChange: e => setBorderColor(e.target.value)
     },
     {
-      title: 'Brightness:',
+      title: "Brightness:",
       value: brightness,
-      min: '25',
-      max: '75',
-      step: '1',
-      type: 'range',
+      min: "25",
+      max: "75",
+      step: "1",
+      type: "range",
       onChange: e => setBrightness(e.target.value)
     },
     {
-      title: 'Scroll Speed:',
-      id: 'scroll-speed',
+      title: "Scroll Speed:",
+      id: "scroll-speed",
       value: scrollSpeed,
-      min: '0',
-      max: '50',
-      step: '1',
-      type: 'range',
+      min: "0",
+      max: "50",
+      step: "1",
+      type: "range",
       onChange: e => setScrollSpeed(e.target.value)
     }
   ];
   const headerProps = {
-    title: 'LED Sign'
+    title: "LED Sign"
   };
 
   async function handleSend() {
@@ -87,10 +87,10 @@ function LedSign(props) {
     if (awaitingSignResponse || requestSuccessful === undefined) {
       return <></>;
     } else if (requestSuccessful) {
-      return <p className='sign-available'>Sign successfully updated!</p>;
+      return <p className="sign-available">Sign successfully updated!</p>;
     } else {
       return (
-        <p className='sign-unavailable'>The request failed. Try again later.</p>
+        <p className="sign-unavailable">The request failed. Try again later.</p>
       );
     }
   }
@@ -116,50 +116,52 @@ function LedSign(props) {
     }
     checkSignHealth(props.user.firstName);
     // eslint-disable-next-line
-  }, [])
+  }, []);
 
   function renderSignHealth() {
     if (loading) {
       return <Spinner />;
     } else if (signHealthy) {
-      return <span className='sign-available'> Sign is up.</span>;
+      return <span className="sign-available"> Sign is up.</span>;
     } else {
-      return <span className='sign-unavailable'> Sign is down!</span>;
+      return <span className="sign-unavailable"> Sign is down!</span>;
     }
   }
 
   const fakeMessages = [
     {
-      text: 'Big Oof',
+      text: "Big Oof",
       brightness: 50,
       scrollSpeed: 50,
-      backgroundColor: '#00FF00',
-      textColor: '#FF0000',
-      borderColor: '#0000FF',
+      backgroundColor: "#00FF00",
+      textColor: "#FF0000",
+      borderColor: "#0000FF"
     },
     {
-      text: 'kzv',
+      text: "kzv",
       brightness: 50,
       scrollSpeed: 50,
-      backgroundColor: '#00FF00',
-      textColor: '#FF0000',
-      borderColor: '#0000FF',
+      backgroundColor: "#00FF00",
+      textColor: "#FF0000",
+      borderColor: "#0000FF"
     },
     {
-      text: 'shoutout taline',
+      text: "shoutout taline taline rules",
       brightness: 50,
       scrollSpeed: 50,
-      backgroundColor: '#00FF00',
-      textColor: '#FF0000',
-      borderColor: '#0000FF',
-    },
+      backgroundColor: "#00FF00",
+      textColor: "#FF0000",
+      borderColor: "#0000FF"
+    }
   ];
   return (
     <div>
       <Header {...headerProps} />
-      {fakeMessages.map((fakeMessage) => (
-        <LedSignMessage {...fakeMessage} />
-      ))}
+      <div className='flex-container wrap-reverse'>
+        {fakeMessages.map(fakeMessage => (
+          <LedSignMessage {...fakeMessage} />
+        ))}
+      </div>
       {/* <div className='sign-wrapper'>
         <Container>
           <h1 className='sign-status'>
