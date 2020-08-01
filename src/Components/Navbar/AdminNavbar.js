@@ -5,9 +5,7 @@ import {
   NavLink,
   Nav,
   Collapse,
-  NavbarToggler,
-  DropdownItem,
-  DropdownMenu
+  NavbarToggler
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
 

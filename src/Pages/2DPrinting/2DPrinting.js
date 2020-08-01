@@ -261,49 +261,7 @@ export default function Printing(props) {
       setPrintStatus('Cannot print encrypted PDF');
     }
   }
-
-
-  async function handlePrinting(file) {
-    const raw = file.getFileEncodeBase64String();
-    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
-    const memberName = props.user.firstName + ' ' + props.user.lastName;
-    let data = {
-      raw,
-      pageRanges: pageRanges.replace(/\s/g, ''),
-      sides,
-      copies
-    };
-
-    let status = await printPage(data);
-    if (!status.error) {
-      editUser({ ...props.user, pagesPrinted }, props.user.token);
-      setPrintStatus('Printing succeeded!');
-      logPrintRequest({
-        pagesPrinted,
-        destination: 'Right',
-        printedDate: new Date().toISOString(),
-        memberName
-      });
-    } else {
-      setPrintStatus(failPrintStatus);
-      logPrintRequest({
-        pagesPrinted,
-        destination: 'Fail',
-        printedDate: new Date().toISOString(),
-        memberName
-      });
-    }
-    setStatusModal(true);
-  }
-
-  function finishPrinting() {
-    setConfirmModal(false);
-    setPreviewModal(false);
-    setFiles([]);
-    setContinue(false);
-    setPages(false);
-  }
-
+  
   return (
     <div>
       <Header {...headerProps} />
