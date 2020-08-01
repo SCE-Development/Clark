@@ -14,7 +14,7 @@ class OfficerApplication extends Component {
 			experience: '',
             linkedin: '',
             submitted: 'false',
-            enabled: [6,7,8,9]
+            enabledMonths: [7,8,9]
         };
         this.handleNameChange = this.handleNameChange.bind(this);
 		this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -89,14 +89,11 @@ class OfficerApplication extends Component {
     }
     
 	render() { 
-        if(!this.state.enabled.includes(new Date().getMonth())){
+        if(!this.state.enabledMonths.includes(new Date().getMonth())){
             return(
                 <div id="wrapper">
                     <p> 
-                       SCE Officer Applications are not available at this time.
-                    </p>
-                    <p> 
-                       Please check again at a later time.
+                       SCE Officer Applications are not available at this time. Please check again later.
                     </p>
                     <p> 
                        Thank you!
@@ -106,64 +103,66 @@ class OfficerApplication extends Component {
         }
         else {
             return (
-                <div className="ui equal width form" id="wrapper" onSubmit={this.handleSubmit}>
-                    <h2>SCE Officer Application 2020-21</h2>
-                    <form className="ui form" id="form-area">
-                        <div className="required field">
-                            <label htmlFor="full-name">Name</label>
-                            <h5>Enter your first and last name</h5>
-                            <input
-                                type="text"
-                                name="full-name"
-                                placeholder="Full Name"
-                                onChange={this.handleNameChange}
-                                required
-                            />
-                        </div>
-                        <div className="required field">
-                            <label htmlFor="email">Email</label>
-                            <h5>Enter your email address</h5>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="john.doe@sjsu.edu"
-                                onChange={this.handleEmailChange}
-                                required
-                            />
-                        </div>
-                        <div className="required field">
-                            <label>Graduation Date</label>
-                            <div className="two fields">
-                                <div className="four width field">
-                                    <h5>Month</h5>
-                                    <input type="text" placeholder="MM" onChange={this.handleMonthChange} required />
-                                </div>
-                                <div className="four width field">
-                                    <h5>Year</h5>
-                                    <input type="text" placeholder="YYYY" onChange={this.handleYearChange} required />
-                                </div>
+                <div id="wrapper" onSubmit={this.handleSubmit}>
+                <h2>SCE Officer Application 2020-21</h2>
+                <form id="form-area">
+                    <div className="form-group">
+                        <label className="control-label required" htmlFor="full-name">Name</label>
+                        <h5>Enter your first and last name</h5>
+                        <input
+                            type="text"
+                            name="full-name"
+                            placeholder="Full Name"
+                            onChange={this.handleNameChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label required" htmlFor="email">Email</label>
+                        <h5>Enter your email address</h5>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="john.doe@sjsu.edu"
+                            onChange={this.handleEmailChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label required">Graduation Date</label>
+                        <div className="row">
+                            <div className="col">
+                                <h5>Month</h5>
+                                <input type="text" placeholder="MM" onChange={this.handleMonthChange} required />
+                            </div>
+                            <div className="col">
+                                <h5>Year</h5>
+                                <input type="text" placeholder="YYYY" onChange={this.handleYearChange} required />
                             </div>
                         </div>
-                        <div className="required field">
-                            <label htmlFor="resume">Resume</label>
-                            <h5>Share a link to your resume (pdf, docx, doc) using <u>Google Drive</u>.</h5>
-                            <input type="url" placeholder="https://" onChange={this.handleExperienceChange} required></input>
-                        </div>
-                        <div className="field">
-                            <label htmlFor="linkedin">LinkedIn</label>
-                            <h5>Please enter the website URL</h5>
-                            <input
-                                type="url"
-                                name="linkedin"
-                                placeholder="https://www.linkedin.com/in/"
-                                onChange={this.handleLinkedInChange}
-                            />
-                        </div>
-                        <button className="fluid large ui teal button" type="submit">
-                            Submit
-                        </button>
-                    </form>
-                </div>
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label required" htmlFor="resume">Resume</label>
+                        <h5>
+                            Share a link to your resume (pdf, docx, doc) using <strong>Google Drive</strong>.
+                        </h5>
+                        <input type="url" placeholder="https://" onChange={this.handleExperienceChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="linkedin">LinkedIn</label>
+                        <h5>Please enter the website URL</h5>
+                        <input
+                            type="url"
+                            name="linkedin"
+                            placeholder="https://www.linkedin.com/in/"
+                            onChange={this.handleLinkedInChange}
+                        />
+                    </div>
+                    <button class="btn btn-info" type="submit">
+                        Submit
+                    </button>
+                </form>
+            </div>
             );
         }
         

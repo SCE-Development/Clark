@@ -1,62 +1,72 @@
-*{
-    box-sizing: border-box;
+* {
+	box-sizing: border-box;
 }
 
-p{
-    text-align: center;
+#wrapper {
+	width: 600px;
+	margin: 5% auto;
+	padding: 1.9rem;
+	border-radius: 20px;
+	box-shadow: 0 0 10px #808080;
 }
 
-#wrapper{
-    width: 600px;
-    margin: 5% auto;
-    padding: 1.9rem;
-    border-radius: 20px;
-    box-shadow: 0 0 10px #808080; 
-}
-
-#wrapper h2{
-    text-align: center;
+#wrapper h2 {
+	text-align: center;
     margin-top: 1em;
+    font-size: 30px;
 }
 
-#form-area{
-    display: flex;
-    border-radius: 25px;
-    padding: 1.9rem;
-    order: 1;
-    margin-right: 2em;
+form label.required:after
+{
+    color: red;
+    content: " *";
+}
+
+#form-area {
+	display: flex;
+	border-radius: 25px;
+	padding: 1.9rem;
+	order: 1;
+	margin-right: 0.5em;
     flex-direction: column;
+    align-items: left;
 }
 
-#form-area input{
-    width: 100%;
+#form-area input {
     background: transparent;
+    border-color: lightgray;
+    border-width: 0.25px;
+    border-style: solid;
 }
 
-#form-area input, #form-area button {
-    padding: 1em;
-    margin-bottom: 1em;
+#form-area input,
+#form-area button {
+	padding: 1em;
+	margin-bottom: 1em;
     border-radius: 7px;
-
+    width: 100%;
 }
 
-#form-area label{
-    font-size: 20px;
+label {
+	font-size: 20px;
     text-align: left;
+    margin-bottom: 0.1em;
 }
 
-#form-area h5{
-    text-align: left;
-    margin: 5px 0px;
-    font-weight: lighter;
+p {
+    text-align: center;
 }
 
-#form-area button{
-    padding: 15px 50px;
-    border-radius: 7px;
+#form-area h5 {
+	text-align: left;
+	margin: 5px 0px;
+    font-weight: normal;
+    font-size: 15px;
+}
+
+#form-area button {
+	padding: 15px 50px;
+	border-radius: 7px;
     text-transform: uppercase;
-}
-
-.upload{
-    font-size: medium;
+    margin-bottom: 1em;
 }
