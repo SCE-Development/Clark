@@ -1,6 +1,9 @@
 import axios from 'axios';
-import { PrintApiResponse } from './ApiResponses';
-import { RPC_API_URL } from '../config/config.json';
+import {
+  PrintApiResponse,
+  ApiResponse
+} from './ApiResponses';
+import { RPC_API_URL, LOGGING_API_URL } from '../config/config.json';
 
 /**
  * Return an array similar to python's range() function
@@ -56,6 +59,37 @@ export function parseRange(pages, maxPages) {
 export async function printPage(data) {
   let status = new PrintApiResponse();
   await axios.post(RPC_API_URL + '/SceRpcApi/Printer/sendPrintRequest', data)
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+/**
+ * Log the print request
+ * @param {Object} data         Encoded file
+ * @returns {PrintApiResponse}  Containing information for if
+ *                              the page is printing
+ */
+export async function logPrintRequest(data) {
+  let status = new ApiResponse();
+  await axios.post(LOGGING_API_URL + '/api/PrintLog/addPrintLog', data)
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+/**
+ * Retrieves all print logs
+ * @returns {ApiResponse}  Containing all print logs
+ */
+export async function getAllLogs() {
+  let status = new ApiResponse();
+  await axios.get(LOGGING_API_URL + '/api/PrintLog/getPrintLogs')
+    .then(response => {
+      status.responseData = response.data;
+    })
     .catch(() => {
       status.error = true;
     });
