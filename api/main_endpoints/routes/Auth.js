@@ -20,7 +20,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const addErrorLog = require ('../util/logging-helpers');
+const addErrorLog = require('../util/logging-helpers');
 
 function checkIfPageCountResets(lastLogin) {
   if (!lastLogin) return false;
@@ -43,8 +43,8 @@ function checkIfPageCountResets(lastLogin) {
 // Register a member
 router.post('/register', async (req, res) => {
   const registrationStatus = await registerUser(req.body);
-  if(!registrationStatus.userSaved) {
-    if(registrationStatus.status === 'BAD_REQUEST') {
+  if (!registrationStatus.userSaved) {
+    if (registrationStatus.status === 'BAD_REQUEST') {
       return res.status(BAD_REQUEST).send({
         message: registrationStatus.message
       });
@@ -172,10 +172,10 @@ router.post('/verify', function(req, res) {
 
 router.post('/generateHashedId', async (req, res) => {
   User.findOne({ email: req.body.email }, function(error, result) {
-    if (error){
+    if (error) {
       return res.sendStatus(BAD_REQUEST);
     }
-    if (!result){
+    if (!result) {
       return res.sendStatus(NOT_FOUND);
     }
     let hashedId = String(result._id);
@@ -198,12 +198,12 @@ router.post('/generateHashedId', async (req, res) => {
   });
 });
 
-router.post('/validateVerificationEmail', async (req, res) =>{
-  User.findOne({ email: req.body.email}, async function(error, result){
-    if (error){
+router.post('/validateVerificationEmail', async (req, res) => {
+  User.findOne({ email: req.body.email }, async function(error, result) {
+    if (error) {
       res.sendStatus(BAD_REQUEST);
     }
-    if (!result){
+    if (!result) {
       res.sendStatus(NOT_FOUND);
     }
 

@@ -53,6 +53,12 @@ function membershipStateToString(index) {
   return membershipStatusArray[index + 2];
 }
 
+const userFilterType = {
+  VALID: 0,
+  NON_VALID: 1,
+  ALL: 2
+};
+
 module.exports = {
   eventModalState,
   memberApplicationState,
@@ -60,5 +66,6 @@ module.exports = {
   memberShipPlanToString,
   membershipState,
   membershipStateToString,
-  itemCategories
+  itemCategories,
+  userFilterType
 };
