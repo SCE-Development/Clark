@@ -1,0 +1,25 @@
+{
+  "secretKey": "super duper secret key",
+  "passwordStrength": "medium",
+  "googleApiKeys": {
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "REDIRECT_URIS": ["https://developers.google.com/oauthplayground"],
+    "USER": "sce.sjsu@gmail.com",
+    "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  },
+  "googleCalendarIds": {
+    "PRIMARY_CAL": "primary",
+    "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  },
+  "ledSignIp": "192.168.4.1",
+  "GENERAL_API_URL": "http://localhost:8080/",
+  "LOGGING_API_URL": "http://localhost:8081/",
+  "MAILER_API_URL": "http://localhost:8082/",
+  "discordApiKeys": {
+    "CLIENT_SECRET": "TSPbNCvUgmLq14A7pvc4SNdJBkUw-VeM",
+    "CLIENT_ID": "732474088689238047",
+    "REDIRECT_URI": "http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify",
+    "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  }
+}

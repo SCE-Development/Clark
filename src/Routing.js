@@ -87,12 +87,6 @@ export default function Routing({ appProps }) {
       redirect: "/login",
     },
     {
-      Component: Resume,
-      path: "/resume",
-      allowedIf: !userIsAuthenticated,
-      redirect: "/login",
-    },
-    {
       Component: Login,
       path: "/login",
       allowedIf: !userIsAuthenticated,
@@ -130,6 +124,11 @@ export default function Routing({ appProps }) {
     { Component: OfficerDB, path: "/officerDB" },
     { Component: Team, path: "/team" },
     { Component: VerifyEmailPage, path: "/verify" },
+
+    {
+      Component: Resume,
+      path: "/resume",
+    },
   ];
   return (
     <Router>
