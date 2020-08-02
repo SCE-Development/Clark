@@ -15,6 +15,14 @@ export default function PrintRequest(props) {
 	}
 
 	return (
+		// <Button
+		// onClick={async () => {
+		// 	await updateRequests();
+		// 	setToggle(!toggle);
+		// }}
+		// 	color="primary"
+		// 	id="printing-request-button">
+		// 3D Printing Requests
 		<Modal isOpen={toggle}>
 			<ModalHeader>Your Requests, come to Engr294 for Pick-up</ModalHeader>
 			<ModalBody>
@@ -31,13 +39,10 @@ export default function PrintRequest(props) {
 							<div key={ind}>You don't have any</div>
 						)
 				)}
-				<a style={{ fontSize: '1.5rem', fontWeight: 'bolder' }} href="/3DPrintingForm">
-					Make a Request
-				</a>
+				<a href="/3DPrintingForm">Make a Request</a>
 			</ModalBody>
 			<ModalFooter>
 				<Button
-					style={{ background: '#eb4559', border: 'None', fontSize: '1.5rem', fontWeight: 'bolder' }}
 					onClick={() => {
 						setToggle(!toggle);
 					}}>
@@ -45,5 +50,6 @@ export default function PrintRequest(props) {
 				</Button>
 			</ModalFooter>
 		</Modal>
+		// </Button>
 	);
 }

@@ -7,51 +7,66 @@ import 'regenerator-runtime/runtime';
 
 import UserProfile from '../../src/Pages/Profile/MemberView/Profile';
 import InfoCard from '../../src/Pages/Profile/MemberView/InfoCard';
-import ChangePassword from '../../src/Pages/Profile/MemberView/ChangePassword';
-import PrintRequest from '../../src/Pages/Profile/MemberView/PrintRequest';
 import { mockMonth, revertClock } from '../util/mocks/Date';
 import Adapter from 'enzyme-adapter-react-16';
+
+import winter from '../../src/Pages/Profile/MemberView/Image/winter';
+import fall from '../../src/Pages/Profile/MemberView/Image/fall';
+import summer from '../../src/Pages/Profile/MemberView/Image/summer';
+import spring from '../../src/Pages/Profile/MemberView/Image/spring';
 
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<UserProfile />', () => {
-	after((done) => {
-		// get rid of the stub
-		revertClock();
-		done();
-	});
+  after(done => {
+    // get rid of the stub
+    revertClock();
+    done();
+  });
 
-	const user = {
-		token: 'token'
-	};
+  const user = {
+    token: 'token'
+  };
 
-	const obj = [
-		{ title: '2D Prints', value: '', icon: 'First Hello' },
-		{ title: 'Request 3D Printing', value: 'Print Request', icon: 'Second Hello' },
-		{ title: 'Connect with Discord', value: '', icon: 'Hello World' },
-		{ title: 'Change Password', value: 'Change Password', icon: 'Last Hello' }
-	];
+  let wrapper = mount(<UserProfile user={user} />);
 
-	let wrapper = mount(<UserProfile user={user} />);
+  it('Should render a <InfoCard /> component with one child', () => {
+    expect(wrapper.find(InfoCard)).to.have.lengthOf(1);
+  });
 
-	let infoWrapper = mount(<InfoCard fields={obj} />);
+  it('Should render a <img /> component with 3 children', () => {
+    expect(wrapper.find('img')).to.have.lengthOf(3);
+  });
 
-	it(`Should render div component with ${obj.length * 2 + 2} children`, () => {
-		expect(infoWrapper.find('div')).to.have.lengthOf(obj.length * 2 + 2);
-	});
+  it('Should render a <img /> where src = public/images/SCE-glow.png', () => {
+    expect(wrapper.find('img').get(0).props.src).equals('images/SCE-glow.png');
+  });
 
-	it(`Should render b component with ${obj.length + 2} children`, () => {
-		expect(infoWrapper.find('b')).to.have.lengthOf(obj.length + 2);
-	});
+  it('Should render spring images when the month is spring', () => {
+    mockMonth(4);
+    wrapper = mount(<UserProfile user={user} />);
+    expect(wrapper.find('img').get(1).props.src).equals(spring);
+    expect(wrapper.find('img').get(2).props.src).equals(spring);
+  });
 
-	it(`Should render h3 component with ${obj.length} children`, () => {
-		expect(infoWrapper.find('h3')).to.have.lengthOf(obj.length);
-	});
+  it('Should render summer images when the month is summer', () => {
+    mockMonth(6);
+    wrapper = mount(<UserProfile user={user} />);
+    expect(wrapper.find('img').get(1).props.src).equals(summer);
+    expect(wrapper.find('img').get(2).props.src).equals(summer);
+  });
 
-	it(`Should render span component with ${obj.length} children`, () => {
-		for (let i = 0; i < obj.length; i++) {
-			expect(infoWrapper.find('span').get(i).props.children).equal(obj[i].icon);
-		}
-		expect(infoWrapper.find('span')).to.have.lengthOf(obj.length);
-	});
+  it('Should render fall images when the month is fall', () => {
+    mockMonth(10);
+    wrapper = mount(<UserProfile user={user} />);
+    expect(wrapper.find('img').get(1).props.src).equals(fall);
+    expect(wrapper.find('img').get(2).props.src).equals(fall);
+  });
+
+  it('Should render winter images when the month is winter', () => {
+    mockMonth(0);
+    wrapper = mount(<UserProfile user={user} />);
+    expect(wrapper.find('img').get(1).props.src).equals(winter);
+    expect(wrapper.find('img').get(2).props.src).equals(winter);
+  });
 });

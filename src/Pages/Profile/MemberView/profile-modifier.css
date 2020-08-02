@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap';
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	font-family: 'Rubik', sans-serif;
+	font-family: 'Roboto', sans-serif;
 }
 
 #season-img {
@@ -21,12 +21,19 @@
 
 #profile-box {
 	position: relative;
-
+	/* background-color: white; */
+	/* width: 40%;
+	top: 40%;
+	left: 30%; */
+	/* border: thick double #4385ac; */
 	height: 100%;
 	width: 100%;
 	top: 50%;
 	background-color: #ffffff;
 	padding: 1.5vh;
+	/* margin: 2vw; */
+
+	/* border-radius: 50px; */
 	z-index: 1;
 
 	display: grid;
@@ -37,12 +44,11 @@
 #profile-box > div {
 	background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
 
-	border-radius: 0.8rem;
+	border-radius: 0.5rem;
 	background-attachment: fixed;
 	word-wrap: break-word;
-	height: 43vh;
+	height: 35vh;
 	cursor: pointer;
-	max-width: 100%;
 	/* Flex Box */
 	display: flex;
 	flex-direction: column;
@@ -59,27 +65,15 @@
 /* Make the background a lighter color */
 #profile-box > div:hover {
 	opacity: 0.9;
-	transform: scale(0.97);
+	transform: scale(0.98);
 }
 
 #profile-box > div:nth-of-type(1) {
 	grid-column: 1/5;
-	height: 25vh;
-	transition: none;
-	transform: none;
-	opacity: 1;
-	cursor: default;
-
+	height: 20vh;
 	/* ? How do I increase the font-size? */
 }
 
-#profile-box > div:nth-of-type(4) {
-	padding: 2rem;
-	transition: none;
-	transform: none;
-	opacity: 1;
-	cursor: default;
-}
 #profile-box > div:nth-of-type(4) {
 	grid-column: 1/5;
 	grid-row: 2/3;
@@ -89,17 +83,31 @@
 #profile-box > div:nth-of-type(9) {
 	grid-row: 4/5;
 	grid-column: 3/5;
-	overflow: hidden;
 }
 
-.box {
-	display: block;
+/* #inner-text-top {
+	margin-left: 5%;
+	margin-top: 2%;
+	margin-right: 5%;
+	text-align: left;
+} */
+
+/* #clip {
+	position: relative;
+	width: 40%;
+	height: 40%;
+	display: inline-block;
+	clip-path: polygon(0 0, 0% 100%, 100% 0);
 }
 
-#value-span {
-	display: block;
-	line-height: 3rem;
-}
+#clip2 {
+	position: relative;
+	width: 40%;
+	height: 40%;
+	right: 5%;
+	display: inline-block;
+	clip-path: polygon(100% 0, 100% 100%, 0 100%);
+} */
 
 #profile-logo {
 	position: absolute;
@@ -118,19 +126,15 @@
 	color: red !important;
 }
 
-#password-div {
-	background-color: #48bfe3;
-}
-.password-span {
-	margin: 1rem;
-	color: #333;
-}
-
 @media screen and (max-width: 1200px) {
 	#profile-logo {
 		height: 15%;
 		left: 60%;
 	}
+
+	/* #inner-text-top {
+		font-size: 50px;
+	} */
 
 	#profile-box {
 		width: 40%;
@@ -144,10 +148,20 @@
 		height: 0%;
 	}
 
+	/* #inner-text-top {
+		font-size: 50px;
+	} */
+
 	#profile-box {
 		position: relative;
 		width: 100%;
 		top: 0%;
 		left: 0%;
 	}
+
+	/* #clip,
+	#clip2 {
+		height: 0%;
+		width: 0%;
+	} */
 }
