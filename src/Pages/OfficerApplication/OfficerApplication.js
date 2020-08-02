@@ -133,11 +133,11 @@ class OfficerApplication extends Component {
                         <div className="row">
                             <div className="col">
                                 <h5>Month</h5>
-                                <input type="text" placeholder="MM" onChange={this.handleMonthChange} required />
+                                <input className="form-control-lg" type="number" placeholder="MM" min="1" max="12" onChange={this.handleMonthChange} required />
                             </div>
                             <div className="col">
                                 <h5>Year</h5>
-                                <input type="text" placeholder="YYYY" onChange={this.handleYearChange} required />
+                                <input className="form-control-lg" type="number" placeholder="YYYY" min="2020" onChange={this.handleYearChange} required />
                             </div>
                         </div>
                     </div>

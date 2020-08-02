@@ -3,16 +3,17 @@
 }
 
 #wrapper {
-	width: 600px;
-	margin: 5% auto;
-	padding: 1.9rem;
+    width: 40%;
+    min-width: 500px;
+	margin: 5% auto; 
+	padding: 3%; 
 	border-radius: 20px;
 	box-shadow: 0 0 10px #808080;
 }
 
 #wrapper h2 {
 	text-align: center;
-    margin-top: 1em;
+    margin-top: 5%;
     font-size: 30px;
 }
 
@@ -22,12 +23,13 @@ form label.required:after
     content: " *";
 }
 
+
 #form-area {
 	display: flex;
 	border-radius: 25px;
-	padding: 1.9rem;
+	padding: 3%;
 	order: 1;
-	margin-right: 0.5em;
+	margin-right: 1%;
     flex-direction: column;
     align-items: left;
 }
@@ -41,16 +43,18 @@ form label.required:after
 
 #form-area input,
 #form-area button {
-	padding: 1em;
-	margin-bottom: 1em;
+	padding: 2%;
+	margin-bottom: 1.5%;
     border-radius: 7px;
     width: 100%;
+    font-size: 15px;
 }
+
 
 label {
 	font-size: 20px;
     text-align: left;
-    margin-bottom: 0.1em;
+    margin-bottom: 0.5%;
 }
 
 p {
@@ -59,14 +63,11 @@ p {
 
 #form-area h5 {
 	text-align: left;
-	margin: 5px 0px;
     font-weight: normal;
     font-size: 15px;
 }
 
 #form-area button {
-	padding: 15px 50px;
-	border-radius: 7px;
     text-transform: uppercase;
-    margin-bottom: 1em;
+    margin-bottom: 5%;
 }
