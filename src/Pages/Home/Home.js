@@ -4,7 +4,6 @@ import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 import Iframe from 'react-iframe';
-
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -18,7 +17,6 @@ import Iframe from 'react-iframe';
         display="initial"
         position="relative"
         allowFullScreen/>
-
         <Iframe url="https://calendar.google.com/calendar/b/4/embed?showTitle=
         0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;
         height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1
@@ -28,39 +26,39 @@ import Iframe from 'react-iframe';
         */
 
 class Home extends Component {
-	render() {
-		return (
-			<div>
-				<div className="home">
-					<Slideshow className="slideshow" />
+  render() {
+    return (
+      <div>
+        <div className="home">
+          <Slideshow className="slideshow" />
+          <Jumbotron />
 
-					<Jumbotron />
+          <div className="text-center">
+            <h1 className="display-4">SCE Events Calendar</h1>{' '}
+          </div>
+          <p className="lead text-center">
+            {' '}
+						Add SCE Calendar to your own by
+						clicking the Google Calendar
+						icon on the bottom right side!
+          </p>
 
-					<div className="text-center">
-						<h1 className="display-4">SCE Events Calendar</h1>{' '}
-					</div>
-					<p className="lead text-center">
-						{' '}
-						Add SCE Calendar to your own by clicking the Google Calendar icon on the bottom right side!
-					</p>
-
-					<div className="outer-div">
-						<div className="inner-div">
-							<Iframe
-								// Unable to breka up iframe url
-								// eslint-disable-next-line
+          <div className="outer-div">
+            <div className="inner-div">
+              <Iframe
+                // Unable to breka up iframe url
+                // eslint-disable-next-line
 								url="https://calendar.google.com/calendar/b/4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FLos_Angeles"
-								className="calendar"
-								allowFullScreen
-							/>
-						</div>
-					</div>
-					<Benefits className="benefits" />
-					<Footer />
-				</div>
-			</div>
-		);
-	}
+                className="calendar"
+                allowFullScreen
+              />
+            </div>
+          </div>
+          <Footer />
+        </div>
+      </div>
+    );
+  }
 }
 
 export default Home;
