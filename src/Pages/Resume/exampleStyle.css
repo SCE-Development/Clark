@@ -1,0 +1,48 @@
+.labels{
+    margin: 0 auto;
+    margin-top: 20px;
+    width: 500px;
+}
+.leftAlign{
+    margin: 0 auto;
+    width: 1000px;
+}
+
+.textAreas{
+    margin-left: 32.5%;
+}
+.inputs{
+    margin: "auto";
+    width: 50%;
+    font: "Popper";
+}
+
+  .customRight{
+    margin-right: 300px;
+    float: right;
+    background-color: #3F99FF;
+    border-radius: 5px;
+    font-size: x-large;
+
+  }
+
+  .customLeft{
+    margin-left: 300px;
+    float: left;
+    background-color: #797979;
+    border-radius: 5px;
+    font-size: x-large;
+  }
+  .customBtnVisible {
+    margin-left: 630px;
+    background-color: #336699;
+    border-radius: 5px;
+    visibility: visible;
+  }
+  .customBtnHidden {
+    margin-left: 630px;
+    background-color: #336699;
+    border-radius: 5px;
+    visibility: hidden;
+  }
+

@@ -8,13 +8,18 @@ export async function getResume(newResume) {
     phone: newResume.phone,
     email: newResume.email,
     github: newResume.github,
-    educationPart: newResume.educationPart,
-    education: newResume.education,
+    schoolName: newResume.schoolName,
+    gradYear: newResume.gradYear,
+    titleMajor: newResume.titleMajor,
+    college: newResume.college,
+    GPA: newResume.GPA,
+    relevantCoursework: newResume.relevantCoursework,
+    skillsProficient: newResume.skillsProficient,
+    skillsExperienced: newResume.skillsExperienced,
+    skillsFamiliar: newResume.skillsFamiliar,
   };
-  console.log(resumeToAdd.github);
-  await axios.post("api/resume/ResumeForm").catch(() => {
+  await axios.post("api/Resume/ResumeForm", {resumeToAdd}).catch(() => {
     status.error = true;
   });
-
   return status;
 }
