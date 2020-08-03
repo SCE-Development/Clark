@@ -4,20 +4,7 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 import Header from
   '../../Components/Header/Header.js';
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  FormGroup,
-  Label,
-  Input,
-  Col,
-  Row,
-  Spinner
-} from 'reactstrap';
-import { FilePond, registerPlugin } from 'react-filepond';
+import { registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
@@ -31,14 +18,36 @@ import {
 import { editUser } from '../../APIFunctions/User';
 import {
   PrintIcon,
-  PrintInfo,
   StatusModal,
-  failPrintStatus
+  failPrintStatus,
+  FileUpload
 } from './2DComponents';
+import { PrintPageModal } from './2DPrintPageModal';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
 
 export default function Printing(props) {
+  /**
+   * State variables:
+   * files - pdf file stored in filepond
+   * continueButn - enable continue button
+   * confirmModal - pop up confirm modal
+   * pages - set radio to select page range or use all
+   * previewModal - enable print page modal
+   * dataURI - used for updating embed
+   * encodedFile - encoded file to be printed
+   * copies - copies of file to be printed
+   * sides - sides of file
+   * pageRanges - page ranges to be printed
+   * numPages - number of pages included in page range
+   * usedPages - array of all pages to be printed
+   * canPrint - checks if user has enough pages to print
+   * displayPagesLeft - pages left
+   * previewDisplay - iframe content
+   * loadPreview - loading indicator of iframe
+   * statusModal - status modal toggle
+   * printStatus - status in statusModal
+   */
   const [files, setFiles] = useState([]);
   const [continueButn, setContinue] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
@@ -60,15 +69,6 @@ export default function Printing(props) {
   const [statusModal, setStatusModal] = useState(false);
   const [printStatus, setPrintStatus] = useState('');
 
-  const previewLabels = {
-    copies: 'Number of Copies',
-    sides: 'Type of print',
-    pages: 'Pages'
-  };
-
-  const headerProps = {
-    title: 'Printing'
-  };
 
   async function updateEmbed(totalPages) {
     try {
@@ -90,6 +90,23 @@ export default function Printing(props) {
     }
   }
 
+  async function handleUpdate(file) {
+    try {
+      setDataURI(file.getFileEncodeDataURL());
+      setPreviewDisplay(file.getFileEncodeDataURL());
+      setEncodedFile(file);
+      setContinue(true);
+      const pdf = await PDFDocument.load(file.getFileEncodeDataURL());
+      setNumPages(pdf.getPages().length);
+      let tmp = new Set(range(1, pdf.getPages().length + 1));
+      setUsedPages(tmp);
+    } catch {
+      setStatusModal(true);
+      setCanPrint(false);
+      setPrintStatus('Cannot print encrypted PDF');
+    }
+  }
+
   async function handleCanPrint(totalPages, copy) {
     const result = await getPagesPrinted(
       props.user.email,
@@ -102,74 +119,54 @@ export default function Printing(props) {
     updateEmbed(totalPages);
   }
 
-  const continueButtonProps = {
-    color: 'primary',
-    className: 'continue',
-    hidden: !continueButn,
-    onClick: () => {
-      handleCanPrint(usedPages, copies); // ->
-      setPreviewModal(true);
+  function finishPrinting() {
+    setConfirmModal(false);
+    setPreviewModal(false);
+    setFiles([]);
+    setContinue(false);
+    setPages(false);
+  }
+
+  const previewLabels = {
+    copies: 'Number of Copies',
+    sides: 'Type of print',
+    pages: 'Pages'
+  };
+
+  const headerProps = {
+    title: 'Printing'
+  };
+
+  const fileUploadProps = {
+    filePond: {
+      files: files,
+      allowMultiple: false,
+      acceptedFileTypes: ['application/pdf'],
+      maxFileSize: '10MB',
+      onupdatefiles: (fileItems) => {
+        const tmp = fileItems.map(fileItem => fileItem.file);
+        setFiles(tmp);
+      },
+      onaddfile: async (err, file) => {
+        if (!err) await handleUpdate(file);
+      },
+      onremovefile: err => {
+        setContinue(false);
+        setPages(false);
+        if (!err) setFiles([]);
+      },
+      labelIdle: PrintIcon
     },
-    text: 'Continue'
-  };
-
-  const backButtonProps = {
-    color: 'danger',
-    onClick: () => {
-      setPreviewModal(false);
-      setPages(false);
-      // Reset the pages selection to "All"
-      let arr = new Set(range(1, numPages + 1));
-      setUsedPages(arr);
-    },
-    text: 'Back'
-  };
-
-  const printButtonProps = {
-    color: 'success',
-    onClick: () => {
-      setConfirmModal(!confirmModal);
-    },
-    disabled: !canPrint,
-    text: 'Print!'
-  };
-
-  const previewModalProps = {
-    isOpen: previewModal,
-    toggle: () => {
-      setPreviewModal(!previewModal);
-    },
-    size: 'xl'
-  };
-
-  const iframePreviewProps = {
-    src: files[0] && previewDisplay,
-    width: '100%',
-    height: '100%',
-  };
-
-  const copyInputProps = {
-    className: 'center-blocks',
-    type: 'number',
-    name: 'numbers',
-    min: '1',
-    max: '30',
-    id: 'numcopy',
-    defaultValue: '1',
-    onChange: (e) => {
-      setCopies(e.target.value);
-      handleCanPrint(usedPages, e.target.value);
+    continueButton: {
+      color: 'primary',
+      className: 'continue',
+      hidden: !continueButn,
+      onClick: () => {
+        handleCanPrint(usedPages, copies); // ->
+        setPreviewModal(true);
+      },
+      text: 'Continue'
     }
-  };
-
-  const sidesInputProps = {
-    type: 'radio',
-    name: 'pType'
-  };
-
-  const pagesInputProps = {
-    type: 'radio',
-    name: 'Pages',
   };
 
   async function handlePrinting(file) {
@@ -194,6 +191,129 @@ export default function Printing(props) {
     setStatusModal(true);
   }
 
+  const printPageModalProps = {
+    isOpen: previewModal,
+    toggle: () => {
+      setPreviewModal(!previewModal);
+    },
+    size: 'xl',
+    ModalHeader: {
+      toggle: () => {
+        setPreviewModal(!previewModal);
+      }
+    },
+    ModalBody: {
+
+      Col: {
+        sm: { size: 8 }
+      },
+      Spinner: {
+        className: 'loading-spinner',
+        animation: 'border',
+        variant: 'primary'
+      },
+      iFrame: {
+        hidden: loadPreview,
+        onLoad: () =>
+          setTimeout(() => {
+            setLoadPreview(false);
+          }, 300),
+        src: files[0] && previewDisplay,
+        width: '100%',
+        height: '100%'
+      },
+      pagesLeft: {
+        size: '4',
+        color: 'red'
+      },
+      legend: {
+        className: 'center-blocks'
+      },
+      copyInput: {
+        className: 'center-blocks',
+        type: 'number',
+        name: 'numbers',
+        min: '1',
+        max: '30',
+        id: 'numcopy',
+        defaultValue: '1',
+        onChange: (e) => {
+          setCopies(e.target.value);
+          handleCanPrint(usedPages, e.target.value);
+        }
+      },
+      sideInput: {
+        type: 'radio',
+        name: 'pType'
+      },
+      pagesAll: {
+        type: 'radio',
+        name: 'Pages',
+        onChange: () => {
+          setPages(false);
+          setPageRanges('NA');
+          handleCanPrint(
+            new Set(range(1, numPages + 1)),
+            copies
+          );
+          setLoadPreview(true);
+        },
+        defaultChecked: true
+      },
+      pagesSelect: {
+        type: 'radio',
+        name: 'Pages',
+        checked: pages,
+        onChange: () => {
+          setPages(true);
+          handleCanPrint(usedPages, copies);
+          setLoadPreview(true);
+        }
+      },
+      pagesRange: {
+        type: 'text',
+        disabled: !pages,
+        placeholder: '1-5, 7, 9-11',
+        onChange: async e => {
+          setPageRanges(e.target.value);
+          const x = await parseRange(
+            e.target.value, numPages
+          );
+          setUsedPages(x);
+          handleCanPrint(x, copies);
+          setLoadPreview(true);
+        }
+      }
+
+    },
+    ModalFooter: {
+      backButton: {
+        color: 'danger',
+        onClick: () => {
+          setPreviewModal(false);
+          setPages(false);
+          // Reset the pages selection to "All"
+          let arr = new Set(range(1, numPages + 1));
+          setUsedPages(arr);
+        },
+        text: 'Back'
+      },
+      printButton: {
+        color: 'success',
+        onClick: () => {
+          setConfirmModal(!confirmModal);
+        },
+        disabled: !canPrint,
+        text: 'Print!'
+      }
+    },
+    // Additional imports to be unpacked
+    loadPreview,
+    displayPagesLeft,
+    previewLabels,
+    setSides,
+  };
+
   const confirmModalProps = {
     headerText: 'Are you sure you want to print?',
     bodyText: '',
@@ -208,14 +328,6 @@ export default function Printing(props) {
     },
     open: confirmModal
   };
-
-  function finishPrinting() {
-    setConfirmModal(false);
-    setPreviewModal(false);
-    setFiles([]);
-    setContinue(false);
-    setPages(false);
-  }
 
   const statusModalProps = {
     headerText: 'Printing Status',
@@ -233,185 +345,12 @@ export default function Printing(props) {
     open: statusModal
   };
 
-  async function handleUpdate(file) {
-    try {
-      setDataURI(file.getFileEncodeDataURL());
-      setPreviewDisplay(file.getFileEncodeDataURL());
-      setEncodedFile(file);
-      setContinue(true);
-      const pdf = await PDFDocument.load(file.getFileEncodeDataURL());
-      setNumPages(pdf.getPages().length);
-      let tmp = new Set(range(1, pdf.getPages().length + 1));
-      setUsedPages(tmp);
-    } catch {
-      setStatusModal(true);
-      setCanPrint(false);
-      setPrintStatus('Cannot print encrypted PDF');
-    }
-  }
-
   return (
     <div>
       <Header {...headerProps} />
-
-      <div className='printInfo'>
-        <p>
-          {PrintInfo}
-        </p>
-      </div>
-
-      <FilePond
-        files={files}
-        allowMultiple={false}
-        acceptedFileTypes={['application/pdf']}
-        maxFileSize='10MB'
-        onupdatefiles={fileItems => {
-          const tmp = fileItems.map(fileItem => fileItem.file);
-          setFiles(tmp);
-        }}
-        onaddfile={async (err, file) => {
-          if (!err) await handleUpdate(file);
-        }}
-        onremovefile={err => {
-          setContinue(false);
-          setPages(false);
-          if (!err) setFiles([]);
-        }}
-        labelIdle={PrintIcon}
-      />
-
-      <Button {...continueButtonProps}> Continue </Button>
-
-      <Modal {...previewModalProps}>
-        <ModalHeader
-          toggle={() => {
-            setPreviewModal(!previewModal);
-          }}
-        >
-          Confirm
-        </ModalHeader>
-        <ModalBody>
-          <Row>
-            <Col sm={{ size: 8 }}>
-              {loadPreview ? (
-                <div className='spinner-wrapper'>
-                  <Spinner
-                    className='loading-spinner'
-                    animation='border'
-                    variant='primary'
-                  />
-                </div>
-              ) : null}
-              <iframe
-                hidden={loadPreview}
-                title='Preview'
-                onLoad={() =>
-                  setTimeout(() => {
-                    setLoadPreview(false);
-                  }, 300)
-                }
-                {...iframePreviewProps}
-              />
-            </Col>
-            <Col>
-              <br />
-              <FormGroup>
-                <font size='4' color='red'>
-                  <b>You have {displayPagesLeft} pages left</b>
-                </font>
-                <legend className='center-blocks' htmlFor='numcopy'>
-                  {previewLabels.copies}
-                </legend>
-                <Input {...copyInputProps} />
-                <legend className='center-blocks'>
-                  {previewLabels.sides}{' '}
-                </legend>
-                <FormGroup check>
-                  <Label check>
-                    <Input
-                      onChange={e => {
-                        setSides('one-sided');
-                      }}
-                      defaultChecked
-                      {...sidesInputProps}
-                    />
-                        Front
-                  </Label>
-                </FormGroup>
-                <FormGroup check>
-                  <Label check>
-                    <Input
-                      onChange={e => {
-                        setSides('two-sided-long-edge');
-                      }}
-                      {...sidesInputProps}
-                    />
-                      Front & Back
-                  </Label>
-                </FormGroup>
-                <legend className='center-blocks'>
-                  {previewLabels.pages}{' '}
-                </legend>
-                <FormGroup check>
-                  <Label check>
-                    <Input
-                      onChange={() => {
-                        setPages(false);
-                        setPageRanges('NA');
-                        handleCanPrint(
-                          new Set(range(1, numPages + 1)),
-                          copies
-                        );
-                        setLoadPreview(true);
-                      }}
-                      {...pagesInputProps}
-                      defaultChecked
-                    />
-                        All
-                  </Label>
-                </FormGroup>
-                <FormGroup check>
-                  <Label check>
-                    <Input
-                      checked={pages}
-                      onChange={() => {
-                        setPages(true);
-                        handleCanPrint(usedPages, copies);
-                        setLoadPreview(true);
-                      }}
-                      {...pagesInputProps}
-                    />
-                    <Input
-                      type='text'
-                      disabled={!pages}
-                      placeholder='1-5, 7, 9-11'
-                      onChange={async e => {
-                        setPageRanges(e.target.value);
-                        const x = await parseRange(
-                          e.target.value, numPages
-                        );
-                        setUsedPages(x);
-                        handleCanPrint(x, copies);
-                        setLoadPreview(true);
-                      }}
-                    />
-                  </Label>
-                </FormGroup>
-              </FormGroup>
-              <Label className='center-blocks'>
-                Note: All prints are black ink only
-              </Label>
-              <br />
-            </Col>
-          </Row>
-        </ModalBody>
-        <ModalFooter>
-          <Button {...backButtonProps}> Back </Button>
-          <Button {...printButtonProps}> Print! </Button>
-        </ModalFooter>
-
-        <ConfirmationModal {...confirmModalProps} />
-      </Modal>
+      <FileUpload {...fileUploadProps} />
+      <PrintPageModal {...printPageModalProps} />
+      <ConfirmationModal {...confirmModalProps} />
       <StatusModal {...statusModalProps} />
     </div>
   );

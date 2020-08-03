@@ -34,6 +34,7 @@
   transform: translateZ(0px);
   animation: fade-in 1s ease-in-out;
   animation-fill-mode: forwards;
+  cursor: pointer;
 }
 
 .filepond--root .filepond--panel-root {
