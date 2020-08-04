@@ -1,4 +1,4 @@
-.card-wrapper[deleted='displayed'] {
+.card-wrapper[deleted="displayed"] {
   font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
     "Lucida Sans", Arial, sans-serif;
   flex-wrap: wrap;
@@ -8,9 +8,10 @@
   display: flex;
   margin: 10px;
   height: auto;
+  flex-direction: row !important;
 }
 
-.card-wrapper[deleted='notDisplayed'] {
+.card-wrapper[deleted="notDisplayed"] {
   display: none;
 }
 
@@ -18,7 +19,7 @@
   margin: 3%;
 }
 
-.img-dim{
+.img-dim {
   width: 30px !important;
   height: 30px;
   float: right;
@@ -31,17 +32,23 @@
 }
 
 .input-bar {
-  width: 30px !important;
+  width: 200px !important;
   height: 30px !important;
+  margin: 5px;
 }
 
 .color-bar {
   width: 25px;
   height: 25px;
   margin: 5px;
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.color-form {
+.text-form {
   display: flex;
+  justify-content: space-between;
+}
+
+.scroll-text {
+  margin: 5px;
 }
