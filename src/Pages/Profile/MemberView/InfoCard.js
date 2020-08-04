@@ -4,6 +4,7 @@ import './profile-modifier.css';
 import Footer from '../../../Components/Footer/Footer.js';
 import PrintRequest from './PrintRequest';
 import { editUser } from '../../../APIFunctions/User';
+import { connectToDiscord } from '../../../APIFunctions/User';
 const pic = require('./getPicBySeason');
 const bcrypt = require('bcryptjs');
 
@@ -11,12 +12,16 @@ export default function ProfileCard(props) {
   const [password, setPassword] = useState('New Password');
   const [confirmPass, setConfirmPass] = useState('Confirming New Password');
   const [user, setUser] = useState('');
+  const discordLogo =
+    'https://www.freeiconspng.com/uploads/discord-black-icon-1.png';
 
   async function changePassword() {
     // hash pass
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword =
-      password.trim() === '' ? user.password : bcrypt.hashSync(password, salt);
+        password.trim() === '' ?
+          user.password :
+          bcrypt.hashSync(password, salt);
 
     if (password === confirmPass) {
       const apiResponse = await editUser(
@@ -48,6 +53,11 @@ export default function ProfileCard(props) {
     return style;
   }
 
+  async function handleDiscordAuth() {
+    const response = await connectToDiscord(props.user.email, props.user.token);
+    window.open(response.responseData);
+  }
+
   return (
     <div id='enclose'>
       <img id='clip' alt='side' src={pic.getPictureByMonth()} />
@@ -67,8 +77,19 @@ export default function ProfileCard(props) {
             }
           </h3>
         ))}
+        <Button
+          className='discord-button'
+          onClick={handleDiscordAuth}>
+          <div className='center-text'>
+            <img alt='discordLogo'
+              src={discordLogo}>
+            </img>
+            {(props.fields[4].value === 'Not Linked') ? 'Connect to Discord'
+              : 'Change Discord Account'}
+          </div>
+        </Button>
         <h3 id='inner-text-top'>
-          New Password:{' '}
+            New Password:{' '}
           <Input
             onChange={e => {
               setUser(props.user);
@@ -94,7 +115,7 @@ export default function ProfileCard(props) {
               changePassword();
             }}
           >
-            Change Password
+          Change Password
           </Button>
           <PrintRequest email={props.user.email} />
         </h3>

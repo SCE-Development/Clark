@@ -37,6 +37,9 @@ export async function getAllUsers(token) {
  * the user
  * @param {(string|undefined)} userToEdit.major - The updated major of
  * the user
+ * @param {(string|undefined)} userToEdit.discordUsername
+ * @param {(string|undefined)} userToEdit.discordDiscrim
+ * @param {(string|undefined)} userToEdit.discordID
  * @param {(string|undefined)} userToEdit.numberOfSemestersToSignUpFor
  * @param {(string|undefined)} userToEdit.doorCode - The updated password of
  * the user
@@ -59,6 +62,9 @@ export async function editUser(userToEdit, token) {
     major,
     numberOfSemestersToSignUpFor,
     doorCode,
+    discordUsername,
+    discordDiscrim,
+    discordID,
     pagesPrinted,
     accessLevel,
     lastLogin
@@ -72,6 +78,9 @@ export async function editUser(userToEdit, token) {
       major,
       numberOfSemestersToSignUpFor,
       doorCode,
+      discordUsername,
+      discordDiscrim,
+      discordID,
       pagesPrinted,
       accessLevel,
       lastLogin,
@@ -176,3 +185,15 @@ export function filterUsers(users, filterID) {
   });
   return filteredUsers;
 }
+export async function connectToDiscord(email, token) {
+  let status = new UserApiResponse();
+  await axios.post('api/user/connectToDiscord', { email, token })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+

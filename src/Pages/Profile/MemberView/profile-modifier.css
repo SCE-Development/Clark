@@ -54,6 +54,22 @@
   margin-left: 10%;
 }
 
+.discord-button {
+  background-color: #7289da !important;
+  align-items: center !important;
+}
+
+.discord-button img {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+}
+
+.center-text {
+  padding: 5px;
+  align-items: center;
+}
+
 .invalid {
   color:red !important
 }

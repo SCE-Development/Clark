@@ -15,5 +15,12 @@
   "ledSignIp": "192.168.4.1",
   "GENERAL_API_URL": "http://localhost:8080/",
   "LOGGING_API_URL": "http://localhost:8081/",
-  "MAILER_API_URL": "http://localhost:8082/"
+  "MAILER_API_URL": "http://localhost:8082/",
+  "discordApiKeys": {
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXX",
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXX",
+    "REDIRECT_URI_DEV": "http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify",
+    "REDIRECT_URI_PROD": "http%3A%2F%2Fsce.sjsu.edu%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify",
+    "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  }
 }
