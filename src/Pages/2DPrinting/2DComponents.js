@@ -21,7 +21,7 @@ export function FileUpload(props) {
   const {
     filePond,
     continueButton
-  } = props
+  } = props;
   return (
     <>
       <div className='printInfo'>
