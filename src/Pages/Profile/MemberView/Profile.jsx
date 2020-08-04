@@ -24,7 +24,6 @@ export default class Profile extends Component {
   async componentDidMount() {
     const response = await searchUserByEmail(this.props.user.email,
       this.props.user.token)
-      console.log(response);
     if (!response.error) {
       //concat user to full name
       this.setState({ user: response.responseData }, () => {
