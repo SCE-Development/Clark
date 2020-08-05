@@ -7,7 +7,7 @@ const constants = require('../api/util/constants');
 const { OK, NOT_FOUND, BAD_REQUEST } = constants.STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
 const { SceGoogleApiHandler } =
-  require('../api/google_api/util/SceGoogleApiHandler');
+  require('../api/cloud_api/util/SceGoogleApiHandler');
 
 let app = null;
 let test = null;
@@ -27,7 +27,7 @@ describe('Calendar', () => {
     addCalendarEventStub = sandbox.stub(SceGoogleApiHandler.prototype,
       'addEventToCalendar');
     app = tools.initializeServer(
-      __dirname + '/../api/google_api/routes/Calendar.js');
+      __dirname + '/../api/cloud_api/routes/Calendar.js');
     test = new SceApiTester(app);
     done();
   });

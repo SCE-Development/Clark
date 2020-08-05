@@ -117,7 +117,7 @@ class SceHttpServer {
 if (typeof module !== 'undefined' && !module.parent) {
   const generalApiEndpoints = __dirname + '/../main_endpoints/routes/';
   const loggingApiEndpoints = __dirname + '/../logging_api/routes/';
-  const mailerApiEndpoints = __dirname + '/../google_api/routes/';
+  const mailerApiEndpoints = __dirname + '/../cloud_api/routes/';
 
   const generalServer = new SceHttpServer(generalApiEndpoints, 8080);
   const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081);
