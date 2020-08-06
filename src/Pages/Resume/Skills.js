@@ -10,7 +10,7 @@
             }
   const nameStyle = {
       margin: "auto",
-      width: "500px",
+      width: "35%",
       fontFamily: "Popper"
     };
 return(
@@ -24,6 +24,7 @@ return(
       <h6 class ="labels"> Skills I am Familiar With</h6>
       <Input style = {nameStyle} name = "skillsFamiliar" type="text" value = {this.props.skillsFamiliar} onChange = {this.props.handleChange} placeholder="Type Skills You are Familiar With" />
       </FormGroup>
+          <button class = "customRight" onClick={this.props.handleSubmit}>Submit</button>
       </div>      
      )
           }

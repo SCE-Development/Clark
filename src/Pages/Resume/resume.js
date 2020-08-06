@@ -6,8 +6,7 @@ import Experience from "./Experience";
 import Projects from "./Projects";
 import Skills from "./Skills";
 import './exampleStyle.css';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-
+import { Button, Form, FormGroup, Label, Input, FormText, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 class Resume extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +15,9 @@ class Resume extends Component {
     this._addStuff = this._addStuff.bind(this);
     this.addProject = this.addProject.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleNormalChange = this.handleNormalChange.bind(this);
+    this.showConfirmation = this.showConfirmation.bind(this);
+    this.hideConfirmation = this.hideConfirmation.bind(this);
     this.state = {
       projectInfo: [{
         projectName: "", projectLocation: "", projectToolsUsed: "",
@@ -27,6 +29,7 @@ class Resume extends Component {
         experienceStartDate: "", experienceEndDate: "", experienceDescription1: "",
         experienceDescription2: "", experienceDescription3: "",
       }],
+      showingConfirmation: false,
       currentStep: 1,
       name: "",
       phone: "",
@@ -41,9 +44,16 @@ class Resume extends Component {
       skillsProficient: "",
       skillsExperienced: "",
       skillsFamiliar: "",
+      numberItems: 2,
     };
   }
 
+  showConfirmation = () => {
+    this.setState({showingConfirmation: true});
+  }
+  hideConfirmation = () => {
+    this.setState({showingConfirmation: false});
+  }
 
   _next() {
     let currentStep = this.state.currentStep
@@ -93,57 +103,38 @@ class Resume extends Component {
     }
     return null;
   }
-
-  handleChange(event, index = null) {
-    // check if index was sent as a parameter
-    if (!!index) {
-      // check if the thing to mofidy was experience or project
-      // update the correct experience OR project at the index
-    } else {
-      console.log(event.target.name);
-      console.log(event.target.value);
-      let projectSlice = this.state.projectInfo.slice();
-      let experienceSlice = this.state.experienceInfo.slice();
-      var inProjects = false;
-      var inExperience = false;
-      for (var i in projectSlice) { //for each object in projectInfo
-        for (var d in projectSlice[i]) { //for each component of each object
-          if (d == event.target.name) {
-            projectSlice[i][d] = event.target.value;
-            this.setState({ projectInfo: projectSlice });
-            inProjects = true;
-            break;
-          }
-        }
-      }
-      for (var i in experienceSlice) { //for each object in projectInfo
-        for (var d in experienceSlice[i]) { //for each component of each object
-          if (d == event.target.name) {
-            experienceSlice[i][d] = event.target.value;
-            this.setState({ experienceInfo: experienceSlice });
-            inExperience = true;
-            break;
-          }
-        }
-      }
-      if (!(inExperience || inProjects) == true) {
-        const name = event.target.name;
+  handleNormalChange(event){
+    const name = event.target.name;
         const value = event.target.value;
         this.setState({
           [name]: value
         })
       }
-      console.log(this.state);
-    }
+    
+  
+  handleChange(event, index = null, type = null) {
+    // check if index was sent as a parameter
+   if(type == "experience"){
+      let experienceSlice = this.state.experienceInfo.slice();
+      experienceSlice[index][event.target.name] = event.target.value;
+            this.setState({ experienceInfo: experienceSlice });
   }
+   if(type == "project"){
+      let projectSlice = this.state.projectInfo.slice();
+      projectSlice[index][event.target.name] = event.target.value;
+            this.setState({ projectInfo: projectSlice });
+  }
+    }
+  
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const { email, name, phone, github, schoolName, gradYear, titleMajor, college, GPA, relevantCoursework, skillsProficient, skillsExperienced, skillsFamiliar, } = this.state;
+    this.showConfirmation();
     const eventResponse = getResume(this.state);
+    console.log(this.state.showingConfirmation)
   }
 
-  addProject = (e) => {
+  addProject = (event) => {
     this.setState((prevState) => ({
       projectInfo: [...prevState.projectInfo, {
         projectName: "", projectLocation: "", projectToolsUsed: "",
@@ -151,10 +142,10 @@ class Resume extends Component {
         projectDescription2: "", projectDescription3: ""
       }],
     }));
-    console.log(this.state.projectInfo);
+        this.setState({numberItems: this.state.numberItems+1});
   }
 
-  addExperience = (e) => {
+  addExperience = (event) => {
     this.setState((prevState) => ({
       experienceInfo: [...prevState.experienceInfo, {
         organizationName: "", positionTitle: "", experienceLocation: "",
@@ -162,26 +153,40 @@ class Resume extends Component {
         experienceDescription2: "", experienceDescription3: ""
       }],
     }));
-    console.log(this.state.experienceInfo);
+        this.setState({numberItems: this.state.numberItems+1});
   }
 
   render() {
+    
     document.body.style.background = 'rgba(173, 169, 169, 0.3)';
     document.body.style.paddingBottom = '150px';
     let { projectInfo } = this.state;
     let { experienceInfo } = this.state;
+ 
     return (
+      <div>
+       <Modal isOpen = {this.state.showingConfirmation}>
+        <ModalHeader >
+        Are you sure?
+        </ModalHeader>
+        <ModalBody>Woohoo, you're reading this text in a modal!</ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={this.hideConfirmation}>
+            Go Back
+          </Button>
+          <Button color = "success"  onClick={this.hideConfirmation}>
+            Confirm PDF Submission
+          </Button>
+        </ModalFooter>
+      </Modal>
       <React.Fragment>
-        <p> Step {this.state.currentStep} </p>
-
-        <form onSubmit={this.handleSubmit}>
           <GeneralInformation
             name={this.state.name}
             phone={this.state.phone}
             email={this.state.email}
             github={this.state.github}
             currentStep={this.state.currentStep}
-            handleChange={this.handleChange}
+            handleChange={this.handleNormalChange}
           />
           <Education
             schoolName={this.state.schoolName}
@@ -191,14 +196,12 @@ class Resume extends Component {
             GPA={this.state.GPA}
             relevantCoursework={this.state.relevantCoursework}
             currentStep={this.state.currentStep}
-            handleChange={this.handleChange}
+            handleChange={this.handleNormalChange}
           />
 
           {
             experienceInfo.map((val, idx) => {
-              let organizationName = `organizationName-${idx}`, positionTitle = `positionTitle-${idx}`, experienceLocation = `experienceLocation-${idx}`,
-                experienceStartDate = `experienceStartDate-${idx}`, experienceEndDate = `experienceEndDate-${idx}`, experienceDescription1 = `experienceDescription1-${idx}`,
-                experienceDescription2 = `experienceDescription2-${idx}`, experienceDescription3 = `experienceDescription3-${idx}`
+             
               return (
                 <Experience
                   id={idx}
@@ -207,29 +210,23 @@ class Resume extends Component {
                   addExperience={this.addExperience}
                   currentStep={this.state.currentStep}
                   handleChange={this.handleChange}
+                  numberItems= {this.state.numberItems}
                 />
               )
             })
           }
           {
             projectInfo.map((val, idx) => {
-              let projectNameId = `projectName-${idx}`, projectLocationId = `projectLocation-${idx}`, projectToolsUsed = `projectToolsUsed-${idx}`,
-                projectStartDate = `projectStartDate-${idx}`, projectEndDate = `projectEndDate-${idx}`, projectDescription1 = `projectDescription1-${idx}`,
-                projectDescription2 = `projectDescription2-${idx}`, projectDescription3 = `projetDescription3-${idx}`;
+             
               return (
                 <Projects
-                  id={idx}
-                  projectName={this.state.projectInfo[0].projectName}
-                  projectToolsUsed={this.state.projectInfo[0].projectToolsUsed}
-                  projectLocation={this.state.projectInfo[0].projectLocation}
-                  projectStartDate={this.state.projectInfo[0].projectStartDate}
-                  projectEndDate={this.state.projectInfo[0].projectEndDate}
-                  projectDescription1={this.state.projectInfo[0].projectDescription1}
-                  projectDescription2={this.state.projectInfo[0].projectDescription2}
-                  projectDescription3={this.state.projectInfo[0].projectDescription3}
-                  addProject={this.addProject}
-                  currentStep={this.state.currentStep}
-                  handleChange={this.handleChange}
+                id={idx}
+                index = {idx}
+                {...this.state.projectInfo[idx]}
+                addProject={this.addProject}
+                currentStep={this.state.currentStep}
+                handleChange={this.handleChange}
+                numberItems={this.state.numberItems}
                 />
 
               )
@@ -239,18 +236,18 @@ class Resume extends Component {
             skillsProficient={this.state.skillsProficient}
             skillsExperienced={this.state.skillsExperienced}
             skillsFamiliar={this.state.skillsFamiliar}
-
+            handleSubmit = {this.handleSubmit}
             currentStep={this.state.currentStep}
-            handleChange={this.handleChange}
+            handleChange={this.handleNormalChange}
           />
           {this.previousButton}
           {this.nextButton}
 
-
-        </form>
       </React.Fragment>
+      </div>
     );
+  
   }
 }
-
+   
 export default Resume;

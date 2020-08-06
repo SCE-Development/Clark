@@ -7,7 +7,7 @@
             }
  const nameStyle = {
       margin: "auto",
-      width: "500px",
+      width: "35%",
       fontFamily: "Popper"
     };
 

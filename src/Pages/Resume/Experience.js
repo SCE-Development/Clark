@@ -10,26 +10,31 @@ class Experience extends React.Component {
     }
   }
   handleClick = () => {
-    this.props.addExperience();
+    if(this.props.numberItems<6){
+      this.props.addExperience();
     this.setState({ visibleButton: false });
+    }
+    else{
+      alert("Max Number of Items Reached");
+    }
   }
   handleChange = (event) => {
-    this.props.handleChange(event, this.props.index)
+    this.props.handleChange(event, this.props.index, "experience")
   }
   render() {
-    let btn_Visible = this.state.visibleButton ? "customBtnVisible" : "customBtnHidden";
+    let btn_Visible = (this.state.visibleButton) ? "customBtnVisible" : "customBtnHidden";
 
     if (this.props.currentStep !== 3) {
       return null;
     }
     const nameStyle = {
       margin: "auto",
-      width: "500px",
+      width: "35%",
       fontFamily: "Popper"
     };
     const descripStyle = {
       margin: "auto",
-      width: "500px",
+      width: "35%",
       fontFamily: "Popper"
     }
 
@@ -51,13 +56,13 @@ class Experience extends React.Component {
           <Input style={nameStyle} type="text" name="experienceStartDate" value={this.props.experienceStartDate} onChange={this.handleChange} placeholder="Type The Start Date Here" />
 
           <h6 class="labels"> End Date </h6>
-          <Input style={nameStyle} type="text" name="experienceEndDate" value={this.props.experienceEndDate} onChange={this.handleChange} placeholder="Type The End Date Here (Present if ongoing)" />
+          <Input style={nameStyle} type="text" name="experienceEndDate" value={this.props.experienceEndDate} onChange={this.handleChange} placeholder="Type The End Date Here (Type 'Present' if ongoing)" />
           <h6 class="labels"> Description Line 1 </h6>
-          <textarea name="" maxlength="115" class="textAreas" rows="2" cols="59" name="experienceDescription1" value={this.props.experienceDescription1} onChange={this.handleChange} placeholder="Type Description of Experience Here" />
+          <textarea name="" maxlength="115" class="textAreas" rows="2"  name="experienceDescription1" value={this.props.experienceDescription1} onChange={this.handleChange} placeholder="Type Description of Experience Here" />
           <h6 class="labels"> Description Line 2 </h6>
-          <textarea maxlength="115" class="textAreas" rows="2" cols="59" name="experienceDescription2" value={this.props.experienceDescription2} onChange={this.handleChange} placeholder="Type Description of Experience Here" />
+          <textarea maxlength="115" class="textAreas" rows="2"  name="experienceDescription2" value={this.props.experienceDescription2} onChange={this.handleChange} placeholder="Type Description of Experience Here" />
           <h6 class="labels"> Description Line 3 </h6>
-          <textarea maxlength="115" class="textAreas" rows="2" cols="59" name="experienceDescription3" value={this.props.experienceDescription3} onChange={this.handleChange} placeholder="Type Description of Experience Here" />
+          <textarea maxlength="115" class="textAreas" rows="2"  name="experienceDescription3" value={this.props.experienceDescription3} onChange={this.handleChange} placeholder="Type Description of Experience Here" />
           <h1 />
           <button class={btn_Visible} onClick={this.handleClick}>Add New Experience </button>
         </FormGroup>
