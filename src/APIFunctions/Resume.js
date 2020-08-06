@@ -1,5 +1,5 @@
-import axios from "axios";
-import { ApiResponse } from "./ApiResponses";
+import axios from 'axios';
+import { ApiResponse } from './ApiResponses';
 
 export async function getResume(newResume) {
   let status = new ApiResponse();
@@ -18,17 +18,17 @@ export async function getResume(newResume) {
       cumulativeGPA: newResume.GPA,
       courseWork: newResume.relevantCoursework,
     },
-  
+
     experienceList: newResume.experienceInfo,
     projectList: newResume.projectInfo,
-      skills:{
+    skills:{
       proficient: newResume.skillsProficient,
       experienced: newResume.skillsExperienced,
       familiar: newResume.skillsFamiliar,
     },
   };
-  
-  await axios.post("api/Resume/ResumeForm", {resumeToAdd}).catch(() => {
+
+  await axios.post('api/Resume/ResumeForm', {resumeToAdd}).catch(() => {
     status.error = true;
   });
   return status;

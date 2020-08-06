@@ -1,9 +1,9 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import "./index.css";
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import './index.css';
 
-import PrivateRoute from "./Components/Routing/PrivateRoute";
-import NavBarWrapper from "./Components/Navbar/NavBarWrapper";
+import PrivateRoute from './Components/Routing/PrivateRoute';
+import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
 import Overview from './Pages/Overview/Overview';
 import EmailPage from './Pages/EmailList/EmailPage';
@@ -11,7 +11,7 @@ import EventManager from './Pages/EventManager/EventManager';
 import Login from './Pages/Login/Login';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
-import Resume from "./Pages/Resume/resume.js";
+import Resume from './Pages/Resume/resume.js';
 import Home from './Pages/Home/Home.js';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import EventList from './Pages/Events/EventList';
@@ -43,7 +43,7 @@ export default function Routing({ appProps }) {
       Component: Overview,
       path: '/dashboard',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
@@ -55,54 +55,54 @@ export default function Routing({ appProps }) {
     },
     {
       Component: EventManager,
-      path: "/event-manager",
+      path: '/event-manager',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
       Component: SolidsConsole,
-      path: "/3DConsole",
+      path: '/3DConsole',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
       Component: LedSign,
-      path: "/led-sign",
+      path: '/led-sign',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
       Component: PrintingSolids,
-      path: "/3DPrintingForm",
+      path: '/3DPrintingForm',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: "/login",
+      redirect: '/login',
     },
     {
       Component: Printing,
-      path: "/2DPrinting",
+      path: '/2DPrinting',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: "/login",
+      redirect: '/login',
     },
     {
       Component: Login,
-      path: "/login",
+      path: '/login',
       allowedIf: !userIsAuthenticated,
-      redirect: "/",
+      redirect: '/',
     },
     {
       Component: MembershipApplication,
-      path: "/register",
+      path: '/register',
       allowedIf: !userIsAuthenticated,
-      redirect: "/",
+      redirect: '/',
     },
     {
       Component: Profile,
-      path: "/profile",
+      path: '/profile',
       allowedIf: userIsAuthenticated,
-      redirect: "/login",
+      redirect: '/login',
     },
     {
       Component: PrintingAnalytics,
@@ -119,15 +119,15 @@ export default function Routing({ appProps }) {
     }
   ];
   const signedOutRoutes = [
-    { Component: Home, path: "/" },
-    { Component: EventList, path: "/events" },
-    { Component: OfficerDB, path: "/officerDB" },
-    { Component: Team, path: "/team" },
-    { Component: VerifyEmailPage, path: "/verify" },
+    { Component: Home, path: '/' },
+    { Component: EventList, path: '/events' },
+    { Component: OfficerDB, path: '/officerDB' },
+    { Component: Team, path: '/team' },
+    { Component: VerifyEmailPage, path: '/verify' },
 
     {
       Component: Resume,
-      path: "/resume",
+      path: '/resume',
     },
   ];
   return (

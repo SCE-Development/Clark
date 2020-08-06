@@ -1,6 +1,6 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-//const ResumeForm = require("../models/ResumeForm");
+// const ResumeForm = require("../models/ResumeForm");
 
 
 const {
@@ -9,18 +9,13 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND,
-} = require("../../util/constants").STATUS_CODES;
+} = require('../../util/constants').STATUS_CODES;
 
-router.post("/ResumeForm", (req, res) => {
-  var fs = require('fs');
-  fs.writeFile("resumeContents.json", JSON.stringify(req.body), (err) =>{
-    if(err){
-      console.log("Err", err);
-    } else {
-      console.log("Success");
-    }
+router.post('/ResumeForm', (req, res) => {
+  let fs = require('fs');
+  fs.writeFile('resumeContents.json', JSON.stringify(req.body), (err) =>{
   });
-  
-  res.send(OK)
+
+  res.send(OK);
 });
 module.exports = router;

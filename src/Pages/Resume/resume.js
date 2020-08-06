@@ -1,12 +1,21 @@
-import React, { Component } from "react";
-import { getResume } from "../../APIFunctions/Resume";
-import GeneralInformation from "./GeneralInformation";
-import Education from "./Education";
-import Experience from "./Experience";
-import Projects from "./Projects";
-import Skills from "./Skills";
+import React, { Component } from 'react';
+import { getResume } from '../../APIFunctions/Resume';
+import GeneralInformation from './GeneralInformation';
+import Education from './Education';
+import Experience from './Experience';
+import Projects from './Projects';
+import Skills from './Skills';
 import './exampleStyle.css';
-import { Button, Form, FormGroup, Label, Input, FormText, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
+import { Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormText,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter} from 'reactstrap';
 class Resume extends Component {
   constructor(props) {
     super(props);
@@ -20,30 +29,40 @@ class Resume extends Component {
     this.hideConfirmation = this.hideConfirmation.bind(this);
     this.state = {
       projectInfo: [{
-        projectName: "", projectLocation: "", projectToolsUsed: "",
-        projectStartDate: "", projectEndDate: "", projectDescription1: "",
-        projectDescription2: "", projectDescription3: "",
+        projectName: '',
+        projectLocation: '',
+        projectToolsUsed: '',
+        projectStartDate: '',
+        projectEndDate: '',
+        projectDescription1: '',
+        projectDescription2: '',
+        projectDescription3: '',
       }],
       experienceInfo: [{
-        organizationName: "", positionTitle: "", experienceLocation: "",
-        experienceStartDate: "", experienceEndDate: "", experienceDescription1: "",
-        experienceDescription2: "", experienceDescription3: "",
+        organizationName: '',
+        positionTitle: '',
+        experienceLocation: '',
+        experienceStartDate: '',
+        experienceEndDate: '',
+        experienceDescription1: '',
+        experienceDescription2: '',
+        experienceDescription3: '',
       }],
       showingConfirmation: false,
       currentStep: 1,
-      name: "",
-      phone: "",
-      email: "",
-      github: "",
-      schoolName: "",
-      gradYear: "",
-      titleMajor: "",
-      college: "",
-      GPA: "",
-      relevantCoursework: "",
-      skillsProficient: "",
-      skillsExperienced: "",
-      skillsFamiliar: "",
+      name: '',
+      phone: '',
+      email: '',
+      github: '',
+      schoolName: '',
+      gradYear: '',
+      titleMajor: '',
+      college: '',
+      GPA: '',
+      relevantCoursework: '',
+      skillsProficient: '',
+      skillsExperienced: '',
+      skillsFamiliar: '',
       numberItems: 2,
     };
   }
@@ -56,23 +75,23 @@ class Resume extends Component {
   }
 
   _next() {
-    let currentStep = this.state.currentStep
-    currentStep = currentStep >= 4 ? 5 : currentStep + 1
+    let currentStep = this.state.currentStep;
+    currentStep = currentStep >= 4 ? 5 : currentStep + 1;
     this.setState({
       currentStep: currentStep
-    })
+    });
   }
 
   _prev() {
-    let currentStep = this.state.currentStep
-    currentStep = currentStep <= 1 ? 1 : currentStep - 1
+    let currentStep = this.state.currentStep;
+    currentStep = currentStep <= 1 ? 1 : currentStep - 1;
     this.setState({
       currentStep: currentStep
-    })
+    });
   }
 
   _addStuff() {
-    var hecko = document.createElement('class', <Experience />);
+    let hecko = document.createElement('class', <Experience />);
     document.body.appendChild(hecko);
   }
 
@@ -85,7 +104,7 @@ class Resume extends Component {
           onClick={this._prev}>
           Previous Page
         </button>
-      )
+      );
     }
     return null;
   }
@@ -99,87 +118,96 @@ class Resume extends Component {
           onClick={this._next}>
           Next Page
         </button>
-      )
+      );
     }
     return null;
   }
   handleNormalChange(event){
     const name = event.target.name;
-        const value = event.target.value;
-        this.setState({
-          [name]: value
-        })
-      }
-    
-  
+    const value = event.target.value;
+    this.setState({
+      [name]: value
+    });
+  }
+
+
   handleChange(event, index = null, type = null) {
     // check if index was sent as a parameter
-   if(type == "experience"){
+    if(type == 'experience'){
       let experienceSlice = this.state.experienceInfo.slice();
       experienceSlice[index][event.target.name] = event.target.value;
-            this.setState({ experienceInfo: experienceSlice });
-  }
-   if(type == "project"){
+      this.setState({ experienceInfo: experienceSlice });
+    }
+    if(type == 'project'){
       let projectSlice = this.state.projectInfo.slice();
       projectSlice[index][event.target.name] = event.target.value;
-            this.setState({ projectInfo: projectSlice });
-  }
+      this.setState({ projectInfo: projectSlice });
     }
-  
+  }
+
 
   handleSubmit = (event) => {
     event.preventDefault();
     this.showConfirmation();
     const eventResponse = getResume(this.state);
-    console.log(this.state.showingConfirmation)
   }
 
   addProject = (event) => {
     this.setState((prevState) => ({
       projectInfo: [...prevState.projectInfo, {
-        projectName: "", projectLocation: "", projectToolsUsed: "",
-        projectStartDate: "", projectEndDate: "", projectDescription1: "",
-        projectDescription2: "", projectDescription3: ""
+        projectName: '',
+        projectLocation: '',
+        projectToolsUsed: '',
+        projectStartDate: '',
+        projectEndDate: '',
+        projectDescription1: '',
+        projectDescription2: '',
+        projectDescription3: ''
       }],
     }));
-        this.setState({numberItems: this.state.numberItems+1});
+    this.setState({numberItems: this.state.numberItems+1});
   }
 
   addExperience = (event) => {
     this.setState((prevState) => ({
       experienceInfo: [...prevState.experienceInfo, {
-        organizationName: "", positionTitle: "", experienceLocation: "",
-        experienceStartDate: "", experienceEndDate: "", experienceDescription1: "",
-        experienceDescription2: "", experienceDescription3: ""
+        organizationName: '',
+        positionTitle: '',
+        experienceLocation: '',
+        experienceStartDate: '',
+        experienceEndDate: '',
+        experienceDescription1: '',
+        experienceDescription2: '',
+        experienceDescription3: ''
       }],
     }));
-        this.setState({numberItems: this.state.numberItems+1});
+    this.setState({numberItems: this.state.numberItems+1});
   }
 
   render() {
-    
+
     document.body.style.background = 'rgba(173, 169, 169, 0.3)';
     document.body.style.paddingBottom = '150px';
     let { projectInfo } = this.state;
     let { experienceInfo } = this.state;
- 
+
     return (
       <div>
-       <Modal isOpen = {this.state.showingConfirmation}>
-        <ModalHeader >
+        <Modal isOpen = {this.state.showingConfirmation}>
+          <ModalHeader >
         Are you sure?
-        </ModalHeader>
-        <ModalBody>Woohoo, you're reading this text in a modal!</ModalBody>
-        <ModalFooter>
-          <Button color="secondary" onClick={this.hideConfirmation}>
+          </ModalHeader>
+          <ModalBody>Woohoo, you're reading this text in a modal!</ModalBody>
+          <ModalFooter>
+            <Button color="secondary" onClick={this.hideConfirmation}>
             Go Back
-          </Button>
-          <Button color = "success"  onClick={this.hideConfirmation}>
+            </Button>
+            <Button color = "success"  onClick={this.hideConfirmation}>
             Confirm PDF Submission
-          </Button>
-        </ModalFooter>
-      </Modal>
-      <React.Fragment>
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <React.Fragment>
           <GeneralInformation
             name={this.state.name}
             phone={this.state.phone}
@@ -201,7 +229,7 @@ class Resume extends Component {
 
           {
             experienceInfo.map((val, idx) => {
-             
+
               return (
                 <Experience
                   id={idx}
@@ -212,24 +240,24 @@ class Resume extends Component {
                   handleChange={this.handleChange}
                   numberItems= {this.state.numberItems}
                 />
-              )
+              );
             })
           }
           {
             projectInfo.map((val, idx) => {
-             
+
               return (
                 <Projects
-                id={idx}
-                index = {idx}
-                {...this.state.projectInfo[idx]}
-                addProject={this.addProject}
-                currentStep={this.state.currentStep}
-                handleChange={this.handleChange}
-                numberItems={this.state.numberItems}
+                  id={idx}
+                  index = {idx}
+                  {...this.state.projectInfo[idx]}
+                  addProject={this.addProject}
+                  currentStep={this.state.currentStep}
+                  handleChange={this.handleChange}
+                  numberItems={this.state.numberItems}
                 />
 
-              )
+              );
             })
           }
           <Skills
@@ -243,11 +271,11 @@ class Resume extends Component {
           {this.previousButton}
           {this.nextButton}
 
-      </React.Fragment>
+        </React.Fragment>
       </div>
     );
-  
+
   }
 }
-   
+
 export default Resume;
