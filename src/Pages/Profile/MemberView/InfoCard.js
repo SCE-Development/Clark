@@ -12,115 +12,60 @@ export default function ProfileCard(props) {
   const [password, setPassword] = useState('New Password');
   const [confirmPass, setConfirmPass] = useState('Confirming New Password');
   const [user, setUser] = useState('');
-  const discordLogo =
-    'https://www.freeiconspng.com/uploads/discord-black-icon-1.png';
+  const [toggle, setToggle] = useState(false);
 
-  async function changePassword() {
-    // hash pass
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword =
-        password.trim() === '' ?
-          user.password :
-          bcrypt.hashSync(password, salt);
-
-    if (password === confirmPass) {
-      const apiResponse = await editUser(
-        {
-          ...user,
-          password: hashedPassword
-        },
-        user.token
-      );
-      if (!apiResponse.error) {
-        setPassword('');
-        window.alert('Success!!');
-      }
+  function itemClicked() {
+    // } else if (id === 7) {
+    // 	props.handleDiscordAuth();
+    // } else {
+    // 	setState({
+    // 		...state,
+    // 		[id]: {
+    // 			clicked: state[id] ? !state[id].clicked : true
+    // 		}
+    // 	});
+    // }
+    if (props.field.function) {
+      props.field.function();
     }
+    setToggle(!toggle);
   }
-
-  function buttonStyle() {
-    let style = { marginTop: '10px' };
-    password === confirmPass
-      ? (style = {
-        ...style,
-        color: 'white'
-      })
-      : (style = {
-        ...style,
-        color: 'grey',
-        cursor: 'not-allowed'
-      });
-    return style;
-  }
-
-  async function handleDiscordAuth() {
-    const response = await connectToDiscord(props.user.email, props.user.token);
-    window.open(response.responseData);
-  }
-
   return (
-    <div id='enclose'>
-      <img id='clip' alt='side' src={pic.getPictureByMonth()} />
-      <img id='clip2' alt='side' src={pic.getPictureByMonth()} />
-      <div id='profile-box'>
-        {props.fields.map((field, ind) => (
-          <h3 key={ind} id='inner-text-top'>
-            <b>{field.title}:</b>{' '}
-            {
-              <span
-                className={
-                  field.value && field.value.includes('Valid') ? 'invalid' : ''
-                }
-              >
-                {field.value}
-              </span>
-            }
-          </h3>
-        ))}
-        <Button
-          className='discord-button'
-          onClick={handleDiscordAuth}>
-          <div className='center-text'>
-            <img alt='discordLogo'
-              src={discordLogo}>
-            </img>
-            {(props.fields[4].value === 'Not Linked') ? 'Connect to Discord'
-              : 'Change Discord Account'}
-          </div>
-        </Button>
-        <h3 id='inner-text-top'>
-            New Password:{' '}
-          <Input
-            onChange={e => {
-              setUser(props.user);
-              setPassword(e.target.value);
-            }}
-            type='password'
-          />
-        </h3>
-        <h3 id='inner-text-top'>
-          Confirm Password:{' '}
-          <Input
-            onChange={e => {
-              setUser(props.user);
-              setConfirmPass(e.target.value);
-            }}
-            type='password'
-          />
-          <Button
-            id='changePasswd'
-            color='info'
-            style={buttonStyle()}
-            onClick={() => {
-              changePassword();
-            }}
-          >
-          Change Password
-          </Button>
-          <PrintRequest email={props.user.email} />
+    <div>
+      {/* {props.fields ? (
+					props.fields.map((field, ind) => ( */}
+      <div key={props.field.title}
+        className="box"
+        onClick={() => itemClicked()}>
+        <span id="icon" style={{ fontSize: '3.8rem' }}>
+          {props.field.icon}
+        </span>
+
+        <h3
+          id="inner-text-top"
+          style={{
+            fontSize: '2.2rem',
+            marginTop: '0.2rem'
+          }}>
+          <b style={props.field.style ?
+            { fontSize: props.field.style } : { fontSize: '' }}>
+            {props.field.title}{' '}
+          </b>
+
+          {toggle == true ? (
+            <span
+              id="value-span"
+              style={{
+                fontSize: '2rem',
+                fontWeight: '500'
+              }}>
+              {props.field.value}
+            </span>
+          ) : (
+            ''
+          )}
         </h3>
       </div>
-      <Footer />
     </div>
   );
 }
