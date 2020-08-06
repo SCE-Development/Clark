@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { healthCheck, updateSignText } from "../../APIFunctions/LedSign";
+import {
+  healthCheck,
+  updateSignText,
+  getAllSignMessages
+} from "../../APIFunctions/LedSign";
 import { Spinner, Input, Button, Container } from "reactstrap";
 import "./led-sign.css";
 import Header from "../../Components/Header/Header";
@@ -16,6 +20,7 @@ function LedSign(props) {
   const [borderColor, setBorderColor] = useState("#ff0000");
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
+  const [signMessages, setSignMessages] = useState([]);
   const inputArray = [
     {
       title: "Sign Text:",
@@ -96,6 +101,7 @@ function LedSign(props) {
   }
   useEffect(() => {
     async function checkSignHealth() {
+      setSignMessages(await getAllSignMessages());
       setLoading(true);
       const status = await healthCheck(props.user.firstName);
       if (status && !status.error) {
@@ -128,37 +134,11 @@ function LedSign(props) {
     }
   }
 
-  const fakeMessages = [
-    {
-      text: "Big Oof",
-      brightness: 50,
-      scrollSpeed: 50,
-      backgroundColor: "#00FF00",
-      textColor: "#FF0000",
-      borderColor: "#0000FF"
-    },
-    {
-      text: "kzv",
-      brightness: 50,
-      scrollSpeed: 50,
-      backgroundColor: "#00FF00",
-      textColor: "#FF0000",
-      borderColor: "#0000FF"
-    },
-    {
-      text: "shoutout taline taline rules",
-      brightness: 50,
-      scrollSpeed: 50,
-      backgroundColor: "#00FF00",
-      textColor: "#FF0000",
-      borderColor: "#0000FF"
-    }
-  ];
   return (
     <div>
       <Header {...headerProps} />
-      <div className='flex-container wrap-reverse'>
-        {fakeMessages.map(fakeMessage => (
+      <div className="flex-container wrap-reverse">
+        {signMessages.map(fakeMessage => (
           <LedSignMessage {...fakeMessage} />
         ))}
       </div>

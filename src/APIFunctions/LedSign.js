@@ -61,3 +61,22 @@ export async function updateSignText(signData) {
     });
   return status;
 }
+
+/**
+ * Retrieve all sign messages.
+ * @returns {ApiResponse} Containing sign messages
+ */
+export async function getAllSignMessages() {
+  let result = new ApiResponse();
+  await axios
+    .get(RPC_API_URL + '/SceRpcApi/LedSign/getSignMessages')
+    .then(res => {
+      console.log(res.data);
+      result = res.data;
+    })
+    .catch(err => {
+      result.responseData = err;
+      result.error = true;
+    });
+  return result;
+}
