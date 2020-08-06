@@ -34,11 +34,18 @@ const UserSchema = new Schema(
       type: Boolean,
       default: true
     },
+    discordUsername: {
+      type: String,
+      default: ''
+    },
+    discordDiscrim: {
+      type: String,
+      default: ''
+    },
     discordID: {
       type: String,
+      default: ''
     },
-
-    // Users declared Major at SJSU
     major: {
       type: String
     },
@@ -69,7 +76,7 @@ const UserSchema = new Schema(
 
 UserSchema.pre('save', function(next) {
   const member = this;
-  let emailRegExp = new RegExp (['^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0',
+  let emailRegExp = new RegExp(['^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0',
     '-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61',
     '}[a-zA-Z0-9])?)*$'].join(''));
   if (!this.email.match(emailRegExp)) {

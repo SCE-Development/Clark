@@ -34,8 +34,8 @@ describe('<UserProfile />', () => {
     expect(wrapper.find(InfoCard)).to.have.lengthOf(1);
   });
 
-  it('Should render a <img /> component with 3 children', () => {
-    expect(wrapper.find('img')).to.have.lengthOf(3);
+  it('Should render a <img /> component with 4 children', () => {
+    expect(wrapper.find('img')).to.have.lengthOf(4);
   });
 
   it('Should render a <img /> where src = public/images/SCE-glow.png', () => {

@@ -5,6 +5,8 @@ const router = express.Router();
 const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
+const axios = require('axios');
+const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid
@@ -17,7 +19,12 @@ const {
   NOT_FOUND,
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
-const addErrorLog = require ('../util/logging-helpers');
+const {
+  discordApiKeys
+} = require('../../config/config.json');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const addErrorLog = require('../util/logging-helpers');
+const discordConnection = require('../util/discord-connection');
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
@@ -97,6 +104,8 @@ router.post('/search', function(req, res) {
       email: result.email,
       emailVerified: result.emailVerified,
       emailOptIn: result.emailOptIn,
+      discordUsername: result.discordUsername,
+      discordDiscrim: result.discordDiscrim,
       discordID: result.discordID,
       active: result.active,
       accessLevel: result.accessLevel,
@@ -197,6 +206,35 @@ router.post('/getPagesPrintedCount', (req, res) => {
     }
     return res.status(OK).json(result.pagesPrinted);
   });
+});
+
+router.get('/callback', async function(req, res) {
+  const code = req.query.code;
+  const email = req.query.state;
+  discordConnection.loginWithDiscord(code, email)
+    .then(status => {
+      return res.status(OK).redirect('https://discord.com/oauth2/authorized');
+    })
+    .catch(_ => {
+      return res.status(NOT_FOUND).send('Authorization unsuccessful!');
+    });
+});
+
+router.post('/connectToDiscord', function(req, res) {
+  const email = req.body.email;
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!email) {
+    return res.sendStatus(BAD_REQUEST);
+  }
+  return res.status(OK)
+    .send('https://discord.com/api/oauth2/authorize?client_id=' +
+      `${discordApiKeys.CLIENT_ID}` +
+      `&redirect_uri=${discordApiKeys.REDIRECT_URI_DEV}` +
+      `&state=${email}`);
 });
 
 function checkIfPageCountResets(lastLogin) {
