@@ -111,8 +111,8 @@ function LedSign(props) {
       setLoading(true);
       const status = await healthCheck(props.user.firstName);
       if (status && !status.error) {
-        setSignMessages(status.responseData);
         setSignHealthy(true);
+        setSignMessages(status.responseData);
       } else {
         setSignHealthy(false);
       }
@@ -149,7 +149,7 @@ function LedSign(props) {
     <div>
       <Header {...headerProps} />
       <div className="flex-container wrap-reverse">
-        {signMessages[0] &&
+        {signMessages &&
           signMessages.map((fakeMessage, index) => (
             <LedSignMessage
               index={index}
