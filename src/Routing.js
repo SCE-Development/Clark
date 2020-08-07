@@ -123,7 +123,8 @@ export default function Routing({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' }
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: OfficerApplication, path: '/officerApplication'}
   ];
   return (
     <Router>

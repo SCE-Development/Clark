@@ -5,7 +5,7 @@ const { googleApiKeys } = require('../../config/config.json');
 const nodemailer = require('nodemailer');
 const { consoleColors } = require('../../util/constants');
 const { reject } = require('bluebird');
-const { GoogleSpreadsheet } = require('google-spreadsheet');
+
 
 const {
   CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS,
@@ -333,12 +333,8 @@ class SceGoogleApiHandler {
  * @param {object} data response data from the officer application form
  */
   async writeToForm(sheetsId, data){
+    const {GoogleSpreadsheet} = require('google-spreadsheet');
     return new Promise(async (resolve, reject)=>{
-      GoogleSpreadsheet.openById(sheetsId, (error, response) => {
-        if (error){
-          reject(false);
-        }
-      });
       const doc = new GoogleSpreadsheet(sheetsId);
       this.checkIfTokenFileExists(this.tokenPath, (error, response)=> {
         if(error){
@@ -356,7 +352,7 @@ class SceGoogleApiHandler {
         'Work Experience': data.experience,
         LinkedIn: data.linkedin
       };
-      sheet.addRow(row, (error, response) => {
+      sheet.addRow(row, (error, response)=> {
         if(error){
           reject(false);
         }else{

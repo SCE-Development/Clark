@@ -81,7 +81,18 @@ export default function UserNavBar(props) {
       ].join('')
     }
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events', month: null }, {title: 'Officer Application', route:'/officerApplication', month: [7,8,9] }];
+  const unauthedRoutes = [
+    {
+      title: 'Events',
+      route: '/events',
+      month: null
+    },
+    {
+      title: 'Officer Application',
+      route: '/officerApplication',
+      month: [7, 8, 9]
+    }
+  ];
 
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
@@ -162,15 +173,16 @@ export default function UserNavBar(props) {
                 </DropdownItem>
               )}
               {unauthedRoutes.map((link, index) => {
-                if (link.month === null || link.month.includes(new Date().getMonth())){
+                if (link.month === null ||
+                link.month.includes(new Date().getMonth())){
                   return (
-                      <DropdownItem className='drp-item' key={index}>
-                        <NavItem>  
-                          <NavLink id='btndrp-text' href={link.route}>
-                            {link.title}
-                          </NavLink>
-                        </NavItem>
-                      </DropdownItem>
+                    <DropdownItem className='drp-item' key={index}>
+                      <NavItem>
+                        <NavLink id='btndrp-text' href={link.route}>
+                          {link.title}
+                        </NavLink>
+                      </NavItem>
+                    </DropdownItem>
                   );
                 }
                 return null;
@@ -261,7 +273,8 @@ export default function UserNavBar(props) {
               </UncontrolledDropdown>
             )}
             {unauthedRoutes.map((link, index) => {
-              if (link.month === null || link.month.includes(new Date().getMonth())){
+              if (link.month === null ||
+              link.month.includes(new Date().getMonth())){
                 return(
                   <NavItem key={index}>
                     <NavLink id='navlink-text' href={link.route}>
