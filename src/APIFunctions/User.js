@@ -170,10 +170,8 @@ export async function checkIfUserExists(email) {
  */
 export function filterUsers(users, filterID) {
   let filteredUsers = users.filter((user) => {
-    const d = new Date();
     if (filterID === userFilterType.VALID) {
-      return (user.accessLevel >= membershipState.MEMBER
-        && user.membershipValidUntil > d.toISOString());
+      return (user.accessLevel >= membershipState.MEMBER);
     } else if (filterID === userFilterType.NON_VALID) {
       return (
         user.accessLevel === membershipState.NON_MEMBER ||
