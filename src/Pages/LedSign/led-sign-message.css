@@ -31,12 +31,6 @@
   text-align: left;
 }
 
-.input-bar {
-  width: 200px !important;
-  height: 30px !important;
-  margin: 5px;
-}
-
 .color-bar {
   width: 25px;
   height: 25px;
@@ -49,6 +43,10 @@
   justify-content: space-between;
 }
 
-.scroll-text {
+.title-text {
+  width: 300px !important;
+}
+
+.value-info {
   margin: 5px;
 }

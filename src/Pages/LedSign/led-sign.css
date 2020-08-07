@@ -38,3 +38,8 @@
   display: -webkit-flex;
   display: flex;
 }
+
+#led-sign-clear {
+  margin: 0 auto;
+  display: block;
+}

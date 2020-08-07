@@ -23,6 +23,26 @@ export async function healthCheck(officerName) {
 }
 
 /**
+ * Deletes a certain message from a certain index.
+ * @param {string} deleteMessage The text of the message to be deleted.
+ * @returns {ApiResponse} ApiResponse Object containing the response data
+ */
+export async function deleteMessageFromQueue(deleteMessage) {
+  let status = new ApiResponse();
+  await axios
+    .post(RPC_API_URL + '/SceRpcApi/LedSign/deleteMessageFromQueue',
+      { deleteMessage })
+    .then(res => {
+      status.responseData = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+/**
  * Retrieve all sign logs.
  * @returns {ApiResponse} Containing any error information related to the
  * request.
@@ -48,10 +68,10 @@ export async function getAllSignLogs() {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function updateSignText(signData) {
+export async function addMessageToQueue(signData) {
   let status = new ApiResponse();
   await axios
-    .post(RPC_API_URL + '/LedSign/updateSignText', { ...signData })
+    .post(RPC_API_URL + '/SceRpcApi/LedSign/addMessageToQueue', { ...signData })
     .then(res => {
       status = res.data;
     })
@@ -63,20 +83,20 @@ export async function updateSignText(signData) {
 }
 
 /**
- * Retrieve all sign messages.
- * @returns {ApiResponse} Containing sign messages
+ * Clears all messages from the queue.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
  */
-export async function getAllSignMessages() {
-  let result = new ApiResponse();
+export async function clearMessageQueue() {
+  let status = new ApiResponse();
   await axios
-    .get(RPC_API_URL + '/SceRpcApi/LedSign/getSignMessages')
+    .post(RPC_API_URL + '/SceRpcApi/LedSign/clearMessageQueue')
     .then(res => {
-      console.log(res.data);
-      result = res.data;
+      status = res.data;
     })
     .catch(err => {
-      result.responseData = err;
-      result.error = true;
+      status.responseData = err;
+      status.error = true;
     });
-  return result;
+  return status;
 }
