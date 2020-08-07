@@ -5,7 +5,7 @@ const { googleApiKeys } = require('../../config/config.json');
 const nodemailer = require('nodemailer');
 const { consoleColors } = require('../../util/constants');
 const { reject } = require('bluebird');
-
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 const {
   CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS,
@@ -332,33 +332,43 @@ class SceGoogleApiHandler {
  * @param {String} sheetsId spreadsheet id for the spreadsheet to add to
  * @param {object} data response data from the officer application form
  */
-  async writeToForm(sheetsId, data){
-    const {GoogleSpreadsheet} = require('google-spreadsheet');
-    return new Promise(async (resolve, reject)=>{
+  async writeToForm(sheetsId, data) {
+    const { GoogleSpreadsheet } = require('google-spreadsheet');
+    return new Promise(async (resolve, reject) => {
+      this.checkIfTokenFileExists(this.tokenPath, (error, response) => {
+        if (error) {
+          reject(false);
+        }
+      });
       const doc = new GoogleSpreadsheet(sheetsId);
-      this.checkIfTokenFileExists(this.tokenPath, (error, response)=> {
-        if(error){
-          reject(false);
-        }
-      });
       await doc.useServiceAccountAuth(require(this.tokenPath));
-      await doc.loadInfo();
-      const sheet = doc.sheetsByIndex[0];
-      const row = {
-        Name: data.name,
-        Email: data.email,
-        'Graduation Month': data.gradMonth,
-        'Graduation Year': data.gradYear,
-        'Work Experience': data.experience,
-        LinkedIn: data.linkedin
-      };
-      sheet.addRow(row, (error, response)=> {
-        if(error){
-          reject(false);
-        }else{
-          resolve(response);
-        }
-      });
+      let validSheetsId = true;
+      await doc.loadInfo()
+        .then(async () => {
+          const sheet = doc.sheetsByIndex[0];
+		  	const row = {
+				  Name: data.name,
+				  Email: data.email,
+				  'Graduation Month': data.gradMonth,
+				  'Graduation Year': data.gradYear,
+				  'Work Experience': data.experience,
+				  LinkedIn: data.linkedin
+			  };
+			  await sheet
+				  .addRow(row)
+				  .then((res) => {
+					  resolve(row);
+			  	})
+				  .catch((error) => {
+              reject(false);
+            });
+        })
+        .catch((_) => {
+          validSheetsId = false;
+        });
+      if(!validSheetsId){
+        reject(false);
+      }
     });
   }
 }
