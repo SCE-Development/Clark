@@ -15,6 +15,7 @@ function App(props) {
   const [user, setUser] = useState();
 
   async function getAuthStatus() {
+    console.log(props);
     setIsAuthenticating(true);
     const authStatus = await checkIfUserIsSignedIn();
     setAuthenticated(!authStatus.error);

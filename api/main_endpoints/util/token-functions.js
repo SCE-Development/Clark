@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const { secretKey } = require('../../config/config.json');
 const passport = require('passport');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+
 require('./passport')(passport);
+
 
 /**
  * Check if the request body contains a token
@@ -20,12 +23,12 @@ function checkIfTokenSent(request) {
  * response to the user
  * @returns {object} the decoded response from jwt.verify
  */
-function checkIfTokenValid(request) {
+function checkIfTokenValid(request, accessLevel = membershipState) {
   const userToken = request.body.token.replace(/^JWT\s/, '');
   let decodedResponse;
+
   jwt.verify(userToken, secretKey, function(error, decoded) {
-    decodedResponse = !error && decoded;
-  });
+    decodedResponse = !error && decoded && (decoded.accessLevel >= accessLevel);  });
   return decodedResponse;
 }
 

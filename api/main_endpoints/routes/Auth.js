@@ -161,7 +161,8 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const decoded = checkIfTokenValid(req);
+  console.log(req.body);
+  const decoded = checkIfTokenValid(req, membershipState.MEMBER);
   if (!decoded) {
     res.sendStatus(UNAUTHORIZED);
   } else {
