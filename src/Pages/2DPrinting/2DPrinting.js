@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import './2D-printing.css';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 import Header from
   '../../Components/Header/Header.js';
-import { registerPlugin } from 'react-filepond';
+import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
@@ -24,6 +25,7 @@ import {
   FileUpload
 } from './2DComponents';
 import { PrintPageModal } from './2DPrintPageModal';
+import PrintingHealthCheck from './2DPrintingHealthCheck';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
 
@@ -69,7 +71,6 @@ export default function Printing(props) {
   const [loadPreview, setLoadPreview] = useState(true);
   const [statusModal, setStatusModal] = useState(false);
   const [printStatus, setPrintStatus] = useState('');
-
 
   async function updateEmbed(totalPages) {
     try {
@@ -360,6 +361,7 @@ export default function Printing(props) {
   return (
     <div>
       <Header {...headerProps} />
+      <PrintingHealthCheck />
       <FileUpload {...fileUploadProps} />
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
