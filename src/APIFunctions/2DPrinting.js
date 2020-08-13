@@ -53,12 +53,15 @@ export function parseRange(pages, maxPages) {
  * one-sided or two-sided
  * @param {String|undefined} data.pageRanges - Pages to print:
  * 1-2, 5, 7-10
- * @returns {PrintApiResponse} - Containing information for if
+ * @returns {ApiResponse} - Containing information for if
  * the page successfully printed
  */
 export async function printPage(data) {
-  let status = new PrintApiResponse();
+  let status = new ApiResponse();
   await axios.post(RPC_API_URL + '/SceRpcApi/Printer/sendPrintRequest', data)
+    .then(response => {
+      status.responseData = response.data.message;
+    })
     .catch(() => {
       status.error = true;
     });
@@ -68,7 +71,7 @@ export async function printPage(data) {
 /**
  * Log the print request
  * @param {Object} data         Encoded file
- * @returns {PrintApiResponse}  Containing information for if
+ * @returns {ApiResponse}  Containing information for if
  *                              the page is printing
  */
 export async function logPrintRequest(data) {

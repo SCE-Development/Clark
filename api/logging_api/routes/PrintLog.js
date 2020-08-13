@@ -6,7 +6,7 @@ const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 router.post('/addPrintLog', (req, res) => {
   const newPrint = new PrintLog({
     numPages: req.body.numPages,
-    chosenPrinter: req.body.chosenPrinter,
+    chosenPrinter: req.body.destination,
     printedDate: req.body.printedDate,
     memberName: req.body.memberName
   });
