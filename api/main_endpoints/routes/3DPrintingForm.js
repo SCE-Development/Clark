@@ -61,7 +61,7 @@ router.post('/GetForm', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   PrintingForm3D.deleteOne(

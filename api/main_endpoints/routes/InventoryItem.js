@@ -13,6 +13,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require('../util/logging-helpers');
+const { membershipState } = require('../../../src/Enums');
 
 router.get('/getItems', (req, res) => {
   const category = req.body.category ? { category: req.body.category } : {};
@@ -22,7 +23,7 @@ router.get('/getItems', (req, res) => {
 router.post('/editItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -58,7 +59,7 @@ router.post('/editItem', (req, res) => {
 router.post('/addItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const newItem = new InventoryItem({
@@ -81,7 +82,7 @@ router.post('/addItem', (req, res) => {
 router.post('/deleteItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   InventoryItem.deleteOne({ name: req.body.name }, (error, form) => {

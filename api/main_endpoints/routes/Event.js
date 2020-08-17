@@ -13,6 +13,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require ('../util/logging-helpers');
+const { membershipState } = require('../../../src/Enums');
 
 router.get('/getEvents', (req, res) => {
   Event.find()
@@ -32,7 +33,7 @@ router.get('/getEvents', (req, res) => {
 router.post('/createEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const newEvent = new Event({
@@ -57,7 +58,7 @@ router.post('/createEvent', (req, res) => {
 router.post('/editEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const {
@@ -100,7 +101,7 @@ router.post('/editEvent', (req, res) => {
 router.post('/deleteEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   Event.deleteOne({ _id: req.body.id })

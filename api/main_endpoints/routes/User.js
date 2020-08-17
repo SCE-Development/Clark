@@ -55,7 +55,7 @@ router.post('/checkIfUserExists', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -139,7 +139,7 @@ router.post('/users', function(req, res) {
 router.post('/edit', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const query = { email: req.body.email };

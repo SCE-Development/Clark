@@ -13,6 +13,7 @@ const {
   NOT_FOUND,
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require ('../util/logging-helpers');
+const { membershipState } = require('../../../src/Enums');
 
 router.get('/getDoorCodes', (req, res) => {
   DoorCode.find()
@@ -39,7 +40,7 @@ router.get('/getAvailableDoorCode', (req, res) => {
 router.post('/addCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -60,7 +61,7 @@ router.post('/addCode', (req, res) => {
 router.post('/editCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -94,7 +95,7 @@ router.post('/editCode', (req, res) => {
 router.post('/removeCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 

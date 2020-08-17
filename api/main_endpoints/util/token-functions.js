@@ -23,12 +23,15 @@ function checkIfTokenSent(request) {
  * response to the user
  * @returns {object} the decoded response from jwt.verify
  */
-function checkIfTokenValid(request, accessLevel = membershipState) {
+function checkIfTokenValid(request, accessLevel = membershipState.MEMBER) {
   const userToken = request.body.token.replace(/^JWT\s/, '');
   let decodedResponse;
 
   jwt.verify(userToken, secretKey, function(error, decoded) {
-    decodedResponse = !error && decoded && (decoded.accessLevel >= accessLevel);  });
+    console.log(decoded)
+    decodedResponse = !error && decoded ;  
+    console.log(userToken)
+  }); 
   return decodedResponse;
 }
 
