@@ -54,7 +54,7 @@ function RequestForm(props) {
       color: 'danger',
       value: 'Delete',
       handleUpdates: e => {
-        props.handleDeleteData(item);
+        props.handleDelete(item);
       }
     }
   ];
@@ -110,7 +110,7 @@ function RequestForm(props) {
       </Card>
 
       <Collapse isOpen={props.collapse}>
-        <Card>
+        <Card className = 'request-info'>
           <CardBody>
             <Row>
               {printColumnInfo.map((columnInfo, index) => {
