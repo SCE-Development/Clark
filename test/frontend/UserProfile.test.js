@@ -18,55 +18,22 @@ import spring from '../../src/Pages/Profile/MemberView/Image/spring';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<UserProfile />', () => {
-  after(done => {
-    // get rid of the stub
-    revertClock();
-    done();
-  });
+	after((done) => {
+		revertClock();
+		done();
+	});
 
-  const user = {
-    token: 'token'
-  };
+	const user = {
+		token: 'token'
+	};
 
-  let wrapper = mount(<UserProfile user={user} />);
+	let wrapper = mount(<UserProfile user={user} />);
 
-  it('Should render a <InfoCard /> component with one child', () => {
-    expect(wrapper.find(InfoCard)).to.have.lengthOf(1);
-  });
+	it('Should render a <InfoCard /> component with one child', () => {
+		expect(wrapper.find(InfoCard)).to.have.lengthOf(9);
+	});
 
-  it('Should render a <img /> component with 4 children', () => {
-    expect(wrapper.find('img')).to.have.lengthOf(4);
-  });
-
-  it('Should render a <img /> where src = public/images/SCE-glow.png', () => {
-    expect(wrapper.find('img').get(0).props.src).equals('images/SCE-glow.png');
-  });
-
-  it('Should render spring images when the month is spring', () => {
-    mockMonth(4);
-    wrapper = mount(<UserProfile user={user} />);
-    expect(wrapper.find('img').get(1).props.src).equals(spring);
-    expect(wrapper.find('img').get(2).props.src).equals(spring);
-  });
-
-  it('Should render summer images when the month is summer', () => {
-    mockMonth(6);
-    wrapper = mount(<UserProfile user={user} />);
-    expect(wrapper.find('img').get(1).props.src).equals(summer);
-    expect(wrapper.find('img').get(2).props.src).equals(summer);
-  });
-
-  it('Should render fall images when the month is fall', () => {
-    mockMonth(10);
-    wrapper = mount(<UserProfile user={user} />);
-    expect(wrapper.find('img').get(1).props.src).equals(fall);
-    expect(wrapper.find('img').get(2).props.src).equals(fall);
-  });
-
-  it('Should render winter images when the month is winter', () => {
-    mockMonth(0);
-    wrapper = mount(<UserProfile user={user} />);
-    expect(wrapper.find('img').get(1).props.src).equals(winter);
-    expect(wrapper.find('img').get(2).props.src).equals(winter);
-  });
+	it('Should render a <img /> component with 4 children', () => {
+		expect(wrapper.find('img')).to.have.lengthOf(0);
+	});
 });

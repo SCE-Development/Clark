@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
 * {
 	margin: 0;
 	padding: 0;
@@ -32,6 +33,20 @@
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	grid-gap: 1.5vh;
+}
+
+#icon {
+	font-size: 3.8rem;
+}
+
+#inner-text-top {
+	font-size: 2.2rem;
+	margin-top: 0.2rem;
+}
+
+#value-span {
+	font-size: 2rem;
+	font-weight: 500;
 }
 
 #profile-box > div {
@@ -109,9 +124,51 @@
 	z-index: 2;
 }
 
-#printing-request-button {
-	margin-top: 10px;
-	margin-left: 10%;
+.modal-header {
+	float: left;
+	font-weight: bolder;
+}
+
+#printing-pickup {
+	margin-top: 2rem;
+	font-size: 2rem;
+	font-weight: bolder;
+}
+
+#three-print-request-button {
+	font-size: 1.5rem;
+	font-weight: bolder;
+	background: #0779e4;
+	border: none;
+	float: left !important;
+	margin-right: 11rem;
+}
+
+#three-print-close-button {
+	background: #eb4559;
+	border: none;
+	font-size: 1.5rem;
+	font-weight: bolder;
+	float: right;
+}
+
+#new-password {
+	margin: 1rem;
+	width: 75%;
+	border: 2px solid #b5b5b5;
+}
+
+#confirm-password {
+	margin: 1rem;
+	width: 75%;
+	border: 2px solid #b5b5b5;
+}
+
+#change-password-close-button {
+	background: #eb4559;
+	border: none;
+	font-size: 1.5rem;
+	font-weight: bolder;
 }
 
 .discord-button {

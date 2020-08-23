@@ -6,9 +6,22 @@ import { formatFirstAndLastName } from '../../../APIFunctions/Profile';
 import Header from '../../../Components/Header/Header';
 import PrintRequest from './PrintRequest';
 import ChangePassword from './ChangePassword';
-import { Button } from 'reactstrap';
 import Footer from '../../../Components/Footer/Footer.js';
 import { connectToDiscord } from '../../../APIFunctions/User';
+
+// Font Awesome Imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	faExclamationTriangle,
+	faDoorOpen,
+	faCalendarDay,
+	faCubes,
+	faPrint,
+	faLock
+} from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+library.add(fab);
 
 const membershipStatus = require('../../../Enums').membershipState;
 
@@ -28,7 +41,7 @@ export default class Profile extends Component {
 
 	async componentDidMount() {
 		const response = await searchUserByEmail(this.props.user.email, this.props.user.token);
-		console.log(this.props.user.firstName);
+
 		if (!response.error) {
 			//concat user to full name
 			this.setState({ user: response.responseData }, () => {
@@ -52,12 +65,12 @@ export default class Profile extends Component {
 					{
 						title: 'Door Code',
 						value: this.state.user.doorCode,
-						icon: <i class="fas fa-door-open" />
+						icon: <FontAwesomeIcon icon={faDoorOpen} />
 					},
 					{
 						title: 'Joined Date',
 						value: this.state.user.joinDate.slice(0, 10),
-						icon: <i class="fas fa-calendar-day" />
+						icon: <FontAwesomeIcon icon={faCalendarDay} />
 					},
 					{ title: `${this.state.user.email}`, value: '', style: '2.5rem' },
 					{
@@ -66,26 +79,30 @@ export default class Profile extends Component {
 							this.props.user.accessLevel < membershipStatus.MEMBER
 								? 'Not Valid'
 								: this.state.user.membershipValidUntil.slice(0, 10),
-						icon: <i class="fas fa-exclamation-triangle" />
+						icon: <FontAwesomeIcon icon={faExclamationTriangle} />
 					},
 					{
 						title: '2D Prints',
 						value: '',
-						icon: <i class="fas fa-print" />,
+						icon: <FontAwesomeIcon icon={faPrint} />,
 						function: () => {
 							window.location.href = '/2DPrinting';
 						}
 					},
-					{ title: 'Request 3D Printing', value: <PrintRequest />, icon: <i class="fas fa-cubes" /> },
+					{ title: 'Request 3D Printing', value: <PrintRequest />, icon: <FontAwesomeIcon icon={faCubes} /> },
 					{
 						title: 'Connect with Discord',
 						value: '',
-						icon: <i class="fab fa-discord" />,
+						icon: <FontAwesomeIcon icon={[ 'fab', 'discord' ]} />,
 						function: () => {
 							this.handleDiscordAuth();
 						}
 					},
-					{ title: 'Change Password', value: <ChangePassword />, icon: <i class="fas fa-lock" /> }
+					{
+						title: 'Change Password',
+						value: <ChangePassword user={{ ...this.state.user, token: this.props.user.token }} />,
+						icon: <FontAwesomeIcon icon={faLock} />
+					}
 				]
 			: [
 					{ title: '', value: '' },
@@ -103,17 +120,15 @@ export default class Profile extends Component {
 			<div id="app">
 				<Header {...this.headerProps} />
 
-				{/* <InfoCard
-					fields={fields}
-					user={{ ...this.state.user, token: this.props.user.token }}
-					handleDiscordAuth={this.handleDiscordAuth}
-				/> */}
-
 				<div id="enclose">
 					<div id="profile-box">
 						{fields.map((elem, ind) => {
 							return (
-								<InfoCard field={elem} user={{ ...this.state.user, token: this.props.user.token }} />
+								<InfoCard
+									key={ind}
+									field={elem}
+									user={{ ...this.state.user, token: this.props.user.token }}
+								/>
 							);
 						})}
 					</div>
