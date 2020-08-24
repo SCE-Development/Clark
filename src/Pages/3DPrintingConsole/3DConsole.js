@@ -9,6 +9,8 @@ import {
   update3DPrintRequestProgress
 } from '../../APIFunctions/3DPrinting';
 import Header from '../../Components/Header/Header';
+import ConfirmationModal from
+  '../../Components/DecisionModal/ConfirmationModal';
 
 export default class PrintConsole3D extends React.Component {
   constructor(props) {
@@ -18,7 +20,9 @@ export default class PrintConsole3D extends React.Component {
       collapse: true,
       data: [],
       key: '',
-      search: ''
+      search: '',
+      modalOpen: false,
+      itemToDelete: null
     };
     this.headerProps = {
       title: '3D Console'
@@ -46,12 +50,23 @@ export default class PrintConsole3D extends React.Component {
     }
   }
 
-  /*
-  Delete api
-  parameter: Json object of object to be deleted
-  Search for object in db using name and color then delete
-  */
-  handleDeleteData = async requestToDelete => {
+  handleConfirmationModal = async item => {
+    this.setState({
+      modalOpen: true,
+      itemToDelete: item
+    });
+  }
+
+  toggleModal = () => {
+    this.setState({
+      modalOpen: !this.state.modalOpen
+    });
+  }
+
+  delete3dPrintRequest = async requestToDelete => {
+    this.setState({
+      modalOpen: false
+    });
     const deleteResponse = await delete3DPrintRequest(
       requestToDelete,
       this.state.authToken
@@ -124,10 +139,18 @@ export default class PrintConsole3D extends React.Component {
                 key={key}
                 handleToggle={this.handleToggle}
                 handleUpdateProgress={this.handleUpdateProgress}
-                handleDeleteData={this.handleDeleteData}
+                handleDelete={this.handleConfirmationModal}
                 collapse={this.state.collapse}
               />
             ))}
+            <ConfirmationModal
+              headerText = 'Delete 3D Print Request'
+              bodyText = {'Are you sure you want to ' +
+                'delete this print request?'}
+              handleConfirmation = {() =>
+                this.delete3dPrintRequest(this.state.itemToDelete)}
+              open = {this.state.modalOpen}
+              toggle = {this.toggleModal}/>
           </Form>
         </Container>
       </div>
