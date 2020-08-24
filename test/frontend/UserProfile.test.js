@@ -18,22 +18,22 @@ import spring from '../../src/Pages/Profile/MemberView/Image/spring';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<UserProfile />', () => {
-	after((done) => {
-		revertClock();
-		done();
-	});
+  after((done) => {
+    revertClock();
+    done();
+  });
 
-	const user = {
-		token: 'token'
-	};
+  const user = {
+    token: 'token'
+  };
 
-	let wrapper = mount(<UserProfile user={user} />);
+  let wrapper = mount(<UserProfile user={user} />);
 
-	it('Should render a <InfoCard /> component with one child', () => {
-		expect(wrapper.find(InfoCard)).to.have.lengthOf(9);
-	});
+  it('Should render a <InfoCard /> component with one child', () => {
+    expect(wrapper.find(InfoCard)).to.have.lengthOf(9);
+  });
 
-	it('Should render a <img /> component with 4 children', () => {
-		expect(wrapper.find('img')).to.have.lengthOf(0);
-	});
+  it('Should render a <img /> component with 4 children', () => {
+    expect(wrapper.find('img')).to.have.lengthOf(0);
+  });
 });
