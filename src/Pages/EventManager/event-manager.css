@@ -18,3 +18,7 @@
   max-height: 13rem;
   object-fit: contain;
 }
+
+#event-manager-body {
+  padding-top: 32px;
+}

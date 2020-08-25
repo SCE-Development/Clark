@@ -50,9 +50,9 @@ export default function EventManager(props) {
   async function handleSubmit(event) {
     if (modalState === eventModalState.SUBMIT) {
       const res = await createNewEvent(event, props.user.token);
-      if(res.error === false) {
+      if (res.error === false) {
         const addEventRes = await addEventToCalendar(event, props.user.token);
-        if(addEventRes.error === true) {
+        if (addEventRes.error === true) {
           alert('Cannot add event to Google Calendar due to Event conflict!');
         }
       } else {
@@ -66,7 +66,7 @@ export default function EventManager(props) {
   return (
     <div className='event-background'>
       <Header {...headerProps} />
-      <Container>
+      <Container id='event-manager-body'>
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event
         </Button>
