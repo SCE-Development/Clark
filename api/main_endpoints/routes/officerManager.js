@@ -22,7 +22,7 @@ const { membershipState } = require('../../../src/Enums');
 router.post('/submit', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const data = {
@@ -44,7 +44,7 @@ router.post('/submit', (req, res) => {
 router.post('/GetForm', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   let obj = {};
@@ -71,7 +71,7 @@ router.post('/GetForm', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   Manager.deleteOne({ email: req.body.email }, function(error, form) {
@@ -99,7 +99,7 @@ router.post('/delete', (req, res) => {
 router.post('/edit', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const query = { email: req.body.email };

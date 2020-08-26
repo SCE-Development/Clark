@@ -31,8 +31,8 @@ function checkIfTokenValid(request, accessLevel = membershipState.MEMBER) {
       decodedResponse = false;
     }else{
       decodedResponse = !error && decoded;
-    }  
-  }); 
+    }
+  });
   return decodedResponse;
 }
 

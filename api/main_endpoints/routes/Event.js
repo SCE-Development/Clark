@@ -33,7 +33,7 @@ router.get('/getEvents', (req, res) => {
 router.post('/createEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const newEvent = new Event({

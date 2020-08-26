@@ -139,7 +139,7 @@ router.post('/users', function(req, res) {
 router.post('/edit', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req,membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const query = { email: req.body.email };
