@@ -22,14 +22,12 @@
 
 #profile-box {
 	position: relative;
-
 	height: 100%;
 	width: 100%;
 	top: 50%;
 	background-color: #ffffff;
 	padding: 1.5vh;
 	z-index: 1;
-
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	grid-gap: 1.5vh;
@@ -51,27 +49,22 @@
 
 #profile-box > div {
 	background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
-
 	border-radius: 0.8rem;
 	background-attachment: fixed;
 	word-wrap: break-word;
 	height: 43vh;
 	cursor: pointer;
 	max-width: 100%;
-	/* Flex Box */
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	text-align: center;
-
 	padding: 1.5vh;
 	color: #333333;
-
 	transition: all .3s ease-in;
 }
 
-/* Make the background a lighter color */
 #profile-box > div:hover {
 	opacity: 0.9;
 	transform: scale(0.97);
@@ -84,8 +77,6 @@
 	transform: none;
 	opacity: 1;
 	cursor: default;
-
-	/* ? How do I increase the font-size? */
 }
 
 #profile-box > div:nth-of-type(4) {
