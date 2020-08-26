@@ -15,35 +15,29 @@ function EventCard(props) {
   } = props;
 
   return (
-    <React.Fragment>
-      <button
-        className='event-card-button'
-        onClick={() => {
-          handleClick();
-        }}
-      >
-        <tbody>
-          <td>
-            <img id='event-image'
-              className='event-image'
-              src={imageURL} alt=''
-            />
-          </td>
-          <Row className='event-title'>{title}</Row>
-          <Row className='event-date'>
-            {clockSymbol()}
-            {'  '}
-            {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
-            {' '}
-            {endTime}
-          </Row>
-          <Row className='event-location'>
-            {mapPinSymbol()}
-            {eventLocation}
-          </Row>
-        </tbody>
-      </button>
-    </React.Fragment>
+    <button
+      className='event-card-button'
+      onClick={() => {
+        handleClick();
+      }}
+    >
+      <img id='event-image'
+        className='event-image'
+        src={imageURL} alt=''
+      />
+      <Row className='event-title'>{title}</Row>
+      <Row className='event-date'>
+        {clockSymbol()}
+        {'  '}
+        {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
+        {' '}
+        {endTime}
+      </Row>
+      <Row className='event-location'>
+        {mapPinSymbol()}
+        {eventLocation}
+      </Row>
+    </button>
   );
 }
 
