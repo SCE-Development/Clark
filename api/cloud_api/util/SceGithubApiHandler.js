@@ -97,28 +97,11 @@ class SceGithubApiHandler {
           return {
             number: pr.number,
             title: pr.title,
-            pullRequestUrl: pr.html_url
+            pullRequestUrl: pr.html_url,
+            branchName: pr.head.ref
           };
         });
         return pullRequests;
-      })
-      .catch(_ => {
-        return false;
-      });
-  }
-
-  async getBranchesForPullRequest(repoName, pullNumber) {
-    return await axios
-      .get(
-        `https://api.github.com/repos/SCE-Development/${repoName}/pulls/` +
-        `${pullNumber}?client_id=${this.clientId}&client_secret=` +
-        `${this.clientSecret}`
-      )
-      .then(( { data }) => {
-        const branchName = data;
-        console.log('sha:', data.head.sha);
-        console.log('ref:', data.head.ref);
-        return data;
       })
       .catch(_ => {
         return false;
