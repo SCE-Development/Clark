@@ -107,6 +107,24 @@ class SceGithubApiHandler {
       });
   }
 
+  async getBranchesForPullRequest(repoName, pullNumber) {
+    return await axios
+      .get(
+        `https://api.github.com/repos/SCE-Development/${repoName}/pulls/` +
+        `${pullNumber}?client_id=${this.clientId}&client_secret=` +
+        `${this.clientSecret}`
+      )
+      .then(( { data }) => {
+        const branchName = data;
+        console.log('sha:', data.head.sha);
+        console.log('ref:', data.head.ref);
+        return data;
+      })
+      .catch(_ => {
+        return false;
+      });
+  }
+
   /**
    * Gets all commits merged into repos master branch
    * @param {String} repoName Name of SCE Github repo
