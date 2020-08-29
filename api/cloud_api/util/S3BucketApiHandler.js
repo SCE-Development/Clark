@@ -6,7 +6,7 @@ class S3BucketApiHandler {
     this.s3 = new aws.S3({
       accessKeyId: s3BucketKeys.AWSACCESSKEYID,
       secretAccessKey: s3BucketKeys.AWSSECRETKEY,
-      region: 'us-east-2',
+      region: 'us-west-1',
     });
   }
   getSignedUrl(s3Params, bucket) {
