@@ -119,7 +119,6 @@ export default class Profile extends Component {
 		return (
 			<div id="app">
 				<Header {...this.headerProps} />
-
 				<div id="enclose">
 					<div id="profile-box">
 						{fields.map((elem, ind) => {
