@@ -10,7 +10,7 @@ import { ApiResponse } from './ApiResponses';
 export function uploadToS3(files) {
   let uploadResult = new ApiResponse();
   let signedUrlResult = new ApiResponse();
-  files.map(file => {
+  return files.map(file => {
     let fileParts = file.name.split('.');
     let fileName = fileParts[0];
     let fileType = fileParts[1];

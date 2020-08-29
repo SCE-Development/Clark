@@ -52,7 +52,7 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 1em auto;
+  margin: 0px 1em auto;
   padding-top: 32px;
 }
 

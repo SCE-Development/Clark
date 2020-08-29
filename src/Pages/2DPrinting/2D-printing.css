@@ -24,7 +24,6 @@
 .filepond--root .filepond--drop-label {
   transform:translate3d(0px, 0px, 0);
   opacity: 1;
-  height: 100%;
 }
 
 .filepond--root .filepond--drop-label label {
