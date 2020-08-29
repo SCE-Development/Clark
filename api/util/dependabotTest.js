@@ -33,7 +33,7 @@ async function getPullRequestsAndBranches() {
 async function restoftheprojectlmaoooo(data) {
   // pass
   console.log(data);
-  exec("git fetch origin dev", (error, stdout, stderr) => {
+  exec('git stash', (error, stdout, stderr) => {
     if (error) {
       console.log('error: ', `${error.message}`);
       return;
