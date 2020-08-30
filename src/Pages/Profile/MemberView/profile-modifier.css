@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
-
-* {
+#profile {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
@@ -47,7 +46,7 @@
 	font-weight: 500;
 }
 
-#profile-box > div {
+#profile-box>div {
 	background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
 	border-radius: 0.8rem;
 	background-attachment: fixed;
@@ -65,12 +64,12 @@
 	transition: all .3s ease-in;
 }
 
-#profile-box > div:hover {
+#profile-box>div:hover {
 	opacity: 0.9;
 	transform: scale(0.97);
 }
 
-#profile-box > div:nth-of-type(1) {
+#profile-box>div:nth-of-type(1) {
 	grid-column: 1/5;
 	height: 25vh;
 	transition: none;
@@ -79,20 +78,21 @@
 	cursor: default;
 }
 
-#profile-box > div:nth-of-type(4) {
+#profile-box>div:nth-of-type(4) {
 	padding: 2rem;
 	transition: none;
 	transform: none;
 	opacity: 1;
 	cursor: default;
 }
-#profile-box > div:nth-of-type(4) {
+
+#profile-box>div:nth-of-type(4) {
 	grid-column: 1/5;
 	grid-row: 2/3;
 	height: 10vh;
 }
 
-#profile-box > div:nth-of-type(9) {
+#profile-box>div:nth-of-type(9) {
 	grid-row: 4/5;
 	grid-column: 3/5;
 	overflow: hidden;
@@ -185,6 +185,7 @@
 #password-div {
 	background-color: #48bfe3;
 }
+
 .password-span {
 	margin: 1rem;
 	color: #333;
@@ -195,7 +196,6 @@
 		height: 15%;
 		left: 60%;
 	}
-
 	#profile-box {
 		width: 40%;
 		top: 30%;
@@ -207,7 +207,6 @@
 	#profile-logo {
 		height: 0%;
 	}
-
 	#profile-box {
 		position: relative;
 		width: 100%;

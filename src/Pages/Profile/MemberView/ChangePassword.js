@@ -95,14 +95,14 @@ export default function ChangePassword(props) {
             onClick={() => {
               changePassword();
             }}>
-						Change Password
+            Change Password
           </Button>
           <Button
             id="change-password-close-button"
             onClick={() => {
               setToggle(!toggle);
             }}>
-						Close
+            Close
           </Button>
         </ModalFooter>
       </Modal>

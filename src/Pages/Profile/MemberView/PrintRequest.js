@@ -4,8 +4,8 @@ import './profile-modifier.css';
 import { search3DPrintRequests } from '../../../APIFunctions/3DPrinting';
 
 export default function PrintRequest(props) {
-  const [ toggle, setToggle ] = useState(true);
-  const [ requests, setRequests ] = useState([]);
+  const [toggle, setToggle] = useState(true);
+  const [requests, setRequests] = useState([]);
 
   async function updateRequests() {
     const requestResult = await search3DPrintRequests(props.email);
