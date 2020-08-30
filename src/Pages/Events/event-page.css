@@ -1,55 +1,107 @@
-.event-desc {
-  margin-top: 10px;
-}
-
 .event-list {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 30px;
+  /* min-width: max-content; */
 }
 
 .event-background {
-  background-color: #ecebeb;
-  min-height: 100vh !important;
+  background: linear-gradient(90deg, rgb(4, 27, 56) , rgb(33, 139, 172));
+  /* min-height: 100vh !important; */
+  min-width: 1000px;
 }
 
-.event-container {
-  background-color: #ffffff;
-  border-radius: 5px;
-  margin: 10px;
-  transition: ease 0.2s;
-}
+.event-card-button {
+  width: 80%;
+  min-width: 888px;
+  padding: 1%;
+  /* width: 60vw; */
+  /* height: 100px; */
+  min-height: 150px;
+  /* height: 20vh; */
+  margin-top: 2.5%;
+  border-radius: 10px;
+  border-width: thin;
+  outline: transparent !important;
 
-.event-container:hover {
-  background-color: #cfcfcf;
-}
-
-.card-row {
-  margin: 0px !important;
-}
-
-.event-date {
-  color: #0098ab;
-  font-weight: bold;
-  font-size: 120%;
+  /* outline-color: red !important; */
+  border: transparent;
+  background: #e0e0e0;
+  background: #e0e0e0;
 }
 
 .event-title {
-  font-size: 188%;
+  font-style: normal;
+  font-weight: bold;
+  /* font-size: 2vw; */
+  font-size: 35px;
+  /* padding-left: 5.9vw; */
+  color: #000000;
+  justify-content: center;
+}
+
+.event-date {
+  font-style: italic;
+  font-weight: bold;
+  /* font-size: 1.8vw; */
+  font-size: 30px;
+  /* padding-left: 5.9vw; */
+  color: #0098ab;
+  align-items: center;
+  justify-content: center;
+  
 }
 
 .event-location {
+  font-style: normal;
+  font-weight: normal;
+  /* font-size: 1.7vw; */
+  font-size: 28px;
+  /* padding-left: 5.9vw; */
   color: #414141bd;
-  font-size: 128%;
+  align-items: center;
+  justify-content: center;
 }
 
 .event-image {
-  width:auto; 
-  text-align:center; 
-  padding:20px; 
+  /* width: 18vw; */
+  /* width: 70%; */
+  width: 33%;
+  /* height: 18.4vh; */
+  float: left;
+  max-width: 300px;
+  max-height:150px;
+   /* height: 30%; */
+  /* padding-left: 1vw; */
+  border-radius: 10px;
 }
 
 .image-container > img {
   max-width: 7rem;
   max-height: 7rem;
   object-fit: contain;
+}
+
+.modal-event-title {
+  font-size: 188%;
+}
+
+.modal-event-date {
+  font-style: italic;
+  font-weight: bold;
+  color: #0098ab;
+  font-size: 138%;
+  align-items: center;
+}
+
+.modal-event-location {
+  font-style: normal;
+  font-weight: normal;
+  color: #414141bd;
+  font-size: 138%;
+  align-items: center;
+}
+
+.modal-event-image {
+  width:auto; 
+  text-align:center; 
+  padding:20px; 
 }

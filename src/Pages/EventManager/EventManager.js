@@ -50,9 +50,9 @@ export default function EventManager(props) {
   async function handleSubmit(event) {
     if (modalState === eventModalState.SUBMIT) {
       const res = await createNewEvent(event, props.user.token);
-      if(res.error === false) {
+      if (res.error === false) {
         const addEventRes = await addEventToCalendar(event, props.user.token);
-        if(addEventRes.error === true) {
+        if (addEventRes.error === true) {
           alert('Cannot add event to Google Calendar due to Event conflict!');
         }
       } else {
@@ -66,7 +66,11 @@ export default function EventManager(props) {
   return (
     <div className='event-background'>
       <Header {...headerProps} />
-      <Container>
+<<<<<<< HEAD
+      <Container id='event-manager-body'>
+=======
+      <Container className='event-list'>
+>>>>>>> bfe8380... Added package json file
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event
         </Button>
@@ -74,7 +78,10 @@ export default function EventManager(props) {
           <EventManagerModal
             modal={modal}
             toggle={toggle}
-            handleDelete={event => deleteEvent(event, props.user.token)}
+            handleDelete={event => {
+              deleteEvent(event, props.user.token);
+              window.location.reload();
+            }}
             handleSubmit={handleSubmit}
             modalState={modalState}
             populateEventList={populateEventList}

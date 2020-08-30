@@ -28,7 +28,7 @@ describe('<EventInfoModal />', () => {
   };
   it('Should render the title of the event', () => {
     const wrapper = mount(<EventInfoModal {...appProps} />);
-    expect(wrapper.find(Container).get(0).props.children).to.equal(
+    expect(wrapper.find(Row).get(0).props.children).to.equal(
       currentEvent.title
     );
   });
@@ -37,7 +37,7 @@ describe('<EventInfoModal />', () => {
     expect(
       wrapper
         .find(Row)
-        .get(0)
+        .get(1)
         .props.children
         .join('')
     ).to.equal(
@@ -51,7 +51,7 @@ describe('<EventInfoModal />', () => {
     expect(
       wrapper
         .find(Row)
-        .get(1)
+        .get(2)
         .props.children
         .join('')
     ).to.equal(
@@ -59,7 +59,7 @@ describe('<EventInfoModal />', () => {
   });
   it('Should render the description of the event', () => {
     const wrapper = mount(<EventInfoModal {...appProps} />);
-    expect(wrapper.find(Col).get(2).props.children).to.equal(
+    expect(wrapper.find(Row).get(3).props.children).to.equal(
       currentEvent.description
     );
   });

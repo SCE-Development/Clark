@@ -4,6 +4,8 @@ import './PrintingAnalytics.css';
 import { Line, Pie } from 'react-chartjs-2';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Header from '../../Components/Header/Header';
+import { Label } from 'reactstrap';
 
 export default function Analytics() {
   const [printLogs, setPrintLogs] = useState([]);
@@ -21,12 +23,12 @@ export default function Analytics() {
   // Filter the print logs to only get logs in selected date
   useEffect(() => {
     let targetDate = selectedDate
-      .toLocaleString('en-US', {hour12: false})
+      .toLocaleString('en-US', { hour12: false })
       .split(',')[0];
 
     let filteredPrintLogs = printLogs.filter(printLog => {
       let dateAndTime = new Date(printLog.printedDate)
-        .toLocaleString('en-US', {hour12: false})
+        .toLocaleString('en-US', { hour12: false })
         .split(',');
 
       return dateAndTime[0] === targetDate;
@@ -34,6 +36,10 @@ export default function Analytics() {
 
     setFilteredPrintLogs(filteredPrintLogs);
   }, [selectedDate, printLogs]);
+
+  const headerProps = {
+    title: 'Printing Analytics'
+  };
 
   function getRequestCounts() {
     let count = new Array(28);
@@ -43,7 +49,7 @@ export default function Analytics() {
 
     for (let i = 0; i < filteredPrintLogs.length; i++) {
       let dateAndTime = new Date(filteredPrintLogs[i].printedDate)
-        .toLocaleString('en-US', {hour12: false})
+        .toLocaleString('en-US', { hour12: false })
         .split(',');
       let time = dateAndTime[1].split(':');
       let hour = parseInt(time[0].trim());
@@ -133,8 +139,9 @@ export default function Analytics() {
 
   return (
     <React.Fragment>
+      <Header {...headerProps} />
       <div className='date-picker-component'>
-        <div className='select-date-text'><p>Select Date:</p></div>
+        <Label for='date-select'>Select Date: </Label>
         <DatePicker
           className='date-picker'
           selected={selectedDate}
@@ -143,13 +150,14 @@ export default function Analytics() {
           showMonthDropdown
           showYearDropdown
           dropdownMode='select'
+          id='date-select'
         />
       </div>
       <div className='visualizations'>
         <div className='line-graph'>
           <Line
             data={lineGraphInfo}
-            options={{responsive: true, maintainAspectRatio: true}}
+            options={{ responsive: true, maintainAspectRatio: true }}
             redraw
           />
         </div>
@@ -181,7 +189,7 @@ export default function Analytics() {
                   <td>{log.chosenPrinter}</td>
                   <td>{
                     new Date(log.printedDate)
-                      .toLocaleString('en-US', {hour12: false})
+                      .toLocaleString('en-US', { hour12: false })
                   }</td>
                 </tr>
               ))}

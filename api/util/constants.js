@@ -17,7 +17,7 @@ const MEMBERSHIP_STATE = {
 };
 
 const DEFAULT_PHOTO_URL =
-  'https://sce.engr.sjsu.edu/wp-content/uploads/2016/04/SCE_sq.png';
+'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG';
 
 const teamType = {
   DEVELOPMENT: 'Development',

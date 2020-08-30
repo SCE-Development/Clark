@@ -15,14 +15,14 @@ function NavBarWrapper({
   }
 
   return (
-    <div>
+    <>
       {enableAdminNavbar ? (
         <AdminNavbar {...appProps} handleLogout={handleLogout} />
       ) : (
         <UserNavbar {...appProps} handleLogout={handleLogout} />
       )}
       <Component {...appProps} />
-    </div>
+    </>
   );
 }
 

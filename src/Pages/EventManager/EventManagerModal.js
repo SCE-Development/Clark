@@ -63,7 +63,9 @@ function EventManagerModal(props) {
         addon: 'Event Date*',
         type: 'date',
         defaultValue: props.eventDate ? props.eventDate.slice(0, 10) : '',
-        handleChange: e => setEventDate(e.target.value)
+        handleChange: e => {
+          setEventDate(e.target.value);
+        }
       }
     ],
     [
@@ -72,7 +74,7 @@ function EventManagerModal(props) {
         type: 'text',
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
-        handleChange: e => setEventLocation(e.target.value)
+        handleChange: e => setEventLocation(e.target.value),
       },
       {
         addon: 'Event Category',
@@ -159,8 +161,12 @@ function EventManagerModal(props) {
       <ConfirmationModal {...confirmModalProps} />
       <Modal isOpen={modal} size='lg' toggle={toggle}>
         <ModalHeader>
-          {modalState === eventModalState.SUBMIT ? 'Create New ' : 'Edit '}
+          <Col>
+            <Row>
+              {modalState === eventModalState.SUBMIT ? 'Create New ' : 'Edit '}
           Event
+            </Row>
+          </Col>
         </ModalHeader>
         <ModalBody>
           <span>
@@ -200,7 +206,7 @@ function EventManagerModal(props) {
               onChange={e => setDescription(e.target.value)}
             />
           </Row>
-          <Row className='event-image'>
+          <Row className='modal-event-image'>
             <Label>Event Image + Preview</Label>
             <Input
               type='text'

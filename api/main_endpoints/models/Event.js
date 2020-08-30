@@ -30,9 +30,10 @@ const EventSchema = new Schema(
     eventCategory: {
       type: String
     },
+
     imageURL: {
       type: String,
-      default: DEFAULT_PHOTO_URL
+      default: 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG'
     }
   },
   { collection: 'Event' }

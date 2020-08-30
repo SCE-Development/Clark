@@ -1,53 +1,56 @@
 import React from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import { Row } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
-import { mapPinSymbol, clockSymbol} from '../Overview/SVG';
+import { mapPinSymbol, clockSymbol } from '../Overview/SVG';
 
 function EventCard(props) {
   const {
     title,
-    description,
     eventDate,
     eventLocation,
     startTime,
     endTime,
     handleClick,
-    imageURL
+    imageURL,
+    noImageURL = 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG',
   } = props;
 
   return (
-    <Container
-      className='event-container'
-      onClick={() => {
-        handleClick();
-      }}
-    >
-      <Row className='card-row'>
-        <Col>
-          <Row className='event-date'>
-            {clockSymbol()}{'  '}
-            {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} - {endTime}
-          </Row>
-          <Row className='event-title'>{title}</Row>
-          <Row className='event-location'>
-            {mapPinSymbol()}
-            {eventLocation}
-          </Row>
-          <Row className='event-desc'>
-            {description && description.length > 250 ? (
-              <span>{description.substring(0, 250)} ...</span>
-            ) : (
-              description
-            )}
-          </Row>
-        </Col>
-        <Col className='event-image d-none d-xl-block'>
-          <p className='image-container'>
-            <img id='event-img' src={imageURL} alt='event visual' />
-          </p>
-        </Col>
-      </Row>
-    </Container>
+    <React.Fragment>
+      <button
+        className='event-card-button'
+        onClick={() => {
+          handleClick();
+        }}
+      >
+        {imageURL !== null ? (
+          <img
+            id='event-image'
+            className='event-image'
+            src={imageURL} alt=''
+          />
+        ) : (
+            <img id='event-image'
+              className='event-image'
+              src={noImageURL} alt=''
+            />
+          )}
+
+        <Row className='event-title'>{title.slice(0, 24)}</Row>
+        <Row className='event-date'>
+          {clockSymbol()}
+          {'  '}
+          {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
+                  {' '}
+          {endTime}
+        </Row>
+        <Row className='event-location'>
+          {mapPinSymbol()}
+          {eventLocation.slice(0, 28)}
+        </Row>
+
+      </button>
+    </React.Fragment>
   );
 }
 
