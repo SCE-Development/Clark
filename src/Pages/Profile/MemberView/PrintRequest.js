@@ -5,7 +5,7 @@ import { search3DPrintRequests } from '../../../APIFunctions/3DPrinting';
 
 export default function PrintRequest(props) {
   const [toggle, setToggle] = useState(true);
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests ] = useState([]);
 
   async function updateRequests() {
     const requestResult = await search3DPrintRequests(props.email);
@@ -15,12 +15,13 @@ export default function PrintRequest(props) {
   }
 
   useEffect(() => {
-    updateRequests();
+    if(toggle)
+      updateRequests();
   });
 
   return (
-    <Modal isOpen={toggle}>
-      <ModalHeader className="modal-header">Your Requests</ModalHeader>
+    <Modal isOpen={toggle} id='profile'>
+      <ModalHeader>Your Requests</ModalHeader>
       <ModalBody>
         {requests.map(
           (request, ind) =>
@@ -35,14 +36,15 @@ export default function PrintRequest(props) {
               <div key={ind}>You don't have any</div>
             )
         )}
-        <div id="printing-pickup">Come to Engr294 for Pick-up</div>
+        {requests.length > 0 && <hr className='hr'/>}
+        <div id='printing-pickup'>Come to Engr294 for Pick-up</div>
       </ModalBody>
       <ModalFooter>
-        <Button id="three-print-request-button" href="/3DPrintingForm">
+        <Button id='three-print-request-button' href='/3DPrintingForm'>
 					Make a Request
         </Button>
         <Button
-          id="three-print-close-button"
+          id='three-print-close-button'
           onClick={() => {
             setToggle(!toggle);
           }}>
