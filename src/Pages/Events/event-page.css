@@ -4,14 +4,14 @@
 
 .event-background {
   background: linear-gradient(90deg, rgb(4, 27, 56) , rgb(33, 139, 172));
-  min-width: 1000px;
+  min-height: 100vh;
+  min-width: 100vw;
 }
 
 .event-card-button {
-  width: 80%;
-  min-width: 888px;
+  width: 90%;
   padding: 1%;
-  min-height: 150px;
+  min-height: 170px;
   margin-top: 2.5%;
   border-radius: 10px;
   border-width: thin;
@@ -23,7 +23,7 @@
 .event-title {
   font-style: normal;
   font-weight: bold;
-  font-size: 35px;
+  font-size: 240%;
   color: #000000;
   justify-content: center;
 }
@@ -31,7 +31,7 @@
 .event-date {
   font-style: italic;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 170%;
   color: #0098ab;
   align-items: center;
   justify-content: center;
@@ -41,17 +41,17 @@
 .event-location {
   font-style: normal;
   font-weight: normal;
-  font-size: 28px;
+  font-size: 170%;
   color: #414141bd;
   align-items: center;
   justify-content: center;
 }
 
 .event-image {
-  width: 33%;
   float: left;
-  max-width: 300px;
-  max-height:150px;
+  height: 150px;
+  width: 20vw;
+  max-width:300px;
   border-radius: 10px;
 }
 
