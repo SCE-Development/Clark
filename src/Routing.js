@@ -32,6 +32,8 @@ import InventoryPage from './Pages/Inventory/InventoryPage.js';
 
 import DoorCode from './Pages/DoorCode/DoorCode.js';
 
+import DoorCode from './Pages/DoorCode/DoorCode.js';
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
