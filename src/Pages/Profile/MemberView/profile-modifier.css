@@ -53,6 +53,7 @@
   word-wrap: break-word;
   height: 43vh;
   cursor: pointer;
+  min-height: 300px;
   min-width: 200px;
   max-width: 100%;
   display: flex;
@@ -72,6 +73,7 @@
 
 #profile-box>div:nth-of-type(1) {
   grid-column: 1/5;
+  min-height: 100px !important;
   height: 25vh;
   transition: none;
   transform: none;
@@ -90,6 +92,7 @@
 #profile-box>div:nth-of-type(4) {
   grid-column: 1/5;
   grid-row: 2/3;
+  min-height: 50px !important;
   height: 10vh;
 }
 
