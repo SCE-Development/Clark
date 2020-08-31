@@ -1,0 +1,120 @@
+.layout-inv{
+    padding-top: 32px;
+    margin: 10px auto;
+    max-width: 1000px;
+}
+
+.button-inv{
+    background-color: #ffffff;
+    color: rgb(151, 196, 204);
+    border: solid 1px;
+    border-color: rgb(151, 196, 204);
+    font-weight: bold;
+    width: 80px;
+    padding: 10px;
+    border-radius: 4px;
+    margin-left: 15px;
+}
+
+.button-inv-delete{
+    background-color: #ffffff;
+    color: rgb(214, 146, 146);
+    border: solid 1px;
+    border-color: rgb(214, 146, 146);
+    font-weight: bold;
+    width: 80px;
+    padding: 10px;
+    border-radius: 4px;
+    margin-left: 15px;
+}
+
+.content-table-inv {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    border-radius: 5px 5px 0 0;
+    overflow: auto;
+    box-shadow: 0 0 20px rbga(0, 0, 0, 0.15);
+    white-space: nowrap;
+}
+
+.content-table-inv thead tr {
+    background-color: rgb(2, 107, 126);
+    color: black;
+    text-align: left;
+    font-weight: bold;
+}
+
+.content-table-inv th,
+.content-table-inv td {
+    padding: 12px 15px;
+}
+
+.content-table-inv tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.content-table-inv tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.content-table-inv tbody tr:last-of-type {
+    border-bottom: 2px solid rgb(2, 107, 126);
+}
+
+.content-table-inv tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+.content-table-emails {
+    max-width: 200px;
+    white-space: pre-wrap;
+}
+
+@media only screen and (max-width: 1000px) {
+    .input-overview-inv {
+        width: 60% !important;
+    }
+}
+
+.input-overview-inv{
+    width: 75%;
+    padding: 12px 20px;
+    margin: 8px 0px;
+    display: inline-block;
+    border-radius: 4px;
+    box-sizing: border-box;
+    initial-letter-align: left;
+    font-size: smaller;
+    font-style: italic;
+  }
+
+.content-table-inv tbody tr:hover{
+    background-color: #737373;
+}
+
+.button-inv:hover{
+    background-color: rgb(151, 196, 204);;
+    color: #ffffff
+}
+
+.button-inv-delete:hover{
+    background-color: rgb(214, 146, 146);;
+    color: #ffffff
+}
+
+button{
+    background-color: transparent;
+    border: transparent;
+    outline: transparent;
+}
+
+#button-image{
+    width: 35px;
+    height: 35px;
+}
+
+.code-error {
+    color: red;
+}

@@ -48,7 +48,22 @@ export async function sendBlastEmail(emailList, subject, content) {
     .then((response) => {
       status.responseData = response;
     })
-    .catch((error) => {
+    .catch(error => {
+      status.error = true;
+      status.responseData = error;
+    });
+  return status;
+}
+
+export async function sendDoorCodeEmail(email, doorCode, firstName) {
+  let status = new ApiResponse();
+  await axios
+    .post(MAILER_API_URL + '/Mailer/sendDoorCodeEmail', {
+      recipientEmail: email,
+      recipientName: firstName,
+      recipientDoorCode: doorCode
+    })
+    .catch(error => {
       status.error = true;
       status.responseData = error;
     });

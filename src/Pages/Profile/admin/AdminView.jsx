@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Modal,
@@ -6,6 +6,7 @@ import {
 import Display from './Profile.js';
 import EditForm from './EditorForm';
 import { editUser } from '../../../APIFunctions/User.js';
+import { getPersonsDoorCode } from '../../../APIFunctions/DoorCode';
 const bcrypt = require('bcryptjs');
 
 export default function Editor(props) {
@@ -83,11 +84,6 @@ export default function Editor(props) {
       handleChange: (e) => setPassword(e.target.value)
     },
     {
-      label: 'Door Code',
-      placeholder: 'make it secure',
-      handleChange: (e) => setDoorCode(e.target.value)
-    },
-    {
       label: 'Major',
       placeholder: user.major,
       handleChange: (e) => setMajor(e.target.value)
@@ -101,12 +97,37 @@ export default function Editor(props) {
     { value: 2, name: '2 semesters' }
   ];
 
+  useEffect(() => {
+    setDoorCode('None Assigned');
+    async function fetchDoorCode() {
+      let data = await getPersonsDoorCode(user.email, props.token);
+      if(!data.error){
+        setDoorCode(data.responseData.doorCode.doorCode);
+      }
+    }
+    fetchDoorCode();
+  }, [user.email, props.token]);
+
+  useEffect(() => {
+    setDoorCode('None Assigned');
+    async function fetchDoorCode() {
+      let data = await getPersonsDoorCode(user.email, props.token);
+      if(!data.error){
+        setDoorCode(data.responseData.doorCode.doorCode);
+      }
+    }
+    fetchDoorCode();
+  }, [user.email, props.token]);
+
   return (
     <div className="center">
       <ul className="profileInfo">
 
         <Display
           user={{...user, membershipValidUntil}}
+          email={user.email}
+          token={props.token}
+          doorCode={doorCode}
         />
 
         <EditForm
@@ -129,6 +150,8 @@ export default function Editor(props) {
             setuserMembership(onChangeEvent);
           }}
           toggle={toggle}
+          email={user.email}
+          token={props.token}
         />
 
         <Modal

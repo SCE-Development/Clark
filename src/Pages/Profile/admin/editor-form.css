@@ -2,6 +2,15 @@
     margin-top: 5px;
 }
 
+.door-code-display{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.door-code-message{
+    margin-left: 20px;
+}
+
 #reset-pages-label{
     margin-right: 5px;
 }

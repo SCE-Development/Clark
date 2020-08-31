@@ -11,11 +11,10 @@ const DoorCodeSchema = new Schema(
     doorCodeValidUntil: {
       type: Date,
     },
-    usersAssigned: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+    userEmails: {
+      type: Array,
+      default: [],
+    }
   },
   { collection: 'DoorCodes' }
 );

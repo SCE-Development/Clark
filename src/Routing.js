@@ -30,6 +30,8 @@ import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import InventoryPage from './Pages/Inventory/InventoryPage.js';
 
+import DoorCode from './Pages/DoorCode/DoorCode.js';
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -124,7 +126,15 @@ export default function Routing({ appProps }) {
       path: '/inventory',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
-      inAdminNavbar: true}
+      inAdminNavbar: true
+    },
+    {
+      Component: DoorCode,
+      path: '/doorcode',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

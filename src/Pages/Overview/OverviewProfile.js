@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Overview.css';
 import { Modal } from 'reactstrap';
 import InfoCard from '../Profile/admin/AdminView';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
+import { getPersonsDoorCode } from '../../APIFunctions/DoorCode.js';
 const enums = require('../../Enums.js');
 const svg = require('./SVG');
 
 export default function OverviewProfile(props) {
   const [toggle, setToggle] = useState(false);
   const [toggleDelete, setToggleDelete] = useState(false);
+  const [code, setDoorCode] = useState('');
   const confirmModalProps = {
     headerText: `Delete ${props.user.firstName} ${props.user.lastName} ?`,
     bodyText: `Are you sure you want to delete 
@@ -29,13 +31,23 @@ export default function OverviewProfile(props) {
   function mark(bool) {
     return bool ? svg.checkMark() : svg.xMark();
   }
+  useEffect(() => {
+    setDoorCode('None Assigned');
+    async function fetchDoorCode() {
+      let data = await getPersonsDoorCode(props.user.email, props.token);
+      if(!data.error){
+        setDoorCode(data.responseData.doorCode.doorCode);
+      }
+    }
+    fetchDoorCode();
+  }, [props.user.email, props.token]);
   return (
     <tr>
       <td>
         <div className='name'>{formatFirstAndLastName(props.user)}</div>
       </td>
 
-      <td>{props.user.doorCode}</td>
+      <td>{ code }</td>
 
       <td>{props.user.pagesPrinted}/30</td>
 
