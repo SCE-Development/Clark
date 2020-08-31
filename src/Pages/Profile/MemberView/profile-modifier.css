@@ -53,6 +53,7 @@
   word-wrap: break-word;
   height: 43vh;
   cursor: pointer;
+  min-width: 200px;
   max-width: 100%;
   display: flex;
   flex-direction: column;

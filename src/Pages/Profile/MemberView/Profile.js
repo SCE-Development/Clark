@@ -98,7 +98,7 @@ export default class Profile extends Component {
           value: <PrintRequest />,
           icon: <FontAwesomeIcon icon={faCubes} /> },
         {
-          title: 'Connect with Discord',
+          title: 'Change Discord Account',
           value: '',
           icon: <FontAwesomeIcon icon={['fab', 'discord']} />,
           function: () => {
