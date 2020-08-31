@@ -66,11 +66,7 @@ export default function EventManager(props) {
   return (
     <div className='event-background'>
       <Header {...headerProps} />
-<<<<<<< HEAD
-      <Container id='event-manager-body'>
-=======
       <Container className='event-list'>
->>>>>>> bfe8380... Added package json file
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event
         </Button>
