@@ -29,10 +29,37 @@ router.get('/getDoorCodes', (req, res) => {
 });
 
 router.get('/getAvailableDoorCode', (req, res) => {
-  DoorCode.findOne({ usersAssigned: { $lt: 2 } }).then((doorcodes) =>
-    res.status(OK).send(doorcodes)
-  ).catch(() => {
+  DoorCode.findOne({userEmails : {$exists:true},
+    $where:'this.userEmails.length<2'}).then((doorcodes) => {
+    if(doorcodes) {
+      res.status(OK).send(doorcodes);
+    } else {
+      res.status(BAD_REQUEST).send({ message: 'No codes left.' });
+    }
+  }).catch(() => {
     res.status(BAD_REQUEST).send({ message: 'No codes left.' });
+  });
+});
+
+router.post('/getPersonsDoorCode', (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const {
+    email,
+  } = req.body;
+
+  DoorCode.findOne({userEmails: email }).then((doorCode) => {
+    if(doorCode) {
+      res.status(OK).send({doorCode});
+    } else {
+      res.status(NOT_FOUND).send({ message: 'No codes found.' });
+    }
+  }).catch(() => {
+    res.status(NOT_FOUND).send({ message: 'No codes found.' });
   });
 });
 
@@ -46,7 +73,7 @@ router.post('/addCode', (req, res) => {
   const newCode = new DoorCode({
     doorCode: req.body.doorCode,
     doorCodeValidUntil: req.body.doorCodeValidUntil,
-    usersAssigned: req.body.usersAssigned,
+    userEmails: req.body.userEmails,
   });
 
   DoorCode.create(newCode, (error, post) => {
@@ -67,13 +94,13 @@ router.post('/editCode', (req, res) => {
   const {
     doorCode,
     doorCodeValidUntil,
-    usersAssigned,
+    userEmails,
   } = req.body;
   DoorCode.findOne({ _id: req.body.id  })
     .then((code) => {
       code.doorCode = doorCode || code.doorCode;
       code.doorCodeValidUntil = doorCodeValidUntil || code.doorCodeValidUntil;
-      code.usersAssigned = usersAssigned || code.usersAssigned;
+      code.userEmails =  userEmails || code.userEmails;
       code
         .save()
         .then((ret) => {
