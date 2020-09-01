@@ -12,32 +12,23 @@
 .event-card-button {
   width: 90%;
   padding: 1%;
-  /* min-width: 800px; */
+  min-width: 480px;
   min-height: 170px;
   margin-top: 2.5%;
   border-radius: 10px;
-  border-width: thin;
   outline: transparent !important;
   border: transparent;
   background: #e0e0e0;
 }
 
 .event-title {
-  font-style: normal;
   font-weight: bold;
   font-size: 2.4rem;
-  /* font-size: 3vw; */
   color: #000000;
   text-overflow: ellipsis;
-  overflow-wrap: initial;
-  white-space: nowrap;
   justify-content: center;
   overflow: hidden;
-  /* margin: 1%; */
-  /* max-width: 400px;
-  overflow: hidden;
-  text-overflow: ellipsis; */
-  /* overflow-wrap: initial; */
+  display: block !important;
 }
 
 .event-date {
