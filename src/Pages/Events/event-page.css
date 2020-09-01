@@ -23,10 +23,10 @@
 
 .event-title {
   font-weight: bold;
-  font-size: 2.4rem;
+  font-size: 2.5rem;
   color: #000000;
   text-overflow: ellipsis;
-  justify-content: center;
+  /* justify-content: center; */
   overflow: hidden;
   display: block !important;
 }
@@ -59,7 +59,8 @@
 }
 
 @media screen and (max-width: 900px) { 
-  .event-image { display: none; }  
+  .event-image { display: none; } 
+  .event-title{ margin: 0 !important;} 
 }
 
 .image-container > img {
