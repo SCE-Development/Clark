@@ -26,7 +26,6 @@
   font-size: 2.5rem;
   color: #000000;
   text-overflow: ellipsis;
-  /* justify-content: center; */
   overflow: hidden;
   display: block !important;
 }
