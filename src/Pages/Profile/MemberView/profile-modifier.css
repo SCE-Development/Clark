@@ -6,6 +6,10 @@
   font-family: 'Rubik', sans-serif;
 }
 
+#modal-font {
+  font-family: 'Rubik', sans-serif;
+}
+
 #season-img {
   height: 50%;
   width: 100%;
@@ -54,7 +58,6 @@
   height: 43vh;
   cursor: pointer;
   min-height: 300px;
-  min-width: 200px;
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -102,8 +105,31 @@
   overflow: hidden;
 }
 
-.box {
+#profile .box {
   display: block;
+}
+
+@media screen and (max-width: 650px) { 
+  #profile-box>div:nth-of-type(2) h3,
+  #profile-box>div:nth-of-type(3) h3,
+  #profile-box>div:nth-of-type(5) h3,
+  #profile-box>div:nth-of-type(6) h3,
+  #profile-box>div:nth-of-type(7) h3,
+  #profile-box>div:nth-of-type(8) h3
+  {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+  } 
+  #profile-box>div:nth-of-type(1) h3{
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+  }
 }
 
 #value-span {

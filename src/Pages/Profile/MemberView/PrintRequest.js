@@ -20,7 +20,7 @@ export default function PrintRequest(props) {
   });
 
   return (
-    <Modal isOpen={toggle} id='profile'>
+    <Modal isOpen={toggle} id='modal-font'>
       <ModalHeader>Your Requests</ModalHeader>
       <ModalBody>
         {requests.map(
