@@ -117,17 +117,17 @@ export default function UserNavBar(props) {
             <img id='logo-image' src={logo} alt={'sce logo'} />
           </div>
         </NavbarBrand>
-        <div style={{ display: 'inline-flex', width: '75%' }}>
-          <div id='sun-image' className='sun-icon'
-            style={{ width: '0.7rem', height: '1.9rem' }} >{sunIcon()}</div>
+        <div align='left' style={{
+          display: 'inline-flex', position: 'fixed', left: '75px'
+        }}>
+          <div style={{ width: '0.7rem', height: '1.9rem' }} >{sunIcon()}</div>
           <div style={{ width: '1.2rem' }} />
           <CustomInput style={{ width: '1.8rem' }}
             onChange={createCookie} className='darkToggle'
             type='switch' id='exampleCustomSwitch' name='customSwitch'
             checked={darkTheme} />
-          <div className='moon-icon' style={{
-            width: '1.1rem',
-            height: '1.9rem'
+          <div style={{
+            width: '1.1rem', height: '1.9rem'
           }}>{moonIcon()}</div>
         </div>
         <NavbarToggler tag='h1'>
