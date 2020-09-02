@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'universal-cookie';
+import './navbar.css';
 import {
   ButtonDropdown,
   Collapse,
@@ -118,6 +119,7 @@ export default function UserNavBar(props) {
           </div>
         </NavbarBrand>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div id='toggler-left'>
           <div id='sun-icon' >{sunIcon()}</div>
           <div id='dark-toggler'>
@@ -144,6 +146,15 @@ export default function UserNavBar(props) {
             width: '1.1rem', height: '1.9rem'
           }}>{moonIcon()}</div>
 >>>>>>> Fixed Navbar Formatting
+=======
+        <div style={{ display: 'inline-flex', width: '75%' }}>
+          <div id='sun-image' className='sun-icon' style={{ width: '0.7rem', height: '1.9rem' }} >{sunIcon()}</div>
+          <div style={{ width: '1.2rem' }} />
+          <CustomInput style={{ width: '1.8rem' }} onChange={createCookie} className='darkToggle'
+            type='switch' id='exampleCustomSwitch' name='customSwitch'
+            checked={darkTheme} />
+          <div className='moon-icon' style={{ width: '1.1rem', height: '1.9rem' }} >{moonIcon()}</div>
+>>>>>>> Fixed Minimization Error
         </div>
         <NavbarToggler tag='h1'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
