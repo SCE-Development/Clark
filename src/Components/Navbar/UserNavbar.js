@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'universal-cookie';
-import './navbar.css';
 import {
   ButtonDropdown,
   Collapse,
