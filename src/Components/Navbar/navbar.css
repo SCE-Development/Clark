@@ -56,6 +56,13 @@
   margin-left: 10;
 }
 
+#sun-image {
+  width: 100%;
+  margin-top: -5;
+  margin-bottom: -5;
+  margin-left: 10;
+}
+
 .logout-image {
   width: 18px;
   height: 18px;
@@ -110,4 +117,8 @@
   background-color: #4e6fa16c !important;
   border-color: #ffffff00 !important;
   border-radius: 4px !important;
+}
+
+.dark-toggle{
+
 }
