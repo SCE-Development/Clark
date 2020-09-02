@@ -117,6 +117,7 @@ export default function UserNavBar(props) {
             <img id='logo-image' src={logo} alt={'sce logo'} />
           </div>
         </NavbarBrand>
+<<<<<<< HEAD
         <div id='toggler-left'>
           <div id='sun-icon' >{sunIcon()}</div>
           <div id='dark-toggler'>
@@ -126,6 +127,20 @@ export default function UserNavBar(props) {
               checked={darkTheme} />
           </div>
           <div id='moon-icon' >{moonIcon()}</div>
+=======
+        <div align='left' style={{
+          display: 'inline-flex', position: 'fixed', left: '75px'
+        }}>
+          <div style={{ width: '0.7rem', height: '1.9rem' }} >{sunIcon()}</div>
+          <div style={{ width: '1.2rem' }} />
+          <CustomInput style={{ width: '1.8rem' }}
+            onChange={createCookie} className='darkToggle'
+            type='switch' id='exampleCustomSwitch' name='customSwitch'
+            checked={darkTheme} />
+          <div style={{
+            width: '1.1rem', height: '1.9rem'
+          }}>{moonIcon()}</div>
+>>>>>>> Fixed Navbar Formatting
         </div>
         <NavbarToggler tag='h1'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
