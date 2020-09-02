@@ -28,13 +28,14 @@ function EventCard(props) {
       <Row className='event-title'>{title}</Row>
       <Row className='event-date'>
         {clockSymbol()}
-        {'  '}
+        {' '}
         {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
         {' '}
         {endTime}
       </Row>
       <Row className='event-location'>
         {mapPinSymbol()}
+        {' '}
         {eventLocation}
       </Row>
     </button>

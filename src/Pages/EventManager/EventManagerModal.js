@@ -20,7 +20,7 @@ import ConfirmationModal from
 
 function EventManagerModal(props) {
   const NOT_FOUND_PNG =
-    'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG';
+    'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
   const { modal, toggle, modalState } = props;
   const [title, setTitle] = useState(props.title);
   const [confirmationModal, setConfirmationModal] = useState(false);
@@ -55,7 +55,7 @@ function EventManagerModal(props) {
       {
         addon: 'Event Title*',
         type: 'text',
-        maxLength: '25',
+        // maxLength: '25',
         defaultValue: props.title,
         placeholder: 'e.g. Python Workshop',
         handleChange: e => setTitle(e.target.value)
@@ -73,7 +73,7 @@ function EventManagerModal(props) {
       {
         addon: 'Event Location*',
         type: 'text',
-        maxLength: '25',
+        // maxLength: '25',
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
         handleChange: e => setEventLocation(e.target.value),

@@ -8,7 +8,7 @@ import EventInfoModal from '../../src/Pages/Events/EventInfoModal';
 import Adapter from 'enzyme-adapter-react-16';
 import { Container, Row, Col } from 'reactstrap';
 import { getDateWithSlashes } from '../../src/APIFunctions/Event';
-import {clockSymbol, mapPinSymbol} from '../../src/Pages/Overview/SVG.js';
+import { clockSymbol, mapPinSymbol } from '../../src/Pages/Overview/SVG.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -23,12 +23,12 @@ describe('<EventInfoModal />', () => {
   };
   const appProps = {
     modal: true,
-    toggle: () => {},
+    toggle: () => { },
     currentEvent
   };
   it('Should render the title of the event', () => {
     const wrapper = mount(<EventInfoModal {...appProps} />);
-    expect(wrapper.find(Row).get(0).props.children).to.equal(
+    expect(wrapper.find('.modal-event-title').get(0).props.children).to.equal(
       currentEvent.title
     );
   });
@@ -36,30 +36,32 @@ describe('<EventInfoModal />', () => {
     const wrapper = mount(<EventInfoModal {...appProps} />);
     expect(
       wrapper
-        .find(Row)
-        .get(1)
+        .find('.modal-event-date')
+        .get(0)
         .props.children
         .join('')
     ).to.equal(
-      `${clockSymbol()}  ` + ` ${getDateWithSlashes(currentEvent.eventDate)}  ${
-        currentEvent.startTime
-      } - ` + `${currentEvent.endTime}`
+      `${clockSymbol()}` + ' ' +
+      `${getDateWithSlashes
+      (currentEvent.eventDate)} ${currentEvent.startTime} - ` +
+      `${currentEvent.endTime}`
     );
   });
   it('Should render the location of the event', () => {
     const wrapper = mount(<EventInfoModal {...appProps} />);
     expect(
       wrapper
-        .find(Row)
-        .get(2)
+        .find('.modal-event-location')
+        .get(0)
         .props.children
         .join('')
     ).to.equal(
-      `${mapPinSymbol()}` + currentEvent.eventLocation);
+      `${mapPinSymbol()}` + ' ' + currentEvent.eventLocation);
   });
   it('Should render the description of the event', () => {
     const wrapper = mount(<EventInfoModal {...appProps} />);
-    expect(wrapper.find(Row).get(3).props.children).to.equal(
+    expect(wrapper.find('.modal-event-description').get(0).
+      props.children).to.equal(
       currentEvent.description
     );
   });

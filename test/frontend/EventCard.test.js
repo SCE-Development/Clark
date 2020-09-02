@@ -34,7 +34,7 @@ describe('<EventCard />', () => {
         .get(1)
         .props.children.join('')
     ).to.equal(
-      `${clockSymbol()}` + '  ' +
+      `${clockSymbol()}` + ' ' +
       `${getDateWithSlashes(appProps.eventDate)} ${appProps.startTime} - ` +
         `${appProps.endTime}`
     );
@@ -48,7 +48,7 @@ describe('<EventCard />', () => {
         .get(2)
         .props.children.join('')
     ).to.equal(
-      `${mapPinSymbol()}` + '' + appProps.eventLocation
+      `${mapPinSymbol()}` + ' ' + appProps.eventLocation
     );
   });
 

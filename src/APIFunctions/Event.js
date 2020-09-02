@@ -39,7 +39,7 @@ function handleImageURL(url) {
   if(url !== null) {
     return url;
   }
-  return 'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG';
+  return 'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
 }
 
 /**

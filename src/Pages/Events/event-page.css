@@ -22,6 +22,7 @@
 }
 
 .event-title {
+  white-space: nowrap;
   font-weight: bold;
   font-size: 2.5rem;
   color: #000000;
@@ -33,20 +34,20 @@
 .event-date {
   font-style: italic;
   font-weight: bold;
-  font-size: 170%;
+  font-size: 1.6rem;
   color: #0098ab;
-  align-items: center;
-  justify-content: center;
-  
+  display: block !important; 
 }
 
 .event-location {
+  white-space: nowrap;
   font-style: normal;
   font-weight: normal;
-  font-size: 170%;
+  font-size: 1.6rem;
   color: #414141bd;
-  align-items: center;
-  justify-content: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block !important;
 }
 
 .event-image {
@@ -60,6 +61,7 @@
 @media screen and (max-width: 900px) { 
   .event-image { display: none; } 
   .event-title{ margin: 0 !important;} 
+  .event-location{ margin: 0 !important;} 
 }
 
 .image-container > img {
@@ -68,24 +70,41 @@
   object-fit: contain;
 }
 
+.modal-event-border .modal-content{
+  border-radius: 10px;
+}
+
 .modal-event-title {
-  font-size: 188%;
+  font-size: 2.5rem;
+  font-weight: bold;
+  word-break:break-all;
+  text-align: -webkit-left;
 }
 
 .modal-event-date {
+  font-size: 1.6rem;
   font-style: italic;
   font-weight: bold;
   color: #0098ab;
-  font-size: 138%;
-  align-items: center;
+  word-break:break-all;
+  text-align: -webkit-left;
 }
 
 .modal-event-location {
+  font-size: 1.6rem;
   font-style: normal;
   font-weight: normal;
   color: #414141bd;
-  font-size: 138%;
-  align-items: center;
+  word-break:break-all;
+  text-align: -webkit-left;
+}
+
+.modal-event-description {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: normal;
+  word-break:break-all;
+  padding-right: 5%;
 }
 
 .modal-event-image {
