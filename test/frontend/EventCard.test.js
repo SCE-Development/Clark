@@ -24,7 +24,7 @@ describe('<EventCard />', () => {
   };
   it('Should render the title of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find(Row).get(2).props.children).to.equal(appProps.title);
+    expect(wrapper.find(Row).get(0).props.children).to.equal(appProps.title);
   });
   it('Should render the date and time of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
@@ -34,30 +34,27 @@ describe('<EventCard />', () => {
         .get(1)
         .props.children.join('')
     ).to.equal(
-      `${clockSymbol()}` + '  ' +
+      `${clockSymbol()}` + ' ' +
       `${getDateWithSlashes(appProps.eventDate)} ${appProps.startTime} - ` +
         `${appProps.endTime}`
     );
   });
+
   it('Should render the location of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(
       wrapper
         .find(Row)
-        .get(3)
+        .get(2)
         .props.children.join('')
     ).to.equal(
-      `${mapPinSymbol()}` + '' + appProps.eventLocation
+      `${mapPinSymbol()}` + ' ' + appProps.eventLocation
     );
   });
-  it('Should render the description of the event', () => {
-    const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find(Row).get(4).props.children).to.equal(
-      appProps.description
-    );
-  });
+
   it('Should a photo related to the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find('#event-img').props().src).to.equal(appProps.imageURL);
+    expect(wrapper.find('#event-image').props().src).to.equal
+    (appProps.imageURL);
   });
 });

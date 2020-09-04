@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
 import './profile-modifier.css';
 import { search3DPrintRequests } from '../../../APIFunctions/3DPrinting';
 
 export default function PrintRequest(props) {
-  const [toggle, setToggle] = useState(false);
-  const [requests, setRequests] = useState([]);
+  const [toggle, setToggle] = useState(true);
+  const [requests, setRequests ] = useState([]);
 
   async function updateRequests() {
     const requestResult = await search3DPrintRequests(props.email);
@@ -14,43 +14,43 @@ export default function PrintRequest(props) {
     }
   }
 
+  useEffect(() => {
+    if(toggle)
+      updateRequests();
+  });
+
   return (
-    <Button
-      onClick={async () => {
-        await updateRequests();
-        setToggle(!toggle);
-      }}
-      color='primary'
-      id='printing-request-button'
-    >
-      3D Printing Requests
-      <Modal isOpen={toggle}>
-        <ModalHeader>Your Requests, come to Engr294 for Pick-up</ModalHeader>
-        <ModalBody>
-          {requests.map((request, ind) =>
+    <Modal isOpen={toggle} id='modal-font'>
+      <ModalHeader>Your Requests</ModalHeader>
+      <ModalBody>
+        {requests.map(
+          (request, ind) =>
             requests.length > 0 ? (
               <div key={ind}>
                 <a href={request.projectLink}>Request</a> on{' '}
                 {request.date && request.date.substring(0, 10) + ' '}
-                for {request.projectType + '; '}
-                Progress: {request.progress}
+								for {request.projectType + '; '}
+								Progress: {request.progress}
               </div>
             ) : (
               <div key={ind}>You don't have any</div>
             )
-          )}
-          <a href='/3DPrintingForm'>Make a Request</a>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            onClick={() => {
-              setToggle(!toggle);
-            }}
-          >
-            Close
-          </Button>
-        </ModalFooter>
-      </Modal>
-    </Button>
+        )}
+        {requests.length > 0 && <hr className='hr'/>}
+        <div id='printing-pickup'>Come to Engr294 for Pick-up</div>
+      </ModalBody>
+      <ModalFooter>
+        <Button id='three-print-request-button' href='/3DPrintingForm'>
+					Make a Request
+        </Button>
+        <Button
+          id='three-print-close-button'
+          onClick={() => {
+            setToggle(!toggle);
+          }}>
+					Close
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 }

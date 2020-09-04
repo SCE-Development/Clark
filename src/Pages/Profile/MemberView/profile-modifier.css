@@ -1,4 +1,21 @@
-#enclose { 
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+#profile {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Rubik', sans-serif;
+}
+
+#modal-font {
+  font-family: 'Rubik', sans-serif;
+}
+
+#season-img {
+  height: 50%;
+  width: 100%;
+}
+
+#enclose {
   text-align: center;
 }
 
@@ -7,38 +24,117 @@
 }
 
 #profile-box {
-  position: absolute;
-  background-color: white;
-  width: 40%;
-  top: 40%;
-  left: 30%;
-  border: thick double #4385ac;
-  border-radius: 50px;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  top: 50%;
+  background-color: #ffffff;
+  padding: 1.5vh;
   z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 1.5vh;
 }
 
-#inner-text-top{
-  margin-left: 5%;
-  margin-top: 2%;
-  margin-right: 5%;
-  text-align: left;
+#icon {
+  font-size: 3.8rem;
 }
 
-#clip {
-  position: relative;
-  width: 40%;
-  height: 40%;
-  display: inline-block;
-  clip-path: polygon(0 0, 0% 100%, 100% 0);
+#inner-text-top {
+  font-size: 2.2rem;
+  margin-top: 0.2rem;
 }
 
-#clip2 {
-  position: relative;
-  width: 40%;
-  height: 40%;
-  right: 5%;
-  display: inline-block;
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+#value-span {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+#profile-box>div {
+  background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
+  border-radius: 0.8rem;
+  background-attachment: fixed;
+  word-wrap: break-word;
+  height: 43vh;
+  cursor: pointer;
+  min-height: 300px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5vh;
+  color: #333333;
+  transition: all .3s ease-in;
+}
+
+#profile-box>div:hover {
+  opacity: 0.9;
+  transform: scale(0.97);
+}
+
+#profile-box>div:nth-of-type(1) {
+  grid-column: 1/5;
+  min-height: 100px !important;
+  height: 25vh;
+  transition: none;
+  transform: none;
+  opacity: 1;
+  cursor: default;
+}
+
+#profile-box>div:nth-of-type(4) {
+  padding: 2rem;
+  transition: none;
+  transform: none;
+  opacity: 1;
+  cursor: default;
+}
+
+#profile-box>div:nth-of-type(4) {
+  grid-column: 1/5;
+  grid-row: 2/3;
+  min-height: 50px !important;
+  height: 10vh;
+}
+
+#profile-box>div:nth-of-type(9) {
+  grid-row: 4/5;
+  grid-column: 3/5;
+  overflow: hidden;
+}
+
+#profile .box {
+  display: block;
+}
+
+@media screen and (max-width: 650px) { 
+  #profile-box>div:nth-of-type(2) h3,
+  #profile-box>div:nth-of-type(3) h3,
+  #profile-box>div:nth-of-type(5) h3,
+  #profile-box>div:nth-of-type(6) h3,
+  #profile-box>div:nth-of-type(7) h3,
+  #profile-box>div:nth-of-type(8) h3
+  {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+  } 
+  #profile-box>div:nth-of-type(1) h3{
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+  }
+}
+
+#value-span {
+  display: block;
+  line-height: 3rem;
 }
 
 #profile-logo {
@@ -49,9 +145,47 @@
   z-index: 2;
 }
 
-#printing-request-button {
-  margin-top: 10px;
-  margin-left: 10%;
+.hr {
+  margin: 10px !important;
+}
+
+#printing-pickup {
+  font-size: 1.5rem;
+  font-weight: bolder;
+}
+
+#three-print-request-button {
+  font-size: 1.5rem;
+  font-weight: bolder;
+  background: #0779e4;
+  border: none;
+}
+
+#three-print-close-button {
+  background: #eb4559;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  float: right;
+}
+
+#new-password {
+  margin: 1rem;
+  width: 75%;
+  border: 2px solid #b5b5b5;
+}
+
+#confirm-password {
+  margin: 1rem;
+  width: 75%;
+  border: 2px solid #b5b5b5;
+}
+
+#change-password-close-button {
+  background: #eb4559;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bolder;
 }
 
 .discord-button {
@@ -71,7 +205,16 @@
 }
 
 .invalid {
-  color:red !important
+  color: red !important;
+}
+
+#password-div {
+  background-color: #48bfe3;
+}
+
+.password-span {
+  margin: 1rem;
+  color: #333;
 }
 
 @media screen and (max-width: 1200px) {
@@ -79,11 +222,6 @@
     height: 15%;
     left: 60%;
   }
-
-  #inner-text-top{
-    font-size: 20px;
-  }
-
   #profile-box {
     width: 40%;
     top: 30%;
@@ -95,20 +233,10 @@
   #profile-logo {
     height: 0%;
   }
-
-  #inner-text-top{
-    font-size: 20px;
-  }
-
   #profile-box {
     position: relative;
     width: 100%;
     top: 0%;
     left: 0%;
-  }
-
-  #clip, #clip2 {
-    height: 0%;
-    width: 0%;
   }
 }
