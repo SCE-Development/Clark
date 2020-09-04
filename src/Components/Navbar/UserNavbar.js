@@ -117,21 +117,15 @@ export default function UserNavBar(props) {
             <img id='logo-image' src={logo} alt={'sce logo'} />
           </div>
         </NavbarBrand>
-        <div align='left' style={{
-          display: 'inline-flex', position: 'absolute', left: '5rem'
-        }}>
-          <div style={{
-            width: '0.7rem', height: '1.9rem', marginRight: '1.24rem'
-          }} >{sunIcon()}</div>
-          <div style={{ marginTop: '0.08rem' }}>
-            <CustomInput style={{ width: '1.8rem' }}
+        <div id='toggler-left'>
+          <div id='sun-icon' >{sunIcon()}</div>
+          <div id='dark-toggler'>
+            <CustomInput
               onChange={createCookie} className='darkToggle'
               type='switch' id='exampleCustomSwitch' name='customSwitch'
               checked={darkTheme} />
           </div>
-          <div style={{
-            width: '1.1rem', height: '1.9rem'
-          }}>{moonIcon()}</div>
+          <div id='moon-icon' >{moonIcon()}</div>
         </div>
         <NavbarToggler tag='h1'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
@@ -156,20 +150,20 @@ export default function UserNavBar(props) {
               </DropdownItem>
               {props.user && props.user.accessLevel >=
                 membershipState.MEMBER && (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
+                  <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
+                    <DropdownItem className='drp-item' id='btndrp-text'>
                       Printing
                   </DropdownItem>
-                  <DropdownMenu className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/2DPrinting'>
+                    <DropdownMenu className='drp-menu'>
+                      <DropdownItem className='drp-item' href='/2DPrinting'>
                         2D Printing
                     </DropdownItem>
-                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
+                      <DropdownItem className='drp-item' href='/3DPrintingForm'>
                         3D Printing
                     </DropdownItem>
-                  </DropdownMenu>
-                </DropdownItem>
-              )}
+                    </DropdownMenu>
+                  </DropdownItem>
+                )}
               {unauthedRoutes.map((link, index) => {
                 return (
                   <DropdownItem className='drp-item' key={index}>
@@ -222,20 +216,20 @@ export default function UserNavBar(props) {
                   </DropdownMenu>
                 </DropdownItem>
               ) : (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
+                  <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
+                    <DropdownItem className='drp-item' id='btndrp-text'>
                       Join Us!
                   </DropdownItem>
-                  <DropdownMenu right className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/register'>
+                    <DropdownMenu right className='drp-menu'>
+                      <DropdownItem className='drp-item' href='/register'>
                         Membership Application
                     </DropdownItem>
-                    <DropdownItem className='drp-item' href='/login'>
+                      <DropdownItem className='drp-item' href='/login'>
                         Login
                     </DropdownItem>
-                  </DropdownMenu>
-                </DropdownItem>
-              )}
+                    </DropdownMenu>
+                  </DropdownItem>
+                )}
             </DropdownMenu>
           </ButtonDropdown>
         </NavbarToggler>
@@ -315,20 +309,20 @@ export default function UserNavBar(props) {
                 </DropdownMenu>
               </UncontrolledDropdown>
             ) : (
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle id='navlink-text' nav caret>
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle id='navlink-text' nav caret>
                     Join Us!
                 </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem className='drp-item' href='/register'>
+                  <DropdownMenu right>
+                    <DropdownItem className='drp-item' href='/register'>
                       Membership Application
                   </DropdownItem>
-                  <DropdownItem className='drp-item' href='/login'>
+                    <DropdownItem className='drp-item' href='/login'>
                       Login
                   </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            )}
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              )}
           </Nav>
         </Collapse>
       </Navbar>
