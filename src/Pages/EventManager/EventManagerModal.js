@@ -20,7 +20,7 @@ import ConfirmationModal from
 
 function EventManagerModal(props) {
   const NOT_FOUND_PNG =
-    'https://www.freeiconspng.com/uploads/no-image-icon-11.PNG';
+    'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
   const { modal, toggle, modalState } = props;
   const [title, setTitle] = useState(props.title);
   const [confirmationModal, setConfirmationModal] = useState(false);
@@ -55,6 +55,7 @@ function EventManagerModal(props) {
       {
         addon: 'Event Title*',
         type: 'text',
+        // maxLength: '25',
         defaultValue: props.title,
         placeholder: 'e.g. Python Workshop',
         handleChange: e => setTitle(e.target.value)
@@ -63,16 +64,19 @@ function EventManagerModal(props) {
         addon: 'Event Date*',
         type: 'date',
         defaultValue: props.eventDate ? props.eventDate.slice(0, 10) : '',
-        handleChange: e => setEventDate(e.target.value)
+        handleChange: e => {
+          setEventDate(e.target.value);
+        }
       }
     ],
     [
       {
         addon: 'Event Location*',
         type: 'text',
+        // maxLength: '25',
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
-        handleChange: e => setEventLocation(e.target.value)
+        handleChange: e => setEventLocation(e.target.value),
       },
       {
         addon: 'Event Category',
@@ -159,8 +163,12 @@ function EventManagerModal(props) {
       <ConfirmationModal {...confirmModalProps} />
       <Modal isOpen={modal} size='lg' toggle={toggle}>
         <ModalHeader>
-          {modalState === eventModalState.SUBMIT ? 'Create New ' : 'Edit '}
+          <Col>
+            <Row>
+              {modalState === eventModalState.SUBMIT ? 'Create New ' : 'Edit '}
           Event
+            </Row>
+          </Col>
         </ModalHeader>
         <ModalBody>
           <span>
@@ -178,6 +186,7 @@ function EventManagerModal(props) {
                         </InputGroupAddon>
                         <Input
                           type={input.type}
+                          maxLength={input.maxLength}
                           defaultValue={input.defaultValue}
                           placeholder={input.placeholder}
                           onChange={input.handleChange}
@@ -200,7 +209,7 @@ function EventManagerModal(props) {
               onChange={e => setDescription(e.target.value)}
             />
           </Row>
-          <Row className='event-image'>
+          <Row className='modal-event-image'>
             <Label>Event Image + Preview</Label>
             <Input
               type='text'
