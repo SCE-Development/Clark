@@ -11,7 +11,7 @@ import EventManager from './Pages/EventManager/EventManager';
 import Login from './Pages/Login/Login';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
-
+import Resume from './Pages/Resume/resume.js';
 import Home from './Pages/Home/Home.js';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import EventList from './Pages/Events/EventList';
@@ -116,7 +116,13 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
       inAdminNavbar: true
-    }
+    },
+    {
+      Component: Resume,
+      path: '/resume',
+      allowedIf: userIsAuthenticated,
+      redirect: '/login',
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
