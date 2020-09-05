@@ -1,1 +1,67 @@
-{"resumeToAdd":{"personal":{"fullName":"","email":"","phoneNumber":"","github":""},"education":{"university":"","graduationDate":"","titleMajor":"","college":"","cumulativeGPA":"","courseWork":""},"experienceList":[{"organizationName":"","positionTitle":"","experienceLocation":"","experienceStartDate":"","experienceEndDate":"","experienceDescription1":"","experienceDescription2":"","experienceDescription3":""}],"projectList":[{"projectName":"","projectLocation":"","projectToolsUsed":"","projectStartDate":"","projectEndDate":"","projectDescription1":"","projectDescription2":"","projectDescription3":""}],"skills":{"proficient":"","experienced":"","familiar":""}}}
+{
+    "resumeToAdd": {
+        "personal": {
+            "fullName": "Chris Tom",
+            "email": "christophertom2000@gmail.com",
+            "phoneNumber": "(925)786-4308",
+            "github": "https://github.com/Gremlinbaby"
+        },
+        "education": {
+            "university": "San Jose State University",
+            "graduationDate": "2023",
+            "titleMajor": "B.S. Computer Science",
+            "college": "College of Science",
+            "cumulativeGPA": "3.69",
+            "courseWork": "Data Structures and Algorithms, Discrete Mathematics, Calculus II"
+        },
+        "experienceList": [
+            {
+                "organizationName": "Software and Computer Engineering Society",
+                "positionTitle": "Intern",
+                "experienceLocation": "San Jose ",
+                "experienceStartDate": "June 2020",
+                "experienceEndDate": "Present",
+                "experienceDescription1": "Developing a resume-generation service that is accessible to all users of the organization website.",
+                "experienceDescription2": "Implemented ReactJS features to create a form that takes user information and passes it to a back-end server.",
+                "experienceDescription3": "Utilized FPDF (Python Library) to format information and generate a pdf file."
+            },
+            {
+                "organizationName": "BigCompanyLikeGoogleOrFacebook",
+                "positionTitle": "CEO",
+                "experienceLocation": "Space",
+                "experienceStartDate": "August 2020",
+                "experienceEndDate": "Present",
+                "experienceDescription1": "Managed company portfolios and business models",
+                "experienceDescription2": "Met with important clientele and discussed business propositions",
+                "experienceDescription3": "Woke up from the dream"
+            },
+            {
+                "organizationName": "",
+                "positionTitle": "",
+                "experienceLocation": "",
+                "experienceStartDate": "",
+                "experienceEndDate": "",
+                "experienceDescription1": "",
+                "experienceDescription2": "",
+                "experienceDescription3": ""
+            }
+        ],
+        "projectList": [
+            {
+                "projectName": "RecursiveShapePattern",
+                "projectLocation": "San Jose",
+                "projectToolsUsed": "Java 8, JPanel",
+                "projectStartDate": "September 2019",
+                "projectEndDate": "September 2019",
+                "projectDescription1": "This Java applet draws a circle pattern and uses a Stack organization method to Undo a drawn circle.",
+                "projectDescription2": "Users can set the desired color through a slider system.",
+                "projectDescription3": "The circle is presented to the user through JPanel."
+            }
+        ],
+        "skills": {
+            "proficient": "All Skills Ever",
+            "experienced": "Java",
+            "familiar": "Python, Javascript React"
+        }
+    }
+}

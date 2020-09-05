@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-import './exampleStyle.css';
+import React from 'react';
+import {FormGroup, Input} from 'reactstrap';
+import './resume.css';
 class GeneralInformation extends React.Component{
   render(){
     if(this.props.currentStep !==1){
@@ -15,7 +15,6 @@ class GeneralInformation extends React.Component{
       <div>
         <FormGroup>
           <h5 class ="labels"> General Information </h5>
-          <h1/>
           <h6 class ="labels"> Name </h6>
           <Input
             style = {nameStyle}

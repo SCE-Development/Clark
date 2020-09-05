@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-import './exampleStyle.css';
+import React from 'react';
+import {FormGroup, Input} from 'reactstrap';
+import './resume.css';
 
 class Experience extends React.Component {
   constructor() {
@@ -32,17 +32,10 @@ class Experience extends React.Component {
       width: '35%',
       fontFamily: 'Popper'
     };
-    const descripStyle = {
-      margin: 'auto',
-      width: '35%',
-      fontFamily: 'Popper'
-    };
-
     return (
       <div>
         <FormGroup>
           <h5 class='labels'> {`Experience ${this.props.id + 1}`}</h5>
-          <h1 />
           <h6 class='labels'> Organization / Company Name </h6>
           <Input style={nameStyle}
             type='text'
@@ -88,7 +81,6 @@ class Experience extends React.Component {
             placeholder='Type The End Date Here (Type Present if ongoing)' />
           <h6 class='labels'> Description Line 1 </h6>
           <textarea
-            name=''
             maxlength='115'
             class='textAreas'
             rows='2'
@@ -114,7 +106,6 @@ class Experience extends React.Component {
             value={this.props.experienceDescription3}
             onChange={this.handleChange}
             placeholder='Type Description of Experience Here' />
-          <h1 />
           <button
             class={btnVisible}
             onClick={this.handleClick}>Add New Experience </button>

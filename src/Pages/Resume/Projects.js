@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-import './exampleStyle.css';
+import React from 'react';
+import {FormGroup, Input} from 'reactstrap';
+import './resume.css';
 class Projects extends React.Component{
   constructor() {
     super();
@@ -31,16 +31,10 @@ class Projects extends React.Component{
       width: '35%',
       fontFamily: 'Popper'
     };
-    const descripStyle = {
-      margin: 'auto',
-      width: '35%',
-      fontFamily: 'Popper'
-    };
     return(
       <div>
         <FormGroup>
           <h5 class="labels"> {`Project ${this.props.id +1}`}</h5>
-          <h1/>
           <h6 class ="labels"> Project Name </h6>
           <Input
             style = {nameStyle}
@@ -111,11 +105,9 @@ class Projects extends React.Component{
             cols = "59"
             name = "projectDescription3"
             placeholder = "Type Description of Experience Here"/>
-          <h1/>
           <button
             class={btnVisible}
             onClick={this.handleClick}>Add New Project </button>
-          <h1/>
         </FormGroup>
       </div>
     );

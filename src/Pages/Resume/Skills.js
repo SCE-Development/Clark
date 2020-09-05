@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-import './exampleStyle.css';
+import React from 'react';
+import {FormGroup, Input} from 'reactstrap';
+import './resume.css';
 
 class Skills extends React.Component{
   render(){

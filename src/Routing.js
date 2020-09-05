@@ -104,6 +104,7 @@ export default function Routing({ appProps }) {
       allowedIf: userIsAuthenticated,
       redirect: '/login',
     },
+<<<<<<< HEAD
     {
       Component: PrintingAnalytics,
       path: '/printing-analytics',
@@ -117,6 +118,14 @@ export default function Routing({ appProps }) {
       redirect: '/login',
       inAdminNavbar: true
     }
+=======
+      {
+      Component: Resume,
+      path: '/resume',
+      allowedIf: userIsAuthenticated,
+      redirect: '/login',
+    },
+>>>>>>> hello
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -124,11 +133,6 @@ export default function Routing({ appProps }) {
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
     { Component: VerifyEmailPage, path: '/verify' },
-
-    {
-      Component: Resume,
-      path: '/resume',
-    },
   ];
   return (
     <Router>

@@ -18,7 +18,11 @@ export default function AdminNavbar(props) {
     { title: 'Upload Pictures', route: '/uploadPic' },
     { title: 'LED Sign', route: '/led-sign' },
     { title: '3DConsole', route: '/3DConsole' },
+<<<<<<< HEAD
     { title: '2D Printing Analytics', route: '/printing-analytics' }
+=======
+    { title: 'Resume Form', route: '/resume'}
+>>>>>>> hello
   ];
 
   return (

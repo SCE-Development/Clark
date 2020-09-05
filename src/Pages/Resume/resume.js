@@ -5,13 +5,8 @@ import Education from './Education';
 import Experience from './Experience';
 import Projects from './Projects';
 import Skills from './Skills';
-import './exampleStyle.css';
+import './resume.css';
 import { Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
   Modal,
   ModalHeader,
   ModalBody,
@@ -130,15 +125,14 @@ class Resume extends Component {
     });
   }
 
-
   handleChange(event, index = null, type = null) {
     // check if index was sent as a parameter
-    if(type == 'experience'){
+    if(type === 'experience'){
       let experienceSlice = this.state.experienceInfo.slice();
       experienceSlice[index][event.target.name] = event.target.value;
       this.setState({ experienceInfo: experienceSlice });
     }
-    if(type == 'project'){
+    if(type === 'project'){
       let projectSlice = this.state.projectInfo.slice();
       projectSlice[index][event.target.name] = event.target.value;
       this.setState({ projectInfo: projectSlice });
@@ -149,7 +143,7 @@ class Resume extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     this.showConfirmation();
-    const eventResponse = getResume(this.state);
+    getResume(this.state);
   }
 
   addProject = (event) => {
@@ -197,7 +191,7 @@ class Resume extends Component {
           <ModalHeader >
         Are you sure?
           </ModalHeader>
-          <ModalBody>Woohoo, you're reading this text in a modal!</ModalBody>
+          <ModalBody>Once you confirm, your PDF will be downloaded.</ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={this.hideConfirmation}>
             Go Back
