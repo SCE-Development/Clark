@@ -32,6 +32,17 @@ export async function getAllEvents() {
 }
 
 /**
+ * Handles the case in which the image URL is not valid
+ * @param {string} url an image url to be added to an event
+ */
+function handleImageURL(url) {
+  if(url !== null) {
+    return url;
+  }
+  return 'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
+}
+
+/**
  * Add a new event.
  * @param {Object} newEvent - The event that is to be added
  * @param {string} newEvent.title - The title of the new event
@@ -59,7 +70,7 @@ export async function createNewEvent(newEvent, token) {
     startTime: handleMidnightTime(newEvent.startTime),
     endTime: handleMidnightTime(newEvent.endTime),
     eventCategory: newEvent.eventCategory,
-    imageURL: newEvent.imageURL
+    imageURL: handleImageURL(newEvent.imageURL)
   };
   await axios
     .post('api/event/createEvent', { token, ...eventToAdd })

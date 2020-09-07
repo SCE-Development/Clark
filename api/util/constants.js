@@ -17,7 +17,7 @@ const MEMBERSHIP_STATE = {
 };
 
 const DEFAULT_PHOTO_URL =
-  'https://sce.engr.sjsu.edu/wp-content/uploads/2016/04/SCE_sq.png';
+  'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
 
 const teamType = {
   DEVELOPMENT: 'Development',

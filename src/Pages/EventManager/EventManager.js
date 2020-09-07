@@ -66,7 +66,7 @@ export default function EventManager(props) {
   return (
     <div className='event-background'>
       <Header {...headerProps} />
-      <Container id='event-manager-body'>
+      <Container className='event-list'>
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event
         </Button>
@@ -74,7 +74,10 @@ export default function EventManager(props) {
           <EventManagerModal
             modal={modal}
             toggle={toggle}
-            handleDelete={event => deleteEvent(event, props.user.token)}
+            handleDelete={event => {
+              deleteEvent(event, props.user.token);
+              window.location.reload();
+            }}
             handleSubmit={handleSubmit}
             modalState={modalState}
             populateEventList={populateEventList}

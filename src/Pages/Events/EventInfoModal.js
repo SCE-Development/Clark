@@ -4,41 +4,43 @@ import {
   ModalHeader,
   Container,
   ModalBody,
-  Row,
-  Col,
   ModalFooter,
   Button
 } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
-import { clockSymbol, mapPinSymbol} from '../Overview/SVG';
+import { clockSymbol, mapPinSymbol } from '../Overview/SVG';
 
 function EventInfoModal(props) {
   const { modal, toggle, currentEvent } = props;
   return (
-    <Modal isOpen={modal} toggle={toggle}>
+    <Modal className = 'modal-event-border'
+      isOpen={modal}
+      toggle={toggle}
+      size='lg'
+      centered
+    >
       <ModalHeader toggle={toggle}>
-        <Container className='center'>{currentEvent.title}</Container>
+        <div className='modal-event-title'>{currentEvent.title}</div>
+        <div className='modal-event-date'>
+          {clockSymbol()}
+          {' '}
+          {getDateWithSlashes(currentEvent.eventDate.slice(0, 10))}
+          {' '}
+          {currentEvent.startTime} - {currentEvent.endTime}
+        </div>
+        <div className='modal-event-location'>
+          {mapPinSymbol()}
+          {' '}
+          {currentEvent.eventLocation}
+        </div>
       </ModalHeader>
+
       <ModalBody>
-        <Container className='center'>
-          <Col>
-            <Row className='event-date'>
-              {clockSymbol()}{'   '}
-              {getDateWithSlashes(currentEvent.eventDate.slice(0, 10))}{'  '}
-              {currentEvent.startTime} - {currentEvent.endTime}
-            </Row>
-          </Col>
-          <Col>
-            <Row className='event-location'>
-              {mapPinSymbol()}
-              {currentEvent.eventLocation}
-            </Row>
-          </Col>
-          <Row>
-            <Col>{currentEvent.description}</Col>
-          </Row>
-        </Container>
+        <div className='modal-event-description'>
+          {currentEvent.description}
+        </div>
       </ModalBody>
+
       <ModalFooter>
         <Container className='center' />
         <Button color='primary' onClick={toggle}>
