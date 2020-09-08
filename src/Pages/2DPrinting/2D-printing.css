@@ -58,7 +58,7 @@
 }
 
 .printInfo {
-  padding-top: 32px;
+  font-size: medium;
   position: relative;
   max-width: 80%;
   word-wrap: break-word;
@@ -88,4 +88,8 @@
   width: 5rem;
   height: 5rem;
   border-width: 0.45em;
+}
+
+.healthCheck {
+  padding-top: 32px;
 }

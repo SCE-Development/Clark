@@ -9,17 +9,18 @@ export default function PrintingHealthCheck(props) {
   const [loading, setLoading] = useState(true);
   const [printerHealthy, setPrinterHealthy] = useState(false);
 
-  useEffect(() => {
-    async function checkPrinterHealth() {
-      setLoading(true);
-      const status = await healthCheck();
-      if (status && !status.error) {
-        setPrinterHealthy(true);
-      } else {
-        setPrinterHealthy(false);
-      }
-      setLoading(false);
+  async function checkPrinterHealth() {
+    setLoading(true);
+    const status = await healthCheck();
+    if (status && !status.error) {
+      setPrinterHealthy(true);
+    } else {
+      setPrinterHealthy(false);
     }
+    setLoading(false);
+  }
+
+  useEffect(() => {
     checkPrinterHealth();
   }, []);
 
@@ -34,13 +35,13 @@ export default function PrintingHealthCheck(props) {
   }
 
   return (
-    <div>
-      <Container>
+    <>
+      <Container className='healthCheck'>
         <h1>
-          Printer Status:
+          {'Printer Status: '}
           {renderPrinterHealth()}
         </h1>
       </Container>
-    </div>
+    </>
   );
 }
