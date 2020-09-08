@@ -117,19 +117,14 @@ export default function Routing({ appProps }) {
       redirect: '/login',
       inAdminNavbar: true
     },
-    {
-      Component: Resume,
-      path: '/resume',
-      allowedIf: userIsAuthenticated,
-      redirect: '/login',
-    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' }
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: Resume, path: '/resume' }
   ];
   return (
     <Router>

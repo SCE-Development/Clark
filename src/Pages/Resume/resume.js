@@ -183,7 +183,7 @@ class Resume extends Component {
     let { experienceInfo } = this.state;
 
     return (
-      <div className = "resume">
+      <div className = "resumeCSS">
         <Modal isOpen = {this.state.showingConfirmation}>
           <ModalHeader >
         Are you sure?

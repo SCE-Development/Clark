@@ -70,8 +70,8 @@
   display: none;
 }
 
-.resume{
- background: 'rgba(173, 169, 169, 0.3)';
- padding-bottom: '150px';
+.resumeCSS{
+ background: rgba(173, 169, 169, 0.3);
  height: 100vh;
+ 
 }
