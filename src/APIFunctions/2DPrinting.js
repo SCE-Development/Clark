@@ -16,6 +16,22 @@ export const range = (start, end) => {
 };
 
 /**
+ * Checks to see if the printer is available to accept requests!
+ */
+export async function healthCheck() {
+  let status = new ApiResponse();
+  await axios.post(RPC_API_URL + '/SceRpcApi/Printer/healthCheck')
+    .then(res => {
+      status.reponseData = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+/**
  * Returns an array of numbers from pages
  * @param {string} pages    String containing array of pages
  * @param {Number} maxPages Number of pages in the document

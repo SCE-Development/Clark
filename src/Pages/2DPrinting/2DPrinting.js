@@ -24,6 +24,7 @@ import {
   FileUpload
 } from './2DComponents';
 import { PrintPageModal } from './2DPrintPageModal';
+import PrintingHealthCheck from './2DPrintingHealthCheck';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
 
@@ -69,7 +70,6 @@ export default function Printing(props) {
   const [loadPreview, setLoadPreview] = useState(true);
   const [statusModal, setStatusModal] = useState(false);
   const [printStatus, setPrintStatus] = useState('');
-
 
   async function updateEmbed(totalPages) {
     try {
@@ -360,6 +360,7 @@ export default function Printing(props) {
   return (
     <div>
       <Header {...headerProps} />
+      <PrintingHealthCheck />
       <FileUpload {...fileUploadProps} />
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
