@@ -76,8 +76,8 @@ export default function UserNavBar(props) {
       ].join('')
     }
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events' },{ title: 'Resume Form', route: '/resume'}
-];
+  const unauthedRoutes = [{ title: 'Events', route: '/events' }];
+  const authedRoutes = [{ title: 'Resume Form', route: '/resume' }];
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
@@ -120,19 +120,34 @@ export default function UserNavBar(props) {
               </DropdownItem>
               {props.user && props.user.accessLevel >=
                 membershipState.MEMBER && (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
+                <>
+                  {
+                    authedRoutes.map((link, index) =>{
+                      return (
+                        <DropdownItem className='drp-item' key={index}>
+                          <NavItem>
+                            <NavLink id='btndrp-text' href={link.route}>
+                              {link.title}
+                            </NavLink>
+                          </NavItem>
+                        </DropdownItem>
+                      );
+                    })
+                  }
+                  <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
+                    <DropdownItem className='drp-item' id='btndrp-text'>
                       Printing
-                  </DropdownItem>
-                  <DropdownMenu className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/2DPrinting'>
+                    </DropdownItem>
+                    <DropdownMenu className='drp-menu'>
+                      <DropdownItem className='drp-item' href='/2DPrinting'>
                         2D Printing
-                    </DropdownItem>
-                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
+                      </DropdownItem>
+                      <DropdownItem className='drp-item' href='/3DPrintingForm'>
                         3D Printing
-                    </DropdownItem>
-                  </DropdownMenu>
-                </DropdownItem>
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </DropdownItem>
+                </>
               )}
               {unauthedRoutes.map((link, index) => {
                 return (
@@ -142,7 +157,6 @@ export default function UserNavBar(props) {
                         {link.title}
                       </NavLink>
                     </NavItem>
-
                   </DropdownItem>
                 );
               })}
@@ -217,19 +231,30 @@ export default function UserNavBar(props) {
               })}
             </NavItem>
             {props.user && props.user.accessLevel >= membershipState.MEMBER && (
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle id='navlink-text' nav caret>
+              <>
+                {authedRoutes.map((link, index) => {
+                  return (
+                    <NavItem key={index}>
+                      <NavLink id='navlink-text' href={link.route}>
+                        {link.title}
+                      </NavLink>
+                    </NavItem>
+                  );
+                })}
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle id='navlink-text' nav caret>
                   Printing
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem className='drp-item' href='/2DPrinting'>
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem className='drp-item' href='/2DPrinting'>
                     2D Printing
-                  </DropdownItem>
-                  <DropdownItem className='drp-item' href='/3DPrintingForm'>
+                    </DropdownItem>
+                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
                     3D Printing
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </>
             )}
             {unauthedRoutes.map((link, index) => {
               return (

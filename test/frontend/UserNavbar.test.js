@@ -30,17 +30,17 @@ describe('<UserNavbar />', () => {
     const wrapper = mount(<UserNavbar />);
     expect(wrapper.find(Navbar)).to.have.lengthOf(1);
   });
-  it('Should render two <NavLink /> tags for unauthenticated routes', () => {
+  it('Should render three <NavLink /> tags for unauthenticated routes', () => {
     const wrapper = mount(<UserNavbar />);
-    expect(wrapper.find(NavLink)).to.have.lengthOf(2);
+    expect(wrapper.find(NavLink)).to.have.lengthOf(3);
     expect(wrapper.find(Nav).children()).to.have.lengthOf(1);
   });
   it(
-    'Should render two <NavLink /> components for' +
+    'Should render three <NavLink /> components for' +
     ' the user who isn\'t a member',
     () => {
       const wrapper = mount(<UserNavbar {...nonMemberAppProps} />);
-      expect(wrapper.find(NavLink)).to.have.lengthOf(2);
+      expect(wrapper.find(NavLink)).to.have.lengthOf(3);
     }
   );
   it(

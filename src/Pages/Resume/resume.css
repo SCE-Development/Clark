@@ -72,6 +72,5 @@
 
 .resumeCSS{
  background: rgba(173, 169, 169, 0.3);
- height: 100vh;
- 
+ height: 100vh !important;
 }
