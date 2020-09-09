@@ -1,6 +1,6 @@
 .labels{
   margin: 0 auto;
-  padding-top: 10px;
+  padding-top: 20px;
   width: 35%;
 }
 
@@ -68,9 +68,4 @@
   
 .display-none {
   display: none;
-}
-
-.resumeCSS{
- background: rgba(173, 169, 169, 0.3);
- height: 100vh !important;
 }

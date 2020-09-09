@@ -179,6 +179,7 @@ class Resume extends Component {
   }
 
   render() {
+    document.body.style.background = 'rgba(173, 169, 169, 0.3)';
     let { projectInfo } = this.state;
     let { experienceInfo } = this.state;
 
