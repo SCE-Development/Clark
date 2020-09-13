@@ -4,7 +4,7 @@ const cors = require('cors');
 const http = require('http');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-
+const path = require('path');
 const { PathParser } = require('./PathParser');
 
 /**
@@ -64,13 +64,36 @@ class SceHttpServer {
    * Create the http server, connect to MongoDB and start listening on
    * the supplied port.
    */
-  openConnection() {
-    this.server = http.createServer(this.app);
-    this.connectToMongoDb();
+  openConnection(frontend) {
+    if(frontend){
+      openFrontend();
+    } else{
+      const { port } = this;
+      this.server = http.createServer(this.app);
+      this.connectToMongoDb();
+      this.server.listen(port, function() {
+        console.debug(`Now listening on port ${port}`);
+      });
+    }
+  }
+
+  /**
+   * Create a frotnend server and start listening on a port
+   */
+  openFrontend() {
     const { port } = this;
-    this.server.listen(port, function() {
-      console.debug(`Now listening on port ${port}`);
-    });
+    try {
+      this.app.use(express.static(path.join(__dirname, '../../build')));
+      this.app.get('*', function(req, res) {
+        res.sendFile(path.join(__dirname, '../../build/index.html'));
+      });
+      this.server = http.createServer(this.app);
+      this.server.listen(port, function() {
+        console.debug(`Now listening on port ${port}`);
+      });
+    } catch (err) {
+      console.debug(err);
+    }
   }
 
   /**
@@ -85,7 +108,7 @@ class SceHttpServer {
         useUnifiedTopology: true,
         useCreateIndex: true,
       })
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
         throw error;
       });
@@ -119,10 +142,13 @@ if (typeof module !== 'undefined' && !module.parent) {
   const loggingApiEndpoints = __dirname + '/../logging_api/routes/';
   const cloudApiEndpoints = __dirname + '/../cloud_api/routes/';
 
+  const frontendServer = new SceHttpServer('', 8079);
   const generalServer = new SceHttpServer(generalApiEndpoints, 8080);
-  const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081);
-  const cloudServer = new SceHttpServer(cloudApiEndpoints, 8082);
+  /* eslint-disable-next-line */
+  const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081, '/logapi/');
+  const cloudServer = new SceHttpServer(cloudApiEndpoints, 8082, '/cloudapi/');
 
+  frontendServer.openFrontend(true);
   generalServer.initializeEndpoints().then(() => {
     generalServer.openConnection();
   });
