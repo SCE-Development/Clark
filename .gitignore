@@ -88,4 +88,5 @@ sheets.json
 # CSR
 *.csr
 *.key
+*.cer
 

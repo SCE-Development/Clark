@@ -144,8 +144,9 @@ if (typeof module !== 'undefined' && !module.parent) {
 
   const frontendServer = new SceHttpServer('', 8079);
   const generalServer = new SceHttpServer(generalApiEndpoints, 8080);
-  const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081);
-  const cloudServer = new SceHttpServer(cloudApiEndpoints, 8082);
+  /* eslint-disable-next-line */
+  const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081, '/logapi/');
+  const cloudServer = new SceHttpServer(cloudApiEndpoints, 8082, '/cloudapi/');
 
   frontendServer.openFrontend(true);
   generalServer.initializeEndpoints().then(() => {
