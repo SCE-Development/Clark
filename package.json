@@ -6,13 +6,15 @@
     "api-test": "mocha",
     "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js",
     "start": "react-scripts start",
-    "production-frontend": "npm run build | PORT=443 HTTPS=true react-scripts start",
     "server": "npm start --prefix api",
     "server-install": "npm install --prefix api",
     "build": "react-scripts build",
     "lint": "./node_modules/.bin/eslint ./",
     "create-user": "npm run create-user --prefix api",
-    "generate-token": "npm run generate-token --prefix api"
+    "generate-token": "npm run generate-token --prefix api",
+    "production": "rm -rf build && npm run build && npm run server",
+    "start-production": "nginx -c ./nginx.conf",
+    "stop-production": "nginx -s stop"
   },
   "keywords": [
     "sce_core",
