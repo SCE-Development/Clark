@@ -13,8 +13,9 @@
     "create-user": "npm run create-user --prefix api",
     "generate-token": "npm run generate-token --prefix api",
     "production": "rm -rf build && npm run build && npm run server",
-    "start-production": "nginx -c ./nginx.conf",
-    "stop-production": "nginx -s stop"
+    "start-production": "nginx -c ~/Core-v4/nginx.conf",
+    "stop-production": "nginx -s stop",
+    "reload-production": "nginx -s reload"
   },
   "keywords": [
     "sce_core",
