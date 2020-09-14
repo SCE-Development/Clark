@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { updateLastLoginDate } from './User';
+import {GENERAL_API_URL} from '../config/config.json';
 
 /**
  * Add a new user to the database.
@@ -27,7 +28,7 @@ export async function registerUser(userToRegister) {
     numberOfSemestersToSignUpFor
   } = userToRegister;
   await axios
-    .post('/api/Auth/register', {
+    .post(GENERAL_API_URL+'/Auth/register', {
       firstName,
       lastName,
       email,
@@ -55,7 +56,7 @@ export async function registerUser(userToRegister) {
 export async function loginUser(email, password) {
   let status = new UserApiResponse();
   await axios
-    .post('/api/Auth/login', { email, password })
+    .post(GENERAL_API_URL+'/Auth/login', { email, password })
     .then(async result => {
       status.token = result.data.token;
       await updateLastLoginDate(email, result.data.token);
@@ -88,7 +89,7 @@ export async function checkIfUserIsSignedIn() {
   }
 
   await axios
-    .post('/api/Auth/verify', { token })
+    .post(GENERAL_API_URL+'/Auth/verify', { token })
     .then(res => {
       status.responseData = res.data;
       status.token = token;
@@ -110,7 +111,7 @@ export async function checkIfUserIsSignedIn() {
 export async function validateVerificationEmail(email, hashedId) {
   let status = new ApiResponse();
   await axios
-    .post('/api/Auth/validateVerificationEmail', {
+    .post(GENERAL_API_URL+'/Auth/validateVerificationEmail', {
       email,
       hashedId
     })

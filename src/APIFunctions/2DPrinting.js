@@ -3,7 +3,11 @@ import {
   PrintApiResponse,
   ApiResponse
 } from './ApiResponses';
-import { RPC_API_URL, LOGGING_API_URL } from '../config/config.json';
+import {
+  RPC_API_URL,
+  LOGGING_API_URL,
+  GENERAL_API_URL
+} from '../config/config.json';
 
 /**
  * Return an array similar to python's range() function
@@ -20,7 +24,7 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  await axios.post(RPC_API_URL + '/SceRpcApi/Printer/healthCheck')
+  await axios.post(RPC_API_URL + '/Printer/healthCheck')
     .then(res => {
       status.reponseData = res.data;
     })
@@ -74,7 +78,7 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data) {
   let status = new ApiResponse();
-  await axios.post(RPC_API_URL + '/SceRpcApi/Printer/sendPrintRequest', data)
+  await axios.post(RPC_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {
       status.responseData = response.data.message;
     })
@@ -92,7 +96,7 @@ export async function printPage(data) {
  */
 export async function logPrintRequest(data) {
   let status = new ApiResponse();
-  await axios.post(LOGGING_API_URL + '/api/PrintLog/addPrintLog', data)
+  await axios.post(LOGGING_API_URL + '/PrintLog/addPrintLog', data)
     .catch(() => {
       status.error = true;
     });
@@ -105,7 +109,7 @@ export async function logPrintRequest(data) {
  */
 export async function getAllLogs() {
   let status = new ApiResponse();
-  await axios.get(LOGGING_API_URL + '/api/PrintLog/getPrintLogs')
+  await axios.get(LOGGING_API_URL + '/PrintLog/getPrintLogs')
     .then(response => {
       status.responseData = response.data;
     })
@@ -127,7 +131,7 @@ export async function getAllLogs() {
 export async function getPagesPrinted(email, token, totalPages, copies) {
   let status = new PrintApiResponse();
   await axios
-    .post('api/user/getPagesPrintedCount', {
+    .post(GENERAL_API_URL+'/user/getPagesPrintedCount', {
       email,
       token
     })

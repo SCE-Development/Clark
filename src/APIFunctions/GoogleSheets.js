@@ -12,7 +12,7 @@ import { MAILER_API_URL } from '../config/config.json';
 export async function addToSpreadsheet(row, sheetsId){
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/api/sheets/addToSpreadsheet',
+    .post(MAILER_API_URL + '/sheets/addToSpreadsheet',
       {row, sheetsId})
     .then((res)=>{
       status.responseData = res;

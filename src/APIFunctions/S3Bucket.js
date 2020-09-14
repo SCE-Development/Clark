@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MAILER_API_URL } from '../config/config.example.json';
+import { MAILER_API_URL } from '../config/config.json';
 import { ApiResponse } from './ApiResponses';
 
 /**
@@ -17,7 +17,7 @@ export function uploadToS3(files) {
 
     // Retrieving signed url which will allow us to make an upload request to S3
     axios
-      .post(MAILER_API_URL + '/api/S3Bucket/getSignedUrl', {
+      .post(MAILER_API_URL + '/S3Bucket/getSignedUrl', {
         fileName,
         fileType
       })

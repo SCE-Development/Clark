@@ -81,7 +81,14 @@ export default class VerifyEmail extends React.Component {
               There was a problem verifying your email.
             </h3>
             <p
-              style={{ margin: '2em', cursor: 'pointer' }}
+              style={
+                {
+                  margin: '2em',
+                  cursor: 'pointer',
+                  color:'blue',
+                  textDecoration: 'underline'
+                }
+              }
               onClick={this.resendVerificationEmail.bind(this)}
             >
               Click here to resend the verification email.
