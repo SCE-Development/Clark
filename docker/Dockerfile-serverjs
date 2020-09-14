@@ -1,14 +1,12 @@
 FROM node:lts-alpine
 
-RUN mkdir -p /usr/src/app
+WORKDIR /api
 
-COPY . /usr/src/app/
-
-WORKDIR /usr/src/app
+COPY ./api .
 
 RUN npm install
 RUN npm install superagent
 
-EXPOSE 8080
+EXPOSE 8070-8080
 
-CMD node server.js
+CMD npm start
