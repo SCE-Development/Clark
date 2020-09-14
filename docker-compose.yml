@@ -25,10 +25,11 @@ services:
     links:
       - db
   
-  #when you sping up more than 1 container, increase the ports above. Implement a port range, 8080:8085
-  #when you implement a port range, window.location.hostname for the log in page. 
-  #need something in front of the docker container (load balancer) in nginx container.
+  when you sping up more than 1 container, increase the ports above. Implement a port range, 8080:8085
+  when you implement a port range, window.location.hostname for the log in page. 
+  need something in front of the docker container (load balancer) in nginx container.
   frontend:
+    container_name: "react-frontend"
     image: 'corefront:latest'
     build:
       context: .
@@ -37,6 +38,6 @@ services:
       - '3000:3000'
     restart: 'on-failure'
     command: 'npm start'
-    links:
-      - app
+     # This is required otherwise container will exit. https://github.com/facebook/create-react-app/issues/8688
+    stdin_open: true
   #app will ALWAYS fail until mongodb starts so when you do docker-compose up, be patient and wait a while.

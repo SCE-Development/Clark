@@ -1,14 +1,21 @@
 FROM node:lts-alpine
 
-RUN mkdir -p  /usr/src/app
+WORKDIR /frontend
 
-COPY package.json /usr/src/app/package.json
-COPY public/ /usr/src/app/public
+RUN mkdir /frontend/public
+RUN mkdir /frontend/src
 
-WORKDIR /usr/src/app/public/home/home-react/
+# Copy the depencies
+COPY package.json /frontend
+
+# Copy the static files
+COPY public/ /frontend/public
+
+# Copy React source 
+COPY src/ /frontend/src
 
 EXPOSE 3000
 
 RUN npm install
 
-CMD npm start
+CMD npm start 
