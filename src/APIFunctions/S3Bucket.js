@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MAILER_API_URL } from '../config/config.example.json';
+import { MAILER_API_URL } from '../config/config.json';
 import { ApiResponse } from './ApiResponses';
 
 /**
