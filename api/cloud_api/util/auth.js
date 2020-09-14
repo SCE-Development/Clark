@@ -4,7 +4,7 @@ const { GENERAL_API_URL } = require('../../config/config');
 async function validateVerificationEmail(){
   let status = '';
   await axios
-    .post(`${GENERAL_API_URL}api/Auth/sendVerificationEmail`)
+    .post(`${GENERAL_API_URL}/Auth/sendVerificationEmail`)
     .then(res =>{
       status = res.data;
     })
@@ -17,7 +17,7 @@ async function validateVerificationEmail(){
 async function generateHashedId(email){
   let hashedId = '';
   await axios
-    .post(`${GENERAL_API_URL}api/Auth/generateHashedId`, {email})
+    .post(`${GENERAL_API_URL}/Auth/generateHashedId`, {email})
     .then(res =>{
       hashedId = res.data.hashedId;
     })

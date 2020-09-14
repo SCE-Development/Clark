@@ -1,8 +1,8 @@
 {
-  "GENERAL_API_URL": "http://localhost:8080",
-  "LOGGING_API_URL": "http://localhost:8081",
-  "MAILER_API_URL": "http://localhost:8082",
-  "RPC_API_URL": "http://localhost:8083",
+  "GENERAL_API_URL": "http://localhost:8080/api",
+  "LOGGING_API_URL": "http://localhost:8081/loggingapi",
+  "MAILER_API_URL": "http://localhost:8082/cloudapi",
+  "RPC_API_URL": "http://localhost:8083/SceRpcApi",
   "sitekey": "super secret key",
   "TINYMCE_API_KEY": "XXXXXXXXXXXXXXXXXXXXX"
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { RPC_API_URL } from '../config/config.json';
+import { RPC_API_URL, LOGGING_API_URL } from '../config/config.json';
 
 /**
  * Checks to see if the sign is accepting requests. This is done
@@ -11,7 +11,7 @@ import { RPC_API_URL } from '../config/config.json';
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
   await axios
-    .post(RPC_API_URL + '/SceRpcApi/LedSign/healthCheck', { officerName })
+    .post(RPC_API_URL + '/LedSign/healthCheck', { officerName })
     .then(res => {
       status.responseData = res.data;
     })
@@ -30,7 +30,7 @@ export async function healthCheck(officerName) {
 export async function getAllSignLogs() {
   let result = new ApiResponse();
   await axios
-    .get('api/SignLog/getSignLogs')
+    .get(LOGGING_API_URL+'/SignLog/getSignLogs')
     .then(res => {
       result.responseData = res.data;
     })
@@ -51,7 +51,7 @@ export async function getAllSignLogs() {
 export async function updateSignText(signData) {
   let status = new ApiResponse();
   await axios
-    .post(RPC_API_URL + '/SceRpcApi/LedSign/updateSignText', { ...signData })
+    .post(RPC_API_URL + '/LedSign/updateSignText', { ...signData })
     .then(res => {
       status = res.data;
     })

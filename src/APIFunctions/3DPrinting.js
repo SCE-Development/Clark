@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { RPC_API_URL } from '../config/config.json';
+import { RPC_API_URL, GENERAL_API_URL } from '../config/config.json';
 
 /**
  * Submit a user's print request.
@@ -29,7 +29,7 @@ export async function submit3DPrintRequest(printRequest) {
     email
   } = printRequest;
   await axios
-    .post('/api/3DPrintingForm/submit', {
+    .post(GENERAL_API_URL+'/3DPrintingForm/submit', {
       name,
       color,
       comment,
@@ -60,7 +60,7 @@ export async function print3DModel(printRequest) {
   const status = ApiResponse();
   const { raw, name, volume, copies } = printRequest;
   await axios
-    .post(RPC_API_URL + '/SceRpcApi/3dPrinter/print3dModel', {
+    .post(RPC_API_URL + '/3dPrinter/print3dModel', {
       raw,
       name,
       volume,
@@ -80,7 +80,7 @@ export async function print3DModel(printRequest) {
 export async function getAll3DPrintRequests() {
   let status = new ApiResponse();
   await axios
-    .post('/api/3DPrintingForm/GetForm', {})
+    .post(GENERAL_API_URL+'/3DPrintingForm/GetForm', {})
     .then(result => {
       status.responseData = result.data;
     })
@@ -105,7 +105,7 @@ export async function delete3DPrintRequest(requestToDelete, token) {
   let status = new ApiResponse();
   const { date, email } = requestToDelete;
   await axios
-    .post('/api/3DPrintingForm/delete', {
+    .post(GENERAL_API_URL+'/3DPrintingForm/delete', {
       token,
       date,
       email
@@ -130,7 +130,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
   let status = new ApiResponse();
   const { date, email, progress } = requestToUpdate;
   await axios
-    .post('/api/3DPrintingForm/edit', {
+    .post(GENERAL_API_URL+'/3DPrintingForm/edit', {
       date,
       email,
       progress,
@@ -151,7 +151,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
 export async function search3DPrintRequests(email) {
   let status = new ApiResponse();
   await axios
-    .post('/api/3DPrintingForm/GetForm', {
+    .post(GENERAL_API_URL+'/3DPrintingForm/GetForm', {
       email
     })
     .then(result => {

@@ -12,7 +12,7 @@ import { MAILER_API_URL } from '../config/config.json';
 export async function sendVerificationEmail(email, firstName) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/api/Mailer/sendVerificationEmail', {
+    .post(MAILER_API_URL + '/Mailer/sendVerificationEmail', {
       recipientEmail: email,
       recipientName: firstName,
     })
@@ -37,7 +37,7 @@ export async function sendVerificationEmail(email, firstName) {
 export async function sendBlastEmail(emailList, subject, content) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/api/Mailer/sendBlastEmail', {
+    .post(MAILER_API_URL + '/Mailer/sendBlastEmail', {
       emailList,
       subject,
       content,

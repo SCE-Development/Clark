@@ -1,5 +1,5 @@
 {
-  "CLOUD_API_URL": "http://localhost:8082/",
+  "CLOUD_API_URL": "http://localhost:8082/cloudapi",
   "discordApiKeys": {
       "CLIENT_ID": "XXXXXXXXXXXXXXXXXX",
       "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXX",
@@ -7,7 +7,7 @@
       "REDIRECT_URI_PROD": "http%3A%2F%2Fsce.sjsu.edu%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify",
       "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
-  "GENERAL_API_URL": "http://localhost:8080/",
+  "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
       "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
       "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
@@ -26,7 +26,7 @@
       "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
   "ledSignIp": "192.168.4.1",
-  "LOGGING_API_URL": "http://localhost:8081/",
+  "LOGGING_API_URL": "http://localhost:8081/loggingapi",
   "passwordStrength": "medium",
   "S3Bucket": {
       "AWSACCESSKEYID": "XXXXXXXXXXXXXXXXXXXX",

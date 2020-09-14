@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { UserApiResponse } from './ApiResponses';
 import { membershipState, userFilterType } from '../Enums';
+import { GENERAL_API_URL } from '../config/config.json';
 
 /**
  * Queries the database for all users.
@@ -12,7 +13,7 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post('/api/User/users', {
+    .post(GENERAL_API_URL+'/User/users', {
       // don't need email
       token
     })
@@ -70,7 +71,7 @@ export async function editUser(userToEdit, token) {
     lastLogin
   } = userToEdit;
   await axios
-    .post('/api/User/edit', {
+    .post(GENERAL_API_URL+'/User/edit', {
       firstName,
       lastName,
       email,
@@ -114,7 +115,7 @@ export async function updateLastLoginDate(email, token) {
 export async function deleteUserByEmail(email, token) {
   let status = new UserApiResponse();
   axios
-    .post('/api/User/delete', {
+    .post(GENERAL_API_URL+'/User/delete', {
       token,
       email
     })
@@ -134,7 +135,7 @@ export async function deleteUserByEmail(email, token) {
 export async function searchUserByEmail(email, token) {
   let status = new UserApiResponse();
   await axios
-    .post('/api/User/search', {
+    .post(GENERAL_API_URL+'/User/search', {
       token,
       email
     })
@@ -155,7 +156,8 @@ export async function searchUserByEmail(email, token) {
  */
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
-  await axios.post('/api/User/checkIfUserExists', { email }).catch(() => {
+  await axios.post(GENERAL_API_URL+'/User/checkIfUserExists',
+    { email }).catch(() => {
     status.error = true;
   });
   return status;
@@ -185,7 +187,7 @@ export function filterUsers(users, filterID) {
 }
 export async function connectToDiscord(email, token) {
   let status = new UserApiResponse();
-  await axios.post('api/user/connectToDiscord', { email, token })
+  await axios.post(GENERAL_API_URL+'/user/connectToDiscord', { email, token })
     .then((res) => {
       status.responseData = res.data;
     })
