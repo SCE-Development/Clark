@@ -68,7 +68,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "reactstrap": "^8.2.0",
-    "universal-cookie": "^4.0.3"
+    "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
     "@babel/register": "^7.10.4",
