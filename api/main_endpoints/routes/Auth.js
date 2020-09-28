@@ -9,7 +9,8 @@ const User = require('../models/User.js');
 const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
-  checkIfTokenValid
+  checkIfTokenValid,
+  decodeToken
 } = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
 const {
@@ -161,11 +162,12 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const decoded = checkIfTokenValid(req);
-  if (!decoded) {
+  const isValid = checkIfTokenValid(req);
+  if (!isValid) {
     res.sendStatus(UNAUTHORIZED);
   } else {
-    res.status(OK).send(decoded);
+
+    res.status(OK).send(decodeToken(req));
   }
 });
 

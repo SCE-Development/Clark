@@ -16,27 +16,34 @@ function checkIfTokenSent(request) {
 }
 
 /**
+* @param {object} request the HTTP request from the client
+*/
+function decodeToken(request){
+  const token = request.body.token;
+  const userToken = token.replace(/^JWT\s/, '');
+  let decodedResponse = null;
+  jwt.verify(userToken, secretKey, function(error, decoded) {
+    decodedResponse = !error && decoded;
+  });
+  return decodedResponse;
+}
+
+/**
  * Checks if the request token is valid and returns either a valid response
  * or undefined
  * @param {object} request the HTTP request from the client
  * @param {boolean} returnDecoded optional parameter to return the decoded
  * response to the user
- * @returns {object} the decoded response from jwt.verify
+ * @returns {boolean} whether the user token is valid or not
  */
 function checkIfTokenValid(request, accessLevel = membershipState.MEMBER) {
-  const userToken = request.body.token.replace(/^JWT\s/, '');
-  let decodedResponse;
-  jwt.verify(userToken, secretKey, function(error, decoded) {
-    if(decoded && decoded.accessLevel >= accessLevel){
-      decodedResponse = false;
-    }else{
-      decodedResponse = !error && decoded;
-    }
-  });
-  return decodedResponse;
+  let decoded = decodeToken(request);
+  let response = decoded && decoded.accessLevel >= accessLevel;
+  return response;
 }
 
 module.exports = {
   checkIfTokenSent,
-  checkIfTokenValid
+  checkIfTokenValid,
+  decodeToken
 };

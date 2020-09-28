@@ -23,7 +23,7 @@ router.get('/getItems', (req, res) => {
 router.post('/editItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -59,7 +59,7 @@ router.post('/editItem', (req, res) => {
 router.post('/addItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const newItem = new InventoryItem({
@@ -82,7 +82,7 @@ router.post('/addItem', (req, res) => {
 router.post('/deleteItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   InventoryItem.deleteOne({ name: req.body.name }, (error, form) => {

@@ -40,7 +40,7 @@ router.get('/getAvailableDoorCode', (req, res) => {
 router.post('/addCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -61,7 +61,7 @@ router.post('/addCode', (req, res) => {
 router.post('/editCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -95,7 +95,7 @@ router.post('/editCode', (req, res) => {
 router.post('/removeCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 

@@ -9,7 +9,8 @@ const axios = require('axios');
 const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
-  checkIfTokenValid
+  checkIfTokenValid,
+  decodeToken
 } = require('../util/token-functions');
 const {
   OK,
@@ -55,7 +56,7 @@ router.post('/checkIfUserExists', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -129,7 +130,9 @@ router.post('/users', function(req, res) {
   }
   User.find()
     .sort({ joinDate: -1 })
-    .then(items => res.status(OK).send(items))
+    .then(items => {
+      res.status(OK).send(items);
+    })
     .catch(() => {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     });
@@ -139,9 +142,25 @@ router.post('/users', function(req, res) {
 router.post('/edit', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
+  let decoded = decodeToken(req);
+  if(decoded.accessLevel === membershipState.MEMBER){
+    if(req.body.email != decoded.email){
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    if(req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel){
+      return res.sendStatus(UNAUTHORIZED);
+    }
+  }
+
+  if(decoded.accessLevel === membershipState.OFFICER){
+    if(req.body.accessLevel === membershipState.ADMIN){
+      return res.sendStatus(UNAUTHORIZED);
+    }
+  }
+
   const query = { email: req.body.email };
   const user =
     typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
@@ -154,6 +173,7 @@ router.post('/edit', (req, res) => {
       };
 
   delete user.numberOfSemestersToSignUpFor;
+
 
   // Remove the auth token from the form getting edited
   delete user.token;

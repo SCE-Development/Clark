@@ -33,7 +33,7 @@ router.get('/getEvents', (req, res) => {
 router.post('/createEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const newEvent = new Event({
@@ -58,7 +58,7 @@ router.post('/createEvent', (req, res) => {
 router.post('/editEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const {
@@ -101,7 +101,7 @@ router.post('/editEvent', (req, res) => {
 router.post('/deleteEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ADMIN)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   Event.deleteOne({ _id: req.body.id })
