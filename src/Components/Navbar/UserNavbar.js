@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Cookies from 'universal-cookie';
+import React, { useEffect, useState } from 'react';
 import {
   ButtonDropdown,
   Collapse,
-  CustomInput,
   NavbarToggler,
   Navbar,
   NavbarBrand,
@@ -15,15 +13,12 @@ import {
   DropdownMenu,
   DropdownItem
 } from 'reactstrap';
+import DarkMode from './DarkMode';
 import { membershipState } from '../../Enums';
 import logo from '../Navbar/sce_logo.png';
-import { toggleDarkTheme } from '../../APIFunctions/dark-theme';
-import { sunIcon, moonIcon } from '../../Pages/Overview/SVG';
-
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const [darkTheme, setDarkTheme] = useState(true);
   const icons = [
     {
       link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -86,26 +81,7 @@ export default function UserNavBar(props) {
     setMenuIsOpen(!menuIsOpen);
   };
 
-  function createCookie() {
-    if (document.body.className === 'light') {
-      setDarkTheme(true);
-    } else {
-      setDarkTheme(false);
-    }
-    toggleDarkTheme();
-  }
-
-  function keepState() {
-    const cookie = new Cookies();
-    if (cookie.get('dark') === 'true') {
-      setDarkTheme(true);
-    } else {
-      setDarkTheme(false);
-    }
-  }
-
   useEffect(() => {
-    keepState();
     // eslint-disable-next-line
   }, [])
 
@@ -117,15 +93,8 @@ export default function UserNavBar(props) {
             <img id='logo-image' src={logo} alt={'sce logo'} />
           </div>
         </NavbarBrand>
-        <div id='toggler-left'>
-          <div id='sun-icon' >{sunIcon()}</div>
-          <div id='dark-toggler'>
-            <CustomInput
-              onChange={createCookie} className='darkToggle'
-              type='switch' id='exampleCustomSwitch' name='customSwitch'
-              checked={darkTheme} />
-          </div>
-          <div id='moon-icon' >{moonIcon()}</div>
+        <div id='user-dark'>
+          <DarkMode />
         </div>
         <NavbarToggler tag='h1'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
@@ -326,6 +295,6 @@ export default function UserNavBar(props) {
           </Nav>
         </Collapse>
       </Navbar>
-    </div>
+    </div >
   );
 }
