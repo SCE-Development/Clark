@@ -8,6 +8,7 @@ import {
   NavbarToggler
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
+import DarkMode from './DarkMode';
 
 export default function AdminNavbar(props) {
   const [collapsed, setCollapsed] = useState(true);
@@ -27,7 +28,13 @@ export default function AdminNavbar(props) {
       className='admin-nav admin-dark navbar-expand-md'
       navbar='true'
     >
-      <NavbarBrand href='/'>Admin Dashboard</NavbarBrand>
+      <div id='admin-title'>
+        <NavbarBrand href='/'>Admin Dashboard
+        </NavbarBrand>
+        <div id='admin-toggler'>
+          <DarkMode />
+        </div>
+      </div>
       <NavbarToggler
         onClick={() => setCollapsed(!collapsed)}
         className='mr-2'
@@ -61,6 +68,6 @@ export default function AdminNavbar(props) {
           </div>
         </Nav>
       </Collapse>
-    </Navbar>
+    </Navbar >
   );
 }

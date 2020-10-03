@@ -126,3 +126,7 @@ thead.td{
   background-color: rgb(2, 107, 126);
   color: white;
 }
+
+#users-header{
+  color: black;
+}

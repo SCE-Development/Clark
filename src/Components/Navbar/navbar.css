@@ -114,8 +114,20 @@
 
 #toggler-left{
   display: inline-flex;
+}
+
+#user-dark{
   position: absolute;
   left: 5rem;
+}
+
+#admin-dark{
+  position: absolute;
+  left: 12rem;
+}
+
+#admin-title{
+  display: inline-flex;
 }
 
 #sun-icon{
@@ -126,6 +138,10 @@
 
 #dark-toggler{
   margin-top: 0.08rem;
+}
+
+#admin-toggler{
+  margin-top: 0.32rem;
 }
 
 #moon-icon{
