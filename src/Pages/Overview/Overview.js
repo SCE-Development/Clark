@@ -131,7 +131,7 @@ export default class OverviewBoard extends Component {
   render() {
     return (
       <div>
-        <Header {...this.headerProps}/>
+        <Header {...this.headerProps} />
         <div className='layout'>
           <h6 id='search-tag'>Search </h6>
           <ButtonDropdown
@@ -170,7 +170,7 @@ export default class OverviewBoard extends Component {
 
           <table className='content-table' id='users'>
             <thead>
-              <tr>
+              <tr id='users-header'>
                 {[
                   'Name',
                   'Door Code',
