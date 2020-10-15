@@ -7,10 +7,14 @@ import Projects from './Projects';
 import Skills from './Skills';
 import './resume.css';
 import { Button,
+  Row,
+  Col,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter} from 'reactstrap';
+  import Header from
+  '../../Components/Header/Header.js';
 class Resume extends Component {
   constructor(props) {
     super(props);
@@ -106,7 +110,7 @@ class Resume extends Component {
 
   get nextButton() {
     let currentStep = this.state.currentStep;
-    if (currentStep < 5) {
+    if (currentStep < 4) {
       return (
         <button
           class="customRight"
@@ -179,12 +183,16 @@ class Resume extends Component {
   }
 
   render() {
-    document.body.style.background = 'rgba(173, 169, 169, 0.3)';
+    const headerProps = {
+      title: 'Resume Form'
+    };
+    
     let { projectInfo } = this.state;
     let { experienceInfo } = this.state;
 
     return (
-      <div className = "resumeCSS">
+      <div>
+            <Header  {...headerProps}/>
         <Modal isOpen = {this.state.showingConfirmation}>
           <ModalHeader >
         Are you sure?
@@ -200,6 +208,8 @@ class Resume extends Component {
           </ModalFooter>
         </Modal>
         <React.Fragment>
+        <Row>
+        <Col>
           <GeneralInformation
             name={this.state.name}
             phone={this.state.phone}
@@ -208,6 +218,8 @@ class Resume extends Component {
             currentStep={this.state.currentStep}
             handleChange={this.handleNormalChange}
           />
+          </Col>
+          <Col>
           <Education
             schoolName={this.state.schoolName}
             gradYear={this.state.gradYear}
@@ -218,7 +230,8 @@ class Resume extends Component {
             currentStep={this.state.currentStep}
             handleChange={this.handleNormalChange}
           />
-
+          </Col>
+          </Row>
           {
             experienceInfo.map((val, idx) => {
 

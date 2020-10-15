@@ -1,23 +1,41 @@
 .labels{
-  margin: 0 auto;
-  padding-top: 20px;
-  width: 35%;
+  padding-top: 3%;
+  text-align: center;
+  align-items: center;
+  
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
 .leftAlign{
-  margin: 0 auto;
-  width: 35%;
+  margin-left: 15%;
 }
 
 .textAreas{
-  margin-left: 32.5%;
-  width: 35%;
+  width: 70%;
+  text-align: center;
+  margin-left: 15% ;
+  border-color: gainsboro;
 }
 
 .customRight{
   margin-right: 20%;
+  margin-bottom: 1%;
   float: right;
-  background-color: #3F99FF;
+  background-color: #9DD9F3;
   border-radius: 6%;
   font-size: x-large;
 }
@@ -25,20 +43,21 @@
 .customLeft{
   margin-left: 20%;
   float: left;
-  background-color: #797979;
+  background-color: #cfcfc4;
   border-radius: 6%;
   font-size: x-large;
 }
 
 .customBtnVisible {
-  margin-left: 43%;
-  background-color: #336699;
+  margin-left: 45%;
+  margin-top: 2%;
+  background-color: #77DD77;
   border-radius: 6%;
   visibility: visible;
 }
 
 .customBtnHidden {
-  background-color: #336699;
+  background-color: #77DD77;
   border-radius: 6%;
   visibility: hidden;
 }

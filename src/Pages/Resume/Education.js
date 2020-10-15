@@ -2,17 +2,17 @@ import React from 'react';
 import {FormGroup, Input} from 'reactstrap';
 class Education extends React.Component{
   render(){
-    if(this.props.currentStep !==2){
+    if(this.props.currentStep !==1){
       return null;
     }
     const nameStyle = {
       margin: 'auto',
-      width: '35%',
+      width: '80%',
       fontFamily: 'Popper'
     };
 
     return(
-      <div>
+      <div class = 'rightAlign'>
         <FormGroup>
           <h5 class ='labels'> Education </h5>
           <h6 class ='labels'>  University Name </h6>

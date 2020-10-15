@@ -8,14 +8,14 @@ class GeneralInformation extends React.Component{
     }
     const nameStyle = {
       margin: 'auto',
-      width: '35%',
+      width: '80%',
       fontFamily: 'Popper',
     };
     return(
-      <div>
+      <div class = "leftAlign">
         <FormGroup>
           <h5 class ="labels"> General Information </h5>
-          <h6 class ="labels"> Name </h6>
+          <h6 class ="labels"> Full Name </h6>
           <Input
             style = {nameStyle}
             type="text"
