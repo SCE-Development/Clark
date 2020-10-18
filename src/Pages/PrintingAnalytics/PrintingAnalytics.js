@@ -26,15 +26,17 @@ export default function Analytics() {
       .toLocaleString('en-US', { hour12: false })
       .split(',')[0];
 
-    let filteredPrintLogs = printLogs.filter(printLog => {
-      let dateAndTime = new Date(printLog.printedDate)
-        .toLocaleString('en-US', { hour12: false })
-        .split(',');
+    if (printLogs && printLogs.length > 0) {
+      let filteredPrintLogs = printLogs.filter(printLog => {
+        let dateAndTime = new Date(printLog.printedDate)
+          .toLocaleString('en-US', { hour12: false })
+          .split(',');
 
-      return dateAndTime[0] === targetDate;
-    });
+        return dateAndTime[0] === targetDate;
+      });
 
-    setFilteredPrintLogs(filteredPrintLogs);
+      setFilteredPrintLogs(filteredPrintLogs);
+    }
   }, [selectedDate, printLogs]);
 
   const headerProps = {
