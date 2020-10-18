@@ -26,7 +26,7 @@ export default function Analytics() {
       .toLocaleString('en-US', { hour12: false })
       .split(',')[0];
 
-    if (printLogs && printLogs.length > 0) {
+    if (printLogs) {
       let filteredPrintLogs = printLogs.filter(printLog => {
         let dateAndTime = new Date(printLog.printedDate)
           .toLocaleString('en-US', { hour12: false })
