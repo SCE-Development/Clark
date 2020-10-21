@@ -1,0 +1,39 @@
+@keyframes card-transition {
+  from {
+    transform: translateY(35%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+[id^='card'] {
+  /* height: 80vh; */
+  max-height: 90%;
+  transition: all .1s ease-in-out;
+  animation-name: card-transition;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+}
+
+.card-subtitle {
+  color: #b2b2b2;
+}
+
+[id^='card']:hover {
+  transform: scale(1.11);
+}
+
+.card-title, .card-subtitle, .card-text {
+  text-align: left;
+}
+
+.card-subtitle, .card-text {
+  font-size: 90%;
+}
+
+img {
+  object-fit: cover;
+}

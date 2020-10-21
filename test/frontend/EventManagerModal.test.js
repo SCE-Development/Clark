@@ -3,7 +3,7 @@ import 'jsdom-global/register';
 import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
-import { eventModalState } from '../../src/Enums';
+import { modalStates } from '../../src/Enums';
 
 import EventManagerModal from '../../src/Pages/EventManager/EventManagerModal';
 import Adapter from 'enzyme-adapter-react-16';
@@ -25,13 +25,13 @@ describe('<EventManagerModal />', () => {
 
   const submitAppProps = {
     modal: true,
-    modalState: eventModalState.SUBMIT,
+    modalState: modalStates.SUBMIT,
     toggle: () => {}
   };
 
   const editAppProps = {
     modal: true,
-    modalState: eventModalState.EDIT,
+    modalState: modalStates.EDIT,
     toggle: () => {},
     ...currentEvent
   };

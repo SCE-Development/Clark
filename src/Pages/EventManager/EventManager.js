@@ -9,14 +9,14 @@ import { addEventToCalendar } from '../../APIFunctions/Mailer';
 import './event-manager.css';
 import { Button, Container } from 'reactstrap';
 import EventManagerModal from './EventManagerModal';
-import { eventModalState } from '../../Enums';
+import { modalStates } from '../../Enums';
 import EventCard from '../Events/EventCard';
 import Header from '../../Components/Header/Header';
 
 export default function EventManager(props) {
   const [modal, setModal] = useState(false);
   const [event, setEvent] = useState();
-  const [modalState, setModalState] = useState(eventModalState.SUBMIT);
+  const [modalState, setModalState] = useState(modalStates.SUBMIT);
   const [eventList, setEventList] = useState([]);
   const headerProps = {
     title: 'Event Manager'
@@ -36,19 +36,19 @@ export default function EventManager(props) {
   }
 
   function toggleEditEvent(event) {
-    setModalState(eventModalState.EDIT);
+    setModalState(modalStates.EDIT);
     setEvent(event);
     toggle();
   }
 
   function toggleNewEvent() {
     setEvent();
-    setModalState(eventModalState.SUBMIT);
+    setModalState(modalStates.SUBMIT);
     setModal(!modal);
   }
 
   async function handleSubmit(event) {
-    if (modalState === eventModalState.SUBMIT) {
+    if (modalState === modalStates.SUBMIT) {
       const res = await createNewEvent(event, props.user.token);
       if (res.error === false) {
         const addEventRes = await addEventToCalendar(event, props.user.token);
@@ -58,7 +58,7 @@ export default function EventManager(props) {
       } else {
         alert('Cannot create event!');
       }
-    } else if (modalState === eventModalState.EDIT) {
+    } else if (modalState === modalStates.EDIT) {
       await editEvent(event, props.user.token);
     }
   }
