@@ -126,7 +126,7 @@ router.post('/editLesson', (req, res) => {
 
 router.get('/getLessons', (req, res) => {
   const { courseId } = req.query;
-  
+
   Course.find({ _id:courseId })
     .then(items => res.status(OK).send(items[0].lessons))
     .catch(error => {

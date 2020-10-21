@@ -19,7 +19,6 @@ function CoursesManager(props) {
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState(modalStates.SUBMIT);
   let cardNum = 0;
-
   const headerProp = {
     title: 'Courses Manager'
   };
@@ -28,7 +27,6 @@ function CoursesManager(props) {
     const data = await getAllCourses();
     setCoursesList(data.responseData);
   }
-
   useEffect(() => {
     getCourses();
   }, []);

@@ -60,7 +60,6 @@ function CoursesManagerModal(props) {
     toggleConfirmationModal();
     props.toggle();
   }
-
   const confirmationModalProps = {
     headerText: `Delete ${props.title} ?`,
     bodyText: 'The course will be gone forever if you do this.',
