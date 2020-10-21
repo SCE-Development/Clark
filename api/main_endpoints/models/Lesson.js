@@ -9,11 +9,11 @@ const LessonSchema = new Schema(
       required: true
     },
     link: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     }
   },
   { collection: "Lesson" }
 );
 
-module.exports = mongoose.model("Lesson", LessonSchemas);
+module.exports = mongoose.model("Lesson", LessonSchema);

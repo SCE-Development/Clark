@@ -12,7 +12,7 @@ import {
   Row,
   InputGroupAddon
 } from 'reactstrap';
-import { eventModalState } from '../../Enums';
+import { modalStates } from '../../Enums';
 import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event';
 import { validateImageURL } from '../../APIFunctions/Image.js';
 import ConfirmationModal from
@@ -138,7 +138,7 @@ function EventManagerModal(props) {
   }
 
   function requiredFieldsFilledIn() {
-    if (props.modalState === eventModalState.EDIT) {
+    if (props.modalState === modalStates.EDIT) {
       return (
         title !== '' &&
         eventDate !== '' &&
@@ -146,7 +146,7 @@ function EventManagerModal(props) {
         endTime !== '' &&
         eventLocation !== ''
       );
-    } else if (props.modalState === eventModalState.SUBMIT) {
+    } else if (props.modalState === modalStates.SUBMIT) {
       return (
         title !== undefined &&
         eventDate !== undefined &&
@@ -165,7 +165,7 @@ function EventManagerModal(props) {
         <ModalHeader>
           <Col>
             <Row>
-              {modalState === eventModalState.SUBMIT ? 'Create New ' : 'Edit '}
+              {modalState === modalStates.SUBMIT ? 'Create New ' : 'Edit '}
           Event
             </Row>
           </Col>
@@ -230,7 +230,7 @@ function EventManagerModal(props) {
           <Button color='secondary' onClick={toggle}>
             Cancel
           </Button>
-          {modalState === eventModalState.EDIT ? (
+          {modalState === modalStates.EDIT ? (
             <Button color='danger' onClick={toggleConfirmationModal}>
               Delete Event
             </Button>
@@ -242,7 +242,7 @@ function EventManagerModal(props) {
             onClick={handleSubmission}
             disabled={!requiredFieldsFilledIn()}
           >
-            {modalState === eventModalState.SUBMIT
+            {modalState === modalStates.SUBMIT
               ? 'Create New Event'
               : 'Submit Changes'}
           </Button>

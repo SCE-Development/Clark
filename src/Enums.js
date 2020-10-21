@@ -1,4 +1,4 @@
-const eventModalState = {
+const modalStates = {
   SUBMIT: 0,
   EDIT: 1
 };
@@ -60,7 +60,7 @@ const userFilterType = {
 };
 
 module.exports = {
-  eventModalState,
+  modalStates,
   memberApplicationState,
   membershipPlans,
   memberShipPlanToString,
