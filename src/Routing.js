@@ -7,6 +7,7 @@ import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
 import Overview from './Pages/Overview/Overview';
 import EmailPage from './Pages/EmailList/EmailPage';
+import CoursesManager from './Pages/CoursesManager/CoursesManager';
 import EventManager from './Pages/EventManager/EventManager';
 import Login from './Pages/Login/Login';
 import Profile from './Pages/Profile/MemberView/Profile';
@@ -15,6 +16,8 @@ import LedSign from './Pages/LedSign/LedSign';
 import Home from './Pages/Home/Home.js';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import EventList from './Pages/Events/EventList';
+import CoursesPage from './Pages/Courses/CoursesPage';
+import LessonsPage from './Pages/Lessons/LessonsPage';
 import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js';
 import MembershipApplication from
@@ -116,6 +119,19 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
       inAdminNavbar: true
+    },
+    { 
+      Component: CoursesPage,
+      path: '/courses',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login'
+    },
+    { 
+      Component: CoursesManager,
+      path: '/courses-manager',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/login',
+      inAdminNavbar: true
     }
   ];
   const signedOutRoutes = [
@@ -123,7 +139,8 @@ export default function Routing({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' }
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: LessonsPage, path: '/courses/lesson' }
   ];
   return (
     <Router>

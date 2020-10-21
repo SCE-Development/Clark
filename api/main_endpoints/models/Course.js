@@ -9,17 +9,19 @@ const CourseSchema = new Schema(
       required: true
     },
     author: {
-      type: String
+      type: String,
+      required: true
     },
     description: {
-      type: String
+      type: String,
+      required: true
     },
     lessons: {
-      type: Array
+      type: Array,
+      default: []
     },
-    link: {
-        type: String,
-        required: true
+    imageURL: {
+      type: String
     }
   },
   { collection: "Course" }

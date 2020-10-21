@@ -38,7 +38,7 @@ router.post('/createCourse', (req, res) => {
     title: req.body.title,
     author: req.body.author,
     description: req.body.description,
-    link: req.body.link
+    imageURL: req.body.imageURL
   });
 
   Course.create(newCourse, (error, post) => {
@@ -56,17 +56,20 @@ router.post('/editCourse', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   const {
+    _id,
     title,
     author,
     description,
-    link
+    lessons,
+    imageURL
   } = req.body;
-  Course.findOne({ _id: req.body.id })
+  Course.findOne({ _id })
     .then(course => {
       course.title = title || course.title;
       course.author = author || course.author;
+      course.lessons = lessons || course.lessons;
       course.description = description || course.description;
-      course.link = link || course.link;
+      course.imageURL = imageURL || course.imageURL;
       course
         .save()
         .then(ret => {
