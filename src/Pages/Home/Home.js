@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './home.css';
-//import Slideshow from '../../Components/Slideshow/Slideshow.js';
+// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-//import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
-//import Iframe from 'react-iframe';
+// import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+// import Iframe from 'react-iframe';
 import { Row, Col, Container } from 'reactstrap';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
@@ -91,22 +91,7 @@ class Home extends Component {
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-            {/* <div className='outer-div'>
-              <div className='inner-div'>
-                <Iframe
-                  // Unable to breka up iframe url
-                  // eslint-disable-next-line
-                  url='https://calendar.google.com/calendar/b
-                  /4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=
-                  0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp
-                  ;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko
-                  1m2nh39s3js%40group.calendar.google.com&amp;color=%
-                  23182C57&amp;ctz=America%2FLos_Angeles'
-                  className='calendar'
-                  allowFullScreen
-                />
-              </div>
-            </div> */}
+
             <div className="block-space"></div>
 
             <div className="block-one">
@@ -189,8 +174,8 @@ class Home extends Component {
 
 
             <Footer />
-          </div>
-        </div>
+          </div >
+        </div >
       </>
     );
   }
