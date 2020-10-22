@@ -38,7 +38,6 @@ import { Row, Col, Container } from 'reactstrap';
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
-  { title: 'Our clubroom offers everything a software or computer' },
   { title: 'engineering student could need.' },
   { title: <br /> },
   { title: 'We continue to offer resources to our members despite' },
@@ -135,19 +134,19 @@ const icons = [
 //   Aos.init({ duration: 2000 });
 // });
 
-class Home extends Component {
-  render() {
-    Aos.init({ duration: 2000 });
-    return (
-      <>
-        <div className='home'>
+const sceTitle = [
+  { title: "Software and \n" },
+  { title: "Computer" },
+  { title: "Engineering" },
+  { title: "Society" }
+  < div className = 'home' >
 
-          {/* <Slideshow className='slideshow' />
+  {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
-          <div class="groupPicContainer">
-            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
-              alt="officersPic" style={{ width: '105%' }}></img>
-          </div>
+  < div class= "groupPicContainer" >
+  <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+    alt="officersPic" style={{ width: '105%' }}></img>
+          </div >
           <div class="sceLogo" data-aos="fade-out" >
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
@@ -205,7 +204,6 @@ class Home extends Component {
             </div> */}
 
             <div className="block-space"></div>
-
             <div className="block-one">
               <Row>
                 <Col>
@@ -221,7 +219,7 @@ class Home extends Component {
                   <Container className="textOne">
 
                     <h1 class="textBlock1-title" >
-                      Need a place to get things done?
+              Need a place to get things done?
                     </h1>
                     <div class="textBlock1-text" >
                       {blockOneText.map((title) => {
@@ -236,8 +234,8 @@ class Home extends Component {
               </Row>
             </div>
           </Container>
-        </Col>
-      </Row>
+        </Col >
+      </Row >
   </div >
   <div className="block-space"></div>
 
@@ -298,23 +296,23 @@ class Home extends Component {
                         />
                       </svg>
                     </a >
-      <a href='https://www.facebook.com/sjsusce/'>
-        <svg width='50px' height='50px' viewBox='0 0 24 24'>
-          <path
-            fill='#484848'
-            d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2
+  <a href='https://www.facebook.com/sjsusce/'>
+    <svg width='50px' height='50px' viewBox='0 0 24 24'>
+      <path
+        fill='#484848'
+        d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2
                           0 0,1 3,
                 19V5A2,2 0 0,1 5,3M18,5H15.5A3.5,3.5 0 0,0 12,
                 8.5V11H10V14H12V21H15V14H18V11H15V9A1,1 0 0,1 16,8H18V5Z'
-          />
-        </svg>
-      </a>
+      />
+    </svg>
+  </a>
                   </div >
                 </Col >
-      <Col>
-        <img src='images/block2.png' alt="blockOneImg"
-          style={{ width: '100%' }}></img>
-      </Col>
+  <Col>
+    <img src='images/block2.png' alt="blockOneImg"
+      style={{ width: '100%' }}></img>
+  </Col>
               </Row >
             </div >
             <div className="clubRoomContainer">
@@ -373,9 +371,9 @@ class Home extends Component {
             <Footer />
           </div>
 
-
-        </div>
-        <div className="linksIcons">
+            </div>
+            <Footer />
+          </div>
           <a href='https://www.linkedin.com/company/sjsu-software
           -computer-engineering-society/'>
             <svg width='50px' height='50px' viewBox='0 0 24 24'>
