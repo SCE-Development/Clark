@@ -40,6 +40,12 @@ const blockTwoText = [
   { title: 'Instagram and more today, and connect with SCE members' },
 ];
 
+const sceTitle = [
+  { title: "Software and \n" },
+  { title: "Computer" },
+  { title: "Engineering" },
+  { title: "Society" }
+]
 const text = 'Software and \n Computer \n Engineering \n Society';
 
 class Home extends Component {
