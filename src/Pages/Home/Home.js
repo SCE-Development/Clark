@@ -183,7 +183,6 @@ class Home extends Component {
           </div >
         </div >
       </>
-  }
 }
 
 export default Home;
