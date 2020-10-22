@@ -138,19 +138,19 @@ const icons = [
 //   Aos.init({ duration: 2000 });
 // });
 
-class Home extends Component {
-  render() {
-    Aos.init({ duration: 2000 });
-    return (
-      <>
-        <div className='home'>
+const sceTitle = [
+  { title: "Software and \n" },
+  { title: "Computer" },
+  { title: "Engineering" },
+  { title: "Society" }
+  < div className = 'home' >
 
-          {/* <Slideshow className='slideshow' />
+  {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
-          <div class="groupPicContainer">
-            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
-              alt="officersPic" style={{ width: '105%' }}></img>
-          </div>
+  < div class= "groupPicContainer" >
+  <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+    alt="officersPic" style={{ width: '105%' }}></img>
+          </div >
           <div class="sceLogo" data-aos="fade-out" >
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
@@ -178,7 +178,7 @@ class Home extends Component {
                 <Col className="block-styles">
                   <h1 className="leftalign">
                     <span className="textBlock1-title">
-                      Need a place to get things done?</span>
+              Need a place to get things done?</span>
                   </h1>
                   <div class="textBlock1-text" >
                     {blockOneText.map((title) => {
@@ -198,7 +198,7 @@ class Home extends Component {
                 <Row>
                   <Col className="column" xs={3}>
                     <div class="subBlock-title" data-aos="fade-up">
-                      Tech Events
+              Tech Events
                     </div>
                     <div class="subBlockContainer" data-aos="fade-left">
                       {subBlockOneText.map((title) => {
@@ -210,7 +210,7 @@ class Home extends Component {
                   </Col>
                   <Col xs={3} >
                     <div class="subBlock-title" data-aos="fade-up">
-                      Workshops
+              Workshops
                     </div>
                     <div class="subBlockContainer" data-aos="fade-up">
                       {subBlockTwoText.map((title) => {
@@ -222,7 +222,7 @@ class Home extends Component {
                   </Col>
                   <Col xs={3}>
                     <div class="subBlock-title" data-aos="fade-right">
-                      Social Events
+              Social Events
                     </div>
                     <div class="subBlockContainer" data-aos="fade-right">
                       {subBlockThreeText.map((title) => {
@@ -240,7 +240,7 @@ class Home extends Component {
                 <Col className="block-styles">
                   <h1>
                     <span class="textBlock2-title">
-                      Want to know more?
+              Want to know more?
                     </span>
 
                   </h1>
@@ -294,7 +294,7 @@ class Home extends Component {
 
             </Container>
           </div>
-          {/* <div class="sceTitle">
+{/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
                   <text>{item.title + "\n"}</text>
@@ -302,7 +302,7 @@ class Home extends Component {
               })}
             </div> */}
 
-          {/* <div className='text-center'>
+{/* <div className='text-center'>
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
@@ -310,7 +310,7 @@ class Home extends Component {
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-          {/* <div className='outer-div'>
+{/* <div className='outer-div'>
               <div className='inner-div'>
                 <Iframe
                   // Unable to breka up iframe url
@@ -338,7 +338,7 @@ class Home extends Component {
                 <Container className="textOne">
 
                   <h1 class="textBlock1-title">
-                    Need a place to get things done?
+            Need a place to get things done?
                     </h1>
                   <div class="textBlock1-text">
                     {blockOneText.map((title) => {
@@ -351,8 +351,8 @@ class Home extends Component {
               </Col>
             </Row>
           </div>
-          </Container>
-      </Col>
+          </Container >
+      </Col >
 
       </Row >
   </div >
@@ -463,9 +463,9 @@ class Home extends Component {
             <Footer />
           </div>
 
-
-        </div>
-        <div className="linksIcons">
+            </div>
+            <Footer />
+          </div>
           <a href='https://www.linkedin.com/company/sjsu-software
           -computer-engineering-society/'>
             <svg width='50px' height='50px' viewBox='0 0 24 24'>
