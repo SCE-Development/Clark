@@ -326,7 +326,6 @@
   text-align: left;
   font-size: medium;
   margin-left:5%;
-  
 }
 
 .textBlock2-text{
@@ -334,17 +333,18 @@
   text-align: left;
   font-size: medium;
   margin-left: 15%;
-  
 }
 
 .text{
   margin-top: 0%;
   padding: 0%;
 }
+
 .outer-div
 {
   padding: 30px;
 }
+
 .inner-div
 {
   margin: auto;
