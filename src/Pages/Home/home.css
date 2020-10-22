@@ -1,3 +1,65 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+.home{
+  position:absolute;
+  width:100%;
+}
+
+.groupPicContainer,.contentContainer {
+  position:relative;
+  width:100%;
+}
+
+.groupPicContainer{
+  top: 7%;
+  position: fixed;
+  text-align: center;
+  color: white;
+  bottom: 10%;
+  background-size: cover;
+}
+
+.contentContainer{
+  position: absolute;
+  margin-top: 100%;
+  width: 100%;
+  background-color:#fff;
+  overflow: auto;
+  position:relative;
+}
+.sceTitle{
+  position: absolute;
+  top: 10%;  
+  margin-top: 20px;
+  margin-bottom: 15px;
+  left: 50%;
+  font-family: 'Montserrat', sans-serif;
+  white-space: pre-line;
+  text-align: left;
+  direction: ltr;
+  font-size: 60px;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  text-shadow:  0 1px 10px #777;
+}
+
+.sceLogo{
+  position: absolute;
+  top: 10%;  
+  margin-top: 20px;
+  margin-bottom: 15px;
+  right: 40%;
+  align-content: right;
+  direction: rtl;
+  text-shadow:  0 1px 10px #777;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  animation: infinite;
+
+}
+
 .slideshow {
   max-width: auto;
   position: relative;
