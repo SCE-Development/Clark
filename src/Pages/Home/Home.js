@@ -2,9 +2,15 @@ import React, { Component } from 'react';
 import './home.css';
 //import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
+<<<<<<< HEAD
 //import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 //import Iframe from 'react-iframe';
 import { Row, Col, Container } from 'reactstrap';
+=======
+import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+import Iframe from 'react-iframe';
+import UserNavbar from '../../Components/Navbar/UserNavbar.js';
+>>>>>>> Adds Group Pic and Title
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -27,6 +33,7 @@ import { Row, Col, Container } from 'reactstrap';
         height="850" frameborder="0" scrolling="no"/>
         */
 
+<<<<<<< HEAD
 const blockOneText = [
   { title: 'Our clubroom offers everything a software or computer' },
   { title: 'engineering student could need.' },
@@ -40,6 +47,14 @@ const blockTwoText = [
   { title: 'Instagram and more today, and connect with SCE members' },
 ];
 
+=======
+const sceTitle = [
+  { title: "Software and \n" },
+  { title: "Computer" },
+  { title: "Engineering" },
+  { title: "Society" }
+]
+>>>>>>> Adds Group Pic and Title
 const text = 'Software and \n Computer \n Engineering \n Society';
 
 class Home extends Component {
@@ -51,6 +66,7 @@ class Home extends Component {
           {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
           <div class="groupPicContainer">
+<<<<<<< HEAD
             <img class="groupPictureStyles" src='images/officers2019_2.jpg'
               alt="officersPic" style={{ width: '105%' }}></img>
           </div>
@@ -84,28 +100,58 @@ class Home extends Component {
             </div> */}
 
             {/* <div className='text-center'>
+=======
+            <img src='images/officers2019.jpg' alt="officersPic" style={{ width: "100%" }}></img>
+            <div class="sceLogo">
+              <img id="logo-image" src="/static/media/sce_logo.1f644918.png" alt="sce logo" style={{ width: "50%" }}></img>
+            </div>
+            <div className="sceTitle">
+              {text}
+            </div>
+            {/* <div class="sceTitle">
+              {text.split("\n").map((item) => {
+                return (
+                  <text>{item}</text>
+                );
+              })}
+            </div> */}
+          </div>
+          <div class="contentContainer">
+            <div className='text-center'>
+>>>>>>> Adds Group Pic and Title
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
               {' '}
             Add SCE Calendar to your own by clicking the Google Calendar icon on
+<<<<<<< HEAD
             the bottom right side!</p> */}
 
             {/* <div className='outer-div'>
+=======
+            the bottom right side!</p>
+
+            <div className='outer-div'>
+>>>>>>> Adds Group Pic and Title
               <div className='inner-div'>
                 <Iframe
                   // Unable to breka up iframe url
                   // eslint-disable-next-line
+<<<<<<< HEAD
                   url='https://calendar.google.com/calendar/b
                   /4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=
                   0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp
                   ;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko
                   1m2nh39s3js%40group.calendar.google.com&amp;color=%
                   23182C57&amp;ctz=America%2FLos_Angeles'
+=======
+                  url='https://calendar.google.com/calendar/b/4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FLos_Angeles'
+>>>>>>> Adds Group Pic and Title
                   className='calendar'
                   allowFullScreen
                 />
               </div>
+<<<<<<< HEAD
             </div> */}
             <div className="block-space"></div>
 
@@ -188,6 +234,9 @@ class Home extends Component {
             </div>
 
 
+=======
+            </div>
+>>>>>>> Adds Group Pic and Title
             <Footer />
           </div>
         </div>
