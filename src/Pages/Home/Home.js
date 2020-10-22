@@ -39,6 +39,14 @@ const subBlockThreeText =
   '\n\nWe host potlucks, movie nights, game nights and much more!';
 
 
+const sceTitle = [
+  { title: "Software and \n" },
+  { title: "Computer" },
+  { title: "Engineering" },
+  { title: "Society" }
+]
+const text = 'Software and \n Computer \n Engineering \n Society';
+
 class Home extends Component {
   render() {
     AOS.init();
@@ -59,6 +67,7 @@ class Home extends Component {
                 alt="sce logo"
               ></img>
             </div>
+            <Footer />
           </div>
           <div className="sceTitle" data-aos="fade-down"
             data-aos-duration="1000" >
