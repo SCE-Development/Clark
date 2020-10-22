@@ -33,11 +33,9 @@ import { Row, Col, Container, Button } from 'reactstrap';
         */
 
 
-
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
-  { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
   { title: <br /> },
   { title: 'We continue to offer resources to our  ' },
@@ -137,31 +135,26 @@ const icons = [
 //   Aos.init({ duration: 2000 });
 // });
 
-class Home extends Component {
-  render() {
-    Aos.init({ duration: 2000 });
-    return (
-      <>
-        <div className='home'>
+< div className='home' >
 
-          {/* <Slideshow className='slideshow' />
+  {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
-          <div class="groupPicContainer">
-            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
-              alt="officersPic" style={{ width: '105%' }}></img>
-          </div>
-          <div class="sceLogo" data-aos="fade-out" >
-            <img class="logo-styles"
-              src='images/sce_logo_2.svg'
-              alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-          </div>
+  < div class="groupPicContainer" >
+    <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+      alt="officersPic" style={{ width: '105%' }}></img>
+  </div >
+  <div class="sceLogo" data-aos="fade-out" >
+    <img class="logo-styles"
+      src='images/sce_logo_2.svg'
+      alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
+  </div>
 
-          <div className="sceTitle" data-aos="fade-out" >
-            {SCEtitle}
-          </div>
+  <div className="sceTitle" data-aos="fade-out" >
+    {SCEtitle}
+  </div>
 
-          <div class="contentContainer">
-            {/* <div class="sceTitle">
+  <div class="contentContainer">
+    {/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
                   <text>{item.title + "\n"}</text>
@@ -169,14 +162,14 @@ class Home extends Component {
               })}
             </div> */}
 
-            {/* <div className='text-center'>
+    {/* <div className='text-center'>
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
               {' '}
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
-            {/* <div className='outer-div'>
+    {/* <div className='outer-div'>
               <Row>
                 <Col>
                   <div data-aos="fade-up"
@@ -280,9 +273,9 @@ class Home extends Component {
             {/* </div> */}
 
 
-            <Footer />
-          </div >
-        </div >
+    <Footer />
+  </div >
+</div >
       </>
     );
   }
