@@ -101,30 +101,9 @@ class Home extends Component {
                   0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp
                   ;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko
                   1m2nh39s3js%40group.calendar.google.com&amp;color=%
-                  23182C57&amp;ctz=America%2FLos_Angeles'
-                  className='calendar'
-                  allowFullScreen
-                />
-              </div>
-            </div> */}
             <div className="block-space"></div>
-
-            <div className="block-one">
-              <Row>
-                <Col>
-                  <img src='images/block1.png' alt="blockOneImg"
                     style={{ width: '100%' }}></img>
-                </Col>
-                <Col>
-                  <Container className="textOne">
-
-                    <h1 class="textBlock1-title">
                       Need a place to get things done?
-                    </h1>
-                    <div class="textBlock1-text">
-                      {blockOneText.map((title) => {
-                        return (
-                          <p className="text">{title.title}</p>
                         );
                       })}
                     </div>
@@ -191,9 +170,6 @@ class Home extends Component {
             <Footer />
           </div>
         </div>
-      </>
-    );
-  }
-}
+} 
 
 export default Home;

@@ -39,7 +39,6 @@
   position:relative;
 }
 
-
 .sceTitle{
   scroll-behavior: [ smooth ];
   color: white;
@@ -50,20 +49,15 @@
   white-space: pre-line;
   text-align: left;
   direction: ltr;
-  font-size: 60px;
+  font-size: 4em;
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
   text-shadow:  0 1px 10px #777;
-  z-index: 10;
-}
-
-.sceLogo{
-  position: absolute;
-  top: 4%;
-  right: 50%;
+  z-index: 0;
   overflow: auto;
   display: block;
+  font-size-adjust: inherit;
   
 }
 
