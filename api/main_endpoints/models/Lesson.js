@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { DEFAULT_PHOTO_URL } = require("../../util/constants");
 
-const CourseSchema = new Schema(
+const LessonSchema = new Schema(
   {
     title: {
       type: String,
@@ -22,7 +22,7 @@ const CourseSchema = new Schema(
         required: true
     }
   },
-  { collection: "Course" }
+  { collection: "Lesson" }
 );
 
-module.exports = mongoose.model("Course", CourseSchema);
+module.exports = mongoose.model("Lesson", LessonSchemas);
