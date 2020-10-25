@@ -1,11 +1,11 @@
 import React from 'react';
 import { Row } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
-import { mapPinSymbol, clockSymbol } from '../Overview/SVG';
 
 function EventCard(props) {
   const {
     title,
+    description,
     eventDate,
     eventLocation,
     startTime,
@@ -25,19 +25,20 @@ function EventCard(props) {
         className='event-image'
         src={imageURL} alt=''
       />
-      <Row className='event-title'>{title}</Row>
-      <Row className='event-date'>
-        {clockSymbol()}
-        {' '}
-        {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
-        {' '}
-        {endTime}
-      </Row>
-      <Row className='event-location'>
-        {mapPinSymbol()}
-        {' '}
-        {eventLocation}
-      </Row>
+      <div className='event-text-block'>
+        <div className='event-info'>
+          <div className='event-title'>{title}</div>
+          <div> {description}</div>
+          <div><b>DATE </b>
+            : {getDateWithSlashes(eventDate.slice(0, 10))}
+          </div>
+          <div><b>TIME </b>: {startTime} - {endTime}</div>
+          <div>
+            <b>LOCATION </b>
+            : {eventLocation}
+          </div>
+        </div>
+      </div>
     </button>
   );
 }

@@ -55,7 +55,7 @@ function EventManagerModal(props) {
       {
         addon: 'Event Title*',
         type: 'text',
-        // maxLength: '25',
+        maxLength: '25',
         defaultValue: props.title,
         placeholder: 'e.g. Python Workshop',
         handleChange: e => setTitle(e.target.value)
@@ -203,6 +203,7 @@ function EventManagerModal(props) {
             <Label>Event Description</Label>
             <Input
               type='textarea'
+              maxLength = {80}
               rows={5}
               placeholder='Enter Event Description'
               defaultValue={props.description}

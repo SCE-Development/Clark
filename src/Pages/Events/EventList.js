@@ -8,8 +8,10 @@ import Header from '../../Components/Header/Header';
 
 function AnnouncementList() {
   const [modal, setModal] = useState(false);
+  const [getFiltered, setGetFiltered] = useState(true);
   const [currentEvent, setEvent] = useState(null);
   const [eventList, setEventList] = useState();
+  const [validList, setValidList] = useState();
 
   async function toggle() {
     setModal(!modal);
@@ -30,6 +32,24 @@ function AnnouncementList() {
     if (!eventResponse.error) setEventList(eventResponse.responseData);
   }
 
+  const getFilteredEvents= () => {
+    if (getFiltered){
+      try {
+        var currDate = new Date();
+        currDate.setDate(currDate.getDate() -1);
+        let validList = [];
+        eventList.forEach(item => {
+          let date = new Date(item.eventDate);
+          if (date >= currDate) {
+            validList.push(item);
+          }
+        }, setValidList(validList), setGetFiltered(false));
+      } catch (error) {
+        const alertText = 'There are no events to filter!';
+      }
+    }
+  }
+
   useEffect(() => {
     async function fetchData() {
       await populateEventList();
@@ -47,8 +67,10 @@ function AnnouncementList() {
       <Header {...headerProps} />
       <Container className='event-list'>
         {currentEvent === null ? <></> : <EventInfoModal {...modalProps} />}
-        {eventList && eventList.length ? (
-          eventList.map((event, index) => {
+        {console.log(eventList)}
+        {getFilteredEvents()}
+        {validList && validList.length ? (
+          validList.reverse().map((event, index) => {
             return (
               <EventCard
                 key={index}

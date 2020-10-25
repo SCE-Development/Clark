@@ -70,6 +70,7 @@ export default function EventManager(props) {
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event
         </Button>
+        <div> <br></br> </div>
         {modal && (
           <EventManagerModal
             modal={modal}
