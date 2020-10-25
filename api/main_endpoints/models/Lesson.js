@@ -8,15 +8,6 @@ const LessonSchema = new Schema(
       type: String,
       required: true
     },
-    author: {
-      type: String
-    },
-    description: {
-      type: String
-    },
-    lessons: {
-      type: Array
-    },
     link: {
         type: String,
         required: true
