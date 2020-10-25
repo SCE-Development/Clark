@@ -4,7 +4,6 @@
 }
 
 .event-background {
-  background: linear-gradient(90deg, rgb(4, 27, 56) , rgb(33, 139, 172));
   min-height: 100vh;
   min-width: 100vw;
 }
@@ -13,56 +12,57 @@
   width: 90%;
   padding: 1%;
   min-width: 480px;
-  min-height: 170px;
+  min-height: 300px;
   margin-top: 2.5%;
-  border-radius: 10px;
   outline: transparent !important;
   border: transparent;
-  background: #e0e0e0;
+  background: #fcfcfc;
+  box-shadow: 10px 10px 30px rgb(105, 103, 103);
 }
 
 .event-title {
-  white-space: nowrap;
+  /* white-space: nowrap; */
+  white-space: wrap;
   font-weight: bold;
-  font-size: 2.5rem;
-  color: #000000;
-  text-overflow: ellipsis;
+  font-size: 2.7rem;
+  color: #2e0e49;
   overflow: hidden;
-  display: block !important;
+  max-width: 100%;
 }
 
-.event-date {
-  font-style: italic;
-  font-weight: bold;
-  font-size: 1.6rem;
-  color: #0098ab;
+.event-info {
+  font-size: 1.7rem;
+  color: #504579;
   display: block !important; 
-}
-
-.event-location {
-  white-space: nowrap;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 1.6rem;
-  color: #414141bd;
   text-overflow: ellipsis;
-  overflow: hidden;
-  display: block !important;
+  text-align: left;
+  max-width: 100%;
 }
 
 .event-image {
-  float: left;
-  height: 150px;
-  width: 20vw;
-  max-width:300px;
-  border-radius: 10px;
+  float: right;
+  height: 40vh;
+  max-width: 40%; 
+  border-radius: 5px;
 }
 
-@media screen and (max-width: 900px) { 
-  .event-image { display: none; } 
-  .event-title{ margin: 0 !important;} 
-  .event-location{ margin: 0 !important;} 
+.event-text-block {
+  max-width: 66%;
+  padding-right:50px;
+  padding-left: 50px;
 }
+
+@media screen and (max-width: 1100px) { 
+  .event-image { display: none; } 
+  .event-text-block { max-width: 100%; }
+  .event-info { margin: 0 !important; padding: 0px !important; }
+  .event-title{ margin: 0 !important; padding-right: 50px !important; } 
+  .event-location{ margin: 0 !important; } 
+}
+
+/* @media screen and (max-width: 400px) { 
+  .event-text-block { max-width: 100%; }
+} */
 
 .image-container > img {
   max-width: 7rem;

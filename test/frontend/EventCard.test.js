@@ -26,17 +26,29 @@ describe('<EventCard />', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(wrapper.find(Row).get(0).props.children).to.equal(appProps.title);
   });
-  it('Should render the date and time of the event', () => {
+  it('Should render the date of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(
       wrapper
         .find(Row)
-        .get(1)
+        .get(2)
         .props.children.join('')
     ).to.equal(
-      `${clockSymbol()}` + ' ' +
-      `${getDateWithSlashes(appProps.eventDate)} ${appProps.startTime} - ` +
-        `${appProps.endTime}`
+      <b>DATE</b> + ': ' +
+      `${getDateWithSlashes(appProps.eventDate)}`
+    );
+  });
+
+  it('Should render the time of the event', () => {
+    const wrapper = mount(<EventCard {...appProps} />);
+    expect(
+      wrapper
+        .find(Row)
+        .get(3)
+        .props.children.join('')
+    ).to.equal(
+      <b>TIME</b> + ': ' +
+      `${appProps.startTime} - ` + `${appProps.endTime}`
     );
   });
 
@@ -45,10 +57,10 @@ describe('<EventCard />', () => {
     expect(
       wrapper
         .find(Row)
-        .get(2)
+        .get(4)
         .props.children.join('')
     ).to.equal(
-      `${mapPinSymbol()}` + ' ' + appProps.eventLocation
+      <b>LOCATION</b> + ': ' + appProps.eventLocation
     );
   });
 
