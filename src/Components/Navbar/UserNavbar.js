@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   ButtonDropdown,
   Collapse,
@@ -19,6 +20,8 @@ import logo from '../Navbar/sce_logo.png';
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [scroll, setScroll] = useState(false);
+  const [scrollState, setScrollState] = useState('top');
   const icons = [
     {
       link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -81,12 +84,34 @@ export default function UserNavBar(props) {
     setMenuIsOpen(!menuIsOpen);
   };
 
+  const location = useLocation();
+
   useEffect(() => {
-    // eslint-disable-next-line
-  }, [])
+    if (location.pathname !== '/') {
+      setScroll(true);
+    }
+    let listener = null;
+    listener = document.addEventListener('scroll', e => {
+      let scrolled = document.scrollingElement.scrollTop;
+      if (scrolled >= 650) {
+        if (scrollState !== 'bottom') {
+          setScrollState('bottom');
+          setScroll(true);
+        }
+      } else {
+        if (scrollState !== 'top') {
+          setScrollState('top');
+          setScroll(false);
+        }
+      }
+    });
+    return () => {
+      document.removeEventListener('scroll', listener);
+    };
+  }, [scrollState]);
 
   return (
-    <div className='user-nav'>
+    <div className={scroll ? 'user-nav-solid' : 'user-nav'} >
       <Navbar light expand='md'>
         <NavbarBrand href='/'>
           <div>
@@ -110,7 +135,7 @@ export default function UserNavBar(props) {
                     return (
                       <a key={index} href={icon.link}>
                         <svg className='m-2 icon-images' viewBox='0 0 24 24'>
-                          <path fill='gray' d={icon.vector} />
+                          <path fill='white' d={icon.vector} />
                         </svg>
                       </a>
                     );
@@ -215,17 +240,18 @@ export default function UserNavBar(props) {
                 );
               })}
             </NavItem>
-            {props.user && props.user.accessLevel >= membershipState.MEMBER && (
+            {props.user && props.user.accessLevel >=
+              membershipState.MEMBER && (
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle id='navlink-text' nav caret>
-                  Printing
+                    Printing
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem className='drp-item' href='/2DPrinting'>
-                    2D Printing
+                      2D Printing
                   </DropdownItem>
                   <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                    3D Printing
+                      3D Printing
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>

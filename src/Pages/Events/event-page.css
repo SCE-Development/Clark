@@ -7,6 +7,7 @@
   background: linear-gradient(90deg, rgb(4, 27, 56) , rgb(33, 139, 172));
   min-height: 100vh;
   min-width: 100vw;
+  padding-top: 60px;
 }
 
 .event-card-button {
