@@ -93,7 +93,7 @@ export default function UserNavBar(props) {
     let listener = null;
     listener = document.addEventListener('scroll', e => {
       let scrolled = document.scrollingElement.scrollTop;
-      if (scrolled >= 650) {
+      if (scrolled >= 1350) {
         if (scrollState !== 'bottom') {
           setScrollState('bottom');
           setScroll(true);

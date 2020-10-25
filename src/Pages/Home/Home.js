@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './home.css';
-import Slideshow from '../../Components/Slideshow/Slideshow.js';
+// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+// import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 import Iframe from 'react-iframe';
-import UserNavbar from '../../Components/Navbar/UserNavbar.js';
+// import UserNavbar from '../../Components/Navbar/UserNavbar.js';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -27,12 +27,12 @@ import UserNavbar from '../../Components/Navbar/UserNavbar.js';
         height="850" frameborder="0" scrolling="no"/>
         */
 
-const sceTitle = [
-  { title: "Software and \n" },
-  { title: "Computer" },
-  { title: "Engineering" },
-  { title: "Society" }
-]
+// const sceTitle = [
+//   { title: "Software and \n" },
+//   { title: "Computer" },
+//   { title: "Engineering" },
+//   { title: "Society" }
+// ]
 const text = 'Software and \n Computer \n Engineering \n Society';
 
 class Home extends Component {
@@ -44,9 +44,11 @@ class Home extends Component {
           {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
           <div class="groupPicContainer">
-            <img src='images/officers2019.jpg' alt="officersPic" style={{ width: "100%" }}></img>
+            <img src='images/officers2019.jpg' alt="officersPic"
+              style={{ width: '100%' }}></img>
             <div class="sceLogo">
-              <img id="logo-image" src="/static/media/sce_logo.1f644918.png" alt="sce logo" style={{ width: "50%" }}></img>
+              <img id="logo-image" src="/static/media/sce_logo.1f644918.png"
+                alt="sce logo" style={{ width: '50%' }}></img>
             </div>
             <div className="sceTitle">
               {text}
