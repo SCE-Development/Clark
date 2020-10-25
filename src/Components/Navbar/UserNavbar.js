@@ -108,6 +108,7 @@ export default function UserNavBar(props) {
     return () => {
       document.removeEventListener('scroll', listener);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollState]);
 
   return (
