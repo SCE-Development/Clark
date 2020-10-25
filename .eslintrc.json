@@ -17,7 +17,8 @@
     },
     "parser": "babel-eslint",
     "plugins": [
-        "react"
+        "react",
+        "react-hooks"
     ],
     "rules": {
         "indent": [
@@ -56,11 +57,14 @@
         ],
         "no-extra-semi": "error",
         "eol-last": 2,
-        "space-before-function-paren": ["error", {
-          "anonymous": "never",
-          "named": "never",
-          "asyncArrow": "always"
-        }],
+        "space-before-function-paren": [
+            "error",
+            {
+                "anonymous": "never",
+                "named": "never",
+                "asyncArrow": "always"
+            }
+        ],
         "no-warning-comments": [
             2,
             {
@@ -84,6 +88,6 @@
         "no-var": 2,
         "no-trailing-spaces": "error",
         "brace-style": "error",
-        "no-use-before-define": "error" 
+        "no-use-before-define": "error"
     }
 }
