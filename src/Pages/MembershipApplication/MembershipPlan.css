@@ -107,6 +107,7 @@
     min-width: 100%;
     min-height: 100%;
     block-size: auto;
+    padding-top: 60px;
 }
 
 .greet {

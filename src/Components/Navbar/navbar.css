@@ -2,8 +2,15 @@
 
 .user-nav {
   font-size: 18px;
-  background-color: #87b0c7;
+  position: fixed;
   width: 100%;
+  z-index: 4;
+}
+.user-nav-solid {
+  font-size: 18px;
+  background-color: rgba(135, 176, 199);
+  width: 100%;
+  position: fixed;
   z-index: 4;
 }
 
