@@ -1,13 +1,15 @@
 import React from 'react';
 import {FormGroup, Input} from 'reactstrap';
 import './resume.css';
-
+import './dummy.pdf';
+import './laurence.png';
 class Skills extends React.Component{
   render(){
 
     if(this.props.currentStep !== 4){
       return null;
     }
+
     const nameStyle = {
       margin: 'auto',
       width: '35%',
@@ -42,9 +44,11 @@ class Skills extends React.Component{
             onChange = {this.props.handleChange}
             placeholder="Type Skills You are Familiar With" />
         </FormGroup>
+
         <button
           class = "customRight"
           onClick={this.props.handleSubmit}>Submit</button>
+        <a href='' download="dummy.pdf">Download my PDF</a>
       </div>
     );
   }

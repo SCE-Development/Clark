@@ -13,7 +13,7 @@ import { Button,
   ModalHeader,
   ModalBody,
   ModalFooter} from 'reactstrap';
-  import Header from
+import Header from
   '../../Components/Header/Header.js';
 class Resume extends Component {
   constructor(props) {
@@ -186,13 +186,13 @@ class Resume extends Component {
     const headerProps = {
       title: 'Resume Form'
     };
-    
+
     let { projectInfo } = this.state;
     let { experienceInfo } = this.state;
 
     return (
       <div>
-            <Header  {...headerProps}/>
+        <Header  {...headerProps}/>
         <Modal isOpen = {this.state.showingConfirmation}>
           <ModalHeader >
         Are you sure?
@@ -202,35 +202,36 @@ class Resume extends Component {
             <Button color="secondary" onClick={this.hideConfirmation}>
             Go Back
             </Button>
-            <Button color = "success"  onClick={this.hideConfirmation}>
+            <Button color = "success" download="lol.pdf"
+              onClick={this.hideConfirmation}>
             Confirm PDF Submission
             </Button>
           </ModalFooter>
         </Modal>
         <React.Fragment>
-        <Row>
-        <Col>
-          <GeneralInformation
-            name={this.state.name}
-            phone={this.state.phone}
-            email={this.state.email}
-            github={this.state.github}
-            currentStep={this.state.currentStep}
-            handleChange={this.handleNormalChange}
-          />
-          </Col>
-          <Col>
-          <Education
-            schoolName={this.state.schoolName}
-            gradYear={this.state.gradYear}
-            titleMajor={this.state.titleMajor}
-            college={this.state.college}
-            GPA={this.state.GPA}
-            relevantCoursework={this.state.relevantCoursework}
-            currentStep={this.state.currentStep}
-            handleChange={this.handleNormalChange}
-          />
-          </Col>
+          <Row>
+            <Col>
+              <GeneralInformation
+                name={this.state.name}
+                phone={this.state.phone}
+                email={this.state.email}
+                github={this.state.github}
+                currentStep={this.state.currentStep}
+                handleChange={this.handleNormalChange}
+              />
+            </Col>
+            <Col>
+              <Education
+                schoolName={this.state.schoolName}
+                gradYear={this.state.gradYear}
+                titleMajor={this.state.titleMajor}
+                college={this.state.college}
+                GPA={this.state.GPA}
+                relevantCoursework={this.state.relevantCoursework}
+                currentStep={this.state.currentStep}
+                handleChange={this.handleNormalChange}
+              />
+            </Col>
           </Row>
           {
             experienceInfo.map((val, idx) => {

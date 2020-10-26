@@ -37,96 +37,98 @@ class Experience extends React.Component {
         <FormGroup>
           <h5 class='labels'> {`Experience ${this.props.id + 1}`}</h5>
           <Row>
-          <Col>
-          <h6 class='labels'> Organization / Company Name </h6>
-          <Input 
-            style={nameStyle}
-            type='text'
-            name='organizationName'
-            value={this.props.organizationName}
-            onChange={this.handleChange}
-            placeholder='Type The Name of the Organization or Company Here' />
-          </Col>
-          <Col>
-          <h6 class='labels'> Description Line 1 </h6>
-          <textarea
-            maxlength='115'
-            class='textAreas'
-            rows='2'
-            name='experienceDescription1'
-            value={this.props.experienceDescription1}
-            onChange={this.handleChange}
-            placeholder='Type Description of Experience Here' />
-            </Col>
-            </Row>
-            <Row>
             <Col>
-          <h6 class='labels'> Position Title </h6>
-          <Input
-            style={nameStyle}
-            type='text'
-            name='positionTitle'
-            value={this.props.positionTitle}
-            onChange={this.handleChange}
-            placeholder='Type The Title of Your Position Here' />
+              <h6 class='labels'> Organization / Company Name </h6>
+              <Input
+                style={nameStyle}
+                type='text'
+                name='organizationName'
+                value={this.props.organizationName}
+                onChange={this.handleChange}
+                placeholder='Type The Name of the Organization or Company Here'
+              />
             </Col>
             <Col>
-            <h6 class='labels'> Description Line 2 </h6>
-          <textarea
-            maxlength='115'
-            class='textAreas'
-            rows='2'
-            name='experienceDescription2'
-            value={this.props.experienceDescription2}
-            onChange={this.handleChange}
-            placeholder='Type Description of Experience Here' />
+              <h6 class='labels'> Description Line 1 </h6>
+              <textarea
+                maxlength='115'
+                class='textAreas'
+                rows='2'
+                name='experienceDescription1'
+                value={this.props.experienceDescription1}
+                onChange={this.handleChange}
+                placeholder='Type Description of Experience Here' />
             </Col>
-            </Row>
-            <Row>
+          </Row>
+          <Row>
             <Col>
-          <h6 class='labels'> Location </h6>
-          <Input
-            style={nameStyle}
-            type='text'
-            name='experienceLocation'
-            value={this.props.experienceLocation}
-            onChange={this.handleChange}
-            placeholder='Type Location of Experience Here' />
+              <h6 class='labels'> Position Title </h6>
+              <Input
+                style={nameStyle}
+                type='text'
+                name='positionTitle'
+                value={this.props.positionTitle}
+                onChange={this.handleChange}
+                placeholder='Type The Title of Your Position Here' />
             </Col>
             <Col>
-            <h6 class='labels'> Description Line 3 </h6>
-          <textarea
-            maxlength='115'
-            class='textAreas'
-            rows='2'
-            name='experienceDescription3'
-            value={this.props.experienceDescription3}
-            onChange={this.handleChange}
-            placeholder='Type Description of Experience Here' />
+              <h6 class='labels'> Description Line 2 </h6>
+              <textarea
+                maxlength='115'
+                class='textAreas'
+                rows='2'
+                name='experienceDescription2'
+                value={this.props.experienceDescription2}
+                onChange={this.handleChange}
+                placeholder='Type Description of Experience Here' />
             </Col>
-            </Row>
-            <Row>
+          </Row>
+          <Row>
             <Col>
-          <h6 class='labels'> Start Date </h6>
-          <Input
-            style={nameStyle}
-            type='text'
-            name='experienceStartDate'
-            value={this.props.experienceStartDate}
-            onChange={this.handleChange}
-            placeholder='Type The Start Date Here' />
-</Col>
-<Col>
-          <h6 class='labels'> End Date </h6>
-          <Input
-            style={nameStyle}
-            type='text'
-            name='experienceEndDate'
-            value={this.props.experienceEndDate}
-            onChange={this.handleChange}
-            placeholder='Type The End Date Here (Type Present if ongoing)' />
+              <h6 class='labels'> Location </h6>
+              <Input
+                style={nameStyle}
+                type='text'
+                name='experienceLocation'
+                value={this.props.experienceLocation}
+                onChange={this.handleChange}
+                placeholder='Type Location of Experience Here' />
             </Col>
-            </Row>
+            <Col>
+              <h6 class='labels'> Description Line 3 </h6>
+              <textarea
+                maxlength='115'
+                class='textAreas'
+                rows='2'
+                name='experienceDescription3'
+                value={this.props.experienceDescription3}
+                onChange={this.handleChange}
+                placeholder='Type Description of Experience Here' />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <h6 class='labels'> Start Date </h6>
+              <Input
+                style={nameStyle}
+                type='text'
+                name='experienceStartDate'
+                value={this.props.experienceStartDate}
+                onChange={this.handleChange}
+                placeholder='Type The Start Date Here' />
+            </Col>
+            <Col>
+              <h6 class='labels'> End Date </h6>
+              <Input
+                style={nameStyle}
+                type='text'
+                name='experienceEndDate'
+                value={this.props.experienceEndDate}
+                onChange={this.handleChange}
+                placeholder='Type The End Date Here (Type Present if ongoing)'
+              />
+            </Col>
+          </Row>
           <button
             class={btnVisible}
             onClick={this.handleClick}>Add New Experience </button>
