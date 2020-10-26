@@ -119,7 +119,7 @@ export default function Routing({ appProps }) {
     },
     { Component: Resume,
       path: '/resume',
-      allowedIf: !userIsAuthenticated,
+      allowedIf: userIsAuthenticated,
       redirect: 'login'
     }
   ];
