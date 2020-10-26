@@ -46,7 +46,6 @@ class Skills extends React.Component{
         <button
           class = "customRight"
           onClick={this.props.handleSubmit}>Submit</button>
-        <a href='' download="dummy.pdf">Download my PDF</a>
       </div>
     );
   }
