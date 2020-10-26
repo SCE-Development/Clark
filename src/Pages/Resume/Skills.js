@@ -1,8 +1,6 @@
 import React from 'react';
 import {FormGroup, Input} from 'reactstrap';
 import './resume.css';
-import './dummy.pdf';
-import './laurence.png';
 class Skills extends React.Component{
   render(){
 
