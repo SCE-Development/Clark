@@ -16,8 +16,6 @@ import {
 import DarkMode from './DarkMode';
 import { membershipState } from '../../Enums';
 import logo from '../Navbar/sce_logo.png';
-import { toggleDarkTheme } from '../../APIFunctions/dark-theme';
-import { sunIcon, moonIcon } from '../../Pages/Overview/SVG';
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
