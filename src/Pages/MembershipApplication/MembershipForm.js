@@ -17,69 +17,98 @@ export default function MembershipForm(props) {
   const [major, setMajor] = useState('');
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
+  const [submitted, setSubmitted] = useState(false);
+
   const nameFields = [
     {
       label: 'First Name',
       id: 'first-name',
       type: 'text',
-      handleChange: e => setFirstName(e.target.value)
+      minLength: 8,
+      handleChange: e => setFirstName(e.target.value),
+      ifLeftEmpty: !firstName && submitted && (
+        <p className='unavailable'>First name cannot be left emtpy</p>
+      ),
     },
     {
       label: 'Last Name',
       id: 'last-name',
       type: 'text',
-      handleChange: e => setLastName(e.target.value)
+      minLength: 8,
+      ifLeftEmpty: !lastName && submitted && (
+        <p className='unavailable'>Last name cannot be left emtpy</p>
+      ),
+      handleChange: e => setLastName(e.target.value),
+
     }
   ];
   const accountFields = [
     {
       label: 'Email',
       type: 'email',
+      minLength: 8,
       addon: !usernameAvailable && (
         <p className='unavailable'>User already exists!</p>
       ),
-      handleChange: e => setEmail(e.target.value)
+      ifLeftEmpty: !email && submitted && (
+        <p className='unavailable'>Email cannot be left empty</p>
+      ),
+      handleChange: e => setEmail(e.target.value),
+
     },
     {
       label: 'Password (8 or more characters)',
       type: 'password',
+      minLength: 8,
       addon: !passwordValid && (
         <p className='unavailable'>
-          Password requires one uppercase character and one number.
+          Password requires one uppercase character, one number
+          and at least 8 characters
         </p>
       ),
-      handleChange: e => setPassword(e.target.value)
+      ifLeftEmpty: password.length<8 && submitted && (
+        <p className='unavailable'>
+          Password requires one uppercase character, one number
+          and at least 8 characters
+        </p>
+      ),
+      handleChange: e => setPassword(e.target.value),
+
     }
   ];
 
-  async function submitApplication() {
-    const userResponse = await checkIfUserExists(email);
-    if (userResponse.error) {
-      setUsernameAvailable(false);
-      return;
-    }
-    const registrationStatus = await registerUser({
-      firstName,
-      lastName,
-      email,
-      password,
-      major,
-      numberOfSemestersToSignUpFor: props.selectedPlan
-    });
-    if (!registrationStatus.error) {
-      sendVerificationEmail(email, firstName);
-      props.setMembershipState(memberApplicationState.CONFIRMATION);
-    } else {
-      if (registrationStatus.responseData.status === 409) {
-        window.alert('Email already exists in the system.');
-      } else if (registrationStatus.responseData.status === 400) {
-        setPasswordValid(false);
-      }
-    }
+  function requiredFieldsEmpty() {
+    return verified && firstName && lastName &&
+    email && major && password.length >= 8;
   }
 
-  function requiredFieldsEmpty() {
-    return verified && firstName && lastName && email && password.length >= 8;
+  async function submitApplication() {
+    if(submitted===false) setSubmitted(true);
+    if(requiredFieldsEmpty()) {
+      const userResponse = await checkIfUserExists(email);
+      if (userResponse.error) {
+        setUsernameAvailable(false);
+        return;
+      }
+      const registrationStatus = await registerUser({
+        firstName,
+        lastName,
+        email,
+        password,
+        major,
+        numberOfSemestersToSignUpFor: props.selectedPlan
+      });
+      if (!registrationStatus.error) {
+        sendVerificationEmail(email, firstName);
+        props.setMembershipState(memberApplicationState.CONFIRMATION);
+      } else {
+        if (registrationStatus.responseData.status === 409) {
+          window.alert('Email already exists in the system.');
+        } else if (registrationStatus.responseData.status === 400) {
+          setPasswordValid(false);
+        }
+      }
+    }
   }
 
   return (
@@ -104,6 +133,7 @@ export default function MembershipForm(props) {
                   id={input.id}
                   placeholder={`${input.label}*`}
                 />
+                {input.ifLeftEmpty}
               </FormGroup>
             );
           })}
@@ -118,14 +148,22 @@ export default function MembershipForm(props) {
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
+                    minLength={input.minLength}
                     placeholder={`${input.label}*`}
                   />
                   {input.addon}
+                  {input.ifLeftEmpty}
                 </FormGroup>
               </div>
             );
           })}
           <MajorDropdown setMajor={setMajor} />
+          {(!major && submitted) ?
+            <p className='unavailable'>
+              You have to choose your major!
+            </p> :
+            null
+          }
         </div>
         <div className='recaptcha'>
           <GoogleRecaptcha setVerified={setVerified} />
@@ -142,7 +180,7 @@ export default function MembershipForm(props) {
           </Button>
           <Button
             id='submit-btn'
-            disabled={!requiredFieldsEmpty()}
+            // disabled={!requiredFieldsEmpty()} //take this out
             color='primary'
             onClick={submitApplication}
           >
