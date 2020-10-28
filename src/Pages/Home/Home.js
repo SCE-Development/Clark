@@ -5,10 +5,12 @@ import './home.css';
 import Footer from '../../Components/Footer/Footer.js';
 import { Row, Col } from 'reactstrap';
 
+
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 // The major block texts surrounding the sub block
 const blockOneText = [
+  { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
   { title: <br /> },
   { title: 'We continue to offer resources to our  ' },
