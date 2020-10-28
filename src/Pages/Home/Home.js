@@ -43,6 +43,7 @@ const subBlockThreeText =
 
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
+// The major block texts surrounding the sub block
 const blockOneText = [
   { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
@@ -57,12 +58,14 @@ const blockTwoText = [
   { title: 'Instagram and more to connect with SCE members!' },
 ];
 
+// The sub block texts
+// ( the part with the empty clubroom in the background )
 const subBlockOneText = [
-  { title: 'As an SCE member, you will get many perks! ' },
+  { title: 'As an SCE member, you will get inside scoops ' },
+  { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' },
-  { title: <br /> },
+  { title: 'IBM, Tesla, SAP and more!' }
 ];
 
 const subBlockTwoText = [
@@ -78,9 +81,9 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
-  { title: <br /> },
 ];
 
+// Club social media icon links
 const icons = [
   {
     link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -139,11 +142,6 @@ const icons = [
   }
 ];
 
-
-
-// useEffect(() => {
-//   Aos.init({ duration: 2000 });
-// });
 
 class Home extends Component {
   render() {
@@ -273,7 +271,6 @@ class Home extends Component {
                       );
                     })}
                   </div>
-
                 </Col>
                 <Col>
                   <div data-aos="fade-up" data-aos="fade-down"
