@@ -65,7 +65,6 @@ const subBlockOneText = [
   { title: 'As an SCE member, you will get inside scoops ' },
   { title: '& opportunities.' },
   { title: <br /> },
-  { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' }
 ];
 
