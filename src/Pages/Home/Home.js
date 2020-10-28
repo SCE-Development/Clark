@@ -33,9 +33,11 @@ import { Row, Col, Container, Button } from 'reactstrap';
         */
 
 
+
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
+  { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
   { title: <br /> },
   { title: 'We continue to offer resources to our  ' },
@@ -48,11 +50,12 @@ const blockTwoText = [
   { title: 'Instagram and more to connect with SCE members!' },
 ];
 
-const sceTitle = [
-  { title: 'Software and \n' },
-  { title: 'Computer' },
-  { title: 'IBM, Tesla, SAP and more!' },
+const subBlockOneText = [
+  { title: 'As an SCE member, you will get inside scoops ' },
+  { title: '& opportunities.' },
   { title: <br /> },
+  { title: 'We have conducted events with companies like' },
+  { title: 'IBM, Tesla, SAP and more!' }
 ];
 
 const subBlockTwoText = [
@@ -68,7 +71,6 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
-  { title: <br /> },
 ];
 
 const icons = [
@@ -135,26 +137,31 @@ const icons = [
 //   Aos.init({ duration: 2000 });
 // });
 
-< div className='home' >
+class Home extends Component {
+  render() {
+    Aos.init({ duration: 2000 });
+    return (
+      <>
+        <div className='home'>
 
-  {/* <Slideshow className='slideshow' />
+          {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
-  < div class="groupPicContainer" >
-    <img class="groupPictureStyles" src='images/officers2019_2.jpg'
-      alt="officersPic" style={{ width: '105%' }}></img>
-  </div >
-  <div class="sceLogo" data-aos="fade-out" >
-    <img class="logo-styles"
-      src='images/sce_logo_2.svg'
-      alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-  </div>
+          <div class="groupPicContainer">
+            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+              alt="officersPic" style={{ width: '105%' }}></img>
+          </div>
+          <div class="sceLogo" data-aos="fade-out" >
+            <img class="logo-styles"
+              src='images/sce_logo_2.svg'
+              alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
+          </div>
 
-  <div className="sceTitle" data-aos="fade-out" >
-    {SCEtitle}
-  </div>
+          <div className="sceTitle" data-aos="fade-out" >
+            {SCEtitle}
+          </div>
 
-  <div class="contentContainer">
-    {/* <div class="sceTitle">
+          <div class="contentContainer">
+            {/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
                   <text>{item.title + "\n"}</text>
@@ -162,14 +169,17 @@ const icons = [
               })}
             </div> */}
 
-    {/* <div className='text-center'>
+            {/* <div className='text-center'>
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
               {' '}
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
-    {/* <div className='outer-div'>
+
+            <div className="block-space"></div>
+
+            <div className="block-one">
               <Row>
                 <Col>
                   <div data-aos="fade-up"
@@ -212,7 +222,11 @@ const icons = [
                         );
                       })}
                     </div>
+                  </Col>
                   <Col xs={3} >
+                    <div class="subBlock-title" data-aos="fade-up">
+                      Workshops
+                    </div>
                     <div class="subBlockContainer" data-aos="fade-up">
                       {subBlockTwoText.map((title) => {
                         return (
@@ -244,6 +258,16 @@ const icons = [
                       Want to know more?
                     </span>
 
+                  </h1>
+                  <div class="textBlock2-text">
+                    {blockTwoText.map((title) => {
+                      return (
+                        <p className="blockText">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                  <div className="icons-container">
+                    {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
 
@@ -273,9 +297,9 @@ const icons = [
             {/* </div> */}
 
 
-    <Footer />
-  </div >
-</div >
+            <Footer />
+          </div >
+        </div >
       </>
     );
   }
