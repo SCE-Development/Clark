@@ -24,7 +24,6 @@ export default function MembershipForm(props) {
       label: 'First Name',
       id: 'first-name',
       type: 'text',
-      minLength: 8,
       handleChange: e => setFirstName(e.target.value),
       ifLeftEmpty: !firstName && submitted && (
         <p className='unavailable'>First name cannot be left emtpy</p>
@@ -34,7 +33,6 @@ export default function MembershipForm(props) {
       label: 'Last Name',
       id: 'last-name',
       type: 'text',
-      minLength: 8,
       ifLeftEmpty: !lastName && submitted && (
         <p className='unavailable'>Last name cannot be left emtpy</p>
       ),
@@ -46,7 +44,6 @@ export default function MembershipForm(props) {
     {
       label: 'Email',
       type: 'email',
-      minLength: 8,
       addon: !usernameAvailable && (
         <p className='unavailable'>User already exists!</p>
       ),
@@ -59,7 +56,6 @@ export default function MembershipForm(props) {
     {
       label: 'Password (8 or more characters)',
       type: 'password',
-      minLength: 8,
       addon: !passwordValid && (
         <p className='unavailable'>
           Password requires one uppercase character, one number
@@ -148,7 +144,6 @@ export default function MembershipForm(props) {
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
-                    minLength={input.minLength}
                     placeholder={`${input.label}*`}
                   />
                   {input.addon}
