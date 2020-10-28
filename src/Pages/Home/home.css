@@ -32,6 +32,15 @@
   background-size: cover;
 }
 
+.contentContainer{
+  position: absolute;
+  margin-top: 100%;
+  width: 100%;
+  background-color:#fff;
+  overflow: auto;
+  position:relative;
+}
+
 .sceTitle{
   scroll-behavior: [ smooth ];
   color: white;
