@@ -91,7 +91,6 @@ class Home extends Component {
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-
             <div className="block-space"></div>
 
             <div className="block-one">
