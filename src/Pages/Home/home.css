@@ -491,6 +491,42 @@
   display:block;
 }
 
+.textBlock1-title{
+  font-family: 'Merriweather', serif;
+  text-align: left;
+  font-size: xx-large;
+  margin-left:5%;
+  margin-top: 15%;
+  margin-bottom: 5%;
+}
+.textBlock2-title{
+  font-family: 'Merriweather', serif;
+  text-align: left;
+  font-size: xx-large;
+  margin-left: 15%;
+  margin-top: 15%;
+  margin-bottom: 5%;
+}
+.textBlock1-text{
+  font-family: 'Montserrat', sans-serif;
+  text-align: left;
+  font-size: medium;
+  margin-left:5%;
+  
+}
+
+.textBlock2-text{
+  font-family: 'Montserrat', sans-serif;
+  text-align: left;
+  font-size: medium;
+  margin-left: 15%;
+  
+}
+
+.text{
+  margin-top: 0%;
+  padding: 0%;
+}
 .outer-div
 {
   padding: 30px;
