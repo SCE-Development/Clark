@@ -33,6 +33,15 @@
   background-size: cover;
 }
 
+.contentContainer{
+  position: absolute;
+  margin-top: 100%;
+  width: 100%;
+  background-color:#fff;
+  overflow: auto;
+  position:relative;
+}
+
 .sceTitle{
   scroll-behavior: [ smooth ];
   color: white;
@@ -52,6 +61,7 @@
   overflow: auto;
   display: block;
   font-size-adjust: inherit;
+  z-index: 10;
 }
 
 .sceLogo{
@@ -94,7 +104,24 @@
   background-repeat: no-repeat;
   height: 100%;
   /* filter: blur(8px);
-  -webkit-filter: blur(8px) */  
+  -webkit-filter: blur(8px) */    
+  top: 10%;  
+  margin-top: 20px;
+  margin-bottom: 15px;
+  right: 40%;
+  align-content: right;
+  direction: rtl;
+  text-shadow:  0 1px 10px #777;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  animation: infinite;
+
+}
+
+.imgClub{
+  filter: blur(8px);
+  -webkit-filter: blur(8px)
 }
 
 .subBlock-title{

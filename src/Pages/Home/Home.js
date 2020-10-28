@@ -37,6 +37,7 @@ import { Row, Col, Container } from 'reactstrap';
 
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
+// The major block texts surrounding the sub block
 const blockOneText = [
   { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
@@ -54,7 +55,8 @@ const blockTwoText = [
 // The sub block texts
 // ( the part with the empty clubroom in the background )
 const subBlockOneText = [
-  { title: 'As an SCE member, you will get many perks! ' },
+  { title: 'As an SCE member, you will get inside scoops ' },
+  { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' },
@@ -77,7 +79,6 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
-  { title: <br /> },
 ];
 
 // Club social media icon links
@@ -295,13 +296,7 @@ return (
             <div className="sceTitle">
               {text}
             </div>
-
             <div className="block-space"></div>
-
-
-            {/* </div> */}
-
-
             <Footer />
           </div>
 
@@ -516,13 +511,12 @@ return (
       <Footer />
     </div >
   </div >
+          </div >
+        </div >
       </>
     );
   }
 }
-=======
-        </div>
-}
->>>>>>> Adds Group Pic and Title
+
 
 export default Home;
