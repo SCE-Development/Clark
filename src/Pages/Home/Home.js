@@ -6,11 +6,11 @@ import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
 
 import './home.css';
-//import Slideshow from '../../Components/Slideshow/Slideshow.js';
+// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-//import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
-//import Iframe from 'react-iframe';
-import { Row, Col, Container } from 'reactstrap';
+// import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+// import Iframe from 'react-iframe';
+import { Row, Col, Container, Button } from 'reactstrap';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -24,7 +24,6 @@ import { Row, Col, Container } from 'reactstrap';
         display="initial"
         position="relative"
         allowFullScreen/>
-
         <Iframe url="https://calendar.google.com/calendar/b/4/embed?showTitle=
         0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;
         height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1
@@ -38,10 +37,12 @@ import { Row, Col, Container } from 'reactstrap';
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
-  { title: 'engineering student could need.' },
+  { title: 'Our clubroom offers everything an SE ' },
+  { title: 'or COMPE student could need.' },
   { title: <br /> },
-  { title: 'We continue to offer resources to our members despite' },
-  { title: 'of being remote. Read further for more details!' }
+  { title: 'We continue to offer resources to our  ' },
+  { title: 'members despite being remote. ' },
+  { title: 'Read further for more details!' },
 ];
 
 const blockTwoText = [
@@ -130,46 +131,36 @@ const icons = [
   }
 ];
 
+
+
 // useEffect(() => {
 //   Aos.init({ duration: 2000 });
 // });
 
-const sceTitle = [
-  { title: "Software and \n" },
-  { title: "Computer" },
-  { title: "Engineering" },
-  { title: "Society" }
-  < div className = 'home' >
+class Home extends Component {
+  render() {
+    Aos.init({ duration: 2000 });
+    return (
+      <>
+        <div className='home'>
 
-  {/* <Slideshow className='slideshow' />
+          {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
-  < div class= "groupPicContainer" >
-  <img class="groupPictureStyles" src='images/officers2019_2.jpg'
-    alt="officersPic" style={{ width: '105%' }}></img>
-          </div >
+          <div class="groupPicContainer">
+            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+              alt="officersPic" style={{ width: '105%' }}></img>
+          </div>
           <div class="sceLogo" data-aos="fade-out" >
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-
-          </div>
-          <div className="sceTitle">
-            {text}
           </div>
 
-
-
+          <div className="sceTitle" data-aos="fade-out" >
+            {SCEtitle}
+          </div>
 
           <div class="contentContainer">
-
-            <div className="eventsContainer">
-              <Container>
-                <h1>------------------------</h1>
-                <h1>EVENTS!!!!</h1>
-                <h1>------------------------</h1>
-
-              </Container>
-            </div>
             {/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
@@ -186,24 +177,8 @@ const sceTitle = [
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-            {/* <div className='outer-div'>
-              <div className='inner-div'>
-                <Iframe
-                  // Unable to breka up iframe url
-                  // eslint-disable-next-line
-                  url='https://calendar.google.com/calendar/b
-                  /4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=
-                  0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp
-                  ;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko
-                  1m2nh39s3js%40group.calendar.google.com&amp;color=%
-                  23182C57&amp;ctz=America%2FLos_Angeles'
-                  className='calendar'
-                  allowFullScreen
-                />
-              </div>
-            </div> */}
-
             <div className="block-space"></div>
+
             <div className="block-one">
               <Row>
                 <Col>
@@ -215,130 +190,84 @@ const sceTitle = [
                       style={{ width: '40vw', marginLeft: '15%' }}></img>
                   </div>
                 </Col>
-                <Col>
-                  <Container className="textOne">
-
-                    <h1 class="textBlock1-title" >
-              Need a place to get things done?
-                    </h1>
-                    <div class="textBlock1-text" >
-                      {blockOneText.map((title) => {
-                        return (
-                          <p className="blockText">
-                            {title.title}</p>
-                        );
-                      })}
-                    </div>
-                  </Container>
+                <Col className="block-styles">
+                  <h1 className="leftalign">
+                    <span className="textBlock1-title">
+                      Need a place to get things done?</span>
+                  </h1>
+                  <div class="textBlock1-text" >
+                    {blockOneText.map((title) => {
+                      return (
+                        <p className="blockText">
+                          {title.title}</p>
+                      );
+                    })}
+                  </div>
                 </Col>
               </Row>
             </div>
-          </Container>
-        </Col >
-      </Row >
-  </div >
-  <div className="block-space"></div>
 
-  <div className="block-two">
-    <Row>
-      <Col>
-        <h1 class="textBlock2-title">Would like to know more?</h1>
-        <div class="textBlock2-text">
-          {blockTwoText.map((title) => {
-            return (
-              <p className="text">{title.title}</p>
-            );
-          })}
-        </div>
-        <div className="linksIcons">
-          <a href='https://www.linkedin.com/company/sjsu-software
-          -computer-engineering-society/'>
-            <svg width='50px' height='50px' viewBox='0 0 24 24'>
-              <path
-                fill='#484848'
-                d='M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0
-                      <svg width='50px' height='50px' viewBox='0 0 24 24'>
-                        <path
-                          fill='#484848'
-                          d='M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0
-                          0,1 3,
-                19V5A2,2 0 0,1 5,3H19M18.5,18.5V13.2A3.26,3.26 0 0,0 15.24,
-                11.24V10.13H10.13V18.5H12.92V13.57C12.92,12.8 13.54,
-                12.17 14.31,12.17A1.4,1.4 0 0,1 15.71,13.57V18.5H18.5M6.88,
-                8.56A1.68,1.68 0 0,0 8.56,6.88C8.56,5.95 7.81,5.19 6.88,
-                5.19A1.69,1.69 0 0,0 5.19,6.88C5.19,7.81 5.95,8.56 6.88,
-                8.56M8.27,18.5V10.13H5.5V18.5H8.27Z'
-              />
-            </svg>
-          </a>
-          <a href='https://www.facebook.com/sjsusce/'>
-            <svg width='50px' height='50px' viewBox='0 0 24 24'>
-              <path
-                fill='#484848'
-                d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2
-                          0 0,1 3,
-                19V5A2,2 0 0,1 5,3M18,5H15.5A3.5,3.5 0 0,0 12,
-                8.5V11H10V14H12V21H15V14H18V11H15V9A1,1 0 0,1 16,8H18V5Z'
-              />
-            </svg>
-          </a>
-        </div>
-      </Col>
-      <Col>
-        <img src='images/block2.png' alt="blockOneImg"
-          style={{ width: '100%' }}></img>
-      </Col>
-    </Row>
-  </div >
-  <div className="clubRoomContainer">
-    <img class="groupPictureStyles" src='images/emptyclubroom.png'
-      alt="officersPic" style={{ width: '105%' }}></img>
-                        />
-                      </svg>
-                    </a >
-  <a href='https://www.facebook.com/sjsusce/'>
-    <svg width='50px' height='50px' viewBox='0 0 24 24'>
-      <path
-        fill='#484848'
-        d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2
-                          0 0,1 3,
-                19V5A2,2 0 0,1 5,3M18,5H15.5A3.5,3.5 0 0,0 12,
-                8.5V11H10V14H12V21H15V14H18V11H15V9A1,1 0 0,1 16,8H18V5Z'
-      />
-    </svg>
-  </a>
-                  </div >
-                </Col >
-  <Col>
-    <img src='images/block2.png' alt="blockOneImg"
-      style={{ width: '100%' }}></img>
-  </Col>
-              </Row >
-            </div >
+            <div className="block-space"></div>
             <div className="clubRoomContainer">
-              <img class="groupPictureStyles" src='images/emptyclubroom.png'
-                alt="officersPic" style={{ width: '105%' }}></img>
+              <p>
+                <Row>
+                  <Col className="column" xs={3}>
+                    <div class="subBlock-title" data-aos="fade-up">
+                      Tech Events
+                    </div>
+                    <div class="subBlockContainer" data-aos="fade-left">
+                      {subBlockOneText.map((title) => {
+                        return (
+                          <span className="subBlockText">{title.title}</span>
+                        );
+                      })}
+                    </div>
+                  </Col>
+                  <Col xs={3} >
+                    <div class="subBlock-title" data-aos="fade-up">
+                      Workshops
+                    </div>
+                    <div class="subBlockContainer" data-aos="fade-up">
+                      {subBlockTwoText.map((title) => {
+                        return (
+                          <span className="subBlockText">{title.title}</span>
+                        );
+                      })}
+                    </div>
+                  </Col>
+                  <Col xs={3}>
+                    <div class="subBlock-title" data-aos="fade-right">
+                      Social Events
+                    </div>
+                    <div class="subBlockContainer" data-aos="fade-right">
+                      {subBlockThreeText.map((title) => {
+                        return (
+                          <p className="subBlockText">{title.title}</p>
+                        );
+                      })}
+                    </div>
+                  </Col>
+                </Row>
+              </p>
             </div>
-  <div className="block-space"></div>
-
-  <div className="block-two">
-    <Row>
-      <Col>
-        <h1 class="textBlock2-title">Would like to know more?</h1>
-        <div class="textBlock2-text">
-          {blockTwoText.map((title) => {
-            return (
-              <p className="text">{title.title}</p>
-            );
-          })}
-              {/* <img class="clubRoomStyles" src='images/emptyclubroom_cropped.png'
-                alt="clubroom" style={{ width: '105%' }}>
-              </img> */}
+            <div className="block-two">
               <Row>
-                <Col>
-                  <div class="subBlock-one">Company Events</div>
-                  <div class="subBlockOne-text">
-                    {subBlockOneText.map((title) => {
+                <Col className="block-styles">
+                  <h1>
+                    <span class="textBlock2-title">
+                      Want to know more?
+                    </span>
+
+                  </h1>
+                  <div class="textBlock2-text">
+                    {blockTwoText.map((title) => {
+                      return (
+                        <p className="blockText">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                  <div className="icons-container">
+                    {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
 
@@ -369,16 +298,11 @@ const sceTitle = [
 
 
             <Footer />
-          </div>
+          </div >
+        </div >
+      </>
+    );
+  }
+}
 
-            </div>
-            <Footer />
-          </div>
-          <a href='https://www.linkedin.com/company/sjsu-software
-          -computer-engineering-society/'>
-            <svg width='50px' height='50px' viewBox='0 0 24 24'>
-              <path
-                fill='#484848'
-                d='M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,
-                19V5A2,2 0 0,1 5,3H19M18.5,18.5V13.2A3.26,3.26 0 0,0 15.24,
-                9.94C14.39,9.94 13.4,10.46 12.92,
+export default Home;
