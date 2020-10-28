@@ -33,9 +33,11 @@ import { Row, Col, Container, Button } from 'reactstrap';
         */
 
 
+
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
+  { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
   { title: <br /> },
   { title: 'We continue to offer resources to our  ' },
@@ -54,6 +56,8 @@ const subBlockOneText = [
   { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' },
   { title: <br /> },
+  { title: 'We have conducted events with companies like' },
+  { title: 'IBM, Tesla, SAP and more!' }
 ];
 
 const subBlockTwoText = [
@@ -69,7 +73,6 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
-  { title: <br /> },
 ];
 
 const icons = [
@@ -135,143 +138,148 @@ const icons = [
 //   Aos.init({ duration: 2000 });
 // });
 
-< div className='home' >
+class Home extends Component {
+  render() {
+    Aos.init({ duration: 2000 });
+    return (
+      <>
+        <div className='home'>
 
-  {/* <Slideshow className='slideshow' />
+          {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
-  < div class="groupPicContainer" >
-    <img class="groupPictureStyles" src='images/officers2019_2.jpg'
-      alt="officersPic" style={{ width: '105%' }}></img>
-  </div >
-  <div class="sceLogo" data-aos="fade-out" >
-    <img class="logo-styles"
-      src='images/sce_logo_2.svg'
-      alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-  </div>
-
-  <div className="sceTitle" data-aos="fade-out" >
-    {SCEtitle}
-  </div>
-  <div class="contentContainer">
-    <div className="block-space"></div>
-
-    <div className="block-one">
-      <Row>
-        <Col>
-          <div data-aos="fade-up"
-            data-aos="fade-down">
-            <img className="block-images"
-              src='images/resume-workshop.jpg'
-              alt="blockOneImg"
-              style={{ width: '40vw', marginLeft: '15%' }}></img>
+          <div class="groupPicContainer">
+            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+              alt="officersPic" style={{ width: '105%' }}></img>
           </div>
-        </Col>
-        <Col className="block-styles">
-          <h1 className="leftalign">
-            <span className="textBlock1-title">
-              Need a place to get things done?</span>
-          </h1>
-          <div class="textBlock1-text" >
-            {blockOneText.map((title) => {
-              return (
-                <p className="blockText">
-                  {title.title}</p>
-              );
-            })}
+          <div class="sceLogo" data-aos="fade-out" >
+            <img class="logo-styles"
+              src='images/sce_logo_2.svg'
+              alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
           </div>
-        </Col>
-      </Row>
-    </div>
 
-    <div className="block-space"></div>
-    <div className="clubRoomContainer">
-      <p>
-        <Row>
-          <Col className="column" xs={3}>
-            <div class="subBlock-title" data-aos="fade-up">
-              Tech Events
-                    </div>
-            <div class="subBlockContainer" data-aos="fade-left">
-              {subBlockOneText.map((title) => {
-                return (
-                  <span className="subBlockText">{title.title}</span>
-                );
-              })}
+          <div className="sceTitle" data-aos="fade-out" >
+            {SCEtitle}
+          </div>
+          <div class="contentContainer">
+            <div className="block-space"></div>
+
+            <div className="block-one">
+              <Row>
+                <Col>
+                  <div data-aos="fade-up"
+                    data-aos="fade-down">
+                    <img className="block-images"
+                      src='images/resume-workshop.jpg'
+                      alt="blockOneImg"
+                      style={{ width: '40vw', marginLeft: '15%' }}></img>
+                  </div>
+                </Col>
+                <Col className="block-styles">
+                  <h1 className="leftalign">
+                    <span className="textBlock1-title">
+                      Need a place to get things done?</span>
+                  </h1>
+                  <div class="textBlock1-text" >
+                    {blockOneText.map((title) => {
+                      return (
+                        <p className="blockText">
+                          {title.title}</p>
+                      );
+                    })}
+                  </div>
+                </Col>
+              </Row>
             </div>
-            <Col xs={3} >
-              <div class="subBlockContainer" data-aos="fade-up">
-                {subBlockTwoText.map((title) => {
-                  return (
-                    <span className="subBlockText">{title.title}</span>
-                  );
-                })}
-              </div>
-            </Col>
-            <Col xs={3}>
-              <div class="subBlock-title" data-aos="fade-right">
-                Social Events
+
+            <div className="block-space"></div>
+            <div className="clubRoomContainer">
+              <p>
+                <Row>
+                  <Col className="column" xs={3}>
+                    <div class="subBlock-title" data-aos="fade-up">
+                      Tech Events
                     </div>
-              <div class="subBlockContainer" data-aos="fade-right">
-                {subBlockThreeText.map((title) => {
-                  return (
-                    <p className="subBlockText">{title.title}</p>
-                  );
-                })}
-              </div>
-            </Col>
+                    <div class="subBlockContainer" data-aos="fade-left">
+                      {subBlockOneText.map((title) => {
+                        return (
+                          <span className="subBlockText">{title.title}</span>
+                        );
+                      })}
+                    </div>
+                    <Col xs={3} >
+                      <div class="subBlockContainer" data-aos="fade-up">
+                        {subBlockTwoText.map((title) => {
+                          return (
+                            <span className="subBlockText">{title.title}</span>
+                          );
+                        })}
+                      </div>
+                    </Col>
+                    <Col xs={3}>
+                      <div class="subBlock-title" data-aos="fade-right">
+                        Social Events
+                    </div>
+                      <div class="subBlockContainer" data-aos="fade-right">
+                        {subBlockThreeText.map((title) => {
+                          return (
+                            <p className="subBlockText">{title.title}</p>
+                          );
+                        })}
+                      </div>
+                    </Col>
                 </Row>
               </p>
             </div>
-      <div className="block-two">
-        <Row>
-          <Col className="block-styles">
-            <h1>
-              <span class="textBlock2-title">
-                Want to know more?
+              <div className="block-two">
+                <Row>
+                  <Col className="block-styles">
+                    <h1>
+                      <span class="textBlock2-title">
+                        Want to know more?
                     </span>
 
                       return (
                         <a key={index} href={icon.link}>
 
-                <svg className='block2-icons' viewBox='0 0 24 24'>
-                  <path fill='#484848' d={icon.vector} />
-                </svg>
-              </a>
+                        <svg className='block2-icons' viewBox='0 0 24 24'>
+                          <path fill='#484848' d={icon.vector} />
+                        </svg>
+                      </a>
                       );
                     })}
                   </div>
 
-          </Col>
-          <Col>
-            <div data-aos="fade-up" data-aos="fade-down" >
-              <img className="block-images"
-                src='images/Tesla2.jpg'
-                alt="blockOneImg"
-                style={{ width: '45vw', marginRight: '15%' }}></img>
+                  </Col>
+                  <Col>
+                    <div data-aos="fade-up" data-aos="fade-down" >
+                      <img className="block-images"
+                        src='images/Tesla2.jpg'
+                        alt="blockOneImg"
+                        style={{ width: '45vw', marginRight: '15%' }}></img>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+
+              <div className="block-space"></div>
+
+
+              {/* </div> */}
+
+
+              <Footer />
             </div>
-          </Col>
-        </Row>
-      </div>
-
-      <div className="block-space"></div>
 
 
-      {/* </div> */}
+            <div className="eventsContainer">
+              <Container>
+                <h1>------------------------</h1>
+                <h1>EVENTS!!!!</h1>
+                <h1>------------------------</h1>
 
-
-      <Footer />
-    </div>
-
-
-    <div className="eventsContainer">
-      <Container>
-        <h1>------------------------</h1>
-        <h1>EVENTS!!!!</h1>
-        <h1>------------------------</h1>
-
-      </Container>
-    </div>
-    {/* <div class="sceTitle">
+              </Container>
+            </div>
+            {/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
                   <text>{item.title + "\n"}</text>
@@ -279,7 +287,7 @@ const icons = [
               })}
             </div> */}
 
-    {/* <div className='text-center'>
+            {/* <div className='text-center'>
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
@@ -287,7 +295,7 @@ const icons = [
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-    {/* <div className='outer-div'>
+            {/* <div className='outer-div'>
               <div className='inner-div'>
                 <Iframe
                   // Unable to breka up iframe url
@@ -303,31 +311,31 @@ const icons = [
                 />
               </div>
             </div> */}
-    <div className="block-space"></div>
+            <div className="block-space"></div>
 
-    <div className="block-one">
-      <Row>
-        <Col>
-          <img src='images/block1.png' alt="blockOneImg"
-            style={{ width: '100%' }}></img>
-        </Col>
-        <Col>
-          <Container className="textOne">
+            <div className="block-one">
+              <Row>
+                <Col>
+                  <img src='images/block1.png' alt="blockOneImg"
+                    style={{ width: '100%' }}></img>
+                </Col>
+                <Col>
+                  <Container className="textOne">
 
-            <h1 class="textBlock1-title">
-              Need a place to get things done?
+                    <h1 class="textBlock1-title">
+                      Need a place to get things done?
                     </h1>
-            <div class="textBlock1-text">
-              {blockOneText.map((title) => {
-                return (
-                  <p className="text">{title.title}</p>
-                );
-              })}
+                    <div class="textBlock1-text">
+                      {blockOneText.map((title) => {
+                        return (
+                          <p className="text">{title.title}</p>
+                        );
+                      })}
+                    </div>
+                  </Container>
+                </Col>
+              </Row>
             </div>
-          </Container>
-        </Col>
-      </Row>
-    </div>
           </Container >
       </Col >
 
@@ -393,7 +401,7 @@ const icons = [
                 <Col className="block-styles">
                   <h1>
                     <span class="textBlock2-title">
-            Want to know more?
+                Want to know more?
                     </span>
 
                   </h1>
@@ -432,10 +440,10 @@ const icons = [
             <div className="block-space"></div>
 
 
-{/* </div> */ }
+    {/* </div> */ }
 
 
-<Footer />
+    <Footer />
           </div >
         </div >
       </>
