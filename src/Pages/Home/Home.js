@@ -96,6 +96,8 @@ const icons = [
   }
 ];
 
+
+
 // useEffect(() => {
 //   Aos.init({ duration: 2000 });
 // });
@@ -142,7 +144,6 @@ class Home extends Component {
                       alt="blockOneImg"
                       style={{ width: '40vw', marginLeft: '15%' }}></img>
                   </div>
-
                 </Col>
                 <Col className="block-styles">
                   <h1 className="leftalign">
