@@ -1,9 +1,10 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap');
 .home{
   position:absolute;
   width:100%;
+  overflow: auto;
 }
 
 .groupPicContainer,.contentContainer {
@@ -12,11 +13,20 @@
 }
 
 .groupPicContainer{
-  top: 7%;
   position: fixed;
   text-align: center;
   color: white;
-  bottom: 10%;
+  background-size: cover;
+  overflow: hidden; 
+  
+}
+
+.groupPictureStyles{
+  width: 300px;
+  z-index: -1;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
 }
 
@@ -28,36 +38,33 @@
   overflow: auto;
   position:relative;
 }
+
+
 .sceTitle{
+  scroll-behavior: [ smooth ];
+  color: white;
   position: absolute;
-  top: 10%;  
-  margin-top: 20px;
-  margin-bottom: 15px;
+  top: 5%;
   left: 50%;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat';
   white-space: pre-line;
   text-align: left;
   direction: ltr;
   font-size: 60px;
+  font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
   text-shadow:  0 1px 10px #777;
+  z-index: 10;
 }
 
 .sceLogo{
   position: absolute;
-  top: 10%;  
-  margin-top: 20px;
-  margin-bottom: 15px;
-  right: 40%;
-  align-content: right;
-  direction: rtl;
-  text-shadow:  0 1px 10px #777;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center;
-  animation: infinite;
-
+  top: 4%;
+  right: 50%;
+  overflow: auto;
+  display: block;
+  
 }
 
 .slideshow {
@@ -66,9 +73,44 @@
   margin: auto;
   height: auto;
   overflow: hidden;
-  object-fit: cover;
 }
 
+.textBlock1-title{
+  font-family: 'Merriweather', serif;
+  text-align: left;
+  font-size: xx-large;
+  margin-left:5%;
+  margin-top: 15%;
+  margin-bottom: 5%;
+}
+.textBlock2-title{
+  font-family: 'Merriweather', serif;
+  text-align: left;
+  font-size: xx-large;
+  margin-left: 15%;
+  margin-top: 15%;
+  margin-bottom: 5%;
+}
+.textBlock1-text{
+  font-family: 'Montserrat', sans-serif;
+  text-align: left;
+  font-size: medium;
+  margin-left:5%;
+  
+}
+
+.textBlock2-text{
+  font-family: 'Montserrat', sans-serif;
+  text-align: left;
+  font-size: medium;
+  margin-left: 15%;
+  
+}
+
+.text{
+  margin-top: 0%;
+  padding: 0%;
+}
 .outer-div
 {
   padding: 30px;
@@ -77,6 +119,10 @@
 {
   margin: auto;
   width: 80%;
+}
+
+.block-space{
+  margin-top: 10%;
 }
 
 .calendar{
