@@ -294,8 +294,12 @@ return (
               })}
             </div> */}
 
-          {/* <div className='text-center'>
+<<<<<<< HEAD
+        {/* <div className='text-center'>
 >>>>>>> Adds Group Pic and Title
+=======
+            {/* <div className='text-center'>
+>>>>>>> Creates parallax scrolling effect for homepage
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
@@ -303,8 +307,12 @@ return (
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-          {/* <div className='outer-div'>
+<<<<<<< HEAD
+      {/* <div className='outer-div'>
 >>>>>>> Adds Group Pic and Title
+=======
+            {/* <div className='outer-div'>
+>>>>>>> Creates parallax scrolling effect for homepage
               <div className='inner-div'>
                 <Iframe
                   // Unable to breka up iframe url
@@ -320,33 +328,33 @@ return (
                 />
               </div>
             </div> */}
-          <div className="block-space"></div>
+      <div className="block-space"></div>
 
-          <div className="block-one">
-            <Row>
-              <Col>
-                <img src='images/block1.png' alt="blockOneImg"
-                  style={{ width: '100%' }}></img>
-              </Col>
-              <Col>
-                <Container className="textOne">
+      <div className="block-one">
+        <Row>
+          <Col>
+            <img src='images/block1.png' alt="blockOneImg"
+              style={{ width: '100%' }}></img>
+          </Col>
+          <Col>
+            <Container className="textOne">
 
-                  <h1 class="textBlock1-title">
-                    Need a place to get things done?
+              <h1 class="textBlock1-title">
+                Need a place to get things done?
                     </h1>
-                  <div class="textBlock1-text">
-                    {blockOneText.map((title) => {
-                      return (
-                        <p className="text">{title.title}</p>
-                      );
-                    })}
-                  </div>
-                </Container>
-              </Col>
-            </Row>
-          </div>
+              <div class="textBlock1-text">
+                {blockOneText.map((title) => {
+                  return (
+                    <p className="text">{title.title}</p>
+                  );
+                })}
+              </div>
+            </Container>
+          </Col>
+        </Row>
+      </div>
           </Container >
-      </Col >
+  </Col >
 
   </Row >
   </div >
