@@ -39,12 +39,19 @@ const subBlockThreeText =
   '\n\nWe host potlucks, movie nights, game nights and much more!';
 
 
-const sceTitle = [
-  { title: "Software and \n" },
-  { title: "Computer" },
-  { title: "Engineering" },
-  { title: "Society" }
+const blockOneText = [
+  { title: "Our clubroom offers everything a software or computer" },
+  { title: "engineering student could need." },
+  { title: <br /> },
+  { title: "We continue to offer resources to our members regardless" },
+  { title: "of being online. Join our discord for more details!" }
 ]
+
+const blockTwoText = [
+  { title: "Join our public accounts on Discord, Slack," },
+  { title: "Instagram and more today, and connect with SCE members" },
+]
+
 const text = 'Software and \n Computer \n Engineering \n Society';
 
 class Home extends Component {
