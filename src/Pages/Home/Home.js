@@ -48,9 +48,9 @@ const sceTitle = [
 ]
 
 const blockTwoText = [
-  { title: "Join our public accounts on Discord, Slack," },
-  { title: "Instagram and more today, and connect with SCE members" },
-]
+  { title: 'Join our public accounts on Discord, Slack,' },
+  { title: 'Instagram and more today, and connect with SCE members' },
+];
 
 const text = 'Software and \n Computer \n Engineering \n Society';
 
