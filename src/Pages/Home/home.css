@@ -39,6 +39,10 @@
   position:relative;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Creates parallax scrolling effect for homepage
 .sceTitle{
   scroll-behavior: [ smooth ];
   color: white;
@@ -49,15 +53,31 @@
   white-space: pre-line;
   text-align: left;
   direction: ltr;
+<<<<<<< HEAD
   font-size: 4em;
+=======
+  font-size: 60px;
+>>>>>>> Creates parallax scrolling effect for homepage
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
   text-shadow:  0 1px 10px #777;
+<<<<<<< HEAD
   z-index: 0;
   overflow: auto;
   display: block;
   font-size-adjust: inherit;
+=======
+  z-index: 10;
+}
+
+.sceLogo{
+  position: absolute;
+  top: 4%;
+  right: 50%;
+  overflow: auto;
+  display: block;
+>>>>>>> Creates parallax scrolling effect for homepage
   
 }
 
