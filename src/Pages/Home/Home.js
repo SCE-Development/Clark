@@ -28,17 +28,17 @@ import { CardGroup, Card, Row, Col, Container } from 'reactstrap';
         */
 
 const blockOneText = [
-  { title: "Our clubroom offers everything a software or computer" },
-  { title: "engineering student could need." },
+  { title: 'Our clubroom offers everything a software or computer' },
+  { title: 'engineering student could need.' },
   { title: <br /> },
-  { title: "We continue to offer resources to our members regardless" },
-  { title: "of being online. Join our discord for more details!" }
-]
+  { title: 'We continue to offer resources to our members regardless' },
+  { title: 'of being online. Join our discord for more details!' }
+];
 
 const blockTwoText = [
-  { title: "Join our public accounts on Discord, Slack," },
-  { title: "Instagram and more today, and connect with SCE members" },
-]
+  { title: 'Join our public accounts on Discord, Slack,' },
+  { title: 'Instagram and more today, and connect with SCE members' },
+];
 
 const text = 'Software and \n Computer \n Engineering \n Society';
 
@@ -51,10 +51,12 @@ class Home extends Component {
           {/* <Slideshow className='slideshow' />
           <Jumbotron /> */}
           <div class="groupPicContainer">
-            <img class="groupPictureStyles" src='images/officers2019_2.jpg' alt="officersPic" style={{ width: "105%" }}></img>
+            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+              alt="officersPic" style={{ width: '105%' }}></img>
           </div>
           <div class="sceLogo">
-            <img class="logo-styles" src="/static/media/sce_logo.1f644918.png" alt="sce logo" style={{ width: "50%", float: "right" }}></img>
+            <img class="logo-styles" src="/static/media/sce_logo.1f644918.png"
+              alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
           </div>
           <div className="sceTitle">
             {text}
@@ -94,7 +96,12 @@ class Home extends Component {
                 <Iframe
                   // Unable to breka up iframe url
                   // eslint-disable-next-line
-                  url='https://calendar.google.com/calendar/b/4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FLos_Angeles'
+                  url='https://calendar.google.com/calendar/b
+                  /4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=
+                  0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp
+                  ;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko
+                  1m2nh39s3js%40group.calendar.google.com&amp;color=%
+                  23182C57&amp;ctz=America%2FLos_Angeles'
                   className='calendar'
                   allowFullScreen
                 />
@@ -105,12 +112,15 @@ class Home extends Component {
             <div className="block-one">
               <Row>
                 <Col>
-                  <img src='images/block1.png' alt="blockOneImg" style={{ width: "100%" }}></img>
+                  <img src='images/block1.png' alt="blockOneImg"
+                    style={{ width: '100%' }}></img>
                 </Col>
                 <Col>
                   <Container className="textOne">
 
-                    <h1 class="textBlock1-title">Need a place to get things done?</h1>
+                    <h1 class="textBlock1-title">
+                      Need a place to get things done?
+                    </h1>
                     <div class="textBlock1-text">
                       {blockOneText.map((title) => {
                         return (
@@ -141,7 +151,8 @@ class Home extends Component {
                       <svg width='50px' height='50px' viewBox='0 0 24 24'>
                         <path
                           fill='#484848'
-                          d='M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,
+                          d='M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0
+                          0,1 3,
                 19V5A2,2 0 0,1 5,3H19M18.5,18.5V13.2A3.26,3.26 0 0,0 15.24,
                 9.94C14.39,9.94 13.4,10.46 12.92,
                 11.24V10.13H10.13V18.5H12.92V13.57C12.92,12.8 13.54,
@@ -156,7 +167,8 @@ class Home extends Component {
                       <svg width='50px' height='50px' viewBox='0 0 24 24'>
                         <path
                           fill='#484848'
-                          d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,
+                          d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2
+                          0 0,1 3,
                 19V5A2,2 0 0,1 5,3M18,5H15.5A3.5,3.5 0 0,0 12,
                 8.5V11H10V14H12V21H15V14H18V11H15V9A1,1 0 0,1 16,8H18V5Z'
                         />
@@ -165,12 +177,14 @@ class Home extends Component {
                   </div>
                 </Col>
                 <Col>
-                  <img src='images/block2.png' alt="blockOneImg" style={{ width: "100%" }}></img>
+                  <img src='images/block2.png' alt="blockOneImg"
+                    style={{ width: '100%' }}></img>
                 </Col>
               </Row>
             </div>
             <div className="clubRoomContainer">
-              <img class="groupPictureStyles" src='images/emptyclubroom.png' alt="officersPic" style={{ width: "105%" }}></img>
+              <img class="groupPictureStyles" src='images/emptyclubroom.png'
+                alt="officersPic" style={{ width: '105%' }}></img>
             </div>
 
 
