@@ -195,7 +195,6 @@ class Home extends Component {
                 />
               </div>
             </div> */}
-
             <div className="block-space"></div>
 
             <div className="block-one">
