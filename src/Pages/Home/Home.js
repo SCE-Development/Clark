@@ -3,6 +3,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
 import './home.css';
+<<<<<<< HEAD
 import Footer from '../../Components/Footer/Footer.js';
 import { Row, Col } from 'reactstrap';
 import { icons } from './IconConstants';
@@ -38,6 +39,34 @@ const subBlockThreeText =
   'Join us for fun and exciting social events for different occasions!' +
   '\n\nWe host potlucks, movie nights, game nights and much more!';
 
+=======
+//import Slideshow from '../../Components/Slideshow/Slideshow.js';
+import Footer from '../../Components/Footer/Footer.js';
+//import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+//import Iframe from 'react-iframe';
+import { Row, Col, Container } from 'reactstrap';
+// import Calendar from '../../Calendar/App.js'; <Calendar/>
+
+/*
+  <Iframe url="https://calendar.google.com/calendar/embed?src=
+  llv828585faitko1m2nh39s3js%40group.calendar.google.co
+  m&ctz=America%2FLos_Angeles"
+        width="1000px"
+        height="800px"
+        id="myId"
+        className="myClassname"
+        display="initial"
+        position="relative"
+        allowFullScreen/>
+
+        <Iframe url="https://calendar.google.com/calendar/b/4/embed?showTitle=
+        0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;
+        height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1
+        m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=
+        America%2FLos_Angeles" style="border-width:0" width="1000"
+        height="850" frameborder="0" scrolling="no"/>
+        */
+>>>>>>> Fixes lint error
 
 const blockOneText = [
   { title: 'Our clubroom offers everything a software or computer' },
