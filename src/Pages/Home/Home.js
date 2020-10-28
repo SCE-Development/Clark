@@ -1,42 +1,13 @@
-import React, { Component, useEffect } from 'react';
-import { AnimateOnChange, animations } from 'react-animation';
-import ScrollAnimation from 'react-animate-on-scroll';
-import Aos from 'aos';
+import React, { Component } from 'react';
 import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
-
 import './home.css';
-// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-// import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
-// import Iframe from 'react-iframe';
-import { Row, Col, Container, Button } from 'reactstrap';
-// import Calendar from '../../Calendar/App.js'; <Calendar/>
-
-/*
-  <Iframe url="https://calendar.google.com/calendar/embed?src=
-  llv828585faitko1m2nh39s3js%40group.calendar.google.co
-  m&ctz=America%2FLos_Angeles"
-        width="1000px"
-        height="800px"
-        id="myId"
-        className="myClassname"
-        display="initial"
-        position="relative"
-        allowFullScreen/>
-
-        <Iframe url="https://calendar.google.com/calendar/b/4/embed?showTitle=
-        0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;
-        height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko1
-        m2nh39s3js%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=
-        America%2FLos_Angeles" style="border-width:0" width="1000"
-        height="850" frameborder="0" scrolling="no"/>
-        */
-
-
+import { Row, Col } from 'reactstrap';
 
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
+// The major block texts surrounding the sub block
 const blockOneText = [
   { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
@@ -51,12 +22,14 @@ const blockTwoText = [
   { title: 'Instagram and more to connect with SCE members!' },
 ];
 
+// The sub block texts
+// ( the part with the empty clubroom in the background )
 const subBlockOneText = [
-  { title: 'As an SCE member, you will get many perks! ' },
+  { title: 'As an SCE member, you will get inside scoops ' },
+  { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' },
-  { title: <br /> },
+  { title: 'IBM, Tesla, SAP and more!' }
 ];
 
 const subBlockTwoText = [
@@ -72,9 +45,9 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
-  { title: <br /> },
 ];
 
+// Club social media icon links
 const icons = [
   {
     link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -134,20 +107,13 @@ const icons = [
 ];
 
 
-
-// useEffect(() => {
-//   Aos.init({ duration: 2000 });
-// });
-
 class Home extends Component {
   render() {
-    Aos.init({ duration: 2000 });
     return (
       <>
         <div className='home'>
 
-          {/* <Slideshow className='slideshow' />
-          <Jumbotron /> */}
+          {/* This container is for the SCE offciers picture and title */}
           <div class="groupPicContainer">
             <img class="groupPictureStyles" src='images/officers2019_2.jpg'
               alt="officersPic" style={{ width: '105%' }}></img>
@@ -157,14 +123,16 @@ class Home extends Component {
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
           </div>
-
           <div className="sceTitle" data-aos="fade-out" >
             {SCEtitle}
           </div>
 
+          {/* This contains all the content regarding the club,
+         what we have to offer and social media links */}
           <div class="contentContainer">
             <div className="block-space"></div>
 
+            {/* The first major block: "Need a place to get things done?" */}
             <div className="block-one">
               <Row>
                 <Col>
@@ -194,6 +162,8 @@ class Home extends Component {
             </div>
 
             <div className="block-space"></div>
+
+            {/* The sub block section */}
             <div className="clubRoomContainer">
               <p>
                 <Row>
@@ -236,6 +206,8 @@ class Home extends Component {
                 </Row>
               </p>
             </div>
+
+            {/* The second major block: "Want to know more?" */}
             <div className="block-two">
               <Row>
                 <Col className="block-styles">
@@ -243,7 +215,6 @@ class Home extends Component {
                     <span class="textBlock2-title">
                       Want to know more?
                     </span>
-
                   </h1>
                   <div class="textBlock2-text">
                     {blockTwoText.map((title) => {
@@ -252,6 +223,8 @@ class Home extends Component {
                       );
                     })}
                   </div>
+
+                  {/* Icons div */}
                   <div className="icons-container">
                     {icons.map((icon, index) => {
                       return (
@@ -264,7 +237,6 @@ class Home extends Component {
                       );
                     })}
                   </div>
-
                 </Col>
                 <Col>
                   <div data-aos="fade-up" data-aos="fade-down" >
@@ -276,18 +248,13 @@ class Home extends Component {
                 </Col>
               </Row>
             </div>
-
             <div className="block-space"></div>
-
-
-            {/* </div> */}
-
-
             <Footer />
-          </div>
-
-
-        </div>
-} 
+          </div >
+        </div >
+      </>
+    );
+  }
+}
 
 export default Home;
