@@ -1,8 +1,11 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap');
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Karla&family=Open+Sans&display=swap');
 
+=======
+>>>>>>> Creates parallax scrolling effect for homepage
 .home{
   position:absolute;
   width:100%;
