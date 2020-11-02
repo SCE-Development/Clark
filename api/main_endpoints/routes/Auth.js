@@ -87,6 +87,14 @@ router.post('/login', function(req, res) {
                 .status(UNAUTHORIZED)
                 .send({ message: 'User is banned.' });
             }
+
+            //Check if the user's email has been verified
+            if(!user.emailVerified){
+              return res
+                .status(UNAUTHORIZED)
+                .send({message: "Email has not been verified"});
+            }
+
             // If the username and password matches the database, assign and
             // return a jwt token
             const jwtOptions = {
