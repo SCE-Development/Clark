@@ -88,11 +88,11 @@ router.post('/login', function(req, res) {
                 .send({ message: 'User is banned.' });
             }
 
-            //Check if the user's email has been verified
+            // Check if the user's email has been verified
             if(!user.emailVerified){
               return res
                 .status(UNAUTHORIZED)
-                .send({message: "Email has not been verified"});
+                .send({message: 'Email has not been verified'});
             }
 
             // If the username and password matches the database, assign and
