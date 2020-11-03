@@ -51,7 +51,7 @@
     "filepond-plugin-file-validate-type": "^1.2.5",
     "filepond-plugin-image-preview": "^4.6.4",
     "google-spreadsheet": "^3.0.13",
-    "googleapis": "^62.0.0",
+    "googleapis": "^63.0.0",
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.4.11",
