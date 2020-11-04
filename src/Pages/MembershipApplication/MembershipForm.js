@@ -17,7 +17,19 @@ export default function MembershipForm(props) {
   const [major, setMajor] = useState('');
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
-  const [submitted, setSubmitted] = useState(false);
+  const [clickSubmitted, setClickSubmitted] = useState(false);
+
+  function checkEmailInput(){
+    if(!email && clickSubmitted)
+      return (<p className='unavailable'> Email cannot be left empty</p>);
+    else if(email && !email.includes('@') && clickSubmitted)
+      return (<p className='unavailable'> Your input email is invalid</p>);
+  }
+
+  function requiredFieldsMet() {
+    return verified && firstName && lastName &&
+    email && major && password.length >= 8;
+  }
 
   const nameFields = [
     {
@@ -25,7 +37,7 @@ export default function MembershipForm(props) {
       id: 'first-name',
       type: 'text',
       handleChange: e => setFirstName(e.target.value),
-      ifLeftEmpty: !firstName && submitted && (
+      ifRequirementsNotMet: !firstName && clickSubmitted && (
         <p className='unavailable'>First name cannot be left emtpy</p>
       ),
     },
@@ -33,7 +45,7 @@ export default function MembershipForm(props) {
       label: 'Last Name',
       id: 'last-name',
       type: 'text',
-      ifLeftEmpty: !lastName && submitted && (
+      ifRequirementsNotMet: !lastName && clickSubmitted && (
         <p className='unavailable'>Last name cannot be left emtpy</p>
       ),
       handleChange: e => setLastName(e.target.value),
@@ -47,12 +59,10 @@ export default function MembershipForm(props) {
       addon: !usernameAvailable && (
         <p className='unavailable'>User already exists!</p>
       ),
-      ifLeftEmpty: !email && submitted && (
-        <p className='unavailable'>Email cannot be left empty</p>
-      ),
+      ifRequirementsNotMet: checkEmailInput(),
       handleChange: e => setEmail(e.target.value),
-
     },
+
     {
       label: 'Password (8 or more characters)',
       type: 'password',
@@ -62,7 +72,7 @@ export default function MembershipForm(props) {
           and at least 8 characters
         </p>
       ),
-      ifLeftEmpty: password.length<8 && submitted && (
+      ifRequirementsNotMet: password.length<8 && clickSubmitted && (
         <p className='unavailable'>
           Password requires one uppercase character, one number
           and at least 8 characters
@@ -73,14 +83,9 @@ export default function MembershipForm(props) {
     }
   ];
 
-  function requiredFieldsEmpty() {
-    return verified && firstName && lastName &&
-    email && major && password.length >= 8;
-  }
-
   async function submitApplication() {
-    if(submitted===false) setSubmitted(true);
-    if(requiredFieldsEmpty()) {
+    if(clickSubmitted===false) setClickSubmitted(true);
+    if(requiredFieldsMet()) {
       const userResponse = await checkIfUserExists(email);
       if (userResponse.error) {
         setUsernameAvailable(false);
@@ -129,7 +134,7 @@ export default function MembershipForm(props) {
                   id={input.id}
                   placeholder={`${input.label}*`}
                 />
-                {input.ifLeftEmpty}
+                {input.ifRequirementsNotMet}
               </FormGroup>
             );
           })}
@@ -147,13 +152,13 @@ export default function MembershipForm(props) {
                     placeholder={`${input.label}*`}
                   />
                   {input.addon}
-                  {input.ifLeftEmpty}
+                  {input.ifRequirementsNotMet}
                 </FormGroup>
               </div>
             );
           })}
           <MajorDropdown setMajor={setMajor} />
-          {(!major && submitted) ?
+          {(!major && clickSubmitted) ?
             <p className='unavailable'>
               You have to choose your major!
             </p> :
@@ -175,7 +180,6 @@ export default function MembershipForm(props) {
           </Button>
           <Button
             id='submit-btn'
-            // disabled={!requiredFieldsEmpty()} //take this out
             color='primary'
             onClick={submitApplication}
           >
