@@ -23,14 +23,16 @@ export default function MembershipForm(props) {
     if(clickSubmitted){
       if(!email)
         return (<p className='unavailable'> Email cannot be left empty</p>);
-      if(!email.includes('@'))
+      let validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if(!validEmail)
         return (<p className='unavailable'> Your input email is invalid</p>);
     }
   }
 
   function requiredFieldsMet() {
+    let validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     return verified && firstName && lastName &&
-    email && major && password.length >= 8;
+    validEmail && major && password.length >= 8;
   }
 
   const nameFields = [
