@@ -20,10 +20,12 @@ export default function MembershipForm(props) {
   const [clickSubmitted, setClickSubmitted] = useState(false);
 
   function checkEmailInput(){
-    if(!email && clickSubmitted)
-      return (<p className='unavailable'> Email cannot be left empty</p>);
-    else if(email && !email.includes('@') && clickSubmitted)
-      return (<p className='unavailable'> Your input email is invalid</p>);
+    if(clickSubmitted){
+      if(!email)
+        return (<p className='unavailable'> Email cannot be left empty</p>);
+      if(!email.includes('@'))
+        return (<p className='unavailable'> Your input email is invalid</p>);
+    }
   }
 
   function requiredFieldsMet() {
