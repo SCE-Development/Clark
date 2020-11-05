@@ -83,7 +83,6 @@ export default function MembershipForm(props) {
         </p>
       ),
       handleChange: e => setPassword(e.target.value),
-
     }
   ];
 
