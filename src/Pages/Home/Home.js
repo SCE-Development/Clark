@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import './home.css';
-//import Slideshow from '../../Components/Slideshow/Slideshow.js';
+
+// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-//import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
-//import Iframe from 'react-iframe';
+// import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+// import Iframe from 'react-iframe';
 import { Row, Col, Container } from 'reactstrap';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
