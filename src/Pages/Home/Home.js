@@ -286,18 +286,15 @@ class Home extends Component {
           </div>
 
 
-=======
-    <div class="contentContainer">
+          <div className="eventsContainer">
+            <Container>
+              <h1>------------------------</h1>
+              <h1>EVENTS!!!!</h1>
+              <h1>------------------------</h1>
 
-      <div className="eventsContainer">
-        <Container>
-          <h1>------------------------</h1>
-          <h1>EVENTS!!!!</h1>
-          <h1>------------------------</h1>
-
-        </Container>
-      </div>
-      {/* <div class="sceTitle">
+            </Container>
+          </div>
+          {/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
                   <text>{item.title + "\n"}</text>
@@ -305,7 +302,7 @@ class Home extends Component {
               })}
             </div> */}
 
-      {/* <div className='text-center'>
+          {/* <div className='text-center'>
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
@@ -313,7 +310,7 @@ class Home extends Component {
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-      {/* <div className='outer-div'>
+          {/* <div className='outer-div'>
               <div className='inner-div'>
                 <Iframe
                   // Unable to breka up iframe url
@@ -329,37 +326,37 @@ class Home extends Component {
                 />
               </div>
             </div> */}
-      <div className="block-space"></div>
+          <div className="block-space"></div>
 
-      <div className="block-one">
-        <Row>
-          <Col>
-            <img src='images/block1.png' alt="blockOneImg"
-              style={{ width: '100%' }}></img>
-          </Col>
-          <Col>
-            <Container className="textOne">
+          <div className="block-one">
+            <Row>
+              <Col>
+                <img src='images/block1.png' alt="blockOneImg"
+                  style={{ width: '100%' }}></img>
+              </Col>
+              <Col>
+                <Container className="textOne">
 
-              <h1 class="textBlock1-title">
-                Need a place to get things done?
+                  <h1 class="textBlock1-title">
+                    Need a place to get things done?
                     </h1>
-              <div class="textBlock1-text">
-                {blockOneText.map((title) => {
-                  return (
-                    <p className="text">{title.title}</p>
-                  );
-                })}
-              </div>
-            </Container>
-          </Col>
-        </Row>
-      </div>
+                  <div class="textBlock1-text">
+                    {blockOneText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                </Container>
+              </Col>
+            </Row>
+          </div>
           </Container>
-        </Col>
+      </Col>
 
-      </Row>
-  </div>
-</Row>
+      </Row >
+  </div >
+</Row >
   </div >
   <div className="block-space"></div>
 
@@ -426,6 +423,49 @@ class Home extends Component {
               <p className="text">{title.title}</p>
             );
           })}
+              {/* <img class="clubRoomStyles" src='images/emptyclubroom_cropped.png'
+                alt="clubroom" style={{ width: '105%' }}>
+              </img> */}
+              <Row>
+                <Col>
+                  <div class="subBlock-one">Company Events</div>
+                  <div class="subBlockOne-text">
+                    {subBlockOneText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                </Col>
+                <Col>
+                  <div class="subBlock-two">Workshops</div>
+                  <div class="subBlockOne-text">
+                    {subBlockTwoText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+
+                </Col> <Col>
+                  <div class="subBlock-three">Social Events</div>
+                  <div class="subBlockOne-text">
+                    {subBlockThreeText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                </Col>
+              </Row>
+
+            </div>
+
+
+            <Footer />
+          </div>
+
+
         </div>
         <div className="linksIcons">
           <a href='https://www.linkedin.com/company/sjsu-software
