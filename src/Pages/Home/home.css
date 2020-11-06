@@ -34,12 +34,10 @@
 }
 
 .contentContainer{
-  position: absolute;
-  margin-top: 100%;
   width: 100%;
+  margin-top: 50%;
   background-color:#fff;
   overflow: auto;
-  position:relative;
 }
 
 .sceTitle{
@@ -287,7 +285,7 @@
   
 }
 
-.textBlock2-text{
+.textBlock2-text, .linksIcons{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: medium;
