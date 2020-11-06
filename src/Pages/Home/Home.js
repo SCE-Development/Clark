@@ -143,6 +143,10 @@ const icons = [
 ];
 
 
+
+
+const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
+
 const blockOneText = [
   { title: 'Our clubroom offers everything a software or computer' },
   { title: 'engineering student could need.' },
@@ -156,7 +160,25 @@ const blockTwoText = [
   { title: 'Instagram and more today, and connect with SCE members' },
 ];
 
-const text = 'Software and \n Computer \n Engineering \n Society';
+const subBlockOneText = [
+  { title: 'As an SCE member, you will get insider scoops & ' },
+  { title: 'opportunities. We have conducted events with ' },
+  { title: 'companies like IBM, Tesla, SAP and more!' }
+];
+
+const subBlockTwoText = [
+  { title: 'Want to learn new technical skills? Or even develop ' },
+  { title: 'your interpersonal skills?' },
+  { title: 'SCE hosts a range of free workshops taught by peers,' },
+  { title: 'our alumnis and SJSU faculty!' },
+];
+
+const subBlockThreeText = [
+  { title: 'Join us for fun and exciting social events for different' },
+  { title: 'occasions!' },
+  { title: <br /> },
+  { title: 'We host potlucks, movie nights, game nights and much more!' },
+];
 
 class Home extends Component {
   render() {
