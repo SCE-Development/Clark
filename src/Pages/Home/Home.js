@@ -33,6 +33,10 @@ import { Row, Col, Container } from 'reactstrap';
         height="850" frameborder="0" scrolling="no"/>
         */
 
+
+
+const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
+
 const blockOneText = [
   { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
@@ -133,7 +137,25 @@ const icons = [
   }
 ];
 
-const text = 'Software and \n Computer \n Engineering \n Society';
+const subBlockOneText = [
+  { title: 'As an SCE member, you will get insider scoops & ' },
+  { title: 'opportunities. We have conducted events with ' },
+  { title: 'companies like IBM, Tesla, SAP and more!' }
+];
+
+const subBlockTwoText = [
+  { title: 'Want to learn new technical skills? Or even develop ' },
+  { title: 'your interpersonal skills?' },
+  { title: 'SCE hosts a range of free workshops taught by peers,' },
+  { title: 'our alumnis and SJSU faculty!' },
+];
+
+const subBlockThreeText = [
+  { title: 'Join us for fun and exciting social events for different' },
+  { title: 'occasions!' },
+  { title: <br /> },
+  { title: 'We host potlucks, movie nights, game nights and much more!' },
+];
 
 // useEffect(() => {
 //   Aos.init({ duration: 2000 });
@@ -294,8 +316,7 @@ return (
               })}
             </div> */}
 
-<<<<<<< HEAD
-        {/* <div className='text-center'>
+          {/* <div className='text-center'>
 >>>>>>> Adds Group Pic and Title
 =======
             {/* <div className='text-center'>
@@ -307,8 +328,7 @@ return (
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-<<<<<<< HEAD
-      {/* <div className='outer-div'>
+          {/* <div className='outer-div'>
 >>>>>>> Adds Group Pic and Title
 =======
             {/* <div className='outer-div'>
@@ -328,31 +348,31 @@ return (
                 />
               </div>
             </div> */}
-      <div className="block-space"></div>
+          <div className="block-space"></div>
 
-      <div className="block-one">
-        <Row>
-          <Col>
-            <img src='images/block1.png' alt="blockOneImg"
-              style={{ width: '100%' }}></img>
-          </Col>
-          <Col>
-            <Container className="textOne">
+          <div className="block-one">
+            <Row>
+              <Col>
+                <img src='images/block1.png' alt="blockOneImg"
+                  style={{ width: '100%' }}></img>
+              </Col>
+              <Col>
+                <Container className="textOne">
 
-              <h1 class="textBlock1-title">
-                Need a place to get things done?
+                  <h1 class="textBlock1-title">
+                    Need a place to get things done?
                     </h1>
-              <div class="textBlock1-text">
-                {blockOneText.map((title) => {
-                  return (
-                    <p className="text">{title.title}</p>
-                  );
-                })}
-              </div>
-            </Container>
-          </Col>
-        </Row>
-      </div>
+                  <div class="textBlock1-text">
+                    {blockOneText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                </Container>
+              </Col>
+            </Row>
+          </div>
           </Container >
   </Col >
 
