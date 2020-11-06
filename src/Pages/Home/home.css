@@ -31,18 +31,12 @@
 }
 
 .contentContainer{
-  position: absolute;
-  margin-top: 100%;
   width: 100%;
+  margin-top: 50%;
   background-color:#fff;
   overflow: auto;
-  position:relative;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> Creates parallax scrolling effect for homepage
 .sceTitle{
   scroll-behavior: [ smooth ];
   color: white;
@@ -53,22 +47,18 @@
   white-space: pre-line;
   text-align: left;
   direction: ltr;
-<<<<<<< HEAD
-  font-size: 4em;
-=======
-  font-size: 60px;
->>>>>>> Creates parallax scrolling effect for homepage
+  font-size: 4vw;
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
   text-shadow:  0 1px 10px #777;
-<<<<<<< HEAD
   z-index: 0;
   overflow: auto;
   display: block;
   font-size-adjust: inherit;
-=======
   z-index: 10;
+  z-index: 0;
+  overflow: auto;
 }
 
 .sceLogo{
@@ -77,8 +67,92 @@
   right: 50%;
   overflow: auto;
   display: block;
->>>>>>> Creates parallax scrolling effect for homepage
   
+}
+
+.clubRoomContainer{
+  background-image: url("./emptyclubroom_cropped.png"); 
+  position: relative;
+  text-align: center;
+  color: white;
+  padding-bottom: 30%;
+  min-height: 500%;
+  width: 100%;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  height: 100%;
+}
+
+
+.subBlock-one{
+  scroll-behavior: [ smooth ];
+  color: white;
+  position: relative;
+  font-family: 'Montserrat';
+  font-size: 2vw;
+  font-weight: bolder !important; 
+  text-shadow:  0 1px 10px #777;
+  z-index: 0;
+  overflow: auto;
+  text-align: left;
+  direction: ltr;
+  left: 40%;
+  top: 5vw;
+}
+
+.subBlockOne-text{
+  font-family: 'Montserrat', sans-serif;
+  text-align: left;
+  font-size: medium;
+  direction: ltr;
+  left: 40%;
+  top: 10vw;
+  scroll-behavior: [ smooth ];
+  color: white;
+  font-weight: 500;
+  position: relative;
+  line-height: 50%;
+}
+
+.subBlock-two{
+  scroll-behavior: [ smooth ];
+  color:white;
+  position: absolute;
+  font-family: 'Montserrat';
+  font-size: 3vw;
+  font-weight: bolder !important; 
+  text-shadow:  0 1px 10px #777;
+  z-index: 0;
+  /* margin-top: 15%; */
+  top: 10% !important;
+  margin-top: 0% !important;
+  overflow: auto;
+  text-align: left;
+  direction: ltr;
+  left: 15%;
+}
+
+.subBlock-three{
+  scroll-behavior: [ smooth ];
+  color: white;
+  position: absolute;
+  font-family: 'Montserrat';
+  font-size: 3vw;
+  font-weight: bolder !important; 
+  text-shadow:  0 1px 10px #777;
+  z-index: 0;
+  overflow: auto;
+  text-align: left;
+  direction: ltr;
+  left: 15%;
+}
+
+.clubRoomStyles{
+  z-index: -1;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .slideshow {
@@ -113,7 +187,7 @@
   
 }
 
-.textBlock2-text{
+.textBlock2-text, .linksIcons{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: medium;
