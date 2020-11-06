@@ -27,6 +27,10 @@ import { Row, Col, Container } from 'reactstrap';
         height="850" frameborder="0" scrolling="no"/>
         */
 
+
+
+const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
+
 const blockOneText = [
   { title: 'Our clubroom offers everything a software or computer' },
   { title: 'engineering student could need.' },
@@ -40,7 +44,25 @@ const blockTwoText = [
   { title: 'Instagram and more today, and connect with SCE members' },
 ];
 
-const text = 'Software and \n Computer \n Engineering \n Society';
+const subBlockOneText = [
+  { title: 'As an SCE member, you will get insider scoops & ' },
+  { title: 'opportunities. We have conducted events with ' },
+  { title: 'companies like IBM, Tesla, SAP and more!' }
+];
+
+const subBlockTwoText = [
+  { title: 'Want to learn new technical skills? Or even develop ' },
+  { title: 'your interpersonal skills?' },
+  { title: 'SCE hosts a range of free workshops taught by peers,' },
+  { title: 'our alumnis and SJSU faculty!' },
+];
+
+const subBlockThreeText = [
+  { title: 'Join us for fun and exciting social events for different' },
+  { title: 'occasions!' },
+  { title: <br /> },
+  { title: 'We host potlucks, movie nights, game nights and much more!' },
+];
 
 class Home extends Component {
   render() {
@@ -59,22 +81,13 @@ class Home extends Component {
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
           </div>
           <div className="sceTitle">
-            {text}
+            {SCEtitle}
           </div>
 
 
 
 
           <div class="contentContainer">
-
-            <div className="eventsContainer">
-              <Container>
-                <h1>------------------------</h1>
-                <h1>EVENTS!!!!</h1>
-                <h1>------------------------</h1>
-
-              </Container>
-            </div>
             {/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
@@ -146,8 +159,7 @@ class Home extends Component {
                     })}
                   </div>
                   <div className="linksIcons">
-                    <a href='https://www.linkedin.com/company/sjsu-software
-          -computer-engineering-society/'>
+                    <a href='https://www.linkedin.com/company/sjsu-software-computer-engineering-society/'>
                       <svg width='50px' height='50px' viewBox='0 0 24 24'>
                         <path
                           fill='#484848'
@@ -183,13 +195,49 @@ class Home extends Component {
               </Row>
             </div>
             <div className="clubRoomContainer">
-              <img class="groupPictureStyles" src='images/emptyclubroom.png'
-                alt="officersPic" style={{ width: '105%' }}></img>
+              {/* <img class="clubRoomStyles" src='images/emptyclubroom_cropped.png'
+                alt="clubroom" style={{ width: '105%' }}>
+              </img> */}
+              <Row>
+                <Col>
+                  <div class="subBlock-one">Company Events</div>
+                  <div class="subBlockOne-text">
+                    {subBlockOneText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                </Col>
+                <Col>
+                  <div class="subBlock-two">Workshops</div>
+                  <div class="subBlockOne-text">
+                    {subBlockTwoText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+
+                </Col> <Col>
+                  <div class="subBlock-three">Social Events</div>
+                  <div class="subBlockOne-text">
+                    {subBlockThreeText.map((title) => {
+                      return (
+                        <p className="text">{title.title}</p>
+                      );
+                    })}
+                  </div>
+                </Col>
+              </Row>
+
             </div>
 
 
             <Footer />
           </div>
+
+
         </div>
       </>
     );
