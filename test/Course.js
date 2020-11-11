@@ -2,6 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = "test";
 const Course = require("../api/main_endpoints/models/Course");
+const Lesson = require("../api/main_endpoints/models/Lesson")
 const User = require("../api/main_endpoints/models/User");
 // Require the dev-dependencies
 const chai = require("chai");
@@ -53,12 +54,15 @@ describe("Course", () => {
 
   const token = "";
   let courseId = "";
+  const DUMMY_LESSON = { 
+    title: "intro to react",
+    link: "https://google.com"
+  };
   const VALID_NEW_COURSE = {
     title: "intro to react",
     author: "Big Chungus",
     description: "a workshop about react",
-    // what do i need to include here? should i import lessons?
-    lessons: [hooks, frontend],
+    lessons: [DUMMY_LESSON],
     link: "https://google.com"
   };
   const COURSE_WITH_INVALID_TOKEN = {
@@ -74,8 +78,7 @@ describe("Course", () => {
     title: "intro to react",
     author: "Big Chungus",
     description: "a workshop about react",
-    // what do i need to include here? should i import lessons?
-    lessons: [hooks, frontend],
+    lessons: [DUMMY_LESSON],
     link: "https://google.com"
   };
 
@@ -124,6 +127,7 @@ describe("Course", () => {
       expect(getCoursesResponse[0].description).to.equal(
         VALID_NEW_COURSE.description
       );
+      console.log(lessons);
       expect(getCoursesResponse[0].lessons).to.equal(VALID_NEW_COURSE.lessons);
       expect(getCoursesResponse[0].link).to.equal(VALID_NEW_COURSE.link);
       courseId = getCoursesResponse[0]._id;
