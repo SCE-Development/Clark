@@ -45,42 +45,41 @@ export default function CoursesList() {
     title: 'SCE Courses Page'
   };
 
-  // TODO: redirect to the link
   function handleClick(clickedCourse) {
     return (
       <BrowserRouter>
         <LessonsPage lessons={clickedCourse.lessons}/>
       </BrowserRouter>
-    ); 
+    );
   }
 
   return (
-      <div className='courses-background'>
-        <Header {...headerProp} />
-        <Container className='course-cards mb-5 mt-5'>
-          {coursesList.length > 0 ? (
-            groupCards(coursesList).map((group, index) => {
-              return (
-                <Row key={index}> 
-                  {group.map((course, index) => {
-                    {++cardNum}
-                    return (
-                      <Col xs='12' md='4'key={index}>
-                        <CourseCard 
-                          cardNum={cardNum}
-                          handleClick={() => handleClick(course)}
-                          {...course}
-                          />
-                      </Col>
-                    );
-                  })}
-                </Row>
-              );
-            })
-          ) : (
-            <h1>No courses published yet!</h1>
-          )}
-        </Container>
-      </div>
+    <div className='courses-background'>
+      <Header {...headerProp} />
+      <Container className='course-cards mb-5 mt-5'>
+        {coursesList.length > 0 ? (
+          groupCards(coursesList).map((group, index) => {
+            return (
+              <Row key={index}>
+                {group.map((course, index) => {
+                  {++cardNum;}
+                  return (
+                    <Col xs='12' md='4'key={index}>
+                      <CourseCard
+                        cardNum={cardNum}
+                        handleClick={() => handleClick(course)}
+                        {...course}
+                      />
+                    </Col>
+                  );
+                })}
+              </Row>
+            );
+          })
+        ) : (
+          <h1>No courses published yet!</h1>
+        )}
+      </Container>
+    </div>
   );
 }

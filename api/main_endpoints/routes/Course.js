@@ -98,7 +98,8 @@ router.post('/deleteCourse', (req, res) => {
       res.status(OK).json({ course: 'course successfully deleted' });
     })
     .catch(error => {
-      res.status(BAD_REQUEST).send({ error, message: 'deleting course failed' });
+      res.status(BAD_REQUEST)
+        .send({ error, message: 'deleting course failed' });
     });
 });
 

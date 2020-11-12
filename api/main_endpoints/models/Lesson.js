@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const { DEFAULT_PHOTO_URL } = require("../../util/constants");
+const { DEFAULT_PHOTO_URL } = require('../../util/constants');
 
 const LessonSchema = new Schema(
   {
@@ -13,7 +13,7 @@ const LessonSchema = new Schema(
       required: true
     }
   },
-  { collection: "Lesson" }
+  { collection: 'Lesson' }
 );
 
-module.exports = mongoose.model("Lesson", LessonSchema);
+module.exports = mongoose.model('Lesson', LessonSchema);

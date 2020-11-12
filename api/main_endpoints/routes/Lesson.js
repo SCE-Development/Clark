@@ -89,7 +89,8 @@ router.post('/deleteLesson', (req, res) => {
       res.status(OK).json({ lesson: 'lesson successfully deleted' });
     })
     .catch(error => {
-      res.status(BAD_REQUEST).send({ error, message: 'deleting lesson failed' });
+      res.status(BAD_REQUEST)
+        .send({ error, message: 'deleting lesson failed' });
     });
 });
 

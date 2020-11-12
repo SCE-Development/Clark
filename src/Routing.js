@@ -120,13 +120,13 @@ export default function Routing({ appProps }) {
       redirect: '/login',
       inAdminNavbar: true
     },
-    { 
+    {
       Component: CoursesPage,
       path: '/courses',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
       redirect: '/login'
     },
-    { 
+    {
       Component: CoursesManager,
       path: '/courses-manager',
       allowedIf: userIsOfficerOrAdmin,
