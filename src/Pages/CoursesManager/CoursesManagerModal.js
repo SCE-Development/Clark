@@ -25,7 +25,8 @@ function CoursesManagerModal(props) {
   const [author, setAuthor] = useState(props.author);
   const [mdLink, setMdLink] = useState(props.link);
   const [description, setDescription] = useState(props.description);
-  const [imagePreviewURL, setImagePreviewURL] = useState(props.imageURL ? props.imageURL : NOT_FOUND_PNG);
+  const [imagePreviewURL, setImagePreviewURL] = useState(
+    props.imageURL ? props.imageURL : NOT_FOUND_PNG);
   const [confirmationModal, setConfirmationModal] = useState(false);
   const maxDescLength = 200;
   const lessons = props.lessons ? props.lessons : [];
@@ -41,28 +42,28 @@ function CoursesManagerModal(props) {
       .catch(() => validURL = false);
     setImagePreviewURL(validURL ? url : NOT_FOUND_PNG);
   }
-  
+
   function validateFields() {
     return (
-      title !== undefined && 
-      author !== undefined && 
+      title !== undefined &&
+      author !== undefined &&
       description !== undefined &&
       mdLink !== undefined &&
-      title !== '' && 
-      author !== '' && 
+      title !== '' &&
+      author !== '' &&
       description !== '' &&
       mdLink !== '' &&
       description.length <= maxDescLength
     );
   }
-  
+
   async function handleDelete() {
     await props.handleDelete({ _id: props._id });
     await props.getCourses();
     toggleConfirmationModal();
     props.toggle();
   }
-  
+
   const confirmationModalProps = {
     headerText: `Delete ${props.title} ?`,
     bodyText: 'The course will be gone forever if you do this.',
@@ -106,7 +107,7 @@ function CoursesManagerModal(props) {
       description,
       lessons,
       mdLink,
-      imageURL: 
+      imageURL:
         imagePreviewURL === NOT_FOUND_PNG ? undefined : imagePreviewURL
     };
 
@@ -141,7 +142,7 @@ function CoursesManagerModal(props) {
                         <InputGroupAddon addonType="prepend">
                           {constraint.inputTitle}
                         </InputGroupAddon>
-                        <Input 
+                        <Input
                           type={constraint.type}
                           defaultValue={constraint.defaultValue}
                           placeholder={constraint.placeholder}
@@ -156,7 +157,7 @@ function CoursesManagerModal(props) {
           })}
           <Row className="container">
             <Label>Course Description*</Label>
-            <Input 
+            <Input
               type='textarea'
               rows={5}
               placeholder='Enter Course Description'
@@ -164,8 +165,12 @@ function CoursesManagerModal(props) {
               onChange={e => setDescription(e.target.value)}
               maxLength={maxDescLength}
             />
-            <p className='text-muted float-right'>
-              <span>{description ? description.length : 0}</span>/{maxDescLength} characters
+            <p
+              className='text-muted float-right'
+            >
+              <span>
+                {description ? description.length : 0}
+              </span>/{maxDescLength} characters
             </p>
           </Row>
           <Row className="modal-event-image">
@@ -177,8 +182,8 @@ function CoursesManagerModal(props) {
               onChange={e => handleURLChange(e.target.value)}
             />
             <p className="modal-image-container">
-              <img 
-                src={imagePreviewURL} 
+              <img
+                src={imagePreviewURL}
                 alt="course"
               />
             </p>
@@ -200,7 +205,7 @@ function CoursesManagerModal(props) {
             onClick={handleCourseCreation}
             disabled={!validateFields()}
           >
-            {modalState === modalStates.SUBMIT 
+            {modalState === modalStates.SUBMIT
               ? 'Create New Course'
               : 'Submit Changes'}
           </Button>

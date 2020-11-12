@@ -6,10 +6,10 @@ import { groupCards } from '../Courses/CoursesPage';
 import Header from '../../Components/Header/Header';
 import { modalStates } from '../../Enums';
 import {Row, Col} from 'reactstrap';
-import { 
-  getAllCourses, 
-  createNewCourse, 
-  editCourse, 
+import {
+  getAllCourses,
+  createNewCourse,
+  editCourse,
   deleteCourse
 } from '../../APIFunctions/Courses';
 
@@ -19,7 +19,7 @@ function CoursesManager(props) {
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState(modalStates.SUBMIT);
   let cardNum = 0;
-  
+
   const headerProp = {
     title: 'Courses Manager'
   };
@@ -45,10 +45,9 @@ function CoursesManager(props) {
   async function handleSubmit(_id, course) {
     if (modalState === modalStates.SUBMIT) {
       const response = await createNewCourse(course, props.user.token);
-      if (response.error) 
+      if (response.error)
         alert('Course can\'t be added!');
-    } 
-    else if (modalState === modalStates.EDIT) 
+    } else if (modalState === modalStates.EDIT)
       await editCourse( { ...course, _id }, props.user.token);
   }
 
@@ -65,20 +64,20 @@ function CoursesManager(props) {
         <Button className="create-course" onClick={createCourse}>
           Add a course
         </Button>
-        {showModal && 
+        {showModal &&
           <CoursesManagerModal
-           showModal={showModal}
-           toggle={toggle}
-           handleDelete={course => {
-             deleteCourse(course, props.user.token);
-             window.location.reload();
-           }}
-           handleSubmit={handleSubmit}
-           getCourses={getCourses}
-           modalState={modalState}
-           getAllCourses={getAllCourses}
-           token={props.user.token}
-           {...course}
+            showModal={showModal}
+            toggle={toggle}
+            handleDelete={course => {
+              deleteCourse(course, props.user.token);
+              window.location.reload();
+            }}
+            handleSubmit={handleSubmit}
+            getCourses={getCourses}
+            modalState={modalState}
+            getAllCourses={getAllCourses}
+            token={props.user.token}
+            {...course}
           />
         }
         {coursesList.length ? (
@@ -87,13 +86,13 @@ function CoursesManager(props) {
         {coursesList.length > 0 ? (
           groupCards(coursesList).map((group, index) => {
             return (
-              <Row key={index}> 
+              <Row key={index}>
                 {group.map((course, index) => {
-                  {++cardNum}
+                  {++cardNum;}
                   return (
                     <Col xs='12' md='4' key={index}>
-                      <CourseCard 
-                        cardNum={cardNum} 
+                      <CourseCard
+                        cardNum={cardNum}
                         handleClick={() => toggleEditCourse(course)}
                         {...course}
                       />

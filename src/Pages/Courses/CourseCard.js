@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import './courses-page.css';
-import { 
-  Card, 
-  CardText, 
-  CardImg, 
-  CardBody, 
-  CardSubtitle, 
+import {
+  Card,
+  CardText,
+  CardImg,
+  CardBody,
+  CardSubtitle,
   CardTitle,
   Popover,
   PopoverBody,
@@ -23,11 +23,11 @@ function CourseCard(props) {
     description,
     handleClick,
     lessons
-  } = props;  
+  } = props;
 
   return (
     <React.Fragment>
-      <NavLink 
+      <NavLink
         to={{
           pathname: '/courses/lesson',
           state: { lessons }
@@ -36,20 +36,20 @@ function CourseCard(props) {
           color:'black',
           textDecoration:'none'
         }}
-        
+
       >
-        <Card 
+        <Card
           id={`card${cardNum}`}
-          className='shadow h-100' 
+          className='shadow h-100'
           width='3em'
           onClick={() => {
             if(handleClick) {
               handleClick();
-            } 
+            }
           }}
-          onMouseEnter={() => setShowPopOver(true)} 
+          onMouseEnter={() => setShowPopOver(true)}
           onMouseLeave={() => setShowPopOver(false)}
-          onMouseOver={() => setShowPopOver(true)} 
+          onMouseOver={() => setShowPopOver(true)}
         >
           <CardImg top height='50%'src={imageURL} alt='Card image' />
           <CardBody className='pb-0'>
@@ -59,10 +59,10 @@ function CourseCard(props) {
           </CardBody>
         </Card>
       </NavLink>
-      <Popover 
-        placement='right' 
+      <Popover
+        placement='right'
         fade={true}
-        isOpen={showPopOver} 
+        isOpen={showPopOver}
         target={`card${cardNum}`}
       >
         <PopoverHeader>
@@ -71,10 +71,9 @@ function CourseCard(props) {
           </div>
         </PopoverHeader>
         <PopoverBody>
-          {console.log(lessons[0])}
           {lessons[0].data.length > 0 ? (
             <React.Fragment>
-              <h6>This course contains the following lessons:</h6> 
+              <h6>This course contains the following lessons:</h6>
               {lessons[0].data.map((article, index) => {
                 return (
                   <h6 key={index}>
