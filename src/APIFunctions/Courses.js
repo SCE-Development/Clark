@@ -8,18 +8,18 @@ import { GENERAL_API_URL } from '../config/config.json';
  * request or the list of courses
  */
 export async function getAllCourses() {
-    let status = new ApiResponse();
-    await axios.get(GENERAL_API_URL + '/course/getCourses')
-        .then(res => status.responseData = res.data)
-        .catch(error => {
-            status.responseData = error;
-            status.error = true;
-        });
-    return status;
+  let status = new ApiResponse();
+  await axios.get(GENERAL_API_URL + '/course/getCourses')
+    .then(res => status.responseData = res.data)
+    .catch(error => {
+      status.responseData = error;
+      status.error = true;
+    });
+  return status;
 }
 
 function checkImageURL(url) {
-    return (url !== null && url) ? url : 'https://rb.gy/gnrdda';
+  return (url !== null && url) ? url : 'https://rb.gy/gnrdda';
 }
 
 /**
@@ -36,18 +36,18 @@ function checkImageURL(url) {
  * request or the response data
  */
 export async function createNewCourse(newCourse, token) {
-    let status = new ApiResponse();
-    const course = {
-        title: newCourse.title,
-        author: newCourse.author,
-        description: newCourse.description,
-        imageURL: checkImageURL(newCourse.imageURL)
-    };
-    await axios
-        .post(GENERAL_API_URL + '/course/createCourse', { token, ...course })
-        .then(res => status.responseData = res.data)
-        .catch(() => status.error = true);
-    return status;
+  let status = new ApiResponse();
+  const course = {
+    title: newCourse.title,
+    author: newCourse.author,
+    description: newCourse.description,
+    imageURL: checkImageURL(newCourse.imageURL)
+  };
+  await axios
+    .post(GENERAL_API_URL + '/course/createCourse', { token, ...course })
+    .then(res => status.responseData = res.data)
+    .catch(() => status.error = true);
+  return status;
 }
 
 /**
@@ -64,20 +64,20 @@ export async function createNewCourse(newCourse, token) {
  * request or the response data
  */
 export async function editCourse(courseToUpdate, token) {
-    let status = new ApiResponse();
-    const course = {
-        _id: courseToUpdate._id,
-        title: courseToUpdate.title,
-        author: courseToUpdate.author,
-        description: courseToUpdate.description,
-        lessons: courseToUpdate.lessons,
-        imageURL: checkImageURL(courseToUpdate.imageURL),
-    };
-    await axios 
-        .post(GENERAL_API_URL + '/course/editCourse', { token, ...course })
-        .then(res => status.responseData = res.data)
-        .catch(() => status.error = true);
-    return status;
+  let status = new ApiResponse();
+  const course = {
+    _id: courseToUpdate._id,
+    title: courseToUpdate.title,
+    author: courseToUpdate.author,
+    description: courseToUpdate.description,
+    lessons: courseToUpdate.lessons,
+    imageURL: checkImageURL(courseToUpdate.imageURL),
+  };
+  await axios
+    .post(GENERAL_API_URL + '/course/editCourse', { token, ...course })
+    .then(res => status.responseData = res.data)
+    .catch(() => status.error = true);
+  return status;
 }
 
 /**
@@ -90,11 +90,11 @@ export async function editCourse(courseToUpdate, token) {
  * request
  */
 export async function deleteCourse(courseToDelete, token) {
-    let status = new ApiResponse();
-    await axios 
-        .post(GENERAL_API_URL + '/course/deleteCourse', 
-            { token, id: courseToDelete._id })
-        .then(res => status.responseData = res.data)
-        .catch(() => status.error = true)
-    return status;
+  let status = new ApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/course/deleteCourse',
+      { token, id: courseToDelete._id })
+    .then(res => status.responseData = res.data)
+    .catch(() => status.error = true);
+  return status;
 }
