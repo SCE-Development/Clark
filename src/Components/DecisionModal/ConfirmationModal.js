@@ -9,6 +9,7 @@ export default function ConfirmationModal(props) {
   const confirmButtonColor = props.confirmColor || 'danger';
   const confirmButtonCSS = props.confirmButtonCSS || '';
   const cancelButtonCSS = props.cancelButtonCSS || '';
+  const confirmButtonDisabled = props.confirmButtonDisabled || false;
   return (
     <Modal isOpen={open} toggle={toggle}>
       <ModalHeader toggle={toggle}>{headerText}</ModalHeader>
@@ -16,6 +17,7 @@ export default function ConfirmationModal(props) {
       <ModalFooter>
         <Button
           color={confirmButtonColor}
+          disabled={confirmButtonDisabled}
           onClick={handleConfirmation}
           id={confirmButtonCSS}
         >

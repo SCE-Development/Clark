@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import EditButtonModal from "./EditButtonModal";
+import "./InventoryPage.css";
 export default class InventoryRow extends Component {
   constructor(props){
     super(props);
@@ -10,8 +11,10 @@ export default class InventoryRow extends Component {
     return ( 
       <tr>
         <td>
-          {/* {this.props.image} */}
-          Yuhhh
+          <img
+            className='item-image'
+            src={this.props.picture} alt=''
+          />
         </td>
         <td>
           {this.props.name}
@@ -29,8 +32,25 @@ export default class InventoryRow extends Component {
           {this.props.description}
         </td>
         <td>
-          <EditButtonModal 
+          <EditButtonModal
+            key={this.props.index}
+            updateItemName = {this.props.updateItemName}
+            updateItemPrice = {this.props.updateItemPrice}
+            updateItemStock = {this.props.updateItemStock}
+            updateItemCategory = {this.props.updateItemCategory}
+            updateItemDescription = {this.props.updateItemDescription}
+            updateItemPicture = {this.props.updateItemPicture}
+            handleAddItem = {this.props.handleAddItem}
+            checkAllInputs = {this.props.checkAllInputs}
+            //Name, price, stock, descri, picture
+            name={this.props.name}
+            price={this.props.price}
+            stock={this.props.stock}
+            category={this.props.category}
+            description={this.props.description}
+            picture={this.props.picture}
             handleEditItem = {this.props.handleEditItem}
+            handleDeleteItem = {this.props.handleDeleteItem}
           />
         </td>
       </tr>   

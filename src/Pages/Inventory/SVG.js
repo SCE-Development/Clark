@@ -2,9 +2,9 @@ import React from 'react';
 
 export function editSymbol() {
   return (
-    <svg width='50' height='50' viewBox='0 0 24 24'>
+    <svg width='50' height='50' viewBox='0 0 24 24' fill="currentColor" xmlns="http://www.w3.org/2000/svg">
       <path
-        fill='#000000'
+         fillRule="evenodd"
         d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 
         3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 
         2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 
@@ -16,21 +16,29 @@ export function editSymbol() {
 
 export function addSymbol() {
   return (
-    <svg width='50' height='50' viewBox='0 0 24 24'>
-      <path
-        fillRule="evenodd"
-        d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 
-        1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 
-        2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
-      />
-      <path 
-        fillRule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 
-        0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.
-        5 0 0 1 8 4z"
-      />
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fillRule="evenodd" d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
     </svg>
   );
 }
+
+// export function addSymbol() {
+//   return (
+//     <svg width='50' height='50' viewBox='0 0 24 24'>
+//       <path
+//         fillRule="evenodd"
+//         d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 
+//         1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 
+//         2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+//       />
+//       <path 
+//         fillRule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 
+//         0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.
+//         5 0 0 1 8 4z"
+//       />
+//     </svg>
+//   );
+// }
 
 export function trashcanSymbol() {
   return (

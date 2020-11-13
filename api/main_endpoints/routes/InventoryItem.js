@@ -73,7 +73,9 @@ router.post('/addItem', (req, res) => {
 
   InventoryItem.create(newItem, (error, post) => {
     if (error) {
-      return res.sendStatus(BAD_REQUEST);
+
+      // return res.sendStatus(BAD_REQUEST);
+      return res.status(BAD_REQUEST).send(error);
     }
     return res.json(post);
   });

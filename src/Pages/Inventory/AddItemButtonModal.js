@@ -13,19 +13,26 @@ export default function AddItemButtonModal(props) {
     bodyText:
       <React.Fragment>
         <AddItemForm 
-          updateItemName = {props.updateItemName}
-          updateItemQuantity = {props.updateItemQuantity}
-          updateItemDescription = {props.updateItemDescription}
-          updateItemImage = {props.updateItemImage}
-          name = {props.name}
-          quantity = {props.quantity}
-          description = {props.description}
+            updateItemName = {props.updateItemName}
+            updateItemPrice = {props.updateItemPrice}
+            updateItemStock = {props.updateItemStock}
+            updateItemCategory = {props.updateItemCategory}
+            updateItemDescription = {props.updateItemDescription}
+            updateItemPicture = {props.updateItemPicture}
+            handleAddItem = {props.handleAddItem}
+            name = {props.name}
+            price = {props.price}
+            stock = {props.stock}
+            category = {props.category}
+            description = {props.description}
+            picture = {props.picture}
         />
       </React.Fragment>,
     confirmText: 'Confirm',
     confirmColor: 'primary',
     cancelText: 'Cancel',
     confirmButtonCSS: 'inv-conf-button',
+    confirmButtonDisabled: props.checkAllInputs(),
     toggle: () => setToggle(!toggle),
     handleConfirmation: () => {
       setToggle(!toggle);

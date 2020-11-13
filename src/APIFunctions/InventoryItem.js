@@ -27,7 +27,7 @@ export async function addItem(reqItemToAdd, token){
     picture: reqItemToAdd.picture
   };
   await axios
-    .post(GENERAL_API_URL+'/InventoryItem/addItems', {token, ...itemToAdd})
+    .post(GENERAL_API_URL+'/InventoryItem/addItem', {token, ...itemToAdd})
     .then(res =>{
       status.responseData = res.data;
     })
@@ -49,7 +49,7 @@ export async function editItem(reqItemToEdit, token){
     picture: reqItemToEdit.picture
   };
   await axios
-    .post(GENERAL_API_URL+'/InventoryItem/editItems', {token, ...itemToEdit})
+    .post(GENERAL_API_URL+'/InventoryItem/editItem', {token, ...itemToEdit})
     .then(res =>{
       status.responseData = res.data;
     })
@@ -61,9 +61,9 @@ export async function editItem(reqItemToEdit, token){
 }
 
 export async function deleteItem(reqItemToDelete, token){
-  let status = ApiResponse();
+  let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/InventoryItem/deleteItems',
+    .post(GENERAL_API_URL+'/InventoryItem/deleteItem',
       { token, name: reqItemToDelete.name })
     .then(res => {
       status.responseData = res.data;
