@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '../../Components/Header/Header';
 import AddItemButtonModal from "./AddItemButtonModal";
 import InventoryRow from "./InventoryRow";
-import {Table} from "reactstrap";
+import {Alert, Table} from "reactstrap";
 import { validateImageURL } from '../../APIFunctions/Image.js';
 import {getAllItems, addItem, editItem, deleteItem} from "../../APIFunctions/InventoryItem";
 import "./InventoryPage.css";
@@ -12,6 +12,8 @@ export default class InventoryPage extends Component {
     constructor(props) {
     super(props);
     this.state = {
+      alertVisible: false,
+      alertMsg: "",
       name:"",
       price:0,
       stock:0,
@@ -34,6 +36,10 @@ export default class InventoryPage extends Component {
     if(!res.error){
       this.setState({inventoryItems: res.responseData});
     };
+  }
+
+  updateAlertVisible = () =>{
+    this.setState({alertVisible: !this.state.alertVisible});
   }
 
   updateItemName = (e) => {
@@ -112,13 +118,15 @@ export default class InventoryPage extends Component {
       this.updateItemList();
       const alertText = "Add was successful!";
       window.setTimeout(() => {
-        alert(alertText);
+        // alert(alertText);
+        this.renderAlert(alertText);
       }, 500);
     }
     else{
       const alertText = "Something went wrong!";
       window.setTimeout(() => {
-        alert(alertText);
+        // alert(alertText);
+        this.renderAlert(alertText);
       }, 500);
     }
   }
@@ -139,7 +147,8 @@ export default class InventoryPage extends Component {
       this.updateItemList();
       const alertText = "Edit was successful!";
       window.setTimeout(() => {
-        alert(alertText);
+        // alert(alertText);
+        this.renderAlert(alertText);
       }, 500);
     }
   }
@@ -153,13 +162,20 @@ export default class InventoryPage extends Component {
       this.updateItemList();
       const alertText = "Delete was successful!";
       window.setTimeout(() => {
-        alert(alertText);
+        // alert(alertText);
+        this.renderAlert(alertText);
       }, 500);
     }
   }
 
   handleClear = () => {
     this.setState({name: "", price: 0, stock: 0, category: "", description: "", picture: ""});
+  }
+
+  renderAlert = (msg) =>{
+    this.setState({alertMsg: msg});
+    if(this.state.alertVisible === false)
+      this.updateAlertVisible();
   }
 
   render() { 
@@ -169,9 +185,10 @@ export default class InventoryPage extends Component {
       <div>
         <Header {...headerProps} />
         <div className="spacer" />
+        <Alert isOpen={this.state.alertVisible} toggle={this.updateAlertVisible}>{this.state.alertMsg}</Alert>
         <div className="container">
           <div className="search-bar-container">
-            <input className="input-inventory" placeholder="Hi"/>
+            <input className="inventory-search-bar" placeholder="Start typing to filter..."/>
             <AddItemButtonModal 
               updateItemName = {this.updateItemName}
               updateItemPrice = {this.updateItemPrice}
@@ -191,16 +208,16 @@ export default class InventoryPage extends Component {
             />
           </div>
           <div className="table-container">
-            <Table>
+            <Table className = "inventory-table">
               <thead>
                 <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Description</th>
-                  <th>Edit</th>
+                  <th className="row-image">Image</th>
+                  <th className="row-name">Name</th>
+                  <th className="row-category">Category</th>
+                  <th className="row-price">Price</th>
+                  <th className="row-quantity">Quantity</th>
+                  <th className="row-description">Description</th>
+                  <th className="row-edit">Edit</th>
                 </tr>
               </thead>
               <tbody>
