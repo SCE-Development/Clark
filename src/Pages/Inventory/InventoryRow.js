@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import EditButtonModal from "./EditButtonModal";
+import EditButtonModal from "./EditItem/EditButtonModal";
 import "./InventoryPage.css";
 export default class InventoryRow extends Component {
   constructor(props){

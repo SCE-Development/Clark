@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './InventoryPage.css';
+import '../InventoryPage.css';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-// import EditItemForm from "./EditItemForm.js";
-const svg = require('./SVG');
+import EditItemForm from "./EditItemForm.js";
+const svg = require('../SVG');
 
 
 export default function EditButtonModal(props) {
@@ -39,21 +39,21 @@ export default function EditButtonModal(props) {
       <Modal isOpen={toggle} toggle={toggleModal}>
         <ModalHeader toggle={toggleModal}>Edit Item</ModalHeader>
         <ModalBody>
-          {/* <EditItemForm 
-            updateItemName = {props.updateItemName}
-            updateItemPrice = {props.updateItemPrice}
-            updateItemStock = {props.updateItemStock}
-            updateItemCategory = {props.updateItemCategory}
-            updateItemDescription = {props.updateItemDescription}
-            updateItemPicture = {props.updateItemPicture}
-            handleAddItem = {props.handleAddItem}
-            name = {props.name}
-            price = {props.price}
-            stock = {props.stock}
-            category = {props.category}
-            description = {props.description}
-            picture = {props.picture}
-          /> */}
+          <EditItemForm 
+            // updateItemName = {props.updateItemName}
+            // updateItemPrice = {props.updateItemPrice}
+            // updateItemStock = {props.updateItemStock}
+            // updateItemCategory = {props.updateItemCategory}
+            // updateItemDescription = {props.updateItemDescription}
+            // updateItemPicture = {props.updateItemPicture}
+            // handleAddItem = {props.handleAddItem}
+            // name = {props.name}
+            // price = {props.price}
+            // stock = {props.stock}
+            // category = {props.category}
+            // description = {props.description}
+            // picture = {props.picture}
+          />
         </ModalBody>
         <ModalFooter>
           <Button

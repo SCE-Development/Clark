@@ -23,7 +23,7 @@ export default function AddItemForm(props) {
           </FormText>
         </Label>
         <Input 
-          invalid={isNaN(props.price)}
+          invalid={isNaN(props.price) || props.price<0}
           placeholder=""
           value={props.price}
           onChange={(e) => props.updateItemPrice(e.target.value)}
@@ -37,7 +37,7 @@ export default function AddItemForm(props) {
           </FormText>
         </Label>
         <Input
-          invalid={isNaN(props.stock)}
+          invalid={isNaN(props.stock) || props.stock<0}
           placeholder=""
           value={props.stock}
           onChange={(e) => props.updateItemStock(e.target.value)}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Header from '../../Components/Header/Header';
-import AddItemButtonModal from "./AddItemButtonModal";
+import AddItemButtonModal from "./AddItem/AddItemButtonModal";
 import InventoryRow from "./InventoryRow";
 import {Alert, Table} from "reactstrap";
 import { validateImageURL } from '../../APIFunctions/Image.js';
@@ -14,6 +14,7 @@ export default class InventoryPage extends Component {
     this.state = {
       alertVisible: false,
       alertMsg: "",
+      alertColor:"",
       name:"",
       price:0,
       stock:0,
@@ -117,21 +118,25 @@ export default class InventoryPage extends Component {
       this.handleClear();
       this.updateItemList();
       const alertText = "Add was successful!";
+      const alertColor = "success";
       window.setTimeout(() => {
         // alert(alertText);
-        this.renderAlert(alertText);
+        this.renderAlert(alertText, alertColor);
       }, 500);
     }
     else{
-      const alertText = "Something went wrong!";
+      const alertText = "Something went wrong with add! Please make sure your item doesn't already exist in the table!";
+      const alertColor = "danger";
       window.setTimeout(() => {
         // alert(alertText);
-        this.renderAlert(alertText);
+        this.renderAlert(alertText, alertColor);
       }, 500);
     }
   }
 
-  handleEditItem = async () => {
+  handleEditItem = async (index) => {
+    console.log(this.state.inventoryItems);
+    //can't change name
     const reqItemToEdit = {
       name: this.state.name,
       price: this.state.price,
@@ -161,9 +166,10 @@ export default class InventoryPage extends Component {
     if(!res.error){
       this.updateItemList();
       const alertText = "Delete was successful!";
+      const alertColor = "success";
       window.setTimeout(() => {
         // alert(alertText);
-        this.renderAlert(alertText);
+        this.renderAlert(alertText, alertColor);
       }, 500);
     }
   }
@@ -172,7 +178,8 @@ export default class InventoryPage extends Component {
     this.setState({name: "", price: 0, stock: 0, category: "", description: "", picture: ""});
   }
 
-  renderAlert = (msg) =>{
+  renderAlert = (msg, color) =>{
+    this.setState({alertColor: color || "success"});
     this.setState({alertMsg: msg});
     if(this.state.alertVisible === false)
       this.updateAlertVisible();
@@ -185,7 +192,7 @@ export default class InventoryPage extends Component {
       <div>
         <Header {...headerProps} />
         <div className="spacer" />
-        <Alert isOpen={this.state.alertVisible} toggle={this.updateAlertVisible}>{this.state.alertMsg}</Alert>
+        <Alert color={this.state.alertColor} isOpen={this.state.alertVisible} toggle={this.updateAlertVisible}>{this.state.alertMsg}</Alert>
         <div className="container">
           <div className="search-bar-container">
             <input className="inventory-search-bar" placeholder="Start typing to filter..."/>
@@ -240,7 +247,7 @@ export default class InventoryPage extends Component {
                       category={item.category}
                       description={item.description}
                       picture={item.picture}
-                      handleEditItem = {this.handleEditItem}
+                      handleEditItem = {this.handleEditItem.bind(this, index)}
                       handleDeleteItem = {this.handleDeleteItem}
                     />
                   );

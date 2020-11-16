@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './InventoryPage.css';
+import '../InventoryPage.css';
 import ConfirmationModal from
-  '../../Components/DecisionModal/ConfirmationModal.js';
+  '../../../Components/DecisionModal/ConfirmationModal.js';
 import AddItemForm from "./AddItemForm";
-const svg = require('./SVG');
+const svg = require('../SVG');
 
 
 export default function AddItemButtonModal(props) {
