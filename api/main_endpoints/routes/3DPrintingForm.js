@@ -15,6 +15,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require('../util/logging-helpers');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 router.post('/submit', (req, res) => {
   const data = {
@@ -60,7 +61,7 @@ router.post('/GetForm', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   PrintingForm3D.deleteOne(
@@ -83,7 +84,7 @@ router.post('/delete', (req, res) => {
 router.post('/edit', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const query = { email: req.body.email, date: req.body.date };
