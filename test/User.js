@@ -181,7 +181,7 @@ describe('User', () => {
   describe('/POST edit', () => {
     it('Should return statusCode 403 if no token is passed in', async () => {
       const user = {
-        queryEmail: 'a@b.c'
+        email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
         '/api/User/edit', user);
@@ -191,7 +191,7 @@ describe('User', () => {
     it('Should return statusCode 401 if an invalid ' +
        'token was passed in', async () => {
       const user = {
-        queryEmail: 'a@b.c',
+        email: 'a@b.c',
         token: 'Invalid token'
       };
       const result = await test.sendPostRequest(
@@ -201,7 +201,7 @@ describe('User', () => {
 
     it('Should return statusCode 404 if no user was found', async () => {
       const user = {
-        queryEmail: 'invalid@b.c',
+        email: 'invalid@b.c',
         token: token
       };
       setTokenStatus(true);
