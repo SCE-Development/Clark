@@ -20,6 +20,7 @@ export default class EmailTemplate extends Component {
       users: '',
       memberEmail: [],
       officerEmail: [],
+      alumniEmail: [],
       allEmail: [],
     };
   }
@@ -47,18 +48,23 @@ export default class EmailTemplate extends Component {
       let allUsers = filterUsers(this.state.users, 0);
       let officerEmail = [],
         memberEmail = [],
+        alumniEmail = [],
         allEmail = [];
       // forEach loop to push emails to their respective arrays
       allUsers.forEach(function(item) {
-        // Access level >=2 is officers+, Access level >=0 but <2 are members
-        if (item.accessLevel >= 2) {
+        // Access level >=3 is officers+, Access level >=1 but <2 are members
+        // Access level == 0 is alumni
+        if (item.accessLevel >= 3) {
           allEmail.push(item.email);
           officerEmail.push(item.email);
-        } else if (item.accessLevel >= 0) {
+        } else if (item.accessLevel >= 1) {
           allEmail.push(item.email);
           memberEmail.push(item.email);
+        } else if (item.accessLevel == 0) {
+          allEmail.push(item.email);
+          alumniEmail.push(item.email);
         }
-      }, this.setState({ officerEmail, memberEmail, allEmail }));
+      }, this.setState({ officerEmail, memberEmail, allEmail, alumniEmail }));
     } catch (error) {
       const alertText =
         'Looks like there was a problem with fetching the users. ' +

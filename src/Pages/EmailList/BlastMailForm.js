@@ -16,6 +16,7 @@ export default function BlastMailForm(props) {
           <option value="">Choose...</option>
           <option value="Members">Members</option>
           <option value="Officers">Officers</option>
+          <option value="Alumni">Alumni</option>
           <option value="Everyone">Everyone</option>
         </Input>
       </FormGroup>

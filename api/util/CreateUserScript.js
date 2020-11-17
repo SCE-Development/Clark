@@ -65,6 +65,10 @@ inquirer
         {
           name: 'Banned',
           value: membershipState.BANNED
+        },
+        {
+          name: 'Alumni',
+          value: membershipState.ALUMNI
         }
       ],
       filter: function(val) {
