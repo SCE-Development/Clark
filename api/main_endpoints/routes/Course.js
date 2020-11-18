@@ -38,6 +38,7 @@ router.post('/createCourse', (req, res) => {
     title: req.body.title,
     author: req.body.author,
     description: req.body.description,
+    lessons: req.body.lessons,
     link: req.body.link
   });
 
@@ -59,6 +60,7 @@ router.post('/editCourse', (req, res) => {
     title,
     author,
     description,
+    lessons,
     link
   } = req.body;
   Course.findOne({ _id: req.body.id })
@@ -66,6 +68,7 @@ router.post('/editCourse', (req, res) => {
       course.title = title || course.title;
       course.author = author || course.author;
       course.description = description || course.description;
+      course.lessons = lessons || course.lessons;
       course.link = link || course.link;
       course
         .save()

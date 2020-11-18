@@ -2,7 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = "test";
 const Course = require("../api/main_endpoints/models/Course");
-const Lesson = require("../api/main_endpoints/models/Lesson")
+const Lesson = require("../api/main_endpoints/models/Lesson");
 const User = require("../api/main_endpoints/models/User");
 // Require the dev-dependencies
 const chai = require("chai");
@@ -25,6 +25,11 @@ const {
 
 chai.should();
 chai.use(chaiHttp);
+
+const objectsEqual = (o1, o2) => {
+  Object.keys(o1).length === Object.keys(o2).length &&
+    Object.keys(o1).every(p => o1[p] === o2[p]);
+};
 
 describe("Course", () => {
   before(done => {
@@ -54,7 +59,7 @@ describe("Course", () => {
 
   const token = "";
   let courseId = "";
-  const DUMMY_LESSON = { 
+  const DUMMY_LESSON = {
     title: "intro to react",
     link: "https://google.com"
   };
@@ -127,8 +132,7 @@ describe("Course", () => {
       expect(getCoursesResponse[0].description).to.equal(
         VALID_NEW_COURSE.description
       );
-      console.log(lessons);
-      expect(getCoursesResponse[0].lessons).to.equal(VALID_NEW_COURSE.lessons);
+      expect(getCoursesResponse[0].lessons).to.eql(VALID_NEW_COURSE.lessons);
       expect(getCoursesResponse[0].link).to.equal(VALID_NEW_COURSE.link);
       courseId = getCoursesResponse[0]._id;
     });
@@ -175,7 +179,7 @@ describe("Course", () => {
       expect(getCoursesResponse[0].description).to.equal(
         UPDATED_COURSE.description
       );
-      expect(getCoursesResponse[0].lessons).to.equal(UPDATED_COURSE.lessons);
+      expect(getCoursesResponse[0].lessons).to.eql(UPDATED_COURSE.lessons);
       expect(getCoursesResponse[0].link).to.equal(UPDATED_COURSE.link);
     });
   });
