@@ -56,6 +56,7 @@ const subBlockOneText = [
   { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' },
   { title: <br /> },
+  { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' }
 ];
 
@@ -442,6 +443,8 @@ return (
           </div >
         </div >
       </>
+    );
+  }
 }
 
 export default Home;
