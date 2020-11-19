@@ -323,6 +323,7 @@
 }
 
 .textBlock1-title, .textBlock2-title{
+<<<<<<< HEAD
   font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: xx-large;
@@ -368,6 +369,9 @@
 
 .textBlock1-title{
   font-family: 'Merriweather', serif;
+=======
+  font-family: 'Merriweather', sans-serif;
+>>>>>>> Adds pictures, animations and descriptions
   text-align: left;
   font-size: xx-large;
   font-weight: 600;
@@ -376,6 +380,7 @@
   margin-bottom: 5%;
 }
 .textBlock2-title{
+<<<<<<< HEAD
   margin-left: 15%;
 }
 .textBlock1-text{
@@ -462,6 +467,9 @@
   margin-top: 15%;
   margin-bottom: 5%;
   text-align: left;
+=======
+  margin-left: 15%;
+>>>>>>> Adds pictures, animations and descriptions
 }
 
 .leftalign{
@@ -661,7 +669,7 @@
   
 }
 
-.textBlock2-text, .linksIcons{
+.textBlock2-text{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: medium;
