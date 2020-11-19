@@ -133,10 +133,6 @@ const icons = [
 ];
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> Creates parallax scrolling effect for homepage
 // useEffect(() => {
 //   Aos.init({ duration: 2000 });
 // });
@@ -246,23 +242,13 @@ class Home extends Component {
                       Want to know more?
                     </span>
 
-                  </h1>
-                  <div class="textBlock2-text">
-                    {blockTwoText.map((title) => {
-                      return (
-                        <p className="blockText">{title.title}</p>
-                      );
-                    })}
-                  </div>
-                  <div className="icons-container">
-                    {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
 
-                          <svg className='block2-icons' viewBox='0 0 24 24'>
-                            <path fill='#484848' d={icon.vector} />
-                          </svg>
-                        </a>
+                      <svg className='block2-icons' viewBox='0 0 24 24'>
+                        <path fill='#484848' d={icon.vector} />
+                      </svg>
+                    </a>
                       );
                     })}
                   </div>
