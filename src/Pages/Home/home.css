@@ -100,6 +100,9 @@
   background-size: 100%;
   background-repeat: no-repeat;
   height: 100%;
+  /* filter: blur(8px);
+  -webkit-filter: blur(8px) */
+  
 }
 
 .subBlock-title{
@@ -261,21 +264,17 @@
   display:block;
 }
 
-.textBlock1-title{
-  font-family: 'Merriweather', serif;
+.textBlock1-title, .textBlock2-title{
+  font-family: 'Merriweather', sans-serif;
   text-align: left;
   font-size: xx-large;
+  font-weight: 600;
   margin-left:5%;
   margin-top: 15%;
   margin-bottom: 5%;
 }
 .textBlock2-title{
-  font-family: 'Merriweather', serif;
-  text-align: left;
-  font-size: xx-large;
   margin-left: 15%;
-  margin-top: 15%;
-  margin-bottom: 5%;
 }
 .textBlock1-text{
   font-family: 'Montserrat', sans-serif;
@@ -285,7 +284,7 @@
   
 }
 
-.textBlock2-text, .linksIcons{
+.textBlock2-text{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: medium;
@@ -293,9 +292,16 @@
   
 }
 
-.text{
-  margin-top: 0%;
-  padding: 0%;
+.blockText{
+  line-height: 0.4vw;
+}
+
+.subBlockText{
+  font-family: 'Karla', sans-serif;
+  margin: auto;
+  margin-left: 5vw;
+  font-size: 1.5vw;
+  font-weight: 400;
 }
 .outer-div
 {
