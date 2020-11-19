@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;1,300&&display=swap');
+
+/* body{
+    margin: 20px 0px 20px 20px;
+    align-content: center;
+} */
+
+section{
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-top: 20px;
+}
+
+h1{ 
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color:#124559;
+    font-size: 40px;
+}
+
+
+.card{
+    max-width: 250px;
+    max-height: 325px;
+    min-height: 325px;
+    display: block;
+    background-color: #ff930a;
+    border-radius: 9px;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 10px 2px grey;
+    color: whitesmoke;
+    font-family: 'Montserrat', sans-serif;  
+    border: transparent;
+}
+
+.top-card{
+    /* background-color: palevioletred; */
+    background-image: url('images/realpic2.png');
+    background-position: center;
+    background-size: cover;
+    max-width: 250px;
+    max-height: 250px;
+    min-height: 250px;
+    opacity:100%;
+    border-radius: 9px 9px 0px 0px;
+}
+
+.bottom-card{
+    max-width: 250px;
+    max-height: 250px;
+    min-height: 250px;
+    background-color: #0f80aa;
+    color: #f3f3f3;
+    opacity: 5%;
+    border-radius: 9px 9px 0px 0px;
+    padding: 10px 10px 0px 10px;
+}
+
+.bottom-card:hover{
+    opacity: 80%;
+}
+
+.card:hover{
+    transform: scale(1.05);
+}
+
+.grid-container{
+    display: grid;
+    display: -ms-grid;
+    grid-auto-columns: 1fr;
+    -ms-grid-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    -ms-grid-rows: auto auto;
+    grid-template-rows: auto auto;
+    grid-row-gap: 14px;
+    grid-column-gap: 14px;
+}
+
+.card-container{
+    text-align: left;
+    padding-left: 10px;
+    padding-top: 5px;
+}
+
+.card-container h4{
+    font-weight: light;
+    font-size: 18px;
+}
+
+.card-container h3{
+    font-weight: bold;
+    font-size: 24px;
+
+}
+.circle{
+    width: 115px;
+    height: 115px;
+    max-width: none;
+    min-height: auto;
+    min-width: 115px;
+    border-radius: 100%;
+    background-image: url('images/groot.png');
+    background-position: center;
+    background-size: cover;
+    transition: all .6s ease-in-out;
+}
+
+.circle-container{
+    background-color: #386783;
+    width: 115px;
+    height: 115px;
+    min-height: auto;
+    min-width: 115px;
+    border-radius: 100%;
+    color: #f3f3f3;
+    text-align: center !important;
+    opacity: 0%;
+    line-height: 115px !important;
+}
+
+.circle-container p {
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.circle-container:hover{
+    opacity: 80%;
+}
+
+.officer-container{
+    padding-top: 50px;
+}
+
+.grid-container-circle{
+    display: grid;
+    margin-bottom: 20px;
+    grid-row-gap: 40px;
+    -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+    grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+    -ms-grid-rows: minmax ( 2px, 0.7fr) minmax ( 1px, 0.7fr) minmax ( 2px, 0.7fr);
+    grid-template-rows: minmax (2px, 0.7fr) minmax (1px, 0.7fr) minmax (2px, 0.7fr);
+    border-radius: 0px;
+}
+
+@media (max-width: 576px) {
+    .grid-container{
+        -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+    }
+
+    .grid-container-circle{
+        -ms-grid-columns: 0.7fr 0.7fr;
+        grid-template-columns: 0.7fr 0.7fr;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .grid-container{
+        -ms-grid-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+    }
+    .grid-container-circle{
+        -ms-grid-columns: 0.7fr 0.7fr 0.7fr;
+        grid-template-columns: 0.7fr 0.7fr 0.7fr;
+    }
+}
+
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .grid-container{
+        -ms-grid-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .grid-container-circle{
+        -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr;
+        grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr;
+    }
+}
+
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .grid-container{
+        -ms-grid-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .grid-container-circle{
+        -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+        grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+    }
+    
+}
+
+
+@media (min-width: 1200px) {
+    .grid-container{
+        -ms-grid-columns: 1fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .grid-container-circle{
+        -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+        grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+    }
+}

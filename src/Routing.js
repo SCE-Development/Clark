@@ -24,6 +24,7 @@ import Team from './Pages/TheTeam/TheTeam.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
+import AboutUs from './Pages/AboutUs/AboutUs.js';
 import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
 
@@ -123,7 +124,8 @@ export default function Routing({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' }
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: AboutUs, path: '/aboutUs'}
   ];
   return (
     <Router>
