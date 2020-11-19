@@ -134,7 +134,6 @@ const icons = [
 ];
 
 
-
 // useEffect(() => {
 //   Aos.init({ duration: 2000 });
 // });
@@ -156,6 +155,7 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
+
           </div>
 
           <div className="sceTitle" data-aos="fade-out" >
@@ -432,34 +432,32 @@ class Home extends Component {
                   <div class="subBlockOne-text">
                     {subBlockOneText.map((title) => {
                       return (
-                        <p className="text">{title.title}</p>
-                      );
-                    })}
-                  </div>
-                </Col>
-                <Col>
-                  <div class="subBlock-two">Workshops</div>
-                  <div class="subBlockOne-text">
-                    {subBlockTwoText.map((title) => {
-                      return (
-                        <p className="text">{title.title}</p>
+                        <a key={index} href={icon.link}>
+
+                          <svg className='block2-icons' viewBox='0 0 24 24'>
+                            <path fill='#484848' d={icon.vector} />
+                          </svg>
+                        </a>
                       );
                     })}
                   </div>
 
-                </Col> <Col>
-                  <div class="subBlock-three">Social Events</div>
-                  <div class="subBlockOne-text">
-                    {subBlockThreeText.map((title) => {
-                      return (
-                        <p className="text">{title.title}</p>
-                      );
-                    })}
+                </Col>
+                <Col>
+                  <div data-aos="fade-up" data-aos="fade-down" >
+                    <img className="block-images"
+                      src='images/Tesla2.jpg'
+                      alt="blockOneImg"
+                      style={{ width: '45vw', marginRight: '15%' }}></img>
                   </div>
                 </Col>
               </Row>
-
             </div>
+
+            <div className="block-space"></div>
+
+
+            {/* </div> */}
 
 
             <Footer />
