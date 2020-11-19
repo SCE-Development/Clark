@@ -1,6 +1,8 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Karla&family=Open+Sans&display=swap');
+
 .home{
   position:absolute;
   width:100%;
@@ -65,7 +67,7 @@
 }
 
 .clubRoomContainer{
-  background-image: url("./emptyclubroom_cropped.png"); 
+  background-image: url("./emptyclubroom_blurred.jpg"); 
   position: relative;
   text-align: center;
   color: white;
@@ -75,15 +77,31 @@
   background-size: 100%;
   background-repeat: no-repeat;
   height: 100%;
+  /* filter: blur(8px);
+  -webkit-filter: blur(8px) */
+  
+}
+
+.imgClub{
+  filter: blur(8px);
+  -webkit-filter: blur(8px)
+}
+
+.clubRoomContainerText{
+  -webkit-filter: blur(0px);
+    -moz-filter: blur(0px);
+    -o-filter: blur(0px);
+    -ms-filter: blur(13px);
+    filter: blur(0px);
 }
 
 
-.subBlock-one{
+.subBlock-title{
   scroll-behavior: [ smooth ];
   color: white;
   position: relative;
   font-family: 'Montserrat';
-  font-size: 2vw;
+  font-size: 2.5vw;
   font-weight: bolder !important; 
   text-shadow:  0 1px 10px #777;
   z-index: 0;
@@ -91,13 +109,38 @@
   text-align: left;
   direction: ltr;
   left: 40%;
-  top: 5vw;
+  top: 7vw;
+  margin-top: 4vw;
+  margin-left: 5vw;
+
 }
 
-.subBlockOne-text{
+.subBlock-buttons{
+  margin-top: 15vw;
+  top: 16vw;
+  left: 40%;
+  margin-left: 20vw;
+}
+
+.block-images{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 6px 6px 6px 6px rgba(0, 0, 0, 0.19);
+
+}
+
+.block2-icons {
+  width: 3vw;
+  height: 3vw;
+  margin: 0.5vw;
+}
+
+.icons-container{
+  margin-left: 15%;
+}
+
+.subBlock-text{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
-  font-size: medium;
+  font-size: 3vw;
   direction: ltr;
   left: 40%;
   top: 10vw;
@@ -157,21 +200,17 @@
   overflow: hidden;
 }
 
-.textBlock1-title{
-  font-family: 'Merriweather', serif;
+.textBlock1-title, .textBlock2-title{
+  font-family: 'Merriweather', sans-serif;
   text-align: left;
   font-size: xx-large;
+  font-weight: 600;
   margin-left:5%;
   margin-top: 15%;
   margin-bottom: 5%;
 }
 .textBlock2-title{
-  font-family: 'Merriweather', serif;
-  text-align: left;
-  font-size: xx-large;
   margin-left: 15%;
-  margin-top: 15%;
-  margin-bottom: 5%;
 }
 .textBlock1-text{
   font-family: 'Montserrat', sans-serif;
@@ -216,7 +255,7 @@
   
 }
 
-.textBlock2-text, .linksIcons{
+.textBlock2-text{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: medium;
@@ -224,9 +263,16 @@
   
 }
 
-.text{
-  margin-top: 0%;
-  padding: 0%;
+.blockText{
+  line-height: 0.4vw;
+}
+
+.subBlockText{
+  font-family: 'Karla', sans-serif;
+  margin: auto;
+  margin-left: 5vw;
+  font-size: 1.5vw;
+  font-weight: 400;
 }
 .outer-div
 {
