@@ -10,7 +10,7 @@ import './home.css';
 import Footer from '../../Components/Footer/Footer.js';
 // import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 // import Iframe from 'react-iframe';
-import { Row, Col, Container } from 'reactstrap';
+import { Row, Col, Container, Button } from 'reactstrap';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -154,6 +154,7 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
+
           </div>
 
           <div className="sceTitle" data-aos="fade-out" >
