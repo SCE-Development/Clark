@@ -1,12 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700&display=swap');
+
 .footer-text p {
   color: #909090;
+  font-family: 'Montserrat';
 }
 
 .footer-text b {
   color:#E1F5FE;
+  font-family: 'Montserrat';
 }
 
 .footer-text a {
   color: #E1F5FE;
   text-decoration: none;
+  font-family: 'Montserrat';
 }
