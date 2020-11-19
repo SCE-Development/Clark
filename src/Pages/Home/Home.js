@@ -138,14 +138,17 @@ const icons = [
 ];
 
 const subBlockOneText = [
-  { title: 'As an SCE member, you will get insider scoops & ' },
-  { title: 'opportunities. We have conducted events with ' },
-  { title: 'companies like IBM, Tesla, SAP and more!' }
+  { title: 'As an SCE member, you will get inside scoops ' },
+  { title: '& opportunities.' },
+  { title: <br /> },
+  { title: 'We have conducted events with companies like' },
+  { title: 'IBM, Tesla, SAP and more!' }
 ];
 
 const subBlockTwoText = [
   { title: 'Want to learn new technical skills? Or even develop ' },
   { title: 'your interpersonal skills?' },
+  { title: <br /> },
   { title: 'SCE hosts a range of free workshops taught by peers,' },
   { title: 'our alumnis and SJSU faculty!' },
 ];
@@ -365,7 +368,7 @@ return (
                   <div class="textBlock1-text">
                     {blockOneText.map((title) => {
                       return (
-                        <p className="text">{title.title}</p>
+                        <p className="blockText">{title.title}</p>
                       );
                     })}
                   </div>
@@ -476,6 +479,11 @@ return (
               </Row>
             </div>
             <div className="block-space"></div>
+
+            <div className="block-space"></div>
+
+
+{/* </div> */ }
 
 
 {/* </div> */ }
