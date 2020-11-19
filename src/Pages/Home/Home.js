@@ -54,6 +54,7 @@ const subBlockOneText = [
   { title: 'As an SCE member, you will get inside scoops ' },
   { title: '& opportunities.' },
   { title: <br /> },
+  { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' }
 ];
 
@@ -134,8 +135,12 @@ const icons = [
 
 // useEffect(() => {
 //   Aos.init({ duration: 2000 });
-Aos.init({ duration: 2000 });
-return (
+// });
+
+class Home extends Component {
+  render() {
+    Aos.init({ duration: 2000 });
+    return (
       <>
         <div className='home'>
 
@@ -172,11 +177,23 @@ return (
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
+            <div className="block-space"></div>
+
+            <div className="block-one">
+              <Row>
+                <Col>
+                  <div data-aos="fade-up"
+                    data-aos="fade-down">
+                    <img className="block-images"
+                      src='images/resume-workshop.jpg'
+                      alt="blockOneImg"
+                      style={{ width: '40vw', marginLeft: '15%' }}></img>
+                  </div>
                 </Col>
                 <Col className="block-styles">
                   <h1 className="leftalign">
                     <span className="textBlock1-title">
-            Need a place to get things done?</span>
+                      Need a place to get things done?</span>
                   </h1>
                   <div class="textBlock1-text" >
                     {blockOneText.map((title) => {
@@ -196,7 +213,7 @@ return (
                 <Row>
                   <Col className="column" xs={3}>
                     <div class="subBlock-title" data-aos="fade-up">
-            Tech Events
+                      Tech Events
                     </div>
                     <div class="subBlockContainer" data-aos="fade-left">
                       {subBlockOneText.map((title) => {
@@ -208,7 +225,7 @@ return (
                   </Col>
                   <Col xs={3} >
                     <div class="subBlock-title" data-aos="fade-up">
-            Workshops
+                      Workshops
                     </div>
                     <div class="subBlockContainer" data-aos="fade-up">
                       {subBlockTwoText.map((title) => {
@@ -220,7 +237,7 @@ return (
                   </Col>
                   <Col xs={3}>
                     <div class="subBlock-title" data-aos="fade-right">
-            Social Events
+                      Social Events
                     </div>
                     <div class="subBlockContainer" data-aos="fade-right">
                       {subBlockThreeText.map((title) => {
@@ -238,7 +255,7 @@ return (
                 <Col className="block-styles">
                   <h1>
                     <span class="textBlock2-title">
-            Want to know more?
+                      Want to know more?
                     </span>
 
                   </h1>
@@ -277,13 +294,15 @@ return (
             <div className="block-space"></div>
 
 
-            {/* </div> */ }
+            {/* </div> */}
 
 
-<Footer />
+            <Footer />
           </div >
         </div >
       </>
+    );
+  }
 }
 
 export default Home;
