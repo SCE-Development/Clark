@@ -154,6 +154,7 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
+
           </div>
 
           <div className="sceTitle" data-aos="fade-out" >
@@ -176,10 +177,7 @@ class Home extends Component {
               {' '}
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
-
-            <div className="block-space"></div>
-
-            <div className="block-one">
+            {/* <div className='outer-div'>
               <Row>
                 <Col>
                   <div data-aos="fade-up"
@@ -258,16 +256,6 @@ class Home extends Component {
                       Want to know more?
                     </span>
 
-                  </h1>
-                  <div class="textBlock2-text">
-                    {blockTwoText.map((title) => {
-                      return (
-                        <p className="blockText">{title.title}</p>
-                      );
-                    })}
-                  </div>
-                  <div className="icons-container">
-                    {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
 
