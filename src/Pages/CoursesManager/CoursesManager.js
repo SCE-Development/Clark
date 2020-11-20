@@ -27,6 +27,7 @@ function CoursesManager(props) {
     const data = await getAllCourses();
     setCoursesList(data.responseData);
   }
+
   useEffect(() => {
     getCourses();
   }, []);
