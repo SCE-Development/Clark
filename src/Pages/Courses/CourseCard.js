@@ -11,7 +11,6 @@ import {
   PopoverBody,
   PopoverHeader
 } from 'reactstrap';
-import { NavLink } from 'react-router-dom';
 
 function CourseCard(props) {
   const [showPopOver, setShowPopOver] = useState(false);
@@ -27,38 +26,22 @@ function CourseCard(props) {
 
   return (
     <React.Fragment>
-      <NavLink
-        to={{
-          pathname: '/courses/lesson',
-          state: { lessons }
-        }}
-        style={{
-          color:'black',
-          textDecoration:'none'
-        }}
-
+      <Card
+        id={`card${cardNum}`}
+        className='shadow h-100'
+        width='3em'
+        onClick={handleClick}
+        onMouseEnter={() => setShowPopOver(true)}
+        onMouseLeave={() => setShowPopOver(false)}
+        onMouseOver={() => setShowPopOver(true)}
       >
-        <Card
-          id={`card${cardNum}`}
-          className='shadow h-100'
-          width='3em'
-          onClick={() => {
-            if(handleClick) {
-              handleClick();
-            }
-          }}
-          onMouseEnter={() => setShowPopOver(true)}
-          onMouseLeave={() => setShowPopOver(false)}
-          onMouseOver={() => setShowPopOver(true)}
-        >
-          <CardImg top height='50%'src={imageURL} alt='Card image' />
-          <CardBody className='pb-0'>
-            <CardTitle><h2><b>{title}</b></h2></CardTitle>
-            <CardSubtitle>By: {author}</CardSubtitle>
-            <CardText>{description}</CardText>
-          </CardBody>
-        </Card>
-      </NavLink>
+        <CardImg top height='50%'src={imageURL} alt='Card image' />
+        <CardBody className='pb-0'>
+          <CardTitle><h2><b>{title}</b></h2></CardTitle>
+          <CardSubtitle>By: {author}</CardSubtitle>
+          <CardText>{description}</CardText>
+        </CardBody>
+      </Card>
       <Popover
         placement='right'
         fade={true}
@@ -71,13 +54,13 @@ function CourseCard(props) {
           </div>
         </PopoverHeader>
         <PopoverBody>
-          {lessons[0].data.length > 0 ? (
+          {lessons.length > 0 ? (
             <React.Fragment>
               <h6>This course contains the following lessons:</h6>
-              {lessons[0].data.map((article, index) => {
+              {lessons.map((article, index) => {
                 return (
                   <h6 key={index}>
-                    ✔️ {article.name}
+                    ✔️ {article.title}
                   </h6>
                 );
               })}

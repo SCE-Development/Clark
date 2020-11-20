@@ -23,7 +23,6 @@ function CoursesManagerModal(props) {
   const { showModal, toggle, modalState } = props;
   const [title, setTitle] = useState(props.title);
   const [author, setAuthor] = useState(props.author);
-  const [mdLink, setMdLink] = useState(props.link);
   const [description, setDescription] = useState(props.description);
   const [imagePreviewURL, setImagePreviewURL] = useState(
     props.imageURL ? props.imageURL : NOT_FOUND_PNG);
@@ -48,11 +47,9 @@ function CoursesManagerModal(props) {
       title !== undefined &&
       author !== undefined &&
       description !== undefined &&
-      mdLink !== undefined &&
       title !== '' &&
       author !== '' &&
       description !== '' &&
-      mdLink !== '' &&
       description.length <= maxDescLength
     );
   }
@@ -88,15 +85,6 @@ function CoursesManagerModal(props) {
         placeholder: 'e.g. John Smith',
         handleChange: e => setAuthor(e.target.value)
       }
-    ],
-    [
-      {
-        inputTitle: 'Link to md file*',
-        type: 'text',
-        defaultValue: props.link,
-        placeholder: 'e.g. google.com',
-        handleChange: e => setMdLink(e.target.value)
-      }
     ]
   ];
 
@@ -106,7 +94,6 @@ function CoursesManagerModal(props) {
       author,
       description,
       lessons,
-      mdLink,
       imageURL:
         imagePreviewURL === NOT_FOUND_PNG ? undefined : imagePreviewURL
     };

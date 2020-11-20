@@ -13,6 +13,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require ('../util/logging-helpers');
+const { isValidObjectId } = require('mongoose');
 
 router.get('/getCourses', (req, res) => {
   Course.find()
@@ -60,16 +61,16 @@ router.post('/editCourse', (req, res) => {
     title,
     author,
     description,
-    lessons,
-    imageURL
+    imageURL,
+    lessons
   } = req.body;
   Course.findOne({ _id })
     .then(course => {
       course.title = title || course.title;
       course.author = author || course.author;
-      course.lessons = lessons || course.lessons;
       course.description = description || course.description;
       course.imageURL = imageURL || course.imageURL;
+      course.lessons = lessons || course.lessons;
       course
         .save()
         .then(ret => {
@@ -100,6 +101,42 @@ router.post('/deleteCourse', (req, res) => {
     .catch(error => {
       res.status(BAD_REQUEST)
         .send({ error, message: 'deleting course failed' });
+    });
+});
+
+router.post('/editLesson', (req, res) => {
+  const {
+    courseId,
+    newLessons
+  } = req.body;
+
+  Course.updateOne(
+    { _id:courseId },
+    { $set: { lessons: newLessons }})
+    .then(ret => {
+      res.status(OK).json({ ret, course: 'course updated successfully' });
+    })
+    .catch(error => {
+      res.status(BAD_REQUEST).send({
+        error,
+        message: 'Lesson was not updated'
+      });
+    });
+});
+
+router.get('/getLessons', (req, res) => {
+  const { courseId } = req.query;
+  
+  Course.find({ _id:courseId })
+    .then(items => res.status(OK).send(items[0].lessons))
+    .catch(error => {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'course/getLessons',
+        errorDescription: error
+      };
+      addErrorLog(info);
+      res.status(BAD_REQUEST).send({ error, message: 'Getting lesson failed' });
     });
 });
 

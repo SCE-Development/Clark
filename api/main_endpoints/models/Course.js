@@ -16,12 +16,12 @@ const CourseSchema = new Schema(
       type: String,
       required: true
     },
+    imageURL: {
+      type: String
+    },
     lessons: {
       type: Array,
       default: []
-    },
-    imageURL: {
-      type: String
     }
   },
   { collection: 'Course' }
