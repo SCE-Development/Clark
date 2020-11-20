@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Col, Container, Row } from 'reactstrap';
 import './courses-page.css';
 import CourseCard from './CourseCard';
 import Header from '../../Components/Header/Header';
 import { getAllCourses } from '../../APIFunctions/Courses';
-import LessonsPage from '../Lessons/LessonsPage';
 
 // Group together every 3 course cards
 export function groupCards(courses) {
@@ -30,7 +29,9 @@ export function groupCards(courses) {
 
 export default function CoursesList() {
   const [coursesList, setCoursesList] = useState({});
+  const history = useHistory();
   let cardNum = 0;
+
 
   async function getCourses() {
     const data = await getAllCourses();
@@ -46,11 +47,9 @@ export default function CoursesList() {
   };
 
   function handleClick(clickedCourse) {
-    return (
-      <BrowserRouter>
-        <LessonsPage lessons={clickedCourse.lessons}/>
-      </BrowserRouter>
-    );
+    history.push('/courses/lesson', {
+      _id: clickedCourse._id
+    });
   }
 
   return (
@@ -63,6 +62,8 @@ export default function CoursesList() {
               <Row key={index}>
                 {group.map((course, index) => {
                   {++cardNum;}
+                  // eslint-disable-next-line
+                  // {console.log(course);}
                   return (
                     <Col xs='12' md='4'key={index}>
                       <CourseCard

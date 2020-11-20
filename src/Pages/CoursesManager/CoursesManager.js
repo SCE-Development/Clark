@@ -28,6 +28,7 @@ function CoursesManager(props) {
     const data = await getAllCourses();
     setCoursesList(data.responseData);
   }
+
   useEffect(() => {
     getCourses();
   }, []);
@@ -80,7 +81,7 @@ function CoursesManager(props) {
             {...course}
           />
         }
-        {coursesList.length ? (
+        {coursesList.length > 0 ? (
           <h4 className='mt-2 mb-4'>Click a card to edit or delete it</h4>
         ) : null}
         {coursesList.length > 0 ? (

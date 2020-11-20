@@ -132,6 +132,12 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
       inAdminNavbar: true
+    },
+    {
+      Component: LessonsPage,
+      path: '/courses/lesson',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login'
     }
   ];
   const signedOutRoutes = [
@@ -139,8 +145,7 @@ export default function Routing({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' },
-    { Component: LessonsPage, path: '/courses/lesson' }
+    { Component: VerifyEmailPage, path: '/verify' }
   ];
   return (
     <Router>

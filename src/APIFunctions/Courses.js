@@ -98,3 +98,40 @@ export async function deleteCourse(courseToDelete, token) {
     .catch(() => status.error = true);
   return status;
 }
+
+/**
+ * Edit the lessons object in a course
+ * @param {number} _id - The course id in which the lesson belongs to
+ * @param {Object} editedLessons - The updated object of lessons
+ * @param {string} token - The user's jwt token for authentication
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
+export async function editLessons(_id, newLessons) {
+  let status = new ApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/course/editLesson', {
+      newLessons,
+      courseId:_id
+    })
+    .then(res => status.responseData = res.data)
+    .catch(() => status.error = true);
+  return status;
+}
+
+/**
+ * Edit the lessons object in a course
+ * @param {number} _id - The course id in which the lesson belongs to
+ * @param {Object} editedLessons - The updated object of lessons
+ * @param {string} token - The user's jwt token for authentication
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
+export async function getAllLessons(_id) {
+  let status = new ApiResponse();
+  await axios
+    .get(GENERAL_API_URL + '/course/getLessons', { params: { courseId:_id } })
+    .then(res => status.responseData = res.data)
+    .catch(() => status.error = true);
+  return status;
+}
