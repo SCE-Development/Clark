@@ -41,10 +41,13 @@ export default function Login(props) {
       <Row className='form-card-login'>
         <form onSubmit={handleSubmit}>
           <img id='img' alt='sce logo' src='images/SCE-glow.png' />
-          {errorMsg && <span>{errorMsg}</span>}
+
           {fields.map((field, index) => {
             return <LoginInput key={index} field={field} />;
           })}
+
+          {errorMsg && <h6 className = 'login-error'>{errorMsg}*</h6>}
+
           <button type='submit' id='loginBtn'>
             Login
           </button>

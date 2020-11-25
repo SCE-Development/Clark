@@ -6,7 +6,8 @@ const proxyquire = require('proxyquire');
 
 const requestWithToken = {
   body: {
-    token: 'hi thai'
+    token: 'hi thai',
+    accessLevel: 1
   }
 };
 const requestWithoutToken = {
@@ -41,9 +42,9 @@ describe('TokenFunctions', () => {
 
   describe('checkIfTokenValid', () => {
     it('Should return the decoded response ', done => {
-      jwtStub.yields(false, 'decoded response');
+      jwtStub.yields(false, requestWithToken.body);
       expect(tokenFunctions.checkIfTokenValid(requestWithToken))
-        .to.equal('decoded response');
+        .to.equal(true);
       done();
     });
     it('Should return false if a token field ' +
