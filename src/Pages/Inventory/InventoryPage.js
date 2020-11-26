@@ -1,42 +1,56 @@
 import React, { Component } from 'react';
 import Header from '../../Components/Header/Header';
-import AddItemButtonModal from "./AddItem/AddItemButtonModal";
-import InventoryRow from "./InventoryRow";
-import {Alert, Table} from "reactstrap";
+import AddItemButtonModal from './AddItem/AddItemButtonModal';
+import InventoryRow from './InventoryRow';
+import {Alert, Table} from 'reactstrap';
 import { validateImageURL } from '../../APIFunctions/Image.js';
-import {getAllItems, addItem, editItem, deleteItem} from "../../APIFunctions/InventoryItem";
-import "./InventoryPage.css";
-// import { waitForTick } from 'pdf-lib';
+import {getAllItems, addItem, editItem, deleteItem} from
+  '../../APIFunctions/InventoryItem';
+import './InventoryPage.css';
 
 export default class InventoryPage extends Component {
-    constructor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       alertVisible: false,
-      alertMsg: "",
-      alertColor:"",
-      name:"",
-      price:0,
-      stock:0,
-      category:"",
-      description:"",
-      picture:"",
+      alertMsg: '',
+      alertColor: '',
+      name: '',
+      price: 0,
+      stock: 0,
+      category: '',
+      description: '',
+      picture: '',
       inventoryItems:[],
-      invalidPicture: "https://user-images.githubusercontent.com/25803515/99110346-1ce92000-259f-11eb-97df-7ed5c2284ef3.png",
+      allInventoryItems:[],
+      invalidPicture: 'https://user-images.githubusercontent.com/' +
+        '25803515/99110346-1ce92000-259f-11eb-97df-7ed5c2284ef3.png',
+      searchInput: '',
     };
   }
 
   componentDidMount = async () => {
-    console.log("component did mount poggers");
     this.updateItemList();
   }
 
+  // Get items from db and update list
   updateItemList = async () =>{
     const res = await getAllItems();
-    console.log("res here: ", res);
     if(!res.error){
-      this.setState({inventoryItems: res.responseData});
-    };
+      this.setState({allInventoryItems: res.responseData,
+        inventoryItems: res.responseData});
+    }
+  }
+
+  // Used in search function, only search by name
+  filterItemList = async () => {
+    if(this.state.searchInput === ''){
+      this.setState({inventoryItems: this.state.allInventoryItems});
+    } else{
+      const filteredItems = await this.state.allInventoryItems.filter(item =>
+        item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()));
+      this.setState({inventoryItems: filteredItems});
+    }
   }
 
   updateAlertVisible = () =>{
@@ -45,64 +59,50 @@ export default class InventoryPage extends Component {
 
   updateItemName = (e) => {
     this.setState({name: e});
-    // console.log("state of name", this.state.name);
   }
 
   updateItemPrice = (e) => {
     this.setState({price: e});
-    // console.log("state of description", this.state.description);
   }
 
   updateItemStock = (e) => {
     this.setState({stock: e});
-    // console.log("state of quantity", this.state.quantity);
   }
 
   updateItemCategory = (e) => {
     this.setState({category: e});
-    // console.log("state of description", this.state.description);
   }
 
   updateItemDescription = (e) => {
     this.setState({description: e});
-    // console.log("state of description", this.state.description);
   }
 
   updateItemPicture = async (e) => {
-    this.setState({picture: e})
+    this.setState({picture: e});
   }
 
-  //Boolean for disabled prop of Confirm button in AddItemButtonModal
+  updateLoading = (e) => {
+    this.setState({loading: e});
+  }
+
+  updateSearchInput = (e) => {
+    this.setState({searchInput: e}, this.filterItemList);
+  }
+
+  // Boolean for disabled prop of Confirm button in AddItemButtonModal
   checkAllInputs = () =>{
-    return (this.state.name==="" || isNaN(this.state.price) || isNaN(this.state.stock) || 
-            this.state.category==="" || this.state.description==="");
+    return (this.state.name==='' || isNaN(this.state.price) ||
+      isNaN(this.state.stock) || this.state.category==='' ||
+      this.state.description==='');
   }
-  
+
+  // Function for add item form/modal
   handleAddItem = async () => {
-    console.log("Hi how are you today adding item i see good job");
-    console.log("state of name", this.state.name);
-    console.log("state of price", this.state.price);
-    console.log("state of stock", this.state.stock);
-    console.log("state of category", this.state.category);
-    console.log("state of description", this.state.description);
-    console.log("state of picture", this.state.picture);
-
-    let validURL = false;
     try {
-      await validateImageURL(this.state.picture)
-      validURL = true
-    } catch (error) {
-      validURL = false;
-    }
-
-    if(validURL === true){
-      console.log("True");
-    }
-    else{
-      console.log("False");
+      await validateImageURL(this.state.picture);
+    } catch (error) { // If invalid picture URL, use the default picture
       this.state.picture = this.state.invalidPicture;
     }
-
     const reqItemToAdd = {
       name: this.state.name,
       price: this.state.price,
@@ -110,108 +110,128 @@ export default class InventoryPage extends Component {
       category: this.state.category,
       description: this.state.description,
       picture: this.state.picture
-    }
+    };
     const res = await addItem(reqItemToAdd, this.props.user.token);
-    
-    console.log("Res: ", res);
     if(!res.error){
       this.handleClear();
       this.updateItemList();
-      const alertText = "Add was successful!";
-      const alertColor = "success";
+      const alertText = 'Add was successful!';
+      const alertColor = 'success';
       window.setTimeout(() => {
-        // alert(alertText);
         this.renderAlert(alertText, alertColor);
       }, 500);
-    }
-    else{
-      const alertText = "Something went wrong with add! Please make sure your item doesn't already exist in the table!";
-      const alertColor = "danger";
+    } else{
+      const alertText = 'Something went wrong with add! Please make sure ' +
+        'your item doesn\'t already exist in the table!';
+      const alertColor = 'danger';
       window.setTimeout(() => {
-        // alert(alertText);
         this.renderAlert(alertText, alertColor);
       }, 500);
     }
   }
 
-  handleEditItem = async (index) => {
-    console.log(this.state.inventoryItems);
-    //can't change name
+  // Function for edit item form/modal in table
+  handleEditItem = async () => {
     const reqItemToEdit = {
       name: this.state.name,
       price: this.state.price,
       stock: this.state.stock,
       category: this.state.category,
       description: this.state.description,
-      picture: this.state.picture    
-    }
-    console.log("Edit this item: ", reqItemToEdit);
+      picture: this.state.picture || this.state.invalidPicture
+    };
     const res = await editItem(reqItemToEdit, this.props.user.token);
-    console.log("Res: ", res);
     if(!res.error){
       this.updateItemList();
-      const alertText = "Edit was successful!";
+      const alertText = 'Edit was successful!';
+      const alertColor = 'success';
       window.setTimeout(() => {
-        // alert(alertText);
-        this.renderAlert(alertText);
+        this.renderAlert(alertText, alertColor);
       }, 500);
-    }
-  }
-
-  handleDeleteItem = async (itemName) => {
-    const reqItemToDelete = {
-      name: itemName,
-    }    
-    const res = await deleteItem(reqItemToDelete, this.props.user.token);
-    if(!res.error){
-      this.updateItemList();
-      const alertText = "Delete was successful!";
-      const alertColor = "success";
+    } else{
+      const alertText = 'Something went wrong with edit! Please give up ' +
+        'and ask a dev!';
+      const alertColor = 'danger';
       window.setTimeout(() => {
-        // alert(alertText);
         this.renderAlert(alertText, alertColor);
       }, 500);
     }
   }
 
-  handleClear = () => {
-    this.setState({name: "", price: 0, stock: 0, category: "", description: "", picture: ""});
+  // Function to delete item in edit item form/modal
+  handleDeleteItem = async (itemName) => {
+    const reqItemToDelete = {
+      name: itemName,
+    };
+    const res = await deleteItem(reqItemToDelete, this.props.user.token);
+    if(!res.error){
+      this.updateItemList();
+      const alertText = 'Delete was successful!';
+      const alertColor = 'success';
+      window.setTimeout(() => {
+        this.renderAlert(alertText, alertColor);
+      }, 500);
+    } else{
+      const alertText = 'Something went wrong with delete! Please give up ' +
+        'and ask a dev!';
+      const alertColor = 'danger';
+      window.setTimeout(() => {
+        this.renderAlert(alertText, alertColor);
+      }, 500);
+    }
   }
 
+  // Used to clear form/modal when exiting them
+  handleClear = () => {
+    this.setState({name: '', price: 0, stock: 0, category: '',
+      description: '', picture: ''});
+  }
+
+  // Alert Renderer for error/success messages
   renderAlert = (msg, color) =>{
-    this.setState({alertColor: color || "success"});
+    this.setState({alertColor: color || 'success'});
     this.setState({alertMsg: msg});
     if(this.state.alertVisible === false)
       this.updateAlertVisible();
   }
 
-  render() { 
-    const headerProps = {title: "Inventory Page"}; 
-
+  render() {
+    const headerProps = {title: 'Inventory Page'};
     return (
       <div>
         <Header {...headerProps} />
         <div className="spacer" />
-        <Alert color={this.state.alertColor} isOpen={this.state.alertVisible} toggle={this.updateAlertVisible}>{this.state.alertMsg}</Alert>
+        <Alert
+          color={this.state.alertColor}
+          isOpen={this.state.alertVisible}
+          toggle={this.updateAlertVisible}
+        >
+          {this.state.alertMsg}
+        </Alert>
         <div className="container">
           <div className="search-bar-container">
-            <input className="inventory-search-bar" placeholder="Start typing to filter..."/>
-            <AddItemButtonModal 
+            <input
+              className="inventory-search-bar"
+              placeholder="Start typing to filter..."
+              value = {this.searchInput}
+              onChange = {(e) => this.updateSearchInput(e.target.value)}
+            />
+            <AddItemButtonModal
               updateItemName = {this.updateItemName}
               updateItemPrice = {this.updateItemPrice}
               updateItemStock = {this.updateItemStock}
               updateItemCategory = {this.updateItemCategory}
               updateItemDescription = {this.updateItemDescription}
               updateItemPicture = {this.updateItemPicture}
-              handleAddItem = {this.handleAddItem}
-              checkAllInputs = {this.checkAllInputs}
               name = {this.state.name}
               price = {this.state.price}
               stock = {this.state.stock}
               category = {this.state.category}
               description = {this.state.description}
               picture = {this.state.picture}
-              errorPictureURL = {this.state.errorPictureURL}
+              handleAddItem = {this.handleAddItem}
+              handleClear = {this.handleClear}
+              checkAllInputs = {this.checkAllInputs}
             />
           </div>
           <div className="table-container">
@@ -238,17 +258,16 @@ export default class InventoryPage extends Component {
                       updateItemCategory = {this.updateItemCategory}
                       updateItemDescription = {this.updateItemDescription}
                       updateItemPicture = {this.updateItemPicture}
-                      handleAddItem = {this.handleAddItem}
-                      checkAllInputs = {this.checkAllInputs}
-                      //Name, price, stock, description, picture
-                      name={item.name}
-                      price={item.price}
-                      stock={item.stock}
-                      category={item.category}
-                      description={item.description}
-                      picture={item.picture}
-                      handleEditItem = {this.handleEditItem.bind(this, index)}
+                      name={this.state.name}
+                      price={this.state.price}
+                      stock={this.state.stock}
+                      category={this.state.category}
+                      description={this.state.description}
+                      picture={this.state.picture}
+                      item = {item}
+                      handleEditItem = {this.handleEditItem}
                       handleDeleteItem = {this.handleDeleteItem}
+                      handleClear = {this.handleClear}
                     />
                   );
                 })}
@@ -260,4 +279,4 @@ export default class InventoryPage extends Component {
     );
   }
 }
- 
+

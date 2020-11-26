@@ -1,0 +1,38 @@
+.edit-icon {
+  background-color: transparent;
+  border: none;
+  color: grey;
+  padding: 5px;
+  margin: 5px;
+}
+
+.edit-icon:hover {
+  padding: 5px;
+  color: #7fb2cf;
+  cursor: pointer;
+  outline: none;
+}
+
+#edit-item-button-confirm {
+  background-color: #56b4eb;
+  color: white;
+  margin-right: 8px;
+  border-color: #56b4eb;
+}
+
+#edit-item-button-confirm:hover:enabled {
+  background-color: #5da3cc;
+  border-color: #5da3cc;
+}
+
+#edit-item-button-delete {
+  background-color: #e04962;
+  color: white;
+  margin-right: 8px;
+  border-color: #e04962;
+}
+
+#edit-item-button-delete:hover:enabled {
+  background-color: #ca4250;
+  border-color: #ca4250;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Form, FormFeedback, FormGroup, FormText, Label, Input } from 'reactstrap';
+import { Form, FormFeedback, FormGroup, FormText, Label, Input } from
+  'reactstrap';
 
 export default function AddItemForm(props) {
   return (
@@ -7,8 +8,8 @@ export default function AddItemForm(props) {
       <FormGroup>
         <Label>Item Name
           <FormText color="muted">
-            Make sure your item doesn't already exist in the table.
-          </FormText>        
+            Must be unique, check table to see if your item exists
+          </FormText>
         </Label>
         <Input
           placeholder=""
@@ -19,21 +20,23 @@ export default function AddItemForm(props) {
       <FormGroup>
         <Label>Price
           <FormText color="muted">
-            Numerical input (1, 2, 3...)
+            Cost Per Unit
           </FormText>
         </Label>
-        <Input 
+        <Input
           invalid={isNaN(props.price) || props.price<0}
           placeholder=""
           value={props.price}
           onChange={(e) => props.updateItemPrice(e.target.value)}
         />
-        <FormFeedback invalid="true">Please enter a non-negative number!</FormFeedback>
+        <FormFeedback invalid="true">
+          Please enter a non-negative number!
+        </FormFeedback>
       </FormGroup>
       <FormGroup>
         <Label>Stock
           <FormText color="muted">
-            Numerical input (1, 2, 3...)
+            Number of Items Available
           </FormText>
         </Label>
         <Input
@@ -42,12 +45,14 @@ export default function AddItemForm(props) {
           value={props.stock}
           onChange={(e) => props.updateItemStock(e.target.value)}
         />
-        <FormFeedback invalid="true">Please enter a non-negative number!</FormFeedback>
+        <FormFeedback invalid="true">
+          Please enter a non-negative number!
+        </FormFeedback>
       </FormGroup>
       <FormGroup>
         <Label>Category
           <FormText color="muted">
-            Type String
+            Item Type
           </FormText>
         </Label>
         <Input
@@ -60,10 +65,10 @@ export default function AddItemForm(props) {
         <Label>
           Description
           <FormText>
-            Just a quick explanation of what the item is.
+            Item Explanation
           </FormText>
         </Label>
-        <Input 
+        <Input
           type="textarea"
           value={props.description}
           onChange={(e) => props.updateItemDescription(e.target.value)}
@@ -72,7 +77,7 @@ export default function AddItemForm(props) {
       <FormGroup>
         <Label>Picture
           <FormText color="muted">
-            URL. Leave it blank for default image.
+            Enter valid picture URL or leave blank for default
           </FormText>
         </Label>
         <Input

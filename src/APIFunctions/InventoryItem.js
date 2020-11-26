@@ -2,6 +2,11 @@ import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 import { GENERAL_API_URL } from '../config/config.json';
 
+/**
+ * Retrieve all items.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the list of inventory items
+ */
 export async function getAllItems(){
   let status = new ApiResponse();
   await axios
@@ -16,6 +21,20 @@ export async function getAllItems(){
   return status;
 }
 
+/**
+ * Add a new inventory item.
+ * @param {Object} reqItemToAdd - The item that is to be added
+ * @param {string} reqItemToAdd.name - The name of the item
+ * @param {string} reqItemToAdd.price - The price of the item
+ * @param {string} reqItemToAdd.stock - The stock of the item
+ * @param {string} reqItemToAdd.category - The category of the item
+ * @param {string} reqItemToAdd.description - The description of the item
+ * @param {(string|undefined)} reqItemToAdd.picture - The picture URL of
+ * the item
+ * @param {string} token - The user's jwt token for authentication
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
 export async function addItem(reqItemToAdd, token){
   let status = new ApiResponse();
   const itemToAdd = {
@@ -38,6 +57,20 @@ export async function addItem(reqItemToAdd, token){
   return status;
 }
 
+/**
+ * Edit a preexisting inventory item.
+ * @param {Object} reqItemToEdit - The item that is to be edited
+ * @param {string} reqItemToEdit.name - The name of the item
+ * @param {string} reqItemToEdit.price - The price of the item
+ * @param {string} reqItemToEdit.stock - The stock of the item
+ * @param {string} reqItemToEdit.category - The category of the item
+ * @param {string} reqItemToEdit.description - The description of the item
+ * @param {(string|undefined)} reqItemToEdit.picture - The picture URL of
+ * the item
+ * @param {string} token - The user's jwt token for authentication
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
 export async function editItem(reqItemToEdit, token){
   let status = new ApiResponse();
   const itemToEdit = {
@@ -60,6 +93,14 @@ export async function editItem(reqItemToEdit, token){
   return status;
 }
 
+/**
+ * Delete a preexisting inventory item.
+ * @param {Object} reqItemToDelete - The item that is to be deleted
+ * @param {string} reqItemToDelete.name - The name of the item
+ * @param {string} token - The user's jwt token for authentication
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
 export async function deleteItem(reqItemToDelete, token){
   let status = new ApiResponse();
   await axios

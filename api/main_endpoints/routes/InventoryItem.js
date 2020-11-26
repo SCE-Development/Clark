@@ -26,9 +26,7 @@ router.post('/editItem', (req, res) => {
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-
   const { name, price, stock, category, description, picture } = req.body;
-
   InventoryItem.findOne({ name: req.body.name })
     .then(item => {
       item.name = name || item.name;
@@ -70,11 +68,8 @@ router.post('/addItem', (req, res) => {
     description: req.body.description,
     picture: req.body.picture
   });
-
   InventoryItem.create(newItem, (error, post) => {
     if (error) {
-
-      // return res.sendStatus(BAD_REQUEST);
       return res.status(BAD_REQUEST).send(error);
     }
     return res.json(post);

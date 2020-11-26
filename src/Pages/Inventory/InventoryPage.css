@@ -3,7 +3,6 @@
   width: 100%;
   padding-bottom: 100px;
   background: white;
-  /* border: 1px solid black; */
 }
 
 .search-bar-container {
@@ -36,35 +35,6 @@
   vertical-align: middle;
 }
 
-#inv-conf-button {
-  background-color: #648cc0;
-  color: white;
-  border-color: rgb(108, 117, 125);
-}
-
-#inv-conf-button:hover {
-  background-color: #648cc0;
-  border-color: rgb(84, 91, 98);
-}
-
-.overview-icon {
-  background-color: transparent;
-  color: grey;
-  padding: 5px;
-  margin: 5px;
-}
-
-.overview-icon:hover {
-  padding: 5px;
-  color: red;
-  cursor: pointer;
-}
-
-.button-div {
-  display: inline-flex;
-  vertical-align: middle;
-}
-
 .content-table {
   border-collapse: collapse;
   font-size: 0.9em;
@@ -84,8 +54,17 @@
 
 .inventory-table td {
   overflow: hidden;
-  /* white-space: nowrap; */
   text-overflow: ellipsis;
+}
+
+.inventory-table tr {
+  background-color: white;
+  color: black;
+}
+
+.inventory-table tr:hover {
+  background-color: #ebebeb;
+  color: black;
 }
 
 .row-image,
