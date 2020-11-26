@@ -146,26 +146,26 @@ router.post('/edit', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  if (!req.body.email) {
+  if(!req.body.email){
     return res.sendStatus(BAD_REQUEST);
   }
 
   let decoded = decodeToken(req);
-  if (decoded.accessLevel === membershipState.MEMBER) {
-    if (req.body.email && req.body.email != decoded.email) {
+  if(decoded.accessLevel === membershipState.MEMBER){
+    if(req.body.email && req.body.email != decoded.email){
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to edit another user');
     }
-    if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
+    if(req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel){
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to change access level');
     }
   }
 
-  if (decoded.accessLevel === membershipState.OFFICER) {
-    if (req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN) {
+  if(decoded.accessLevel === membershipState.OFFICER){
+    if(req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN){
       return res.sendStatus(UNAUTHORIZED);
     }
   }
