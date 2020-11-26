@@ -14,6 +14,7 @@ export default function MembershipForm(props) {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassWord] = useState('');
   const [major, setMajor] = useState('');
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
@@ -23,18 +24,26 @@ export default function MembershipForm(props) {
     if(clickSubmitted){
       if(!email)
         return (<p className='unavailable'> Email cannot be left empty</p>);
-      let validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      let validEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}/.test(email);
       if(!validEmail)
         return (<p className='unavailable'> Your input email is invalid</p>);
     }
   }
 
   function requiredFieldsMet() {
-    let validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    let validEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}/.test(email);
     return verified && firstName && lastName &&
     validEmail && major && password.length >= 8;
   }
 
+  function checkConfirmPassword() {
+    if(clickSubmitted){
+      if(!confirmPassword)
+        return (<p className='unavailable'>Please confirm your password</p>);
+      if(confirmPassword!==password)
+        return (<p className='unavailable'>Passwords do not match</p>);
+    }
+  }
   const nameFields = [
     {
       label: 'First Name',
@@ -83,6 +92,13 @@ export default function MembershipForm(props) {
         </p>
       ),
       handleChange: e => setPassword(e.target.value),
+    },
+
+    {
+      label: 'Confirm password',
+      type: 'password',
+      ifRequirementsNotMet: checkConfirmPassword(),
+      handleChange: e => setConfirmPassWord(e.target.value),
     }
   ];
 
