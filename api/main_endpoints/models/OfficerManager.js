@@ -4,6 +4,10 @@ const { DEFAULT_PHOTO_URL } = require('../../util/constants');
 
 const OfficerSchema = new Schema(
   {
+    name: {
+      type: String,
+      required: true
+    },
     email: {
       type: String,
       required: true

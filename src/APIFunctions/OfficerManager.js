@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-function create(newOfficer){
+export async function createOfficer(newOfficer, token){
     let status = new ApiResponse();
     const officerToAdd = {
+        name: newOfficer.name,
         email: newOfficer.email,
         facebook: newOfficer.facebook,
         github: newOfficer.github, 
@@ -12,8 +13,8 @@ function create(newOfficer){
         quote: newOfficer.quote,
         pictureUrl: newOfficer.pictureUrl
     };
-  await axios
-    .post('api/officerManager/submit', {officerToAdd})
+   await axios
+    .post('api/officerManager/submit', {token, ...officerToAdd})
     .then(res => {
       status.responseData = res.data;
     })
@@ -23,9 +24,10 @@ function create(newOfficer){
   return status;
 }
 
-function deleteOfficer(email){
-    await axios
-    .post('api/officerManager/delete', {email})
+export async function deleteOfficer(officerToDelete, token){
+  let status = new ApiResponse();
+  await axios
+    .post('api/officerManager/delete', {token, email: officerToDelete._email})
     .then(res => {
         status.responseData = res.data;
     })
@@ -35,4 +37,53 @@ function deleteOfficer(email){
     return status;
 }
 
-function editOfficer(email, data)
+export async function getAllOfficers(token){
+  let status = new ApiResponse();
+  await axios
+    .get('api/officerManager/GetForm', {token})
+    .then(res => {
+      status.responseData = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+export async function getOfficer(email, token){
+  let status = new ApiResponse();
+  await axios
+    .get('api/officerManager/GetForm', {token, email})
+    .then(res => {
+      status.responseData = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+export async function editOfficer(officerToUpdate, token){
+  let status = new ApiResponse();
+  const officerToEdit= {
+    name: officerToUpdate.name,
+    email: officerToUpdate.email,
+    facebook: officerToUpdate.facebook,
+    github: officerToUpdate.github, 
+    linkedin: officerToUpdate.linkedin, 
+    team: officerToUpdate.team,
+    quote: officerToUpdate.quote,
+    pictureUrl: officerToUpdate.pictureUrl
+  };
+  await axios
+    .post('api/officerManager/edit', {token, ...officerToEdit})
+    .then(res => {
+      status.responseData = res.data;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
