@@ -262,7 +262,7 @@ router.post('/connectToDiscord', function(req, res) {
   return res.status(OK)
     .send('https://discord.com/api/oauth2/authorize?client_id=' +
       `${discordApiKeys.CLIENT_ID}` +
-      `&redirect_uri=${discordApiKeys.REDIRECT_URI_DEV}` +
+      `&redirect_uri=${discordApiKeys.REDIRECT_URI_PROD}` +
       `&state=${email}`);
 });
 
