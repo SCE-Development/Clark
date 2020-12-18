@@ -4,8 +4,8 @@ import {
   NavbarBrand,
   NavLink,
   Nav,
+  NavbarToggler,
   Collapse,
-  NavbarToggler
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
 import DarkMode from './DarkMode';
@@ -25,7 +25,7 @@ export default function AdminNavbar(props) {
   return (
     <Navbar
       dark
-      className='admin-nav admin-dark navbar-expand-md'
+      className='admin-nav admin-dark'
       navbar='true'
     >
       <div id='admin-title'>
@@ -37,7 +37,6 @@ export default function AdminNavbar(props) {
       </div>
       <NavbarToggler
         onClick={() => setCollapsed(!collapsed)}
-        className='mr-2'
       />
       <Collapse isOpen={!collapsed} navbar>
         <Nav className='ml-auto sce-nav' navbar>
