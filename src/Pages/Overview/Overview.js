@@ -20,7 +20,7 @@ export default class OverviewBoard extends Component {
       queryResult: [],
       toggle: false,
       currentQueryType: 'All',
-      queryTypes: ['All', 'Pending', 'Officer', 'Admin']
+      queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni']
     };
     this.headerProps = {
       title: 'Users Dashboard'
@@ -89,6 +89,10 @@ export default class OverviewBoard extends Component {
     case 'Pending':
       return this.state.users.filter(
         data => data.accessLevel === membershipState.PENDING
+      );
+    case 'Alumni':
+      return this.state.users.filter(
+        data => data.accessLevel === membershipState.ALUMNI
       );
     default:
       return this.state.users;

@@ -47,7 +47,8 @@ const membershipStatusArray = [
   'Nonmember',
   'Member',
   'Officer',
-  'Admin'
+  'Admin',
+  'Alumni'
 ];
 
 function membershipStateToString(index) {
