@@ -35,7 +35,7 @@ function AnnouncementList() {
   const getFilteredEvents= () => {
     if (getFiltered){
       try {
-        var currDate = new Date();
+        let currDate = new Date();
         currDate.setDate(currDate.getDate() -1);
         let validList = [];
         eventList.forEach(item => {
@@ -45,10 +45,9 @@ function AnnouncementList() {
           }
         }, setValidList(validList), setGetFiltered(false));
       } catch (error) {
-        const alertText = 'There are no events to filter!';
       }
     }
-  }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -67,7 +66,6 @@ function AnnouncementList() {
       <Header {...headerProps} />
       <Container className='event-list'>
         {currentEvent === null ? <></> : <EventInfoModal {...modalProps} />}
-        {console.log(eventList)}
         {getFilteredEvents()}
         {validList && validList.length ? (
           validList.reverse().map((event, index) => {
