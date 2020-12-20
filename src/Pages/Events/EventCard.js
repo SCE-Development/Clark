@@ -1,5 +1,4 @@
 import React from 'react';
-import { Row } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
 
 function EventCard(props) {

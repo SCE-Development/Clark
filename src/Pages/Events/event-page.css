@@ -16,12 +16,11 @@
   margin-top: 2.5%;
   outline: transparent !important;
   border: transparent;
-  background: #fcfcfc;
+  background: #fcfcfc; 
   box-shadow: 10px 10px 30px rgb(105, 103, 103);
 }
 
 .event-title {
-  /* white-space: nowrap; */
   white-space: wrap;
   font-weight: bold;
   font-size: 2.7rem;
@@ -54,15 +53,12 @@
 
 @media screen and (max-width: 1100px) { 
   .event-image { display: none; } 
-  .event-text-block { max-width: 100%; }
+  .event-text-block { max-width: 100%; padding: 10%; } 
+  .event-card-button { min-width: 100% }  
   .event-info { margin: 0 !important; padding: 0px !important; }
   .event-title{ margin: 0 !important; padding-right: 50px !important; } 
   .event-location{ margin: 0 !important; } 
 }
-
-/* @media screen and (max-width: 400px) { 
-  .event-text-block { max-width: 100%; }
-} */
 
 .image-container > img {
   max-width: 7rem;
