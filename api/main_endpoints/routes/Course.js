@@ -160,7 +160,6 @@ router.get('/getSummary', (req, res) => {
 
 router.post('/editSummary', (req, res) => {
   const { courseId, newSummary } = req.body;
-  // console.log(req.body); //eslint-disable-line
 
   Course.updateOne(
     { _id:courseId },

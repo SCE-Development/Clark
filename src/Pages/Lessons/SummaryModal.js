@@ -42,10 +42,7 @@ function SummaryModal(props) {
                 </InputGroupAddon>
                 <Input
                   type='textarea'
-                  onChange={(e) => {
-                    setSummary(e.target.value);
-                    console.log(summary); //eslint-disable-line
-                  }}
+                  onChange={(e) => setSummary(e.target.value)}
                   placeholder='Enter course summary here...'
                   defaultValue={summary}
                 />

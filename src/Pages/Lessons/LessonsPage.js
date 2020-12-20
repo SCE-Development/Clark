@@ -220,6 +220,10 @@ function LessonsPage(props) {
           >
             <DropdownToggle caret>{dropdownValue}</DropdownToggle>
             <DropdownMenu>
+              <DropdownItem header>
+                <p className='text-muted h5 mb-0'>Lessons</p>
+              </DropdownItem>
+              <DropdownItem divider />
               {lessons.length > 0 && (
                 <React.Fragment>
                   {lessons.map((article, index) => (

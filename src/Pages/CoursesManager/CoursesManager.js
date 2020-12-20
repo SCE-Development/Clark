@@ -55,14 +55,12 @@ function CoursesManager(props) {
 
   function toggleEditCourse(e, course) {
     e.stopPropagation();
-    console.log('entered toggleEditCourse'); //eslint-disable-line
     setModalState(modalStates.EDIT);
     setCourse(course);
     toggle();
   }
 
   function handleClick(selectedCourse) {
-    console.log('entered handleClick'); //eslint-disable-line
     history.push('/courses/lesson', {
       _id: selectedCourse._id,
       courseTitle: selectedCourse.title
