@@ -102,8 +102,7 @@ export async function deleteCourse(courseToDelete, token) {
 /**
  * Edit the lessons object in a course
  * @param {number} _id - The course id in which the lesson belongs to
- * @param {Object} editedLessons - The updated object of lessons
- * @param {string} token - The user's jwt token for authentication
+ * @param {Object} newLessons - The updated object of lessons
  * @returns {ApiResponse} Containing any error information related to the
  * request or the response data
  */
@@ -120,10 +119,8 @@ export async function editLessons(_id, newLessons) {
 }
 
 /**
- * Edit the lessons object in a course
+ * Gets the lessons object in a course
  * @param {number} _id - The course id in which the lesson belongs to
- * @param {Object} editedLessons - The updated object of lessons
- * @param {string} token - The user's jwt token for authentication
  * @returns {ApiResponse} Containing any error information related to the
  * request or the response data
  */
@@ -131,6 +128,39 @@ export async function getAllLessons(_id) {
   let status = new ApiResponse();
   await axios
     .get(GENERAL_API_URL + '/course/getLessons', { params: { courseId:_id } })
+    .then(res => status.responseData = res.data)
+    .catch(() => status.error = true);
+  return status;
+}
+
+/**
+ * Gets the summary of a course
+ * @param {number} _id - The course id in which the lesson belongs to
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
+export async function getSummary(_id) {
+  let status = new ApiResponse();
+  await axios
+    .get(GENERAL_API_URL + '/course/getSummary', { params: { courseId:_id } })
+    .then(res => status.responseData = res.data)
+    .catch(() => status.error = true);
+  return status;
+}
+
+/**
+ * Edit the summary of a course
+ * @param {number} _id - The course id in which the lesson belongs to
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
+export async function editSummary(courseId, newSummary) {
+  let status = new ApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/course/editSummary', {
+      courseId,
+      newSummary
+    })
     .then(res => status.responseData = res.data)
     .catch(() => status.error = true);
   return status;

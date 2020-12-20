@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button, Container } from 'reactstrap';
 import CoursesManagerModal from './CoursesManagerModal';
 import CourseCard from '../Courses/CourseCard';
@@ -18,6 +19,7 @@ function CoursesManager(props) {
   const [course, setCourse] = useState();
   const [showModal, setShowModal] = useState(false);
   const [modalState, setModalState] = useState(modalStates.SUBMIT);
+  const history = useHistory();
   let cardNum = 0;
   const headerProp = {
     title: 'Courses Manager'
@@ -51,10 +53,20 @@ function CoursesManager(props) {
       await editCourse( { ...course, _id }, props.user.token);
   }
 
-  function toggleEditCourse(course) {
+  function toggleEditCourse(e, course) {
+    e.stopPropagation();
+    console.log('entered toggleEditCourse'); //eslint-disable-line
     setModalState(modalStates.EDIT);
     setCourse(course);
     toggle();
+  }
+
+  function handleClick(selectedCourse) {
+    console.log('entered handleClick'); //eslint-disable-line
+    history.push('/courses/lesson', {
+      _id: selectedCourse._id,
+      courseTitle: selectedCourse.title
+    });
   }
 
   return (
@@ -86,14 +98,21 @@ function CoursesManager(props) {
         {coursesList.length > 0 ? (
           groupCards(coursesList).map((group, index) => {
             return (
-              <Row key={index}>
+              <Row key={index} className='mb-md-3'>
                 {group.map((course, index) => {
                   {++cardNum;}
                   return (
-                    <Col xs='12' md='4' key={index}>
+                    <Col
+                      xs='12'
+                      md='4'
+                      key={index}
+                      className='mb-sm-5 mb-md-4 card-col'
+                    >
                       <CourseCard
                         cardNum={cardNum}
-                        handleClick={() => toggleEditCourse(course)}
+                        handleClick={() => handleClick(course)}
+                        isCourseManager={true}
+                        handleEdit={(e) => toggleEditCourse(e, course)}
                         {...course}
                       />
                     </Col>

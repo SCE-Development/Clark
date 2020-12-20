@@ -22,6 +22,10 @@ const CourseSchema = new Schema(
     lessons: {
       type: Array,
       default: []
+    },
+    summary: {
+      type: String,
+      default: ''
     }
   },
   { collection: 'Course' }

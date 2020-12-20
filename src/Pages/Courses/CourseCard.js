@@ -9,7 +9,8 @@ import {
   CardTitle,
   Popover,
   PopoverBody,
-  PopoverHeader
+  PopoverHeader,
+  Button
 } from 'reactstrap';
 
 function CourseCard(props) {
@@ -21,7 +22,9 @@ function CourseCard(props) {
     author,
     description,
     handleClick,
-    lessons
+    lessons,
+    isCourseManager,
+    handleEdit
   } = props;
 
   return (
@@ -29,14 +32,26 @@ function CourseCard(props) {
       <Card
         id={`card${cardNum}`}
         className='shadow h-100'
-        width='3em'
         onClick={handleClick}
         onMouseEnter={() => setShowPopOver(true)}
         onMouseLeave={() => setShowPopOver(false)}
         onMouseOver={() => setShowPopOver(true)}
       >
-        <CardImg top height='50%'src={imageURL} alt='Card image' />
-        <CardBody className='pb-0'>
+        {isCourseManager &&
+          <Button
+            id='edit'
+            className='edit-button'
+            onClick={handleEdit}
+            color="warning"
+          >
+            Edit course
+          </Button>}
+        <CardImg
+          top
+          src={imageURL}
+          alt='Card image'
+        />
+        <CardBody>
           <CardTitle><h2><b>{title}</b></h2></CardTitle>
           <CardSubtitle>By: {author}</CardSubtitle>
           <CardText>{description}</CardText>

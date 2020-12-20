@@ -139,4 +139,41 @@ router.get('/getLessons', (req, res) => {
     });
 });
 
+router.get('/getSummary', (req, res) => {
+  const { courseId } = req.query;
+
+  Course.find({ _id:courseId })
+    .then(items => res.status(OK).send(items[0].summary))
+    .catch(error => {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'course/getSummary',
+        errorDescription: error
+      };
+      addErrorLog(info);
+      res
+        .status(BAD_REQUEST)
+        .send({ error, message: 'Getting summary failed' });
+    });
+});
+
+
+router.post('/editSummary', (req, res) => {
+  const { courseId, newSummary } = req.body;
+  // console.log(req.body); //eslint-disable-line
+
+  Course.updateOne(
+    { _id:courseId },
+    { $set: { summary: newSummary }})
+    .then(ret => {
+      res.status(OK).json({ ret, course: 'summary updated successfully' });
+    })
+    .catch(error => {
+      res.status(BAD_REQUEST).send({
+        error,
+        message: 'Summary was not updated'
+      });
+    });
+});
+
 module.exports = router;

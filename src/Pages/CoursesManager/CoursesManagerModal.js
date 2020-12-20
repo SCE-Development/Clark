@@ -18,8 +18,7 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal';
 
 function CoursesManagerModal(props) {
-  const NOT_FOUND_PNG =
-  'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
+  const NOT_FOUND_PNG = 'https://rb.gy/gnrdda';
   const { showModal, toggle, modalState } = props;
   const [title, setTitle] = useState(props.title);
   const [author, setAuthor] = useState(props.author);

@@ -48,7 +48,8 @@ export default function CoursesList() {
 
   function handleClick(clickedCourse) {
     history.push('/courses/lesson', {
-      _id: clickedCourse._id
+      _id: clickedCourse._id,
+      courseTitle: clickedCourse.title
     });
   }
 
@@ -59,16 +60,20 @@ export default function CoursesList() {
         {coursesList.length > 0 ? (
           groupCards(coursesList).map((group, index) => {
             return (
-              <Row key={index}>
+              <Row key={index} className='mb-md-3'>
                 {group.map((course, index) => {
                   {++cardNum;}
-                  // eslint-disable-next-line
-                  // {console.log(course);}
                   return (
-                    <Col xs='12' md='4'key={index}>
+                    <Col
+                      xs='12'
+                      md='4'
+                      key={index}
+                      className='mb-sm-5 mb-md-4 card-col'
+                    >
                       <CourseCard
                         cardNum={cardNum}
                         handleClick={() => handleClick(course)}
+                        isCourseManager={false}
                         {...course}
                       />
                     </Col>

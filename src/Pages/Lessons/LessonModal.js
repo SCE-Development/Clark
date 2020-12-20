@@ -8,7 +8,6 @@ import {
   Input,
   InputGroup,
   Col,
-  Tooltip,
   Row,
   InputGroupAddon
 } from 'reactstrap';
@@ -17,13 +16,12 @@ import ConfirmationModal from
 import { modalStates } from '../../Enums';
 
 function LessonsPageModal(props) {
-  const { selectedLesson, showModal, toggle, modalState } = props;
+  const { selectedLesson, showLessonModal, LessonsToggle, modalState } = props;
   const [lessonTitle, setLessonTitle] = useState(
     modalState === modalStates.EDIT ? selectedLesson.title : undefined);
   const [mdLink, setMdLink] = useState(
     modalState === modalStates.EDIT ? selectedLesson.URL : undefined);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [showToolTip, setShowToolTip] = useState(false);
 
   function toggleShowConfirmationModal() {
     setShowConfirmationModal(!showConfirmationModal);
@@ -44,22 +42,22 @@ function LessonsPageModal(props) {
       mdLink
     };
 
-    await props.handleSubmit(lessonFields);
+    await props.handleLessonSubmit(lessonFields);
     await props.getLessons();
-    props.toggle();
+    props.LessonsToggle();
   }
 
   async function handleDelete() {
-    await props.handleDelete();
+    await props.handleLessonDelete();
     await props.getLessons();
     toggleShowConfirmationModal();
-    props.toggle();
+    props.LessonsToggle();
   }
 
   const confirmationModalProps = {
     headerText: `Delete ${lessonTitle} ?`,
     bodyText: 'The lesson will be gone forever if you do this.',
-    toggle: toggleShowConfirmationModal,
+    LessonsToggle: toggleShowConfirmationModal,
     handleConfirmation: handleDelete,
     open: showConfirmationModal
   };
@@ -67,7 +65,11 @@ function LessonsPageModal(props) {
   return (
     <div>
       <ConfirmationModal {...confirmationModalProps} />
-      <Modal isOpen={showModal} size='lg' toggle={toggle}>
+      <Modal
+        isOpen={showLessonModal}
+        size='lg'
+        toggle={props.LessonsToggle}
+      >
         <ModalHeader>
           <Col>
             <Row>
@@ -112,7 +114,7 @@ function LessonsPageModal(props) {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color='secondary' onClick={toggle}>
+          <Button color='secondary' onClick={LessonsToggle}>
             Cancel
           </Button>
           {modalState === modalStates.EDIT && (
