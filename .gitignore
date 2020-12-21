@@ -90,3 +90,6 @@ sheets.json
 *.key
 *.cer
 
+# api
+*.cmd
+*.ps1

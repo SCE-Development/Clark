@@ -50,23 +50,28 @@ describe('<EventList />', () => {
       ' array',
     async () => {
       returnEventArray();
-      const wrapper = await mount(<EventList />);
+      const wrapper = await mount(<EventList {...RENDERED_EVENTS} />);
       wrapper.update();
-      expect(wrapper.find(EventCard)).to.have.lengthOf(
+      expect(wrapper.find(EventList)).to.have.lengthOf(
         RENDERED_EVENTS.responseData.length
       );
     }
   );
   it('Should render a title if no events are returned', async () => {
     returnEmptyArray();
-    const wrapper = await mount(<EventList />);
+    const wrapper = await mount(<EventList {...RENDERED_EVENTS} />);
+    console.log("Event-list: " + wrapper.find('.event-list').get(0).props.children);
+    console.log("Header: " + wrapper.find('.h1'));
+    console.log("Event-list0: " + wrapper.find(EventCard).get(0).props.children.join(''));
+    console.log("Event-list1: " + wrapper.find('.event-list').get(0).props.children[1].props.children.join(''));
     wrapper.update();
-    expect(wrapper.find(EventCard)).to.have.lengthOf(0);
+    expect(wrapper.find(EventCard).length).to.have.lengthOf(0);
     expect(
       wrapper
         .find('.event-list')
-        .children()
-        .get(0).props.children[1].props.children
+        .get(0)
+        .props.children[0]
+        .props.children.join('')
     ).to.equal('No events yet!');
   });
   it('Should initially hide an <EventInfoModal /> component', async () => {

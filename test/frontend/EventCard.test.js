@@ -6,9 +6,7 @@ import { expect } from 'chai';
 
 import EventCard from '../../src/Pages/Events/EventCard';
 import Adapter from 'enzyme-adapter-react-16';
-import { Row } from 'reactstrap';
 import { getDateWithSlashes } from '../../src/APIFunctions/Event';
-import {clockSymbol, mapPinSymbol} from '../../src/Pages/Overview/SVG.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -24,14 +22,15 @@ describe('<EventCard />', () => {
   };
   it('Should render the title of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find(Row).get(0).props.children).to.equal(appProps.title);
+    expect(wrapper.find('.event-title').get(0).props.children).to.equal(appProps.title);
   });
   it('Should render the date of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(
       wrapper
-        .find(Row)
-        .get(2)
+        .find('.event-info')
+        .get(0)
+        .props.children[2]
         .props.children.join('')
     ).to.equal(
       <b>DATE</b> + ': ' +
@@ -43,8 +42,9 @@ describe('<EventCard />', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(
       wrapper
-        .find(Row)
-        .get(3)
+        .find('.event-info')
+        .get(0)
+        .props.children[3]
         .props.children.join('')
     ).to.equal(
       <b>TIME</b> + ': ' +
@@ -56,8 +56,9 @@ describe('<EventCard />', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(
       wrapper
-        .find(Row)
-        .get(4)
+        .find('.event-info')
+        .get(0)
+        .props.children[4]
         .props.children.join('')
     ).to.equal(
       <b>LOCATION</b> + ': ' + appProps.eventLocation
