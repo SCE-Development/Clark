@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import marked from 'marked';
 import './lessons-page.css';
@@ -20,6 +21,14 @@ import {
 } from 'reactstrap';
 
 function LessonsPage(props) {
+  const history = useHistory();
+
+  // Redirect to courses page if _id isn't passed as a prop
+  if (!props.location.state) {
+    history.push('/courses');
+    location.reload();
+  }
+
   const [mdContent, setMdContent] = useState();
   const [showLessonModal, setShowLessonModal] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
@@ -31,7 +40,9 @@ function LessonsPage(props) {
   const [dropdownValue, setDropdownValue] = useState('Select a lesson');
   const lessonRefs = useRef({});
   const leftCol = useRef();
-  const { _id, courseTitle } = props.location.state;
+  const [isLessonEditBtnDisabled, setIsLessonEditBtnDisabled] = useState(true);
+  const { _id } = props.location.state;
+  const { courseTitle } = props.match.params;
 
   async function getLessons() {
     const data = await getAllLessons(_id);
@@ -62,6 +73,7 @@ function LessonsPage(props) {
   }
 
   function handleClick(URL, title, index) {
+    history.replace(`/course/${courseTitle}/lessons/${title}`, { _id: _id });
     if (Object.keys(selectedLesson).length > 0 && selectedLesson.html) {
       selectedLesson.html.style = null;
     }
@@ -77,6 +89,7 @@ function LessonsPage(props) {
     selectedLessonRef.style.backgroundColor = '#999999';
     getMDContent(URL);
     setDropdownValue(title);
+    setIsLessonEditBtnDisabled(false);
   }
 
   function LessonsToggle() {
@@ -126,6 +139,16 @@ function LessonsPage(props) {
     await fetchSummary();
   }
 
+  function handleSummaryClick() {
+    setMdContent('');
+    if (Object.keys(selectedLesson).length > 0 && selectedLesson.html) {
+      selectedLesson.html.style = null;
+      setSelectedLesson({});
+    }
+    history.replace(`/course/${courseTitle}/lessons/summary`, { _id: _id });
+    setIsLessonEditBtnDisabled(true);
+  }
+
   async function handleLessonDelete() {
     let newLessons = [...lessons];
     newLessons.splice(selectedLesson.index, 1);
@@ -141,7 +164,7 @@ function LessonsPage(props) {
         <h1 className='course-title'>{courseTitle}</h1>
       </div>
       <div
-        className={`left-col col-sm-9 col-12
+        className={`md-content-container col-sm-9 col-12
           pr-4 pl-4 pt-3 float-sm-left`}
         ref={leftCol}
       >
@@ -165,7 +188,7 @@ function LessonsPage(props) {
           (props.user.accessLevel === membershipState.ADMIN ||
             props.user.accessLevel === membershipState.OFFICER) && (
           <div
-            className={`admin-btn-container pt-0 pb-3 d-flex
+            className={`admin-btn-container pt-0 d-flex
               flex-column align-items-stretch flex-wrap
               flex-xl-row justify-content-between`}
           >
@@ -178,7 +201,7 @@ function LessonsPage(props) {
               id='SCEBtn-2'
               className='SCEButton px-2 py-2'
               onClick={handleLessonEdit}
-              disabled={Object.keys(selectedLesson).length === 0}
+              disabled={isLessonEditBtnDisabled}
             >
                 Edit selected lesson
             </button>
@@ -191,9 +214,16 @@ function LessonsPage(props) {
             </button>
           </div>
         )}
+        <button
+          id='SCEBtn-4'
+          className='SCEButton btn-block px-2 py-2 mb-3 mt-3'
+          onClick={handleSummaryClick}
+        >
+            View Summary
+        </button>
+        <h2 className='lessons-title'>Lessons</h2>
         {lessons.length > 0 && (
           <div className='d-none d-sm-block'>
-            <h2 className='lessons-title'>Lessons</h2>
             {lessons.map((article, index) => (
               <div
                 className='lesson-name-container'

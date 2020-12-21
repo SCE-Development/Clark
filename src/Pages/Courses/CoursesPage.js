@@ -47,9 +47,8 @@ export default function CoursesList() {
   };
 
   function handleClick(clickedCourse) {
-    history.push('/courses/lesson', {
-      _id: clickedCourse._id,
-      courseTitle: clickedCourse.title
+    history.push(`/course/${clickedCourse.title}/lessons/summary`, {
+      _id: clickedCourse._id
     });
   }
 

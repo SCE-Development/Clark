@@ -135,7 +135,7 @@ export default function Routing({ appProps }) {
     },
     {
       Component: LessonsPage,
-      path: '/courses/lesson',
+      path: '/course/:courseTitle/lessons/:lessonTitle',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
       redirect: '/login'
     }
@@ -155,7 +155,6 @@ export default function Routing({ appProps }) {
             return (
               <PrivateRoute
                 key={index}
-                exact
                 path={path}
                 appProps={{
                   allowed: allowedIf,

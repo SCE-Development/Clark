@@ -60,10 +60,9 @@ function CoursesManager(props) {
     toggle();
   }
 
-  function handleClick(selectedCourse) {
-    history.push('/courses/lesson', {
-      _id: selectedCourse._id,
-      courseTitle: selectedCourse.title
+  function handleClick(clickedCourse) {
+    history.push(`/course/${clickedCourse.title}/lessons/summary`, {
+      _id: clickedCourse._id
     });
   }
 

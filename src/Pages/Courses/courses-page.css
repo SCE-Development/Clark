@@ -32,8 +32,9 @@
 }
 
 .card img {
-  height: 50%;
-  object-fit: contain;
+  height: 28vh;
+  width: auto;
+  object-fit: cover;
 }
 
 .card-body {

@@ -1,13 +1,13 @@
-.left-col h2, .lessons-title {
+.md-content-container h2, .lessons-title {
   text-align: center;
 }
 
-.left-col, .lessons-list {
+.md-content-container, .lessons-list {
   height: 100vh;
   overflow: scroll;
 }
 
-.left-col h2, .breadcrumb {
+.md-content-container h2, .breadcrumb {
   word-wrap: break-word;
 }
 
@@ -68,7 +68,7 @@
   opacity: 0.4;
 }
 
-.admin-btn-container .SCEButton {
+.admin-btn-container .SCEButton, .lessons-list .SCEButton {
   outline: none;
 }
 
@@ -96,7 +96,7 @@
 
 /* For xl screens and up */
 @media (min-width: 1300px) {
-  .SCEButton {
+  .admin-btn-container .SCEButton {
     display: flex;
     width: 30%;
   }
@@ -109,7 +109,7 @@
     flex-direction: column;
   }
 
-  .left-col {
+  .md-content-container {
     order: 3;
   }
 
@@ -121,18 +121,18 @@
     order: 1;
   }
 
-  .left-col, .lessons-list {
+  .md-content-container, .lessons-list {
     overflow: visible;
   }
 }
 
 /* For lg screens and lower */
 @media (max-width: 1300px) {
-  .SCEButton {
+  .admin-btn-container .SCEButton {
     width: 100%;
   }
 
   #SCEBtn-2, #SCEBtn-3 {
-    margin-top: .5em;
+    margin-top: 1rem;
   }
 }
