@@ -1,13 +1,16 @@
-.md-content-container h2, .lessons-title {
+.md-content-container h2, 
+.lessons-title {
   text-align: center;
 }
 
-.md-content-container, .lessons-list {
+.md-content-container, 
+.lessons-list {
   height: 100vh;
   overflow: scroll;
 }
 
-.md-content-container h2, .breadcrumb {
+.md-content-container h2, 
+.breadcrumb {
   word-wrap: break-word;
 }
 
@@ -68,7 +71,8 @@
   opacity: 0.4;
 }
 
-.admin-btn-container .SCEButton, .lessons-list .SCEButton {
+.admin-btn-container .SCEButton, 
+.lessons-list .SCEButton {
   outline: none;
 }
 
@@ -121,7 +125,8 @@
     order: 1;
   }
 
-  .md-content-container, .lessons-list {
+  .md-content-container, 
+  .lessons-list {
     overflow: visible;
   }
 }

@@ -38,14 +38,13 @@ function CourseCard(props) {
         onMouseOver={() => setShowPopOver(true)}
       >
         {isCourseManager &&
-          <Button
+          <button
             id='edit'
-            className='edit-button'
+            className='edit-button shadow-none'
             onClick={handleEdit}
-            color="warning"
           >
             Edit course
-          </Button>}
+          </button>}
         <CardImg
           top
           src={imageURL}

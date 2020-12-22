@@ -48,18 +48,40 @@
   top: 10px;
 }
 
-.card-title h2, .card-subtitle, .card-text {
+.card .edit-button {
+  background-color: #73B1D1;
+  border-color: #73B1D1;
+  color: white;
+  font-size: 0.75em;
+  padding: 0.8em 1.2em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  font-weight: 500;
+  outline: 0;
+  border: 0;
+}
+
+.card .edit-button:hover {
+  background-color: #54a0c9;
+  border-color: #54a0c9;
+  color:#43464dd0;
+  font-weight: 500;
+}
+
+.card .edit-button:active {
+  color: #43464D;
+  background-color: #4f90b3;
+  border-color: #4f90b3;
+}
+
+.card-title h2, 
+.card-subtitle, 
+.card-text {
   text-align: left;
 }
 
 .card-subtitle, .card-text {
   font-size: 90%;
-}
-
-.course-cards {
-  display: flex;
-  align-items: stretch;
-  flex-wrap: wrap;
 }
 
 @media (max-width: 576px) {

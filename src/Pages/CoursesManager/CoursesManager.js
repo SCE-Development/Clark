@@ -7,6 +7,7 @@ import { groupCards } from '../Courses/CoursesPage';
 import Header from '../../Components/Header/Header';
 import { modalStates } from '../../Enums';
 import {Row, Col} from 'reactstrap';
+import './courses-manager.css';
 import {
   getAllCourses,
   createNewCourse,
@@ -70,9 +71,12 @@ function CoursesManager(props) {
     <React.Fragment>
       <Header {...headerProp}/>
       <Container className="courses-cards mt-4">
-        <Button className="create-course" onClick={createCourse}>
-          Add a course
-        </Button>
+        <button
+          className="create-course-btn shadow-none"
+          onClick={createCourse}
+        >
+          add a course
+        </button>
         {showModal &&
           <CoursesManagerModal
             showModal={showModal}
