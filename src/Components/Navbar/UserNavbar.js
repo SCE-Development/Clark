@@ -19,6 +19,7 @@ import logo from '../Navbar/sce_logo.png';
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [scroll, setScroll] = useState(false);
   const icons = [
     {
       link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -81,12 +82,14 @@ export default function UserNavBar(props) {
     setMenuIsOpen(!menuIsOpen);
   };
 
+
   useEffect(() => {
     // eslint-disable-next-line
   }, [])
 
   return (
-    <div className='user-nav'>
+
+    <div className={'user-nav'}>
       <Navbar light expand='md'>
         <NavbarBrand href='/'>
           <div>
@@ -215,21 +218,22 @@ export default function UserNavBar(props) {
                 );
               })}
             </NavItem>
-            {props.user && props.user.accessLevel >= membershipState.MEMBER && (
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle id='navlink-text' nav caret>
-                  Printing
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem className='drp-item' href='/2DPrinting'>
-                    2D Printing
-                  </DropdownItem>
-                  <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                    3D Printing
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            )}
+            {props.user && props.user.accessLevel >= membershipState.MEMBER
+              && (
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle id='navlink-text' nav caret>
+                    Printing
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem className='drp-item' href='/2DPrinting'>
+                      2D Printing
+                    </DropdownItem>
+                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
+                      3D Printing
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              )}
             {unauthedRoutes.map((link, index) => {
               return (
                 <NavItem key={index}>

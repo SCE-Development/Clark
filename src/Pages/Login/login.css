@@ -1,6 +1,7 @@
 #background {
   background-image: url('../MembershipApplication/assets/background.png');
   min-width: 100%;
+  margin-top: 50px;
   min-height: 100%;
   block-size: auto;
 }
