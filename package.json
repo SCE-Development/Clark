@@ -58,7 +58,7 @@
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-discord": "^0.1.4",
-    "pdf-lib": "^1.11.2",
+    "pdf-lib": "^1.14.0",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.11.1",
     "react-datepicker": "^3.2.2",
