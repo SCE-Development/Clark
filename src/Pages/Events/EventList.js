@@ -78,7 +78,7 @@ function AnnouncementList() {
             );
           })
         ) : (
-          <h1>No events yet!</h1>
+          <h1 className = 'no-event-list'>No events yet!</h1>
         )}
       </Container>
     </div>
