@@ -22,7 +22,12 @@ describe('<EventCard />', () => {
   };
   it('Should render the title of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find('.event-title').get(0).props.children).to.equal(appProps.title);
+    expect(
+      wrapper
+        .find('.event-title')
+        .get(0)
+        .props.children
+    ).to.equal(appProps.title);
   });
   it('Should render the date of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
