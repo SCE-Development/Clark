@@ -89,7 +89,3 @@ sheets.json
 *.csr
 *.key
 *.cer
-
-# api
-*.cmd
-*.ps1

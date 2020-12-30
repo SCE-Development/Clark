@@ -73,7 +73,7 @@ function EventManagerModal(props) {
       {
         addon: 'Event Location*',
         type: 'text',
-        // maxLength: '25',
+        maxLength: '25',
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
         handleChange: e => setEventLocation(e.target.value),

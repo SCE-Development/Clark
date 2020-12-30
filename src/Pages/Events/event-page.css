@@ -49,6 +49,7 @@
   max-width: 66%;
   padding-right:50px;
   padding-left: 50px;
+  overflow-wrap: break-word;
 }
 
 @media screen and (max-width: 1100px) { 
