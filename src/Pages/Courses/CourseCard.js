@@ -9,8 +9,7 @@ import {
   CardTitle,
   Popover,
   PopoverBody,
-  PopoverHeader,
-  Button
+  PopoverHeader
 } from 'reactstrap';
 
 function CourseCard(props) {
@@ -31,7 +30,7 @@ function CourseCard(props) {
     <React.Fragment>
       <Card
         id={`card${cardNum}`}
-        className='shadow h-100'
+        className='shadow h-100 course-card'
         onClick={handleClick}
         onMouseEnter={() => setShowPopOver(true)}
         onMouseLeave={() => setShowPopOver(false)}

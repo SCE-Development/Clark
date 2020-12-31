@@ -4,7 +4,7 @@ import axios from 'axios';
 import marked from 'marked';
 import './lessons-page.css';
 import { membershipState } from '../../Enums';
-import LessonsModal from './LessonModal';
+import LessonModal from './LessonModal';
 import SummaryModal from './SummaryModal';
 import { modalStates } from '../../Enums';
 import {
@@ -210,7 +210,7 @@ function LessonsPage(props) {
               className='SCEButton px-2 py-2'
               onClick={SummaryToggle}
             >
-                Edit summary
+                Edit course home
             </button>
           </div>
         )}
@@ -219,7 +219,7 @@ function LessonsPage(props) {
           className='SCEButton btn-block px-2 py-2 mb-3 mt-3'
           onClick={handleSummaryClick}
         >
-            View Summary
+            Course home
         </button>
         <h2 className='lessons-title'>Lessons</h2>
         {lessons.length > 0 && (
@@ -274,7 +274,7 @@ function LessonsPage(props) {
         </div>
       </div>
       {showLessonModal && (
-        <LessonsModal
+        <LessonModal
           showLessonModal={showLessonModal}
           LessonsToggle={LessonsToggle}
           handleLessonDelete={handleLessonDelete}

@@ -15,7 +15,7 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal';
 import { modalStates } from '../../Enums';
 
-function LessonsPageModal(props) {
+function LessonModal(props) {
   const { selectedLesson, showLessonModal, LessonsToggle, modalState } = props;
   const [lessonTitle, setLessonTitle] = useState(
     modalState === modalStates.EDIT ? selectedLesson.title : undefined);
@@ -137,4 +137,4 @@ function LessonsPageModal(props) {
   );
 }
 
-export default LessonsPageModal;
+export default LessonModal;
