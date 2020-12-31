@@ -72,7 +72,7 @@ describe('<EventCard />', () => {
 
   it('Should a photo related to the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find('#event-image').props().src).to.equal
+    expect(wrapper.find('.event-image').props().src).to.equal
     (appProps.imageURL);
   });
 });

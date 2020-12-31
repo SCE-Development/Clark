@@ -62,7 +62,7 @@ function AnnouncementList() {
   }
 
   return (
-    <div className='event-background'>
+    <React.Fragment>
       <Header {...headerProps} />
       <Container className='event-list'>
         {currentEvent === null ? <></> : <EventInfoModal {...modalProps} />}
@@ -81,7 +81,7 @@ function AnnouncementList() {
           <h1 className = 'no-event-list'>No events yet!</h1>
         )}
       </Container>
-    </div>
+    </React.Fragment>
   );
 }
 

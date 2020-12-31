@@ -64,13 +64,12 @@ export default function EventManager(props) {
   }
 
   return (
-    <div className='event-background'>
+    <React.Fragment>
       <Header {...headerProps} />
       <Container className='event-list'>
         <Button className='create-event' onClick={toggleNewEvent}>
           New Event
         </Button>
-        <div> <br></br> </div>
         {modal && (
           <EventManagerModal
             modal={modal}
@@ -104,6 +103,6 @@ export default function EventManager(props) {
           <h1 className='empty-title'>No events yet!</h1>
         )}
       </Container>
-    </div>
+    </React.Fragment>
   );
 }

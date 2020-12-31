@@ -5,6 +5,7 @@
 .create-event {
   background-color: rgb(2, 107, 126) !important;
   color: white !important;
+  margin-bottom: 15px;
 }
 
 .modal-image-container {
