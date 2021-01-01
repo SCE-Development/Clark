@@ -235,6 +235,8 @@ export default class EmailTemplate extends Component {
       emailList = this.state.memberEmail;
     } else if (this.state.recipients === 'Officers') {
       emailList = this.state.officerEmail;
+    } else if (this.state.recipients === 'Alumni') {
+      emailList = this.state.alumniEmail;
     } else if (this.state.recipients === 'Everyone') {
       emailList = this.state.allEmail;
     }
