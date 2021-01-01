@@ -6,10 +6,10 @@ import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
 
 import './home.css';
-//import Slideshow from '../../Components/Slideshow/Slideshow.js';
+// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-//import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
-//import Iframe from 'react-iframe';
+// import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+// import Iframe from 'react-iframe';
 import { Row, Col, Container } from 'reactstrap';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
@@ -51,16 +51,13 @@ const blockTwoText = [
 ];
 
 const sceTitle = [
-  { title: "Software and \n" },
-  { title: "Computer" },
-  { title: "Engineering" },
-  { title: "Society" }
-]
-
-const blockTwoText = [
-  { title: 'Join our public accounts on Discord, Slack,' },
-  { title: 'Instagram and more today, and connect with SCE members' },
+  { title: 'Software and \n' },
+  { title: 'Computer' },
+  { title: 'Engineering' },
+  { title: 'Society' }
 ];
+
+
 
 const text = 'Software and \n Computer \n Engineering \n Society';
 const subBlockOneText = [
