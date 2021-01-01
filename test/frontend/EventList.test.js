@@ -16,10 +16,11 @@ Enzyme.configure({ adapter: new Adapter() });
 describe('<EventList />', () => {
   let stub = null;
   /**
-   * Event List only renders unexpired events. 
-   * UNEXPIRED_EVENTS_COUNT: event dates that include today's date and the dates after.
+   * Event List only renders unexpired events.
+   * UNEXPIRED_EVENTS_COUNT: event with dates that include
+   * today's date and the dates after.
    */
-  const UNEXPIRED_EVENTS_COUNT = 3; 
+  const UNEXPIRED_EVENTS_COUNT = 3;
   const RENDERED_EVENTS = new ApiResponse(false, [
     {
       title: 'Expired',
@@ -75,8 +76,8 @@ describe('<EventList />', () => {
   }
 
   it(
-    'Should render an <EventCard /> component for every unexpired event card in event list' +
-      ' array',
+    'Should render an <EventCard /> component for every unexpired event card ' +
+      'in event list array',
     async () => {
       returnEventArray();
       const wrapper = await mount(<EventList {...RENDERED_EVENTS} />);
@@ -90,7 +91,6 @@ describe('<EventList />', () => {
     returnEmptyArray();
     const wrapper = await mount(<EventList {...RENDERED_EVENTS} />);
     wrapper.update();
-    console.log(wrapper.text());
     expect(wrapper.find(EventCard)).to.have.lengthOf(0);
     expect(
       wrapper.text().endsWith('No events yet!')
