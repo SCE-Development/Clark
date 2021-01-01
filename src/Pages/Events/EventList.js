@@ -3,25 +3,12 @@ import { Container } from 'reactstrap';
 import './event-page.css';
 import { getAllEvents } from '../../APIFunctions/Event';
 import EventCard from './EventCard';
-import EventInfoModal from './EventInfoModal';
 import Header from '../../Components/Header/Header';
 
 function AnnouncementList() {
-  const [modal, setModal] = useState(false);
   const [getFiltered, setGetFiltered] = useState(true);
-  const [currentEvent, setEvent] = useState(null);
   const [eventList, setEventList] = useState();
   const [validList, setValidList] = useState();
-
-  async function toggle() {
-    setModal(!modal);
-  }
-
-  const modalProps = {
-    currentEvent,
-    modal,
-    toggle
-  };
 
   const headerProps = {
     title: 'SCE Event Page'
@@ -56,23 +43,16 @@ function AnnouncementList() {
     fetchData();
   }, []);
 
-  function handleClick(clickedEvent) {
-    setEvent(clickedEvent);
-    toggle();
-  }
-
   return (
     <React.Fragment>
       <Header {...headerProps} />
       <Container className='event-list'>
-        {currentEvent === null ? <></> : <EventInfoModal {...modalProps} />}
         {getFilteredEvents()}
         {validList && validList.length ? (
           validList.reverse().map((event, index) => {
             return (
               <EventCard
                 key={index}
-                handleClick={() => handleClick(event)}
                 {...event}
               />
             );

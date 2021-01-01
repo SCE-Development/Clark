@@ -10,16 +10,12 @@ function EventCard(props) {
     eventLocation,
     startTime,
     endTime,
-    handleClick,
     imageURL
   } = props;
 
   return (
     <Container
       className='event-card-button'
-      onClick={() => {
-        handleClick();
-      }}
     >
       <Col className='event-info'>
         <div className='event-title'>{title}</div>
