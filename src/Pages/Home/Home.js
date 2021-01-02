@@ -122,7 +122,6 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-
           </div>
           <div className="sceTitle" data-aos="fade-out" >
             {SCEtitle}
