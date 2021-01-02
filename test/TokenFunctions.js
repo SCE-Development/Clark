@@ -1,5 +1,4 @@
 /* global describe it before after afterEach */
-import { membershipState } from '../../Enums';
 
 const sinon = require('sinon');
 const chai = require('chai');
@@ -9,7 +8,7 @@ const proxyquire = require('proxyquire');
 const requestWithToken = {
   body: {
     token: 'hi thai',
-    accessLevel: membershipState.MEMBER,
+    accessLevel: 2,
   }
 };
 const requestWithoutToken = {
