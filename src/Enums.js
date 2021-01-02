@@ -44,11 +44,11 @@ const membershipState = {
 const membershipStatusArray = [
   'Ban',
   'Pending',
+  'Alumni',
   'Nonmember',
   'Member',
   'Officer',
   'Admin',
-  'Alumni'
 ];
 
 function membershipStateToString(index) {

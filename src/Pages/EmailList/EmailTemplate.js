@@ -6,7 +6,7 @@ import BlastMailForm from './BlastMailForm.js';
 import SendButtonModal from './SendButtonModal.js';
 import { sendBlastEmail } from '../../APIFunctions/Mailer';
 import { getAllUsers, filterUsers } from '../../APIFunctions/User';
-
+import { membershipState } from '../../Enums';
 
 export default class EmailTemplate extends Component {
   constructor(props) {
@@ -52,19 +52,19 @@ export default class EmailTemplate extends Component {
         allEmail = [];
       // forEach loop to push emails to their respective arrays
       allUsers.forEach(function(item) {
-        // Access level >=3 is officers+, Access level >=1 but <2 are members
+        // Access level >=3 is officers+, Access level >=2 but <3 are members
         // Access level == 0 is alumni
-        if (item.accessLevel >= 3) {
+        if (item.accessLevel >= membershipState.OFFICER) {
           allEmail.push(item.email);
           officerEmail.push(item.email);
-        } else if (item.accessLevel >= 1) {
+        } else if (item.accessLevel >= membershipState.MEMBER) {
           allEmail.push(item.email);
           memberEmail.push(item.email);
-        } else if (item.accessLevel == 0) {
+        } else if (item.accessLevel == membershipState.ALUMNI) {
           allEmail.push(item.email);
           alumniEmail.push(item.email);
         }
-      }, this.setState({ officerEmail, memberEmail, allEmail, alumniEmail }));
+      }, this.setState({ officerEmail, memberEmail, alumniEmail, allEmail }));
     } catch (error) {
       const alertText =
         'Looks like there was a problem with fetching the users. ' +
