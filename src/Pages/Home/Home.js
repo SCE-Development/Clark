@@ -60,7 +60,8 @@ const subBlockOneText = [
   { title: 'IBM, Tesla, SAP and more!' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' }
+  { title: 'IBM, Tesla, SAP and more!' },
+  { title: <br /> },
 ];
 
 const subBlockTwoText = [
@@ -76,6 +77,7 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
+  { title: <br /> },
 ];
 
 // Club social media icon links
@@ -364,45 +366,63 @@ return (
 
                   <h1 class="textBlock1-title">
                     Need a place to get things done?
+          <div class="contentContainer">
+                      <div className="block-space"></div>
+
+                      <div>
+                        <Row>
+                          <Col>
+                            <div data-aos="fade-up"
+                              data-aos="fade-down">
+                              <img className="block-images"
+                                src='images/resume-workshop.jpg'
+                                alt="blockOneImg"
+                                style={{ width: '40vw', marginLeft: '15%' }}></img>
+                            </div>
+                          </Col>
+                          <Col>
+                            <Container>
+                              <h1 class="textBlock1-title" >
+                                Need a place to get things done?
                     </h1>
-                  <div class="textBlock1-text">
-                    {blockOneText.map((title) => {
-                      return (
-                        <p className="blockText">{title.title}</p>
-                      );
-                    })}
-                  </div>
-                </Container>
-              </Col>
-            </Row>
-          </div>
+                              <div class="textBlock1-text">
+                                {blockOneText.map((title) => {
+                                  return (
+                                    <p className="blockText">{title.title}</p>
+                                  );
+                                })}
+                              </div>
+                            </Container>
+                          </Col>
+                        </Row>
+                      </div>
           </Container >
   </Col >
 
   </Row >
   </div >
-</Row >
-  </div >
-  <div className="block-space"></div>
+            </Row >
+          </div >
+          <div className="block-space"></div>
 
-  <div className="block-two">
-    <Row>
-      <Col>
-        <h1 class="textBlock2-title">Would like to know more?</h1>
-        <div class="textBlock2-text">
-          {blockTwoText.map((title) => {
-            return (
-              <p className="text">{title.title}</p>
-            );
-          })}
-        </div>
-        <div className="linksIcons">
-          <a href='https://www.linkedin.com/company/sjsu-software
+          <div className="block-two">
+            <Row>
+              <Col>
+                <h1 class="textBlock2-title">Would like to know more?</h1>
+                <div class="textBlock2-text">
+                  {blockTwoText.map((title) => {
+                    return (
+                      <p className="text">{title.title}</p>
+                    );
+                  })}
+                </div>
+                <div className="linksIcons">
+                  <a href='https://www.linkedin.com/company/sjsu-software
           -computer-engineering-society/'>
-            <svg width='50px' height='50px' viewBox='0 0 24 24'>
-              <path
-                fill='#484848'
-                d='M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0
+                    <svg width='50px' height='50px' viewBox='0 0 24 24'>
+                      <path
+                        fill='#484848'
+                        d='M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0
                           0,1 3,
                 19V5A2,2 0 0,1 5,3H19M18.5,18.5V13.2A3.26,3.26 0 0,0 15.24,
                 11.24V10.13H10.13V18.5H12.92V13.57C12.92,12.8 13.54,
@@ -410,91 +430,91 @@ return (
                 8.56A1.68,1.68 0 0,0 8.56,6.88C8.56,5.95 7.81,5.19 6.88,
                 5.19A1.69,1.69 0 0,0 5.19,6.88C5.19,7.81 5.95,8.56 6.88,
                 8.56M8.27,18.5V10.13H5.5V18.5H8.27Z'
-              />
-            </svg>
-          </a>
-          <a href='https://www.facebook.com/sjsusce/'>
-            <svg width='50px' height='50px' viewBox='0 0 24 24'>
-              <path
-                fill='#484848'
-                d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2
+                      />
+                    </svg>
+                  </a>
+                  <a href='https://www.facebook.com/sjsusce/'>
+                    <svg width='50px' height='50px' viewBox='0 0 24 24'>
+                      <path
+                        fill='#484848'
+                        d='M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2
                           0 0,1 3,
                 19V5A2,2 0 0,1 5,3M18,5H15.5A3.5,3.5 0 0,0 12,
                 8.5V11H10V14H12V21H15V14H18V11H15V9A1,1 0 0,1 16,8H18V5Z'
-              />
-            </svg>
-          </a>
-        </div>
-      </Col>
-      <Col>
-        <img src='images/block2.png' alt="blockOneImg"
-          style={{ width: '100%' }}></img>
-      </Col>
-    </Row>
-  </div >
-  <div className="clubRoomContainer">
-    <img class="groupPictureStyles" src='images/emptyclubroom.png'
-      alt="officersPic" style={{ width: '105%' }}></img>
-            </div>
+                      />
+                    </svg>
+                  </a>
+                </div>
+              </Col>
+              <Col>
+                <img src='images/block2.png' alt="blockOneImg"
+                  style={{ width: '100%' }}></img>
+              </Col>
+            </Row>
+          </div >
+          <div className="clubRoomContainer">
+            <img class="groupPictureStyles" src='images/emptyclubroom.png'
+              alt="officersPic" style={{ width: '105%' }}></img>
+          </div>
 
-{/* The second major block: "Want to know more?" */ }
-            <div className="block-two">
-              <Row>
-                <Col className="block-styles">
-                  <h1>
-                    <span class="textBlock2-title">
-          Want to know more?
+          {/* The second major block: "Want to know more?" */}
+          <div className="block-two">
+            <Row>
+              <Col className="block-styles">
+                <h1>
+                  <span class="textBlock2-title">
+                    Want to know more?
                     </span>
-                  </h1>
-                  <div class="textBlock2-text">
-                    {blockTwoText.map((title) => {
-                      return (
-                        <p className="blockText">{title.title}</p>
-                      );
-                    })}
-                  </div>
+                </h1>
+                <div class="textBlock2-text">
+                  {blockTwoText.map((title) => {
+                    return (
+                      <p className="blockText">{title.title}</p>
+                    );
+                  })}
+                </div>
 
-                  {/* Icons div */}
-                  <div className="icons-container">
-                    {icons.map((icon, index) => {
-                      return (
-                        <a key={index} href={icon.link}>
+                {/* Icons div */}
+                <div className="icons-container">
+                  {icons.map((icon, index) => {
+                    return (
+                      <a key={index} href={icon.link}>
 
-                          <svg className='block2-icons' viewBox='0 0 24 24'>
-                            <path fill='#484848' d={icon.vector} />
-                          </svg>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </Col>
-                <Col>
-                  <div data-aos="fade-up" data-aos="fade-down" >
-                    <img className="block-images"
-                      src='images/Tesla2.jpg'
-                      alt="blockOneImg"
-                      style={{ width: '45vw', marginRight: '15%' }}></img>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <div className="block-space"></div>
+                        <svg className='block2-icons' viewBox='0 0 24 24'>
+                          <path fill='#484848' d={icon.vector} />
+                        </svg>
+                      </a>
+                    );
+                  })}
+                </div>
+              </Col>
+              <Col>
+                <div data-aos="fade-up" data-aos="fade-down" >
+                  <img className="block-images"
+                    src='images/Tesla2.jpg'
+                    alt="blockOneImg"
+                    style={{ width: '45vw', marginRight: '15%' }}></img>
+                </div>
+              </Col>
+            </Row>
+          </div>
+          <div className="block-space"></div>
 
-            <div className="block-space"></div>
-
-
-{/* </div> */ }
+          <div className="block-space"></div>
 
 
-{/* </div> */ }
+          {/* </div> */}
 
 
-<Footer />
-          </div >
+          {/* </div> */}
+
+
+          <Footer />
         </div >
-  <Footer />
-          </div >
-        </div >
+      </div >
+      <Footer />
+    </div >
+  </div >
       </>
     );
   }
