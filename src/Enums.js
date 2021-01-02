@@ -34,8 +34,8 @@ function memberShipPlanToString(key) {
 const membershipState = {
   BANNED: -2,
   PENDING: -1,
-  ALUMNI: 0,
-  NON_MEMBER: 1,
+  NON_MEMBER: 0,
+  ALUMNI: 1,
   MEMBER: 2,
   OFFICER: 3,
   ADMIN: 4,
@@ -44,8 +44,8 @@ const membershipState = {
 const membershipStatusArray = [
   'Ban',
   'Pending',
-  'Alumni',
   'Nonmember',
+  'Alumni',
   'Member',
   'Officer',
   'Admin',
