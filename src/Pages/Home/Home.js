@@ -50,12 +50,11 @@ const blockTwoText = [
   { title: 'Instagram and more to connect with SCE members!' },
 ];
 
-const subBlockOneText = [
-  { title: 'As an SCE member, you will get inside scoops ' },
-  { title: '& opportunities.' },
+const sceTitle = [
+  { title: 'Software and \n' },
+  { title: 'Computer' },
+  { title: 'IBM, Tesla, SAP and more!' },
   { title: <br /> },
-  { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' }
 ];
 
 const subBlockTwoText = [
@@ -71,6 +70,7 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
+  { title: <br /> },
 ];
 
 const icons = [
@@ -154,7 +154,6 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-
           </div>
 
           <div className="sceTitle" data-aos="fade-out" >
@@ -220,11 +219,7 @@ class Home extends Component {
                         );
                       })}
                     </div>
-                  </Col>
                   <Col xs={3} >
-                    <div class="subBlock-title" data-aos="fade-up">
-                      Workshops
-                    </div>
                     <div class="subBlockContainer" data-aos="fade-up">
                       {subBlockTwoText.map((title) => {
                         return (
