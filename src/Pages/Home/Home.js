@@ -154,7 +154,6 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-
           </div>
 
           <div className="sceTitle" data-aos="fade-out" >
@@ -206,84 +205,80 @@ class Home extends Component {
                         );
                       })}
                     </div>
-                  </Col>
-                  <Col xs={3} >
-                    <div class="subBlock-title" data-aos="fade-up">
-                      Workshops
+                    <Col xs={3} >
+                      <div class="subBlockContainer" data-aos="fade-up">
+                        {subBlockTwoText.map((title) => {
+                          return (
+                            <span className="subBlockText">{title.title}</span>
+                          );
+                        })}
+                      </div>
+                    </Col>
+                    <Col xs={3}>
+                      <div class="subBlock-title" data-aos="fade-right">
+                        Social Events
                     </div>
-                    <div class="subBlockContainer" data-aos="fade-up">
-                      {subBlockTwoText.map((title) => {
-                        return (
-                          <span className="subBlockText">{title.title}</span>
-                        );
-                      })}
-                    </div>
-                  </Col>
-                  <Col xs={3}>
-                    <div class="subBlock-title" data-aos="fade-right">
-                      Social Events
-                    </div>
-                    <div class="subBlockContainer" data-aos="fade-right">
-                      {subBlockThreeText.map((title) => {
-                        return (
-                          <p className="subBlockText">{title.title}</p>
-                        );
-                      })}
-                    </div>
-                  </Col>
+                      <div class="subBlockContainer" data-aos="fade-right">
+                        {subBlockThreeText.map((title) => {
+                          return (
+                            <p className="subBlockText">{title.title}</p>
+                          );
+                        })}
+                      </div>
+                    </Col>
                 </Row>
               </p>
             </div>
-            <div className="block-two">
-              <Row>
-                <Col className="block-styles">
-                  <h1>
-                    <span class="textBlock2-title">
-                      Want to know more?
+              <div className="block-two">
+                <Row>
+                  <Col className="block-styles">
+                    <h1>
+                      <span class="textBlock2-title">
+                        Want to know more?
                     </span>
 
                       return (
                         <a key={index} href={icon.link}>
 
-                      <svg className='block2-icons' viewBox='0 0 24 24'>
-                        <path fill='#484848' d={icon.vector} />
-                      </svg>
-                    </a>
+                        <svg className='block2-icons' viewBox='0 0 24 24'>
+                          <path fill='#484848' d={icon.vector} />
+                        </svg>
+                      </a>
                       );
                     })}
                   </div>
 
-                </Col>
-                <Col>
-                  <div data-aos="fade-up" data-aos="fade-down" >
-                    <img className="block-images"
-                      src='images/Tesla2.jpg'
-                      alt="blockOneImg"
-                      style={{ width: '45vw', marginRight: '15%' }}></img>
-                  </div>
-                </Col>
-              </Row>
+                  </Col>
+                  <Col>
+                    <div data-aos="fade-up" data-aos="fade-down" >
+                      <img className="block-images"
+                        src='images/Tesla2.jpg'
+                        alt="blockOneImg"
+                        style={{ width: '45vw', marginRight: '15%' }}></img>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+
+              <div className="block-space"></div>
+
+
+              {/* </div> */}
+
+
+              <Footer />
             </div>
 
-            <div className="block-space"></div>
 
+            <div className="eventsContainer">
+              <Container>
+                <h1>------------------------</h1>
+                <h1>EVENTS!!!!</h1>
+                <h1>------------------------</h1>
 
-            {/* </div> */}
-
-
-            <Footer />
-          </div>
-
-
-          <div className="eventsContainer">
-            <Container>
-              <h1>------------------------</h1>
-              <h1>EVENTS!!!!</h1>
-              <h1>------------------------</h1>
-
-            </Container>
-          </div>
-          {/* <div class="sceTitle">
+              </Container>
+            </div>
+            {/* <div class="sceTitle">
               {sceTitle.map((item) => {
                 return (
                   <text>{item.title + "\n"}</text>
@@ -291,7 +286,7 @@ class Home extends Component {
               })}
             </div> */}
 
-          {/* <div className='text-center'>
+            {/* <div className='text-center'>
               <h1 className='display-4'>SCE Events Calendar</h1>{' '}
             </div>
             <p className='lead text-center'>
@@ -299,7 +294,7 @@ class Home extends Component {
             Add SCE Calendar to your own by clicking the Google Calendar icon on
             the bottom right side!</p> */}
 
-          {/* <div className='outer-div'>
+            {/* <div className='outer-div'>
               <div className='inner-div'>
                 <Iframe
                   // Unable to breka up iframe url
@@ -315,31 +310,31 @@ class Home extends Component {
                 />
               </div>
             </div> */}
-          <div className="block-space"></div>
+            <div className="block-space"></div>
 
-          <div className="block-one">
-            <Row>
-              <Col>
-                <img src='images/block1.png' alt="blockOneImg"
-                  style={{ width: '100%' }}></img>
-              </Col>
-              <Col>
-                <Container className="textOne">
+            <div className="block-one">
+              <Row>
+                <Col>
+                  <img src='images/block1.png' alt="blockOneImg"
+                    style={{ width: '100%' }}></img>
+                </Col>
+                <Col>
+                  <Container className="textOne">
 
-                  <h1 class="textBlock1-title">
-                    Need a place to get things done?
+                    <h1 class="textBlock1-title">
+                      Need a place to get things done?
                     </h1>
-                  <div class="textBlock1-text">
-                    {blockOneText.map((title) => {
-                      return (
-                        <p className="text">{title.title}</p>
-                      );
-                    })}
-                  </div>
-                </Container>
-              </Col>
-            </Row>
-          </div>
+                    <div class="textBlock1-text">
+                      {blockOneText.map((title) => {
+                        return (
+                          <p className="text">{title.title}</p>
+                        );
+                      })}
+                    </div>
+                  </Container>
+                </Col>
+              </Row>
+            </div>
           </Container >
       </Col >
 
