@@ -19,7 +19,6 @@ import logo from '../Navbar/sce_logo.png';
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const [scroll, setScroll] = useState(false);
   const icons = [
     {
       link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -83,9 +82,9 @@ export default function UserNavBar(props) {
   };
 
 
-  useEffect(() => {
+  useEffect(() =>
     // eslint-disable-next-line
-  }, [])
+    [])
 
   return (
 
