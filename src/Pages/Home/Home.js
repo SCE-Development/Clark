@@ -144,7 +144,8 @@ const subBlockOneText = [
   { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' }
+  { title: 'IBM, Tesla, SAP and more!' },
+  { title: <br /> },
 ];
 
 const subBlockTwoText = [
@@ -160,6 +161,7 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
+  { title: <br /> },
 ];
 
 // useEffect(() => {
