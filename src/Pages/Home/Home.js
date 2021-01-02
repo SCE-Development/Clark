@@ -38,11 +38,12 @@ import { Row, Col, Container } from 'reactstrap';
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
-  { title: 'Our clubroom offers everything a software or computer' },
-  { title: 'engineering student could need.' },
+  { title: 'Our clubroom offers everything a software ' },
+  { title: 'or computer engineering student could need.' },
   { title: <br /> },
-  { title: 'We continue to offer resources to our members despite' },
-  { title: 'of being remote. Read further for more details!' }
+  { title: 'We continue to offer resources to our  ' },
+  { title: 'members despite being remote. ' },
+  { title: 'Read further for more details!' },
 ];
 
 const blockTwoText = [
@@ -55,7 +56,8 @@ const subBlockOneText = [
   { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' }
+  { title: 'IBM, Tesla, SAP and more!' },
+  { title: <br /> },
 ];
 
 const subBlockTwoText = [
@@ -71,6 +73,7 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
+  { title: <br /> },
 ];
 
 const icons = [
@@ -152,7 +155,6 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-
           </div>
 
           <div className="sceTitle" data-aos="fade-out" >
@@ -163,42 +165,9 @@ class Home extends Component {
 
 
           <div class="contentContainer">
-            {/* <div class="sceTitle">
-              {sceTitle.map((item) => {
-                return (
-                  <text>{item.title + "\n"}</text>
-                );
-              })}
-            </div> */}
-
-            {/* <div className='text-center'>
-              <h1 className='display-4'>SCE Events Calendar</h1>{' '}
-            </div>
-            <p className='lead text-center'>
-              {' '}
-            Add SCE Calendar to your own by clicking the Google Calendar icon on
-            the bottom right side!</p> */}
-
-            {/* <div className='outer-div'>
-              <div className='inner-div'>
-                <Iframe
-                  // Unable to breka up iframe url
-                  // eslint-disable-next-line
-                  url='https://calendar.google.com/calendar/b
-                  /4/embed?showTitle=0&amp;showPrint=0&amp;showTabs=
-                  0&amp;showCalendars=0&amp;showTz=0&amp;height=600&amp
-                  ;wkst=1&amp;bgcolor=%23ffffff&amp;src=llv828585faitko
-                  1m2nh39s3js%40group.calendar.google.com&amp;color=%
-                  23182C57&amp;ctz=America%2FLos_Angeles'
-                  className='calendar'
-                  allowFullScreen
-                />
-              </div>
-            </div> */}
-
             <div className="block-space"></div>
 
-            <div className="block-one">
+            <div>
               <Row>
                 <Col>
                   <div data-aos="fade-up"
@@ -210,8 +179,7 @@ class Home extends Component {
                   </div>
                 </Col>
                 <Col>
-                  <Container className="textOne">
-
+                  <Container>
                     <h1 class="textBlock1-title" >
                       Need a place to get things done?
                     </h1>
@@ -236,23 +204,19 @@ class Home extends Component {
                     <p class="subBlock-title" data-aos="fade-left">
                       Tech Events
                     </p>
-                    <p class="subBlock-text" data-aos="fade-left">
+                    <p class="subBlockContainer" data-aos="fade-left">
                       {subBlockOneText.map((title) => {
                         return (
                           <p className="subBlockText">{title.title}</p>
                         );
                       })}
                     </p>
-                    {/* <Button className="subBlock-buttons"
-                      color='primary'>
-                      Submit
-                    </Button> */}
                   </Col>
                   <Col xs={3} >
                     <div class="subBlock-title" data-aos="fade-up">
                       Workshops
                     </div>
-                    <div class="subBlock-text" data-aos="fade-up">
+                    <div class="subBlockContainer" data-aos="fade-up">
                       {subBlockTwoText.map((title) => {
                         return (
                           <p className="subBlockText">{title.title}</p>
@@ -264,7 +228,7 @@ class Home extends Component {
                     <div class="subBlock-title" data-aos="fade-right">
                       Social Events
                     </div>
-                    <div class="subBlock-text" data-aos="fade-right">
+                    <div class="subBlockContainer" data-aos="fade-right">
                       {subBlockThreeText.map((title) => {
                         return (
                           <p className="subBlockText">{title.title}</p>
@@ -274,13 +238,12 @@ class Home extends Component {
                   </Col>
                 </Row>
               </p>
-
             </div>
             <div className="block-two">
               <Row>
                 <Col>
                   <h1 class="textBlock2-title">
-                    Would like to know more?
+                    Want to know more?
                   </h1>
                   <div class="textBlock2-text">
                     {blockTwoText.map((title) => {
@@ -289,7 +252,7 @@ class Home extends Component {
                       );
                     })}
                   </div>
-                  <div className="icons-container" data-aos="fade-in">
+                  <div className="icons-container">
                     {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>

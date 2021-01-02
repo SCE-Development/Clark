@@ -20,7 +20,8 @@
   color: white;
   background-size: cover;
   overflow: hidden; 
-  
+  bottom: 2vw;
+  padding-top: 4vw;
 }
 
 .groupPictureStyles{
@@ -30,13 +31,6 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-}
-
-.contentContainer{
-  width: 100%;
-  margin-top: 50%;
-  background-color:#fff;
-  overflow: auto;
 }
 
 .sceTitle{
@@ -49,13 +43,16 @@
   white-space: pre-line;
   text-align: left;
   direction: ltr;
-  font-size: 4vw;
+  font-size: 4em;
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
   text-shadow:  0 1px 10px #777;
   z-index: 0;
   overflow: auto;
+  display: block;
+  font-size-adjust: inherit;
+
 }
 
 .sceLogo{
@@ -71,7 +68,7 @@
   position: relative;
   text-align: center;
   color: white;
-  padding-bottom: 30%;
+  padding-bottom: 15%;
   min-height: 500%;
   width: 100%;
   background-size: 100%;
@@ -99,21 +96,12 @@
   -webkit-filter: blur(8px)
 }
 
-.clubRoomContainerText{
-  -webkit-filter: blur(0px);
-    -moz-filter: blur(0px);
-    -o-filter: blur(0px);
-    -ms-filter: blur(13px);
-    filter: blur(0px);
-}
-
-
 .subBlock-title{
   scroll-behavior: [ smooth ];
   color: white;
   position: relative;
   font-family: 'Montserrat';
-  font-size: 2.5vw;
+  font-size: 1.5em;
   font-weight: bolder !important; 
   text-shadow:  0 1px 10px #777;
   z-index: 0;
@@ -127,18 +115,6 @@
 
 }
 
-.subBlock-buttons{
-  margin-top: 15vw;
-  top: 16vw;
-  left: 40%;
-  margin-left: 20vw;
-}
-
-.block-images{
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 6px 6px 6px 6px rgba(0, 0, 0, 0.19);
-
-}
-
 .block2-icons {
   width: 3vw;
   height: 3vw;
@@ -146,13 +122,17 @@
 }
 
 .icons-container{
+  margin-top: 20%;
   margin-left: 15%;
+  width: 25%;
+  border-radius: 20px;
+  background-image: linear-gradient(to right, #9ea3df6c 0%, #59ade98c 100%);
 }
 
-.subBlock-text{
+.subBlockContainer{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
-  font-size: 3vw;
+  font-size: 3em;
   direction: ltr;
   left: 40%;
   top: 10vw;
@@ -163,53 +143,16 @@
   line-height: 50%;
 }
 
-.subBlock-two{
-  scroll-behavior: [ smooth ];
-  color:white;
-  position: absolute;
-  font-family: 'Montserrat';
-  font-size: 3vw;
-  font-weight: bolder !important; 
-  text-shadow:  0 1px 10px #777;
-  z-index: 0;
-  /* margin-top: 15%; */
-  top: 10% !important;
-  margin-top: 0% !important;
-  overflow: auto;
-  text-align: left;
-  direction: ltr;
-  left: 15%;
-}
-
-.subBlock-three{
-  scroll-behavior: [ smooth ];
-  color: white;
-  position: absolute;
-  font-family: 'Montserrat';
-  font-size: 3vw;
-  font-weight: bolder !important; 
-  text-shadow:  0 1px 10px #777;
-  z-index: 0;
-  overflow: auto;
-  text-align: left;
-  direction: ltr;
-  left: 15%;
-}
-
-.clubRoomStyles{
-  z-index: -1;
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.slideshow {
-  max-width: auto;
-  position: relative;
+.subBlockText{
+  font-family: 'Karla', sans-serif;
   margin: auto;
-  height: auto;
-  overflow: hidden;
+  margin-left: 5vw;
+  font-size: 0.5em;
+  font-weight: 400;
+  word-wrap: break-word;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  display:block;
 }
 
 .textBlock1-title, .textBlock2-title{
@@ -217,14 +160,24 @@
   text-align: left;
   font-size: xx-large;
   font-weight: 600;
-  margin-left:5%;
+  background-color: #9ed7df6c;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 65%,  #59ade98c 65%);
+}
+
+.textBlock1-title{
   margin-top: 15%;
+  margin-left:4%;
   margin-bottom: 5%;
+  width: 85%;
 }
+
 .textBlock2-title{
+  margin-top: 20%;
   margin-left: 15%;
+  width: 55%;
 }
-.textBlock1-text{
+
+.textBlock1-text, .textBlock2-text{
   font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: medium;
@@ -264,24 +217,20 @@
 }
 
 .textBlock2-text{
-  font-family: 'Montserrat', sans-serif;
-  text-align: left;
-  font-size: medium;
   margin-left: 15%;
-  
 }
 
 .blockText{
-  line-height: 0.4vw;
+  line-height: 5.5vw;
+  text-align: left;
+  font-size: 1.25rem;
+  max-height: 7px;
+  word-wrap: break-word;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  display:block;
 }
 
-.subBlockText{
-  font-family: 'Karla', sans-serif;
-  margin: auto;
-  margin-left: 5vw;
-  font-size: 1.5vw;
-  font-weight: 400;
-}
 .outer-div
 {
   padding: 30px;
@@ -304,3 +253,201 @@
   position: relative !important;
   display: initial !important;
 }
+
+/*********************************************************/
+/*********************************************************/
+
+@media only screen and (min-width: 200px) and (max-width: 700px) { 
+  
+  .groupPicContainer{
+    position: fixed;
+    text-align: center;
+    color: white;
+    background-size: cover;
+    overflow: hidden; 
+    bottom: 2vw;
+    top: 6vw;
+    padding-top: 1 !important;
+  }
+
+  .sceTitle{
+    scroll-behavior: [ smooth ];
+    color: white;
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    font-family: 'Montserrat';
+    white-space: pre-line;
+    text-align: left;
+    direction: ltr;
+    font-size: 1em;
+    font-weight: bolder !important; 
+    line-height: 1.05;
+    letter-spacing: 1px;
+    text-shadow:  0 1px 10px #777;
+    z-index: 0;
+    overflow: auto;
+    display: block;
+    font-size-adjust: inherit;
+  }
+
+  .sceLogo{
+    top: 6%;
+  }
+
+  .clubRoomContainer{
+    background-image: url("./emptyclubroom_blurred.jpg"); 
+    position: relative;
+    text-align: center;
+    color: white;
+    width: 100%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    height: 100%;
+    margin-bottom: 5%;
+  }
+  
+  .subBlockContainer{
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    font-size: 10px;
+    direction: ltr;
+    left: 40%;
+    top: 10vw;
+    scroll-behavior: [ smooth ];
+    color: white;
+    font-weight: 500;
+    position: relative;
+    line-height: 50%;
+  }
+
+  .subBlockText{
+    font-size: 6.5px;
+  }
+
+  .subBlock-title{
+    scroll-behavior: [ smooth ];
+    color: white;
+    position: relative;
+    font-family: 'Montserrat';
+    font-size: 7px;
+    font-weight: bolder !important; 
+    z-index: 0;
+    overflow: auto;
+    text-align: left;
+    direction: ltr;
+    left: 40%;
+    top: 7vw;
+    margin-left: 5vw;
+  }
+
+  .blockText{
+    line-height: 1rem;
+    text-align: left;
+    font-size: 5.5px !important;
+    max-height: 2px;
+    word-wrap: break-word;
+    white-space: pre-line;
+    overflow-wrap: break-word;
+    display:block;
+  }
+
+  .textBlock1-text, .textBlock1-title, .textBlock2-text, .textBlock2-title{
+    font-size: 0.7rem;
+  }
+ }
+
+/*********************************************************/
+/*********************************************************/
+
+@media only screen and (min-width: 701px) and (max-width: 1024px) { 
+  
+  .groupPicContainer{
+    position: fixed;
+    text-align: center;
+    color: white;
+    background-size: cover;
+    overflow: hidden; 
+    bottom: 2vw;
+    top: 6vw;
+    padding-top: 0 !important;
+  }
+
+  .sceTitle{
+    scroll-behavior: [ smooth ];
+    color: white;
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    font-family: 'Montserrat';
+    white-space: pre-line;
+    text-align: left;
+    direction: ltr;
+    font-size: 2.5em;
+    font-weight: bolder !important; 
+    line-height: 1.05;
+    letter-spacing: 1px;
+    text-shadow:  0 1px 10px #777;
+    z-index: 0;
+    overflow: auto;
+    display: block;
+    font-size-adjust: inherit;
+  
+  }
+
+  .clubRoomContainer{
+    background-image: url("./emptyclubroom_blurred.jpg"); 
+    position: relative;
+    text-align: center;
+    color: white;
+    max-height: 50vw;
+    width: 100%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    height: 100%;
+    margin-bottom: 5%;
+  }
+  
+  .subBlockContainer{
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    font-size: 2em;
+    direction: ltr;
+    left: 40%;
+    top: 10vw;
+    scroll-behavior: [ smooth ];
+    color: white;
+    font-weight: 500;
+    position: relative;
+    line-height: 50%;
+  }
+
+  .subBlock-title{
+    scroll-behavior: [ smooth ];
+    color: white;
+    position: relative;
+    font-family: 'Montserrat';
+    font-size: 1em;
+    font-weight: bolder !important; 
+    z-index: 0;
+    overflow: auto;
+    text-align: left;
+    direction: ltr;
+    left: 40%;
+    top: 7vw;
+    margin-top: 1vw;
+    margin-left: 5vw;
+  }
+
+  .blockText{
+    line-height: 5.5vw;
+    text-align: left;
+    font-size: 1.5vw;
+    max-height: 2px;
+    word-wrap: break-word;
+    white-space: pre-line;
+    overflow-wrap: break-word;
+    display:block;
+  }
+ }
+
