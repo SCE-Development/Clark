@@ -53,6 +53,7 @@ function AnnouncementList() {
             return (
               <EventCard
                 key={index}
+                isEventManager = {false}
                 {...event}
               />
             );

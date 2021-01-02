@@ -93,6 +93,7 @@ export default function EventManager(props) {
             return (
               <React.Fragment key={index}>
                 <EventCard
+                  isEventManager = {true}
                   handleClick={() => toggleEditEvent(event)}
                   {...event}
                 />

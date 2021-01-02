@@ -10,15 +10,22 @@ function EventCard(props) {
     eventLocation,
     startTime,
     endTime,
+    isEventManager,
     handleClick,
     imageURL
   } = props;
+
+  function checkModalStatus(isEventManager) {
+    if (isEventManager){
+      handleClick();
+    }
+  }
 
   return (
     <Container
       className='event-card-button'
       onClick={() => {
-        handleClick();
+        checkModalStatus(isEventManager);
       }}
     >
       <Col className='event-info'>
