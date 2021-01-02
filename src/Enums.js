@@ -35,10 +35,10 @@ const membershipState = {
   BANNED: -2,
   PENDING: -1,
   NON_MEMBER: 0,
-  ALUMNI: 1,
-  MEMBER: 2,
-  OFFICER: 3,
-  ADMIN: 4,
+  ALUMNI: 0.5,
+  MEMBER: 1,
+  OFFICER: 2,
+  ADMIN: 3,
 };
 
 const membershipStatusArray = [
