@@ -44,11 +44,12 @@ const subBlockThreeText =
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
-  { title: 'Our clubroom offers everything a software or computer' },
-  { title: 'engineering student could need.' },
+  { title: 'Our clubroom offers everything a software ' },
+  { title: 'or computer engineering student could need.' },
   { title: <br /> },
-  { title: 'We continue to offer resources to our members despite' },
-  { title: 'of being remote. Read further for more details!' }
+  { title: 'We continue to offer resources to our  ' },
+  { title: 'members despite being remote. ' },
+  { title: 'Read further for more details!' },
 ];
 
 const blockTwoText = [
@@ -61,7 +62,8 @@ const subBlockOneText = [
   { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' }
+  { title: 'IBM, Tesla, SAP and more!' },
+  { title: <br /> },
 ];
 
 const subBlockTwoText = [
@@ -77,6 +79,7 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
+  { title: <br /> },
 ];
 
 const icons = [
