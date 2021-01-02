@@ -220,6 +220,7 @@
 
 .textBlock1-title{
   margin-top: 15%;
+  margin-left:4%;
   margin-bottom: 5%;
   text-align: left;
 }
@@ -232,6 +233,7 @@
 .textBlock2-title{
   margin-top: 20%;
   margin-left: 15%;
+  width: 55%;
 }
 
 .textBlock1-text, .textBlock2-text{
