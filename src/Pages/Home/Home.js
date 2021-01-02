@@ -139,7 +139,8 @@ const subBlockOneText = [
   { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' }
+  { title: 'IBM, Tesla, SAP and more!' },
+  { title: <br /> },
 ];
 
 const subBlockTwoText = [
@@ -155,6 +156,7 @@ const subBlockThreeText = [
   { title: 'occasions!' },
   { title: <br /> },
   { title: 'We host potlucks, movie nights, game nights and much more!' },
+  { title: <br /> },
 ];
 
 const icons = [
@@ -236,7 +238,6 @@ class Home extends Component {
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
               alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
-
           </div>
 
           <div className="sceTitle" data-aos="fade-out" >
@@ -246,7 +247,7 @@ class Home extends Component {
           <div class="contentContainer">
             <div className="block-space"></div>
 
-            <div className="block-one">
+            <div>
               <Row>
                 <Col>
                   <div data-aos="fade-up"
