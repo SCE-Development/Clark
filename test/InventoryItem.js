@@ -50,7 +50,6 @@ describe('InventoryItem', () => {
   });
 
   const token = '';
-  // let itemName = '';
   let itemId = '';
   const VALID_NEW_ITEM = {
     name: 'Chips',
@@ -66,11 +65,8 @@ describe('InventoryItem', () => {
   const ITEM_WITHOUT_REQUIRED_FIELDS = {
     name: 'chocolate'
   };
-  // const ITEM_WITH_INVALID_NAME = {
-  //   name: 'bob'
-  // };
   const ITEM_WITH_INVALID_ID = {
-    _id: 'invalid_id_12345'
+    _id: '0123456789AB'
   };
   let UPDATED_ITEM = {
     name: 'Chips',
@@ -120,7 +116,6 @@ describe('InventoryItem', () => {
       expect(getItemsResponse[0].picture).to.equal(VALID_NEW_ITEM.picture);
       expect(getItemsResponse[0].description).to.equal(
         VALID_NEW_ITEM.description);
-      // itemName = getItemsResponse[0].name;
       itemId = getItemsResponse[0]._id;
     });
   });
@@ -173,7 +168,6 @@ describe('InventoryItem', () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/InventoryItem/deleteItem', ITEM_WITH_INVALID_ID);
-        // Works with ITEM_WITH_INVALID_NAME (commented out up there)
       expect(result).to.have.status(NOT_FOUND);
     });
     it('Should return 200 when an item is sucessfully deleted', async () => {
