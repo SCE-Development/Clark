@@ -203,7 +203,7 @@ function EventManagerModal(props) {
             <Label>Event Description</Label>
             <Input
               type='textarea'
-              maxLength = {80}
+              maxLength = {100}
               rows={5}
               placeholder='Enter Event Description'
               defaultValue={props.description}
