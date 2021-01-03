@@ -54,14 +54,14 @@ export default class EmailTemplate extends Component {
       allUsers.forEach(function(item) {
         // Access level >=3 is officers+, Access level >=2 but <3 are members
         // Access level == 0 is alumni
-        if (item.accessLevel >= membershipState.MEMBER) {
-          allEmail.push(item.email);
-        }
         if (item.accessLevel >= membershipState.OFFICER) {
+          allEmail.push(item.email);
           officerEmail.push(item.email);
         } else if (item.accessLevel >= membershipState.MEMBER) {
+          allEmail.push(item.email);
           memberEmail.push(item.email);
         } else if (item.accessLevel == membershipState.ALUMNI) {
+          allEmail.push(item.email);
           alumniEmail.push(item.email);
         }
       }, this.setState({ officerEmail, memberEmail, alumniEmail, allEmail }));
@@ -246,13 +246,15 @@ export default class EmailTemplate extends Component {
     if (emailList.length === 0) {
       filterUsersError = true;
     }
-
+/*eslint-disable*/
+    emailList.forEach(item => { console.log(item) })
+    
     // Send blast email function
-    let status = await sendBlastEmail(
-      emailList,
-      this.state.subject,
-      this.state.loadedContent
-    );
+    // let status = await sendBlastEmail(
+    //   emailList,
+    //   this.state.subject,
+    //   this.state.loadedContent
+    // );
 
     // Clear form
     this.setState({
