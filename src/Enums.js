@@ -51,8 +51,12 @@ const membershipStatusArray = [
   'Admin',
 ];
 
-function membershipStateToString(index) {
-  return membershipStatusArray[index + 2];
+function membershipStateToString(accessLevel) {
+  if (accessLevel === membershipState.ALUMNI)
+    return 'Alumni';
+  else if (accessLevel > 0)
+    return membershipStatusArray[accessLevel + 3];
+  return membershipStatusArray[accessLevel + 2];
 }
 
 const userFilterType = {
