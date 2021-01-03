@@ -246,15 +246,13 @@ export default class EmailTemplate extends Component {
     if (emailList.length === 0) {
       filterUsersError = true;
     }
-/*eslint-disable*/
-    emailList.forEach(item => { console.log(item) })
     
     // Send blast email function
-    // let status = await sendBlastEmail(
-    //   emailList,
-    //   this.state.subject,
-    //   this.state.loadedContent
-    // );
+    let status = await sendBlastEmail(
+      emailList,
+      this.state.subject,
+      this.state.loadedContent
+    );
 
     // Clear form
     this.setState({
