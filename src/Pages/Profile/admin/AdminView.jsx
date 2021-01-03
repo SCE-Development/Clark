@@ -1,33 +1,35 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Button,
   Modal,
-} from "reactstrap";
-import Display from './Profile.js'
-import EditForm from './EditorForm'
-import { editUser } from "../../../APIFunctions/User.js";
-const bcrypt = require('bcryptjs')
+} from 'reactstrap';
+import Display from './Profile.js';
+import EditForm from './EditorForm';
+import { editUser } from '../../../APIFunctions/User.js';
+const bcrypt = require('bcryptjs');
 
 export default function Editor(props) {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [password, setPassword] = useState("")
-  const [doorCode, setDoorCode] = useState("")
-  const [major, setMajor] = useState("")
-  const [user, setUser] = useState({ ...props.user })
-  const [users] = useState( [...props.users] )
-  const [toggle, setToggle] = useState(false)
-  const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted)
-  const [toggleSubmit, setToggleSubmit] = useState(false)
-  const [userMembership, setuserMembership] = useState(user.accessLevel)
-  const [numberOfSemestersToSignUpFor, setNumberOfSemestersToSignUpFor] = useState()
-  const [membershipValidUntil, setMembershipValidUntil] = useState(user.membershipValidUntil)
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
+  const [doorCode, setDoorCode] = useState('');
+  const [major, setMajor] = useState('');
+  const [user, setUser] = useState({ ...props.user });
+  const [users] = useState( [...props.users] );
+  const [toggle, setToggle] = useState(false);
+  const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted);
+  const [toggleSubmit, setToggleSubmit] = useState(false);
+  const [userMembership, setuserMembership] = useState(user.accessLevel);
+  const [numberOfSemestersToSignUpFor, setNumberOfSemestersToSignUpFor]
+    = useState();
+  const [membershipValidUntil, setMembershipValidUntil]
+    = useState(user.membershipValidUntil);
 
   async function handleSubmission() {
-    //hash pass
-    const salt = bcrypt.genSaltSync(10)
+    // hash pass
+    const salt = bcrypt.genSaltSync(10);
     const hashed = (password.trim() === '') ?
-      user.password : bcrypt.hashSync(password, salt)
+      user.password : bcrypt.hashSync(password, salt);
 
     const editedUser = {
       ...user,
@@ -40,24 +42,24 @@ export default function Editor(props) {
       pagesPrinted: pagesPrinted,
       accessLevel: userMembership,
       numberOfSemestersToSignUpFor: numberOfSemestersToSignUpFor
-    }
+    };
 
-    setUser({ ...editedUser })
-    setToggle(!toggle)
-    const apiResponse = await editUser({ ...editedUser }, props.token)
+    setUser({ ...editedUser });
+    setToggle(!toggle);
+    const apiResponse = await editUser({ ...editedUser }, props.token);
     if (!apiResponse.error) {
-      setMembershipValidUntil(apiResponse.responseData.membershipValidUntil)
+      setMembershipValidUntil(apiResponse.responseData.membershipValidUntil);
     }
-    setToggle(false)
-    setToggleSubmit(false)
+    setToggle(false);
+    setToggleSubmit(false);
 
     // Map through users and dynamically update frontend
     let newUsers = [];
     for(let i=0; i<users.length; i++){
       if(users[i]._id === editedUser._id){
-        newUsers.push(editedUser)
+        newUsers.push(editedUser);
       }else{
-        newUsers.push(users[i])
+        newUsers.push(users[i]);
       }
     }
     props.updateUserState(newUsers);
@@ -90,34 +92,42 @@ export default function Editor(props) {
       placeholder: user.major,
       handleChange: (e) => setMajor(e.target.value)
     }
-  ]
+  ];
 
   const membership = [
     { value: 0, name: 'Keep Same' },
     { value: 0, name: 'Expired Membership' },
     { value: 1, name: 'This semester' },
     { value: 2, name: '2 semesters' }
-  ]
+  ];
 
   return (
     <div className="center">
       <ul className="profileInfo">
 
         <Display
-          user={{...user,membershipValidUntil}}
+          user={{...user, membershipValidUntil}}
         />
 
         <EditForm
           formGroups={formGroups}
           membership={membership}
           setNumberOfSemestersToSignUpFor={
-            (onChangeEvent) => { 
-              setNumberOfSemestersToSignUpFor(onChangeEvent) 
+            (onChangeEvent) => {
+              setNumberOfSemestersToSignUpFor(onChangeEvent);
+            }}
+          setPagesPrinted={onChangeEvent => {
+            setPagesPrinted(onChangeEvent);
           }}
-          setPagesPrinted={onChangeEvent => { setPagesPrinted(onChangeEvent) }}
-          handleSubmissionToggle={() => { setToggleSubmit(!toggleSubmit) }}
-          handleToggle={() => { setToggle(!toggle) }}
-          setuserMembership={(onChangeEvent) => { setuserMembership(onChangeEvent) }}
+          handleSubmissionToggle={() => {
+            setToggleSubmit(!toggleSubmit);
+          }}
+          handleToggle={() => {
+            setToggle(!toggle);
+          }}
+          setuserMembership={(onChangeEvent) => {
+            setuserMembership(onChangeEvent);
+          }}
           toggle={toggle}
         />
 
@@ -129,7 +139,9 @@ export default function Editor(props) {
           toggle={()=>setToggleSubmit(!toggleSubmit)}
           isOpen={toggleSubmit}>
           <Button
-            onClick={async () => { await handleSubmission() }}
+            onClick={async () => {
+              await handleSubmission();
+            }}
             color="primary">
             YES!
           </Button>
@@ -137,7 +149,9 @@ export default function Editor(props) {
             style={{
               marginTop: '10px'
             }}
-            onClick={() => { setToggleSubmit(!toggleSubmit) }}
+            onClick={() => {
+              setToggleSubmit(!toggleSubmit);
+            }}
             color="danger">
             Nah! It's a mistake.
           </Button>
@@ -145,6 +159,6 @@ export default function Editor(props) {
 
       </ul>
     </div>
-  )
+  );
 }
 

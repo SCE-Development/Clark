@@ -4,8 +4,10 @@ function verification(user, recipient, name) {
   return new Promise((resolve, reject) => {
     generateHashedId(recipient)
       .then(hashedId => {
+        // eslint-disable-next-line
+        const url = process.env.NODE_ENV === 'production' ? 'https://sce.engr.sjsu.edu' : 'http://localhost:3000';
         const verifyLink =
-          `https://sce.engr.sjsu.edu/verify?id=${hashedId}&user=${recipient}`;
+          `${url}/verify?id=${hashedId}&user=${recipient}`;
         return resolve({
           from: user,
           to: recipient,
