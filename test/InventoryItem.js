@@ -50,7 +50,8 @@ describe('InventoryItem', () => {
   });
 
   const token = '';
-  let itemName = '';
+  // let itemName = '';
+  let itemId = '';
   const VALID_NEW_ITEM = {
     name: 'Chips',
     price: 0.75,
@@ -65,10 +66,13 @@ describe('InventoryItem', () => {
   const ITEM_WITHOUT_REQUIRED_FIELDS = {
     name: 'chocolate'
   };
-  const ITEM_WITH_INVALID_NAME = {
-    name: 'bob'
+  // const ITEM_WITH_INVALID_NAME = {
+  //   name: 'bob'
+  // };
+  const ITEM_WITH_INVALID_ID = {
+    _id: 'invalid_id_12345'
   };
-  const UPDATED_ITEM = {
+  let UPDATED_ITEM = {
     name: 'Chips',
     price: 0.5,
     stock: 15,
@@ -116,7 +120,8 @@ describe('InventoryItem', () => {
       expect(getItemsResponse[0].picture).to.equal(VALID_NEW_ITEM.picture);
       expect(getItemsResponse[0].description).to.equal(
         VALID_NEW_ITEM.description);
-      itemName = getItemsResponse[0].name;
+      // itemName = getItemsResponse[0].name;
+      itemId = getItemsResponse[0]._id;
     });
   });
 
@@ -130,11 +135,12 @@ describe('InventoryItem', () => {
       async () => {
         setTokenStatus(true);
         const result = await test.sendPostRequestWithToken(
-          token, '/api/InventoryItem/editItem', ITEM_WITH_INVALID_NAME);
+          token, '/api/InventoryItem/editItem', ITEM_WITH_INVALID_ID);
         expect(result).to.have.status(NOT_FOUND);
       });
     it('Should return 200 when an item is sucessfully updated', async () => {
       setTokenStatus(true);
+      UPDATED_ITEM._id = itemId;
       const result = await test.sendPostRequestWithToken(
         token, '/api/InventoryItem/editItem', UPDATED_ITEM);
       expect(result).to.have.status(OK);
@@ -145,6 +151,7 @@ describe('InventoryItem', () => {
       expect(result).to.have.status(OK);
       const getItemsResponse = result.body;
       expect(getItemsResponse).to.have.length(1);
+      expect(getItemsResponse[0]._id).to.equal(UPDATED_ITEM._id);
       expect(getItemsResponse[0].name).to.equal(UPDATED_ITEM.name);
       expect(getItemsResponse[0].price).to.equal(UPDATED_ITEM.price);
       expect(getItemsResponse[0].stock).to.equal(UPDATED_ITEM.stock);
@@ -165,13 +172,14 @@ describe('InventoryItem', () => {
     it('Should return 404 when an item is not found', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/InventoryItem/deleteItem', ITEM_WITH_INVALID_NAME);
+        token, '/api/InventoryItem/deleteItem', ITEM_WITH_INVALID_ID);
+        // Works with ITEM_WITH_INVALID_NAME (commented out up there)
       expect(result).to.have.status(NOT_FOUND);
     });
     it('Should return 200 when an item is sucessfully deleted', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/InventoryItem/deleteItem', {name: itemName});
+        token, '/api/InventoryItem/deleteItem', {_id: itemId});
       expect(result).to.have.status(OK);
     });
     it('The deleted item should be reflected in the database', async () => {

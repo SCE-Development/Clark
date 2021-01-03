@@ -8,10 +8,14 @@ export default function EditItemForm(props) {
       <FormGroup>
         <Label>Item Name
           <FormText color="muted">
-            Delete the item and re-add it to modify name
+            Unique Identifier
           </FormText>
-          <div style={{'color' : 'rgb(73, 80, 88)'}}>{props.name}</div>
         </Label>
+        <Input
+          placeholder=""
+          value={props.name}
+          onChange={(e) => props.updateItemName(e.target.value)}
+        />
       </FormGroup>
       <FormGroup>
         <Label>Price

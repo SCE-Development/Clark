@@ -131,8 +131,9 @@ export default class InventoryPage extends Component {
   }
 
   // Function for edit item form/modal in table
-  handleEditItem = async () => {
+  handleEditItem = async (itemId) => {
     const reqItemToEdit = {
+      _id: itemId,
       name: this.state.name,
       price: this.state.price,
       stock: this.state.stock,
@@ -159,9 +160,9 @@ export default class InventoryPage extends Component {
   }
 
   // Function to delete item in edit item form/modal
-  handleDeleteItem = async (itemName) => {
+  handleDeleteItem = async (itemId) => {
     const reqItemToDelete = {
-      name: itemName,
+      _id: itemId,
     };
     const res = await deleteItem(reqItemToDelete, this.props.user.token);
     if(!res.error){

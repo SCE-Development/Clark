@@ -9,13 +9,13 @@ export default function EditButtonModal(props) {
   const [toggle, setToggle] = useState(false);
 
   function handleConfirmation(){
-    props.handleEditItem();
+    props.handleEditItem(props.item._id);
     setToggle(!toggle);
     props.handleClear();
   }
 
   function handleDelete(){
-    props.handleDeleteItem(props.name);
+    props.handleDeleteItem(props.item._id);
     setToggle(!toggle);
     props.handleClear();
   }
@@ -72,7 +72,6 @@ export default function EditButtonModal(props) {
             Confirm
           </Button>
           <Button
-            // color="danger"
             onClick={handleDelete}
             id="edit-item-button-delete"
           >

@@ -74,6 +74,7 @@ export async function addItem(reqItemToAdd, token){
 export async function editItem(reqItemToEdit, token){
   let status = new ApiResponse();
   const itemToEdit = {
+    _id: reqItemToEdit._id,
     name: reqItemToEdit.name,
     price: reqItemToEdit.price,
     stock: reqItemToEdit.stock,
@@ -105,7 +106,7 @@ export async function deleteItem(reqItemToDelete, token){
   let status = new ApiResponse();
   await axios
     .post(GENERAL_API_URL+'/InventoryItem/deleteItem',
-      { token, name: reqItemToDelete.name })
+      { token, _id: reqItemToDelete._id })
     .then(res => {
       status.responseData = res.data;
     })
