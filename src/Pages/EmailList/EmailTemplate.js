@@ -246,7 +246,7 @@ export default class EmailTemplate extends Component {
     if (emailList.length === 0) {
       filterUsersError = true;
     }
-    
+
     // Send blast email function
     let status = await sendBlastEmail(
       emailList,
