@@ -27,7 +27,7 @@ export function groupCards(courses) {
   return groups;
 }
 
-export default function CoursesList() {
+export default function CoursesPage() {
   const [coursesList, setCoursesList] = useState({});
   const history = useHistory();
   let cardNum = 0;
@@ -53,10 +53,10 @@ export default function CoursesList() {
   }
 
   return (
-    <div className='courses-background'>
+    <div>
       <Header {...headerProp} />
       <Container className='course-cards mb-5 mt-5'>
-        {coursesList.length > 0 ? (
+        {coursesList && coursesList.length > 0 ? (
           groupCards(coursesList).map((group, index) => {
             return (
               <Row key={index} className='mb-md-3'>

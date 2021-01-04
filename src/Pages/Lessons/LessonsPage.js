@@ -59,12 +59,6 @@ function LessonsPage(props) {
     fetchSummary();
   }, []);
 
-  // Scroll to top of page when a new md file is rendered
-  useEffect(() => {
-    leftCol.current.scrollTo(0, 0);
-    window.scrollTo(0, 0);
-  }, [mdContent]);
-
   async function getMDContent(URL) {
     axios
       .get(URL)
@@ -72,7 +66,7 @@ function LessonsPage(props) {
       .catch((err) => setMdContent('error'));
   }
 
-  function handleClick(URL, title, index) {
+  async function handleClick(URL, title, index) {
     history.replace(`/course/${courseTitle}/lessons/${title}`, { _id: _id });
     if (Object.keys(selectedLesson).length > 0 && selectedLesson.html) {
       selectedLesson.html.style = null;
@@ -87,7 +81,13 @@ function LessonsPage(props) {
     });
 
     selectedLessonRef.style.backgroundColor = '#999999';
-    getMDContent(URL);
+    await getMDContent(URL);
+    leftCol.current.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+    window.scrollTo(0, 0);
     setDropdownValue(title);
     setIsLessonEditBtnDisabled(false);
   }
@@ -193,13 +193,13 @@ function LessonsPage(props) {
               flex-xl-row justify-content-between`}
           >
             <button
-              className='SCEButton px-3 py-2'
+              className='SCEButton officerBtn px-3 py-2'
               onClick={handleAdd}>
                 Add a lesson
             </button>
             <button
               id='SCEBtn-2'
-              className='SCEButton px-2 py-2'
+              className='SCEButton officerBtn px-2 py-2'
               onClick={handleLessonEdit}
               disabled={isLessonEditBtnDisabled}
             >
@@ -207,7 +207,7 @@ function LessonsPage(props) {
             </button>
             <button
               id='SCEBtn-3'
-              className='SCEButton px-2 py-2'
+              className='SCEButton officerBtn px-2 py-2'
               onClick={SummaryToggle}
             >
                 Edit course home
@@ -215,7 +215,6 @@ function LessonsPage(props) {
           </div>
         )}
         <button
-          id='SCEBtn-4'
           className='SCEButton btn-block px-2 py-2 mb-3 mt-3'
           onClick={handleSummaryClick}
         >
@@ -227,7 +226,7 @@ function LessonsPage(props) {
             {lessons.map((article, index) => (
               <div
                 className='lesson-name-container'
-                onClick={(e) =>
+                onClick={() =>
                   handleClick(article.mdLink, article.title, index)
                 }
                 key={index}
