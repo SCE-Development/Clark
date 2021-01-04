@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
 .user-nav {
   font-size: 18px;
-  top: 0px;
   background-color: #87b0c7;
   width: 100%;
+  top: 0px;
   position: fixed;
   z-index: 4;
 }

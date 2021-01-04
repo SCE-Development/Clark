@@ -81,11 +81,6 @@ export default function UserNavBar(props) {
     setMenuIsOpen(!menuIsOpen);
   };
 
-
-  useEffect(() =>
-    // eslint-disable-next-line
-    [])
-
   return (
 
     <div className={'user-nav'}>
