@@ -2,7 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = "test";
 const Course = require("../api/main_endpoints/models/Course");
-const Lesson = require("../api/main_endpoints/models/Lesson");
+const Lesson = require("../api/main_endpoints/models/Course");
 const User = require("../api/main_endpoints/models/User");
 // Require the dev-dependencies
 const chai = require("chai");

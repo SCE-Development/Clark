@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Lesson = require('../models/Lesson');
+const Lesson = require('../models/Course');
 const {
   checkIfTokenSent,
   checkIfTokenValid
