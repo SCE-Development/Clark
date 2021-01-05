@@ -82,7 +82,6 @@ export default function UserNavBar(props) {
   };
 
   return (
-
     <div className={'user-nav'}>
       <Navbar light expand='md'>
         <NavbarBrand href='/'>
