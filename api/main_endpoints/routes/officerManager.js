@@ -49,7 +49,6 @@ router.post('/GetForm', (req, res) => {
   // }
   let obj = {};
   if (typeof req.body.email !== 'undefined') obj = { email: req.body.email };
-
   Manager.find(obj, (error, forms) => {
     if (error) {
       const info = {
@@ -61,7 +60,6 @@ router.post('/GetForm', (req, res) => {
       addErrorLog(info);
       return res.sendStatus(BAD_REQUEST);
     }
-
     return res.status(OK).send(forms);
   });
 });
@@ -74,6 +72,7 @@ router.post('/delete', (req, res) => {
   // } else if (!checkIfTokenValid(req)) {
   //   return res.sendStatus(UNAUTHORIZED);
   // }
+  console.log(req.body);
   Manager.deleteOne({ email: req.body.email }, function(error, form) {
     if (error) {
       const info = {

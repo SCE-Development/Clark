@@ -10,6 +10,7 @@ const OfficerSchema = new Schema(
     },
     email: {
       type: String,
+      unique: true,
       required: true
     },
     facebook: {
@@ -23,7 +24,10 @@ const OfficerSchema = new Schema(
     },
     team: {
       type: String,
-      require: true
+      required: true
+    },
+    position: {
+      type: String
     },
     quote: {
       type: String
@@ -31,7 +35,7 @@ const OfficerSchema = new Schema(
     pictureUrl: {
       type: String,
       default: DEFAULT_PHOTO_URL
-    }
+    },
   },
   { collection: 'Officers' }
 );

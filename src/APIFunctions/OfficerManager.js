@@ -10,6 +10,7 @@ export async function createOfficer(newOfficer, token){
         github: newOfficer.github, 
         linkedin: newOfficer.linkedin, 
         team: newOfficer.team,
+        position: newOfficer.position, 
         quote: newOfficer.quote,
         pictureUrl: newOfficer.pictureUrl
     };
@@ -27,7 +28,7 @@ export async function createOfficer(newOfficer, token){
 export async function deleteOfficer(officerToDelete, token){
   let status = new ApiResponse();
   await axios
-    .post('api/officerManager/delete', {token, email: officerToDelete._email})
+    .post('api/officerManager/delete', {token, email: officerToDelete.email})
     .then(res => {
         status.responseData = res.data;
     })
@@ -40,7 +41,7 @@ export async function deleteOfficer(officerToDelete, token){
 export async function getAllOfficers(token){
   let status = new ApiResponse();
   await axios
-    .get('api/officerManager/GetForm', {token})
+    .post('api/officerManager/GetForm', {token})
     .then(res => {
       status.responseData = res.data;
     })
@@ -54,7 +55,7 @@ export async function getAllOfficers(token){
 export async function getOfficer(email, token){
   let status = new ApiResponse();
   await axios
-    .get('api/officerManager/GetForm', {token, email})
+    .post('api/officerManager/GetForm', {token, email})
     .then(res => {
       status.responseData = res.data;
     })
@@ -74,6 +75,7 @@ export async function editOfficer(officerToUpdate, token){
     github: officerToUpdate.github, 
     linkedin: officerToUpdate.linkedin, 
     team: officerToUpdate.team,
+    position: officerToUpdate.position,
     quote: officerToUpdate.quote,
     pictureUrl: officerToUpdate.pictureUrl
   };

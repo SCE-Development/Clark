@@ -35,7 +35,7 @@ h1{
 
 .top-card{
     /* background-color: palevioletred; */
-    background-image: url('images/realpic2.png');
+    /* background-image: url('images/realpic2.png'); */
     background-position: center;
     background-size: cover;
     max-width: 250px;
@@ -99,7 +99,7 @@ h1{
     min-height: auto;
     min-width: 115px;
     border-radius: 100%;
-    background-image: url('images/groot.png');
+    /* background-image: url('https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260'); */
     background-position: center;
     background-size: cover;
     transition: all .6s ease-in-out;

@@ -25,6 +25,7 @@ import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import AboutUs from './Pages/AboutUs/AboutUs.js';
+import AboutUsManager from './Pages/AboutUsManager/AboutUsManager.js';
 import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
 
@@ -117,7 +118,14 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
       inAdminNavbar: true
-    }
+    },
+    {
+      Component: AboutUsManager, 
+      path: '/aboutUs-manager',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
