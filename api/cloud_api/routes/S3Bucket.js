@@ -29,4 +29,20 @@ router.post('/getSignedUrl', (req, res) => {
     });
 });
 
+router.post('/getListOfFiles', async (req, res) => {
+  const bucket = s3BucketKeys.BUCKET;
+  const s3Handler = new S3BucketApiHandler();
+  const s3Params = {
+    Bucket: bucket,
+    Prefix: req.body.prefix
+  };
+  s3Handler.getListOfFiles(s3Params)
+    .then((list) => {
+      res.status(OK).send({ list });
+    })
+    .catch((err) => {
+      res.status(NOT_FOUND).send(err);
+    });
+});
+
 module.exports = router;

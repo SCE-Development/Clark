@@ -1,0 +1,113 @@
+.container {
+	opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 2s;
+}
+
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+.gallery {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  -ms-grid-rows: auto auto;
+  grid-template-rows: auto auto;
+  grid-row-gap: 40px;
+  grid-column-gap: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  justify-items: center;
+}
+
+.header {
+  width: auto;
+  max-height: 100%;
+  max-width: 100%;
+  margin-top: 4rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+  font-size: 3.5rem;
+  font-weight: 3.5;
+  line-height: 150%;
+  text-align: center;
+}
+
+.grid {
+  -ms-grid-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  -ms-grid-rows: auto auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
+}
+
+.carouselImg {
+  display: block;
+  margin: auto;
+  width: 100%;
+  height: 600px;
+  position: relative;
+  object-fit: cover;
+  box-shadow: 1px 1px 7px 0 #000000;
+  overflow: visible;
+  transition: none 0ms ease;
+  -o-object-fit: cover;
+}
+
+.carousel {
+  max-width: 100%;
+  margin-bottom: 6%;
+  height: auto;
+  border: 3px black;
+}
+
+.carousel-indicators .active {
+  background-color: black;
+}
+
+.carousel .carousel-indicators li{
+  background-color: black;
+}
+
+.singleImage {
+  height: 250px;
+  width: 340px;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  object-fit: cover;
+  box-shadow: 1px 1px 7px 0 #000000;
+  opacity: 1;
+  transition: 0.5s;
+  transform: scale(
+    1.0
+  );
+}
+
+.singleImage:hover {
+  opacity: .8;
+  transition: 0.5s;
+  transform: scale(
+    1.1
+  ); 
+}
+
+.modalImage {
+  width: 100%;
+  position: relative;
+}
+.modal-body {
+  padding: 0px !important;
+}
+
+.modal-content {
+  border: 0px !important;
+}

@@ -26,6 +26,7 @@ import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
+import Gallery from './Pages/Gallery/Gallery.js';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -123,7 +124,8 @@ export default function Routing({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' }
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: Gallery, path: '/gallery'}
   ];
   return (
     <Router>

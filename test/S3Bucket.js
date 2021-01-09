@@ -20,9 +20,11 @@ chai.should();
 chai.use(chaiHttp);
 
 describe('S3Bucket', () => {
-  let bucketStub = null;
+  let urlStub = null;
+  let listStub = null;
   before((done) => {
-    bucketStub = sandbox.stub(S3BucketApiHandler.prototype, 'getSignedUrl');
+    urlStub = sandbox.stub(S3BucketApiHandler.prototype, 'getSignedUrl');
+    listStub = sandbox.stub(S3BucketApiHandler.prototype, 'getListOfFiles');
     app = tools.initializeServer(
       __dirname + '/../api/cloud_api/routes/S3Bucket.js'
     );
@@ -31,7 +33,7 @@ describe('S3Bucket', () => {
   });
 
   after((done) => {
-    if (bucketStub) bucketStub.restore();
+    if (urlStub) urlStub.restore();
     sandbox.restore();
     tools.terminateServer(done);
   });
@@ -39,7 +41,7 @@ describe('S3Bucket', () => {
 
   describe('/POST getSignedUrl', () => {
     it('Should return 200 when successful', async () => {
-      bucketStub.resolves(BUCKET_RESPONSE);
+      urlStub.resolves(BUCKET_RESPONSE);
       const result = await test.sendPostRequest('/api/S3Bucket/getSignedUrl');
       expect(result).to.have.status(OK);
       expect(result.body).to.have.property('url');
@@ -47,8 +49,24 @@ describe('S3Bucket', () => {
     });
 
     it('Should return 404 when we cannot retrieve a url', async () => {
-      bucketStub.rejects({});
+      urlStub.rejects({});
       const result = await test.sendPostRequest('/api/S3Bucket/getSignedUrl');
+      expect(result).to.have.status(NOT_FOUND);
+    });
+  });
+
+  describe('/POST getListOfFiles', () => {
+    it('Should return 200 when successful', async () => {
+      listStub.resolves(BUCKET_RESPONSE);
+      const result = await test.sendPostRequest('/api/S3Bucket/getListOfFiles');
+      expect(result).to.have.status(OK);
+      expect(result.body).to.have.property('list');
+      expect(result.body.list).to.equal(BUCKET_RESPONSE);
+    });
+
+    it('Should return 404 when we cannot retrieve list of files', async () => {
+      listStub.rejects({});
+      const result = await test.sendPostRequest('/api/S3Bucket/getListOfFiles');
       expect(result).to.have.status(NOT_FOUND);
     });
   });

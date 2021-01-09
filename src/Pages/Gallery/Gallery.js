@@ -1,0 +1,90 @@
+import React, { Component } from 'react';
+import './Gallery.css';
+import CarouselSlider from './CarouselSlider.js';
+import { Modal, ModalBody, Container } from 'reactstrap';
+import {
+  getFileFromS3,
+  getListOfFiles
+} from '../../APIFunctions/S3Bucket.js';
+import carouselImages from './CarouselPictures.js';
+
+class Gallery extends Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  state = {
+    picList: [],
+    isOpen: false,
+    carouselPics: carouselImages,
+    modalImage: ''
+  }
+
+  async getImage(object, index) {
+    const res = await getFileFromS3(object.Key);
+    if (res.error === true) {
+      alert('getFile error at index: ' + index);
+      return '';
+    }
+    return res.responseData.url.url;
+  }
+
+  async componentDidMount() {
+    const prefix = '';
+    const getListRes = await getListOfFiles(prefix);
+    if (getListRes.error === true)
+      alert('Error when getting list of files');
+    else {
+      let picMap = [];
+      getListRes.responseData.list.Contents.map((pic, index) => {
+        this.getImage(pic, index)
+          .then((picStr) => {
+            picMap.push(picStr);
+            this.setState({
+              picList: picMap
+            });
+          });
+      });
+    }
+  }
+
+  toggleModal(pic) {
+    this.setState(prevState => ({
+      isOpen: !prevState.isOpen,
+      modalImage: pic
+    }));
+  }
+
+  render() {
+    return (
+      <div className="section">
+        <h2 className="header">Gallery</h2>
+        <Container className="container">
+          <CarouselSlider carouselPics={this.state.carouselPics} />
+          <div className="gallery">
+            {
+              this.state.picList.map((pic, index) => {
+                return (
+                  <img src={pic} className="singleImage"
+                    onClick={() => this.toggleModal(pic)}
+                    key={index} id={index} />
+                );
+              })
+            }
+            <Modal isOpen={this.state.isOpen}
+              toggle={() => this.toggleModal(this.state.modalImage)} size="lg"
+              aria-labelledby="contained-modal-title-vcenter" centered>
+              <ModalBody className="modal-body">
+                <img src={this.state.modalImage} className="modalImage" />
+              </ModalBody>
+            </Modal>
+          </div>
+          <br />
+        </Container>
+      </div>
+    );
+  }
+}
+
+export default Gallery;

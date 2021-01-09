@@ -55,3 +55,39 @@ export function uploadToS3(files) {
     return signedUrlResult;
   });
 }
+
+/**
+ * Return a url of the requested file from AWS
+ * @param {String} fileName
+ * @returns {ApiResponse} Returns if file is retrieved successfully
+ */
+export async function getFileFromS3(fileName) {
+  let status = new ApiResponse();
+  await axios.post(MAILER_API_URL + '/S3Bucket/getSignedUrl', { fileName })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((error) => {
+      status.error = true;
+      status.responseData = error;
+    });
+  return status;
+}
+
+/**
+ * Return an array of fileNames in the AWS bucket
+ * @param {String} prefix
+ * @returns {ApiResponse} Returns if list of files is retrieved successfully
+ */
+export async function getListOfFiles(prefix) {
+  let status = new ApiResponse();
+  await axios.post(MAILER_API_URL + '/S3Bucket/getListOfFiles', { prefix })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((error) => {
+      status.error = true;
+      status.responseData = error;
+    });
+  return status;
+}

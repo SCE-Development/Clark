@@ -1,5 +1,6 @@
 const s3BucketKeys = require('../../config/config.json').S3Bucket;
 const aws = require('aws-sdk');
+const { resolve } = require('path');
 
 class S3BucketApiHandler {
   constructor() {
@@ -23,6 +24,12 @@ class S3BucketApiHandler {
         resolve(returnData);
       });
     });
+  }
+
+  async getListOfFiles(s3Params) {
+    aws.config.setPromisesDependency();
+    const object = await this.s3.listObjectsV2(s3Params).promise();
+    return object;
   }
 }
 
