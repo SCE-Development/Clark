@@ -61,8 +61,9 @@ function EventManagerModal(props) {
         defaultValue: props.title,
         placeholder: 'e.g. Python Workshop',
         handleChange: e => setTitle(e.target.value),
-        ifRequirementsNotMet: title == undefined && clickedSubmit && (
-          <p className='unavailable'>Please input a title -- it is required</p>
+        ifRequirementsNotMet: (title == undefined || title == '')
+         && clickedSubmit && (
+          <p className='unavailable'>Please input a title!</p>
         ),
       },
       {
@@ -72,8 +73,9 @@ function EventManagerModal(props) {
         handleChange: e => {
           setEventDate(e.target.value);
         },
-        ifRequirementsNotMet: eventDate == undefined && clickedSubmit && (
-          <p className='unavailable'>Please input a date -- it is required</p>
+        ifRequirementsNotMet: (eventDate == undefined || eventDate == '')
+         && clickedSubmit && (
+          <p className='unavailable'>Please input a date!</p>
         ),
       }
     ],
@@ -85,10 +87,9 @@ function EventManagerModal(props) {
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
         handleChange: e => setEventLocation(e.target.value),
-        ifRequirementsNotMet: eventLocation == undefined && clickedSubmit && (
-          <p className='unavailable'>
-            Please input a location -- it is required
-          </p>
+        ifRequirementsNotMet: (eventLocation == undefined ||
+          eventLocation == '') && clickedSubmit && (
+          <p className='unavailable'>Please input a location!</p>
         ),
       },
       {
@@ -112,8 +113,9 @@ function EventManagerModal(props) {
         type: 'time',
         defaultValue: convertTime12to24(props.startTime),
         handleChange: e => setStartTime(e.target.value),
-        ifRequirementsNotMet: startTime == undefined && clickedSubmit && (
-          <p className='unavailable'>Please input a time -- it is required</p>
+        ifRequirementsNotMet: (startTime == undefined || startTime == '')
+        && clickedSubmit && (
+          <div className='unavailable'>Please input a time!</div>
         ),
       },
       {
@@ -122,7 +124,7 @@ function EventManagerModal(props) {
         defaultValue: convertTime12to24(props.endTime),
         handleChange: e => setEndTime(e.target.value),
         ifRequirementsNotMet: endTime == undefined && clickedSubmit && (
-          <p className='unavailable'>Please input a time -- it is required</p>
+          <p className='unavailable'>Please input a time!</p>
         ),
       }
     ]
@@ -222,8 +224,8 @@ function EventManagerModal(props) {
                           onChange={input.handleChange}
                           children={input.children}
                         />
-                        {input.ifRequirementsNotMet}
                       </InputGroup>
+                      {input.ifRequirementsNotMet}
                     </Col>
                   );
                 })}
