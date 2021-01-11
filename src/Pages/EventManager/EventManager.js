@@ -89,7 +89,7 @@ export default function EventManager(props) {
           <h4>Click on an event below to edit or delete it</h4>
         ) : null}
         {eventList.length ? (
-          eventList.map((event, index) => {
+          eventList.reverse().map((event, index) => {
             return (
               <React.Fragment key={index}>
                 <EventCard

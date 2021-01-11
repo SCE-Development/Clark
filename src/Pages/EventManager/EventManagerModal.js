@@ -113,8 +113,7 @@ function EventManagerModal(props) {
         type: 'time',
         defaultValue: convertTime12to24(props.startTime),
         handleChange: e => setStartTime(e.target.value),
-        ifRequirementsNotMet: (startTime == undefined || startTime == '')
-        && clickedSubmit && (
+        ifRequirementsNotMet: startTime == undefined && clickedSubmit && (
           <div className='unavailable'>Please input a time!</div>
         ),
       },
@@ -273,9 +272,7 @@ function EventManagerModal(props) {
           )}
           <Button
             color='primary'
-            onClick={
-              processRequest
-            }
+            onClick={processRequest}
           >
             {modalState === eventModalState.SUBMIT
               ? 'Create New Event'
