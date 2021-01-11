@@ -1,11 +1,9 @@
 #!/bin/bash
-#currently uses my paths
 export PATH=/bin:/usr/bin:/usr/local/bin
-DATABASE_NAMES='ALL'
-if [ ${DATABASE_NAMES} = "ALL" ]; then
- echo "Backing up databases"
- mkdir /Users/farahmasood/Desktop/dump/$(date +"%d%b%Y")
- mongodump -o /Users/farahmasood/Desktop/dump/$(date +"%d%b%Y")
- zip -r $(date +"%d%b%Y").zip /Users/farahmasood/Desktop/dump/$(date +"%d%b%Y")
- mv /Users/farahmasood/Documents/GitHub/Core-v4/$(date +"%d%b%Y").zip /Users/farahmasood/Desktop/dump
-fi
+# change DUMP_DIR to the absolute path to mongo dumps directory
+DUMP_DIR="/Users/admin/Desktop/sce/dbdump"
+PROJECT_DIR=$PWD
+DB_NAME="sce_core"
+echo "Backing up databases"
+mongodump --db $DB_NAME --gzip --archive > $DUMP_DIR/$(date +"%d%b%Y")_$DB_NAME.gzip
+echo "Done backing up sce_core"
