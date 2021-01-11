@@ -6,9 +6,7 @@ import { expect } from 'chai';
 
 import EventCard from '../../src/Pages/Events/EventCard';
 import Adapter from 'enzyme-adapter-react-16';
-import { Row } from 'reactstrap';
 import { getDateWithSlashes } from '../../src/APIFunctions/Event';
-import {clockSymbol, mapPinSymbol} from '../../src/Pages/Overview/SVG.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -24,19 +22,38 @@ describe('<EventCard />', () => {
   };
   it('Should render the title of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find(Row).get(0).props.children).to.equal(appProps.title);
+    expect(
+      wrapper
+        .find('.event-title')
+        .get(0)
+        .props.children
+    ).to.equal(appProps.title);
   });
-  it('Should render the date and time of the event', () => {
+  it('Should render the date of the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(
       wrapper
-        .find(Row)
-        .get(1)
+        .find('.event-info')
+        .get(0)
+        .props.children[2]
         .props.children.join('')
     ).to.equal(
-      `${clockSymbol()}` + ' ' +
-      `${getDateWithSlashes(appProps.eventDate)} ${appProps.startTime} - ` +
-        `${appProps.endTime}`
+      <b>DATE</b> + ': ' +
+      `${getDateWithSlashes(appProps.eventDate)}`
+    );
+  });
+
+  it('Should render the time of the event', () => {
+    const wrapper = mount(<EventCard {...appProps} />);
+    expect(
+      wrapper
+        .find('.event-info')
+        .get(0)
+        .props.children[3]
+        .props.children.join('')
+    ).to.equal(
+      <b>TIME</b> + ': ' +
+      `${appProps.startTime} - ` + `${appProps.endTime}`
     );
   });
 
@@ -44,17 +61,18 @@ describe('<EventCard />', () => {
     const wrapper = mount(<EventCard {...appProps} />);
     expect(
       wrapper
-        .find(Row)
-        .get(2)
+        .find('.event-info')
+        .get(0)
+        .props.children[4]
         .props.children.join('')
     ).to.equal(
-      `${mapPinSymbol()}` + ' ' + appProps.eventLocation
+      <b>LOCATION</b> + ': ' + appProps.eventLocation
     );
   });
 
   it('Should a photo related to the event', () => {
     const wrapper = mount(<EventCard {...appProps} />);
-    expect(wrapper.find('#event-image').props().src).to.equal
+    expect(wrapper.find('.event-image').props().src).to.equal
     (appProps.imageURL);
   });
 });

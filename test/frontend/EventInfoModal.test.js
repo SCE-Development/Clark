@@ -6,7 +6,6 @@ import { expect } from 'chai';
 
 import EventInfoModal from '../../src/Pages/Events/EventInfoModal';
 import Adapter from 'enzyme-adapter-react-16';
-import { Container, Row, Col } from 'reactstrap';
 import { getDateWithSlashes } from '../../src/APIFunctions/Event';
 import { clockSymbol, mapPinSymbol } from '../../src/Pages/Overview/SVG.js';
 

@@ -185,6 +185,7 @@ export function filterUsers(users, filterID) {
   });
   return filteredUsers;
 }
+
 export async function connectToDiscord(email, token) {
   let status = new UserApiResponse();
   await axios.post(GENERAL_API_URL+'/user/connectToDiscord', { email, token })

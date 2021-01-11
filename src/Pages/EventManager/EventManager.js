@@ -64,7 +64,7 @@ export default function EventManager(props) {
   }
 
   return (
-    <div className='event-background'>
+    <React.Fragment>
       <Header {...headerProps} />
       <Container className='event-list'>
         <Button className='create-event' onClick={toggleNewEvent}>
@@ -89,10 +89,11 @@ export default function EventManager(props) {
           <h4>Click on an event below to edit or delete it</h4>
         ) : null}
         {eventList.length ? (
-          eventList.map((event, index) => {
+          eventList.reverse().map((event, index) => {
             return (
               <React.Fragment key={index}>
                 <EventCard
+                  isEventManager = {true}
                   handleClick={() => toggleEditEvent(event)}
                   {...event}
                 />
@@ -103,6 +104,6 @@ export default function EventManager(props) {
           <h1 className='empty-title'>No events yet!</h1>
         )}
       </Container>
-    </div>
+    </React.Fragment>
   );
 }

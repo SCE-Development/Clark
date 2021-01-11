@@ -3,23 +3,12 @@ import { Container } from 'reactstrap';
 import './event-page.css';
 import { getAllEvents } from '../../APIFunctions/Event';
 import EventCard from './EventCard';
-import EventInfoModal from './EventInfoModal';
 import Header from '../../Components/Header/Header';
 
 function AnnouncementList() {
-  const [modal, setModal] = useState(false);
-  const [currentEvent, setEvent] = useState(null);
+  const [getFiltered, setGetFiltered] = useState(true);
   const [eventList, setEventList] = useState();
-
-  async function toggle() {
-    setModal(!modal);
-  }
-
-  const modalProps = {
-    currentEvent,
-    modal,
-    toggle
-  };
+  const [validList, setValidList] = useState();
 
   const headerProps = {
     title: 'SCE Event Page'
@@ -30,6 +19,23 @@ function AnnouncementList() {
     if (!eventResponse.error) setEventList(eventResponse.responseData);
   }
 
+  const getFilteredEvents= () => {
+    if (getFiltered){
+      try {
+        let currDate = new Date();
+        currDate.setDate(currDate.getDate() -1);
+        let validList = [];
+        eventList.forEach(item => {
+          let date = new Date(item.eventDate);
+          if (date >= currDate) {
+            validList.push(item);
+          }
+        }, setValidList(validList), setGetFiltered(false));
+      } catch (error) {
+      }
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       await populateEventList();
@@ -37,31 +43,26 @@ function AnnouncementList() {
     fetchData();
   }, []);
 
-  function handleClick(clickedEvent) {
-    setEvent(clickedEvent);
-    toggle();
-  }
-
   return (
-    <div className='event-background'>
+    <React.Fragment>
       <Header {...headerProps} />
       <Container className='event-list'>
-        {currentEvent === null ? <></> : <EventInfoModal {...modalProps} />}
-        {eventList && eventList.length ? (
-          eventList.map((event, index) => {
+        {getFilteredEvents()}
+        {validList && validList.length ? (
+          validList.reverse().map((event, index) => {
             return (
               <EventCard
                 key={index}
-                handleClick={() => handleClick(event)}
+                isEventManager = {false}
                 {...event}
               />
             );
           })
         ) : (
-          <h1>No events yet!</h1>
+          <h1 className = 'no-event-list'>No events yet!</h1>
         )}
       </Container>
-    </div>
+    </React.Fragment>
   );
 }
 

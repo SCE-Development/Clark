@@ -1,44 +1,52 @@
 import React from 'react';
-import { Row } from 'reactstrap';
+import { Container, Col } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
-import { mapPinSymbol, clockSymbol } from '../Overview/SVG';
 
 function EventCard(props) {
   const {
     title,
+    description,
     eventDate,
     eventLocation,
     startTime,
     endTime,
+    isEventManager,
     handleClick,
     imageURL
   } = props;
 
+  function checkModalStatus(isEventManager) {
+    if (isEventManager){
+      handleClick();
+    }
+  }
+
   return (
-    <button
+    <Container
       className='event-card-button'
       onClick={() => {
-        handleClick();
+        checkModalStatus(isEventManager);
       }}
     >
-      <img id='event-image'
-        className='event-image'
-        src={imageURL} alt=''
-      />
-      <Row className='event-title'>{title}</Row>
-      <Row className='event-date'>
-        {clockSymbol()}
-        {' '}
-        {getDateWithSlashes(eventDate.slice(0, 10))} {startTime} -
-        {' '}
-        {endTime}
-      </Row>
-      <Row className='event-location'>
-        {mapPinSymbol()}
-        {' '}
-        {eventLocation}
-      </Row>
-    </button>
+      <Col className='event-info'>
+        <div className='event-title'>{title}</div>
+        <div> {description}</div>
+        <div><b>DATE </b>
+            : {getDateWithSlashes(eventDate.slice(0, 10))}
+        </div>
+        <div><b>TIME </b>: {startTime} - {endTime}</div>
+        <div>
+          <b>LOCATION </b>
+            : {eventLocation}
+        </div>
+      </Col>
+      <Col id='image-block' >
+        <img
+          className='event-image'
+          src={imageURL} alt=''
+        />
+      </Col>
+    </Container>
   );
 }
 

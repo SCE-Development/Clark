@@ -31,6 +31,8 @@ function EventManagerModal(props) {
   const [endTime, setEndTime] = useState(props.endTime);
   const [eventCategory, setEventCategory] = useState(props.eventCategory);
   const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG);
+  const [clickedSubmit, setClickedSubmit] = useState(false);
+  const [requiredFieldsFilled, setRequiredFieldsFilled] = useState(false);
 
   function toggleConfirmationModal() {
     setConfirmationModal(!confirmationModal);
@@ -55,10 +57,14 @@ function EventManagerModal(props) {
       {
         addon: 'Event Title*',
         type: 'text',
-        // maxLength: '25',
+        maxLength: '25',
         defaultValue: props.title,
         placeholder: 'e.g. Python Workshop',
-        handleChange: e => setTitle(e.target.value)
+        handleChange: e => setTitle(e.target.value),
+        ifRequirementsNotMet: (title == undefined || title == '')
+         && clickedSubmit && (
+          <p className='unavailable'>Please input a title!</p>
+        ),
       },
       {
         addon: 'Event Date*',
@@ -66,17 +72,25 @@ function EventManagerModal(props) {
         defaultValue: props.eventDate ? props.eventDate.slice(0, 10) : '',
         handleChange: e => {
           setEventDate(e.target.value);
-        }
+        },
+        ifRequirementsNotMet: (eventDate == undefined || eventDate == '')
+         && clickedSubmit && (
+          <p className='unavailable'>Please input a date!</p>
+        ),
       }
     ],
     [
       {
         addon: 'Event Location*',
         type: 'text',
-        // maxLength: '25',
+        maxLength: '25',
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
         handleChange: e => setEventLocation(e.target.value),
+        ifRequirementsNotMet: (eventLocation == undefined ||
+          eventLocation == '') && clickedSubmit && (
+          <p className='unavailable'>Please input a location!</p>
+        ),
       },
       {
         addon: 'Event Category',
@@ -98,44 +112,22 @@ function EventManagerModal(props) {
         addon: 'Start Time*',
         type: 'time',
         defaultValue: convertTime12to24(props.startTime),
-        handleChange: e => setStartTime(e.target.value)
+        handleChange: e => setStartTime(e.target.value),
+        ifRequirementsNotMet: startTime == undefined && clickedSubmit && (
+          <div className='unavailable'>Please input a time!</div>
+        ),
       },
       {
         addon: 'End Time*',
         type: 'time',
         defaultValue: convertTime12to24(props.endTime),
-        handleChange: e => setEndTime(e.target.value)
+        handleChange: e => setEndTime(e.target.value),
+        ifRequirementsNotMet: endTime == undefined && clickedSubmit && (
+          <p className='unavailable'>Please input a time!</p>
+        ),
       }
     ]
   ];
-
-  async function handleSubmission() {
-    const eventFields = {
-      title,
-      description,
-      eventLocation,
-      eventDate: new Date(eventDate),
-      startTime:
-        props.startTime === startTime
-          ? startTime
-          : convertTime24to12(startTime),
-      endTime: props.endTime === endTime ? endTime : convertTime24to12(endTime),
-      eventCategory,
-      imageURL: imagePreviewURL === NOT_FOUND_PNG ? undefined : imagePreviewURL
-    };
-
-    await props.handleSubmit({ _id: props._id, ...eventFields });
-    await props.populateEventList();
-    props.toggle();
-  }
-
-  async function handleURLChange(url) {
-    let urlValid = false;
-    await validateImageURL(url)
-      .then(() => (urlValid = true))
-      .catch(() => (urlValid = false));
-    setImagePreviewURL(urlValid ? url : NOT_FOUND_PNG);
-  }
 
   function requiredFieldsFilledIn() {
     if (props.modalState === eventModalState.EDIT) {
@@ -156,6 +148,45 @@ function EventManagerModal(props) {
       );
     }
     return false;
+  }
+
+  async function handleSubmission() {
+    setClickedSubmit(true);
+    if (requiredFieldsFilled){
+      const eventFields = {
+        title,
+        description,
+        eventLocation,
+        eventDate: new Date(eventDate),
+        startTime:
+          props.startTime === startTime
+            ? startTime
+            : convertTime24to12(startTime),
+        endTime: props.endTime === endTime ?
+          endTime : convertTime24to12(endTime),
+        eventCategory,
+        imageURL: imagePreviewURL === NOT_FOUND_PNG ?
+          undefined : imagePreviewURL
+      };
+
+      await props.handleSubmit({ _id: props._id, ...eventFields });
+      await props.populateEventList();
+      props.toggle();
+    }
+  }
+
+  function processRequest() {
+    const passed = requiredFieldsFilledIn();
+    setRequiredFieldsFilled(passed);
+    handleSubmission();
+  }
+
+  async function handleURLChange(url) {
+    let urlValid = false;
+    await validateImageURL(url)
+      .then(() => (urlValid = true))
+      .catch(() => (urlValid = false));
+    setImagePreviewURL(urlValid ? url : NOT_FOUND_PNG);
   }
 
   return (
@@ -193,6 +224,7 @@ function EventManagerModal(props) {
                           children={input.children}
                         />
                       </InputGroup>
+                      {input.ifRequirementsNotMet}
                     </Col>
                   );
                 })}
@@ -203,6 +235,7 @@ function EventManagerModal(props) {
             <Label>Event Description</Label>
             <Input
               type='textarea'
+              maxLength = {100}
               rows={5}
               placeholder='Enter Event Description'
               defaultValue={props.description}
@@ -239,8 +272,7 @@ function EventManagerModal(props) {
           )}
           <Button
             color='primary'
-            onClick={handleSubmission}
-            disabled={!requiredFieldsFilledIn()}
+            onClick={processRequest}
           >
             {modalState === eventModalState.SUBMIT
               ? 'Create New Event'
