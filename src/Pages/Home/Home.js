@@ -38,8 +38,8 @@ import { Row, Col, Container } from 'reactstrap';
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 const blockOneText = [
-  { title: 'Our clubroom offers everything a software ' },
-  { title: 'or computer engineering student could need.' },
+  { title: 'Our clubroom offers everything an SE ' },
+  { title: 'or COMPE student could need.' },
   { title: <br /> },
   { title: 'We continue to offer resources to our  ' },
   { title: 'members despite being remote. ' },
@@ -59,8 +59,7 @@ const sceTitle = [
 ];
 
 const subBlockOneText = [
-  { title: 'As an SCE member, you will get inside scoops ' },
-  { title: '& opportunities.' },
+  { title: 'As an SCE member, you will get many perks! ' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' },
@@ -168,13 +167,10 @@ class Home extends Component {
             {SCEtitle}
           </div>
 
-
-
-
           <div class="contentContainer">
             <div className="block-space"></div>
 
-            <div>
+            <div className="block-one">
               <Row>
                 <Col>
                   <div data-aos="fade-up"
@@ -185,20 +181,19 @@ class Home extends Component {
                       style={{ width: '40vw', marginLeft: '15%' }}></img>
                   </div>
                 </Col>
-                <Col>
-                  <Container>
-                    <h1 class="textBlock1-title" >
-                      Need a place to get things done?
-                    </h1>
-                    <div class="textBlock1-text" >
-                      {blockOneText.map((title) => {
-                        return (
-                          <p className="blockText">
-                            {title.title}</p>
-                        );
-                      })}
-                    </div>
-                  </Container>
+                <Col className="block-styles">
+                  <h1 className="leftalign">
+                    <span className="textBlock1-title">
+                      Need a place to get things done?</span>
+                  </h1>
+                  <div class="textBlock1-text" >
+                    {blockOneText.map((title) => {
+                      return (
+                        <p className="blockText">
+                          {title.title}</p>
+                      );
+                    })}
+                  </div>
                 </Col>
               </Row>
             </div>
@@ -208,16 +203,16 @@ class Home extends Component {
               <p>
                 <Row>
                   <Col className="column" xs={3}>
-                    <p class="subBlock-title" data-aos="fade-left">
+                    <div class="subBlock-title" data-aos="fade-up">
                       Tech Events
-                    </p>
-                    <p class="subBlockContainer" data-aos="fade-left">
+                    </div>
+                    <div class="subBlockContainer" data-aos="fade-left">
                       {subBlockOneText.map((title) => {
                         return (
-                          <p className="subBlockText">{title.title}</p>
+                          <span className="subBlockText">{title.title}</span>
                         );
                       })}
-                    </p>
+                    </div>
                   </Col>
                   <Col xs={3} >
                     <div class="subBlock-title" data-aos="fade-up">
@@ -226,7 +221,7 @@ class Home extends Component {
                     <div class="subBlockContainer" data-aos="fade-up">
                       {subBlockTwoText.map((title) => {
                         return (
-                          <p className="subBlockText">{title.title}</p>
+                          <span className="subBlockText">{title.title}</span>
                         );
                       })}
                     </div>
@@ -248,9 +243,12 @@ class Home extends Component {
             </div>
             <div className="block-two">
               <Row>
-                <Col>
-                  <h1 class="textBlock2-title">
-                    Want to know more?
+                <Col className="block-styles">
+                  <h1>
+                    <span class="textBlock2-title">
+                      Want to know more?
+                    </span>
+
                   </h1>
                   <div class="textBlock2-text">
                     {blockTwoText.map((title) => {
