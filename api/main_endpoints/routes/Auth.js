@@ -10,7 +10,7 @@ const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
 } = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
 const {
@@ -18,7 +18,7 @@ const {
   BAD_REQUEST,
   UNAUTHORIZED,
   NOT_FOUND,
-  CONFLICT
+  CONFLICT,
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
@@ -47,7 +47,7 @@ router.post('/register', async (req, res) => {
   if (!registrationStatus.userSaved) {
     if (registrationStatus.status === 'BAD_REQUEST') {
       return res.status(BAD_REQUEST).send({
-        message: registrationStatus.message
+        message: registrationStatus.message,
       });
     } else {
       res.status(CONFLICT).send({ message: registrationStatus.message });
@@ -65,19 +65,16 @@ router.post('/login', function(req, res) {
 
   User.findOne(
     {
-      email: req.body.email.toLowerCase()
+      email: req.body.email.toLowerCase(),
     },
     function(error, user) {
       if (error) {
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
-
       if (!user) {
-        res
-          .status(UNAUTHORIZED)
-          .send({
-            message: 'Username or password does not match our records.'
-          });
+        res.status(UNAUTHORIZED).send({
+          message: 'Username or password does not match our records.',
+        });
       } else {
         // Check if password matches database
         user.comparePassword(req.body.password, function(error, isMatch) {
@@ -89,16 +86,16 @@ router.post('/login', function(req, res) {
             }
 
             // Check if the user's email has been verified
-            if(!user.emailVerified){
+            if (!user.emailVerified) {
               return res
                 .status(UNAUTHORIZED)
-                .send({message: 'Email has not been verified'});
+                .send({ message: 'Email has not been verified' });
             }
 
             // If the username and password matches the database, assign and
             // return a jwt token
             const jwtOptions = {
-              expiresIn: '2h'
+              expiresIn: '2h',
             };
 
             // check here to see if we should reset the pagecount. If so, do it
@@ -118,15 +115,17 @@ router.post('/login', function(req, res) {
               lastName: user.lastName,
               email: user.email,
               accessLevel: user.accessLevel,
-              pagesPrinted: user.pagesPrinted
+              pagesPrinted: user.pagesPrinted,
             };
             const token = jwt.sign(
-              userToBeSigned, config.secretKey, jwtOptions
+              userToBeSigned,
+              config.secretKey,
+              jwtOptions
             );
             res.status(OK).send({ token: 'JWT ' + token });
           } else {
             res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
+              message: 'Username or password does not match our records.',
             });
           }
         });
@@ -145,7 +144,7 @@ router.post('/setEmailToVerified', (req, res) => {
         userEmail: req.body.email,
         errorTime: new Date(),
         apiEndpoint: 'user/setEmailToVerified',
-        errorDescription: error
+        errorDescription: error,
       };
       addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
@@ -158,7 +157,7 @@ router.post('/setEmailToVerified', (req, res) => {
     }
 
     return res.status(OK).send({
-      message: `${req.body.queryEmail} was updated.`
+      message: `${req.body.queryEmail} was updated.`,
     });
   });
 });
@@ -170,15 +169,13 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const isValid = checkIfTokenValid(req);
+  const isValid = checkIfTokenValid(req, membershipState.ALUMNI);
   if (!isValid) {
     res.sendStatus(UNAUTHORIZED);
   } else {
-
     res.status(OK).send(decodeToken(req));
   }
 });
-
 
 router.post('/generateHashedId', async (req, res) => {
   User.findOne({ email: req.body.email }, function(error, result) {
@@ -217,26 +214,28 @@ router.post('/validateVerificationEmail', async (req, res) => {
       res.sendStatus(NOT_FOUND);
     }
 
-    bcrypt.compare(String(result._id), req.body.hashedId, async function(
-      error,
-      isMatch) {
-      if (error) {
-        res.sendStatus(BAD_REQUEST);
+    bcrypt.compare(
+      String(result._id),
+      req.body.hashedId,
+      async function(error, isMatch) {
+        if (error) {
+          res.sendStatus(BAD_REQUEST);
+        }
+        if (isMatch) {
+          result.emailVerified = true;
+          await result
+            .save()
+            .then((_) => {
+              res.sendStatus(OK);
+            })
+            .catch((err) => {
+              res.sendStatus(BAD_REQUEST);
+            });
+        } else {
+          res.sendStatus(BAD_REQUEST);
+        }
       }
-      if (isMatch) {
-        result.emailVerified = true;
-        await result
-          .save()
-          .then(_ => {
-            res.sendStatus(OK);
-          })
-          .catch(err => {
-            res.sendStatus(BAD_REQUEST);
-          });
-      } else {
-        res.sendStatus(BAD_REQUEST);
-      }
-    });
+    );
   });
 });
 
