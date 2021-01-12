@@ -539,7 +539,7 @@
 }
 
 .textBlock1-title, .textBlock2-title{
-  font-family: 'Merriweather', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: xx-large;
   font-weight: 600;
@@ -549,15 +549,18 @@
 
 .textBlock1-title{
   margin-top: 15%;
-  margin-left:4%;
   margin-bottom: 5%;
-  width: 85%;
+  text-align: left;
+}
+
+.leftalign{
+  text-align: left;
+  margin-left:5%;
 }
 
 .textBlock2-title{
   margin-top: 20%;
   margin-left: 15%;
-  width: 55%;
 }
 
 .textBlock1-text, .textBlock2-text{
