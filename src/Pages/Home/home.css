@@ -20,7 +20,7 @@
   color: white;
   background-size: cover;
   overflow: hidden; 
-  bottom: 2vw;
+  bottom: 0.01vw;
   padding-top: 4vw;
 }
 
@@ -70,8 +70,17 @@
   overflow: auto;
 }
 
+.block-one{
+  text-align: left;
+
+}
+
 .block-images{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 6px 6px 6px 6px rgba(0, 0, 0, 0.19);
+}
+
+.block-styles{
+  margin-top: 5%;
 }
 
 .clubRoomContainer{
@@ -146,8 +155,12 @@
   display:block;
 }
 
+.block-two{
+  margin-top: 5%;
+}
+
 .textBlock1-title, .textBlock2-title{
-  font-family: 'Merriweather', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   text-align: left;
   font-size: xx-large;
   font-weight: 600;
@@ -157,15 +170,18 @@
 
 .textBlock1-title{
   margin-top: 15%;
-  margin-left:4%;
   margin-bottom: 5%;
-  width: 85%;
+  text-align: left;
+}
+
+.leftalign{
+  text-align: left;
+  margin-left:5%;
 }
 
 .textBlock2-title{
   margin-top: 20%;
   margin-left: 15%;
-  width: 55%;
 }
 
 .textBlock1-text, .textBlock2-text{
@@ -255,15 +271,14 @@
   }
 
   .clubRoomContainer{
-    background-image: url("./emptyclubroom_blurred.jpg"); 
+    background-image: url("./grey-gradient.jpg"); 
     position: relative;
     text-align: center;
-    color: white;
+    color: rgb(27, 33, 54);
     width: 100%;
     background-size: 100%;
     background-repeat: no-repeat;
     height: 100%;
-    margin-bottom: 5%;
   }
   
   .subBlockContainer{
@@ -274,45 +289,61 @@
     left: 40%;
     top: 10vw;
     scroll-behavior: [ smooth ];
-    color: white;
+    color: rgb(27, 33, 54);
     font-weight: 500;
     position: relative;
-    line-height: 50%;
   }
 
   .subBlockText{
-    font-size: 6.5px;
+    font-size: 8px;
+    line-height: 0.45rem;
+    margin-top: 0;
   }
 
   .subBlock-title{
     scroll-behavior: [ smooth ];
-    color: white;
+    color: rgb(27, 33, 54);
     position: relative;
     font-family: 'Montserrat';
-    font-size: 7px;
+    font-size: 8px;
     font-weight: bolder !important; 
     z-index: 0;
     overflow: auto;
     text-align: left;
     direction: ltr;
     left: 40%;
-    top: 7vw;
     margin-left: 5vw;
+    margin-top: 0;
   }
 
   .blockText{
-    line-height: 1rem;
+    line-height: 1.2 !important;
     text-align: left;
-    font-size: 5.5px !important;
-    max-height: 2px;
-    word-wrap: break-word;
-    white-space: pre-line;
-    overflow-wrap: break-word;
-    display:block;
+    font-size: 8px !important;
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    /* min-height: 35px; */
   }
 
-  .textBlock1-text, .textBlock1-title, .textBlock2-text, .textBlock2-title{
+  .leftalign, .textBlock1-title, .textBlock2-title{
     font-size: 0.7rem;
+  }
+
+  .textBlock1-text, .textBlock2-text{
+    line-height: 1.2 !important;
+  }
+
+  .icons-container{
+    margin-top: 20%;
+    margin-left: 15%;
+    padding-left: 7%;
+    width: 40%;
+    border-radius: 20px;
+    background-image: linear-gradient(to right, #9ea3df6c 0%, #59ade98c 100%);
+  }
+
+  .block-styles{
+    margin-top: 0%;
   }
  }
 
@@ -408,5 +439,11 @@
     overflow-wrap: break-word;
     display:block;
   }
+
+  .leftalign, .textBlock1-text, .textBlock1-title, .textBlock2-text, .textBlock2-title{
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+
  }
 
