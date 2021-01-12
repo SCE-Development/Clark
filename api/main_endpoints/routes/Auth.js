@@ -76,7 +76,7 @@ router.post('/login', function(req, res) {
         res
           .status(UNAUTHORIZED)
           .send({
-            message: 'Username or password does not match our records.',
+            message: 'Username or password does not match our records.'
           });
       } else {
         // Check if password matches database
@@ -225,10 +225,10 @@ router.post('/validateVerificationEmail', async (req, res) => {
         result.emailVerified = true;
         await result
           .save()
-          .then((_) => {
+          .then(_ => {
             res.sendStatus(OK);
           })
-          .catch((err) => {
+          .catch(err => {
             res.sendStatus(BAD_REQUEST);
           });
       } else {
