@@ -30,5 +30,15 @@ module.exports = [
     major: 'Computer Engineering',
     doorCode: '098-2356',
     accessLevel: membershipState.MEMBER
+  },
+  {
+    firstName: 'John',
+    lastName: 'Doge',
+    joinDate: Date.now,
+    password: 'pass',
+    email: 'jdoge@abc.com',
+    major: 'Applied Math',
+    doorCode: '123-4567',
+    accessLevel: membershipState.ALUMNI
   }
 ];

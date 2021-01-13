@@ -35,22 +35,28 @@ const membershipState = {
   BANNED: -2,
   PENDING: -1,
   NON_MEMBER: 0,
+  ALUMNI: 0.5,
   MEMBER: 1,
   OFFICER: 2,
-  ADMIN: 3
+  ADMIN: 3,
 };
 
 const membershipStatusArray = [
   'Ban',
   'Pending',
   'Nonmember',
+  'Alumni',
   'Member',
   'Officer',
-  'Admin'
+  'Admin',
 ];
 
-function membershipStateToString(index) {
-  return membershipStatusArray[index + 2];
+function membershipStateToString(accessLevel) {
+  if (accessLevel === membershipState.ALUMNI)
+    return 'Alumni';
+  else if (accessLevel > 0)
+    return membershipStatusArray[accessLevel + 3];
+  return membershipStatusArray[accessLevel + 2];
 }
 
 const userFilterType = {

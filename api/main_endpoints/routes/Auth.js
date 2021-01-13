@@ -170,15 +170,13 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const isValid = checkIfTokenValid(req);
+  const isValid = checkIfTokenValid(req, membershipState.ALUMNI);
   if (!isValid) {
     res.sendStatus(UNAUTHORIZED);
   } else {
-
     res.status(OK).send(decodeToken(req));
   }
 });
-
 
 router.post('/generateHashedId', async (req, res) => {
   User.findOne({ email: req.body.email }, function(error, result) {

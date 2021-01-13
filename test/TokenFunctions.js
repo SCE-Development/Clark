@@ -1,4 +1,5 @@
 /* global describe it before after afterEach */
+
 const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
@@ -7,7 +8,7 @@ const proxyquire = require('proxyquire');
 const requestWithToken = {
   body: {
     token: 'hi thai',
-    accessLevel: 1
+    accessLevel: 2,
   }
 };
 const requestWithoutToken = {

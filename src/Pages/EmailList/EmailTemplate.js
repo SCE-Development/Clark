@@ -6,7 +6,7 @@ import BlastMailForm from './BlastMailForm.js';
 import SendButtonModal from './SendButtonModal.js';
 import { sendBlastEmail } from '../../APIFunctions/Mailer';
 import { getAllUsers, filterUsers } from '../../APIFunctions/User';
-
+import { membershipState } from '../../Enums';
 
 export default class EmailTemplate extends Component {
   constructor(props) {
@@ -20,6 +20,7 @@ export default class EmailTemplate extends Component {
       users: '',
       memberEmail: [],
       officerEmail: [],
+      alumniEmail: [],
       allEmail: [],
     };
   }
@@ -47,18 +48,23 @@ export default class EmailTemplate extends Component {
       let allUsers = filterUsers(this.state.users, 0);
       let officerEmail = [],
         memberEmail = [],
+        alumniEmail = [],
         allEmail = [];
       // forEach loop to push emails to their respective arrays
       allUsers.forEach(function(item) {
-        // Access level >=2 is officers+, Access level >=0 but <2 are members
-        if (item.accessLevel >= 2) {
+        // Access level >=3 is officers+, Access level >=2 but <3 are members
+        // Access level == 0 is alumni
+        if (item.accessLevel >= membershipState.ALUMNI) {
           allEmail.push(item.email);
-          officerEmail.push(item.email);
-        } else if (item.accessLevel >= 0) {
-          allEmail.push(item.email);
-          memberEmail.push(item.email);
         }
-      }, this.setState({ officerEmail, memberEmail, allEmail }));
+        if (item.accessLevel >= membershipState.OFFICER) {
+          officerEmail.push(item.email);
+        } else if (item.accessLevel >= membershipState.MEMBER) {
+          memberEmail.push(item.email);
+        } else if (item.accessLevel == membershipState.ALUMNI) {
+          alumniEmail.push(item.email);
+        }
+      }, this.setState({ officerEmail, memberEmail, alumniEmail, allEmail }));
     } catch (error) {
       const alertText =
         'Looks like there was a problem with fetching the users. ' +
@@ -229,6 +235,8 @@ export default class EmailTemplate extends Component {
       emailList = this.state.memberEmail;
     } else if (this.state.recipients === 'Officers') {
       emailList = this.state.officerEmail;
+    } else if (this.state.recipients === 'Alumni') {
+      emailList = this.state.alumniEmail;
     } else if (this.state.recipients === 'Everyone') {
       emailList = this.state.allEmail;
     }

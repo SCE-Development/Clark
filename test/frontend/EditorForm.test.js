@@ -57,9 +57,9 @@ describe('<AdminEditorForm />', () => {
     expect(component.get(2).props.children).equals('Cancel');
   });
 
-  it('Should render a <FormGroup /> component with 10 children', () => {
+  it('Should render a <FormGroup /> component with 11 children', () => {
     const component = wrapper.find(FormGroup);
-    expect(component).to.have.lengthOf(10);
+    expect(component).to.have.lengthOf(11);
     expect(component.get(0).props.children[1].props.placeholder).equals(
       formGroups[0].placeholder
     );
