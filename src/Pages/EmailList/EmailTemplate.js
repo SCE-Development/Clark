@@ -54,7 +54,7 @@ export default class EmailTemplate extends Component {
       allUsers.forEach(function(item) {
         // Access level >=3 is officers+, Access level >=2 but <3 are members
         // Access level == 0 is alumni
-        if (item.accessLevel >= membershipState.MEMBER) {
+        if (item.accessLevel >= membershipState.ALUMNI) {
           allEmail.push(item.email);
         }
         if (item.accessLevel >= membershipState.OFFICER) {
