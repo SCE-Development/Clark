@@ -1,23 +1,52 @@
 import React, { useState } from 'react';
 import './edit-item.css';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Alert, Modal, ModalHeader, ModalBody, ModalFooter, Button } from
+  'reactstrap';
+import ConfirmationModal from
+  '../../../Components/DecisionModal/ConfirmationModal.js';
 import EditItemForm from './EditItemForm.js';
 const svg = require('../SVG');
 
 
 export default function EditButtonModal(props) {
   const [toggle, setToggle] = useState(false);
-
-  function handleConfirmation(){
-    props.handleEditItem(props.item._id);
-    setToggle(!toggle);
-    props.handleClear();
-  }
+  const [deleteModalToggle, setDeleteModalToggle] = useState(false);
+  const [errorToggle, setErrorToggle] = useState(false);
 
   function handleDelete(){
     props.handleDeleteItem(props.item._id);
     setToggle(!toggle);
     props.handleClear();
+  }
+
+  const confirmationModalProps = {
+    headerText: 'Delete Item?',
+    bodyText: 'Item will be removed from the table permanently.',
+    confirmText: 'Confirm',
+    confirmColor: 'primary',
+    cancelText: 'Cancel',
+    toggle: () => setDeleteModalToggle(!deleteModalToggle),
+    handleConfirmation: () => {
+      setDeleteModalToggle(!deleteModalToggle);
+      setToggle(!toggle);
+      handleDelete();
+    },
+    open: deleteModalToggle
+  };
+
+  function handleConfirmation(){
+    if(!props.checkAllInputs()){
+      props.handleEditItem(props.item._id);
+      setToggle(!toggle);
+      props.handleClear();
+    } else{
+      setErrorToggle(!errorToggle);
+    }
+
+  }
+
+  function toggleDeleteConfirmationModal(){
+    setDeleteModalToggle(!deleteModalToggle);
   }
 
   async function fillInputs(){
@@ -49,6 +78,13 @@ export default function EditButtonModal(props) {
       <Modal isOpen={toggle} toggle={escapeModal}>
         <ModalHeader toggle={escapeModal}>Edit Item</ModalHeader>
         <ModalBody>
+          <Alert
+            color="danger"
+            isOpen={errorToggle}
+            toggle={()=> setErrorToggle(!errorToggle)}
+          >
+            An error has occurred! Check your inputs again.
+          </Alert>
           <EditItemForm
             updateItemName = {props.updateItemName}
             updateItemPrice = {props.updateItemPrice}
@@ -67,18 +103,19 @@ export default function EditButtonModal(props) {
         <ModalFooter>
           <Button
             onClick={handleConfirmation}
-            id="edit-item-button-confirm"
+            color='primary'
           >
             Confirm
           </Button>
           <Button
-            onClick={handleDelete}
-            id="edit-item-button-delete"
+            onClick={toggleDeleteConfirmationModal}
+            color='danger'
           >
             Delete
           </Button>
         </ModalFooter>
       </Modal>
+      <ConfirmationModal {...confirmationModalProps} />
     </React.Fragment>
   );
 }

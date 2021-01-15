@@ -4,15 +4,24 @@ import './add-item.css';
 import ConfirmationModal from
   '../../../Components/DecisionModal/ConfirmationModal.js';
 import AddItemForm from './AddItemForm';
+import {Alert} from 'reactstrap';
 const svg = require('../SVG');
 
 
 export default function AddItemButtonModal(props) {
   const [toggle, setToggle] = useState(false);
+  const [errorToggle, setErrorToggle] = useState(false);
   const confirmationModalProps = {
     headerText: 'Add to inventory?',
     bodyText:
       <React.Fragment>
+        <Alert
+          color="danger"
+          isOpen={errorToggle}
+          toggle={()=> setErrorToggle(!errorToggle)}
+        >
+          An error has occurred! Check your inputs again.
+        </Alert>
         <AddItemForm
           updateItemName = {props.updateItemName}
           updateItemPrice = {props.updateItemPrice}
@@ -32,13 +41,14 @@ export default function AddItemButtonModal(props) {
     confirmText: 'Confirm',
     confirmColor: 'primary',
     cancelText: 'Cancel',
-    cancelButtonCSS: 'add-item-button-cancel',
-    confirmButtonCSS: 'add-item-button-confirm',
-    confirmButtonDisabled: props.checkAllInputs(),
     toggle: () => setToggle(!toggle),
     handleConfirmation: () => {
-      setToggle(!toggle);
-      props.handleAddItem();
+      if(!props.checkAllInputs()){
+        setToggle(!toggle);
+        props.handleAddItem();
+      } else{
+        setErrorToggle(!errorToggle);
+      }
     },
     open: toggle
   };
@@ -51,7 +61,7 @@ export default function AddItemButtonModal(props) {
 
   return (
     <React.Fragment>
-      <div className="button-div">
+      <div className='button-div'>
         <button
           className='add-icon'
           onClick={() => {

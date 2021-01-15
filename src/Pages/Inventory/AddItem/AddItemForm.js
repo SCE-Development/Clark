@@ -7,6 +7,7 @@ export default function AddItemForm(props) {
     <Form>
       <FormGroup>
         <Label>Item Name
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Must be unique, check table to see if your item exists
           </FormText>
@@ -19,6 +20,7 @@ export default function AddItemForm(props) {
       </FormGroup>
       <FormGroup>
         <Label>Price
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Cost Per Unit
           </FormText>
@@ -35,6 +37,7 @@ export default function AddItemForm(props) {
       </FormGroup>
       <FormGroup>
         <Label>Stock
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Number of Items Available
           </FormText>
@@ -51,15 +54,20 @@ export default function AddItemForm(props) {
       </FormGroup>
       <FormGroup>
         <Label>Category
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Item Type
           </FormText>
         </Label>
         <Input
-          placeholder=""
+          type="select"
           value={props.category}
           onChange={(e) => props.updateItemCategory(e.target.value)}
-        />
+        >
+          <option value="">Choose...</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Snacks">Snacks</option>
+        </Input>
       </FormGroup>
       <FormGroup>
         <Label>

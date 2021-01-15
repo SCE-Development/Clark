@@ -16,32 +16,3 @@
   color: #9fcca9;
   cursor: pointer;
 }
-
-#add-item-button-confirm {
-  background-color: #9fcca9;
-  color: white;
-  margin-right: 8px;
-  border-color: #9fcca9;
-}
-
-#add-item-button-confirm:hover:enabled {
-  background-color: #87b190;
-  border-color: rgb(114, 151, 173);
-}
-
-#add-item-button-confirm:disabled {
-  background-color: #9fcca9c7;
-  border-color: #9fcca9c7;
-}
-
-#add-item-button-cancel {
-  background-color: #8d959c;
-  color: white;
-  margin-right: 8px;
-  border-color: #8d959c;
-}
-
-#add-item-button-cancel:hover:enabled {
-  background-color: #9ca5ad;
-  border-color: #9ca5ad;
-}

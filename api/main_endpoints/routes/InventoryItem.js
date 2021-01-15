@@ -20,7 +20,6 @@ router.get('/getItems', (req, res) => {
   InventoryItem.find(category).then(items => res.status(OK).send(items));
 });
 
-// TO-DO Find by _id
 router.post('/editItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -77,7 +76,6 @@ router.post('/addItem', (req, res) => {
   });
 });
 
-// TO-DO Find by _id
 router.post('/deleteItem', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);

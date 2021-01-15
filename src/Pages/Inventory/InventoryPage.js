@@ -3,6 +3,7 @@ import Header from '../../Components/Header/Header';
 import AddItemButtonModal from './AddItem/AddItemButtonModal';
 import InventoryRow from './InventoryRow';
 import {Alert, Table} from 'reactstrap';
+import {DEFAULT_PICS} from '../../util/constants.js';
 import { validateImageURL } from '../../APIFunctions/Image.js';
 import {getAllItems, addItem, editItem, deleteItem} from
   '../../APIFunctions/InventoryItem';
@@ -23,8 +24,7 @@ export default class InventoryPage extends Component {
       picture: '',
       inventoryItems:[],
       allInventoryItems:[],
-      invalidPicture: 'https://user-images.githubusercontent.com/' +
-        '25803515/99110346-1ce92000-259f-11eb-97df-7ed5c2284ef3.png',
+      invalidPicture: DEFAULT_PICS.INVENTORY,
       searchInput: '',
     };
   }
@@ -48,7 +48,8 @@ export default class InventoryPage extends Component {
       this.setState({inventoryItems: this.state.allInventoryItems});
     } else{
       const filteredItems = await this.state.allInventoryItems.filter(item =>
-        item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()));
+        item.name.toLowerCase().trim().includes(
+          this.state.searchInput.toLowerCase().trim()));
       this.setState({inventoryItems: filteredItems});
     }
   }
@@ -90,10 +91,11 @@ export default class InventoryPage extends Component {
   }
 
   // Boolean for disabled prop of Confirm button in AddItemButtonModal
+  // Returns false if valid and true if invalid
   checkAllInputs = () =>{
     return (this.state.name==='' || isNaN(this.state.price) ||
-      isNaN(this.state.stock) || this.state.category==='' ||
-      this.state.description==='');
+      this.state.price==='' || this.state.stock==='' ||
+      isNaN(this.state.stock) || this.state.category==='');
   }
 
   // Function for add item form/modal
@@ -101,15 +103,15 @@ export default class InventoryPage extends Component {
     try {
       await validateImageURL(this.state.picture);
     } catch (error) { // If invalid picture URL, use the default picture
-      this.state.picture = this.state.invalidPicture;
+      this.setState({picture: this.state.invalidPicture});
     }
     const reqItemToAdd = {
-      name: this.state.name,
-      price: this.state.price,
+      name: this.state.name.trim(),
+      price: parseFloat(this.state.price).toFixed(2),
       stock: this.state.stock,
-      category: this.state.category,
-      description: this.state.description,
-      picture: this.state.picture
+      category: this.state.category.trim(),
+      description: this.state.description.trim() || 'N/A',
+      picture: this.state.picture.trim()
     };
     const res = await addItem(reqItemToAdd, this.props.user.token);
     if(!res.error){
@@ -134,12 +136,12 @@ export default class InventoryPage extends Component {
   handleEditItem = async (itemId) => {
     const reqItemToEdit = {
       _id: itemId,
-      name: this.state.name,
-      price: this.state.price,
+      name: this.state.name.trim(),
+      price: parseFloat(this.state.price).toFixed(2),
       stock: this.state.stock,
-      category: this.state.category,
-      description: this.state.description,
-      picture: this.state.picture || this.state.invalidPicture
+      category: this.state.category.trim(),
+      description: this.state.description.trim() || 'N/A',
+      picture: this.state.picture.trim() || this.state.invalidPicture
     };
     const res = await editItem(reqItemToEdit, this.props.user.token);
     if(!res.error){
@@ -150,8 +152,7 @@ export default class InventoryPage extends Component {
         this.renderAlert(alertText, alertColor);
       }, 500);
     } else{
-      const alertText = 'Something went wrong with edit! Please give up ' +
-        'and ask a dev!';
+      const alertText = 'Something went wrong with edit!';
       const alertColor = 'danger';
       window.setTimeout(() => {
         this.renderAlert(alertText, alertColor);
@@ -173,8 +174,7 @@ export default class InventoryPage extends Component {
         this.renderAlert(alertText, alertColor);
       }, 500);
     } else{
-      const alertText = 'Something went wrong with delete! Please give up ' +
-        'and ask a dev!';
+      const alertText = 'Something went wrong with delete!';
       const alertColor = 'danger';
       window.setTimeout(() => {
         this.renderAlert(alertText, alertColor);
@@ -213,7 +213,7 @@ export default class InventoryPage extends Component {
           <div className="search-bar-container">
             <input
               className="inventory-search-bar"
-              placeholder="Start typing to filter..."
+              placeholder="Start typing to filter by item name..."
               value = {this.searchInput}
               onChange = {(e) => this.updateSearchInput(e.target.value)}
             />
@@ -269,6 +269,7 @@ export default class InventoryPage extends Component {
                       handleEditItem = {this.handleEditItem}
                       handleDeleteItem = {this.handleDeleteItem}
                       handleClear = {this.handleClear}
+                      checkAllInputs = {this.checkAllInputs}
                     />
                   );
                 })}

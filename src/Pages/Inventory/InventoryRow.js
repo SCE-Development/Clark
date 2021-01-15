@@ -45,6 +45,7 @@ export default class InventoryRow extends Component {
             handleClear = {this.props.handleClear}
             handleEditItem = {this.props.handleEditItem}
             handleDeleteItem = {this.props.handleDeleteItem}
+            checkAllInputs = {this.props.checkAllInputs}
           />
         </td>
       </tr>

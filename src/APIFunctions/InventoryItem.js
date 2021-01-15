@@ -4,8 +4,8 @@ import { GENERAL_API_URL } from '../config/config.json';
 
 /**
  * Retrieve all items.
- * @returns {ApiResponse} Containing any error information related to the
- * request or the list of inventory items
+ * @returns {Promise<ApiResponse>} Containing any error information related
+ * to the request or the list of inventory items
  */
 export async function getAllItems(){
   let status = new ApiResponse();
@@ -29,11 +29,11 @@ export async function getAllItems(){
  * @param {string} reqItemToAdd.stock - The stock of the item
  * @param {string} reqItemToAdd.category - The category of the item
  * @param {string} reqItemToAdd.description - The description of the item
- * @param {(string|undefined)} reqItemToAdd.picture - The picture URL of
+ * @param {string} reqItemToAdd.picture - The picture URL of
  * the item
  * @param {string} token - The user's jwt token for authentication
- * @returns {ApiResponse} Containing any error information related to the
- * request or the response data
+ * @returns {Promise<ApiResponse>} Containing any error information related
+ * to the request or the response data
  */
 export async function addItem(reqItemToAdd, token){
   let status = new ApiResponse();
@@ -68,8 +68,8 @@ export async function addItem(reqItemToAdd, token){
  * @param {(string|undefined)} reqItemToEdit.picture - The picture URL of
  * the item
  * @param {string} token - The user's jwt token for authentication
- * @returns {ApiResponse} Containing any error information related to the
- * request or the response data
+ * @returns {Promise<ApiResponse>} Containing any error information related
+ * to the request or the response data
  */
 export async function editItem(reqItemToEdit, token){
   let status = new ApiResponse();
@@ -99,8 +99,8 @@ export async function editItem(reqItemToEdit, token){
  * @param {Object} reqItemToDelete - The item that is to be deleted
  * @param {string} reqItemToDelete.name - The name of the item
  * @param {string} token - The user's jwt token for authentication
- * @returns {ApiResponse} Containing any error information related to the
- * request or the response data
+ * @returns {Promise<ApiResponse>} Containing any error information related
+ * to the request or the response data
  */
 export async function deleteItem(reqItemToDelete, token){
   let status = new ApiResponse();

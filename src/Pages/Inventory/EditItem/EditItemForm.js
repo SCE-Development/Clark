@@ -7,6 +7,7 @@ export default function EditItemForm(props) {
     <Form>
       <FormGroup>
         <Label>Item Name
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Unique Identifier
           </FormText>
@@ -19,12 +20,13 @@ export default function EditItemForm(props) {
       </FormGroup>
       <FormGroup>
         <Label>Price
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Cost Per Unit
           </FormText>
         </Label>
         <Input
-          invalid={isNaN(props.price)}
+          invalid={isNaN(props.price) || props.price<0}
           placeholder=""
           value={props.price}
           onChange={(e) => props.updateItemPrice(e.target.value)}
@@ -35,12 +37,13 @@ export default function EditItemForm(props) {
       </FormGroup>
       <FormGroup>
         <Label>Stock
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Number of Items Available
           </FormText>
         </Label>
         <Input
-          invalid={isNaN(props.stock)}
+          invalid={isNaN(props.stock) || props.stock<0}
           placeholder=""
           value={props.stock}
           onChange={(e) => props.updateItemStock(e.target.value)}
@@ -51,15 +54,20 @@ export default function EditItemForm(props) {
       </FormGroup>
       <FormGroup>
         <Label>Category
+          <p style={{color: 'red', display: 'inline'}}> *</p>
           <FormText color="muted">
             Item Type
           </FormText>
         </Label>
         <Input
-          placeholder=""
+          type="select"
           value={props.category}
           onChange={(e) => props.updateItemCategory(e.target.value)}
-        />
+        >
+          <option value="">Choose...</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Snacks">Snacks</option>
+        </Input>
       </FormGroup>
       <FormGroup>
         <Label>
