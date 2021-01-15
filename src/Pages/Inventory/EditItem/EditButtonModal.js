@@ -39,8 +39,9 @@ export default function EditButtonModal(props) {
       props.handleEditItem(props.item._id);
       setToggle(!toggle);
       props.handleClear();
+      setErrorToggle(false);
     } else{
-      setErrorToggle(!errorToggle);
+      setErrorToggle(true);
     }
 
   }
@@ -61,10 +62,12 @@ export default function EditButtonModal(props) {
   function enterModal(){
     fillInputs();
     setToggle(!toggle);
+    setErrorToggle(false);
   }
 
   function escapeModal(){
     setToggle(!toggle);
+    setErrorToggle(false);
   }
 
   return (

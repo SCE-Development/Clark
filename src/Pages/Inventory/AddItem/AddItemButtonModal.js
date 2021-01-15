@@ -41,13 +41,17 @@ export default function AddItemButtonModal(props) {
     confirmText: 'Confirm',
     confirmColor: 'primary',
     cancelText: 'Cancel',
-    toggle: () => setToggle(!toggle),
+    toggle: () => {
+      setToggle(!toggle);
+      setErrorToggle(false);
+    },
     handleConfirmation: () => {
       if(!props.checkAllInputs()){
         setToggle(!toggle);
         props.handleAddItem();
+        setErrorToggle(false);
       } else{
-        setErrorToggle(!errorToggle);
+        setErrorToggle(true);
       }
     },
     open: toggle
@@ -57,6 +61,7 @@ export default function AddItemButtonModal(props) {
   function enterModal(){
     props.handleClear();
     setToggle(!toggle);
+    setErrorToggle(false);
   }
 
   return (

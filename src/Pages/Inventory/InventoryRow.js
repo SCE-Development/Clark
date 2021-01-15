@@ -18,7 +18,7 @@ export default class InventoryRow extends Component {
           {this.props.item.category}
         </td>
         <td>
-          {'$'+this.props.item.price}
+          {'$'+this.props.item.price.toFixed(2)}
         </td>
         <td>
           {this.props.item.stock}
