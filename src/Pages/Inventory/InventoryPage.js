@@ -3,8 +3,8 @@ import Header from '../../Components/Header/Header';
 import AddItemButtonModal from './AddItem/AddItemButtonModal';
 import InventoryRow from './InventoryRow';
 import {Alert, Table} from 'reactstrap';
-import {DEFAULT_PICS} from '../../util/constants.js';
-import { validateImageURL } from '../../APIFunctions/Image.js';
+import {DEFAULT_PICS} from '../../Enums.js';
+import {validateImageURL} from '../../APIFunctions/Image.js';
 import {getAllItems, addItem, editItem, deleteItem} from
   '../../APIFunctions/InventoryItem';
 import './InventoryPage.css';

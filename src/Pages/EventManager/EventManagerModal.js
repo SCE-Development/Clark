@@ -13,7 +13,7 @@ import {
   InputGroupAddon
 } from 'reactstrap';
 import { eventModalState } from '../../Enums';
-import {DEFAULT_PICS} from '../../util/constants.js';
+import {DEFAULT_PICS} from '../../Enums.js';
 import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event';
 import { validateImageURL } from '../../APIFunctions/Image.js';
 import ConfirmationModal from
