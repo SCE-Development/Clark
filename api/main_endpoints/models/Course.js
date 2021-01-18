@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const LessonSchema = new Schema(
   {
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true
+    },
     title: {
       type: String,
       required: true
@@ -27,7 +31,7 @@ const CourseSchema = new Schema(
     description: {
       type: String
     },
-    lessons: [LessonSchema],
+    lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: "Lesson" }],
     link: {
       type: String,
       required: true

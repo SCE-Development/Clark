@@ -58,16 +58,16 @@ describe("Course", () => {
   });
 
   const token = "";
-  let courseId = "";
+  let courseId = "5555";
   const DUMMY_LESSON = {
-    title: "intro to react",
-    link: "https://google.com"
+    title: "div blocks",
+    link: "www.divblock.com"
   };
   const VALID_NEW_COURSE = {
     title: "intro to react",
     author: "Big Chungus",
     description: "a workshop about react",
-    lessons: [DUMMY_LESSON],
+    lessons: [],
     link: "https://google.com"
   };
   const COURSE_WITH_INVALID_TOKEN = {
@@ -179,7 +179,8 @@ describe("Course", () => {
       expect(getCoursesResponse[0].description).to.equal(
         UPDATED_COURSE.description
       );
-      expect(getCoursesResponse[0].lessons).to.eql(UPDATED_COURSE.lessons);
+      // this checks that the lessons array has as many lessons are were added
+      expect(getCoursesResponse[0].lessons).to.have.length(1);
       expect(getCoursesResponse[0].link).to.equal(UPDATED_COURSE.link);
     });
   });
