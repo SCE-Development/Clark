@@ -102,7 +102,7 @@ class SceHttpServer {
   connectToMongoDb() {
     this.mongoose = mongoose;
     this.mongoose
-      .connect(`mongodb://localhost/${this.database}`, {
+      .connect(`mongodb://host.docker.internal/${this.database}`, {
         promiseLibrary: require('bluebird'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
