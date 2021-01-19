@@ -17,7 +17,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require('../util/logging-helpers');
-const { membershipState } = require('../../../src/Enums');
+const { membershipState } = require('../Enums');
 
 router.post('/submit', (req, res) => {
   if (!checkIfTokenSent(req)) {

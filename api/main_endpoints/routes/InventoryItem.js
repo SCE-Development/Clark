@@ -13,7 +13,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require('../util/logging-helpers');
-const { membershipState } = require('../../../src/Enums');
+const { membershipState } = require('../Enums');
 
 router.get('/getItems', (req, res) => {
   const category = req.body.category ? { category: req.body.category } : {};
