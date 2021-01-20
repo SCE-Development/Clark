@@ -88,25 +88,8 @@ class SceHttpServer {
       })
       .then(() => {})
       .catch((error) => {
-
-        this.mongoose
-          .connect(`mongodb://db:27017/${this.database}`, {
-            promiseLibrary: require('bluebird'),
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-          })
-          .then(() => {})
-          .catch((errordb) => {
-            throw JSON.stringify({
-              ErrorLocal: error,
-              ErrorDocker: errordb,
-              Reminder: 'Make sure mongo is running',
-              Env: process.env.NODE_ENV
-            });
-          });
+        throw error
       });
-
   }
 
   /**
