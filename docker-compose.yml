@@ -61,6 +61,7 @@ services:
       - '3000:3000'
     restart: 'on-failure'
     command: 'npm start'
+    restart: 'on-failure'
     stdin_open: true
     links:
       - db
