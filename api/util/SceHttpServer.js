@@ -64,45 +64,23 @@ class SceHttpServer {
    * Create the http server, connect to MongoDB and start listening on
    * the supplied port.
    */
-  openConnection(frontend) {
-    if(frontend){
-      openFrontend();
-    } else{
+  openConnection() {
       const { port } = this;
       this.server = http.createServer(this.app);
       this.connectToMongoDb();
       this.server.listen(port, function() {
         console.debug(`Now listening on port ${port}`);
       });
-    }
-  }
-
-  /**
-   * Create a frotnend server and start listening on a port
-   */
-  openFrontend() {
-    const { port } = this;
-    try {
-      this.app.use(express.static(path.join(__dirname, '../../build')));
-      this.app.get('*', function(req, res) {
-        res.sendFile(path.join(__dirname, '../../build/index.html'));
-      });
-      this.server = http.createServer(this.app);
-      this.server.listen(port, function() {
-        console.debug(`Now listening on port ${port}`);
-      });
-    } catch (err) {
-      console.debug(err);
-    }
   }
 
   /**
    * Initialize a connection to MongoDB.
    */
   connectToMongoDb() {
+    var dbHost = process.env.DATABASE_HOST || 'localhost';
     this.mongoose = mongoose;
     this.mongoose
-      .connect(`mongodb://localhost:27017/${this.database}`, {
+      .connect(`mongodb://${dbHost}:27017/${this.database}`, {
         promiseLibrary: require('bluebird'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -110,25 +88,8 @@ class SceHttpServer {
       })
       .then(() => {})
       .catch((error) => {
-
-        this.mongoose
-          .connect(`mongodb://db:27017/${this.database}`, {
-            promiseLibrary: require('bluebird'),
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-          })
-          .then(() => {})
-          .catch((errordb) => {
-            throw JSON.stringify({
-              ErrorLocal: error,
-              ErrorDocker: errordb,
-              Reminder: 'Make sure mongo is running',
-              Env: process.env.NODE_ENV
-            });
-          });
+        throw error
       });
-
   }
 
   /**
@@ -149,32 +110,6 @@ class SceHttpServer {
     this.server.close();
     this.mongoose.connection.close(done);
   }
-}
-
-// This if statement checks if the module was require()'d or if it was run
-// by node server.js. If we are not requiring it and are running it from the
-// command line, we create a server instance and start listening for requests.
-if (typeof module !== 'undefined' && !module.parent) {
-  const generalApiEndpoints = __dirname + '/../main_endpoints/routes/';
-  const loggingApiEndpoints = __dirname + '/../logging_api/routes/';
-  const cloudApiEndpoints = __dirname + '/../cloud_api/routes/';
-
-  const frontendServer = new SceHttpServer('', 8079);
-  const generalServer = new SceHttpServer(generalApiEndpoints, 8080);
-  /* eslint-disable-next-line */
-  const loggingServer = new SceHttpServer(loggingApiEndpoints, 8081, '/logapi/');
-  const cloudServer = new SceHttpServer(cloudApiEndpoints, 8082, '/cloudapi/');
-
-  frontendServer.openFrontend(true);
-  generalServer.initializeEndpoints().then(() => {
-    generalServer.openConnection();
-  });
-  loggingServer.initializeEndpoints().then(() => {
-    loggingServer.openConnection();
-  });
-  cloudServer.initializeEndpoints().then(() => {
-    cloudServer.openConnection();
-  });
 }
 
 module.exports = { SceHttpServer };

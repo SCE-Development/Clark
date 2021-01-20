@@ -3,6 +3,8 @@ FROM node:8.10.0-alpine
 
 WORKDIR /app
 
+ENV DATABASE_HOST db
+
 COPY package.json ./
 
 RUN npm install --production

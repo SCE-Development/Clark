@@ -2,6 +2,8 @@ FROM node:alpine
 
 WORKDIR /app
 
+ENV DATABASE_HOST db
+
 COPY package.json ./
 
 RUN npm install --production

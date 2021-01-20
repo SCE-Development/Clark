@@ -4,6 +4,9 @@ FROM node:8.10.0-alpine
 WORKDIR /app
 #all commands will run in this directory
 
+ENV DATABASE_HOST db
+#database env variable
+
 COPY ./package.json .
 #copies all the dependenices into work directory (./app) (since you set the work dir before)
 
