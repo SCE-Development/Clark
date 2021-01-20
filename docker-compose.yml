@@ -1,42 +1,68 @@
 version: '3'
 services:
   db:
+    restart: always
     image: 'mongo'
     ports:
       - '27017:27017'
     volumes:
-      - '/data/db1:/data/db'
-    command: 'mongod --auth'
-  #goto mackintoshHD or whereever your data directory for Mongo is and go in it and clone the db and rename it as db1.
-  #When running mongo, it doesn't like it when the container and mongod accesses the db so we make a copy of it and run the container from it on start.
+      - '~/data/db:/data/db'
+    command: 'mongod'
+  # sce-logging-api:
+  #   container_name: sce-logging-api
+  #   build:
+  #     context: ./api
+  #     dockerfile: ./logging_api/Dockerfile
+  #   ports:
+  #     - '8081:8081'
+  #   restart: 'on-failure'
+  #   stdin_open: true
+  #   links:
+  #     - db
+  #   depends_on:
+  #     - db
+  # sce-cloud-api:
+  #   container_name: sce-cloud-api
+  #   image: cloudapi:latest
+  #   build:
+  #     context: ./api
+  #     dockerfile: ./cloud_api/Dockerfile
+  #   ports:
+  #     - '8082:8082'
+  #   restart: 'on-failure'
+  #   stdin_open: true
+  #   links:
+  #     - db
+  #   depends_on:
+  #     - db
 
-  #use docker-compose up --build after changing the dockerfiles in docker folder.
-  #use docker-compose up to run the container
-  app:
-    image: 'coretest:latest'
+  mainendpoints:
+    container_name: mainendpoints
+    image: mainendpoints:latest
     build:
-      context: .
-      dockerfile: ./docker/Dockerfile-serverjs
+      context: ./api
+      dockerfile: ./main_endpoints/Dockerfile
     ports:
       - '8080:8080'
-    restart: 'on-failure'
+    restart: always
+    stdin_open: true
+    links:
+      - db
     depends_on:
       - db
-    links:
-      - db
   
-  #when you sping up more than 1 container, increase the ports above. Implement a port range, 8080:8085
-  #when you implement a port range, window.location.hostname for the log in page. 
-  #need something in front of the docker container (load balancer) in nginx container.
-  frontend:
-    image: 'corefront:latest'
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile-ScePage
-    ports:
-      - '3000:3000'
-    restart: 'on-failure'
-    command: 'npm start'
-    links:
-      - app
-  #app will ALWAYS fail until mongodb starts so when you do docker-compose up, be patient and wait a while.
+  # frontend:
+  #   image: 'corefront:latest'
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile-frontend
+  #   ports:
+  #     - '3000:3000'
+  #   restart: 'on-failure'
+  #   command: 'npm start'
+  #   restart: 'on-failure'
+  #   stdin_open: true
+  #   links:
+  #     - db
+  #   depends_on:
+  #     - db
