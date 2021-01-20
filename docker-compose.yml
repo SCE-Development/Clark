@@ -8,33 +8,33 @@ services:
     volumes:
       - '~/data/db:/data/db'
     command: 'mongod'
-  # sce-logging-api:
-  #   container_name: sce-logging-api
-  #   build:
-  #     context: ./api
-  #     dockerfile: ./logging_api/Dockerfile
-  #   ports:
-  #     - '8081:8081'
-  #   restart: 'on-failure'
-  #   stdin_open: true
-  #   links:
-  #     - db
-  #   depends_on:
-  #     - db
-  # sce-cloud-api:
-  #   container_name: sce-cloud-api
-  #   image: cloudapi:latest
-  #   build:
-  #     context: ./api
-  #     dockerfile: ./cloud_api/Dockerfile
-  #   ports:
-  #     - '8082:8082'
-  #   restart: 'on-failure'
-  #   stdin_open: true
-  #   links:
-  #     - db
-  #   depends_on:
-  #     - db
+  sce-logging-api:
+    container_name: sce-logging-api
+    build:
+      context: ./api
+      dockerfile: ./logging_api/Dockerfile
+    ports:
+      - '8081:8081'
+    restart: 'on-failure'
+    stdin_open: true
+    links:
+      - db
+    depends_on:
+      - db
+  sce-cloud-api:
+    container_name: sce-cloud-api
+    image: cloudapi:latest
+    build:
+      context: ./api
+      dockerfile: ./cloud_api/Dockerfile
+    ports:
+      - '8082:8082'
+    restart: 'on-failure'
+    stdin_open: true
+    links:
+      - db
+    depends_on:
+      - db
 
   mainendpoints:
     container_name: mainendpoints
@@ -51,18 +51,18 @@ services:
     depends_on:
       - db
   
-  # frontend:
-  #   image: 'corefront:latest'
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/Dockerfile-frontend
-  #   ports:
-  #     - '3000:3000'
-  #   restart: 'on-failure'
-  #   command: 'npm start'
-  #   restart: 'on-failure'
-  #   stdin_open: true
-  #   links:
-  #     - db
-  #   depends_on:
-  #     - db
+  frontend:
+    image: 'corefront:latest'
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-frontend
+    ports:
+      - '3000:3000'
+    restart: 'on-failure'
+    command: 'npm start'
+    restart: 'on-failure'
+    stdin_open: true
+    links:
+      - db
+    depends_on:
+      - db
