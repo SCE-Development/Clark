@@ -13,7 +13,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require ('../util/logging-helpers');
-const { membershipState } = require('../Enums');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 router.get('/getEvents', (req, res) => {
   Event.find()
