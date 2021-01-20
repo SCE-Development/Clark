@@ -6,7 +6,8 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - '~/data/db:/data/db'
+      - '/data/db:/data/db' 
+      # - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
   sce-logging-api:
     container_name: sce-logging-api
