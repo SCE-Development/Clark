@@ -86,9 +86,9 @@ class SceHttpServer {
         useUnifiedTopology: true,
         useCreateIndex: true,
       })
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
-        throw error
+        throw error;
       });
   }
 
