@@ -102,16 +102,33 @@ class SceHttpServer {
   connectToMongoDb() {
     this.mongoose = mongoose;
     this.mongoose
-      .connect(`mongodb://localhost/${this.database}`, {
+      .connect(`mongodb://localhost:27017/${this.database}`, {
         promiseLibrary: require('bluebird'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
       })
-      .then(() => { })
+      .then(() => {})
       .catch((error) => {
-        throw error;
+
+        this.mongoose
+          .connect(`mongodb://db:27017/${this.database}`, {
+            promiseLibrary: require('bluebird'),
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
+          })
+          .then(() => {})
+          .catch((errordb) => {
+            throw JSON.stringify({
+              ErrorLocal: error,
+              ErrorDocker: errordb,
+              Reminder: 'Make sure mongo is running',
+              Env: process.env.NODE_ENV
+            });
+          });
       });
+
   }
 
   /**
