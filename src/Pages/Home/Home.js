@@ -5,7 +5,6 @@ import './home.css';
 import Footer from '../../Components/Footer/Footer.js';
 import { Row, Col } from 'reactstrap';
 
-
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 // The major block texts surrounding the sub block
