@@ -58,7 +58,7 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile-frontend
     ports:
-      - '8079:8079'
+      - '3000:3000'
     restart: 'on-failure'
     command: 'npm start'
     stdin_open: true
