@@ -6,7 +6,7 @@ function main() {
     __dirname + '/routes/PrintLog.js',
     __dirname + '/routes/SignLog.js'
   ];
-  const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081);
+  const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/logapi/');
   loggingServer.initializeEndpoints().then(() => {
     loggingServer.openConnection();
   });
