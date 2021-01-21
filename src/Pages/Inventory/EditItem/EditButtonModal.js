@@ -81,13 +81,6 @@ export default function EditButtonModal(props) {
       <Modal isOpen={toggle} toggle={escapeModal}>
         <ModalHeader toggle={escapeModal}>Edit Item</ModalHeader>
         <ModalBody>
-          <Alert
-            color="danger"
-            isOpen={errorToggle}
-            toggle={()=> setErrorToggle(!errorToggle)}
-          >
-            An error has occurred! Check your inputs again.
-          </Alert>
           <EditItemForm
             updateItemName = {props.updateItemName}
             updateItemPrice = {props.updateItemPrice}
@@ -102,6 +95,13 @@ export default function EditButtonModal(props) {
             description = {props.description}
             picture = {props.picture}
           />
+          <Alert
+            color="danger"
+            isOpen={errorToggle}
+            toggle={()=> setErrorToggle(!errorToggle)}
+          >
+            An error has occurred! Check your inputs again.
+          </Alert>
         </ModalBody>
         <ModalFooter>
           <Button

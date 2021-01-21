@@ -94,6 +94,7 @@ export default class InventoryPage extends Component {
   // Returns false if valid and true if invalid
   checkAllInputs = () =>{
     return (this.state.name==='' || isNaN(this.state.price) ||
+      this.state.price < 0 || this.state.stock < 0 ||
       this.state.price==='' || this.state.stock==='' ||
       isNaN(this.state.stock) || this.state.category==='');
   }

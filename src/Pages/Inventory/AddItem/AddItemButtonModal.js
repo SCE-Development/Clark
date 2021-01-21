@@ -15,13 +15,6 @@ export default function AddItemButtonModal(props) {
     headerText: 'Add to inventory?',
     bodyText:
       <React.Fragment>
-        <Alert
-          color="danger"
-          isOpen={errorToggle}
-          toggle={()=> setErrorToggle(!errorToggle)}
-        >
-          An error has occurred! Check your inputs again.
-        </Alert>
         <AddItemForm
           updateItemName = {props.updateItemName}
           updateItemPrice = {props.updateItemPrice}
@@ -37,6 +30,13 @@ export default function AddItemButtonModal(props) {
           description = {props.description}
           picture = {props.picture}
         />
+        <Alert
+          color="danger"
+          isOpen={errorToggle}
+          toggle={()=> setErrorToggle(!errorToggle)}
+        >
+          An error has occurred! Check your inputs again.
+        </Alert>
       </React.Fragment>,
     confirmText: 'Confirm',
     confirmColor: 'primary',
