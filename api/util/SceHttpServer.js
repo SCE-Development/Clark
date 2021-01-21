@@ -88,7 +88,7 @@ class SceHttpServer {
       })
       .then(() => {})
       .catch((error) => {
-        throw error;
+        throw error
       });
   }
 
