@@ -13,6 +13,6 @@ RUN npm install
 COPY . ./
 RUN npm run build
 
-EXPOSE 8079
+EXPOSE 3000
 
-CMD npm run deploy-production-frontend
+CMD npm run start
