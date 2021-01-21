@@ -65,19 +65,19 @@ class SceHttpServer {
    * the supplied port.
    */
   openConnection() {
-      const { port } = this;
-      this.server = http.createServer(this.app);
-      this.connectToMongoDb();
-      this.server.listen(port, function() {
-        console.debug(`Now listening on port ${port}`);
-      });
+    const { port } = this;
+    this.server = http.createServer(this.app);
+    this.connectToMongoDb();
+    this.server.listen(port, function() {
+      console.debug(`Now listening on port ${port}`);
+    });
   }
 
   /**
    * Initialize a connection to MongoDB.
    */
   connectToMongoDb() {
-    var dbHost = process.env.DATABASE_HOST || 'localhost';
+    let dbHost = process.env.DATABASE_HOST || 'localhost';
     this.mongoose = mongoose;
     this.mongoose
       .connect(`mongodb://${dbHost}:27017/${this.database}`, {
@@ -88,7 +88,7 @@ class SceHttpServer {
       })
       .then(() => {})
       .catch((error) => {
-        throw error
+        throw error;
       });
   }
 
