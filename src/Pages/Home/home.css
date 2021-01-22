@@ -37,7 +37,7 @@
   scroll-behavior: [ smooth ];
   color: white;
   position: absolute;
-  top: 5%;
+  top: 4%;
   left: 50%;
   font-family: 'Montserrat';
   white-space: pre-line;
@@ -56,7 +56,7 @@
 
 .sceLogo{
   position: absolute;
-  top: 4%;
+  margin-top: 6%;
   right: 50%;
   overflow: auto;
   display: block;
