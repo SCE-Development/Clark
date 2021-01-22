@@ -33,9 +33,7 @@ class Gallery extends Component {
   async componentDidMount() {
     const prefix = '';
     const getListRes = await getListOfFiles(prefix);
-    if (getListRes.error === true)
-      alert('Error when getting list of files');
-    else {
+    if (getListRes.error === false) {
       let picMap = [];
       getListRes.responseData.list.Contents.map((pic, index) => {
         this.getImage(pic, index)
