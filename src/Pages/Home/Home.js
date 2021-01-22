@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
-
 import './home.css';
-// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
 import { Row, Col } from 'reactstrap';
 import { icons } from './IconConstants';
@@ -45,9 +43,8 @@ const subBlockThreeText =
 
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
-
+// The major block texts surrounding the sub block
 const blockOneText = [
-
   { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
   { title: <br /> },
@@ -56,20 +53,19 @@ const blockOneText = [
   { title: 'Read further for more details!' },
 ];
 
-
 const blockTwoText = [
   { title: 'Join our public accounts on Discord, Slack,' },
   { title: 'Instagram and more to connect with SCE members!' },
 ];
 
-
+// The sub block texts
+// ( the part with the empty clubroom in the background )
 const subBlockOneText = [
   { title: 'As an SCE member, you will get inside scoops ' },
   { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' }
-
 ];
 
 const subBlockTwoText = [
@@ -87,7 +83,7 @@ const subBlockThreeText = [
   { title: 'We host potlucks, movie nights, game nights and much more!' },
 ];
 
-
+// Club social media icon links
 const icons = [
   {
     link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -100,7 +96,6 @@ const icons = [
       '96-2.586 7-2.777 7 2.476v6.759z'
     ].join('')
   },
-
   {
     link: 'https://discord.com/invite/STkT6mH',
     vector: [
@@ -123,7 +118,6 @@ const icons = [
       '24 1.332.684 0 1.224-.6 1.224-1.332 0-.732-.54-1.332-1.224-1.332z'
     ].join('')
   },
-
   {
     link: 'https://www.instagram.com/sjsusce/',
     vector: [
@@ -145,10 +139,7 @@ const icons = [
       '845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.',
       '439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'
     ].join('')
-
   }
-
-
 ];
 
 
@@ -159,6 +150,8 @@ class Home extends Component {
       <>
 
         <div className='home'>
+
+          {/* This container is for the SCE offciers picture and title */}
           <div class="groupPicContainer">
             <img class="groupictureStyles" src='images/officers2019_2.jpg'
               alt="officersPic" style={{ width: '100%' }}></img>
@@ -177,6 +170,8 @@ class Home extends Component {
             {SCEtitle}
           </div>
 
+          {/* This contains all the content regarding the club,
+         what we have to offer and social media links */}
           <div class="contentContainer">
 
             {/* The first major block: "Need a place to get things done?" */}
@@ -207,6 +202,7 @@ class Home extends Component {
 
             <div className="block-space" />
 
+            {/* The sub block section */}
             <div className="clubRoomContainer">
               <p>
                 <Row>
@@ -221,8 +217,6 @@ class Home extends Component {
                       <span className="subBlockText">{subBlockOneText}</span>
                     </div>
                   </Col>
-
-
                   <Col xs={3} >
                     <div class="subBlock-title" data-aos="fade-up"
                       data-aos-duration="1000" >
@@ -249,8 +243,8 @@ class Home extends Component {
               </p>
             </div>
 
+            {/* The second major block: "Want to know more?" */}
             <div className="block-two">
-
               <Row>
                 <Col className="block-styles">
                   <h1>
@@ -269,16 +263,15 @@ class Home extends Component {
                     {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
+
                           <svg className='block2-icons' viewBox='0 0 24 24'>
                             <path fill='#484848' d={icon.vector} />
                           </svg>
                         </a>
-
                       );
                     })}
                   </div>
                 </Col>
-
                 <Col>
                   <div data-aos="fade-up" data-aos="fade-down"
                     data-aos-duration="1000" >
