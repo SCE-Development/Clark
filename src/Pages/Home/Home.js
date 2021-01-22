@@ -1,14 +1,25 @@
-import React, { Component } from 'react';
+
+import React, { Component, useEffect } from 'react';
+import { AnimateOnChange, animations } from 'react-animation';
+import ScrollAnimation from 'react-animate-on-scroll';
+import Aos from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
+
 import './home.css';
+// import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
-import { Row, Col } from 'reactstrap';
+// import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
+// import Iframe from 'react-iframe';
+import { Row, Col, Container, Button } from 'reactstrap';
+// import Calendar from '../../Calendar/App.js'; <Calendar/>
+
 
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
-// The major block texts surrounding the sub block
+
 const blockOneText = [
+
   { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
   { title: <br /> },
@@ -17,19 +28,20 @@ const blockOneText = [
   { title: 'Read further for more details!' },
 ];
 
+
 const blockTwoText = [
   { title: 'Join our public accounts on Discord, Slack,' },
   { title: 'Instagram and more to connect with SCE members!' },
 ];
 
-// The sub block texts
-// ( the part with the empty clubroom in the background )
+
 const subBlockOneText = [
   { title: 'As an SCE member, you will get inside scoops ' },
   { title: '& opportunities.' },
   { title: <br /> },
   { title: 'We have conducted events with companies like' },
   { title: 'IBM, Tesla, SAP and more!' }
+
 ];
 
 const subBlockTwoText = [
@@ -47,7 +59,7 @@ const subBlockThreeText = [
   { title: 'We host potlucks, movie nights, game nights and much more!' },
 ];
 
-// Club social media icon links
+
 const icons = [
   {
     link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -60,6 +72,7 @@ const icons = [
       '96-2.586 7-2.777 7 2.476v6.759z'
     ].join('')
   },
+
   {
     link: 'https://discord.com/invite/STkT6mH',
     vector: [
@@ -82,6 +95,7 @@ const icons = [
       '24 1.332.684 0 1.224-.6 1.224-1.332 0-.732-.54-1.332-1.224-1.332z'
     ].join('')
   },
+
   {
     link: 'https://www.instagram.com/sjsusce/',
     vector: [
@@ -103,17 +117,19 @@ const icons = [
       '845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.',
       '439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'
     ].join('')
+
   }
+
+
 ];
 
 
 class Home extends Component {
   render() {
+    Aos.init({ duration: 2000 });
     return (
       <>
         <div className='home'>
-
-          {/* This container is for the SCE offciers picture and title */}
           <div class="groupPicContainer">
             <img class="groupPictureStyles" src='images/officers2019_2.jpg'
               alt="officersPic" style={{ width: '105%' }}></img>
@@ -127,12 +143,8 @@ class Home extends Component {
             {SCEtitle}
           </div>
 
-          {/* This contains all the content regarding the club,
-         what we have to offer and social media links */}
           <div class="contentContainer">
             <div className="block-space"></div>
-
-            {/* The first major block: "Need a place to get things done?" */}
             <div className="block-one">
               <Row>
                 <Col>
@@ -163,7 +175,6 @@ class Home extends Component {
 
             <div className="block-space"></div>
 
-            {/* The sub block section */}
             <div className="clubRoomContainer">
               <p>
                 <Row>
@@ -179,10 +190,13 @@ class Home extends Component {
                       })}
                     </div>
                   </Col>
+
+
                   <Col xs={3} >
                     <div class="subBlock-title" data-aos="fade-up">
                       Workshops
                     </div>
+
                     <div class="subBlockContainer" data-aos="fade-up">
                       {subBlockTwoText.map((title) => {
                         return (
@@ -195,6 +209,7 @@ class Home extends Component {
                     <div class="subBlock-title" data-aos="fade-right">
                       Social Events
                     </div>
+
                     <div class="subBlockContainer" data-aos="fade-right">
                       {subBlockThreeText.map((title) => {
                         return (
@@ -207,8 +222,8 @@ class Home extends Component {
               </p>
             </div>
 
-            {/* The second major block: "Want to know more?" */}
             <div className="block-two">
+
               <Row>
                 <Col className="block-styles">
                   <h1>
@@ -224,20 +239,20 @@ class Home extends Component {
                     })}
                   </div>
 
-                  {/* Icons div */}
                   <div className="icons-container">
                     {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
-
                           <svg className='block2-icons' viewBox='0 0 24 24'>
                             <path fill='#484848' d={icon.vector} />
                           </svg>
                         </a>
+
                       );
                     })}
                   </div>
                 </Col>
+
                 <Col>
                   <div data-aos="fade-up" data-aos="fade-down" >
                     <img className="block-images"
@@ -248,7 +263,9 @@ class Home extends Component {
                 </Col>
               </Row>
             </div>
+
             <div className="block-space"></div>
+
             <Footer />
           </div >
         </div >
@@ -258,3 +275,4 @@ class Home extends Component {
 }
 
 export default Home;
+
