@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { MAILER_API_URL } from '../config/config.json';
+
+let config = require('../config/config.json');
+let MAILER_API_URL = process.env.NODE_ENV === 'production' ?
+  config.MAILER_API_URL_PROD : config.MAILER_API_URL;
 
 /**
  * Invoke the gmail API to send an email to verify a user.

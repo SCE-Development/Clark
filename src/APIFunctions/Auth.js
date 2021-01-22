@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { updateLastLoginDate } from './User';
-import {GENERAL_API_URL} from '../config/config.json';
+
+let config = require('../config/config.json');
+let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
+  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
 
 /**
  * Add a new user to the database.

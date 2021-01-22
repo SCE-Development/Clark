@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { LOGGING_API_URL } from '../config/config.json';
+let config = require('../config/config.json');
+let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
+  config.LOGGING_API_URL_PROD : config.LOGGING_API_URL;
 
 /**
  * Retrieve all errors.
