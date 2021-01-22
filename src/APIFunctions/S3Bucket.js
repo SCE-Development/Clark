@@ -1,6 +1,9 @@
 import axios from 'axios';
-import { MAILER_API_URL } from '../config/config.json';
 import { ApiResponse } from './ApiResponses';
+
+let config = require('../config/config.json');
+let MAILER_API_URL = process.env.NODE_ENV === 'production' ?
+  config.MAILER_API_URL_PROD : config.MAILER_API_URL;
 
 /**
  * Return a url of the uploaded file from AWS

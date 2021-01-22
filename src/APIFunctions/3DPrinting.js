@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { RPC_API_URL, GENERAL_API_URL } from '../config/config.json';
+let config = require('../config/config.json');
+let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
+  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
+let RPC_API_URL = process.env.NODE_ENV === 'production' ?
+  config.RPC_API_URL_PROD : config.RPC_API_URL;
 
 /**
  * Submit a user's print request.
