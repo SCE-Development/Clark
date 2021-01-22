@@ -1,9 +1,13 @@
-import React, { Component } from 'react';
+
+import React, { Component, useEffect } from 'react';
+import { AnimateOnChange, animations } from 'react-animation';
+import ScrollAnimation from 'react-animate-on-scroll';
+import Aos from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
 import './home.css';
 import Footer from '../../Components/Footer/Footer.js';
-import { Row, Col } from 'reactstrap';
+import { Row, Col, Container, Button } from 'reactstrap';
 
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
@@ -39,6 +43,7 @@ const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 // The major block texts surrounding the sub block
 const blockOneText = [
+
   { title: 'Our clubroom offers everything an SE ' },
   { title: 'or COMPE student could need.' },
   { title: <br /> },
@@ -47,13 +52,13 @@ const blockOneText = [
   { title: 'Read further for more details!' },
 ];
 
+
 const blockTwoText = [
   { title: 'Join our public accounts on Discord, Slack,' },
   { title: 'Instagram and more to connect with SCE members!' },
 ];
 
-// The sub block texts
-// ( the part with the empty clubroom in the background )
+
 const subBlockOneText = [
   { title: 'As an SCE member, you will get inside scoops ' },
   { title: '& opportunities.' },
@@ -81,7 +86,7 @@ const subBlockThreeText = [
   { title: 'We host potlucks, movie nights, game nights and much more!' },
 ];
 
-// Club social media icon links
+
 const icons = [
   {
     link: ['https://www.linkedin.com/company', '/sjsusce/'].join(''),
@@ -94,6 +99,7 @@ const icons = [
       '96-2.586 7-2.777 7 2.476v6.759z'
     ].join('')
   },
+
   {
     link: 'https://discord.com/invite/STkT6mH',
     vector: [
@@ -116,6 +122,7 @@ const icons = [
       '24 1.332.684 0 1.224-.6 1.224-1.332 0-.732-.54-1.332-1.224-1.332z'
     ].join('')
   },
+
   {
     link: 'https://www.instagram.com/sjsusce/',
     vector: [
@@ -137,7 +144,10 @@ const icons = [
       '845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.',
       '439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'
     ].join('')
+
   }
+
+
 ];
 
 const subBlockOneText = [
@@ -296,7 +306,9 @@ return (
             <div className="sceTitle">
               {text}
             </div>
+
             <div className="block-space"></div>
+
             <Footer />
           </div>
 
@@ -520,3 +532,4 @@ return (
 
 
 export default Home;
+
