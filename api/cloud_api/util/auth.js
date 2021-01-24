@@ -1,11 +1,12 @@
 const axios = require('axios');
-const { GENERAL_API_URL, GENERAL_API_URL_PROD } = require('../../config/config.json');
+const { GENERAL_API_URL, GENERAL_API_URL_PROD } =
+  require('../../config/config.json');
 
 async function validateVerificationEmail(){
   let status = '';
   await axios
-    .post(`${process.env.NODE_ENV === 'production' ? 
-    GENERAL_API_URL_PROD : GENERAL_API_URL}/Auth/sendVerificationEmail`)
+    .post(`${process.env.NODE_ENV === 'production' ?
+      GENERAL_API_URL_PROD : GENERAL_API_URL}/Auth/sendVerificationEmail`)
     .then(res =>{
       status = res.data;
     })
@@ -18,8 +19,8 @@ async function validateVerificationEmail(){
 async function generateHashedId(email){
   let hashedId = '';
   await axios
-    .post(`${process.env.NODE_ENV === 'production' ? 
-    GENERAL_API_URL_PROD : GENERAL_API_URL}/Auth/generateHashedId`, {email})
+    .post(`${process.env.NODE_ENV === 'production' ?
+      GENERAL_API_URL_PROD : GENERAL_API_URL}/Auth/generateHashedId`, {email})
     .then(res =>{
       hashedId = res.data.hashedId;
     })
