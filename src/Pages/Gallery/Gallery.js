@@ -66,7 +66,7 @@ class Gallery extends Component {
                 return (
                   <img src={pic} className="singleImage"
                     onClick={() => this.toggleModal(pic)}
-                    key={index} id={index} />
+                    key={pic.id} id={index} />
                 );
               })
             }
