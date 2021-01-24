@@ -59,7 +59,7 @@ export function uploadToS3(files) {
 /**
  * Return a url of the requested file from AWS
  * @param {String} fileName
- * @returns {ApiResponse} Returns if file is retrieved successfully
+ * @returns {Promise<ApiResponse>} The url of the requested file.
  */
 export async function getFileFromS3(fileName) {
   let status = new ApiResponse();
