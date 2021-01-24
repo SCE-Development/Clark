@@ -33,5 +33,9 @@
     "AWSSECRETKEY": "XXXXXXXXXXXXXXXXXXXXXXXX",
     "BUCKET": "XXXXXXXXXXXXX"
   },
-  "secretKey": "super duper secret key"
+  "secretKey": "super duper secret key",
+  "GENERAL_API_URL_PROD": "https://mainendpoints/api",
+  "LOGGING_API_URL_PROD": "https://sce-logging-api/loggingapi",
+  "MAILER_API_URL_PROD": "https://sce-cloud-api/cloudapi",
+  "RPC_API_URL_PROD": "https://localhost:8083/SceRpcApi"
 }
