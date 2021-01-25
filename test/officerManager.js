@@ -89,10 +89,9 @@ describe('OfficerManager', () => {
     it('Should return statusCode 200 when all required ' +
        'fields are filled in', async () => {
       const form = {
+        name: 'member',
         email: 'test@test.com',
         team: 'dev',
-        facebook: 'facebooklink',
-        github: 'githublink',
         linkedin: 'linkedinlink',
         quote: 'aquote',
         pictureUrl: DEFAULT_PHOTO_URL,
@@ -105,40 +104,19 @@ describe('OfficerManager', () => {
     });
   });
 
-  describe('/POST GetForm', () => {
-    it('Should return statusCode 403 when no token is submited', async () => {
-      const form = {
-        email: 'test@test.com'
-      };
-      const result = await test.sendPostRequest(
-        '/api/officerManager/GetForm', form);
-      expect(result).to.have.status(FORBIDDEN);
-    });
-
-    it('Should return statusCode 401 when invalid token is submited',
-      async () => {
-        const form = {
-          email: 'test@test.com',
-          token: 'Invalid-Token'
-        };
-        const result = await test.sendPostRequest(
-          '/api/officerManager/GetForm', form);
-        expect(result).to.have.status(UNAUTHORIZED);
-      });
-
+  describe('/POST getOfficers', () => {
     it('Should return an object of all forms', async () => {
       const form = { token: token };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/GetForm', form);
+        '/api/officerManager/getOfficers', form);
       expect(result).to.have.status(OK);
       const response = result.body;
       response.should.be.a('array');
       expect(response).to.have.length(1);
+      expect(response[0].name).to.be.eql('member');
       expect(response[0].email).to.be.eql('test@test.com');
       expect(response[0].team).to.be.eql('dev');
-      expect(response[0].facebook).to.be.eql('facebooklink');
-      expect(response[0].github).to.be.eql('githublink');
       expect(response[0].linkedin).to.be.eql('linkedinlink');
       expect(response[0].quote).to.be.eql('aquote');
       expect(response[0].pictureUrl).to.be.eql(DEFAULT_PHOTO_URL);
@@ -151,7 +129,7 @@ describe('OfficerManager', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/GetForm', form);
+        '/api/officerManager/getOfficers', form);
       expect(result).to.have.status(OK);
       result.body.should.be.a('array');
       result.body.forEach(obj => {
@@ -214,7 +192,7 @@ describe('OfficerManager', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/GetForm', form);
+        '/api/officerManager/getOfficers', form);
       expect(result).to.have.status(OK);
       expect(result.body[0].team).to.equal('event');
     });
@@ -274,7 +252,7 @@ describe('OfficerManager', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/GetForm', form);
+        '/api/officerManager/getOfficers', form);
       expect(result).to.have.status(OK);
       expect(result.body).have.length(0);
     });

@@ -3,6 +3,11 @@ const eventModalState = {
   EDIT: 1
 };
 
+const officerModalState = {
+  SUBMIT: 0,
+  EDIT: 1
+};
+
 const memberApplicationState = {
   SELECT_MEMBERSHIP_PLAN: 0,
   FORM_INFO: 1,
@@ -67,6 +72,7 @@ const userFilterType = {
 
 module.exports = {
   eventModalState,
+  officerModalState,
   memberApplicationState,
   membershipPlans,
   memberShipPlanToString,

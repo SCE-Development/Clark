@@ -5,10 +5,10 @@ const router = express.Router();
 const Manager = require('../models/OfficerManager.js');
 const passport = require('passport');
 require('../util/passport')(passport);
-// const {
-//   checkIfTokenSent,
-//   checkIfTokenValid
-// } = require('../util/token-functions');
+const {
+  checkIfTokenSent,
+  checkIfTokenValid
+} = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,
@@ -20,11 +20,11 @@ const addErrorLog = require('../util/logging-helpers');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 router.post('/submit', (req, res) => {
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(FORBIDDEN);
-  // } else if (!checkIfTokenValid(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   const data = {
     ...req.body
   };
@@ -41,12 +41,7 @@ router.post('/submit', (req, res) => {
 
 // Find all api if email is null/undefined
 // else query by email
-router.post('/GetForm', (req, res) => {
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(FORBIDDEN);
-  // } else if (!checkIfTokenValid(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
+router.post('/getOfficers', (req, res) => {
   let obj = {};
   if (typeof req.body.email !== 'undefined') obj = { email: req.body.email };
   Manager.find(obj, (error, forms) => {
@@ -54,7 +49,7 @@ router.post('/GetForm', (req, res) => {
       const info = {
         userEmail:req.body.email,
         errorTime: new Date(),
-        apiEndpoint: 'officerManager/GetForm',
+        apiEndpoint: 'officerManager/getOfficers',
         errorDescription: error
       };
       addErrorLog(info);
@@ -67,12 +62,11 @@ router.post('/GetForm', (req, res) => {
 // Delete request
 // query by email
 router.post('/delete', (req, res) => {
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(FORBIDDEN);
-  // } else if (!checkIfTokenValid(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
-  console.log(req.body);
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   Manager.deleteOne({ email: req.body.email }, function(error, form) {
     if (error) {
       const info = {
@@ -96,11 +90,11 @@ router.post('/delete', (req, res) => {
 // Edit/Update a member record
 // query by email
 router.post('/edit', (req, res) => {
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(FORBIDDEN);
-  // } else if (!checkIfTokenValid(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   const query = { email: req.body.email };
   const form = {
     ...req.body

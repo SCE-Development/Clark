@@ -1,23 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;1,300&&display=swap');
 
-/* body{
-    margin: 20px 0px 20px 20px;
-    align-content: center;
-} */
-
-section{
+section {
     padding-left: 100px;
     padding-right: 100px;
     padding-top: 20px;
 }
 
-h1{ 
+.officer-body h1{ 
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     color:#124559;
     font-size: 40px;
 }
 
+.officer-body h2, h3, p {
+    min-width: 200;
+}
 
 .card{
     max-width: 250px;
@@ -34,8 +32,6 @@ h1{
 }
 
 .top-card{
-    /* background-color: palevioletred; */
-    /* background-image: url('images/realpic2.png'); */
     background-position: center;
     background-size: cover;
     max-width: 250px;
@@ -51,9 +47,24 @@ h1{
     min-height: 250px;
     background-color: #0f80aa;
     color: #f3f3f3;
-    opacity: 5%;
+    opacity: 0%;
     border-radius: 9px 9px 0px 0px;
     padding: 10px 10px 0px 10px;
+}
+
+.wrap{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis !important;
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow-wrap: initial;
+}
+
+.no-wrap{
+    overflow: hidden;
+    text-overflow: ellipsis !important;
+    overflow-wrap: initial;
 }
 
 .bottom-card:hover{
@@ -76,22 +87,32 @@ h1{
     grid-column-gap: 14px;
 }
 
+.officer-text{
+    width: 85%;
+}
+
+.officer-position{
+    width: 100%;
+    display: inline-flex;
+    font-weight: light;
+    font-size: 18px;
+    text-align: left;
+    padding-left: 10px;
+}
+
 .card-container{
     text-align: left;
     padding-left: 10px;
     padding-top: 5px;
-}
-
-.card-container h4{
-    font-weight: light;
-    font-size: 18px;
+    font-weight: bold;
+    font-size: 24px;
 }
 
 .card-container h3{
     font-weight: bold;
     font-size: 24px;
-
 }
+
 .circle{
     width: 115px;
     height: 115px;
@@ -99,7 +120,6 @@ h1{
     min-height: auto;
     min-width: 115px;
     border-radius: 100%;
-    /* background-image: url('https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260'); */
     background-position: center;
     background-size: cover;
     transition: all .6s ease-in-out;
@@ -189,7 +209,6 @@ h1{
     }
     
 }
-
 
 @media (min-width: 1200px) {
     .grid-container{

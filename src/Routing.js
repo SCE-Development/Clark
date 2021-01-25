@@ -120,7 +120,7 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true
     },
     {
-      Component: AboutUsManager, 
+      Component: AboutUsManager,
       path: '/aboutUs-manager',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',

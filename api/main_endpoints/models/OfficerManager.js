@@ -13,12 +13,6 @@ const OfficerSchema = new Schema(
       unique: true,
       required: true
     },
-    facebook: {
-      type: String
-    },
-    github: {
-      type: String
-    },
     linkedin: {
       type: String
     },
