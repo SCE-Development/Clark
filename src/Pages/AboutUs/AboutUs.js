@@ -17,8 +17,7 @@ class AboutUs extends Component {
   }
 
   componentDidMount(){
-    const token = '';
-    getAllOfficers(token).then(response => {
+    getAllOfficers().then(response => {
       this.setState({
         officers: response.responseData
       });
