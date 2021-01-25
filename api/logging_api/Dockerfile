@@ -7,6 +7,8 @@ WORKDIR /app
 ENV DATABASE_HOST db
 #database env variable
 
+ENV NODE_ENV production
+
 COPY ./package.json .
 #copies all the dependenices into work directory (./app) (since you set the work dir before)
 
