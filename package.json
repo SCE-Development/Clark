@@ -47,7 +47,7 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.2",
     "chart.js": "^2.9.4",
-    "darkreader": "^4.9.22",
+    "darkreader": "^4.9.27",
     "express": "^4.16.2",
     "filepond": "^4.19.2",
     "filepond-plugin-file-encode": "^2.1.6",
