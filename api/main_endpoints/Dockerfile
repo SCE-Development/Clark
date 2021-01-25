@@ -4,6 +4,8 @@ WORKDIR /app
 
 ENV DATABASE_HOST db
 
+ENV NODE_ENV production
+
 COPY package.json ./
 
 RUN npm install --production
