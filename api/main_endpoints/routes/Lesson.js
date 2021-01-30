@@ -91,6 +91,9 @@ router.post('/deleteLesson', (req, res) => {
     .catch(error => {
       res.status(BAD_REQUEST).send({ error, message: 'deleting lesson failed' });
     });
+
+    //have to find a way to get the course that the deleted lesson was in and delete it from there
+    // cannot do it in courses
 });
 
 module.exports = router;
