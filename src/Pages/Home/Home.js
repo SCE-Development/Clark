@@ -1,7 +1,5 @@
 
 import React, { Component, useEffect } from 'react';
-import { AnimateOnChange, animations } from 'react-animation';
-import ScrollAnimation from 'react-animate-on-scroll';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import 'animate.css/animate.min.css';
