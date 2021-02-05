@@ -36,13 +36,13 @@
   scroll-behavior: [ smooth ];
   color: white;
   position: absolute;
-  top: 5%;
+  top: 4.5%;
   left: 50%;
   font-family: 'Montserrat';
   white-space: pre-line;
   text-align: left;
   direction: ltr;
-  font-size: 4em;
+  font-size: 2.75vw;
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;

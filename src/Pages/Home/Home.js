@@ -117,15 +117,16 @@ class Home extends Component {
 
           {/* This container is for the SCE offciers picture and title */}
           <div class="groupPicContainer">
-            <img class="groupPictureStyles" src='images/officers2019_2.jpg'
+            <img class="groupictureStyles" src='images/officers2019_2.jpg'
               alt="officersPic" style={{ width: '105%' }}></img>
           </div>
-          <div class="sceLogo" data-aos="fade-out" >
+          <div class="sceLogo" data-aos="fade-down" data-aos-duration="1000" >
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
-              alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
+              alt="sce logo" style={{ width: '35%', float: 'right' }}></img>
           </div>
-          <div className="sceTitle" data-aos="fade-out" >
+          <div className="sceTitle" data-aos="fade-down"
+            data-aos-duration="1000" >
             {SCEtitle}
           </div>
 
@@ -139,7 +140,8 @@ class Home extends Component {
               <Row>
                 <Col>
                   <div data-aos="fade-up"
-                    data-aos="fade-down">
+                    data-aos="fade-down"
+                    data-aos-duration="1000" >
                     <img className="block-images"
                       src='images/resume-workshop.jpg'
                       alt="blockOneImg"
@@ -171,10 +173,12 @@ class Home extends Component {
               <p>
                 <Row>
                   <Col className="column" xs={3}>
-                    <div class="subBlock-title" data-aos="fade-up">
+                    <div class="subBlock-title" data-aos="fade-up"
+                      data-aos-duration="1000" >
                       Tech Events
                     </div>
-                    <div class="subBlockContainer" data-aos="fade-left">
+                    <div class="subBlockContainer" data-aos="fade-left"
+                      data-aos-duration="2000" >
                       {subBlockOneText.map((title) => {
                         return (
                           <span className="subBlockText">{title.title}</span>
@@ -183,10 +187,12 @@ class Home extends Component {
                     </div>
                   </Col>
                   <Col xs={3} >
-                    <div class="subBlock-title" data-aos="fade-up">
+                    <div class="subBlock-title" data-aos="fade-up"
+                      data-aos-duration="1000" >
                       Workshops
                     </div>
-                    <div class="subBlockContainer" data-aos="fade-up">
+                    <div class="subBlockContainer" data-aos="fade-up"
+                      data-aos-duration="2000" >
                       {subBlockTwoText.map((title) => {
                         return (
                           <span className="subBlockText">{title.title}</span>
@@ -195,10 +201,12 @@ class Home extends Component {
                     </div>
                   </Col>
                   <Col xs={3}>
-                    <div class="subBlock-title" data-aos="fade-right">
+                    <div class="subBlock-title" data-aos="fade-right"
+                      data-aos-duration="1000" >
                       Social Events
                     </div>
-                    <div class="subBlockContainer" data-aos="fade-right">
+                    <div class="subBlockContainer" data-aos="fade-right"
+                      data-aos-duration="2000" >
                       {subBlockThreeText.map((title) => {
                         return (
                           <p className="subBlockText">{title.title}</p>
@@ -228,7 +236,9 @@ class Home extends Component {
                   </div>
 
                   {/* Icons div */}
-                  <div className="icons-container">
+                  <div className="icons-container"
+                    data-aos="fade-right"
+                    data-aos-duration="1000">
                     {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
@@ -242,7 +252,8 @@ class Home extends Component {
                   </div>
                 </Col>
                 <Col>
-                  <div data-aos="fade-up" data-aos="fade-down" >
+                  <div data-aos="fade-up" data-aos="fade-down"
+                    data-aos-duration="1000" >
                     <img className="block-images"
                       src='images/Tesla2.jpg'
                       alt="blockOneImg"
