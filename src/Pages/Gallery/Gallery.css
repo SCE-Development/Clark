@@ -3,7 +3,9 @@
 	animation-name: fadeInOpacity;
 	animation-iteration-count: 1;
 	animation-timing-function: ease-in;
-	animation-duration: 2s;
+  animation-duration: 2s;
+  padding: 0px !important;
+  max-width: 100%;
 }
 
 @keyframes fadeInOpacity {
@@ -15,45 +17,40 @@
 	}
 }
 
+.wrapper {
+  position: relative;
+}
+
 .gallery {
   display: -ms-grid;
   display: grid;
-  -ms-grid-columns: 1fr;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  -ms-grid-rows: auto auto;
-  grid-template-rows: auto auto;
-  grid-row-gap: 40px;
-  grid-column-gap: 40px;
+  -ms-grid-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  -ms-grid-rows: auto auto auto auto;
+  grid-template-rows: auto auto auto auto;
   margin-left: auto;
   margin-right: auto;
   align-items: center;
   justify-items: center;
+  margin: 4.5%;
+  row-gap: 5%;
+  z-index: 1;
 }
 
-.header {
-  width: auto;
-  max-height: 100%;
-  max-width: 100%;
-  margin-top: 4rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
-  font-size: 3.5rem;
-  font-weight: 3.5;
-  line-height: 150%;
-  text-align: center;
-}
-
-.grid {
-  -ms-grid-columns: 1fr 1fr 1fr;
-  grid-template-columns: 1fr 1fr 1fr;
-  -ms-grid-rows: auto auto auto auto auto;
-  grid-template-rows: auto auto auto auto auto;
+.rectangle {
+  height: 135px;
+  width: 100%;
+  background-color: #FFFFFF;
+  opacity: 35%;
+  z-index: 2;
+  position: absolute;
 }
 
 .carouselImg {
   display: block;
   margin: auto;
   width: 100%;
-  height: 600px;
+  height: 840px;
   position: relative;
   object-fit: cover;
   box-shadow: 1px 1px 7px 0 #000000;
@@ -78,8 +75,8 @@
 }
 
 .singleImage {
-  height: 250px;
-  width: 340px;
+  height: 260px;
+  width: 350px;
   max-width: 100%;
   max-height: 100%;
   position: relative;
