@@ -9,44 +9,32 @@ import { Row, Col } from 'reactstrap';
 const SCEtitle = 'Software and \n Computer \n Engineering \n Society';
 
 // The major block texts surrounding the sub block
-const blockOneText = [
-  { title: 'Our clubroom offers everything an SE ' },
-  { title: 'or COMPE student could need.' },
-  { title: <br /> },
-  { title: 'We continue to offer resources to our  ' },
-  { title: 'members despite being remote. ' },
-  { title: 'Read further for more details!' },
-];
+const blockOneText =
+  'Our clubroom offers everything a Software Engineering ' +
+  'or Computer Engineering student could need. \n\n' +
+  'We continue to offer resources to our ' +
+  'members despite being remote. \n\n' +
+  'Read further for more details!';
 
-const blockTwoText = [
-  { title: 'Join our public accounts on Discord, Slack,' },
-  { title: 'Instagram and more to connect with SCE members!' },
-];
+const blockTwoText =
+  'Join our public accounts on Discord, Slack,\n' +
+  'Instagram and more to connect with SCE members!';
 
 // The sub block texts
 // ( the part with the empty clubroom in the background )
-const subBlockOneText = [
-  { title: 'As an SCE member, you will get inside scoops ' },
-  { title: '& opportunities.' },
-  { title: <br /> },
-  { title: 'We have conducted events with companies like' },
-  { title: 'IBM, Tesla, SAP and more!' }
-];
+const subBlockOneText =
+  'As an SCE member, you will get inside scoops & opportunities.' +
+  '\n\nWe have conducted events with companies like ' +
+  'IBM, Tesla, SAP and more!';
 
-const subBlockTwoText = [
-  { title: 'Want to learn new technical skills? Or even develop ' },
-  { title: 'your interpersonal skills?' },
-  { title: <br /> },
-  { title: 'SCE hosts a range of free workshops taught by peers,' },
-  { title: 'our alumnis and SJSU faculty!' },
-];
+const subBlockTwoText = 'Want to learn new technical skills? Or even develop ' +
+  'your interpersonal skills? \n \n' +
+  'SCE hosts a range of free workshops taught by peers, ' +
+  'our alumni and SJSU faculty!';
 
-const subBlockThreeText = [
-  { title: 'Join us for fun and exciting social events for different' },
-  { title: 'occasions!' },
-  { title: <br /> },
-  { title: 'We host potlucks, movie nights, game nights and much more!' },
-];
+const subBlockThreeText =
+  'Join us for fun and exciting social events for different occasions!' +
+  '\n\nWe host potlucks, movie nights, game nights and much more!';
 
 // Club social media icon links
 const icons = [
@@ -123,7 +111,7 @@ class Home extends Component {
           <div class="sceLogo" data-aos="fade-down" data-aos-duration="1000" >
             <img class="logo-styles"
               src='images/sce_logo_2.svg'
-              alt="sce logo" style={{ width: '35%', float: 'right' }}></img>
+              alt="sce logo" style={{ width: '50%', float: 'right' }}></img>
           </div>
           <div className="sceTitle" data-aos="fade-down"
             data-aos-duration="1000" >
@@ -133,7 +121,7 @@ class Home extends Component {
           {/* This contains all the content regarding the club,
          what we have to offer and social media links */}
           <div class="contentContainer">
-            <div className="block-space"></div>
+            {/* <div className="block-space"></div> */}
 
             {/* The first major block: "Need a place to get things done?" */}
             <div className="block-one">
@@ -154,13 +142,16 @@ class Home extends Component {
                     <span className="textBlock1-title">
                       Need a place to get things done?</span>
                   </h1>
-                  <div class="textBlock1-text" >
+                  {/* <div class="textBlock1-text" >
                     {blockOneText.map((title) => {
                       return (
                         <p className="blockText">
                           {title.title}</p>
                       );
                     })}
+                  </div> */}
+                  <div class="textBlock1-text" >
+                    <span className="blockText">{blockOneText}</span>
                   </div>
                 </Col>
               </Row>
@@ -177,13 +168,10 @@ class Home extends Component {
                       data-aos-duration="1000" >
                       Tech Events
                     </div>
-                    <div class="subBlockContainer" data-aos="fade-left"
+                    <div class="subBlockContainer"
+                      data-aos="fade-up"
                       data-aos-duration="2000" >
-                      {subBlockOneText.map((title) => {
-                        return (
-                          <span className="subBlockText">{title.title}</span>
-                        );
-                      })}
+                      <span className="subBlockText">{subBlockOneText}</span>
                     </div>
                   </Col>
                   <Col xs={3} >
@@ -191,13 +179,18 @@ class Home extends Component {
                       data-aos-duration="1000" >
                       Workshops
                     </div>
-                    <div class="subBlockContainer" data-aos="fade-up"
+                    {/* <div class="subBlockContainer" data-aos="fade-up"
                       data-aos-duration="2000" >
                       {subBlockTwoText.map((title) => {
                         return (
                           <span className="subBlockText">{title.title}</span>
                         );
                       })}
+                    </div> */}
+                    <div class="subBlockContainer"
+                      data-aos="fade-up"
+                      data-aos-duration="2000" >
+                      <span className="subBlockText">{subBlockTwoText}</span>
                     </div>
                   </Col>
                   <Col xs={3}>
@@ -205,13 +198,10 @@ class Home extends Component {
                       data-aos-duration="1000" >
                       Social Events
                     </div>
-                    <div class="subBlockContainer" data-aos="fade-right"
+                    <div class="subBlockContainer"
+                      data-aos="fade-up"
                       data-aos-duration="2000" >
-                      {subBlockThreeText.map((title) => {
-                        return (
-                          <p className="subBlockText">{title.title}</p>
-                        );
-                      })}
+                      <span className="subBlockText">{subBlockThreeText}</span>
                     </div>
                   </Col>
                 </Row>
@@ -227,12 +217,8 @@ class Home extends Component {
                       Want to know more?
                     </span>
                   </h1>
-                  <div class="textBlock2-text">
-                    {blockTwoText.map((title) => {
-                      return (
-                        <p className="blockText">{title.title}</p>
-                      );
-                    })}
+                  <div class="textBlock2-text" >
+                    <span className="blockText">{blockTwoText}</span>
                   </div>
 
                   {/* Icons div */}
