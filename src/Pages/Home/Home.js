@@ -182,10 +182,8 @@ class Home extends Component {
           </div >
         </div >
       </>
+    );
+  }
 }
-=======
-        </div>
-}
->>>>>>> Adds Group Pic and Title
 
 export default Home;

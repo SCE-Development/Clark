@@ -14,13 +14,13 @@
 }
 
 .groupPicContainer{
-  position: fixed;
+  /* position: fixed; */
   text-align: center;
   color: white;
   background-size: cover;
   overflow: hidden; 
-  bottom: 0.01vw;
-  padding-top: 4vw;
+  /* bottom: 0.01vw; */
+  /* padding-top: 4vw; */
 }
 
 .groupPictureStyles{
@@ -70,7 +70,7 @@
 
 .contentContainer{
   width: 100%;
-  margin-top: 65%;
+  margin-top: 5%;
   background-color:#fff;
   overflow: auto;
 }
@@ -94,7 +94,7 @@
   text-align: center;
   color: white;
   padding-bottom: 15%;
-  min-height: 500%;
+  max-height: 90vh;
   width: 100%;
   background-size: 100%;
   background-repeat: no-repeat;
@@ -159,14 +159,14 @@
   color: white;
   font-weight: 500;
   position: relative;
-  line-height: 50%;
+  line-height: 55%;
 }
 
 .subBlockText{
   font-family: 'Karla', sans-serif;
   margin: auto;
   margin-left: 5vw;
-  font-size: 0.5em;
+  font-size: 2vw;
   font-weight: 400;
   word-wrap: break-word;
   white-space: pre-line;
@@ -209,6 +209,7 @@
   font-size: medium;
   margin-left:5%;
   min-height: 10px;
+  width: 35vw;
 }
 
 .textBlock2-text{
@@ -216,9 +217,9 @@
 }
 
 .blockText{
-  line-height: 5.5vw;
+  line-height: 1.5vw;
   text-align: left;
-  font-size: 1.25rem;
+  font-size: 1.25vw;
   max-height: 7px;
   word-wrap: break-word;
   white-space: pre-line;
