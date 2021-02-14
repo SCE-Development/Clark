@@ -24,7 +24,7 @@
 }
 
 .groupPictureStyles{
-  width: 300px;
+  /* width: 300px; */
   z-index: -1;
   background-attachment: fixed;
   background-position: center;
@@ -36,13 +36,13 @@
   scroll-behavior: [ smooth ];
   color: white;
   position: absolute;
-  top: 4.5%;
+  top: 5.5%;
   left: 50%;
   font-family: 'Montserrat';
   white-space: pre-line;
   text-align: left;
   direction: ltr;
-  font-size: 3.25vw;
+  font-size: 6vh;
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
@@ -60,13 +60,28 @@
   right: 50%;
   overflow: auto;
   display: block;
+  height: 100%;
+  float: right;
+  /* style={{ width: '50%', float: 'right' }}*/
 }
+
+.logo-styles{
+  width:20vw;
+  height:20vw;
+}
+
+/* .img-container{
+  width:100%;
+  height:100%; 
+  float: right;
+} */
 
 .contentContainer{
   width: 100%;
-  margin-top: 5%;
+  margin-top: 15vh;
   background-color:#fff;
   overflow: auto;
+  margin-bottom: 0 !important;
 }
 
 .block-one{
@@ -76,10 +91,6 @@
 
 .block-images{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 6px 6px 6px 6px rgba(0, 0, 0, 0.19);
-}
-
-.block-styles{
-  margin-top: 5%;
 }
 
 .clubRoomContainer{
@@ -100,7 +111,7 @@
   color: white;
   position: relative;
   font-family: 'Montserrat';
-  font-size: 1.5em;
+  font-size: 1.75vw;
   font-weight: bolder !important; 
   text-shadow:  0 1px 10px #777;
   z-index: 0;
@@ -146,7 +157,7 @@
   font-family: 'Karla', sans-serif;
   margin: auto;
   margin-left: 5vw;
-  font-size: 2vw;
+  font-size: 3vh;
   font-weight: 400;
   word-wrap: break-word;
   white-space: pre-line;
@@ -155,6 +166,10 @@
 }
 
 .block-two{
+  margin-top: 5%;
+}
+
+.block-styles{
   margin-top: 5%;
 }
 
@@ -188,7 +203,7 @@
   text-align: left;
   font-size: medium;
   margin-left:5%;
-  min-height: 10px;
+  max-height: 1vh;
   width: 35vw;
 }
 
@@ -197,10 +212,10 @@
 }
 
 .blockText{
-  line-height: 1.5vw;
+  line-height: 2.5vh;
   text-align: left;
   font-size: 1.25vw;
-  max-height: 7px;
+  /* max-height: 7px; */
   word-wrap: break-word;
   white-space: pre-line;
   overflow-wrap: break-word;
@@ -229,33 +244,38 @@
   display: initial !important;
 }
 
+Footer{
+  margin-top: 10%;
+}
+
 /*********************************************************/
 /*********************************************************/
 
 @media only screen and (min-width: 200px) and (max-width: 700px) { 
   
   .groupPicContainer{
-    position: fixed;
+    /* position: fixed; */
     text-align: center;
     color: white;
     background-size: cover;
-    overflow: hidden; 
+    /* overflow: hidden;  */
     bottom: 2vw;
     top: 6vw;
-    padding-top: 1 !important;
+    padding-top: 1px !important;
+    margin-top: 1px;
   }
 
   .sceTitle{
     scroll-behavior: [ smooth ];
     color: white;
     position: absolute;
-    top: 6%;
+    top: 6.5%;
     left: 50%;
     font-family: 'Montserrat';
     white-space: pre-line;
     text-align: left;
     direction: ltr;
-    font-size: 1em;
+    font-size: 4.5vw;
     font-weight: bolder !important; 
     line-height: 1.05;
     letter-spacing: 1px;
@@ -270,15 +290,22 @@
     top: 6%;
   }
 
+  .logo-styles{
+    width:20vw;
+    height:20vw;
+  }
+
   .clubRoomContainer{
-    background-image: url("./grey-gradient.jpg"); 
-    position: relative;
+    background-image: url("./emptyclubroom_blurred.jpg"); 
+    /* background-image: url("./grey-gradient.jpg");  */
+    /* position: relative; */
     text-align: center;
-    color: rgb(27, 33, 54);
+    color: rgb(255, 255, 255);
     width: 100%;
     background-size: 100%;
     background-repeat: no-repeat;
-    height: 100%;
+    height: 45vh;
+    box-sizing: border-box;
   }
   
   .subBlockContainer{
@@ -289,23 +316,23 @@
     left: 40%;
     top: 10vw;
     scroll-behavior: [ smooth ];
-    color: rgb(27, 33, 54);
+    color: rgb(255, 255, 255);
     font-weight: 500;
-    position: relative;
+    /* position: relative; */
   }
 
   .subBlockText{
-    font-size: 8px;
-    line-height: 0.45rem;
+    font-size: 2.25vw;
+    line-height: 2.25vh;
     margin-top: 0;
   }
 
   .subBlock-title{
     scroll-behavior: [ smooth ];
-    color: rgb(27, 33, 54);
-    position: relative;
+    color: rgb(255, 255, 255);
+    /* position: relative; */
     font-family: 'Montserrat';
-    font-size: 8px;
+    font-size: 2vh;
     font-weight: bolder !important; 
     z-index: 0;
     overflow: auto;
@@ -319,14 +346,14 @@
   .blockText{
     line-height: 1.2 !important;
     text-align: left;
-    font-size: 8px !important;
+    font-size: 2vh !important;
     font-family: 'Montserrat', sans-serif;
     text-align: left;
     /* min-height: 35px; */
   }
 
   .leftalign, .textBlock1-title, .textBlock2-title{
-    font-size: 0.7rem;
+    font-size: 2.5vh;
   }
 
   .textBlock1-text, .textBlock2-text{
@@ -345,6 +372,10 @@
   .block-styles{
     margin-top: 0%;
   }
+
+  .icons-container{
+    margin-top: 30%;
+  }
  }
 
 /*********************************************************/
@@ -353,11 +384,11 @@
 @media only screen and (min-width: 701px) and (max-width: 1024px) { 
   
   .groupPicContainer{
-    position: fixed;
+    /* position: fixed; */
     text-align: center;
     color: white;
     background-size: cover;
-    overflow: hidden; 
+    /* overflow: hidden;  */
     bottom: 2vw;
     top: 6vw;
     padding-top: 0 !important;
@@ -429,10 +460,17 @@
     margin-left: 5vw;
   }
 
+  .subBlockText{
+    font-size: 1.95vw;
+    line-height: 1.95vh;
+    margin-top: 0;
+    
+  }
+
   .blockText{
-    line-height: 5.5vw;
+    line-height: 1.95vw;
     text-align: left;
-    font-size: 1.5vw;
+    font-size: 1.75vw;
     max-height: 2px;
     word-wrap: break-word;
     white-space: pre-line;
