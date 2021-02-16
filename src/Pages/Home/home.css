@@ -75,6 +75,7 @@
   /* margin-top: 15vh; */
   background-color:#fff;
   overflow: auto;
+  overflow-x: hidden;
   /* margin-bottom: 0 !important; */
 }
 
@@ -230,7 +231,7 @@
 /*********************************************************/
 /*********************************************************/
 
-@media only screen and (min-width: 200px) and (max-width: 700px) { 
+@media only screen and (min-width: 200px) and (max-width: 500px) { 
   
   .groupPicContainer{
     /* position: fixed; */
@@ -274,6 +275,15 @@
     height:20vw;
   }
 
+  .contentContainer{
+    width: auto;
+  /* margin-top: 15vh; */
+    background-color:#fff;
+    overflow: auto;
+    overflow-x: hidden;
+  /* margin-bottom: 0 !important; */
+  }
+
   .clubRoomContainer{
     background-image: url("./emptyclubroom_blurred.jpg"); 
     /* background-image: url("./grey-gradient.jpg");  */
@@ -281,7 +291,7 @@
     text-align: center;
     color: rgb(255, 255, 255);
     width: auto;
-    background-size: 100%;
+    background-size: 110%;
     background-repeat: no-repeat;
     height: 45vh;
     box-sizing: border-box;
@@ -297,12 +307,13 @@
     scroll-behavior: [ smooth ];
     color: rgb(255, 255, 255);
     font-weight: 500;
+    /* max-height:2vh !important; */
     /* position: relative; */
   }
 
   .subBlockText{
     font-size: 2.25vw;
-    line-height: 2.25vh;
+    line-height: 2vh;
     margin-top: 0;
   }
 
@@ -352,8 +363,146 @@
     margin-top: 0%;
   }
 
+  .row{
+    margin-right: 0 !important; 
+  }
+ }
+
+ /*********************************************************/
+/*********************************************************/
+
+@media only screen and (min-width: 501px) and (max-width: 700px) { 
+  
+  .groupPicContainer{
+    /* position: fixed; */
+    text-align: center;
+    color: white;
+    background-size: cover;
+    /* overflow: hidden;  */
+    margin-bottom: 10% !important;
+    top: 6vw;
+    padding-top: 1px !important;
+    margin-top: 1px;
+  }
+
+  .sceTitle{
+    scroll-behavior: [ smooth ];
+    color: white;
+    position: absolute;
+    top: 6.5%;
+    left: 50%;
+    font-family: 'Montserrat';
+    white-space: pre-line;
+    text-align: left;
+    direction: ltr;
+    font-size: 4.5vw;
+    font-weight: bolder !important; 
+    line-height: 1.05;
+    letter-spacing: 1px;
+    text-shadow:  0 1px 10px #777;
+    z-index: 0;
+    overflow: auto;
+    display: block;
+    font-size-adjust: inherit;
+  }
+
+  .sceLogo{
+    top: 6%;
+  }
+
+  .logo-styles{
+    width:20vw;
+    height:20vw;
+  }
+
+  .contentContainer{
+    width: auto;
+  /* margin-top: 15vh; */
+    background-color:#fff;
+    overflow: auto;
+    overflow-x: hidden;
+  /* margin-bottom: 0 !important; */
+  }
+
+  .clubRoomContainer{
+    background-image: url("./emptyclubroom_blurred.jpg"); 
+    /* background-image: url("./grey-gradient.jpg");  */
+    /* position: relative; */
+    text-align: center;
+    color: rgb(255, 255, 255);
+    width: auto;
+    background-size: 135%;
+    background-repeat: no-repeat;
+    height: 45vh;
+    box-sizing: border-box;
+  }
+  
+  .subBlockContainer{
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    font-size: 10px;
+    direction: ltr;
+    left: 40%;
+    top: 10vw;
+    scroll-behavior: [ smooth ];
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    /* max-height:2vh !important; */
+    /* position: relative; */
+  }
+
+  .subBlockText{
+    font-size: 2.25vw;
+    line-height: 1.5vh;
+    margin-top: 0;
+  }
+
+  .subBlock-title{
+    scroll-behavior: [ smooth ];
+    color: rgb(255, 255, 255);
+    /* position: relative; */
+    font-family: 'Montserrat';
+    font-size: 1.35vh;
+    font-weight: bolder !important; 
+    z-index: 0;
+    overflow: auto;
+    text-align: left;
+    direction: ltr;
+    left: 40%;
+    margin-left: 5vw;
+    margin-top: 0;
+  }
+
+  .blockText{
+    line-height: 1.5vh !important;
+    text-align: left;
+    font-size: 1.5vh !important;
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    /* min-height: 35px; */
+  }
+
+  .leftalign, .textBlock1-title, .textBlock2-title{
+    font-size: 1.75vh;
+  }
+
+  .textBlock1-text, .textBlock2-text{
+    height: 5vh !important;
+
+  }
+
   .icons-container{
-    margin-top: 30%;
+    margin-top: 40%;
+    margin-left: 15%;
+    padding-left: 7%;
+    width: 40%;
+    border-radius: 20px;
+    background-image: linear-gradient(to right, #9ea3df6c 0%, #59ade98c 100%);
+  }
+
+  .block-styles{
+    margin-top: 0%;
+    margin-bottom: 30%;
   }
 
   .row{
@@ -364,7 +513,8 @@
 /*********************************************************/
 /*********************************************************/
 
-@media only screen and (min-width: 701px) and (max-width: 1024px) { 
+@media only screen and (min-width: 701px) and (max-width: 1024px)
+and (min-height: 400px) { 
   
   .groupPicContainer{
     /* position: fixed; */
@@ -464,6 +614,15 @@
   .leftalign, .textBlock1-text, .textBlock1-title, .textBlock2-text, .textBlock2-title{
     font-size: 1.5rem;
     margin-top: 0;
+  }
+
+  .icons-container{
+    margin-top: 40%;
+    margin-left: 15%;
+    padding-left: 7%;
+    width: 40%;
+    border-radius: 20px;
+    background-image: linear-gradient(to right, #9ea3df6c 0%, #59ade98c 100%);
   }
 
  }
