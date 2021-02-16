@@ -47,13 +47,15 @@ class Home extends Component {
         <div className='home'>
 
           {/* This container is for the SCE offciers picture and title */}
-          <div class="groupPicContainer">
-            <img class="groupictureStyles" src='images/officers2019_2.jpg'
+          <div className="groupPicContainer">
+            <img className="groupictureStyles" src='images/officers2019_2.jpg'
               alt="officersPic" style={{ width: '100%' }}></img>
           </div>
-          <div class="sceLogo" data-aos="fade-down" data-aos-duration="1000" >
+          <div className="sceLogo"
+            data-aos="fade-down"
+            data-aos-duration="1000" >
             <div className="img-container">
-              <img class="logo-styles"
+              <img className="logo-styles"
                 src='images/sce_logo_2.svg'
                 alt="sce logo"
               ></img>
@@ -64,122 +66,121 @@ class Home extends Component {
             {SCEtitle}
           </div>
 
-          {/* This contains all the content regarding the club,
+          <section id='things'>
+            {/* This contains all the content regarding the club,
          what we have to offer and social media links */}
-          <div class="contentContainer">
+            <div className="contentContainer">
 
-            {/* The first major block: "Need a place to get things done?" */}
-            <div className="block-one">
-              <Row>
-                <Col>
-                  <div data-aos="fade-up"
-                    data-aos="fade-down"
-                    data-aos-duration="1000" >
-                    <img className="block-images"
-                      src='images/resume-workshop.jpg'
-                      alt="blockOneImg"
-                      style={{ width: '40vw', marginLeft: '15%' }}></img>
-                  </div>
+              {/* The first major block: "Need a place to get things done?" */}
+              <div className="block-one">
+                <Row>
+                  <Col>
+                    <div data-aos="fade-down"
+                      data-aos-duration="1000" >
+                      <img className="block-images"
+                        src='images/resume-workshop.jpg'
+                        alt="blockOneImg"
+                        style={{ width: '40vw', marginLeft: '15%' }}></img>
+                    </div>
 
-                </Col>
-                <Col className="block-styles">
-                  <h1 className="leftalign">
-                    <span className="textBlock1-title">
-                      Need a place to get things done?</span>
-                  </h1>
-                  <div class="textBlock1-text" >
-                    <span className="blockText">{blockOneText}</span>
-                  </div>
-                </Col>
-              </Row>
-            </div>
+                  </Col>
+                  <Col className="block-styles">
+                    <h1 className="leftalign">
+                      <span className="textBlock1-title">
+                        Need a place to get things done?</span>
+                    </h1>
+                    <div className="textBlock1-text" >
+                      <span className="blockText">{blockOneText}</span>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
 
-            <div className="block-space" />
+              <div className="block-space" />
 
-            {/* The sub block section */}
-            <div className="clubRoomContainer">
-              <p>
+              {/* The sub block section */}
+              <div className="clubRoomContainer">
                 <Row>
                   <Col className="column" xs={3}>
-                    <div class="subBlock-title" data-aos="fade-up"
+                    <div className="subBlock-title" data-aos="fade-up"
                       data-aos-duration="1000" >
                       Tech Events
                     </div>
-                    <div class="subBlockContainer"
+                    <div className="subBlockContainer"
                       data-aos="fade-up"
                       data-aos-duration="2000" >
                       <span className="subBlockText">{subBlockOneText}</span>
                     </div>
                   </Col>
                   <Col xs={3} >
-                    <div class="subBlock-title" data-aos="fade-up"
+                    <div className="subBlock-title" data-aos="fade-up"
                       data-aos-duration="1000" >
                       Workshops
                     </div>
-                    <div class="subBlockContainer"
+                    <div className="subBlockContainer"
                       data-aos="fade-up"
                       data-aos-duration="2000" >
                       <span className="subBlockText">{subBlockTwoText}</span>
                     </div>
                   </Col>
                   <Col xs={3}>
-                    <div class="subBlock-title" data-aos="fade-right"
+                    <div className="subBlock-title" data-aos="fade-right"
                       data-aos-duration="1000" >
                       Social Events
                     </div>
-                    <div class="subBlockContainer"
+                    <div className="subBlockContainer"
                       data-aos="fade-up"
                       data-aos-duration="2000" >
                       <span className="subBlockText">{subBlockThreeText}</span>
                     </div>
                   </Col>
                 </Row>
-              </p>
-            </div>
+              </div>
 
-            {/* The second major block: "Want to know more?" */}
-            <div className="block-two">
-              <Row>
-                <Col className="block-styles">
-                  <h1>
-                    <span class="textBlock2-title">
-                      Want to know more?
-                    </span>
-                  </h1>
-                  <div class="textBlock2-text" >
-                    <span className="blockText">{blockTwoText}</span>
-                  </div>
+              {/* The second major block: "Want to know more?" */}
+              <div className="block-two">
+                <Row>
+                  <Col className="block-styles">
+                    <h1>
+                      <span className="textBlock2-title">
+                        Want to know more?
+                      </span>
+                    </h1>
+                    <div className="textBlock2-text" >
+                      <span className="blockText">{blockTwoText}</span>
+                    </div>
 
-                  {/* Icons div */}
-                  <div className="icons-container"
-                    data-aos="fade-right"
-                    data-aos-duration="1000">
-                    {icons.map((icon, index) => {
-                      return (
-                        <a key={index} href={icon.link}>
+                    {/* Icons div */}
+                    <div className="icons-container"
+                      data-aos="fade-right"
+                      data-aos-duration="1000">
+                      {icons.map((icon, index) => {
+                        return (
+                          <a key={index} href={icon.link}>
 
-                          <svg className='block2-icons' viewBox='0 0 24 24'>
-                            <path fill='#484848' d={icon.vector} />
-                          </svg>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </Col>
-                <Col>
-                  <div data-aos="fade-up" data-aos="fade-down"
-                    data-aos-duration="1000" >
-                    <img className="block-images"
-                      src='images/Tesla2.jpg'
-                      alt="blockOneImg"
-                      style={{ width: '45vw', marginRight: '15%' }}></img>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <div className="block-space" />
-            <Footer />
-          </div >
+                            <svg className='block2-icons' viewBox='0 0 24 24'>
+                              <path fill='#484848' d={icon.vector} />
+                            </svg>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </Col>
+                  <Col>
+                    <div data-aos="fade-down"
+                      data-aos-duration="1000" >
+                      <img className="block-images"
+                        src='images/Tesla2.jpg'
+                        alt="blockOneImg"
+                        style={{ width: '45vw' }} />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              <div className="block-space" />
+              <Footer />
+            </div >
+          </section>
         </div >
       </>
     );
