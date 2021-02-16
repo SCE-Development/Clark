@@ -115,7 +115,7 @@ class Home extends Component {
                   <div className="subBlock-title" data-aos="fade-up"
                     data-aos-duration="1000" >
                     Workshops
-                    </div>
+                  </div>
                   <div className="subBlockContainer"
                     data-aos="fade-up"
                     data-aos-duration="2000" >
@@ -126,7 +126,7 @@ class Home extends Component {
                   <div className="subBlock-title" data-aos="fade-right"
                     data-aos-duration="1000" >
                     Social Events
-                    </div>
+                  </div>
                   <div className="subBlockContainer"
                     data-aos="fade-up"
                     data-aos-duration="2000" >
@@ -143,7 +143,7 @@ class Home extends Component {
                   <h1>
                     <span className="textBlock2-title">
                       Want to know more?
-                      </span>
+                    </span>
                   </h1>
                   <div className="textBlock2-text" >
                     <span className="blockText">{blockTwoText}</span>
