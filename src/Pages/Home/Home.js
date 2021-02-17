@@ -41,6 +41,16 @@ const subBlockThreeText =
 class Home extends Component {
   render() {
     AOS.init();
+    // AOS.init({
+    //   // Global settings:
+    //   debounceDelay: 50, // the delay on debounce used while resizing window (advanced)
+
+
+    //   // Settings that can be overridden on per-element basis, by `data-aos-*` attributes:
+    //   once: false, // whether animation should happen only once - while scrolling down
+    //   mirror: true, // whether elements should animate out while scrolling past them
+
+    // });
     return (
       <>
 
@@ -69,13 +79,16 @@ class Home extends Component {
           {/* This contains all the content regarding the club,
          what we have to offer and social media links */}
           <div className="contentContainer">
+            <div className="block-space" />
 
             {/* The first major block: "Need a place to get things done?" */}
-            <div className="block-one">
+            <div className="block-one aos-item">
               <Row>
                 <Col>
                   <div data-aos="fade-down"
-                    data-aos-duration="1000" >
+                    data-aos-easing="linear"
+                    data-aos-anchor-placement="bottom-bottom"
+                    data-aos-duration="500" >
                     <img className="block-images"
                       src='images/resume-workshop.jpg'
                       alt="blockOneImg"
@@ -167,7 +180,10 @@ class Home extends Component {
                 </Col>
                 <Col>
                   <div data-aos="fade-down"
-                    data-aos-duration="1000" >
+                    data-aos-easing="linear"
+                    data-aos-anchor-placement="bottom-bottom"
+                    data-aos-duration="500"
+                  >
                     <img className="block-images"
                       src='images/Tesla2.jpg'
                       alt="blockOneImg"
