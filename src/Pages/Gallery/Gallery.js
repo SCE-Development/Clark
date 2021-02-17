@@ -7,7 +7,6 @@ import {
   getListOfFiles
 } from '../../APIFunctions/S3Bucket.js';
 import carouselImages from './CarouselPictures.js';
-import Footer from '../../Components/Footer/Footer.js';
 
 class Gallery extends Component {
 
@@ -61,9 +60,10 @@ class Gallery extends Component {
         <Container className="container">
           <div className="wrapper">
             <div className="rectangle">
-              <h2>Gallery</h2>
+              <h2 className="header">Gallery</h2>
             </div>
             <CarouselSlider carouselPics={this.state.carouselPics} />
+            <div className="arrow-down"></div>
           </div>
           <div className="gallery">
             {
@@ -84,12 +84,6 @@ class Gallery extends Component {
             </Modal>
           </div>
         </Container>
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <Footer />
       </div>
     );
   }
