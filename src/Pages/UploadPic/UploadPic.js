@@ -4,6 +4,17 @@ import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import { Button } from 'reactstrap';
 import { uploadToS3 } from '../../APIFunctions/S3Bucket';
+import {
+  createNewFace,
+  createNewImage,
+  facialRekognition,
+  getImageByName,
+  getImageByID,
+  getFaceInformation,
+  deleteImage,
+  deleteFace,
+  deleteImageAndFace,
+} from '../../APIFunctions/AWSRekognition';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 /* eslint-disable-next-line */
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
@@ -11,25 +22,132 @@ import './UploadPic.css';
 registerPlugin(FilePondPluginImagePreview);
 
 class UploadPic extends Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       success: false,
+      labelsuccess: 0,
       files: [],
+      bytes: [],
     };
+    this.token = props.user.token;
   }
 
   handleUpload = async () => {
+    /* =========================
+    Uploading Image to S3 bucket
+    ========================= */
     const response = await uploadToS3(this.state.files);
     if (!response.error) {
       this.setState({ success: true });
     }
+    /* ====================
+    Labeling Faces with AWS
+    ==================== */
+    if (document.getElementById('labelface').checked) {
+      this.setState({ labelsuccess: 2 });
+      window.scrollTo(0, document.getElementById('labelMessage').clientTop);
+      let failed = [];
+      for (const file of this.state.bytes) {
+        const status = await this.handleFacialRecognition(file);
+        if (!status) {
+          failed.push(file.filename);
+        }
+      }
+      if (failed.length) {
+        alert('Face Rekognition failed for:\n - ' + failed.join('\n - '));
+      } else {
+        alert('Face Rekognition Successful!!');
+        this.setState({ labelsuccess: 1 });
+      }
+    }
+  };
+
+  handleFacialRecognition = async (file) => {
+    /* ===============
+    Facial Rekognition
+    =============== */
+    const status = await facialRekognition(file);
+    if (status.error) return;
+    let array = status.responseData.array[0];
+
+    /* ==================
+    Creating GalleryImage
+    ================== */
+    let Gimage = await createNewImage(file, this.token);
+
+    /* ============================
+    Adding and creating GalleryFace
+    ============================ */
+    let id = Gimage.responseData._id;
+    for (let i = 0; i < array.length; i++) {
+      let newFace = {
+        id: id,
+        name: array[i][0],
+        top: array[i][1],
+        left: array[i][2],
+        width: array[i][3],
+        height: array[i][4],
+      };
+
+      let temp = await createNewFace(newFace, this.token);
+    }
+
+    /* ==================
+    Getting Image By Name
+    ================== */
+    // let image = await getImageByName(file);
+
+    /* ================
+    Getting Image By ID
+    ================ */
+    // let imageById = await getImageByID(image.responseData);
+
+    /* ===============
+    Getting Face By id
+    =============== */
+    // let faces = image.responseData.faces;
+    // for (const faceID of faces) {
+    //   let faceInfo = await getFaceInformation({ id: faceID });
+    // }
+
+    /* ==========
+    Deleting Face
+    ========== */
+    // for (const faceID of faces) {
+    //   let deleted = await deleteFace({ _id: faceID }, this.token);
+    // }
+
+    /* ===========
+    Deleting Image
+    =========== */
+    // let deleting = await deleteImage(image.responseData, this.token);
+
+    /* =====================
+    Deleting Image and faces
+    ===================== */
+    // let dele = await deleteImageAndFace(image.responseData, this.token);
+
+    return !status.error;
   };
 
   render() {
     const SuccessMessage = () => (
       <div>
         <h3 className='success-message'>Successfully uploaded files</h3>
+      </div>
+    );
+
+    const LabelSuccessMessage = () => (
+      <div>
+        <h3 className='success-message'>
+          Successfully labeled faces in files!
+        </h3>
+      </div>
+    );
+    const LabelWaitingMessage = () => (
+      <div>
+        <h3 className='labeling-message'>Labeling Faces ...</h3>
       </div>
     );
 
@@ -51,7 +169,9 @@ class UploadPic extends Component {
           onupdatefiles={(fileItems) => {
             const tmp = fileItems.map((fileItem) => fileItem.file);
             this.setState({
+              ...this.state,
               files: tmp,
+              bytes: fileItems,
             });
           }}
           labelIdle="<h3 class='s3-header'>Drag & Drop or Touch Here</h3>
@@ -69,6 +189,10 @@ class UploadPic extends Component {
             </svg>"
         />
         <center>
+          <input type='checkbox' id='labelface' name='labelface' />
+          <label htmlFor='labelface'>Label Faces</label>
+        </center>
+        <center>
           <Button
             className='upload-button'
             onClick={this.handleUpload.bind(this)}
@@ -76,6 +200,15 @@ class UploadPic extends Component {
             Upload
           </Button>
           <br />
+        </center>
+        <center id='labelMessage'>
+          {this.state.labelsuccess == 1 ? (
+            <LabelSuccessMessage />
+          ) : this.state.labelsuccess == 2 ? (
+            <LabelWaitingMessage />
+          ) : (
+            true
+          )}
         </center>
         <center>{this.state.success ? <SuccessMessage /> : true}</center>
         <br />

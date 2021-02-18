@@ -1,34 +1,39 @@
 .filepond--root {
-    width: 70%;
-    height: 500px;
+  width: 70%;
+  height: 500px;
 }
 
 .upload-button {
-    width: 15%;
-    padding: 10px;
-    font-size: 25px;
-    margin-top: 10px;
-    background-color: #42A3B9;
-    border: none;
+  width: 15%;
+  padding: 10px;
+  font-size: 25px;
+  margin-top: 10px;
+  background-color: #42a3b9;
+  border: none;
 }
 
 .upload-icon {
-    width: 50% !important;
+  width: 50% !important;
 }
 
 .upload-sub-header {
-    font-size: x-large !important;   
+  font-size: x-large !important;
 }
 
 .s3-header {
-    font-size: 25px;
+  font-size: 25px;
 }
 
 .success-message {
-    padding: 25px;
-    color: green
+  padding: 25px;
+  color: green;
+}
+
+.labeling-message {
+  padding: 25px;
+  color: blue;
 }
 
 .uploadPic {
-    padding-top: 32px;
+  padding-top: 32px;
 }
