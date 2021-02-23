@@ -35,10 +35,9 @@
   "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
-    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
-    "@fortawesome/react-fontawesome": "^0.1.12",
     "@tinymce/tinymce-react": "^3.10.2",
     "availity-reactstrap-validation": "^2.3.0",
     "aws-sdk": "^2.848.0",
