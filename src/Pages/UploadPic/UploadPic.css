@@ -34,6 +34,11 @@
   color: blue;
 }
 
+.fail-message {
+  padding: 25px;
+  color: red;
+}
+
 .uploadPic {
   padding-top: 32px;
 }

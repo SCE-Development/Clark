@@ -37,15 +37,15 @@ class UploadPic extends Component {
     /* =========================
     Uploading Image to S3 bucket
     ========================= */
-    const response = await uploadToS3(this.state.files);
-    if (!response.error) {
-      this.setState({ success: true });
-    }
+    // const response = await uploadToS3(this.state.files);
+    // if (!response.error) {
+    //   this.setState({ ...this.state, success: true });
+    // }
     /* ====================
     Labeling Faces with AWS
     ==================== */
     if (document.getElementById('labelface').checked) {
-      this.setState({ labelsuccess: 2 });
+      this.setState({ ...this.state, labelsuccess: 2 });
       window.scrollTo(0, document.getElementById('labelMessage').clientTop);
       let failed = [];
       for (const file of this.state.bytes) {
@@ -56,6 +56,7 @@ class UploadPic extends Component {
       }
       if (failed.length) {
         alert('Face Rekognition failed for:\n - ' + failed.join('\n - '));
+        this.setState({ labelsuccess: 3 });
       } else {
         alert('Face Rekognition Successful!!');
         this.setState({ labelsuccess: 1 });
@@ -69,12 +70,21 @@ class UploadPic extends Component {
     =============== */
     const status = await facialRekognition(file);
     if (status.error) return;
+    // eslint-disable-next-line no-console
+    console.log('status', status);
     let array = status.responseData.array[0];
+    const width = status.responseData.array[1];
+    const height = status.responseData.array[2];
 
     /* ==================
     Creating GalleryImage
     ================== */
-    let Gimage = await createNewImage(file, this.token);
+    let imageFile = {
+      name: file.filename,
+      width: width,
+      height: height,
+    };
+    let Gimage = await createNewImage(imageFile, this.token);
 
     /* ============================
     Adding and creating GalleryFace
@@ -150,6 +160,11 @@ class UploadPic extends Component {
         <h3 className='labeling-message'>Labeling Faces ...</h3>
       </div>
     );
+    const LabelFailedMessage = () => (
+      <div>
+        <h3 className='fail-message'>Failed to label faces in files...</h3>
+      </div>
+    );
 
     const headerProps = { title: 'Upload Pictures' };
     return (
@@ -206,6 +221,8 @@ class UploadPic extends Component {
             <LabelSuccessMessage />
           ) : this.state.labelsuccess == 2 ? (
             <LabelWaitingMessage />
+          ) : this.state.labelsuccess == 3 ? (
+            <LabelFailedMessage />
           ) : (
             true
           )}

@@ -7,6 +7,14 @@ const GalleryImageSchema = new Schema(
       type: String,
       required: true,
     },
+    width: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+    },
     faces: [{ type: Schema.Types.ObjectId, ref: 'GalleryFace' }],
   },
   { collection: 'GalleryImage' }

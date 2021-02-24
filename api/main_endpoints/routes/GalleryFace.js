@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 const express = require('express');
 const router = express.Router();
 const { GalleryImage, GalleryFace } = require('../models/GalleryFace');
@@ -90,6 +88,8 @@ router.post('/createImage', (req, res) => {
   try {
     newImage = new GalleryImage({
       name: req.body.name,
+      width: req.body.width,
+      height: req.body.height,
       faces: [],
     });
   } catch (error) {
@@ -98,7 +98,6 @@ router.post('/createImage', (req, res) => {
 
   GalleryImage.create(newImage, (error, post) => {
     if (error) {
-      // console.log('GI createNewImage: ', error);
       return res.sendStatus(BAD_REQUEST);
     }
     return res.status(OK).json(post);

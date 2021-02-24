@@ -22,9 +22,13 @@ export async function facialRekognition(file) {
 }
 
 export async function createNewImage(file, token) {
+  /* eslint-disable-next-line no-console */
+  console.log(file);
   let status = new ApiResponse();
   let newImage = {
-    name: file.filename,
+    name: file.name,
+    width: file.width,
+    height: file.height,
   };
   await axios
     .post(GENERAL_API_URL + '/galleryface/createImage', { token, ...newImage })

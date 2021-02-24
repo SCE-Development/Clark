@@ -71,6 +71,8 @@ describe('GalleryFace', () => {
   };
   const VALID_IMAGE_WITH_NO_FACE = {
     name: 'VLD_Image_1.jpg',
+    width: 1000,
+    height: 1000,
     faces: [],
   };
   const FACE_WITHOUT_REQUIRED_FIELD = {};
@@ -83,6 +85,8 @@ describe('GalleryFace', () => {
   };
   const IMAGE_WITH_WEIRD_NAME = {
     name: 'Hola Como estas? Soy bien.',
+    width: 1000,
+    height: 1000,
     faces: [],
   };
 
