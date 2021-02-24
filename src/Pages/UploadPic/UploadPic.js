@@ -37,10 +37,10 @@ class UploadPic extends Component {
     /* =========================
     Uploading Image to S3 bucket
     ========================= */
-    // const response = await uploadToS3(this.state.files);
-    // if (!response.error) {
-    //   this.setState({ ...this.state, success: true });
-    // }
+    const response = await uploadToS3(this.state.files);
+    if (!response.error) {
+      this.setState({ ...this.state, success: true });
+    }
     /* ====================
     Labeling Faces with AWS
     ==================== */
@@ -55,10 +55,10 @@ class UploadPic extends Component {
         }
       }
       if (failed.length) {
-        alert('Face Rekognition failed for:\n - ' + failed.join('\n - '));
+        // alert('Face Rekognition failed for:\n - ' + failed.join('\n - '));
         this.setState({ labelsuccess: 3 });
       } else {
-        alert('Face Rekognition Successful!!');
+        // alert('Face Rekognition Successful!!');
         this.setState({ labelsuccess: 1 });
       }
     }
@@ -70,8 +70,6 @@ class UploadPic extends Component {
     =============== */
     const status = await facialRekognition(file);
     if (status.error) return;
-    // eslint-disable-next-line no-console
-    console.log('status', status);
     let array = status.responseData.array[0];
     const width = status.responseData.array[1];
     const height = status.responseData.array[2];

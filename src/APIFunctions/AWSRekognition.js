@@ -22,8 +22,6 @@ export async function facialRekognition(file) {
 }
 
 export async function createNewImage(file, token) {
-  /* eslint-disable-next-line no-console */
-  console.log(file);
   let status = new ApiResponse();
   let newImage = {
     name: file.name,
