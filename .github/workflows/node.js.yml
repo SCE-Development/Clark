@@ -28,9 +28,9 @@ jobs:
      
 install:
   - python setup.py
-  - npm ci
+  - npm install
   - cd api
-  - npm ci
+  - npm install
   - cd ..
     - run: npm install
     - run: npm run frontend-test
