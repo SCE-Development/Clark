@@ -26,9 +26,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: python setup.py
-    - run: npm install
+    - run: npm ci
     - run: cd api
-    - run: npm install
-    - run: npm install
+    - run: npm ci
     - run: npm run frontend-test
     - run: npm run build
