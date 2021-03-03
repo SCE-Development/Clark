@@ -58,8 +58,10 @@ class Home extends Component {
 
           {/* This container is for the SCE offciers picture and title */}
           <div className="groupPicContainer">
-            <img className="groupictureStyles" src='images/officers2019_2.jpg'
-              alt="officersPic" style={{ width: '100%' }}></img>
+            <img className="groupictureStyles"
+            id="groupictureStyles"
+            src='images/officers2019_2.jpg'
+            alt="officersPic" style={{ width: '100%' }}></img>
           </div>
           <div className="sceLogo"
             data-aos="fade-down"
@@ -84,12 +86,13 @@ class Home extends Component {
             {/* The first major block: "Need a place to get things done?" */}
             <div className="block-one aos-item">
               <Row>
-                <Col>
+                <Col className="col-images">
                   <div data-aos="fade-down"
                     data-aos-easing="linear"
                     data-aos-anchor-placement="bottom-bottom"
                     data-aos-duration="500" >
                     <img className="block-images"
+                      id = "block-images"
                       src='images/resume-workshop.jpg'
                       alt="blockOneImg"
                       style={{ width: '40vw', marginLeft: '15%' }}></img>
@@ -113,7 +116,7 @@ class Home extends Component {
             {/* The sub block section */}
             <div className="clubRoomContainer">
               <Row>
-                <Col className="column" xs={3}>
+                <Col className="col-cr1" xs={3}>
                   <div className="subBlock-title" data-aos="fade-up"
                     data-aos-duration="1000" >
                     Tech Events
@@ -124,7 +127,7 @@ class Home extends Component {
                     <span className="subBlockText">{subBlockOneText}</span>
                   </div>
                 </Col>
-                <Col xs={3} >
+                <Col className="col-cr2" xs={3} >
                   <div className="subBlock-title" data-aos="fade-up"
                     data-aos-duration="1000" >
                     Workshops
@@ -135,7 +138,7 @@ class Home extends Component {
                     <span className="subBlockText">{subBlockTwoText}</span>
                   </div>
                 </Col>
-                <Col xs={3}>
+                <Col className="col-cr3" xs={3}>
                   <div className="subBlock-title" data-aos="fade-right"
                     data-aos-duration="1000" >
                     Social Events
@@ -147,7 +150,26 @@ class Home extends Component {
                   </div>
                 </Col>
               </Row>
-            </div>
+
+              <div className="screen-cr">
+                </div>
+                <br />
+                <div className="screen-cr">
+                  <b>Tech Events</b>
+                </div>
+                <span className="screen-cr">{subBlockOneText}</span>
+                <div className="special-margins"></div>
+                <div className="screen-cr" >
+                  <b>Diverse Workshops</b>
+                </div>
+                <span className="screen-cr">{subBlockTwoText}</span> 
+                <div className="special-margins"></div>
+                 <div className="screen-cr" >
+                  <b>Social Events</b>
+                </div>
+                <span className="screen-cr">{subBlockThreeText}</span>
+                <div className="special-margins"></div>
+              </div>
 
             {/* The second major block: "Want to know more?" */}
             <div className="block-two">
@@ -178,7 +200,7 @@ class Home extends Component {
                     })}
                   </div>
                 </Col>
-                <Col>
+                <Col className="col-images">
                   <div data-aos="fade-down"
                     data-aos-easing="linear"
                     data-aos-anchor-placement="bottom-bottom"

@@ -21,6 +21,17 @@
   overflow: hidden; 
   margin-bottom: 2%;
   /* padding-top: 4vw; */
+  /* background-image: url("./officers2019_2.jpg");  */
+  /* position: relative; */
+
+
+  /* text-align: center;
+  color: white;
+  padding-top: 50%;
+  width: auto;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  height: 100%; */
 }
 
 .groupPictureStyles{
@@ -229,11 +240,46 @@
   display: initial !important;
 }
 
+.screen-cr{
+  display: none;
+  visibility: hidden;
+}
+
 /*********************************************************/
 /*********************************************************/
 
 @media only screen and (min-width: 200px) and (max-width: 500px) { 
   
+  img#groupictureStyles{
+    visibility: hidden;
+  }
+
+  img#block-images{
+    visibility: hidden;
+  }
+
+  .col-images{
+    display: none; 
+    flex-basis: 0; 
+  }
+
+  .col-cr1, .col-cr2, .col-cr3{
+    flex-basis: 0; 
+    display: none; 
+  }
+
+  .screen-cr{
+    display:inherit;
+    visibility: visible;
+    text-align: center;
+    font-size: 11.25px;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .special-margins{
+    margin: 2.5%;
+  }
+
   .groupPicContainer{
     /* position: fixed; */
     text-align: center;
@@ -242,15 +288,23 @@
     /* overflow: hidden;  */
     margin-bottom: 10% !important;
     top: 6vw;
-    padding-top: 1px !important;
-    margin-top: 1px;
+    padding-top: 0px !important;
+    background-image: url("./grey-gradient.jpg") !important; 
+    margin-top: 1vh;
+  /* position: relative; */
+    text-align: center;
+    padding-top: 50%;
+    width: auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    height: 100%;
   }
 
   .sceTitle{
     scroll-behavior: [ smooth ];
     color: white;
     position: absolute;
-    top: 6.5%;
+    top: 7.5%;
     left: 50%;
     font-family: 'Montserrat';
     white-space: pre-line;
@@ -268,7 +322,8 @@
   }
 
   .sceLogo{
-    top: 6%;
+    top: 7%;
+    right: 55%;
   }
 
   .logo-styles{
@@ -292,9 +347,9 @@
     text-align: center;
     color: rgb(255, 255, 255);
     width: auto;
-    background-size: 200%;
+    background-size: 150%;
     background-repeat: no-repeat;
-    height: 45vh;
+    height: 40vh;
     box-sizing: border-box;
   }
   
@@ -313,8 +368,8 @@
   }
 
   .subBlockText{
-    font-size: 2.75vw;
-    line-height: 1.5vh;
+    font-size: 2.9vw;
+    line-height: 2.5vh;
     margin-top: 0;
   }
 
@@ -323,13 +378,13 @@
     color: rgb(255, 255, 255);
     /* position: relative; */
     font-family: 'Montserrat';
-    font-size: 1.25vh;
+    font-size: 2.5vh;
     font-weight: bolder !important; 
     z-index: 0;
     overflow: auto;
     text-align: left;
     direction: ltr;
-    left: 40%;
+    left: 50%;
     margin-left: 2.75vw;
     margin-top: 0;
   }
@@ -337,7 +392,7 @@
   .blockText{
     line-height: 1.2 !important;
     text-align: left;
-    font-size: 1.2vh !important;
+    font-size: 2vh !important;
     font-family: 'Montserrat', sans-serif;
     text-align: left;
     /* min-height: 35px; */
@@ -348,22 +403,46 @@
   }
 
   .block-two{
-    margin-bottom: 30%;
+    margin-bottom: 10%;
   }
 
-  .leftalign, .textBlock1-title, .textBlock2-title{
-    font-size: 1.5vh;
+  .leftalign, .textBlock1-title{
+    font-size: 2.5vh;
   }
 
-  .textBlock1-text, .textBlock2-text{
+  .textBlock2-title{
+    font-size: 2.5vh;
+    margin-left: 5%;
+  }
+
+  .textBlock1-text{
     line-height: 1.2 !important;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    font-size: 3vh !important;
+    max-height: 1vh;
+    margin-left: 5%;
+    margin-bottom: 7vh;
+    width: 100%;
+  }
+
+  .textBlock2-text{
+    line-height: 1.2 !important;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    font-size: 3vh !important;
+    max-height: 1vh;
+    margin-left: 5%;
+    margin-bottom: 7vh;
+    width: 70%;
   }
 
   .icons-container{
-    margin-top: 50%;
-    margin-left: 15%;
-    padding-left: 7%;
-    width: 40%;
+    margin-top: 20%;
+    margin-left: 5%;
+    margin-right: 15%;
+    padding-left: 6%;
+    width: 25%;
     border-radius: 20px;
     background-image: linear-gradient(to right, #9ea3df6c 0%, #59ade98c 100%);
   }
@@ -382,6 +461,9 @@
 
 @media only screen and (min-width: 501px) and (max-width: 700px) { 
   
+  .screen-cr{
+    display: none;
+  }
   .groupPicContainer{
     /* position: fixed; */
     text-align: center;
@@ -392,6 +474,16 @@
     top: 6vw;
     padding-top: 1px !important;
     margin-top: 1px;
+
+    background-image: url("./grey-gradient.jpg") !important; 
+    margin-top: 1vh;
+  /* position: relative; */
+    text-align: center;
+    padding-top: 50%;
+    width: auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    height: 100%;
   }
 
   .sceTitle{
@@ -462,7 +554,7 @@
 
   .subBlockText{
     font-size: 2.25vw;
-    line-height: 1.5vh;
+    line-height: 2vh;
     margin-top: 0;
   }
 
@@ -471,7 +563,7 @@
     color: rgb(255, 255, 255);
     /* position: relative; */
     font-family: 'Montserrat';
-    font-size: 1.35vh;
+    font-size: 2.75vh;
     font-weight: bolder !important; 
     z-index: 0;
     overflow: auto;
@@ -483,16 +575,16 @@
   }
 
   .blockText{
-    line-height: 1.5vh !important;
+    line-height: 2.10vh !important;
     text-align: left;
-    font-size: 1.5vh !important;
+    font-size: 2vh !important;
     font-family: 'Montserrat', sans-serif;
     text-align: left;
     /* min-height: 35px; */
   }
 
   .leftalign, .textBlock1-title, .textBlock2-title{
-    font-size: 1.75vh;
+    font-size: 3.15vh;
   }
 
   .textBlock1-text, .textBlock2-text{
@@ -511,12 +603,13 @@
 
   .block-styles{
     margin-top: 0%;
-    margin-bottom: 30%;
+    margin-bottom: 15%;
   }
 
   .row{
     margin-right: 0 !important; 
   }
+
  }
 
 /*********************************************************/
