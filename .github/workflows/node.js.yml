@@ -1,8 +1,6 @@
 name: Core-v4 Tests
 
 on:
-  push:
-    branches: [ dev ]
   pull_request:
     branches: [ dev ]
 
