@@ -13,7 +13,7 @@ export default function ChangePassword(props) {
   const [toggle, setToggle] = useState(true);
 
   async function changePassword() {
-    const salt = bcrypt.genSaltSync(10);
+    const salt
     const hashedPassword = password.trim() === '' ? user.password :
       bcrypt.hashSync(password, salt);
 
