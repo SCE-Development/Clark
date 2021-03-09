@@ -7,13 +7,13 @@ import { editUser } from '../../../APIFunctions/User';
 const bcrypt = require('bcryptjs');
 
 export default function ChangePassword(props) {
-  
+  const [password, setPassword] = useState('New Password');
   const [confirmPass, setConfirmPass] = useState('Confirming New Password');
   const [user, setUser] = useState('');
   const [toggle, setToggle] = useState(true);
 
   async function changePassword() {
-    const salt
+    const salt= bcrypt.genSaltSync(10);
     const hashedPassword = password.trim() === '' ? user.password :
       bcrypt.hashSync(password, salt);
 

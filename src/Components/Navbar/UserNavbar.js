@@ -183,7 +183,7 @@ export default function UserNavBar(props) {
               ) : (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                      Join Us!
+                      Join Us! :)
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
                     <DropdownItem className='drp-item' href='/register'>
