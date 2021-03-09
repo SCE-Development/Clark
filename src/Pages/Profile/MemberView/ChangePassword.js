@@ -7,7 +7,7 @@ import { editUser } from '../../../APIFunctions/User';
 const bcrypt = require('bcryptjs');
 
 export default function ChangePassword(props) {
-  const [password, setPassword] = useState('New Password');
+  
   const [confirmPass, setConfirmPass] = useState('Confirming New Password');
   const [user, setUser] = useState('');
   const [toggle, setToggle] = useState(true);
