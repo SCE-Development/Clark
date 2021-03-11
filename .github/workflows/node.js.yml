@@ -13,8 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Starting MongoDB 
-      uses: supercharge/mongodb-github-action@1.3.0
+    - name: Starting MongoDB
+      run:  |
+           if: [ "matrix.os == 'windows-latest']; then
+                uses: supercharge/mongodb-github-action@1.3.0
+           fi
+    - run: npm run api-test
     - name: Use Node.js ${{ matrix.node }}
       uses: actions/setup-node@v1
       with:
@@ -25,6 +29,5 @@ jobs:
     - run: npm ci
     - run: cd ..
     - run: npm run lint
-    - run: npm run api-test
     - run: npm run frontend-test
     - run: npm run build
