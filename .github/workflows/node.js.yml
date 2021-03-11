@@ -16,7 +16,7 @@ jobs:
     - name: Starting MongoDB
     - uses: supercharge/mongodb-github-action@1.3.0
     - name: Use Node.js ${{ matrix.node }}
-      uses: actions/setup-node@v1
+    - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
     - run: python setup.py
