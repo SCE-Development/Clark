@@ -19,8 +19,8 @@
   color: white;
   background-size: cover;
   overflow: hidden; 
-  margin-bottom: 2%;
-  /* padding-top: 4vw; */
+  top: 73px;
+  margin-bottom: 73px;
   /* background-image: url("./officers2019_2.jpg");  */
   /* position: relative; */
 
@@ -41,19 +41,20 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  width: 100%;
 }
 
 .sceTitle{
   scroll-behavior: [ smooth ];
   color: white;
   position: absolute;
-  top: 5.5%;
+  top: 5%;
   left: 50%;
   font-family: 'Montserrat';
   white-space: pre-line;
   text-align: left;
   direction: ltr;
-  font-size: 6vh;
+  font-size: 3vw;
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
@@ -67,7 +68,7 @@
 
 .sceLogo{
   position: absolute;
-  top: 4%;
+  top: 5%;
   right: 50%;
   overflow: auto;
   display: block;
@@ -248,11 +249,11 @@
 /*********************************************************/
 /*********************************************************/
 
-@media only screen and (min-width: 200px) and (max-width: 500px) { 
+@media only screen and (max-width: 500px) { 
   
-  img#groupictureStyles{
+  /* img#groupictureStyles{
     visibility: hidden;
-  }
+  } */
 
   img#block-images{
     visibility: hidden;
@@ -280,37 +281,42 @@
     margin: 2.5%;
   }
 
+  .groupPictureStyles{
+    transform: translateX(-50%);
+    margin-left: 50%;
+    width: auto;
+    height: 100%;
+  }
+
   .groupPicContainer{
-    /* position: fixed; */
+    /* 
     text-align: center;
     color: white;
     background-size: cover;
-    /* overflow: hidden;  */
-    margin-bottom: 10% !important;
-    top: 6vw;
-    padding-top: 0px !important;
-    background-image: url("./grey-gradient.jpg") !important; 
-    margin-top: 1vh;
-  /* position: relative; */
+
+    margin-bottom: 73px;
+    top: 73px;
+    background-image: url("./grey-gradient.jpg") !important;
+
     text-align: center;
-    padding-top: 50%;
-    width: auto;
+    height: auto;
     background-size: 100%;
     background-repeat: no-repeat;
-    height: 200px;
+    */
+    height: 90vw;
   }
 
   .sceTitle{
     scroll-behavior: [ smooth ];
     color: white;
     position: absolute;
-    top: 7.5%;
+    top: 10%;
     left: 50%;
     font-family: 'Montserrat';
     white-space: pre-line;
     text-align: left;
     direction: ltr;
-    font-size: 20px;
+    font-size: 5vw;
     font-weight: bolder !important; 
     line-height: 1.05;
     letter-spacing: 1px;
@@ -323,7 +329,7 @@
   }
 
   .sceLogo{
-    top: 7%;
+    top: 10%;
     right: 55%;
   }
 
@@ -480,20 +486,18 @@
   .screen-cr{
     display: none;
   }
+  /* 
   .groupPicContainer{
-    /* position: fixed; */
+
     text-align: center;
     color: white;
     background-size: cover;
-    /* overflow: hidden;  */
-    margin-bottom: 10% !important;
-    top: 6vw;
-    padding-top: 1px !important;
-    margin-top: 1px;
+
+    margin-bottom: 73px;
+    top: 73px;
 
     background-image: url("./grey-gradient.jpg") !important; 
-    margin-top: 1vh;
-  /* position: relative; */
+
     text-align: center;
     padding-top: 50%;
     width: auto;
@@ -512,7 +516,7 @@
     white-space: pre-line;
     text-align: left;
     direction: ltr;
-    font-size: 4.5vw;
+    font-size: 3vw;
     font-weight: bolder !important; 
     line-height: 1.05;
     letter-spacing: 1px;
@@ -531,6 +535,7 @@
     width:20vw;
     height:20vw;
   }
+  */
 
   .contentContainer{
     width: auto;
@@ -652,20 +657,18 @@
   .screen-cr{
     display: none;
   }
+  /* 
   .groupPicContainer{
-    /* position: fixed; */
+
     text-align: center;
     color: white;
     background-size: cover;
-    /* overflow: hidden;  */
-    margin-bottom: 10% !important;
-    top: 6vw;
-    padding-top: 1px !important;
-    margin-top: 1px;
 
-    background-image: url("./grey-gradient.jpg") !important; 
-    margin-top: 1vh;
-  /* position: relative; */
+    margin-bottom: 73px;
+    top: 73px;
+
+    background-image: url("./grey-gradient.jpg") !important;
+
     text-align: center;
     padding-top: 50%;
     width: auto;
@@ -684,7 +687,7 @@
     white-space: pre-line;
     text-align: left;
     direction: ltr;
-    font-size: 4.5vw;
+    font-size: 3vw;
     font-weight: bolder !important; 
     line-height: 1.05;
     letter-spacing: 1px;
@@ -703,6 +706,7 @@
     width:20vw;
     height:20vw;
   }
+  */
 
   .contentContainer{
     width: auto;
@@ -813,14 +817,15 @@
 
 @media only screen and (min-width: 741px) and (max-width: 880px) { 
   
+  /* 
   .groupPicContainer{
-    /* position: fixed; */
+
     text-align: center;
     color: white;
     background-size: cover;
-    /* overflow: hidden;  */
-    margin-bottom: 10%;
-    top: 6vw;
+
+    margin-bottom: 73px;
+    top: 73px;
     padding-top: 0 !important;
   }
 
@@ -834,7 +839,7 @@
     white-space: pre-line;
     text-align: left;
     direction: ltr;
-    font-size: 2.5em;
+    font-size: 2.3vw;
     font-weight: bolder !important; 
     line-height: 1.05;
     letter-spacing: 1px;
@@ -845,6 +850,7 @@
     font-size-adjust: inherit;
   
   }
+  */
 
   .clubRoomContainer{
     background-image: url("./emptyclubroom_blurred.jpg"); 
@@ -930,14 +936,15 @@
  @media only screen and (min-width: 881px) and (max-width: 1200px)
 and (min-height: 400px) { 
   
+  /*
   .groupPicContainer{
-    /* position: fixed; */
+
     text-align: center;
     color: white;
     background-size: cover;
-    /* overflow: hidden;  */
-    margin-bottom: 10%;
-    top: 6vw;
+
+    top: 73px;
+    margin-bottom: 73px;
     padding-top: 0 !important;
   }
 
@@ -951,7 +958,7 @@ and (min-height: 400px) {
     white-space: pre-line;
     text-align: left;
     direction: ltr;
-    font-size: 2.5em;
+    font-size: 3vw;
     font-weight: bolder !important; 
     line-height: 1.05;
     letter-spacing: 1px;
@@ -962,6 +969,7 @@ and (min-height: 400px) {
     font-size-adjust: inherit;
   
   }
+  */
 
   .clubRoomContainer{
     background-image: url("./emptyclubroom_blurred.jpg"); 

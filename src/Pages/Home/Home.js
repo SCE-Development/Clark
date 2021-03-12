@@ -58,10 +58,10 @@ class Home extends Component {
 
           {/* This container is for the SCE offciers picture and title */}
           <div className="groupPicContainer">
-            <img className="groupictureStyles"
-            id="groupictureStyles"
+            <img className="groupPictureStyles"
+            id="grouPicture"
             src='images/officers2019_2.jpg'
-            alt="officersPic" style={{ width: '100%' }}></img>
+            alt="officersPic"></img>
           </div>
           <div className="sceLogo"
             data-aos="fade-down"
