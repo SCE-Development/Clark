@@ -54,7 +54,7 @@
   white-space: pre-line;
   text-align: left;
   direction: ltr;
-  font-size: 3vw;
+  font-size: 3.5vw;
   font-weight: bolder !important; 
   line-height: 1.05;
   letter-spacing: 1px;
@@ -78,8 +78,8 @@
 }
 
 .logo-styles{
-  width:20vw;
-  height:20vw;
+  width:18vw;
+  height:18vw;
 }
 
 .contentContainer{
@@ -318,7 +318,7 @@
     scroll-behavior: [ smooth ];
     color: white;
     position: absolute;
-    top: 10%;
+    top: 100px;
     left: 50%;
     font-family: 'Montserrat';
     white-space: pre-line;
@@ -337,14 +337,13 @@
   }
 
   .sceLogo{
-    top: 10%;
+    top: 100px;
     right: 55%;
   }
 
   .logo-styles{
-    width:100px;
-    height:100vw;
-    height: auto;
+    width:26vw;
+    height:26vw;
   }
 
   .contentContainer{
