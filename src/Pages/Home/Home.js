@@ -139,7 +139,7 @@ class Home extends Component {
                   </div>
                 </Col>
                 <Col className="col-cr3" xs={3}>
-                  <div className="subBlock-title" data-aos="fade-right"
+                  <div className="subBlock-title" data-aos="fade-up"
                     data-aos-duration="1000" >
                     Social Events
                   </div>
@@ -153,7 +153,6 @@ class Home extends Component {
 
               <div className="screen-cr">
                 </div>
-                <br />
                 <div className="screen-cr">
                   <b>Tech Events</b>
                 </div>
@@ -168,7 +167,6 @@ class Home extends Component {
                   <b>Social Events</b>
                 </div>
                 <span className="screen-cr">{subBlockThreeText}</span>
-                <div className="special-margins"></div>
               </div>
 
             {/* The second major block: "Want to know more?" */}
@@ -193,7 +191,7 @@ class Home extends Component {
                         <a key={index} href={icon.link}>
 
                           <svg className='block2-icons' viewBox='0 0 24 24'>
-                            <path fill='#484848' d={icon.vector} />
+                            <path fill='#ff8c66' d={icon.vector} />
                           </svg>
                         </a>
                       );
