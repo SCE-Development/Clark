@@ -73,14 +73,17 @@ class Home extends Component {
               ></img>
             </div>
           </div>
-          <div className="sceTitle" data-aos="fade-down"
+          <div className="sceTitle-div" data-aos="fade-down"
             data-aos-duration="1000" >
-            {SCEtitle}
+              <div className="sceTitle-style">
+                {SCEtitle}
+                </div>
           </div>
 
           {/* This contains all the content regarding the club,
          what we have to offer and social media links */}
           <div className="contentContainer">
+
             <div className="block-space" />
 
             {/* The first major block: "Need a place to get things done?" */}
@@ -152,22 +155,25 @@ class Home extends Component {
               </Row>
 
               <div className="screen-cr">
+                <div className="screen-cr-sub">
+                  <b>Tech Events</b><br />
+                  <span className="screen-cr-body">{subBlockOneText}</span>
                 </div>
-                <div className="screen-cr">
-                  <b>Tech Events</b>
-                </div>
-                <span className="screen-cr">{subBlockOneText}</span>
                 <div className="special-margins"></div>
-                <div className="screen-cr" >
-                  <b>Diverse Workshops</b>
+
+                <div className="screen-cr-sub" >
+                  <b>Diverse Workshops</b><br />
+                  <span className="screen-cr-body">{subBlockTwoText}</span> 
                 </div>
-                <span className="screen-cr">{subBlockTwoText}</span> 
                 <div className="special-margins"></div>
-                 <div className="screen-cr" >
-                  <b>Social Events</b>
+
+                <div className="screen-cr-sub" >
+                  <b>Social Events</b><br />
+                  <span className="screen-cr-body">{subBlockThreeText}</span>
                 </div>
-                <span className="screen-cr">{subBlockThreeText}</span>
               </div>
+              
+            </div>
 
             {/* The second major block: "Want to know more?" */}
             <div className="block-two">
@@ -189,7 +195,6 @@ class Home extends Component {
                     {icons.map((icon, index) => {
                       return (
                         <a key={index} href={icon.link}>
-
                           <svg className='block2-icons' viewBox='0 0 24 24'>
                             <path fill='#ff8c66' d={icon.vector} />
                           </svg>
@@ -202,8 +207,7 @@ class Home extends Component {
                   <div data-aos="fade-down"
                     data-aos-easing="linear"
                     data-aos-anchor-placement="bottom-bottom"
-                    data-aos-duration="500"
-                  >
+                    data-aos-duration="500">
                     <img className="block-images"
                       src='images/Tesla2.jpg'
                       alt="blockOneImg"
@@ -211,11 +215,13 @@ class Home extends Component {
                   </div>
                 </Col>
               </Row>
+              
             </div>
             <div className="block-space" />
             <Footer />
-          </div >
-        </div >
+            
+          </div>
+        </div>
       </>
     );
   }
