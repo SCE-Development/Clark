@@ -71,9 +71,11 @@ util/common/trustStore/*.csr
 # For now, ignore the security file so that people can name their own CSRs, Certs, etc. their way
 util/common/security.js
 
-.vscode/*
+.history
+.vscode
 *.code-workspace
 .DS_Store
+.prettierrc.js
 
 build
 
