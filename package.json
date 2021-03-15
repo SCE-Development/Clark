@@ -38,7 +38,7 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
-    "@tinymce/tinymce-react": "^3.10.2",
+    "@tinymce/tinymce-react": "^3.10.4",
     "availity-reactstrap-validation": "^2.3.0",
     "aws-sdk": "^2.848.0",
     "axios": "^0.21.0",
