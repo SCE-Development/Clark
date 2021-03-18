@@ -56,54 +56,56 @@ export default function AboutUsManager(props){
   }
 
   return (
-    <body>
+    <div>
       <Header {...headerProps} />
-      <section className="exec-container">
-        <Button onClick={toggleCreateOfficer} className="create-officer">
-                    Add Officer +
-        </Button>
-        {modal && (<AboutUsManagerModal
-          modal={modal}
-          toggle={toggle}
-          handleDelete={() => deleteOfficer(officer, props.user.token)}
-          handleSubmit={handleSubmit}
-          modalState={modalState}
-          populateOfficers={populateOfficers}
-          token={props.user.token}
-          {...officer}
-        />)}
-        <h1>Executive Team</h1>
-        <div className="grid-container">
-          {officers.length ? (officers.map(officer => {
-            if(officer.team === 'executive'){
-              return(
-                <AboutUsCard
-                  handleClick={() => toggleEditOfficer(officer)}
-                  info={officer}/>
-              );
-            } return null;
-          })): (
-            <h1>No officers yet!</h1>
-          )}
-        </div>
-      </section>
-      <section className="officer-container">
-        <h1>Meet Our Team</h1>
-        <div className="grid-container-circle">
-          {officers.length ? (officers.map((officer, index) => {
-            if(officer.team === 'officers'){
-              return(
-                <AboutUsCircle
-                  handleClick={() => toggleEditOfficer(officer)}
-                  info={officer}/>
-              );
-            } return null;
-          })): (
-            <h1>No officers yet!</h1>
-          )}
-        </div>
-      </section>
-    </body>
+      <body className="officer-body">
+        <section className="exec-container">
+          <Button onClick={toggleCreateOfficer} className="create-officer">
+                      Add Officer +
+          </Button>
+          {modal && (<AboutUsManagerModal
+            modal={modal}
+            toggle={toggle}
+            handleDelete={() => deleteOfficer(officer, props.user.token)}
+            handleSubmit={handleSubmit}
+            modalState={modalState}
+            populateOfficers={populateOfficers}
+            token={props.user.token}
+            {...officer}
+          />)}
+          <h1>Executive Team</h1>
+          <div className="grid-container">
+            {officers.length ? (officers.map(officer => {
+              if(officer.team === 'executive'){
+                return(
+                  <AboutUsCard
+                    handleClick={() => toggleEditOfficer(officer)}
+                    info={officer}/>
+                );
+              } return null;
+            })): (
+              <h1>No officers yet!</h1>
+            )}
+          </div>
+        </section>
+        <section className="officer-container">
+          <h1>Meet Our Team</h1>
+          <div className="grid-container-circle">
+            {officers.length ? (officers.map((officer, index) => {
+              if(officer.team === 'officers'){
+                return(
+                  <AboutUsCircle
+                    handleClick={() => toggleEditOfficer(officer)}
+                    info={officer}/>
+                );
+              } return null;
+            })): (
+              <h1>No officers yet!</h1>
+            )}
+          </div>
+        </section>
+      </body>
+    </div>
   );
 }
 

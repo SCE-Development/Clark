@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;1,300&&display=swap');
 
-section {
+.officer-body {
     padding-left: 100px;
     padding-right: 100px;
     padding-top: 20px;
 }
 
-.officer-body h1{ 
+.officer-body h1 { 
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     color:#124559;
@@ -17,7 +17,7 @@ section {
     min-width: 200;
 }
 
-.card{
+.card {
     max-width: 250px;
     max-height: 325px;
     min-height: 325px;
@@ -31,7 +31,7 @@ section {
     border: transparent;
 }
 
-.top-card{
+.top-card {
     background-position: center;
     background-size: cover;
     max-width: 250px;
@@ -41,7 +41,7 @@ section {
     border-radius: 9px 9px 0px 0px;
 }
 
-.bottom-card{
+.bottom-card {
     max-width: 250px;
     max-height: 250px;
     min-height: 250px;
@@ -52,7 +52,7 @@ section {
     padding: 10px 10px 0px 10px;
 }
 
-.wrap{
+.wrap {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis !important;
@@ -61,13 +61,13 @@ section {
     overflow-wrap: initial;
 }
 
-.no-wrap{
+.no-wrap {
     overflow: hidden;
     text-overflow: ellipsis !important;
     overflow-wrap: initial;
 }
 
-.bottom-card:hover{
+.bottom-card:hover {
     opacity: 80%;
 }
 
@@ -75,7 +75,7 @@ section {
     transform: scale(1.05);
 }
 
-.grid-container{
+.grid-container {
     display: grid;
     display: -ms-grid;
     grid-auto-columns: 1fr;
@@ -87,11 +87,11 @@ section {
     grid-column-gap: 14px;
 }
 
-.officer-text{
+.officer-text {
     width: 85%;
 }
 
-.officer-position{
+.officer-position {
     width: 100%;
     display: inline-flex;
     font-weight: light;
@@ -100,7 +100,7 @@ section {
     padding-left: 10px;
 }
 
-.card-container{
+.card-container {
     text-align: left;
     padding-left: 10px;
     padding-top: 5px;
@@ -108,12 +108,12 @@ section {
     font-size: 24px;
 }
 
-.card-container h3{
+.card-container h3 {
     font-weight: bold;
     font-size: 24px;
 }
 
-.circle{
+.circle {
     width: 115px;
     height: 115px;
     max-width: none;
@@ -125,7 +125,7 @@ section {
     transition: all .6s ease-in-out;
 }
 
-.circle-container{
+.circle-container {
     background-color: #386783;
     width: 115px;
     height: 115px;
@@ -143,15 +143,15 @@ section {
     font-family: 'Montserrat', sans-serif;
 }
 
-.circle-container:hover{
+.circle-container:hover {
     opacity: 80%;
 }
 
-.officer-container{
+.officer-container {
     padding-top: 50px;
 }
 
-.grid-container-circle{
+.grid-container-circle {
     display: grid;
     margin-bottom: 20px;
     grid-row-gap: 40px;
@@ -163,7 +163,7 @@ section {
 }
 
 @media (max-width: 576px) {
-    .grid-container{
+    .grid-container {
         -ms-grid-columns: 1fr;
         grid-template-columns: 1fr;
     }
@@ -175,11 +175,11 @@ section {
 }
 
 @media (min-width: 576px) and (max-width: 767.98px) {
-    .grid-container{
+    .grid-container {
         -ms-grid-columns: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
     }
-    .grid-container-circle{
+    .grid-container-circle {
         -ms-grid-columns: 0.7fr 0.7fr 0.7fr;
         grid-template-columns: 0.7fr 0.7fr 0.7fr;
     }
@@ -187,11 +187,11 @@ section {
 
 
 @media (min-width: 768px) and (max-width: 991.98px) {
-    .grid-container{
+    .grid-container {
         -ms-grid-columns: 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr;
     }
-    .grid-container-circle{
+    .grid-container-circle {
         -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr;
         grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr;
     }
@@ -199,11 +199,11 @@ section {
 
 
 @media (min-width: 992px) and (max-width: 1199.98px) {
-    .grid-container{
+    .grid-container {
         -ms-grid-columns: 1fr 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
-    .grid-container-circle{
+    .grid-container-circle {
         -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
         grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
     }
@@ -211,11 +211,11 @@ section {
 }
 
 @media (min-width: 1200px) {
-    .grid-container{
+    .grid-container {
         -ms-grid-columns: 1fr 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
-    .grid-container-circle{
+    .grid-container-circle {
         -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
         grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
     }

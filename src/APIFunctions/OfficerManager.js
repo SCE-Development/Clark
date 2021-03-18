@@ -3,17 +3,8 @@ import { ApiResponse } from './ApiResponses';
 
 export async function createOfficer(newOfficer, token){
   let status = new ApiResponse();
-  const officerToAdd = {
-    name: newOfficer.name,
-    email: newOfficer.email,
-    linkedin: newOfficer.linkedin,
-    team: newOfficer.team,
-    position: newOfficer.position,
-    quote: newOfficer.quote,
-    pictureUrl: newOfficer.pictureUrl
-  };
   await axios
-    .post('api/officerManager/submit', {token, ...officerToAdd})
+    .post('api/officerManager/submit', {token, ...newOfficer})
     .then(res => {
       status.responseData = res.data;
     })
@@ -66,17 +57,8 @@ export async function getOfficer(email, token){
 
 export async function editOfficer(officerToUpdate, token){
   let status = new ApiResponse();
-  const officerToEdit= {
-    name: officerToUpdate.name,
-    email: officerToUpdate.email,
-    linkedin: officerToUpdate.linkedin,
-    team: officerToUpdate.team,
-    position: officerToUpdate.position,
-    quote: officerToUpdate.quote,
-    pictureUrl: officerToUpdate.pictureUrl
-  };
   await axios
-    .post('api/officerManager/edit', {token, ...officerToEdit})
+    .post('api/officerManager/edit', {token, ...officerToUpdate})
     .then(res => {
       status.responseData = res.data;
     })

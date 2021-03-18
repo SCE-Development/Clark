@@ -86,7 +86,7 @@ function AboutUsManagerModal(props) {
         rows: 5,
         placeholder: 'Enter Description',
         defaultValue: props.quote,
-        onChange: e => setQuote(e.target.value),
+        handleChange: e => setQuote(e.target.value),
         maxlength: '180'
       }
     ],
@@ -154,43 +154,16 @@ function AboutUsManagerModal(props) {
   }
 
   function requiredFieldsFilledIn() {
-    if (team === 'executive' && props.modalState === officerModalState.EDIT) {
-      return (
-        name !== '' &&
-        email !== '' &&
-        team !== '' &&
-        pictureUrl !== '' &&
-        linkedin !== '' &&
-        quote !== '' &&
-        position !== ''
-      );
-    } else if (team === 'executive' &&
-    props.modalState === officerModalState.SUBMIT) {
-      return (
-        name !== undefined &&
-        email !== undefined &&
-        team !== undefined &&
-        pictureUrl !== undefined &&
-        linkedin !== undefined &&
-        quote !== undefined&&
-        position !== undefined
-      );
-    } else if (props.modalState === officerModalState.EDIT){
-      return (
-        name !== '' &&
-            email !== '' &&
-            team !== '' &&
-            pictureUrl !== ''
-      );
-    } else if (props.modalState === officerModalState.SUBMIT){
-      return (
-        name !== undefined &&
-            email !== undefined &&
-            team !== undefined &&
-            pictureUrl !== undefined
-      );
-    }
-    return false;
+    const nameEmailTeamPicture = name && email
+      && team && pictureUrl;
+    const linkedInQuotePosition = linkedin && quote && position;
+    if (team === 'executive' && (props.modalState === officerModalState.EDIT ||
+       props.modalState === officerModalState.SUBMIT)) {
+      return nameEmailTeamPicture && linkedInQuotePosition;
+    } else if (props.modalState === officerModalState.SUBMIT ||
+       props.modalState === officerModalState.EDIT) {
+      return nameEmailTeamPicture;
+    } return false;
   }
 
   return (
@@ -213,9 +186,8 @@ function AboutUsManagerModal(props) {
               onChange={e => setTeam(e.target.value)}
               children= {
                 <>
-                  <option/>
-                  <option value="executive">Executive Team</option>
                   <option value="officers">Officer Team</option>
+                  <option value="executive">Executive Team</option>
                 </>
               }
             />
@@ -302,7 +274,6 @@ function AboutUsManagerModal(props) {
               ? 'Create New Officer'
               : 'Submit Changes'}
           </Button>
-
         </ModalFooter>
       </Modal>
     </div>
