@@ -23,7 +23,8 @@ export default function EventManager(props) {
   };
 
   async function populateEventList() {
-    const eventData = await getAllEvents(); if (!eventData.error) setEventList(eventData.responseData);
+    const eventData = await getAllEvents();
+    if (!eventData.error) setEventList(eventData.responseData);
   }
 
   useEffect(() => {
