@@ -53,8 +53,8 @@
 }
 
 .inventory-table td {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: auto;
+  text-overflow: clip;
 }
 
 .inventory-table tr {
@@ -67,18 +67,31 @@
   color: black;
 }
 
-.row-image,
+.row-image {
+  width: 15%;
+}
+
+@media (max-width: 768px) {
+  .row-image,
+  .row-description {
+    display: none;
+  }
+}
+
 .row-category,
 .row-name,
 .row-edit {
   width: 15%;
 }
 
-.row-price,
-.row-quantity {
+.row-price {
   width: 10%;
 }
 
+.row-quantity {
+  width: 13%;
+}
+
 .row-description {
-  width: 20%;
+  width: 17%;
 }
