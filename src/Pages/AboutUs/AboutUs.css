@@ -22,13 +22,16 @@
     max-height: 325px;
     min-height: 325px;
     display: block;
-    background-color: #ff930a;
-    border-radius: 9px;
+    background-color: #195780;
     margin-bottom: 20px;
     box-shadow: 0px 0px 10px 2px grey;
-    color: whitesmoke;
-    font-family: 'Montserrat', sans-serif;  
+    color: whitesmoke;  
     border: transparent;
+    border-radius: 0px;
+}
+
+.linkedin-svg :hover{
+  cursor: pointer;
 }
 
 .top-card {
@@ -38,17 +41,15 @@
     max-height: 250px;
     min-height: 250px;
     opacity:100%;
-    border-radius: 9px 9px 0px 0px;
 }
 
 .bottom-card {
     max-width: 250px;
     max-height: 250px;
     min-height: 250px;
-    background-color: #0f80aa;
+    background-color: #04395E;
     color: #f3f3f3;
     opacity: 0%;
-    border-radius: 9px 9px 0px 0px;
     padding: 10px 10px 0px 10px;
 }
 
@@ -149,6 +150,7 @@
 
 .officer-container {
     padding-top: 50px;
+    margin-bottom: 100px;
 }
 
 .grid-container-circle {

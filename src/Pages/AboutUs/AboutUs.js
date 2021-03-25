@@ -4,7 +4,7 @@ import AboutUsCard from './AboutUsCard.js';
 import AboutUsCircle from './AboutUsCircle.js';
 import {getAllOfficers} from '../../APIFunctions/OfficerManager';
 import Header from '../../Components/Header/Header';
-
+import Footer from '../../Components/Footer/Footer';
 class AboutUs extends Component {
   constructor(props) {
     super(props);
@@ -60,6 +60,7 @@ class AboutUs extends Component {
             </div>
           </section>
         </body>
+        <Footer/>
       </div>
     );
   }

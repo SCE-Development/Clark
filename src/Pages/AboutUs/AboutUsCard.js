@@ -26,7 +26,7 @@ function AboutUsCard(props){
           <div className="officer-text wrap">
             {position}
           </div>
-          <svg class="bi bi-chevron-right"
+          <svg class="linkedin-svg"
             width="25" height="25"
             viewBox="0 0 20 20"
             fill="currentColor"
