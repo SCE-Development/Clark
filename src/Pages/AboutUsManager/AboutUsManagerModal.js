@@ -160,8 +160,9 @@ function AboutUsManagerModal(props) {
     if (team === 'executive' && (props.modalState === officerModalState.EDIT ||
        props.modalState === officerModalState.SUBMIT)) {
       return nameEmailTeamPicture && linkedInQuotePosition;
-    } else if (props.modalState === officerModalState.SUBMIT ||
-       props.modalState === officerModalState.EDIT) {
+    } else if (team === 'officers' &&
+       (props.modalState === officerModalState.SUBMIT ||
+       props.modalState === officerModalState.EDIT)) {
       return nameEmailTeamPicture;
     } return false;
   }
@@ -186,6 +187,7 @@ function AboutUsManagerModal(props) {
               onChange={e => setTeam(e.target.value)}
               children= {
                 <>
+                  <option>Select Team</option>
                   <option value="officers">Officer Team</option>
                   <option value="executive">Executive Team</option>
                 </>

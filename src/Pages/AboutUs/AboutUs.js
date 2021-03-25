@@ -26,9 +26,9 @@ class AboutUs extends Component {
 
   render() {
     return (
-      <div>
+      <>
         <Header {...this.state.headerProps} />
-        <body className="officer-body">
+        <main className="officer-body">
           <section className="exec-container">
             <h1>Executive Team</h1>
             <div className="grid-container">
@@ -59,9 +59,9 @@ class AboutUs extends Component {
               }
             </div>
           </section>
-        </body>
+        </main>
         <Footer/>
-      </div>
+      </>
     );
   }
 }

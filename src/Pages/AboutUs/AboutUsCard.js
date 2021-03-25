@@ -26,13 +26,13 @@ function AboutUsCard(props){
           <div className="officer-text wrap">
             {position}
           </div>
-          <svg class="linkedin-svg"
+          <svg className="linkedin-svg"
             width="25" height="25"
             viewBox="0 0 20 20"
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg">
             <path onClick={() =>  window.open(`${linkedin}`, '_blank')}
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474
               0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175
                1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943

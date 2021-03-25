@@ -56,9 +56,9 @@ export default function AboutUsManager(props){
   }
 
   return (
-    <div>
+    <>
       <Header {...headerProps} />
-      <body className="officer-body">
+      <main className="officer-body">
         <section className="exec-container">
           <Button onClick={toggleCreateOfficer} className="create-officer">
                       Add Officer +
@@ -75,12 +75,13 @@ export default function AboutUsManager(props){
           />)}
           <h1>Executive Team</h1>
           <div className="grid-container">
-            {officers.length ? (officers.map(officer => {
+            {officers.length ? (officers.map((officer, i)=> {
               if(officer.team === 'executive'){
                 return(
                   <AboutUsCard
                     handleClick={() => toggleEditOfficer(officer)}
-                    info={officer}/>
+                    info={officer}
+                    key={i}/>
                 );
               } return null;
             })): (
@@ -91,12 +92,13 @@ export default function AboutUsManager(props){
         <section className="officer-container">
           <h1>Meet Our Team</h1>
           <div className="grid-container-circle">
-            {officers.length ? (officers.map((officer, index) => {
+            {officers.length ? (officers.map((officer, i) => {
               if(officer.team === 'officers'){
                 return(
                   <AboutUsCircle
                     handleClick={() => toggleEditOfficer(officer)}
-                    info={officer}/>
+                    info={officer}
+                    key={i}/>
                 );
               } return null;
             })): (
@@ -104,8 +106,8 @@ export default function AboutUsManager(props){
             )}
           </div>
         </section>
-      </body>
-    </div>
+      </main>
+    </>
   );
 }
 
