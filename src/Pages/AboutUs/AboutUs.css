@@ -6,14 +6,14 @@
     padding-top: 20px;
 }
 
-.officer-body h1 { 
+.officer-body h2 { 
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     color:#124559;
     font-size: 40px;
 }
 
-.officer-body h2, h3, p {
+.officer-body h3, p {
     min-width: 200;
 }
 

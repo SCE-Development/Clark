@@ -22,6 +22,8 @@ class AboutUs extends Component {
         officers: response.responseData
       });
     });
+    /* eslint-disable-next-line */
+    console.log(this.state.officers.length);
   }
 
   render() {
@@ -30,33 +32,31 @@ class AboutUs extends Component {
         <Header {...this.state.headerProps} />
         <main className="officer-body">
           <section className="exec-container">
-            <h1>Executive Team</h1>
+            <h2>Executive Team</h2>
             <div className="grid-container">
-              {
-                this.state.officers.map(info => {
-                  if (info.team === 'executive'){
-                    return(
-                      <AboutUsCard info={info}/>
-                    );
-                  }
-                  return null;
-                })
-              }
+              {this.state.officers.length?(this.state.officers.map(info => {
+                if (info.team === 'executive'){
+                  return(
+                    <AboutUsCard info={info}/>
+                  );
+                }
+              })):(
+                <span>No executives yet!</span>
+              )}
             </div>
           </section>
           <section className="officer-container">
-            <h1>Meet Our Team</h1>
+            <h2>Meet Our Team</h2>
             <div className="grid-container-circle">
-              {
-                this.state.officers.map(info => {
-                  if (info.team === 'officers'){
-                    return(
-                      <AboutUsCircle info={info}/>
-                    );
-                  }
-                  return null;
-                })
-              }
+              {this.state.officers.length ? (this.state.officers.map(info => {
+                if (info.team === 'officers'){
+                  return(
+                    <AboutUsCircle info={info}/>
+                  );
+                }
+              })):(
+                <span>No officers yet!</span>
+              )}
             </div>
           </section>
         </main>

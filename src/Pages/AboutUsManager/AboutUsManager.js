@@ -41,7 +41,7 @@ export default function AboutUsManager(props){
     toggle();
   }
 
-  function toggleCreateOfficer(officer) {
+  function toggleCreateOfficer() {
     setOfficer();
     setModalState(officerModalState.SUBMIT);
     setModal(!modal);
@@ -73,7 +73,7 @@ export default function AboutUsManager(props){
             token={props.user.token}
             {...officer}
           />)}
-          <h1>Executive Team</h1>
+          <h2>Executive Team</h2>
           <div className="grid-container">
             {officers.length ? (officers.map((officer, i)=> {
               if(officer.team === 'executive'){
@@ -85,12 +85,12 @@ export default function AboutUsManager(props){
                 );
               } return null;
             })): (
-              <h1>No officers yet!</h1>
+              <span>No executives yet!</span>
             )}
           </div>
         </section>
         <section className="officer-container">
-          <h1>Meet Our Team</h1>
+          <h2>Meet Our Team</h2>
           <div className="grid-container-circle">
             {officers.length ? (officers.map((officer, i) => {
               if(officer.team === 'officers'){
@@ -102,7 +102,7 @@ export default function AboutUsManager(props){
                 );
               } return null;
             })): (
-              <h1>No officers yet!</h1>
+              <span>No officers yet!</span>
             )}
           </div>
         </section>
