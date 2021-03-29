@@ -8,5 +8,6 @@
   "MAILER_API_URL_PROD": "https://sce.engr.sjsu.edu/cloudapi",
   "RPC_API_URL_PROD": "https://sce.engr.sjsu.edu/SceRpcApi",
   "sitekey": "super secret key",
-  "TINYMCE_API_KEY": "XXXXXXXXXXXXXXXXXXXXX"
+  "TINYMCE_API_KEY": "XXXXXXXXXXXXXXXXXXXXX",
+  "REACT_APP_GOOGLE_CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com"
 }
