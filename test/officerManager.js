@@ -105,7 +105,7 @@ describe('OfficerManager', () => {
   });
 
   describe('/POST get', () => {
-    it('Should return an object of all forms', async () => {
+    it('Should return an object of all forms if token is given', async () => {
       const form = { token: token };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
@@ -116,6 +116,22 @@ describe('OfficerManager', () => {
       expect(response).to.have.length(1);
       expect(response[0].name).to.be.eql('member');
       expect(response[0].email).to.be.eql('test@test.com');
+      expect(response[0].team).to.be.eql('dev');
+      expect(response[0].linkedin).to.be.eql('linkedinlink');
+      expect(response[0].quote).to.be.eql('aquote');
+      expect(response[0].pictureUrl).to.be.eql(DEFAULT_PHOTO_URL);
+    });
+
+    it('Should return an object without email if no token is given', async () => {
+      const form = { token: token };
+      setTokenStatus(false);
+      const result = await test.sendPostRequest(
+        '/api/officerManager/get', form);
+      expect(result).to.have.status(OK);
+      const response = result.body;
+      response.should.be.a('array');
+      expect(response).to.have.length(1);
+      expect(response[0].name).to.be.eql('member');
       expect(response[0].team).to.be.eql('dev');
       expect(response[0].linkedin).to.be.eql('linkedinlink');
       expect(response[0].quote).to.be.eql('aquote');
