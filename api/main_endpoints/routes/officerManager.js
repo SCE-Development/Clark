@@ -41,7 +41,9 @@ router.post('/submit', (req, res) => {
 
 // Find all api if email is null/undefined
 // else query by email
-router.post('/getOfficers', (req, res) => {
+// if token is valid, all information is returned
+// else, only public information is returned
+router.post('/get', (req, res) => {
   let obj = {};
   if (typeof req.body.email !== 'undefined') obj = { email: req.body.email };
   Manager.find(obj, (error, forms) => {
@@ -49,13 +51,30 @@ router.post('/getOfficers', (req, res) => {
       const info = {
         userEmail:req.body.email,
         errorTime: new Date(),
-        apiEndpoint: 'officerManager/getOfficers',
+        apiEndpoint: 'officerManager/get',
         errorDescription: error
       };
       addErrorLog(info);
       return res.sendStatus(BAD_REQUEST);
+    } else if (checkIfTokenSent(req) &&
+    (checkIfTokenValid(req, membershipState.OFFICER))) {
+      return res.status(OK).send(forms);
+    } else {
+      const officers = [];
+      forms.forEach(element => {
+        const officer = new Manager({
+          name: element.name,
+          linkedin: element.linkedin,
+          team: element.team,
+          position: element.position,
+          quote: element.quote,
+          pictureUrl: element.pictureUrl
+        });
+        officers.push(officer);
+      });
+      return res.status(OK).send(officers);
     }
-    return res.status(OK).send(forms);
+
   });
 });
 

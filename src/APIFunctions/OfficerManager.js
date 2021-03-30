@@ -27,10 +27,10 @@ export async function deleteOfficer(officerToDelete, token){
   return status;
 }
 
-export async function getAllOfficers(){
+export async function getAllOfficers(token){
   let status = new ApiResponse();
   await axios
-    .post('api/officerManager/getOfficers')
+    .post('api/officerManager/get', {token})
     .then(res => {
       status.responseData = res.data;
     })

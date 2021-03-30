@@ -30,7 +30,7 @@
     border-radius: 0px;
 }
 
-.linkedin-svg :hover{
+.linkedin-svg :hover {
   cursor: pointer;
 }
 
@@ -171,8 +171,8 @@
     }
 
     .grid-container-circle{
-        -ms-grid-columns: 0.7fr 0.7fr;
-        grid-template-columns: 0.7fr 0.7fr;
+        -ms-grid-columns: 0.7fr;
+        grid-template-columns: 0.7fr;
     }
 }
 

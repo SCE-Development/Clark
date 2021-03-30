@@ -3,7 +3,7 @@ import React from 'react';
 function AboutUsCircle(props){
   const {
     name,
-    pictureUrl,
+    pictureUrl
   } = props.info;
 
   return (

@@ -23,7 +23,7 @@ export default function AboutUsManager(props){
 
 
   async function populateOfficers(){
-    const officerData = await getAllOfficers();
+    const officerData = await getAllOfficers(props.user.token);
     if(!officerData.error) setOfficers(officerData.responseData);
   }
 

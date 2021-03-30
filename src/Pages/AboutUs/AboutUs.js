@@ -22,8 +22,6 @@ class AboutUs extends Component {
         officers: response.responseData
       });
     });
-    /* eslint-disable-next-line */
-    console.log(this.state.officers.length);
   }
 
   render() {
@@ -34,29 +32,31 @@ class AboutUs extends Component {
           <section className="exec-container">
             <h2>Executive Team</h2>
             <div className="grid-container">
-              {this.state.officers.length?(this.state.officers.map(info => {
-                if (info.team === 'executive'){
-                  return(
-                    <AboutUsCard info={info}/>
-                  );
-                }
-              })):(
-                <span>No executives yet!</span>
-              )}
+              {this.state.officers.length?
+                (this.state.officers.map((info, index) => {
+                  if (info.team === 'executive'){
+                    return(
+                      <AboutUsCard info={info} key={index}/>
+                    );
+                  }
+                })):(
+                  <span>No executives yet!</span>
+                )}
             </div>
           </section>
           <section className="officer-container">
             <h2>Meet Our Team</h2>
             <div className="grid-container-circle">
-              {this.state.officers.length ? (this.state.officers.map(info => {
-                if (info.team === 'officers'){
-                  return(
-                    <AboutUsCircle info={info}/>
-                  );
-                }
-              })):(
-                <span>No officers yet!</span>
-              )}
+              {this.state.officers.length ?
+                (this.state.officers.map((info, index)=> {
+                  if (info.team === 'officers'){
+                    return(
+                      <AboutUsCircle info={info} key={index}/>
+                    );
+                  }
+                })):(
+                  <span>No officers yet!</span>
+                )}
             </div>
           </section>
         </main>

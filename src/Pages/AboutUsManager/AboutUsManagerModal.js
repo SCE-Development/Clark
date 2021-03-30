@@ -108,7 +108,7 @@ function AboutUsManagerModal(props) {
         type: 'text',
         defaultValue: props.name,
         placeholder: 'e.g. John D.',
-        maxlength: '24',
+        maxlength: '10',
         handleChange: e => setName(e.target.value)
       },
       {
@@ -211,7 +211,7 @@ function AboutUsManagerModal(props) {
                             defaultValue={input.defaultValue}
                             placeholder={input.placeholder}
                             onChange={input.handleChange}
-                            maxlength={input.maxlength}
+                            maxLength={input.maxlength}
                             children={input.children}
                           />
                         </InputGroup>
@@ -236,6 +236,7 @@ function AboutUsManagerModal(props) {
                             defaultValue={input.defaultValue}
                             placeholder={input.placeholder}
                             onChange={input.handleChange}
+                            maxlength={input.maxlength}
                             children={input.children}
                           />
                         </InputGroup>

@@ -104,12 +104,12 @@ describe('OfficerManager', () => {
     });
   });
 
-  describe('/POST getOfficers', () => {
+  describe('/POST get', () => {
     it('Should return an object of all forms', async () => {
       const form = { token: token };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/getOfficers', form);
+        '/api/officerManager/get', form);
       expect(result).to.have.status(OK);
       const response = result.body;
       response.should.be.a('array');
@@ -129,7 +129,7 @@ describe('OfficerManager', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/getOfficers', form);
+        '/api/officerManager/get', form);
       expect(result).to.have.status(OK);
       result.body.should.be.a('array');
       result.body.forEach(obj => {
@@ -192,7 +192,7 @@ describe('OfficerManager', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/getOfficers', form);
+        '/api/officerManager/get', form);
       expect(result).to.have.status(OK);
       expect(result.body[0].team).to.equal('event');
     });
@@ -252,7 +252,7 @@ describe('OfficerManager', () => {
       };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
-        '/api/officerManager/getOfficers', form);
+        '/api/officerManager/get', form);
       expect(result).to.have.status(OK);
       expect(result.body).have.length(0);
     });
