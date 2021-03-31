@@ -43,8 +43,9 @@
 }
 
 .item-image {
-  max-width: 100px;
-  max-height: 100px;
+  max-width: 90px;
+  height: auto;
+  padding: auto;
 }
 
 .inventory-table {
@@ -53,8 +54,7 @@
 }
 
 .inventory-table td {
-  overflow: auto;
-  text-overflow: clip;
+  word-wrap: break-word;
 }
 
 .inventory-table tr {
@@ -67,8 +67,20 @@
   color: black;
 }
 
-.row-image {
+.row-image,
+.row-category,
+.row-name {
   width: 15%;
+}
+
+.row-price,
+.row-quantity,
+.row-edit {
+  width: 13%;
+}
+
+.row-description {
+  width: 16%;
 }
 
 @media (max-width: 768px) {
@@ -78,20 +90,27 @@
   }
 }
 
-.row-category,
-.row-name,
-.row-edit {
-  width: 15%;
-}
-
-.row-price {
-  width: 10%;
-}
-
-.row-quantity {
-  width: 13%;
-}
-
-.row-description {
-  width: 17%;
+@media (max-width: 480px) {
+  .inventory-table thead {
+    display: none;
+  }
+  .inventory-table td {
+    display: block;
+    width: 100%;
+  }
+  .inventory-table td:first-child {
+    border: none;
+  }
+  .inventory-table tr {
+    outline: rgb(196, 196, 196) 1px dashed;
+  }
+  .inventory-table {
+    border-spacing: 0px 30px;
+    border-collapse: separate;
+    margin: 0px;
+  }
+  .table-container {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 }

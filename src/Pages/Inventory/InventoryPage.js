@@ -214,7 +214,7 @@ export default class InventoryPage extends Component {
           <div className="search-bar-container">
             <input
               className="inventory-search-bar"
-              placeholder="Start typing to filter by item name..."
+              placeholder="Filter by item name..."
               value = {this.searchInput}
               onChange = {(e) => this.updateSearchInput(e.target.value)}
             />
