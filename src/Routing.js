@@ -125,7 +125,7 @@ export default function Routing({ appProps }) {
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
     { Component: VerifyEmailPage, path: '/verify' },
-    { Component: LoginBot, path: '/discordSJSU/LoginWithGoogle'}
+    { Component: LoginBot, path: '/discordSJSU/LoginWithGoogle/:id'}
   ];
   return (
     <Router>
