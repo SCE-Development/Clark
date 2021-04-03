@@ -11,6 +11,7 @@
     font-weight: 700;
     color:#124559;
     font-size: 40px;
+    padding-bottom: 15px;
 }
 
 .officer-body h3, p {
@@ -124,6 +125,7 @@
     background-position: center;
     background-size: cover;
     transition: all .6s ease-in-out;
+    background-color: #386783;
 }
 
 .circle-container {
@@ -156,23 +158,28 @@
 .grid-container-circle {
     display: grid;
     margin-bottom: 20px;
-    grid-row-gap: 40px;
-    -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
-    grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
-    -ms-grid-rows: minmax ( 2px, 0.7fr) minmax ( 1px, 0.7fr) minmax ( 2px, 0.7fr);
-    grid-template-rows: minmax (2px, 0.7fr) minmax (1px, 0.7fr) minmax (2px, 0.7fr);
+    grid-row-gap: 20px;
+    -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
+    grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
+    -ms-grid-rows: minmax ( 2px, 0.51fr) minmax ( 1px, 0.51fr) minmax ( 2px, 0.51fr);
+    grid-template-rows: minmax (2px, 0.51fr) minmax (1px, 0.51fr) minmax (2px, 0.51fr);
     border-radius: 0px;
 }
 
 @media (max-width: 576px) {
+    .officer-body {
+        padding-left:  50px;
+        padding-right: 50px;
+    }
+
     .grid-container {
         -ms-grid-columns: 1fr;
         grid-template-columns: 1fr;
     }
 
     .grid-container-circle{
-        -ms-grid-columns: 0.7fr;
-        grid-template-columns: 0.7fr;
+        -ms-grid-columns: 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr;
     }
 }
 
@@ -182,8 +189,8 @@
         grid-template-columns: 1fr 1fr;
     }
     .grid-container-circle {
-        -ms-grid-columns: 0.7fr 0.7fr 0.7fr;
-        grid-template-columns: 0.7fr 0.7fr 0.7fr;
+        -ms-grid-columns: 0.51fr 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr 0.51fr;
     }
 }
 
@@ -194,8 +201,8 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
     .grid-container-circle {
-        -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr;
-        grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr;
+        -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr;
     }
 }
 
@@ -206,8 +213,8 @@
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
     .grid-container-circle {
-        -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
-        grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+        -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
     }
     
 }
@@ -218,7 +225,7 @@
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
     .grid-container-circle {
-        -ms-grid-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
-        grid-template-columns: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr;
+        -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
     }
 }

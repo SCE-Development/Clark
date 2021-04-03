@@ -7,8 +7,9 @@ function AboutUsCircle(props){
   } = props.info;
 
   return (
-    <div className="grid" onClick={props.handleClick}>
-      <div className="circle" style={{backgroundImage: `url(${pictureUrl})`}}>
+    <div className="grid">
+      <div className="circle" style={{backgroundImage: `url(${pictureUrl})`}}
+        onClick={props.handleClick}>
         <div className="circle-container">
           <p>{name}</p>
         </div>
