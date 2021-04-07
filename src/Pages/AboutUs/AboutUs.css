@@ -19,9 +19,9 @@
 }
 
 .card {
-    max-width: 250px;
-    max-height: 325px;
-    min-height: 325px;
+    max-width: 375px;
+    max-height: 470px;
+    min-height: 470px;
     display: block;
     background-color: #195780;
     margin-bottom: 20px;
@@ -38,16 +38,16 @@
 .top-card {
     background-position: center;
     background-size: cover;
-    max-width: 250px;
-    max-height: 250px;
-    min-height: 250px;
+    max-width: 375px;
+    max-height: 390px;
+    min-height: 390px;
     opacity:100%;
 }
 
 .bottom-card {
-    max-width: 250px;
-    max-height: 250px;
-    min-height: 250px;
+    max-width: 375px;
+    max-height: 390px;
+    min-height: 390px;
     background-color: #04395E;
     color: #f3f3f3;
     opacity: 0%;
@@ -64,8 +64,8 @@
 }
 
 .no-wrap {
+    text-overflow: ellipses !important;
     overflow: hidden;
-    text-overflow: ellipsis !important;
     overflow-wrap: initial;
 }
 
@@ -85,8 +85,8 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
     -ms-grid-rows: auto auto;
     grid-template-rows: auto auto;
-    grid-row-gap: 14px;
-    grid-column-gap: 14px;
+    grid-row-gap: 20px;
+    grid-column-gap: 20px;
 }
 
 .officer-text {
@@ -116,11 +116,11 @@
 }
 
 .circle {
-    width: 115px;
-    height: 115px;
+    width: 170px;
+    height: 170px;
     max-width: none;
     min-height: auto;
-    min-width: 115px;
+    min-width: 170px;
     border-radius: 100%;
     background-position: center;
     background-size: cover;
@@ -129,16 +129,16 @@
 }
 
 .circle-container {
-    background-color: #386783;
-    width: 115px;
-    height: 115px;
+    background-color: #04395E;
+    width: 170px;
+    height: 170px;
     min-height: auto;
-    min-width: 115px;
+    min-width: 170px;
     border-radius: 100%;
     color: #f3f3f3;
     text-align: center !important;
     opacity: 0%;
-    line-height: 115px !important;
+    line-height: 150px !important;
 }
 
 .circle-container p {
@@ -166,27 +166,66 @@
     border-radius: 0px;
 }
 
-@media (max-width: 576px) {
+@media (max-width: 600px) {
     .officer-body {
-        padding-left:  50px;
-        padding-right: 50px;
+        padding-left: 5px;
+        padding-right: 0px;
+    }
+
+    .card {
+        max-width: 300px;
+        max-height: 375px;
+        max-height: 375px;
+    }
+
+    .top-card .bottom-card{
+        max-width: 300px;
+        max-height: 300px;
+        max-height: 300px;
     }
 
     .grid-container {
-        -ms-grid-columns: 1fr;
-        grid-template-columns: 1fr;
+        -ms-grid-columns: 0.7fr;
+        grid-template-columns: 0.7fr;
+        grid-column-gap: 0px;
+        justify-content: center;
     }
 
     .grid-container-circle{
         -ms-grid-columns: 0.51fr 0.51fr;
         grid-template-columns: 0.51fr 0.51fr;
+        justify-content: center;
     }
 }
 
-@media (min-width: 576px) and (max-width: 767.98px) {
+@media (min-width: 600px) and (max-width: 770px) {
+    .card {
+        max-width: 300px;
+        max-height: 375px;
+        max-height: 375px;
+    }
+
+    .top-card .bottom-card{
+        max-width: 300px;
+        max-height: 300px;
+        max-height: 300px;
+    }
+
     .grid-container {
         -ms-grid-columns: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
+    }
+    .grid-container-circle {
+        -ms-grid-columns: 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr;
+    }
+}
+
+
+@media (min-width: 770px) and (max-width: 930px) {
+    .grid-container {
+        -ms-grid-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
     }
     .grid-container-circle {
         -ms-grid-columns: 0.51fr 0.51fr 0.51fr;
@@ -195,7 +234,7 @@
 }
 
 
-@media (min-width: 768px) and (max-width: 991.98px) {
+@media (min-width: 930px) and (max-width: 1200px) {
     .grid-container {
         -ms-grid-columns: 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr;
@@ -203,18 +242,6 @@
     .grid-container-circle {
         -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr;
         grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr;
-    }
-}
-
-
-@media (min-width: 992px) and (max-width: 1199.98px) {
-    .grid-container {
-        -ms-grid-columns: 1fr 1fr 1fr 1fr;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-    }
-    .grid-container-circle {
-        -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
-        grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
     }
     
 }

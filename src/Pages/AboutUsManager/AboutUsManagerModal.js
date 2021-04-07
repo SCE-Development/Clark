@@ -75,19 +75,19 @@ function AboutUsManagerModal(props) {
         addon: 'Position*',
         type: 'text',
         defaultValue: props.position,
-        maxlength: '20',
+        maxlength: '24',
         handleChange: e => setPosition(e.target.value)
       }
     ],
     [
       {
-        addon: 'Description* (180 characters max)',
+        addon: 'Description* (400 characters max)',
         type: 'textarea',
         rows: 5,
         placeholder: 'Enter Description',
         defaultValue: props.quote,
         handleChange: e => setQuote(e.target.value),
-        maxlength: '180'
+        maxlength: '400'
       }
     ],
     [
@@ -108,7 +108,7 @@ function AboutUsManagerModal(props) {
         type: 'text',
         defaultValue: props.name,
         placeholder: 'e.g. John D.',
-        maxlength: '10',
+        maxlength: '15',
         handleChange: e => setName(e.target.value)
       },
       {
