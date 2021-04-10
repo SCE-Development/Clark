@@ -10,7 +10,7 @@ function AboutUsCircle(props){
     <div className="grid">
       <div className="circle" style={{backgroundImage: `url(${pictureUrl})`}}
         onClick={props.handleClick}>
-        <div className="circle-container">
+        <div className="circle-container wrap">
           <p>{name}</p>
         </div>
       </div>

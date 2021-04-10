@@ -15,8 +15,8 @@ function AboutUsCard(props){
         <div className="top-card" style={
           {backgroundImage: `url(${pictureUrl})`
           }}>
-          <div className="bottom-card no-wrap">
-            {quote}
+          <div className="bottom-card">
+            <div className="no-wrap">{quote}</div>
           </div>
         </div>
         <div className="card-container wrap">

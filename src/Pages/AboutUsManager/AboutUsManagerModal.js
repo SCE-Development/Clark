@@ -81,13 +81,13 @@ function AboutUsManagerModal(props) {
     ],
     [
       {
-        addon: 'Description* (400 characters max)',
+        addon: 'Description* (360 characters max)',
         type: 'textarea',
         rows: 5,
         placeholder: 'Enter Description',
         defaultValue: props.quote,
         handleChange: e => setQuote(e.target.value),
-        maxlength: '400'
+        maxlength: '360'
       }
     ],
     [

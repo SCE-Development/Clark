@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;1,300&&display=swap');
 
 .officer-body {
-    padding-left: 100px;
+    padding-left: 90px;
     padding-right: 100px;
     padding-top: 20px;
 }
@@ -19,9 +19,8 @@
 }
 
 .card {
-    max-width: 375px;
-    max-height: 470px;
-    min-height: 470px;
+    width: 280px;
+    height: 420px;
     display: block;
     background-color: #195780;
     margin-bottom: 20px;
@@ -38,16 +37,14 @@
 .top-card {
     background-position: center;
     background-size: cover;
-    max-width: 375px;
-    max-height: 390px;
-    min-height: 390px;
+    width: 280px;
+    height: 345px;
     opacity:100%;
 }
 
 .bottom-card {
-    max-width: 375px;
-    max-height: 390px;
-    min-height: 390px;
+    width: 280px;
+    height: 345px;
     background-color: #04395E;
     color: #f3f3f3;
     opacity: 0%;
@@ -62,7 +59,6 @@
     word-wrap: break-word;
     overflow-wrap: initial;
 }
-
 .no-wrap {
     text-overflow: ellipses !important;
     overflow: hidden;
@@ -73,7 +69,7 @@
     opacity: 80%;
 }
 
-.card:hover{
+.card:hover {
     transform: scale(1.05);
 }
 
@@ -85,8 +81,9 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
     -ms-grid-rows: auto auto;
     grid-template-rows: auto auto;
-    grid-row-gap: 20px;
-    grid-column-gap: 20px;
+    grid-row-gap: 30px;
+    grid-column-gap: 30px;
+    justify-content: center;
 }
 
 .officer-text {
@@ -164,53 +161,44 @@
     -ms-grid-rows: minmax ( 2px, 0.51fr) minmax ( 1px, 0.51fr) minmax ( 2px, 0.51fr);
     grid-template-rows: minmax (2px, 0.51fr) minmax (1px, 0.51fr) minmax (2px, 0.51fr);
     border-radius: 0px;
+    justify-content: center;
 }
-
-@media (max-width: 600px) {
+@media (max-width: 325px) {
     .officer-body {
         padding-left: 5px;
         padding-right: 0px;
-    }
-
-    .card {
-        max-width: 300px;
-        max-height: 375px;
-        max-height: 375px;
-    }
-
-    .top-card .bottom-card{
-        max-width: 300px;
-        max-height: 300px;
-        max-height: 300px;
     }
 
     .grid-container {
         -ms-grid-columns: 0.7fr;
         grid-template-columns: 0.7fr;
         grid-column-gap: 0px;
-        justify-content: center;
     }
 
-    .grid-container-circle{
-        -ms-grid-columns: 0.51fr 0.51fr;
-        grid-template-columns: 0.51fr 0.51fr;
-        justify-content: center;
+    .grid-container-circle {
+        -ms-grid-columns: 0.51fr;
+        grid-template-columns: 0.51fr;
     }
 }
-
-@media (min-width: 600px) and (max-width: 770px) {
-    .card {
-        max-width: 300px;
-        max-height: 375px;
-        max-height: 375px;
+@media (min-width: 325px) and (max-width: 600px) {
+    .officer-body {
+        padding-left: 5px;
+        padding-right: 0px;
     }
 
-    .top-card .bottom-card{
-        max-width: 300px;
-        max-height: 300px;
-        max-height: 300px;
+    .grid-container {
+        -ms-grid-columns: 0.7fr;
+        grid-template-columns: 0.7fr;
+        grid-column-gap: 0px;
     }
 
+    .grid-container-circle {
+        -ms-grid-columns: 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr;
+    }
+}
+@media (min-width: 600px) and (max-width: 768px) {
+    
     .grid-container {
         -ms-grid-columns: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
@@ -218,14 +206,28 @@
     .grid-container-circle {
         -ms-grid-columns: 0.51fr 0.51fr;
         grid-template-columns: 0.51fr 0.51fr;
+        column-gap: 10px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 900px) {
+    
+    .grid-container {
+        -ms-grid-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+    }
+    .grid-container-circle {
+        -ms-grid-columns: 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr;
+        column-gap: 10px;
     }
 }
 
 
-@media (min-width: 770px) and (max-width: 930px) {
+@media (min-width: 900px) and (max-width: 1024px) {
     .grid-container {
-        -ms-grid-columns: 1fr 1fr 1fr;
-        grid-template-columns: 1fr 1fr 1fr;
+        -ms-grid-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
     }
     .grid-container-circle {
         -ms-grid-columns: 0.51fr 0.51fr 0.51fr;
@@ -234,7 +236,7 @@
 }
 
 
-@media (min-width: 930px) and (max-width: 1200px) {
+@media (min-width: 1024px) and (max-width: 1200px) {
     .grid-container {
         -ms-grid-columns: 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr;
