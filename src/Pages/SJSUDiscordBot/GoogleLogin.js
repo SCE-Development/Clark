@@ -1,16 +1,19 @@
 import React, {useState} from 'react';
 import {GoogleLogin,
   GoogleLogout} from 'react-google-login';
-import { REACT_APP_GOOGLE_CLIENT_ID } from '../../config/config.json';
+import { GOOGLE_API_CLIENT_ID } from '../../config/config.json';
 import axios from 'axios';
 import { ApiResponse } from '../../../src/APIFunctions/ApiResponses';
-const clientId = REACT_APP_GOOGLE_CLIENT_ID;
+const clientId = GOOGLE_API_CLIENT_ID;
 
 function Verify(){
   const [isLogined, setLoginState] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const [username, setUsername] = useState('');
+  const [discordID, setDiscordID] = useState(0);
   const [id, setID] = useState(window.location.href.split('/')[5]);
+  const [validID, setValidID] = useState(false);
+  const [loginFailed, setLoginFailed] = useState(false);
 
   const getTempUser = () => {
     let status = new ApiResponse();
@@ -18,6 +21,8 @@ function Verify(){
       .post('http://localhost:8080/api/verifiedUser/getTempUser', {id})
       .then(res => {
         setUsername(res.data.username);
+        setDiscordID(res.data.id);
+        setValidID(true);
       })
       .catch(() => {
         status.error = true;
@@ -33,6 +38,24 @@ function Verify(){
     if(res.accessToken){
       setLoginState(true);
       setAccessToken(res.accessToken);
+      // const user = {
+      //   discordID: discordID,
+      //   googleId: res.profileObj.googleId,
+      //   email: res.profileObj.email,
+      //   name: res.profileObj.name,
+      //   givenName: res.profileObj.givenName,
+      //   familyName: res.profileObj.familyName
+      // };
+      // axios
+      //   .post('http://localhost:8080/api/verifiedUser/AddUser', {id})
+      //   .then(res => {
+      //     setUsername(res.data.username);
+      //     setValidID(true);
+      //   })
+      //   .catch(() => {
+      //     status.error = true;
+      //   });
+      // return status;
     }
     /* eslint-disable no-console */
     console.log(res.profileObj);
@@ -44,27 +67,38 @@ function Verify(){
     setAccessToken('');
   };
 
-  const onFailure = (res) => {
-    alert('Failed to Login!');
+  const onLoginFailure = (res) => {
+    alert('Login failed');
   };
+
+  const onLogoutFailure = (res) => {
+    alert('Logout failed');
+  };
+
+  /* eslint-disable no-console */
+  console.log(clientId);
+  /* eslint-disable no-console */
 
   return(
     <div>
       <section style={{margin: '100px'}}>
-        <h4> You are verifying as <b>{username}</b></h4>
+        { !validID?
+          <h5>Invalid ID: please type verify in the chat again</h5>
+          :<h4> You are verifying as <b>{username}</b></h4>
+        }
         <h5> Please login with SJSU email</h5>
         { isLogined ?
           <GoogleLogout
             clientId= {clientId}
             buttonText='Logout'
             onLogoutSuccess={ logout }
-            onFailure={ onFailure }
+            onFailure={ onLogoutFailure }
           >
           </GoogleLogout>: <GoogleLogin
             clientId= {clientId}
             buttonText='Login'
             onSuccess={ onSuccess }
-            onFailure={ onFailure }
+            onFailure={ onLoginFailure }
             cookiePolicy={ 'single_host_origin' }
             responseType='code,token'
           />
