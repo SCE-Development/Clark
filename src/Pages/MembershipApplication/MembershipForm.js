@@ -51,7 +51,7 @@ export default function MembershipForm(props) {
       type: 'text',
       handleChange: e => setFirstName(e.target.value),
       ifRequirementsNotMet: !firstName && clickSubmitted && (
-        <p className='unavailable'>First name cannot be left emtpy</p>
+        <p className='unavailable'>First name cannot be left empty</p>
       ),
     },
     {
