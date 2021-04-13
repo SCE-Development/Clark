@@ -20,18 +20,26 @@ export default function MembershipForm(props) {
   const [passwordValid, setPasswordValid] = useState(true);
   const [clickSubmitted, setClickSubmitted] = useState(false);
 
+  function checkValidEmail(){
+    let pattern = new RegExp(' /^\s*(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()'+
+                            '\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}' +
+                            '\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|'+
+                            '(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))\s*$/');
+    return pattern.test(email);
+  }
+
   function checkEmailInput(){
     if(clickSubmitted){
       if(!email)
         return (<p className='unavailable'> Email cannot be left empty</p>);
-      let validEmail = /^\s*(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))\s*$/.test(email);
+      let validEmail = checkValidEmail();
       if(!validEmail)
         return (<p className='unavailable'> Your input email is invalid</p>);
     }
   }
 
   function requiredFieldsMet() {
-    let validEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}/.test(email);
+    let validEmail = checkValidEmail();
     return verified && firstName && lastName &&
     validEmail && major && password.length >= 8;
   }
@@ -79,26 +87,20 @@ export default function MembershipForm(props) {
     {
       label: 'Password (8 or more characters)',
       type: 'password',
-      addon: !passwordValid && (
+      addon: !passwordValid && clickSubmitted &&(
         <p className='unavailable'>
           Password requires one uppercase character, one number
-          and at least 8 characters
+          and at least 8 charactersfirst
         </p>
       ),
-      ifRequirementsNotMet: password.length<8 && clickSubmitted && (
-        <p className='unavailable'>
-          Password requires one uppercase character, one number
-          and at least 8 characters
-        </p>
-      ),
-      handleChange: e => setPassword(e.target.value),
+      handleChange: e => setPassword(e.target.value.trim()),
     },
 
     {
       label: 'Confirm password',
       type: 'password',
       ifRequirementsNotMet: checkConfirmPassword(),
-      handleChange: e => setConfirmPassWord(e.target.value),
+      handleChange: e => setConfirmPassWord(e.target.value.trim()),
     }
   ];
 
