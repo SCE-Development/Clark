@@ -4,7 +4,7 @@ import {GoogleLogin,
 import { GOOGLE_API_CLIENT_ID } from '../../config/config.json';
 import axios from 'axios';
 import { ApiResponse } from '../../../src/APIFunctions/ApiResponses';
-const clientId = GOOGLE_API_CLIENT_ID;
+import CookieConsent from 'react-cookie-consent';
 
 function Verify(){
   const [isLogined, setLoginState] = useState(false);
@@ -34,32 +34,43 @@ function Verify(){
     getTempUser();
   }, []);
 
+  const deleteTempUser = (()=>{
+    let status = new ApiResponse();
+    axios
+      .post('http://localhost:8080/api/verifiedUser/getTempUser', {id})
+      .then(res => {
+        status.responseData = res.data;
+      })
+      .catch(() => {
+        status.error = true;
+      });
+    return status;
+  });
+
   const onSuccess = (res) => {
+    let status = new ApiResponse();
+    /* eslint-disable */
+    console.log(res);
+    /* eslint-disable */
     if(res.accessToken){
       setLoginState(true);
       setAccessToken(res.accessToken);
-      // const user = {
-      //   discordID: discordID,
-      //   googleId: res.profileObj.googleId,
-      //   email: res.profileObj.email,
-      //   name: res.profileObj.name,
-      //   givenName: res.profileObj.givenName,
-      //   familyName: res.profileObj.familyName
-      // };
-      // axios
-      //   .post('http://localhost:8080/api/verifiedUser/AddUser', {id})
-      //   .then(res => {
-      //     setUsername(res.data.username);
-      //     setValidID(true);
-      //   })
-      //   .catch(() => {
-      //     status.error = true;
-      //   });
-      // return status;
+      deleteTempUser();
+      const body = {
+        discordID: discordID,
+        googleTokenId: res.tokenId
+      };
+      axios
+        .post('http://localhost:8080/api/verifiedUser/addUser_withGoogleToken',
+          body)
+        .then(res => {
+          status.responseData = res.data;
+        })
+        .catch(() => {
+          status.error = true;
+        });
+      return status;
     }
-    /* eslint-disable no-console */
-    console.log(res.profileObj);
-    /* eslint-disable no-console */
   };
 
   const logout = (res) => {
@@ -69,45 +80,56 @@ function Verify(){
 
   const onLoginFailure = (res) => {
     alert('Login failed');
+    setLoginFailed(true);
   };
-
-  const onLogoutFailure = (res) => {
-    alert('Logout failed');
-  };
-
-  /* eslint-disable no-console */
-  console.log(clientId);
-  /* eslint-disable no-console */
 
   return(
     <div>
       <section style={{margin: '100px'}}>
         { !validID?
-          <h5>Invalid ID: please type verify in the chat again</h5>
-          :<h4> You are verifying as <b>{username}</b></h4>
+          <h5>Invalid ID: please type verify in the discord chat again</h5>
+          : isLogined ?
+            accessToken ?
+              <h5>
+                Success: please type "verify" in chat to get your role
+              </h5>
+              : null
+            :
+            loginFailed ?
+              <>
+                <h4> Login Failed. Please login again. </h4>
+                <GoogleLogin
+                  clientId= {GOOGLE_API_CLIENT_ID}
+                  buttonText='Login'
+                  onSuccess={ onSuccess }
+                  onFailure={ onLoginFailure }
+                  cookiePolicy={ 'single_host_origin' }
+                  responseType='code,token'
+                />
+              </>:
+              <>
+                <h4> You are verifying as <b>{username}</b></h4>
+                <h5> Please login with SJSU email</h5>
+                <GoogleLogin
+                  clientId= {GOOGLE_API_CLIENT_ID}
+                  buttonText='Login'
+                  onSuccess={ onSuccess }
+                  onFailure={ onLoginFailure }
+                  cookiePolicy={ 'single_host_origin' }
+                  responseType='code,token'
+                />
+              </>
         }
-        <h5> Please login with SJSU email</h5>
-        { isLogined ?
-          <GoogleLogout
-            clientId= {clientId}
-            buttonText='Logout'
-            onLogoutSuccess={ logout }
-            onFailure={ onLogoutFailure }
-          >
-          </GoogleLogout>: <GoogleLogin
-            clientId= {clientId}
-            buttonText='Login'
-            onSuccess={ onSuccess }
-            onFailure={ onLoginFailure }
-            cookiePolicy={ 'single_host_origin' }
-            responseType='code,token'
-          />
-        }
-        { accessToken ?
-          <h5>
-            Success: please type "verify" in chat to get your role
-          </h5>
-          : null }
+        <CookieConsent
+          location='bottom'
+          buttonText='Accept Cookies'
+          cookieName='authCookie'
+          style={{ background:'#2B373B' }}
+          buttonStyle={{ color: '#4e503b', fontSize: '13px' }}
+          expires={150}
+        >
+          This website uses cookies to enhance the user experience.{' '}
+        </CookieConsent>
       </section>
     </div>
   );
