@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;1,300&&display=swap');
 
 .officer-body {
-    padding-left: 90px;
+    padding-left: 100px;
     padding-right: 100px;
-    padding-top: 20px;
+    padding-top: 30px;
 }
 
 .officer-body h2 { 
@@ -11,15 +11,11 @@
     font-weight: 700;
     color:#124559;
     font-size: 40px;
-    padding-bottom: 15px;
-}
-
-.officer-body h3, p {
-    min-width: 200;
+    padding-bottom: 20px;
 }
 
 .card {
-    width: 280px;
+    width: 265px;
     height: 420px;
     display: block;
     background-color: #195780;
@@ -37,13 +33,13 @@
 .top-card {
     background-position: center;
     background-size: cover;
-    width: 280px;
+    width: 265px;
     height: 345px;
     opacity:100%;
 }
 
 .bottom-card {
-    width: 280px;
+    width: 265px;
     height: 345px;
     background-color: #04395E;
     color: #f3f3f3;
@@ -60,9 +56,10 @@
     overflow-wrap: initial;
 }
 .no-wrap {
-    text-overflow: ellipses !important;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 12;
     overflow: hidden;
-    overflow-wrap: initial;
 }
 
 .bottom-card:hover {
@@ -163,10 +160,15 @@
     border-radius: 0px;
     justify-content: center;
 }
-@media (max-width: 325px) {
+@media (max-width: 400px) {
     .officer-body {
-        padding-left: 5px;
+        padding-left: 0px;
         padding-right: 0px;
+    }
+
+    .officer-body h2 { 
+        font-size: 35px;
+        text-align: center;
     }
 
     .grid-container {
@@ -180,10 +182,15 @@
         grid-template-columns: 0.51fr;
     }
 }
-@media (min-width: 325px) and (max-width: 600px) {
+@media (min-width: 400px) and (max-width: 600px) {
     .officer-body {
-        padding-left: 5px;
+        padding-left: 10px;
         padding-right: 0px;
+    }
+
+    .officer-body h2 { 
+        font-size: 35px;
+        text-align: center;
     }
 
     .grid-container {
@@ -217,8 +224,8 @@
         grid-template-columns: 1fr 1fr;
     }
     .grid-container-circle {
-        -ms-grid-columns: 0.51fr 0.51fr;
-        grid-template-columns: 0.51fr 0.51fr;
+        -ms-grid-columns: 0.51fr 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr 0.51fr;
         column-gap: 10px;
     }
 }
@@ -254,7 +261,7 @@
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
     .grid-container-circle {
-        -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
-        grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
+        -ms-grid-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
+        grid-template-columns: 0.51fr 0.51fr 0.51fr 0.51fr 0.51fr;
     }
 }

@@ -39,9 +39,8 @@ class AboutUs extends Component {
                       <AboutUsCard info={info} key={index}/>
                     );
                   }
-                })):(
-                  <span>No executives yet!</span>
-                )}
+                })):null
+              }
             </div>
           </section>
           <section className="officer-container">
@@ -54,9 +53,8 @@ class AboutUs extends Component {
                       <AboutUsCircle info={info} key={index}/>
                     );
                   }
-                })):(
-                  <span>No officers yet!</span>
-                )}
+                })): null
+              }
             </div>
           </section>
         </main>
