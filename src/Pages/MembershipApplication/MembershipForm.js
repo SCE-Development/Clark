@@ -60,7 +60,7 @@ export default function MembershipForm(props) {
 
   function requiredFieldsMet() {
     let validEmail = checkValidEmail();
-    let validPassword = checkValidPassword()
+    let validPassword = checkValidPassword();
     return verified && firstName && lastName &&
     validEmail && major && validPassword && password.length >= 8;
   }
@@ -90,7 +90,7 @@ export default function MembershipForm(props) {
     {
       label: 'Email',
       type: 'email',
-      /* addon is to display error after clicking submit application 
+      /* addon is to display error after clicking submit application
         ifRequirementsNotMet display error while typing
       */
       addon: !usernameAvailable && (
