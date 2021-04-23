@@ -19,45 +19,58 @@ export default function MembershipForm(props) {
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
   const [clickSubmitted, setClickSubmitted] = useState(false);
+  const VALID_EMAIL_REGEXP = new RegExp(
+    '^\\s*(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)' +
+      '|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])' +
+      '|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))\\s*$'
+  );
 
-  function checkValidEmail(){
-    let pattern = new RegExp(' /^\s*(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()'+
-                            '\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}' +
-                            '\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|'+
-                            '(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))\s*$/');
-    return pattern.test(email);
+  function checkValidEmail() {
+    return VALID_EMAIL_REGEXP.test(email);
   }
 
-  function checkEmailInput(){
-    if(clickSubmitted){
-      if(!email)
-        return (<p className='unavailable'> Email cannot be left empty</p>);
+  function checkEmailInput() {
+    if(email) {
       let validEmail = checkValidEmail();
       if(!validEmail)
         return (<p className='unavailable'> Your input email is invalid</p>);
+    }
+    if(clickSubmitted) {
+      if(!email)
+        return (<p className='unavailable'> Email cannot be left empty</p>);
+    }
+  }
+
+  // password needs one upper case and one number
+  function checkValidPassword() {
+    let result = /[A-Z]/.test(password) && /\d/.test(password);
+    return result;
+  }
+
+  function checkValidConfirmPassword() {
+    if(password && !confirmPassword) {
+      if(!confirmPassword)
+        return (<p className='unavailable'>Please confirm your password</p>);
+    }
+    if(confirmPassword) {
+      if(confirmPassword!==password)
+        return (<p className='unavailable'>Passwords do not match</p>);
     }
   }
 
   function requiredFieldsMet() {
     let validEmail = checkValidEmail();
+    let validPassword = checkValidPassword()
     return verified && firstName && lastName &&
-    validEmail && major && password.length >= 8;
+    validEmail && major && validPassword && password.length >= 8;
   }
 
-  function checkConfirmPassword() {
-    if(clickSubmitted){
-      if(!confirmPassword)
-        return (<p className='unavailable'>Please confirm your password</p>);
-      if(confirmPassword!==password)
-        return (<p className='unavailable'>Passwords do not match</p>);
-    }
-  }
   const nameFields = [
     {
       label: 'First Name',
       id: 'first-name',
       type: 'text',
-      handleChange: e => setFirstName(e.target.value),
+      handleChange: e => setFirstName(e.target.value.trim()),
       ifRequirementsNotMet: !firstName && clickSubmitted && (
         <p className='unavailable'>First name cannot be left empty</p>
       ),
@@ -69,7 +82,7 @@ export default function MembershipForm(props) {
       ifRequirementsNotMet: !lastName && clickSubmitted && (
         <p className='unavailable'>Last name cannot be left empty</p>
       ),
-      handleChange: e => setLastName(e.target.value),
+      handleChange: e => setLastName(e.target.value.trim()),
 
     }
   ];
@@ -77,20 +90,29 @@ export default function MembershipForm(props) {
     {
       label: 'Email',
       type: 'email',
+      /* addon is to display error after clicking submit application 
+        ifRequirementsNotMet display error while typing
+      */
       addon: !usernameAvailable && (
         <p className='unavailable'>User already exists!</p>
       ),
       ifRequirementsNotMet: checkEmailInput(),
-      handleChange: e => setEmail(e.target.value),
+      handleChange: e => setEmail(e.target.value.trim()),
     },
 
     {
       label: 'Password (8 or more characters)',
       type: 'password',
-      addon: !passwordValid && clickSubmitted &&(
+      addon: !passwordValid && clickSubmitted (
         <p className='unavailable'>
           Password requires one uppercase character, one number
-          and at least 8 charactersfirst
+          and at least 8 characters
+        </p>
+      ),
+      ifRequirementsNotMet: password && !checkValidPassword() && (
+        <p className = 'unavailable'>
+           Password requires one uppercase character, one number
+          and at least 8 characters
         </p>
       ),
       handleChange: e => setPassword(e.target.value),
@@ -99,7 +121,7 @@ export default function MembershipForm(props) {
     {
       label: 'Confirm password',
       type: 'password',
-      ifRequirementsNotMet: checkConfirmPassword(),
+      ifRequirementsNotMet: checkValidConfirmPassword(),
       handleChange: e => setConfirmPassWord(e.target.value),
     }
   ];
