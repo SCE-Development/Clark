@@ -100,7 +100,7 @@ export default function MembershipForm(props) {
       label: 'Confirm password',
       type: 'password',
       ifRequirementsNotMet: checkConfirmPassword(),
-      handleChange: e => setConfirmPassWord(e.target.value.trim()),
+      handleChange: e => setConfirmPassWord(e.target.value),
     }
   ];
 
