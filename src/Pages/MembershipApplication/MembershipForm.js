@@ -93,7 +93,7 @@ export default function MembershipForm(props) {
           and at least 8 charactersfirst
         </p>
       ),
-      handleChange: e => setPassword(e.target.value.trim()),
+      handleChange: e => setPassword(e.target.value),
     },
 
     {
