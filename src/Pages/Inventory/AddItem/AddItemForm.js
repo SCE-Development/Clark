@@ -80,6 +80,7 @@ export default function AddItemForm(props) {
           type="textarea"
           value={props.description}
           onChange={(e) => props.updateItemDescription(e.target.value)}
+          style={{minHeight:'calc(1.5em + .75rem + 2px)'}}
         />
       </FormGroup>
       <FormGroup>
