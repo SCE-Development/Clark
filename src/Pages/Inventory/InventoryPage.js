@@ -210,74 +210,73 @@ export default class InventoryPage extends Component {
         >
           {this.state.alertMsg}
         </Alert>
-        <div className="container">
-          <div className="search-bar-container">
-            <input
-              className="inventory-search-bar"
-              placeholder="Filter by item name..."
-              value = {this.searchInput}
-              onChange = {(e) => this.updateSearchInput(e.target.value)}
-            />
-            <AddItemButtonModal
-              updateItemName = {this.updateItemName}
-              updateItemPrice = {this.updateItemPrice}
-              updateItemStock = {this.updateItemStock}
-              updateItemCategory = {this.updateItemCategory}
-              updateItemDescription = {this.updateItemDescription}
-              updateItemPicture = {this.updateItemPicture}
-              name = {this.state.name}
-              price = {this.state.price}
-              stock = {this.state.stock}
-              category = {this.state.category}
-              description = {this.state.description}
-              picture = {this.state.picture}
-              handleAddItem = {this.handleAddItem}
-              handleClear = {this.handleClear}
-              checkAllInputs = {this.checkAllInputs}
-            />
-          </div>
-          <div className="table-container">
-            <Table className = "inventory-table">
-              <thead>
-                <tr>
-                  <th className="row-image">Image</th>
-                  <th className="row-name">Name</th>
-                  <th className="row-category">Category</th>
-                  <th className="row-price">Price</th>
-                  <th className="row-quantity">Quantity</th>
-                  <th className="row-description">Description</th>
-                  <th className="row-edit">Edit</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.inventoryItems.map((item, index)=>{
-                  return(
-                    <InventoryRow
-                      key={index}
-                      updateItemName = {this.updateItemName}
-                      updateItemPrice = {this.updateItemPrice}
-                      updateItemStock = {this.updateItemStock}
-                      updateItemCategory = {this.updateItemCategory}
-                      updateItemDescription = {this.updateItemDescription}
-                      updateItemPicture = {this.updateItemPicture}
-                      name={this.state.name}
-                      price={this.state.price}
-                      stock={this.state.stock}
-                      category={this.state.category}
-                      description={this.state.description}
-                      picture={this.state.picture}
-                      item = {item}
-                      handleEditItem = {this.handleEditItem}
-                      handleDeleteItem = {this.handleDeleteItem}
-                      handleClear = {this.handleClear}
-                      checkAllInputs = {this.checkAllInputs}
-                    />
-                  );
-                })}
-              </tbody>
-            </Table>
-          </div>
+        <div className="search-bar-container">
+          <input
+            className="inventory-search-bar"
+            placeholder="Filter by item name..."
+            value = {this.searchInput}
+            onChange = {(e) => this.updateSearchInput(e.target.value)}
+          />
+          <AddItemButtonModal
+            updateItemName = {this.updateItemName}
+            updateItemPrice = {this.updateItemPrice}
+            updateItemStock = {this.updateItemStock}
+            updateItemCategory = {this.updateItemCategory}
+            updateItemDescription = {this.updateItemDescription}
+            updateItemPicture = {this.updateItemPicture}
+            name = {this.state.name}
+            price = {this.state.price}
+            stock = {this.state.stock}
+            category = {this.state.category}
+            description = {this.state.description}
+            picture = {this.state.picture}
+            handleAddItem = {this.handleAddItem}
+            handleClear = {this.handleClear}
+            checkAllInputs = {this.checkAllInputs}
+          />
         </div>
+        <div className="table-container">
+          <Table className = "inventory-table">
+            <thead>
+              <tr>
+                <th className="row-image">Image</th>
+                <th className="row-name">Name</th>
+                <th className="row-category">Category</th>
+                <th className="row-price">Price</th>
+                <th className="row-quantity">Quantity</th>
+                <th className="row-description">Description</th>
+                <th className="row-edit">Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.inventoryItems.map((item, index)=>{
+                return(
+                  <InventoryRow
+                    key={index}
+                    updateItemName = {this.updateItemName}
+                    updateItemPrice = {this.updateItemPrice}
+                    updateItemStock = {this.updateItemStock}
+                    updateItemCategory = {this.updateItemCategory}
+                    updateItemDescription = {this.updateItemDescription}
+                    updateItemPicture = {this.updateItemPicture}
+                    name={this.state.name}
+                    price={this.state.price}
+                    stock={this.state.stock}
+                    category={this.state.category}
+                    description={this.state.description}
+                    picture={this.state.picture}
+                    item = {item}
+                    handleEditItem = {this.handleEditItem}
+                    handleDeleteItem = {this.handleDeleteItem}
+                    handleClear = {this.handleClear}
+                    checkAllInputs = {this.checkAllInputs}
+                  />
+                );
+              })}
+            </tbody>
+          </Table>
+        </div>
+        <div className="spacer" />
       </div>
     );
   }

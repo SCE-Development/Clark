@@ -4,27 +4,39 @@ import './InventoryPage.css';
 export default class InventoryRow extends Component {
   render() {
     return (
-      <tr>
+      <tr className = "inventory-row">
         <td className="row-image">
-          <img
-            className='item-image'
-            src={this.props.item.picture} alt=''
-          />
+          <div className="table-contents">
+            <img
+              className='item-image'
+              src={this.props.item.picture} alt=''
+            />
+          </div>
         </td>
         <td className="row-name">
-          {this.props.item.name}
+          <div className="table-contents">
+            {this.props.item.name}
+          </div>
         </td>
         <td className="row-category">
-          {this.props.item.category}
+          <div className="table-contents">
+            {this.props.item.category}
+          </div>
         </td>
         <td className="row-price">
-          {'$'+this.props.item.price.toFixed(2)}
+          <div className="table-contents">
+            {'$'+this.props.item.price.toFixed(2)}
+          </div>
         </td>
         <td className="row-quantity">
-          {this.props.item.stock}
+          <div className="table-contents">
+            {this.props.item.stock}
+          </div>
         </td>
-        <td className = "row-description">
-          {this.props.item.description}
+        <td className="row-description">
+          <div className="table-contents">
+            {this.props.item.description}
+          </div>
         </td>
         <td>
           <EditButtonModal

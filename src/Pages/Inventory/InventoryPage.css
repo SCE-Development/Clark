@@ -1,11 +1,6 @@
-.container {
-  margin: auto;
-  width: 100%;
-  padding-bottom: 100px;
-  background: white;
-}
-
 .search-bar-container {
+  margin: auto 5%;
+  text-align: center;
   background: #fdfdfd;
   border: 1px dashed rgb(196, 196, 196);
   padding: 30px;
@@ -13,6 +8,7 @@
 }
 
 .table-container {
+  margin: auto 5%;
   background: #fdfdfd;
   border: 1px dashed rgb(196, 196, 196);
   padding: 30px;
@@ -25,11 +21,11 @@
 }
 
 .inventory-search-bar {
-  width: 75%;
-  margin: 0;
+  width: 80%;
+  margin: 0px;
   padding: 5px 10px;
   border-radius: 2px;
-  border: 2px solid grey;
+  border: 1.5px solid grey;
   box-sizing: border-box;
   initial-letter-align: left;
   vertical-align: middle;
@@ -67,6 +63,16 @@
   color: black;
 }
 
+.inventory-row {
+  height: 100px;
+}
+
+.table-contents {
+  width: 100%;
+  height: 100px;
+  overflow: scroll;
+}
+
 .row-image,
 .row-category,
 .row-name {
@@ -81,6 +87,7 @@
 
 .row-description {
   width: 16%;
+  height: 40px;
 }
 
 @media (max-width: 768px) {
@@ -96,7 +103,11 @@
   }
   .inventory-table td {
     display: block;
+    height: 100%;
     width: 100%;
+  }
+  .table-contents {
+    height: 100%;
   }
   .inventory-table td:first-child {
     border: none;

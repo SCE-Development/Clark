@@ -16,3 +16,7 @@
   color: #9fcca9;
   cursor: pointer;
 }
+
+.add-icon:focus {
+  outline: none;
+}

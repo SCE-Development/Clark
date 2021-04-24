@@ -12,3 +12,7 @@
   cursor: pointer;
   outline: none;
 }
+
+.edit-icon:focus {
+  outline: none;
+}
