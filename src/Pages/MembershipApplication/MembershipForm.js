@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './register-page.css';
-import { Row, FormGroup, Input, Button, Container } from 'reactstrap';
+import { Row, Form, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
 import { checkIfUserExists } from '../../APIFunctions/User';
@@ -24,11 +24,11 @@ export default function MembershipForm(props) {
       '|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))\\s*$'
   );
 
-  function checkValidEmail() {
+  const checkValidEmail = () => {
     return email && VALID_EMAIL_REGEXP.test(email);
-  }
+  };
 
-  function checkValidPassword() {
+  const checkValidPassword = () => {
     return (
       password &&
       password.length >= 8 &&
@@ -36,9 +36,9 @@ export default function MembershipForm(props) {
       /[A-Z]/.test(password) &&
       /\d/.test(password)
     );
-  }
+  };
 
-  function invalidEmailAlert() {
+  const invalidEmailAlert = () => {
     if (clickSubmitted) {
       if (!email) {
         return <span className="unavailable">Email cannot be left empty</span>;
@@ -56,9 +56,9 @@ export default function MembershipForm(props) {
         );
       }
     }
-  }
+  };
 
-  function invalidPasswordAlert() {
+  const invalidPasswordAlert = () => {
     if (!password) {
       return (
         clickSubmitted && (
@@ -76,38 +76,42 @@ export default function MembershipForm(props) {
     const numberClass =
       'passwordRequirement' + (/\d/.test(password) ? 'Valid' : 'Invalid');
 
-    return !checkValidPassword() && (
-      <ul>
-        <li id="passwordLengthRequirement" className={lengthClass}>
-          8 or more characters
-        </li>
-        <li id="passwordLowercaseRequirement" className={lowercaseClass}>
-          a lowercase letter
-        </li>
-        <li id="passwordUppercaseRequirement" className={uppercaseClass}>
-          an uppercase letter
-        </li>
-        <li id="passwordNumberRequirement" className={numberClass}>
-          a number 0-9
-        </li>
-      </ul>
+    return (
+      !checkValidPassword() && (
+        <ul>
+          <li id="passwordLengthRequirement" className={lengthClass}>
+            8 or more characters
+          </li>
+          <li id="passwordLowercaseRequirement" className={lowercaseClass}>
+            a lowercase letter
+          </li>
+          <li id="passwordUppercaseRequirement" className={uppercaseClass}>
+            an uppercase letter
+          </li>
+          <li id="passwordNumberRequirement" className={numberClass}>
+            a number 0-9
+          </li>
+        </ul>
+      )
     );
-  }
+  };
 
-  function invalidConfirmPasswordAlert() {
+  const invalidConfirmPasswordAlert = () => {
     if (checkValidPassword()) {
       if (!confirmPassword) {
-        return clickSubmitted && (
-          <span className="unavailable">Please confirm your password</span>
+        return (
+          clickSubmitted && (
+            <span className="unavailable">Please confirm your password</span>
+          )
         );
       }
       if (password !== confirmPassword) {
         return <span className="unavailable">Passwords do not match</span>;
       }
     }
-  }
+  };
 
-  function requiredFieldsMet() {
+  const requiredFieldsMet = () => {
     return (
       verified &&
       firstName &&
@@ -117,12 +121,12 @@ export default function MembershipForm(props) {
       checkValidPassword() &&
       password === confirmPassword
     );
-  }
+  };
 
   const nameFields = [
     {
-      label: 'First Name',
-      id: 'first-name',
+      label: 'First Name*',
+      id: 'first-name-field',
       type: 'text',
       handleChange: (e) => setFirstName(e.target.value),
       ifRequirementsNotMet: clickSubmitted && !firstName && (
@@ -130,8 +134,8 @@ export default function MembershipForm(props) {
       ),
     },
     {
-      label: 'Last Name',
-      id: 'last-name',
+      label: 'Last Name*',
+      id: 'last-name-field',
       type: 'text',
       ifRequirementsNotMet: clickSubmitted && !lastName && (
         <span className="unavailable">Last name cannot be left empty</span>
@@ -141,8 +145,9 @@ export default function MembershipForm(props) {
   ];
   const accountFields = [
     {
-      label: 'Email',
+      label: 'Email*',
       type: 'email',
+      id: 'email-field',
       ifRequirementsNotMet: invalidEmailAlert(),
       handleChange: (e) => {
         setEmail(e.target.value);
@@ -150,20 +155,23 @@ export default function MembershipForm(props) {
       },
     },
     {
-      label: 'Password',
+      label: 'Password*',
       type: 'password',
+      id: 'password-field',
       ifRequirementsNotMet: invalidPasswordAlert(),
       handleChange: (e) => setPassword(e.target.value),
     },
     {
-      label: 'Confirm password',
+      label: 'Confirm password*',
       type: 'password',
+      id: 'confirm-password-field',
       ifRequirementsNotMet: invalidConfirmPasswordAlert(),
       handleChange: (e) => setConfirmPassWord(e.target.value),
     },
   ];
 
-  async function submitApplication() {
+  const submitApplication = async (e) => {
+    e.preventDefault();
     if (!clickSubmitted) setClickSubmitted(true);
     if (requiredFieldsMet()) {
       const userResponse = await checkIfUserExists(email);
@@ -192,7 +200,7 @@ export default function MembershipForm(props) {
         }
       }
     }
-  }
+  };
 
   return (
     <Container id="background" fluid>
@@ -205,62 +213,62 @@ export default function MembershipForm(props) {
         <p>
           <span color="red">*</span>= Required field
         </p>
-        <Row id="name-field-row">
-          {nameFields.map((input, index) => {
-            return (
-              <FormGroup key={index}>
+        <Form onSubmit={submitApplication}>
+          <Row id="name-field-row">
+            {nameFields.map((input, index) => (
+              <FormGroup key={`name-field-input-${index}`}>
                 <Input
                   className="name-input membership-input"
                   type={input.type}
                   onChange={input.handleChange}
                   id={input.id}
-                  placeholder={`${input.label}*`}
+                  placeholder={input.label}
                 />
                 {input.ifRequirementsNotMet}
               </FormGroup>
-            );
-          })}
-        </Row>
-        <div id="email-input-container">
-          {accountFields.map((input, index) => (
-            <div key={index} className="account-input">
-              <FormGroup>
+            ))}
+          </Row>
+          <div id="email-input-container">
+            {accountFields.map((input, index) => (
+              <FormGroup key={`account-field-${index}`}>
                 <Input
                   className="membership-input email-input"
                   type={input.type}
                   onChange={input.handleChange}
                   id={input.id}
-                  placeholder={`${input.label}*`}
+                  placeholder={input.label}
                 />
                 {input.ifRequirementsNotMet}
               </FormGroup>
-            </div>
-          ))}
-          <MajorDropdown setMajor={setMajor} />
-          {clickSubmitted && !major && (
-            <span className="unavailable">You have to choose your major!</span>
-          )}
-        </div>
-        <div className="recaptcha">
-          <GoogleRecaptcha setVerified={setVerified} />
-        </div>
-        <div className="transition-button-wrapper">
-          <Button
-            id="change-and-select-btns"
-            onClick={() =>
-              props.setMembershipState(
-                memberApplicationState.SELECT_MEMBERSHIP_PLAN
-              )
-            }
-          >
-            Change membership plan
-          </Button>
-          <Button id="submit-btn" color="primary" onClick={submitApplication}>
-            Submit application
-          </Button>
-        </div>
+            ))}
+            <MajorDropdown setMajor={setMajor} />
+            {clickSubmitted && !major && (
+              <span className="unavailable">
+                You have to choose your major!
+              </span>
+            )}
+          </div>
+          <div className="recaptcha">
+            <GoogleRecaptcha setVerified={setVerified} />
+          </div>
+          <div className="transition-button-wrapper">
+            <Button
+              id="change-and-select-btns"
+              onClick={() =>
+                props.setMembershipState(
+                  memberApplicationState.SELECT_MEMBERSHIP_PLAN
+                )
+              }
+            >
+              Change membership plan
+            </Button>
+            <Button id="submit-btn" color="primary" type="submit">
+              Submit application
+            </Button>
+          </div>
+        </Form>
         <hr />
-        <p id="login">
+        <p id="login-link">
           <a href="/login" style={{ fontSize: '120%' }}>
             Switch to Login
           </a>
