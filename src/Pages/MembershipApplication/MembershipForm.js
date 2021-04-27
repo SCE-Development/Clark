@@ -41,18 +41,18 @@ export default function MembershipForm(props) {
   const invalidEmailAlert = () => {
     if (clickSubmitted) {
       if (!email) {
-        return <span className="unavailable">Email cannot be left empty</span>;
+        return <p className="unavailable">Email cannot be left empty</p>;
       }
       if (!checkValidEmail()) {
-        return <span className="unavailable">Your input email is invalid</span>;
+        return <p className="unavailable">Your input email is invalid</p>;
       }
       if (!usernameAvailable) {
         return (
-          <span className="unavailable">
+          <p className="unavailable">
             An account with this email already exists. Contact{' '}
             <a href="mailto:asksce@gmail.com">asksce@gmail.com</a> if you forgot
             your password.
-          </span>
+          </p>
         );
       }
     }
@@ -62,7 +62,7 @@ export default function MembershipForm(props) {
     if (!password) {
       return (
         clickSubmitted && (
-          <span className="unavailable">Password cannot be left empty</span>
+          <p className="unavailable">Password cannot be left empty</p>
         )
       );
     }
@@ -101,12 +101,12 @@ export default function MembershipForm(props) {
       if (!confirmPassword) {
         return (
           clickSubmitted && (
-            <span className="unavailable">Please confirm your password</span>
+            <p className="unavailable">Please confirm your password</p>
           )
         );
       }
       if (password !== confirmPassword) {
-        return <span className="unavailable">Passwords do not match</span>;
+        return <p className="unavailable">Passwords do not match</p>;
       }
     }
   };
@@ -130,7 +130,7 @@ export default function MembershipForm(props) {
       type: 'text',
       handleChange: (e) => setFirstName(e.target.value),
       ifRequirementsNotMet: clickSubmitted && !firstName && (
-        <span className="unavailable">First name cannot be left empty</span>
+        <p className="unavailable">First name cannot be left empty</p>
       ),
     },
     {
@@ -138,7 +138,7 @@ export default function MembershipForm(props) {
       id: 'last-name-field',
       type: 'text',
       ifRequirementsNotMet: clickSubmitted && !lastName && (
-        <span className="unavailable">Last name cannot be left empty</span>
+        <p className="unavailable">Last name cannot be left empty</p>
       ),
       handleChange: (e) => setLastName(e.target.value),
     },
@@ -243,12 +243,12 @@ export default function MembershipForm(props) {
             ))}
             <MajorDropdown setMajor={setMajor} />
             {clickSubmitted && !major && (
-              <span className="unavailable">
+              <p className="unavailable">
                 You have to choose your major!
-              </span>
+              </p>
             )}
           </div>
-          <div className="recaptcha">
+          <div id="recaptcha">
             <GoogleRecaptcha setVerified={setVerified} />
           </div>
           <div className="transition-button-wrapper">

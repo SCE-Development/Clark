@@ -122,10 +122,6 @@
   width: 100%;
 }
 
-.recaptcha {
-  margin: 20px 20px 0px 0px;
-}
-
 #change-and-select-btns {
   background-color: #aecfe2;
   border: none;
@@ -162,4 +158,8 @@
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 850px;
+}
+
+#recaptcha {
+  margin: 20px 20px 0px 0px;
 }
