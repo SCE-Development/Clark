@@ -17,7 +17,6 @@ export default function MembershipForm(props) {
   const [confirmPassword, setConfirmPassWord] = useState('');
   const [major, setMajor] = useState('');
   const [usernameAvailable, setUsernameAvailable] = useState(true);
-  const [passwordValid, setPasswordValid] = useState(true);
   const [clickSubmitted, setClickSubmitted] = useState(false);
   const VALID_EMAIL_REGEXP = new RegExp(
     '^\\s*(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)' +
@@ -26,43 +25,98 @@ export default function MembershipForm(props) {
   );
 
   function checkValidEmail() {
-    return VALID_EMAIL_REGEXP.test(email);
+    return email && VALID_EMAIL_REGEXP.test(email);
   }
 
-  function checkEmailInput() {
-    if(email) {
-      let validEmail = checkValidEmail();
-      if(!validEmail)
-        return (<p className='unavailable'> Your input email is invalid</p>);
-    }
-    if(clickSubmitted) {
-      if(!email)
-        return (<p className='unavailable'> Email cannot be left empty</p>);
-    }
-  }
-
-  // password needs one upper case and one number
   function checkValidPassword() {
-    let result = /[A-Z]/.test(password) && /\d/.test(password);
-    return result;
+    return (
+      password &&
+      password.length >= 8 &&
+      /[a-z]/.test(password) &&
+      /[A-Z]/.test(password) &&
+      /\d/.test(password)
+    );
   }
 
-  function checkValidConfirmPassword() {
-    if(password && !confirmPassword) {
-      if(!confirmPassword)
-        return (<p className='unavailable'>Please confirm your password</p>);
+  function invalidEmailAlert() {
+    if (clickSubmitted) {
+      if (!email) {
+        return <span className="unavailable">Email cannot be left empty</span>;
+      }
+      if (!checkValidEmail()) {
+        return <span className="unavailable">Your input email is invalid</span>;
+      }
+      if (!usernameAvailable) {
+        return (
+          <span className="unavailable">
+            An account with this email already exists. Contact{' '}
+            <a href="mailto:asksce@gmail.com">asksce@gmail.com</a> if you forgot
+            your password.
+          </span>
+        );
+      }
     }
-    if(confirmPassword) {
-      if(confirmPassword!==password)
-        return (<p className='unavailable'>Passwords do not match</p>);
+  }
+
+  function invalidPasswordAlert() {
+    if (!password) {
+      return (
+        clickSubmitted && (
+          <span className="unavailable">Password cannot be left empty</span>
+        )
+      );
+    }
+
+    const lengthClass =
+      'passwordRequirement' + (password.length >= 8 ? 'Valid' : 'Invalid');
+    const lowercaseClass =
+      'passwordRequirement' + (/[a-z]/.test(password) ? 'Valid' : 'Invalid');
+    const uppercaseClass =
+      'passwordRequirement' + (/[A-Z]/.test(password) ? 'Valid' : 'Invalid');
+    const numberClass =
+      'passwordRequirement' + (/\d/.test(password) ? 'Valid' : 'Invalid');
+
+    return !checkValidPassword() && (
+      <ul>
+        <li id="passwordLengthRequirement" className={lengthClass}>
+          8 or more characters
+        </li>
+        <li id="passwordLowercaseRequirement" className={lowercaseClass}>
+          a lowercase letter
+        </li>
+        <li id="passwordUppercaseRequirement" className={uppercaseClass}>
+          an uppercase letter
+        </li>
+        <li id="passwordNumberRequirement" className={numberClass}>
+          a number 0-9
+        </li>
+      </ul>
+    );
+  }
+
+  function invalidConfirmPasswordAlert() {
+    if (checkValidPassword()) {
+      if (!confirmPassword) {
+        return clickSubmitted && (
+          <span className="unavailable">Please confirm your password</span>
+        );
+      }
+      if (password !== confirmPassword) {
+        return <span className="unavailable">Passwords do not match</span>;
+      }
     }
   }
 
   function requiredFieldsMet() {
-    let validEmail = checkValidEmail();
-    let validPassword = checkValidPassword();
-    return verified && firstName && lastName &&
-    validEmail && major && validPassword && password.length >= 8;
+    return (
+      verified &&
+      firstName &&
+      lastName &&
+      checkValidEmail() &&
+      major &&
+      checkValidPassword() &&
+      password === confirmPassword
+    );
   }
 
   const nameFields = [
@@ -70,108 +124,93 @@ export default function MembershipForm(props) {
       label: 'First Name',
       id: 'first-name',
       type: 'text',
-      handleChange: e => setFirstName(e.target.value.trim()),
-      ifRequirementsNotMet: !firstName && clickSubmitted && (
-        <p className='unavailable'>First name cannot be left empty</p>
+      handleChange: (e) => setFirstName(e.target.value),
+      ifRequirementsNotMet: clickSubmitted && !firstName && (
+        <span className="unavailable">First name cannot be left empty</span>
       ),
     },
     {
       label: 'Last Name',
       id: 'last-name',
       type: 'text',
-      ifRequirementsNotMet: !lastName && clickSubmitted && (
-        <p className='unavailable'>Last name cannot be left empty</p>
+      ifRequirementsNotMet: clickSubmitted && !lastName && (
+        <span className="unavailable">Last name cannot be left empty</span>
       ),
-      handleChange: e => setLastName(e.target.value.trim()),
-
-    }
+      handleChange: (e) => setLastName(e.target.value),
+    },
   ];
   const accountFields = [
     {
       label: 'Email',
       type: 'email',
-      /* addon is to display error after clicking submit application
-        ifRequirementsNotMet display error while typing
-      */
-      addon: !usernameAvailable && (
-        <p className='unavailable'>User already exists!</p>
-      ),
-      ifRequirementsNotMet: checkEmailInput(),
-      handleChange: e => setEmail(e.target.value.trim()),
+      ifRequirementsNotMet: invalidEmailAlert(),
+      handleChange: (e) => {
+        setEmail(e.target.value);
+        if (!usernameAvailable) setUsernameAvailable(true);
+      },
     },
-
     {
-      label: 'Password (8 or more characters)',
+      label: 'Password',
       type: 'password',
-      addon: !passwordValid && clickSubmitted (
-        <p className='unavailable'>
-          Password requires one uppercase character, one number
-          and at least 8 characters
-        </p>
-      ),
-      ifRequirementsNotMet: password && !checkValidPassword() && (
-        <p className = 'unavailable'>
-           Password requires one uppercase character, one number
-          and at least 8 characters
-        </p>
-      ),
-      handleChange: e => setPassword(e.target.value),
+      ifRequirementsNotMet: invalidPasswordAlert(),
+      handleChange: (e) => setPassword(e.target.value),
     },
-
     {
       label: 'Confirm password',
       type: 'password',
-      ifRequirementsNotMet: checkValidConfirmPassword(),
-      handleChange: e => setConfirmPassWord(e.target.value),
-    }
+      ifRequirementsNotMet: invalidConfirmPasswordAlert(),
+      handleChange: (e) => setConfirmPassWord(e.target.value),
+    },
   ];
 
   async function submitApplication() {
-    if(clickSubmitted===false) setClickSubmitted(true);
-    if(requiredFieldsMet()) {
+    if (!clickSubmitted) setClickSubmitted(true);
+    if (requiredFieldsMet()) {
       const userResponse = await checkIfUserExists(email);
       if (userResponse.error) {
         setUsernameAvailable(false);
         return;
       }
+
       const registrationStatus = await registerUser({
-        firstName,
-        lastName,
-        email,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim(),
         password,
         major,
-        numberOfSemestersToSignUpFor: props.selectedPlan
+        numberOfSemestersToSignUpFor: props.selectedPlan,
       });
+
       if (!registrationStatus.error) {
         sendVerificationEmail(email, firstName);
         props.setMembershipState(memberApplicationState.CONFIRMATION);
       } else {
         if (registrationStatus.responseData.status === 409) {
-          window.alert('Email already exists in the system.');
+          window.alert('An account with this email already exists');
         } else if (registrationStatus.responseData.status === 400) {
-          setPasswordValid(false);
+          window.alert('Password requirements not met');
         }
       }
     }
   }
 
   return (
-    <Container id='background' fluid>
-      <div className='form-card'>
+    <Container id="background" fluid>
+      <div className="form-card">
         <h1>Membership Application</h1>
         <hr />
         <p>
           Selected Membership Plan: {memberShipPlanToString(props.selectedPlan)}
         </p>
-        <span>
-          <span color='red'>*</span>= Required field
-        </span>
-        <Row id='name-field-row'>
+        <p>
+          <span color="red">*</span>= Required field
+        </p>
+        <Row id="name-field-row">
           {nameFields.map((input, index) => {
             return (
               <FormGroup key={index}>
                 <Input
-                  className='name-input membership-input'
+                  className="name-input membership-input"
                   type={input.type}
                   onChange={input.handleChange}
                   id={input.id}
@@ -182,56 +221,47 @@ export default function MembershipForm(props) {
             );
           })}
         </Row>
-        <div id='email-input-container'>
-          {accountFields.map((input, index) => {
-            return (
-              <div key={index} className='account-input'>
-                <FormGroup>
-                  <Input
-                    className='membership-input email-input'
-                    type={input.type}
-                    onChange={input.handleChange}
-                    id={input.id}
-                    placeholder={`${input.label}*`}
-                  />
-                  {input.addon}
-                  {input.ifRequirementsNotMet}
-                </FormGroup>
-              </div>
-            );
-          })}
+        <div id="email-input-container">
+          {accountFields.map((input, index) => (
+            <div key={index} className="account-input">
+              <FormGroup>
+                <Input
+                  className="membership-input email-input"
+                  type={input.type}
+                  onChange={input.handleChange}
+                  id={input.id}
+                  placeholder={`${input.label}*`}
+                />
+                {input.ifRequirementsNotMet}
+              </FormGroup>
+            </div>
+          ))}
           <MajorDropdown setMajor={setMajor} />
-          {(!major && clickSubmitted) ?
-            <p className='unavailable'>
-              You have to choose your major!
-            </p> :
-            null
-          }
+          {clickSubmitted && !major && (
+            <span className="unavailable">You have to choose your major!</span>
+          )}
         </div>
-        <div className='recaptcha'>
+        <div className="recaptcha">
           <GoogleRecaptcha setVerified={setVerified} />
         </div>
-        <div className='transition-button-wrapper'>
+        <div className="transition-button-wrapper">
           <Button
-            id='change-and-select-btns'
+            id="change-and-select-btns"
             onClick={() =>
               props.setMembershipState(
                 memberApplicationState.SELECT_MEMBERSHIP_PLAN
-              )}
+              )
+            }
           >
             Change membership plan
           </Button>
-          <Button
-            id='submit-btn'
-            color='primary'
-            onClick={submitApplication}
-          >
+          <Button id="submit-btn" color="primary" onClick={submitApplication}>
             Submit application
           </Button>
         </div>
         <hr />
-        <p id='login'>
-          <a href='/login' style={{ fontSize: '120%' }}>
+        <p id="login">
+          <a href="/login" style={{ fontSize: '120%' }}>
             Switch to Login
           </a>
         </p>
