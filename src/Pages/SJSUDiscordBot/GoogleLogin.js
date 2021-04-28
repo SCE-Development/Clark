@@ -4,7 +4,6 @@ import {GoogleLogin,
 import { GOOGLE_API_CLIENT_ID } from '../../config/config.json';
 import axios from 'axios';
 import { ApiResponse } from '../../../src/APIFunctions/ApiResponses';
-import CookieConsent from 'react-cookie-consent';
 
 function Verify(){
   const [isLogined, setLoginState] = useState(false);
@@ -14,6 +13,7 @@ function Verify(){
   const [id, setID] = useState(window.location.href.split('/')[5]);
   const [validID, setValidID] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
+  const [SJSUEmail, setSJSUEmail] = useState(false);
 
   const getTempUser = () => {
     let status = new ApiResponse();
@@ -34,46 +34,32 @@ function Verify(){
     getTempUser();
   }, []);
 
-  const deleteTempUser = (()=>{
-    let status = new ApiResponse();
-    axios
-      .post('http://localhost:8080/api/verifiedUser/getTempUser', {id})
-      .then(res => {
-        status.responseData = res.data;
-      })
-      .catch(() => {
-        status.error = true;
-      });
-    return status;
-  });
-
   const onSuccess = (res) => {
     let status = new ApiResponse();
-    /* eslint-disable */
-    console.log(res);
-    /* eslint-disable */
     if(res.accessToken){
       setLoginState(true);
       setAccessToken(res.accessToken);
-      deleteTempUser();
-      const body = {
-        discordID: discordID,
-        googleTokenId: res.tokenId
-      };
-      axios
-        .post('http://localhost:8080/api/verifiedUser/addUser_withGoogleToken',
-          body)
-        .then(res => {
-          status.responseData = res.data;
-        })
-        .catch(() => {
-          status.error = true;
-        });
-      return status;
+      if(res.profileObj.email.includes('sjsu.edu')){
+        setSJSUEmail(true);
+        const body = {
+          discordID: discordID,
+          googleTokenId: res.tokenId
+        };
+        axios
+          .post('http://localhost:8080/api/verifiedUser/addUser_withGoogleToken'
+            , body)
+          .then(res => {
+            status.responseData = res.data;
+          })
+          .catch(() => {
+            status.error = true;
+          });
+        return status;
+      }
     }
   };
 
-  const logout = (res) => {
+  const onLogout = (res) => {
     setLoginState(false);
     setAccessToken('');
   };
@@ -83,17 +69,32 @@ function Verify(){
     setLoginFailed(true);
   };
 
+  const onLogoutFailure = (res) => {
+    alert('Logout failed');
+  };
+
   return(
     <div>
       <section style={{margin: '100px'}}>
         { !validID?
           <h5>Invalid ID: please type verify in the discord chat again</h5>
           : isLogined ?
-            accessToken ?
+            accessToken && SJSUEmail?
               <h5>
                 Success: please type "verify" in chat to get your role
               </h5>
-              : null
+              : <>
+                <h5>
+                  Verification Failed.
+                  Please logout and login again with an SJSU email
+                </h5>
+                <GoogleLogout
+                  clientId= {GOOGLE_API_CLIENT_ID}
+                  buttonText='Logout'
+                  onLogoutSuccess={ onLogout }
+                  onFailure={ onLogoutFailure }
+                />
+              </>
             :
             loginFailed ?
               <>
@@ -120,21 +121,9 @@ function Verify(){
                 />
               </>
         }
-        <CookieConsent
-          location='bottom'
-          buttonText='Accept Cookies'
-          cookieName='authCookie'
-          style={{ background:'#2B373B' }}
-          buttonStyle={{ color: '#4e503b', fontSize: '13px' }}
-          expires={150}
-        >
-          This website uses cookies to enhance the user experience.{' '}
-        </CookieConsent>
       </section>
     </div>
   );
-
-
 }
 
 export default Verify;
