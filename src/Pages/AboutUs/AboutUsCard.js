@@ -11,7 +11,7 @@ function AboutUsCard(props){
 
   return (
     <div className="grid" onClick={props.handleClick}>
-      <div className="card">
+      <div className="officer-card">
         <div className="top-card" style={
           {backgroundImage: `url(${pictureUrl})`
           }}>

@@ -10,9 +10,9 @@ class AboutUs extends Component {
     super(props);
     this.state = {
       officers: [],
-      headerProps: {
-        title: 'About Us'
-      }
+    };
+    this.headerProps = {
+      title: 'About Us'
     };
   }
 
@@ -27,7 +27,7 @@ class AboutUs extends Component {
   render() {
     return (
       <>
-        <Header {...this.state.headerProps} />
+        <Header {...this.headerProps} />
         <main className="officer-body">
           <section className="exec-container">
             <h2>Executive Team</h2>

@@ -14,7 +14,7 @@
     padding-bottom: 20px;
 }
 
-.card {
+.officer-card {
     width: 265px;
     height: 420px;
     display: block;
@@ -66,7 +66,7 @@
     opacity: 80%;
 }
 
-.card:hover {
+.officer-card:hover {
     transform: scale(1.05);
 }
 
