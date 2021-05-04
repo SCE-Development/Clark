@@ -2,8 +2,7 @@ import React, {useState} from 'react';
 import {GoogleLogin,
   GoogleLogout} from 'react-google-login';
 import { GOOGLE_API_CLIENT_ID } from '../../config/config.json';
-import axios from 'axios';
-import { ApiResponse } from '../../../src/APIFunctions/ApiResponses';
+import { getTempUser, addUser } from '../../APIFunctions/GoogleLoginPage.js';
 
 function Verify(){
   const [isLogined, setLoginState] = useState(false);
@@ -13,29 +12,24 @@ function Verify(){
   const [id, setID] = useState(window.location.href.split('/')[5]);
   const [validID, setValidID] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
+  const [logoutFailed, setLogoutFailed] = useState(false);
   const [SJSUEmail, setSJSUEmail] = useState(false);
 
-  const getTempUser = () => {
-    let status = new ApiResponse();
-    axios
-      .post('http://localhost:8080/api/verifiedUser/getTempUser', {id})
-      .then(res => {
-        setUsername(res.data.username);
-        setDiscordID(res.data.id);
+  const getUser = async () => {
+    await getTempUser(id).then(res => {
+      if(!res.error){
+        setUsername(res.responseData.username);
+        setDiscordID(res.responseData.id);
         setValidID(true);
-      })
-      .catch(() => {
-        status.error = true;
-      });
-    return status;
+      }
+    });
   };
 
-  React.useEffect(()=> {
-    getTempUser();
+  React.useEffect(() => {
+    getUser();
   }, []);
 
-  const onSuccess = (res) => {
-    let status = new ApiResponse();
+  const onSuccess = async (res) => {
     if(res.accessToken){
       setLoginState(true);
       setAccessToken(res.accessToken);
@@ -45,16 +39,7 @@ function Verify(){
           discordID: discordID,
           googleTokenId: res.tokenId
         };
-        axios
-          .post('http://localhost:8080/api/verifiedUser/addUser_withGoogleToken'
-            , body)
-          .then(res => {
-            status.responseData = res.data;
-          })
-          .catch(() => {
-            status.error = true;
-          });
-        return status;
+        await addUser(body);
       }
     }
   };
@@ -65,12 +50,11 @@ function Verify(){
   };
 
   const onLoginFailure = (res) => {
-    alert('Login failed');
     setLoginFailed(true);
   };
 
   const onLogoutFailure = (res) => {
-    alert('Logout failed');
+    setLogoutFailed(true);
   };
 
   return(
@@ -79,26 +63,40 @@ function Verify(){
         { !validID?
           <h5>Invalid ID: please type verify in the discord chat again</h5>
           : isLogined ?
-            accessToken && SJSUEmail?
-              <h5>
-                Success: please type "verify" in chat to get your role
-              </h5>
-              : <>
-                <h5>
-                  Verification Failed.
-                  Please logout and login again with an SJSU email
-                </h5>
+            logoutFailed ?
+              <>
+                <h5>Logout failed. Please try again or contact us. </h5>
                 <GoogleLogout
                   clientId= {GOOGLE_API_CLIENT_ID}
                   buttonText='Logout'
                   onLogoutSuccess={ onLogout }
                   onFailure={ onLogoutFailure }
                 />
-              </>
+              </> :
+              accessToken && SJSUEmail ?
+                <h5>
+                Success: please type "verify" in chat to get your role
+                </h5>
+                : <>
+                  <h5>
+                  Verification failed.
+                  Please logout and login again with an SJSU email.
+                  </h5>
+                  <GoogleLogout
+                    clientId= {GOOGLE_API_CLIENT_ID}
+                    buttonText='Logout'
+                    onLogoutSuccess={ onLogout }
+                    onFailure={ onLogoutFailure }
+                  />
+                </>
             :
             loginFailed ?
               <>
-                <h4> Login Failed. Please login again. </h4>
+                <h5> Login failed. Please login again. </h5>
+                <h5>
+                  If issue persists,
+                  enable 3rd party cookies in your browser and try again.
+                </h5>
                 <GoogleLogin
                   clientId= {GOOGLE_API_CLIENT_ID}
                   buttonText='Login'
@@ -109,8 +107,8 @@ function Verify(){
                 />
               </>:
               <>
-                <h4> You are verifying as <b>{username}</b></h4>
-                <h5> Please login with SJSU email</h5>
+                <h5> You are verifying as <b>{username}</b>.</h5>
+                <h5> Please login with your SJSU email address.</h5>
                 <GoogleLogin
                   clientId= {GOOGLE_API_CLIENT_ID}
                   buttonText='Login'
