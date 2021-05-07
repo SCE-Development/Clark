@@ -60,6 +60,7 @@ function Verify(){
   return(
     <div>
       <section style={{margin: '100px'}}>
+        <h1>SJSU SCE Discord Verify</h1>
         { !validID?
           <h5>Invalid ID: please type verify in the discord chat again</h5>
           : isLogined ?
