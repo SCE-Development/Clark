@@ -23,7 +23,7 @@ export default function MajorDropdown(props) {
 
   return (
     <>
-      <p>Major</p>
+      <p>Major*</p>
       <ButtonDropdown
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
