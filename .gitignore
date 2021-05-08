@@ -73,9 +73,9 @@ util/common/security.js
 
 .history
 .vscode
-.prettierrc.js
 *.code-workspace
 .DS_Store
+.prettierrc.js
 
 build
 
