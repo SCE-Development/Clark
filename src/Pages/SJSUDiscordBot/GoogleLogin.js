@@ -66,7 +66,7 @@ function Verify(){
           : isLogined ?
             logoutFailed ?
               <>
-                <h5>Logout failed. Please try again or contact us. </h5>
+                <h6>Logout failed. Please try again or contact us. </h6>
                 <GoogleLogout
                   clientId= {GOOGLE_API_CLIENT_ID}
                   buttonText='Logout'
