@@ -17,7 +17,7 @@ function Verify(){
 
   const getUser = async () => {
     await getTempUser(id).then(res => {
-      if(!res.error){
+      if (!res.error){
         setUsername(res.responseData.username);
         setDiscordID(res.responseData.id);
         setValidID(true);
