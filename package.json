@@ -67,7 +67,7 @@
     "pdf-lib": "^1.16.0",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.11.1",
-    "react-datepicker": "^3.2.2",
+    "react-datepicker": "^4.1.0",
     "react-dom": "^16.13.1",
     "react-filepond": "^7.1.0",
     "react-google-recaptcha": "^2.1.0",
