@@ -17,7 +17,7 @@ function Verify(){
 
   const getUser = async () => {
     await getTempUser(id).then(res => {
-      if(!res.error){
+      if (!res.error){
         setUsername(res.responseData.username);
         setDiscordID(res.responseData.id);
         setValidID(true);
@@ -66,7 +66,7 @@ function Verify(){
           : isLogined ?
             logoutFailed ?
               <>
-                <h5>Logout failed. Please try again or contact us. </h5>
+                <h6>Logout failed. Please try again or contact us. </h6>
                 <GoogleLogout
                   clientId= {GOOGLE_API_CLIENT_ID}
                   buttonText='Logout'

@@ -70,6 +70,7 @@
     "react-datepicker": "^3.2.2",
     "react-dom": "^16.13.1",
     "react-filepond": "^7.1.0",
+    "react-google-login": "^5.2.2",
     "react-google-recaptcha": "^2.1.0",
     "react-iframe": "^1.8.0",
     "react-router-dom": "^5.2.0",
