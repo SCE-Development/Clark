@@ -8,7 +8,7 @@
   "LOGGING_API_URL_PROD": "https://sce.engr.sjsu.edu/loggingapi",
   "MAILER_API_URL_PROD": "https://sce.engr.sjsu.edu/cloudapi",
   "RPC_API_URL_PROD": "https://sce.engr.sjsu.edu/SceRpcApi",
-  "DISCORD_SJSU_API_URL_PROD": "http://67.180.18.35:8080/api",
+  "DISCORD_SJSU_API_URL_PROD": "http://XXXXXXXXXXXX.XXX:8080/api",
   "sitekey": "super secret key",
   "TINYMCE_API_KEY": "XXXXXXXXXXXXXXXXXXXXX"
 }
