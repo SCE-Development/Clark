@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
+let config = require('../config/config.json');
+let DISCORD_SJSU_API_URL = config.DISCORD_SJSU_API_URL;
 
 /**
  * Gets the temporary user from the cache when given the id
@@ -10,7 +12,7 @@ import { ApiResponse } from './ApiResponses';
 export async function getTempUser(id) {
   let status = new ApiResponse();
   await axios
-    .post('http://localhost:8080/api/verifiedUser/getTempUser', {id})
+    .get(`${DISCORD_SJSU_API_URL}/TempUser/get_tempUser/${id}`)
     .then(res => {
       status.responseData = res.data;
     })
@@ -29,7 +31,7 @@ export async function getTempUser(id) {
 export async function addUser(body) {
   let status = new ApiResponse();
   await axios
-    .post('http://localhost:8080/api/verifiedUser/addUser_withGoogleToken'
+    .post(`${DISCORD_SJSU_API_URL}/verifiedUser/addUser_withGoogleToken`
       , body)
     .catch(() => {
       status.error = true;

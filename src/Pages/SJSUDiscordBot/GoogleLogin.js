@@ -4,12 +4,12 @@ import {GoogleLogin,
 import { GOOGLE_API_CLIENT_ID } from '../../config/config.json';
 import { getTempUser, addUser } from '../../APIFunctions/GoogleLoginPage.js';
 
-function Verify(){
+function Verify(props){
   const [isLogined, setLoginState] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const [username, setUsername] = useState('');
   const [discordID, setDiscordID] = useState(0);
-  const [id, setID] = useState(window.location.href.split('/')[5]);
+  const [id, setID] = useState(props.match.params.id);
   const [validID, setValidID] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
   const [logoutFailed, setLogoutFailed] = useState(false);
@@ -62,7 +62,7 @@ function Verify(){
       <section style={{margin: '100px'}}>
         <h1>SJSU SCE Discord Verify</h1>
         { !validID?
-          <h5>Invalid ID: please type verify in the discord chat again</h5>
+          <h5>Invalid ID: please type "/verify" in the discord chat again</h5>
           : isLogined ?
             logoutFailed ?
               <>
@@ -76,7 +76,7 @@ function Verify(){
               </> :
               accessToken && SJSUEmail ?
                 <h5>
-                Success: please type "verify" in chat to get your role
+                Success: please type "/verify" in chat again to get your role
                 </h5>
                 : <>
                   <h5>
