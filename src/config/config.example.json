@@ -3,10 +3,12 @@
   "LOGGING_API_URL": "http://localhost:8081/loggingapi",
   "MAILER_API_URL": "http://localhost:8082/cloudapi",
   "RPC_API_URL": "http://localhost:8083/SceRpcApi",
+  "DISCORD_SJSU_API_URL": "http://localhost:8080/api",
   "GENERAL_API_URL_PROD": "https://sce.engr.sjsu.edu/api",
   "LOGGING_API_URL_PROD": "https://sce.engr.sjsu.edu/loggingapi",
   "MAILER_API_URL_PROD": "https://sce.engr.sjsu.edu/cloudapi",
   "RPC_API_URL_PROD": "https://sce.engr.sjsu.edu/SceRpcApi",
+  "DISCORD_SJSU_API_URL_PROD": "http://67.180.18.35:8080/api",
   "sitekey": "super secret key",
   "TINYMCE_API_KEY": "XXXXXXXXXXXXXXXXXXXXX"
 }
