@@ -7,6 +7,25 @@ let DISCORD_SJSU_API_URL = process.env.NODE_ENV === 'production' ?
 
 /**
  * Gets the temporary user from the cache when given the id
+ * @param {string} email - sjsu email to query
+ * @returns {ApiResponse} - Containing any error information
+ *                      related to the request or the temporary user
+ */
+export async function getVerifiedUser(email) {
+  let status = new ApiResponse();
+  await axios
+    .post(`${DISCORD_SJSU_API_URL}/VerifiedUser/getUser`, { email })
+    .then(res => {
+      status.responseData = res.data;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+/**
+ * Gets the temporary user from the cache when given the id
  * @param {integer} id - the id associated with the temporary user in the cache
  * @returns {ApiResponse} - Containing any error information
  *                      related to the request or the temporary user

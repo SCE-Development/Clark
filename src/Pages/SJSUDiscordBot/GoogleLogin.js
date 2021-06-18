@@ -1,10 +1,16 @@
-import React, {useState} from 'react';
-import {GoogleLogin,
-  GoogleLogout} from 'react-google-login';
+import React, { useState } from 'react';
+import {
+  GoogleLogin,
+  GoogleLogout
+} from 'react-google-login';
 import { GOOGLE_API_CLIENT_ID } from '../../config/config.json';
-import { getTempUser, addUser } from '../../APIFunctions/GoogleLoginPage.js';
+import {
+  getTempUser,
+  addUser,
+  getVerifiedUser
+} from '../../APIFunctions/GoogleLoginPage.js';
 
-function Verify(props){
+function Verify(props) {
   const [isLogined, setLoginState] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const [username, setUsername] = useState('');
@@ -14,10 +20,11 @@ function Verify(props){
   const [loginFailed, setLoginFailed] = useState(false);
   const [logoutFailed, setLogoutFailed] = useState(false);
   const [SJSUEmail, setSJSUEmail] = useState(false);
+  const [errorMSG, setErrorMSG] = useState('');
 
   const getUser = async () => {
     await getTempUser(id).then(res => {
-      if (!res.error){
+      if (!res.error) {
         setUsername(res.responseData.username);
         setDiscordID(res.responseData.id);
         setValidID(true);
@@ -30,16 +37,24 @@ function Verify(props){
   }, []);
 
   const onSuccess = async (res) => {
-    if(res.accessToken){
+    if (res.accessToken) {
       setLoginState(true);
       setAccessToken(res.accessToken);
-      if(res.profileObj.email.includes('sjsu.edu')){
+      const findUserRes = await getVerifiedUser(res.profileObj.email);
+      if (res.profileObj.email.includes('sjsu.edu')
+        && !findUserRes.responseData) {
         setSJSUEmail(true);
         const body = {
           discordID: discordID,
           googleTokenId: res.tokenId
         };
         await addUser(body);
+      } else if (findUserRes.responseData) {
+        setLoginFailed(true);
+        setErrorMSG(`
+        SJSU account is already registered under another discord account.
+        Please contact admin.
+        `);
       }
     }
   };
@@ -47,6 +62,7 @@ function Verify(props){
   const onLogout = (res) => {
     setLoginState(false);
     setAccessToken('');
+    setErrorMSG('');
   };
 
   const onLoginFailure = (res) => {
@@ -57,65 +73,66 @@ function Verify(props){
     setLogoutFailed(true);
   };
 
-  return(
+  return (
     <div>
-      <section style={{margin: '100px'}}>
+      <section style={{ margin: '100px' }}>
         <h1>SJSU SCE Discord Verify</h1>
-        { !validID?
+        {!validID ?
           <h5>Invalid ID: please type "/verify" in the discord chat again</h5>
           : isLogined ?
             logoutFailed ?
               <>
-                <h6>Logout failed. Please try again or contact us. </h6>
+                <h6>Logout failed. Please try again or contact us.</h6>
                 <GoogleLogout
-                  clientId= {GOOGLE_API_CLIENT_ID}
+                  clientId={GOOGLE_API_CLIENT_ID}
                   buttonText='Logout'
-                  onLogoutSuccess={ onLogout }
-                  onFailure={ onLogoutFailure }
+                  onLogoutSuccess={onLogout}
+                  onFailure={onLogoutFailure}
                 />
               </> :
               accessToken && SJSUEmail ?
                 <h5>
-                Success: please type "/verify" in chat again to get your role
+                  Success: please type "/verify" in chat again to get your role
                 </h5>
                 : <>
                   <h5>
-                  Verification failed.
-                  Please logout and login again with an SJSU email.
+                    Verification failed.
+                    Please logout and login again with an SJSU email.
+                    {errorMSG}
                   </h5>
                   <GoogleLogout
-                    clientId= {GOOGLE_API_CLIENT_ID}
+                    clientId={GOOGLE_API_CLIENT_ID}
                     buttonText='Logout'
-                    onLogoutSuccess={ onLogout }
-                    onFailure={ onLogoutFailure }
+                    onLogoutSuccess={onLogout}
+                    onFailure={onLogoutFailure}
                   />
                 </>
             :
             loginFailed ?
               <>
-                <h5> Login failed. Please login again. </h5>
+                <h5> Login failed. Please login again.</h5>
                 <h5>
                   If issue persists,
                   enable 3rd party cookies in your browser and try again.
                 </h5>
                 <GoogleLogin
-                  clientId= {GOOGLE_API_CLIENT_ID}
+                  clientId={GOOGLE_API_CLIENT_ID}
                   buttonText='Login'
-                  onSuccess={ onSuccess }
-                  onFailure={ onLoginFailure }
-                  cookiePolicy={ 'single_host_origin' }
+                  onSuccess={onSuccess}
+                  onFailure={onLoginFailure}
+                  cookiePolicy={'single_host_origin'}
                   responseType='code,token'
                 />
-              </>:
+              </> :
               <>
                 <h5> You are verifying as <b>{username}</b>.</h5>
                 <h5> Please login with your SJSU email address.</h5>
                 <GoogleLogin
-                  clientId= {GOOGLE_API_CLIENT_ID}
+                  clientId={GOOGLE_API_CLIENT_ID}
                   buttonText='Login'
-                  onSuccess={ onSuccess }
-                  onFailure={ onLoginFailure }
-                  cookiePolicy={ 'single_host_origin' }
+                  onSuccess={onSuccess}
+                  onFailure={onLoginFailure}
+                  cookiePolicy={'single_host_origin'}
                   responseType='code,token'
                 />
               </>
