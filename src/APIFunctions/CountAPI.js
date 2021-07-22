@@ -2,6 +2,8 @@
  * Used to process data from APIs to count and send to skylab pipeline 
  */
 
+//TODO: What imports are needed?
+
 /**
  * When a Core-v4 API endpoint is called  
  * Raw Data Format (JSON Object):
@@ -11,7 +13,6 @@
  *      time: sting
  *      UserID: string
  *      Description: string
- * 
  */
 
 /** 
@@ -25,18 +26,20 @@
 export async function dataAPI(name, err, ID, descr){
     //find a way to catch the current date and time when this function is called 
     let formatDay = new Date(); 
-    let date = formatDay.getFullYear()+'-'+(formatDay.getMonth()+1)+'-'+formatDay.getDate();
+    let APIdate = formatDay.getFullYear()+'-'+(formatDay.getMonth()+1)+'-'+formatDay.getDate();
 
-    let time = formatDay.getHours() + ":" + formatDay.getMinutes() + ":" + formatDay.getSeconds();
+    let APItime = formatDay.getHours() + ":" + formatDay.getMinutes() + ":" + formatDay.getSeconds();
 
     const {
-        api_name, 
-        error, 
-        date, 
-        time, 
-        userID, 
-        description
+        api_name: name, 
+        Error: err, 
+        date: APIdate, 
+        time: APItime, 
+        userID: ID, 
+        description: descr
     } = myJSON; //TODO: Change name of this object 
 
     return myJSON;
 }
+
+//TODO: edits to API files to make them import & run dataAPI

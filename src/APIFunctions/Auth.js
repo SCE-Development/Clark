@@ -40,9 +40,11 @@ export async function registerUser(userToRegister) {
       numberOfSemestersToSignUpFor
     })
     .then(res => {
+      dataAPI("registerUser", false, "", "User registered successfully"); 
       status.responseData = res.data;
     })
     .catch(err => {
+      dataAPI("registerUser", true, "", "User registration ended in error"); 
       status.error = true;
       status.responseData = err.response;
     });

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dataAPI from './CountAPI'; 
 import {
   PrintApiResponse,
   ApiResponse
@@ -35,6 +36,7 @@ export async function healthCheck() {
       status.responseData = err;
       status.error = true;
     });
+  
   return status;
 }
 
