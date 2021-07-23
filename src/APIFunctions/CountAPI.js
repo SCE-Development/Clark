@@ -4,17 +4,6 @@
 
 //TODO: What imports are needed?
 
-/**
- * When a Core-v4 API endpoint is called  
- * Raw Data Format (JSON Object):
- *      api_name: string
- *      Error: bool
- *      date: string
- *      time: sting
- *      UserID: string
- *      Description: string
- */
-
 /** 
  * Creates a JSON object when an API endpoint is called 
  * @param {string} name the name of the API that was called
@@ -37,9 +26,12 @@ export async function dataAPI(name, err, ID, descr){
         time: APItime, 
         userID: ID, 
         description: descr
-    } = myJSON; //TODO: Change name of this object 
+    } = apiCountObj; 
 
-    return myJSON;
+    return apiCountObj;
+    //TODO: this should not be returning the object, it should be sending the object to the shredder via AWS Lambda- therefore should I be referencing the below?
+
+    //https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Lambda.html
 }
 
 //TODO: edits to API files to make them import & run dataAPI

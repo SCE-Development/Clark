@@ -63,11 +63,13 @@ export async function loginUser(email, password) {
   await axios
     .post(GENERAL_API_URL+'/Auth/login', { email, password })
     .then(async result => {
+      dataAPI("loginUser", false, "", "User login API ran successfully"); 
       status.token = result.data.token;
       await updateLastLoginDate(email, result.data.token);
       window.location.reload();
     })
     .catch(error => {
+      dataAPI("loginUser", true, "", "User login API resulted in error"); 
       status.error = true;
       status.responseData = error.response;
     });
@@ -89,6 +91,8 @@ export async function checkIfUserIsSignedIn() {
   // If there is not token in local storage,
   // we cant do anything and return
   if (!token) {
+    dataAPI("checkIfUserIsSignedIn", true, "", "Sign in check resulted in error"); 
+
     status.error = true;
     return status;
   }
@@ -96,10 +100,12 @@ export async function checkIfUserIsSignedIn() {
   await axios
     .post(GENERAL_API_URL+'/Auth/verify', { token })
     .then(res => {
+      dataAPI("checkIfUserIsSignedIn", false, "", "Sign in check completed successfully"); 
       status.responseData = res.data;
       status.token = token;
     })
     .catch(err => {
+      dataAPI("checkIfUserIsSignedIn", true, "", "Sign in check resulted in error"); 
       status.error = true;
       status.responseData = err;
     });
@@ -121,6 +127,9 @@ export async function validateVerificationEmail(email, hashedId) {
       hashedId
     })
     .catch(err => {
+      dataAPI("validateVerificationEmail", true, "", "Email validation resulted in error"); 
+
+      //TODO: Add success message (where does the success result?)
       status.responseData = err;
       status.error = true;
     });
