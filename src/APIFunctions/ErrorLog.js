@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
+import dataAPI from './CountAPI'; 
+
 let config = require('../config/config.json');
 let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
   config.LOGGING_API_URL_PROD : config.LOGGING_API_URL;

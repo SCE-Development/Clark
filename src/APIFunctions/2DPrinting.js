@@ -30,9 +30,11 @@ export async function healthCheck() {
   let status = new ApiResponse();
   await axios.post(RPC_API_URL + '/Printer/healthCheck')
     .then(res => {
+      dataAPI("healthCheck", false, "", "Heathcheck completed successfully"); 
       status.reponseData = res.data;
     })
     .catch(err => {
+      dataAPI("healthCheck", true, "", "Heathcheck resulted in error");
       status.responseData = err;
       status.error = true;
     });
@@ -85,9 +87,11 @@ export async function printPage(data) {
   let status = new ApiResponse();
   await axios.post(RPC_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {
+      dataAPI("printPage", false, "", "Print page completed successfully");
       status.responseData = response.data.message;
     })
     .catch(() => {
+      dataAPI("printPage", true, "", "Print page resulted in error");
       status.error = true;
     });
   return status;
@@ -103,6 +107,8 @@ export async function logPrintRequest(data) {
   let status = new ApiResponse();
   await axios.post(LOGGING_API_URL + '/PrintLog/addPrintLog', data)
     .catch(() => {
+      //TODO: Add dataAPI for non-error
+      dataAPI("logPrintRequest", true, "", "Log print request resulted in error");
       status.error = true;
     });
   return status;
@@ -116,9 +122,11 @@ export async function getAllLogs() {
   let status = new ApiResponse();
   await axios.get(LOGGING_API_URL + '/PrintLog/getPrintLogs')
     .then(response => {
+      dataAPI("getAllLogs", false, "", "Get all logs completed successfully");
       status.responseData = response.data;
     })
     .catch(() => {
+      dataAPI("getAllLogs", true, "", "Get all logs resulted in error");
       status.error = true;
     });
   return status;
@@ -141,10 +149,12 @@ export async function getPagesPrinted(email, token, totalPages, copies) {
       token
     })
     .then(res => {
+      dataAPI("getPagesPrinted", false, "", "Get pages printed completed successfully");
       status.canPrint = copies * totalPages.size + res.data <= 30;
       status.remainingPages = 30 - res.data;
     })
     .catch(() => {
+      dataAPI("getPagesPrinted", true, "", "Get pages printed resulted in error");
       status.error = true;
     });
   return status;

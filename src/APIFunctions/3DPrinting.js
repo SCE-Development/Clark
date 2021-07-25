@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
+import dataAPI from './CountAPI'; 
+
 let config = require('../config/config.json');
 let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
   config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
