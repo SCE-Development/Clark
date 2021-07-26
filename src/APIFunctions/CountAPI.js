@@ -19,6 +19,7 @@ export async function dataAPI(name, err, ID, descr){
 
     let APItime = formatDay.getHours() + ":" + formatDay.getMinutes() + ":" + formatDay.getSeconds();
 
+    /*
     const {
         api_name: name, 
         Error: err, 
@@ -27,6 +28,9 @@ export async function dataAPI(name, err, ID, descr){
         userID: ID, 
         description: descr
     } = apiCountObj; 
+    */
+
+    const {} = apiCountObj; 
 
     return apiCountObj;
     //TODO: this should not be returning the object, it should be sending the object to the shredder via AWS Lambda- therefore should I be referencing the below?
@@ -34,4 +38,5 @@ export async function dataAPI(name, err, ID, descr){
     //https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Lambda.html
 }
 
+export default dataAPI; 
 //TODO: edits to API files to make them import & run dataAPI
