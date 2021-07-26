@@ -3,13 +3,13 @@ let endTime;
 let domain;
 
 let whenClose = function() {
-    endTime = new Date().getHours() + ':' +  new Date().getMinutes() + ':' + new Date().getSeconds();
+    endTime = checkTime(new Date().getHours()) + ':' +  checkTime(new Date().getMinutes()) + ':' + checkTime(new Date().getSeconds());
     console.log(JSONobject());
 
 }
 
 window.onload = function(event){
-    startTime = new Date().getHours() + ':' +  new Date().getMinutes() + ':' + new Date().getSeconds();
+    startTime =checkTime(new Date().getHours()) + ':' +  checkTime(new Date().getMinutes()) + ':' + checkTime(new Date().getSeconds());
     domain = window.location.href.split('/');
     domain = domain[domain.length -1];
     
@@ -21,7 +21,7 @@ document.addEventListener("visibilitychange", () => {
       whenClose();
     }
     else{
-        startTime = new Date().getHours() + ':' +  new Date().getMinutes() + ':' + new Date().getSeconds();
+        startTime = checkTime(new Date().getHours()) + ':' +  checkTime(new Date().getMinutes()) + ':' + checkTime(new Date().getSeconds());
     }
 });
 
@@ -33,9 +33,17 @@ function JSONobject() {
         'Start Time' : startTime,
         'End Time' : endTime,
         'User ID' : null,
-        'SSOID' : null
+        'SSOID' : null,
+        'Source' : 'coreV4'
     };
 }
+
+function checkTime(i) {
+    if (i < 10) {
+      i = "0" + i;
+    }
+    return i;
+  }
 // {
 //     Page_name: string
 //     Time_from: string
