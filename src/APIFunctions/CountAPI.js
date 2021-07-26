@@ -9,28 +9,31 @@
  * @param {string} name the name of the API that was called
  * @param {bool} err whether the API caused an error or not 
  * @param {string} ID the ID of the user that called the function
- * @param {string} descr description of what the API does?
  * @returns {object} a json object containing all the relevant raw data 
 */
-export async function dataAPI(name, err, ID, descr){
+export async function dataAPI(name, err, ID){ //TODO: Remove description from all files where this is used so far, change 'returns' param
     //find a way to catch the current date and time when this function is called 
     let formatDay = new Date(); 
     let APIdate = formatDay.getFullYear()+'-'+(formatDay.getMonth()+1)+'-'+formatDay.getDate();
 
     let APItime = formatDay.getHours() + ":" + formatDay.getMinutes() + ":" + formatDay.getSeconds();
 
-    /*
-    const {
+    const apiCountObj = {
         api_name: name, 
         Error: err, 
         date: APIdate, 
         time: APItime, 
         userID: ID, 
-        description: descr
-    } = apiCountObj; 
-    */
+        description: name, //set to name to start
+        Source: "CountAPI"
+    };   
 
-    const {} = apiCountObj; 
+    //if no error
+    if (!err){
+        apiCountObj.description += " completed successfully";
+    } else { //if error
+        apiCountObj.description += " resulted in error"; 
+    }
 
     return apiCountObj;
     //TODO: this should not be returning the object, it should be sending the object to the shredder via AWS Lambda- therefore should I be referencing the below?
