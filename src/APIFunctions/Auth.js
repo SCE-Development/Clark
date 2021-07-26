@@ -1,5 +1,5 @@
 import axios from 'axios';
-import dataAPI from './CountAPI'; 
+import dataAPI from './CountAPI';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { updateLastLoginDate } from './User';
 
@@ -128,9 +128,9 @@ export async function validateVerificationEmail(email, hashedId) {
       hashedId
     })
     .catch(err => {
-      dataAPI('validateVerificationEmail', true, ''); 
+      dataAPI('validateVerificationEmail', true, '');
 
-      //TODO: Add success message (where does the success result?)
+      // Add success message (where does the success result?)
       status.responseData = err;
       status.error = true;
     });

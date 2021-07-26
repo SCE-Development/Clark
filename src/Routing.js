@@ -29,8 +29,7 @@ import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 
 export default function Routing({ appProps }) {
-  console.log(appProps.user); 
-  //console.log(props.user); 
+  alert(appProps.user);
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
     userIsAuthenticated &&

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import dataAPI from './CountAPI'; 
+import dataAPI from './CountAPI';
 import {
   PrintApiResponse,
   ApiResponse
@@ -38,7 +38,6 @@ export async function healthCheck() {
       status.responseData = err;
       status.error = true;
     });
-  
   return status;
 }
 
@@ -107,7 +106,7 @@ export async function logPrintRequest(data) {
   let status = new ApiResponse();
   await axios.post(LOGGING_API_URL + '/PrintLog/addPrintLog', data)
     .catch(() => {
-      //TODO: Add dataAPI for non-error
+      // Add dataAPI for non-error
       dataAPI('logPrintRequest', true, '');
       status.error = true;
     });
