@@ -2,14 +2,14 @@ let startTime;
 let endTime;
 let domain;
 
-function checkTime(i) {
+export function checkTime(i) {
   if (i < 10) {
     i = '0' + i;
   }
   return i;
 }
 
-function JSONobject() {
+export function JSONobject() {
   return {
     'Page Name' : domain,
     'Start Time' : startTime,
@@ -19,29 +19,28 @@ function JSONobject() {
   };
 }
 
-function onLoad(){
+export function whenClose(){
   let date = new Date();
-  startTime = `${checkTime(date.getHours())}:
-              +${checkTime(date.getMinutes())}:
-              +${checkTime(date.getSeconds())}`;
+  /* eslint-disable-next-line */
+  endTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
+}
+
+export function onLoad(){
+  let date = new Date();
+  /* eslint-disable-next-line */
+  startTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
   domain = window.location.href.split('/'); domain = domain[domain.length -1];
 }
 
-function whenClose(){
-  let date = new Date();
-  endTime = `${checkTime(date.getHours())}:
-            +${checkTime(date.getMinutes())}:
-            +${checkTime(date.getSeconds())}`;
-  JSONobject();
-}
-
-function visibiltyChange(){
+export function visibiltyChange(){
   if(document.visibilityState == 'hidden'){
+    alert('Closed');
     whenClose();
   } else{
     onLoad();
   }
 }
+
 
 
 // {

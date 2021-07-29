@@ -4,6 +4,7 @@ import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 import Iframe from 'react-iframe';
+import * as countTime from '../../countTime.js';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -25,6 +26,14 @@ import Iframe from 'react-iframe';
         America%2FLos_Angeles" style="border-width:0" width="1000"
         height="850" frameborder="0" scrolling="no"/>
         */
+window.onload = () =>{
+  countTime.onLoad();
+  alert('initialLoad');
+};
+
+document.addEventListener('visibilitychange', () =>{
+  countTime.visibiltyChange();
+});
 
 class Home extends Component {
   render() {
