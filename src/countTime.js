@@ -11,11 +11,11 @@ export function checkTime(i) {
 
 export function JSONobject() {
   return {
-    'Page Name' : domain,
-    'Start Time' : startTime,
-    'End Time' : endTime,
-    'User ID' : null,
-    'SSOID' : null
+    PageName : domain,
+    StartTime : startTime,
+    EndTime : endTime,
+    UserID : null,
+    SSOID : null
   };
 }
 
@@ -23,6 +23,7 @@ export function whenClose(){
   let date = new Date();
   /* eslint-disable-next-line */
   endTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
+  alert(JSON.stringify(JSONobject()));
 }
 
 export function onLoad(){
