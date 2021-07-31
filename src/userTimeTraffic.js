@@ -47,9 +47,9 @@ export function visibiltyChange(){
 
 
 // {
-//     Page_name: string
-//     Time_from: string
-//     Time_until: string
-//     userID: string
+//     Page_name: string,
+//     Time_from: string,
+//     Time_until: string,
+//     userID: string,
 //     SSOID: string
 //  }
