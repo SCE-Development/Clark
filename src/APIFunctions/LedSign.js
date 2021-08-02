@@ -25,6 +25,13 @@ export async function healthCheck(officerName) {
       status.responseData = err;
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('healthCheck', true);
+  }
+  else {
+    dataAPI('healthCheck', false);
+  }
   return status;
 }
 
@@ -44,6 +51,13 @@ export async function getAllSignLogs() {
       result.responseData = err;
       result.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('getAllSignLogs', true);
+  }
+  else {
+    dataAPI('getAllSignLogs', false);
+  }
   return result;
 }
 
@@ -65,5 +79,12 @@ export async function updateSignText(signData) {
       status.responseData = err;
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('updateSignText', true);
+  }
+  else {
+    dataAPI('updateSignText', false);
+  }
   return status;
 }

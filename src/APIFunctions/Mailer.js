@@ -27,6 +27,13 @@ export async function sendVerificationEmail(email, firstName) {
       status.error = true;
       status.responseData = error;
     });
+
+  if (status.error = true) {
+    dataAPI('sendVerificationEmail', true);
+  }
+  else {
+    dataAPI('sendVerificationEmail', false);
+  }    
   return status;
 }
 
@@ -53,6 +60,13 @@ export async function sendBlastEmail(emailList, subject, content) {
       status.error = true;
       status.responseData = error;
     });
+
+  if (status.error = true) {
+    dataAPI('sendBlastEmail', true);
+  }
+  else {
+    dataAPI('sendBlastEmail', false);
+  }
   return status;
 }
 
@@ -87,5 +101,12 @@ export async function addEventToCalendar(newEvent, token) {
     .catch((error) => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('addEventToCalendar', true);
+  }
+  else {
+    dataAPI('addEventToCalendar', false);
+  }
   return status;
 }
