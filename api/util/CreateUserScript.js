@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 const User = require('../main_endpoints/models/User.js');
 const inquirer = require('inquirer');
 const mongoose = require('mongoose');
@@ -15,6 +15,7 @@ const {
 } = consoleColors;
 
 console.debug(blueColor, 'Welcome to the SCE User Creation CLI!', defaultColor);
+
 inquirer
   .prompt([
     {

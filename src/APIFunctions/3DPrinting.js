@@ -48,6 +48,13 @@ export async function submit3DPrintRequest(printRequest) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('submit3DPrintRequest', true);
+  }
+  else {
+    dataAPI('submit3DPrintRequest', false);
+  }
   return status;
 }
 
@@ -75,6 +82,13 @@ export async function print3DModel(printRequest) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('print3DModel', true);
+  }
+  else {
+    dataAPI('print3DModel', false);
+  }
   return status;
 }
 
@@ -94,6 +108,13 @@ export async function getAll3DPrintRequests() {
       status.error = true;
       status.responseData = err;
     });
+
+  if (status.error = true) {
+    dataAPI('getAll3DPrintRequests', true);
+  }
+  else {
+    dataAPI('getAll3DPrintRequests', false);
+  }
   return status;
 }
 
@@ -119,6 +140,13 @@ export async function delete3DPrintRequest(requestToDelete, token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('delete3DPrintRequest', true);
+  }
+  else {
+    dataAPI('delete3DPrintRequest', false);
+  }
   return status;
 }
 
@@ -145,6 +173,13 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('update3DPrintRequestProgress', true);
+  }
+  else {
+    dataAPI('update3DPrintRequestProgress', false);
+  }
   return status;
 }
 
@@ -166,5 +201,11 @@ export async function search3DPrintRequests(email) {
     .catch(() => {
       status.err = true;
     });
+  if (status.error = true) {
+    dataAPI('update3DPrintRequestProgress', true);
+  }
+  else {
+    dataAPI('update3DPrintRequestProgress', false);
+  }
   return status;
 }

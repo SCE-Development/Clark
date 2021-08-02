@@ -9,7 +9,8 @@
  * @param {string} ID the ID of the user that called the function
  * @returns {object} a json object containing all the relevant raw data
 */
-export async function dataAPI(name, err, ID){
+export async function dataAPI(name, err){
+  // Where are we getting the user ID?
   let formatDay = new Date();
   let APIdate = formatDay.getFullYear()+'-'
       +(formatDay.getMonth()+1)+'-'+formatDay.getDate();
@@ -22,7 +23,7 @@ export async function dataAPI(name, err, ID){
     Error: err,
     date: APIdate,
     time: APItime,
-    userID: ID,
+    // userID: ID,
     description: name, // set to name to start
     Source: 'CountAPI'
   };

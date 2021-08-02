@@ -26,5 +26,12 @@ export async function addToSpreadsheet(row, sheetsId){
       status.responseData = err;
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('addToSpreadsheet', true);
+  }
+  else {
+    dataAPI('addToSpreadsheet', false);
+  }
   return status;
 }

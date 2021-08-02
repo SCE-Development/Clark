@@ -21,6 +21,13 @@ export async function getAllErrorLogs() {
       status.responseData = err.data;
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('getAllErrorLogs', true);
+  }
+  else {
+    dataAPI('getAllErrorLogs', false);
+  }
   return status;
 }
 
@@ -40,5 +47,12 @@ export async function addErrorLog(newError) {
     status.error = true;
     status.responseData = err;
   });
+
+  if (status.error = true) {
+    dataAPI('addErrorLog', true);
+  }
+  else {
+    dataAPI('addErrorLog', false);
+  }
   return status;
 }

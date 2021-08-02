@@ -30,11 +30,11 @@ export async function healthCheck() {
   let status = new ApiResponse();
   await axios.post(RPC_API_URL + '/Printer/healthCheck')
     .then(res => {
-      dataAPI('healthCheck', false, '');
+      dataAPI('healthCheck', false);
       status.reponseData = res.data;
     })
     .catch(err => {
-      dataAPI('healthCheck', true, '');
+      dataAPI('healthCheck', true);
       status.responseData = err;
       status.error = true;
     });
@@ -107,7 +107,7 @@ export async function logPrintRequest(data) {
   await axios.post(LOGGING_API_URL + '/PrintLog/addPrintLog', data)
     .catch(() => {
       // Add dataAPI for non-error
-      dataAPI('logPrintRequest', true, '');
+      dataAPI('logPrintRequest', true);
       status.error = true;
     });
   return status;
@@ -121,11 +121,11 @@ export async function getAllLogs() {
   let status = new ApiResponse();
   await axios.get(LOGGING_API_URL + '/PrintLog/getPrintLogs')
     .then(response => {
-      dataAPI('getAllLogs', false, '');
+      dataAPI('getAllLogs', false);
       status.responseData = response.data;
     })
     .catch(() => {
-      dataAPI('getAllLogs', true, '');
+      dataAPI('getAllLogs', true);
       status.error = true;
     });
   return status;
@@ -148,12 +148,12 @@ export async function getPagesPrinted(email, token, totalPages, copies) {
       token
     })
     .then(res => {
-      dataAPI('getPagesPrinted', false, '');
+      dataAPI('getPagesPrinted', false);
       status.canPrint = copies * totalPages.size + res.data <= 30;
       status.remainingPages = 30 - res.data;
     })
     .catch(() => {
-      dataAPI('getPagesPrinted', true, '');
+      dataAPI('getPagesPrinted', true);
       status.error = true;
     });
   return status;

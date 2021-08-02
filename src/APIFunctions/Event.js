@@ -33,6 +33,13 @@ export async function getAllEvents() {
       status.responseData = err;
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('getAllEvents', true);
+  }
+  else {
+    dataAPI('getAllEvents', false);
+  }
   return status;
 }
 
@@ -85,6 +92,12 @@ export async function createNewEvent(newEvent, token) {
     .catch(() => {
       status.error = true;
     });
+  if (status.error = true) {
+    dataAPI('createNewEvent', true);
+  }
+  else {
+    dataAPI('createNewEvent', false);
+  }
   return status;
 }
 
@@ -133,6 +146,13 @@ export async function editEvent(eventToUpdate, token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('editEvent', true);
+  }
+  else {
+    dataAPI('editEvent', false);
+  }
   return status;
 }
 
@@ -157,6 +177,13 @@ export async function deleteEvent(eventToDelete, token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('deleteEvent', true);
+  }
+  else {
+    dataAPI('deleteEvent', false);
+  }
   return status;
 }
 
