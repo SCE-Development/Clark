@@ -4,7 +4,7 @@ import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 import Iframe from 'react-iframe';
-import * as countTime from '../../countTime.js';
+import * as countTime from '../../userTimeTraffic.js';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -28,12 +28,17 @@ import * as countTime from '../../countTime.js';
         */
 window.onload = () =>{
   countTime.onLoad();
-  alert('initialLoad');
+  /* eslint-disable-next-line */
+  console.log('initialLoad');
 };
 
-document.addEventListener('visibilitychange', () =>{
-  countTime.visibiltyChange();
-});
+// React.useEffect(() =>{
+//   document.addEventListener('visibilitychange', countTime.visibiltyChange);
+//   return () => {
+//     document.removeEventListener('visibiltyChange',
+//       countTime.visibiltyChange);
+//   };
+// });
 
 class Home extends Component {
   render() {

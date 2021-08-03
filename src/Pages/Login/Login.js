@@ -4,8 +4,23 @@ import { Link } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
 import './login.css';
+import * as countTime from '../../countTime.js';
+
+window.onload = () =>{
+  countTime.onLoad();
+  /* eslint-disable-next-line */
+  console.log('initialLoad');
+};
+
 
 export default function Login(props) {
+  React.useEffect(() =>{
+    document.addEventListener('visibilitychange', countTime.visibiltyChange);
+    return () => {
+      document.removeEventListener('visibiltyChange',
+        countTime.visibiltyChange);
+    };
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');

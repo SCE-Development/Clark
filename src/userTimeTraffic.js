@@ -1,8 +1,9 @@
+const aws = require('aws-sdk');
 let startTime;
 let endTime;
 let domain;
 
-export function checkTime(i) {
+function checkTime(i) {
   if (i < 10) {
     i = '0' + i;
   }
@@ -19,11 +20,12 @@ export function JSONobject() {
   };
 }
 
-export function whenClose(){
+function whenClose(){
   let date = new Date();
   /* eslint-disable-next-line */
   endTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
-  alert(JSON.stringify(JSONobject()));
+  /* eslint-disable-next-line */
+  console.log(JSON.stringify(JSONobject()));
 }
 
 export function onLoad(){
@@ -35,13 +37,13 @@ export function onLoad(){
 
 export function visibiltyChange(){
   if(document.visibilityState == 'hidden'){
-    alert('Closed');
+    /* eslint-disable-next-line */
+    console.log('Closed');
     whenClose();
   } else{
     onLoad();
   }
 }
-
 
 
 // {
