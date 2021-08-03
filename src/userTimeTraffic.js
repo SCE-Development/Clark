@@ -1,4 +1,5 @@
 const aws = require('aws-sdk');
+const React = require('react');
 let startTime;
 let endTime;
 let domain;
@@ -44,6 +45,13 @@ export function visibiltyChange(){
     onLoad();
   }
 }
+
+export const reactComp = (callback) => {
+  React.useEffect(() => {
+    window.addEventListener('visibilitychange', callback);
+    return () => window.removeEventListener('visibilitychange', callback);
+  }, [callback]);
+};
 
 
 // {

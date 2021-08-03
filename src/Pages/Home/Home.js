@@ -42,6 +42,7 @@ window.onload = () =>{
 
 class Home extends Component {
   render() {
+    // add/remove visibiltychage listener
     return (
       <>
         <div className='home'>
