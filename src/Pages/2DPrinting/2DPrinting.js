@@ -25,10 +25,22 @@ import {
 } from './2DComponents';
 import { PrintPageModal } from './2DPrintPageModal';
 import PrintingHealthCheck from './2DPrintingHealthCheck';
+import * as countTime from '../../userTimeTraffic.js';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
 
 export default function Printing(props) {
+
+  React.useEffect(() =>{
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+    return () => {
+      window.removeEventListener('onload', countTime.onLoad);
+      document.removeEventListener('visibiltyChange',
+        countTime.visibilityChange);
+    };
+  });
+
   /**
    * State variables:
    * files - pdf file stored in filepond

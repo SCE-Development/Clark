@@ -11,6 +11,7 @@ import spring2 from './assets/spring2.jpeg';
 import { Container, Button, Row, Col } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
+import * as countTime from '../../userTimeTraffic.js';
 
 class MembershipPlan extends Component {
   constructor(props) {
@@ -73,6 +74,8 @@ class MembershipPlan extends Component {
   }
 
   componentDidMount() {
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
     this.changeSeason();
     this.setState({
       planType: [
@@ -92,6 +95,12 @@ class MembershipPlan extends Component {
         }
       ]
     });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
   }
 
   changeSeason() {

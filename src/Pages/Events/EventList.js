@@ -4,6 +4,7 @@ import './event-page.css';
 import { getAllEvents } from '../../APIFunctions/Event';
 import EventCard from './EventCard';
 import Header from '../../Components/Header/Header';
+import * as countTime from '../../userTimeTraffic.js';
 
 function AnnouncementList() {
   const [getFiltered, setGetFiltered] = useState(true);
@@ -37,10 +38,18 @@ function AnnouncementList() {
   };
 
   useEffect(() => {
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange',
+      countTime.visibilityChange);
     async function fetchData() {
       await populateEventList();
     }
     fetchData();
+    return () => {
+      window.removeEventListener('onload', countTime.onLoad);
+      document.removeEventListener('visibiltyChange',
+        countTime.visibilityChange);
+    };
   }, []);
 
   return (

@@ -26,23 +26,21 @@ import * as countTime from '../../userTimeTraffic.js';
         America%2FLos_Angeles" style="border-width:0" width="1000"
         height="850" frameborder="0" scrolling="no"/>
         */
-window.onload = () =>{
-  countTime.onLoad();
-  /* eslint-disable-next-line */
-  console.log('initialLoad');
-};
-
-// React.useEffect(() =>{
-//   document.addEventListener('visibilitychange', countTime.visibiltyChange);
-//   return () => {
-//     document.removeEventListener('visibiltyChange',
-//       countTime.visibiltyChange);
-//   };
-// });
+window.onload = countTime.onLoad;
 
 class Home extends Component {
+
+  componentDidMount() {
+    document.addEventListener('visibilitychange',
+      countTime.visibilityChange);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
+  }
+
   render() {
-    // add/remove visibiltychage listener
     return (
       <>
         <div className='home'>

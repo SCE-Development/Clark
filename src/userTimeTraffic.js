@@ -1,8 +1,7 @@
 const aws = require('aws-sdk');
-const React = require('react');
 let startTime;
 let endTime;
-let domain;
+export let domain;
 
 function checkTime(i) {
   if (i < 10) {
@@ -21,7 +20,7 @@ export function JSONobject() {
   };
 }
 
-function whenClose(){
+export function whenClose(){
   let date = new Date();
   /* eslint-disable-next-line */
   endTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
@@ -34,25 +33,22 @@ export function onLoad(){
   /* eslint-disable-next-line */
   startTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
   domain = window.location.href.split('/'); domain = domain[domain.length -1];
+  if(domain === '') {
+    domain = 'home';
+  }
+  /* eslint-disable-next-line */
+  console.log('USER TIME INITIALIZED');
 }
 
-export function visibiltyChange(){
+export function visibilityChange(){
   if(document.visibilityState == 'hidden'){
-    /* eslint-disable-next-line */
-    console.log('Closed');
     whenClose();
+    /* eslint-disable-next-line */
+    console.log('USER TIME TERMINATED');
   } else{
     onLoad();
   }
 }
-
-export const reactComp = (callback) => {
-  React.useEffect(() => {
-    window.addEventListener('visibilitychange', callback);
-    return () => window.removeEventListener('visibilitychange', callback);
-  }, [callback]);
-};
-
 
 // {
 //     Page_name: string,

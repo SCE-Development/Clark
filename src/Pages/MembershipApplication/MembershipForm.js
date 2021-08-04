@@ -7,6 +7,7 @@ import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 import GoogleRecaptcha from './GoogleRecaptcha';
+import * as countTime from '../../userTimeTraffic.js';
 
 export default function MembershipForm(props) {
   const [verified, setVerified] = useState(false);
@@ -201,6 +202,16 @@ export default function MembershipForm(props) {
       }
     }
   };
+
+  React.useEffect(() =>{
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+    return () => {
+      window.removeEventListener('onload', countTime.onLoad);
+      document.removeEventListener('visibiltyChange',
+        countTime.visibilityChange);
+    };
+  });
 
   return (
     <Container id="background" fluid>

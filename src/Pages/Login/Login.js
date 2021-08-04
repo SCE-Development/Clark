@@ -6,20 +6,15 @@ import { loginUser } from '../../APIFunctions/Auth';
 import './login.css';
 import * as countTime from '../../userTimeTraffic.js';
 
-window.onload = () =>{
-  countTime.onLoad();
-  /* eslint-disable-next-line */
-  console.log('initialLoad');
-};
-
-
 export default function Login(props) {
 
   React.useEffect(() =>{
-    document.addEventListener('visibilitychange', countTime.visibiltyChange);
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
     return () => {
+      window.removeEventListener('onload', countTime.onLoad);
       document.removeEventListener('visibiltyChange',
-        countTime.visibiltyChange);
+        countTime.visibilityChange);
     };
   });
 
