@@ -36,8 +36,7 @@ export async function getAllEvents() {
 
   if (status.error = true) {
     dataAPI('getAllEvents', true);
-  }
-  else {
+  } else {
     dataAPI('getAllEvents', false);
   }
   return status;
@@ -94,8 +93,7 @@ export async function createNewEvent(newEvent, token) {
     });
   if (status.error = true) {
     dataAPI('createNewEvent', true);
-  }
-  else {
+  } else {
     dataAPI('createNewEvent', false);
   }
   return status;
@@ -149,8 +147,7 @@ export async function editEvent(eventToUpdate, token) {
 
   if (status.error = true) {
     dataAPI('editEvent', true);
-  }
-  else {
+  } else {
     dataAPI('editEvent', false);
   }
   return status;
@@ -180,8 +177,7 @@ export async function deleteEvent(eventToDelete, token) {
 
   if (status.error = true) {
     dataAPI('deleteEvent', true);
-  }
-  else {
+  } else {
     dataAPI('deleteEvent', false);
   }
   return status;

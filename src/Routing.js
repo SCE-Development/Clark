@@ -29,7 +29,7 @@ import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 
 export default function Routing({ appProps }) {
-  // eslint-disable-next-line no-console
+  // eslint-disable-next-line no-console;
   console.log(appProps.user);
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =

@@ -51,8 +51,7 @@ export async function submit3DPrintRequest(printRequest) {
 
   if (status.error = true) {
     dataAPI('submit3DPrintRequest', true);
-  }
-  else {
+  } else {
     dataAPI('submit3DPrintRequest', false);
   }
   return status;
@@ -85,8 +84,7 @@ export async function print3DModel(printRequest) {
 
   if (status.error = true) {
     dataAPI('print3DModel', true);
-  }
-  else {
+  } else {
     dataAPI('print3DModel', false);
   }
   return status;
@@ -111,8 +109,7 @@ export async function getAll3DPrintRequests() {
 
   if (status.error = true) {
     dataAPI('getAll3DPrintRequests', true);
-  }
-  else {
+  } else {
     dataAPI('getAll3DPrintRequests', false);
   }
   return status;
@@ -143,8 +140,7 @@ export async function delete3DPrintRequest(requestToDelete, token) {
 
   if (status.error = true) {
     dataAPI('delete3DPrintRequest', true);
-  }
-  else {
+  } else {
     dataAPI('delete3DPrintRequest', false);
   }
   return status;
@@ -176,8 +172,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
 
   if (status.error = true) {
     dataAPI('update3DPrintRequestProgress', true);
-  }
-  else {
+  } else {
     dataAPI('update3DPrintRequestProgress', false);
   }
   return status;
@@ -203,8 +198,7 @@ export async function search3DPrintRequests(email) {
     });
   if (status.error = true) {
     dataAPI('update3DPrintRequestProgress', true);
-  }
-  else {
+  } else {
     dataAPI('update3DPrintRequestProgress', false);
   }
   return status;

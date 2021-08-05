@@ -29,6 +29,7 @@ export async function dataAPI(name, err){
     Source: 'CountAPI'
   };
 
+  /* REMOVE THIS TO MAKE THE LAMBDA WORK AGAIN
   //Accessing Lambda to send to Data Shredder 
   const lambdaClient = new Lambda ({region: 'us-west-1',
     credentials: {

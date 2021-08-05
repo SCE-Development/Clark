@@ -21,12 +21,11 @@ export async function getVerifiedUser(email) {
     })
     .catch(() => {
       status.error = true;
-      });
+    });
 
   if (status.error = true) {
     dataAPI('getVerifiedUser', true);
-  }
-  else {
+  } else {
     dataAPI('getVerifiedUser', false);
   }
   return status;
@@ -51,8 +50,7 @@ export async function getTempUser(id) {
 
   if (status.error = true) {
     dataAPI('getTempUser', true);
-  }
-  else {
+  } else {
     dataAPI('getTempUser', false);
   }
   return status;
@@ -75,8 +73,7 @@ export async function addUser(body) {
 
   if (status.error = true) {
     dataAPI('addUser', true);
-  }
-  else {
+  } else {
     dataAPI('addUser', false);
   }
   return status;

@@ -134,8 +134,7 @@ export async function validateVerificationEmail(email, hashedId) {
 
   if (status.error = true) {
     dataAPI('validateVerificationEmail', true);
-  }
-  else {
+  } else {
     dataAPI('validateVerificationEmail', false);
   }
   return status;
