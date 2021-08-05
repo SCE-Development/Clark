@@ -10,7 +10,7 @@ const {Lambda} = require('@aws-sdk/client-lambda');
  * @returns {object} a json object containing all the relevant raw data
 */
 export async function dataAPI(name, err){
-  //formatting for object
+  // formatting for object
   let formatDay = new Date();
   let APIdate = formatDay.getFullYear()+'-'
       +(formatDay.getMonth()+1)+'-'+formatDay.getDate();
@@ -18,7 +18,7 @@ export async function dataAPI(name, err){
   let APItime = formatDay.getHours() + ':'
       + formatDay.getMinutes() + ':' + formatDay.getSeconds();
 
-  //object to be sent to the shredder
+  // object to be sent to the shredder
   const apiCountObj = {
     apiName: name,
     Error: err,
@@ -30,7 +30,7 @@ export async function dataAPI(name, err){
   };
 
   /* REMOVE THIS TO MAKE THE LAMBDA WORK AGAIN
-  //Accessing Lambda to send to Data Shredder 
+  // Accessing Lambda to send to Data Shredder
   const lambdaClient = new Lambda ({region: 'us-west-1',
     credentials: {
       accessKeyID: 'AKIARDBH275VZUROQ3W7',
@@ -39,33 +39,33 @@ export async function dataAPI(name, err){
   const params = {
     FunctionName: 'arn:aws:lambda:us-west-1:075245485931:function:DataShredder',
     InvocationType: 'RequestResponse',
-    Payload: JSON.stringify(apiCountObj) //test if this is inputted correctly to the shredder
+    Payload: JSON.stringify(apiCountObj) // test if this is inputted correctly
   };
 
   const command = new InvokeCommand(params); 
 
-  //note: current method for error testing. Choose another error method for use in website
+  //note: current method for error testing
   try {
-    alert('try block'); 
+    alert('try block');
     const response = await lambdaClient.send(command);
-    //process data 
-    alert(JSON.stringify(response)); 
+    //process data
+    alert(JSON.stringify(response));
   } catch (error) {
     //error handling
-    alert('error'); 
+    alert('error');
   } finally {
     //try block completed
     alert('finally');
   }
 
-  /* PREVIOUS ERROR CHECK METHOD 
+  /* PREVIOUS ERROR CHECK METHOD
   // if no error
   if (!err){
     apiCountObj.description += ' completed successfully';
   } else { // if error
     apiCountObj.description += ' resulted in error';
   }
-  */ 
+  */
 
   return apiCountObj; //Should anything be returned?
 }

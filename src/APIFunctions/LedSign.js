@@ -28,8 +28,7 @@ export async function healthCheck(officerName) {
 
   if (status.error = true) {
     dataAPI('healthCheck', true);
-  }
-  else {
+  } else {
     dataAPI('healthCheck', false);
   }
   return status;
@@ -54,8 +53,7 @@ export async function getAllSignLogs() {
 
   if (status.error = true) {
     dataAPI('getAllSignLogs', true);
-  }
-  else {
+  } else {
     dataAPI('getAllSignLogs', false);
   }
   return result;
@@ -82,8 +80,7 @@ export async function updateSignText(signData) {
 
   if (status.error = true) {
     dataAPI('updateSignText', true);
-  }
-  else {
+  } else {
     dataAPI('updateSignText', false);
   }
   return status;

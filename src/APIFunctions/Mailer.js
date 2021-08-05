@@ -30,10 +30,9 @@ export async function sendVerificationEmail(email, firstName) {
 
   if (status.error = true) {
     dataAPI('sendVerificationEmail', true);
-  }
-  else {
+  } else {
     dataAPI('sendVerificationEmail', false);
-  }    
+  }
   return status;
 }
 
@@ -63,8 +62,7 @@ export async function sendBlastEmail(emailList, subject, content) {
 
   if (status.error = true) {
     dataAPI('sendBlastEmail', true);
-  }
-  else {
+  } else {
     dataAPI('sendBlastEmail', false);
   }
   return status;
@@ -104,8 +102,7 @@ export async function addEventToCalendar(newEvent, token) {
 
   if (status.error = true) {
     dataAPI('addEventToCalendar', true);
-  }
-  else {
+  } else {
     dataAPI('addEventToCalendar', false);
   }
   return status;
