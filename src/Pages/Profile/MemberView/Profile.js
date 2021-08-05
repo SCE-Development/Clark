@@ -22,6 +22,7 @@ import {
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 library.add(fab);
+import * as countTime from '../../../userTimeTraffic.js';
 
 const membershipStatus = require('../../../Enums').membershipState;
 
@@ -52,6 +53,15 @@ export default class Profile extends Component {
         this.setState({ fullName: name });
       });
     }
+
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
   }
 
   async handleDiscordAuth() {

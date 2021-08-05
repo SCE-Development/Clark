@@ -1,8 +1,20 @@
 import React from 'react';
 import { Badge, Container } from 'reactstrap';
 const enums = require('../../../Enums.js');
+import * as countTime from '../../../userTimeTraffic.js';
 
 export default function displayProfile(props) {
+
+  React.useEffect(() =>{
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+    return () => {
+      window.removeEventListener('onload', countTime.onLoad);
+      document.removeEventListener('visibilitychange',
+        countTime.visibilityChange);
+    };
+  });
+
   return (
     <div>
       <Container>

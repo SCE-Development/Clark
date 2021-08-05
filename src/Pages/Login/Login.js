@@ -13,7 +13,7 @@ export default function Login(props) {
     document.addEventListener('visibilitychange', countTime.visibilityChange);
     return () => {
       window.removeEventListener('onload', countTime.onLoad);
-      document.removeEventListener('visibiltyChange',
+      document.removeEventListener('visibilitychange',
         countTime.visibilityChange);
     };
   });
@@ -64,7 +64,8 @@ export default function Login(props) {
             Login
           </button>
           <p id='SignUp'>
-            <Link to='/register'>Create an account</Link>
+            <a href = '/register'>Create an account</a>
+            {/* <Link to='/register'>Create an account</Link> */}
           </p>
         </form>
       </Row>

@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
+import * as countTime from '../../userTimeTraffic.js';
 
 export default class EmailList extends Component {
   constructor(props) {
@@ -24,6 +25,14 @@ export default class EmailList extends Component {
     if (this.props.user) {
       this.getUsers();
     }
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
   }
 
   handleToggle = () => {

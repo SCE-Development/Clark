@@ -11,6 +11,7 @@ import {
 import Header from '../../Components/Header/Header';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal';
+import * as countTime from '../../userTimeTraffic.js';
 
 export default class PrintConsole3D extends React.Component {
   constructor(props) {
@@ -35,6 +36,14 @@ export default class PrintConsole3D extends React.Component {
       authToken: this.props.user.token
     });
     if (window.localStorage) this.callDatabase();
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
   }
 
   // Update card's collapse option

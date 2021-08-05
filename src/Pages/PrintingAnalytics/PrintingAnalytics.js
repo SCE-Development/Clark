@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Header from '../../Components/Header/Header';
 import { Label } from 'reactstrap';
+import * as countTime from '../../userTimeTraffic.js';
 
 export default function Analytics() {
   const [printLogs, setPrintLogs] = useState([]);
@@ -18,6 +19,13 @@ export default function Analytics() {
       setPrintLogs(fetchedLogs.responseData);
     }
     fetchPrintLogs();
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+    return () => {
+      window.removeEventListener('onload', countTime.onLoad);
+      document.removeEventListener('visibilitychange',
+        countTime.visibilityChange);
+    };
   }, []);
 
   // Filter the print logs to only get logs in selected date

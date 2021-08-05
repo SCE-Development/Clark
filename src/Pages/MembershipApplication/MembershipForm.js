@@ -208,7 +208,7 @@ export default function MembershipForm(props) {
     document.addEventListener('visibilitychange', countTime.visibilityChange);
     return () => {
       window.removeEventListener('onload', countTime.onLoad);
-      document.removeEventListener('visibiltyChange',
+      document.removeEventListener('visibilitychange',
         countTime.visibilityChange);
     };
   });

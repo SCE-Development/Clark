@@ -11,6 +11,7 @@ import {
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
 import Header from '../../Components/Header/Header';
+import * as countTime from '../../userTimeTraffic.js';
 
 export default class OverviewBoard extends Component {
   constructor(props) {
@@ -40,6 +41,14 @@ export default class OverviewBoard extends Component {
         }
       );
     }
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
   }
 
   async callDatabase() {

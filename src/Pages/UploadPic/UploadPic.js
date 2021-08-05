@@ -8,6 +8,8 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 /* eslint-disable-next-line */
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
 import './UploadPic.css';
+import * as countTime from '../../userTimeTraffic.js';
+
 registerPlugin(FilePondPluginImagePreview);
 
 class UploadPic extends Component {
@@ -25,6 +27,17 @@ class UploadPic extends Component {
       this.setState({ success: true });
     }
   };
+
+  componentDidMount() {
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
+  }
 
   render() {
     const SuccessMessage = () => (

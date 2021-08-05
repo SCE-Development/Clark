@@ -12,6 +12,7 @@ import EventManagerModal from './EventManagerModal';
 import { eventModalState } from '../../Enums';
 import EventCard from '../Events/EventCard';
 import Header from '../../Components/Header/Header';
+import * as countTime from '../../userTimeTraffic.js';
 
 export default function EventManager(props) {
   const [modal, setModal] = useState(false);
@@ -29,6 +30,13 @@ export default function EventManager(props) {
 
   useEffect(() => {
     populateEventList();
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+    return () => {
+      window.removeEventListener('onload', countTime.onLoad);
+      document.removeEventListener('visibilitychange',
+        countTime.visibilityChange);
+    };
   }, []);
 
   function toggle() {

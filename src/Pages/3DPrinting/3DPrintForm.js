@@ -14,6 +14,7 @@ import {
 import { submit3DPrintRequest } from '../../APIFunctions/3DPrinting';
 import Header from
   '../../Components/Header/Header.js';
+import * as countTime from '../../userTimeTraffic.js';
 
 let fill = false;
 export default class PrintForm3D extends React.Component {
@@ -120,6 +121,15 @@ export default class PrintForm3D extends React.Component {
         this.setState({ fill: true });
       }
     }
+  }
+  componentDidMount() {
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
   }
 
   render() {

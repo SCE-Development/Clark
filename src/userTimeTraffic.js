@@ -1,5 +1,5 @@
-// import {LambdaClient, InvokeCommand} from '@aws-sdk/client-lambda';
-// const {Lambda} = require('@aws-sdk/client-lambda');
+import {LambdaClient, InvokeCommand} from '@aws-sdk/client-lambda';
+const {Lambda} = require('@aws-sdk/client-lambda');
 
 let startTime, endTime, domain;
 /* eslint-disable */
