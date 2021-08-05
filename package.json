@@ -56,6 +56,7 @@
     "filepond-plugin-image-preview": "^4.6.5",
     "google-spreadsheet": "^3.0.13",
     "googleapis": "^67.1.0",
+    "inquirer": "^8.1.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.18",
     "node-fetch": "^2.6.1",
