@@ -3,6 +3,7 @@ import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { Spinner, Input, Button, Container } from 'reactstrap';
 import './led-sign.css';
 import Header from '../../Components/Header/Header';
+import * as countTime from '../../userTimeTraffic.js';
 
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
@@ -114,6 +115,13 @@ function LedSign(props) {
       setLoading(false);
     }
     checkSignHealth(props.user.firstName);
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange', countTime.visibilityChange);
+    return () => {
+      window.removeEventListener('onload', countTime.onLoad);
+      document.removeEventListener('visibiltyChange',
+        countTime.visibilityChange);
+    };
     // eslint-disable-next-line
   }, [])
 

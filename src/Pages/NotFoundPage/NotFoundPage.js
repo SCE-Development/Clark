@@ -1,7 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component } from 'react';
 import './NotFoundPage.css';
+import * as countTime from '../../userTimeTraffic.js';
 
 class NotFoundPage extends Component {
+
+  componentDidMount() {
+    window.addEventListener('onload', countTime.onLoad);
+    document.addEventListener('visibilitychange',
+      countTime.visibilityChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('onload', countTime.onLoad);
+    document.removeEventListener('visibilitychange',
+      countTime.visibilityChange);
+  }
+
   render() {
     return (
       <div className='background'>

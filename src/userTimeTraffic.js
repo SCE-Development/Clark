@@ -1,7 +1,34 @@
-const aws = require('aws-sdk');
-let startTime;
-let endTime;
-export let domain;
+// import {LambdaClient, InvokeCommand} from '@aws-sdk/client-lambda';
+// const {Lambda} = require('@aws-sdk/client-lambda');
+
+let startTime, endTime, domain;
+/* eslint-disable */
+async function sendData(data){
+  const lambdaClient = new Lambda({
+    region: 'us-west-1',
+    credentials: {
+      accessKeyId: 'xxx',
+      secretAccessKey: 'xxxxxx'
+    }
+  });
+  const params = {
+    FunctionName: 'arn:aws:lambda:us-west-1:075245485931:function:DataShredder',
+    InvocationType: 'RequestResponse',
+    Payload: JSON.stringify(data)
+  };
+  const command = new InvokeCommand(params);
+  try {
+    const response = await lambdaClient.send(command);
+    /* eslint-disable-next-line */
+    console.log(JSON.stringify(response));
+  } catch (err) {
+    /* eslint-disable-next-line */
+    console.log(err);
+  } finally {
+    // ...
+  }
+}
+/* eslint-enable */
 
 function checkTime(i) {
   if (i < 10) {
@@ -10,22 +37,30 @@ function checkTime(i) {
   return i;
 }
 
-export function JSONobject() {
-  return {
+let CoreV4Data = {
+  PageName : domain,
+  StartTime : startTime,
+  EndTime : endTime,
+  UserID : null,
+  SSOID : null
+};
+
+function whenClose(){
+  let date = new Date();
+  /* eslint-disable-next-line */
+  endTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
+  CoreV4Data = {
     PageName : domain,
     StartTime : startTime,
     EndTime : endTime,
     UserID : null,
     SSOID : null
   };
-}
-
-export function whenClose(){
-  let date = new Date();
-  /* eslint-disable-next-line */
-  endTime = `${checkTime(date.getHours())}:${checkTime(date.getMinutes())}:${checkTime(date.getSeconds())}`;
-  /* eslint-disable-next-line */
-  console.log(JSON.stringify(JSONobject()));
+  /* eslint-disable */
+  // sendData(CoreV4Data);
+  console.log(JSON.stringify(CoreV4Data));
+  console.log('USER TIME TERMINATED');
+  /* eslint-enable */
 }
 
 export function onLoad(){
@@ -43,17 +78,7 @@ export function onLoad(){
 export function visibilityChange(){
   if(document.visibilityState == 'hidden'){
     whenClose();
-    /* eslint-disable-next-line */
-    console.log('USER TIME TERMINATED');
   } else{
     onLoad();
   }
 }
-
-// {
-//     Page_name: string,
-//     Time_from: string,
-//     Time_until: string,
-//     userID: string,
-//     SSOID: string
-//  }
