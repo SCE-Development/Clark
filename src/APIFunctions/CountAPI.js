@@ -29,7 +29,6 @@ export async function dataAPI(name, err){
     Source: 'CountAPI'
   };
 
-  /* REMOVE THIS TO MAKE THE LAMBDA WORK AGAIN
   // Accessing Lambda to send to Data Shredder
   const lambdaClient = new Lambda ({region: 'us-west-1',
     credentials: {
@@ -44,7 +43,6 @@ export async function dataAPI(name, err){
 
   const command = new InvokeCommand(params); 
 
-  //note: current method for error testing
   try {
     alert('try block');
     const response = await lambdaClient.send(command);
@@ -57,15 +55,6 @@ export async function dataAPI(name, err){
     //try block completed
     alert('finally');
   }
-
-  /* PREVIOUS ERROR CHECK METHOD
-  // if no error
-  if (!err){
-    apiCountObj.description += ' completed successfully';
-  } else { // if error
-    apiCountObj.description += ' resulted in error';
-  }
-  */
 
   return apiCountObj; //Should anything be returned?
 }
