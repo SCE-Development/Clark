@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { UserApiResponse } from './ApiResponses';
+import dataAPI from './CountAPI';
 import { membershipState, userFilterType } from '../Enums';
 
 let config = require('../config/config.json');
@@ -26,6 +27,12 @@ export async function getAllUsers(token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('getAllUsers', true);
+  } else {
+    dataAPI('getAllUsers', false);
+  }
   return status;
 }
 
@@ -97,6 +104,12 @@ export async function editUser(userToEdit, token) {
       status.error = true;
       status.responseData = err.response;
     });
+
+  if (status.error = true) {
+    dataAPI('editUser', true);
+  } else {
+    dataAPI('editUser', false);
+  }
   return status;
 }
 
@@ -125,6 +138,12 @@ export async function deleteUserByEmail(email, token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('deleteUserByEmail', true);
+  } else {
+    dataAPI('deleteUserByEmail', false);
+  }
   return status;
 }
 
@@ -148,6 +167,12 @@ export async function searchUserByEmail(email, token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('searchUserByEmail', true);
+  } else {
+    dataAPI('searchUserByEmail', false);
+  }
   return status;
 }
 
@@ -163,6 +188,13 @@ export async function checkIfUserExists(email) {
     { email }).catch(() => {
     status.error = true;
   });
+
+  if (status.error = true) {
+    dataAPI('checkIfUserExists', true);
+  } else {
+    dataAPI('checkIfUserExists', false);
+  }
+
   return status;
 }
 
@@ -212,5 +244,12 @@ export async function connectToDiscord(email, token) {
     .catch(() => {
       status.error = true;
     });
+
+  if (status.error = true) {
+    dataAPI('connectToDiscord', true);
+  } else {
+    dataAPI('connectToDiscord', false);
+  }
   return status;
+
 }

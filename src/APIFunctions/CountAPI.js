@@ -32,8 +32,8 @@ export async function dataAPI(name, err){
   // Accessing Lambda to send to Data Shredder
   const lambdaClient = new Lambda ({region: 'us-west-1',
     credentials: {
-      accessKeyID: 'AKIARDBH275VZUROQ3W7',
-      secretAccessKey: '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'
+      accessKeyID: 'xxxxxxxxxxxxxxxxxxxx',
+      secretAccessKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
     }});
   const params = {
     FunctionName: 'arn:aws:lambda:us-west-1:075245485931:function:DataShredder',
@@ -46,17 +46,17 @@ export async function dataAPI(name, err){
   try {
     alert('try block');
     const response = await lambdaClient.send(command);
-    //process data
+    // process data
     alert(JSON.stringify(response));
   } catch (error) {
-    //error handling
+    // error handling
     alert('error');
   } finally {
-    //try block completed
+    // try block completed
     alert('finally');
-  } 
+  }
 
-  return apiCountObj; //Should anything be returned?
+  return apiCountObj; // Should anything be returned?
 }
 
 export default dataAPI;
