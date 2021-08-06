@@ -32,8 +32,8 @@ export async function dataAPI(name, err){
   // Accessing Lambda to send to Data Shredder
   const lambdaClient = new Lambda ({region: 'us-west-1',
     credentials: {
-      accessKeyID: 'AKIARDBH275VZUROQ3W7',
-      secretAccessKey: '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'
+      accessKeyID: 'xxxxxxxxxxxxxxxxxxxx',
+      secretAccessKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
     }});
   const params = {
     FunctionName: 'arn:aws:lambda:us-west-1:075245485931:function:DataShredder',
