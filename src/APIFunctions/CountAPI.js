@@ -54,7 +54,7 @@ export async function dataAPI(name, err){
   } finally {
     //try block completed
     alert('finally');
-  }
+  } 
 
   return apiCountObj; //Should anything be returned?
 }

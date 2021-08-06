@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.css';
@@ -27,10 +28,9 @@ import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
+import * as countTime from './userTimeTraffic.js';
 
 export default function Routing({ appProps }) {
-  // eslint-disable-next-line no-console;
-  console.log(appProps.user);
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
     userIsAuthenticated &&
@@ -129,6 +129,8 @@ export default function Routing({ appProps }) {
     { Component: VerifyEmailPage, path: '/verify' },
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'}
   ];
+
+  countTime.getSSOID(appProps);
   return (
     <Router>
       <Switch>
