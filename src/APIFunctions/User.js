@@ -166,6 +166,20 @@ export async function checkIfUserExists(email) {
   return status;
 }
 
+export async function getUserID(email) {
+  let status = new UserApiResponse();
+  await axios.post(GENERAL_API_URL+'/User/getUserID',
+    { email })
+    .then(result => {
+      status.responseData = result.data;
+    })
+    .catch((error) => {
+      status.error = true;
+      status.responseData = error;
+    });
+  return status;
+}
+
 /**
  * This function takes in a list of current users and returns a
  * filtered user list that is determined by the filter id.

@@ -52,6 +52,28 @@ router.post('/checkIfUserExists', (req, res) => {
   );
 });
 
+router.post('/getUserID', (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.sendStatus(BAD_REQUEST);
+  }
+  User.findOne(
+    {
+      email: email.toLowerCase()
+    },
+    function(error, user) {
+      if (error) {
+        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      }
+
+      const usrID = {
+        userID: user._id
+      };
+      return res.status(OK).send(usrID);
+    }
+  );
+});
+
 // Delete a member
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {

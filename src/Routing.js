@@ -28,6 +28,8 @@ import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
+import * as countTime from './userTimeTraffic.js';
+
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -129,6 +131,8 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
     { Component: DiscordSJSU, path: '/discordSJSU'}
   ];
+
+  countTime.getSSOID(appProps);
   return (
     <Router>
       <Switch>

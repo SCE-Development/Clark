@@ -1,14 +1,15 @@
+import {getUserID} from './APIFunctions/User.js';
 import {LambdaClient, InvokeCommand} from '@aws-sdk/client-lambda';
 const {Lambda} = require('@aws-sdk/client-lambda');
 
-let startTime, endTime, domain;
+let startTime, endTime, domain, userID, SSOID;
 /* eslint-disable */
 async function sendData(data){
   const lambdaClient = new Lambda({
     region: 'us-west-1',
     credentials: {
-      accessKeyId: 'xxxxxxx',
-      secretAccessKey: 'xxxxxxx'
+      accessKeyId: 'AKIARDBH275VQJEGZJ4P',
+      secretAccessKey: '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'
     }
   });
 
@@ -21,7 +22,7 @@ async function sendData(data){
   const command = new InvokeCommand(params);
   try {
     const response = await lambdaClient.send(command);
-    console.log(JSON.stringify(response));
+    // console.log(JSON.stringify(response));
   } catch (err) {
     console.log(err);
   }
@@ -39,8 +40,8 @@ let CoreV4Data = {
   PageName : domain,
   StartTime : startTime,
   EndTime : endTime,
-  UserID : null,
-  SSOID : null
+  UserID : userID,
+  SSOID : SSOID
 };
 
 function whenClose(){
@@ -51,11 +52,11 @@ function whenClose(){
     PageName : domain,
     StartTime : startTime,
     EndTime : endTime,
-    UserID : null,
-    SSOID : null
+    UserID : userID,
+    SSOID : SSOID
   };
   /* eslint-disable */
-  sendData(CoreV4Data);
+  // sendData(CoreV4Data);
   console.log(JSON.stringify(CoreV4Data));
   console.log('USER TIME TERMINATED');
   /* eslint-enable */
@@ -80,3 +81,19 @@ export function visibilityChange() {
     onLoad();
   }
 }
+
+export async function getSSOID(param) {
+  /* eslint-disable-next-line */
+  console.log(param.user);
+  userID = await getUserID(param.user.email);
+  /* eslint-disable-next-line */
+  console.log('userID:', userID);
+  userID = userID.responseData.userID;
+  SSOID = param.user.token;
+}
+
+/*
+SSOID --> DONE
+USER_ID --> DONE
+AWS-LAMBDA --> printing error data
+*/
