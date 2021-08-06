@@ -209,6 +209,12 @@ export async function getUserID(email) {
       status.error = true;
       status.responseData = error;
     });
+
+  if (status.error = true) {
+    dataAPI('getUserID', true);
+  } else {
+    dataAPI('getUserID', false);
+  }
   return status;
 }
 
