@@ -29,7 +29,6 @@ import * as countTime from '../../userTimeTraffic.js';
 window.onload = countTime.onLoad;
 
 class Home extends Component {
-
   componentDidMount() {
     document.addEventListener('visibilitychange',
       countTime.visibilityChange);

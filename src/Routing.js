@@ -132,7 +132,7 @@ export default function Routing({ appProps }) {
     { Component: DiscordSJSU, path: '/discordSJSU'}
   ];
 
-  countTime.getSSOID(appProps);
+  countTime.getUserID_SSOID(appProps);
   return (
     <Router>
       <Switch>

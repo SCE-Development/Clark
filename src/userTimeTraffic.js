@@ -4,7 +4,7 @@ const {Lambda} = require('@aws-sdk/client-lambda');
 const credentials = require('./config/config.json');
 
 let startTime, endTime, domain, userID, SSOID;
-/* eslint-disable */
+
 async function sendData(data){
   const lambdaClient = new Lambda({
     region: 'us-west-1',
@@ -23,12 +23,14 @@ async function sendData(data){
   const command = new InvokeCommand(params);
   try {
     const response = await lambdaClient.send(command);
+    /* eslint-disable-next-line */
     // console.log(JSON.stringify(response));
   } catch (err) {
+    /* eslint-disable-next-line */
     console.log(err);
   }
 }
-/* eslint-enable */
+
 
 function checkTime(i) {
   if (i < 10) {
@@ -56,11 +58,9 @@ function whenClose(){
     UserID : userID,
     SSOID : SSOID
   };
-  /* eslint-disable */
   sendData(CoreV4Data);
+  /* eslint-disable-next-line */
   console.log(JSON.stringify(CoreV4Data));
-  console.log('USER TIME TERMINATED');
-  /* eslint-enable */
 }
 
 export function onLoad(){
@@ -71,8 +71,6 @@ export function onLoad(){
   if(domain === '') {
     domain = 'home';
   }
-  /* eslint-disable-next-line */
-  console.log('USER TIME INITIALIZED');
 }
 
 export function visibilityChange() {
@@ -82,19 +80,16 @@ export function visibilityChange() {
     onLoad();
   }
 }
-
-export async function getSSOID(param) {
-  /* eslint-disable-next-line */
-  console.log(param.user);
+/* eslint-disable-next-line */
+export async function getUserID_SSOID(param) {
   userID = await getUserID(param.user.email);
-  /* eslint-disable-next-line */
-  console.log('userID:', userID);
-  userID = userID.responseData.userID;
+  if(userID.error){
+    userID = null;
+  } else{
+    userID = userID.responseData.userID;
+  }
   SSOID = param.user.token;
 }
 
-/*
-SSOID --> DONE
-USER_ID --> DONE
-AWS-LAMBDA --> printing error data
-*/
+// home.js react class component error
+// but works in other class components
