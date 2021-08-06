@@ -1,7 +1,6 @@
 import {getUserID} from './APIFunctions/User.js';
 import {LambdaClient, InvokeCommand} from '@aws-sdk/client-lambda';
 const {Lambda} = require('@aws-sdk/client-lambda');
-const credentials = require('./config/config.json');
 
 let startTime, endTime, domain, userID, SSOID;
 /* eslint-disable */
@@ -9,13 +8,13 @@ async function sendData(data){
   const lambdaClient = new Lambda({
     region: 'us-west-1',
     credentials: {
-      accessKeyId: credentials.aws_access_key_id,
-      secretAccessKey: credentials.aws_secret_access_key
+      accessKeyId: 'xxxxxx',
+      secretAccessKey: 'xxxxxx'
     }
   });
 
   const params = {
-    FunctionName: credentials.aws_function_name,
+    FunctionName: 'arn:aws:lambda:us-west-1:075245485931:function:DataShredder',
     InvocationType: 'RequestResponse',
     Payload: JSON.stringify(data)
   };
