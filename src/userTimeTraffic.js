@@ -57,7 +57,7 @@ function whenClose(){
     SSOID : SSOID
   };
   /* eslint-disable */
-  // sendData(CoreV4Data);
+  sendData(CoreV4Data);
   console.log(JSON.stringify(CoreV4Data));
   console.log('USER TIME TERMINATED');
   /* eslint-enable */
