@@ -8,8 +8,8 @@ async function sendData(data){
   const lambdaClient = new Lambda({
     region: 'us-west-1',
     credentials: {
-      accessKeyId: 'AKIARDBH275VQJEGZJ4P',
-      secretAccessKey: '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'
+      accessKeyId: 'xxxxxx',
+      secretAccessKey: 'xxxxxx'
     }
   });
 
