@@ -1,5 +1,5 @@
 import {getUserID} from './APIFunctions/User.js';
-const {InvokeCommand} = require('@aws-sdk/client-lambda');
+const {LambdaClient, InvokeCommand} = require('@aws-sdk/client-lambda');
 const {Lambda} = require('@aws-sdk/client-lambda');
 const credentials = require('./config/config.json');
 
@@ -44,7 +44,8 @@ let CoreV4Data = {
   StartTime : startTime,
   EndTime : endTime,
   UserID : userID,
-  SSOID : SSOID
+  SSOID : SSOID,
+  Source: 'Core-v4'
 };
 
 function whenClose(){
@@ -56,7 +57,8 @@ function whenClose(){
     StartTime : startTime,
     EndTime : endTime,
     UserID : userID,
-    SSOID : SSOID
+    SSOID : SSOID,
+    Source: 'Core-v4'
   };
   sendData(CoreV4Data);
 }
