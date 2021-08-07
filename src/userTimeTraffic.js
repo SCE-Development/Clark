@@ -1,5 +1,5 @@
 import {getUserID} from './APIFunctions/User.js';
-import {LambdaClient, InvokeCommand} from '@aws-sdk/client-lambda';
+const {InvokeCommand} = require('@aws-sdk/client-lambda');
 const {Lambda} = require('@aws-sdk/client-lambda');
 const credentials = require('./config/config.json');
 
@@ -59,8 +59,6 @@ function whenClose(){
     SSOID : SSOID
   };
   sendData(CoreV4Data);
-  /* eslint-disable-next-line */
-  console.log(JSON.stringify(CoreV4Data));
 }
 
 export function onLoad(){
