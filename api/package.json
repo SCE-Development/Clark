@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/SCE-Development/Core-v4#readme",
   "dependencies": {
+    "@types/inquirer": "^7.3.3",
     "aws-sdk": "^2.828.0",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
