@@ -27,6 +27,7 @@ import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
+import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -117,7 +118,7 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
       inAdminNavbar: true
-    }
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -125,7 +126,8 @@ export default function Routing({ appProps }) {
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
     { Component: VerifyEmailPage, path: '/verify' },
-    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'}
+    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
+    { Component: DiscordSJSU, path: '/discordSJSU'}
   ];
   return (
     <Router>
