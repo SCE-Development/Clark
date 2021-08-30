@@ -16,6 +16,8 @@ import {
 import DarkMode from './DarkMode';
 import { membershipState } from '../../Enums';
 import logo from '../Navbar/sce_logo.png';
+import { MouseEvent } from 'react';
+import passClick from '../../ClickStream/ClickStream.js';
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -83,7 +85,8 @@ export default function UserNavBar(props) {
   };
 
   return (
-    <div className={'user-nav'}>
+    <div className={'user-nav'}
+      onMouseDown={(e) => passClick(e.nativeEvent)}>
       <Navbar light expand='md'>
         <NavbarBrand href='/'>
           <div>

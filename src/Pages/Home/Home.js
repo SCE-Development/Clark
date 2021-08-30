@@ -4,6 +4,8 @@ import Slideshow from '../../Components/Slideshow/Slideshow.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 import Iframe from 'react-iframe';
+import { MouseEvent } from 'react';
+import passClick from '../../ClickStream/ClickStream.js';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -30,10 +32,12 @@ class Home extends Component {
   render() {
     return (
       <>
-        <div className='home'>
+        <div className='home'
+          onMouseDown={(e) => passClick(e.nativeEvent)}
+          /* covers all components except the calendar and header.
+             header is handled separately, idk how to do the calendar. */>
           <Slideshow className='slideshow' />
           <Jumbotron />
-
           <div className='text-center'>
             <h1 className='display-4'>SCE Events Calendar</h1>{' '}
           </div>

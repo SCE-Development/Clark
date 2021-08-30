@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
 import './login.css';
+import { MouseEvent } from 'react';
+import passClick from '../../ClickStream/ClickStream.js';
 
 export default function Login(props) {
   const [email, setEmail] = useState('');
@@ -37,7 +39,8 @@ export default function Login(props) {
   }
 
   return (
-    <Container fluid id='background'>
+    <Container fluid id='background'
+      onMouseDown={(e) => passClick(e.nativeEvent)}>
       <Row className='form-card-login'>
         <form onSubmit={handleSubmit}>
           <img id='img' alt='sce logo' src='images/SCE-glow.png' />

@@ -11,6 +11,8 @@ import spring2 from './assets/spring2.jpeg';
 import { Container, Button, Row, Col } from 'reactstrap';
 import { memberApplicationState, membershipPlans } from '../../Enums';
 import { getSemesterPlan, getYearPlan } from './GetPlans';
+import { MouseEvent } from 'react';
+import passClick from '../../ClickStream/ClickStream.js';
 
 class MembershipPlan extends Component {
   constructor(props) {
@@ -109,7 +111,8 @@ class MembershipPlan extends Component {
 
   render() {
     return (
-      <div className='background'>
+      <div className='background'
+        onMouseDown={(e) => passClick(e.nativeEvent)}>
         <Container id='container-membership-plan'>
           <h1 className='greet'>Welcome</h1>
           <div className='card'>

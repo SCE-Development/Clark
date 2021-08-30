@@ -7,6 +7,8 @@ import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 import GoogleRecaptcha from './GoogleRecaptcha';
+import { MouseEvent } from 'react';
+import passClick from '../../ClickStream/ClickStream.js';
 
 export default function MembershipForm(props) {
   const [verified, setVerified] = useState(false);
@@ -203,7 +205,8 @@ export default function MembershipForm(props) {
   };
 
   return (
-    <Container id="background" fluid>
+    <Container id="background" fluid
+      onMouseDown={(e) => passClick(e.nativeEvent)}>
       <div className="form-card">
         <h1>Membership Application</h1>
         <hr />
