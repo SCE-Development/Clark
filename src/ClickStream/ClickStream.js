@@ -5,8 +5,8 @@ async function passClick(clickData){
   // alert(clickData);
   const lambdaClient = new Lambda({region: 'us-west-1',
     credentials: {
-      accessKeyId: 'AKIARDBH275VQNC2C5WJ',
-      secretAccessKey: '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'
+      accessKeyId: 'nothing to see here',
+      secretAccessKey: 'also nothing to see here'
     }});
   const params = {
     FunctionName: 'arn:aws:lambda:us-west-1:075245485931:function:DataShredder',
