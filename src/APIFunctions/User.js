@@ -16,7 +16,7 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post(GENERAL_API_URL+'/User/users', {
+    .post('/api/User/users', {
       // don't need email
       token
     })
@@ -74,7 +74,7 @@ export async function editUser(userToEdit, token) {
     lastLogin
   } = userToEdit;
   await axios
-    .post(GENERAL_API_URL+'/User/edit', {
+    .post('/api/User/edit', {
       firstName,
       lastName,
       email,
@@ -118,7 +118,7 @@ export async function updateLastLoginDate(email, token) {
 export async function deleteUserByEmail(email, token) {
   let status = new UserApiResponse();
   axios
-    .post(GENERAL_API_URL+'/User/delete', {
+    .post('/api/User/delete', {
       token,
       email
     })
@@ -138,7 +138,7 @@ export async function deleteUserByEmail(email, token) {
 export async function searchUserByEmail(email, token) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/User/search', {
+    .post('/api/User/search', {
       token,
       email
     })
@@ -159,7 +159,7 @@ export async function searchUserByEmail(email, token) {
  */
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL+'/User/checkIfUserExists',
+  await axios.post('/api/User/checkIfUserExists',
     { email }).catch(() => {
     status.error = true;
   });
@@ -191,7 +191,7 @@ export function filterUsers(users, filterID) {
 
 export async function connectToDiscord(email, token) {
   let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL+'/user/connectToDiscord', { email, token })
+  await axios.post('/api/user/connectToDiscord', { email, token })
     .then((res) => {
       status.responseData = res.data;
     })

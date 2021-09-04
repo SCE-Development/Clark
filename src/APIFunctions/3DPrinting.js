@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 let config = require('../config/config.json');
-let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
 let RPC_API_URL = process.env.NODE_ENV === 'production' ?
   config.RPC_API_URL_PROD : config.RPC_API_URL;
 
@@ -33,7 +31,7 @@ export async function submit3DPrintRequest(printRequest) {
     email
   } = printRequest;
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/submit', {
+    .post('/api/3DPrintingForm/submit', {
       name,
       color,
       comment,
@@ -84,7 +82,7 @@ export async function print3DModel(printRequest) {
 export async function getAll3DPrintRequests() {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/GetForm', {})
+    .post('/api/3DPrintingForm/GetForm', {})
     .then(result => {
       status.responseData = result.data;
     })
@@ -109,7 +107,7 @@ export async function delete3DPrintRequest(requestToDelete, token) {
   let status = new ApiResponse();
   const { date, email } = requestToDelete;
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/delete', {
+    .post('/api/3DPrintingForm/delete', {
       token,
       date,
       email
@@ -134,7 +132,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
   let status = new ApiResponse();
   const { date, email, progress } = requestToUpdate;
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/edit', {
+    .post('/api/3DPrintingForm/edit', {
       date,
       email,
       progress,
@@ -155,7 +153,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
 export async function search3DPrintRequests(email) {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/GetForm', {
+    .post('/api/3DPrintingForm/GetForm', {
       email
     })
     .then(result => {

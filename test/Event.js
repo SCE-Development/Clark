@@ -1,8 +1,8 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const Event = require('../api/main_endpoints/models/Event');
-const User = require('../api/main_endpoints/models/User');
+const Event = require('../api/models/Event');
+const User = require('../api/models/User');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -30,7 +30,7 @@ describe('Event', () => {
   before(done => {
     initializeMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/Event.js');
+      __dirname + '/../api/routes/Event.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(Event);

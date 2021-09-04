@@ -1,10 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let config = require('../config/config.json');
-let MAILER_API_URL = process.env.NODE_ENV === 'production' ?
-  config.MAILER_API_URL_PROD : config.MAILER_API_URL;
-
 /**
  * Invokes the google spreadsheet API to add officer application form data to it
  * @param {object} row - the data from the officer application form
@@ -15,7 +11,7 @@ let MAILER_API_URL = process.env.NODE_ENV === 'production' ?
 export async function addToSpreadsheet(row, sheetsId){
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/sheets/addToSpreadsheet',
+    .post('/api/sheets/addToSpreadsheet',
       {row, sheetsId})
     .then((res)=>{
       status.responseData = res;

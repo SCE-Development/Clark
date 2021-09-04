@@ -15,7 +15,7 @@ let MAILER_API_URL = process.env.NODE_ENV === 'production' ?
 export async function sendVerificationEmail(email, firstName) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/Mailer/sendVerificationEmail', {
+    .post('/api/Mailer/sendVerificationEmail', {
       recipientEmail: email,
       recipientName: firstName,
     })
@@ -40,7 +40,7 @@ export async function sendVerificationEmail(email, firstName) {
 export async function sendBlastEmail(emailList, subject, content) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/Mailer/sendBlastEmail', {
+    .post('/api/Mailer/sendBlastEmail', {
       emailList,
       subject,
       content,
@@ -75,11 +75,8 @@ export async function sendBlastEmail(emailList, subject, content) {
  */
 export async function addEventToCalendar(newEvent, token) {
   let status = new ApiResponse();
-  const firstAPI = axios.create({
-    baseURL: MAILER_API_URL
-  });
-  await firstAPI
-    .post('api/Calendar/addEventToCalendar', { token, newEvent })
+  await axios
+    .post('/api/Calendar/addEventToCalendar', { token, newEvent })
     .then(res => {
       status.responseData = res.data;
     })

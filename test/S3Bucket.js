@@ -8,7 +8,7 @@ const { OK, NOT_FOUND } = constants.STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
 const {
   S3BucketApiHandler,
-} = require('../api/cloud_api/util/S3BucketApiHandler');
+} = require('../api/util/S3BucketApiHandler');
 
 let app = null;
 let test = null;
@@ -24,7 +24,7 @@ describe('S3Bucket', () => {
   before((done) => {
     bucketStub = sandbox.stub(S3BucketApiHandler.prototype, 'getSignedUrl');
     app = tools.initializeServer(
-      __dirname + '/../api/cloud_api/routes/S3Bucket.js'
+      __dirname + '/../api/routes/S3Bucket.js'
     );
     test = new SceApiTester(app);
     done();

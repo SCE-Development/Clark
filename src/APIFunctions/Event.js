@@ -1,10 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let config = require('../config/config.json');
-let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
-
 /**
  * Handles the edge case of a time being at midnight and must be converted
  * from 0:20 AM for example.
@@ -24,7 +20,7 @@ function handleMidnightTime(time) {
 export async function getAllEvents() {
   let status = new ApiResponse();
   await axios
-    .get(GENERAL_API_URL+'/event/getEvents')
+    .get('/api/event/getEvents')
     .then(res => {
       status.responseData = res.data;
     })
@@ -77,7 +73,7 @@ export async function createNewEvent(newEvent, token) {
     imageURL: handleImageURL(newEvent.imageURL)
   };
   await axios
-    .post(GENERAL_API_URL+'/event/createEvent', { token, ...eventToAdd })
+    .post('/api/event/createEvent', { token, ...eventToAdd })
     .then(res => {
       status.responseData = res.data;
     })
@@ -125,7 +121,7 @@ export async function editEvent(eventToUpdate, token) {
     imageURL: eventToUpdate.imageURL
   };
   await axios
-    .post(GENERAL_API_URL+'/event/editEvent', { token, ...eventToEdit })
+    .post('/api/event/editEvent', { token, ...eventToEdit })
     .then(res => {
       status.responseData = res.data;
     })
@@ -148,7 +144,7 @@ export async function editEvent(eventToUpdate, token) {
 export async function deleteEvent(eventToDelete, token) {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/event/deleteEvent',
+    .post('/api/event/deleteEvent',
       { token, id: eventToDelete._id })
     .then(res => {
       status.responseData = res.data;

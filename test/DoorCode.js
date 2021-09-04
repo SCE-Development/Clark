@@ -1,7 +1,7 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const DoorCode = require('../api/main_endpoints/models/DoorCode');
+const DoorCode = require('../api/models/DoorCode');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const constants = require('../api/util/constants');
@@ -26,7 +26,7 @@ chai.use(chaiHttp);
 describe('DoorCode', () => {
   before((done) => {
     initializeMock();
-    app = tools.initializeServer(__dirname + '/../api/main_endpoints/' +
+    app = tools.initializeServer(__dirname + '/../api/' +
     'routes/DoorCode.js');
     test = new SceApiTester(app);
     // Before each test we empty the database

@@ -1,10 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let config = require('../config/config.json');
-let MAILER_API_URL = process.env.NODE_ENV === 'production' ?
-  config.MAILER_API_URL_PROD : config.MAILER_API_URL;
-
 /**
  * Return a url of the uploaded file from AWS
  * @param {Array} files
@@ -20,7 +16,7 @@ export function uploadToS3(files) {
 
     // Retrieving signed url which will allow us to make an upload request to S3
     axios
-      .post(MAILER_API_URL + '/S3Bucket/getSignedUrl', {
+      .post('/api/S3Bucket/getSignedUrl', {
         fileName,
         fileType
       })

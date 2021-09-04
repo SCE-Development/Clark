@@ -9,40 +9,12 @@ services:
       - '/data/db:/data/db' 
       # - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
-  sce-logging-api:
-    container_name: sce-logging-api
+  api:
+    container_name: api
+    image: api:latest
     build:
       context: ./api
-      dockerfile: ./logging_api/Dockerfile
-    ports:
-      - '8081:8081'
-    restart: 'on-failure'
-    stdin_open: true
-    links:
-      - db
-    depends_on:
-      - db
-  sce-cloud-api:
-    container_name: sce-cloud-api
-    image: cloudapi:latest
-    build:
-      context: ./api
-      dockerfile: ./cloud_api/Dockerfile
-    ports:
-      - '8082:8082'
-    restart: 'on-failure'
-    stdin_open: true
-    links:
-      - db
-    depends_on:
-      - db
-
-  mainendpoints:
-    container_name: mainendpoints
-    image: mainendpoints:latest
-    build:
-      context: ./api
-      dockerfile: ./main_endpoints/Dockerfile
+      dockerfile: ./Dockerfile
     ports:
       - '8080:8080'
     restart: 'on-failure'

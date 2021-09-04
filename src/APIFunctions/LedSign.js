@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 let config = require('../config/config.json');
-let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
-  config.LOGGING_API_URL_PROD : config.LOGGING_API_URL;
 let RPC_API_URL = process.env.NODE_ENV === 'production' ?
   config.RPC_API_URL_PROD : config.RPC_API_URL;
 
@@ -34,7 +32,7 @@ export async function healthCheck(officerName) {
 export async function getAllSignLogs() {
   let result = new ApiResponse();
   await axios
-    .get(LOGGING_API_URL+'/SignLog/getSignLogs')
+    .get('/api/SignLog/getSignLogs')
     .then(res => {
       result.responseData = res.data;
     })

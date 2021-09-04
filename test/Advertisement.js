@@ -1,6 +1,6 @@
 /* global describe it before after */
 process.env.NODE_ENV = 'test';
-const Advertisement = require('../api/main_endpoints/models/Advertisement');
+const Advertisement = require('../api/models/Advertisement');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const constants = require('../api/util/constants');
@@ -18,7 +18,7 @@ chai.use(chaiHttp);
 describe('Advertisement', () => {
   before(done => {
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/Advertisement.js');
+      __dirname + '/../api/routes/Advertisement.js');
     test = new SceApiTester(app);
     tools.emptySchema(Advertisement);
     done();

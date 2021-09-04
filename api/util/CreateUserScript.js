@@ -1,5 +1,5 @@
 'use strict';
-const User = require('../main_endpoints/models/User.js');
+const User = require('../models/User.js');
 const inquirer = require('inquirer');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');

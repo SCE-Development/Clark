@@ -1,6 +1,6 @@
-const { AuthManager } = require('../cloud_api/util/AuthManager');
+const { AuthManager } = require('../util/AuthManager');
 const { SceGoogleApiHandler } =
-  require('../cloud_api/util/SceGoogleApiHandler');
+  require('../util/SceGoogleApiHandler');
 
 const authManager = new AuthManager();
 const configPath = __dirname + '/../config/config.json';

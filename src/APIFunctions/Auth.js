@@ -2,10 +2,6 @@ import axios from 'axios';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { updateLastLoginDate } from './User';
 
-let config = require('../config/config.json');
-let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
-
 /**
  * Add a new user to the database.
  * @param {Object} userToRegister - The object containing all of the user's
@@ -31,7 +27,7 @@ export async function registerUser(userToRegister) {
     numberOfSemestersToSignUpFor
   } = userToRegister;
   await axios
-    .post(GENERAL_API_URL+'/Auth/register', {
+    .post('/api/Auth/register', {
       firstName,
       lastName,
       email,
@@ -59,7 +55,7 @@ export async function registerUser(userToRegister) {
 export async function loginUser(email, password) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/Auth/login', { email, password })
+    .post('/api/Auth/login', { email, password })
     .then(async result => {
       status.token = result.data.token;
       await updateLastLoginDate(email, result.data.token);
@@ -92,7 +88,7 @@ export async function checkIfUserIsSignedIn() {
   }
 
   await axios
-    .post(GENERAL_API_URL+'/Auth/verify', { token })
+    .post('/api/Auth/verify', { token })
     .then(res => {
       status.responseData = res.data;
       status.token = token;
@@ -114,7 +110,7 @@ export async function checkIfUserIsSignedIn() {
 export async function validateVerificationEmail(email, hashedId) {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/Auth/validateVerificationEmail', {
+    .post('/api/Auth/validateVerificationEmail', {
       email,
       hashedId
     })

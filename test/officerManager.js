@@ -1,8 +1,8 @@
 /* global describe it before after beforeEach afterEach */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const OfficerManager = require('../api/main_endpoints/models/OfficerManager');
-const User = require('../api/main_endpoints/models/User');
+const OfficerManager = require('../api/models/OfficerManager');
+const User = require('../api/models/User');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const {
@@ -34,7 +34,7 @@ describe('OfficerManager', () => {
   before(done => {
     initializeMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/officerManager.js');
+      __dirname + '/../api/routes/officerManager.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(OfficerManager);

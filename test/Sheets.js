@@ -7,7 +7,7 @@ const constants = require('../api/util/constants');
 const { OK, NOT_FOUND } = constants.STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
 const { SceGoogleApiHandler } =
-  require('../api/cloud_api/util/SceGoogleApiHandler');
+  require('../api/util/SceGoogleApiHandler');
 
 let app = null;
 let test = null;
@@ -24,7 +24,7 @@ describe('Sheets', () => {
   before(done => {
     sheetsStub = sandbox.stub(SceGoogleApiHandler.prototype, 'writeToForm');
     app = tools.initializeServer(
-      __dirname + '/../api/cloud_api/routes/Sheets.js');
+      __dirname + '/../api/routes/Sheets.js');
     test = new SceApiTester(app);
     done();
   });

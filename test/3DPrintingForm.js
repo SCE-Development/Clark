@@ -1,7 +1,7 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const PrintingForm3D = require('../api/main_endpoints/models/PrintingForm3D');
+const PrintingForm3D = require('../api/models/PrintingForm3D');
 const tokenValidMocker = require('./util/mocks/TokenValidFunctions');
 // Require the dev-dependencies
 const chai = require('chai');
@@ -35,7 +35,7 @@ describe('3DPrintingForm', () => {
   before(done => {
     initializeMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/3DPrintingForm.js');
+      __dirname + '/../api/routes/3DPrintingForm.js');
     test = new SceApiTester(app);
     tools.emptySchema(PrintingForm3D);
     done();
