@@ -90,6 +90,3 @@ export async function getUserID_SSOID(param) {
   }
   SSOID = param.user.token;
 }
-
-// home.js react class component error
-// but works in other class components
