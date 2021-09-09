@@ -1,5 +1,5 @@
-const { LOGGING_API_URL } = require('../config/config.json');
-const axios = require('axios');
+const ErrorLog = require('../models/ErrorLog');
+const SignLog = require('../models/SignLog');
 
 /**
  * Add a new error by calling on the ErrorLog API.
@@ -9,16 +9,24 @@ const axios = require('axios');
  * @param {(string|undefined)} errorToAdd.errorTime- The time the error occured
  * @param {string} errorToAdd.apiEndpoint - The location of the error
  * @param {string} errorToAdd.errordescription - The description of the error
- * @returns {boolean} - Whether the save was successul or not
+ * @returns {Promise<boolean>} - Whether the save was successul or not
  */
 async function addErrorLog(errorToAdd) {
-  let errorSaved = true;
-  await axios.post('/api/api/ErrorLog/addErrorLog',
-    { ...errorToAdd })
-    .catch(err => {
-      errorSaved = false;
+  const newError = new ErrorLog({
+    userEmail: errorToAdd.userEmail,
+    errorTime: errorToAdd.errorTime,
+    apiEndpoint: errorToAdd.apiEndpoint,
+    errorDescription: errorToAdd.errorDescription
+  });
+  return new Promise((resolve, reject) => {
+    newError.save(function(error) {
+      if (error) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     });
-  return errorSaved;
+  });
 }
 
 /**
@@ -28,15 +36,22 @@ async function addErrorLog(errorToAdd) {
  * @returns {boolean} If the save was successful or not.
  */
 async function addSignLog(signRequest) {
-  let saveSuccessful = true;
-  await axios.post('/api/api/SignLog/addSignLog', {
-    signText: signRequest.text,
+  const newSign = new SignLog({
+    signText: signRequest.signText,
     firstName: signRequest.firstName,
-    email: signRequest.email
-  }).catch(err => {
-    saveSuccessful = false;
+    email: signRequest.email,
+    timeOfPosting: signRequest.timeOfPosting
   });
-  return saveSuccessful;
+
+  return new Promise((resolve, reject) => {
+    newSign.save(function(error) {
+      if (error) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
+  });
 }
 
 module.exports = { addErrorLog, addSignLog };

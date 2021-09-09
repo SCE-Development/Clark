@@ -2,9 +2,6 @@ import axios from 'axios';
 import { UserApiResponse } from './ApiResponses';
 import { membershipState, userFilterType } from '../Enums';
 
-let config = require('../config/config.json');
-let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
 
 /**
  * Queries the database for all users.

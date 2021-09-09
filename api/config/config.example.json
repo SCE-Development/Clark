@@ -1,5 +1,4 @@
 {
-  "CLOUD_API_URL": "http://localhost:8082/cloudapi",
   "discordApiKeys": {
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXX",
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXX",
@@ -7,7 +6,6 @@
     "REDIRECT_URI_PROD": "http%3A%2F%2Fsce.engr.sjsu.edu%2Fprofile&response_type=code&scope=identify",
     "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
-  "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
@@ -26,7 +24,6 @@
     "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
   "ledSignIp": "192.168.4.1",
-  "LOGGING_API_URL": "http://localhost:8081/loggingapi",
   "passwordStrength": "medium",
   "S3Bucket": {
     "AWSACCESSKEYID": "XXXXXXXXXXXXXXXXXXXX",
@@ -34,8 +31,5 @@
     "BUCKET": "XXXXXXXXXXXXX"
   },
   "secretKey": "super duper secret key",
-  "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
-  "LOGGING_API_URL_PROD": "http://sce-logging-api:8081/loggingapi",
-  "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi",
   "RPC_API_URL_PROD": "http://localhost:8083/SceRpcApi"
 }
