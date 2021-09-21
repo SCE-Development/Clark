@@ -96,7 +96,8 @@ export default class InventoryPage extends Component {
     return (this.state.name==='' || isNaN(this.state.price) ||
       this.state.price < 0 || this.state.stock < 0 ||
       this.state.price==='' || this.state.stock==='' ||
-      isNaN(this.state.stock) || this.state.category==='');
+      isNaN(this.state.stock) || this.state.category==='' ||
+      this.state.description.length > 100);
   }
 
   // Function for add item form/modal

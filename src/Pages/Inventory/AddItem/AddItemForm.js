@@ -78,10 +78,20 @@ export default function AddItemForm(props) {
         </Label>
         <Input
           type="textarea"
+          invalid={props.description.length > 100}
           value={props.description}
           onChange={(e) => props.updateItemDescription(e.target.value)}
           style={{minHeight:'calc(1.5em + .75rem + 2px)'}}
         />
+        <FormText style={{ textAlign: 'right' }}
+        >
+          <div style={{color: props.description.length > 100 ?
+            '#dc3545' : '#6c757d'}}
+          >
+            {props.description.length+'/100'}
+          </div>
+        </FormText>
+        <FormFeedback invalid="true"/>
       </FormGroup>
       <FormGroup>
         <Label>Picture
