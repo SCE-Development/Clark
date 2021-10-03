@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import axios from 'axios';
 import {
   PrintApiResponse,
@@ -29,9 +30,11 @@ export async function healthCheck() {
   let status = new ApiResponse();
   await axios.post(RPC_API_URL + '/Printer/healthCheck')
     .then(res => {
+      console.error('sup cutty', res.data);
       status.reponseData = res.data;
     })
     .catch(err => {
+      console.error('i am so mad now');
       status.responseData = err;
       status.error = true;
     });
@@ -80,6 +83,7 @@ export function parseRange(pages, maxPages) {
  * the page successfully printed
  */
 export async function printPage(data) {
+  console.log({data})
   let status = new ApiResponse();
   await axios.post(RPC_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {
