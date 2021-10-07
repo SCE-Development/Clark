@@ -4,7 +4,9 @@ function main() {
   const API_ENDPOINTS = [
     __dirname + '/routes/ErrorLog.js',
     __dirname + '/routes/PrintLog.js',
-    __dirname + '/routes/SignLog.js'
+    __dirname + '/routes/SignLog.js',
+    __dirname + '/routes/Printer.js'
+
   ];
   const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/logapi/');
   loggingServer.initializeEndpoints().then(() => {
