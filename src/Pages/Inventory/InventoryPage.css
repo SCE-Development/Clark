@@ -1,0 +1,135 @@
+.search-bar-container {
+  margin: auto 5%;
+  text-align: center;
+  background: #fdfdfd;
+  border: 1px dashed rgb(196, 196, 196);
+  padding: 30px;
+  margin-bottom: 10px;
+}
+
+.table-container {
+  margin: auto 5%;
+  background: #fdfdfd;
+  border: 1px dashed rgb(196, 196, 196);
+  padding: 30px;
+  padding-bottom: 10px;
+}
+
+.spacer {
+  width: 100%;
+  padding: 10px;
+}
+
+.inventory-search-bar {
+  width: 80%;
+  margin: 0px;
+  padding: 5px 10px;
+  border-radius: 2px;
+  border: 1.5px solid grey;
+  box-sizing: border-box;
+  initial-letter-align: left;
+  vertical-align: middle;
+}
+
+.content-table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+  max-width: 700px;
+  min-width: 700px;
+}
+
+.item-image {
+  width: 100%;
+  height: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.inventory-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.inventory-table td {
+  word-wrap: break-word;
+}
+
+.inventory-table tr {
+  background-color: white;
+  color: black;
+}
+
+.inventory-table tr:hover {
+  background-color: #ebebeb;
+  color: black;
+}
+
+.inventory-row {
+  height: 100px;
+}
+
+.table-contents {
+  width: 100%;
+  overflow: hidden;
+}
+
+.row-image,
+.row-category,
+.row-name {
+  width: 15%;
+}
+
+.row-price,
+.row-quantity,
+.row-edit {
+  width: 13%;
+}
+
+.row-description {
+  width: 16%;
+  height: 40px;
+}
+
+@media (max-width: 1100px) {
+  .row-description {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .row-image {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-table thead {
+    display: none;
+  }
+  .inventory-table td {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  .table-contents {
+    height: 100%;
+  }
+  .inventory-table td:first-child {
+    border: none;
+    height: 100px;
+  }
+  .inventory-table tr {
+    outline: rgb(196, 196, 196) 1px dashed;
+  }
+  .inventory-table {
+    border-spacing: 0px 30px;
+    border-collapse: separate;
+    margin: 0px;
+  }
+  .table-container {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+}

@@ -1,0 +1,18 @@
+.edit-icon {
+  background-color: transparent;
+  border: none;
+  color: grey;
+  padding: 5px;
+  margin: 5px;
+}
+
+.edit-icon:hover {
+  padding: 5px;
+  color: #7fb2cf;
+  cursor: pointer;
+  outline: none;
+}
+
+.edit-icon:focus {
+  outline: none;
+}
