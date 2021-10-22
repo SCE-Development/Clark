@@ -1,6 +1,6 @@
 {
   "GENERAL_API_URL": "http://localhost:8080/api",
-  "LOGGING_API_URL": "http://localhost:8081/loggingapi",
+  "LOGGING_API_URL": "http://localhost:8081/logapi",
   "MAILER_API_URL": "http://localhost:8082/cloudapi",
   "RPC_API_URL": "http://localhost:8083/SceRpcApi",
   "DISCORD_SJSU_API_URL": "http://localhost:8080/api",

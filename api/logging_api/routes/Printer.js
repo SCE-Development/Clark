@@ -2,34 +2,32 @@ const fs = require('fs');
 const express = require('express');
 const { exec } = require('child_process');
 const router = express.Router();
+const axios = require('axios')
 const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 
-router.post('/healthCheck', (req, res) => {
-  res.sendStatus(OK);
+router.post('/healthCheck', async (req, res) => {
+    await axios.get("http://localhost:8000" + '/healthCheck')
+    .then(result => {
+      reponseData = res.data;
+      res.sendStatus(200);
+    })
+    .catch(err => {
+      console.error('Health check error: ', err);
+      responseData = err;
+      error = true;
+    });
 });
 
-router.post('/sendPrintRequest', (req, res) => {
-  const { raw } = req.body;
-  let buf = Buffer.from(raw, 'base64');
-  const fileName = `/tmp/${Math.random()}.pdf`;
-
-  fs.writeFile(fileName, buf, error => {
-    if (error) {
-      throw error;
-    }
-    exec(
-      'lp -n 1 -o sides=one-sided -d '
-      + `HP_LaserJet_P2015_Series__15CD32_ ${fileName}`,
-      (error, stdout, stderr) => {
-        exec(`rm ${fileName}`, () => { });
-        if (error) {
-          throw error;
-        }
-        if (stderr) {
-          throw stderr;
-        }
-      });
+router.post('/sendPrintRequest', async (req, res) => {
+  await axios.post("http://localhost:8000" + '/sendPrintRequest', req.body)
+    .then(result => {
+      reponseData = res.data;
+      res.sendStatus(200);
+    })
+    .catch(err => {
+      console.error('Print request error: ', err);
+      responseData = err;
+      error = true;
+    });
   });
-  res.sendStatus(OK);
-});
 module.exports = router;

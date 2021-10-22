@@ -8,7 +8,7 @@ function main() {
     __dirname + '/routes/Printer.js'
 
   ];
-  const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/logapi/');
+  const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/meme/');
   loggingServer.initializeEndpoints().then(() => {
     loggingServer.openConnection();
   });

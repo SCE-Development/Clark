@@ -13,6 +13,11 @@ let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
 let RPC_API_URL = process.env.NODE_ENV === 'production' ?
   config.RPC_API_URL_PROD : config.RPC_API_URL;
 
+  console.log({
+
+    config,
+    LOGGING_API_URL
+  });
 /**
  * Return an array similar to python's range() function
  * @param {Number} start
@@ -28,13 +33,12 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
+  console.log('get lost ', LOGGING_API_URL + '/Printer/healthCheck');
   await axios.post(LOGGING_API_URL + '/Printer/healthCheck')
     .then(res => {
-      console.error('sup cutty', res.data);
       status.reponseData = res.data;
     })
     .catch(err => {
-      console.error('i am so mad now');
       status.responseData = err;
       status.error = true;
     });
