@@ -3,8 +3,6 @@ import { ApiResponse } from './ApiResponses';
 let config = require('../config/config.json');
 let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
   config.LOGGING_API_URL_PROD : config.LOGGING_API_URL;
-let RPC_API_URL = process.env.NODE_ENV === 'production' ?
-  config.RPC_API_URL_PROD : config.RPC_API_URL;
 
 /**
  * Checks to see if the sign is accepting requests. This is done
@@ -15,7 +13,7 @@ let RPC_API_URL = process.env.NODE_ENV === 'production' ?
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
   await axios
-    .post(RPC_API_URL + '/LedSign/healthCheck', { officerName })
+    .get(LOGGING_API_URL + '/LedSign/healthCheck', { officerName })
     .then(res => {
       status.responseData = res.data;
     })
@@ -55,7 +53,7 @@ export async function getAllSignLogs() {
 export async function updateSignText(signData) {
   let status = new ApiResponse();
   await axios
-    .post(RPC_API_URL + '/LedSign/updateSignText', { ...signData })
+    .post(LOGGING_API_URL + '/LedSign/updateSignText', { ...signData })
     .then(res => {
       status = res.data;
     })
