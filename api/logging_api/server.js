@@ -8,7 +8,6 @@ function main() {
     __dirname + '/routes/LedSign.js'
   ];
   const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/meme/');
-  console.log(loggingServer);
   loggingServer.initializeEndpoints().then(() => {
     loggingServer.openConnection();
   });
