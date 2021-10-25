@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, FormFeedback, FormGroup, FormText, Label, Input } from
-  'reactstrap';
+'reactstrap';
 
 export default function EditItemForm(props) {
   return (

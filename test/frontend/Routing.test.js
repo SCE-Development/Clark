@@ -17,7 +17,7 @@ import Events from '../../src/Pages/Events/EventList';
 import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js';
 import MembershipApplication from
-  '../../src/Pages/MembershipApplication/membershipApplication.jsx';
+'../../src/Pages/MembershipApplication/membershipApplication.jsx';
 import Team from '../../src/Pages/TheTeam/TheTeam.js';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from '../../src/Pages/OfficerDB/OfficerDB.js';
@@ -80,7 +80,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <OfficerDB /> component with the /officerDB' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/officerDB');
         expect(wrapper.find(OfficerDB)).to.have.lengthOf(1);
@@ -92,7 +92,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     });
     it(
       'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/3DPrintingForm');
         expect(wrapper.find(PrintingSolids)).to.have.lengthOf(1);
@@ -100,7 +100,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <Printing /> component with the /2DPrinting' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/2DPrinting');
         expect(wrapper.find(Printing)).to.have.lengthOf(1);
@@ -108,7 +108,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should redirect the authenticated user to <Home /> from the' +
-        ' /login endpoint',
+      ' /login endpoint',
       () => {
         const wrapper = getComponentFromRoute('/login');
         expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -116,7 +116,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should redirect the authenticated user to <Home /> from the' +
-        ' /register endpoint',
+      ' /register endpoint',
       () => {
         const wrapper = getComponentFromRoute('/register');
         expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -124,7 +124,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <EventManager /> component with the /event-manager' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/event-manager');
         expect(wrapper.find(EventManager)).to.have.lengthOf(1);
@@ -132,7 +132,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <SolidsConsole /> component with the /3DConsole' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/3DConsole');
         expect(wrapper.find(SolidsConsole)).to.have.lengthOf(1);
@@ -140,7 +140,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <NotFoundPage /> component with an invalid ' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/not-real');
         expect(wrapper.find(NotFoundPage)).to.have.lengthOf(1);
@@ -162,7 +162,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <OfficerDB /> component with the /officerDB' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/officerDB', officerAppProps);
         expect(wrapper.find(OfficerDB)).to.have.lengthOf(1);
@@ -174,7 +174,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     });
     it(
       'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute(
           '/3DPrintingForm',
@@ -185,7 +185,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <Printing /> component with the /2DPrinting' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/2DPrinting', officerAppProps);
         expect(wrapper.find(Printing)).to.have.lengthOf(1);
@@ -193,7 +193,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should redirect the authenticated user to <Home /> from the' +
-        ' /login endpoint',
+      ' /login endpoint',
       () => {
         const wrapper = getComponentFromRoute('/login', officerAppProps);
         expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -201,7 +201,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should redirect the authenticated user to <Home /> from the' +
-        ' /register endpoint',
+      ' /register endpoint',
       () => {
         const wrapper = getComponentFromRoute('/register', officerAppProps);
         expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -216,7 +216,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <EventManager /> component with the /event-manager' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute(
           '/event-manager', officerAppProps
@@ -226,7 +226,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should render a <SolidsConsole /> component with the /3DConsole' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/3DConsole', officerAppProps);
         expect(wrapper.find(SolidsConsole)).to.have.lengthOf(1);
@@ -236,11 +236,11 @@ describe('<Routing /> with <PrivateRoute />', () => {
 
   describe(
     '<PrivateRoute /> prevents unauthorized members from viewing the' +
-      ' backend',
+    ' backend',
     () => {
       it(
         'Should redirect the <EventManager /> component with the ' +
-          '/event-manager endpoint',
+        '/event-manager endpoint',
         () => {
           const wrapper = getComponentFromRoute(
             '/event-manager',
@@ -251,7 +251,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       );
       it(
         'Should redirect the <Overview /> component with the ' +
-          '/dashboard endpoint',
+        '/dashboard endpoint',
         () => {
           const wrapper = getComponentFromRoute('/dashboard', memberAppProps);
           expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -259,7 +259,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       );
       it(
         'Should redirect the <SolidsConsole /> component with the /3DConsole ' +
-          'endpoint',
+        'endpoint',
         () => {
           const wrapper = getComponentFromRoute('/3DConsole', memberAppProps);
           expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -275,19 +275,19 @@ describe('<Routing /> with <PrivateRoute />', () => {
     });
     it(
       'Should render the <MembershipApplication /> component with the ' +
-        '/register endpoint',
+      '/register endpoint',
       () => {
         const wrapper = getComponentFromRoute('/register', unauthedAppProps);
         expect(wrapper.find(MembershipApplication)).to.have.lengthOf(1);
       }
     );
     it('Should redirect from the /2DPrinting endpoint ' +
-       'to the /login endpoint', () => {
+      'to the /login endpoint', () => {
       const wrapper = getComponentFromRoute('/2DPrinting', unauthedAppProps);
       expect(wrapper.find(Login)).to.have.lengthOf(1);
     });
     it('Should redirect from the /3DPrintingForm endpoint ' +
-       'to the /login endpoint', () => {
+      'to the /login endpoint', () => {
       const wrapper = getComponentFromRoute(
         '/3DPrintingForm', unauthedAppProps
       );
@@ -296,12 +296,12 @@ describe('<Routing /> with <PrivateRoute />', () => {
   });
   describe('Renders correct component for the non member user', () => {
     it('Should redirect from the /2DPrinting ' +
-       'endpoint to the / endpoint', () => {
+      'endpoint to the / endpoint', () => {
       const wrapper = getComponentFromRoute('/2DPrinting', nonMemberAppProps);
       expect(wrapper.find(Home)).to.have.lengthOf(1);
     });
     it('Should redirect from the /3DPrintingForm ' +
-       'endpoint to the / endpoint', () => {
+      'endpoint to the / endpoint', () => {
       const wrapper = getComponentFromRoute(
         '/3DPrintingForm',
         nonMemberAppProps
