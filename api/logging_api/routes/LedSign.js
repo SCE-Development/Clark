@@ -8,21 +8,23 @@ const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 router.use(express.json());
 
 router.get('/healthCheck', (req, res) => {
-  axios.get(LED_SIGN_URL + 'api/health-check')
+  axios.get(LED_SIGN_URL + 'healthCheck')
     .then(response => {
       res.status(OK).send(response.data);
     })
     .catch(error => {
+      console.log(error);
       res.status(BAD_REQUEST).send(error);
     });
 });
 
 router.post('/updateSignText', (req, res) => {
-  axios.post(LED_SIGN_URL + 'api/update-sign', req.body)
+  axios.post(LED_SIGN_URL + 'updateSignText', req.body)
     .then(response => {
       res.status(OK).send(response.data);
     })
     .catch(error => {
+      console.log(error);
       res.status(BAD_REQUEST).send(error);
     });
 });
