@@ -25,7 +25,6 @@ router.get('/healthCheck', (req, res) => {
       res.status(OK).send(response.data);
     })
     .catch(error => {
-      console.log(error);
       res.status(BAD_REQUEST).send(error);
     });
 });
@@ -36,7 +35,6 @@ router.post('/updateSignText', (req, res) => {
       res.status(OK).send(response.data);
     })
     .catch(error => {
-      console.log(error);
       res.status(BAD_REQUEST).send(error);
     });
 });
