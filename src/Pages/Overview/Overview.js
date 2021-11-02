@@ -20,7 +20,7 @@ export default class OverviewBoard extends Component {
       queryResult: [],
       toggle: false,
       currentQueryType: 'All',
-      queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni']
+      queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni'],
     };
     this.headerProps = {
       title: 'Users Dashboard'
@@ -44,8 +44,6 @@ export default class OverviewBoard extends Component {
 
   async callDatabase() {
     const apiResponse = await getAllUsers(this.state.authToken);
-    // console.log(apiResponse);
-
     if (!apiResponse.error) this.setState({ users: apiResponse.responseData });
   }
 

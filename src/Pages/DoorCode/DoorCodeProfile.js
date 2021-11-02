@@ -8,7 +8,8 @@ import {
   Modal,
   Label,
   ModalBody,
-  ModalFooter
+  ModalFooter,
+  ModalHeader
 } from 'reactstrap';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -34,7 +35,7 @@ export default function DoorCodeProfile(props) {
   };
 
   return (
-    <tr>
+    <tr className='doorcode-table-row'>
       <td>{ props.doorcode }</td>
       <td>{ props.expire }</td>
       <td className = 'content-table-emails'>{ props.emails }</td>
@@ -59,7 +60,19 @@ export default function DoorCodeProfile(props) {
 
       <ConfirmationModal {...confirmModalProps} />
 
-      <Modal isOpen={toggleEdit}>
+      <Modal
+        isOpen={toggleEdit}
+        toggle={()=>{
+          setToggleEdit(!toggleEdit);
+        }}
+      >
+        <ModalHeader
+          toggle={()=>{
+            setToggleEdit(!toggleEdit);
+          }}
+        >
+          Edit Doorcode
+        </ModalHeader>
         <ModalBody>
           <Form>
             <FormGroup>

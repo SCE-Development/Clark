@@ -5,7 +5,10 @@ import InfoCard from '../Profile/admin/AdminView';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
-import { getPersonsDoorCode } from '../../APIFunctions/DoorCode.js';
+import {
+  getPersonsDoorCode,
+  removePersonsDoorCode
+} from '../../APIFunctions/DoorCode.js';
 const enums = require('../../Enums.js');
 const svg = require('./SVG');
 
@@ -23,6 +26,8 @@ export default function OverviewProfile(props) {
     toggle: () => setToggleDelete(!toggleDelete),
     handleConfirmation: () => {
       props.deleteUser(props.user);
+      if(props.user.email != null)
+        removePersonsDoorCode(props.user.email, props.token);
       setToggleDelete(!toggleDelete);
     },
     open: toggleDelete
@@ -31,6 +36,11 @@ export default function OverviewProfile(props) {
   function mark(bool) {
     return bool ? svg.checkMark() : svg.xMark();
   }
+
+  function updateDoorCode(doorCode) {
+    setDoorCode(doorCode);
+  }
+
   useEffect(() => {
     setDoorCode('None Assigned');
     async function fetchDoorCode() {
@@ -90,7 +100,8 @@ export default function OverviewProfile(props) {
         })}
         <InfoCard updateUserState={props.updateUserState}
           users={props.users} user={props.user}
-          token={props.token} />
+          token={props.token} doorCode={code}
+          updateDoorCode={updateDoorCode}/>
       </Modal>
 
       <ConfirmationModal {...confirmModalProps} />

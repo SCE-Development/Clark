@@ -25,12 +25,12 @@ describe('<AdminNavbar />', () => {
         .toString() === 'Admin Dashboard'
     );
   });
-  it('Should render 8 <NavLink /> tags with officer Credentials', () => {
+  it('Should render 9 <NavLink /> tags with officer Credentials', () => {
     const wrapper = mount(<AdminNavbar />);
-    expect(wrapper.find(NavLink)).to.have.lengthOf(8);
+    expect(wrapper.find(NavLink)).to.have.lengthOf(9);
   });
-  it('Should render 8 <NavLink /> tags with admin Credentials', () => {
+  it('Should render 9 <NavLink /> tags with admin Credentials', () => {
     const wrapper = mount(<AdminNavbar {...adminAppProps} />);
-    expect(wrapper.find(NavLink)).to.have.lengthOf(8);
+    expect(wrapper.find(NavLink)).to.have.lengthOf(9);
   });
 });

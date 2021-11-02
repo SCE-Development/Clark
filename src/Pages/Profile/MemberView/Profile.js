@@ -21,6 +21,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
+import { getPersonsDoorCode } from '../../../APIFunctions/DoorCode';
 library.add(fab);
 
 const membershipStatus = require('../../../Enums').membershipState;
@@ -32,7 +33,8 @@ export default class Profile extends Component {
     // Variables that will be send to data base
     this.state = {
       user: '',
-      fullName: ''
+      fullName: '',
+      doorCode: '',
     };
     this.headerProps = {
       title: 'SCE Member Profile'
@@ -52,6 +54,14 @@ export default class Profile extends Component {
         this.setState({ fullName: name });
       });
     }
+
+    const res = await getPersonsDoorCode(
+      this.props.user.email, this.props.user.token
+    );
+
+    if (!res.error) {
+      this.setState({doorCode: res.responseData.doorCode.doorCode});
+    }
   }
 
   async handleDiscordAuth() {
@@ -68,7 +78,7 @@ export default class Profile extends Component {
         { title: `Welcome, ${this.state.fullName}!`, value: '', style: '4rem' },
         {
           title: 'Door Code',
-          value: this.state.user.doorCode,
+          value: this.state.doorCode,
           icon: <FontAwesomeIcon icon={faDoorOpen} />
         },
         {

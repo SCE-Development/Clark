@@ -4,12 +4,15 @@ import DoorCodeProfile from './DoorCodeProfile';
 import {
   Button,
   FormGroup,
+  FormText,
+  FormFeedback,
   Form,
   Input,
   Modal,
   Label,
   ModalBody,
   ModalFooter,
+  ModalHeader,
   Table,
 } from 'reactstrap';
 import {
@@ -21,6 +24,7 @@ import {
 import Header from '../../Components/Header/Header';
 import PlusSym from '../DoorCode/add_symbol.png';
 import DeleteSym from '../DoorCode/delete_time.png';
+import { assertInteger } from 'pdf-lib';
 
 export default class DoorCodeTable extends Component {
   constructor(props) {
@@ -30,12 +34,16 @@ export default class DoorCodeTable extends Component {
       doorCodes: [],
       currentQueryType: 'All',
       queryResult: [],
+      toggleDelete: false,
+      toggleEdit: false,
       toggleMult: false,
       toggleMassDelete: false,
       inputSeq: '',
       inputMult: '',
       inputDate: '',
-      codeInputError: '',
+      multError: false,
+      dateError: false,
+      multErrorMsg: '',
     };
     this.headerProps = {
       title: 'Door Codes'
@@ -90,18 +98,21 @@ export default class DoorCodeTable extends Component {
     e.preventDefault();
     const inputMult = e.target.value;
     this.setState({ inputMult });
+    if(this.state.multError)
+      this.setState({multError: false});
   }
 
   handleDate = (e) => {
     e.preventDefault();
     const inputDate = e.target.value;
     this.setState({ inputDate });
+    if(this.state.dateError)
+      this.setState({dateError: false});
   }
 
   createDoor = async (input, dateInput) => {
-    let inputWithDash = input.slice(0, 3) + '-' + input.slice(3, 7);
     const VALID_NEW_CODE = {
-      doorCode: inputWithDash,
+      doorCode: input,
       doorCodeValidUntil: new Date(dateInput),
       userEmails: [],
     };
@@ -114,9 +125,50 @@ export default class DoorCodeTable extends Component {
 
   createMultDoor = async (input, dateInput) => {
     const perCode = input.split('\n');
-    perCode.map((aCode) => {
-      return this.createDoor(aCode, dateInput);
+    let err = false;
+    let formattedCodes = [];
+    perCode.forEach((code) => {
+      code = code.replace(/[^0-9]/g, '');
+      if(code.length == 7) {
+        formattedCodes.push(code.slice(0, 3) + '-' + code.slice(3, 7));
+      } else if(code.length != 0){
+        err = true;
+        this.setState({multError: err});
+        this.setState({multErrorMsg: 'Check doorcode length of ' + code});
+      }
     });
+
+    formattedCodes.forEach((code) => {
+      if(this.doorCodeExists(code, formattedCodes)){
+        err=true;
+        this.setState({multError: err});
+        this.setState({multErrorMsg: 'Doorcode ' + code + ' already exists!'});
+      }
+      if(Date.parse(dateInput) < Date.now() || dateInput===''){
+        err=true;
+        this.setState({dateError: err});
+      }
+    });
+
+    if(!err){
+      formattedCodes.forEach((code) => {
+        this.createDoor(code, dateInput);
+      });
+    }
+  }
+
+  doorCodeExists = (doorCodeToAdd, existingDoorCodes) => {
+    let counter = 0;
+    let totalDoorCodes = existingDoorCodes;
+    this.state.doorCodes.forEach((d) => {
+      totalDoorCodes.push(d.doorCode);
+    });
+    totalDoorCodes.forEach((doorCode) => {
+      if(doorCodeToAdd == doorCode){
+        counter++;
+      }
+    });
+    return counter > 1;
   }
 
   deleteDoor = async (input) => {
@@ -153,6 +205,11 @@ export default class DoorCodeTable extends Component {
     return [month, day, year].join('/');
   }
 
+  clearMult = () => {
+    this.setState({inputMult: '', inputDate: '',
+      multError: false, dateError: false});
+  }
+
   render() {
     return (
       <div>
@@ -173,6 +230,7 @@ export default class DoorCodeTable extends Component {
               className='button-inv'
               onClick={() => {
                 this.setState({ toggleMult: true });
+                this.clearMult();
               }}
             >
               <img id='button-image' src={PlusSym} alt={'sce logo'} />
@@ -193,7 +251,7 @@ export default class DoorCodeTable extends Component {
               <tr>
                 {[
                   'Door Code',
-                  'Expire Date',
+                  'Expiration Date',
                   'User Emails',
                   'Delete',
                   'Edit'
@@ -259,27 +317,53 @@ export default class DoorCodeTable extends Component {
             </tbody>
           </Table>
 
-          <Modal isOpen={this.state.toggleMult}>
+          <Modal
+            isOpen={this.state.toggleMult}
+            toggle={()=>{
+              this.setState({toggleMult: !this.state.toggleMult});
+            }}
+          >
+            <ModalHeader
+              toggle={()=>{
+                this.setState({toggleMult: !this.state.toggleMult});
+              }}
+            >
+              Add Doorcode(s)
+            </ModalHeader>
             <ModalBody>
               <Form>
                 <FormGroup>
-                  <Label>Add Doorcodes</Label>
+                  <Label>
+                    Doorcode(s)
+                    <p style={{color: 'red', display: 'inline'}}> *</p>
+                    <FormText color='muted'>
+                      7 numbers per doorcode. Add multiple by line.
+                      No duplicates.
+                    </FormText>
+                  </Label>
                   <Input
                     type='textarea'
                     rows={10}
-                    placeholder='####### add multiple by line'
+                    placeholder=''
                     onChange={this.handleMult}
-                    // defaultValue='###-####'
+                    invalid={this.state.multError}
                   />
-                  <Label className='code-error'>
-                    { this.state.codeInputError }
-                  </Label>
+                  <FormFeedback invalid='true'>
+                    {this.state.multErrorMsg}
+                  </FormFeedback>
                 </FormGroup>
                 <FormGroup>
-                  <Label>Expire Date</Label>
+                  <Label>
+                    Expiration Date
+                    <p style={{color: 'red', display: 'inline'}}> *</p>
+                    <FormText color='muted'>
+                      Enter a valid date.
+                    </FormText>
+                  </Label>
                   <Input
                     type='Date'
                     onChange={this.handleDate}
+                    invalid={this.state.dateError}
                   />
                 </FormGroup>
               </Form>
@@ -291,7 +375,6 @@ export default class DoorCodeTable extends Component {
                   this.createMultDoor(this.state.inputMult,
                     this.state.inputDate);
                   this.updateQuery();
-                  this.setState({ toggleMult: false });
                 }}
               >
                 Add Door Codes
@@ -308,7 +391,12 @@ export default class DoorCodeTable extends Component {
             </ModalFooter>
           </Modal>
 
-          <Modal isOpen={this.state.toggleMassDelete}>
+          <Modal
+            isOpen={this.state.toggleMassDelete}
+            toggle={()=>{
+              this.setState({toggleMassDelete: !this.state.toggleMassDelete});
+            }}
+          >
             <ModalBody>
               <Label>Delete all expired door codes?</Label>
             </ModalBody>

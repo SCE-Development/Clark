@@ -118,3 +118,7 @@ button{
 .code-error {
     color: red;
 }
+
+.doorcode-table-row td {
+    vertical-align: middle;
+}

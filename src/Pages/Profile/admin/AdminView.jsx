@@ -13,7 +13,6 @@ export default function Editor(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
-  const [doorCode, setDoorCode] = useState('');
   const [major, setMajor] = useState('');
   const [user, setUser] = useState({ ...props.user });
   const [users] = useState( [...props.users] );
@@ -97,28 +96,6 @@ export default function Editor(props) {
     { value: 2, name: '2 semesters' }
   ];
 
-  useEffect(() => {
-    setDoorCode('None Assigned');
-    async function fetchDoorCode() {
-      let data = await getPersonsDoorCode(user.email, props.token);
-      if(!data.error){
-        setDoorCode(data.responseData.doorCode.doorCode);
-      }
-    }
-    fetchDoorCode();
-  }, [user.email, props.token]);
-
-  useEffect(() => {
-    setDoorCode('None Assigned');
-    async function fetchDoorCode() {
-      let data = await getPersonsDoorCode(user.email, props.token);
-      if(!data.error){
-        setDoorCode(data.responseData.doorCode.doorCode);
-      }
-    }
-    fetchDoorCode();
-  }, [user.email, props.token]);
-
   return (
     <div className="center">
       <ul className="profileInfo">
@@ -127,7 +104,7 @@ export default function Editor(props) {
           user={{...user, membershipValidUntil}}
           email={user.email}
           token={props.token}
-          doorCode={doorCode}
+          doorCode={props.doorCode}
         />
 
         <EditForm
@@ -152,6 +129,7 @@ export default function Editor(props) {
           toggle={toggle}
           email={user.email}
           token={props.token}
+          updateDoorCode={props.updateDoorCode}
         />
 
         <Modal

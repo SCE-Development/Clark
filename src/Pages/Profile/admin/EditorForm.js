@@ -41,6 +41,7 @@ export default function EditForm(props) {
     const data = await getPersonsDoorCode(props.email, props.token);
     await sendDoorCodeEmail(props.email,
       data.responseData.doorCode.doorCode, props.formGroups[0].placeholder);
+    props.updateDoorCode(data.responseData.doorCode.doorCode);
     setSuccess(true);
     setHasDoorCode(true);
   }
@@ -51,6 +52,7 @@ export default function EditForm(props) {
       alert('Person already has no door code!');
       return;
     }
+    props.updateDoorCode('None Assigned');
     setRemove(true);
     setHasDoorCode(false);
   }
