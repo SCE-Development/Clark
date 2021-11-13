@@ -25,7 +25,7 @@ class MembershipPlan extends Component {
       blocks: [
         {
           className: 'how-to-join-block',
-          title: 'HOW TO JOIN',
+          title: 'HOW TO JIN',
           details: [
             '1️⃣ SELECT a plan below',
             '2️⃣ CLICK on "Add Account Information"',

@@ -3,6 +3,7 @@ import './register-page.css';
 import { Row, Form, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
+import PlanDropdown from './PlanDropdown';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
@@ -16,6 +17,7 @@ export default function MembershipForm(props) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassWord] = useState('');
   const [major, setMajor] = useState('');
+  const [plan, setPlan] = useState('');
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [clickSubmitted, setClickSubmitted] = useState(false);
   const VALID_EMAIL_REGEXP = new RegExp(
@@ -161,12 +163,21 @@ export default function MembershipForm(props) {
       ifRequirementsNotMet: invalidPasswordAlert(),
       handleChange: (e) => setPassword(e.target.value),
     },
+    // {
+    //   label: 'Confirm password*',
+    //   type: 'password',
+    //   id: 'confirm-password-field',
+    //   ifRequirementsNotMet: invalidConfirmPasswordAlert(),
+    //   handleChange: (e) => setConfirmPassWord(e.target.value),
+    // },
+
+  ];
+
+  const majorField = [
     {
-      label: 'Confirm password*',
-      type: 'password',
-      id: 'confirm-password-field',
-      ifRequirementsNotMet: invalidConfirmPasswordAlert(),
-      handleChange: (e) => setConfirmPassWord(e.target.value),
+      label: 'Major*',
+      type: 'text',
+      id: 'major-field',
     },
   ];
 
@@ -203,15 +214,20 @@ export default function MembershipForm(props) {
   };
 
   return (
-    <Container id="background" fluid>
+    <Container id="loginbackground" fluid>
+
+
       <div className="form-card">
+      </div>
+      <div className="vertical-line"></div>
+      <div className="form-card2">
         <h1>Membership Application</h1>
         <hr />
+        <h2>
+          Term: {memberShipPlanToString(props.selectedPlan)}
+        </h2>
         <p>
-          Selected Membership Plan: {memberShipPlanToString(props.selectedPlan)}
-        </p>
-        <p>
-          <span color="red">*</span>= Required field
+          * = Required field
         </p>
         <Form onSubmit={submitApplication}>
           <Row id="name-field-row">
@@ -241,30 +257,31 @@ export default function MembershipForm(props) {
                 {input.ifRequirementsNotMet}
               </FormGroup>
             ))}
-            <MajorDropdown setMajor={setMajor} />
-            {clickSubmitted && !major && (
-              <p className="unavailable">
-                You have to choose your major!
-              </p>
-            )}
           </div>
+          <div id="major-input-container">
+            <p>Major:*   </p>
+            {majorField.map((input, index) => (
+              <FormGroup key={`major-input-${index}`}>
+                <Input
+                  className="name-input membership-input"
+                  type={input.type}
+                  onChange={input.handleChange}
+                  id={input.id}
+                  placeholder={input.label}
+                />
+              </FormGroup>
+            ))}
+          </div>
+          <PlanDropdown setPlan={setPlan} />
           <div id="recaptcha">
             <GoogleRecaptcha setVerified={setVerified} />
           </div>
           <div className="transition-button-wrapper">
-            <Button
-              id="change-and-select-btns"
-              onClick={() =>
-                props.setMembershipState(
-                  memberApplicationState.SELECT_MEMBERSHIP_PLAN
-                )
-              }
-            >
-              Change membership plan
-            </Button>
-            <Button id="submit-btn" color="primary" type="submit">
-              Submit application
-            </Button>
+            <div className="center">
+              <Button className = "submit-btn" type="submit">
+                Submit Application
+              </Button>
+            </div>
           </div>
         </Form>
         <hr />
