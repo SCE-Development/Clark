@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import './edit-item.css';
 import { Alert, Modal, ModalHeader, ModalBody, ModalFooter, Button } from
+<<<<<<< HEAD
   'reactstrap';
 import ConfirmationModal from
   '../../../Components/DecisionModal/ConfirmationModal.js';
+=======
+'reactstrap';
+import ConfirmationModal from
+'../../../Components/DecisionModal/ConfirmationModal.js';
+>>>>>>> 2eca280... add all untracked files
 import EditItemForm from './EditItemForm.js';
 const svg = require('../SVG');
 

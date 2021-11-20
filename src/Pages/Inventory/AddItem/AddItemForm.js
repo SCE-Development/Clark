@@ -1,6 +1,10 @@
 import React from 'react';
 import { Form, FormFeedback, FormGroup, FormText, Label, Input } from
+<<<<<<< HEAD
   'reactstrap';
+=======
+'reactstrap';
+>>>>>>> 2eca280... add all untracked files
 
 export default function AddItemForm(props) {
   return (
