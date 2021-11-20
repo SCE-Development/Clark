@@ -26,10 +26,8 @@ router.post('/editItem', (req, res) => {
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-
   const { name, price, stock, category, description, picture } = req.body;
-
-  InventoryItem.findOne({ name: req.body.name })
+  InventoryItem.findOne({ _id: req.body._id })
     .then(item => {
       item.name = name || item.name;
       item.price = price || item.price;
@@ -70,10 +68,9 @@ router.post('/addItem', (req, res) => {
     description: req.body.description,
     picture: req.body.picture
   });
-
   InventoryItem.create(newItem, (error, post) => {
     if (error) {
-      return res.sendStatus(BAD_REQUEST);
+      return res.status(BAD_REQUEST).send(error);
     }
     return res.json(post);
   });
@@ -85,7 +82,7 @@ router.post('/deleteItem', (req, res) => {
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  InventoryItem.deleteOne({ name: req.body.name }, (error, form) => {
+  InventoryItem.deleteOne({ _id: req.body._id }, (error, form) => {
     if (error) {
       const info = {
         errorTime: new Date(),

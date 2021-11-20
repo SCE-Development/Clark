@@ -1,17 +1,17 @@
-.name{
+.name {
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   overflow-wrap: initial;
 }
 
-.layout{
+.layout {
   padding-top: 32px;
   margin: 10px auto;
-  width:700px;
+  width: 700px;
 }
 
-.title{
+.title {
   min-height: 100%;
   min-width: 100%;
   text-align: center;
@@ -19,40 +19,40 @@
   font-variant-caps: all-small-caps;
 }
 
-.content-table{
+.content-table {
   border-collapse: collapse;
   font-size: 0.9em;
   max-width: 700px;
   min-width: 700px;
 }
 
-.content-table thead tr{
-  background-color:#3a5f7f;
+.content-table thead tr {
+  background-color: #3a5f7f;
   color: #ffffff;
   text-align: left;
   font-weight: bold;
 }
 
-thead.td{
+thead.td {
   text-align: center;
 }
 
 .content-table td,
-.content-table th{
+.content-table th {
   overflow-wrap: break-word;
   word-wrap: break-word;
   padding: 12px 15px;
 }
 
-.content-table tbody tr{
-  border-bottom: 1px solid #dddddd
+.content-table tbody tr {
+  border-bottom: 1px solid #dddddd;
 }
 
-.content-table tbody tr:nth-of-type(even){
+.content-table tbody tr:nth-of-type(even) {
   background-color: #f3f3f3;
 }
 
-.input-overview{
+.input-overview {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0px;
@@ -64,8 +64,8 @@ thead.td{
   font-style: italic;
 }
 
-.submit-button{
-  background-color: #4CAF50;
+.submit-button {
+  background-color: #4caf50;
   border: none;
   color: white;
   padding: 20px;
@@ -81,34 +81,33 @@ thead.td{
 }
 
 .icon-button,
-.overview-icon{
-
+.overview-icon {
   background-color: transparent;
   outline: none;
-  border:none;
-  color:grey;
+  border: none;
+  color: grey;
   animation: reverse;
   padding: 5px;
   border-radius: 20px;
-  margin: 5px
+  margin: 5px;
 }
 
-.overview-icon:hover{
+.overview-icon:hover {
   padding: 5px;
   border-radius: 20px;
 
   outline: none;
-  color:red;
+  color: red;
   animation: reverse;
-  cursor:pointer;
+  cursor: pointer;
 }
 
-.icon-button:hover{
-  cursor:pointer;
+.icon-button:hover {
+  cursor: pointer;
   padding: 5px;
   border-radius: 20px;
   outline: none;
-  color:rgb(8, 185, 117);
+  color: rgb(8, 185, 117);
   animation: reverse;
 }
 
@@ -117,8 +116,8 @@ thead.td{
 }
 
 #view-email-button {
-  border-color: rgb(2, 107, 126) ;
-  color: rgb(2, 107, 126) ;
+  border-color: rgb(2, 107, 126);
+  color: rgb(2, 107, 126);
   margin-left: 8px;
 }
 
@@ -127,6 +126,6 @@ thead.td{
   color: white;
 }
 
-#users-header{
+#users-header {
   color: black;
 }
