@@ -5,11 +5,7 @@
   "scripts": {
     "api-test": "mocha",
     "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js",
-<<<<<<< HEAD
     "start": "ESLINT_NO_DEV_ERRORS=true react-scripts start",
-=======
-    "start": " set ESLINT_NO_DEV_ERRORS=true && react-scripts start",
->>>>>>> 681e8bc... add all modified files
     "server": "npm start --prefix api",
     "server-install": "npm install --prefix api",
     "build": "react-scripts build",
