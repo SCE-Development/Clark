@@ -33,6 +33,12 @@
     "AWSSECRETKEY": "XXXXXXXXXXXXXXXXXXXXXXXX",
     "BUCKET": "XXXXXXXXXXXXX"
   },
+  "ledSqsKeys": {
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "ACCOUNT_ID": "xxxxxxxxxxxx",
+    "QUEUE_NAME": "xxxxxxxx"
+  },
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
   "LOGGING_API_URL_PROD": "http://sce-logging-api:8081/loggingapi",
