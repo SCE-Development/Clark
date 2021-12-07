@@ -75,9 +75,9 @@
     "react-google-recaptcha": "^2.1.0",
     "react-iframe": "^1.8.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^3.4.4",
     "reactstrap": "^8.10.0",
-    "serve": "^11.3.2",
+    "serve": "^13.0.2",
     "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
