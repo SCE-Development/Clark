@@ -2,15 +2,13 @@ FROM node:lts-alpine
 
 RUN mkdir -p /usr/src/app
 
-COPY src /usr/src/app/
-COPY public /usr/src/app/
-COPY util /usr/src/app/
-COPY package.json /usr/src/app/
-
 WORKDIR /usr/src/app
-
+COPY package.json ./
 RUN npm install
-COPY . ./
+COPY public ./public
+COPY util ./util
+COPY src ./src
+
 RUN npm run build
 
 EXPOSE 3000
