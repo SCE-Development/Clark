@@ -53,7 +53,7 @@ export async function getAllSignLogs() {
 export async function updateSignText(signData) {
   let status = new ApiResponse();
   await axios
-    .post(LOGGING_API_URL + '/LedSign/sendLEDSign', { ...signData })
+    .post(LOGGING_API_URL + '/LedSign/updateSignText', { ...signData })
     .then(res => {
       status = res.data;
     })
