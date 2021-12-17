@@ -8,13 +8,15 @@ const { ledSqsKeys } = require('../../config/config.json');
 
 creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID, ledSqsKeys.CLIENT_SECRET);
 AWS.config.update({
-  region: "us-west-1",
+  region: 'us-west-1',
   endpoint: LED_SIGN_URL,
   credentials: creds
 });
 
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const queueUrl = `https://sqs.us-west-2.amazonaws.com/${ledSqsKeys.ACCOUNT_ID}/${ledSqsKeys.QUEUE_NAME}`;
+const queueUrl =
+'https://sqs.us-west-2.amazonaws.com/'
++ ledSqsKeys.ACCOUNT_ID + '/' + ledSqsKeys.QUEUE_NAME;
 
 // send as part of request body which isn't present in url
 router.use(express.json());
@@ -46,10 +48,8 @@ router.post('/sendLEDSign', (req, res) => {
     ),
     QueueUrl: queueUrl
   };
-  sqs.sendMessage(sqsParams, function (err, data) {
-    if (err) console.log(err, err.stack); // an error occurred
-    else console.log(data);           // successful response
-  })
+  sqs.sendMessage(sqsParams, function(err, data) {
+  });
   res.sendStatus(OK);
 });
 
