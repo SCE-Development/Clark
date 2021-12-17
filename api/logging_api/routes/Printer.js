@@ -17,6 +17,10 @@ AWS.config.update({
   credentials: creds
 });
 
+router.get('/healthCheck', (req, res) => {
+  res.sendStatus(OK);
+});
+
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
 
