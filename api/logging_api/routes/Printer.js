@@ -28,6 +28,7 @@ app.use(express.json());
 /*
 have this file encode the base and then upload it to s3
 */
+
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
 
@@ -37,17 +38,14 @@ router.post('/sendPrintRequest', async (req, res) => {
 
   const params = {
     Key: `folder/${fileName}.pdf`,
-    Body: Buffer.from(raw, 'base64'), // <---------
+    Body: Buffer.from(raw, 'base64'),
     Bucket: printingS3Bucket,
-
   };
   // console.log(s3);
 
   const response = await s3.upload(params, function(err, data) {
-    if (err) {
-      throw err;
-    }
-    res.send(`File uploaded successfully. ${data.Location}`);
+    if (err) throw err;
+
   }).promise();
 
   //   console.log(response.Location);
@@ -65,13 +63,8 @@ router.post('/sendPrintRequest', async (req, res) => {
     QueueUrl: `https://sqs.us-west-2.amazonaws.com/${accountId}/${queueName}`
   };
   sqs.sendMessage(sqsParams, (err, data) => {
-    if (err) {
-      res.send('Error', err);
-    } else {
-      res.send('Successfully added message', data.MessageId);
-    }
+    return res.sendStatus(OK);
   });
-  res.sendStatus(OK);
 });
 
 module.exports = router;
