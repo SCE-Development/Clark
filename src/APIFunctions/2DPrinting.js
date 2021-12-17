@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 import axios from 'axios';
 import {
   PrintApiResponse,
@@ -13,11 +12,6 @@ let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
 let RPC_API_URL = process.env.NODE_ENV === 'production' ?
   config.RPC_API_URL_PROD : config.RPC_API_URL;
 
-  console.log({
-
-    config,
-    LOGGING_API_URL
-  });
 /**
  * Return an array similar to python's range() function
  * @param {Number} start
@@ -33,7 +27,6 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  console.log('get lost ', LOGGING_API_URL + '/Printer/healthCheck');
   await axios.get(LOGGING_API_URL + '/Printer/healthCheck')
     .then(res => {
       status.reponseData = res.data;
@@ -87,7 +80,6 @@ export function parseRange(pages, maxPages) {
  * the page successfully printed
  */
 export async function printPage(data) {
-  console.log({data})
   let status = new ApiResponse();
   await axios.post(LOGGING_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {
