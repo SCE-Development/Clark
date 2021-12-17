@@ -7,7 +7,7 @@ function main() {
     __dirname + '/routes/SignLog.js',
     __dirname + '/routes/LedSign.js'
   ];
-  const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/meme/');
+  const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/logging_api/');
   loggingServer.initializeEndpoints().then(() => {
     loggingServer.openConnection();
   });

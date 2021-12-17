@@ -36,8 +36,12 @@ router.post('/updateSignText', (req, res) => {
     QueueUrl: queueUrl
   };
   sqs.sendMessage(sqsParams, function(err, data) {
+    if(err) {
+      res.sendStatus(BAD_REQUEST);
+    } else {
+      res.sendStatus(OK);
+    }
   });
-  res.sendStatus(OK);
 });
 
 
