@@ -61,7 +61,7 @@ export default class EmailTemplate extends Component {
           officerEmail.push(item.email);
         } else if (item.accessLevel >= membershipState.MEMBER) {
           memberEmail.push(item.email);
-        } else if (item.accessLevel == membershipState.ALUMNI) {
+        } else if (item.accessLevel === membershipState.ALUMNI) {
           alumniEmail.push(item.email);
         }
       }, this.setState({ officerEmail, memberEmail, alumniEmail, allEmail }));
