@@ -19,6 +19,7 @@ const queueUrl =
 + ledSqsKeys.ACCOUNT_ID + '/' + ledSqsKeys.QUEUE_NAME;
 
 router.get('/healthCheck', (req, res) => {
+  res.sendStatus(OK);
   axios.get(LED_SIGN_URL + 'healthCheck')
     .then(response => {
       res.status(OK).send(response.data);
