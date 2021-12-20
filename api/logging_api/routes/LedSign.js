@@ -20,13 +20,6 @@ const queueUrl =
 
 router.get('/healthCheck', (req, res) => {
   res.sendStatus(OK);
-  axios.get(LED_SIGN_URL + 'healthCheck')
-    .then(response => {
-      res.status(OK).send(response.data);
-    })
-    .catch(error => {
-      res.status(BAD_REQUEST).send(error);
-    });
 });
 
 router.post('/updateSignText', (req, res) => {
