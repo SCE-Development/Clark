@@ -39,6 +39,11 @@
     "ACCOUNT_ID": "xxxxxxxxxxxx",
     "QUEUE_NAME": "xxxxxxxx"
   },
+  "Queue": {
+    "AccountID": "XXXXXXXXXX",
+    "QueueName": "XXXXXXXXXX"
+  },
+  "PrintingS3Bucket": "XXXXXXXXXXXXXXX",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
   "LOGGING_API_URL_PROD": "http://sce-logging-api:8081/loggingapi",
