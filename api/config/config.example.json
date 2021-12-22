@@ -25,13 +25,19 @@
     "PRIMARY_CAL": "primary",
     "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
-  "ledSignIp": "192.168.4.1",
+  "ledSignUrl": "XXXXXXX",
   "LOGGING_API_URL": "http://localhost:8081/loggingapi",
   "passwordStrength": "medium",
   "S3Bucket": {
     "AWSACCESSKEYID": "XXXXXXXXXXXXXXXXXXXX",
     "AWSSECRETKEY": "XXXXXXXXXXXXXXXXXXXXXXXX",
     "BUCKET": "XXXXXXXXXXXXX"
+  },
+  "ledSqsKeys": {
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "ACCOUNT_ID": "xxxxxxxxxxxx",
+    "QUEUE_NAME": "xxxxxxxx"
   },
   "Queue": {
     "AccountID": "XXXXXXXXXX",
