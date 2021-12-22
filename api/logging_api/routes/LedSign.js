@@ -1,15 +1,14 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const { LED_SIGN_URL } = require('../../config/config.js');
 const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 const AWS = require('aws-sdk');
-const { ledSqsKeys } = require('../../config/config.json');
+const { ledSqsKeys, ledSignUrl } = require('../../config/config.json');
 
 creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID, ledSqsKeys.CLIENT_SECRET);
 AWS.config.update({
   region: 'us-west-1',
-  endpoint: LED_SIGN_URL,
+  endpoint: ledSignUrl,
   credentials: creds
 });
 
