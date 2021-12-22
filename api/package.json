@@ -31,7 +31,7 @@
   "homepage": "https://github.com/SCE-Development/Core-v4#readme",
   "dependencies": {
     "aws-sdk": "^2.1032.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",
