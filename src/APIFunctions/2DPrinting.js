@@ -27,7 +27,7 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  await axios.post(RPC_API_URL + '/Printer/healthCheck')
+  await axios.get(LOGGING_API_URL + '/Printer/healthCheck')
     .then(res => {
       status.reponseData = res.data;
     })
@@ -81,7 +81,7 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data) {
   let status = new ApiResponse();
-  await axios.post(RPC_API_URL + '/Printer/sendPrintRequest', data)
+  await axios.post(LOGGING_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {
       status.responseData = response.data.message;
     })
