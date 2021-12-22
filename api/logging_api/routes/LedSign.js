@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const router = express.Router();
 const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 const AWS = require('aws-sdk');
