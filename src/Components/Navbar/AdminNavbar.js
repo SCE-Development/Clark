@@ -15,7 +15,7 @@ export default function AdminNavbar(props) {
   const navbarLinks = [
     { title: 'Home', route: '/' },
     { title: 'Overview', route: '/dashboard' },
-    { title: 'Inventory', route: '/inventory'},
+    { title: 'Inventory', route: '/inventory' },
     { title: 'Event Manager', route: '/event-manager' },
     { title: 'Upload Pictures', route: '/uploadPic' },
     { title: 'LED Sign', route: '/led-sign' },
@@ -24,21 +24,14 @@ export default function AdminNavbar(props) {
   ];
 
   return (
-    <Navbar
-      dark
-      className='admin-nav admin-dark'
-      navbar='true'
-    >
+    <Navbar dark className='admin-nav admin-dark' navbar='true'>
       <div id='admin-title'>
-        <NavbarBrand href='/'>Admin Dashboard
-        </NavbarBrand>
+        <NavbarBrand href='/'>Admin Dashboard</NavbarBrand>
         <div id='admin-toggler'>
           <DarkMode />
         </div>
       </div>
-      <NavbarToggler
-        onClick={() => setCollapsed(!collapsed)}
-      />
+      <NavbarToggler onClick={() => setCollapsed(!collapsed)} />
       <Collapse isOpen={!collapsed} navbar>
         <Nav className='ml-auto sce-nav' navbar>
           {navbarLinks.map((link, index) => {
@@ -52,22 +45,22 @@ export default function AdminNavbar(props) {
             // just return the link.
             return link.restricted
               ? props.user &&
-              props.user.accessLevel === membershipState.ADMIN &&
-              navlink
+                  props.user.accessLevel === membershipState.ADMIN &&
+                  navlink
               : navlink;
           })}
           <div onClick={props.handleLogout} className='nav-button nav-link'>
             <svg style={{ width: '18px', height: '18px' }} viewBox='0 0 24 24'>
               <path
-                d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,
+                d='M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,
               2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,
-              2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"
+              2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z'
               />
             </svg>
             Logout
           </div>
         </Nav>
       </Collapse>
-    </Navbar >
+    </Navbar>
   );
 }

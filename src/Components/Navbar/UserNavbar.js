@@ -11,7 +11,7 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
 } from 'reactstrap';
 import DarkMode from './DarkMode';
 import { membershipState } from '../../Enums';
@@ -28,8 +28,8 @@ export default function UserNavBar(props) {
         'v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.7',
         '64 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5',
         ' 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.3',
-        '96-2.586 7-2.777 7 2.476v6.759z'
-      ].join('')
+        '96-2.586 7-2.777 7 2.476v6.759z',
+      ].join(''),
     },
     {
       link: 'https://discord.com/invite/STkT6mH',
@@ -50,8 +50,8 @@ export default function UserNavBar(props) {
         '2.792.972zm-5.58-5.604c-.684 0-1.224.6-1.224 1.332 0 .732.552 1.33',
         '2 1.224 1.332.684 0 1.224-.6 1.224-1.332.012-.732-.54-1.332-1.22',
         '4-1.332zm4.38 0c-.684 0-1.224.6-1.224 1.332 0 .732.552 1.332 1.2',
-        '24 1.332.684 0 1.224-.6 1.224-1.332 0-.732-.54-1.332-1.224-1.332z'
-      ].join('')
+        '24 1.332.684 0 1.224-.6 1.224-1.332 0-.732-.54-1.332-1.224-1.332z',
+      ].join(''),
     },
     {
       link: 'https://www.instagram.com/sjsusce/',
@@ -72,12 +72,14 @@ export default function UserNavBar(props) {
         'c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-',
         '4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.',
         '845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.',
-        '439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'
-      ].join('')
-    }
+        '439-.645 1.439-1.44s-.644-1.44-1.439-1.44z',
+      ].join(''),
+    },
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events' },
-    { title: 'Discord Bot', route: '/discordSJSU' }];
+  const unauthedRoutes = [
+    { title: 'Events', route: '/events' },
+    { title: 'Discord Bot', route: '/discordSJSU' },
+  ];
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
@@ -114,18 +116,17 @@ export default function UserNavBar(props) {
                   })}
                 </NavItem>
               </DropdownItem>
-              {props.user && props.user.accessLevel >=
-                membershipState.MEMBER && (
+              {props.user&&props.user.accessLevel>=membershipState.MEMBER&& (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                      Printing
+                    Printing
                   </DropdownItem>
                   <DropdownMenu className='drp-menu'>
                     <DropdownItem className='drp-item' href='/2DPrinting'>
-                        2D Printing
+                      2D Printing
                     </DropdownItem>
                     <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                        3D Printing
+                      3D Printing
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownItem>
@@ -138,7 +139,6 @@ export default function UserNavBar(props) {
                         {link.title}
                       </NavLink>
                     </NavItem>
-
                   </DropdownItem>
                 );
               })}
@@ -184,14 +184,14 @@ export default function UserNavBar(props) {
               ) : (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                      Join Us!
+                    Join Us!
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
                     <DropdownItem className='drp-item' href='/register'>
-                        Membership Application
+                      Membership Application
                     </DropdownItem>
                     <DropdownItem className='drp-item' href='/login'>
-                        Login
+                      Login
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownItem>
@@ -212,22 +212,21 @@ export default function UserNavBar(props) {
                 );
               })}
             </NavItem>
-            {props.user && props.user.accessLevel >= membershipState.MEMBER
-              && (
-                <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle id='navlink-text' nav caret>
-                    Printing
-                  </DropdownToggle>
-                  <DropdownMenu right>
-                    <DropdownItem className='drp-item' href='/2DPrinting'>
-                      2D Printing
-                    </DropdownItem>
-                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                      3D Printing
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              )}
+            {props.user && props.user.accessLevel >= membershipState.MEMBER && (
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle id='navlink-text' nav caret>
+                  Printing
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem className='drp-item' href='/2DPrinting'>
+                    2D Printing
+                  </DropdownItem>
+                  <DropdownItem className='drp-item' href='/3DPrintingForm'>
+                    3D Printing
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            )}
             {unauthedRoutes.map((link, index) => {
               return (
                 <NavItem key={index}>
@@ -278,14 +277,14 @@ export default function UserNavBar(props) {
             ) : (
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle id='navlink-text' nav caret>
-                    Join Us!
+                  Join Us!
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem className='drp-item' href='/register'>
-                      Membership Application
+                    Membership Application
                   </DropdownItem>
                   <DropdownItem className='drp-item' href='/login'>
-                      Login
+                    Login
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
@@ -293,6 +292,6 @@ export default function UserNavBar(props) {
           </Nav>
         </Collapse>
       </Navbar>
-    </div >
+    </div>
   );
 }
