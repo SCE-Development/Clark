@@ -7,9 +7,11 @@ const {
 } = require('../../util/token-functions');
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
-module.exports = router;
+
+
 let add_RFID = false;
 let new_name = null;
+
 router.post('/validateRFID', (req, res) => {
   const { byte } = req.body;
   if (add_RFID) {
@@ -47,3 +49,13 @@ router.post('/createRFID', (req, res) => {
     new_name = null;
   }, 60000);
 });
+
+router.post('/getRFIDs', (req, res) => {
+  RFID.find()
+        .then(items => res.status(OK).send(items))
+        .catch(error => {
+            res.sendStatus(BAD_REQUEST);
+        });
+});
+
+module.exports = router;
