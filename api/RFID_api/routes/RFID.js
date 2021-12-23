@@ -8,7 +8,6 @@ const {
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 
-
 let add_RFID = false;
 let new_name = null;
 
@@ -19,18 +18,25 @@ router.post('/validateRFID', (req, res) => {
       name: new_name,
       byte: req.body.byte,
     });
-    new_name = null;
     RFID.create(newEvent, (error) => {
       if (error) {
-        return res.sendStatus(BAD_REQUEST);
+        res.sendStatus(BAD_REQUEST);
       } else {
-        return res.sendStatus(OK);
+        res.sendStatus(OK);
       }
+      new_name = null;
+      clearTimeout();
+      add_RFID = false;
     });
   } else {
     RFID.findOne({ byte })
-      .then((RFID) => {
-        res.sendStatus(OK);
+      .then((result) => {
+        console.log(new_name, add_RFID, result);
+        if (result != null) {
+          res.sendStatus(OK);
+        } else {
+          res.sendStatus(NOT_FOUND);
+        }
       })
       .catch(() => {
         res.sendStatus(NOT_FOUND);
@@ -48,14 +54,29 @@ router.post('/createRFID', (req, res) => {
     add_RFID = false;
     new_name = null;
   }, 60000);
+  return res.sendStatus(OK);
 });
 
-router.post('/getRFIDs', (req, res) => {
+router.get('/getRFIDs', (req, res) => {
   RFID.find()
-        .then(items => res.status(OK).send(items))
-        .catch(error => {
-            res.sendStatus(BAD_REQUEST);
-        });
+    .then((items) => res.status(OK).send(items))
+    .catch((error) => {
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
+router.delete('/deleteRFID', (req, res) => {
+  RFID.deleteOne({ _id: req.body._id })
+    .then((result) => {
+      if (result.n < 1) {
+        return res.sendStatus(BAD_REQUEST);
+      } else {
+        return res.sendStatus(OK);
+      }
+    })
+    .catch((error) => {
+      res.sendStatus(BAD_REQUEST);
+    });
 });
 
 module.exports = router;

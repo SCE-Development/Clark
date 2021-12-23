@@ -9,6 +9,7 @@ const RFIDSchema = new Schema(
     },
     byte: {
       type: String,
+      unique: true,
       require: true,
     },
     created: {
