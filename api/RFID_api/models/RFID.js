@@ -11,8 +11,9 @@ const RFIDSchema = new Schema(
       type: String,
       require: true,
     },
-    last_scanned: {
-      type: String,
+    created: {
+      type: Date,
+      default: Date.now,
     },
   },
   { collection: 'RFID' }
