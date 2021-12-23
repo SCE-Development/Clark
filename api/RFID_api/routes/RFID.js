@@ -31,7 +31,6 @@ router.post('/validateRFID', (req, res) => {
   } else {
     RFID.findOne({ byte })
       .then((result) => {
-        console.log(new_name, add_RFID, result);
         if (result != null) {
           res.sendStatus(OK);
         } else {
