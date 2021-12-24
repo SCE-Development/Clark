@@ -13,14 +13,14 @@ import {
   InputGroupAddon
 } from 'reactstrap';
 import { eventModalState } from '../../Enums';
+import {DEFAULT_PICS} from '../../Enums.js';
 import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event';
 import { validateImageURL } from '../../APIFunctions/Image.js';
 import ConfirmationModal from
-  '../../Components/DecisionModal/ConfirmationModal.js';
+'../../Components/DecisionModal/ConfirmationModal.js';
 
 function EventManagerModal(props) {
-  const NOT_FOUND_PNG =
-    'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
+  const NOT_FOUND_PNG = DEFAULT_PICS.EVENT;
   const { modal, toggle, modalState } = props;
   const [title, setTitle] = useState(props.title);
   const [confirmationModal, setConfirmationModal] = useState(false);
@@ -61,8 +61,8 @@ function EventManagerModal(props) {
         defaultValue: props.title,
         placeholder: 'e.g. Python Workshop',
         handleChange: e => setTitle(e.target.value),
-        ifRequirementsNotMet: (title == undefined || title == '')
-         && clickedSubmit && (
+        ifRequirementsNotMet: (title === undefined || title === '')
+          && clickedSubmit && (
           <p className='unavailable'>Please input a title!</p>
         ),
       },
@@ -73,8 +73,8 @@ function EventManagerModal(props) {
         handleChange: e => {
           setEventDate(e.target.value);
         },
-        ifRequirementsNotMet: (eventDate == undefined || eventDate == '')
-         && clickedSubmit && (
+        ifRequirementsNotMet: (eventDate === undefined || eventDate === '')
+          && clickedSubmit && (
           <p className='unavailable'>Please input a date!</p>
         ),
       }
@@ -87,8 +87,8 @@ function EventManagerModal(props) {
         defaultValue: props.eventLocation,
         placeholder: 'e.g. ENGR 294',
         handleChange: e => setEventLocation(e.target.value),
-        ifRequirementsNotMet: (eventLocation == undefined ||
-          eventLocation == '') && clickedSubmit && (
+        ifRequirementsNotMet: (eventLocation === undefined ||
+          eventLocation === '') && clickedSubmit && (
           <p className='unavailable'>Please input a location!</p>
         ),
       },
@@ -113,7 +113,7 @@ function EventManagerModal(props) {
         type: 'time',
         defaultValue: convertTime12to24(props.startTime),
         handleChange: e => setStartTime(e.target.value),
-        ifRequirementsNotMet: startTime == undefined && clickedSubmit && (
+        ifRequirementsNotMet: startTime === undefined && clickedSubmit && (
           <div className='unavailable'>Please input a time!</div>
         ),
       },
@@ -122,7 +122,7 @@ function EventManagerModal(props) {
         type: 'time',
         defaultValue: convertTime12to24(props.endTime),
         handleChange: e => setEndTime(e.target.value),
-        ifRequirementsNotMet: endTime == undefined && clickedSubmit && (
+        ifRequirementsNotMet: endTime === undefined && clickedSubmit && (
           <p className='unavailable'>Please input a time!</p>
         ),
       }
@@ -152,7 +152,7 @@ function EventManagerModal(props) {
 
   async function handleSubmission() {
     setClickedSubmit(true);
-    if (requiredFieldsFilled){
+    if (requiredFieldsFilled) {
       const eventFields = {
         title,
         description,
@@ -235,7 +235,7 @@ function EventManagerModal(props) {
             <Label>Event Description</Label>
             <Input
               type='textarea'
-              maxLength = {100}
+              maxLength={100}
               rows={5}
               placeholder='Enter Event Description'
               defaultValue={props.description}

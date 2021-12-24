@@ -32,7 +32,7 @@ describe('<UserNavbar />', () => {
   });
   it('Should render two <NavLink /> tags for unauthenticated routes', () => {
     const wrapper = mount(<UserNavbar />);
-    expect(wrapper.find(NavLink)).to.have.lengthOf(2);
+    expect(wrapper.find(NavLink)).to.have.lengthOf(4);
     expect(wrapper.find(Nav).children()).to.have.lengthOf(1);
   });
   it(
@@ -40,7 +40,7 @@ describe('<UserNavbar />', () => {
     ' the user who isn\'t a member',
     () => {
       const wrapper = mount(<UserNavbar {...nonMemberAppProps} />);
-      expect(wrapper.find(NavLink)).to.have.lengthOf(2);
+      expect(wrapper.find(NavLink)).to.have.lengthOf(4);
     }
   );
   it(

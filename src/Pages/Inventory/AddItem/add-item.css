@@ -1,0 +1,22 @@
+.button-div {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.add-icon {
+  background-color: transparent;
+  border: none;
+  color: grey;
+  padding: 5px;
+  margin: 5px;
+}
+
+.add-icon:hover {
+  padding: 5px;
+  color: #9fcca9;
+  cursor: pointer;
+}
+
+.add-icon:focus {
+  outline: none;
+}

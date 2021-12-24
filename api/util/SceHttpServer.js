@@ -77,7 +77,7 @@ class SceHttpServer {
    * Initialize a connection to MongoDB.
    */
   connectToMongoDb() {
-    let dbHost = process.env.DATABASE_HOST || 'localhost';
+    let dbHost = process.env.DATABASE_HOST || '127.0.0.1';
     this.mongoose = mongoose;
     this.mongoose
       .connect(`mongodb://${dbHost}:27017/${this.database}`, {

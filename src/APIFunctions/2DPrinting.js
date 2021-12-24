@@ -33,7 +33,6 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  console.log('get lost ', LOGGING_API_URL + '/Printer/healthCheck');
   await axios.get(LOGGING_API_URL + '/Printer/healthCheck')
     .then(res => {
       status.reponseData = res.data;

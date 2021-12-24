@@ -19,11 +19,11 @@ export default () => {
           </p>
           <p>
             President:{' '}
-            <a href='mailto:pres.sce.sjsu@gmail.com'>pres.sce.sjsu@gmail.com</a>
+            <a href='mailto:sce.sjsu@gmail.com'>sce.sjsu@gmail.com</a>
           </p>
           <p>
             Vice-President:{' '}
-            <a href='mailto:vp.sce.sjsu@gmail.com'>vp.sce.sjsu@gmail.com</a>
+            <a href='mailto:sce.sjsu@gmail.com'>sce.sjsu@gmail.com</a>
           </p>
           <p>
             Public Relations:{' '}

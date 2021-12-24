@@ -3,7 +3,7 @@ import './Overview.css';
 import { Modal } from 'reactstrap';
 import InfoCard from '../Profile/admin/AdminView';
 import ConfirmationModal from
-  '../../Components/DecisionModal/ConfirmationModal.js';
+'../../Components/DecisionModal/ConfirmationModal.js';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 const enums = require('../../Enums.js');
 const svg = require('./SVG');
