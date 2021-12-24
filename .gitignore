@@ -103,3 +103,5 @@ sheets.json
 **/rc*
 **/semver*
 **/uuid*
+*.cmd
+*.ps1
