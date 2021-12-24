@@ -15,7 +15,7 @@ COPY ./package.json .
 RUN npm install 
 #installs packages
 
-COPY ./logging_api /app/logging_api
+COPY ./peripheral_api /app/peripheral_api
 #copies this file to the desination
 
 COPY ./util /app/util
@@ -28,4 +28,4 @@ ENV DOCKER true
 
 ENV NODE_ENV production
 
-CMD [ "node", "./logging_api/server.js" ]
+CMD [ "node", "./peripheral_api/server.js" ]

@@ -13,7 +13,7 @@ services:
     container_name: sce-logging-api
     build:
       context: ./api
-      dockerfile: ./logging_api/Dockerfile
+      dockerfile: ./peripheral_api/Dockerfile
     ports:
       - '8081:8081'
     restart: 'on-failure'

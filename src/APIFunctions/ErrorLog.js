@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 let config = require('../config/config.json');
-let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
-  config.LOGGING_API_URL_PROD : config.LOGGING_API_URL;
+let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
+  config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
 
 /**
  * Retrieve all errors.
@@ -11,7 +11,7 @@ let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
 export async function getAllErrorLogs() {
   let status = new ApiResponse();
   await axios
-    .get(LOGGING_API_URL+'/ErrorLog/getErrorLogs')
+    .get(PERIPHERAL_API_URL+'/ErrorLog/getErrorLogs')
     .then(res => {
       status.responseData = res.data;
     })
@@ -33,7 +33,7 @@ export async function getAllErrorLogs() {
  */
 export async function addErrorLog(newError) {
   let status = new ApiResponse();
-  await axios.post(LOGGING_API_URL+'/ErrorLog/addErrorLog',
+  await axios.post(PERIPHERAL_API_URL+'/ErrorLog/addErrorLog',
     { ...newError }).catch(err => {
     status.error = true;
     status.responseData = err;
