@@ -96,10 +96,11 @@ sheets.json
 **/gp12-pem*
 **/is-ci*
 **/mime*
-**/mongo_dump*
 **/nodemon*
 **/nodetouch*
 **/nopt*
 **/rc*
 **/semver*
 **/uuid*
+*.cmd
+*.ps1
