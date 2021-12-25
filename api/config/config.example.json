@@ -46,7 +46,7 @@
   "PrintingS3Bucket": "XXXXXXXXXXXXXXX",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
-  "PERIPHERAL_API_URL_PROD": "http://sce-logging-api:8081/loggingapi",
+  "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
   "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi",
   "RPC_API_URL_PROD": "http://localhost:8083/SceRpcApi"
 }

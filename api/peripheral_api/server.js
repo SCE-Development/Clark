@@ -9,9 +9,10 @@ function main() {
     __dirname + '/routes/Printer.js'
 
   ];
-  const loggingServer = new SceHttpServer(API_ENDPOINTS, 8081, '/logging_api/');
-  loggingServer.initializeEndpoints().then(() => {
-    loggingServer.openConnection();
+  const peripheralServer = new
+  SceHttpServer(API_ENDPOINTS, 8081, '/peripheral_api/');
+  peripheralServer.initializeEndpoints().then(() => {
+    peripheralServer.openConnection();
   });
 }
 
