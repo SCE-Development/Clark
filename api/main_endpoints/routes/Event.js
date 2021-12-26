@@ -30,7 +30,7 @@ router.get("/getUpcomingEvents", (req, res) => {
   today.setHours(0,0,0,0);
   Event.find({
     eventDate: {
-      $gte: today.toISOString()
+      $gte: today.toISOString() //gets all upcoming events including today's
     },
   })
     .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
