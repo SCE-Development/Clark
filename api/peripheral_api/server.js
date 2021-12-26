@@ -10,7 +10,7 @@ function main() {
 
   ];
   const peripheralServer = new
-  SceHttpServer(API_ENDPOINTS, 8081, '/peripheral_api/');
+  SceHttpServer(API_ENDPOINTS, 8081, '/peripheralapi/');
   peripheralServer.initializeEndpoints().then(() => {
     peripheralServer.openConnection();
   });

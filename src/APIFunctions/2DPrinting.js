@@ -1,4 +1,3 @@
-/* eslint-disable */ 
 import axios from 'axios';
 import {
   PrintApiResponse,
@@ -13,11 +12,6 @@ let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
 let RPC_API_URL = process.env.NODE_ENV === 'production' ?
   config.RPC_API_URL_PROD : config.RPC_API_URL;
 
-  console.log({
-
-    config,
-    PERIPHERAL_API_URL
-  });
 /**
  * Return an array similar to python's range() function
  * @param {Number} start
@@ -86,7 +80,6 @@ export function parseRange(pages, maxPages) {
  * the page successfully printed
  */
 export async function printPage(data) {
-  console.log({data})
   let status = new ApiResponse();
   await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {

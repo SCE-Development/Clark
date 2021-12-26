@@ -7,7 +7,7 @@
     "start": "nodemon devServer.js",
     "main-endpoints": "npm start --prefix main_endpoints",
     "google-api": "npm start --prefix google_api",
-    "logging-api": "npm start --prefix peripheral_api",
+    "peripheral-api": "npm start --prefix peripheral_api",
     "github-api": "npm start --prefix github_api",
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-user": "node ./util/CreateUserScript.js",

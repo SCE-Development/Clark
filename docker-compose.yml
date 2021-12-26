@@ -9,8 +9,8 @@ services:
       - '/data/db:/data/db' 
       # - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
-  sce-logging-api:
-    container_name: sce-logging-api
+  sce-peripheral-api:
+    container_name: sce-peripheral-api
     build:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile
