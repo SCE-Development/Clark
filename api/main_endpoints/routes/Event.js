@@ -30,6 +30,23 @@ router.get('/getEvents', (req, res) => {
     });
 });
 
+router.get('getUpcomingEvents', (req, res) => {
+  Event.find({eventDate: {
+    $gte: new Date(Date.now().setHours(00, 00, 00))
+  }})
+    .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
+    .then(items => res.status(OK).send(items))
+    .catch(error => {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'Event/getEvents',
+        errorDescription: error
+      };
+      addErrorLog(info);
+      res.status(BAD_REQUEST).send({ error, message: 'Getting event failed' });
+    });
+});
+
 router.post('/createEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
