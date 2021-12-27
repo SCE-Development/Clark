@@ -90,7 +90,7 @@ describe('Event', () => {
     endTime: '14:00',
     eventCategory: 'game night',
     imageURL: 'https://link.to/pdf'
-  }
+  };
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const TOMORROWS_EVENT = {
@@ -101,7 +101,7 @@ describe('Event', () => {
     endTime: '14:00',
     eventCategory: 'game night',
     imageURL: 'https://link.to/pdf'
-  }
+  };
   describe('/POST createEvent', () => {
     it('Should return 403 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequest(
