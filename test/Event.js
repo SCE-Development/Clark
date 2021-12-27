@@ -229,7 +229,8 @@ describe('Event', () => {
     });
   });
   describe('/GET getUpcomingEvents', () => {
-    it('Should return an empty array if no upcoming events are available', async () => {
+    it('Should return an empty array if no'+
+        'upcoming events are available', async () => {
       setTokenStatus(true);
       const result = await test.sendGetRequest(
         '/api/event/getUpcomingEvents');
