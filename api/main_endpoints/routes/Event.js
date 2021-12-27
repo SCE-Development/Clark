@@ -1,36 +1,36 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Event = require("../models/Event");
+const Event = require('../models/Event');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-} = require("../../util/token-functions");
+} = require('../../util/token-functions');
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
-  require("../../util/constants").STATUS_CODES;
-const addErrorLog = require("../util/logging-helpers");
-const membershipState = require("../../util/constants").MEMBERSHIP_STATE;
+  require('../../util/constants').STATUS_CODES;
+const addErrorLog = require('../util/logging-helpers');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
-router.get("/getEvents", (req, res) => {
+router.get('/getEvents', (req, res) => {
   Event.find()
     .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
     .then((items) => res.status(OK).send(items))
     .catch((error) => {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: "Event/getEvents",
+        apiEndpoint: 'Event/getEvents',
         errorDescription: error,
       };
       addErrorLog(info);
-      res.status(BAD_REQUEST).send({ error, message: "Getting event failed" });
+      res.status(BAD_REQUEST).send({ error, message: 'Getting event failed' });
     });
 });
 
-router.get("/getUpcomingEvents", (req, res) => {
+router.get('/getUpcomingEvents', (req, res) => {
   const today = new Date(Date.now());
-  today.setHours(0,0,0,0);
+  today.setHours(0, 0, 0, 0);
   Event.find({
     eventDate: {
-      $gte: today.toISOString() //gets all upcoming events including today's
+      $gte: today.toISOString(), //gets all upcoming events including today's
     },
   })
     .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
@@ -38,15 +38,15 @@ router.get("/getUpcomingEvents", (req, res) => {
     .catch((error) => {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: "Event/getEvents",
+        apiEndpoint: 'Event/getEvents',
         errorDescription: error,
       };
       addErrorLog(info);
-      res.status(BAD_REQUEST).send({ error, message: "Getting event failed" });
+      res.status(BAD_REQUEST).send({ error, message: 'Getting event failed' });
     });
 });
 
-router.post("/createEvent", (req, res) => {
+router.post('/createEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -71,7 +71,7 @@ router.post("/createEvent", (req, res) => {
   });
 });
 
-router.post("/editEvent", (req, res) => {
+router.post('/editEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -100,21 +100,21 @@ router.post("/editEvent", (req, res) => {
       event
         .save()
         .then((ret) => {
-          res.status(OK).json({ ret, event: "event updated successfully" });
+          res.status(OK).json({ ret, event: 'event updated successfully' });
         })
         .catch((error) => {
           res.status(BAD_REQUEST).send({
             error,
-            message: "event was not updated",
+            message: 'event was not updated',
           });
         });
     })
     .catch((error) => {
-      res.status(NOT_FOUND).send({ error, message: "event not found" });
+      res.status(NOT_FOUND).send({ error, message: 'event not found' });
     });
 });
 
-router.post("/deleteEvent", (req, res) => {
+router.post('/deleteEvent', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -122,10 +122,10 @@ router.post("/deleteEvent", (req, res) => {
   }
   Event.deleteOne({ _id: req.body.id })
     .then((event) => {
-      res.status(OK).json({ event: "event successfully deleted" });
+      res.status(OK).json({ event: 'event successfully deleted' });
     })
     .catch((error) => {
-      res.status(BAD_REQUEST).send({ error, message: "deleting event failed" });
+      res.status(BAD_REQUEST).send({ error, message: 'deleting event failed' });
     });
 });
 
