@@ -30,7 +30,7 @@ function getEvents(req, res, upcomingEvents) {
     .catch((error) => {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: 'Event/getEvents',
+        apiEndpoint: (upcomingEvents) ? 'Event/getUpcomingEvents' : 'Event/getEvents',
         errorDescription: error,
       };
       addErrorLog(info);
