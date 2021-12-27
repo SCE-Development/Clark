@@ -21,9 +21,7 @@ function getEvents(req, res, upcomingEvents) {
     const today = new Date(Date.now());
     today.setHours(0, 0, 0, 0);
     query = {
-      eventDate: {
-        $gte: today.toISOString(), // gets all upcoming events including today's
-      }
+      eventDate: { $gte: today.toISOString() }
     }
   }
   Event.find(query)
@@ -41,11 +39,11 @@ function getEvents(req, res, upcomingEvents) {
 }
 
 router.get('/getEvents', (req, res) => {
-  getEvents(req,res,false);
+  getEvents(req, res, false);
 });
 
 router.get('/getUpcomingEvents', (req, res) => {
-  getEvents(req,res,true);
+  getEvents(req, res, true);
 });
 
 router.post('/createEvent', (req, res) => {
