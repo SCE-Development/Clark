@@ -22,7 +22,7 @@ function getEvents(req, res, upcomingEvents) {
     today.setHours(0, 0, 0, 0);
     query = {
       eventDate: { $gte: today.toISOString() }
-    }
+    };
   }
   Event.find(query)
     .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
