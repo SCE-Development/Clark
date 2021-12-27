@@ -229,7 +229,7 @@ describe('Event', () => {
     });
   });
   describe('/GET getUpcomingEvents', () => {
-    it('Should return 404 if no upcoming events are available', async () => {
+    it('Should return an empty array if no upcoming events are available', async () => {
       setTokenStatus(true);
       const result = await test.sendGetRequest(
         '/api/event/getUpcomingEvents');
@@ -238,7 +238,7 @@ describe('Event', () => {
       getEventsResponse.should.be.a('array');
       expect(getEventsResponse).to.have.length(0);
     });
-    it('Should return 200 if there are upcoming events', async () => {
+    it('Should return all upcoming events', async () => {
       setTokenStatus(true);
       const create1 = await test.sendPostRequestWithToken(
         token, '/api/event/createEvent', TOMORROWS_EVENT);

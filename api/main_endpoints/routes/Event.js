@@ -5,8 +5,13 @@ const {
   checkIfTokenSent,
   checkIfTokenValid,
 } = require('../../util/token-functions');
-const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
-  require('../../util/constants').STATUS_CODES;
+const {
+  OK,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND
+} = require('../../util/constants').STATUS_CODES;
 const addErrorLog = require('../util/logging-helpers');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
@@ -39,7 +44,7 @@ router.get('/getUpcomingEvents', (req, res) => {
       const info = {
         errorTime: new Date(),
         apiEndpoint: 'Event/getEvents',
-        errorDescription: error,
+        errorDescription: error
       };
       addErrorLog(info);
       res.status(BAD_REQUEST).send({ error, message: 'Getting event failed' });
@@ -60,7 +65,7 @@ router.post('/createEvent', (req, res) => {
     startTime: req.body.startTime,
     endTime: req.body.endTime,
     eventCategory: req.body.eventCategory,
-    imageURL: req.body.imageURL,
+    imageURL: req.body.imageURL
   });
 
   Event.create(newEvent, (error, post) => {
@@ -85,10 +90,10 @@ router.post('/editEvent', (req, res) => {
     startTime,
     endTime,
     eventCategory,
-    imageURL,
+    imageURL
   } = req.body;
   Event.findOne({ _id: req.body.id })
-    .then((event) => {
+    .then(event => {
       event.title = title || event.title;
       event.description = description || event.description;
       event.eventLocation = eventLocation || event.eventLocation;
@@ -99,17 +104,17 @@ router.post('/editEvent', (req, res) => {
       event.imageURL = imageURL || event.imageURL;
       event
         .save()
-        .then((ret) => {
+        .then(ret => {
           res.status(OK).json({ ret, event: 'event updated successfully' });
         })
-        .catch((error) => {
+        .catch(error => {
           res.status(BAD_REQUEST).send({
             error,
-            message: 'event was not updated',
+            message: 'event was not updated'
           });
         });
     })
-    .catch((error) => {
+    .catch(error => {
       res.status(NOT_FOUND).send({ error, message: 'event not found' });
     });
 });
@@ -121,10 +126,10 @@ router.post('/deleteEvent', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   Event.deleteOne({ _id: req.body.id })
-    .then((event) => {
+    .then(event => {
       res.status(OK).json({ event: 'event successfully deleted' });
     })
-    .catch((error) => {
+    .catch(error => {
       res.status(BAD_REQUEST).send({ error, message: 'deleting event failed' });
     });
 });
