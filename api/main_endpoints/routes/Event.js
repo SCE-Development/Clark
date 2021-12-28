@@ -15,7 +15,7 @@ const {
 const addErrorLog = require('../util/logging-helpers');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
-function getEvents(req, res, upcomingEvents) {
+function getEvents(res, upcomingEvents) {
   let query = {};
   if(upcomingEvents) {
     const today = new Date(Date.now());
@@ -40,11 +40,11 @@ function getEvents(req, res, upcomingEvents) {
 }
 
 router.get('/getEvents', (req, res) => {
-  getEvents(req, res, false);
+  getEvents(res, false);
 });
 
 router.get('/getUpcomingEvents', (req, res) => {
-  getEvents(req, res, true);
+  getEvents(res, true);
 });
 
 router.post('/createEvent', (req, res) => {
