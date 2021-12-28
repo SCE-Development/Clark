@@ -35,6 +35,20 @@ export async function getAllEvents() {
   return status;
 }
 
+export async function getUpcomingEvents() {
+  let status = new ApiResponse();
+  await axios
+    .get(GENERAL_API_URL+'/event/getUpcomingEvents')
+    .then(res => {
+      status.responseData = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
 /**
  * Handles the case in which the image URL is not valid
  * @param {string} url an image url to be added to an event

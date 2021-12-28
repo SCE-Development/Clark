@@ -58,7 +58,7 @@ describe('<EventList />', () => {
   ]);
 
   before(done => {
-    stub = sinon.stub(EventAPI, 'getAllEvents');
+    stub = sinon.stub(EventAPI, 'getUpcomingEvents');
     done();
   });
 
