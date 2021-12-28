@@ -1,16 +1,15 @@
 import axios from 'axios';
-import {
-  PrintApiResponse,
-  ApiResponse
-} from './ApiResponses';
+import { PrintApiResponse, ApiResponse } from './ApiResponses';
 
 let config = require('../config/config.json');
-let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
-let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
-let RPC_API_URL = process.env.NODE_ENV === 'production' ?
-  config.RPC_API_URL_PROD : config.RPC_API_URL;
+let GENERAL_API_URL =
+  process.env.NODE_ENV === 'production'
+    ? config.GENERAL_API_URL_PROD
+    : config.GENERAL_API_URL;
+let PERIPHERAL_API_URL =
+  process.env.NODE_ENV === 'production'
+    ? config.PERIPHERAL_API_URL_PROD
+    : config.PERIPHERAL_API_URL;
 
 /**
  * Return an array similar to python's range() function
@@ -27,11 +26,12 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  await axios.get(PERIPHERAL_API_URL + '/Printer/healthCheck')
-    .then(res => {
+  await axios
+    .get(PERIPHERAL_API_URL + '/Printer/healthCheck')
+    .then((res) => {
       status.reponseData = res.data;
     })
-    .catch(err => {
+    .catch((err) => {
       status.responseData = err;
       status.error = true;
     });
@@ -46,18 +46,18 @@ export async function healthCheck() {
 export function parseRange(pages, maxPages) {
   let result = new Set();
   let pagesFromCommaSplit = pages.split(',');
-  pagesFromCommaSplit.forEach(element => {
+  pagesFromCommaSplit.forEach((element) => {
     const pagesFromDashSplit = element.split('-');
     const arr = range(
       Number(pagesFromDashSplit[0]),
       Number(pagesFromDashSplit[pagesFromDashSplit.length - 1]) + 1
     );
-    arr.forEach(element => {
+    arr.forEach((element) => {
       result.add(element);
     });
   });
   result.delete(0);
-  result.forEach(element => {
+  result.forEach((element) => {
     if (element > maxPages) result.delete(element);
   });
   if (result.size === 0) {
@@ -81,8 +81,9 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data) {
   let status = new ApiResponse();
-  await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest', data)
-    .then(response => {
+  await axios
+    .post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest', data)
+    .then((response) => {
       status.responseData = response.data.message;
     })
     .catch(() => {
@@ -99,7 +100,8 @@ export async function printPage(data) {
  */
 export async function logPrintRequest(data) {
   let status = new ApiResponse();
-  await axios.post(PERIPHERAL_API_URL + '/PrintLog/addPrintLog', data)
+  await axios
+    .post(PERIPHERAL_API_URL + '/PrintLog/addPrintLog', data)
     .catch(() => {
       status.error = true;
     });
@@ -112,8 +114,9 @@ export async function logPrintRequest(data) {
  */
 export async function getAllLogs() {
   let status = new ApiResponse();
-  await axios.get(PERIPHERAL_API_URL + '/PrintLog/getPrintLogs')
-    .then(response => {
+  await axios
+    .get(PERIPHERAL_API_URL + '/PrintLog/getPrintLogs')
+    .then((response) => {
       status.responseData = response.data;
     })
     .catch(() => {
@@ -134,11 +137,11 @@ export async function getAllLogs() {
 export async function getPagesPrinted(email, token, totalPages, copies) {
   let status = new PrintApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/user/getPagesPrintedCount', {
+    .post(GENERAL_API_URL + '/user/getPagesPrintedCount', {
       email,
-      token
+      token,
     })
-    .then(res => {
+    .then((res) => {
       status.canPrint = copies * totalPages.size + res.data <= 30;
       status.remainingPages = 30 - res.data;
     })
