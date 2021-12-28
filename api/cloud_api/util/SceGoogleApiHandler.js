@@ -24,8 +24,6 @@ const {
 if(
   CLIENT_SECRET != 'NOT_SET' &&
   CLIENT_ID != 'NOT_SET' &&
-  REDIRECT_URIS != 'NOT_SET' &&
-  USER != 'NOT_SET' &&
   REFRESH_TOKEN != 'NOT_SET'
 ) {
   /**
