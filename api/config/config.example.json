@@ -15,7 +15,9 @@
   "googleApiKeys": {
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXX",
-    "REDIRECT_URIS": ["https://developers.google.com/oauthplayground"],
+    "REDIRECT_URIS": [
+      "https://developers.google.com/oauthplayground"
+    ],
     "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "USER": "sce.sjsu@gmail.com"
   },
