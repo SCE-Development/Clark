@@ -21,11 +21,7 @@ const {
 /**
  * Check if API keys are available
  */
-if(
-  CLIENT_SECRET != 'NOT_SET' &&
-  CLIENT_ID != 'NOT_SET' &&
-  REFRESH_TOKEN != 'NOT_SET'
-) {
+if(CLIENT_SECRET != 'NOT_SET' && CLIENT_ID != 'NOT_SET') {
   /**
    * Handles our website's backend to interace with various Google APIs. It also
    * is able to generate a token file for us to invoke the API calls.
