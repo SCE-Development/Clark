@@ -128,6 +128,13 @@ export default function Routing({ appProps }) {
       redirect: '/login',
       inAdminNavbar: true,
     },
+    {
+      Component: RFIDManager,
+      path: '/inventory',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/login',
+      inAdminNavbar: true,
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

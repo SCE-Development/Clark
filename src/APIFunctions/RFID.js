@@ -6,9 +6,9 @@ let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
   config.RFID_API_URL_PROD : config.RFID_API_URL;
 
 /**
- * Retrieve all events.
+ * Retrieve all RFIDs.
  * @returns {ApiResponse} Containing any error information related to the
- * request or the list of events
+ * request or the list of RFIDs
  */
 export async function getAllRFIDs() {
   let status = new ApiResponse();
@@ -61,7 +61,7 @@ export async function createNewRFID(newRFID, token) {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function deleteEvent(eventToDelete, token) {
+export async function deleteRFID(eventToDelete, token) {
   let status = new ApiResponse();
   await axios
     .post(GENERAL_API_URL+'/RFID/deleteRFID',
