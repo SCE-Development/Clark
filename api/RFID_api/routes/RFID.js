@@ -20,13 +20,19 @@ router.post('/validateRFID', (req, res) => {
     });
     RFID.create(newEvent, (error) => {
       if (error) {
-        res.sendStatus(BAD_REQUEST);
+        const check = {
+          Added: false,
+        };
+        res.sendStatus(BAD_REQUEST).send(check);
       } else {
-        res.sendStatus(OK);
+        const check = {
+          Added: true,
+        };
+        res.sendStatus(OK).send(check);
       }
       new_name = null;
-      clearTimeout();
       add_RFID = false;
+      clearTimeout();
     });
   } else {
     RFID.findOne({ byte })
