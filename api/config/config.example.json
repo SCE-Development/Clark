@@ -25,13 +25,19 @@
     "PRIMARY_CAL": "primary",
     "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
-  "ledSignIp": "192.168.4.1",
-  "LOGGING_API_URL": "http://localhost:8081/loggingapi",
+  "ledSignUrl": "XXXXXXX",
+  "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
   "passwordStrength": "medium",
   "S3Bucket": {
     "AWSACCESSKEYID": "XXXXXXXXXXXXXXXXXXXX",
     "AWSSECRETKEY": "XXXXXXXXXXXXXXXXXXXXXXXX",
     "BUCKET": "XXXXXXXXXXXXX"
+  },
+  "ledSqsKeys": {
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "ACCOUNT_ID": "xxxxxxxxxxxx",
+    "QUEUE_NAME": "xxxxxxxx"
   },
   "Queue": {
     "AccountID": "XXXXXXXXXX",
@@ -40,7 +46,7 @@
   "PrintingS3Bucket": "XXXXXXXXXXXXXXX",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
-  "LOGGING_API_URL_PROD": "http://sce-logging-api:8081/loggingapi",
+  "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
   "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi",
   "RPC_API_URL_PROD": "http://localhost:8083/SceRpcApi"
 }

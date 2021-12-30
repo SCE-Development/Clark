@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from 'reactstrap';
 import './event-page.css';
-import { getAllEvents } from '../../APIFunctions/Event';
+import { getUpcomingEvents } from '../../APIFunctions/Event';
 import EventCard from './EventCard';
 import Header from '../../Components/Header/Header';
 
@@ -15,7 +15,7 @@ function AnnouncementList() {
   };
 
   async function populateEventList() {
-    const eventResponse = await getAllEvents();
+    const eventResponse = await getUpcomingEvents();
     if (!eventResponse.error) setEventList(eventResponse.responseData);
   }
 
