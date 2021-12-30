@@ -82,7 +82,7 @@ export async function delete3DPrintRequest(requestToDelete, token) {
   await axios.post(GENERAL_API_URL+'/3DPrintingForm/delete', {
     token,
     date,
-    email,
+    email
   })
     .catch(() => {
       status.error = true;
@@ -126,7 +126,7 @@ export async function search3DPrintRequests(email) {
   let status = new ApiResponse();
   await axios
     .post(GENERAL_API_URL+'/3DPrintingForm/GetForm', {
-      email,
+      email
     })
     .then(result => {
       status.responseData = result.data;

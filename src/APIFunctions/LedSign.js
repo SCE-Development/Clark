@@ -13,7 +13,7 @@ let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
   await axios
-    .get(PERIPHERAL_API_URL+'/LedSign/healthCheck', { officerName })
+    .get(PERIPHERAL_API_URL + '/LedSign/healthCheck', { officerName })
     .then(res => {
       status.responseData = res.data;
     })

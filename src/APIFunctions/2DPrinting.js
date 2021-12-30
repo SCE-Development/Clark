@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { PrintApiResponse, ApiResponse } from './ApiResponses';
+import {
+  PrintApiResponse,
+  ApiResponse
+} from './ApiResponses';
 
 let config = require('../config/config.json');
 let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
@@ -76,8 +79,7 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data) {
   let status = new ApiResponse();
-  await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest',
-    data)
+  await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {
       status.responseData = response.data.message;
     })
@@ -130,9 +132,9 @@ export async function getAllLogs() {
 export async function getPagesPrinted(email, token, totalPages, copies) {
   let status = new PrintApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/user/getPagesPrintedCount', {
+    .post(GENERAL_API_URL + '/user/getPagesPrintedCount', {
       email,
-      token,
+      token
     })
     .then(res => {
       status.canPrint = copies * totalPages.size + res.data <= 30;
