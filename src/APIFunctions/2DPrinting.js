@@ -132,7 +132,7 @@ export async function getAllLogs() {
 export async function getPagesPrinted(email, token, totalPages, copies) {
   let status = new PrintApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/user/getPagesPrintedCount', {
+    .post(GENERAL_API_URL + '/user/getPagesPrintedCount', {
       email,
       token
     })

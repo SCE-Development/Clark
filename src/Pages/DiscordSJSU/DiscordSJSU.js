@@ -5,8 +5,8 @@ import rolesIMG from './pics/roles.png';
 
 class DiscordSJSU extends Component {
   render() {
-    const DiscordBotInv= 'https://discord.com/api/oauth2/authorize?'
-    +'client_id=819715999451709440&permissions=8&'+
+    const DiscordBotInv = 'https://discord.com/api/oauth2/authorize?'
+    + 'client_id=819715999451709440&permissions=8&' +
     'scope=applications.commands%20bot';
     return (
       <div className='background DiscordSJSU__app'>
