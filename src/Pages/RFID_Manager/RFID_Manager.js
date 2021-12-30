@@ -3,6 +3,7 @@ import {
   createNewRFID,
   getAllRFIDs,
   deleteRFID,
+  readNewRFID,
 } from '../../APIFunctions/RFID';
 
 import './rfid-manager.css';
@@ -49,9 +50,9 @@ export default function EventManager(props) {
   async function handleSubmit(event) {
     if (modalState === eventModalState.SUBMIT) {
       const createRFID = await createNewRFID(event, props.user.token);
-      const receiveRFID_byte = await readNewRFID(event, props.user.token);
+      const receiveRFIDByte = await readNewRFID(event, props.user.token);
       if (createRFID.error === false) {
-        if (receiveRFID_byte.responseData.check) {
+        if (receiveRFIDByte.responseData.check) {
           // show check mark
         } else {
           // red cross
