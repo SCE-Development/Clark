@@ -10,9 +10,6 @@ const {
 const { googleApiKeys } = require('../../config/config.json');
 const { USER } = googleApiKeys;
 
-/**
- * Check if API keys are valid
- */
 // Routing post /sendVerificationEmail calls the sendEmail function
 // and sends the verification email with the verification email template
 router.post('/sendVerificationEmail', async (req, res) => {

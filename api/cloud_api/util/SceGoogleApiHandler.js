@@ -278,10 +278,10 @@ class SceGoogleApiHandler {
      * @param newEvent {Event} event to translate and add to Google Calendar
      */
   addEventToCalendar(calendarId, newEvent) {
-    if(this.hasValidApiKeys) {
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      if(this.hasValidApiKeys) {
         const calendar =
-            google.calendar({ version: 'v3', auth: this.oAuth2Client });
+          google.calendar({ version: 'v3', auth: this.oAuth2Client });
         let eventToAdd = this.translateEvent(newEvent);
         calendar.freebusy.query({
           resource: {
@@ -304,44 +304,50 @@ class SceGoogleApiHandler {
           }
           reject(false);
         });
-      });
-    }
+      } else {
+        resolve('Input API keys in config.json please');
+      }
+    });
   }
 
   /**
-   * Sends an email from sce.sjsu@gmail.com. The parameter defines recipient,
-   * subject and email body.
-   * @param {nodemailer.envelope} mailTemplate The email template to send.
-   */
+     * Sends an email from sce.sjsu@gmail.com. The parameter defines recipient,
+     * subject and email body.
+     * @param {nodemailer.envelope} mailTemplate The email template to send.
+     */
   async sendEmail(mailTemplate) {
     return new Promise(async (resolve, reject) => {
-      if (!this.runningInProduction) {
-        resolve();
-      }
       if(this.hasValidApiKeys) {
-        const smtpTransport = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            type: 'OAuth2',
-            user: USER,
-            clientId: CLIENT_ID,
-            clientSecret: CLIENT_SECRET,
-            refreshToken: REFRESH_TOKEN,
-          },
-        });
+        if (!this.runningInProduction) {
+          resolve();
+        }
+        if(this.hasValidApiKeys) {
+          const smtpTransport = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              type: 'OAuth2',
+              user: USER,
+              clientId: CLIENT_ID,
+              clientSecret: CLIENT_SECRET,
+              refreshToken: REFRESH_TOKEN,
+            },
+          });
 
-        smtpTransport.sendMail(mailTemplate, (error, response) => {
-          error ? reject(error) : resolve(response);
-          smtpTransport.close();
-        });
+          smtpTransport.sendMail(mailTemplate, (error, response) => {
+            error ? reject(error) : resolve(response);
+            smtpTransport.close();
+          });
+        }
+      } else {
+        resolve('Input API keys in config.json please');
       }
     });
   }
   /**
-   * Adds responses from officer app form to a google spreadsheet
-   * @param {String} sheetsId spreadsheet id for the spreadsheet to add to
-   * @param {object} data response data from the officer application form
-   */
+     * Adds responses from officer app form to a google spreadsheet
+     * @param {String} sheetsId spreadsheet id for the spreadsheet to add to
+     * @param {object} data response data from the officer application form
+     */
   async writeToForm(sheetsId, data){
     return new Promise(async (resolve, reject)=>{
       GoogleSpreadsheet.openById(sheetsId, (error, response) => {
