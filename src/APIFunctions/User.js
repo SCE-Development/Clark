@@ -16,7 +16,7 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post(GENERAL_API_URL+'/User/users', {
+    .post(GENERAL_API_URL+'/User/users', { 
       // don't need email
       token
     })
