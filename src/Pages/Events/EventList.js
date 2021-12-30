@@ -6,7 +6,6 @@ import EventCard from './EventCard';
 import Header from '../../Components/Header/Header';
 
 function AnnouncementList() {
-  const [getFiltered, setGetFiltered] = useState(true);
   const [eventList, setEventList] = useState();
   const [validList, setValidList] = useState();
 
@@ -19,23 +18,6 @@ function AnnouncementList() {
     if (!eventResponse.error) setEventList(eventResponse.responseData);
   }
 
-  const getFilteredEvents= () => {
-    if (getFiltered){
-      try {
-        let currDate = new Date();
-        currDate.setDate(currDate.getDate() -1);
-        let validList = [];
-        eventList.forEach(item => {
-          let date = new Date(item.eventDate);
-          if (date >= currDate) {
-            validList.push(item);
-          }
-        }, setValidList(validList), setGetFiltered(false));
-      } catch (error) {
-      }
-    }
-  };
-
   useEffect(() => {
     async function fetchData() {
       await populateEventList();
@@ -47,19 +29,18 @@ function AnnouncementList() {
     <React.Fragment>
       <Header {...headerProps} />
       <Container className='event-list'>
-        {getFilteredEvents()}
         {validList && validList.length ? (
           validList.reverse().map((event, index) => {
             return (
               <EventCard
                 key={index}
-                isEventManager = {false}
+                isEventManager={false}
                 {...event}
               />
             );
           })
         ) : (
-          <h1 className = 'no-event-list'>No events yet!</h1>
+          <h1 className='no-event-list'>No events yet!</h1>
         )}
       </Container>
     </React.Fragment>
