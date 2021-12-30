@@ -31,7 +31,7 @@ export async function submit3DPrintRequest(printRequest) {
     email
   } = printRequest;
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/submit', {
+    .post(GENERAL_API_URL + '/3DPrintingForm/submit', {
       name,
       color,
       comment,
@@ -55,7 +55,7 @@ export async function submit3DPrintRequest(printRequest) {
 export async function getAll3DPrintRequests() {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/GetForm', {})
+    .post(GENERAL_API_URL + '/3DPrintingForm/GetForm', {})
     .then(result => {
       status.responseData = result.data;
     })
@@ -79,7 +79,7 @@ export async function getAll3DPrintRequests() {
 export async function delete3DPrintRequest(requestToDelete, token) {
   let status = new ApiResponse();
   const { date, email } = requestToDelete;
-  await axios.post(GENERAL_API_URL+'/3DPrintingForm/delete', {
+  await axios.post(GENERAL_API_URL + '/3DPrintingForm/delete', {
     token,
     date,
     email
@@ -104,7 +104,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
   let status = new ApiResponse();
   const { date, email, progress } = requestToUpdate;
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/edit', {
+    .post(GENERAL_API_URL + '/3DPrintingForm/edit', {
       date,
       email,
       progress,
@@ -125,7 +125,7 @@ export async function update3DPrintRequestProgress(requestToUpdate, token) {
 export async function search3DPrintRequests(email) {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/GetForm', {
+    .post(GENERAL_API_URL + '/3DPrintingForm/GetForm', {
       email
     })
     .then(result => {
