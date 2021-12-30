@@ -6,5 +6,4 @@ if (typeof module !== 'undefined' && !module.parent) {
   require('./main_endpoints/server');
   require('./cloud_api/server');
   require('./peripheral_api/server');
-  require('./RFID_api/server');
 }

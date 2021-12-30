@@ -2,8 +2,8 @@ import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
 let config = require('../config/config.json');
-let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.RFID_API_URL_PROD : config.RFID_API_URL;
+let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
+  config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
 
 /**
  * Retrieve all RFIDs.
@@ -13,7 +13,7 @@ let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
 export async function getAllRFIDs() {
   let status = new ApiResponse();
   await axios
-    .get(GENERAL_API_URL+'/RFID/getRFIDs')
+    .get(PERIPHERAL_API_URL+'/RFID/getRFIDs')
     .then(res => {
       status.responseData = res.data;
     })
@@ -42,7 +42,7 @@ export async function createNewRFID(newRFID, token) {
     created: newRFID.Date,
   };
   await axios
-    .post(GENERAL_API_URL+'/RFID/createRFID', { token, ...RFIDtoAdd })
+    .post(PERIPHERAL_API_URL+'/RFID/createRFID', { token, ...RFIDtoAdd })
     .then(res => {
       status.responseData = res.data;
     })
@@ -64,7 +64,7 @@ export async function createNewRFID(newRFID, token) {
 export async function deleteRFID(eventToDelete, token) {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/RFID/deleteRFID',
+    .post(PERIPHERAL_API_URL+'/RFID/deleteRFID',
       { token, id: eventToDelete._id })
     .then(res => {
       status.responseData = res.data;

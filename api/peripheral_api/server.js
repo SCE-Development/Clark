@@ -6,7 +6,8 @@ function main() {
     __dirname + '/routes/PrintLog.js',
     __dirname + '/routes/SignLog.js',
     __dirname + '/routes/LedSign.js',
-    __dirname + '/routes/Printer.js'
+    __dirname + '/routes/Printer.js',
+    __dirname + '/routes/RFID.js'
 
   ];
   const peripheralServer = new
