@@ -34,13 +34,13 @@ function AnnouncementList() {
             return (
               <EventCard
                 key={index}
-                isEventManager={false}
+                isEventManager = {false}
                 {...event}
               />
             );
           })
         ) : (
-          <h1 className='no-event-list'>No events yet!</h1>
+          <h1 className = 'no-event-list'>No events yet!</h1>
         )}
       </Container>
     </React.Fragment>
