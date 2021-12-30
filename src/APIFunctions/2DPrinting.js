@@ -9,8 +9,6 @@ let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
   config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
 let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
   config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
-let RPC_API_URL = process.env.NODE_ENV === 'production' ?
-  config.RPC_API_URL_PROD : config.RPC_API_URL;
 
 /**
  * Return an array similar to python's range() function

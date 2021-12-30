@@ -3,8 +3,6 @@ import { ApiResponse } from './ApiResponses';
 let config = require('../config/config.json');
 let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
   config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
-let RPC_API_URL = process.env.NODE_ENV === 'production' ?
-  config.RPC_API_URL_PROD : config.RPC_API_URL;
 
 /**
  * Submit a user's print request.
@@ -50,33 +48,6 @@ export async function submit3DPrintRequest(printRequest) {
 }
 
 /**
- * Sends a user's 3D print request to the printer.
- * @param {Object} printRequest - The request containing all of the project's
- * information.
- * @param {string} printRequest.raw - The raw STL file of the model.
- * @param {string} printRequest.name - The user's full name.
- * @param {string} printRequest.volume - The volume of the print in cubic cm.
- * @param {string} printRequest.copies - How many copies the user wants.
- * @returns {ApiResponse} - Containing any error information
- *                          related to the request.
- */
-export async function print3DModel(printRequest) {
-  const status = ApiResponse();
-  const { raw, name, volume, copies } = printRequest;
-  await axios
-    .post(RPC_API_URL + '/3dPrinter/print3dModel', {
-      raw,
-      name,
-      volume,
-      copies
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
-/**
  * Query the database for all 3D print requests.
  * @returns {ApiResponse} Containing any error information related to the
  * request or list of requests
@@ -108,12 +79,11 @@ export async function getAll3DPrintRequests() {
 export async function delete3DPrintRequest(requestToDelete, token) {
   let status = new ApiResponse();
   const { date, email } = requestToDelete;
-  await axios
-    .post(GENERAL_API_URL+'/3DPrintingForm/delete', {
-      token,
-      date,
-      email
-    })
+  await axios.post(GENERAL_API_URL+'/3DPrintingForm/delete', {
+    token,
+    date,
+    email
+  })
     .catch(() => {
       status.error = true;
     });

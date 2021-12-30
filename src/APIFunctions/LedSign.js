@@ -46,7 +46,7 @@ export async function getAllSignLogs() {
 /**
  * Update the text of the sign.
  * @param {Object} signData - An object containing all of the sign data (text,
- * colors, etc.) sent to the RPC client.
+ * colors, etc.).
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
