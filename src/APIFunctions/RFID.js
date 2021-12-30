@@ -6,9 +6,9 @@ let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
   config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
 
 /**
- * Retrieve all RFIDs.
+ * Retrieve all events.
  * @returns {ApiResponse} Containing any error information related to the
- * request or the list of RFIDs
+ * request or the list of events
  */
 export async function getAllRFIDs() {
   let status = new ApiResponse();
@@ -17,7 +17,7 @@ export async function getAllRFIDs() {
     .then(res => {
       status.responseData = res.data;
     })
-    .catch(err => {
+    .catch((err) => {
       status.responseData = err;
       status.error = true;
     });
@@ -25,28 +25,38 @@ export async function getAllRFIDs() {
 }
 
 /**
- * Add a new RFID.
- * @param {Object} newRFID - The RFID that is to be added
- * @param {string} newRFID.name - The name of the RFID holder
- * @param {string} newRFID.byte - The RFID byte of the RFID card
- * @param {string} newRFID.Date - The date the new RFID was created
+ * Changes the state of the ESP32
  * @param {string} token - The user's jwt token for authentication
  * @returns {ApiResponse} Containing any error information related to the
  * request or the response data
  */
-export async function createNewRFID(newRFID, token) {
+export async function createNewRFID() {
   let status = new ApiResponse();
-  const RFIDtoAdd = {
-    name: newRFID.name,
-    byte: newRFID.byte,
-    created: newRFID.Date,
-  };
   await axios
     .post(PERIPHERAL_API_URL+'/RFID/createRFID', { token, ...RFIDtoAdd })
     .then(res => {
       status.responseData = res.data;
     })
     .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+/**
+ * Reads RFID.
+ * @returns {ApiResponse} Containing any error information related to the
+ * request or the response data
+ */
+export async function readNewRFID(readRFIDByte, token) {
+  let status = new ApiResponse();
+  await axios
+    .get(RFID_API_URL + '/RFID/validateRFID')
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.responseData = err;
       status.error = true;
     });
   return status;
@@ -61,11 +71,11 @@ export async function createNewRFID(newRFID, token) {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function deleteRFID(eventToDelete, token) {
+export async function deleteEvent(eventToDelete, token) {
   let status = new ApiResponse();
   await axios
     .post(PERIPHERAL_API_URL+'/RFID/deleteRFID',
-      { token, id: eventToDelete._id })
+      { token, _id: eventToDelete._id })
     .then(res => {
       status.responseData = res.data;
     })
