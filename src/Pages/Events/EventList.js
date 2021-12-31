@@ -7,7 +7,6 @@ import Header from '../../Components/Header/Header';
 
 function AnnouncementList() {
   const [eventList, setEventList] = useState();
-  const [validList, setValidList] = useState();
 
   const headerProps = {
     title: 'SCE Event Page'
@@ -29,8 +28,8 @@ function AnnouncementList() {
     <React.Fragment>
       <Header {...headerProps} />
       <Container className='event-list'>
-        {validList && validList.length ? (
-          validList.reverse().map((event, index) => {
+        {eventList && eventList.length ? (
+          eventList.reverse().map((event, index) => {
             return (
               <EventCard
                 key={index}
