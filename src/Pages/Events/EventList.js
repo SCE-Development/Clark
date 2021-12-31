@@ -19,11 +19,11 @@ function AnnouncementList() {
     if (!eventResponse.error) setEventList(eventResponse.responseData);
   }
 
-  const getFilteredEvents= () => {
+  const getFilteredEvents = () => {
     if (getFiltered){
       try {
         let currDate = new Date();
-        currDate.setDate(currDate.getDate() -1);
+        currDate.setDate(currDate.getDate() - 1);
         let validList = [];
         eventList.forEach(item => {
           let date = new Date(item.eventDate);

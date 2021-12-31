@@ -24,7 +24,7 @@ function handleMidnightTime(time) {
 export async function getAllEvents() {
   let status = new ApiResponse();
   await axios
-    .get(GENERAL_API_URL+'/event/getEvents')
+    .get(GENERAL_API_URL + '/event/getEvents')
     .then(res => {
       status.responseData = res.data;
     })
@@ -38,7 +38,7 @@ export async function getAllEvents() {
 export async function getUpcomingEvents() {
   let status = new ApiResponse();
   await axios
-    .get(GENERAL_API_URL+'/event/getUpcomingEvents')
+    .get(GENERAL_API_URL + '/event/getUpcomingEvents')
     .then(res => {
       status.responseData = res.data;
     })
@@ -91,7 +91,7 @@ export async function createNewEvent(newEvent, token) {
     imageURL: handleImageURL(newEvent.imageURL)
   };
   await axios
-    .post(GENERAL_API_URL+'/event/createEvent', { token, ...eventToAdd })
+    .post(GENERAL_API_URL + '/event/createEvent', { token, ...eventToAdd })
     .then(res => {
       status.responseData = res.data;
     })
@@ -139,7 +139,7 @@ export async function editEvent(eventToUpdate, token) {
     imageURL: eventToUpdate.imageURL
   };
   await axios
-    .post(GENERAL_API_URL+'/event/editEvent', { token, ...eventToEdit })
+    .post(GENERAL_API_URL + '/event/editEvent', { token, ...eventToEdit })
     .then(res => {
       status.responseData = res.data;
     })
@@ -162,7 +162,7 @@ export async function editEvent(eventToUpdate, token) {
 export async function deleteEvent(eventToDelete, token) {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/event/deleteEvent',
+    .post(GENERAL_API_URL + '/event/deleteEvent',
       { token, id: eventToDelete._id })
     .then(res => {
       status.responseData = res.data;

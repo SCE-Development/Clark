@@ -11,7 +11,7 @@ let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
 export async function getAllErrorLogs() {
   let status = new ApiResponse();
   await axios
-    .get(PERIPHERAL_API_URL+'/ErrorLog/getErrorLogs')
+    .get(PERIPHERAL_API_URL + '/ErrorLog/getErrorLogs')
     .then(res => {
       status.responseData = res.data;
     })
@@ -33,7 +33,7 @@ export async function getAllErrorLogs() {
  */
 export async function addErrorLog(newError) {
   let status = new ApiResponse();
-  await axios.post(PERIPHERAL_API_URL+'/ErrorLog/addErrorLog',
+  await axios.post(PERIPHERAL_API_URL + '/ErrorLog/addErrorLog',
     { ...newError }).catch(err => {
     status.error = true;
     status.responseData = err;
