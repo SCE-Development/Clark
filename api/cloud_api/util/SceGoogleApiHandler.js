@@ -31,7 +31,6 @@ class SceGoogleApiHandler {
    * Google.
    */
   constructor(scopes, tokenPath) {
-    this.runningInProduction = (process.env.NODE_ENV === 'production');
     this.scopes = scopes;
     this.tokenPath = tokenPath;
     this.oAuth2Client = new google.auth.OAuth2(
@@ -56,9 +55,6 @@ class SceGoogleApiHandler {
    */
   checkIfTokenFileExists() {
     return new Promise((resolve, reject) => {
-      if (!this.runningInProduction) {
-        resolve(false);
-      }
       fs.readFile(this.tokenPath, (err, token) => {
         if (err) {
           resolve(false);
@@ -77,7 +73,7 @@ class SceGoogleApiHandler {
    * DevOps purposes, false for API endpoints.
    */
   getNewToken(isDevScript) {
-    if (!this.runningInProduction && !isDevScript) return;
+    if (!isDevScript) return;
 
     const authUrl = this.oAuth2Client.generateAuthUrl({
       /* eslint-disable-next-line */
@@ -122,7 +118,6 @@ class SceGoogleApiHandler {
    * This function refreshes a Google API token if it is found to be expired.
    */
   refreshToken() {
-    if (!this.runningInProduction) return;
     this.oAuth2Client.setCredentials({
       // eslint-disable-next-line
       refresh_token: REFRESH_TOKEN
@@ -318,9 +313,6 @@ class SceGoogleApiHandler {
     return new Promise(async (resolve, reject) => {
       if (!this.hasValidAPIKeys) {
         return resolve(true);
-      }
-      if (!this.runningInProduction) {
-        resolve();
       }
       const smtpTransport = nodemailer.createTransport({
         service: 'gmail',
