@@ -144,27 +144,26 @@ class SceGoogleApiHandler {
    */
   getEventsFromCalendar(calendarId, numOfEvents) {
     return new Promise((resolve, reject) => {
-      if(this.hasValidAPIKeys) {
-        const calendar =
-          google.calendar({ version: 'v3', auth: this.oAuth2Client });
-        calendar.events.list({
-          calendarId: calendarId,
-          timeMin: (new Date()).toISOString(),
-          maxResults: numOfEvents,
-          singleEvents: true,
-          orderBy: 'startTime',
-        }, (err, res) => {
-          if (err) return reject(false);
-          const events = res.data.items;
-          if (events.length) {
-            resolve(events);
-          } else {
-            reject(false);
-          }
-        });
-      } else {
-        resolve();
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
       }
+      const calendar =
+        google.calendar({ version: 'v3', auth: this.oAuth2Client });
+      calendar.events.list({
+        calendarId: calendarId,
+        timeMin: (new Date()).toISOString(),
+        maxResults: numOfEvents,
+        singleEvents: true,
+        orderBy: 'startTime',
+      }, (err, res) => {
+        if (err) return reject(false);
+        const events = res.data.items;
+        if (events.length) {
+          resolve(events);
+        } else {
+          reject(false);
+        }
+      });
     });
   }
 
@@ -280,34 +279,33 @@ class SceGoogleApiHandler {
    */
   addEventToCalendar(calendarId, newEvent) {
     return new Promise((resolve, reject) => {
-      if(this.hasValidAPIKeys) {
-        const calendar =
-          google.calendar({ version: 'v3', auth: this.oAuth2Client });
-        let eventToAdd = this.translateEvent(newEvent);
-        calendar.freebusy.query({
-          resource: {
-            timeMin: eventToAdd.start.dateTime,
-            timeMax: eventToAdd.end.dateTime,
-            timeZone: eventToAdd.start.timeZone,
-            items: [{ id: 'primary' }],
-          },
-        },
-        (err, res) => {
-          if(err) reject(err);
-          const eventsArr = res.data.calendars.primary.busy;
-          if(eventsArr.length === 0) {
-            const response = calendar.events.insert({
-              auth: this.oAuth2Client,
-              calendarId: calendarId,
-              resource: eventToAdd
-            });
-            resolve(eventToAdd);
-          }
-          reject(false);
-        });
-      } else {
-        resolve();
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
       }
+      const calendar =
+        google.calendar({ version: 'v3', auth: this.oAuth2Client });
+      let eventToAdd = this.translateEvent(newEvent);
+      calendar.freebusy.query({
+        resource: {
+          timeMin: eventToAdd.start.dateTime,
+          timeMax: eventToAdd.end.dateTime,
+          timeZone: eventToAdd.start.timeZone,
+          items: [{ id: 'primary' }],
+        },
+      },
+      (err, res) => {
+        if(err) reject(err);
+        const eventsArr = res.data.calendars.primary.busy;
+        if(eventsArr.length === 0) {
+          const response = calendar.events.insert({
+            auth: this.oAuth2Client,
+            calendarId: calendarId,
+            resource: eventToAdd
+          });
+          resolve(eventToAdd);
+        }
+        reject(false);
+      });
     });
   }
 
@@ -318,28 +316,27 @@ class SceGoogleApiHandler {
  */
   async sendEmail(mailTemplate) {
     return new Promise(async (resolve, reject) => {
-      if(this.hasValidAPIKeys) {
-        if (!this.runningInProduction) {
-          resolve();
-        }
-        const smtpTransport = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            type: 'OAuth2',
-            user: USER,
-            clientId: CLIENT_ID,
-            clientSecret: CLIENT_SECRET,
-            refreshToken: REFRESH_TOKEN,
-          },
-        });
-
-        smtpTransport.sendMail(mailTemplate, (error, response) => {
-          error ? reject(error) : resolve(response);
-          smtpTransport.close();
-        });
-      } else {
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
+      }
+      if (!this.runningInProduction) {
         resolve();
       }
+      const smtpTransport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: USER,
+          clientId: CLIENT_ID,
+          clientSecret: CLIENT_SECRET,
+          refreshToken: REFRESH_TOKEN,
+        },
+      });
+
+      smtpTransport.sendMail(mailTemplate, (error, response) => {
+        error ? reject(error) : resolve(response);
+        smtpTransport.close();
+      });
     });
   }
   /**
@@ -348,6 +345,9 @@ class SceGoogleApiHandler {
  * @param {object} data response data from the officer application form
  */
   async writeToForm(sheetsId, data){
+    if (!this.hasValidAPIKeys) {
+      return resolve(true);
+    }
     return new Promise(async (resolve, reject)=>{
       GoogleSpreadsheet.openById(sheetsId, (error, response) => {
         if (error){
