@@ -43,6 +43,9 @@ class SceGoogleApiHandler {
       // eslint-disable-next-line
       refresh_token: REFRESH_TOKEN
     });
+    if(CLIENT_ID != 'NOT_SET' && CLIENT_SECRET != 'NOT_SET') {
+      this.hasValidAPIKeys = true;
+    }
   }
 
   /**
@@ -141,6 +144,9 @@ class SceGoogleApiHandler {
    */
   getEventsFromCalendar(calendarId, numOfEvents) {
     return new Promise((resolve, reject) => {
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
+      }
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
       calendar.events.list({
@@ -273,6 +279,9 @@ class SceGoogleApiHandler {
    */
   addEventToCalendar(calendarId, newEvent) {
     return new Promise((resolve, reject) => {
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
+      }
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
       let eventToAdd = this.translateEvent(newEvent);
@@ -307,6 +316,9 @@ class SceGoogleApiHandler {
  */
   async sendEmail(mailTemplate) {
     return new Promise(async (resolve, reject) => {
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
+      }
       if (!this.runningInProduction) {
         resolve();
       }
@@ -333,6 +345,9 @@ class SceGoogleApiHandler {
  * @param {object} data response data from the officer application form
  */
   async writeToForm(sheetsId, data){
+    if (!this.hasValidAPIKeys) {
+      return resolve(true);
+    }
     return new Promise(async (resolve, reject)=>{
       GoogleSpreadsheet.openById(sheetsId, (error, response) => {
         if (error){
@@ -359,7 +374,7 @@ class SceGoogleApiHandler {
       sheet.addRow(row, (error, response) => {
         if(error){
           reject(false);
-        }else{
+        } else{
           resolve(response);
         }
       });

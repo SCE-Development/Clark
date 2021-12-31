@@ -13,17 +13,17 @@
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   },
   "googleApiKeys": {
-    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET",
     "REDIRECT_URIS": [
       "https://developers.google.com/oauthplayground"
     ],
-    "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "REFRESH_TOKEN": "NOT_SET",
     "USER": "sce.sjsu@gmail.com"
   },
   "googleCalendarIds": {
     "PRIMARY_CAL": "primary",
-    "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "SCE_EVENTS_CAL": "NOT_SET"
   },
   "ledSignUrl": "XXXXXXX",
   "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
