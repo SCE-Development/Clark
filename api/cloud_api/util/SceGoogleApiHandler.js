@@ -83,7 +83,7 @@ class SceGoogleApiHandler {
 
     const authUrl = this.oAuth2Client.generateAuthUrl({
       /* eslint-disable-next-line */
-        access_type: 'offline',
+      access_type: 'offline',
       scope: this.scopes,
     });
     console.debug('\nAuthorize this app by visiting this URL:\n' + authUrl);
@@ -93,7 +93,7 @@ class SceGoogleApiHandler {
       output: process.stdout,
     });
 
-    rl.question('\nPlease enter the \'Authorization Code\' from the URL'+
+    rl.question('\nPlease enter the \'Authorization Code\' from the URL' +
       ' here: ',
     authCode => {
       rl.close();
