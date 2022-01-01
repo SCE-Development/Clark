@@ -20,7 +20,6 @@ describe('<EventList />', () => {
    * UNEXPIRED_EVENTS_COUNT: event with dates that include
    * today's date and the dates after.
    */
-  const UNEXPIRED_EVENTS_COUNT = 3;
   const RENDERED_EVENTS = new ApiResponse(false, [
     {
       title: 'Expired',
@@ -76,14 +75,14 @@ describe('<EventList />', () => {
   }
 
   it(
-    'Should render an <EventCard /> component for every unexpired event card ' +
+    'Should render an <EventCard /> component for every event given ' +
       'in event list array',
     async () => {
       returnEventArray();
       const wrapper = await mount(<EventList {...RENDERED_EVENTS} />);
       wrapper.update();
       expect(wrapper.find(EventCard)).to.have.lengthOf(
-        UNEXPIRED_EVENTS_COUNT
+        RENDERED_EVENTS.responseData.length
       );
     }
   );
