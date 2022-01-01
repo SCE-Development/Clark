@@ -9,8 +9,8 @@
   },
   "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
-    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
-    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET"
   },
   "googleApiKeys": {
     "CLIENT_ID": "NOT_SET",
