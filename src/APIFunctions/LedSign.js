@@ -32,7 +32,7 @@ export async function healthCheck(officerName) {
 export async function getAllSignLogs() {
   let result = new ApiResponse();
   await axios
-    .get(PERIPHERAL_API_URL+'/SignLog/getSignLogs')
+    .get(PERIPHERAL_API_URL + '/SignLog/getSignLogs')
     .then(res => {
       result.responseData = res.data;
     })
