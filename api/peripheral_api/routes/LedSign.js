@@ -4,7 +4,7 @@ const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 const AWS = require('aws-sdk');
 const { ledSqsKeys, ledSignUrl } = require('../../config/config.json');
 
-creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID, ledSqsKeys.CLIENT_SECRET);
+let creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID, ledSqsKeys.CLIENT_SECRET);
 AWS.config.update({
   region: 'us-west-1',
   endpoint: ledSignUrl,
@@ -21,6 +21,12 @@ router.get('/healthCheck', (req, res) => {
 });
 
 router.post('/updateSignText', (req, res) => {
+  if(ledSqsKeys.CLIENT_ID === 'NOT_SET'
+  && ledSqsKeys.CLIENT_SECRET === 'NOT_SET'
+  && ledSqsKeys.ACCOUNT_ID === 'NOT_SET'
+  && ledSqsKeys.QUEUE_NAME === 'NOT_SET') {
+    return res.sendStatus(OK);
+  }
   const sqsParams = {
     MessageBody: JSON.stringify(
       req.body
