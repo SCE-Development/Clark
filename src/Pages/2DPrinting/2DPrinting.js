@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import './2D-printing.css';
 import ConfirmationModal from
 '../../Components/DecisionModal/ConfirmationModal.js';
@@ -25,6 +25,8 @@ import {
 } from './2DComponents';
 import { PrintPageModal } from './2DPrintPageModal';
 import PrintingHealthCheck from './2DPrintingHealthCheck';
+import { healthCheck } from '../../APIFunctions/2DPrinting';
+import {Container} from 'reactstrap';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
 
@@ -70,6 +72,23 @@ export default function Printing(props) {
   const [loadPreview, setLoadPreview] = useState(true);
   const [statusModal, setStatusModal] = useState(false);
   const [printStatus, setPrintStatus] = useState('');
+  const [printerHealthy, setPrinterHealthy] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  async function checkPrinterHealth() {
+    setLoading(true);
+    const status = await healthCheck();
+    if (status && !status.error) {
+      setPrinterHealthy(true);
+    } else {
+      setPrinterHealthy(false);
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    checkPrinterHealth();
+  }, []);
 
   async function updateEmbed(totalPages) {
     try {
@@ -168,6 +187,14 @@ export default function Printing(props) {
       },
       text: 'Continue'
     }
+  };
+
+  const hidePrint =  () => {
+    return printerHealthy ?
+      <FileUpload {...fileUploadProps} /> :
+      <Container className='healthCheck'>
+        <h1>Reach out to an officer through Discord for help.</h1>
+      </Container>;
   };
 
   async function handlePrinting(file) {
@@ -360,8 +387,8 @@ export default function Printing(props) {
   return (
     <div>
       <Header {...headerProps} />
-      <PrintingHealthCheck />
-      <FileUpload {...fileUploadProps} />
+      <PrintingHealthCheck {...{loading, printerHealthy}} />
+      {hidePrint({...fileUploadProps})}
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
       <StatusModal {...statusModalProps} />
