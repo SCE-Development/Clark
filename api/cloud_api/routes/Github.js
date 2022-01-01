@@ -9,7 +9,7 @@ const {
   OK,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const NoGithubApiKeys = (process.env.NODE_ENV === 'test')
+const NoGithubApiKeys = !(process.env.NODE_ENV === 'test')
 && CLIENT_ID === 'NOT_SET'
 && CLIENT_SECRET === 'NOT_SET';
 /**
