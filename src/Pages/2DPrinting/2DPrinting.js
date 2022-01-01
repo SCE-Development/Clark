@@ -78,11 +78,7 @@ export default function Printing(props) {
   async function checkPrinterHealth() {
     setLoading(true);
     const status = await healthCheck();
-    if (status && !status.error) {
-      setPrinterHealthy(true);
-    } else {
-      setPrinterHealthy(false);
-    }
+    setPrinterHealthy(status && !status.error);
     setLoading(false);
   }
 
