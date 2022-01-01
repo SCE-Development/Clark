@@ -22,8 +22,8 @@ router.get('/healthCheck', (req, res) => {
 
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
-  if (s3BucketKeys.AWSACCESSKEYID == 'NOT_SET'
-  && s3BucketKeys.AWSSECRETKEY == 'NOT_SET') {
+  if (s3BucketKeys.AWSACCESSKEYID === 'NOT_SET'
+  && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
     return res.sendStatus(OK);
   }
   const { raw } = req.body;
