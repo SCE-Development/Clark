@@ -15,7 +15,7 @@ const runningInTest = (process.env.NODE_ENV === 'test');
  */
 router.get('/getPullRequestsFromRepo', (req, res) => {
   if(!runningInTest) {
-    if(CLIENT_ID == 'NOT_SET' && CLIENT_SECRET == 'NOT_SET') {
+    if(CLIENT_ID === 'NOT_SET' && CLIENT_SECRET === 'NOT_SET') {
       return res.sendStatus(OK);
     }
   }
@@ -40,7 +40,7 @@ router.get('/getPullRequestsFromRepo', (req, res) => {
  */
 router.get('/getContributorsInPastMonthFromRepo', (req, res) => {
   if(!runningInTest) {
-    if(CLIENT_ID == 'NOT_SET' && CLIENT_SECRET == 'NOT_SET') {
+    if(CLIENT_ID === 'NOT_SET' && CLIENT_SECRET === 'NOT_SET') {
       return res.sendStatus(OK);
     }
   }
@@ -65,7 +65,7 @@ router.get('/getContributorsInPastMonthFromRepo', (req, res) => {
  */
 router.get('/getCommitsFromRepo', (req, res) => {
   if(!runningInTest) {
-    if(CLIENT_ID == 'NOT_SET' && CLIENT_SECRET == 'NOT_SET') {
+    if(CLIENT_ID === 'NOT_SET' && CLIENT_SECRET === 'NOT_SET') {
       return res.sendStatus(OK);
     }
   }
