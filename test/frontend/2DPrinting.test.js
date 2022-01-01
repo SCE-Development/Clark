@@ -11,6 +11,7 @@ import { FilePond } from 'react-filepond';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<Printing2D />', () => {
+  let stub = null;
   const user = {
     email: 'testEmail',
     pagesPrinted: 10
@@ -19,8 +20,21 @@ describe('<Printing2D />', () => {
     const wrapper = mount(<Printing2D user={user} />);
     expect(wrapper.find(Jumbotron)).to.have.lengthOf(1);
   });
-  it('Should render a <Filepond /> component', () => {
+  it('Should render a <Filepond /> component when printer is up', () => {
+    before(done => {
+      stub = sinon.stub(Printing2D, FilePond);
+      const wrapper = mount(<Printing2D user={user} />);
+      expect(wrapper.find(FilePond)).to.have.lengthOf(1);
+      done();
+    });
+
+    after(done => {
+      if (stub) stub.restore();
+      done();
+    });
+  });
+  it('Should not render a <Filepond /> component when printer is down', () => {
     const wrapper = mount(<Printing2D user={user} />);
-    expect(wrapper.find(FilePond)).to.have.lengthOf(1);
+    expect(wrapper.find(FilePond)).to.have.lengthOf(0);
   });
 });
