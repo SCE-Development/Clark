@@ -5,7 +5,7 @@ const AWS = require('aws-sdk');
 const { ledSqsKeys, ledSignUrl } = require('../../config/config.json');
 
 const creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID,
-ledSqsKeys.CLIENT_SECRET);
+  ledSqsKeys.CLIENT_SECRET);
 
 AWS.config.update({
   region: 'us-west-1',
