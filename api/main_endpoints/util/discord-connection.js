@@ -6,8 +6,8 @@ const {
 
 async function loginWithDiscord(code, email) {
   return new Promise((resolve, reject) => {
-    if(discordApiKeys.CLIENT_ID === 'NOT_SET'
-    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
+    if(discordApiKeys.CLIENT_ID == 'NOT_SET'
+    && discordApiKeys.CLIENT_SECRET == 'NOT_SET') {
       return resolve(true);
     }
     axios
