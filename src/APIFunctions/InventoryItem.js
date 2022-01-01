@@ -10,7 +10,7 @@ import { GENERAL_API_URL } from '../config/config.json';
 export async function getAllItems(){
   let status = new ApiResponse();
   await axios
-    .get(GENERAL_API_URL+'/InventoryItem/getItems')
+    .get(GENERAL_API_URL + '/InventoryItem/getItems')
     .then(res =>{
       status.responseData = res.data;
     })
@@ -46,7 +46,7 @@ export async function addItem(reqItemToAdd, token){
     picture: reqItemToAdd.picture
   };
   await axios
-    .post(GENERAL_API_URL+'/InventoryItem/addItem', {token, ...itemToAdd})
+    .post(GENERAL_API_URL + '/InventoryItem/addItem', {token, ...itemToAdd})
     .then(res =>{
       status.responseData = res.data;
     })
@@ -83,7 +83,7 @@ export async function editItem(reqItemToEdit, token){
     picture: reqItemToEdit.picture
   };
   await axios
-    .post(GENERAL_API_URL+'/InventoryItem/editItem', {token, ...itemToEdit})
+    .post(GENERAL_API_URL + '/InventoryItem/editItem', {token, ...itemToEdit})
     .then(res =>{
       status.responseData = res.data;
     })
@@ -105,7 +105,7 @@ export async function editItem(reqItemToEdit, token){
 export async function deleteItem(reqItemToDelete, token){
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/InventoryItem/deleteItem',
+    .post(GENERAL_API_URL + '/InventoryItem/deleteItem',
       { token, _id: reqItemToDelete._id })
     .then(res => {
       status.responseData = res.data;

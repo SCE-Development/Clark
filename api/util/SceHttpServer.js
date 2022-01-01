@@ -23,7 +23,6 @@ class SceHttpServer {
    */
   constructor(pathToEndpoints, port, prefix = '/api/') {
     const testEnv = process.env.NODE_ENV === 'test';
-    this.runningInProduction = process.env.NODE_ENV === 'production';
     this.database = testEnv ? 'sce_core_test' : 'sce_core';
     this.port = port;
     this.pathToEndpoints = pathToEndpoints;
