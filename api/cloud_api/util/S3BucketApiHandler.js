@@ -8,12 +8,11 @@ class S3BucketApiHandler {
       secretAccessKey: s3BucketKeys.AWSSECRETKEY,
       region: 'us-west-1',
     });
-    /* eslint-disable-next-line */
-    this.hasValidKeys = (s3BucketKeys.AWSACCESSKEYID != 'NOT_SET' && s3BucketKeys.AWSSECRETKEY != 'NOT_SET') ? true : false;
   }
   getSignedUrl(s3Params, bucket) {
     return new Promise((resolve, reject) => {
-      if(!this.hasValidKeys) {
+      if(s3BucketKeys.AWSACCESSKEYID == 'NOT_SET'
+      && s3BucketKeys.AWSSECRETKEY == 'NOT_SET') {
         return resolve(true);
       }
       this.s3.getSignedUrl('putObject', s3Params, (err, data) => {
