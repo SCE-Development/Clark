@@ -9,8 +9,8 @@
   },
   "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
-    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
-    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET"
   },
   "googleApiKeys": {
     "CLIENT_ID": "NOT_SET",
@@ -29,9 +29,9 @@
   "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
   "passwordStrength": "medium",
   "S3Bucket": {
-    "AWSACCESSKEYID": "XXXXXXXXXXXXXXXXXXXX",
-    "AWSSECRETKEY": "XXXXXXXXXXXXXXXXXXXXXXXX",
-    "BUCKET": "XXXXXXXXXXXXX"
+    "AWSACCESSKEYID": "NOT_SET",
+    "AWSSECRETKEY": "NOT_SET",
+    "BUCKET": "NOT_SET"
   },
   "ledSqsKeys": {
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
@@ -43,7 +43,7 @@
     "AccountID": "XXXXXXXXXX",
     "QueueName": "XXXXXXXXXX"
   },
-  "PrintingS3Bucket": "XXXXXXXXXXXXXXX",
+  "PrintingS3Bucket": "NOT_SET",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
   "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
