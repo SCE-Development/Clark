@@ -250,6 +250,10 @@ router.get('/callback', async function(req, res) {
 });
 
 router.post('/connectToDiscord', function(req, res) {
+  if(discordApiKeys.CLIENT_ID == 'NOT_SET'
+  && discordApiKeys.CLIENT_SECRET == 'NOT_SET') {
+    return res.sendStatus(OK);
+  }
   const email = req.body.email;
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
