@@ -33,7 +33,7 @@ describe('<Printing2D />', () => {
       done();
     });
   });
-  it('Should render a <Filepond /> component when printer is up', () => {
+  it('Should not render a <Filepond /> component when printer is down', () => {
     const wrapper = mount(<Printing2D user={user} />);
     expect(wrapper.find(FilePond)).to.have.lengthOf(0);
   });
