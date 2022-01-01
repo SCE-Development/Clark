@@ -25,7 +25,7 @@
     "PRIMARY_CAL": "primary",
     "SCE_EVENTS_CAL": "NOT_SET"
   },
-  "ledSignUrl": "NOT_SET",
+  "ledSignUrl": "XXXXXXX",
   "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
   "passwordStrength": "medium",
   "S3Bucket": {
@@ -34,10 +34,10 @@
     "BUCKET": "NOT_SET"
   },
   "ledSqsKeys": {
-    "CLIENT_ID": "NOT_SET",
-    "CLIENT_SECRET": "NOT_SET",
-    "ACCOUNT_ID": "NOT_SET",
-    "QUEUE_NAME": "NOT_SET"
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "ACCOUNT_ID": "xxxxxxxxxxxx",
+    "QUEUE_NAME": "xxxxxxxx"
   },
   "Queue": {
     "AccountID": "XXXXXXXXXX",
