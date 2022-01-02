@@ -4,7 +4,9 @@ const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 const AWS = require('aws-sdk');
 const { ledSqsKeys, ledSignUrl } = require('../../config/config.json');
 
-creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID, ledSqsKeys.CLIENT_SECRET);
+const creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID,
+  ledSqsKeys.CLIENT_SECRET);
+
 AWS.config.update({
   region: 'us-west-1',
   endpoint: ledSignUrl,
