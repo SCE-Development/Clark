@@ -1,0 +1,72 @@
+.rfid-list {
+  padding-top: 20px;
+  padding-bottom: 30px;
+  justify-content: space-between;
+}
+
+.rfid-card-button {
+  width: 90%;
+  padding: 1%;
+  margin-top: 2.5%;
+  outline: transparent !important;
+  border: transparent;
+  background: #fcfcfc; 
+  box-shadow: 10px 10px 30px rgb(105, 103, 103);
+  /* display:flex;  */
+  flex-direction:column;
+}
+
+.rfid-title {
+  white-space: wrap;
+  font-weight: bold;
+  font-size: 2.7rem;
+  color: #2e0e49;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.rfid-info {
+  min-width: 60%;
+  padding-right:50px;
+  padding-left: 50px;
+  overflow-wrap: break-word;
+
+  font-size: 1.7rem;
+  color: #504579;
+  display: block !important; 
+  text-overflow: ellipsis;
+  text-align: left;
+  max-width: 100%;
+}
+
+@media screen and (max-width: 1100px) {
+  .rfid-text-block { max-width: 100%; padding: 10%; } 
+  .rfid-card-button { min-width: 100% }
+  .rfid-title{ margin: 0 !important; padding-right: 50px !important; } 
+}
+
+.modal-rfid-border .modal-content{
+  border-radius: 10px;
+}
+
+.modal-rfid-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  word-break:break-all;
+  text-align: -webkit-left;
+}
+
+
+.rfid-input-group {
+  padding-bottom: 10px;
+}
+
+.create-rfid {
+  background-color: rgb(2, 107, 126) !important;
+  color: white !important;
+  margin-bottom: 15px;
+}
+
+#rfid-manager-body {
+  padding-top: 32px;
+}

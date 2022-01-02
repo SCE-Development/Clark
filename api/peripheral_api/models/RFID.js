@@ -9,13 +9,16 @@ const RFIDSchema = new Schema(
     },
     byte: {
       type: String,
-      unique: true,
-      require: true,
+      unique: true
     },
     created: {
       type: Date,
       default: Date.now,
     },
+    lastScanned : {
+      type: Date,
+      default: Date.now,
+    }
   },
   { collection: 'RFID' }
 );

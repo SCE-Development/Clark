@@ -12,30 +12,23 @@ let add_RFID = false;
 let new_name = null;
 
 router.post('/validateRFID', (req, res) => {
-  const { byte } = req.body;
   if (add_RFID) {
-    const newEvent = new RFID({
+    const newRFID = new RFID({
       name: new_name,
       byte: req.body.byte,
     });
-    RFID.create(newEvent, (error) => {
+    RFID.create(newRFID, (error) => {
       if (error) {
-        const check = {
-          Added: false,
-        };
-        res.sendStatus(BAD_REQUEST).send(check);
+        res.status(BAD_REQUEST).send({check:false});
       } else {
-        const check = {
-          Added: true,
-        };
-        res.sendStatus(OK).send(check);
+        res.status(OK).send({check:true});
       }
       new_name = null;
       add_RFID = false;
       clearTimeout();
     });
   } else {
-    RFID.findOne({ byte })
+    RFID.findOne({ byte : req.body.byte})
       .then((result) => {
         if (result != null) {
           res.sendStatus(OK);
@@ -50,6 +43,11 @@ router.post('/validateRFID', (req, res) => {
 });
 
 router.post('/createRFID', (req, res) => {
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
   if (add_RFID) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -71,6 +69,11 @@ router.get('/getRFIDs', (req, res) => {
 });
 
 router.delete('/deleteRFID', (req, res) => {
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
   RFID.deleteOne({ _id: req.body._id })
     .then((result) => {
       if (result.n < 1) {

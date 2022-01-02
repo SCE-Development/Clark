@@ -3,6 +3,11 @@ const eventModalState = {
   EDIT: 1
 };
 
+const RFIDModalState = {
+  SUBMIT: 0,
+  DELETE: 1
+};
+
 const memberApplicationState = {
   SELECT_MEMBERSHIP_PLAN: 0,
   FORM_INFO: 1,
@@ -73,6 +78,7 @@ const DEFAULT_PICS = {
 
 module.exports = {
   eventModalState,
+  RFIDModalState,
   memberApplicationState,
   membershipPlans,
   memberShipPlanToString,

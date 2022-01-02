@@ -8,7 +8,7 @@ import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 import Overview from './Pages/Overview/Overview';
 import EmailPage from './Pages/EmailList/EmailPage';
 import EventManager from './Pages/EventManager/EventManager';
-import RFIDManager from './Pages/RFID_Manager/RFID_Manager';
+import RFIDManager from './Pages/RFID_Manager/RFIDManager';
 import Login from './Pages/Login/Login';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';

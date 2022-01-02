@@ -13,7 +13,7 @@ let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
 export async function getAllRFIDs() {
   let status = new ApiResponse();
   await axios
-    .get(PERIPHERAL_API_URL+'/RFID/getRFIDs')
+    .get(PERIPHERAL_API_URL + '/RFID/getRFIDs')
     .then(res => {
       status.responseData = res.data;
     })
@@ -30,10 +30,13 @@ export async function getAllRFIDs() {
  * @returns {ApiResponse} Containing any error information related to the
  * request or the response data
  */
-export async function createNewRFID() {
+export async function createNewRFID(RFIDData, token) {
   let status = new ApiResponse();
+  const RFIDname = {
+    name: RFIDData.name
+  };
   await axios
-    .post(PERIPHERAL_API_URL+'/RFID/createRFID', { token, ...RFIDtoAdd })
+    .post(PERIPHERAL_API_URL + '/RFID/createRFID', { token, ...RFIDname })
     .then(res => {
       status.responseData = res.data;
     })
@@ -48,15 +51,14 @@ export async function createNewRFID() {
  * @returns {ApiResponse} Containing any error information related to the
  * request or the response data
  */
-export async function readNewRFID(readRFIDByte, token) {
+export async function readNewRFID() {
   let status = new ApiResponse();
   await axios
-    .get(RFID_API_URL + '/RFID/validateRFID')
+    .get(PERIPHERAL_API_URL + '/RFID/validateRFID')
     .then((res) => {
       status.responseData = res.data;
     })
     .catch((err) => {
-      status.responseData = err;
       status.error = true;
     });
   return status;
@@ -71,11 +73,11 @@ export async function readNewRFID(readRFIDByte, token) {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function deleteEvent(eventToDelete, token) {
+export async function deleteRFID(RFIDToDelete, token) {
   let status = new ApiResponse();
   await axios
-    .post(PERIPHERAL_API_URL+'/RFID/deleteRFID',
-      { token, _id: eventToDelete._id })
+    .post(PERIPHERAL_API_URL + '/RFID/deleteRFID',
+      { token, _id: RFIDToDelete._id })
     .then(res => {
       status.responseData = res.data;
     })

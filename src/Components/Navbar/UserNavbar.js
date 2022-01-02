@@ -116,7 +116,8 @@ export default function UserNavBar(props) {
                   })}
                 </NavItem>
               </DropdownItem>
-              {props.user&&props.user.accessLevel>=membershipState.MEMBER&& (
+              {props.user && props.user.accessLevel >= membershipState.MEMBER
+              && (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
                     Printing
