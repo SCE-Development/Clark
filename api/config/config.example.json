@@ -1,37 +1,37 @@
 {
   "CLOUD_API_URL": "http://localhost:8082/cloudapi",
   "discordApiKeys": {
-    "CLIENT_ID": "SET",
-    "CLIENT_SECRET": "SET",
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET",
     "REDIRECT_URI_DEV": "http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify",
     "REDIRECT_URI_PROD": "http%3A%2F%2Fsce.engr.sjsu.edu%2Fprofile&response_type=code&scope=identify",
-    "REFRESH_TOKEN": "SET"
+    "REFRESH_TOKEN": "NOT_SET"
   },
   "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
-    "CLIENT_ID": "SET",
-    "CLIENT_SECRET": "SET"
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET"
   },
   "googleApiKeys": {
-    "CLIENT_ID": "SET",
-    "CLIENT_SECRET": "SET",
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET",
     "REDIRECT_URIS": [
       "https://developers.google.com/oauthplayground"
     ],
-    "REFRESH_TOKEN": "SET",
+    "REFRESH_TOKEN": "NOT_SET",
     "USER": "sce.sjsu@gmail.com"
   },
   "googleCalendarIds": {
     "PRIMARY_CAL": "primary",
-    "SCE_EVENTS_CAL": "SET"
+    "SCE_EVENTS_CAL": "NOT_SET"
   },
   "ledSignUrl": "XXXXXXX",
   "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
   "passwordStrength": "medium",
   "S3Bucket": {
-    "AWSACCESSKEYID": "SET",
-    "AWSSECRETKEY": "SET",
-    "BUCKET": “SET"
+    "AWSACCESSKEYID": "NOT_SET",
+    "AWSSECRETKEY": "NOT_SET",
+    "BUCKET": "NOT_SET"
   },
   "ledSqsKeys": {
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
@@ -43,7 +43,7 @@
     "AccountID": "XXXXXXXXXX",
     "QueueName": "XXXXXXXXXX"
   },
-  "PrintingS3Bucket": "SET",
+  "PrintingS3Bucket": "NOT_SET",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
   "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
