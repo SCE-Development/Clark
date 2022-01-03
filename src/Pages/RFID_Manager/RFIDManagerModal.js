@@ -9,11 +9,11 @@ import {
   InputGroup,
   Col,
   Row,
-  InputGroupAddon
+  InputGroupAddon,
 } from 'reactstrap';
 import { RFIDModalState } from '../../Enums';
-import ConfirmationModal from
-'../../Components/DecisionModal/ConfirmationModal.js';
+import ConfirmationModal
+from '../../Components/DecisionModal/ConfirmationModal.js';
 
 function RFIDManagerModal(props) {
   const { modal, toggle, modalState } = props;
@@ -38,9 +38,9 @@ function RFIDManagerModal(props) {
     bodyText: 'The RFID will be gone forever if you do this.',
     toggle: toggleConfirmationModal,
     handleConfirmation: handleDeletion,
-    open: confirmationModal
+    open: confirmationModal,
   };
-  const inputMatrix = [
+  let inputMatrix = [
     [
       {
         addon: 'RFID Holder*',
@@ -49,44 +49,38 @@ function RFIDManagerModal(props) {
         maxLength: '25',
         defaultValue: props.name,
         placeholder: 'First & Last Name',
-        handleChange: e => setName(e.target.value),
-        ifRequirementsNotMet: (name === undefined || name === '')
-          && clickedSubmit && (
-          <p className='unavailable'>Please input a name!</p>
-        ),
-      }
-    ]
-  ];
-  if(modalState === RFIDModalState.DELETE) {
-    inputMatrix[0][0].disabled = true;
-    inputMatrix[0].push(
-      {
-        addon: 'Byte',
-        type: 'text',
-        disabled: true,
-        maxLength: '100',
-        defaultValue: props.byte,
-        handleChange: e => setName(e.target.value)
+        handleChange: (e) => setName(e.target.value),
+        ifRequirementsNotMet: (name === undefined || name === '') &&
+          clickedSubmit && <p className='unavailable'>Please input a name!</p>,
       },
-      {
-        addon: 'Created On:',
-        type: 'text',
-        disabled: true,
-        maxLength: '10',
-        defaultValue: props.created.substring(0, 10),
-        handleChange: e => setName(e.target.value)
-      }
-    );
+    ],
+    [],
+    [],
+  ];
+  if (modalState === RFIDModalState.DELETE) {
+    inputMatrix[0][0].disabled = true;
+    inputMatrix[1].push({
+      addon: 'Byte',
+      type: 'text',
+      disabled: true,
+      maxLength: '100',
+      defaultValue: props.byte,
+      handleChange: (e) => setName(e.target.value),
+    });
+    inputMatrix[2].push({
+      addon: 'Created On:',
+      type: 'text',
+      disabled: true,
+      maxLength: '10',
+      defaultValue: props.created.substring(0, 10),
+      handleChange: (e) => setName(e.target.value),
+    });
   }
   function requiredFieldsFilledIn() {
     if (props.modalState === RFIDModalState.DELETE) {
-      return (
-        name !== ''
-      );
+      return name !== '';
     } else if (props.modalState === RFIDModalState.SUBMIT) {
-      return (
-        name !== undefined
-      );
+      return name !== undefined;
     }
     return false;
   }
@@ -123,11 +117,10 @@ function RFIDManagerModal(props) {
         </ModalHeader>
         <ModalBody>
           <span>
-            <span style={{color: 'red', display: 'inline'}}>
-              {modalState === RFIDModalState.SUBMIT ?
-                '* ' : ''}</span>
-            {modalState === RFIDModalState.SUBMIT ?
-              '= This is a required field' : ''}
+            <span style={{ color: 'red', display: 'inline' }} color='red'>
+              *
+            </span>
+            = This is a required field
           </span>
           {inputMatrix.map((row, index) => {
             return (
@@ -139,7 +132,7 @@ function RFIDManagerModal(props) {
                         <InputGroupAddon addonType='prepend'>
                           {input.addon}
                         </InputGroupAddon>
-                        <Input className='layout'
+                        <Input
                           type={input.type}
                           disabled={input.disabled}
                           maxLength={input.maxLength}
@@ -166,7 +159,9 @@ function RFIDManagerModal(props) {
               Delete RFID
             </Button>
           ) : (
-            <Button color='primary' onClick={handleSubmission}>Submit</Button>
+            <Button color='primary' onClick={handleSubmission}>
+              Submit
+            </Button>
           )}
         </ModalFooter>
       </Modal>
