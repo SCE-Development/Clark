@@ -27,6 +27,7 @@ function RFIDManagerModal(props) {
   }
 
   async function handleDeletion() {
+    // eslint-disable-next-line
     await props.handleDelete({ _id: props._id });
     await props.populateRFIDList();
     toggleConfirmationModal();
@@ -59,14 +60,6 @@ function RFIDManagerModal(props) {
   ];
   if (modalState === RFIDModalState.DELETE) {
     inputMatrix[0][0].disabled = true;
-    inputMatrix[1].push({
-      addon: 'Byte',
-      type: 'text',
-      disabled: true,
-      maxLength: '100',
-      defaultValue: props.byte,
-      handleChange: (e) => setName(e.target.value),
-    });
     inputMatrix[2].push({
       addon: 'Created On:',
       type: 'text',

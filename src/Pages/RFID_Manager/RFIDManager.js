@@ -45,25 +45,27 @@ export default function RFIDManager(props) {
     setModalState(RFIDModalState.SUBMIT);
     setModal(!modal);
   }
-
+  async function handleDelete(RFID) {
+    const res = await deleteRFID(RFID, props.user.token);
+    if(res.error === false) {
+      window.location.reload();
+    } else {
+      alert('EPIC FAIL');
+    }
+  }
   async function handleSubmit(RFID) {
     if (modalState === RFIDModalState.SUBMIT) {
       const res = await createNewRFID(RFID, props.user.token);
       if (res.error === false) {
-        const readNewRFIDRes = await readNewRFID();
-        if (readNewRFIDRes.error === false) {
-          alert('Cannot add RFID!');
-        } else {
-          alert('Scan RFID card then press OK');
-          window.location.reload();
-        }
+        alert('Scan card within the next 60 seconds!');
       } else {
         alert('Try Again!');
-        window.location.reload();
       }
     } else if (modalState === RFIDModalState.DELETE) {
+      alert('delete calling...');
       await deleteRFID(RFID, props.user.token);
     }
+    window.location.reload();
   }
 
   return (
@@ -77,10 +79,7 @@ export default function RFIDManager(props) {
           <RFIDManagerModal
             modal={modal}
             toggle={toggle}
-            handleDelete={RFID => {
-              deleteRFID(RFID, props.user.token);
-              window.location.reload();
-            }}
+            handleDelete={handleDelete}
             handleSubmit={handleSubmit}
             modalState={modalState}
             populateRFIDList={populateRFIDList}

@@ -47,26 +47,8 @@ export async function createNewRFID(RFIDData, token) {
 }
 
 /**
- * Reads RFID.
- * @returns {ApiResponse} Containing any error information related to the
- * request or the response data
- */
-export async function readNewRFID() {
-  let status = new ApiResponse();
-  await axios
-    .get(PERIPHERAL_API_URL + '/RFID/validateRFID')
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = true;
-    });
-  return status;
-}
-
-/**
  * Delete a RFID.
- * @param {Object} RFIDToDelete - The RFID that is to be added
+ * @param {Object} RFIDToDelete - The RFID that is to be deleted
  * @param {string} RFIDToDelete._id - The unique MongoDB id of
  *                                    the RFID that is to be added
  * @param {string} token - The user's jwt token for authentication
@@ -76,8 +58,8 @@ export async function readNewRFID() {
 export async function deleteRFID(RFIDToDelete, token) {
   let status = new ApiResponse();
   await axios
-    .post(PERIPHERAL_API_URL + '/RFID/deleteRFID',
-      { token, _id: RFIDToDelete._id })
+    .delete(PERIPHERAL_API_URL + '/RFID/deleteRFID',
+      { data: { token, _id: RFIDToDelete._id } })
     .then(res => {
       status.responseData = res.data;
     })

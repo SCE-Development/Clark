@@ -4,7 +4,6 @@ import { Container, Col } from 'reactstrap';
 function RFIDCard(props) {
   const {
     name,
-    byte,
     created,
     _id,
     lastScanned,
@@ -27,7 +26,6 @@ function RFIDCard(props) {
     >
       <Col className='rfid-info'>
         <div className='rfid-title'>{name}</div>
-        <div><b>RFID-Byte: </b>{byte}</div>
         <div><b>Created On: </b>
           {created.substring(0, 10)}
         </div>
