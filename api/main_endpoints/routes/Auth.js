@@ -243,7 +243,7 @@ router.post('/validateVerificationEmail', async (req, res) => {
 });
 
 
-// If the email exists in db, generate a token and store in 
+// If the email exists in db, generate a token and store in
 // password_reset collection.
 // Every reset request of the same account updates the token in the DB.
 // The token expires after 1 hour
@@ -257,7 +257,7 @@ router.post('/request-reset', async (req, res) => {
     if (count < 1) {
       return res.sendStatus(OK);
     }
-    const token = await updateTokenDb(email)
+    const token = await updateTokenDb(email);
     if (!token) {
       return res.sendStatus(INTERNAL_SERVER_ERROR);
     }
@@ -265,12 +265,10 @@ router.post('/request-reset', async (req, res) => {
     const resetLink = generateResetLink(token);
     await notifyUser(email, resetLink);
     return res.sendStatus(OK);
-  }
-  catch (e) {
-    console.log(e);
+  } catch (err) {
+    // console.log(err);
     return res.sendStatus(INTERNAL_SERVER_ERROR);
   }
-  
 });
 
 async function updateTokenDb(email) {
@@ -289,15 +287,14 @@ async function updateTokenDb(email) {
       }
     );
     return token;
-  }
-  catch (e) {
-    console.log(e);
+  } catch (err) {
+    console.log(err);
     return null;
   }
 }
 
 function generateResetLink(token) {
-  const link = "http://localhost:3000/reset-password/?token=" + token;
+  const link = 'http://localhost:3000/reset-password/?token=' + token;
   return link;
 }
 
@@ -331,8 +328,8 @@ router.put('/validate-reset-token', async (req, res) => {
       success: true,
       email: email
     });
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    // zconsole.log(err);
     return res.sendStatus(INTERNAL_SERVER_ERROR);
   }
 });
@@ -350,7 +347,7 @@ router.post('/reset-password', async (req, res) => {
     return res.status(UNPROCESSABLE_ENTITY).json(
       {
         success: false,
-        error: "invalid password",
+        error: 'invalid password',
         detail: testResult.message
       }
     );

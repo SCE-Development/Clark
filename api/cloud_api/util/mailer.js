@@ -1,5 +1,7 @@
 const { SceGoogleApiHandler } = require('../util/SceGoogleApiHandler');
-const { generateResetPasswordTemplate } = require('../email_templates/reset-password');
+const {
+  generateResetPasswordTemplate
+} = require('../email_templates/reset-password');
 
 async function sendResetEmail(recipient, resetLink) {
   const scopes = ['https://mail.google.com/'];
@@ -18,8 +20,8 @@ async function sendResetEmail(recipient, resetLink) {
   try {
     await googleApiHandler.sendEmail(template);
     return true;
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    // console.log(err);
     return false;
   }
 }
