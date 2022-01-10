@@ -1,6 +1,7 @@
 import React from 'react';
 import { Editor } from '@tinymce/tinymce-react';
-import { TINYMCE_API_KEY } from '../../config/config.json';
+import config from '../../config/config.json';
+const { TINYMCE_API_KEY } = config;
 
 export default function TextEditor(props) {
   return (

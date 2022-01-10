@@ -1,6 +1,5 @@
 const axios = require('axios');
-const { GENERAL_API_URL, GENERAL_API_URL_PROD } =
-  require('../../config/config.json');
+const { GENERAL_API_URL, GENERAL_API_URL_PROD } = require('../../config/config.json');
 
 async function validateVerificationEmail(){
   let status = '';

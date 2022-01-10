@@ -29,6 +29,10 @@ import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import InventoryPage from './Pages/Inventory/InventoryPage.js';
+import {
+  RequestResetPage
+} from './Pages/password-reset/request-reset/request-reset-page';
+import { ResetPage } from './Pages/password-reset/reset/reset-page';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -133,7 +137,9 @@ export default function Routing({ appProps }) {
     { Component: Team, path: '/team' },
     { Component: VerifyEmailPage, path: '/verify' },
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
-    { Component: DiscordSJSU, path: '/discordSJSU'}
+    { Component: DiscordSJSU, path: '/discordSJSU'},
+    { Component: RequestResetPage, path: '/forgot-password' },
+    { Component: ResetPage, path: '/reset-password' }
   ];
   return (
     <Router>

@@ -5,7 +5,8 @@ const { verification } = require('../email_templates/verification');
 const { blastEmail } = require('../email_templates/blastEmail');
 const {
   OK,
-  BAD_REQUEST
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
 const { googleApiKeys } = require('../../config/config.json');
 const { USER } = googleApiKeys;
@@ -17,7 +18,6 @@ router.post('/sendVerificationEmail', async (req, res) => {
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
   const tokenJson = await apiHandler.checkIfTokenFileExists();
-
   if (tokenJson) {
     if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
       apiHandler.refreshToken();

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-import { GENERAL_API_URL } from '../config/config.json';
+import config from '../config/config.json';
+const { GENERAL_API_URL } = config;
 
 /**
  * Retrieve all items.

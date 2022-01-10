@@ -1,4 +1,5 @@
 'use strict';
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const express = require('express');
 const router = express.Router();
@@ -6,6 +7,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const config = require('../../config/config');
 const User = require('../models/User.js');
+const PasswordReset = require('../models/password-reset');
 const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
@@ -18,7 +20,9 @@ const {
   BAD_REQUEST,
   UNAUTHORIZED,
   NOT_FOUND,
-  CONFLICT
+  CONFLICT,
+  UNPROCESSABLE_ENTITY,
+  INTERNAL_SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
@@ -236,6 +240,154 @@ router.post('/validateVerificationEmail', async (req, res) => {
       }
     });
   });
+});
+
+
+// If the email exists in db, generate a token and store in 
+// password_reset collection.
+// Every reset request of the same account updates the token in the DB.
+// The token expires after 1 hour
+router.post('/request-reset', async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  try {
+    const count = await User.countDocuments({ email: email });
+    if (count < 1) {
+      return res.sendStatus(OK);
+    }
+    const token = await updateTokenDb(email)
+    if (!token) {
+      return res.sendStatus(INTERNAL_SERVER_ERROR);
+    }
+
+    const resetLink = generateResetLink(token);
+    await notifyUser(email, resetLink);
+    return res.sendStatus(OK);
+  }
+  catch (e) {
+    console.log(e);
+    return res.sendStatus(INTERNAL_SERVER_ERROR);
+  }
+  
+});
+
+async function updateTokenDb(email) {
+  const token = crypto.randomBytes(32).toString('hex');
+  try {
+    await PasswordReset.updateOne(
+      {
+        email: email
+      },
+      {
+        token: token,
+        createdAt: Date.now()
+      },
+      {
+        upsert: true
+      }
+    );
+    return token;
+  }
+  catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+function generateResetLink(token) {
+  const link = "http://localhost:3000/reset-password/?token=" + token;
+  return link;
+}
+
+const { sendResetEmail } = require('../../cloud_api/util/mailer');
+async function notifyUser(recipient, resetLink) {
+  if (await !sendResetEmail(recipient, resetLink)) {
+    return false;
+  }
+  return true;
+}
+
+// Validate reset token and return the email address for the reset password page
+router.put('/validate-reset-token', async (req, res) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(UNAUTHORIZED).send({
+      success: false
+    });
+  }
+  try {
+    const result = await PasswordReset.findOne({
+      token: token
+    });
+    if (!result) {
+      return res.status(UNAUTHORIZED).send({
+        success: false
+      });
+    }
+    const email = result.email;
+    return res.status(OK).send({
+      success: true,
+      email: email
+    });
+  } catch (e) {
+    console.log(e);
+    return res.sendStatus(INTERNAL_SERVER_ERROR);
+  }
+});
+
+const { validatePassword, hashPassword } = require('../util/password');
+// Reset password if the token is valid
+router.post('/reset-password', async (req, res) => {
+  const { newPassword, email, token } = req.body;
+  if (!newPassword || !email || !token) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  // Validate new password
+  const testResult = validatePassword(newPassword);
+  if (!testResult.success) {
+    return res.status(UNPROCESSABLE_ENTITY).json(
+      {
+        success: false,
+        error: "invalid password",
+        detail: testResult.message
+      }
+    );
+  }
+
+  try {
+    const hashedPassword = await hashPassword(newPassword);
+    // Validate reset token in DB
+    const count = await PasswordReset.countDocuments({
+        token: token,
+        email: email
+    });
+    if (count < 1) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    // update password
+    await User.updateOne(
+      {
+        email: email
+      },
+      {
+        password: hashedPassword
+      }
+    );
+    await PasswordReset.deleteOne({
+      token: token
+    });
+    res.status(OK).send(
+      {
+        success: true
+      }
+    );
+  }
+  catch (e) {
+    console.log(e);
+    return res.sendStatus(INTERNAL_SERVER_ERROR);
+  }
 });
 
 module.exports = router;

@@ -3,7 +3,8 @@ import {
   GoogleLogin,
   GoogleLogout
 } from 'react-google-login';
-import { GOOGLE_API_CLIENT_ID } from '../../config/config.json';
+import config from '../../config/config.json';
+const { GOOGLE_API_CLIENT_ID } = config;
 import {
   getTempUser,
   addUser,
