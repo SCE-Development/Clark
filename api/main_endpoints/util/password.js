@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-function validatePassword(password, strength = "medium") {
+function validatePassword(password, strength = 'medium') {
   // eslint-disable-next-line
   // https://www.ibm.com/docs/en/baw/19.x?topic=security-characters-that-are-valid-user-ids-passwords
   // Require at least one digit and one letter
@@ -13,11 +13,11 @@ function validatePassword(password, strength = "medium") {
   const result = {
     success: true,
     message: ''
-  }
+  };
 
   if (password.length < 8) {
     result.success = false;
-    result.message = "Use 8 characters or more for your password";
+    result.message = 'Use 8 characters or more for your password';
     return result;
   }
 
@@ -25,7 +25,7 @@ function validatePassword(password, strength = "medium") {
   case 'strong':
     if (!strongStrength.test(password)) {
       result.success = false;
-      result.message = "Try a mix of letters, numbers, and symbols";
+      result.message = 'Try a mix of letters, numbers, and symbols';
     }
     break;
   case 'medium':

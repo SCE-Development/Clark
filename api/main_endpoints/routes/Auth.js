@@ -288,7 +288,7 @@ async function updateTokenDb(email) {
     );
     return token;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return null;
   }
 }
@@ -357,8 +357,8 @@ router.post('/reset-password', async (req, res) => {
     const hashedPassword = await hashPassword(newPassword);
     // Validate reset token in DB
     const count = await PasswordReset.countDocuments({
-        token: token,
-        email: email
+      token: token,
+      email: email
     });
     if (count < 1) {
       return res.sendStatus(UNAUTHORIZED);
@@ -380,9 +380,8 @@ router.post('/reset-password', async (req, res) => {
         success: true
       }
     );
-  }
-  catch (e) {
-    console.log(e);
+  } catch (err) {
+    // console.log(err);
     return res.sendStatus(INTERNAL_SERVER_ERROR);
   }
 });
