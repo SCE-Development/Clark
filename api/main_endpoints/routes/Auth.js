@@ -242,35 +242,6 @@ router.post('/validateVerificationEmail', async (req, res) => {
   });
 });
 
-
-// If the email exists in db, generate a token and store in
-// password_reset collection.
-// Every reset request of the same account updates the token in the DB.
-// The token expires after 1 hour
-router.post('/request-reset', async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  try {
-    const count = await User.countDocuments({ email: email });
-    if (count < 1) {
-      return res.sendStatus(OK);
-    }
-    const token = await updateTokenDb(email);
-    if (!token) {
-      return res.sendStatus(INTERNAL_SERVER_ERROR);
-    }
-
-    const resetLink = generateResetLink(token);
-    await notifyUser(email, resetLink);
-    return res.sendStatus(OK);
-  } catch (err) {
-    // console.log(err);
-    return res.sendStatus(INTERNAL_SERVER_ERROR);
-  }
-});
-
 async function updateTokenDb(email) {
   const token = crypto.randomBytes(32).toString('hex');
   try {
@@ -305,6 +276,34 @@ async function notifyUser(recipient, resetLink) {
   }
   return true;
 }
+
+// If the email exists in db, generate a token and store in
+// password_reset collection.
+// Every reset request of the same account updates the token in the DB.
+// The token expires after 1 hour
+router.post('/request-reset', async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  try {
+    const count = await User.countDocuments({ email: email });
+    if (count < 1) {
+      return res.sendStatus(OK);
+    }
+    const token = await updateTokenDb(email);
+    if (!token) {
+      return res.sendStatus(INTERNAL_SERVER_ERROR);
+    }
+
+    const resetLink = generateResetLink(token);
+    await notifyUser(email, resetLink);
+    return res.sendStatus(OK);
+  } catch (err) {
+    // console.log(err);
+    return res.sendStatus(INTERNAL_SERVER_ERROR);
+  }
+});
 
 // Validate reset token and return the email address for the reset password page
 router.put('/validate-reset-token', async (req, res) => {
