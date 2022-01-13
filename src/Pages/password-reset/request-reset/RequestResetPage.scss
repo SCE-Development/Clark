@@ -1,0 +1,49 @@
+body {
+  // background-color: white !important;
+  background-image: url("./resources/ADV_about-sjsu_2.jpg") !important;
+}
+
+.header-spacer {
+  height: 73px;
+}
+
+// $backgroundHeight: calc(100vh - 73px);
+// #background {
+//   background-image: url("./resources/ADV_about-sjsu_2.jpg");
+//   min-width: 100%;
+//   min-height: 100%;
+// }
+
+.flex-left {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.input-card {
+  background-color: white !important;
+  padding: 20px 30px;
+  width: 512px !important;
+  height: 630px !important;
+  border-radius: 5px;
+  display: block;
+  margin-top: 10vh;
+
+  .email-prompt {
+    text-align: left;
+    padding: 0px 0px 30px 0px;
+    font-size: medium;
+  }
+
+  .email-form {
+    padding: 0px 0px 30px 0px;
+  }
+}
