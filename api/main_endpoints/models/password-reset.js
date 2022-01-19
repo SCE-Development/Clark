@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const PasswordReset = new Schema(
+const PasswordResetSchema = new Schema(
   {
     email: {
       type: String,
