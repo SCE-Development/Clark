@@ -4,7 +4,7 @@
   "description": "The SCE Website",
   "scripts": {
     "api-test": "mocha",
-    "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js",
+    "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js --exit",
     "start": "react-scripts start",
     "server": "npm start --prefix api",
     "lint": "./node_modules/.bin/eslint ./",
