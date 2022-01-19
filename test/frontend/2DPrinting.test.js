@@ -3,6 +3,7 @@ import 'jsdom-global/register';
 import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
+import sinon from 'sinon';
 import Printing2D from '../../src/Pages/2DPrinting/2DPrinting';
 import Adapter from 'enzyme-adapter-react-16';
 import { Jumbotron } from 'reactstrap';
