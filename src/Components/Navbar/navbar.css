@@ -1,11 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Mina&display=swap');
 .user-nav {
+  font-family: "Mina", sans-serif;
   font-size: 18px;
-  background-color: #87b0c7;
-  width: 100%;
+  background-color: rgb(0, 0, 0);
   top: 0px;
   position: fixed;
   z-index: 4;
+  width: 100%;
 }
 
 .login-icon {
@@ -43,6 +44,7 @@
 
 .sce-nav {
   flex-flow: row wrap;
+  width:100%;
 }
 
 .icon-images {
@@ -50,21 +52,63 @@
   height: 20px;
 }
 
+.navlink-items {
+  display: flex;
+  width:20%;
+  line-height: 32px;
+  justify-content:space-between;
+  margin-left:35%;
+  column-gap: 30%;
+}
+
 #navlink-text {
   color: white;
-  font-weight: bold;
+}
+
+.authentication {
+  column-gap: 30px;
+  position:absolute;
+  top:10px;
+  right:80px;
+  line-height: 190%;
+  width:290px;
+  text-align: center;
+}
+
+#signin-btn {
+	background-color: transparent;
+	border: 1px solid #ffffff;
+	color: white;
+  border-radius:10px;
+  font-size: 15px;
+  width: 150px;
+}
+
+#signup-btn {
+  background-color: #2288FF !important;
+  border: none;
+  color: white;
+  border-radius:10px;
+  font-size: 15px;
+  width: 150px;
 }
 
 #logo-image {
   width: 50px;
   margin-top: -5;
   margin-bottom: -5;
-  margin-left: 10;
+  margin-left: 30px;
 }
 
 .logout-image {
   width: 18px;
   height: 18px;
+}
+
+.profile{
+  position:absolute;
+  top:10px;
+  right:15px
 }
 
 .profile-image {
@@ -140,6 +184,7 @@
   width: 0.7rem;
   height: 1.6rem;
   margin-right: 1.24rem;
+  
 }
 
 #dark-toggler {
