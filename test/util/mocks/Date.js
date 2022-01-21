@@ -8,7 +8,13 @@ let clock = null;
  */
 export function mockMonth(month) {
   const year = new Date().getFullYear();
-  clock = sinon.useFakeTimers(new Date(year, month));
+  clock = sinon.useFakeTimers({
+    now: new Date(year, month),
+    toFake: [
+      'setTimeout', 'clearTimeout', 'setImmediate', 'clearImmediate',
+      'setInterval', 'clearInterval', 'Date'
+    ],
+  });
 }
 
 /**
