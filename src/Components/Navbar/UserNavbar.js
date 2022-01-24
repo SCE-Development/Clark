@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
 import {
   ButtonDropdown,
@@ -11,7 +12,7 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
 } from 'reactstrap';
 import DarkMode from './DarkMode';
 import { membershipState } from '../../Enums';
@@ -28,8 +29,8 @@ export default function UserNavBar(props) {
         'v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.7',
         '64 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5',
         ' 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.3',
-        '96-2.586 7-2.777 7 2.476v6.759z'
-      ].join('')
+        '96-2.586 7-2.777 7 2.476v6.759z',
+      ].join(''),
     },
     {
       link: 'https://discord.com/invite/STkT6mH',
@@ -50,8 +51,8 @@ export default function UserNavBar(props) {
         '2.792.972zm-5.58-5.604c-.684 0-1.224.6-1.224 1.332 0 .732.552 1.33',
         '2 1.224 1.332.684 0 1.224-.6 1.224-1.332.012-.732-.54-1.332-1.22',
         '4-1.332zm4.38 0c-.684 0-1.224.6-1.224 1.332 0 .732.552 1.332 1.2',
-        '24 1.332.684 0 1.224-.6 1.224-1.332 0-.732-.54-1.332-1.224-1.332z'
-      ].join('')
+        '24 1.332.684 0 1.224-.6 1.224-1.332 0-.732-.54-1.332-1.224-1.332z',
+      ].join(''),
     },
     {
       link: 'https://www.instagram.com/sjsusce/',
@@ -72,108 +73,105 @@ export default function UserNavBar(props) {
         'c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-',
         '4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.',
         '845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.',
-        '439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'
-      ].join('')
-    }
+        '439-.645 1.439-1.44s-.644-1.44-1.439-1.44z',
+      ].join(''),
+    },
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events' },
-    { title: 'Discord Bot', route: '/discordSJSU' }];
+  const unauthedRoutes = [
+    { title: 'Events', route: '/events' },
+    { title: 'Discord Bot', route: '/discordSJSU' },
+  ];
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
 
   return (
     <div className={'user-nav'}>
-      <Navbar light expand='md'>
-        <NavbarBrand href='/'>
+      <Navbar light expand="md">
+        <NavbarBrand href="/">
           <div>
-            <img id='logo-image' src={logo} alt={'sce logo'} />
+            <img id="logo-image" src={logo} alt={'sce logo'} />
           </div>
         </NavbarBrand>
-        <div id='user-dark'>
+        <div id="user-dark">
           <DarkMode />
         </div>
-        <NavbarToggler tag='h1'>
+        <NavbarToggler tag="h1">
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
-            <DropdownToggle className='hamburger-button'>
-              <span className='border'></span>
-              <span className='border'></span>
-              <span className='border'></span>
+            <DropdownToggle className="hamburger-button">
+              <span className="border"></span>
+              <span className="border"></span>
+              <span className="border"></span>
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem className='drp-item'>
+              <DropdownItem className="drp-item">
                 <NavItem>
                   {icons.map((icon, index) => {
                     return (
                       <a key={index} href={icon.link}>
-                        <svg className='m-2 icon-images' viewBox='0 0 24 24'>
-                          <path fill='gray' d={icon.vector} />
+                        <svg className="m-2 icon-images" viewBox="0 0 24 24">
+                          <path fill="gray" d={icon.vector} />
                         </svg>
                       </a>
                     );
                   })}
                 </NavItem>
               </DropdownItem>
-              {props.user && props.user.accessLevel >=
-                membershipState.MEMBER && (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
-                      Printing
+              {props.user && props.user.accessLevel >= membershipState.MEMBER && (
+                <DropdownItem tag="h1" className="dropdown-submenu drp-item">
+                  <DropdownItem className="drp-item" id="btndrp-text">
+                    Services
                   </DropdownItem>
-                  <DropdownMenu className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/2DPrinting'>
-                        2D Printing
-                    </DropdownItem>
-                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                        3D Printing
+                  <DropdownMenu className="drp-menu">
+                    <DropdownItem className="drp-item" href="/2DPrinting">
+                      Printing
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownItem>
               )}
               {unauthedRoutes.map((link, index) => {
                 return (
-                  <DropdownItem className='drp-item' key={index}>
+                  <DropdownItem className="drp-item" key={index}>
                     <NavItem>
-                      <NavLink id='btndrp-text' href={link.route}>
+                      <NavLink id="btndrp-text" href={link.route}>
                         {link.title}
                       </NavLink>
                     </NavItem>
-
                   </DropdownItem>
                 );
               })}
               {props.authenticated && props.user ? (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
-                    <svg className='profile-image' viewBox='0 0 24 24'>
+                <DropdownItem tag="h1" className="dropdown-submenu drp-item">
+                  <DropdownItem className="drp-item" id="btndrp-text">
+                    <svg className="profile-image" viewBox="0 0 24 24">
                       <path
-                        fill='gray'
-                        d='M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,
+                        fill="gray"
+                        d="M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,
                           12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,
                           17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,
                           3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,
                           2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,
-                          0 22,12C22,6.47 17.5,2 12,2Z'
+                          0 22,12C22,6.47 17.5,2 12,2Z"
                       />
                     </svg>
                     {props.user.firstName}
                   </DropdownItem>
-                  <DropdownMenu right className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/profile'>
+                  <DropdownMenu right className="drp-menu">
+                    <DropdownItem className="drp-item" href="/profile">
                       Profile
                     </DropdownItem>
                     {props.user.accessLevel >= membershipState.OFFICER && (
-                      <DropdownItem className='drp-item' href='/dashboard'>
+                      <DropdownItem className="drp-item" href="/dashboard">
                         Admin
                       </DropdownItem>
                     )}
-                    <DropdownItem className='drp-item'>
+                    <DropdownItem className="drp-item">
                       <div onClick={() => props.handleLogout()}>
-                        <svg className='logout-image' viewBox='0 0 24 24'>
+                        <svg className="logout-image" viewBox="0 0 24 24">
                           <path
-                            d='M17,17.25V14H10V10H17V6.75L22.25,12L17,
+                            d="M17,17.25V14H10V10H17V6.75L22.25,12L17,
                             17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,
-                            2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z'
+                            2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"
                           />
                         </svg>
                         Logout
@@ -182,16 +180,16 @@ export default function UserNavBar(props) {
                   </DropdownMenu>
                 </DropdownItem>
               ) : (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
-                      Join Us!
+                <DropdownItem tag="h1" className="dropdown-submenu drp-item">
+                  <DropdownItem className="drp-item" id="btndrp-text">
+                    Join Us!
                   </DropdownItem>
-                  <DropdownMenu right className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/register'>
-                        Membership Application
+                  <DropdownMenu right className="drp-menu">
+                    <DropdownItem className="drp-item" href="/register">
+                      Membership Application
                     </DropdownItem>
-                    <DropdownItem className='drp-item' href='/login'>
-                        Login
+                    <DropdownItem className="drp-item" href="/login">
+                      Login
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownItem>
@@ -200,38 +198,34 @@ export default function UserNavBar(props) {
           </ButtonDropdown>
         </NavbarToggler>
         <Collapse navbar>
-          <Nav className='ml-auto d-flex align-items-end sce-nav' navbar>
+          <Nav className="ml-auto d-flex align-items-end sce-nav" navbar>
             <NavItem>
               {icons.map((icon, index) => {
                 return (
                   <a key={index} href={icon.link}>
-                    <svg className='m-2 icon-images' viewBox='0 0 24 24'>
-                      <path fill='white' d={icon.vector} />
+                    <svg className="m-2 icon-images" viewBox="0 0 24 24">
+                      <path fill="white" d={icon.vector} />
                     </svg>
                   </a>
                 );
               })}
             </NavItem>
-            {props.user && props.user.accessLevel >= membershipState.MEMBER
-              && (
-                <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle id='navlink-text' nav caret>
+            {props.user && props.user.accessLevel >= membershipState.MEMBER && (
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle id="navlink-text" nav caret>
+                  Services
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem className="drp-item" href="/2DPrinting">
                     Printing
-                  </DropdownToggle>
-                  <DropdownMenu right>
-                    <DropdownItem className='drp-item' href='/2DPrinting'>
-                      2D Printing
-                    </DropdownItem>
-                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                      3D Printing
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              )}
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            )}
             {unauthedRoutes.map((link, index) => {
               return (
                 <NavItem key={index}>
-                  <NavLink id='navlink-text' href={link.route}>
+                  <NavLink id="navlink-text" href={link.route}>
                     {link.title}
                   </NavLink>
                 </NavItem>
@@ -239,35 +233,35 @@ export default function UserNavBar(props) {
             })}
             {props.authenticated && props.user ? (
               <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle id='navlink-text' nav caret>
-                  <svg className='profile-image' viewBox='0 0 24 24'>
+                <DropdownToggle id="navlink-text" nav caret>
+                  <svg className="profile-image" viewBox="0 0 24 24">
                     <path
-                      fill='white'
-                      d='M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,
+                      fill="white"
+                      d="M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,
                       12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,
                       19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,
                       8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,
-                      22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z'
+                      22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z"
                     />
                   </svg>
                   {props.user.firstName}
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem className='drp-item' href='/profile'>
+                  <DropdownItem className="drp-item" href="/profile">
                     Profile
                   </DropdownItem>
                   {props.user.accessLevel >= membershipState.OFFICER && (
-                    <DropdownItem className='drp-item' href='/dashboard'>
+                    <DropdownItem className="drp-item" href="/dashboard">
                       Admin
                     </DropdownItem>
                   )}
-                  <DropdownItem className='drp-item'>
+                  <DropdownItem className="drp-item">
                     <div onClick={() => props.handleLogout()}>
-                      <svg className='logout-image' viewBox='0 0 24 24'>
+                      <svg className="logout-image" viewBox="0 0 24 24">
                         <path
-                          d='M17,17.25V14H10V10H17V6.75L22.25,12L17,
+                          d="M17,17.25V14H10V10H17V6.75L22.25,12L17,
                         17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,
-                        2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z'
+                        2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"
                         />
                       </svg>
                       Logout
@@ -277,15 +271,15 @@ export default function UserNavBar(props) {
               </UncontrolledDropdown>
             ) : (
               <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle id='navlink-text' nav caret>
-                    Join Us!
+                <DropdownToggle id="navlink-text" nav caret>
+                  Join Us!
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem className='drp-item' href='/register'>
-                      Membership Application
+                  <DropdownItem className="drp-item" href="/register">
+                    Membership Application
                   </DropdownItem>
-                  <DropdownItem className='drp-item' href='/login'>
-                      Login
+                  <DropdownItem className="drp-item" href="/login">
+                    Login
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
@@ -293,6 +287,6 @@ export default function UserNavBar(props) {
           </Nav>
         </Collapse>
       </Navbar>
-    </div >
+    </div>
   );
 }

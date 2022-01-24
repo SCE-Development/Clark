@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import './2D-printing.css';
-import ConfirmationModal from
-  '../../Components/DecisionModal/ConfirmationModal.js';
-import Header from
-  '../../Components/Header/Header.js';
+// eslint-disable-next-line max-len
+import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
 import { registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
@@ -14,14 +12,14 @@ import {
   parseRange,
   printPage,
   getPagesPrinted,
-  logPrintRequest
+  logPrintRequest,
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 import {
-  PrintIcon,
+  PrintMessage,
   StatusModal,
   failPrintStatus,
-  FileUpload
+  FileUpload,
 } from './2DComponents';
 import { PrintPageModal } from './2DPrintPageModal';
 import PrintingHealthCheck from './2DPrintingHealthCheck';
@@ -32,7 +30,6 @@ export default function Printing(props) {
   /**
    * State variables:
    * files - pdf file stored in filepond
-   * continueButn - enable continue button
    * confirmModal - pop up confirm modal
    * pages - set radio to select page range or use all
    * previewModal - enable print page modal
@@ -51,7 +48,6 @@ export default function Printing(props) {
    * printStatus - status in statusModal
    */
   const [files, setFiles] = useState([]);
-  const [continueButn, setContinue] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [pages, setPages] = useState(false);
   const [previewModal, setPreviewModal] = useState(false);
@@ -70,6 +66,8 @@ export default function Printing(props) {
   const [loadPreview, setLoadPreview] = useState(true);
   const [statusModal, setStatusModal] = useState(false);
   const [printStatus, setPrintStatus] = useState('');
+  /* eslint-disable */
+  console.log('value is', props.user.pagesPrinted);
 
   async function updateEmbed(totalPages) {
     try {
@@ -77,9 +75,9 @@ export default function Printing(props) {
       const display = await PDFDocument.create();
       const copiedPages = await display.copyPages(
         pdf,
-        Array.from(totalPages).map(x => x - 1)
+        Array.from(totalPages).map((x) => x - 1)
       );
-      copiedPages.forEach(element => {
+      copiedPages.forEach((element) => {
         display.addPage(element);
       });
       const data = await display.saveAsBase64({ dataUri: true });
@@ -131,11 +129,7 @@ export default function Printing(props) {
   const previewLabels = {
     copies: 'Number of Copies',
     sides: 'Type of print',
-    pages: 'Pages'
-  };
-
-  const headerProps = {
-    title: 'Printing'
+    pages: 'Pages',
   };
 
   const fileUploadProps = {
@@ -145,29 +139,29 @@ export default function Printing(props) {
       acceptedFileTypes: ['application/pdf'],
       maxFileSize: '10MB',
       onupdatefiles: (fileItems) => {
-        const tmp = fileItems.map(fileItem => fileItem.file);
+        const tmp = fileItems.map((fileItem) => fileItem.file);
         setFiles(tmp);
       },
       onaddfile: async (err, file) => {
         if (!err) await handleUpdate(file);
       },
-      onremovefile: err => {
+      onremovefile: (err) => {
         setContinue(false);
         setPages(false);
         if (!err) setFiles([]);
       },
-      labelIdle: PrintIcon
+      labelIdle: PrintMessage,
     },
-    continueButton: {
+    printButton: {
       color: 'primary',
-      className: 'continue',
-      hidden: !continueButn,
+      className: 'print',
       onClick: () => {
         handleCanPrint(usedPages, copies); // ->
         setPreviewModal(true);
       },
-      text: 'Continue'
-    }
+      text: 'Print',
+    },
+    displayPagesLeft: 30 - props.user.pagesPrinted,
   };
 
   async function handlePrinting(file) {
@@ -178,7 +172,7 @@ export default function Printing(props) {
       raw,
       pageRanges: pageRanges.replace(/\s/g, ''),
       sides,
-      copies
+      copies,
     };
 
     let status = await printPage(data);
@@ -189,7 +183,7 @@ export default function Printing(props) {
         numPages: numPages * copies,
         destination: status.responseData,
         printedDate: new Date(),
-        memberName
+        memberName,
       });
     } else {
       setPrintStatus(failPrintStatus);
@@ -197,7 +191,7 @@ export default function Printing(props) {
         numPages: numPages * copies,
         destination: 'Fail',
         printedDate: new Date(),
-        memberName
+        memberName,
       });
     }
     setStatusModal(true);
@@ -212,17 +206,16 @@ export default function Printing(props) {
     ModalHeader: {
       toggle: () => {
         setPreviewModal(!previewModal);
-      }
+      },
     },
     ModalBody: {
-
       Col: {
-        sm: { size: 8 }
+        sm: { size: 8 },
       },
       Spinner: {
         className: 'loading-spinner',
         animation: 'border',
-        variant: 'primary'
+        variant: 'primary',
       },
       iFrame: {
         hidden: loadPreview,
@@ -232,14 +225,14 @@ export default function Printing(props) {
           }, 300),
         src: files[0] && previewDisplay,
         width: '100%',
-        height: '100%'
+        height: '100%',
       },
       pagesLeft: {
         size: '4',
-        color: 'red'
+        color: 'red',
       },
       legend: {
-        className: 'center-blocks'
+        className: 'center-blocks',
       },
       copyInput: {
         className: 'center-blocks',
@@ -252,11 +245,11 @@ export default function Printing(props) {
         onChange: (e) => {
           setCopies(e.target.value);
           handleCanPrint(usedPages, e.target.value);
-        }
+        },
       },
       sideInput: {
         type: 'radio',
-        name: 'pType'
+        name: 'pType',
       },
       pagesAll: {
         type: 'radio',
@@ -264,13 +257,10 @@ export default function Printing(props) {
         onChange: () => {
           setPages(false);
           setPageRanges('NA');
-          handleCanPrint(
-            new Set(range(1, numPages + 1)),
-            copies
-          );
+          handleCanPrint(new Set(range(1, numPages + 1)), copies);
           setLoadPreview(true);
         },
-        defaultChecked: true
+        defaultChecked: true,
       },
       pagesSelect: {
         type: 'radio',
@@ -280,23 +270,20 @@ export default function Printing(props) {
           setPages(true);
           handleCanPrint(usedPages, copies);
           setLoadPreview(true);
-        }
+        },
       },
       pagesRange: {
         type: 'text',
         disabled: !pages,
         placeholder: '1-5, 7, 9-11',
-        onChange: async e => {
+        onChange: async (e) => {
           setPageRanges(e.target.value);
-          const x = await parseRange(
-            e.target.value, numPages
-          );
+          const x = await parseRange(e.target.value, numPages);
           setUsedPages(x);
           handleCanPrint(x, copies);
           setLoadPreview(true);
-        }
-      }
-
+        },
+      },
     },
     ModalFooter: {
       backButton: {
@@ -308,7 +295,7 @@ export default function Printing(props) {
           let arr = new Set(range(1, numPages + 1));
           setUsedPages(arr);
         },
-        text: 'Back'
+        text: 'Back',
       },
       printButton: {
         color: 'success',
@@ -316,8 +303,8 @@ export default function Printing(props) {
           setConfirmModal(!confirmModal);
         },
         disabled: !canPrint,
-        text: 'Print!'
-      }
+        text: 'Print!',
+      },
     },
     // Additional imports to be unpacked
     loadPreview,
@@ -338,7 +325,7 @@ export default function Printing(props) {
     handleConfirmation: () => {
       handlePrinting(encodedFile);
     },
-    open: confirmModal
+    open: confirmModal,
   };
 
   const statusModalProps = {
@@ -354,12 +341,11 @@ export default function Printing(props) {
       finishPrinting();
       setStatusModal(!statusModal);
     },
-    open: statusModal
+    open: statusModal,
   };
 
   return (
     <div>
-      <Header {...headerProps} />
       <PrintingHealthCheck />
       <FileUpload {...fileUploadProps} />
       <PrintPageModal {...printPageModalProps} />
@@ -368,3 +354,11 @@ export default function Printing(props) {
     </div>
   );
 }
+
+/*
+
+Stuff I deleted
+
+<Header {...headerProps} />
+
+*/

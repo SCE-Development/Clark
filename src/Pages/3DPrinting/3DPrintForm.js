@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './3D-print-form.css';
@@ -9,11 +10,18 @@ import {
   Input,
   Container,
   Row,
-  Col
+  Col,
 } from 'reactstrap';
 import { submit3DPrintRequest } from '../../APIFunctions/3DPrinting';
-import Header from
-  '../../Components/Header/Header.js';
+import mailImage from '../3DPrinting/gmail-icon.png';
+import discordImage from '../3DPrinting/discord-icon.png';
+
+export const copyrightMessage = `Created with ❤️ by the SCE Development 
+Team | © 2021 Software and Computer Engineering Society at SJSU`;
+
+export const mailIcon = <img id="mail-image" src={mailImage} />;
+
+export const discordIcon = <img id="discord-image" src={discordImage} />;
 
 let fill = false;
 export default class PrintForm3D extends React.Component {
@@ -31,7 +39,7 @@ export default class PrintForm3D extends React.Component {
       user: this.props.user,
       isLoggedIn: this.props.authenticated,
       fill: false,
-      error: ''
+      error: '',
     };
   }
 
@@ -113,7 +121,7 @@ export default class PrintForm3D extends React.Component {
         projectType,
         url,
         email,
-        progress: 'Pending'
+        progress: 'Pending',
       };
       const submitStatus = await submit3DPrintRequest(request);
       if (!submitStatus.error) {
@@ -137,51 +145,43 @@ export default class PrintForm3D extends React.Component {
       'Purple',
       'Yellow',
       'White',
-      'Clear'
+      'Transparent',
     ];
-    const headerProps = {
-      title: '3D Printing'
-    };
+    const reasons = ['School-related project', 'Personal project'];
+
     return (
       <>
-        <Header {...headerProps} />
+        <br />
+        <br />
+        <br />
+        <br />
+
         {fill === false ? (
           <Container>
+            <div classname="btns">
+              <Button className="paperPrinting printingBtn" href="/2DPrinting">
+                Paper Printing
+              </Button>
+              <Button
+                className="threeDPrinting printingBtn"
+                href="/3DPrintingForm"
+              >
+                3D Printing
+              </Button>
+            </div>
             <Form>
               <br />
-
               <br />
-
               <FormGroup>
                 <Row>
                   <Col>
-                    <Label for='name'>Full Name</Label>
+                    <p className="colorSelect label">Select a color:</p>
                   </Col>
-                  <Col>
-                    <Label for='colors'>
-                      {' '}
-                      What color would you like your print to be?
-                    </Label>
-                  </Col>
-                </Row>
-
-                <Row>
                   <Col>
                     <Input
-                      type='text'
-                      name='name'
-                      id='name'
-                      placeholder='Enter Full Name'
-                      onChange={this.handleNameChange.bind(this)}
-                      value={this.state.name}
-                    />
-                  </Col>
-
-                  <Col>
-                    <Input
-                      type='select'
-                      name='colors'
-                      id='colors'
+                      type="select"
+                      name="colors"
+                      id="colors"
                       onChange={this.handleColorChange.bind(this)}
                     >
                       {printingColors.map((color, itr) => {
@@ -191,79 +191,92 @@ export default class PrintForm3D extends React.Component {
                   </Col>
                 </Row>
               </FormGroup>
+              <FormGroup>
+                <Row>
+                  <Col>
+                    <p className="use label">Reason for usage:</p>
+                  </Col>
+                  <Col>
+                    <Input
+                      onChange={this.handleProjectTypeChange.bind(this)}
+                      type="select"
+                      name="projectType"
+                      id="projectType"
+                      placeholder="Type of Project"
+                    >
+                      {reasons.map((choice, itr) => {
+                        return <option key={itr}>{choice}</option>;
+                      })}
+                    </Input>
+                  </Col>
+                </Row>
+              </FormGroup>
 
               <FormGroup>
                 <Row>
                   <Col>
-                    <Label for='project'>
-                      Is this for a school project or a personal project? <br />
-                      (If a personal project, please explain what it's for)
-                    </Label>
-                  </Col>
-                  <Col>
-                    <Label for='url'>
-                      Please copy the link to the .stl file you would like
-                      printed. (NOTE: Maximum print dimensions are 25 x 21 x 21
-                      cm){' '}
-                    </Label>{' '}
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col>
-                    <Input
-                      onChange={this.handleProjectTypeChange.bind(this)}
-                      type='text'
-                      name='projectType'
-                      id='projectType'
-                      placeholder='Type of Project'
-                    />
+                    <p className="stlFile label">Upload your .stl file:</p>{' '}
                   </Col>
                   <Col>
                     <Input
                       onChange={this.handleUrlChange.bind(this)}
-                      type='url'
-                      pattern='https://.*'
-                      name='url'
-                      id='url'
-                      placeholder='Link to Project File'
+                      type="file"
+                      pattern="https://.*"
+                      name="url"
+                      id="url"
                     />
                   </Col>
                 </Row>
               </FormGroup>
+
               <FormGroup>
-                <Label for='comments'>
-                  {' '}
-                  Do you have any special comments or requests we should know
-                  about?
-                </Label>
-                <Input
-                  onChange={this.handleCommentChange.bind(this)}
-                  value={this.state.comment}
-                  type='text'
-                  name='comments'
-                  id='comments'
-                  placeholder='Comments'
-                />
+                <Row>
+                  <Col>
+                    <p className="additionalComments label">
+                      Additional comments:
+                    </p>
+                  </Col>
+                  <Col></Col>
+
+                  <Input
+                    onChange={this.handleCommentChange.bind(this)}
+                    value={this.state.comment}
+                    className="comments"
+                    type="text"
+                    name="comments"
+                    id="comments"
+                  />
+                </Row>
               </FormGroup>
 
               <FormGroup>
+                <div className="additionalConcerns label">
+                  <p>
+                    Please reach out to Andrew Emerson (3D and Hardware Chair)
+                    for any additional concerns. <br /> {mailIcon}
+                    andrew.emerson@sjsu.edu {discordIcon} AndrewE#6333
+                  </p>
+                </div>
                 <Button
-                  color='primary'
+                  className="submit"
                   onClick={this.submitApplication.bind(this)}
                 >
                   Submit
                 </Button>
               </FormGroup>
-              <p id='error-message'>Error: {this.state.error}</p>
+              <p id="error-message">Error: {this.state.error}</p>
             </Form>
+
+            <div className="copyrightMessage">
+              <p>{copyrightMessage}</p>
+            </div>
           </Container>
         ) : null}
 
         {fill === true ? (
           <div>
-            <h3 id='submit-label-1'>Your application has been submitted!</h3>
-            <p id='submit-label-2'>You may now return to the homepage!</p>
+            <h3 id="submit-label-1">Your application has been submitted!</h3>
+            <p id="submit-label-2">You may now return to the homepage!</p>
           </div>
         ) : null}
       </>

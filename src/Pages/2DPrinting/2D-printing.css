@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=Mina:wght@400;700&family=Ubuntu:wght@700&display=swap');
+
 .center-blocks {
   display: block;
   text-align: center;
@@ -7,28 +9,92 @@
 .modal-header {
   display: flex;
   text-align: center;
+  font-family: 'Mina', sans-serif;
 }
 
-.continue {
-  display: block;
-  width: 20%;
-  max-width: 100px;
+.container {
+  background-color: #16252e;
+}
+
+.buttons {
   text-align: center;
+  margin: 0 auto;
+  display: inline-block;
+}
+
+.buttons {
+  margin-left: 50%;
+}
+
+.paperBtn {
+  width: 50%;
+}
+
+.paperPrinting {
+  background-color: #16252e;
+  font-family: Ubuntu;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 50px;
+  text-align: center;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
+  margin: auto;
+  border-color: #16252e;
+  border-radius: 20px;
+  margin-bottom: 50px;
+}
+
+.threeDPrinting {
+  border-color: rgba(61, 121, 138, 0.5);
+  background-color: rgba(61, 121, 138, 0.5);
+  font-family: Ubuntu;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 50px;
+  text-align: center;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
   margin: auto;
   border-radius: 20px;
-  background-color: rgb(28, 192, 247);
-  color: black;
+  margin-bottom: 50px;
+}
+
+.print {
+  display: block;
+  width: 30%;
+  max-width: 182px;
+  max-height: 42px;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 32px;
+  text-align: center;
+  margin: auto;
+  border-color: #f3a43b;
+  border-radius: 20px;
+  background-color: #f3a43b;
+  color: #16252e;
   margin-bottom: 50px;
 }
 
 .filepond--root .filepond--drop-label {
-  transform:translate3d(0px, 0px, 0);
+  transform: translate3d(0px, 0px, 0);
   opacity: 1;
 }
 
 .filepond--root .filepond--drop-label label {
-  flex:1 1 auto;
-  line-height: 100px;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 160px;
+  text-align: center;
+
+  flex: 1 1 auto;
   height: 100%;
   transform: translateZ(0px);
   animation: fade-in 1s ease-in-out;
@@ -37,35 +103,60 @@
 }
 
 .filepond--root .filepond--panel-root {
-  background-color: lightgray;
-  border: 2px solid black;
-  border-radius: 20px;
+  background: #b4cbd1;
+  box-shadow: 0px 4px 80px rgba(0, 0, 0, 0.25);
+  border-radius: 30px;
 }
 
 .filepond--root:hover .filepond--panel-root {
   background-color: rgb(134, 215, 241);
-  border: 2px solid blue;
-} 
+}
 
 .filepond--root {
-  display:flex;
+  display: flex;
   position: relative;
   width: 70%;
-  max-width: 700px;
+  max-width: 900px;
+  max-height: 200px;
   margin-left: auto;
   margin-right: auto;
-  height: 500px;
 }
 
 .printInfo {
-  font-size: medium;
   position: relative;
-  max-width: 80%;
+  max-width: 50%;
+  word-wrap: break-word;
+  height: auto;
+  width: auto;
+  margin: auto;
+  color: white;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 40px;
+  text-align: center;
+}
+
+#pagesLeft {
+  color: #f1a644;
+  font-weight: bold;
+}
+
+.copyrightMessage {
+  position: relative;
+  max-width: 90%;
   word-wrap: break-word;
   height: auto;
   width: auto;
   margin: auto;
   text-align: center;
+  color: white;
+  font-family: IBM Plex Mono;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 26px;
 }
 
 @keyframes fade-in {
