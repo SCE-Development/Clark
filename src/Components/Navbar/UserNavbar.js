@@ -43,7 +43,7 @@ export default function UserNavBar(props) {
       ].join('')
     }
   ];
-  const unauthedRoutes = [{ title: 'About', route: '/about' },
+  const unauthedRoutes = [{ title: 'About', route: '/#about' },
     // need to check for the right route to About
     { title: 'Services', route: '/services' },
     // need to check for the right route to Services
@@ -55,7 +55,7 @@ export default function UserNavBar(props) {
 
   return (
     <div className={'user-nav'}>
-      <Navbar light expand='lg'>
+      <Navbar expand='xl'>
         <NavbarBrand href='/'>
           <div>
             <img id='logo-image' src={logo} alt={'sce logo'} />

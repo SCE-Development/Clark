@@ -2,9 +2,9 @@
 .user-nav {
   font-family: "Mina", sans-serif;
   font-size: 18px;
-  background-color: rgb(0, 0, 0);
+  background-color: black;
   top: 0px;
-  position: fixed;
+  position: absolute;
   z-index: 4;
   width: 100%;
 }
@@ -43,8 +43,8 @@
 }
 
 .sce-nav {
-  flex-flow: row wrap;
-  width:100%;
+  flex-flow:row wrap;
+  width:40%;
 }
 
 .icon-images {
@@ -57,7 +57,7 @@
   width:20%;
   line-height: 32px;
   justify-content:space-between;
-  margin-left:35%;
+  margin-left:15%;
   column-gap: 30%;
 }
 
@@ -81,7 +81,7 @@
 	color: white;
   border-radius:10px;
   font-size: 15px;
-  width: 150px;
+  width: 140px;
 }
 
 #signup-btn {
@@ -90,7 +90,7 @@
   color: white;
   border-radius:10px;
   font-size: 15px;
-  width: 150px;
+  width: 140px;
 }
 
 #logo-image {
@@ -153,14 +153,9 @@
   margin-bottom: 5px;
   padding: 1px;
   width: 30px;
-  background:	#00008B;
+  background:#00008B;
 }
 
-.hamburger-button {
-  background-color: #4e6fa16c !important;
-  border-color: #ffffff00 !important;
-  border-radius: 4px !important;
-}
 
 #toggler-left {
   display: inline-flex;
