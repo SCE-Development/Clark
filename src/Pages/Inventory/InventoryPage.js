@@ -6,7 +6,7 @@ import {Alert, Table} from 'reactstrap';
 import {DEFAULT_PICS} from '../../Enums.js';
 import {validateImageURL} from '../../APIFunctions/Image.js';
 import {getAllItems, addItem, editItem, deleteItem} from
-  '../../APIFunctions/InventoryItem';
+'../../APIFunctions/InventoryItem';
 import './InventoryPage.css';
 
 export default class InventoryPage extends Component {
@@ -93,10 +93,10 @@ export default class InventoryPage extends Component {
   // Boolean for disabled prop of Confirm button in AddItemButtonModal
   // Returns false if valid and true if invalid
   checkAllInputs = () =>{
-    return (this.state.name==='' || isNaN(this.state.price) ||
+    return (this.state.name === '' || isNaN(this.state.price) ||
       this.state.price < 0 || this.state.stock < 0 ||
-      this.state.price==='' || this.state.stock==='' ||
-      isNaN(this.state.stock) || this.state.category==='' ||
+      this.state.price === '' || this.state.stock === '' ||
+      isNaN(this.state.stock) || this.state.category === '' ||
       this.state.description.length > 100);
   }
 

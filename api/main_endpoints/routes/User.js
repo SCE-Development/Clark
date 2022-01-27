@@ -11,7 +11,7 @@ const {
   checkIfTokenSent,
   checkIfTokenValid,
   decodeToken
-} = require('../util/token-functions');
+} = require('../../util/token-functions');
 const {
   OK,
   BAD_REQUEST,
@@ -258,6 +258,10 @@ router.post('/connectToDiscord', function(req, res) {
   }
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
+  }
+  if(discordApiKeys.CLIENT_ID === 'NOT_SET'
+  && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
+    return res.sendStatus(OK);
   }
   return res.status(OK)
     .send('https://discord.com/api/oauth2/authorize?client_id=' +

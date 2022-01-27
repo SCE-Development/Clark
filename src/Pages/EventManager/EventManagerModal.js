@@ -17,7 +17,7 @@ import {DEFAULT_PICS} from '../../Enums.js';
 import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event';
 import { validateImageURL } from '../../APIFunctions/Image.js';
 import ConfirmationModal from
-  '../../Components/DecisionModal/ConfirmationModal.js';
+'../../Components/DecisionModal/ConfirmationModal.js';
 
 function EventManagerModal(props) {
   const NOT_FOUND_PNG = DEFAULT_PICS.EVENT;
@@ -32,7 +32,6 @@ function EventManagerModal(props) {
   const [eventCategory, setEventCategory] = useState(props.eventCategory);
   const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG);
   const [clickedSubmit, setClickedSubmit] = useState(false);
-  const [requiredFieldsFilled, setRequiredFieldsFilled] = useState(false);
 
   function toggleConfirmationModal() {
     setConfirmationModal(!confirmationModal);
@@ -150,7 +149,7 @@ function EventManagerModal(props) {
     return false;
   }
 
-  async function handleSubmission() {
+  async function handleSubmission(requiredFieldsFilled) {
     setClickedSubmit(true);
     if (requiredFieldsFilled) {
       const eventFields = {
@@ -177,8 +176,7 @@ function EventManagerModal(props) {
 
   function processRequest() {
     const passed = requiredFieldsFilledIn();
-    setRequiredFieldsFilled(passed);
-    handleSubmission();
+    handleSubmission(passed);
   }
 
   async function handleURLChange(url) {

@@ -23,7 +23,6 @@ class SceHttpServer {
    */
   constructor(pathToEndpoints, port, prefix = '/api/') {
     const testEnv = process.env.NODE_ENV === 'test';
-    this.runningInProduction = process.env.NODE_ENV === 'production';
     this.database = testEnv ? 'sce_core_test' : 'sce_core';
     this.port = port;
     this.pathToEndpoints = pathToEndpoints;
@@ -77,7 +76,7 @@ class SceHttpServer {
    * Initialize a connection to MongoDB.
    */
   connectToMongoDb() {
-    let dbHost = process.env.DATABASE_HOST || 'localhost';
+    let dbHost = process.env.DATABASE_HOST || '127.0.0.1';
     this.mongoose = mongoose;
     this.mongoose
       .connect(`mongodb://${dbHost}:27017/${this.database}`, {

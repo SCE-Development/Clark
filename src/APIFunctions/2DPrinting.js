@@ -7,10 +7,8 @@ import {
 let config = require('../config/config.json');
 let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
   config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
-let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
-  config.LOGGING_API_URL_PROD : config.LOGGING_API_URL;
-let RPC_API_URL = process.env.NODE_ENV === 'production' ?
-  config.RPC_API_URL_PROD : config.RPC_API_URL;
+let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
+  config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
 
 /**
  * Return an array similar to python's range() function
@@ -27,7 +25,7 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  await axios.post(RPC_API_URL + '/Printer/healthCheck')
+  await axios.get(PERIPHERAL_API_URL + '/Printer/healthCheck')
     .then(res => {
       status.reponseData = res.data;
     })
@@ -81,7 +79,7 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data) {
   let status = new ApiResponse();
-  await axios.post(RPC_API_URL + '/Printer/sendPrintRequest', data)
+  await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest', data)
     .then(response => {
       status.responseData = response.data.message;
     })
@@ -99,7 +97,7 @@ export async function printPage(data) {
  */
 export async function logPrintRequest(data) {
   let status = new ApiResponse();
-  await axios.post(LOGGING_API_URL + '/PrintLog/addPrintLog', data)
+  await axios.post(PERIPHERAL_API_URL + '/PrintLog/addPrintLog', data)
     .catch(() => {
       status.error = true;
     });
@@ -112,7 +110,7 @@ export async function logPrintRequest(data) {
  */
 export async function getAllLogs() {
   let status = new ApiResponse();
-  await axios.get(LOGGING_API_URL + '/PrintLog/getPrintLogs')
+  await axios.get(PERIPHERAL_API_URL + '/PrintLog/getPrintLogs')
     .then(response => {
       status.responseData = response.data;
     })
@@ -134,7 +132,7 @@ export async function getAllLogs() {
 export async function getPagesPrinted(email, token, totalPages, copies) {
   let status = new PrintApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/user/getPagesPrintedCount', {
+    .post(GENERAL_API_URL + '/user/getPagesPrintedCount', {
       email,
       token
     })

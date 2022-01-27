@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   db:
     restart: always
@@ -9,11 +9,11 @@ services:
       - '/data/db:/data/db' 
       # - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
-  sce-logging-api:
-    container_name: sce-logging-api
+  sce-peripheral-api:
+    container_name: sce-peripheral-api
     build:
       context: ./api
-      dockerfile: ./logging_api/Dockerfile
+      dockerfile: ./peripheral_api/Dockerfile
     ports:
       - '8081:8081'
     restart: 'on-failure'
@@ -60,7 +60,6 @@ services:
     ports:
       - '3000:3000'
     restart: 'on-failure'
-    command: 'npm run deploy-production-frontend'
     stdin_open: true
     links:
       - db

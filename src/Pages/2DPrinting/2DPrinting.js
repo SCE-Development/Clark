@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import './2D-printing.css';
-// eslint-disable-next-line max-len
-import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
+import ConfirmationModal from
+'../../Components/DecisionModal/ConfirmationModal.js';
+import Header from
+'../../Components/Header/Header.js';
 import { registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
@@ -23,6 +25,8 @@ import {
 } from './2DComponents';
 import { PrintPageModal } from './2DPrintPageModal';
 import PrintingHealthCheck from './2DPrintingHealthCheck';
+import { healthCheck } from '../../APIFunctions/2DPrinting';
+import {Container} from 'reactstrap';
 
 registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
 
@@ -68,6 +72,19 @@ export default function Printing(props) {
   const [printStatus, setPrintStatus] = useState('');
   /* eslint-disable */
   console.log('value is', props.user.pagesPrinted);
+  const [printerHealthy, setPrinterHealthy] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  async function checkPrinterHealth() {
+    setLoading(true);
+    const status = await healthCheck();
+    setPrinterHealthy(status && !status.error);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    checkPrinterHealth();
+  }, []);
 
   async function updateEmbed(totalPages) {
     try {
@@ -162,6 +179,14 @@ export default function Printing(props) {
       text: 'Print',
     },
     displayPagesLeft: 30 - props.user.pagesPrinted,
+  };
+
+  const hidePrint =  () => {
+    return printerHealthy ?
+      <FileUpload {...fileUploadProps} /> :
+      <Container className='healthCheck'>
+        <h1>Reach out to an officer through Discord for help.</h1>
+      </Container>;
   };
 
   async function handlePrinting(file) {
@@ -346,8 +371,8 @@ export default function Printing(props) {
 
   return (
     <div>
-      <PrintingHealthCheck />
-      <FileUpload {...fileUploadProps} />
+      <PrintingHealthCheck {...{loading, printerHealthy}} />
+      {hidePrint({...fileUploadProps})}
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
       <StatusModal {...statusModalProps} />
