@@ -6,7 +6,7 @@ import { expect } from 'chai';
 
 import UserNavbar from '../../src/Components/Navbar/UserNavbar';
 import Adapter from 'enzyme-adapter-react-16';
-import { Navbar, Nav, NavLink, UncontrolledDropdown } from 'reactstrap';
+import { Navbar, Nav, NavLink, UncontrolledDropdown, NavItem } from 'reactstrap';
 import { membershipState } from '../../src/Enums';
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -21,6 +21,7 @@ const nonMemberAppProps = {
   user: { accessLevel: membershipState.NON_MEMBER }
 };
 
+
 function getDropdownDetails(dropdown, index = 0) {
   return dropdown.props.children[index].props.children;
 }
@@ -30,34 +31,16 @@ describe('<UserNavbar />', () => {
     const wrapper = mount(<UserNavbar />);
     expect(wrapper.find(Navbar)).to.have.lengthOf(1);
   });
-  it('Should render two <NavLink /> tags for unauthenticated routes', () => {
+  it('Should render 3 routes by default', () => {
     const wrapper = mount(<UserNavbar />);
-    expect(wrapper.find(NavLink)).to.have.lengthOf(4);
-    expect(wrapper.find(Nav).children()).to.have.lengthOf(1);
+    expect(wrapper.find('.routes')).to.have.lengthOf(6);
   });
   it(
-    'Should render two <NavLink /> components for' +
-    ' the user who isn\'t a member',
-    () => {
-      const wrapper = mount(<UserNavbar {...nonMemberAppProps} />);
-      expect(wrapper.find(NavLink)).to.have.lengthOf(4);
-    }
-  );
-  it(
-    'Should render one <UncontrolledDropdown /> tag for' +
-    ' the unauthenticated user',
+    'Should render two authentication buttons for' +
+	' the user who isn\'t a member',
     () => {
       const wrapper = mount(<UserNavbar />);
-      expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(1);
-    }
-  );
-  it(
-    'The one <UncontrolledDropdown /> tags for' +
-    ' the unauthenticated user should be to join sce ',
-    () => {
-      const wrapper = mount(<UserNavbar />);
-      const dropdowns = wrapper.find(UncontrolledDropdown);
-      expect(getDropdownDetails(dropdowns.get(0))).to.equal('Join Us!');
+      expect(wrapper.find('.authentication')).to.have.length(2);
     }
   );
   it(

@@ -233,7 +233,8 @@ export default function UserNavBar(props) {
               {unauthedRoutes.map((link, index) => {
                 return (
                   <NavItem key={index}>
-                    <NavLink id='navlink-text' href={link.route}>
+                    <NavLink className='routes' id='navlink-text'
+					  href={link.route}>
                       {link.title}
                     </NavLink>
                   </NavItem>
