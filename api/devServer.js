@@ -7,3 +7,4 @@ if (typeof module !== 'undefined' && !module.parent) {
   require('./cloud_api/server');
   require('./logging_api/server');
 }
+

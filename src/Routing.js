@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.css';
@@ -18,8 +17,8 @@ import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import EventList from './Pages/Events/EventList';
 import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js';
-
-import MembershipApplication from './Pages/MembershipApplication/membershipApplication.jsx';
+import MembershipApplication from
+  './Pages/MembershipApplication/membershipApplication.jsx';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Team from './Pages/TheTeam/TheTeam.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
@@ -42,92 +41,90 @@ export default function Routing({ appProps }) {
     appProps.user &&
     appProps.user.accessLevel >= membershipState.OFFICER;
   const signedInRoutes = [
+
     {
       Component: Overview,
       path: '/dashboard',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
-      inAdminNavbar: true,
+      inAdminNavbar: true
     },
     {
       Component: EmailPage,
       path: '/email-list',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
-      inAdminNavbar: true,
+      inAdminNavbar: true
     },
     {
       Component: EventManager,
       path: '/event-manager',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
-      inAdminNavbar: true,
+      inAdminNavbar: true
     },
     {
       Component: SolidsConsole,
       path: '/3DConsole',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
-      inAdminNavbar: true,
+      inAdminNavbar: true
     },
     {
       Component: LedSign,
       path: '/led-sign',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
-      inAdminNavbar: true,
+      inAdminNavbar: true
     },
     {
       Component: PrintingSolids,
       path: '/3DPrintingForm',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: '/login',
+      redirect: '/login'
     },
     {
       Component: Printing,
       path: '/2DPrinting',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: '/login',
+      redirect: '/login'
     },
     {
       Component: Login,
       path: '/login',
       allowedIf: !userIsAuthenticated,
-      redirect: '/',
+      redirect: '/'
     },
     {
       Component: MembershipApplication,
       path: '/register',
       allowedIf: !userIsAuthenticated,
-      redirect: '/',
+      redirect: '/'
     },
     {
       Component: Profile,
       path: '/profile',
       allowedIf: userIsAuthenticated,
-      redirect: '/login',
+      redirect: '/login'
     },
     {
       Component: PrintingAnalytics,
       path: '/printing-analytics',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
-      inAdminNavbar: true,
+      inAdminNavbar: true
     },
-    {
-      Component: UploadPic,
+    { Component: UploadPic,
       path: '/uploadPic',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
-      inAdminNavbar: true,
+      inAdminNavbar: true
     },
-    {
-      Component: InventoryPage,
+    { Component: InventoryPage,
       path: '/inventory',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
-      inAdminNavbar: true,
-    },
+      inAdminNavbar: true}
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -135,8 +132,8 @@ export default function Routing({ appProps }) {
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
     { Component: VerifyEmailPage, path: '/verify' },
-    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
-    { Component: DiscordSJSU, path: '/discordSJSU' },
+    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
+    { Component: DiscordSJSU, path: '/discordSJSU'}
   ];
   return (
     <Router>
@@ -152,9 +149,9 @@ export default function Routing({ appProps }) {
                   allowed: allowedIf,
                   user: appProps.user,
                   redirect,
-                  ...appProps,
+                  ...appProps
                 }}
-                component={(props) => (
+                component={props => (
                   <NavBarWrapper
                     component={Component}
                     enableAdminNavbar={inAdminNavbar}
@@ -171,7 +168,7 @@ export default function Routing({ appProps }) {
               key={index}
               exact
               path={path}
-              render={(props) => (
+              render={props => (
                 <NavBarWrapper component={Component} {...props} {...appProps} />
               )}
             />
