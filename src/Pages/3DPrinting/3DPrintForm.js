@@ -157,8 +157,8 @@ export default class PrintForm3D extends React.Component {
         <br />
 
         {fill === false ? (
-          <Container>
-            <div classname="btns">
+          <Container className = "container-3D">
+            <div className="btns">
               <Button className="paperPrinting printingBtn" href="/2DPrinting">
                 Paper Printing
               </Button>

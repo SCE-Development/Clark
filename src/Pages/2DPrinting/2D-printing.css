@@ -6,27 +6,20 @@
   margin: 0 auto;
 }
 
-.modal-header {
+.container-2D .modal-header {
   display: flex;
   text-align: center;
   font-family: 'Mina', sans-serif;
 }
 
-.container {
+.container-2D {
   background-color: #16252e;
 }
 
-.buttons {
+.container-2D .buttons a{
   text-align: center;
   margin: 0 auto;
   display: inline-block;
-}
-
-.buttons {
-  margin-left: 50%;
-}
-
-.paperBtn {
   width: 50%;
 }
 
@@ -62,7 +55,7 @@
   margin-bottom: 50px;
 }
 
-.print {
+.container-2D .print {
   display: block;
   width: 30%;
   max-width: 182px;
@@ -81,12 +74,12 @@
   margin-bottom: 50px;
 }
 
-.filepond--root .filepond--drop-label {
+.container-2D .filepond--root .filepond--drop-label {
   transform: translate3d(0px, 0px, 0);
   opacity: 1;
 }
 
-.filepond--root .filepond--drop-label label {
+.container-2D .filepond--root .filepond--drop-label label {
   font-family: Mina;
   font-style: normal;
   font-weight: bold;
@@ -102,17 +95,17 @@
   cursor: pointer;
 }
 
-.filepond--root .filepond--panel-root {
+.container-2D .filepond--root .filepond--panel-root {
   background: #b4cbd1;
   box-shadow: 0px 4px 80px rgba(0, 0, 0, 0.25);
   border-radius: 30px;
 }
 
-.filepond--root:hover .filepond--panel-root {
+.container-2D .filepond--root:hover .filepond--panel-root {
   background-color: rgb(134, 215, 241);
 }
 
-.filepond--root {
+.container-2D .filepond--root {
   display: flex;
   position: relative;
   width: 70%;
@@ -122,7 +115,7 @@
   margin-right: auto;
 }
 
-.printInfo {
+.container-2D .printInfo {
   position: relative;
   max-width: 50%;
   word-wrap: break-word;
@@ -138,12 +131,12 @@
   text-align: center;
 }
 
-#pagesLeft {
+.container-2D #pagesLeft {
   color: #f1a644;
   font-weight: bold;
 }
 
-.copyrightMessage {
+.container-2D .copyrightMessage {
   position: relative;
   max-width: 90%;
   word-wrap: break-word;
@@ -168,19 +161,19 @@
   }
 }
 
-.spinner-wrapper {
+.container-2D .spinner-wrapper {
   position: absolute;
   top: 50%;
   right: 50%;
 }
 
-.spinner-border {
+.container-2D .spinner-border {
   color: blue;
   width: 5rem;
   height: 5rem;
   border-width: 0.45em;
 }
 
-.healthCheck {
+.container-2D .healthCheck {
   padding-top: 32px;
 }

@@ -23,8 +23,8 @@ Team | © 2021 Software and Computer Engineering Society at SJSU`;
 export function FileUpload(props) {
   const { filePond, printButton, displayPagesLeft } = props;
   return (
-    <Container>
-      <div classname="buttons">
+    <Container className="container-2D">
+      <div className="buttons">
         <Button className="paperPrinting printingBtn" href="/2DPrinting">
           Paper Printing
         </Button>
