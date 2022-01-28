@@ -43,6 +43,7 @@
     "AccountID": "XXXXXXXXXX",
     "QueueName": "XXXXXXXXXX"
   },
+  "RFID_BCRYPT_SALT" : "NOT_SET",
   "PrintingS3Bucket": "NOT_SET",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
