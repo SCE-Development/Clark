@@ -31,7 +31,7 @@ export async function registerUser(userToRegister) {
     numberOfSemestersToSignUpFor
   } = userToRegister;
   await axios
-    .post(GENERAL_API_URL+'/Auth/register', {
+    .post(GENERAL_API_URL + '/Auth/register', {
       firstName,
       lastName,
       email,
@@ -59,7 +59,7 @@ export async function registerUser(userToRegister) {
 export async function loginUser(email, password) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/Auth/login', { email, password })
+    .post(GENERAL_API_URL + '/Auth/login', { email, password })
     .then(async result => {
       status.token = result.data.token;
       await updateLastLoginDate(email, result.data.token);
@@ -92,7 +92,7 @@ export async function checkIfUserIsSignedIn() {
   }
 
   await axios
-    .post(GENERAL_API_URL+'/Auth/verify', { token })
+    .post(GENERAL_API_URL + '/Auth/verify', { token })
     .then(res => {
       status.responseData = res.data;
       status.token = token;
@@ -114,7 +114,7 @@ export async function checkIfUserIsSignedIn() {
 export async function validateVerificationEmail(email, hashedId) {
   let status = new ApiResponse();
   await axios
-    .post(GENERAL_API_URL+'/Auth/validateVerificationEmail', {
+    .post(GENERAL_API_URL + '/Auth/validateVerificationEmail', {
       email,
       hashedId
     })

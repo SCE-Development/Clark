@@ -5,15 +5,15 @@ import Enzyme, { shallow } from 'enzyme';
 import { expect } from 'chai';
 
 import MembershipApplication from
-  '../../src/Pages/MembershipApplication/membershipApplication';
+'../../src/Pages/MembershipApplication/membershipApplication';
 import Adapter from 'enzyme-adapter-react-16';
 
 import MembershipPlan from
-  '../../src/Pages/MembershipApplication/MembershipPlan';
+'../../src/Pages/MembershipApplication/MembershipPlan';
 import MembershipForm from
-  '../../src/Pages/MembershipApplication/MembershipForm';
+'../../src/Pages/MembershipApplication/MembershipForm';
 import ConfirmationPage from
-  '../../src/Pages/MembershipApplication/ConfirmationPage';
+'../../src/Pages/MembershipApplication/ConfirmationPage';
 import { memberApplicationState } from '../../src/Enums';
 import { CSSTransition } from 'react-transition-group';
 

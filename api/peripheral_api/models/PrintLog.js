@@ -9,7 +9,6 @@ const PrintLogSchema = new Schema(
     },
     chosenPrinter: {
       type: String,
-      required: true
     },
     printedDate: {
       type: Date,

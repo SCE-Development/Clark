@@ -6,6 +6,10 @@ const {
 
 async function loginWithDiscord(code, email) {
   return new Promise((resolve, reject) => {
+    if(discordApiKeys.CLIENT_ID == 'NOT_SET'
+    && discordApiKeys.CLIENT_SECRET == 'NOT_SET') {
+      return resolve(true);
+    }
     axios
       .post('https://discord.com/api/oauth2/token',
         `&client_id=${discordApiKeys.CLIENT_ID}` +

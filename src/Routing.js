@@ -18,7 +18,7 @@ import EventList from './Pages/Events/EventList';
 import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js';
 import MembershipApplication from
-  './Pages/MembershipApplication/membershipApplication.jsx';
+'./Pages/MembershipApplication/membershipApplication.jsx';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Team from './Pages/TheTeam/TheTeam.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
@@ -26,6 +26,9 @@ import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
+import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
+import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
+import InventoryPage from './Pages/Inventory/InventoryPage.js';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -116,14 +119,21 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
       inAdminNavbar: true
-    }
+    },
+    { Component: InventoryPage,
+      path: '/inventory',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/login',
+      inAdminNavbar: true}
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: Team, path: '/team' },
-    { Component: VerifyEmailPage, path: '/verify' }
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
+    { Component: DiscordSJSU, path: '/discordSJSU'}
   ];
   return (
     <Router>

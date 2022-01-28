@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ButtonDropdown,
   Collapse,
@@ -76,7 +76,8 @@ export default function UserNavBar(props) {
       ].join('')
     }
   ];
-  const unauthedRoutes = [{ title: 'Events', route: '/events' }];
+  const unauthedRoutes = [{ title: 'Events', route: '/events' },
+    { title: 'Discord Bot', route: '/discordSJSU' }];
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
