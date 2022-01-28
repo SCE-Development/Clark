@@ -257,7 +257,6 @@ async function updateTokenDb(email) {
         upsert: true
       }
     );
-
     return token;
   } catch (err) {
     // console.log(err);
