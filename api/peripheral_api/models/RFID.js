@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const { default_salt } = require('../../config/config.json').RFID_BCRYPT_SALT;
 const RfidSchema = new Schema(
   {
     name: {
