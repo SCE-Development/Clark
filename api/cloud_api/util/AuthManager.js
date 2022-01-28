@@ -63,7 +63,7 @@ class AuthManager {
       let input = '';
       if (config.googleApiKeys.CLIENT_ID !== 'NOT_SET') {
         console.debug(
-          `Current Client ID: ${yellowColor}` /
+          `Current Client ID: ${yellowColor}` +
           `${config.googleApiKeys.CLIENT_ID}${defaultColor}`
         );
         while ((input.toLocaleLowerCase() !== 'y') &&
@@ -105,7 +105,8 @@ class AuthManager {
       input = '';
       if (config.googleApiKeys.CLIENT_SECRET !== 'NOT_SET') {
         console.debug(
-          `Current Client Secret: ${config.googleApiKeys.CLIENT_SECRET}`
+          `Current Client Secret: ${yellowColor}` +
+          `${config.googleApiKeys.CLIENT_SECRET}${defaultColor}`
         );
         while ((input.toLocaleLowerCase() !== 'y') &&
                (input.toLocaleLowerCase() !== 'n')) {
