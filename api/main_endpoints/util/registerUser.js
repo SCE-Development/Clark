@@ -1,33 +1,6 @@
 const User = require('../models/User');
 const config = require('../../config/config.json');
-
-function testPasswordStrength(password) {
-  const passwordStrength = config.passwordStrength || 'strong';
-  /* eslint-disable */
-  const strongRegex = new RegExp(
-    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
-  )
-  const strongMessage =
-    'Invalid password. Requires 1 uppercase, 1 lowercase, 1 number and 1 special character: !@#$%^&'
-
-  const mediumRegex = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])')
-  const mediumMessage =
-    'Password requires one uppercase character and one number.'
-  /* eslint-enable */
-
-  // test the password against the strong regex & return true if it passes
-  if (passwordStrength === 'strong') {
-    return { success: strongRegex.test(password), message: strongMessage };
-  }
-
-  // allow unrestricted passwords if strength is set to weak
-  if (passwordStrength === 'weak') {
-    return { success: true, message: '' };
-  }
-
-  // test medium password by default
-  return { success: mediumRegex.test(password), message: mediumMessage };
-}
+const validatePassword = require('./password');
 
 function getMemberValidationDate(numberOfSemestersToSignUpFor) {
   const today = new Date();
@@ -107,7 +80,7 @@ async function registerUser(userToAdd){
     );
     newUser.membershipValidUntil = membershipValidUntil;
 
-    const testPassword = testPasswordStrength(userToAdd.password);
+    const testPassword = validatePassword(userToAdd.password);
 
     if (!testPassword.success) {
       result.userSaved = false;
