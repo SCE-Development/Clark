@@ -95,6 +95,7 @@ class SceGoogleApiHandler {
             console.debug(redColor +
               'Error generating token', err + defaultColor
             );
+            console.debug(`${redColor}Please re-run the script${defaultColor}`);
             return;
           }
           this.oAuth2Client.setCredentials(token);
