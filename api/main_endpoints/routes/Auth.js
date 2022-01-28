@@ -240,6 +240,8 @@ router.post('/validateVerificationEmail', async (req, res) => {
   });
 });
 
+const crypto = require('crypto');
+const PasswordReset = require('../models/password-reset')
 async function updateTokenDb(email) {
   const token = crypto.randomBytes(32).toString('hex');
   try {
@@ -255,6 +257,7 @@ async function updateTokenDb(email) {
         upsert: true
       }
     );
+
     return token;
   } catch (err) {
     // console.log(err);

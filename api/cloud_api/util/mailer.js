@@ -21,7 +21,7 @@ async function sendResetEmail(recipient, resetLink) {
     await googleApiHandler.sendEmail(template);
     return true;
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     return false;
   }
 }
