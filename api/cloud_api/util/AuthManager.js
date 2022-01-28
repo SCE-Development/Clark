@@ -63,7 +63,8 @@ class AuthManager {
       let input = '';
       if (config.googleApiKeys.CLIENT_ID !== 'NOT_SET') {
         console.debug(
-          `Current Client ID: ${config.googleApiKeys.CLIENT_ID}`
+          `Current Client ID: ${yellowColor}` /
+          `${config.googleApiKeys.CLIENT_ID}${defaultColor}`
         );
         while ((input.toLocaleLowerCase() !== 'y') &&
                (input.toLocaleLowerCase() !== 'n')) {
