@@ -67,7 +67,7 @@ class AuthManager {
         config.googleApiKeys.CLIENT_ID = clientID;
       } else {
         console.debug(
-          greenColor + `defaulting to ${config.googleApiKeys.CLIENT_ID}`
+          `defaulting to ${yellowColor}${config.googleApiKeys.CLIENT_ID}`
           + defaultColor
         );
       }
@@ -79,7 +79,7 @@ class AuthManager {
         config.googleApiKeys.CLIENT_SECRET = clientSecret;
       } else {
         console.debug(
-          greenColor + `defaulting to ${config.googleApiKeys.CLIENT_SECRET}`
+          `defaulting to ${yellowColor}${config.googleApiKeys.CLIENT_SECRET}`
           + defaultColor
         );
       }
