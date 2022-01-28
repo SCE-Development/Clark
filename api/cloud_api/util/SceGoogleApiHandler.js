@@ -91,10 +91,30 @@ class SceGoogleApiHandler {
       authCode => {
         rl.close();
         this.oAuth2Client.getToken(authCode, (err, token) => {
-          if (err) console.debug(redColor +
-            'Error generating token', err + defaultColor
-          );
+          if (err) {
+            console.debug(redColor +
+              'Error generating token', err + defaultColor
+            );
+            return;
+          }
           this.oAuth2Client.setCredentials(token);
+          // write token.refresh_token to
+          // config.json's googleApiKeys.REFRESH_TOKEN
+          const configPath = __dirname + '/../../config/config.json';
+          const config = JSON.parse(fs.readFileSync(configPath));
+          config.REFRESH_TOKEN = token.refresh_token;
+          fs.writeFile(configPath, JSON.stringify(config), (error) => {
+            if (error) {
+              return console.debug(
+                `A problem occurred trying to write to ${configPath}`, error
+              );
+            }
+            console.debug(greenColor +
+              'Successfully wrote config data to:', configPath + defaultColor
+            );
+          });
+
+
 
           // Store the token to disk for later program executions
           console.debug(`\nGenerating token.js file to ${this.tokenPath}...`);
