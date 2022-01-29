@@ -19,20 +19,21 @@ const device = awsIot.device({
   host: 'ae3c662b19597-ats.iot.us-west-1.amazonaws.com'
 });
 
-let add_RFID = false;
-let new_name = null;
+let addRfid = false;
+let newName = null;
 
 device
-  .on('connect', function () {
+  .on('connect', function() {
+    /* eslint-disable-next-line */
     console.log('Connected to AWS IoT!');
     device.subscribe('MessageForNode');
   });
 
 device
-  .on('message', async function (topic, payload) {
-    if (add_RFID) {
+  .on('message', async function(topic, payload) {
+    if (addRfid) {
       const newRFID = new RFID({
-        name: new_name,
+        name: newName,
         byte: await hashedByte(JSON.parse(payload.toString()).message)
       });
       RFID.create(newRFID, (error) => {
@@ -47,8 +48,8 @@ device
               message: OK
             }));
         }
-        new_name = null;
-        add_RFID = false;
+        newName = null;
+        addRfid = false;
         clearTimeout();
       });
     } else {
@@ -64,11 +65,17 @@ device
           if (result != null) {
             device.publish('MessageForESP32', JSON.stringify({ message: OK }));
           } else {
-            device.publish('MessageForESP32', JSON.stringify({ message: NOT_FOUND }));
+            device.publish(
+              'MessageForESP32',
+              JSON.stringify({ message: NOT_FOUND })
+            );
           }
         })
         .catch(() => {
-          device.publish('MessageForESP32', JSON.stringify({ message: BAD_REQUEST }));
+          device.publish(
+            'MessageForESP32',
+            JSON.stringify({ message: BAD_REQUEST })
+          );
         });
     }
   });
@@ -79,21 +86,21 @@ router.post('/createRFID', (req, res) => {
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (add_RFID) {
+  if (addRfid) {
     return res.sendStatus(BAD_REQUEST);
   }
-  add_RFID = true;
-  new_name = req.body.name;
+  addRfid = true;
+  newName = req.body.name;
   setTimeout(() => {
-    add_RFID = false;
-    new_name = null;
+    addRfid = false;
+    newName = null;
   }, 60000);
   return res.sendStatus(OK);
 });
 
-//-------------------------------------------
+// -------------------------------------------
 // stays same even after adding pub sub since
-// we are not interacting with esp32 
+// we are not interacting with esp32
 router.get('/getRFIDs', (req, res) => {
   RFID.find()
     .then((items) => res.status(OK).send(items))
