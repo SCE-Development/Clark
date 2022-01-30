@@ -179,7 +179,7 @@ export default function UserNavBar(props) {
               {props.authenticated && props.user ? (
                 <div className='profile'>
                   <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle id='navlink-text' nav caret>
+                    <DropdownToggle className='text-white' nav caret>
                       <svg className='profile-image' viewBox='0 0 24 24'>
                         <path
                           fill='white'
@@ -233,7 +233,7 @@ export default function UserNavBar(props) {
               {unauthedRoutes.map((link, index) => {
                 return (
                   <NavItem key={index}>
-                    <NavLink className='routes' id='navlink-text'
+                    <NavLink id='navlink-text'
 					  href={link.route}>
                       {link.title}
                     </NavLink>

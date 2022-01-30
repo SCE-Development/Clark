@@ -6,7 +6,7 @@ import {Alert, Table} from 'reactstrap';
 import {DEFAULT_PICS} from '../../Enums.js';
 import {validateImageURL} from '../../APIFunctions/Image.js';
 import {getAllItems, addItem, editItem, deleteItem} from
-'../../APIFunctions/InventoryItem';
+  '../../APIFunctions/InventoryItem';
 import './InventoryPage.css';
 
 export default class InventoryPage extends Component {

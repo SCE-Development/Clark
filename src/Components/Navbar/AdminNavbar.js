@@ -33,7 +33,7 @@ export default function AdminNavbar(props) {
         <NavbarBrand href='/'>Admin Dashboard
         </NavbarBrand>
         <div id='admin-toggler'>
-          <DarkMode />
+          {/* <DarkMode /> */}
         </div>
       </div>
       <NavbarToggler

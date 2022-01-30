@@ -45,7 +45,7 @@ class Home extends Component {
           <div className='join-sce'>
             <a href='/register'>
               <Button outline color="primary" id='joinsce-btn'
-                style={{width:'110px', border:'3px solid',
+                style={{width:'130px', border:'3px solid',
                   borderRadius:8}}>Join SCE</Button>
             </a>
           </div>

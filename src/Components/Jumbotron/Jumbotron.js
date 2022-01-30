@@ -18,10 +18,10 @@ const aboutJumbotron = props => {
   */
 
   return (
-    <div id="about">
+    <div className="about">
       <Jumbotron>
         <div className='text-center'>
-          <h1 className='display-4'>About SCE</h1>{' '}
+          <h1 className='display-4 '>About SCE</h1>{' '}
         </div>
         <p className='lead'>
           {' '}
