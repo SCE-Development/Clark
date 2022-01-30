@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../InventoryPage.css';
 import './add-item.css';
 import ConfirmationModal from
-'../../../Components/DecisionModal/ConfirmationModal.js';
+  '../../../Components/DecisionModal/ConfirmationModal.js';
 import AddItemForm from './AddItemForm';
 import {Alert} from 'reactstrap';
 const svg = require('../SVG');
