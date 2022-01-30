@@ -222,9 +222,13 @@ export default function UserNavBar(props) {
                     Printing
                   </DropdownToggle>
                   <DropdownMenu right>
-                    {authedRoutes.map((link) => {
+                    {authedRoutes.map((link, index) => {
                       return (
-                        <DropdownItem className='drp-item' href={link.route}>
+                        <DropdownItem
+                          key={index}
+                          className='drp-item'
+                          href={link.route}
+                        >
                           {link.title}
                         </DropdownItem>
                       );
