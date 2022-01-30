@@ -1,9 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import './2D-printing.css';
 import ConfirmationModal from
-'../../Components/DecisionModal/ConfirmationModal.js';
-import Header from
-'../../Components/Header/Header.js';
+  '../../Components/DecisionModal/ConfirmationModal.js';
 import { registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
@@ -71,8 +69,7 @@ export default function Printing(props) {
   const [loadPreview, setLoadPreview] = useState(true);
   const [statusModal, setStatusModal] = useState(false);
   const [printStatus, setPrintStatus] = useState('');
-  /* eslint-disable */
-  console.log('value is', props.user.pagesPrinted);
+
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -373,9 +370,9 @@ export default function Printing(props) {
 
   return (
     <div>
-      <PrintingHealthCheck /> 
+      <PrintingHealthCheck />
       <br />
-      <FileUpload {...fileUploadProps} />
+      {hidePrint()}
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
       <StatusModal {...statusModalProps} />

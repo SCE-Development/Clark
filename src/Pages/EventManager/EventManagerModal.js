@@ -17,7 +17,7 @@ import {DEFAULT_PICS} from '../../Enums.js';
 import { convertTime12to24, convertTime24to12 } from '../../APIFunctions/Event';
 import { validateImageURL } from '../../APIFunctions/Image.js';
 import ConfirmationModal from
-'../../Components/DecisionModal/ConfirmationModal.js';
+  '../../Components/DecisionModal/ConfirmationModal.js';
 
 function EventManagerModal(props) {
   const NOT_FOUND_PNG = DEFAULT_PICS.EVENT;

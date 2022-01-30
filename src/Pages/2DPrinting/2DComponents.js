@@ -19,7 +19,7 @@ at the moment. Please see an officer or try again later`;
 
 export const copyrightMessage = `Created with ❤️ by the SCE Development 
 Team | © 2021 Software and Computer Engineering Society at SJSU`;
-/* eslint-disable */
+
 export function FileUpload(props) {
   const { filePond, printButton, displayPagesLeft } = props;
   return (

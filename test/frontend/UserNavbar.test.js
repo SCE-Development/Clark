@@ -75,7 +75,7 @@ describe('<UserNavbar />', () => {
     () => {
       const wrapper = mount(<UserNavbar {...adminAppProps} />);
       const dropdowns = wrapper.find(UncontrolledDropdown);
-      expect(getDropdownDetails(dropdowns.get(0))).to.equal('Printing');
+      expect(getDropdownDetails(dropdowns.get(0))).to.equal('Services');
       expect(getDropdownDetails(dropdowns.get(1), 1)[0].props.children)
         .to.equal('Profile');
     }

@@ -6,11 +6,11 @@ import { expect } from 'chai';
 import { Input } from 'reactstrap';
 
 import MembershipForm
-from '../../src/Pages/MembershipApplication/MembershipForm';
+  from '../../src/Pages/MembershipApplication/MembershipForm';
 import Adapter from 'enzyme-adapter-react-16';
 import MajorDropdown from '../../src/Pages/MembershipApplication/MajorDropdown';
 import GoogleRecaptcha
-from '../../src/Pages/MembershipApplication/GoogleRecaptcha';
+  from '../../src/Pages/MembershipApplication/GoogleRecaptcha';
 
 Enzyme.configure({ adapter: new Adapter() });
 
