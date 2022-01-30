@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import './home.css';
-import Slideshow from '../../Components/Slideshow/Slideshow.js';
+import HeroFrame from '../../Components/Frame/HeroFrame.js';
 import Footer from '../../Components/Footer/Footer.js';
-import Jumbotron from '../../Components/Jumbotron/Jumbotron.js';
 import Iframe from 'react-iframe';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
@@ -30,9 +29,21 @@ class Home extends Component {
   render() {
     return (
       <>
-        <div className='home'>
-          <Slideshow className='slideshow' />
-          <Jumbotron />
+        <div className='home bg-black text-white'>
+
+          <div className='text-header'>
+            <h1>Software and Computer </h1>
+            <h1>Engineering Society</h1>
+          </div>
+
+          <div className='text-content'>
+            <p>Empowering students through support in academics, projects,</p>
+            <p> and professional development.</p>
+          </div>
+
+          <div className='card text-center mx-auto'>
+            <HeroFrame />
+          </div>
 
           <div className='text-center'>
             <h1 className='display-4'>SCE Events Calendar</h1>{' '}

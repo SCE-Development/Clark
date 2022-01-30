@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&family=Open+Sans&display=swap');
+.card {
+	display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 40px 40px;
+    margin-bottom: 50px;
+
+    width: 65%;
+    height: 60%;
+}
+
+.circles {
+    display: flex;
+    margin-left: -0.5px;
+    width:100%;
+    height:auto
+}
+
+.red{
+    border: 3px solid #BF0000;
+    border-radius: 50%;
+    width: 20px;
+}
+
+.orange{
+    border: 3px solid #FF9C41;;
+    border-radius: 24.95px;
+    margin-left: 15px;
+    width: 20px;
+}
+
+.green{
+    border: 3px solid #308214;
+    border-radius: 24.95px;
+    margin-left: 15px;
+    height: 20px;
+    width: 20px;
+}
+
+.image-header {
+    align-items: flex-start;
+	display:flex;
+    margin-left: 60px;
+    margin-top: 20px;
+    min-width: 365px;
+}
+
+.hero-logo {
+    margin-top: -10px;
+    margin-left: -60px;
+    width: 13%;
+}
+
+.name {
+	font-family:'Open Sans', sans-serif;
+	font-weight: light;
+}
+
+@media screen and (max-width:800px) {
+	.name {
+		display: none !important
+	}
+}
+
+.more {
+	font-family:'Open Sans', sans-serif;
+    font-style: bold;
+    font-weight: 800;
+    font-size: 250%;
+    position:absolute;
+	top:75px;
+	right:10%;
+}
+.hero-image {
+    margin-top: 20px;
+    object-fit: cover;
+}

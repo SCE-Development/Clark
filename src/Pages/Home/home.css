@@ -1,3 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
+.home {
+	background-color: black;
+}
+
+.text-header {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    line-height: 25px;
+    padding: 200px 0 0 0; 
+	text-align:center;
+
+}
+.text-content {
+    font-family: 'Mina', sans-serif;
+    font-style: normal;
+    font-weight:lighter;
+    font-size: 15px;
+    line-height: 10px;
+    padding: 15px 0 0 0;
+	text-align:center;
+}
+
+.card {
+  padding-left: 300px;
+	
+}
 .slideshow {
   max-width: auto;
   position: relative;
