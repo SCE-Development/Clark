@@ -5,9 +5,9 @@ const {
   checkIfTokenSent,
   checkIfTokenValid,
 } = require('../../util/token-functions');
-const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
+const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN } =
   require('../../util/constants').STATUS_CODES;
-const { hashedByte, getCards } = require('../util/RFID-helpers');
+const { onMessage } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
 
 const device = awsIot.device({
@@ -22,58 +22,15 @@ let addRfid = false;
 let newName = null;
 
 device
-  .on('connect', function() {
+  .on('connect', function () {
     /* eslint-disable-next-line */
     console.log('Connected to AWS IoT!');
     device.subscribe('MessageForNode');
   });
 
 device
-  .on('message', async function(topic, payload) {
-    if (addRfid) {
-      const newRFID = new RFID({
-        name: newName,
-        byte: await hashedByte(JSON.parse(payload.toString()).message)
-      });
-      RFID.create(newRFID, (error) => {
-        if (error) {
-          device.publish('MessageForESP32',
-            JSON.stringify({
-              message: BAD_REQUEST
-            }));
-        } else {
-          device.publish('MessageForESP32',
-            JSON.stringify({
-              message: OK
-            }));
-        }
-        newName = null;
-        addRfid = false;
-        clearTimeout();
-      });
-    } else {
-      const {
-        message
-      } = JSON.parse(payload.toString());
-      const hash = await hashedByte(message);
-      let cards = [];
-      cards.push(... await getCards());
-      let found = false;
-      for (let card of cards) {
-        if (card.byte === hash) {
-          found = true;
-          device.publish('MessageForESP32',
-            JSON.stringify({
-              message: OK
-            }));
-        }
-      }
-      if(!found)
-        device.publish('MessageForESP32',
-          JSON.stringify({
-            message: NOT_FOUND
-          }));
-    }
+  .on('message', async function (topic, payload) {
+    onMessage(addRfid, newName, payload);
   });
 
 router.post('/createRFID', (req, res) => {
@@ -124,4 +81,4 @@ router.delete('/deleteRFID', (req, res) => {
     });
 });
 
-module.exports = router;
+module.exports = { router, device };
