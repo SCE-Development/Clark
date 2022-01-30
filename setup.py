@@ -13,18 +13,15 @@ def write_to_file(file_name):
 def add_alias_unix():
     HOME_PATH = os.environ["HOME"]
     BASHRC_PATH = f'{HOME_PATH}/.bashrc'
-    if platform.system() == "Darwin":
-        ZSHRC_PATH = f"{HOME_PATH}/.zshrc"
-        if os.path.isfile(BASHRC_PATH):
-            write_to_file(BASHRC_PATH)
-        if os.path.isfile(ZSHRC_PATH):
-            write_to_file(ZSHRC_PATH)
-    elif platform.system() == "Linux":
-        BASH_PROFILE_PATH = f"{HOME_PATH}/.bash_profile"
-        if os.path.isfile(BASHRC_PATH):
-            write_to_file(BASHRC_PATH)
-        elif os.path.isfile(BASH_PROFILE_PATH):
-            write_to_file(BASH_PROFILE_PATH)
+    ZSHRC_PATH = f"{HOME_PATH}/.zshrc"
+    BASH_PROFILE_PATH = f"{HOME_PATH}/.bash_profile"
+    user_os = platform.system()
+    if os.path.isfile(BASHRC_PATH):
+        write_to_file(BASHRC_PATH)
+    if user_os == "Darwin" and os.path.isfile(ZSHRC_PATH):
+        write_to_file(ZSHRC_PATH)
+    elif user_os == "Linux" and os.path.isfile(BASH_PROFILE_PATH):
+        write_to_file(BASH_PROFILE_PATH)
 
 def add_alias_windows():
     subprocess.check_call("setx ESLINT_NO_DEV_ERRORS true",
