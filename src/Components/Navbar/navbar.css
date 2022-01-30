@@ -57,12 +57,13 @@
   width:20%;
   line-height: 32px;
   justify-content:space-between;
-  margin-left:15%;
+  margin-left:20%;
   column-gap: 30%;
 }
 
 #navlink-text {
   color: white;
+
 }
 
 .authentication {
@@ -108,7 +109,7 @@
 .profile{
   position:absolute;
   top:10px;
-  right:15px
+  right:15px;
 }
 
 .profile-image {
