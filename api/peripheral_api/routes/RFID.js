@@ -9,7 +9,6 @@ const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 const { hashedByte, getCards } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
-const { createReadStream } = require('fs');
 
 const device = awsIot.device({
   keyPath: '../api/config/AWS-IOT/private.pem.key',
