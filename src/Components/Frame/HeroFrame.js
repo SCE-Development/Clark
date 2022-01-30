@@ -23,7 +23,7 @@ function HeroFrame() {
         <div className="green"></div>
       </CardBody>
 	    <div className='image-header'>
-        <img className="hero-logo" src='images/favicon.ico' alt="hero-logo" />
+        <img className="hero-logo" src='favicon.ico' alt="hero-logo" />
         <div>
           {icons.map((icon, index) => {
             return (

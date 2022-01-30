@@ -37,6 +37,7 @@
   z-index: 4;
 }
 
+
 .nav-admin-link {
   color: white !important;
   fill: white;
@@ -44,7 +45,6 @@
 
 .sce-nav {
   flex-flow:row wrap;
-  width:40%;
 }
 
 .icon-images {
@@ -57,14 +57,14 @@
   width:20%;
   line-height: 32px;
   justify-content:space-between;
-  justify-content: center;
   column-gap: 60%;
+  justify-content: center;
 }
 
 #navlink-text {
   color: white;
-
 }
+
 
 .authentication {
   column-gap: 30px;
