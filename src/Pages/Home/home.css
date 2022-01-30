@@ -5,9 +5,8 @@
 
 .text-header {
     font-family: 'Montserrat', sans-serif;
-    font-size: 17px;
     line-height: 25px;
-    padding: 200px 0 0 0; 
+    padding: 200px 0 20px 0; 
 	text-align:center;
 
 }
@@ -15,24 +14,27 @@
     font-family: 'Mina', sans-serif;
     font-style: normal;
     font-weight:lighter;
-    font-size: 15px;
+    font-size: 20px;
     line-height: 10px;
     padding: 15px 0 0 0;
 	text-align:center;
 }
 
+.join-sce{
+	margin-top: 40px;
+	width:100%;
+	text-align: center;
+	font-family: "Mina";
+	font-size: large;
+}
+
+#joinsce-btn {
+	height: 50px
+}
 .card {
-  padding-left: 300px;
-	
+  padding-left: 300px;	
 }
-.slideshow {
-  max-width: auto;
-  position: relative;
-  margin: auto;
-  height: auto;
-  overflow: hidden;
-  object-fit: cover;
-}
+
 
 .outer-div
 {

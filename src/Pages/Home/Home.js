@@ -3,6 +3,7 @@ import './home.css';
 import HeroFrame from '../../Components/Frame/HeroFrame.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Iframe from 'react-iframe';
+import { View, Button } from 'reactstrap';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -41,6 +42,13 @@ class Home extends Component {
             <p> and professional development.</p>
           </div>
 
+          <div className='join-sce'>
+            <a href='/register'>
+              <Button outline color="primary" id='joinsce-btn'
+                style={{width:'110px', border:'3px solid',
+                  borderRadius:8}}>Join SCE</Button>
+            </a>
+          </div>
           <div className='card text-center mx-auto'>
             <HeroFrame />
           </div>
