@@ -57,6 +57,7 @@ export default function Printing(props) {
   const [previewModal, setPreviewModal] = useState(false);
   const [dataURI, setDataURI] = useState('');
   const [encodedFile, setEncodedFile] = useState();
+  const [continueButn, setContinue] = useState(false);
   const [copies, setCopies] = useState(1);
   const [sides, setSides] = useState('one-sided');
   const [pageRanges, setPageRanges] = useState('NA');
@@ -172,6 +173,7 @@ export default function Printing(props) {
     printButton: {
       color: 'primary',
       className: 'print',
+      hidden: !continueButn,
       onClick: () => {
         handleCanPrint(usedPages, copies); // ->
         setPreviewModal(true);
@@ -371,8 +373,9 @@ export default function Printing(props) {
 
   return (
     <div>
-      <PrintingHealthCheck {...{loading, printerHealthy}} />
-      {hidePrint({...fileUploadProps})}
+      <PrintingHealthCheck /> 
+      <br />
+      <FileUpload {...fileUploadProps} />
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
       <StatusModal {...statusModalProps} />
@@ -380,10 +383,4 @@ export default function Printing(props) {
   );
 }
 
-/*
 
-Stuff I deleted
-
-<Header {...headerProps} />
-
-*/
