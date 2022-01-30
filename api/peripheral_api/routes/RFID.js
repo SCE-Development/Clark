@@ -1,4 +1,3 @@
-const { hashedByte } = require('../util/RFID-helpers');
 const express = require('express');
 const router = express.Router();
 const RFID = require('../models/RFID');
@@ -8,8 +7,9 @@ const {
 } = require('../../util/token-functions');
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
-
+const { hashedByte, getCards } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
+const { createReadStream } = require('fs');
 
 const device = awsIot.device({
   keyPath: '../api/config/AWS-IOT/private.pem.key',
@@ -57,26 +57,23 @@ device
         message
       } = JSON.parse(payload.toString());
       const hash = await hashedByte(message);
-      RFID.findOne(
-        {
-          byte: hash
-        })
-        .then((result) => {
-          if (result != null) {
-            device.publish('MessageForESP32', JSON.stringify({ message: OK }));
-          } else {
-            device.publish(
-              'MessageForESP32',
-              JSON.stringify({ message: NOT_FOUND })
-            );
-          }
-        })
-        .catch(() => {
-          device.publish(
-            'MessageForESP32',
-            JSON.stringify({ message: BAD_REQUEST })
-          );
-        });
+      let cards = [];
+      cards.push(... await getCards());
+      let found = false;
+      for (let card of cards) {
+        if (card.byte === hash) {
+          found = true;
+          device.publish('MessageForESP32',
+            JSON.stringify({
+              message: OK
+            }));
+        }
+      }
+      if(!found)
+        device.publish('MessageForESP32',
+          JSON.stringify({
+            message: NOT_FOUND
+          }));
     }
   });
 
