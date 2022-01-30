@@ -6,7 +6,8 @@ import { expect } from 'chai';
 
 import UserNavbar from '../../src/Components/Navbar/UserNavbar';
 import Adapter from 'enzyme-adapter-react-16';
-import { Navbar, Nav, NavLink, UncontrolledDropdown, NavItem } from 'reactstrap';
+import { Navbar, Nav, NavLink,
+  UncontrolledDropdown, NavItem } from 'reactstrap';
 import { membershipState } from '../../src/Enums';
 
 Enzyme.configure({ adapter: new Adapter() });
