@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Mina&display=swap');
 .user-nav {
   font-family: "Mina", sans-serif;
-  font-size: 18px;
+  font-size: 25px;
   background-color: black;
   top: 0px;
   position: absolute;
@@ -47,17 +47,12 @@
   flex-flow:row wrap;
 }
 
-.icon-images {
-  width: 20px;
-  height: 20px;
-}
-
 .navlink-items {
   display: flex;
-  width:20%;
+  width:50%;
   line-height: 32px;
   justify-content:space-between;
-  column-gap: 60%;
+  column-gap: 80%;
   justify-content: center;
 }
 
@@ -77,11 +72,11 @@
 }
 
 #signin-btn {
-	background-color: transparent;
-	border: 1px solid #ffffff;
-	color: white;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  color: white;
   border-radius:10px;
-  font-size: 15px;
+  font-size: 20px;
   width: 140px;
 }
 
@@ -90,7 +85,7 @@
   border: none;
   color: white;
   border-radius:10px;
-  font-size: 15px;
+  font-size: 20px;
   width: 140px;
 }
 

@@ -8,15 +8,17 @@
     line-height: 25px;
     padding: 200px 0 20px 0; 
 	text-align:center;
-
+}
+.text-header>h1{
+	font-size: 50px
 }
 .text-content {
     font-family: 'Mina', sans-serif;
     font-style: normal;
     font-weight:lighter;
-    font-size: 20px;
-    line-height: 10px;
-    padding: 15px 0 0 0;
+    font-size: 25px;
+    line-height: 20px;
+    padding: 30px 0 0 0;
 	text-align:center;
 }
 
@@ -29,7 +31,7 @@
 }
 
 #joinsce-btn {
-	height: 50px
+	height: 70px
 }
 .card {
   padding-left: 300px;	

@@ -15,7 +15,6 @@ import {
 } from 'reactstrap';
 import DarkMode from './DarkMode';
 import { membershipState } from '../../Enums';
-import logo from '../Navbar/sce_logo.png';
 
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
@@ -38,7 +37,8 @@ export default function UserNavBar(props) {
       <Navbar expand='xl'>
         <NavbarBrand href='/'>
           <div>
-            <img id='logo-image' src={logo} alt={'sce logo'} />
+            <img id='logo-image' src='favicon.ico'
+              alt={'sce logo'} style={{width:'70px'}}/>
           </div>
         </NavbarBrand>
         <NavbarToggler tag='h1'>

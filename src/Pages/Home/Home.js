@@ -45,8 +45,8 @@ class Home extends Component {
           <div className='join-sce'>
             <a href='/register'>
               <Button outline color="primary" id='joinsce-btn'
-                style={{width:'130px', border:'3px solid',
-                  borderRadius:8}}>Join SCE</Button>
+                style={{width:'170px', border:'3px solid',
+                  borderRadius:8, fontSize:'25px'}}>Join SCE</Button>
             </a>
           </div>
           <div className='card text-center mx-auto'>
