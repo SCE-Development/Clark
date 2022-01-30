@@ -55,7 +55,7 @@ export default function Editor(props) {
 
     // Map through users and dynamically update frontend
     let newUsers = [];
-    for(let i=0; i<users.length; i++){
+    for(let i = 0; i < users.length; i++){
       if(users[i]._id === editedUser._id){
         newUsers.push(editedUser);
       }else{

@@ -3,7 +3,7 @@ const router = express.Router();
 const Event = require('../models/Event');
 const {
   checkIfTokenSent,
-  checkIfTokenValid
+  checkIfTokenValid,
 } = require('../../util/token-functions');
 const {
   OK,
@@ -12,22 +12,39 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const addErrorLog = require ('../util/logging-helpers');
+const addErrorLog = require('../util/logging-helpers');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
-router.get('/getEvents', (req, res) => {
-  Event.find()
+function getEvents(res, upcomingEvents) {
+  let query = {};
+  if(upcomingEvents) {
+    const today = new Date(Date.now());
+    today.setHours(0, 0, 0, 0);
+    query = {
+      eventDate: { $gte: today.toISOString() }
+    };
+  }
+  Event.find(query)
     .sort({ eventDate: -1, startTime: -1 }) // Sort By date in descending order
-    .then(items => res.status(OK).send(items))
-    .catch(error => {
+    .then((items) => res.status(OK).send(items))
+    .catch((error) => {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: 'Event/getEvents',
-        errorDescription: error
+        apiEndpoint:
+          (upcomingEvents) ? 'Event/getUpcomingEvents' : 'Event/getEvents',
+        errorDescription: error,
       };
       addErrorLog(info);
       res.status(BAD_REQUEST).send({ error, message: 'Getting event failed' });
     });
+}
+
+router.get('/getEvents', (req, res) => {
+  getEvents(res, false);
+});
+
+router.get('/getUpcomingEvents', (req, res) => {
+  getEvents(res, true);
 });
 
 router.post('/createEvent', (req, res) => {

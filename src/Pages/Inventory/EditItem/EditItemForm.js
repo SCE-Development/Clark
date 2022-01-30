@@ -26,7 +26,7 @@ export default function EditItemForm(props) {
           </FormText>
         </Label>
         <Input
-          invalid={isNaN(props.price) || props.price<0}
+          invalid={isNaN(props.price) || props.price < 0}
           placeholder=""
           value={props.price}
           onChange={(e) => props.updateItemPrice(e.target.value)}
@@ -43,7 +43,7 @@ export default function EditItemForm(props) {
           </FormText>
         </Label>
         <Input
-          invalid={isNaN(props.stock) || props.stock<0}
+          invalid={isNaN(props.stock) || props.stock < 0}
           placeholder=""
           value={props.stock}
           onChange={(e) => props.updateItemStock(e.target.value)}
@@ -88,7 +88,7 @@ export default function EditItemForm(props) {
           <div style={{color: props.description.length > 100 ?
             '#dc3545' : '#6c757d'}}
           >
-            {props.description.length+'/100'}
+            {props.description.length + '/100'}
           </div>
         </FormText>
         <FormFeedback invalid="true"/>
