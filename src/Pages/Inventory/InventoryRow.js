@@ -25,7 +25,7 @@ export default class InventoryRow extends Component {
         </td>
         <td className="row-price">
           <div className="table-contents">
-            {'$'+this.props.item.price.toFixed(2)}
+            {'$' + this.props.item.price.toFixed(2)}
           </div>
         </td>
         <td className="row-quantity">

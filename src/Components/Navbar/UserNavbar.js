@@ -49,6 +49,8 @@ export default function UserNavBar(props) {
     // need to check for the right route to Services
     { title: 'Events', route: '/events' }];
 
+  const authedRoutes = [{title: '2D Printing', route: '/2DPrinting'},
+    {title: '3D Printing', route: '/3DPrintingForm'}];
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
@@ -76,12 +78,17 @@ export default function UserNavBar(props) {
                       Printing
                   </DropdownItem>
                   <DropdownMenu className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/2DPrinting'>
-                        2D Printing
-                    </DropdownItem>
-                    <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                        3D Printing
-                    </DropdownItem>
+                    {authedRoutes.map((link, index) => {
+                      return (
+                        <DropdownItem
+                          key={index}
+                          className='drp-item'
+                          href={link.route}
+                        >
+                          {link.title}
+                        </DropdownItem>
+                      );
+                    })}
                   </DropdownMenu>
                 </DropdownItem>
               )}
@@ -165,12 +172,17 @@ export default function UserNavBar(props) {
                       Printing
                     </DropdownToggle>
                     <DropdownMenu right>
-                      <DropdownItem className='drp-item' href='/2DPrinting'>
-                        2D Printing
-                      </DropdownItem>
-                      <DropdownItem className='drp-item' href='/3DPrintingForm'>
-                        3D Printing
-                      </DropdownItem>
+                      {authedRoutes.map((link, index) => {
+                        return (
+                          <DropdownItem
+                            key={index}
+                            className='drp-item'
+                            href={link.route}
+                          >
+                            {link.title}
+                          </DropdownItem>
+                        );
+                      })}
                     </DropdownMenu>
                   </UncontrolledDropdown>
                 )}

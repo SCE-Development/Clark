@@ -4,7 +4,7 @@
   "description": "The SCE Website",
   "scripts": {
     "api-test": "mocha",
-    "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js",
+    "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js --exit",
     "start": "react-scripts start",
     "server": "npm start --prefix api",
     "lint": "./node_modules/.bin/eslint ./",
@@ -12,12 +12,6 @@
     "build": "react-scripts build",
     "create-user": "npm run create-user --prefix api",
     "generate-token": "npm run generate-token --prefix api",
-    "build-production": "docker-compose build",
-    "start-production": "docker-compose up -d",
-    "stop-production": "docker-compose stop",
-    "start-nginx": "nginx -c ~/Core-v4/nginx.conf",
-    "stop-nginx": "nginx -s stop",
-    "reload-nginx": "nginx -s reload",
     "deploy-production-frontend": "serve -s build -l 3000"
   },
   "keywords": [

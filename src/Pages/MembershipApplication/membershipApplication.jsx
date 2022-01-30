@@ -18,7 +18,7 @@ export default function MembershipApplication() {
   const membershipArray = [
     {
       isShown:
-        membershipState=== memberApplicationState.SELECT_MEMBERSHIP_PLAN,
+        membershipState === memberApplicationState.SELECT_MEMBERSHIP_PLAN,
       Component: <MembershipPlan {...appProps} />
     },
     {

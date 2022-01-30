@@ -10,7 +10,6 @@ const queueKeys = require('../../config/config.json').Queue;
 const AWS = require('aws-sdk');
 let creds = new
 AWS.Credentials(s3BucketKeys.AWSACCESSKEYID, s3BucketKeys.AWSSECRETKEY);
-
 AWS.config.update({
   region: 'us-west-1',
   endpoint: 'https://s3.amazonaws.com',
@@ -23,7 +22,10 @@ router.get('/healthCheck', (req, res) => {
 
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
-
+  if (s3BucketKeys.AWSACCESSKEYID === 'NOT_SET'
+  && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
+    return res.sendStatus(OK);
+  }
   const { raw } = req.body;
   const { copies } = req.body;
   const fileName = Math.random();
