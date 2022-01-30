@@ -1,16 +1,16 @@
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
-const { googleApiKeys } = require('../../config/config.json');
+// const { googleApiKeys } = require('../../config/config.json');
 const nodemailer = require('nodemailer');
 const { consoleColors } = require('../../util/constants');
 const { reject } = require('bluebird');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
-const {
-  CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS,
-  USER, REFRESH_TOKEN
-} = googleApiKeys;
+// const {
+//   REDIRECT_URIS,
+//   USER, REFRESH_TOKEN
+// } = googleApiKeys;
 
 const {
   redColor,
@@ -33,16 +33,26 @@ class SceGoogleApiHandler {
   constructor(scopes, tokenPath) {
     this.scopes = scopes;
     this.tokenPath = tokenPath;
+
+    const apiConfigs
+      = JSON.parse(fs.readFileSync(__dirname + '/../../config/config.json'));
+
+    this.CLIENT_ID = apiConfigs.googleApiKeys.CLIENT_ID;
+    this.CLIENT_SECRET = apiConfigs.googleApiKeys.CLIENT_SECRET;
+    this.REDIRECT_URIS = apiConfigs.googleApiKeys.REDIRECT_URIS;
+    this.USER = apiConfigs.googleApiKeys.USER;
+    this.REFRESH_TOKEN = apiConfigs.googleApiKeys.REFRESH_TOKEN;
+
     this.oAuth2Client = new google.auth.OAuth2(
-      CLIENT_ID,
-      CLIENT_SECRET,
-      REDIRECT_URIS[0]
+      this.CLIENT_ID,
+      this.CLIENT_ID,
+      this.REDIRECT_URIS[0]
     );
     this.oAuth2Client.setCredentials({
       // eslint-disable-next-line
-      refresh_token: REFRESH_TOKEN
+      refresh_token: this.REFRESH_TOKEN
     });
-    if(CLIENT_ID != 'NOT_SET' && CLIENT_SECRET != 'NOT_SET') {
+    if(this.CLIENT_ID != 'NOT_SET' && this.CLIENT_SECRET != 'NOT_SET') {
       this.hasValidAPIKeys = true;
     }
   }
@@ -140,7 +150,7 @@ class SceGoogleApiHandler {
   refreshToken() {
     this.oAuth2Client.setCredentials({
       // eslint-disable-next-line
-      refresh_token: REFRESH_TOKEN
+      refresh_token: this.REFRESH_TOKEN
     });
 
     this.oAuth2Client.getAccessToken().then(token => {
@@ -338,10 +348,10 @@ class SceGoogleApiHandler {
         service: 'gmail',
         auth: {
           type: 'OAuth2',
-          user: USER,
-          clientId: CLIENT_ID,
-          clientSecret: CLIENT_SECRET,
-          refreshToken: REFRESH_TOKEN,
+          user: this.USER,
+          clientId: this.CLIENT_ID,
+          clientSecret: this.CLIENT_SECRET,
+          refreshToken: this.REFRESH_TOKEN,
         },
       });
 

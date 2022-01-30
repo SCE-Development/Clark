@@ -60,6 +60,11 @@ class AuthManager {
     if (configFileData) {
       let config = JSON.parse(configFileData);
 
+      console.debug(
+        `Current client secret: ${yellowColor}` +
+        `${config.googleApiKeys.CLIENT_ID}` +
+        `${defaultColor}`
+      );
       const clientID = await this.inputPrompt(
         'Please enter the Client ID (press enter to skip): '
       );
@@ -72,6 +77,11 @@ class AuthManager {
         );
       }
 
+      console.debug(
+        `Current client secret: ${yellowColor}` +
+        `${config.googleApiKeys.CLIENT_SECRET}` +
+        `${defaultColor}`
+      );
       const clientSecret = await this.inputPrompt(
         'Please enter the Client Secret (press enter to skip): '
       );
