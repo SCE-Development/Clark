@@ -7,7 +7,7 @@ const {
 } = require('../../util/token-functions');
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN } =
   require('../../util/constants').STATUS_CODES;
-const { onMessage } = require('../util/RFID-helpers');
+const { validate, createRfid } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
 
 const device = awsIot.device({
@@ -19,34 +19,42 @@ const device = awsIot.device({
 });
 
 let addRfid = false;
-let newName = null;
+let name = null;
 
 device
-  .on('connect', function () {
+  .on('connect', function() {
     /* eslint-disable-next-line */
     console.log('Connected to AWS IoT!');
     device.subscribe('MessageForNode');
   });
 
 device
-  .on('message', async function (topic, payload) {
-    onMessage(addRfid, newName, payload);
+  .on('message', async function(topic, payload) {
+    if (addRfid) {
+      const creatorResponse = await createRfid(name, payload);
+      device.publish('MessageForESP32', JSON.stringify({
+        message: creatorResponse
+      }));
+      name = null;
+      addRfid = false;
+      clearTimeout();
+    } else {
+      const validateResponse = await validate(payload);
+      device.publish('MessageForESP32', JSON.stringify({
+        message: validateResponse
+      }));
+    }
   });
 
 router.post('/createRFID', (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
   if (addRfid) {
     return res.sendStatus(BAD_REQUEST);
   }
   addRfid = true;
-  newName = req.body.name;
+  name = req.body.name;
   setTimeout(() => {
     addRfid = false;
-    newName = null;
+    name = null;
   }, 60000);
   return res.sendStatus(OK);
 });
@@ -55,6 +63,11 @@ router.post('/createRFID', (req, res) => {
 // stays same even after adding pub sub since
 // we are not interacting with esp32
 router.get('/getRFIDs', (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   RFID.find()
     .then((items) => res.status(OK).send(items))
     .catch((error) => {
@@ -81,4 +94,4 @@ router.delete('/deleteRFID', (req, res) => {
     });
 });
 
-module.exports = { router, device };
+module.exports = router;
