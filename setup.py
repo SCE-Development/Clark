@@ -2,13 +2,21 @@ import subprocess
 import platform
 import os
 
+def alias_already_exists(file_name):
+  with open(file_name, 'r') as f:
+      for line in f.readlines():
+        if "export ESLINT_NO_DEV_ERRORS=true" in line:
+          return True
+  return False
+
 def write_to_file(file_name):
-    with open(file_name, 'a') as file:
-        file.write('\n')
-        file.write("export ESLINT_NO_DEV_ERRORS=true")
-        file.write('\n')
-    print(f"\n{file_name} written! " +
-        "Open a new terminal after completing setup for changes to be in effect.")
+    if not alias_already_exists(file_name):
+        with open(file_name, 'a') as file:
+            file.write('\n')
+            file.write("export ESLINT_NO_DEV_ERRORS=true")
+            file.write('\n')
+        print(f"\n{file_name} written! " +
+            "Open a new terminal after completing setup for changes to be in effect.")
 
 def add_alias_unix():
     HOME_PATH = os.environ["HOME"]
