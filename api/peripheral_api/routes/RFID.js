@@ -75,7 +75,7 @@ router.get('/getRFIDs', (req, res) => {
     });
 });
 
-router.delete('/deleteRFID', (req, res) => {
+router.post('/deleteRFID', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
