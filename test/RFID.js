@@ -51,14 +51,16 @@ describe('RFID', () => {
   describe('/GET getRFIDs', () => {
     it('Should return 403 when supplied with invalid token',
       async () => {
-        const result = await test.sendGetRequestWithToken(token, '/getRFIDs', {token : INVALID_TOKEN});
+        const result = await test.sendGetRequestWithToken(INVALID_TOKEN,
+          '/getRFIDs', {});
         expect(result).to.have.status(UNAUTHORIZED);
       }
     );
 
     it('Should return 200 with a list of RFID cards when successful',
       async () => {
-        const result = await test.sendGetRequestWithToken({token : VALID_TOKEN}, '/getRFIDs');
+        const result = await test.sendGetRequestWithToken(VALID_TOKEN,
+          '/getRFIDs', {});
         expect(result).to.have.length(1);
         expect(result.body).to.have.property('name');
         expect(result.body).to.have.property('byte');
@@ -90,7 +92,7 @@ describe('RFID', () => {
         token, '/deleteRFID', {id : VALID_ID});
       expect(result).to.have.status(OK);
       const getReqResult = await test.sendGetRequestWithToken(
-        VALID_TOKEN, '/getRFIDs');
+        VALID_TOKEN, '/getRFIDs', {});
       expect(getReqResult).to.have.status(OK);
       const getRfidResponse = getReqResult.body;
       getRfidResponse.should.be.a('array');
