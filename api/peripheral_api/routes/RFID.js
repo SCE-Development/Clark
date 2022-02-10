@@ -9,13 +9,14 @@ const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN } =
   require('../../util/constants').STATUS_CODES;
 const { validate, createRfid } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
+const { AWS_IOT_ENDPOINT } = require('../../config/config.json');
 
 const device = awsIot.device({
   keyPath: '../api/config/AWS-IOT/private.pem.key',
   certPath: '../api/config/AWS-IOT/cert.pem.crt',
   caPath: '../api/config/AWS-IOT/AmazonRootCA1.pem',
   clientId: 'CentauriServer',
-  host: 'ae3c662b19597-ats.iot.us-west-1.amazonaws.com'
+  host: AWS_IOT_ENDPOINT
 });
 
 let addRfid = false;
