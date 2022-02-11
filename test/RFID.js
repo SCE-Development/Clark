@@ -8,7 +8,12 @@ const {
   OK, NOT_FOUND, BAD_REQUEST, UNAUTHORIZED
 } = require('../api/util/constants').STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
-
+const {
+  initializeMock,
+  setTokenStatus,
+  resetMock,
+  restoreMock,
+} = require('./util/mocks/TokenValidFunctions');
 let app = null;
 let test = null;
 const expect = chai.expect;
@@ -19,6 +24,7 @@ chai.use(chaiHttp);
 
 describe('RFID', () => {
   before(done => {
+    initializeMock();
     app = tools.initializeServer(
       __dirname + '/../api/main_endpoints/routes/RFID.js');
     test = new SceApiTester(app);
@@ -27,8 +33,16 @@ describe('RFID', () => {
   });
 
   after(done => {
-    sandbox.restore();
+    restoreMock();
     tools.terminateServer(done);
+  });
+
+  beforeEach(() => {
+    setTokenStatus(false);
+  });
+
+  afterEach(() => {
+    resetMock();
   });
 
   const token = '';
@@ -46,19 +60,18 @@ describe('RFID', () => {
     token : 'jdihuehfuqhuifw'
   };
 
-  /* *********** add/create testing here ************* */
-
   describe('/GET getRFIDs', () => {
-    it('Should return 403 when supplied with invalid token',
+    it('Should return 401 when supplied with invalid token',
       async () => {
         const result = await test.sendGetRequestWithToken(INVALID_TOKEN,
-          '/getRFIDs', {});
+          '/getRFIDs');
         expect(result).to.have.status(UNAUTHORIZED);
       }
     );
 
     it('Should return 200 with a list of RFID cards when successful',
       async () => {
+        setTokenStatus(true);
         const result = await test.sendGetRequestWithToken(VALID_TOKEN,
           '/getRFIDs', {});
         expect(result).to.have.length(1);
