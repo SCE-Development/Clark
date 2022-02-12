@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './home.css';
 import HeroFrame from '../../Components/Frame/HeroFrame.js';
-import PastEvents from '../../Components/PastEventsTabs/PastEvents';
+import PastEvents from '../../Components/PastEventsTabs/PastEvents.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Iframe from 'react-iframe';
 import { View, Button } from 'reactstrap';
@@ -47,14 +47,13 @@ class Home extends Component {
             <a href='/register'>
               <Button outline color="primary" id='joinsce-btn'
                 style={{width:'170px', border:'3px solid',
-                  borderRadius:8, fontSize:'25px'}}>Join SCE</Button>
+                  borderRadius:8, fontSize:'20px'}}>Join SCE</Button>
             </a>
           </div>
           <div className='card text-center mx-auto'>
             <HeroFrame />
+		    <PastEvents />
           </div>
-
-          <PastEvents />
           <div className='text-center'>
             <h1 className='display-4'>SCE Events Calendar</h1>{' '}
           </div>

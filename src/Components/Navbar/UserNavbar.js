@@ -36,7 +36,7 @@ export default function UserNavBar(props) {
         <NavbarBrand href='/'>
           <div>
             <img id='logo-image' src='favicon.ico'
-              alt={'sce-logo'} style={{width:'70px'}}/>
+              alt={'sce-logo'} style={{width:'50px'}}/>
           </div>
         </NavbarBrand>
         <NavbarToggler tag='h1'>

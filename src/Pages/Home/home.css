@@ -6,19 +6,19 @@
 .text-header {
     font-family: 'Montserrat', sans-serif;
     line-height: 25px;
-    padding: 200px 0 20px 0; 
+    padding: 130px 0 20px 0; 
 	text-align:center;
 }
 .text-header>h1{
-	font-size: 50px
+	font-size: 35px
 }
 .text-content {
     font-family: 'Mina', sans-serif;
     font-style: normal;
     font-weight:lighter;
-    font-size: 25px;
+    font-size: 20px;
     line-height: 20px;
-    padding: 30px 0 0 0;
+    padding: 20px 0 0 0;
 	text-align:center;
 }
 
@@ -27,11 +27,10 @@
 	width:100%;
 	text-align: center;
 	font-family: "Mina";
-	font-size: large;
 }
 
 #joinsce-btn {
-	height: 70px
+	height: 60px
 }
 .card {
   padding-left: 300px;	

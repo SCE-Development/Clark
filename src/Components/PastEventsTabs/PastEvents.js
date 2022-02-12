@@ -6,7 +6,6 @@ import {
 } from 'reactstrap';
 import classnames from 'classnames';
 import './past-events.css';
-import { redis } from 'googleapis/build/src/apis/redis';
 
 function PastEvents() {
   // State for current active Tab
@@ -21,7 +20,7 @@ function PastEvents() {
 
   return (
     <div style={{
-      display: 'block', width: '40%', padding: 30, backgroundColor:'#1B1B1B'
+      display: 'block', width: '60%', padding: 30, backgroundColor:'#1B1B1B'
     }}>
       <Nav tabs className = 'tab-header' style={{}}>
         <NavItem className="circle">
@@ -29,46 +28,48 @@ function PastEvents() {
           <div className="orange" style={{width:25, height:25}}></div>
           <div className="green" style={{width:25, height:25}}></div>
         </NavItem>
-        <NavItem className='tab-title'>
-          <NavLink
-            className={classnames({
-              active:
-                currentActiveTab === '1'
-            })}
-            onClick={() =>{
-              toggle('1');
-            }}
-          >
-            Industry Events
-          </NavLink>
-        </NavItem>
-        <NavItem className='tab-title'>
-          <NavLink
-            className={classnames({
-              active:
-                  currentActiveTab === '2'
-            })}
-            onClick={() => {
-              toggle('2');
+        <div className='tab-title'>
+          <NavItem>
+            <NavLink
+              className={classnames({
+                active:
+                  currentActiveTab === '1'
+              })}
+              onClick={() =>{
+                toggle('1');
+              }}
+            >
+              Industry Events
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({
+                active:
+                    currentActiveTab === '2'
+              })}
+              onClick={() => {
+                toggle('2');
 
-            }}
-          >
-            Socials
-          </NavLink>
-        </NavItem>
-        <NavItem className='tab-title'>
-          <NavLink
-            className={classnames({
-              active:
-                currentActiveTab === '3'
-            })}
-            onClick={() => {
-              toggle('3');
-            }}
-          >
-            Workshops
-          </NavLink>
-        </NavItem>
+              }}
+            >
+              Socials
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({
+                active:
+                  currentActiveTab === '3'
+              })}
+              onClick={() => {
+                toggle('3');
+              }}
+            >
+              Workshops
+            </NavLink>
+          </NavItem>
+        </div>
       </Nav>
       <TabContent activeTab={currentActiveTab}>
         <TabPane tabId="1">

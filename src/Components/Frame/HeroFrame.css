@@ -8,7 +8,7 @@
     margin-bottom: 50px;
 
     width: 80%;
-    height: 60%;
+
 }
 
 .circles {
@@ -50,16 +50,16 @@
 .hero-logo {
     margin-top: -10px;
     margin-left: -60px;
-    width: 20%;
+    width: 15%;
 }
 
 .name {
 	font-family:'Open Sans', sans-serif;
 	font-weight: light;
-	font-size: 30px;
+	font-size: 20px;
 }
 
-@media screen and (max-width:800px) {
+@media screen and (max-width:400px) {
 	.name {
 		display: none !important
 	}
@@ -71,7 +71,7 @@
     font-weight: 800;
     font-size: 250%;
     position:absolute;
-	top:100px;
+	top:89px;
 	right:10%;
 }
 .hero-image {

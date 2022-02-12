@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Mina&display=swap');
 .user-nav {
   font-family: "Mina", sans-serif;
-  font-size: 25px;
+  font-size: 20px;
   background-color: black;
   top: 0px;
   position: absolute;
@@ -51,7 +51,6 @@
   display: flex;
   width:50%;
   line-height: 32px;
-  justify-content:space-between;
   column-gap: 80%;
   justify-content: center;
 }
@@ -65,9 +64,9 @@
   column-gap: 30px;
   position:absolute;
   top:10px;
-  right:80px;
+  right:20px;
   line-height: 190%;
-  width:340px;
+  width:300px;
   text-align: center;
 }
 
@@ -84,8 +83,8 @@
   border: 1px solid #ffffff;
   color: white;
   border-radius:10px;
-  font-size: 20px;
-  width: 140px;
+  font-size: 17px;
+  width: 120px;
 }
 
 #signup-btn {
@@ -93,8 +92,8 @@
   border: none;
   color: white;
   border-radius:10px;
-  font-size: 20px;
-  width: 140px;
+  font-size: 17px;
+  width: 120px;
 }
 
 #logo-image {
