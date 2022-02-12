@@ -67,10 +67,18 @@
   top:10px;
   right:80px;
   line-height: 190%;
-  width:290px;
+  width:340px;
   text-align: center;
 }
 
+@media only screen and (max-width: 1368px){
+	#signin-btn {
+		display: none !important;
+	}
+	#signup-btn {
+		display: none !important;
+	}
+}
 #signin-btn {
   background-color: transparent;
   border: 1px solid #ffffff;
@@ -103,7 +111,7 @@
 
 .profile{
   position:absolute;
-  top:10px;
+  top:20px;
   right:15px;
 }
 

@@ -20,8 +20,6 @@ export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const unauthedRoutes = [{ title: 'About', route: '/#about' },
-    // need to check for the right route to About
-    { title: 'Services', route: '/services' },
     // need to check for the right route to Services
     { title: 'Events', route: '/events' }];
 
@@ -38,7 +36,7 @@ export default function UserNavBar(props) {
         <NavbarBrand href='/'>
           <div>
             <img id='logo-image' src='favicon.ico'
-              alt={'sce logo'} style={{width:'70px'}}/>
+              alt={'sce-logo'} style={{width:'70px'}}/>
           </div>
         </NavbarBrand>
         <NavbarToggler tag='h1'>
@@ -147,7 +145,7 @@ export default function UserNavBar(props) {
                 && (
                   <UncontrolledDropdown nav inNavbar>
                     <DropdownToggle id='navlink-text' nav caret>
-                      Printing
+                      Services
                     </DropdownToggle>
                     <DropdownMenu right>
                       {authedRoutes.map((link, index) => {

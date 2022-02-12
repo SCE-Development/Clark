@@ -1,0 +1,23 @@
+.tab-header {
+	display: flex;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+	column-gap: 20px;
+}
+.tab-title {
+	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
+	cursor: pointer;
+	background-color: #242424;
+}
+
+.circle {
+	width: 100%;
+	display: flex;
+	position: relative;
+	top: 30px;
+}
+
+.tab-title:active:focus {
+	background-color: darkred;
+}

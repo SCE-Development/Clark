@@ -1,11 +1,7 @@
 import React from 'react';
 import {
   Card,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  CardLink,
-  CardText } from 'reactstrap';
+  CardBody } from 'reactstrap';
 import './HeroFrame.css';
 
 function HeroFrame() {
