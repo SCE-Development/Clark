@@ -10,7 +10,7 @@ import {
 } from '../../APIFunctions/3DPrinting';
 import Header from '../../Components/Header/Header';
 import ConfirmationModal from
-  '../../Components/DecisionModal/ConfirmationModal';
+'../../Components/DecisionModal/ConfirmationModal';
 
 export default class PrintConsole3D extends React.Component {
   constructor(props) {
