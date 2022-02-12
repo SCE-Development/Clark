@@ -32,6 +32,7 @@ function EventManagerModal(props) {
   const [eventCategory, setEventCategory] = useState(props.eventCategory);
   const [imagePreviewURL, setImagePreviewURL] = useState(NOT_FOUND_PNG);
   const [clickedSubmit, setClickedSubmit] = useState(false);
+  const [requiredFieldsFilled, setRequiredFieldsFilled] = useState(false);
 
   function toggleConfirmationModal() {
     setConfirmationModal(!confirmationModal);
@@ -149,7 +150,7 @@ function EventManagerModal(props) {
     return false;
   }
 
-  async function handleSubmission(requiredFieldsFilled) {
+  async function handleSubmission() {
     setClickedSubmit(true);
     if (requiredFieldsFilled) {
       const eventFields = {
@@ -176,7 +177,8 @@ function EventManagerModal(props) {
 
   function processRequest() {
     const passed = requiredFieldsFilledIn();
-    handleSubmission(passed);
+    setRequiredFieldsFilled(passed);
+    handleSubmission();
   }
 
   async function handleURLChange(url) {
