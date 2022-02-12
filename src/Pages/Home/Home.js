@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import './home.css';
 import HeroFrame from '../../Components/Frame/HeroFrame.js';
-import PastEvents from '../../Components/PastEventsTabs/PastEvents.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Iframe from 'react-iframe';
-import { View, Button } from 'reactstrap';
+import { Button } from 'reactstrap';
 // import Calendar from '../../Calendar/App.js'; <Calendar/>
 
 /*
@@ -52,7 +51,6 @@ class Home extends Component {
           </div>
           <div className='card text-center mx-auto'>
             <HeroFrame />
-		    <PastEvents />
           </div>
           <div className='text-center'>
             <h1 className='display-4'>SCE Events Calendar</h1>{' '}
