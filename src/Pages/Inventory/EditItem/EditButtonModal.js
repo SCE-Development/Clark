@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './edit-item.css';
 import { Alert, Modal, ModalHeader, ModalBody, ModalFooter, Button } from
-'reactstrap';
+  'reactstrap';
 import ConfirmationModal from
-'../../../Components/DecisionModal/ConfirmationModal.js';
+  '../../../Components/DecisionModal/ConfirmationModal.js';
 import EditItemForm from './EditItemForm.js';
 const svg = require('../SVG');
 

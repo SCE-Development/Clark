@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'reactstrap';
 import './email-template.css';
 import ConfirmationModal from
-'../../Components/DecisionModal/ConfirmationModal.js';
+  '../../Components/DecisionModal/ConfirmationModal.js';
 
 export default function SendButtonModal(props) {
   const [toggle, setToggle] = useState(false);

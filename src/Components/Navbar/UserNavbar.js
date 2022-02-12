@@ -116,18 +116,19 @@ export default function UserNavBar(props) {
                   })}
                 </NavItem>
               </DropdownItem>
-              {props.user && props.user.accessLevel >= membershipState.MEMBER && (
-                <DropdownItem tag="h1" className="dropdown-submenu drp-item">
-                  <DropdownItem className="drp-item" id="btndrp-text">
-                    Services
-                  </DropdownItem>
-                  <DropdownMenu className="drp-menu">
-                    <DropdownItem className="drp-item" href="/2DPrinting">
-                      Printing
+              {props.user && props.user.accessLevel >= membershipState.MEMBER
+                && (
+                  <DropdownItem tag="h1" className="dropdown-submenu drp-item">
+                    <DropdownItem className="drp-item" id="btndrp-text">
+                      Services
                     </DropdownItem>
-                  </DropdownMenu>
-                </DropdownItem>
-              )}
+                    <DropdownMenu className="drp-menu">
+                      <DropdownItem className="drp-item" href="/2DPrinting">
+                        Printing
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </DropdownItem>
+                )}
               {unauthedRoutes.map((link, index) => {
                 return (
                   <DropdownItem className="drp-item" key={index}>
