@@ -1,7 +1,8 @@
 import React from 'react';
 import {
   Card,
-  CardBody } from 'reactstrap';
+  CardBody
+} from 'reactstrap';
 import './HeroFrame.css';
 
 function HeroFrame() {
