@@ -20,11 +20,11 @@ export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const unauthedRoutes = [{ title: 'About', route: '/#about' },
-    // need to check for the right route to Services
+  // need to check for the right route to Services
     { title: 'Events', route: '/events' }];
 
-  const authedRoutes = [{title: '2D Printing', route: '/2DPrinting'},
-	  {title: '3D Printing', route: '/3DPrintingForm'}];
+  const authedRoutes = [{ title: '2D Printing', route: '/2DPrinting' },
+    { title: '3D Printing', route: '/3DPrintingForm' }];
 
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
@@ -36,9 +36,12 @@ export default function UserNavBar(props) {
         <NavbarBrand href='/'>
           <div>
             <img id='logo-image' src='favicon.ico'
-              alt={'sce-logo'} style={{width:'50px'}}/>
+              alt={'sce-logo'} style={{ width: '50px' }} />
           </div>
         </NavbarBrand>
+        <div id='user-dark'>
+          <DarkMode />
+        </div>
         <NavbarToggler tag='h1'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
             <DropdownToggle className='hamburger-button'>
@@ -51,7 +54,7 @@ export default function UserNavBar(props) {
                 membershipState.MEMBER && (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                      Services
+                      Printing
                   </DropdownItem>
                   <DropdownMenu className='drp-menu'>
                     {authedRoutes.map((link, index) => {
@@ -68,7 +71,6 @@ export default function UserNavBar(props) {
                   </DropdownMenu>
                 </DropdownItem>
               )}
-
               {/* Display unauthedRoutes in hamburger button */}
               {unauthedRoutes.map((link, index) => {
                 return (
@@ -81,7 +83,7 @@ export default function UserNavBar(props) {
                   </DropdownItem>
                 );
               })}
-			        {/* account icon */}
+              {/* account icon */}
               {props.authenticated && props.user ? (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
@@ -122,14 +124,14 @@ export default function UserNavBar(props) {
                     </DropdownItem>
                   </DropdownMenu>
                 </DropdownItem>
-              // display sign in, sign up in hamburger if not logged in
+                // display sign in, sign up in hamburger if not logged in
               ) : (
                 <NavItem className='drp-item'>
                   <NavLink id='btndrp-text' href='/register'>
-                Sign Up
+                    Sign Up
                   </NavLink>
                   <NavLink id='btndrp-text' href='/login'>
-                Sign In
+                    Sign In
                   </NavLink>
                 </NavItem>
               )}
@@ -140,29 +142,6 @@ export default function UserNavBar(props) {
         <Collapse navbar>
           <Nav className='mx-auto d-flex sce-nav' navbar>
             <div className='navlink-items'>
-              {/* Display printing in nav when logged in */}
-              {props.user && props.user.accessLevel >= membershipState.MEMBER
-                && (
-                  <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle id='navlink-text' nav caret>
-                      Services
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      {authedRoutes.map((link, index) => {
-                        return (
-                          <DropdownItem
-                            key={index}
-                            className='drp-item'
-                            href={link.route}
-                          >
-                            {link.title}
-                          </DropdownItem>
-                        );
-                      })}
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                )}
-
               {/* Display user's first name in nav*/}
               {props.authenticated && props.user ? (
                 <div className='profile'>
@@ -209,10 +188,10 @@ export default function UserNavBar(props) {
               ) : (
                 <NavItem className='mx-auto d-flex authentication'>
                   <NavLink id='signin-btn' href='/login'>
-                Sign In
+                    Sign In
                   </NavLink>
                   <NavLink id='signup-btn' href='/register'>
-                Sign Up
+                    Sign Up
                   </NavLink>
                 </NavItem>
               )}
@@ -229,6 +208,28 @@ export default function UserNavBar(props) {
                   </NavItem>
                 );
               })}
+              {/* Display printing in nav when logged in */}
+              {props.user && props.user.accessLevel >= membershipState.MEMBER
+                && (
+                  <UncontrolledDropdown nav inNavbar>
+                    <DropdownToggle id='navlink-text' nav caret>
+                      Services
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                      {authedRoutes.map((link, index) => {
+                        return (
+                          <DropdownItem
+                            key={index}
+                            className='drp-item'
+                            href={link.route}
+                          >
+                            {link.title}
+                          </DropdownItem>
+                        );
+                      })}
+                    </DropdownMenu>
+                  </UncontrolledDropdown>
+                )}
             </div>
           </Nav>
         </Collapse>
