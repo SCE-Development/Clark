@@ -51,7 +51,7 @@ export default function UserNavBar(props) {
                 membershipState.MEMBER && (
                 <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                      Printing
+                      Services
                   </DropdownItem>
                   <DropdownMenu className='drp-menu'>
                     {authedRoutes.map((link, index) => {
