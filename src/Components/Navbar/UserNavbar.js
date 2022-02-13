@@ -212,7 +212,12 @@ export default function UserNavBar(props) {
               {props.user && props.user.accessLevel >= membershipState.MEMBER
                 && (
                   <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle id='navlink-text' nav caret>
+                    <DropdownToggle
+                      className='services-dropdown'
+                      id='navlink-text'
+                      nav
+                      caret
+                    >
                       Services
                     </DropdownToggle>
                     <DropdownMenu right>

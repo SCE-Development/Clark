@@ -4,7 +4,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { Line, Pie } from 'react-chartjs-2';
 import PrintingAnalytics
-  from '../../src/Pages/PrintingAnalytics/PrintingAnalytics';
+from '../../src/Pages/PrintingAnalytics/PrintingAnalytics';
 import { shallow } from 'enzyme';
 
 describe('<PrintingAnalytics />', () => {
