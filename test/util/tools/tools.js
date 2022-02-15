@@ -10,7 +10,7 @@ function emptySchema(schema) {
   });
 }
 
-function insertItem(schema,item) {
+function insertItem(schema, item) {
   schema.create(item, (err) => {
     if(err) {
       //

@@ -41,7 +41,7 @@ describe('RFID', () => {
     countDownStub = sinon.stub(RfidHelper.prototype, 'startCountdownToAddCard');
     addingRfidStub = sinon.stub(RfidHelper.prototype, 'addingRfid');
     awsIotStub = sinon.stub(awsIot, 'device');
-    awsIotStub.returns({ on: () => { } })
+    awsIotStub.returns({ on: () => { } });
     sinon.stub(RfidHelper.prototype, 'keysExist').returns(true);
     // rfidHelper.keysExist = () => { return true };
     app = tools.initializeServer(

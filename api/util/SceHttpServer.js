@@ -54,14 +54,9 @@ class SceHttpServer {
    */
   async initializeEndpoints() {
     const requireList = await PathParser.parsePath(this.pathToEndpoints);
-    try {
-      requireList.map((route) => {
-        console.log('bruh', this.prefix + route.endpointName)
-        this.app.use(this.prefix + route.endpointName, require(route.filePath));
-      });
-    } catch (e) {
-      console.log('nooooo', e)
-    }
+    requireList.map((route) => {
+      this.app.use(this.prefix + route.endpointName, require(route.filePath));
+    });
   }
 
   /**
@@ -72,7 +67,7 @@ class SceHttpServer {
     const { port } = this;
     this.server = http.createServer(this.app);
     this.connectToMongoDb();
-    this.server.listen(port, function () {
+    this.server.listen(port, function() {
       console.debug(`Now listening on port ${port}`);
     });
   }

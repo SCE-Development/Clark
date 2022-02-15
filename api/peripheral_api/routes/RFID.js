@@ -14,7 +14,6 @@ const { AWS_IOT_ENDPOINT } = require('../../config/config.json');
 
 const rfidHelper = new RfidHelper();
 
-console.log("hmmmmm", rfidHelper.keysExist(), rfidHelper.name)
 if (rfidHelper.keysExist()) {
   const device = awsIot.device({
     keyPath: '../api/config/AWS-IOT/private.pem.key',
@@ -25,14 +24,14 @@ if (rfidHelper.keysExist()) {
   });
 
   device
-    .on('connect', function () {
+    .on('connect', function() {
       /* eslint-disable-next-line */
       console.log('Connected to AWS IoT!');
       device.subscribe('MessageForNode');
     });
 
   device
-    .on('message', async function (topic, payload) {
+    .on('message', async function(topic, payload) {
       rfidHelper.handleAwsIotMessage(device, payload);
     });
 

@@ -12,7 +12,7 @@ class RfidHelper {
     this.name = null;
   }
 
-  addingRfid () {
+  addingRfid() {
     return this.addRfid;
   }
 
@@ -29,14 +29,14 @@ class RfidHelper {
     }
     return true;
   }
-  
+
   hashedByte(byte) {
     return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10, function (error, salt) {
+      bcrypt.genSalt(10, function(error, salt) {
         if (error) {
           resolve(null);
         }
-        bcrypt.hash(byte, RFID_BCRYPT_SALT, function (hashError, hash) {
+        bcrypt.hash(byte, RFID_BCRYPT_SALT, function(hashError, hash) {
           if (hashError) {
             resolve(null);
           }
@@ -110,7 +110,7 @@ class RfidHelper {
 
   startCountdownToAddCard(name) {
     this.addRfid = true;
-    this.name = name
+    this.name = name;
     setTimeout(() => {
       this.addRfid = false;
       this.name = null;
