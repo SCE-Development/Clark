@@ -43,9 +43,7 @@ if (rfidHelper.keysExist()) {
     return res.sendStatus(OK);
   });
 }
-// -------------------------------------------
-// stays same even after adding pub sub since
-// we are not interacting with esp32
+
 router.get('/getRFIDs', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);

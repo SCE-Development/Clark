@@ -20,9 +20,6 @@ let test = null;
 const expect = chai.expect;
 const tools = require('./util/tools/tools');
 const { RfidHelper } = require('../api/peripheral_api/util/RFID-helpers');
-// let rfidHelper = sinon.createStubInstance(RfidHelper);
-
-// rfidHelper.name = 123123123123123
 
 let addingRfidStub = null;
 let awsIotStub = null;
@@ -43,7 +40,6 @@ describe('RFID', () => {
     awsIotStub = sinon.stub(awsIot, 'device');
     awsIotStub.returns({ on: () => { } });
     sinon.stub(RfidHelper.prototype, 'keysExist').returns(true);
-    // rfidHelper.keysExist = () => { return true };
     app = tools.initializeServer(
       __dirname + '/../api/peripheral_api/routes/RFID.js');
     test = new SceApiTester(app);
