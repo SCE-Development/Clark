@@ -101,7 +101,10 @@ export default function UserNavBar(props) {
                     {props.user.firstName}
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
-                    <DropdownItem className='drp-item' href='/profile'>
+                    <DropdownItem
+                      className='authenticated-navlink drp-item'
+                      href='/profile'
+                    >
                       Profile
                     </DropdownItem>
                     {/* Display admin in hamburger if user is admin */}
@@ -213,7 +216,7 @@ export default function UserNavBar(props) {
                 && (
                   <UncontrolledDropdown nav inNavbar>
                     <DropdownToggle
-                      className='services-dropdown'
+                      className='authenticated-navlink'
                       id='navlink-text'
                       nav
                       caret
