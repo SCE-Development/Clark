@@ -25,8 +25,6 @@ if (rfidHelper.keysExist()) {
 
   device
     .on('connect', function() {
-      /* eslint-disable-next-line */
-      console.log('Connected to AWS IoT!');
       device.subscribe('MessageForNode');
     });
 
