@@ -24,6 +24,7 @@ const { RfidHelper } = require('../api/peripheral_api/util/RFID-helpers');
 let addingRfidStub = null;
 let awsIotStub = null;
 let countDownStub = null;
+let testingStub = null;
 
 chai.should();
 chai.use(chaiHttp);
@@ -37,6 +38,8 @@ describe('RFID', () => {
     initializeMock();
     countDownStub = sinon.stub(RfidHelper.prototype, 'startCountdownToAddCard');
     addingRfidStub = sinon.stub(RfidHelper.prototype, 'addingRfid');
+    testingStub = sinon.stub(RfidHelper.prototype, 'testing');
+    testingStub.returns(true);
     awsIotStub = sinon.stub(awsIot, 'device');
     awsIotStub.returns({ on: () => { } });
     sinon.stub(RfidHelper.prototype, 'keysExist').returns(true);
@@ -129,7 +132,7 @@ describe('RFID', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 400 when an RFID does not exist', async () => {
+    it('Should return 404 when an RFID does not exist', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         TOKEN, '/api/RFID/deleteRFID', INVALID_ID);

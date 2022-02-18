@@ -14,7 +14,7 @@ const { AWS_IOT_ENDPOINT } = require('../../config/config.json');
 
 const rfidHelper = new RfidHelper();
 
-if (rfidHelper.keysExist()) {
+if (rfidHelper.keysExist() && !rfidHelper.testing()) {
   const device = awsIot.device({
     keyPath: '../api/config/AWS-IOT/private.pem.key',
     certPath: '../api/config/AWS-IOT/cert.pem.crt',
@@ -24,25 +24,23 @@ if (rfidHelper.keysExist()) {
   });
 
   device
-    .on('connect', function() {
-      /* eslint-disable-next-line */
-      console.log('Connected to AWS IoT!');
+    .on('connect', function () {
       device.subscribe('MessageForNode');
     });
 
   device
-    .on('message', async function(topic, payload) {
+    .on('message', async function (topic, payload) {
       rfidHelper.handleAwsIotMessage(device, payload);
     });
-
-  router.post('/createRFID', (req, res) => {
-    if (rfidHelper.addingRfid()) {
-      return res.sendStatus(BAD_REQUEST);
-    }
-    rfidHelper.startCountdownToAddCard(req.body.name);
-    return res.sendStatus(OK);
-  });
 }
+
+router.post('/createRFID', (req, res) => {
+  if (rfidHelper.addingRfid()) {
+    return res.sendStatus(BAD_REQUEST);
+  }
+  rfidHelper.startCountdownToAddCard(req.body.name);
+  return res.sendStatus(OK);
+});
 
 router.get('/getRFIDs', (req, res) => {
   if (!checkIfTokenSent(req)) {
