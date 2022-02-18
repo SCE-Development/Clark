@@ -57,11 +57,11 @@ class RfidHelper {
 
   hashedCardData(byte) {
     return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10, function (error, salt) {
+      bcrypt.genSalt(10, function(error, salt) {
         if (error) {
           resolve(null);
         }
-        bcrypt.hash(byte, RFID_BCRYPT_SALT, function (hashError, hash) {
+        bcrypt.hash(byte, RFID_BCRYPT_SALT, function(hashError, hash) {
           if (hashError) {
             resolve(null);
           }
@@ -73,7 +73,7 @@ class RfidHelper {
 
   /**
    * Retrieves all RFID cards in the database
-   * @returns {Promise<Array<Object>>} 
+   * @returns {Promise<Array<Object>>}
    */
   getCards() {
     return new Promise((resolve, reject) => {

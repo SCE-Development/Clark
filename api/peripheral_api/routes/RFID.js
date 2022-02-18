@@ -29,7 +29,7 @@ if (rfidHelper.keysExist() && !rfidHelper.testing()) {
     });
 
   device
-    .on('message', async function (topic, payload) {
+    .on('message', async function(topic, payload) {
       rfidHelper.handleAwsIotMessage(device, payload);
     });
 }
