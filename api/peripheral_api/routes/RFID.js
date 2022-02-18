@@ -24,7 +24,7 @@ if (rfidHelper.keysExist() && !rfidHelper.testing()) {
   });
 
   device
-    .on('connect', function () {
+    .on('connect', function() {
       device.subscribe('MessageForNode');
     });
 
