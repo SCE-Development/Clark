@@ -109,11 +109,11 @@ class SceGoogleApiHandler {
             return;
           }
           this.oAuth2Client.setCredentials(token);
-          // write token.refresh_token to
-          // config.json's googleApiKeys.REFRESH_TOKEN
+
           const configPath = __dirname + '/../../config/config.json';
-          const config = JSON.parse(fs.readFileSync(configPath));
-          config.REFRESH_TOKEN = token.refresh_token;
+          let config = JSON.parse(fs.readFileSync(configPath));
+          config.googleApiKeys.REFRESH_TOKEN = token.refresh_token;
+
           fs.writeFile(configPath, JSON.stringify(config), (error) => {
             if (error) {
               return console.debug(
