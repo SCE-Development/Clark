@@ -60,67 +60,38 @@ class AuthManager {
     if (configFileData) {
       let config = JSON.parse(configFileData);
 
-      let input = '';
-      if (config.googleApiKeys.CLIENT_ID !== 'NOT_SET') {
-        console.debug(
-          `Current Client ID: ${yellowColor}` +
-          `${config.googleApiKeys.CLIENT_ID}${defaultColor}`
-        );
-        while ((input.toLocaleLowerCase() !== 'y') &&
-               (input.toLocaleLowerCase() !== 'n')) {
-          input = await this.inputPrompt(
-            'Do you want to enter a new Client ID (Y/N)? '
-          );
-        }
-      }
-      let clientID;
-      if (input.toLocaleLowerCase() !== 'n') {
-        clientID = await this.inputPrompt(
-          'Please enter the Client ID: '
-        );
+      console.debug(
+        `Current client secret: ${yellowColor}` +
+        `${config.googleApiKeys.CLIENT_ID}` +
+        `${defaultColor}`
+      );
+      const clientID = await this.inputPrompt(
+        'Please enter the Client ID (press enter to skip): '
+      );
+      if (clientID) {
         config.googleApiKeys.CLIENT_ID = clientID;
-      }
-
-      // if (clientID) {
-      //   config.googleApiKeys.CLIENT_ID = clientID;
-      // } else {
-      //   console.debug(
-      //     greenColor + `defaulting to ${config.googleApiKeys.CLIENT_ID}`
-      //     + defaultColor
-      //   );
-      // }
-
-      // const clientSecret = await this.inputPrompt(
-      //   'Please enter the Client Secret (press enter to skip): '
-      // );
-      // if (clientSecret) {
-      //   config.googleApiKeys.CLIENT_SECRET = clientSecret;
-      // } else {
-      //   console.debug(
-      //     greenColor + `defaulting to ${config.googleApiKeys.CLIENT_SECRET}`
-      //     + defaultColor
-      //   );
-      // }
-
-      input = '';
-      if (config.googleApiKeys.CLIENT_SECRET !== 'NOT_SET') {
+      } else {
         console.debug(
-          `Current Client Secret: ${yellowColor}` +
-          `${config.googleApiKeys.CLIENT_SECRET}${defaultColor}`
+          `defaulting to ${yellowColor}${config.googleApiKeys.CLIENT_ID}`
+          + defaultColor
         );
-        while ((input.toLocaleLowerCase() !== 'y') &&
-               (input.toLocaleLowerCase() !== 'n')) {
-          input = await this.inputPrompt(
-            'Do you want to enter a new Client ID (Y/N)? '
-          );
-        }
       }
-      let clientSecret;
-      if (input.toLocaleLowerCase() !== 'n') {
-        clientSecret = await this.inputPrompt(
-          'Please enter the Client Secret: '
-        );
+
+      console.debug(
+        `Current client secret: ${yellowColor}` +
+        `${config.googleApiKeys.CLIENT_SECRET}` +
+        `${defaultColor}`
+      );
+      const clientSecret = await this.inputPrompt(
+        'Please enter the Client Secret (press enter to skip): '
+      );
+      if (clientSecret) {
         config.googleApiKeys.CLIENT_SECRET = clientSecret;
+      } else {
+        console.debug(
+          `defaulting to ${yellowColor}${config.googleApiKeys.CLIENT_SECRET}`
+          + defaultColor
+        );
       }
 
       fs.writeFile(configPath, JSON.stringify(config), (error) => {
