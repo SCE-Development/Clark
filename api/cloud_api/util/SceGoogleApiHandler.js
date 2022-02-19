@@ -1,16 +1,9 @@
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
-// const { googleApiKeys } = require('../../config/config.json');
 const nodemailer = require('nodemailer');
 const { consoleColors } = require('../../util/constants');
-const { reject } = require('bluebird');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-
-// const {
-//   REDIRECT_URIS,
-//   USER, REFRESH_TOKEN
-// } = googleApiKeys;
 
 const {
   redColor,
