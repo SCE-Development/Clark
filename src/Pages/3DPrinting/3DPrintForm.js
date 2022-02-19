@@ -15,8 +15,9 @@ import { submit3DPrintRequest } from '../../APIFunctions/3DPrinting';
 import mailImage from '../3DPrinting/gmail-icon.png';
 import discordImage from '../3DPrinting/discord-icon.png';
 
-export const copyrightMessage = `Created with ❤️ by the SCE Development 
-Team | © 2021 Software and Computer Engineering Society at SJSU`;
+export const footerNote = `Created with ❤️ by the SCE Development 
+Team | Software and Computer Engineering Society at SJSU 
+${new Date().getFullYear()}`;
 
 export const mailIcon = <img id="mail-image" src={mailImage} />;
 
@@ -266,8 +267,8 @@ export default class PrintForm3D extends React.Component {
               <p id="error-message">Error: {this.state.error}</p>
             </Form>
 
-            <div className="copyrightMessage">
-              <p>{copyrightMessage}</p>
+            <div className="footerNote">
+              <p>{footerNote}</p>
             </div>
           </Container>
         ) : null}

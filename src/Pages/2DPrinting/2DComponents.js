@@ -17,8 +17,9 @@ Pages left for this week: `;
 export const failPrintStatus = `Sorry! Our printing system is down 
 at the moment. Please see an officer or try again later`;
 
-export const copyrightMessage = `Created with ❤️ by the SCE Development 
-Team | © 2021 Software and Computer Engineering Society at SJSU`;
+export const footerNote = `Created with ❤️ by the SCE Development 
+Team | Software and Computer Engineering Society at SJSU 
+${new Date().getFullYear()}`;
 
 export function FileUpload(props) {
   const { filePond, printButton, displayPagesLeft } = props;
@@ -42,8 +43,8 @@ export function FileUpload(props) {
       <FilePond {...filePond} />
       <Button {...printButton}> Print </Button>
       <br />
-      <div className="copyrightMessage">
-        <p>{copyrightMessage}</p>
+      <div className="footerNote">
+        <p>{footerNote}</p>
       </div>
     </Container>
   );
