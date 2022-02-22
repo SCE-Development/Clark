@@ -1,6 +1,0 @@
-PLEASE ADD THE FOLLOWING FILES TO THIS FOLDER TO CONNECT TO AWS IOT AND TO SUCCESSFULLY RUN THE RFID SERVER: 
-
-- AmazonRootCA1.pem
-- cert.pem.crt
-- private.pem.key
-- public.pem.key
