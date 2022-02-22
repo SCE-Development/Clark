@@ -51,17 +51,26 @@ class RfidHelper {
     return true;
   }
 
+  /**
+   * Helper function to determine if currently running in testing
+   * @return If running api tests then it return true else returns false
+   */
   testing() {
     return this.inTesting;
   }
 
+  /**
+   * Helper function to hash the RFID data for security purposes
+   * @param {String|null} byte RFID card data
+   * @returns a hashed value if successful else null
+   */
   hashedCardData(byte) {
     return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10, function(error, salt) {
+      bcrypt.genSalt(10, function (error, salt) {
         if (error) {
           resolve(null);
         }
-        bcrypt.hash(byte, secretKey, function(hashError, hash) {
+        bcrypt.hash(byte, secretKey, function (hashError, hash) {
           if (hashError) {
             resolve(null);
           }
@@ -85,6 +94,13 @@ class RfidHelper {
     });
   }
 
+  /**
+   * Validates the scanned RFID card by comparing the hashed data
+   * with the one in the database
+   * @param {JSONObject} payload Incoming card data from ESP32
+   * @returns {Number} 404 if card data was null or if the card is not in the database
+   * else 200 if the incoming data is not null and it exists in the database
+   */
   async validate(payload) {
     return new Promise(async (resolve, reject) => {
       const { message } = JSON.parse(payload.toString());
@@ -109,13 +125,20 @@ class RfidHelper {
     });
   }
 
+  /**
+   * Creates and adds a new RFID card in the database
+   * @param {String|null} name Name of the cardholder
+   * @param {JSONObject} payload Incoming card data from ESP32 
+   * @returns {Number} 400 if incoming data was null or if the card already
+   * exists in the database else returns 200 if successful
+   */
   async createRfid(name, payload) {
     return new Promise(async (resolve, reject) => {
       const newRFID = new RFID({
         name: name,
         byte: await this.hashedCardData(JSON.parse(payload.toString()).message)
       });
-      if (newRFID.byte === null) {
+      if (newRFID.name === null || newRFID.byte === null) {
         resolve(BAD_REQUEST);
       } else {
         RFID.create(newRFID, (error) => {
@@ -129,6 +152,13 @@ class RfidHelper {
     });
   }
 
+  /**
+   * @param {Wrapper} device  MQTT Client Wrapper
+   * @param {JSONObject} payload Incoming card data from ESP32
+   * Handles incoming messages from ESP32
+   * If in creating mode, then it will create new RFID card
+   * else validate RFID card
+   */
   async handleAwsIotMessage(device, payload) {
     if (this.addRfid) {
       const creatorResponse = await this.createRfid(this.name, payload);
@@ -145,7 +175,12 @@ class RfidHelper {
       }));
     }
   }
-
+  /**
+   * Starts a timeout counter during creating mode
+   * in case the card is never scanned, it will return to the
+   * original state which is validating
+   * @param {String|null} name The name of the cardholder
+   */
   startCountdownToAddCard(name) {
     this.addRfid = true;
     this.name = name;
