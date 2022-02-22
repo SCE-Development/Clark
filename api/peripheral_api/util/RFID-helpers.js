@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { RFID_BCRYPT_SALT } = require('../../config/config.json');
+const { secretKey } = require('../../config/config.json');
 const RFID = require('../models/RFID');
 const { OK, BAD_REQUEST, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
@@ -61,7 +61,7 @@ class RfidHelper {
         if (error) {
           resolve(null);
         }
-        bcrypt.hash(byte, RFID_BCRYPT_SALT, function(hashError, hash) {
+        bcrypt.hash(byte, secretKey, function(hashError, hash) {
           if (hashError) {
             resolve(null);
           }

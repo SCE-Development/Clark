@@ -43,7 +43,6 @@
     "AccountID": "XXXXXXXXXX",
     "QueueName": "XXXXXXXXXX"
   },
-  "RFID_BCRYPT_SALT" : "NOT_SET",
   "AWS_IOT_ENDPOINT" : "NOT_SET",
   "PrintingS3Bucket": "NOT_SET",
   "secretKey": "super duper secret key",
