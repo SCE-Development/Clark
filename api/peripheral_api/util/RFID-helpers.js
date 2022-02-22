@@ -66,11 +66,11 @@ class RfidHelper {
    */
   hashedCardData(byte) {
     return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10, function (error, salt) {
+      bcrypt.genSalt(10, function(error, salt) {
         if (error) {
           resolve(null);
         }
-        bcrypt.hash(byte, secretKey, function (hashError, hash) {
+        bcrypt.hash(byte, secretKey, function(hashError, hash) {
           if (hashError) {
             resolve(null);
           }
@@ -98,7 +98,7 @@ class RfidHelper {
    * Validates the scanned RFID card by comparing the hashed data
    * with the one in the database
    * @param {JSONObject} payload Incoming card data from ESP32
-   * @returns {Number} 404 if card data was null or if the card is not in the database
+   * @returns {Number} 404 if card data was null or not in the database
    * else 200 if the incoming data is not null and it exists in the database
    */
   async validate(payload) {
@@ -128,7 +128,7 @@ class RfidHelper {
   /**
    * Creates and adds a new RFID card in the database
    * @param {String|null} name Name of the cardholder
-   * @param {JSONObject} payload Incoming card data from ESP32 
+   * @param {JSONObject} payload Incoming card data from ESP32
    * @returns {Number} 400 if incoming data was null or if the card already
    * exists in the database else returns 200 if successful
    */
