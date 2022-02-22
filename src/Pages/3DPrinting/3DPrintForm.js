@@ -236,16 +236,15 @@ export default class PrintForm3D extends React.Component {
                       Additional comments:
                     </p>
                   </Col>
-                  <Col></Col>
-
-                  <Input
-                    onChange={this.handleCommentChange.bind(this)}
-                    value={this.state.comment}
-                    className="comments"
-                    type="text"
-                    name="comments"
-                    id="comments"
-                  />
+                  <Col>
+                    <textarea
+                      onChange={this.handleCommentChange.bind(this)}
+                      value={this.state.comment}
+                      className="comments"
+                      name="comments"
+                      id="comments">
+                    </textarea>
+                  </Col>
                 </Row>
               </FormGroup>
 
@@ -270,6 +269,7 @@ export default class PrintForm3D extends React.Component {
             <div className="footerNote">
               <p>{footerNote}</p>
             </div>
+            <br/>
           </Container>
         ) : null}
 

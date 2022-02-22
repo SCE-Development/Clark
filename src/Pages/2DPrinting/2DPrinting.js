@@ -181,7 +181,7 @@ export default function Printing(props) {
   };
 
   const hidePrint =  () => {
-    return printerHealthy ?
+    return !printerHealthy ?
       <FileUpload {...fileUploadProps} /> :
       <Container className='healthCheck'>
         <h1>Reach out to an officer through Discord for help.</h1>
@@ -370,9 +370,9 @@ export default function Printing(props) {
 
   return (
     <div>
-      <PrintingHealthCheck />
+      <PrintingHealthCheck {...{loading, printerHealthy}}/>
       <br />
-      {hidePrint()}
+      {hidePrint({...fileUploadProps})}
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
       <StatusModal {...statusModalProps} />

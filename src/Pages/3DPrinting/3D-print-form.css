@@ -87,6 +87,15 @@
   line-height: 32px;
 }
 
+.container-3D .comments {
+  background-color: #b4cbd1;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 32px;
+}
+
 .container-3D .printingBtn {
   width: 50%;
 }
@@ -118,14 +127,8 @@
   text-transform: uppercase;
   margin: auto;
   border-radius: 20px;
+  border-color: #16252e;
   margin-bottom: 50px;
-}
-
-.container-3D .comments {
-  background-color: #b4cbd1;
-  border: 0px;
-  max-width: 100%;
-  max-height: 86px;
 }
 
 .container-3D .submit {

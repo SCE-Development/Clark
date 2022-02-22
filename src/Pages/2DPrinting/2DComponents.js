@@ -33,6 +33,7 @@ export function FileUpload(props) {
           3D Printing
         </Button>
       </div>
+      <br/>
       <div className="printInfo">
         <p>
           Each member can print up to 30 pages a week <br /> Pages left for this
@@ -46,6 +47,7 @@ export function FileUpload(props) {
       <div className="footerNote">
         <p>{footerNote}</p>
       </div>
+      <br/>
     </Container>
   );
 }
