@@ -64,7 +64,7 @@ class RfidHelper {
    * @param {String|null} byte RFID card data
    * @returns a hashed value if successful else null
    */
-  hashedCardData(byte) {
+  hashCardData(byte) {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(10, function(error, salt) {
         if (error) {
@@ -101,10 +101,10 @@ class RfidHelper {
    * @returns {Number} 404 if card data was null or not in the database
    * else 200 if the incoming data is not null and it exists in the database
    */
-  async validate(payload) {
+  async validateCard(payload) {
     return new Promise(async (resolve, reject) => {
       const { message } = JSON.parse(payload.toString());
-      const hash = await this.hashedCardData(message);
+      const hash = await this.hashCardData(message);
       if (hash === null) {
         resolve(NOT_FOUND);
       } else {
@@ -136,7 +136,7 @@ class RfidHelper {
     return new Promise(async (resolve, reject) => {
       const newRFID = new RFID({
         name: name,
-        byte: await this.hashedCardData(JSON.parse(payload.toString()).message)
+        byte: await this.hashCardData(JSON.parse(payload.toString()).message)
       });
       if (newRFID.name === null || newRFID.byte === null) {
         resolve(BAD_REQUEST);
@@ -153,11 +153,11 @@ class RfidHelper {
   }
 
   /**
-   * @param {Wrapper} device  MQTT Client Wrapper
-   * @param {JSONObject} payload Incoming card data from ESP32
    * Handles incoming messages from ESP32
    * If in creating mode, then it will create new RFID card
    * else validate RFID card
+   * @param {Wrapper} device  MQTT Client Wrapper
+   * @param {JSONObject} payload Incoming card data from ESP32
    */
   async handleAwsIotMessage(device, payload) {
     if (this.addRfid) {
@@ -169,7 +169,7 @@ class RfidHelper {
       this.addRfid = false;
       clearTimeout();
     } else {
-      const validateResponse = await this.validate(payload);
+      const validateResponse = await this.validateCard(payload);
       device.publish('MessageForESP32', JSON.stringify({
         message: validateResponse
       }));
