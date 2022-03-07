@@ -26,6 +26,9 @@ export default function UserNavBar(props) {
   const authedRoutes = [{ title: '2D Printing', route: '/2DPrinting' },
     { title: '3D Printing', route: '/3DPrintingForm' }];
 
+  const authentication = [{ title: 'Sign Up', route: '/register' },
+    { title: 'Sign In', route: '/login' }];
+
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
@@ -52,7 +55,7 @@ export default function UserNavBar(props) {
             <DropdownMenu right>
               {props.user && props.user.accessLevel >=
                 membershipState.MEMBER && (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
+                <DropdownItem  className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
                       Printing
                   </DropdownItem>
@@ -85,7 +88,7 @@ export default function UserNavBar(props) {
               })}
               {/* account icon */}
               {props.authenticated && props.user ? (
-                <DropdownItem tag='h1' className='dropdown-submenu drp-item'>
+                <DropdownItem className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
                     <svg className='profile-image' viewBox='0 0 24 24'>
                       <path
@@ -102,7 +105,7 @@ export default function UserNavBar(props) {
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
                     <DropdownItem
-                      className='authenticated-navlink drp-item'
+                      className='drp-item'
                       href='/profile'
                     >
                       Profile
@@ -130,12 +133,17 @@ export default function UserNavBar(props) {
                 // display sign in, sign up in hamburger if not logged in
               ) : (
                 <NavItem className='drp-item'>
-                  <NavLink id='btndrp-text' href='/register'>
-                    Sign Up
-                  </NavLink>
-                  <NavLink id='btndrp-text' href='/login'>
-                    Sign In
-                  </NavLink>
+                  {authentication.map((link, index) => {
+                    return (
+                      <DropdownItem className='drp-item' key={index}>
+                        <NavItem>
+                          <NavLink id='btndrp-text' href={link.route}>
+                            {link.title}
+                          </NavLink>
+                        </NavItem>
+                      </DropdownItem>
+                    );
+                  })}
                 </NavItem>
               )}
             </DropdownMenu>

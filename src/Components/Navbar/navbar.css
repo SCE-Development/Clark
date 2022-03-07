@@ -69,8 +69,25 @@
   width:300px;
   text-align: center;
 }
+#signin-btn {
+	background-color: transparent;
+	border: 1px solid #ffffff;
+	color: white;
+	border-radius:10px;
+	font-size: 17px;
+	width: 120px;
+  }
+  
+  #signup-btn {
+	background-color: #2288FF !important;
+	border: none;
+	color: white;
+	border-radius:10px;
+	font-size: 17px;
+	width: 120px;
+  }
 
-@media only screen and (max-width: 1368px){
+@media only screen and (max-width: 1168px){
 	#signin-btn {
 		display: none !important;
 	}
@@ -78,23 +95,7 @@
 		display: none !important;
 	}
 }
-#signin-btn {
-  background-color: transparent;
-  border: 1px solid #ffffff;
-  color: white;
-  border-radius:10px;
-  font-size: 17px;
-  width: 120px;
-}
 
-#signup-btn {
-  background-color: #2288FF !important;
-  border: none;
-  color: white;
-  border-radius:10px;
-  font-size: 17px;
-  width: 120px;
-}
 
 #logo-image {
   width: 50px;
@@ -128,7 +129,6 @@
 
 .drp-item.active, .drp-item:active {
   background-color:#d3d3d3 !important;
-  outline: none !important;
 }
 
 .dropdown-submenu {
@@ -145,10 +145,6 @@
   display: block !important;
 }
 
-.navbar-toggler {
-  padding: 0 !important;
-  border: none !important;
-}
 
 .border {
   display: block;

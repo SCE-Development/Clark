@@ -32,7 +32,7 @@ describe('<UserNavbar />', () => {
   it('Should render 4 routes by default', () => {
     const wrapper = mount(<UserNavbar />);
     // The reason there are 4 is due to the two
-    // routes being duplicated 
+    // routes being duplicated
     expect(wrapper.find('.routes')).to.have.lengthOf(4);
   });
   it(

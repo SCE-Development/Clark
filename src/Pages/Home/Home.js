@@ -4,7 +4,7 @@ import HeroFrame from '../../Components/Frame/HeroFrame.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Iframe from 'react-iframe';
 import { Button } from 'reactstrap';
-// import Calendar from '../../Calendar/App.js'; <Calendar/>
+
 
 /*
   <Iframe url="https://calendar.google.com/calendar/embed?src=
