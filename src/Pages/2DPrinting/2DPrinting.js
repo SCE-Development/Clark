@@ -180,11 +180,16 @@ export default function Printing(props) {
     displayPagesLeft: 30 - props.user.pagesPrinted,
   };
 
-  const hidePrint =  () => {
-    return !printerHealthy ?
+  const maybeShowFileUpload =  () => {
+    return printerHealthy ?
       <FileUpload {...fileUploadProps} /> :
       <Container className='healthCheck'>
-        <h1>Reach out to an officer through Discord for help.</h1>
+        <br/>
+        <br/>
+        <h3>
+          Printing is down at the moment. Reach out to an officer
+           through Discord for help.
+        </h3>
       </Container>;
   };
 
@@ -371,8 +376,7 @@ export default function Printing(props) {
   return (
     <div>
       <PrintingHealthCheck {...{loading, printerHealthy}}/>
-      <br />
-      {hidePrint({...fileUploadProps})}
+      {maybeShowFileUpload({...fileUploadProps})}
       <PrintPageModal {...printPageModalProps} />
       <ConfirmationModal {...confirmModalProps} />
       <StatusModal {...statusModalProps} />

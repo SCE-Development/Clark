@@ -154,7 +154,6 @@ export default class PrintForm3D extends React.Component {
         <br />
         <br />
         <br />
-        <br />
 
         {fill === false ? (
           <Container className = "container-3D">
@@ -215,14 +214,14 @@ export default class PrintForm3D extends React.Component {
               <FormGroup>
                 <Row>
                   <Col>
-                    <p className="stlFile label">Upload your .stl file:</p>{' '}
+                    <p className="stlFile label">
+                      URL to your .stl file:
+                    </p>{' '}
                   </Col>
                   <Col>
                     <Input
                       onChange={this.handleUrlChange.bind(this)}
-                      type="file"
-                      pattern="https://.*"
-                      name="url"
+                      type="text"
                       id="url"
                     />
                   </Col>
@@ -237,13 +236,14 @@ export default class PrintForm3D extends React.Component {
                     </p>
                   </Col>
                   <Col>
-                    <textarea
+                    <Input
+                      type='textarea'
                       onChange={this.handleCommentChange.bind(this)}
                       value={this.state.comment}
                       className="comments"
                       name="comments"
                       id="comments">
-                    </textarea>
+                    </Input>
                   </Col>
                 </Row>
               </FormGroup>

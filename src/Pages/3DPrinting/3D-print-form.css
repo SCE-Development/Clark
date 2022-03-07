@@ -12,6 +12,7 @@
 
 .container-3D{
   background-color: #16252e;
+  min-width: 100%;
 }
 
 .container-3D .App-header {
@@ -69,7 +70,6 @@
 }
 
 .container-3D #url {
-  color: white;
   font-family: Mina;
   font-style: normal;
   font-weight: normal;
