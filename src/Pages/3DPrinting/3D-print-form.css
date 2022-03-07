@@ -13,6 +13,7 @@
 .container-3D{
   background-color: #16252e;
   min-width: 100%;
+  min-height: 100vh;
 }
 
 .container-3D .App-header {

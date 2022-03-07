@@ -15,6 +15,7 @@
 .container-2D {
   background-color: #16252e;
   max-width: 100%;
+  min-height: 100vh;
 }
 
 .container-2D .buttons a{
