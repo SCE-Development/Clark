@@ -58,6 +58,7 @@
   margin: 0 auto;
   display: inline-block;
   width: 50%;
+  margin-top: .3em;
 }
 
 .container-3D .label {

@@ -15,7 +15,6 @@
 .container-2D {
   background-color: #16252e;
   max-width: 100%;
-  margin-top: '1em';
 }
 
 .container-2D .buttons a{
@@ -23,6 +22,7 @@
   margin: 0 auto;
   display: inline-block;
   width: 50%;
+  margin-top: 1em;
 }
 
 .paperPrinting {
