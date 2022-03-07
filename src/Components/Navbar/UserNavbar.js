@@ -76,10 +76,10 @@ export default function UserNavBar(props) {
       ].join(''),
     },
   ];
-  const unauthedRoutes = [
-    { title: 'Events', route: '/events' },
-    { title: 'Discord Bot', route: '/discordSJSU' },
-  ];
+  const unauthedRoutes = [{ title: 'Events', route: '/events' },
+    { title: 'Discord Bot', route: '/discordSJSU' }];
+  const authedRoutes = [{title: '2D Printing', route: '/2DPrinting'},
+    {title: '3D Printing', route: '/3DPrintingForm'}];
   const toggler = () => {
     setMenuIsOpen(!menuIsOpen);
   };
