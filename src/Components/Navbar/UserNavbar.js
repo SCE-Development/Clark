@@ -172,7 +172,8 @@ export default function UserNavBar(props) {
                       {props.user.firstName}
                     </DropdownToggle>
                     <DropdownMenu right>
-                      <DropdownItem className='drp-item' href='/profile'>
+                      <DropdownItem className='authenticated-navlink drp-item'
+                        href='/profile'>
                         Profile
                       </DropdownItem>
                       {/* Display admin if user is admin */}
