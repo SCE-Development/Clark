@@ -13,7 +13,8 @@ function HeroFrame() {
     }
   ];
   return(
-    <Card className="bg-light card" style={{ borderRadius: 18 }}>
+    <Card className="bg-light hero-frame"
+	 style={{ borderRadius: 18 }}>
       <CardBody className="circles">
         <div className="red"></div>
         <div className="orange"></div>

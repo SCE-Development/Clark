@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&family=Open+Sans&display=swap');
-.card {
+.hero-frame {
 	display: flex;
     flex-direction: column;
     justify-content: center;
@@ -7,7 +7,7 @@
     padding: 30px 40px 40px;
     margin-bottom: 50px;
 
-    width: 80%;
+    width: 60%;
 
 }
 

@@ -49,7 +49,7 @@ class Home extends Component {
                   borderRadius:8, fontSize:'20px'}}>Join SCE</Button>
             </a>
           </div>
-          <div className='card text-center mx-auto'>
+          <div className='home-hero-frame text-center mx-auto'>
             <HeroFrame />
           </div>
           <div className='text-center'>

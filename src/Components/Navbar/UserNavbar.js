@@ -34,7 +34,7 @@ export default function UserNavBar(props) {
 
   return (
     <div className={'user-nav'}>
-      <Navbar expand='xl'>
+      <Navbar expand='xl' className = "navbar">
         <NavbarBrand href='/'>
           <div>
             <img id='logo-image' src='favicon.ico'
@@ -104,7 +104,7 @@ export default function UserNavBar(props) {
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
                     <DropdownItem
-                      className='drp-item authenticated-navlink'
+                      className='authenticated-navlink drp-item'
                       href='/profile'
                     >
                       Profile
@@ -171,7 +171,7 @@ export default function UserNavBar(props) {
                       {props.user.firstName}
                     </DropdownToggle>
                     <DropdownMenu right>
-                      <DropdownItem className='authenticated-navlink drp-item'
+                      <DropdownItem className='drp-item'
                         href='/profile'>
                         Profile
                       </DropdownItem>
