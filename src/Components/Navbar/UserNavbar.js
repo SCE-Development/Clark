@@ -20,7 +20,6 @@ export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const unauthedRoutes = [{ title: 'About', route: '/#about' },
-  // need to check for the right route to Services
     { title: 'Events', route: '/events' }];
 
   const authedRoutes = [{ title: '2D Printing', route: '/2DPrinting' },
@@ -105,7 +104,7 @@ export default function UserNavBar(props) {
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
                     <DropdownItem
-                      className='drp-item'
+                      className='drp-item authenticated-navlink'
                       href='/profile'
                     >
                       Profile
