@@ -3,7 +3,7 @@ const { secretKey } = require('../config/config.json');
 const passport = require('passport');
 const membershipState = require('./constants').MEMBERSHIP_STATE;
 
-require('../main_endpoints/util/passport')(passport);
+require('./passport')(passport);
 
 
 /**

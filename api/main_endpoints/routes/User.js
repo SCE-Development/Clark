@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-require('../util/passport')(passport);
+require('../../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
 const { registerUser } = require('../util/registerUser');

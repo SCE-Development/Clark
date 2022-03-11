@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-require('../util/passport')(passport);
+require('../../util/passport')(passport);
 const config = require('../../config/config');
 const User = require('../models/User.js');
 const { registerUser } = require('../util/registerUser');
