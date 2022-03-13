@@ -154,13 +154,9 @@ describe('Auth', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return statusCode 200 when a valid' +
-        'token is passed in', async () => {
-      setTokenStatus({
-        name: 'name',
-        email: 'email',
-        accessLevel: 'accessLevel'
-      });
+    it('Should return statusCode 200 when a ' +
+        'token is passed in and recieved back', async () => {
+      setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/Auth/verify', { token: token });
       expect(result).to.have.status(OK);

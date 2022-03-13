@@ -73,7 +73,7 @@ describe('RFID', () => {
   const INVALID_ID = {
     id: '0987654321'
   };
-  const TOKEN = 'jdihuehfuqhuifw';
+  const TOKEN = '';
 
   describe('/POST createRFID', () => {
     it('Should return 400 when adding already in progress',
@@ -126,7 +126,7 @@ describe('RFID', () => {
   });
 
   describe('/POST deleteRFID', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequestWithToken(
         TOKEN, '/api/RFID/deleteRFID');
       expect(result).to.have.status(UNAUTHORIZED);

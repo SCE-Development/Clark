@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const RFID = require('../models/RFID');
-const {
-  checkIfTokenSent,
-  checkIfTokenValid,
-} = require('../../util/token-functions');
-const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 const { RfidHelper } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
 const { AWS_IOT_ENDPOINT } = require('../../config/config.json');
-
+const { verifyToken } = require('../util/token-verification');
 const rfidHelper = new RfidHelper();
 
 if (rfidHelper.keysExist() && !rfidHelper.testing()) {
@@ -35,6 +30,9 @@ if (rfidHelper.keysExist() && !rfidHelper.testing()) {
 }
 
 router.post('/createRFID', (req, res) => {
+  if(!verifyToken(req.body.token)) {
+    return;
+  }
   if (rfidHelper.addingRfid()) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -43,10 +41,8 @@ router.post('/createRFID', (req, res) => {
 });
 
 router.get('/getRFIDs', (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  if(!verifyToken(req.body.token)) {
+    return;
   }
   RFID.find()
     .then((items) => res.status(OK).send(items))
@@ -56,10 +52,8 @@ router.get('/getRFIDs', (req, res) => {
 });
 
 router.post('/deleteRFID', (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  if(!verifyToken(req.body.token)) {
+    return;
   }
   RFID.deleteOne({ _id: req.body._id })
     .then((result) => {

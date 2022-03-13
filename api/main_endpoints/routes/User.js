@@ -11,7 +11,7 @@ const {
   checkIfTokenSent,
   checkIfTokenValid,
   decodeToken
-} = require('../../util/token-functions');
+} = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,

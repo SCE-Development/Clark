@@ -11,7 +11,7 @@ const {
   checkIfTokenSent,
   checkIfTokenValid,
   decodeToken
-} = require('../../util/token-functions');
+} = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
 const {
   OK,
@@ -170,11 +170,12 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const isValid = checkIfTokenValid(req, membershipState.ALUMNI);
-  if (!isValid) {
+  const token = decodeToken(req);
+  console.log(token);
+  if (!token) {
     res.sendStatus(UNAUTHORIZED);
   } else {
-    res.status(OK).send(decodeToken(req));
+    res.status(OK).send(token);
   }
 });
 
