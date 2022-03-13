@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 require('../util/passport')(passport);
-const config = require('../../config/config');
+const config = require('../../config/config.json');
 const User = require('../models/User.js');
 const { registerUser } = require('../util/registerUser');
 const {
