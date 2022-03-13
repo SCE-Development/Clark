@@ -58,7 +58,7 @@ router.post('/register', async (req, res) => {
 });
 
 // User Login
-router.post('/login', function(req, res) {
+router.post('/login', function (req, res) {
   if (!req.body.email || !req.body.password) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -67,7 +67,7 @@ router.post('/login', function(req, res) {
     {
       email: req.body.email.toLowerCase()
     },
-    function(error, user) {
+    function (error, user) {
       if (error) {
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
@@ -80,7 +80,7 @@ router.post('/login', function(req, res) {
           });
       } else {
         // Check if password matches database
-        user.comparePassword(req.body.password, function(error, isMatch) {
+        user.comparePassword(req.body.password, function (error, isMatch) {
           if (isMatch && !error) {
             if (user.accessLevel === membershipState.BANNED) {
               return res
@@ -89,10 +89,10 @@ router.post('/login', function(req, res) {
             }
 
             // Check if the user's email has been verified
-            if(!user.emailVerified){
+            if (!user.emailVerified) {
               return res
                 .status(UNAUTHORIZED)
-                .send({message: 'Email has not been verified'});
+                .send({ message: 'Email has not been verified' });
             }
 
             // If the username and password matches the database, assign and
@@ -139,7 +139,7 @@ router.post('/login', function(req, res) {
 router.post('/setEmailToVerified', (req, res) => {
   const query = { email: req.body.email };
 
-  User.updateOne(query, { emailVerified: true }, function(error, result) {
+  User.updateOne(query, { emailVerified: true }, function (error, result) {
     if (error) {
       const info = {
         userEmail: req.body.email,
@@ -166,21 +166,20 @@ router.post('/setEmailToVerified', (req, res) => {
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
-router.post('/verify', function(req, res) {
+router.post('/verify', function (req, res) {
   if (!checkIfTokenSent(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+    return res.send(UNAUTHORIZED).json({});
   }
   const token = decodeToken(req);
-  console.log(token);
   if (!token) {
-    res.sendStatus(UNAUTHORIZED);
+    res.status(UNAUTHORIZED).json(token);
   } else {
-    res.status(OK).send(token);
+    res.status(OK).json(token);
   }
 });
 
 router.post('/generateHashedId', async (req, res) => {
-  User.findOne({ email: req.body.email }, function(error, result) {
+  User.findOne({ email: req.body.email }, function (error, result) {
     if (error) {
       return res.sendStatus(BAD_REQUEST);
     }
@@ -190,13 +189,13 @@ router.post('/generateHashedId', async (req, res) => {
     let hashedId = String(result._id);
     // Generate a salt and created a hashed value of the _id using
     // bcrypts library
-    bcrypt.genSalt(10, function(error, salt) {
+    bcrypt.genSalt(10, function (error, salt) {
       if (error) {
         // reject('Bcrypt failed')
         res.sendStatus(BAD_REQUEST);
       }
 
-      bcrypt.hash(hashedId, salt, function(error, hash) {
+      bcrypt.hash(hashedId, salt, function (error, hash) {
         if (error) {
           res.sendStatus(BAD_REQUEST);
         }
@@ -208,7 +207,7 @@ router.post('/generateHashedId', async (req, res) => {
 });
 
 router.post('/validateVerificationEmail', async (req, res) => {
-  User.findOne({ email: req.body.email }, async function(error, result) {
+  User.findOne({ email: req.body.email }, async function (error, result) {
     if (error) {
       res.sendStatus(BAD_REQUEST);
     }
@@ -216,7 +215,7 @@ router.post('/validateVerificationEmail', async (req, res) => {
       res.sendStatus(NOT_FOUND);
     }
 
-    bcrypt.compare(String(result._id), req.body.hashedId, async function(
+    bcrypt.compare(String(result._id), req.body.hashedId, async function (
       error,
       isMatch) {
       if (error) {

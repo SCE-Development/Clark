@@ -142,8 +142,7 @@ describe('Auth', () => {
   describe('/POST verify', () => {
     it('Should return statusCode 401 when a token is not passed in',
       async () => {
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/Auth/verify', null);
+        const result = await test.sendPostRequest('/api/Auth/verify', {});
         expect(result).to.have.status(UNAUTHORIZED);
       });
 
@@ -155,10 +154,10 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 200 when a ' +
-        'token is passed in and recieved back', async () => {
+        'token is passed in', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/Auth/verify', { token: token });
+        token, '/api/Auth/verify');
       expect(result).to.have.status(OK);
     });
   });

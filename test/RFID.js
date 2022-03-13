@@ -20,6 +20,7 @@ let test = null;
 const expect = chai.expect;
 const tools = require('./util/tools/tools');
 const { RfidHelper } = require('../api/peripheral_api/util/RFID-helpers');
+const { faHourglassEnd } = require('@fortawesome/free-solid-svg-icons');
 
 let addingRfidStub = null;
 let awsIotStub = null;
@@ -121,6 +122,7 @@ describe('RFID', () => {
         expect(item.byte).to.equal(SAMPLE_RFID_BYTE.byte);
         expect(result).to.have.status(OK);
         VALID_ID = item._id;
+        console.log(VALID_ID);
       }
     );
   });

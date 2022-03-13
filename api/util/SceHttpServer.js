@@ -54,14 +54,9 @@ class SceHttpServer {
    */
   async initializeEndpoints() {
     const requireList = await PathParser.parsePath(this.pathToEndpoints);
-    try {
-      requireList.map((route) => {
-        this.app.use(this.prefix + route.endpointName, require(route.filePath));
-      });
-    } catch (err) {
-      console.log(err);
-    }
-
+    requireList.map((route) => {
+      this.app.use(this.prefix + route.endpointName, require(route.filePath));
+    });
   }
 
   /**
