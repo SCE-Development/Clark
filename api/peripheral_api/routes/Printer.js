@@ -49,7 +49,7 @@ router.post('/sendPrintRequest', async (req, res) => {
       location: response.Location,
       fileNo: fileName,
       copies: copies,
-      pageRanges: pageRanges,
+      pageRanges,
     }),
     QueueUrl: `https://sqs.us-west-2.amazonaws.com/${accountId}/${queueName}`
   };
