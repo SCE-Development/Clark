@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/SCE-Development/Core-v4#readme",
   "dependencies": {
+    "aws-iot-device-sdk": "^2.2.11",
     "aws-sdk": "^2.1032.0",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",

@@ -10,6 +10,14 @@ function emptySchema(schema) {
   });
 }
 
+function insertItem(schema, item) {
+  schema.create(item, (err) => {
+    if(err) {
+      //
+    }
+  });
+}
+
 function initializeServer(path, port = 7999) {
   serverInstance = new SceHttpServer(path, port);
   serverInstance.initializeEndpoints();
@@ -24,6 +32,7 @@ function terminateServer(done) {
 // Exporting functions
 module.exports = {
   emptySchema,
+  insertItem,
   initializeServer,
   terminateServer
 };

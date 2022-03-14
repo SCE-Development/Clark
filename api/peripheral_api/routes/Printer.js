@@ -26,8 +26,7 @@ router.post('/sendPrintRequest', async (req, res) => {
   && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
     return res.sendStatus(OK);
   }
-  const { raw } = req.body;
-  const { copies } = req.body;
+  const { raw, copies, pageRanges } = req.body;
   const fileName = Math.random();
 
   const params = {
@@ -50,6 +49,7 @@ router.post('/sendPrintRequest', async (req, res) => {
       location: response.Location,
       fileNo: fileName,
       copies: copies,
+      pageRanges,
     }),
     QueueUrl: `https://sqs.us-west-2.amazonaws.com/${accountId}/${queueName}`
   };

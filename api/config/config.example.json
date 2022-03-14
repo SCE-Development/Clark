@@ -43,6 +43,7 @@
     "AccountID": "XXXXXXXXXX",
     "QueueName": "XXXXXXXXXX"
   },
+  "AWS_IOT_ENDPOINT" : "NOT_SET",
   "PrintingS3Bucket": "NOT_SET",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",

@@ -74,6 +74,21 @@ class SceApiTester{
       });
     return response;
   }
+
+  async sendGetRequestWithToken(token, endpoint) {
+    let response = null;
+    await chai
+      .request(this.app)
+      .get(endpoint)
+      .send({token : token})
+      .then(function(res) {
+        response = res;
+      })
+      .catch(err =>{
+        throw err;
+      });
+    return response;
+  }
 }
 
 module.exports = SceApiTester;
