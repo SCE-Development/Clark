@@ -3,7 +3,7 @@ const membershipState = require('./constants').MEMBERSHIP_STATE;
 
 /**
  * Checks if the given token is valid
- * @param {Object} token 
+ * @param {Object} token
  * @returns {Boolean} true if valid token else false
  */
 async function verifyToken(token) {
@@ -18,9 +18,9 @@ async function verifyToken(token) {
 }
 
 /**
- * 
- * @param {Object} request 
- * @returns {Boolean} true if a token was sent with request else false
+ * Checks if token was sent
+ * @param {Object} request
+ * @returns {Boolean} true if a token was found in request else false
  */
 function checkIfTokenSent(request) {
   return request.body.token !== undefined;
