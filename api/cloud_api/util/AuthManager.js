@@ -61,7 +61,7 @@ class AuthManager {
       let config = JSON.parse(configFileData);
 
       console.debug(
-        `Current client secret: ${yellowColor}` +
+        `Current client ID: ${yellowColor}` +
         `${config.googleApiKeys.CLIENT_ID}` +
         `${defaultColor}`
       );

@@ -38,13 +38,17 @@ class SceGoogleApiHandler {
 
     this.oAuth2Client = new google.auth.OAuth2(
       this.CLIENT_ID,
-      this.CLIENT_ID,
+      this.CLIENT_SECRET,
       this.REDIRECT_URIS[0]
     );
-    this.oAuth2Client.setCredentials({
-      // eslint-disable-next-line
-      refresh_token: this.REFRESH_TOKEN
-    });
+
+    if (this.REFRESH_TOKEN !== 'NOT_SET') {
+      this.oAuth2Client.setCredentials({
+        // eslint-disable-next-line
+        refresh_token: this.REFRESH_TOKEN
+      });
+    }
+
     if(this.CLIENT_ID != 'NOT_SET' && this.CLIENT_SECRET != 'NOT_SET') {
       this.hasValidAPIKeys = true;
     }
