@@ -103,7 +103,7 @@ describe('Event', () => {
     imageURL: 'https://link.to/pdf'
   };
   describe('/POST createEvent', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequest(
         '/api/event/createEvent', EVENT_WITH_INVALID_TOKEN);
       expect(result).to.have.status(UNAUTHORIZED);
@@ -155,7 +155,7 @@ describe('Event', () => {
   });
 
   describe('/POST editEvent', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/event/editEvent', EVENT_WITH_INVALID_TOKEN);
       expect(result).to.have.status(UNAUTHORIZED);
@@ -201,7 +201,7 @@ describe('Event', () => {
   });
 
   describe('/POST deleteEvent', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/event/deleteEvent', EVENT_WITH_INVALID_TOKEN);
       expect(result).to.have.status(UNAUTHORIZED);

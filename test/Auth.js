@@ -146,18 +146,13 @@ describe('Auth', () => {
         expect(result).to.have.status(UNAUTHORIZED);
       });
 
-    it('Should return statusCode 401 when an invalid ' +
-        'token is passed in', async () => {
-      const result = await test.sendPostRequest(
-        '/api/Auth/verify', { token: 'Invalid Token' });
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
+    // add test for invalid token
 
     it('Should return statusCode 200 when a ' +
         'token is passed in', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/Auth/verify');
+        token, '/api/Auth/verify', {});
       expect(result).to.have.status(OK);
     });
   });
