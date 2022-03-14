@@ -170,7 +170,7 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const isValid = checkIfTokenValid(req, membershipState.ALUMNI);
+  const isValid = checkIfTokenValid(req, membershipState.NON_MEMBER);
   if (!isValid) {
     res.sendStatus(UNAUTHORIZED);
   } else {
@@ -223,6 +223,7 @@ router.post('/validateVerificationEmail', async (req, res) => {
       }
       if (isMatch) {
         result.emailVerified = true;
+        result.accessLevel = membershipState.NON_MEMBER;
         await result
           .save()
           .then(_ => {
