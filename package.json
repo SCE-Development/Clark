@@ -32,7 +32,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
     "@fortawesome/free-solid-svg-icons": "^6.0.0",
-    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "@tinymce/tinymce-react": "~3.8.4",
     "availity-reactstrap-validation": "^2.3.0",
     "aws-iot-device-sdk": "^2.2.11",
