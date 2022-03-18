@@ -32,7 +32,13 @@ if (rfidHelper.keysExist() && !rfidHelper.testing()) {
     });
 }
 
-router.post('/createRFID', (req, res) => {
+router.post('/createRFID', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if(!await verifyToken(req.body.token)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   if (rfidHelper.addingRfid()) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -40,8 +46,11 @@ router.post('/createRFID', (req, res) => {
   return res.sendStatus(OK);
 });
 
-router.get('/getRFIDs', (req, res) => {
+router.get('/getRFIDs', async (req, res) => {
   if (!checkIfTokenSent(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if(!await verifyToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.find()
@@ -51,8 +60,11 @@ router.get('/getRFIDs', (req, res) => {
     });
 });
 
-router.post('/deleteRFID', (req, res) => {
+router.post('/deleteRFID', async (req, res) => {
   if (!checkIfTokenSent(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if(!await verifyToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.deleteOne({ _id: req.body._id })

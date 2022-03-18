@@ -168,7 +168,7 @@ router.post('/setEmailToVerified', (req, res) => {
 // Returns the name and accesslevel of the user w/ the given access token
 router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
-    return res.send(UNAUTHORIZED).json({});
+    return res.status(UNAUTHORIZED).json({});
   }
   const token = decodeToken(req);
   if (!token) {

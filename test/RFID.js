@@ -79,6 +79,7 @@ describe('RFID', () => {
   describe('/POST createRFID', () => {
     it('Should return 400 when adding already in progress',
       async () => {
+        setTokenStatus(true);
         addingRfidStub.returns(true);
         const result = await test.sendPostRequestWithToken(token,
           '/api/RFID/createRFID', SAMPLE_USER_NAME);
@@ -88,6 +89,7 @@ describe('RFID', () => {
 
     it('Should start countdown to add RFID',
       async () => {
+        setTokenStatus(true);
         addingRfidStub.returns(false);
         const result = await test.sendPostRequestWithToken(token,
           '/api/RFID/createRFID', SAMPLE_USER_NAME);
