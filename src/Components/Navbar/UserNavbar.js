@@ -32,7 +32,7 @@ export default function UserNavBar(props) {
       ].join('')
     },
     {
-      link: 'https://discord.com/invite/STkT6mH',
+      link: 'https://discord.gg/Enavv8aUjY',
       vector: [
         'M19.54 0c1.356 0 2.46 1.104 2.46 2.472v21.528l-2.58-2.28-1.4',
         '52-1.344-1.536-1.428.636 2.22h-13.608c-1.356 0-2.46-1.104-2.4',

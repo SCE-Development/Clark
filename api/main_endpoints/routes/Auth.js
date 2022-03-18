@@ -223,6 +223,7 @@ router.post('/validateVerificationEmail', async (req, res) => {
       }
       if (isMatch) {
         result.emailVerified = true;
+        result.accessLevel = membershipState.NON_MEMBER;
         await result
           .save()
           .then(_ => {

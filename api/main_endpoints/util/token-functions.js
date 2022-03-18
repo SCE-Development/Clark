@@ -38,7 +38,7 @@ function decodeToken(request){
  * response to the user
  * @returns {boolean} whether the user token is valid or not
  */
-function checkIfTokenValid(request, accessLevel = membershipState.MEMBER) {
+function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
   let decoded = decodeToken(request);
   let response = decoded && decoded.accessLevel >= accessLevel;
   return response;
