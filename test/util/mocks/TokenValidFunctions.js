@@ -40,7 +40,7 @@ function setTokenStatus(returnValue) {
   if (returnValue) {
     decodeTokenValidMock.returns({accessLevel: 10});
   } else {
-    decodeTokenValidMock.returns({});
+    decodeTokenValidMock.returns(null);
   }
 }
 

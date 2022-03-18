@@ -102,7 +102,8 @@ describe('RFID', () => {
   describe('/GET getRFIDs', () => {
     it('Should return 401 when supplied with invalid token',
       async () => {
-        const result = await test.sendGetRequest('/api/RFID/getRFIDs', {});
+        const result = await test.sendGetRequestWithToken(token,
+          '/api/RFID/getRFIDs');
         expect(result).to.have.status(UNAUTHORIZED);
       }
     );
@@ -127,7 +128,8 @@ describe('RFID', () => {
 
   describe('/POST deleteRFID', () => {
     it('Should return 401 when an invalid token is supplied', async () => {
-      const result = await test.sendPostRequest('/api/RFID/deleteRFID', {});
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/RFID/deleteRFID', {});
       expect(result).to.have.status(UNAUTHORIZED);
     });
 

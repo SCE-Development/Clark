@@ -146,7 +146,12 @@ describe('Auth', () => {
         expect(result).to.have.status(UNAUTHORIZED);
       });
 
-    // add test for invalid token
+    it('Should return statusCode 401 when a token is invalid',
+      async () => {
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/Auth/verify', {});
+        expect(result).to.have.status(UNAUTHORIZED);
+      });
 
     it('Should return statusCode 200 when a ' +
         'token is passed in', async () => {
