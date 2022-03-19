@@ -5,7 +5,7 @@ services:
     image: 'mongo'
     volumes:
       - '/data/db:/data/db' 
-      - '~/data/db:/data/db'  # use this command instead for mac users
+      # - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
   sce-peripheral-api:
     container_name: sce-peripheral-api

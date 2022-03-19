@@ -5,6 +5,7 @@ const { OK, BAD_REQUEST, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 const fs = require('fs');
 
+
 /**
  * Abstracts RFID card backend logic to a class to improve readability.
  * @member {bool} addRfid - Keeps track of the state of the server, whether
