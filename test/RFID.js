@@ -20,7 +20,6 @@ let test = null;
 const expect = chai.expect;
 const tools = require('./util/tools/tools');
 const { RfidHelper } = require('../api/peripheral_api/util/RFID-helpers');
-const { faHourglassEnd } = require('@fortawesome/free-solid-svg-icons');
 
 let addingRfidStub = null;
 let awsIotStub = null;
@@ -29,10 +28,6 @@ let testingStub = null;
 
 chai.should();
 chai.use(chaiHttp);
-
-const namespace = {
-  Service: require('../api/peripheral_api/util/RFID-helpers')
-};
 
 describe('RFID', () => {
   before(done => {
@@ -81,7 +76,7 @@ describe('RFID', () => {
       async () => {
         setTokenStatus(true);
         addingRfidStub.returns(true);
-        const result = await test.sendPostRequestWithToken('xyz',
+        const result = await test.sendPostRequestWithToken(token,
           '/api/RFID/createRFID', SAMPLE_USER_NAME);
         expect(result).to.have.status(BAD_REQUEST);
       }

@@ -7,14 +7,13 @@ const membershipState = require('./constants').MEMBERSHIP_STATE;
  * @returns {Boolean} true if valid token else false
  */
 async function verifyToken(token) {
-  console.log('verifyToken called  with ', { token });
   let valid = false;
   await axios
     .post('http://localhost:8080/api/Auth/verify', { token })
     .then(res => {
       valid = res && res.accessLevel >= membershipState.OFFICER;
     })
-    .catch((e) => { console.log(e.code); });
+    .catch(() => { });
   return valid;
 }
 
