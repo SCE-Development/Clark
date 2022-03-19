@@ -4,7 +4,7 @@ const Event = require('../models/Event');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-} = require('../../util/token-functions');
+} = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,

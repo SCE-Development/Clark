@@ -1,14 +1,18 @@
 const TokenFunctions = require(
-  '../../../api/util/token-functions');
+  '../../../api/main_endpoints/util/token-functions');
+const TokenValidation = require('../../../api/util/token-verification');
 const sinon = require('sinon');
 
 let checkifTokenValidMock = null;
+let decodeTokenValidMock = null;
 
 /**
  * Initialize the stub to be used in other functions.
  */
 function initializeMock() {
   checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid');
+  decodeTokenValidMock = sinon.stub(TokenFunctions, 'decodeToken');
+  verifyTokenMock = sinon.stub(TokenValidation, 'verifyToken');
 }
 
 /**
@@ -16,6 +20,8 @@ function initializeMock() {
  */
 function restoreMock() {
   checkifTokenValidMock.restore();
+  decodeTokenValidMock.restore();
+  verifyTokenMock.restore();
 }
 
 /**
@@ -23,6 +29,8 @@ function restoreMock() {
  */
 function resetMock() {
   checkifTokenValidMock.reset();
+  decodeTokenValidMock.reset();
+  verifyTokenMock.reset();
 }
 
 /**
@@ -33,6 +41,13 @@ function resetMock() {
  */
 function setTokenStatus(returnValue) {
   checkifTokenValidMock.returns(returnValue);
+  if (returnValue) {
+    decodeTokenValidMock.returns({accessLevel: 10});
+    verifyTokenMock.returns(true);
+  } else {
+    decodeTokenValidMock.returns(null);
+    verifyTokenMock.returns(false);
+  }
 }
 
 module.exports = {

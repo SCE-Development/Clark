@@ -6,7 +6,7 @@ const PrintingForm3D = require('../models/PrintingForm3D.js');
 const {
   checkIfTokenSent,
   checkIfTokenValid
-} = require('../../util/token-functions');
+} = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,
