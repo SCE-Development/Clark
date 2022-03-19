@@ -4,7 +4,7 @@ services:
     restart: always
     image: 'mongo'
     volumes:
-      # - '/data/db:/data/db' 
+      - '/data/db:/data/db' 
       - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
   sce-peripheral-api:

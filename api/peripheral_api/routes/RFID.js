@@ -22,12 +22,12 @@ if (rfidHelper.keysExist() && !rfidHelper.testing()) {
   });
 
   device
-    .on('connect', function() {
+    .on('connect', function () {
       device.subscribe('MessageForNode');
     });
 
   device
-    .on('message', async function(topic, payload) {
+    .on('message', async function (topic, payload) {
       rfidHelper.handleAwsIotMessage(device, payload);
     });
 }
@@ -36,7 +36,8 @@ router.post('/createRFID', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  if(!await verifyToken(req.body.token)) {
+  if (!await verifyToken(req.body.token)) {
+    console.log('not valid token', await verifyToken(req.body.token));
     return res.sendStatus(UNAUTHORIZED);
   }
   if (rfidHelper.addingRfid()) {
@@ -50,7 +51,7 @@ router.get('/getRFIDs', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  if(!await verifyToken(req.body.token)) {
+  if (!await verifyToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.find()
@@ -64,7 +65,7 @@ router.post('/deleteRFID', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  if(!await verifyToken(req.body.token)) {
+  if (!await verifyToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.deleteOne({ _id: req.body._id })

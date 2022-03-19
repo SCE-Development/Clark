@@ -81,7 +81,7 @@ describe('RFID', () => {
       async () => {
         setTokenStatus(true);
         addingRfidStub.returns(true);
-        const result = await test.sendPostRequestWithToken(token,
+        const result = await test.sendPostRequestWithToken('xyz',
           '/api/RFID/createRFID', SAMPLE_USER_NAME);
         expect(result).to.have.status(BAD_REQUEST);
       }
@@ -144,8 +144,8 @@ describe('RFID', () => {
 
     it('Should return 200 when an RFID is sucessfully deleted', async () => {
       setTokenStatus(true);
-      const result = await test.sendPostRequest(
-        '/api/RFID/deleteRFID', { _id: VALID_ID, token: 'xyz' });
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/RFID/deleteRFID', { _id: VALID_ID });
       expect(result).to.have.status(OK);
       const getReqResult = await test.sendGetRequestWithToken(token,
         '/api/RFID/getRFIDs');
