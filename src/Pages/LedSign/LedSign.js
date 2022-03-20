@@ -77,7 +77,7 @@ function LedSign(props) {
       borderColor,
       email: props.user.email,
       firstName: props.user.firstName
-    });
+    }, props.user.token);
     setRequestSuccessful(!signResponse.error);
     setAwaitingSignResponse(false);
   }

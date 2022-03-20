@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
+const { OK, BAD_REQUEST, UNAUTHORIZED } = require('../../util/constants').STATUS_CODES;
 const AWS = require('aws-sdk');
 const { ledSqsKeys, ledSignUrl } = require('../../config/config.json');
+const {
+  verifyToken,
+  checkIfTokenSent
+} = require('../../util/token-verification');
 
 const creds = new AWS.Credentials(ledSqsKeys.CLIENT_ID,
   ledSqsKeys.CLIENT_SECRET);
@@ -23,6 +27,12 @@ router.get('/healthCheck', (req, res) => {
 });
 
 router.post('/updateSignText', (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   const sqsParams = {
     MessageBody: JSON.stringify(
       req.body

@@ -50,10 +50,11 @@ export async function getAllSignLogs() {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function updateSignText(signData) {
+export async function updateSignText(signData, token) {
   let status = new ApiResponse();
   await axios
-    .post(PERIPHERAL_API_URL + '/LedSign/updateSignText', { ...signData })
+    .post(PERIPHERAL_API_URL + '/LedSign/updateSignText',
+    { token, ...signData })
     .then(res => {
       status = res.data;
     })
