@@ -2,25 +2,31 @@ process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const aws = require('aws-sdk');
-const sinon = require('sinon');
-const {
-  OK, NOT_FOUND, BAD_REQUEST, UNAUTHORIZED
-} = require('../api/util/constants').STATUS_CODES;
+const tools = require('./util/tools/tools');
 const SceApiTester = require('./util/tools/SceApiTester');
+const {
+  OK,
+  NOT_FOUND,
+  BAD_REQUEST,
+  UNAUTHORIZED
+} = require('../api/util/constants').STATUS_CODES;
 const {
   initializeMock,
   setTokenStatus,
   resetMock,
   restoreMock,
 } = require('./util/mocks/TokenValidFunctions');
+const {
+  initializeSqsMock,
+  setSqsResponse,
+  resetSqsMock,
+  restoreSqsMock,
+} = require('./util/mocks/SceSqsApiHandler');
+
 let app = null;
 let test = null;
 const expect = chai.expect;
-const tools = require('./util/tools/tools');
 
-// const sqs = new aws.SQS({ apiVersion: '2012-11-05' });
-let awsSqsStub = null;
 
 chai.should();
 chai.use(chaiHttp);
@@ -30,6 +36,7 @@ const token = '';
 describe('LED Sign', () => {
   before(done => {
     initializeMock();
+    initializeSqsMock();
     app = tools.initializeServer(
       __dirname + '/../api/peripheral_api/routes/LedSign.js');
     test = new SceApiTester(app);
@@ -38,15 +45,18 @@ describe('LED Sign', () => {
 
   after(done => {
     restoreMock();
+    restoreSqsMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
+    setSqsResponse(false);
   });
 
   afterEach(() => {
     resetMock();
+    resetSqsMock();
   });
 
   describe('/POST updateSignText', () => {
@@ -61,11 +71,20 @@ describe('LED Sign', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 200 when...', async () => {
+    it('Should return 400 when error in queue', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(token,
         '/api/LedSign/updateSignText');
-      expect(result).to.have.status(OK);
+      expect(result).to.have.status(BAD_REQUEST);
     });
+
+    it('Should return 200 when message is successfully pushed to the queue',
+      async () => {
+        setTokenStatus(true);
+        setSqsResponse(true);
+        const result = await test.sendPostRequestWithToken(token,
+          '/api/LedSign/updateSignText');
+        expect(result).to.have.status(OK);
+      });
   });
 });
