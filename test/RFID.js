@@ -36,8 +36,6 @@ describe('RFID', () => {
     addingRfidStub = sinon.stub(RfidHelper.prototype, 'addingRfid');
     testingStub = sinon.stub(RfidHelper.prototype, 'testing');
     testingStub.returns(true);
-    awsIotStub = sinon.stub(awsIot, 'device');
-    awsIotStub.returns({ on: () => { } });
     sinon.stub(RfidHelper.prototype, 'keysExist').returns(true);
     app = tools.initializeServer(
       __dirname + '/../api/peripheral_api/routes/RFID.js');

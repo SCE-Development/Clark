@@ -33,7 +33,7 @@ let {
   SceSqsApiHandler
 } = proxyquire(
   '../api/peripheral_api/util/SceSqsApiHandler.js', {
-    'aws-sdk': awsStub,
+    'aws-sdk': awsStub
   }
 );
 
