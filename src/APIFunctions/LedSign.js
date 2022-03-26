@@ -54,7 +54,7 @@ export async function updateSignText(signData, token) {
   let status = new ApiResponse();
   await axios
     .post(PERIPHERAL_API_URL + '/LedSign/updateSignText',
-    { token, ...signData })
+      { token, ...signData })
     .then(res => {
       status = res.data;
     })
