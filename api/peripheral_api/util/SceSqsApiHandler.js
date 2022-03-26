@@ -2,7 +2,7 @@ const queueKeys = require('../../config/config.json').Queue;
 const AWS = require('aws-sdk');
 
 /**
- * SQS API Handler 
+ * SQS API Handler
  * @member {Object} sqs  SQS service object
  * @member {String} queueName name of the queue
  * @member {String} queueUrl url of the queue
@@ -39,7 +39,7 @@ class SceSqsApiHandler {
         MessageBody: JSON.stringify(data),
         QueueUrl: this.queueUrl
       };
-      this.sqs.sendMessage(sqsParams, function (err, data) {
+      this.sqs.sendMessage(sqsParams, function(err, data) {
         if (err) {
           resolve(false);
         } else {

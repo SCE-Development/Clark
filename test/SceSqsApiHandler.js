@@ -11,7 +11,7 @@ let sqsHanlder = null;
 // sendMessage function
 let sqsStub = {
   sendMessage: sinon.stub()
-}
+};
 
 // Create the replacement that proxyquire will use so
 // we can stub SQS functions. Since SQS is a class, the
@@ -22,7 +22,7 @@ let awsStub = {
       return sqsStub;
     }
   }
-}
+};
 
 // Import the class from the path it is defined in. We are
 // using proxyquire instead of the default node "require"
@@ -33,8 +33,8 @@ let {
   SceSqsApiHandler
 } = proxyquire(
   '../api/peripheral_api/util/SceSqsApiHandler.js', {
-  'aws-sdk': awsStub,
-}
+    'aws-sdk': awsStub,
+  }
 );
 
 // Import the class again, but this time mocking out the
@@ -50,13 +50,13 @@ let {
   SceSqsApiHandler: SceSqsApiHandlerWithNoKeys
 } = proxyquire(
   '../api/peripheral_api/util/SceSqsApiHandler.js', {
-  'aws-sdk': awsStub,
-  '../../config/config.json': {
-    Queue: {
-      ACCOUNT_ID: "NOT_SET"
+    'aws-sdk': awsStub,
+    '../../config/config.json': {
+      Queue: {
+        ACCOUNT_ID: 'NOT_SET'
+      }
     }
   }
-}
 );
 
 describe('SceSqsApiHandler', () => {
