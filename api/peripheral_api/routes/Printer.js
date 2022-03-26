@@ -1,11 +1,12 @@
 const express = require('express');
-const fs = require('fs');
 const router = express.Router();
 const {OK} = require('../../util/constants').STATUS_CODES;
-const app = express();
 const s3BucketKeys = require('../../config/config.json').S3Bucket;
 const printingS3Bucket = require('../../config/config.json').PrintingS3Bucket;
-const queueKeys = require('../../config/config.json').Queue;
+const {
+  ACCOUNT_ID,
+  PAPER_PRINTING_QUEUE_NAME
+} = require('../../config/config.json').Queue;
 
 const AWS = require('aws-sdk');
 let creds = new
@@ -41,8 +42,8 @@ router.post('/sendPrintRequest', async (req, res) => {
 
   const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
-  const accountId = queueKeys.AccountID;
-  const queueName = queueKeys.QueueName;
+  const accountId = ACCOUNT_ID;
+  const queueName = PAPER_PRINTING_QUEUE_NAME;
 
   const sqsParams = {
     MessageBody: JSON.stringify({
