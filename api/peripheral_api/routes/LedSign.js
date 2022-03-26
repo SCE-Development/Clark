@@ -26,7 +26,7 @@ router.get('/healthCheck', (req, res) => {
   res.sendStatus(OK);
 });
 
-router.post('/updateSignText', (req, res) => {
+router.post('/updateSignText', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
