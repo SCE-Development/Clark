@@ -2,6 +2,7 @@ process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const aws = require('aws-sdk');
 const sinon = require('sinon');
 const {
   OK, NOT_FOUND, BAD_REQUEST, UNAUTHORIZED
@@ -17,6 +18,9 @@ let app = null;
 let test = null;
 const expect = chai.expect;
 const tools = require('./util/tools/tools');
+
+// const sqs = new aws.SQS({ apiVersion: '2012-11-05' });
+let awsSqsStub = null;
 
 chai.should();
 chai.use(chaiHttp);
@@ -55,6 +59,13 @@ describe('LED Sign', () => {
       const result = await test.sendPostRequestWithToken(token,
         '/api/LedSign/updateSignText');
       expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 200 when...', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/LedSign/updateSignText');
+      expect(result).to.have.status(OK);
     });
   });
 });

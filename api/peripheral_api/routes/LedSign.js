@@ -19,8 +19,8 @@ AWS.config.update({
 
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 const queueUrl =
-'https://sqs.us-west-2.amazonaws.com/'
-+ ledSqsKeys.ACCOUNT_ID + '/' + ledSqsKeys.QUEUE_NAME;
+  'https://sqs.us-west-2.amazonaws.com/'
+  + ledSqsKeys.ACCOUNT_ID + '/' + ledSqsKeys.QUEUE_NAME;
 
 router.get('/healthCheck', (req, res) => {
   res.sendStatus(OK);
@@ -39,8 +39,9 @@ router.post('/updateSignText', async (req, res) => {
     ),
     QueueUrl: queueUrl
   };
-  sqs.sendMessage(sqsParams, function(err, data) {
-    if(err) {
+  console.log("i am gonna add", { sqsParams })
+  sqs.sendMessage(sqsParams, function (err, data) {
+    if (err) {
       res.sendStatus(BAD_REQUEST);
     } else {
       res.sendStatus(OK);
