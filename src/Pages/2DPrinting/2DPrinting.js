@@ -204,7 +204,7 @@ export default function Printing(props) {
       copies
     };
 
-    let status = await printPage(data);
+    let status = await printPage(data, props.user.token);
     if (!status.error) {
       editUser({ ...props.user, pagesPrinted }, props.user.token);
       setPrintStatus('Printing succeeded!');
