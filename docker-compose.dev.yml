@@ -1,0 +1,69 @@
+version: '3.8'
+services:
+  db:
+    restart: always
+    image: 'mongo'
+    volumes:
+      - '/data/db:/data/db' 
+      # - '~/data/db:/data/db'  # use this command instead for mac users
+    command: 'mongod'
+  sce-peripheral-api:
+    container_name: sce-peripheral-api
+    build:
+      context: ./api
+      dockerfile: ./peripheral_api/Dockerfile
+    restart: 'on-failure'
+    stdin_open: true
+    links:
+      - db
+    depends_on:
+      - db
+  sce-cloud-api:
+    container_name: sce-cloud-api
+    image: cloudapi:latest
+    build:
+      context: ./api
+      dockerfile: ./cloud_api/Dockerfile
+    restart: 'on-failure'
+    stdin_open: true
+    links:
+      - db
+    depends_on:
+      - db
+
+  mainendpoints:
+    container_name: mainendpoints
+    image: mainendpoints:latest
+    build:
+      context: ./api
+      dockerfile: ./main_endpoints/Dockerfile
+    restart: 'on-failure'
+    stdin_open: true
+    links:
+      - db
+    depends_on:
+      - db
+  
+  frontend:
+    image: 'corefront:latest'
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-frontend
+    restart: 'on-failure'
+    stdin_open: true
+    links:
+      - db
+    depends_on:
+      - db
+
+  web:
+    image: 'nginx'
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.dev.conf:ro
+    command: [nginx-debug, '-g', 'daemon off;']
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: 'on-failure'
+    depends_on:
+      - frontend
