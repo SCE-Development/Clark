@@ -17,9 +17,9 @@ const expect = chai.expect;
 const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
-  resetMock,
-  restoreMock,
-  initializeMock
+  resetTokenMock,
+  restoreTokenMock,
+  initializeTokenMock
 } = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
@@ -27,7 +27,7 @@ chai.use(chaiHttp);
 
 describe('InventoryItem', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     app = tools.initializeServer(
       __dirname + '/../api/main_endpoints/routes/InventoryItem.js');
     test = new SceApiTester(app);
@@ -37,7 +37,7 @@ describe('InventoryItem', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -46,7 +46,7 @@ describe('InventoryItem', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const token = '';
