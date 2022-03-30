@@ -14,10 +14,10 @@ const expect = chai.expect;
 // tools for testing
 const tools = require('./util/tools/tools.js');
 const {
-  initializeMock,
+  initializeTokenMock,
   setTokenStatus,
-  resetMock,
-  restoreMock,
+  resetTokenMock,
+  restoreTokenMock,
 } = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
@@ -25,7 +25,7 @@ chai.use(chaiHttp);
 
 describe('DoorCode', () => {
   before((done) => {
-    initializeMock();
+    initializeTokenMock();
     app = tools.initializeServer(__dirname + '/../api/main_endpoints/' +
     'routes/DoorCode.js');
     test = new SceApiTester(app);
@@ -35,7 +35,7 @@ describe('DoorCode', () => {
   });
 
   after((done) => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -44,7 +44,7 @@ describe('DoorCode', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const token = '';

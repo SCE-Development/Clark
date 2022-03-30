@@ -9,7 +9,7 @@ let decodeTokenValidMock = null;
 /**
  * Initialize the stub to be used in other functions.
  */
-function initializeMock() {
+function initializeTokenMock() {
   checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid');
   decodeTokenValidMock = sinon.stub(TokenFunctions, 'decodeToken');
   verifyTokenMock = sinon.stub(TokenValidation, 'verifyToken');
@@ -18,7 +18,7 @@ function initializeMock() {
 /**
  * Restore sinon's stub, function returned to its original state
  */
-function restoreMock() {
+function restoreTokenMock() {
   checkifTokenValidMock.restore();
   decodeTokenValidMock.restore();
   verifyTokenMock.restore();
@@ -27,7 +27,7 @@ function restoreMock() {
 /**
  * Reset sinon-stub's call, reset onCall-function back to the beginning
  */
-function resetMock() {
+function resetTokenMock() {
   checkifTokenValidMock.reset();
   decodeTokenValidMock.reset();
   verifyTokenMock.reset();
@@ -51,5 +51,5 @@ function setTokenStatus(returnValue) {
 }
 
 module.exports = {
-  setTokenStatus, resetMock, restoreMock, initializeMock
+  setTokenStatus, resetTokenMock, restoreTokenMock, initializeTokenMock
 };
