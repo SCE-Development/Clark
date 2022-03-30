@@ -24,31 +24,34 @@ ${new Date().getFullYear()}`;
 export function FileUpload(props) {
   const { filePond, printButton, displayPagesLeft } = props;
   return (
-    <Container className="container-2D">
-      <div className="buttons">
-        <Button className="paperPrinting printingBtn" href="/2DPrinting">
+    <React.Fragment className = "paperContainer">
+      <Container className="container-2D">
+        <br/>
+        <div className="buttons">
+          <Button className="paperPrinting printingBtn" href="/2DPrinting">
           Paper Printing
-        </Button>
-        <Button className="threeDPrinting printingBtn" href="/3DPrintingForm">
+          </Button>
+          <Button className="threeDPrinting printingBtn" href="/3DPrintingForm">
           3D Printing
-        </Button>
-      </div>
-      <br/>
-      <div className="printInfo">
-        <p>
+          </Button>
+        </div>
+        <br/>
+        <br/>
+        <div className="printInfo">
+          <p>
           Each member can print up to 30 pages a week <br /> Pages left for this
           week: <span id="pagesLeft">{displayPagesLeft}</span>
-        </p>
+          </p>
+          <br />
+        </div>
+        <FilePond {...filePond} />
+        <Button {...printButton}> Print </Button>
         <br />
-      </div>
-      <FilePond {...filePond} />
-      <Button {...printButton}> Print </Button>
-      <br />
+      </Container>
       <div className="footerNote">
         <p>{footerNote}</p>
       </div>
-      <br/>
-    </Container>
+    </React.Fragment>
   );
 }
 

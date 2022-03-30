@@ -12,8 +12,9 @@
 
 .container-3D{
   background-color: #16252e;
-  min-width: 100%;
-  min-height: 100vh;
+  max-width: 80%;
+  min-height: 80vh;
+  max-height: 80%;
 }
 
 .container-3D .App-header {
@@ -71,22 +72,26 @@
   line-height: 32px;
 }
 
-.container-3D #url {
-  font-family: Mina;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 20px;
-  line-height: 32px;
-}
-
 .container-3D #projectType,
 .container-3D #colors {
+  text-align: center;
   color: black;
   font-family: Mina;
   font-style: normal;
   font-weight: normal;
   font-size: 18px;
   line-height: 32px;
+  max-width: 80%;
+}
+
+.container-3D #url {
+  text-align: center;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 32px;
+  max-width: 80%;
 }
 
 .container-3D .comments {
@@ -96,6 +101,7 @@
   font-weight: normal;
   font-size: 18px;
   line-height: 32px;
+  max-width: 80%;
 }
 
 .container-3D .printingBtn {
@@ -108,6 +114,7 @@
   font-style: normal;
   font-weight: bold;
   font-size: 20px;
+  opacity: 0.5;
   line-height: 50px;
   text-align: center;
   letter-spacing: 0.21em;
@@ -167,15 +174,17 @@
   text-align: center;
 }
 
-.container-3D .footerNote {
-  position: relative;
+.footerNote {
+  position: absolute;
+  bottom: 0;
   max-width: 90%;
   word-wrap: break-word;
   height: auto;
   width: auto;
-  margin: auto;
-  text-align: center;
-  color: white;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: right;
+  color: rgb(0, 0, 0);
   font-family: IBM Plex Mono;
   font-style: normal;
   font-weight: normal;

@@ -14,8 +14,9 @@
 
 .container-2D {
   background-color: #16252e;
-  max-width: 100%;
-  min-height: 100vh;
+  max-width: 80%;
+  min-height: 80vh;
+  max-height: 60%;
 }
 
 .container-2D .buttons a{
@@ -26,7 +27,7 @@
   margin-top: 1em;
 }
 
-.paperPrinting {
+.container-2D .paperPrinting {
   background-color: #16252e;
   font-family: Ubuntu;
   font-style: normal;
@@ -42,13 +43,14 @@
   margin-bottom: 50px;
 }
 
-.threeDPrinting {
+.container-2D .threeDPrinting {
   border-color: rgba(61, 121, 138, 0.5);
   background-color: rgba(61, 121, 138, 0.5);
   font-family: Ubuntu;
   font-style: normal;
   font-weight: bold;
   font-size: 20px;
+  opacity: 0.5;
   line-height: 50px;
   text-align: center;
   letter-spacing: 0.21em;
@@ -139,15 +141,16 @@
   font-weight: bold;
 }
 
-.container-2D .footerNote {
-  position: relative;
+.footerNote {
+  position: absolute;
+  bottom: 0;
   max-width: 90%;
   word-wrap: break-word;
   height: auto;
   width: auto;
   margin: auto;
   text-align: center;
-  color: white;
+  color: rgb(0, 0, 0);
   font-family: IBM Plex Mono;
   font-style: normal;
   font-weight: normal;

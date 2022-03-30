@@ -154,123 +154,125 @@ export default class PrintForm3D extends React.Component {
         <br />
         <br />
         <br />
+        <br />
 
         {fill === false ? (
-          <Container className = "container-3D">
-            <div className="btns">
-              <Button className="paperPrinting printingBtn" href="/2DPrinting">
+          <React.Fragment className = "plastic">
+            <Container className = "container-3D">
+              <div className="btns">
+                <Button className="paperPrinting printingBtn"
+                  href="/2DPrinting">
                 Paper Printing
-              </Button>
-              <Button
-                className="threeDPrinting printingBtn"
-                href="/3DPrintingForm"
-              >
+                </Button>
+                <Button
+                  className="threeDPrinting printingBtn"
+                  href="/3DPrintingForm"
+                >
                 3D Printing
-              </Button>
-            </div>
-            <Form>
-              <br />
-              <br />
-              <FormGroup>
-                <Row>
-                  <Col>
-                    <p className="colorSelect label">Select a color:</p>
-                  </Col>
-                  <Col>
-                    <Input
-                      type="select"
-                      name="colors"
-                      id="colors"
-                      onChange={this.handleColorChange.bind(this)}
-                    >
-                      {printingColors.map((color, itr) => {
-                        return <option key={itr}>{color}</option>;
-                      })}
-                    </Input>
-                  </Col>
-                </Row>
-              </FormGroup>
-              <FormGroup>
-                <Row>
-                  <Col>
-                    <p className="use label">Reason for usage:</p>
-                  </Col>
-                  <Col>
-                    <Input
-                      onChange={this.handleProjectTypeChange.bind(this)}
-                      type="select"
-                      name="projectType"
-                      id="projectType"
-                      placeholder="Type of Project"
-                    >
-                      {reasons.map((choice, itr) => {
-                        return <option key={itr}>{choice}</option>;
-                      })}
-                    </Input>
-                  </Col>
-                </Row>
-              </FormGroup>
+                </Button>
+              </div>
+              <Form>
+                <br />
+                <br />
+                <FormGroup>
+                  <Row>
+                    <Col>
+                      <p className="colorSelect label">Select a color:</p>
+                    </Col>
+                    <Col>
+                      <Input
+                        type="select"
+                        name="colors"
+                        id="colors"
+                        onChange={this.handleColorChange.bind(this)}
+                      >
+                        {printingColors.map((color, itr) => {
+                          return <option key={itr}>{color}</option>;
+                        })}
+                      </Input>
+                    </Col>
+                  </Row>
+                </FormGroup>
+                <FormGroup>
+                  <Row>
+                    <Col>
+                      <p className="use label">Reason for usage:</p>
+                    </Col>
+                    <Col>
+                      <Input
+                        onChange={this.handleProjectTypeChange.bind(this)}
+                        type="select"
+                        name="projectType"
+                        id="projectType"
+                        placeholder="Type of Project"
+                      >
+                        {reasons.map((choice, itr) => {
+                          return <option key={itr}>{choice}</option>;
+                        })}
+                      </Input>
+                    </Col>
+                  </Row>
+                </FormGroup>
 
-              <FormGroup>
-                <Row>
-                  <Col>
-                    <p className="stlFile label">
+                <FormGroup>
+                  <Row>
+                    <Col>
+                      <p className="stlFile label">
                       URL to your .stl file:
-                    </p>{' '}
-                  </Col>
-                  <Col>
-                    <Input
-                      onChange={this.handleUrlChange.bind(this)}
-                      type="text"
-                      id="url"
-                    />
-                  </Col>
-                </Row>
-              </FormGroup>
+                      </p>{' '}
+                    </Col>
+                    <Col>
+                      <Input
+                        onChange={this.handleUrlChange.bind(this)}
+                        type="text"
+                        id="url"
+                      />
+                    </Col>
+                  </Row>
+                </FormGroup>
 
-              <FormGroup>
-                <Row>
-                  <Col>
-                    <p className="additionalComments label">
+                <FormGroup>
+                  <Row>
+                    <Col>
+                      <p className="additionalComments label">
                       Additional comments:
-                    </p>
-                  </Col>
-                  <Col>
-                    <Input
-                      type='textarea'
-                      onChange={this.handleCommentChange.bind(this)}
-                      value={this.state.comment}
-                      className="comments"
-                      name="comments"
-                      id="comments">
-                    </Input>
-                  </Col>
-                </Row>
-              </FormGroup>
+                      </p>
+                    </Col>
+                    <Col>
+                      <Input
+                        type='textarea'
+                        onChange={this.handleCommentChange.bind(this)}
+                        value={this.state.comment}
+                        className="comments"
+                        name="comments"
+                        id="comments">
+                      </Input>
+                    </Col>
+                  </Row>
+                </FormGroup>
 
-              <FormGroup>
-                <div className="additionalConcerns label">
-                  <p>
+                <FormGroup>
+                  <div className="additionalConcerns label">
+                    <p>
                     Please reach out to Andrew Emerson (3D and Hardware Chair)
                     for any additional concerns. <br /> {mailIcon}
                     andrew.emerson@sjsu.edu {discordIcon} AndrewE#6333
-                  </p>
-                </div>
-                <Button
-                  className="submit"
-                  onClick={this.submitApplication.bind(this)}
-                >
+                    </p>
+                  </div>
+                  <Button
+                    className="submit"
+                    onClick={this.submitApplication.bind(this)}
+                  >
                   Submit
-                </Button>
-              </FormGroup>
-              <p id="error-message">Error: {this.state.error}</p>
-            </Form>
-
+                  </Button>
+                </FormGroup>
+                <p id="error-message">Error: {this.state.error}</p>
+              </Form>
+            </Container>
             <div className="footerNote">
               <p>{footerNote}</p>
             </div>
-            <br/>
-          </Container>
+          </React.Fragment>
         ) : null}
 
         {fill === true ? (
