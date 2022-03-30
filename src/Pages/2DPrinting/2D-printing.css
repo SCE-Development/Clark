@@ -14,9 +14,8 @@
 
 .container-2D {
   background-color: #16252e;
-  max-width: 80%;
-  min-height: 80vh;
-  max-height: 60%;
+  border-radius: 25px;
+  height: 50%;
 }
 
 .container-2D .buttons a{
@@ -24,7 +23,7 @@
   margin: 0 auto;
   display: inline-block;
   width: 50%;
-  margin-top: 1em;
+  padding: 0;
 }
 
 .container-2D .paperPrinting {
@@ -114,8 +113,7 @@
   display: flex;
   position: relative;
   width: 70%;
-  max-width: 900px;
-  max-height: 200px;
+  height: 18rem;
   margin-left: auto;
   margin-right: auto;
 }
@@ -144,18 +142,24 @@
 .footerNote {
   position: absolute;
   bottom: 0;
-  max-width: 90%;
   word-wrap: break-word;
   height: auto;
-  width: auto;
   margin: auto;
   text-align: center;
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
   font-family: IBM Plex Mono;
   font-style: normal;
   font-weight: normal;
   font-size: 20px;
   line-height: 26px;
+  left: 5%;
+  width: 100%;
+}
+
+.paperContainer{
+  background-color: #131516;
+  max-width: 100%;
+  min-height: 94vh;
 }
 
 @keyframes fade-in {

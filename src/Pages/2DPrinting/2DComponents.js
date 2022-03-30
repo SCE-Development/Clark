@@ -24,9 +24,11 @@ ${new Date().getFullYear()}`;
 export function FileUpload(props) {
   const { filePond, printButton, displayPagesLeft } = props;
   return (
-    <React.Fragment className = "paperContainer">
+    <div className = "paperContainer">
+      <br/>
+      <br/>
+      <br/>
       <Container className="container-2D">
-        <br/>
         <div className="buttons">
           <Button className="paperPrinting printingBtn" href="/2DPrinting">
           Paper Printing
@@ -51,7 +53,7 @@ export function FileUpload(props) {
       <div className="footerNote">
         <p>{footerNote}</p>
       </div>
-    </React.Fragment>
+    </div>
   );
 }
 

@@ -19,7 +19,7 @@
 
 .container-3D .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 94vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -60,7 +60,6 @@
   margin: 0 auto;
   display: inline-block;
   width: 50%;
-  margin-top: .3em;
 }
 
 .container-3D .label {
@@ -177,7 +176,6 @@
 .footerNote {
   position: absolute;
   bottom: 0;
-  max-width: 90%;
   word-wrap: break-word;
   height: auto;
   width: auto;
@@ -190,4 +188,6 @@
   font-weight: normal;
   font-size: 20px;
   line-height: 26px;
+  left: 12%;
+  width: 80%;
 }

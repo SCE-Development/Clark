@@ -269,6 +269,7 @@ export default class PrintForm3D extends React.Component {
                 <p id="error-message">Error: {this.state.error}</p>
               </Form>
             </Container>
+            <br/>
             <div className="footerNote">
               <p>{footerNote}</p>
             </div>
