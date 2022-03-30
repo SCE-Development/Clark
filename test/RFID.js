@@ -10,10 +10,10 @@ const {
 } = require('../api/util/constants').STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
 const {
-  initializeMock,
+  initializeTokenMock,
   setTokenStatus,
-  resetMock,
-  restoreMock,
+  resetTokenMock,
+  restoreTokenMock,
 } = require('./util/mocks/TokenValidFunctions');
 let app = null;
 let test = null;
@@ -29,19 +29,13 @@ let testingStub = null;
 chai.should();
 chai.use(chaiHttp);
 
-const namespace = {
-  Service: require('../api/peripheral_api/util/RFID-helpers')
-};
-
 describe('RFID', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     countDownStub = sinon.stub(RfidHelper.prototype, 'startCountdownToAddCard');
     addingRfidStub = sinon.stub(RfidHelper.prototype, 'addingRfid');
     testingStub = sinon.stub(RfidHelper.prototype, 'testing');
     testingStub.returns(true);
-    awsIotStub = sinon.stub(awsIot, 'device');
-    awsIotStub.returns({ on: () => { } });
     sinon.stub(RfidHelper.prototype, 'keysExist').returns(true);
     app = tools.initializeServer(
       __dirname + '/../api/peripheral_api/routes/RFID.js');
@@ -51,7 +45,7 @@ describe('RFID', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -60,7 +54,7 @@ describe('RFID', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const SAMPLE_RFID_BYTE = {
@@ -73,13 +67,14 @@ describe('RFID', () => {
   const INVALID_ID = {
     id: '0987654321'
   };
-  const TOKEN = 'jdihuehfuqhuifw';
+  const token = '';
 
   describe('/POST createRFID', () => {
     it('Should return 400 when adding already in progress',
       async () => {
+        setTokenStatus(true);
         addingRfidStub.returns(true);
-        const result = await test.sendPostRequestWithToken(TOKEN,
+        const result = await test.sendPostRequestWithToken(token,
           '/api/RFID/createRFID', SAMPLE_USER_NAME);
         expect(result).to.have.status(BAD_REQUEST);
       }
@@ -87,8 +82,9 @@ describe('RFID', () => {
 
     it('Should start countdown to add RFID',
       async () => {
+        setTokenStatus(true);
         addingRfidStub.returns(false);
-        const result = await test.sendPostRequestWithToken(TOKEN,
+        const result = await test.sendPostRequestWithToken(token,
           '/api/RFID/createRFID', SAMPLE_USER_NAME);
         expect(countDownStub.called === true);
         const args = countDownStub.getCall(0).args[0];
@@ -101,7 +97,7 @@ describe('RFID', () => {
   describe('/GET getRFIDs', () => {
     it('Should return 401 when supplied with invalid token',
       async () => {
-        const result = await test.sendGetRequestWithToken(TOKEN,
+        const result = await test.sendGetRequestWithToken(token,
           '/api/RFID/getRFIDs');
         expect(result).to.have.status(UNAUTHORIZED);
       }
@@ -109,10 +105,10 @@ describe('RFID', () => {
 
     it('Should return 200 with a list of RFID cards when successful',
       async () => {
-        tools.insertItem(RFID, { ...SAMPLE_RFID_BYTE, ...SAMPLE_USER_NAME });
         setTokenStatus(true);
-        const result = await test.sendGetRequestWithToken(TOKEN,
-          '/api/RFID/getRFIDs', {});
+        tools.insertItem(RFID, { ...SAMPLE_RFID_BYTE, ...SAMPLE_USER_NAME });
+        const result = await test.sendGetRequestWithToken(token,
+          '/api/RFID/getRFIDs');
         const item = result.body[0];
         expect(result.body).to.have.length(1);
         expect(item).to.have.property('name');
@@ -126,26 +122,26 @@ describe('RFID', () => {
   });
 
   describe('/POST deleteRFID', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
-      const result = await test.sendPostRequestWithToken(
-        TOKEN, '/api/RFID/deleteRFID');
+    it('Should return 401 when an invalid token is supplied', async () => {
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/RFID/deleteRFID', {});
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return 404 when an RFID does not exist', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        TOKEN, '/api/RFID/deleteRFID', INVALID_ID);
+        token, '/api/RFID/deleteRFID', INVALID_ID);
       expect(result).to.have.status(NOT_FOUND);
     });
 
     it('Should return 200 when an RFID is sucessfully deleted', async () => {
       setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        TOKEN, '/api/RFID/deleteRFID', { _id: VALID_ID });
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/RFID/deleteRFID', { _id: VALID_ID });
       expect(result).to.have.status(OK);
-      const getReqResult = await test.sendGetRequestWithToken(
-        TOKEN, '/api/RFID/getRFIDs', {});
+      const getReqResult = await test.sendGetRequestWithToken(token,
+        '/api/RFID/getRFIDs');
       expect(getReqResult).to.have.status(OK);
       const getRfidResponse = getReqResult.body;
       getRfidResponse.should.be.a('array');

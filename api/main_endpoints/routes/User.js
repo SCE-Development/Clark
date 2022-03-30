@@ -11,7 +11,7 @@ const {
   checkIfTokenSent,
   checkIfTokenValid,
   decodeToken
-} = require('../../util/token-functions');
+} = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,
@@ -146,26 +146,26 @@ router.post('/edit', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  if(!req.body.email){
+  if (!req.body.email) {
     return res.sendStatus(BAD_REQUEST);
   }
 
   let decoded = decodeToken(req);
-  if(decoded.accessLevel === membershipState.MEMBER){
-    if(req.body.email && req.body.email != decoded.email){
+  if (decoded.accessLevel === membershipState.MEMBER) {
+    if (req.body.email && req.body.email != decoded.email) {
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to edit another user');
     }
-    if(req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel){
+    if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to change access level');
     }
   }
 
-  if(decoded.accessLevel === membershipState.OFFICER){
-    if(req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN){
+  if (decoded.accessLevel === membershipState.OFFICER) {
+    if (req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN) {
       return res.sendStatus(UNAUTHORIZED);
     }
   }
@@ -259,8 +259,8 @@ router.post('/connectToDiscord', function(req, res) {
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
   }
-  if(discordApiKeys.CLIENT_ID === 'NOT_SET'
-  && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
+  if (discordApiKeys.CLIENT_ID === 'NOT_SET'
+    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
     return res.sendStatus(OK);
   }
   return res.status(OK)

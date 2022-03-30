@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const RFID = require('../models/RFID');
-const {
-  checkIfTokenSent,
-  checkIfTokenValid,
-} = require('../../util/token-functions');
-const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 const { RfidHelper } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
 const { AWS_IOT_ENDPOINT } = require('../../config/config.json');
-
+const {
+  verifyToken,
+  checkIfTokenSent
+} = require('../../util/token-verification');
 const rfidHelper = new RfidHelper();
 
 if (rfidHelper.keysExist() && !rfidHelper.testing()) {
@@ -34,7 +32,13 @@ if (rfidHelper.keysExist() && !rfidHelper.testing()) {
     });
 }
 
-router.post('/createRFID', (req, res) => {
+router.post('/createRFID', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   if (rfidHelper.addingRfid()) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -42,10 +46,11 @@ router.post('/createRFID', (req, res) => {
   return res.sendStatus(OK);
 });
 
-router.get('/getRFIDs', (req, res) => {
+router.get('/getRFIDs', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.find()
@@ -55,10 +60,11 @@ router.get('/getRFIDs', (req, res) => {
     });
 });
 
-router.post('/deleteRFID', (req, res) => {
+router.post('/deleteRFID', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.deleteOne({ _id: req.body._id })
