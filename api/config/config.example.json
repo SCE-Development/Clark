@@ -33,15 +33,12 @@
     "AWSSECRETKEY": "NOT_SET",
     "BUCKET": "NOT_SET"
   },
-  "ledSqsKeys": {
+  "Queue": {
     "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
     "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "ACCOUNT_ID": "xxxxxxxxxxxx",
-    "QUEUE_NAME": "xxxxxxxx"
-  },
-  "Queue": {
-    "AccountID": "XXXXXXXXXX",
-    "QueueName": "XXXXXXXXXX"
+    "LED_QUEUE_NAME": "xxxxxxxx",
+    "PAPER_PRINTING_QUEUE_NAME": "xxxxxxxx"
   },
   "AWS_IOT_ENDPOINT" : "NOT_SET",
   "PrintingS3Bucket": "NOT_SET",

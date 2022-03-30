@@ -22,9 +22,9 @@ const expect = chai.expect;
 const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
-  resetMock,
-  restoreMock,
-  initializeMock
+  resetTokenMock,
+  restoreTokenMock,
+  initializeTokenMock
 } = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
@@ -33,7 +33,7 @@ chai.use(chaiHttp);
 // Our parent block
 describe('3DPrintingForm', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     app = tools.initializeServer(
       __dirname + '/../api/main_endpoints/routes/3DPrintingForm.js');
     test = new SceApiTester(app);
@@ -42,7 +42,7 @@ describe('3DPrintingForm', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -51,7 +51,7 @@ describe('3DPrintingForm', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const token = 'token';
