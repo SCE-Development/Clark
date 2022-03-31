@@ -4,8 +4,7 @@ import HeroFrame from '../../Components/Frame/HeroFrame.js';
 import Footer from '../../Components/Footer/Footer.js';
 import Iframe from 'react-iframe';
 import { Button } from 'reactstrap';
-import PastEvents from '../../Components/PastEvents/PastEvents';
-import MemberPerksSlide from '../../Components/MemberPerks/MemberPerksSlide';
+
 /*
   <Iframe url="https://calendar.google.com/calendar/embed?src=
   llv828585faitko1m2nh39s3js%40group.calendar.google.co
