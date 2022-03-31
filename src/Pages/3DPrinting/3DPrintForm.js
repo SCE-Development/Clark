@@ -178,7 +178,9 @@ export default class PrintForm3D extends React.Component {
                 <FormGroup className='forminputs3d'>
                   <Row>
                     <Col>
-                      <p className="printInfo colorSelect label">Select a color:</p>
+                      <p className="printInfo colorSelect label">
+                        Select a color:
+                      </p>
                     </Col>
                     <Col className='colfor3dpage'>
                       <Input
