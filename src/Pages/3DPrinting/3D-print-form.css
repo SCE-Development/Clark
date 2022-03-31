@@ -1,15 +1,32 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=Mina:wght@400;700&family=Ubuntu:wght@700&display=swap');
+
+.plastic{
+  background-color: #131516;
+  max-width: 100%;
+  min-height: 94vh;
 }
 
-.App-logo {
+.container-3D .App {
+  text-align: center;
+  font-family: 'Mina', sans-serif;
+}
+
+.container-3D .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 40vmin;
 }
 
-.App-header {
+.container-3D{
+  background-color: #16252e;
+  max-width: 80%;
+  min-height: 80vh;
+  max-height: 80%;
+  padding: 0;
+}
+
+.container-3D .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 94vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,7 +35,7 @@
   color: white;
 }
 
-.App-link {
+.container-3D .App-link {
   color: #61dafb;
 }
 
@@ -31,16 +48,179 @@
   }
 }
 
-#error-message {
+.container-3D #error-message {
   display: none;
   color: red;
   font-weight: 500;
 }
 
-#submit-label-1 {
+.container-3D #submit-label-1 {
   margin: 1em;
 }
 
-#submit-label-2 {
+.container-3D #submit-label-2 {
   margin: 2em;
+}
+
+.container-3D .btns a {
+  text-align: center;
+  margin: 0 auto;
+  display: inline-block;
+  width: 50%;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+.container-3D .label {
+  color: white;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 32px;
+}
+
+.container-3D #projectType,
+.container-3D #colors {
+  text-align: center;
+  color: black;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 32px;
+  max-width: 80%;
+}
+
+.container-3D #url {
+  text-align: center;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 32px;
+  max-width: 80%;
+}
+
+.container-3D .comments {
+  background-color: #b4cbd1;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 32px;
+  max-width: 80%;
+}
+
+.container-3D .printingBtn {
+  width: 50%;
+}
+
+.container-3D .paperPrinting {
+  background-color: rgba(61, 121, 138, 0.5);
+  font-family: Ubuntu;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  opacity: 0.5;
+  line-height: 50px;
+  text-align: center;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
+  margin: auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 0px !important;
+  margin-bottom: 50px;
+}
+
+.container-3D .threeDPrinting {
+  background-color: #16252e;
+  font-family: Ubuntu;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 50px;
+  text-align: center;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
+  margin: auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-color: #16252e;
+  margin-bottom: 50px;
+}
+
+.container-3D .submit {
+  display: block;
+  width: 30%;
+  max-width: 182px;
+  max-height: 42px;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 32px;
+  text-align: center;
+  margin: auto;
+  border-radius: 20px;
+  background-color: #f3a43b;
+  color: black;
+  margin-bottom: 50px;
+}
+
+.container-2D .additionalConcerns .printInfo {
+  position: relative;
+  width: 100%;
+  word-wrap: break-word;
+  height: auto;
+  width: auto;
+  margin: auto;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 40px;
+  color: white;
+  text-align: center;
+}
+
+.megan {
+  margin-top: 2em;
+  font-size: 18px;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  color: white;
+  width: 100%;
+}
+
+.footerNote {
+  position: absolute;
+  bottom: 0;
+  word-wrap: break-word;
+  height: auto;
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: right;
+  color: rgb(255, 255, 255);
+  font-family: IBM Plex Mono;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 26px;
+  left: 12%;
+  width: 80%;
+}
+
+.plastic {
+  background-color: #131516;
+  max-width: 100%;
+  min-height: 94vh;
+}
+
+.colfor3dpage {
+  padding-right: 49px;
+  padding-left: 49px;
 }
