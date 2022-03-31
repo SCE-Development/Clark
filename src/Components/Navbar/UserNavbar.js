@@ -38,12 +38,9 @@ export default function UserNavBar(props) {
         <NavbarBrand href='/'>
           <div>
             <img id='logo-image' src='favicon.ico'
-              alt={'sce-logo'} style={{ width: '50px' }} />
+              alt={'sce-logo'} style={{ width: '70px' }} />
           </div>
         </NavbarBrand>
-        <div id='user-dark'>
-          <DarkMode />
-        </div>
         <NavbarToggler tag='h1'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
             <DropdownToggle className='hamburger-button'>
@@ -87,7 +84,7 @@ export default function UserNavBar(props) {
               })}
               {/* account icon */}
               {props.authenticated && props.user ? (
-                <DropdownItem className='dropdown-submenu drp-item'>
+                <div className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
                     <svg className='profile-image' viewBox='0 0 24 24'>
                       <path
@@ -128,7 +125,7 @@ export default function UserNavBar(props) {
                       </div>
                     </DropdownItem>
                   </DropdownMenu>
-                </DropdownItem>
+                </div>
                 // display sign in, sign up in hamburger if not logged in
               ) : (
                 <NavItem className='drp-item'>
