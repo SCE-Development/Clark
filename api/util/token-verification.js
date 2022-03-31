@@ -11,7 +11,7 @@ async function verifyToken(token) {
   await axios
     .post('http://localhost:8080/api/Auth/verify', { token })
     .then(res => {
-      valid = res && res.accessLevel >= membershipState.OFFICER;
+      valid = res && res.data.accessLevel >= membershipState.OFFICER;
     })
     .catch(() => { });
   return valid;

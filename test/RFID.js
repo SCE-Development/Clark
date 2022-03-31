@@ -10,10 +10,10 @@ const {
 } = require('../api/util/constants').STATUS_CODES;
 const SceApiTester = require('./util/tools/SceApiTester');
 const {
-  initializeMock,
+  initializeTokenMock,
   setTokenStatus,
-  resetMock,
-  restoreMock,
+  resetTokenMock,
+  restoreTokenMock,
 } = require('./util/mocks/TokenValidFunctions');
 let app = null;
 let test = null;
@@ -31,13 +31,11 @@ chai.use(chaiHttp);
 
 describe('RFID', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     countDownStub = sinon.stub(RfidHelper.prototype, 'startCountdownToAddCard');
     addingRfidStub = sinon.stub(RfidHelper.prototype, 'addingRfid');
     testingStub = sinon.stub(RfidHelper.prototype, 'testing');
     testingStub.returns(true);
-    awsIotStub = sinon.stub(awsIot, 'device');
-    awsIotStub.returns({ on: () => { } });
     sinon.stub(RfidHelper.prototype, 'keysExist').returns(true);
     app = tools.initializeServer(
       __dirname + '/../api/peripheral_api/routes/RFID.js');
@@ -47,7 +45,7 @@ describe('RFID', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -56,7 +54,7 @@ describe('RFID', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const SAMPLE_RFID_BYTE = {

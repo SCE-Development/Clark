@@ -27,9 +27,9 @@ const expect = chai.expect;
 const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
-  resetMock,
-  restoreMock,
-  initializeMock
+  resetTokenMock,
+  restoreTokenMock,
+  initializeTokenMock
 } = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
@@ -38,7 +38,7 @@ chai.use(chaiHttp);
 // Our parent block
 describe('User', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     app = tools.initializeServer([
       __dirname + '/../api/main_endpoints/routes/User.js',
       __dirname + '/../api/main_endpoints/routes/Auth.js'
@@ -50,7 +50,7 @@ describe('User', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -59,7 +59,7 @@ describe('User', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const token = '';

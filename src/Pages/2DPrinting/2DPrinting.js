@@ -1,9 +1,9 @@
 import React, { useState, useEffect} from 'react';
 import './2D-printing.css';
 import ConfirmationModal from
-'../../Components/DecisionModal/ConfirmationModal.js';
+  '../../Components/DecisionModal/ConfirmationModal.js';
 import Header from
-'../../Components/Header/Header.js';
+  '../../Components/Header/Header.js';
 import { registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
@@ -204,7 +204,7 @@ export default function Printing(props) {
       copies
     };
 
-    let status = await printPage(data);
+    let status = await printPage(data, props.user.token);
     if (!status.error) {
       editUser({ ...props.user, pagesPrinted }, props.user.token);
       setPrintStatus('Printing succeeded!');
