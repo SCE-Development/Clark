@@ -19,9 +19,9 @@ const expect = chai.expect;
 const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
-  resetMock,
-  restoreMock,
-  initializeMock
+  resetTokenMock,
+  restoreTokenMock,
+  initializeTokenMock
 } = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
@@ -30,7 +30,7 @@ chai.use(chaiHttp);
 // Our parent block
 describe('Auth', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     app = tools.initializeServer(__dirname +
       '/../api/main_endpoints/routes/Auth.js');
     test = new SceApiTester(app);
@@ -40,7 +40,7 @@ describe('Auth', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -49,7 +49,7 @@ describe('Auth', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const token = '';
@@ -142,27 +142,22 @@ describe('Auth', () => {
   describe('/POST verify', () => {
     it('Should return statusCode 401 when a token is not passed in',
       async () => {
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/Auth/verify', null);
+        const result = await test.sendPostRequest('/api/Auth/verify', {});
         expect(result).to.have.status(UNAUTHORIZED);
       });
 
-    it('Should return statusCode 401 when an invalid ' +
-        'token is passed in', async () => {
-      const result = await test.sendPostRequest(
-        '/api/Auth/verify', { token: 'Invalid Token' });
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
-    it('Should return statusCode 200 when a valid' +
-        'token is passed in', async () => {
-      setTokenStatus({
-        name: 'name',
-        email: 'email',
-        accessLevel: 'accessLevel'
+    it('Should return statusCode 401 when a token is invalid',
+      async () => {
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/Auth/verify', {});
+        expect(result).to.have.status(UNAUTHORIZED);
       });
+
+    it('Should return statusCode 200 when a ' +
+        'token is passed in', async () => {
+      setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/Auth/verify', { token: token });
+        token, '/api/Auth/verify', {});
       expect(result).to.have.status(OK);
     });
   });

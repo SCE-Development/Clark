@@ -4,7 +4,7 @@ const InventoryItem = require('../models/InventoryItem');
 const {
   checkIfTokenSent,
   checkIfTokenValid
-} = require('../../util/token-functions');
+} = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,

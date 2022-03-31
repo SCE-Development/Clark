@@ -9,13 +9,17 @@
         "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
+        "babelOptions": {
+            "configFile": "./.babelrc"
+        },
         "ecmaFeatures": {
             "jsx": true
         },
         "ecmaVersion": 2018,
+        "requireConfigFile": "false",
         "sourceType": "module"
     },
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "plugins": [
         "react"
     ],
