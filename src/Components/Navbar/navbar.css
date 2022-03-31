@@ -1,11 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Mina&display=swap');
 .user-nav {
-  font-size: 18px;
-  background-color: #87b0c7;
-  width: 100%;
+  font-family: "Mina", sans-serif;
+  font-size: 20px;
+  background-color: black;
   top: 0px;
   position: fixed;
   z-index: 4;
+  width: 100%;
 }
 
 .login-icon {
@@ -36,35 +37,82 @@
   z-index: 4;
 }
 
+
 .nav-admin-link {
   color: white !important;
   fill: white;
 }
 
 .sce-nav {
-  flex-flow: row wrap;
+  flex-flow:row wrap;
 }
 
-.icon-images {
-  width: 20px;
-  height: 20px;
+.navlink-items {
+  display: flex;
+  width:50%;
+  line-height: 32px;
+  column-gap: 80%;
+  justify-content: center;
 }
 
 #navlink-text {
   color: white;
-  font-weight: bold;
 }
 
+
+.authentication {
+  column-gap: 30px;
+  position:absolute;
+  top:10px;
+  right:20px;
+  line-height: 190%;
+  width:300px;
+  text-align: center;
+}
+#signin-btn {
+	background-color: transparent;
+	border: 1px solid #ffffff;
+	color: white;
+	border-radius:10px;
+	font-size: 17px;
+	width: 120px;
+  }
+  
+  #signup-btn {
+	background-color: #2288FF !important;
+	border: none;
+	color: white;
+	border-radius:10px;
+	font-size: 17px;
+	width: 120px;
+  }
+
+@media only screen and (max-width: 1168px){
+	#signin-btn {
+		display: none !important;
+	}
+	#signup-btn {
+		display: none !important;
+	}
+}
+
+
 #logo-image {
-  width: 50px;
+  width: 70px;
   margin-top: -5;
   margin-bottom: -5;
-  margin-left: 10;
+  margin-left: 30px;
 }
 
 .logout-image {
   width: 18px;
   height: 18px;
+}
+
+.profile{
+  position:absolute;
+  top:20px;
+  right:46px;
 }
 
 .profile-image {
@@ -81,7 +129,6 @@
 
 .drp-item.active, .drp-item:active {
   background-color:#d3d3d3 !important;
-  outline: none !important;
 }
 
 .dropdown-submenu {
@@ -98,10 +145,6 @@
   display: block !important;
 }
 
-.navbar-toggler {
-  padding: 0 !important;
-  border: none !important;
-}
 
 .border {
   display: block;
@@ -109,14 +152,9 @@
   margin-bottom: 5px;
   padding: 1px;
   width: 30px;
-  background:	#00008B;
+  background:#00008B;
 }
 
-.hamburger-button {
-  background-color: #4e6fa16c !important;
-  border-color: #ffffff00 !important;
-  border-radius: 4px !important;
-}
 
 #toggler-left {
   display: inline-flex;
@@ -124,7 +162,8 @@
 
 #user-dark{
   position: absolute;
-  left: 5rem;
+  left: 9rem;
+  color: #e8e6e3;
 }
 
 #admin-dark{
@@ -140,6 +179,7 @@
   width: 0.7rem;
   height: 1.6rem;
   margin-right: 1.24rem;
+  
 }
 
 #dark-toggler {
