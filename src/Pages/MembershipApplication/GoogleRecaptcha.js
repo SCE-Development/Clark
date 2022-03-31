@@ -15,7 +15,7 @@ class GoogleRecaptcha extends Component {
       if (recaptchaToken === null) this.props.setVerified(false);
       resolve();
     });
-  }
+  };
 
   render() {
     return (

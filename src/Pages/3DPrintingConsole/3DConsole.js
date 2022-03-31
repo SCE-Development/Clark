@@ -55,13 +55,13 @@ export default class PrintConsole3D extends React.Component {
       modalOpen: true,
       itemToDelete: item
     });
-  }
+  };
 
   toggleModal = () => {
     this.setState({
       modalOpen: !this.state.modalOpen
     });
-  }
+  };
 
   delete3dPrintRequest = async requestToDelete => {
     this.setState({
@@ -78,7 +78,7 @@ export default class PrintConsole3D extends React.Component {
         )
       });
     }
-  }
+  };
 
   /*
   Parameters: Json Object that will be updated and an onClick event with a value
@@ -105,7 +105,7 @@ export default class PrintConsole3D extends React.Component {
       newData[updateIndex].progress = newProgress;
       this.setState({ data: newData });
     }
-  }
+  };
 
   search() {
     const search = this.state.search.trim().toLowerCase();
