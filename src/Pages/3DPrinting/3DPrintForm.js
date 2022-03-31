@@ -161,12 +161,12 @@ export default class PrintForm3D extends React.Component {
             <br />
             <Container className = "container-2D">
               <div className="buttons">
-                <Button className="paperPrinting printingBtn"
+                <Button className="threeDPrinting printingBtn inactive"
                   href="/2DPrinting">
                 Paper Printing
                 </Button>
                 <Button
-                  className="threeDPrinting printingBtn"
+                  className="paperPrinting printingBtn active"
                   href="/3DPrintingForm"
                 >
                 3D Printing
@@ -175,12 +175,12 @@ export default class PrintForm3D extends React.Component {
               <Form>
                 <br />
                 <br />
-                <FormGroup>
+                <FormGroup className='forminputs3d'>
                   <Row>
                     <Col>
                       <p className="printInfo colorSelect label">Select a color:</p>
                     </Col>
-                    <Col>
+                    <Col className='colfor3dpage'>
                       <Input
                         type="select"
                         name="colors"
@@ -199,7 +199,7 @@ export default class PrintForm3D extends React.Component {
                     <Col>
                       <p className="printInfo use label">Reason for usage:</p>
                     </Col>
-                    <Col>
+                    <Col className='colfor3dpage'>
                       <Input
                         onChange={this.handleProjectTypeChange.bind(this)}
                         type="select"
@@ -222,7 +222,7 @@ export default class PrintForm3D extends React.Component {
                       URL to your .stl file:
                       </p>{' '}
                     </Col>
-                    <Col>
+                    <Col className='colfor3dpage'>
                       <Input
                         onChange={this.handleUrlChange.bind(this)}
                         type="text"
@@ -239,7 +239,7 @@ export default class PrintForm3D extends React.Component {
                       Additional comments:
                       </p>
                     </Col>
-                    <Col>
+                    <Col className='colfor3dpage'>
                       <Input
                         type='textarea'
                         onChange={this.handleCommentChange.bind(this)}
@@ -253,11 +253,11 @@ export default class PrintForm3D extends React.Component {
                 </FormGroup>
 
                 <FormGroup>
-                    <p className='megan'>
+                  <p className='megan'>
                     Please reach out to Andrew Emerson (3D and Hardware Chair)
                     for any additional concerns. <br /> {mailIcon}
                     andrew.emerson@sjsu.edu {discordIcon} AndrewE#6333
-                    </p>
+                  </p>
                   <Button
                     className="submit"
                     onClick={this.submitApplication.bind(this)}

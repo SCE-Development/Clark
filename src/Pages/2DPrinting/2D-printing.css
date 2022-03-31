@@ -16,6 +16,13 @@
   background-color: #16252e;
   border-radius: 25px;
   height: 50%;
+  padding: 0;
+}
+
+.container-2D .buttons {
+  background-color: rgba(61, 121, 138, 0.5);
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 }
 
 .container-2D .buttons a{
@@ -38,7 +45,8 @@
   text-transform: uppercase;
   margin: auto;
   border-color: #16252e;
-  border-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   margin-bottom: 50px;
 }
 
@@ -55,7 +63,8 @@
   letter-spacing: 0.21em;
   text-transform: uppercase;
   margin: auto;
-  border-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   margin-bottom: 50px;
 }
 

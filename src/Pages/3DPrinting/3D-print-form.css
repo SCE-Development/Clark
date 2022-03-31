@@ -21,6 +21,7 @@
   max-width: 80%;
   min-height: 80vh;
   max-height: 80%;
+  padding: 0;
 }
 
 .container-3D .App-header {
@@ -66,6 +67,8 @@
   margin: 0 auto;
   display: inline-block;
   width: 50%;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 }
 
 .container-3D .label {
@@ -125,7 +128,8 @@
   letter-spacing: 0.21em;
   text-transform: uppercase;
   margin: auto;
-  border-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   margin-bottom: 50px;
 }
 
@@ -140,7 +144,8 @@
   letter-spacing: 0.21em;
   text-transform: uppercase;
   margin: auto;
-  border-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   border-color: #16252e;
   margin-bottom: 50px;
 }
@@ -212,4 +217,9 @@
   background-color: #131516;
   max-width: 100%;
   min-height: 94vh;
+}
+
+.colfor3dpage {
+  padding-right: 49px;
+  padding-left: 49px;
 }
