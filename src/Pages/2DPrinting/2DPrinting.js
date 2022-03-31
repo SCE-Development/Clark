@@ -181,7 +181,7 @@ export default function Printing(props) {
   };
 
   const maybeShowFileUpload =  () => {
-    return !printerHealthy ?
+    return printerHealthy ?
       <FileUpload {...fileUploadProps} /> :
       <Container className='healthCheck'>
         <br/>

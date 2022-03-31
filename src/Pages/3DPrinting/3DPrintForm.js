@@ -154,12 +154,13 @@ export default class PrintForm3D extends React.Component {
         <br />
         <br />
         <br />
-        <br />
 
         {fill === false ? (
-          <React.Fragment className = "plastic">
-            <Container className = "container-3D">
-              <div className="btns">
+          <div className = "plastic">
+            <br />
+            <br />
+            <Container className = "container-2D">
+              <div className="buttons">
                 <Button className="paperPrinting printingBtn"
                   href="/2DPrinting">
                 Paper Printing
@@ -177,7 +178,7 @@ export default class PrintForm3D extends React.Component {
                 <FormGroup>
                   <Row>
                     <Col>
-                      <p className="colorSelect label">Select a color:</p>
+                      <p className="printInfo colorSelect label">Select a color:</p>
                     </Col>
                     <Col>
                       <Input
@@ -196,7 +197,7 @@ export default class PrintForm3D extends React.Component {
                 <FormGroup>
                   <Row>
                     <Col>
-                      <p className="use label">Reason for usage:</p>
+                      <p className="printInfo use label">Reason for usage:</p>
                     </Col>
                     <Col>
                       <Input
@@ -217,7 +218,7 @@ export default class PrintForm3D extends React.Component {
                 <FormGroup>
                   <Row>
                     <Col>
-                      <p className="stlFile label">
+                      <p className="printInfo stlFile label">
                       URL to your .stl file:
                       </p>{' '}
                     </Col>
@@ -234,7 +235,7 @@ export default class PrintForm3D extends React.Component {
                 <FormGroup>
                   <Row>
                     <Col>
-                      <p className="additionalComments label">
+                      <p className="printInfo additionalComments label">
                       Additional comments:
                       </p>
                     </Col>
@@ -252,13 +253,11 @@ export default class PrintForm3D extends React.Component {
                 </FormGroup>
 
                 <FormGroup>
-                  <div className="additionalConcerns label">
-                    <p>
+                    <p className='megan'>
                     Please reach out to Andrew Emerson (3D and Hardware Chair)
                     for any additional concerns. <br /> {mailIcon}
                     andrew.emerson@sjsu.edu {discordIcon} AndrewE#6333
                     </p>
-                  </div>
                   <Button
                     className="submit"
                     onClick={this.submitApplication.bind(this)}
@@ -269,11 +268,10 @@ export default class PrintForm3D extends React.Component {
                 <p id="error-message">Error: {this.state.error}</p>
               </Form>
             </Container>
-            <br/>
             <div className="footerNote">
-              <p>{footerNote}</p>
+              <p className='printInfo'>{footerNote}</p>
             </div>
-          </React.Fragment>
+          </div>
         ) : null}
 
         {fill === true ? (

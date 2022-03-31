@@ -19,7 +19,6 @@
         "requireConfigFile": "false",
         "sourceType": "module"
     },
-    "parser": "@babel/eslint-parser",
     "plugins": [
         "react"
     ],

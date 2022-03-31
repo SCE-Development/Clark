@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=Mina:wght@400;700&family=Ubuntu:wght@700&display=swap');
 
+.plastic{
+  background-color: #131516;
+  max-width: 100%;
+  min-height: 94vh;
+}
+
 .container-3D .App {
   text-align: center;
   font-family: 'Mina', sans-serif;
@@ -157,9 +163,9 @@
   margin-bottom: 50px;
 }
 
-.container-3D .additionalConcerns {
+.container-2D .additionalConcerns .printInfo {
   position: relative;
-  max-width: 100%;
+  width: 100%;
   word-wrap: break-word;
   height: auto;
   width: auto;
@@ -167,10 +173,20 @@
   font-family: Mina;
   font-style: normal;
   font-weight: normal;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 40px;
   color: white;
   text-align: center;
+}
+
+.megan {
+  margin-top: 2em;
+  font-size: 18px;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  color: white;
+  width: 100%;
 }
 
 .footerNote {
@@ -182,7 +198,7 @@
   margin-left: auto;
   margin-right: auto;
   text-align: right;
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
   font-family: IBM Plex Mono;
   font-style: normal;
   font-weight: normal;
@@ -190,4 +206,10 @@
   line-height: 26px;
   left: 12%;
   width: 80%;
+}
+
+.plastic {
+  background-color: #131516;
+  max-width: 100%;
+  min-height: 94vh;
 }
