@@ -21,8 +21,8 @@
 
 .container-2D .buttons {
   background-color: rgba(61, 121, 138, 0.5);
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
 .container-2D .buttons a{
@@ -47,6 +47,8 @@
   border-color: #16252e;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
   margin-bottom: 50px;
 }
 
