@@ -31,7 +31,7 @@ export default class InventoryPage extends Component {
 
   componentDidMount = async () => {
     this.updateItemList();
-  }
+  };
 
   // Get items from db and update list
   updateItemList = async () =>{
@@ -40,7 +40,7 @@ export default class InventoryPage extends Component {
       this.setState({allInventoryItems: res.responseData,
         inventoryItems: res.responseData});
     }
-  }
+  };
 
   // Used in search function, only search by name
   filterItemList = async () => {
@@ -52,43 +52,43 @@ export default class InventoryPage extends Component {
           this.state.searchInput.toLowerCase().trim()));
       this.setState({inventoryItems: filteredItems});
     }
-  }
+  };
 
   updateAlertVisible = () =>{
     this.setState({alertVisible: !this.state.alertVisible});
-  }
+  };
 
   updateItemName = (e) => {
     this.setState({name: e});
-  }
+  };
 
   updateItemPrice = (e) => {
     this.setState({price: e});
-  }
+  };
 
   updateItemStock = (e) => {
     this.setState({stock: e});
-  }
+  };
 
   updateItemCategory = (e) => {
     this.setState({category: e});
-  }
+  };
 
   updateItemDescription = (e) => {
     this.setState({description: e});
-  }
+  };
 
   updateItemPicture = async (e) => {
     this.setState({picture: e});
-  }
+  };
 
   updateLoading = (e) => {
     this.setState({loading: e});
-  }
+  };
 
   updateSearchInput = (e) => {
     this.setState({searchInput: e}, this.filterItemList);
-  }
+  };
 
   // Boolean for disabled prop of Confirm button in AddItemButtonModal
   // Returns false if valid and true if invalid
@@ -98,7 +98,7 @@ export default class InventoryPage extends Component {
       this.state.price === '' || this.state.stock === '' ||
       isNaN(this.state.stock) || this.state.category === '' ||
       this.state.description.length > 100);
-  }
+  };
 
   // Function for add item form/modal
   handleAddItem = async () => {
@@ -132,7 +132,7 @@ export default class InventoryPage extends Component {
         this.renderAlert(alertText, alertColor);
       }, 500);
     }
-  }
+  };
 
   // Function for edit item form/modal in table
   handleEditItem = async (itemId) => {
@@ -160,7 +160,7 @@ export default class InventoryPage extends Component {
         this.renderAlert(alertText, alertColor);
       }, 500);
     }
-  }
+  };
 
   // Function to delete item in edit item form/modal
   handleDeleteItem = async (itemId) => {
@@ -182,13 +182,13 @@ export default class InventoryPage extends Component {
         this.renderAlert(alertText, alertColor);
       }, 500);
     }
-  }
+  };
 
   // Used to clear form/modal when exiting them
   handleClear = () => {
     this.setState({name: '', price: 0, stock: 0, category: '',
       description: '', picture: ''});
-  }
+  };
 
   // Alert Renderer for error/success messages
   renderAlert = (msg, color) =>{
@@ -196,7 +196,7 @@ export default class InventoryPage extends Component {
     this.setState({alertMsg: msg});
     if(this.state.alertVisible === false)
       this.updateAlertVisible();
-  }
+  };
 
   render() {
     const headerProps = {title: 'Inventory Page'};

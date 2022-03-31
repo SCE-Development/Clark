@@ -46,7 +46,7 @@ export default class App extends React.Component {
         <td>{person.major}</td>
       </tr>
     );
-  }
+  };
 
   render() {
     return (
