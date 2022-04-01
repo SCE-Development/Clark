@@ -59,7 +59,7 @@ services:
   web:
     image: 'nginx'
     volumes:
-      - ./nginx.dev.conf:/etc/nginx/nginx.dev.conf:ro
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
