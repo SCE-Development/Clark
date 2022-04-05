@@ -1,5 +1,7 @@
 const axios = require('axios');
 const membershipState = require('./constants').MEMBERSHIP_STATE;
+let MAIN_ENDPOINT_URL = process.env.NODE_ENV === 'production' ?
+  'mainendpoints:8080' : 'localhost:8080';
 
 /**
  * Checks if the given token is valid
@@ -9,7 +11,7 @@ const membershipState = require('./constants').MEMBERSHIP_STATE;
 async function verifyToken(token) {
   let valid = false;
   await axios
-    .post('http://localhost:8080/api/Auth/verify', { token })
+    .post(`http://${MAIN_ENDPOINT_URL}/api/Auth/verify`, { token })
     .then(res => {
       valid = res && res.data.accessLevel >= membershipState.OFFICER;
     })
