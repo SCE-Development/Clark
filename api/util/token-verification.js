@@ -1,6 +1,9 @@
 const axios = require('axios');
 const membershipState = require('./constants').MEMBERSHIP_STATE;
-let MAIN_ENDPOINT_URL = process.env.NODE_ENV === 'production' ?
+// If we are in a docker/prod environment, we can't rely on localhost
+// to route the request to the Auth API so we use the name of
+// the container instead,
+const MAIN_ENDPOINT_URL = process.env.NODE_ENV === 'production' ?
   'mainendpoints:8080' : 'localhost:8080';
 
 /**
