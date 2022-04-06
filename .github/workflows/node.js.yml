@@ -24,25 +24,26 @@ jobs:
 
       
     - name: Cache dependencies
+      id: frontend-cache
       uses: actions/cache@v2
       with:
-        path: ~/.npm
-        key: npm-${{ hashFiles('package-lock.json') }}
-        restore-keys: npm-
-
-    - name: Cache server dependencies
+        path: ./node_modules
+        key: modules-${{ hashFiles('package-lock.json') }}
+    - name: Install dependencies
+      if: steps.frontend-cache.outputs.cache-hit != 'true'
+      run: npm ci --ignore-scripts
+    - name: Cache dependencies
+      id: cache-api
       uses: actions/cache@v2
       with:
-        path: ~/.npm
-        key: npm-${{ hashFiles('api/package-lock.json') }}
-        restore-keys: npm-
+        path: ./api/node_modules
+        key: modules-${{ hashFiles('api/package-lock.json') }}
+    - name: Install dependencies
+      if: steps.cache-api.outputs.cache-hit != 'true'
+      run: cd api; npm ci --ignore-scripts; cd ..
 
 
     - run: python setup.py
-    - run: npm ci
-    - run: cd api
-    - run: npm ci
-    - run: cd ..
     - run: npm run lint
     - run: npm run api-test
     - run: npm run frontend-test
