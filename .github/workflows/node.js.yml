@@ -23,22 +23,22 @@ jobs:
       uses: actions/setup-node@v2
 
       
-    - name: Cache dependencies
+    - name: cache frontend dependencies
       id: frontend-cache
       uses: actions/cache@v2
       with:
         path: ./node_modules
         key: modules-${{ hashFiles('package-lock.json') }}
-    - name: Install dependencies
+    - name: install frontend dependencies if cache miss
       if: steps.frontend-cache.outputs.cache-hit != 'true'
       run: npm ci --ignore-scripts
-    - name: Cache dependencies
+    - name: cache backend dependencies
       id: cache-api
       uses: actions/cache@v2
       with:
         path: ./api/node_modules
         key: modules-${{ hashFiles('api/package-lock.json') }}
-    - name: Install dependencies
+    - name: install backend dependencies if cache miss
       if: steps.cache-api.outputs.cache-hit != 'true'
       run: cd api; npm ci --ignore-scripts; cd ..
 
