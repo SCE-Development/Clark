@@ -43,7 +43,7 @@
     "filepond": "^4.19.2",
     "filepond-plugin-file-encode": "^2.1.6",
     "filepond-plugin-file-validate-type": "^1.2.5",
-    "filepond-plugin-image-preview": "^4.6.5",
+    "filepond-plugin-image-preview": "^4.6.11",
     "mongoose": "^5.11.18",
     "pdf-lib": "^1.16.0",
     "react": "^16.13.1",
