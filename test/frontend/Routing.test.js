@@ -18,7 +18,6 @@ import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js';
 import MembershipApplication from
   '../../src/Pages/MembershipApplication/membershipApplication.jsx';
-import Team from '../../src/Pages/TheTeam/TheTeam.js';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from '../../src/Pages/OfficerDB/OfficerDB.js';
 import Overview from '../../src/Pages/Overview/Overview';
@@ -86,10 +85,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
         expect(wrapper.find(OfficerDB)).to.have.lengthOf(1);
       }
     );
-    it('Should render a <Team /> component with the /team endpoint', () => {
-      const wrapper = getComponentFromRoute('/team');
-      expect(wrapper.find(Team)).to.have.lengthOf(1);
-    });
     it(
       'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
         'endpoint',
@@ -168,10 +163,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
         expect(wrapper.find(OfficerDB)).to.have.lengthOf(1);
       }
     );
-    it('Should render a <Team /> component with the /team endpoint', () => {
-      const wrapper = getComponentFromRoute('/team', officerAppProps);
-      expect(wrapper.find(Team)).to.have.lengthOf(1);
-    });
     it(
       'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
         'endpoint',
