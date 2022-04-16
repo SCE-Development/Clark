@@ -2,10 +2,11 @@ import React from 'react';
 
 function DiscordIcon() {
   return (
-    <svg width='48' height='37.18' viewBox='0 0 71 55'>
-      <path
-        fill='#5865F2'
-        d='M60.105 4.898A58.55 58.55 0 0045.653.415a.22.22 0 00-.233.11 40.784
+    <a href='https://discord.gg/KZCKCEz5YA'>
+      <svg width='48' height='37.18' viewBox='0 0 71 55'>
+        <path
+          fill='#5865F2'
+          d='M60.105 4.898A58.55 58.55 0 0045.653.415a.22.22 0 00-.233.11 40.784
          40.784 0 00-1.8 3.697c-5.456-.817-10.886-.817-16.23
          0-.485-1.164-1.201-2.587-1.828-3.697a.228.228 0 00-.233-.11 58.386
          58.386 0 00-14.451 4.483.207.207 0 00-.095.082C1.578 18.73-.944
@@ -23,13 +24,14 @@ function DiscordIcon() {
          3.945-2.827 7.156-6.381 7.156zm23.593 0c-3.498
          0-6.38-3.211-6.38-7.156 0-3.944 2.826-7.156 6.38-7.156 3.582 0
          6.437 3.24 6.38 7.156 0 3.945-2.798 7.156-6.38 7.156z'
-      ></path>
-      <defs>
-        <clipPath id='clip0'>
-          <path fill='#fff' d='M0 0h71v55H0z'></path>
-        </clipPath>
-      </defs>
-    </svg>
+        ></path>
+        <defs>
+          <clipPath id='clip0'>
+            <path fill='#fff' d='M0 0h71v55H0z'></path>
+          </clipPath>
+        </defs>
+      </svg>
+    </a>
   );
 }
 

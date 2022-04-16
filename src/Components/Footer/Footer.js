@@ -44,12 +44,10 @@ export default () => {
           </ul>
         </Col>
         <Col id='social-media'>
-          <a
-            href='https://www.linkedin.com/company/sjsu-software
-          -computer-engineering-society/'>{<LinkedinIcon />}</a>
-          <a href='https://www.facebook.com/sjsusce/'>{<FacebookIcon />}</a>
-          <a href='https://www.instagram.com/sjsusce/'>{<InstagramIcon />}</a>
-          <a href='https://discord.gg/KZCKCEz5YA'>{<DiscordIcon />}</a>
+          <LinkedinIcon/>
+          <FacebookIcon/>
+          <InstagramIcon/>
+          <DiscordIcon/>
           <p>Brought to you by SCE Dev-Team</p>
         </Col>
       </Row>
