@@ -35,7 +35,7 @@ function HeroFrame() {
       </div>
       <img
         alt="Card image cap"
-        src="images/sce-hero.png"
+        src="images/sce-hero.webp"
         width="100%"
         className="hero-image"
       />
