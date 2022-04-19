@@ -1,12 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
+
 .footer-text p {
-  color: #909090;
+  font-family: 'Mina', sans-serif;
+  color: rgb(180, 180, 180);
 }
 
 .footer-text b {
-  color:#E1F5FE;
+  font-size: large;
+  font-family: 'Montserrat', sans-serif;
+  color:#ffff;
+}
+
+.footer-text ul {
+  list-style-type: none;
+  padding-left: 0;
+  padding-top: 10px;
+}
+
+.footer-text ul li {
+  color: rgb(180, 180, 180);
+  padding-top: 5px;
 }
 
 .footer-text a {
-  color: #E1F5FE;
+  color: lightblue;
   text-decoration: none;
+}
+
+.footer-text a svg {
+  margin: 5px;
+}
+
+@media (max-width: 500px) {
+  #social-media {
+    margin-left: 50px;
+  }
 }

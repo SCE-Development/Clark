@@ -1,34 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=Mina:wght@400;700&family=Ubuntu:wght@700&display=swap');
+
 .center-blocks {
   display: block;
   text-align: center;
   margin: 0 auto;
 }
 
-.modal-header {
+.container-2D .modal-header {
   display: flex;
   text-align: center;
+  font-family: 'Mina', sans-serif;
 }
 
-.continue {
-  display: block;
-  width: 20%;
-  max-width: 100px;
+.container-2D {
+  background-color: #16252e;
+  border-radius: 25px;
+  height: 50%;
+  padding: 0;
+}
+
+.container-2D .buttons {
+  background-color: rgba(61, 121, 138, 0.5);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.container-2D .buttons a{
   text-align: center;
+  margin: 0 auto;
+  display: inline-block;
+  width: 50%;
+  padding: 0;
+}
+
+.container-2D .paperPrinting {
+  background-color: #16252e;
+  font-family: Ubuntu;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 50px;
+  text-align: center;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
   margin: auto;
-  border-radius: 20px;
-  background-color: rgb(28, 192, 247);
-  color: black;
+  border-color: #16252e;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
   margin-bottom: 50px;
 }
 
-.filepond--root .filepond--drop-label {
-  transform:translate3d(0px, 0px, 0);
+.container-2D .threeDPrinting {
+  border-color: rgba(61, 121, 138, 0.5);
+  background-color: rgba(61, 121, 138, 0.5);
+  font-family: Ubuntu;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  opacity: 0.5;
+  line-height: 50px;
+  text-align: center;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
+  margin: auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  margin-bottom: 50px;
+}
+
+.container-2D .print {
+  display: block;
+  width: 30%;
+  max-width: 182px;
+  max-height: 42px;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 32px;
+  text-align: center;
+  margin: auto;
+  border-color: #f3a43b;
+  border-radius: 20px;
+  background-color: #f3a43b;
+  color: #16252e;
+  margin-bottom: 50px;
+}
+
+.container-2D .filepond--root .filepond--drop-label {
+  transform: translate3d(0px, 0px, 0);
   opacity: 1;
 }
 
-.filepond--root .filepond--drop-label label {
-  flex:1 1 auto;
-  line-height: 100px;
+.container-2D .filepond--root .filepond--drop-label label {
+  font-family: Mina;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 160px;
+  text-align: center;
+
+  flex: 1 1 auto;
   height: 100%;
   transform: translateZ(0px);
   animation: fade-in 1s ease-in-out;
@@ -36,36 +110,67 @@
   cursor: pointer;
 }
 
-.filepond--root .filepond--panel-root {
-  background-color: lightgray;
-  border: 2px solid black;
-  border-radius: 20px;
+.container-2D .filepond--root .filepond--panel-root {
+  background: #b4cbd1;
+  box-shadow: 0px 4px 80px rgba(0, 0, 0, 0.25);
+  border-radius: 30px;
 }
 
-.filepond--root:hover .filepond--panel-root {
+.container-2D .filepond--root:hover .filepond--panel-root {
   background-color: rgb(134, 215, 241);
-  border: 2px solid blue;
-} 
+}
 
-.filepond--root {
-  display:flex;
+.container-2D .filepond--root {
+  display: flex;
   position: relative;
   width: 70%;
-  max-width: 700px;
+  height: 18rem;
   margin-left: auto;
   margin-right: auto;
-  height: 500px;
 }
 
-.printInfo {
-  font-size: medium;
+.container-2D .printInfo {
   position: relative;
-  max-width: 80%;
+  max-width: 50%;
   word-wrap: break-word;
   height: auto;
   width: auto;
   margin: auto;
+  color: white;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 40px;
   text-align: center;
+}
+
+.container-2D #pagesLeft {
+  color: #f1a644;
+  font-weight: bold;
+}
+
+.footerNote {
+  position: absolute;
+  bottom: 0;
+  word-wrap: break-word;
+  height: auto;
+  margin: auto;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  font-family: IBM Plex Mono;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 26px;
+  left: 5%;
+  width: 100%;
+}
+
+.paperContainer{
+  background-color: #131516;
+  max-width: 100%;
+  min-height: 94vh;
 }
 
 @keyframes fade-in {
@@ -77,19 +182,19 @@
   }
 }
 
-.spinner-wrapper {
+.container-2D .spinner-wrapper {
   position: absolute;
   top: 50%;
   right: 50%;
 }
 
-.spinner-border {
+.container-2D .spinner-border {
   color: blue;
   width: 5rem;
   height: 5rem;
   border-width: 0.45em;
 }
 
-.healthCheck {
+.container-2D .healthCheck {
   padding-top: 32px;
 }

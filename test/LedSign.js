@@ -11,10 +11,10 @@ const {
   UNAUTHORIZED
 } = require('../api/util/constants').STATUS_CODES;
 const {
-  initializeMock,
+  initializeTokenMock,
   setTokenStatus,
-  resetMock,
-  restoreMock,
+  resetTokenMock,
+  restoreTokenMock,
 } = require('./util/mocks/TokenValidFunctions');
 const {
   initializeSqsMock,
@@ -35,7 +35,7 @@ const token = '';
 
 describe('LED Sign', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     initializeSqsMock();
     app = tools.initializeServer(
       __dirname + '/../api/peripheral_api/routes/LedSign.js');
@@ -44,7 +44,7 @@ describe('LED Sign', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     restoreSqsMock();
     tools.terminateServer(done);
   });
@@ -55,7 +55,7 @@ describe('LED Sign', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
     resetSqsMock();
   });
 
