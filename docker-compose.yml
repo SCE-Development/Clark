@@ -45,7 +45,6 @@ services:
       - db
   
   frontend:
-    # image: 'corefront:latest'
     build:
       context: .
       dockerfile: ./docker/Dockerfile-frontend
