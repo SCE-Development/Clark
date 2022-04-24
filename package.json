@@ -43,7 +43,7 @@
     "filepond": "^4.19.2",
     "filepond-plugin-file-encode": "^2.1.6",
     "filepond-plugin-file-validate-type": "^1.2.5",
-    "filepond-plugin-image-preview": "^4.6.5",
+    "filepond-plugin-image-preview": "^4.6.11",
     "mongoose": "^5.11.18",
     "pdf-lib": "^1.16.0",
     "react": "^16.13.1",
@@ -58,7 +58,7 @@
     "react-scripts": "^4.0.3",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.10.0",
-    "serve": "^11.3.2",
+    "serve": "^13.0.2",
     "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
