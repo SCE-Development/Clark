@@ -4,18 +4,20 @@ const {
   discordApiKeys
 } = require('../../config/config.json');
 
-async function loginWithDiscord(code, email) {
+async function loginWithDiscord(code, email, discordRedirectUri) {
   return new Promise((resolve, reject) => {
     if(discordApiKeys.CLIENT_ID == 'NOT_SET'
     && discordApiKeys.CLIENT_SECRET == 'NOT_SET') {
       return resolve(true);
     }
     axios
-      .post('https://discord.com/api/oauth2/token',
-        `&client_id=${discordApiKeys.CLIENT_ID}` +
-        `&client_secret=${discordApiKeys.CLIENT_SECRET}` +
-        `&grant_type=authorization_code&code=${code}` +
-        `&redirect_uri=${discordApiKeys.REDIRECT_URI_PROD}`)
+      .post('https://discord.com/api/oauth2/token', {
+        'client_id': discordApiKeys.CLIENT_ID,
+        'client_secret': discordApiKeys.CLIENT_SECRET,
+        'grant_type': 'authorization_code',
+        code,
+        'redirect_uri': encodeURIComponent(discordRedirectUri),
+      })
       .then(response => {
         axios.get('https://discord.com/api/users/@me', {
           headers: {
@@ -25,9 +27,10 @@ async function loginWithDiscord(code, email) {
           .then(loginResponse => {
             User.findOne({ email })
               .then((user) => {
-                user.discordUsername = loginResponse.data.username;
-                user.discordDiscrim = loginResponse.data.discriminator;
-                user.discordID = loginResponse.data.id;
+                const { username, discriminator, id } = loginResponse.data;
+                user.discordUsername = username;
+                user.discordDiscrim = discriminator;
+                user.discordID = id;
                 user.save();
                 resolve(true);
               });

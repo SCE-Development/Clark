@@ -3,8 +3,8 @@
   "discordApiKeys": {
     "CLIENT_ID": "NOT_SET",
     "CLIENT_SECRET": "NOT_SET",
-    "REDIRECT_URI_DEV": "http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify",
-    "REDIRECT_URI_PROD": "http%3A%2F%2Fsce.engr.sjsu.edu%2Fprofile&response_type=code&scope=identify",
+    "REDIRECT_URI_DEV": "http://localhost:8080/api/user/callback",
+    "REDIRECT_URI_PROD": "http://sce.engr.sjsu.edu/api/user/callback",
     "REFRESH_TOKEN": "NOT_SET"
   },
   "GENERAL_API_URL": "http://localhost:8080/api",
