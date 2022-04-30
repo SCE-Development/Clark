@@ -27,6 +27,9 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
+const discordRedirectUri = process.env.NODE_ENV === 'production' ?
+  discordApiKeys.REDIRECT_URI_PROD : discordApiKeys.REDIRECT_URI_DEV;
+
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -240,7 +243,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
 router.get('/callback', async function(req, res) {
   const code = req.query.code;
   const email = req.query.state;
-  discordConnection.loginWithDiscord(code, email)
+  discordConnection.loginWithDiscord(code, email, discordRedirectUri)
     .then(status => {
       return res.status(OK).redirect('https://discord.com/oauth2/authorized');
     })
@@ -266,8 +269,9 @@ router.post('/connectToDiscord', function(req, res) {
   return res.status(OK)
     .send('https://discord.com/api/oauth2/authorize?client_id=' +
       `${discordApiKeys.CLIENT_ID}` +
-      `&redirect_uri=${discordApiKeys.REDIRECT_URI_PROD}` +
-      `&state=${email}`);
+      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
+      `&state=${email}&response_type=code&scope=identify`
+    );
 });
 
 function checkIfPageCountResets(lastLogin) {
