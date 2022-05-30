@@ -21,13 +21,13 @@ export default function PlanDropdown(props) {
 
   return (
     <>
-      <p>Plan*</p>
+      <h6>Plan*</h6>
       <ButtonDropdown
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
         <DropdownToggle caret id='change-and-select-btns'>
-          {plan != '' ? plan : 'Select plan'}
+          {plan != null ? plan : 'Select membership plan'}
         </DropdownToggle>
         <DropdownMenu id='change-and-select-btns'>
           {options.map((option, index) => {
