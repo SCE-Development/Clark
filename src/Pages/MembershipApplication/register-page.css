@@ -1,3 +1,24 @@
+@media only screen and (min-width: 1000px) {
+  loginbackground {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    max-height: 150vh;
+    position: absolute;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  loginbackground {
+    background-color: black;
+    width: 100%;
+    height: 200%;
+    position: absolute;
+  }
+}
+
+
 #membership {
   width: 100%;
   padding: 0;
@@ -73,13 +94,26 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
   color: white;
 }
 
-.planContainer {
-  display: flex;
-  position: relative;
-  margin-top: auto;
-  top: 15%;
-  flex-wrap: wrap;
-  /* justify-content: space-around; */
+
+@media only screen and (min-width: 1000px) {
+  .planContainer {
+    display: flex;
+    position: relative;
+    /* margin-top: auto; */
+    top: 15%;
+    flex-wrap: wrap;
+    /* justify-content: space-around; */
+  }
+}
+@media only screen and (max-width: 1000px) {
+  .planContainer {
+    display: flex;
+    position: relative;
+    /* margin-top: auto; */
+    top: 7%;
+    flex-wrap: wrap;
+    /* justify-content: space-around; */
+  }
 }
 
 .planHeaders {
@@ -330,13 +364,6 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
   width: 100%;
   display: inline-block;
   text-align: center;
-}
-
-#loginbackground {
-  background-color: black;
-  width: 100%;
-  height: 100%;
-  position: absolute;
 }
 
 #recaptcha {

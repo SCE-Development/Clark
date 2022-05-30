@@ -214,7 +214,7 @@ export default function MembershipForm(props) {
   };
 
   return (
-    <Container id="loginbackground" fluid>
+    <loginbackground fluid>
       <Container className = "planContainer">
         <div className="form-card">
           <div className = "planHeaders">
@@ -288,6 +288,6 @@ export default function MembershipForm(props) {
           </Form>
         </div>
       </Container>
-    </Container>
+    </loginbackground>
   );
 }
