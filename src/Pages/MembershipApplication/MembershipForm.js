@@ -163,13 +163,13 @@ export default function MembershipForm(props) {
       ifRequirementsNotMet: invalidPasswordAlert(),
       handleChange: (e) => setPassword(e.target.value),
     },
-    // {
-    //   label: 'Confirm password*',
-    //   type: 'password',
-    //   id: 'confirm-password-field',
-    //   ifRequirementsNotMet: invalidConfirmPasswordAlert(),
-    //   handleChange: (e) => setConfirmPassWord(e.target.value),
-    // },
+    {
+      label: 'Confirm password*',
+      type: 'password',
+      id: 'confirm-password-field',
+      ifRequirementsNotMet: invalidConfirmPasswordAlert(),
+      handleChange: (e) => setConfirmPassWord(e.target.value),
+    },
 
   ];
 
@@ -215,82 +215,79 @@ export default function MembershipForm(props) {
 
   return (
     <Container id="loginbackground" fluid>
-
-
-      <div className="form-card">
-      </div>
-      <div className="vertical-line"></div>
-      <div className="form-card2">
-        <h1>Membership Application</h1>
-        <hr />
-        <h2>
-          Term: {memberShipPlanToString(props.selectedPlan)}
-        </h2>
-        <p>
-          * = Required field
-        </p>
-        <Form onSubmit={submitApplication}>
-          <Row id="name-field-row">
-            {nameFields.map((input, index) => (
-              <FormGroup key={`name-field-input-${index}`}>
-                <Input
-                  className="name-input membership-input"
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={input.label}
-                />
-                {input.ifRequirementsNotMet}
-              </FormGroup>
-            ))}
-          </Row>
-          <div id="email-input-container">
-            {accountFields.map((input, index) => (
-              <FormGroup key={`account-field-${index}`}>
-                <Input
-                  className="membership-input email-input"
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={input.label}
-                />
-                {input.ifRequirementsNotMet}
-              </FormGroup>
-            ))}
+      <Container className = "planContainer">
+        <div className="form-card">
+          <div className = "planHeaders">
+            Semester Plan
           </div>
-          <div id="major-input-container">
-            <p>Major:*   </p>
-            {majorField.map((input, index) => (
-              <FormGroup key={`major-input-${index}`}>
-                <Input
-                  className="name-input membership-input"
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={input.label}
-                />
-              </FormGroup>
-            ))}
+          <div class = "circle">
+            <div class="circle-text">$20</div>
           </div>
-          <PlanDropdown setPlan={setPlan} />
-          <div id="recaptcha">
-            <GoogleRecaptcha setVerified={setVerified} />
+          <div class = "planFooters">
+            Expires: May 20, 2021
           </div>
-          <div className="transition-button-wrapper">
-            <div className="center">
-              <Button className = "submit-btn" type="submit">
-                Submit Application
-              </Button>
+          <div className = "planHeaders">
+            Annual Plan
+          </div>
+          <div class = "circle">
+            <div class="circle-text">$30</div>
+          </div>
+          <div class = "planFooters">
+            Expires: December 20, 2021
+          </div>
+        </div>
+        <div className="form-card2">
+          <h1>Membership Application</h1>
+          <h2>
+            Term: {memberShipPlanToString(props.selectedPlan)}
+          </h2>
+          <h6>
+            * = Required field
+          </h6>
+          <Form onSubmit={submitApplication}>
+            <Row id="name-field-row">
+              {nameFields.map((input, index) => (
+                <FormGroup key={`name-field-input-${index}`}>
+                  <Input
+                    className="name-input membership-input"
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
+            </Row>
+            <div id="email-input-container">
+              {accountFields.map((input, index) => (
+                <FormGroup key={`account-field-${index}`}>
+                  <Input
+                    className="membership-input email-input"
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
             </div>
-          </div>
-        </Form>
-        <hr />
-        <p id="login-link">
-          <a href="/login" style={{ fontSize: '120%' }}>
-            Switch to Login
-          </a>
-        </p>
-      </div>
+            <MajorDropdown setMajor={setMajor} />
+            <PlanDropdown setPlan={setPlan} />
+            <div id="recaptcha">
+              <GoogleRecaptcha setVerified={setVerified} />
+            </div>
+            <div className="transition-button-wrapper">
+              <div className="center">
+                <Button className = "submit-btn" type="submit">
+                  Submit Application
+                </Button>
+              </div>
+            </div>
+          </Form>
+        </div>
+      </Container>
     </Container>
   );
 }
