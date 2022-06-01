@@ -8,7 +8,7 @@ import { CSSTransition } from 'react-transition-group';
 
 export default function MembershipApplication() {
   const [membershipState, setMembershipState] =
-    useState(memberApplicationState.SELECT_MEMBERSHIP_PLAN);
+    useState(memberApplicationState.FORM_INFO);
   const [selectedPlan, setSelectedPlan] = useState();
   const appProps = {
     setMembershipState,

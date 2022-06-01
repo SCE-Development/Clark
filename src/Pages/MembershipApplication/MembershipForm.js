@@ -214,7 +214,7 @@ export default function MembershipForm(props) {
   };
 
   return (
-    <loginbackground fluid>
+    <body fluid>
       <Container className = "planContainer">
         <div className="form-card">
           <div className = "planHeaders">
@@ -224,7 +224,7 @@ export default function MembershipForm(props) {
             <div class="circle-text">$20</div>
           </div>
           <div class = "planFooters">
-            Expires: May 20, 2021
+            Expires: May 20, {new Date().getFullYear()}
           </div>
           <div className = "planHeaders">
             Annual Plan
@@ -233,7 +233,7 @@ export default function MembershipForm(props) {
             <div class="circle-text">$30</div>
           </div>
           <div class = "planFooters">
-            Expires: December 20, 2021
+            Expires: December 20, {new Date().getFullYear()}
           </div>
         </div>
         <div className="form-card2">
@@ -288,6 +288,6 @@ export default function MembershipForm(props) {
           </Form>
         </div>
       </Container>
-    </loginbackground>
+    </body>
   );
 }
