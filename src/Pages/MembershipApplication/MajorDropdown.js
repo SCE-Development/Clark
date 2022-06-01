@@ -28,7 +28,7 @@ export default function MajorDropdown(props) {
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
-        <DropdownToggle caret id='change-and-select-btns'>
+        <DropdownToggle caret id='change-and-select-btns 2'>
           {!inputEnable ? major || 'Select major' : 'Other'}
         </DropdownToggle>
         <DropdownMenu id='change-and-select-btns'>

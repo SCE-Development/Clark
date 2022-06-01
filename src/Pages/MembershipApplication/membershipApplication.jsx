@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './register-page.css';
-import MembershipPlan from './MembershipPlan.js';
 import { memberApplicationState } from '../../Enums';
 import MembershipForm from './MembershipForm';
 import ConfirmationPage from './ConfirmationPage';
@@ -16,11 +15,6 @@ export default function MembershipApplication() {
     setSelectedPlan
   };
   const membershipArray = [
-    {
-      isShown:
-        membershipState=== memberApplicationState.SELECT_MEMBERSHIP_PLAN,
-      Component: <MembershipPlan {...appProps} />
-    },
     {
       isShown: membershipState === memberApplicationState.FORM_INFO,
       Component: <MembershipForm {...appProps} />

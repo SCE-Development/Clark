@@ -26,7 +26,7 @@ export default function PlanDropdown(props) {
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
-        <DropdownToggle caret id='change-and-select-btns'>
+        <DropdownToggle caret id='change-and-select-btns 1'>
           {plan != null ? plan : 'Select membership plan'}
         </DropdownToggle>
         <DropdownMenu id='change-and-select-btns'>
