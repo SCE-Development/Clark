@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './register-page.css';
+import './registerPage.css';
 import { memberApplicationState } from '../../Enums';
 import MembershipForm from './MembershipForm';
 import ConfirmationPage from './ConfirmationPage';

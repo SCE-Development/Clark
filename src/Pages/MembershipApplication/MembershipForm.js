@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './register-page.css';
+import './registerPage.css';
 import { Row, Form, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
