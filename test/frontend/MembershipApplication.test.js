@@ -20,11 +20,6 @@ import { CSSTransition } from 'react-transition-group';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<MembershipApplication />', () => {
-  it('Should render a <MembershipPlan /> Component ' +
-     'under the SELECT_MEMBERSHIP_PLAN state', () => {
-    const wrapper = shallow(<MembershipApplication />);
-    expect(wrapper.find(MembershipPlan)).to.have.lengthOf(1);
-  });
   it('Should render a <MembershipForm /> Component ' +
      'under the FORM_INFO state', () => {
     const wrapper = shallow(<MembershipApplication />);
