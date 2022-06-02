@@ -5,14 +5,6 @@ body {
 }
 
 
-#membership {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-
-
 h1 {
   text-align: center;
   color: white;
@@ -50,16 +42,6 @@ p {
   color: white; 
 }
 
-.semesterPlan {
-  text-align: center;
-  font-family: 'Mina', sans-serif;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 33px;
-  line-height: 52px;
-  color: #FCA311;
-}
-
 input[type="text"], input[type="email"], input[type="password"], textarea {
   background: rgba(171, 201, 207, 0.69);
   border-radius: 10px;
@@ -82,22 +64,18 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
   .planContainer {
     display: flex;
     position: relative;
-    /* margin-top: auto; */
     padding-top: 7%;
     padding-bottom: 3%;
     flex-wrap: wrap;
-    /* justify-content: space-around; */
   }
 }
 @media only screen and (max-width: 1000px) {
   .planContainer {
     display: flex;
     position: relative;
-    /* margin-top: auto; */
     padding-top: 20%;
     padding-bottom: 10%;
     flex-wrap: wrap;
-    /* justify-content: space-around; */
   }
 }
 
@@ -122,18 +100,6 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
 
 
 .form-card {
-  /* position: absolute;
-  margin: auto;
-  left: auto;
-  top: 25%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  flex-wrap: wrap;
-  margin-top: 30px;
-  width: 35%;
-  min-width: 400px; */
   margin: auto;
   min-width: 400px;
   align-items: center;
@@ -142,58 +108,14 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
   border-radius: 20px;
   padding: 1.5rem;
   background: #12262F;
-  /* overflow: hidden; */
 }
 
 .form-card2 {
-  /* position: absolute;
-  left: 50%;
-  width: 35%;
-  min-width: 400px;
-  border-radius: 20px;
-  padding: 1.5rem; */
   margin: auto;
   min-width: 400px;
   left: 50%;
   background: black;
   padding: 1.5rem;
-  /* overflow: hidden; */
-}
-
-.vertical-line {
-  border-left: 10px dashed white;
-  height: 965px;
-  position: absolute;
-  left: 50%;
-}
-
-.dashedSpace {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width:10px;
-  height:350px;
-  margin-top:10px;
-  background-image:linear-gradient(0deg, white 0%, white 50%, transparent 50%);
-  background-size:28px 1px;
-  background-repeat:repeat-x;
-}
-
-.membership-info {
-  width: 40%;
-  float: left;
-  min-width: 500px;
-  font-size: 500%;
-  color: white;
-  background-color: rgba(173, 169, 169, 0.3);
-  text-align: left;
-  top: 50%;
-  left: 50%;
-  transform: translate(0, 50%);
-  height: 50%;
-  vertical-align: middle;
-  padding: 2rem;
-  padding-bottom: 0rem;
 }
 
 #membership-plan-btn {
@@ -202,7 +124,6 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
 }
 
 .transition-button-wrapper {
-  /* display: flex; */
   justify-content: space-evenly;
   align-items: center;
   margin-top: 30px;
