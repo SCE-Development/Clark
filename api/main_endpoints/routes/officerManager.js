@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const Manager = require('../models/OfficerManager.js');
 const passport = require('passport');
-require('../util/passport')(passport);
+require('../../main_endpoints/util/passport')(passport);
 const {
   checkIfTokenSent,
   checkIfTokenValid

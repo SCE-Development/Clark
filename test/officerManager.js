@@ -21,9 +21,9 @@ const expect = chai.expect;
 const tools = require('./util/tools/tools.js');
 const {
   setTokenStatus,
-  resetMock,
-  restoreMock,
-  initializeMock
+  resetTokenMock,
+  restoreTokenMock,
+  initializeTokenMock
 } = require('./util/mocks/TokenValidFunctions');
 const { DEFAULT_PHOTO_URL } = require('../api/util/constants');
 chai.should();
@@ -32,7 +32,7 @@ chai.use(chaiHttp);
 // Our parent block
 describe('OfficerManager', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     app = tools.initializeServer(
       __dirname + '/../api/main_endpoints/routes/officerManager.js');
     test = new SceApiTester(app);
@@ -42,14 +42,14 @@ describe('OfficerManager', () => {
     done();
   });
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
   beforeEach(() => {
     setTokenStatus(false);
   });
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const token = '';

@@ -1,18 +1,24 @@
-FROM node:lts-alpine
+FROM node:14-alpine as builder
 
-RUN mkdir -p /usr/src/app
+WORKDIR /frontend
 
-COPY src /usr/src/app/
-COPY public /usr/src/app/
-COPY util /usr/src/app/
-COPY package.json /usr/src/app/
+COPY ./package.json /frontend/package.json
+COPY ./package-lock.json /frontend/package-lock.json
 
-WORKDIR /usr/src/app
+RUN npm install --production
 
-RUN npm install
-COPY . ./
-RUN npm run build
+COPY public ./public
+COPY util ./util
+COPY src ./src
+
+RUN npm run build --production
+
+# stage 2
+FROM nginx:alpine
+
+COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /frontend/build /usr/share/nginx/html
 
 EXPOSE 3000
 
-CMD npm run deploy-production-frontend
+CMD ["nginx", "-g", "daemon off;"]

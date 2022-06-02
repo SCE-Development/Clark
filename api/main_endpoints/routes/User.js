@@ -27,6 +27,9 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
+const discordRedirectUri = process.env.NODE_ENV === 'production' ?
+  discordApiKeys.REDIRECT_URI_PROD : discordApiKeys.REDIRECT_URI_DEV;
+
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -146,26 +149,26 @@ router.post('/edit', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  if(!req.body.email){
+  if (!req.body.email) {
     return res.sendStatus(BAD_REQUEST);
   }
 
   let decoded = decodeToken(req);
-  if(decoded.accessLevel === membershipState.MEMBER){
-    if(req.body.email && req.body.email != decoded.email){
+  if (decoded.accessLevel === membershipState.MEMBER) {
+    if (req.body.email && req.body.email != decoded.email) {
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to edit another user');
     }
-    if(req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel){
+    if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to change access level');
     }
   }
 
-  if(decoded.accessLevel === membershipState.OFFICER){
-    if(req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN){
+  if (decoded.accessLevel === membershipState.OFFICER) {
+    if (req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN) {
       return res.sendStatus(UNAUTHORIZED);
     }
   }
@@ -240,7 +243,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
 router.get('/callback', async function(req, res) {
   const code = req.query.code;
   const email = req.query.state;
-  discordConnection.loginWithDiscord(code, email)
+  discordConnection.loginWithDiscord(code, email, discordRedirectUri)
     .then(status => {
       return res.status(OK).redirect('https://discord.com/oauth2/authorized');
     })
@@ -259,11 +262,16 @@ router.post('/connectToDiscord', function(req, res) {
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
   }
+  if (discordApiKeys.CLIENT_ID === 'NOT_SET'
+    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
+    return res.sendStatus(OK);
+  }
   return res.status(OK)
     .send('https://discord.com/api/oauth2/authorize?client_id=' +
       `${discordApiKeys.CLIENT_ID}` +
-      `&redirect_uri=${discordApiKeys.REDIRECT_URI_PROD}` +
-      `&state=${email}`);
+      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
+      `&state=${email}&response_type=code&scope=identify`
+    );
 });
 
 function checkIfPageCountResets(lastLogin) {

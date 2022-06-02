@@ -1,21 +1,17 @@
-version: '3'
+version: '3.8'
 services:
   db:
     restart: always
     image: 'mongo'
-    ports:
-      - '27017:27017'
     volumes:
       - '/data/db:/data/db' 
       # - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
-  sce-logging-api:
-    container_name: sce-logging-api
+  sce-peripheral-api:
+    container_name: sce-peripheral-api
     build:
       context: ./api
-      dockerfile: ./logging_api/Dockerfile
-    ports:
-      - '8081:8081'
+      dockerfile: ./peripheral_api/Dockerfile
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -28,8 +24,6 @@ services:
     build:
       context: ./api
       dockerfile: ./cloud_api/Dockerfile
-    ports:
-      - '8082:8082'
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -43,8 +37,6 @@ services:
     build:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile
-    ports:
-      - '8080:8080'
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -53,14 +45,10 @@ services:
       - db
   
   frontend:
-    image: 'corefront:latest'
     build:
       context: .
       dockerfile: ./docker/Dockerfile-frontend
-    ports:
-      - '3000:3000'
     restart: 'on-failure'
-    command: 'npm run deploy-production-frontend'
     stdin_open: true
     links:
       - db

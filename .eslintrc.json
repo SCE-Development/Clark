@@ -9,13 +9,17 @@
         "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
+        "babelOptions": {
+            "configFile": "./.babelrc"
+        },
         "ecmaFeatures": {
             "jsx": true
         },
         "ecmaVersion": 2018,
+        "requireConfigFile": "false",
         "sourceType": "module"
     },
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "plugins": [
         "react"
     ],
@@ -56,11 +60,14 @@
         ],
         "no-extra-semi": "error",
         "eol-last": 2,
-        "space-before-function-paren": ["error", {
-          "anonymous": "never",
-          "named": "never",
-          "asyncArrow": "always"
-        }],
+        "space-before-function-paren": [
+            "error",
+            {
+                "anonymous": "never",
+                "named": "never",
+                "asyncArrow": "always"
+            }
+        ],
         "no-warning-comments": [
             2,
             {
@@ -81,9 +88,15 @@
                 ]
             }
         ],
+        "space-infix-ops": [
+            "error",
+            {
+                "int32Hint": false
+            }
+        ],
         "no-var": 2,
         "no-trailing-spaces": "error",
         "brace-style": "error",
-        "no-use-before-define": "error" 
+        "no-use-before-define": "error"
     }
 }

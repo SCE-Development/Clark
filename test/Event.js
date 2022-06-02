@@ -17,10 +17,10 @@ const expect = chai.expect;
 // tools for testing
 const tools = require('./util/tools/tools.js');
 const {
-  initializeMock,
+  initializeTokenMock,
   setTokenStatus,
-  resetMock,
-  restoreMock,
+  resetTokenMock,
+  restoreTokenMock,
 } = require('./util/mocks/TokenValidFunctions');
 
 chai.should();
@@ -28,7 +28,7 @@ chai.use(chaiHttp);
 
 describe('Event', () => {
   before(done => {
-    initializeMock();
+    initializeTokenMock();
     app = tools.initializeServer(
       __dirname + '/../api/main_endpoints/routes/Event.js');
     test = new SceApiTester(app);
@@ -39,7 +39,7 @@ describe('Event', () => {
   });
 
   after(done => {
-    restoreMock();
+    restoreTokenMock();
     tools.terminateServer(done);
   });
 
@@ -48,7 +48,7 @@ describe('Event', () => {
   });
 
   afterEach(() => {
-    resetMock();
+    resetTokenMock();
   });
 
   const token = '';
@@ -79,9 +79,31 @@ describe('Event', () => {
     eventCategory: 'game night',
     imageURL: 'https://link.to/pdf'
   };
-
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const YESTERDAYS_EVENT = {
+    title: 'yesterday\'s event',
+    eventLocation: 'ENGR 294',
+    eventDate: yesterday,
+    startTime: '13:00',
+    endTime: '14:00',
+    eventCategory: 'game night',
+    imageURL: 'https://link.to/pdf'
+  };
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const TOMORROWS_EVENT = {
+    title: 'tomorrow\'s event',
+    eventLocation: 'ENGR 294',
+    eventDate: tomorrow,
+    startTime: '13:00',
+    endTime: '14:00',
+    eventCategory: 'game night',
+    imageURL: 'https://link.to/pdf'
+  };
   describe('/POST createEvent', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequest(
         '/api/event/createEvent', EVENT_WITH_INVALID_TOKEN);
       expect(result).to.have.status(UNAUTHORIZED);
@@ -133,7 +155,7 @@ describe('Event', () => {
   });
 
   describe('/POST editEvent', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/event/editEvent', EVENT_WITH_INVALID_TOKEN);
       expect(result).to.have.status(UNAUTHORIZED);
@@ -179,7 +201,7 @@ describe('Event', () => {
   });
 
   describe('/POST deleteEvent', () => {
-    it('Should return 403 when an invalid token is supplied', async () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/event/deleteEvent', EVENT_WITH_INVALID_TOKEN);
       expect(result).to.have.status(UNAUTHORIZED);
@@ -204,6 +226,38 @@ describe('Event', () => {
       const getEventsResponse = result.body;
       getEventsResponse.should.be.a('array');
       expect(getEventsResponse).to.have.length(0);
+    });
+  });
+  describe('/GET getUpcomingEvents', () => {
+    it('Should return an empty array if no' +
+        'upcoming events are available', async () => {
+      setTokenStatus(true);
+      const result = await test.sendGetRequest(
+        '/api/event/getUpcomingEvents');
+      expect(result).to.have.status(OK);
+      const getEventsResponse = result.body;
+      getEventsResponse.should.be.a('array');
+      expect(getEventsResponse).to.have.length(0);
+    });
+    it('Should return all upcoming events', async () => {
+      setTokenStatus(true);
+      const create1 = await test.sendPostRequestWithToken(
+        token, '/api/event/createEvent', TOMORROWS_EVENT);
+      expect(create1).to.have.status(OK);
+      const create2 = await test.sendPostRequestWithToken(
+        token, '/api/event/createEvent', YESTERDAYS_EVENT);
+      expect(create2).to.have.status(OK);
+      const result = await test.sendGetRequest(
+        '/api/event/getUpcomingEvents');
+      expect(result).to.have.status(OK);
+      const getUpcomingEventsResponse = result.body;
+      getUpcomingEventsResponse.should.be.a('array');
+      expect(getUpcomingEventsResponse).to.have.length(1);
+      expect(new Date(getUpcomingEventsResponse[0].eventDate) >= today);
+      const getEvents = await test.sendGetRequest('/api/event/getEvents');
+      const getEventsResponse = getEvents.body;
+      getEventsResponse.should.be.a('array');
+      expect(getEventsResponse).to.have.length(2);
     });
   });
 });

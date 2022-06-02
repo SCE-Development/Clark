@@ -3,6 +3,10 @@ name: Core-v4 Tests
 on:
   pull_request:
     branches: [ dev ]
+  push:
+    branches: [ dev ]
+  workflow_dispatch:
+    branches: [ dev ]
 
 jobs:
   build:
@@ -16,12 +20,30 @@ jobs:
     - name: Starting MongoDB
       uses: supercharge/mongodb-github-action@1.3.0
     - name: Use Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2
+
+      
+    - name: cache frontend dependencies
+      id: frontend-cache
+      uses: actions/cache@v2
+      with:
+        path: ./node_modules
+        key: modules-${{ hashFiles('package-lock.json') }}
+    - name: install frontend dependencies if cache miss
+      if: steps.frontend-cache.outputs.cache-hit != 'true'
+      run: npm ci --ignore-scripts
+    - name: cache backend dependencies
+      id: cache-api
+      uses: actions/cache@v2
+      with:
+        path: ./api/node_modules
+        key: modules-${{ hashFiles('api/package-lock.json') }}
+    - name: install backend dependencies if cache miss
+      if: steps.cache-api.outputs.cache-hit != 'true'
+      run: cd api; npm ci --ignore-scripts; cd ..
+
+
     - run: python setup.py
-    - run: npm ci
-    - run: cd api
-    - run: npm ci
-    - run: cd ..
     - run: npm run lint
     - run: npm run api-test
     - run: npm run frontend-test

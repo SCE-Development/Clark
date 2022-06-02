@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 require('../util/passport')(passport);
-const config = require('../../config/config');
+const config = require('../../config/config.json');
 const User = require('../models/User.js');
 const { registerUser } = require('../util/registerUser');
 const {
@@ -89,10 +89,10 @@ router.post('/login', function(req, res) {
             }
 
             // Check if the user's email has been verified
-            if(!user.emailVerified){
+            if (!user.emailVerified) {
               return res
                 .status(UNAUTHORIZED)
-                .send({message: 'Email has not been verified'});
+                .send({ message: 'Email has not been verified' });
             }
 
             // If the username and password matches the database, assign and
@@ -168,13 +168,13 @@ router.post('/setEmailToVerified', (req, res) => {
 // Returns the name and accesslevel of the user w/ the given access token
 router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+    return res.status(UNAUTHORIZED).json({});
   }
-  const isValid = checkIfTokenValid(req, membershipState.ALUMNI);
-  if (!isValid) {
-    res.sendStatus(UNAUTHORIZED);
+  const token = decodeToken(req);
+  if (!token) {
+    res.status(UNAUTHORIZED).json(token);
   } else {
-    res.status(OK).send(decodeToken(req));
+    res.status(OK).json(token);
   }
 });
 
@@ -223,6 +223,7 @@ router.post('/validateVerificationEmail', async (req, res) => {
       }
       if (isMatch) {
         result.emailVerified = true;
+        result.accessLevel = membershipState.NON_MEMBER;
         await result
           .save()
           .then(_ => {

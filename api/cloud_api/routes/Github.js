@@ -9,11 +9,16 @@ const {
   OK,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-
+const NoGithubApiKeys = !(process.env.NODE_ENV === 'test')
+&& CLIENT_ID === 'NOT_SET'
+&& CLIENT_SECRET === 'NOT_SET';
 /**
  * Call to Github API to retrieve active Pull Requests in a given repository
  */
 router.get('/getPullRequestsFromRepo', (req, res) => {
+  if(NoGithubApiKeys) {
+    return res.sendStatus(OK);
+  }
   const apiHandler = new SceGithubApiHandler(CLIENT_ID, CLIENT_SECRET);
   const repository = req.body.repository || req.query.repository;
   apiHandler.getPullRequestsFromRepo(repository)
@@ -34,6 +39,9 @@ router.get('/getPullRequestsFromRepo', (req, res) => {
  * contributors in the past month
  */
 router.get('/getContributorsInPastMonthFromRepo', (req, res) => {
+  if(NoGithubApiKeys) {
+    return res.sendStatus(OK);
+  }
   const apiHandler = new SceGithubApiHandler(CLIENT_ID, CLIENT_SECRET);
   const repository = req.body.repository || req.query.repository;
   apiHandler.getContributorsInPastMonthFromRepo(repository)
@@ -54,6 +62,9 @@ router.get('/getContributorsInPastMonthFromRepo', (req, res) => {
  * a repository
  */
 router.get('/getCommitsFromRepo', (req, res) => {
+  if(NoGithubApiKeys) {
+    return res.sendStatus(OK);
+  }
   const apiHandler = new SceGithubApiHandler(CLIENT_ID, CLIENT_SECRET);
   const repository = req.body.repository || req.query.repository;
   apiHandler.getCommitsFromRepo(repository)

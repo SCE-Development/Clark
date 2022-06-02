@@ -88,7 +88,7 @@ inquirer
     });
     this.mongoose = mongoose;
     this.mongoose
-      .connect('mongodb://localhost/sce_core', {
+      .connect('mongodb://127.0.0.1/sce_core', {
         promiseLibrary: require('bluebird'),
         useNewUrlParser: true,
         serverSelectionTimeoutMS: 3000,
