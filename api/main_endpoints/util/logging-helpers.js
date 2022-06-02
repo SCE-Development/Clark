@@ -1,4 +1,4 @@
-const { LOGGING_API_URL } = require('../../config/config.json');
+const { PERIPHERAL_API_URL } = require('../../config/config.json');
 const axios = require('axios');
 
 /**
@@ -13,7 +13,7 @@ const axios = require('axios');
  */
 async function addErrorLog(errorToAdd) {
   let errorSaved = true;
-  await axios.post(LOGGING_API_URL + '/api/ErrorLog/addErrorLog',
+  await axios.post(PERIPHERAL_API_URL + '/api/ErrorLog/addErrorLog',
     { ...errorToAdd })
     .catch(err => {
       errorSaved = false;
@@ -29,7 +29,7 @@ async function addErrorLog(errorToAdd) {
  */
 async function addSignLog(signRequest) {
   let saveSuccessful = true;
-  await axios.post(LOGGING_API_URL + 'api/SignLog/addSignLog', {
+  await axios.post(PERIPHERAL_API_URL + 'api/SignLog/addSignLog', {
     signText: signRequest.text,
     firstName: signRequest.firstName,
     email: signRequest.email

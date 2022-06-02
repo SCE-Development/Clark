@@ -11,6 +11,10 @@ class S3BucketApiHandler {
   }
   getSignedUrl(s3Params, bucket) {
     return new Promise((resolve, reject) => {
+      if(s3BucketKeys.AWSACCESSKEYID === 'NOT_SET'
+      && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
+        return resolve(true);
+      }
       this.s3.getSignedUrl('putObject', s3Params, (err, data) => {
         if (err) {
           reject(false);

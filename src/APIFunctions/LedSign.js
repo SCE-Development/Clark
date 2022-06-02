@@ -1,10 +1,8 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 let config = require('../config/config.json');
-let LOGGING_API_URL = process.env.NODE_ENV === 'production' ?
-  config.LOGGING_API_URL_PROD : config.LOGGING_API_URL;
-let RPC_API_URL = process.env.NODE_ENV === 'production' ?
-  config.RPC_API_URL_PROD : config.RPC_API_URL;
+let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
+  config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
 
 /**
  * Checks to see if the sign is accepting requests. This is done
@@ -15,7 +13,7 @@ let RPC_API_URL = process.env.NODE_ENV === 'production' ?
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
   await axios
-    .post(RPC_API_URL + '/LedSign/healthCheck', { officerName })
+    .get(PERIPHERAL_API_URL + '/LedSign/healthCheck', { officerName })
     .then(res => {
       status.responseData = res.data;
     })
@@ -34,7 +32,7 @@ export async function healthCheck(officerName) {
 export async function getAllSignLogs() {
   let result = new ApiResponse();
   await axios
-    .get(LOGGING_API_URL+'/SignLog/getSignLogs')
+    .get(PERIPHERAL_API_URL + '/SignLog/getSignLogs')
     .then(res => {
       result.responseData = res.data;
     })
@@ -48,14 +46,15 @@ export async function getAllSignLogs() {
 /**
  * Update the text of the sign.
  * @param {Object} signData - An object containing all of the sign data (text,
- * colors, etc.) sent to the RPC client.
+ * colors, etc.).
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function updateSignText(signData) {
+export async function updateSignText(signData, token) {
   let status = new ApiResponse();
   await axios
-    .post(RPC_API_URL + '/LedSign/updateSignText', { ...signData })
+    .post(PERIPHERAL_API_URL + '/LedSign/updateSignText',
+      { token, ...signData })
     .then(res => {
       status = res.data;
     })

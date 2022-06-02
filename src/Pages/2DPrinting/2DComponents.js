@@ -1,37 +1,59 @@
 import React from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Container,
+} from 'reactstrap';
 import { FilePond } from 'react-filepond';
 
-export const PrintIcon = `Drag & Drop or Touch Here <br />
-<svg aria-hidden='true' viewBox='0 0 512 512' width='40%'>
-<path
-  d='M399.95 160h-287.9C76.824 160 48 188.803 48
-  224v138.667h79.899V448H384.1v-85.333H464V224c0-35.197-28.825-64-64.05-64zM352
-  416H160V288h192v128zm32.101-352H127.899v80H384.1V64z'
-  />
-</svg>`;
+export const PrintMessage = 'Insert or drag your file here';
 
-export const PrintInfo = `Welcome to printing! Click the icon below 
-and upload your file. Each member can print up to 30 pages a week.`;
+export const PrintInfo = `Each member can print up to 30 pages a week
+Pages left for this week: `;
 
 export const failPrintStatus = `Sorry! Our printing system is down 
 at the moment. Please see an officer or try again later`;
 
+export const footerNote = `Created with ❤️ by the SCE Development 
+Team | Software and Computer Engineering Society at SJSU 
+${new Date().getFullYear()}`;
+
 export function FileUpload(props) {
-  const {
-    filePond,
-    continueButton
-  } = props;
+  const { filePond, printButton, displayPagesLeft } = props;
   return (
-    <>
-      <div className='printInfo'>
-        <p>
-          {PrintInfo}
-        </p>
+    <div className = "paperContainer">
+      <br/>
+      <br/>
+      <br/>
+      <Container className="container-2D">
+        <div className="buttons">
+          <Button className="paperPrinting printingBtn" href="/2DPrinting">
+          Paper Printing
+          </Button>
+          <Button className="threeDPrinting printingBtn" href="/3DPrintingForm">
+          3D Printing
+          </Button>
+        </div>
+        <br/>
+        <br/>
+        <div className="printInfo">
+          <p>
+          Each member can print up to 30 pages a week <br /> Pages left for this
+          week: <span id="pagesLeft">{displayPagesLeft}</span>
+          </p>
+          <br />
+        </div>
+        <FilePond {...filePond} />
+        <Button {...printButton}> Print </Button>
+        <br />
+      </Container>
+      <div className="footerNote">
+        <p>{footerNote}</p>
       </div>
-      <FilePond {...filePond} />
-      <Button {...continueButton}> Continue </Button>
-    </>
+    </div>
   );
 }
 
@@ -43,7 +65,7 @@ export function StatusModal(props) {
     open,
     toggle,
     confirmText,
-    buttonColor
+    buttonColor,
   } = props;
 
   return (
@@ -58,4 +80,3 @@ export function StatusModal(props) {
     </Modal>
   );
 }
-

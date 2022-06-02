@@ -8,9 +8,10 @@ import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 import GoogleRecaptcha from './GoogleRecaptcha';
-
 export default function MembershipForm(props) {
-  const [verified, setVerified] = useState(false);
+  // we skip captcha verification if the environment is dev
+  const [verified, setVerified] = useState(
+    process.env.NODE_ENV !== 'production');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,9 +23,14 @@ export default function MembershipForm(props) {
   const [clickSubmitted, setClickSubmitted] = useState(false);
   const VALID_EMAIL_REGEXP = new RegExp(
     '^\\s*(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)' +
-      '|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])' +
-      '|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))\\s*$'
+    '|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])' +
+    '|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))\\s*$'
   );
+
+  const maybeShowCaptcha = () => {
+    return process.env.NODE_ENV === 'production' ?
+      <GoogleRecaptcha setVerified={setVerified} /> : null;
+  };
 
   const checkValidEmail = () => {
     return email && VALID_EMAIL_REGEXP.test(email);
@@ -275,7 +281,7 @@ export default function MembershipForm(props) {
           <MajorDropdown setMajor={setMajor} />
           <PlanDropdown setPlan={setPlan} />
           <div id="recaptcha">
-            <GoogleRecaptcha setVerified={setVerified} />
+            {maybeShowCaptcha()}
           </div>
           <div className="transition-button-wrapper">
             <div className="center">

@@ -1,16 +1,9 @@
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
-const { googleApiKeys } = require('../../config/config.json');
 const nodemailer = require('nodemailer');
 const { consoleColors } = require('../../util/constants');
-const { reject } = require('bluebird');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-
-const {
-  CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS,
-  USER, REFRESH_TOKEN
-} = googleApiKeys;
 
 const {
   redColor,
@@ -31,18 +24,34 @@ class SceGoogleApiHandler {
    * Google.
    */
   constructor(scopes, tokenPath) {
-    this.runningInProduction = (process.env.NODE_ENV === 'production');
     this.scopes = scopes;
     this.tokenPath = tokenPath;
+
+    const apiConfigs
+      = JSON.parse(fs.readFileSync(__dirname + '/../../config/config.json'));
+
+    this.CLIENT_ID = apiConfigs.googleApiKeys.CLIENT_ID;
+    this.CLIENT_SECRET = apiConfigs.googleApiKeys.CLIENT_SECRET;
+    this.REDIRECT_URIS = apiConfigs.googleApiKeys.REDIRECT_URIS;
+    this.USER = apiConfigs.googleApiKeys.USER;
+    this.REFRESH_TOKEN = apiConfigs.googleApiKeys.REFRESH_TOKEN;
+
     this.oAuth2Client = new google.auth.OAuth2(
-      CLIENT_ID,
-      CLIENT_SECRET,
-      REDIRECT_URIS[0]
+      this.CLIENT_ID,
+      this.CLIENT_SECRET,
+      this.REDIRECT_URIS[0]
     );
-    this.oAuth2Client.setCredentials({
-      // eslint-disable-next-line
-      refresh_token: REFRESH_TOKEN
-    });
+
+    if (this.REFRESH_TOKEN !== 'NOT_SET') {
+      this.oAuth2Client.setCredentials({
+        // eslint-disable-next-line
+        refresh_token: this.REFRESH_TOKEN
+      });
+    }
+
+    if(this.CLIENT_ID != 'NOT_SET' && this.CLIENT_SECRET != 'NOT_SET') {
+      this.hasValidAPIKeys = true;
+    }
   }
 
   /**
@@ -53,9 +62,6 @@ class SceGoogleApiHandler {
    */
   checkIfTokenFileExists() {
     return new Promise((resolve, reject) => {
-      if (!this.runningInProduction) {
-        resolve(false);
-      }
       fs.readFile(this.tokenPath, (err, token) => {
         if (err) {
           resolve(false);
@@ -74,7 +80,7 @@ class SceGoogleApiHandler {
    * DevOps purposes, false for API endpoints.
    */
   getNewToken(isDevScript) {
-    if (!this.runningInProduction && !isDevScript) return;
+    if (!isDevScript) return;
 
     const authUrl = this.oAuth2Client.generateAuthUrl({
       /* eslint-disable-next-line */
@@ -92,10 +98,31 @@ class SceGoogleApiHandler {
       authCode => {
         rl.close();
         this.oAuth2Client.getToken(authCode, (err, token) => {
-          if (err) console.debug(redColor +
-            'Error generating token', err + defaultColor
-          );
+          if (err) {
+            console.debug(redColor +
+              'Error generating token', err + defaultColor
+            );
+            console.debug(`${redColor}Please re-run the script${defaultColor}`);
+            return;
+          }
           this.oAuth2Client.setCredentials(token);
+
+          const configPath = __dirname + '/../../config/config.json';
+          let config = JSON.parse(fs.readFileSync(configPath));
+          config.googleApiKeys.REFRESH_TOKEN = token.refresh_token;
+
+          fs.writeFile(configPath, JSON.stringify(config), (error) => {
+            if (error) {
+              return console.debug(
+                `A problem occurred trying to write to ${configPath}`, error
+              );
+            }
+            console.debug(greenColor +
+              'Successfully wrote config data to:', configPath + defaultColor
+            );
+          });
+
+
 
           // Store the token to disk for later program executions
           console.debug(`\nGenerating token.js file to ${this.tokenPath}...`);
@@ -119,10 +146,9 @@ class SceGoogleApiHandler {
    * This function refreshes a Google API token if it is found to be expired.
    */
   refreshToken() {
-    if (!this.runningInProduction) return;
     this.oAuth2Client.setCredentials({
       // eslint-disable-next-line
-      refresh_token: REFRESH_TOKEN
+      refresh_token: this.REFRESH_TOKEN
     });
 
     this.oAuth2Client.getAccessToken().then(token => {
@@ -141,6 +167,9 @@ class SceGoogleApiHandler {
    */
   getEventsFromCalendar(calendarId, numOfEvents) {
     return new Promise((resolve, reject) => {
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
+      }
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
       calendar.events.list({
@@ -273,6 +302,9 @@ class SceGoogleApiHandler {
    */
   addEventToCalendar(calendarId, newEvent) {
     return new Promise((resolve, reject) => {
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
+      }
       const calendar =
         google.calendar({ version: 'v3', auth: this.oAuth2Client });
       let eventToAdd = this.translateEvent(newEvent);
@@ -307,17 +339,17 @@ class SceGoogleApiHandler {
  */
   async sendEmail(mailTemplate) {
     return new Promise(async (resolve, reject) => {
-      if (!this.runningInProduction) {
-        resolve();
+      if (!this.hasValidAPIKeys) {
+        return resolve(true);
       }
       const smtpTransport = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           type: 'OAuth2',
-          user: USER,
-          clientId: CLIENT_ID,
-          clientSecret: CLIENT_SECRET,
-          refreshToken: REFRESH_TOKEN,
+          user: this.USER,
+          clientId: this.CLIENT_ID,
+          clientSecret: this.CLIENT_SECRET,
+          refreshToken: this.REFRESH_TOKEN,
         },
       });
 
@@ -333,6 +365,9 @@ class SceGoogleApiHandler {
  * @param {object} data response data from the officer application form
  */
   async writeToForm(sheetsId, data){
+    if (!this.hasValidAPIKeys) {
+      return resolve(true);
+    }
     return new Promise(async (resolve, reject)=>{
       GoogleSpreadsheet.openById(sheetsId, (error, response) => {
         if (error){
@@ -359,7 +394,7 @@ class SceGoogleApiHandler {
       sheet.addRow(row, (error, response) => {
         if(error){
           reject(false);
-        }else{
+        } else{
           resolve(response);
         }
       });

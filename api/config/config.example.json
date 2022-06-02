@@ -1,41 +1,49 @@
 {
   "CLOUD_API_URL": "http://localhost:8082/cloudapi",
   "discordApiKeys": {
-    "CLIENT_ID": "XXXXXXXXXXXXXXXXXX",
-    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXX",
-    "REDIRECT_URI_DEV": "http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fuser%2Fcallback&response_type=code&scope=identify",
-    "REDIRECT_URI_PROD": "http%3A%2F%2Fsce.engr.sjsu.edu%2Fprofile&response_type=code&scope=identify",
-    "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET",
+    "REDIRECT_URI_DEV": "http://localhost:8080/api/user/callback",
+    "REDIRECT_URI_PROD": "http://sce.engr.sjsu.edu/api/user/callback",
+    "REFRESH_TOKEN": "NOT_SET"
   },
   "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
-    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
-    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET"
   },
   "googleApiKeys": {
-    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_ID": "NOT_SET",
+    "CLIENT_SECRET": "NOT_SET",
     "REDIRECT_URIS": [
       "https://developers.google.com/oauthplayground"
     ],
-    "REFRESH_TOKEN": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "REFRESH_TOKEN": "NOT_SET",
     "USER": "sce.sjsu@gmail.com"
   },
   "googleCalendarIds": {
     "PRIMARY_CAL": "primary",
-    "SCE_EVENTS_CAL": "XXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    "SCE_EVENTS_CAL": "NOT_SET"
   },
-  "ledSignIp": "192.168.4.1",
-  "LOGGING_API_URL": "http://localhost:8081/loggingapi",
+  "ledSignUrl": "XXXXXXX",
+  "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
   "passwordStrength": "medium",
   "S3Bucket": {
-    "AWSACCESSKEYID": "XXXXXXXXXXXXXXXXXXXX",
-    "AWSSECRETKEY": "XXXXXXXXXXXXXXXXXXXXXXXX",
-    "BUCKET": "XXXXXXXXXXXXX"
+    "AWSACCESSKEYID": "NOT_SET",
+    "AWSSECRETKEY": "NOT_SET",
+    "BUCKET": "NOT_SET"
   },
+  "Queue": {
+    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
+    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "ACCOUNT_ID": "xxxxxxxxxxxx",
+    "LED_QUEUE_NAME": "xxxxxxxx",
+    "PAPER_PRINTING_QUEUE_NAME": "xxxxxxxx"
+  },
+  "AWS_IOT_ENDPOINT" : "NOT_SET",
+  "PrintingS3Bucket": "NOT_SET",
   "secretKey": "super duper secret key",
   "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
-  "LOGGING_API_URL_PROD": "http://sce-logging-api:8081/loggingapi",
-  "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi",
-  "RPC_API_URL_PROD": "http://localhost:8083/SceRpcApi"
+  "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
+  "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi"
 }

@@ -55,20 +55,43 @@ class AuthManager {
       defaultColor
     );
 
-    const rawConfig = fs.readFileSync(configPath);
+    const configFileData = fs.readFileSync(configPath);
 
-    if (rawConfig) {
-      const clientID =
-        await this.inputPrompt('Please enter the Client ID: ');
-      const clientSecret =
-        await this.inputPrompt('Please enter the Client Secret: ');
+    if (configFileData) {
+      let config = JSON.parse(configFileData);
 
-      let config = JSON.parse(rawConfig);
+      console.debug(
+        `Current client ID: ${yellowColor}` +
+        `${config.googleApiKeys.CLIENT_ID}` +
+        `${defaultColor}`
+      );
+      const clientID = await this.inputPrompt(
+        'Please enter the Client ID (press enter to skip): '
+      );
       if (clientID) {
         config.googleApiKeys.CLIENT_ID = clientID;
+      } else {
+        console.debug(
+          `defaulting to ${yellowColor}${config.googleApiKeys.CLIENT_ID}`
+          + defaultColor
+        );
       }
+
+      console.debug(
+        `Current client secret: ${yellowColor}` +
+        `${config.googleApiKeys.CLIENT_SECRET}` +
+        `${defaultColor}`
+      );
+      const clientSecret = await this.inputPrompt(
+        'Please enter the Client Secret (press enter to skip): '
+      );
       if (clientSecret) {
         config.googleApiKeys.CLIENT_SECRET = clientSecret;
+      } else {
+        console.debug(
+          `defaulting to ${yellowColor}${config.googleApiKeys.CLIENT_SECRET}`
+          + defaultColor
+        );
       }
 
       fs.writeFile(configPath, JSON.stringify(config), (error) => {
@@ -79,7 +102,7 @@ class AuthManager {
         }
 
         console.debug(greenColor +
-          'Successfully written to:', configPath + defaultColor
+          'Successfully wrote config data to:', configPath + defaultColor
         );
         callback();
       });

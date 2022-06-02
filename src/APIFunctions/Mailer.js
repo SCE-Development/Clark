@@ -79,7 +79,7 @@ export async function addEventToCalendar(newEvent, token) {
     baseURL: MAILER_API_URL
   });
   await firstAPI
-    .post('api/Calendar/addEventToCalendar', { token, newEvent })
+    .post('/Calendar/addEventToCalendar', { token, newEvent })
     .then(res => {
       status.responseData = res.data;
     })

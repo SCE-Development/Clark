@@ -17,6 +17,7 @@ const requestWithoutToken = {
 let tokenFunctions;
 let jwtStub;
 
+
 describe('TokenFunctions', () => {
   jwtStub = sinon.stub();
   beforeEach(done => {
