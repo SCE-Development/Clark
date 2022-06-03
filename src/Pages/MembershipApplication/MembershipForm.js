@@ -220,78 +220,80 @@ export default function MembershipForm(props) {
   };
 
   return (
-    <Container className = "planContainer">
-      <div className="form-card">
-        <div className = "planHeaders">
-          Semester Plan
-        </div>
-        <div className = "circle">
-          <div className="circle-text">$20</div>
-        </div>
-        <div className = "planFooters">
-          Expires: May 20, {new Date().getFullYear()}
-        </div>
-        <div className = "planHeaders">
-          Annual Plan
-        </div>
-        <div className = "circle">
-          <div className="circle-text">$30</div>
-        </div>
-        <div className = "planFooters">
-          Expires: December 20, {new Date().getFullYear()}
-        </div>
-      </div>
-      <div className="form-card2">
-        <h1>Membership Application</h1>
-        <h2>
-          Year: {new Date().getFullYear()}
-        </h2>
-        <h6>
-          * = Required field
-        </h6>
-        <Form onSubmit={submitApplication}>
-          <Row id="name-field-row">
-            {nameFields.map((input, index) => (
-              <FormGroup key={`name-field-input-${index}`}>
-                <Input
-                  className="name-input membership-input"
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={input.label}
-                />
-                {input.ifRequirementsNotMet}
-              </FormGroup>
-            ))}
-          </Row>
-          <div id="email-input-container">
-            {accountFields.map((input, index) => (
-              <FormGroup key={`account-field-${index}`}>
-                <Input
-                  className="membership-input email-input"
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={input.label}
-                />
-                {input.ifRequirementsNotMet}
-              </FormGroup>
-            ))}
+    <div className="planBody">
+      <Container className = "planContainer">
+        <div className="form-card">
+          <div className = "planHeaders">
+            Semester Plan
           </div>
-          <MajorDropdown setMajor={setMajor} />
-          <PlanDropdown setPlan={setPlan} />
-          <div id="recaptcha">
-            {maybeShowCaptcha()}
+          <div className = "circle">
+            <div className="circle-text">$20</div>
           </div>
-          <div className="transition-button-wrapper">
-            <div className="center">
-              <Button className = "submit-btn" type="submit">
-                Submit Application
-              </Button>
+          <div className = "planFooters">
+            Expires: May 20, {new Date().getFullYear()}
+          </div>
+          <div className = "planHeaders">
+            Annual Plan
+          </div>
+          <div className = "circle">
+            <div className="circle-text">$30</div>
+          </div>
+          <div className = "planFooters">
+            Expires: December 20, {new Date().getFullYear()}
+          </div>
+        </div>
+        <div className="form-card2">
+          <h1>Membership Application</h1>
+          <h2>
+            Year: {new Date().getFullYear()}
+          </h2>
+          <h6>
+            * = Required field
+          </h6>
+          <Form onSubmit={submitApplication}>
+            <Row id="name-field-row">
+              {nameFields.map((input, index) => (
+                <FormGroup key={`name-field-input-${index}`}>
+                  <Input
+                    className="name-input membership-input"
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
+            </Row>
+            <div id="email-input-container">
+              {accountFields.map((input, index) => (
+                <FormGroup key={`account-field-${index}`}>
+                  <Input
+                    className="membership-input email-input"
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
             </div>
-          </div>
-        </Form>
-      </div>
-    </Container>
+            <MajorDropdown setMajor={setMajor} />
+            <PlanDropdown setPlan={setPlan} />
+            <div id="recaptcha">
+              {maybeShowCaptcha()}
+            </div>
+            <div className="transition-button-wrapper">
+              <div className="center">
+                <Button className = "submit-btn" type="submit">
+                  Submit Application
+                </Button>
+              </div>
+            </div>
+          </Form>
+        </div>
+      </Container>
+    </div>
   );
 }
