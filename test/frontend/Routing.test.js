@@ -17,7 +17,7 @@ import Events from '../../src/Pages/Events/EventList';
 import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js';
 import MembershipApplication from
-  '../../src/Pages/MembershipApplication/membershipApplication.jsx';
+  '../../src/Pages/MembershipApplication/MembershipApplication.jsx';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from '../../src/Pages/OfficerDB/OfficerDB.js';
 import Overview from '../../src/Pages/Overview/Overview';
