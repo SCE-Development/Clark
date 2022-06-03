@@ -5,11 +5,9 @@ import Enzyme, { shallow } from 'enzyme';
 import { expect } from 'chai';
 
 import MembershipApplication from
-  '../../src/Pages/MembershipApplication/MembershipApplication';
+  '../../src/Pages/MembershipApplication/embershipApplication';
 import Adapter from 'enzyme-adapter-react-16';
 
-import MembershipPlan from
-  '../../src/Pages/MembershipApplication/MembershipPlan';
 import MembershipForm from
   '../../src/Pages/MembershipApplication/MembershipForm';
 import ConfirmationPage from
