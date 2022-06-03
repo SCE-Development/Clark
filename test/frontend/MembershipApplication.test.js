@@ -8,6 +8,8 @@ import MembershipApplication from
   '../../src/Pages/MembershipApplication/MembershipApplication';
 import Adapter from 'enzyme-adapter-react-16';
 
+import MembershipPlan from
+  '../../src/Pages/MembershipApplication/MembershipPlan';
 import MembershipForm from
   '../../src/Pages/MembershipApplication/MembershipForm';
 import ConfirmationPage from
