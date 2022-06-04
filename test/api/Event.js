@@ -117,11 +117,11 @@ describe('Event', () => {
       });
     it('Should return statusCode 200 when all required ' +
       'fields are filled in', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/event/createEvent', VALID_NEW_EVENT);
-        expect(result).to.have.status(OK);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/event/createEvent', VALID_NEW_EVENT);
+      expect(result).to.have.status(OK);
+    });
   });
 
   describe('/GET getEvents', () => {
@@ -162,11 +162,11 @@ describe('Event', () => {
     });
     it('Should return 404 when an event by an ' +
       'invalid id isn\'t found', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/event/editEvent', EVENT_WITH_INVALID_ID);
-        expect(result).to.have.status(NOT_FOUND);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/event/editEvent', EVENT_WITH_INVALID_ID);
+      expect(result).to.have.status(NOT_FOUND);
+    });
     it('Should return 200 when an event is sucessfully updated', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
@@ -231,14 +231,14 @@ describe('Event', () => {
   describe('/GET getUpcomingEvents', () => {
     it('Should return an empty array if no' +
       'upcoming events are available', async () => {
-        setTokenStatus(true);
-        const result = await test.sendGetRequest(
-          '/api/event/getUpcomingEvents');
-        expect(result).to.have.status(OK);
-        const getEventsResponse = result.body;
-        getEventsResponse.should.be.a('array');
-        expect(getEventsResponse).to.have.length(0);
-      });
+      setTokenStatus(true);
+      const result = await test.sendGetRequest(
+        '/api/event/getUpcomingEvents');
+      expect(result).to.have.status(OK);
+      const getEventsResponse = result.body;
+      getEventsResponse.should.be.a('array');
+      expect(getEventsResponse).to.have.length(0);
+    });
     it('Should return all upcoming events', async () => {
       setTokenStatus(true);
       const create1 = await test.sendPostRequestWithToken(

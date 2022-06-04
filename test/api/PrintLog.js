@@ -50,12 +50,12 @@ describe('PrintLog', () => {
 
     it('Should return statusCode 200 when all required ' +
       'fields are filled in', async () => {
-        const result = await test.sendPostRequest(
-          '/api/PrintLog/addPrintLog',
-          VALID_PRINT_LOG
-        );
-        expect(result).to.have.status(OK);
-      });
+      const result = await test.sendPostRequest(
+        '/api/PrintLog/addPrintLog',
+        VALID_PRINT_LOG
+      );
+      expect(result).to.have.status(OK);
+    });
   });
 
   describe('/GET getPrintLogs', () => {

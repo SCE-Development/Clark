@@ -97,64 +97,64 @@ describe('DoorCode', () => {
     });
     it('Should return 400 when the required fields ' +
       'aren\'t filled in', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token,
-          '/api/DoorCode/addCode',
-          CODE_WITHOUT_REQUIRED_FIELDS
-        );
-        expect(result).to.have.status(BAD_REQUEST);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/addCode',
+        CODE_WITHOUT_REQUIRED_FIELDS
+      );
+      expect(result).to.have.status(BAD_REQUEST);
+    });
     it('Should return statusCode 200 when all required fields' +
       'are filled in', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token,
-          '/api/DoorCode/addCode',
-          VALID_NEW_CODE
-        );
-        expect(result).to.have.status(OK);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/addCode',
+        VALID_NEW_CODE
+      );
+      expect(result).to.have.status(OK);
+    });
     it('Should return statusCode 200 when all required fields' +
       'are filled in when users assigned is 2 or more', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token,
-          '/api/DoorCode/addCode',
-          CODE_WITH_MORE_ASSIGNED
-        );
-        expect(result).to.have.status(OK);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/addCode',
+        CODE_WITH_MORE_ASSIGNED
+      );
+      expect(result).to.have.status(OK);
+    });
     it('Should return statusCode 400 nothing when adding a ' +
       'repeated door code', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token,
-          '/api/DoorCode/addCode',
-          REPEATED_CODE
-        );
-        expect(result).to.have.status(BAD_REQUEST);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/addCode',
+        REPEATED_CODE
+      );
+      expect(result).to.have.status(BAD_REQUEST);
+    });
     it('Should return statusCode 400 nothing when adding a ' +
       'door code with bad formatting', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token,
-          '/api/DoorCode/addCode',
-          CODE_WITH_BAD_FORMAT
-        );
-        expect(result).to.have.status(BAD_REQUEST);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/addCode',
+        CODE_WITH_BAD_FORMAT
+      );
+      expect(result).to.have.status(BAD_REQUEST);
+    });
     it('Should return statusCode 400 nothing when adding a ' +
       'door code with bad formatting symbols', async () => {
-        setTokenStatus(true);
-        const result = await test.sendPostRequestWithToken(
-          token,
-          '/api/DoorCode/addCode',
-          CODE_WITH_BAD_FORMAT_TWO
-        );
-        expect(result).to.have.status(BAD_REQUEST);
-      });
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/addCode',
+        CODE_WITH_BAD_FORMAT_TWO
+      );
+      expect(result).to.have.status(BAD_REQUEST);
+    });
   });
 
   describe('/GET getDoorCodes', () => {

@@ -48,10 +48,10 @@ describe('ErrorLog', () => {
       });
     it('Should return statusCode 200 when all required ' +
       'fields are filled in ', async () => {
-        const result = await test.sendPostRequest(
-          '/api/ErrorLog/addErrorLog', VALID_ERROR_LOG);
-        expect(result).to.have.status(OK);
-      });
+      const result = await test.sendPostRequest(
+        '/api/ErrorLog/addErrorLog', VALID_ERROR_LOG);
+      expect(result).to.have.status(OK);
+    });
   });
   describe('/GET getErrorLogs', () => {
     it('Should return an object of all events', async () => {

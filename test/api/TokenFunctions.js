@@ -36,10 +36,10 @@ describe('TokenFunctions', () => {
     });
     it('Should return false if a token field does ' +
       'not exist in the request', done => {
-        expect(tokenFunctions.checkIfTokenSent(requestWithoutToken))
-          .to.equal(false);
-        done();
-      });
+      expect(tokenFunctions.checkIfTokenSent(requestWithoutToken))
+        .to.equal(false);
+      done();
+    });
   });
 
   describe('checkIfTokenValid', () => {
@@ -51,10 +51,10 @@ describe('TokenFunctions', () => {
     });
     it('Should return false if a token field ' +
       'does not exist in the request', done => {
-        jwtStub.yields(true, false);
-        expect(tokenFunctions.checkIfTokenValid(requestWithToken))
-          .to.equal(false);
-        done();
-      });
+      jwtStub.yields(true, false);
+      expect(tokenFunctions.checkIfTokenValid(requestWithToken))
+        .to.equal(false);
+      done();
+    });
   });
 });

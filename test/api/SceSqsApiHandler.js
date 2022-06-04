@@ -33,8 +33,8 @@ let {
   SceSqsApiHandler
 } = proxyquire(
   '../../api/peripheral_api/util/SceSqsApiHandler.js', {
-  'aws-sdk': awsStub
-}
+    'aws-sdk': awsStub
+  }
 );
 
 // Import the class again, but this time mocking out the
@@ -51,13 +51,13 @@ let {
   SceSqsApiHandler: SceSqsApiHandlerWithNoKeys
 } = proxyquire(
   '../../api/peripheral_api/util/SceSqsApiHandler.js', {
-  'aws-sdk': awsStub,
-  '../../../api/config/config.json': {
-    Queue: {
-      ACCOUNT_ID: 'NOT_SET'
+    'aws-sdk': awsStub,
+    '../../../api/config/config.json': {
+      Queue: {
+        ACCOUNT_ID: 'NOT_SET'
+      }
     }
   }
-}
 );
 
 describe('SceSqsApiHandler', () => {
