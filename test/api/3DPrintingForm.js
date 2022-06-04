@@ -1,8 +1,9 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const PrintingForm3D = require('../api/main_endpoints/models/PrintingForm3D');
-const tokenValidMocker = require('./util/mocks/TokenValidFunctions');
+const PrintingForm3D
+  = require('../../api/main_endpoints/models/PrintingForm3D');
+const tokenValidMocker = require('../util/mocks/TokenValidFunctions');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -12,20 +13,20 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND
-} = require('../api/util/constants').STATUS_CODES;
-const SceApiTester = require('../test/util/tools/SceApiTester');
+} = require('../../api/util/constants').STATUS_CODES;
+const SceApiTester = require('../../test/util/tools/SceApiTester');
 
 let app = null;
 let test = null;
 const expect = chai.expect;
 // tools for testing
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const {
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
   initializeTokenMock
-} = require('./util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
@@ -35,7 +36,7 @@ describe('3DPrintingForm', () => {
   before(done => {
     initializeTokenMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/3DPrintingForm.js');
+      __dirname + '/../../api/main_endpoints/routes/3DPrintingForm.js');
     test = new SceApiTester(app);
     tools.emptySchema(PrintingForm3D);
     done();
@@ -59,24 +60,24 @@ describe('3DPrintingForm', () => {
 
   describe('/POST submit', () => {
     it('Should return statusCode 400 when the ' +
-       'required fields are not set', async () => {
-      const form = {};
-      const result = await test.sendPostRequest(
-        '/api/3DPrintingForm/submit', form);
-      expect(result).to.have.status(BAD_REQUEST);
-    });
+      'required fields are not set', async () => {
+        const form = {};
+        const result = await test.sendPostRequest(
+          '/api/3DPrintingForm/submit', form);
+        expect(result).to.have.status(BAD_REQUEST);
+      });
     it('Should return statusCode 200 when all ' +
-       'required fields are filled in', async () => {
-      const form = {
-        name: 'pinkUnicorn',
-        color: 'Rainbow',
-        contact: 'b@b.c',
-        email: 'b@b.c'
-      };
-      const result = await test.sendPostRequest(
-        '/api/3DPrintingForm/submit', form);
-      expect(result).to.have.status(OK);
-    });
+      'required fields are filled in', async () => {
+        const form = {
+          name: 'pinkUnicorn',
+          color: 'Rainbow',
+          contact: 'b@b.c',
+          email: 'b@b.c'
+        };
+        const result = await test.sendPostRequest(
+          '/api/3DPrintingForm/submit', form);
+        expect(result).to.have.status(OK);
+      });
   });
 
   describe('/POST GetForm', () => {
@@ -99,16 +100,16 @@ describe('3DPrintingForm', () => {
       expect(result).to.have.status(FORBIDDEN);
     });
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
-      const form = {
-        name: 'pinkUnicorn',
-        token: 'Invalid token',
-        email: 'b@b.c'
-      };
-      const result = await test.sendPostRequest(
-        '/api/3DPrintingForm/edit', form);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
+      'token was passed in', async () => {
+        const form = {
+          name: 'pinkUnicorn',
+          token: 'Invalid token',
+          email: 'b@b.c'
+        };
+        const result = await test.sendPostRequest(
+          '/api/3DPrintingForm/edit', form);
+        expect(result).to.have.status(UNAUTHORIZED);
+      });
 
     it('Should return statusCode 404 if no form was found', async () => {
       const form = {
@@ -122,19 +123,19 @@ describe('3DPrintingForm', () => {
       expect(result).to.have.status(NOT_FOUND);
     });
     it('Should return statusCode 200 and a message ' +
-       'if a form was edited', async () => {
-      const form = {
-        name: 'pinkUnicorn',
-        color: 'something else',
-        token: token,
-        email: 'b@b.c',
-        date: date
-      };
-      setTokenStatus(true);
-      const result = await test.sendPostRequest(
-        '/api/3DPrintingForm/edit', form);
-      expect(result).to.have.status(OK);
-    });
+      'if a form was edited', async () => {
+        const form = {
+          name: 'pinkUnicorn',
+          color: 'something else',
+          token: token,
+          email: 'b@b.c',
+          date: date
+        };
+        setTokenStatus(true);
+        const result = await test.sendPostRequest(
+          '/api/3DPrintingForm/edit', form);
+        expect(result).to.have.status(OK);
+      });
   });
 
   describe('/POST delete', () => {
@@ -149,17 +150,17 @@ describe('3DPrintingForm', () => {
       expect(result).to.have.status(FORBIDDEN);
     });
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
-      const form = {
-        name: 'invalid-name',
-        color: 'invalid-color',
-        token: 'Invalid token',
-        email: 'b@b.c'
-      };
-      const result = await test.sendPostRequest(
-        '/api/3DPrintingForm/delete', form);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
+      'token was passed in', async () => {
+        const form = {
+          name: 'invalid-name',
+          color: 'invalid-color',
+          token: 'Invalid token',
+          email: 'b@b.c'
+        };
+        const result = await test.sendPostRequest(
+          '/api/3DPrintingForm/delete', form);
+        expect(result).to.have.status(UNAUTHORIZED);
+      });
 
     it('Should return statusCode 404 if no form was found', async () => {
       const form = {
@@ -175,18 +176,18 @@ describe('3DPrintingForm', () => {
     });
 
     it('Should return statusCode 200 and a message ' +
-       'if a form was deleted', async () => {
-      const form = {
-        name: 'pinkUnicorn',
-        color: 'NeonGhost',
-        token: token,
-        email: 'b@b.c',
-        date: date
-      };
-      setTokenStatus(true);
-      const result = await test.sendPostRequest(
-        '/api/3DPrintingForm/delete', form);
-      expect(result).to.have.status(OK);
-    });
+      'if a form was deleted', async () => {
+        const form = {
+          name: 'pinkUnicorn',
+          color: 'NeonGhost',
+          token: token,
+          email: 'b@b.c',
+          date: date
+        };
+        setTokenStatus(true);
+        const result = await test.sendPostRequest(
+          '/api/3DPrintingForm/delete', form);
+        expect(result).to.have.status(OK);
+      });
   });
 });

@@ -1,24 +1,24 @@
 /* global describe it before after */
 process.env.NODE_ENV = 'test';
-const Advertisement = require('../api/main_endpoints/models/Advertisement');
+const Advertisement = require('../../api/main_endpoints/models/Advertisement');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const constants = require('../api/util/constants');
+const constants = require('../../api/util/constants');
 const { OK, BAD_REQUEST } = constants.STATUS_CODES;
-const SceApiTester = require('../test/util/tools/SceApiTester');
+const SceApiTester = require('../../test/util/tools/SceApiTester');
 
 let app = null;
 let test = null;
 const expect = chai.expect;
 
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 chai.should();
 chai.use(chaiHttp);
 
 describe('Advertisement', () => {
   before(done => {
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/Advertisement.js');
+      __dirname + '/../../api/main_endpoints/routes/Advertisement.js');
     test = new SceApiTester(app);
     tools.emptySchema(Advertisement);
     done();

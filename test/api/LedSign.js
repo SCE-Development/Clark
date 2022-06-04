@@ -2,26 +2,26 @@ process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const tools = require('./util/tools/tools');
-const SceApiTester = require('./util/tools/SceApiTester');
+const tools = require('../util/tools/tools');
+const SceApiTester = require('../util/tools/SceApiTester');
 const {
   OK,
   NOT_FOUND,
   BAD_REQUEST,
   UNAUTHORIZED
-} = require('../api/util/constants').STATUS_CODES;
+} = require('../../api/util/constants').STATUS_CODES;
 const {
   initializeTokenMock,
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
-} = require('./util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 const {
   initializeSqsMock,
   setSqsResponse,
   resetSqsMock,
   restoreSqsMock,
-} = require('./util/mocks/SceSqsApiHandler');
+} = require('../util/mocks/SceSqsApiHandler');
 
 let app = null;
 let test = null;
@@ -38,7 +38,7 @@ describe('LED Sign', () => {
     initializeTokenMock();
     initializeSqsMock();
     app = tools.initializeServer(
-      __dirname + '/../api/peripheral_api/routes/LedSign.js');
+      __dirname + '/../../api/peripheral_api/routes/LedSign.js');
     test = new SceApiTester(app);
     done();
   });

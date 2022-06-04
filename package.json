@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "description": "The SCE Website",
   "scripts": {
-    "api-test": "mocha",
+    "api-test": "mocha test/api/*.js",
     "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js --exit",
     "start": "react-scripts start",
     "server": "npm start --prefix api",

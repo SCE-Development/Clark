@@ -3,17 +3,17 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const constants = require('../api/util/constants');
+const constants = require('../../api/util/constants');
 const { OK, NOT_FOUND } = constants.STATUS_CODES;
-const SceApiTester = require('./util/tools/SceApiTester');
+const SceApiTester = require('../util/tools/SceApiTester');
 const { SceGithubApiHandler } =
-  require('../api/cloud_api/util/SceGithubApiHandler');
+  require('../../api/cloud_api/util/SceGithubApiHandler');
 
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
 const expect = chai.expect;
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const GITHUB_RESPONSE = 'Sample response';
 
 chai.should();
@@ -25,7 +25,7 @@ describe('Github', () => {
     githubStub = sandbox.stub(SceGithubApiHandler.prototype,
       'getPullRequestsFromRepo');
     app = tools.initializeServer(
-      __dirname + '/../api/cloud_api/routes/Github.js');
+      __dirname + '/../../api/cloud_api/routes/Github.js');
     test = new SceApiTester(app);
     done();
   });
@@ -63,7 +63,7 @@ describe('Github', () => {
     githubStub = sandbox.stub(SceGithubApiHandler.prototype,
       'getCommitsFromRepo');
     app = tools.initializeServer(
-      __dirname + '/../api/cloud_api/routes/Github.js');
+      __dirname + '/../../api/cloud_api/routes/Github.js');
     test = new SceApiTester(app);
     done();
   });
@@ -101,7 +101,7 @@ describe('Github', () => {
     githubStub = sandbox.stub(SceGithubApiHandler.prototype,
       'getContributorsInPastMonthFromRepo');
     app = tools.initializeServer(
-      __dirname + '/../api/cloud_api/routes/Github.js');
+      __dirname + '/../../api/cloud_api/routes/Github.js');
     test = new SceApiTester(app);
     done();
   });
