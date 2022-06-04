@@ -2,7 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
 
-const User = require('../../../api/main_endpoints/models/User.js');
+const User = require('../../api/main_endpoints/models/User.js');
 
 // Require the dev-dependencies
 const chai = require('chai');
@@ -13,10 +13,10 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   FORBIDDEN
-} = require('../../../api/util/constants').STATUS_CODES;
+} = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
-const SceApiTester = require('../../util/tools/SceApiTester');
-const discordModule = require('../../../api/main_endpoints/util/discord-connection');
+const SceApiTester = require('../util/tools/SceApiTester');
+const discordModule = require('../../api/main_endpoints/util/discord-connection');
 
 
 let app = null;
@@ -24,13 +24,13 @@ let test = null;
 let sandbox = sinon.createSandbox();
 
 const expect = chai.expect;
-const tools = require('../../util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const {
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
   initializeTokenMock
-} = require('../../util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
