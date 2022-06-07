@@ -1,24 +1,24 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const ErrorLog = require('../api/peripheral_api/models/ErrorLog');
+const ErrorLog = require('../../api/peripheral_api/models/ErrorLog');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const constants = require('../api/util/constants');
+const constants = require('../../api/util/constants');
 const { OK, BAD_REQUEST } = constants.STATUS_CODES;
-const SceApiTester = require('../test/util/tools/SceApiTester');
+const SceApiTester = require('../../test/util/tools/SceApiTester');
 
 let app = null;
 let test = null;
 const expect = chai.expect;
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 chai.should();
 chai.use(chaiHttp);
 
 describe('ErrorLog', () => {
   before(done => {
     app = tools.initializeServer(
-      __dirname + '/../api/peripheral_api/routes/ErrorLog.js');
+      __dirname + '/../../api/peripheral_api/routes/ErrorLog.js');
     test = new SceApiTester(app);
     tools.emptySchema(ErrorLog);
     done();

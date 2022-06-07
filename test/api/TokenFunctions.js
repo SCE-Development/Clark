@@ -21,7 +21,7 @@ let jwtStub;
 describe('TokenFunctions', () => {
   jwtStub = sinon.stub();
   beforeEach(done => {
-    tokenFunctions = proxyquire('../api/main_endpoints/util/token-functions',
+    tokenFunctions = proxyquire('../../api/main_endpoints/util/token-functions',
       {
         jsonwebtoken: {
           verify: jwtStub

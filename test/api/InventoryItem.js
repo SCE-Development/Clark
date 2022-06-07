@@ -1,26 +1,26 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const InventoryItem = require('../api/main_endpoints/models/InventoryItem');
+const InventoryItem = require('../../api/main_endpoints/models/InventoryItem');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const constants = require('../api/util/constants');
+const constants = require('../../api/util/constants');
 const { OK, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND } = constants.STATUS_CODES;
-const SceApiTester = require('../test/util/tools/SceApiTester');
+const SceApiTester = require('../../test/util/tools/SceApiTester');
 
 let app = null;
 let test = null;
 
 const expect = chai.expect;
 // tools for testing
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const {
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
   initializeTokenMock
-} = require('./util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
@@ -29,7 +29,7 @@ describe('InventoryItem', () => {
   before(done => {
     initializeTokenMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/InventoryItem.js');
+      __dirname + '/../../api/main_endpoints/routes/InventoryItem.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(InventoryItem);
@@ -173,7 +173,7 @@ describe('InventoryItem', () => {
     it('Should return 200 when an item is sucessfully deleted', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/InventoryItem/deleteItem', {_id: itemId});
+        token, '/api/InventoryItem/deleteItem', { _id: itemId });
       expect(result).to.have.status(OK);
     });
     it('The deleted item should be reflected in the database', async () => {

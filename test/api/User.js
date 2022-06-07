@@ -2,7 +2,7 @@
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
 
-const User = require('../api/main_endpoints/models/User');
+const User = require('../../api/main_endpoints/models/User.js');
 
 // Require the dev-dependencies
 const chai = require('chai');
@@ -13,10 +13,11 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   FORBIDDEN
-} = require('../api/util/constants').STATUS_CODES;
+} = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
-const SceApiTester = require('./util/tools/SceApiTester');
-const discordModule = require('../api/main_endpoints/util/discord-connection');
+const SceApiTester = require('../util/tools/SceApiTester');
+const discordModule
+  = require('../../api/main_endpoints/util/discord-connection');
 
 
 let app = null;
@@ -24,13 +25,13 @@ let test = null;
 let sandbox = sinon.createSandbox();
 
 const expect = chai.expect;
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const {
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
   initializeTokenMock
-} = require('./util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
@@ -40,8 +41,8 @@ describe('User', () => {
   before(done => {
     initializeTokenMock();
     app = tools.initializeServer([
-      __dirname + '/../api/main_endpoints/routes/User.js',
-      __dirname + '/../api/main_endpoints/routes/Auth.js'
+      __dirname + '/../../api/main_endpoints/routes/User.js',
+      __dirname + '/../../api/main_endpoints/routes/Auth.js'
     ]);
     test = new SceApiTester(app);
     // Before each test we empty the database
@@ -66,7 +67,7 @@ describe('User', () => {
 
   describe('/POST checkIfUserExists with no users added yet', () => {
     it('Should return statusCode 400 when an email is not' +
-     'provided', async () => {
+      'provided', async () => {
       const user = {};
       const result = await test.sendPostRequest(
         '/api/User/checkIfUserExists', user);
@@ -101,7 +102,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const user = {
         token: 'Invalid token'
       };
@@ -111,7 +112,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 200 and return an array ' +
-       'of all objects in collection', async () => {
+      'of all objects in collection', async () => {
       const form = {
         token: token
       };
@@ -133,7 +134,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const user = {
         email: 'a@b.c',
         token: 'Invalid token'
@@ -155,7 +156,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 200 and a user if ' +
-       'the query was found', async () => {
+      'the query was found', async () => {
       const user = {
         email: 'a@b.c',
         token: token
@@ -189,7 +190,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const user = {
         email: 'a@b.c',
         token: 'Invalid token'
@@ -211,7 +212,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 200 and a message ' +
-       'if a user was edited', async () => {
+      'if a user was edited', async () => {
       const user = {
         email: 'a@b.c',
         token: token,
@@ -238,7 +239,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 403 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const user = {
         email: 'a@b.c',
         token: 'Invalid token'
@@ -260,7 +261,7 @@ describe('User', () => {
     });
 
     it('Should return statusCode 200 and a message ' +
-       'if a user was deleted', async () => {
+      'if a user was deleted', async () => {
       const user = {
         email: 'a@b.c',
         token: token

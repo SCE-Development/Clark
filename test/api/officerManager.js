@@ -1,8 +1,9 @@
 /* global describe it before after beforeEach afterEach */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const OfficerManager = require('../api/main_endpoints/models/OfficerManager');
-const User = require('../api/main_endpoints/models/User');
+const OfficerManager
+  = require('../../api/main_endpoints/models/OfficerManager');
+const User = require('../../api/main_endpoints/models/User');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const {
@@ -11,21 +12,21 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   FORBIDDEN
-} = require('../api/util/constants').STATUS_CODES;
-const SceApiTester = require('../test/util/tools/SceApiTester');
+} = require('../../api/util/constants').STATUS_CODES;
+const SceApiTester = require('../../test/util/tools/SceApiTester');
 
 let app = null;
 let test = null;
 const expect = chai.expect;
 // tools for testing
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const {
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
   initializeTokenMock
-} = require('./util/mocks/TokenValidFunctions');
-const { DEFAULT_PHOTO_URL } = require('../api/util/constants');
+} = require('../util/mocks/TokenValidFunctions');
+const { DEFAULT_PHOTO_URL } = require('../../api/util/constants');
 chai.should();
 chai.use(chaiHttp);
 
@@ -34,7 +35,7 @@ describe('OfficerManager', () => {
   before(done => {
     initializeTokenMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/officerManager.js');
+      __dirname + '/../../api/main_endpoints/routes/officerManager.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(OfficerManager);
@@ -56,7 +57,7 @@ describe('OfficerManager', () => {
 
   describe('/POST submit', () => {
     it('Should return statusCode 400 when the ' +
-       'required fields are not set', async () => {
+      'required fields are not set', async () => {
       const form = { token: token };
       setTokenStatus(true);
       const result = await test.sendPostRequest(
@@ -87,7 +88,7 @@ describe('OfficerManager', () => {
       });
 
     it('Should return statusCode 200 when all required ' +
-       'fields are filled in', async () => {
+      'fields are filled in', async () => {
       const form = {
         email: 'test@test.com',
         team: 'dev',
@@ -171,7 +172,7 @@ describe('OfficerManager', () => {
     });
 
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const form = {
         token: 'Invalid token',
         email: 'test@test.com'
@@ -193,7 +194,7 @@ describe('OfficerManager', () => {
     });
 
     it('Should return statusCode 200 and a message ' +
-       'if a form was edited', async () => {
+      'if a form was edited', async () => {
       const form = {
         token: token,
         email: 'test@test.com',
@@ -232,7 +233,7 @@ describe('OfficerManager', () => {
     });
 
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const form = {
         token: 'Invalid token',
         email: 'test@test.com'
@@ -254,7 +255,7 @@ describe('OfficerManager', () => {
     });
 
     it('Should return statusCode 200 and a message ' +
-       'if a form was deleted', async () => {
+      'if a form was deleted', async () => {
       const form = {
         token: token,
         email: 'test@test.com'

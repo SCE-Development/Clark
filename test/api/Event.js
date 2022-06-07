@@ -1,27 +1,27 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const Event = require('../api/main_endpoints/models/Event');
-const User = require('../api/main_endpoints/models/User');
+const Event = require('../../api/main_endpoints/models/Event');
+const User = require('../../api/main_endpoints/models/User');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const constants = require('../api/util/constants');
+const constants = require('../../api/util/constants');
 const { OK, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND } = constants.STATUS_CODES;
 const { DEFAULT_PHOTO_URL } = constants;
-const SceApiTester = require('./util/tools/SceApiTester');
+const SceApiTester = require('../util/tools/SceApiTester');
 
 let app = null;
 let test = null;
 const expect = chai.expect;
 // tools for testing
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const {
   initializeTokenMock,
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
-} = require('./util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
@@ -30,7 +30,7 @@ describe('Event', () => {
   before(done => {
     initializeTokenMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/Event.js');
+      __dirname + '/../../api/main_endpoints/routes/Event.js');
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(Event);
@@ -116,7 +116,7 @@ describe('Event', () => {
         expect(result).to.have.status(BAD_REQUEST);
       });
     it('Should return statusCode 200 when all required ' +
-       'fields are filled in', async () => {
+      'fields are filled in', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/event/createEvent', VALID_NEW_EVENT);
@@ -161,7 +161,7 @@ describe('Event', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
     it('Should return 404 when an event by an ' +
-       'invalid id isn\'t found', async () => {
+      'invalid id isn\'t found', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/event/editEvent', EVENT_WITH_INVALID_ID);
@@ -170,7 +170,7 @@ describe('Event', () => {
     it('Should return 200 when an event is sucessfully updated', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/event/editEvent', {id: eventId, ...UPDATED_EVENT});
+        token, '/api/event/editEvent', { id: eventId, ...UPDATED_EVENT });
       expect(result).to.have.status(OK);
     });
     it('The update should be reflected in the database', async () => {
@@ -215,7 +215,7 @@ describe('Event', () => {
     it('Should return 200 when an event is sucessfully deleted', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/event/deleteEvent', {id: eventId});
+        token, '/api/event/deleteEvent', { id: eventId });
       expect(result).to.have.status(OK);
     });
     it('The deleted item should be reflected in the database', async () => {
@@ -230,7 +230,7 @@ describe('Event', () => {
   });
   describe('/GET getUpcomingEvents', () => {
     it('Should return an empty array if no' +
-        'upcoming events are available', async () => {
+      'upcoming events are available', async () => {
       setTokenStatus(true);
       const result = await test.sendGetRequest(
         '/api/event/getUpcomingEvents');

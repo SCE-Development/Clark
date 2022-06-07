@@ -3,19 +3,19 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const constants = require('../api/util/constants');
+const constants = require('../../api/util/constants');
 const { OK, BAD_REQUEST } = constants.STATUS_CODES;
-const SceApiTester = require('./util/tools/SceApiTester');
+const SceApiTester = require('../util/tools/SceApiTester');
 const { SceGoogleApiHandler } =
-  require('../api/cloud_api/util/SceGoogleApiHandler');
+  require('../../api/cloud_api/util/SceGoogleApiHandler');
 const verificationTemplate =
-  require('../api/cloud_api/email_templates/verification');
+  require('../../api/cloud_api/email_templates/verification');
 
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
 const expect = chai.expect;
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 
 chai.should();
 chai.use(chaiHttp);
@@ -27,7 +27,7 @@ describe('Mailer', () => {
     sendEmailStub = sandbox.stub(SceGoogleApiHandler.prototype, 'sendEmail');
     verificationStub = sandbox.stub(verificationTemplate, 'verification');
     app = tools.initializeServer(
-      __dirname + '/../api/cloud_api/routes/Mailer.js');
+      __dirname + '/../../api/cloud_api/routes/Mailer.js');
     test = new SceApiTester(app);
     done();
   });

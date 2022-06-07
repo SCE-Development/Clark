@@ -1,25 +1,25 @@
 process.env.NODE_ENV = 'test';
 
-const RFID = require('../api/peripheral_api/models/RFID');
+const RFID = require('../../api/peripheral_api/models/RFID');
 const awsIot = require('aws-iot-device-sdk');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const sinon = require('sinon');
 const {
   OK, NOT_FOUND, BAD_REQUEST, UNAUTHORIZED
-} = require('../api/util/constants').STATUS_CODES;
-const SceApiTester = require('./util/tools/SceApiTester');
+} = require('../../api/util/constants').STATUS_CODES;
+const SceApiTester = require('../util/tools/SceApiTester');
 const {
   initializeTokenMock,
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
-} = require('./util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 let app = null;
 let test = null;
 const expect = chai.expect;
-const tools = require('./util/tools/tools');
-const { RfidHelper } = require('../api/peripheral_api/util/RFID-helpers');
+const tools = require('../util/tools/tools');
+const { RfidHelper } = require('../../api/peripheral_api/util/RFID-helpers');
 
 let addingRfidStub = null;
 let awsIotStub = null;
@@ -38,7 +38,7 @@ describe('RFID', () => {
     testingStub.returns(true);
     sinon.stub(RfidHelper.prototype, 'keysExist').returns(true);
     app = tools.initializeServer(
-      __dirname + '/../api/peripheral_api/routes/RFID.js');
+      __dirname + '/../../api/peripheral_api/routes/RFID.js');
     test = new SceApiTester(app);
     tools.emptySchema(RFID);
     done();

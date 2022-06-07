@@ -32,7 +32,7 @@ let awsStub = {
 let {
   SceSqsApiHandler
 } = proxyquire(
-  '../api/peripheral_api/util/SceSqsApiHandler.js', {
+  '../../api/peripheral_api/util/SceSqsApiHandler.js', {
     'aws-sdk': awsStub
   }
 );
@@ -46,12 +46,13 @@ let {
 // config.json. We resolve true because in case someone
 // is running the backend and doesn't care for SQS logic,
 // we avoid uncecesarry errors.
+
 let {
   SceSqsApiHandler: SceSqsApiHandlerWithNoKeys
 } = proxyquire(
-  '../api/peripheral_api/util/SceSqsApiHandler.js', {
+  '../../api/peripheral_api/util/SceSqsApiHandler.js', {
     'aws-sdk': awsStub,
-    '../../config/config.json': {
+    '../../../api/config/config.json': {
       Queue: {
         ACCOUNT_ID: 'NOT_SET'
       }

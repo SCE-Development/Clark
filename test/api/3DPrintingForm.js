@@ -1,8 +1,9 @@
 /* global describe it before after */
 // During the test the env variable is set to test
 process.env.NODE_ENV = 'test';
-const PrintingForm3D = require('../api/main_endpoints/models/PrintingForm3D');
-const tokenValidMocker = require('./util/mocks/TokenValidFunctions');
+const PrintingForm3D
+  = require('../../api/main_endpoints/models/PrintingForm3D');
+const tokenValidMocker = require('../util/mocks/TokenValidFunctions');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -12,20 +13,20 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND
-} = require('../api/util/constants').STATUS_CODES;
-const SceApiTester = require('../test/util/tools/SceApiTester');
+} = require('../../api/util/constants').STATUS_CODES;
+const SceApiTester = require('../../test/util/tools/SceApiTester');
 
 let app = null;
 let test = null;
 const expect = chai.expect;
 // tools for testing
-const tools = require('./util/tools/tools.js');
+const tools = require('../util/tools/tools.js');
 const {
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
   initializeTokenMock
-} = require('./util/mocks/TokenValidFunctions');
+} = require('../util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
@@ -35,7 +36,7 @@ describe('3DPrintingForm', () => {
   before(done => {
     initializeTokenMock();
     app = tools.initializeServer(
-      __dirname + '/../api/main_endpoints/routes/3DPrintingForm.js');
+      __dirname + '/../../api/main_endpoints/routes/3DPrintingForm.js');
     test = new SceApiTester(app);
     tools.emptySchema(PrintingForm3D);
     done();
@@ -59,14 +60,14 @@ describe('3DPrintingForm', () => {
 
   describe('/POST submit', () => {
     it('Should return statusCode 400 when the ' +
-       'required fields are not set', async () => {
+      'required fields are not set', async () => {
       const form = {};
       const result = await test.sendPostRequest(
         '/api/3DPrintingForm/submit', form);
       expect(result).to.have.status(BAD_REQUEST);
     });
     it('Should return statusCode 200 when all ' +
-       'required fields are filled in', async () => {
+      'required fields are filled in', async () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'Rainbow',
@@ -99,7 +100,7 @@ describe('3DPrintingForm', () => {
       expect(result).to.have.status(FORBIDDEN);
     });
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const form = {
         name: 'pinkUnicorn',
         token: 'Invalid token',
@@ -122,7 +123,7 @@ describe('3DPrintingForm', () => {
       expect(result).to.have.status(NOT_FOUND);
     });
     it('Should return statusCode 200 and a message ' +
-       'if a form was edited', async () => {
+      'if a form was edited', async () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'something else',
@@ -149,7 +150,7 @@ describe('3DPrintingForm', () => {
       expect(result).to.have.status(FORBIDDEN);
     });
     it('Should return statusCode 401 if an invalid ' +
-       'token was passed in', async () => {
+      'token was passed in', async () => {
       const form = {
         name: 'invalid-name',
         color: 'invalid-color',
@@ -175,7 +176,7 @@ describe('3DPrintingForm', () => {
     });
 
     it('Should return statusCode 200 and a message ' +
-       'if a form was deleted', async () => {
+      'if a form was deleted', async () => {
       const form = {
         name: 'pinkUnicorn',
         color: 'NeonGhost',
