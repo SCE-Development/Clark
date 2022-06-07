@@ -23,20 +23,33 @@ const {
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
 
+/**
+ * Check if a Sunday has passed in between the user's last login date and
+ * today's date. This is because the printing pages reset every Sunday.
+ * @param {Date} lastLogin the date when the user last logged in
+ * @returns {Boolean} returns boolean representing if the pages need to be
+ * reset
+ */
 function checkIfPageCountResets(lastLogin) {
   if (!lastLogin) return false;
 
+  let date = new Date(lastLogin.getTime());
   const newDate = new Date();
-  // + 1 to account for daylight savings time
-  newDate.setDate(newDate.getDate() + 1);
-  const amountOfDaysToLastSunday = newDate.getDate() - newDate.getDay();
-  const lastSundayDate = new Date();
-  lastSundayDate.setDate(amountOfDaysToLastSunday); // last sunday
-  lastSundayDate.setHours(23, 59, 59); // 11:59:59 PM
+  let isSunday = false;
 
-  // If the last login is before last Sunday
-  // at 1 second before midnight, return true
-  if (lastLogin < lastSundayDate) return true;
+  // If last login was today, don't check.
+  if (date.toDateString() === newDate.toDateString()) {
+    return false;
+  }
+
+  while (date <= newDate) {
+    let day = date.getDay();
+    isSunday = (day === 0);
+    if (isSunday) {
+      return true;
+    }
+    date.setDate(date.getDate() + 1);
+  }
 
   return false;
 }
