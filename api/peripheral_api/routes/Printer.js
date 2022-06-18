@@ -1,8 +1,10 @@
+const axios = require('axios');
 const express = require('express');
 const router = express.Router();
 const {
   OK,
-  UNAUTHORIZED
+  UNAUTHORIZED,
+  NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const s3BucketKeys = require('../../config/config.json').S3Bucket;
 const printingS3Bucket = require('../../config/config.json').PrintingS3Bucket;
@@ -24,8 +26,13 @@ AWS.config.update({
   credentials: creds
 });
 
-router.get('/healthCheck', (req, res) => {
-  res.sendStatus(OK);
+router.get('/healthCheck', async (req, res) => {
+  await axios
+    .get("http://localhost:14000/")
+    .then(() => {
+      return res.sendStatus(OK);
+    })
+    .catch((err) => { console.log(err); return res.sendStatus(NOT_FOUND) });
 });
 
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
