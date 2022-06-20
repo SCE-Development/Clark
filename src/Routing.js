@@ -28,6 +28,8 @@ import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import InventoryPage from './Pages/Inventory/InventoryPage.js';
+import DessertPage from './Pages/Desserts/Desserts';
+import DessertAdmin from './Pages/Desserts/DessertAdmin';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -123,7 +125,15 @@ export default function Routing({ appProps }) {
       path: '/inventory',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
-      inAdminNavbar: true}
+      inAdminNavbar: true
+    },
+    {
+      Component: DessertAdmin,
+      path: '/dessert-admin',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -131,7 +141,8 @@ export default function Routing({ appProps }) {
     { Component: OfficerDB, path: '/officerDB' },
     { Component: VerifyEmailPage, path: '/verify' },
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
-    { Component: DiscordSJSU, path: '/discordSJSU'}
+    { Component: DiscordSJSU, path: '/discordSJSU'},
+    { Component: DessertPage, path: '/desserts'}
   ];
   return (
     <Router>
