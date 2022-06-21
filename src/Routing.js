@@ -24,7 +24,6 @@ import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
-import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import InventoryPage from './Pages/Inventory/InventoryPage.js';
@@ -111,12 +110,6 @@ export default function Routing({ appProps }) {
       path: '/printing-analytics',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
-      inAdminNavbar: true
-    },
-    { Component: UploadPic,
-      path: '/uploadPic',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/login',
       inAdminNavbar: true
     },
     { Component: InventoryPage,
