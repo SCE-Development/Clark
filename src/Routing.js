@@ -27,7 +27,12 @@ import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
+<<<<<<< HEAD
 import InventoryPage from './Pages/Inventory/InventoryPage.js';
+=======
+import DessertPage from './Pages/Desserts/Desserts';
+import DessertAdmin from './Pages/Desserts/DessertAdmin';
+>>>>>>> 8377d88 (delete inventory from admin navbar)
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -119,11 +124,6 @@ export default function Routing({ appProps }) {
       redirect: '/login',
       inAdminNavbar: true
     },
-    { Component: InventoryPage,
-      path: '/inventory',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/login',
-      inAdminNavbar: true}
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
