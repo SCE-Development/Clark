@@ -56,7 +56,6 @@ router.post('/editDessert', (req, res) => {
         });
     })
     .catch ((error) => {
-      console.log('bruh', _id, error);
       res.sendStatus(NOT_FOUND);
     });
 });

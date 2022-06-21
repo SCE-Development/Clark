@@ -27,7 +27,6 @@ import { membershipState } from './Enums';
 import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
-import InventoryPage from './Pages/Inventory/InventoryPage.js';
 import DessertPage from './Pages/Desserts/Desserts';
 import DessertAdmin from './Pages/Desserts/DessertAdmin';
 
@@ -117,12 +116,6 @@ export default function Routing({ appProps }) {
     },
     { Component: UploadPic,
       path: '/uploadPic',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/login',
-      inAdminNavbar: true
-    },
-    { Component: InventoryPage,
-      path: '/inventory',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/login',
       inAdminNavbar: true
