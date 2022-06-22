@@ -17,7 +17,6 @@ export default function AdminNavbar(props) {
     { title: 'Overview', route: '/dashboard' },
     { title: 'Inventory', route: '/inventory'},
     { title: 'Event Manager', route: '/event-manager' },
-    { title: 'Upload Pictures', route: '/uploadPic' },
     { title: 'LED Sign', route: '/led-sign' },
     { title: '3DConsole', route: '/3DConsole' },
     { title: '2D Printing Analytics', route: '/printing-analytics' },
