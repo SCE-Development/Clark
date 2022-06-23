@@ -15,7 +15,6 @@ export default function AdminNavbar(props) {
   const navbarLinks = [
     { title: 'Home', route: '/' },
     { title: 'Overview', route: '/dashboard' },
-    { title: 'Inventory', route: '/inventory'},
     { title: 'Event Manager', route: '/event-manager' },
     { title: 'LED Sign', route: '/led-sign' },
     { title: '3DConsole', route: '/3DConsole' },
