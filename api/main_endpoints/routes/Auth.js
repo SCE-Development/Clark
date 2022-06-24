@@ -183,6 +183,9 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.status(UNAUTHORIZED).json({});
   }
+  if (!checkIfTokenValid(req)) {
+    res.status(UNAUTHORIZED).json({});
+  }
   const token = decodeToken(req);
   if (!token) {
     res.status(UNAUTHORIZED).json(token);
