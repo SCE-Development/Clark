@@ -183,11 +183,9 @@ router.post('/verify', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.status(UNAUTHORIZED).json({});
   }
-  if (!checkIfTokenValid(req)) {
-    res.status(UNAUTHORIZED).json({});
-  }
   const token = decodeToken(req);
-  if (!token) {
+  // decodeToken returns an empty object if the token isnt valid
+  if (Object.keys(token).length === 0) {
     res.status(UNAUTHORIZED).json(token);
   } else {
     res.status(OK).json(token);
