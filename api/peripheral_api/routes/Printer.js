@@ -28,11 +28,13 @@ AWS.config.update({
 
 router.get('/healthCheck', async (req, res) => {
   await axios
-    .get("http://localhost:14000/")
+    .get('http://localhost:14000/')
     .then(() => {
       return res.sendStatus(OK);
     })
-    .catch((err) => { console.log(err); return res.sendStatus(NOT_FOUND) });
+    .catch((err) => {
+      return res.sendStatus(NOT_FOUND);
+    });
 });
 
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
