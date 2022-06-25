@@ -184,7 +184,11 @@ router.post('/verify', function(req, res) {
     return res.status(UNAUTHORIZED).json({});
   }
   const token = decodeToken(req);
-  // decodeToken returns an empty object if the token isnt valid
+  //checking if token is invalid and should return statusCode 401 when it is
+  if (!checkIfTokenValid(token)) {
+    return res.status(UNAUTHORIZED).json(token);
+  }
+  //decodeToken returns an empty object if the token has an error
   if (Object.keys(token).length === 0) {
     res.status(UNAUTHORIZED).json(token);
   } else {
