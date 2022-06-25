@@ -24,6 +24,7 @@ export default function Editor(props) {
     = useState();
   const [membershipValidUntil, setMembershipValidUntil]
     = useState(user.membershipValidUntil);
+  const date = new Date();
 
   async function handleSubmission() {
     // hash pass
@@ -94,11 +95,25 @@ export default function Editor(props) {
     }
   ];
 
+  function membershipExpDate() {
+    let expDate1 = '';
+    let expDate2 = '';
+    let actualMonth = date.getMonth() + 1;
+    if (actualMonth >= 1 && actualMonth <= 5) {
+      expDate1 = `May ${date.getFullYear()}`;
+      expDate2 = `Dec ${date.getFullYear()}`;
+    } else {
+      expDate1 = `Dec ${date.getFullYear()}`;
+      expDate2 = `May ${date.getFullYear() + 1}`;
+    }
+    return [expDate1, expDate2];
+  }
+  const expDates = membershipExpDate();
   const membership = [
     { value: 0, name: 'Keep Same' },
     { value: 0, name: 'Expired Membership' },
-    { value: 1, name: 'This semester' },
-    { value: 2, name: '2 semesters' }
+    { value: 1, name: `This semester: ${expDates[0]}` },
+    { value: 2, name: `2 semesters: ${expDates[1]}` }
   ];
 
   return (
