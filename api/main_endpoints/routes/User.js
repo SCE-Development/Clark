@@ -34,7 +34,7 @@ router.post('/checkIfUserExists', (req, res) => {
     {
       email: email.toLowerCase(),
     },
-    function (error, user) {
+    function(error, user) {
       if (error) {
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
@@ -58,7 +58,7 @@ router.post('/delete', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  User.deleteOne({ email: req.body.email }, function (error, user) {
+  User.deleteOne({ email: req.body.email }, function(error, user) {
     if (error) {
       const info = {
         userEmail: req.body.email,
@@ -79,13 +79,13 @@ router.post('/delete', (req, res) => {
 });
 
 // Search for a member
-router.post('/search', function (req, res) {
+router.post('/search', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.ALUMNI)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function (error, result) {
+  User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
@@ -120,7 +120,7 @@ router.post('/search', function (req, res) {
 });
 
 // Search for all members
-router.post('/users', function (req, res) {
+router.post('/users', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -170,8 +170,7 @@ router.post('/edit', (req, res) => {
   const user =
     typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
       ? { ...req.body }
-      : {
-          ...req.body,
+      : { ...req.body,
           membershipValidUntil: getMemberValidationDate(
             parseInt(req.body.numberOfSemestersToSignUpFor)
           ),
@@ -182,7 +181,7 @@ router.post('/edit', (req, res) => {
   // Remove the auth token from the form getting edited
   delete user.token;
 
-  User.updateOne(query, { ...user }, function (error, result) {
+  User.updateOne(query, { ...user }, function(error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
@@ -212,7 +211,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function (error, result) {
+  User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
@@ -232,7 +231,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
   });
 });
 
-router.get('/callback', async function (req, res) {
+router.get('/callback', async function(req, res) {
   const code = req.query.code;
   const email = req.query.state;
   discordConnection
@@ -245,7 +244,7 @@ router.get('/callback', async function (req, res) {
     });
 });
 
-router.post('/connectToDiscord', function (req, res) {
+router.post('/connectToDiscord', function(req, res) {
   const email = req.body.email;
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -271,20 +270,6 @@ router.post('/connectToDiscord', function (req, res) {
     );
 });
 
-router.post('/createUserTest', (req, res) => {
-  const id = req.body;
-  const newEvent = new User({
-    checkDiscordID: id,
-  });
-
-  User.create(newEvent, (req, res) => {
-    if (error) {
-      return req.sendStatus(BAD_REQUEST);
-    } else {
-      return res.json(post);
-    }
-  });
-});
 
 router.get('/checkUserIDTest', (req, res) => {
   User.findOne({ discordID: req.query.discordID }, (error, result) => {
@@ -301,10 +286,6 @@ router.get('/checkUserIDTest', (req, res) => {
     };
     return res.send(sendMessage);
   });
-});
-
-router.get('/checkAPI', (req, res) => {
-  res.sendStatus(OK);
 });
 
 module.exports = router;
