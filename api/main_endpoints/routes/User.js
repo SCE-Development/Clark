@@ -170,7 +170,7 @@ router.post('/edit', (req, res) => {
   const user =
     typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
       ? { ...req.body }
-      : { 
+      : {
         ...req.body,
         membershipValidUntil: getMemberValidationDate(
           parseInt(req.body.numberOfSemestersToSignUpFor)
