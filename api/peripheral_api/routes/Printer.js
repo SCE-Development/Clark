@@ -27,6 +27,9 @@ AWS.config.update({
 });
 
 router.get('/healthCheck', async (req, res) => {
+  if (process.env.NODE_ENV !== 'production') {
+    return res.sendStates(OK);
+  }
   await axios
     .get('http://localhost:14000/')
     .then(() => {
