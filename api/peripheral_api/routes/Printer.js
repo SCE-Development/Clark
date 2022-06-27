@@ -27,6 +27,10 @@ AWS.config.update({
 });
 
 router.get('/healthCheck', async (req, res) => {
+/* 
+ * How these work with Quasar:
+ * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+ */
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
