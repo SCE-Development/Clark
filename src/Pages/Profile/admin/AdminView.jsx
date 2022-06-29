@@ -112,8 +112,8 @@ export default function Editor(props) {
   const membership = [
     { value: 0, name: 'Keep Same' },
     { value: 0, name: 'Expired Membership' },
-    { value: 1, name: `This semester: ${expDates[0]}` },
-    { value: 2, name: `2 semesters: ${expDates[1]}` }
+    { value: 1, name: `This semester (${expDates[0]})` },
+    { value: 2, name: `2 semesters (${expDates[1]})` }
   ];
 
   return (
@@ -176,4 +176,3 @@ export default function Editor(props) {
     </div>
   );
 }
-

@@ -29,53 +29,59 @@ function testPasswordStrength(password) {
   return { success: mediumRegex.test(password), message: mediumMessage };
 }
 
-function getMemberValidationDate(numberOfSemestersToSignUpFor) {
+function getMemberExpirationDate(numberOfSemestersToSignUpFor) {
+  /**
+   * we get a int param, which can be 0, 1 or 2
+   *  - represents the number of semesters from rn to extend membership
+   * we want to return the appropriate date for when a membership expires
+   *  - e.g. when numberOfSemestersToSignUpFor semester ends
+   *
+   * if the param is 0:
+   * keep date the same,
+   *
+   * if the param is 1:
+   * return the date of when the next semester ends
+   *
+   * if the param is 2:
+   * return the date of when the semester after the next semester ends
+   *
+   *
+   *
+   * Examples:
+   * I sign up in June for 1 sem -> December expire
+   * I sign up in October for 1 sem -> December expire
+   * I sign up in December for 1 sem -> December expire
+   * I sign up in March for 1 sem -> May expire
+   * I sign up in May for 1 sem -> May expire
+   */
   const today = new Date();
-  const membershipValidationDate = new Date();
+  let membershipExpirationDate = new Date();
 
-  // August 1st - January 31st
-  const startOfFallMonth = 8;
-  const endOfFallMonth = 1;
-  const endOfFallDay = 31;
+  const endOfSpringSemThisYear = new Date(today.getFullYear(), 5, 1);
+  const endOfSpringSemNextYear = new Date(today.getFullYear() + 1, 5, 1);
+  const endOfFallSemThisYear = new Date(today.getFullYear() + 1, 0, 1);
 
-  // January 1st - August 31st
-  const startOfSpringMonth = 1;
-  const endOfSpringMonth = 8;
-  const endOfSpringDay = 31;
-
-  const isFallSemester =
-    today.getMonth() >= startOfFallMonth &&
-    today.getMonth() < startOfSpringMonth + 12;
-
-  if (isFallSemester) {
-    if (numberOfSemestersToSignUpFor === 1) {
-      // months are zero indexed??
-      membershipValidationDate.setMonth(endOfFallMonth - 1);
-      membershipValidationDate.setDate(endOfFallDay);
-      membershipValidationDate.setFullYear(
-        membershipValidationDate.getFullYear() + 1
-      ); // set to next year
-    } else if (numberOfSemestersToSignUpFor === 2) {
-      membershipValidationDate.setMonth(endOfSpringMonth - 1);
-      membershipValidationDate.setDate(endOfSpringDay);
-      membershipValidationDate.setFullYear(
-        membershipValidationDate.getFullYear() + 1
-      ); // set to next year
+  // first key is number of Semesters to sign up for,
+  // nested key checks whether or not it is spring
+  let list = {
+    0: {
+      true: null,
+      false: null
+    },
+    1: {
+      true: endOfSpringSemThisYear,
+      false: endOfFallSemThisYear
+    },
+    2: {
+      true: endOfFallSemThisYear,
+      false: endOfSpringSemNextYear
     }
-  } else {
-    if (numberOfSemestersToSignUpFor === 1) {
-      membershipValidationDate.setMonth(endOfSpringMonth - 1);
-      membershipValidationDate.setDate(endOfSpringDay);
-    } else if (numberOfSemestersToSignUpFor === 2) {
-      membershipValidationDate.setMonth(endOfFallMonth - 1);
-      membershipValidationDate.setDate(endOfFallDay);
-      membershipValidationDate.setFullYear(
-        membershipValidationDate.getFullYear() + 1
-      ); // set to next year
-    }
-  }
+  };
 
-  return membershipValidationDate;
+  let actualMonth = today.getMonth() + 1;
+  let springSem = actualMonth >= 1 && actualMonth <= 5;
+
+  return list[numberOfSemestersToSignUpFor][springSem];
 }
 
 /**
@@ -86,7 +92,7 @@ function getMemberValidationDate(numberOfSemestersToSignUpFor) {
  *                            whether or not the request to register was
  *                            successful or not.
  */
-async function registerUser(userToAdd){
+async function registerUser(userToAdd) {
   let result = {
     userSaved: true,
     message: '',
@@ -102,7 +108,7 @@ async function registerUser(userToAdd){
       major: userToAdd.major || ''
     });
 
-    const membershipValidUntil = getMemberValidationDate(
+    const membershipValidUntil = getMemberExpirationDate(
       userToAdd.numberOfSemestersToSignUpFor
     );
     newUser.membershipValidUntil = membershipValidUntil;
@@ -131,4 +137,4 @@ async function registerUser(userToAdd){
 }
 
 
-module.exports = {registerUser};
+module.exports = { registerUser, getMemberExpirationDate };
