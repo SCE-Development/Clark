@@ -1,5 +1,8 @@
 process.env.NODE_ENV = 'test';
-const { registerUser, getMemberExpirationDate } = require('../../api/main_endpoints/util/registerUser.js');
+const { getMemberExpirationDate } =
+  require('../../api/main_endpoints/util/registerUser.js');
+const { registerUser } =
+  require('../../api/main_endpoints/util/registerUser.js');
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
