@@ -14,7 +14,10 @@ export default function AdminNavbar(props) {
   const [collapsed, setCollapsed] = useState(true);
   const navbarLinks = [
     { title: 'Home', route: '/' },
-    { title: 'Overview', route: '/dashboard' },
+    // { title: 'Overview', route: '/dashboard' },
+    // new changes
+    { title: 'User Manager', route: '/user-manager' },
+    //
     { title: 'Event Manager', route: '/event-manager' },
     { title: 'LED Sign', route: '/led-sign' },
     { title: '3DConsole', route: '/3DConsole' },
@@ -28,7 +31,7 @@ export default function AdminNavbar(props) {
       navbar='true'
     >
       <div id='admin-title'>
-        <NavbarBrand href='/'>Admin Dashboard
+        <NavbarBrand href='/dashboard'>Admin Dashboard
         </NavbarBrand>
         <div id='admin-toggler'>
           <DarkMode />
