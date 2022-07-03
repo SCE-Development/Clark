@@ -3,6 +3,8 @@ import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { Spinner, Input, Button, Container } from 'reactstrap';
 import './led-sign.css';
 import Header from '../../Components/Header/Header';
+import ConfirmationModal
+  from '../../Components/DecisionModal/ConfirmationModal.js';
 
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
@@ -14,7 +16,11 @@ function LedSign(props) {
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
+  const [awaitingStopSignResponse, setAwaitingStopSignResponse]
+    = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
+  const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
+  const [shutdownToggle, setShutdownToggle] = useState(false);
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -68,25 +74,45 @@ function LedSign(props) {
 
   async function handleSend() {
     setAwaitingSignResponse(true);
-    const signResponse = await updateSignText({
-      text,
-      brightness,
-      scrollSpeed,
-      backgroundColor,
-      textColor,
-      borderColor,
-      email: props.user.email,
-      firstName: props.user.firstName
-    }, props.user.token);
+    const signResponse = await updateSignText(
+      {
+        text,
+        brightness,
+        scrollSpeed,
+        backgroundColor,
+        textColor,
+        borderColor,
+        email: props.user.email,
+        firstName: props.user.firstName,
+      },
+      props.user.token
+    );
     setRequestSuccessful(!signResponse.error);
     setAwaitingSignResponse(false);
   }
 
+  async function handleStop(){
+    setAwaitingStopSignResponse(true);
+    const signResponse = await updateSignText(
+      {
+        ledIsOff: true,
+        email: props.user.email,
+        firstName: props.user.firstName,
+      },
+      props.user.token
+    );
+    setStopRequestSuccesful(!signResponse.error);
+    setAwaitingStopSignResponse(false);
+  }
+
   function renderRequestStatus() {
-    if (awaitingSignResponse || requestSuccessful === undefined) {
+    if (awaitingSignResponse ||
+      (requestSuccessful === undefined && stopRequestSuccesful === undefined)) {
       return <></>;
     } else if (requestSuccessful) {
       return <p className='sign-available'>Sign successfully updated!</p>;
+    } else if (stopRequestSuccesful){
+      return <p className="sign-available">Sign successfully stopped!</p>;
     } else {
       return (
         <p className='sign-unavailable'>The request failed. Try again later.</p>
@@ -130,30 +156,52 @@ function LedSign(props) {
   return (
     <div>
       <Header {...headerProps} />
-      <div className='sign-wrapper'>
+      <div className="sign-wrapper">
         <Container>
-          <h1 className='sign-status'>
+          <h1 className="sign-status">
             Sign Status:
             {renderSignHealth()}
           </h1>
         </Container>
         {inputArray.map((input, index) => {
           return (
-            <div key={index} className='full-width'>
+            <div key={index} className="full-width">
               <label>{input.title}</label>
               <Input disabled={loading || !signHealthy} {...input} />
             </div>
           );
         })}
-        <Button
-          id='led-sign-send'
-          onClick={handleSend}
-          disabled={loading || !signHealthy || awaitingSignResponse}
-        >
-          {awaitingSignResponse ? <Spinner /> : 'Send'}
-        </Button>
+        <div className="turn-off-sign-wrapper">
+          <Button
+            id="led-sign-send"
+            onClick={handleSend}
+            disabled={loading || !signHealthy || awaitingSignResponse}
+          >
+            {awaitingSignResponse ? <Spinner /> : 'Send'}
+          </Button>
+          <Button
+            id="led-sign-stop"
+            color="danger"
+            onClick={() => setShutdownToggle(true)}
+          >
+            {awaitingStopSignResponse ? <Spinner /> : 'Stop'}
+          </Button>
+        </div>
         {renderRequestStatus()}
       </div>
+      <ConfirmationModal
+        headerText={'Turn Off LED'}
+        bodyText={'Are you sure you want to turn off the LED?'}
+        confirmText={'Turn Off'}
+        cancelText={'Cancel'}
+        toggle={() => setShutdownToggle(!shutdownToggle)}
+        handleConfirmation={() => {
+          setRequestSuccessful();
+          setShutdownToggle(!shutdownToggle);
+          handleStop();
+        }}
+        open={shutdownToggle}
+      />
     </div>
   );
 }
