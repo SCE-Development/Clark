@@ -1,3 +1,5 @@
+console.log('dev containers ftw ');
+
 const express = require('express');
 const router = express.Router();
 const PrintLog = require('../models/PrintLog');

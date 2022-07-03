@@ -6,14 +6,13 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - '/data/db:/data/db' 
-      # - '~/data/db:/data/db'  # use this command instead for mac users
+      - mongodb_data:/data/db
     command: 'mongod'
   sce-peripheral-api:
     container_name: sce-peripheral-api
     build:
       context: ./api
-      dockerfile: ./peripheral_api/Dockerfile
+      dockerfile: ./peripheral_api/Dockerfile.dev
     ports:
       - '8081:8081'
     restart: 'on-failure'
@@ -22,6 +21,10 @@ services:
       - db
     depends_on:
       - db
+    volumes:
+      - ./api/package.json:/app/package.json
+      - ./api/peripheral_api:/app/peripheral_api
+      - ./api/node_modules:/app/node_modules
   sce-cloud-api:
     container_name: sce-cloud-api
     image: cloudapi:latest
@@ -76,3 +79,7 @@ services:
     restart: 'on-failure'
     depends_on:
       - frontend
+
+
+volumes:
+  mongodb_data:
