@@ -20,10 +20,6 @@ RUN npm install -g nodemon
 COPY ./peripheral_api /app/peripheral_api
 #copies this file to the desination
 
-RUN ls
-
-RUN echo asdfasdfasdf
-
 COPY ./util/ /app/util/
 
 COPY ./config/config.json /app/config/config.json
@@ -34,5 +30,5 @@ ENV DOCKER true
 
 ENV NODE_ENV production
 
-CMD [ "npm", "run",  "start" ]
+CMD [ "npm", "run",  "peripheral_api" ]
 

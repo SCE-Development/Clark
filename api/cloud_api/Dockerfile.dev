@@ -1,0 +1,30 @@
+
+FROM node:14.10.0-alpine
+
+WORKDIR /app
+
+ENV DATABASE_HOST db
+
+ENV NODE_ENV production
+
+COPY package.json ./
+
+RUN npm install --production
+
+RUN echo here
+
+RUN npm install -g nodemon
+
+COPY ./cloud_api /app/cloud_api
+
+COPY ./util /app/util
+
+COPY ./config/config.json /app/config/config.json
+
+EXPOSE 8082
+
+ENV DOCKER true
+
+ENV NODE_ENV production
+
+CMD ["npm", "run", "cloud_api"]
