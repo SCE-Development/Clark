@@ -14,10 +14,7 @@ export default function AdminNavbar(props) {
   const [collapsed, setCollapsed] = useState(true);
   const navbarLinks = [
     { title: 'Home', route: '/' },
-    // { title: 'Overview', route: '/dashboard' },
-    // new changes
     { title: 'User Manager', route: '/user-manager' },
-    //
     { title: 'Event Manager', route: '/event-manager' },
     { title: 'LED Sign', route: '/led-sign' },
     { title: '3DConsole', route: '/3DConsole' },

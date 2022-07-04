@@ -6,6 +6,7 @@ import {
 import Display from './Profile.js';
 import EditForm from './EditorForm';
 import { editUser } from '../../../APIFunctions/User.js';
+import { setWordSpacing } from 'pdf-lib';
 const bcrypt = require('bcryptjs');
 
 export default function Editor(props) {
@@ -98,19 +99,20 @@ export default function Editor(props) {
   function membershipExpDate() {
     let expDate1 = '';
     let expDate2 = '';
-    let actualMonth = date.getMonth() + 1;
-    if (actualMonth >= 1 && actualMonth <= 5) {
-      expDate1 = `May ${date.getFullYear()}`;
-      expDate2 = `Dec ${date.getFullYear()}`;
+    // spring checks if current month is between January and May
+    let spring = date.getMonth() >= 0 && date.getMonth() <= 4;
+    if (spring) {
+      expDate1 = `June 1, ${date.getFullYear()}`;
+      expDate2 = `Jan 1, ${date.getFullYear() + 1}`;
     } else {
-      expDate1 = `Dec ${date.getFullYear()}`;
-      expDate2 = `May ${date.getFullYear() + 1}`;
+      expDate1 = `Jan 1, ${date.getFullYear() + 1}`;
+      expDate2 = `June 1, ${date.getFullYear() + 1}`;
     }
     return [expDate1, expDate2];
   }
   const expDates = membershipExpDate();
   const membership = [
-    { value: 0, name: 'Keep Same' },
+    { value: 'undefined', name: 'Keep Same' },
     { value: 0, name: 'Expired Membership' },
     { value: 1, name: `This semester (${expDates[0]})` },
     { value: 2, name: `2 semesters (${expDates[1]})` }

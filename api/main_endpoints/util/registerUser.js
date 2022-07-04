@@ -29,7 +29,8 @@ function testPasswordStrength(password) {
   return { success: mediumRegex.test(password), message: mediumMessage };
 }
 
-function getMemberExpirationDate(numberOfSemestersToSignUpFor) {
+function getMemberExpirationDate(numberOfSemestersToSignUpFor = 0) {
+  console.log("getMemberExpirationDate called with", { numberOfSemestersToSignUpFor })
   /**
    * we get a int param, which can be 0, 1 or 2
    *  - represents the number of semesters from rn to extend membership
@@ -37,7 +38,7 @@ function getMemberExpirationDate(numberOfSemestersToSignUpFor) {
    *  - e.g. when numberOfSemestersToSignUpFor semester ends
    *
    * if the param is 0:
-   * keep date the same,
+   * change expiration date to today,
    *
    * if the param is 1:
    * return the date of when the next semester ends
@@ -55,7 +56,6 @@ function getMemberExpirationDate(numberOfSemestersToSignUpFor) {
    * I sign up in May for 1 sem -> May expire
    */
   const today = new Date();
-  let membershipExpirationDate = new Date();
 
   const endOfSpringSemThisYear = new Date(today.getFullYear(), 5, 1);
   const endOfSpringSemNextYear = new Date(today.getFullYear() + 1, 5, 1);
@@ -65,8 +65,8 @@ function getMemberExpirationDate(numberOfSemestersToSignUpFor) {
   // nested key checks whether or not it is spring
   let list = {
     0: {
-      true: null,
-      false: null
+      true: today,
+      false: today
     },
     1: {
       true: endOfSpringSemThisYear,
