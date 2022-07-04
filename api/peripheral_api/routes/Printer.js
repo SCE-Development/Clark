@@ -13,6 +13,7 @@ const {
   ACCOUNT_ID,
   PAPER_PRINTING_QUEUE_NAME,
 } = require('../../config/config.json').Queue;
+const {DISCORD_SECRET_KEY} = require('../../config/config.json');
 const {
   verifyToken,
   checkIfTokenSent
@@ -99,6 +100,9 @@ router.post('/addFilePDF', async (req, res) => {
   // const response  = await s3.upload(params, function( err, data) {
   //   if(err) throw err;
   // }).promise();
+  if(req.body.apiKey !== DISCORD_SECRET_KEY){
+    return res.sendStatus(UNAUTHORIZED);
+  }
 
   const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
