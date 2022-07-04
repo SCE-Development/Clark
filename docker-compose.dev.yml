@@ -1,15 +1,16 @@
 version: '3.8'
 services:
-  db:
+  mongodb:
+    container_name: sce-mongodb-dev
     restart: always
     image: 'mongo'
     ports:
       - '27017:27017'
     volumes:
-      - mongodb_data:/data/db
+      - sce_mongodb_data_dev:/data/db
     command: 'mongod'
   sce-peripheral-api:
-    container_name: sce-peripheral-api
+    container_name: sce-peripheral-api-dev
     build:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile.dev
@@ -18,15 +19,15 @@ services:
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
     volumes:
       - ./api/package.json:/app/package.json
       - ./api/peripheral_api:/app/peripheral_api
       - ./api/node_modules:/app/node_modules
   sce-cloud-api:
-    container_name: sce-cloud-api
+    container_name: sce-cloud-api-dev
     image: cloudapi:latest
     build:
       context: ./api
@@ -36,17 +37,15 @@ services:
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
     volumes:
       - ./api/package.json:/app/package.json
       - ./api/cloud_api:/app/cloud_api
       - ./api/node_modules:/app/node_modules
-
-  mainendpoints:
-    container_name: mainendpoints
-    image: mainendpoints:latest
+  main-endpoints:
+    container_name: sce-main-endpoints-dev
     build:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile.dev
@@ -55,15 +54,16 @@ services:
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
     volumes:
       - ./api/package.json:/app/package.json
       - ./api/main_endpoints:/app/main_endpoints
       - ./api/node_modules:/app/node_modules
 
   frontend:
+    container_name: sce-frontend-dev
     build:
       context: .
       dockerfile: ./docker/Dockerfile.dev
@@ -72,9 +72,9 @@ services:
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
     volumes:
       - ./package.json:/frontend/package.json
       - ./src:/frontend/src/
@@ -82,7 +82,8 @@ services:
       - ./public:/frontend/public/
       - ./node_modules:/frontend/node_modules
   
-  web:
+  nginx:
+    container_name: sce-nginx-dev
     image: 'nginx'
     volumes:
       - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
@@ -94,4 +95,4 @@ services:
       - frontend
 
 volumes:
-  mongodb_data:
+  sce_mongodb_data_dev:

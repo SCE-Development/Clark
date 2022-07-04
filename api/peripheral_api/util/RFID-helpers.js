@@ -20,6 +20,7 @@ class RfidHelper {
     this.name = null;
     this.inTesting = false;
   }
+
   /**
    * Helper function to determine the state of the RFID API.
    * @returns {bool} If we are adding a card the value is true,

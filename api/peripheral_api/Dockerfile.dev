@@ -4,10 +4,8 @@ FROM node:14.10.0-alpine
 WORKDIR /app
 #all commands will run in this directory
 
-ENV DATABASE_HOST db
+ENV DATABASE_HOST sce-mongodb-dev
 #database env variable
-
-ENV NODE_ENV production
 
 COPY ./package.json /app/
 #copies all the dependenices into work directory (./app) (since you set the work dir before)
@@ -28,7 +26,4 @@ EXPOSE 8081
 
 ENV DOCKER true
 
-ENV NODE_ENV production
-
-CMD [ "npm", "run",  "start" ]
-
+CMD [ "npm", "run", "peripheral_api" ]
