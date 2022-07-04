@@ -6,7 +6,6 @@ import {
 import Display from './Profile.js';
 import EditForm from './EditorForm';
 import { editUser } from '../../../APIFunctions/User.js';
-import { setWordSpacing } from 'pdf-lib';
 const bcrypt = require('bcryptjs');
 
 export default function Editor(props) {
@@ -25,7 +24,6 @@ export default function Editor(props) {
     = useState();
   const [membershipValidUntil, setMembershipValidUntil]
     = useState(user.membershipValidUntil);
-  const date = new Date();
 
   async function handleSubmission() {
     // hash pass
@@ -96,26 +94,11 @@ export default function Editor(props) {
     }
   ];
 
-  function membershipExpDate() {
-    let expDate1 = '';
-    let expDate2 = '';
-    // spring checks if current month is between January and May
-    let spring = date.getMonth() >= 0 && date.getMonth() <= 4;
-    if (spring) {
-      expDate1 = `June 1, ${date.getFullYear()}`;
-      expDate2 = `Jan 1, ${date.getFullYear() + 1}`;
-    } else {
-      expDate1 = `Jan 1, ${date.getFullYear() + 1}`;
-      expDate2 = `June 1, ${date.getFullYear() + 1}`;
-    }
-    return [expDate1, expDate2];
-  }
-  const expDates = membershipExpDate();
   const membership = [
-    { value: 'undefined', name: 'Keep Same' },
+    { value: 0, name: 'Keep Same' },
     { value: 0, name: 'Expired Membership' },
-    { value: 1, name: `This semester (${expDates[0]})` },
-    { value: 2, name: `2 semesters (${expDates[1]})` }
+    { value: 1, name: 'This semester' },
+    { value: 2, name: '2 semesters' }
   ];
 
   return (
@@ -178,3 +161,4 @@ export default function Editor(props) {
     </div>
   );
 }
+
