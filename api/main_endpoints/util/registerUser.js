@@ -30,7 +30,6 @@ function testPasswordStrength(password) {
 }
 
 function getMemberExpirationDate(numberOfSemestersToSignUpFor = 0) {
-  console.log("getMemberExpirationDate called with", { numberOfSemestersToSignUpFor })
   /**
    * we get a int param, which can be 0, 1 or 2
    *  - represents the number of semesters from rn to extend membership
