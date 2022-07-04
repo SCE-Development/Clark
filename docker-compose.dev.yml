@@ -62,10 +62,11 @@ services:
       - ./api/package.json:/app/package.json
       - ./api/main_endpoints:/app/main_endpoints
       - ./api/node_modules:/app/node_modules
+
   frontend:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-frontend
+      dockerfile: ./docker/Dockerfile.dev
     ports:
       - '3000:3000'
     restart: 'on-failure'
@@ -74,6 +75,12 @@ services:
       - db
     depends_on:
       - db
+    volumes:
+      - ./package.json:/frontend/package.json
+      - ./src:/frontend/src/
+      - ./util:/frontend/util/
+      - ./public:/frontend/public/
+      - ./node_modules:/frontend/node_modules
   
   web:
     image: 'nginx'
@@ -82,11 +89,9 @@ services:
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
-      - '443:443'
     restart: 'on-failure'
     depends_on:
       - frontend
-
 
 volumes:
   mongodb_data:

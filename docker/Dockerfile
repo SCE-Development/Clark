@@ -1,4 +1,5 @@
-FROM node:14-alpine as builder
+# Build steps for production frontend
+FROM node:14.10.0-alpine as builder
 
 WORKDIR /frontend
 

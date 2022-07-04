@@ -1,0 +1,15 @@
+# Build steps for production frontend
+FROM node:14.10.0-alpine as builder
+
+WORKDIR /frontend
+
+COPY ./package.json /frontend/package.json
+COPY ./package-lock.json /frontend/package-lock.json
+
+RUN npm install
+
+COPY public ./public
+COPY util ./util
+COPY src ./src
+
+CMD ["npm", "start"]

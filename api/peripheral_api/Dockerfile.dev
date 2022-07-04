@@ -30,5 +30,5 @@ ENV DOCKER true
 
 ENV NODE_ENV production
 
-CMD [ "npm", "run",  "peripheral_api" ]
+CMD [ "npm", "run",  "start" ]
 

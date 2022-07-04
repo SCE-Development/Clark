@@ -47,7 +47,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-frontend
+      dockerfile: ./docker/Dockerfile
     restart: 'on-failure'
     stdin_open: true
     links:
