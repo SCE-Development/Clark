@@ -2,9 +2,9 @@
   "name": "sce-backend",
   "version": "1.0.0",
   "description": "contains all the APIs used by the SCE website",
-  "main": "SceHttpServer.js",
+  "main": "peripheral_api/server.js",
   "scripts": {
-    "start": "nodemon devServer.js",
+    "start": "nodemon",
     "main-endpoints": "npm start --prefix main_endpoints",
     "google-api": "npm start --prefix google_api",
     "peripheral-api": "npm start --prefix peripheral_api",
