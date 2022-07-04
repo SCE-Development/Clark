@@ -282,11 +282,12 @@ router.get('/checkUserIDTest', (req, res) => {
     if (result === null) {
       message = 'User not found';
     }
-    const sendMessage = {
+    let sendMessage = {
       mess: message,
     };
     return res.send(sendMessage);
   });
 });
+
 
 module.exports = router;
