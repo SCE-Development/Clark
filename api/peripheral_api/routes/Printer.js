@@ -1,9 +1,10 @@
+const axios = require('axios');
 const express = require('express');
 const router = express.Router();
 const {
   OK,
   UNAUTHORIZED,
-  BAD_REQUEST
+  NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 const s3BucketKeys = require('../../config/config.json').S3Bucket;
 const printingS3Bucket = require('../../config/config.json').PrintingS3Bucket;
@@ -29,8 +30,22 @@ AWS.config.update({
   credentials: creds
 });
 
-router.get('/healthCheck', (req, res) => {
-  res.sendStatus(OK);
+router.get('/healthCheck', async (req, res) => {
+/*
+ * How these work with Quasar:
+ * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+ */
+  if (process.env.NODE_ENV !== 'production') {
+    return res.sendStatus(OK);
+  }
+  await axios
+    .get('http://localhost:14000/')
+    .then(() => {
+      return res.sendStatus(OK);
+    })
+    .catch((err) => {
+      return res.sendStatus(NOT_FOUND);
+    });
 });
 
 
