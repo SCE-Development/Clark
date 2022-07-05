@@ -1,0 +1,23 @@
+#admin-box>div {
+    background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
+    border-radius: 0.8rem;
+    background-attachment: fixed;
+    word-wrap: break-word;
+    cursor: pointer;
+    min-height: 300px;
+    max-width: 100%;
+    text-align: center;
+    padding: 0;
+    color: #333333;
+    transition: all .3s ease-in;
+    min-height: 50px !important;
+    height: 30vh;
+    width: 50%;
+    align-items: center;
+    justify-content: center;
+    display: inline-flex;
+    margin: auto;
+    border-color: black;
+    border-style: double;
+    flex-direction: row;
+}
