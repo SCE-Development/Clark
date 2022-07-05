@@ -21,7 +21,6 @@ import MembershipApplication from
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from '../../src/Pages/OfficerDB/OfficerDB.js';
 import Overview from '../../src/Pages/Overview/Overview';
-import AdminDashboard from '../../src/Pages/Profile/admin/AdminDashboard';
 import { membershipState } from '../../src/Enums';
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -200,11 +199,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       }
     );
     it(
-      'Should render a <AdminDashboard /> component with the '
-      + '/dashboard' + 'endpoint',
+      'Should render a <Overveiw /> component with the /dashboard' + 'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/dashboard', officerAppProps);
-        expect(wrapper.find(AdminDashboard)).to.have.lengthOf(1);
+        expect(wrapper.find(Overview)).to.have.lengthOf(1);
       }
     );
     it(
@@ -223,14 +221,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       () => {
         const wrapper = getComponentFromRoute('/3DConsole', officerAppProps);
         expect(wrapper.find(SolidsConsole)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <Overview /> component with the '
-        + '/user-manager' + 'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/user-manager', officerAppProps);
-        expect(wrapper.find(Overview)).to.have.lengthOf(1);
       }
     );
   });
