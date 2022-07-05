@@ -94,27 +94,6 @@ router.post('/sendPrintRequest', async (req, res) => {
 });
 
 router.post('/addFilePDF', async (req, res) => {
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
-  // if (!await verifyToken(req.body.token)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
-  // if (s3BucketKeys.AWSACCESSKEYID === 'NOT_SET'
-  // && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
-  //   return res.sendStatus(OK);
-  // }
-  // const { url } = req.body;
-  // const fileName = Math.random();
-  // const params = {
-  //   Key: `folder/${fileName}.pdf`,
-  //   Body: Buffer.from(url, 'base64'),
-  //   Bucket: printingS3Bucket,
-  // }
-
-  // const response  = await s3.upload(params, function( err, data) {
-  //   if(err) throw err;
-  // }).promise();
   if(req.body.apiKey !== DISCORD_SECRET_KEY){
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -138,14 +117,6 @@ router.post('/addFilePDF', async (req, res) => {
       return res.sendStatus(OK);
     }
   });
-});
-
-router.get('/getURL', (req, res) => {
-  PrinterHawkTest.find()
-    .then(items => res.status(OK).send(items))
-    .catch(error => {
-      res.sendStatus(BAD_REQUEST);
-    });
 });
 
 module.exports = router;
