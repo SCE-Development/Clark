@@ -13,8 +13,8 @@ function AdminDashboard() {
   ];
   return (
     <div>
-      <Header title='Admin Dashboard'></Header>
-      <body>
+      <body className='admin-dashboard-bg'>
+        <Header title='Admin Dashboard'></Header>
         {fields.map((elem, ind) => {
           return (
             <Link to={elem.url} id='admin-box'

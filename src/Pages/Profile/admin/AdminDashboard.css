@@ -1,5 +1,7 @@
-body {
+.admin-dashboard-bg {
     background-color: black;
+    max-width: 100%;
+    min-height: 94vh;
 }
 
 #admin-box>div {
