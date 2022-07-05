@@ -3,6 +3,8 @@ import './AdminDashboard.css';
 import Header from '../../../Components/Header/Header';
 import InfoCard from '../MemberView/InfoCard';
 import { Link } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import BorderStyle from 'pdf-lib/cjs/core/annotation/BorderStyle';
 
 function AdminDashboard() {
   const fields = [
@@ -12,22 +14,24 @@ function AdminDashboard() {
     { title: '3D Console', value: '', url: '/3DConsole' }
   ];
   return (
-    <div>
-      <body className='admin-dashboard-bg'>
-        <Header title='Admin Dashboard'></Header>
-        {fields.map((elem, ind) => {
-          return (
-            <Link to={elem.url} id='admin-box'
-              style={{ textDecoration: 'none' }}>
-              <InfoCard
-                key={ind}
-                field={elem}
-              />
-            </Link>
-          );
-        })}
-      </body>
-    </div>
+    <BrowserRouter>
+      <div>
+        <body className='admin-dashboard-bg'>
+          <Header title='Admin Dashboard'></Header>
+          {fields.map((elem, ind) => {
+            return (
+              <Link to={elem.url} id='admin-box'
+                style={{ textDecoration: 'none' }}>
+                <InfoCard
+                  key={ind}
+                  field={elem}
+                />
+              </Link>
+            );
+          })}
+        </body>
+      </div>
+    </BrowserRouter>
   );
 }
 
