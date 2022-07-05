@@ -14,16 +14,19 @@ function AdminDashboard() {
   return (
     <div>
       <Header title='Admin Dashboard'></Header>
-      {fields.map((elem, ind) => {
-        return (
-          <Link to={elem.url} id='admin-box' style={{ textDecoration: 'none' }}>
-            <InfoCard
-              key={ind}
-              field={elem}
-            />
-          </Link>
-        );
-      })}
+      <body>
+        {fields.map((elem, ind) => {
+          return (
+            <Link to={elem.url} id='admin-box'
+              style={{ textDecoration: 'none' }}>
+              <InfoCard
+                key={ind}
+                field={elem}
+              />
+            </Link>
+          );
+        })}
+      </body>
     </div>
   );
 }

@@ -1,3 +1,7 @@
+body {
+    background-color: black;
+}
+
 #admin-box>div {
     background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
     border-radius: 0.8rem;
