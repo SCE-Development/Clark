@@ -15,7 +15,8 @@ export default function displayProfile(props) {
       <div style={{ textAlign: 'left'}}>
         <h5> Doorcode: {props.user.doorCode} </h5>
         <h5>
-          Member Since (yyyy-mm-dd): {props.user.joinDate.slice(0, 10)}</h5>
+          Member Since (yyyy-mm-dd): {props.user.joinDate.slice(0, 10)}
+        </h5>
         <h5> Expiration on (yyyy-mm-dd): {' '}
           {props.user.membershipValidUntil &&
           props.user.membershipValidUntil.slice(0, 10)}
