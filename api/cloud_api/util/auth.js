@@ -1,12 +1,10 @@
 const axios = require('axios');
-const { GENERAL_API_URL, GENERAL_API_URL_PROD } =
-  require('../../config/config.json');
 
+const GENERAL_API_URL = process.env.GENERAL_API_URL || 'localhost:8080/api'
 async function validateVerificationEmail(){
   let status = '';
   await axios
-    .post(`${process.env.NODE_ENV === 'production' ?
-      GENERAL_API_URL_PROD : GENERAL_API_URL}/Auth/sendVerificationEmail`)
+    .post(`${GENERAL_API_URL}/Auth/sendVerificationEmail`)
     .then(res =>{
       status = res.data;
     })
@@ -19,8 +17,7 @@ async function validateVerificationEmail(){
 async function generateHashedId(email){
   let hashedId = '';
   await axios
-    .post(`${process.env.NODE_ENV === 'production' ?
-      GENERAL_API_URL_PROD : GENERAL_API_URL}/Auth/generateHashedId`, {email})
+    .post(`${GENERAL_API_URL}/Auth/generateHashedId`, {email})
     .then(res =>{
       hashedId = res.data.hashedId;
     })

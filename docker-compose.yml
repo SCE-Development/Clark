@@ -24,6 +24,8 @@ services:
     build:
       context: ./api
       dockerfile: ./cloud_api/Dockerfile
+    args:
+      GENERAL_API_URL: http://mainendpoints:8080/api
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -37,6 +39,8 @@ services:
     build:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile
+    args:
+      PERIPHERAL_API_URL: http://sce-peripheral-api:8081/peripheralapi
     restart: 'on-failure'
     stdin_open: true
     links:

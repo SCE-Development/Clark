@@ -5,8 +5,6 @@ WORKDIR /app
 
 ENV DATABASE_HOST db
 
-ENV NODE_ENV production
-
 COPY package.json ./
 
 RUN npm install --production
@@ -19,8 +17,6 @@ COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8082
 
-ENV DOCKER true
-
-ENV NODE_ENV production
+ARG GENERAL_API_URL
 
 CMD [ "node", "./cloud_api/server.js" ]

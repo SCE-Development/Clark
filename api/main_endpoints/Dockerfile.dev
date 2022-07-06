@@ -17,6 +17,6 @@ COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8080
 
-ENV DOCKER true
+ARG PERIPHERAL_API_URL
 
 CMD [ "npm", "run", "main_endpoints"]

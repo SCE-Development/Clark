@@ -8,8 +8,6 @@ COPY package.json ./
 
 RUN npm install --production
 
-RUN echo here
-
 RUN npm install -g nodemon
 
 COPY ./cloud_api /app/cloud_api
@@ -20,6 +18,6 @@ COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8082
 
-ENV DOCKER true
+ARG GENERAL_API_URL
 
 CMD ["npm", "run", "cloud_api"]
