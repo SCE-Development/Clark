@@ -47,7 +47,6 @@ router.get('/healthCheck', async (req, res) => {
     });
 });
 
-
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
   if (!checkIfTokenSent(req)) {
