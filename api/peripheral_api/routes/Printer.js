@@ -6,8 +6,7 @@ const {
   UNAUTHORIZED,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const s3BucketKeys = require('../../config/config.json').S3Bucket;
-const printingS3Bucket = require('../../config/config.json').PrintingS3Bucket;
+const { s3BucketKeys, printingS3Bucket }  = require('../../config/config.json');
 const {
   CLIENT_ID,
   CLIENT_SECRET,
