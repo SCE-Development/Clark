@@ -4,8 +4,7 @@ function main() {
   const API_ENDPOINTS = [
     __dirname + '/routes/'
   ];
-  const mainEndpointServer = new SceHttpServer(API_ENDPOINTS, 8080,
-    '/mainendpoints/');
+  const mainEndpointServer = new SceHttpServer(API_ENDPOINTS, 8080, '/mainendpoints/');
   mainEndpointServer.initializeEndpoints().then(() => {
     mainEndpointServer.openConnection();
   });
