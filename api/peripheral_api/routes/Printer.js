@@ -91,7 +91,7 @@ router.post('/sendPrintRequest', async (req, res) => {
   });
 });
 
-router.post('/addFilePDF', async (req, res) => {
+router.post('/validateDiscordReq', async (req, res) => {
   if(req.body.apiKey !== DISCORD_SECRET_KEY){
     return res.sendStatus(UNAUTHORIZED);
   }
