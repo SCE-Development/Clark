@@ -1,4 +1,3 @@
-const { PERIPHERAL_API_URL } = require('../../config/config.json');
 const axios = require('axios');
 const PERIPHERAL_API_URL = process.env.PERIPHERAL_API_URL || 'localhost:8081/peripheralapi'
 /**
