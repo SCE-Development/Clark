@@ -1,5 +1,6 @@
 const axios = require('axios');
-const PERIPHERAL_API_URL = process.env.PERIPHERAL_API_URL || 'localhost:8081/peripheralapi'
+const PERIPHERAL_API_URL = process.env.PERIPHERAL_API_URL
+  || 'localhost:8081/peripheralapi';
 /**
  * Add a new error by calling on the ErrorLog API.
  * @param {Object} newError - The error that is to be added

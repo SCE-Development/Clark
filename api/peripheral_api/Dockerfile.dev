@@ -1,29 +1,27 @@
-FROM node:14.10.0-alpine 
 #gets the base linux image
+FROM node:14.10.0-alpine 
 
-WORKDIR /app
 #all commands will run in this directory
+WORKDIR /app
 
-ENV DATABASE_HOST sce-mongodb-dev
 #database env variable
+ENV DATABASE_HOST sce-mongodb-dev
 
-COPY ./package.json /app/
 #copies all the dependenices into work directory (./app) (since you set the work dir before)
+COPY ./package.json /app/
 
-RUN npm install 
+RUN npm install
 
-RUN npm install -g nodemon
 #installs packages
+RUN npm install -g nodemon
 
-COPY ./peripheral_api /app/peripheral_api
 #copies this file to the desination
+COPY ./peripheral_api /app/peripheral_api
 
 COPY ./util/ /app/util/
 
 COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8081
-
-ENV DOCKER true
 
 CMD [ "npm", "run", "peripheral_api" ]

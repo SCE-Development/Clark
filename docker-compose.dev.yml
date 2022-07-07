@@ -14,6 +14,8 @@ services:
     build:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile.dev
+      args:
+        DATABASE_HOST: sce-mongodb-dev
     ports:
       - '8081:8081'
     restart: 'on-failure'
@@ -35,6 +37,7 @@ services:
       dockerfile: ./cloud_api/Dockerfile.dev
       args:
         GENERAL_API_URL: http://mainendpoints:8080/api
+        DATABASE_HOST: sce-mongodb-dev
     ports:
         - '8082:8082'
     restart: 'on-failure'
@@ -55,6 +58,7 @@ services:
       dockerfile: ./main_endpoints/Dockerfile.dev
       args:
         PERIPHERAL_API_URL: http://sce-peripheral-api:8081/peripheralapi
+        DATABASE_HOST: sce-mongodb-dev
     ports:
       - '8080:8080'
     restart: 'on-failure'

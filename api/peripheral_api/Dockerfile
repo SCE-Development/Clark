@@ -7,8 +7,6 @@ WORKDIR /app
 ENV DATABASE_HOST db
 #database env variable
 
-ENV NODE_ENV production
-
 COPY ./package.json .
 #copies all the dependenices into work directory (./app) (since you set the work dir before)
 
@@ -23,9 +21,5 @@ COPY ./util /app/util
 COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8081
-
-ENV DOCKER true
-
-ENV NODE_ENV production
 
 CMD [ "node", "./peripheral_api/server.js" ]
