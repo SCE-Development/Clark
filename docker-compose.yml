@@ -4,8 +4,8 @@ services:
     restart: always
     image: 'mongo'
     volumes:
-      - '/data/db:/data/db' 
-      # - '~/data/db:/data/db'  # use this command instead for mac users
+      # - '/data/db:/data/db' 
+      - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
   sce-peripheral-api:
     container_name: sce-peripheral-api
@@ -20,12 +20,11 @@ services:
       - db
   sce-cloud-api:
     container_name: sce-cloud-api
-    image: cloudapi:latest
     build:
       context: ./api
       dockerfile: ./cloud_api/Dockerfile
-    args:
-      GENERAL_API_URL: http://mainendpoints:8080/api
+      args:
+        GENERAL_API_URL: http://sce-main-endpoints:8080/api
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -33,14 +32,13 @@ services:
     depends_on:
       - db
 
-  mainendpoints:
-    container_name: mainendpoints
-    image: mainendpoints:latest
+  main-endpoints:
+    container_name: sce-main-endpoints
     build:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile
-    args:
-      PERIPHERAL_API_URL: http://sce-peripheral-api:8081/peripheralapi
+      args:
+        PERIPHERAL_API_URL: http://sce-peripheral-api:8081/peripheralapi
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -49,9 +47,12 @@ services:
       - db
   
   frontend:
+    container_name: sce-frontend
     build:
       context: .
       dockerfile: ./docker/Dockerfile
+      args:
+        NODE_ENV: production
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -61,14 +62,14 @@ services:
 
   web:
     image: 'nginx'
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./sce_engr_sjsu_edu.cer:/etc/nginx/sce_engr_sjsu_edu.cer
-      - ./sce.key:/etc/nginx/sce.key
+    # volumes:
+    #   - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    #   - ./sce_engr_sjsu_edu.cer:/etc/nginx/sce_engr_sjsu_edu.cer
+    #   - ./sce.key:/etc/nginx/sce.key
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
-      - '443:443'
+      # - '443:443'
     restart: 'on-failure'
     depends_on:
       - frontend

@@ -36,7 +36,7 @@ services:
       context: ./api
       dockerfile: ./cloud_api/Dockerfile.dev
       args:
-        GENERAL_API_URL: http://mainendpoints:8080/api
+        GENERAL_API_URL: http://sce-main-endpoints:8080/api
         DATABASE_HOST: sce-mongodb-dev
     ports:
         - '8082:8082'
@@ -78,6 +78,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile.dev
+      args:
+        NODE_ENV: dev
     ports:
       - '3000:3000'
     restart: 'on-failure'
