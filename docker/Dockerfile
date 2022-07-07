@@ -3,6 +3,8 @@ FROM node:14.10.0-alpine as builder
 
 WORKDIR /frontend
 
+ARG NODE_ENV
+
 COPY ./package.json /frontend/package.json
 COPY ./package-lock.json /frontend/package-lock.json
 

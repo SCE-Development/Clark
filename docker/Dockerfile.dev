@@ -6,6 +6,8 @@ WORKDIR /frontend
 COPY ./package.json /frontend/package.json
 COPY ./package-lock.json /frontend/package-lock.json
 
+ARG NODE_ENV
+
 RUN npm install
 
 COPY public ./public

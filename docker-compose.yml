@@ -52,7 +52,7 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile
       args:
-        NODE_ENV: production
+        PERIPHERAL_API_URL: https://sce.engr.sjsu.edu/peripheralapi
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -62,8 +62,8 @@ services:
 
   web:
     image: 'nginx'
-    # volumes:
-    #   - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     #   - ./sce_engr_sjsu_edu.cer:/etc/nginx/sce_engr_sjsu_edu.cer
     #   - ./sce.key:/etc/nginx/sce.key
     command: [nginx-debug, '-g', 'daemon off;']
