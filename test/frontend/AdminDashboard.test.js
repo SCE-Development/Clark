@@ -8,11 +8,16 @@ import InfoCard from '../../src/Pages/Profile/MemberView/InfoCard';
 
 import AdminDashboard from '../../src/Pages/Profile/admin/AdminDashboard';
 import Adapter from 'enzyme-adapter-react-16';
+import { BrowserRouter } from 'react-router-dom';
 
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<Admin Dashboard />', () => {
-  const wrapper = mount(<AdminDashboard/>);
+  const wrapper = mount(
+    <BrowserRouter>
+      <AdminDashboard />
+    </BrowserRouter>
+  );
 
   it('Should render 4 Links', () => {
     expect(wrapper.find(Link)).to.have.lengthOf(4);
