@@ -14,9 +14,14 @@
     background: white;
     justify-content: center;
   }
+h3 {
+    font-weight: bold;
+    text-align: center;
+}
 
 h5 {
-    color: 	#201c1c;
-    line-height: 10px;
+    color:#201c1c;
+    line-height: 20px;
     font-family: 'Times New Roman', Times, serif;
+    text-align: left;
 }
