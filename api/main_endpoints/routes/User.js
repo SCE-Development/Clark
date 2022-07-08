@@ -11,19 +11,24 @@ const { registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken,
+  decodeToken
 } = require('../util/token-functions');
-const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND, CONFLICT } =
-  require('../../util/constants').STATUS_CODES;
-const { discordApiKeys } = require('../../config/config.json');
+const {
+  OK,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+  CONFLICT } = require('../../util/constants').STATUS_CODES;
+const {
+  discordApiKeys
+} = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
-const discordRedirectUri =
-  process.env.NODE_ENV === 'production'
-    ? discordApiKeys.REDIRECT_URI_PROD
-    : discordApiKeys.REDIRECT_URI_DEV;
+const discordRedirectUri = process.env.NODE_ENV === 'production' ?
+  discordApiKeys.REDIRECT_URI_PROD : discordApiKeys.REDIRECT_URI_DEV;
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
@@ -32,7 +37,7 @@ router.post('/checkIfUserExists', (req, res) => {
   }
   User.findOne(
     {
-      email: email.toLowerCase(),
+      email: email.toLowerCase()
     },
     function(error, user) {
       if (error) {
@@ -64,7 +69,7 @@ router.post('/delete', (req, res) => {
         userEmail: req.body.email,
         errorTime: new Date(),
         apiEndpoint: 'user/delete',
-        errorDescription: error,
+        errorDescription: error
       };
       addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
@@ -113,7 +118,7 @@ router.post('/search', function(req, res) {
       lastLogin: result.lastLogin,
       membershipValidUntil: result.membershipValidUntil,
       pagesPrinted: result.pagesPrinted,
-      doorCode: result.doorCode,
+      doorCode: result.doorCode
     };
     return res.status(OK).send(user);
   });
@@ -128,7 +133,7 @@ router.post('/users', function(req, res) {
   }
   User.find()
     .sort({ joinDate: -1 })
-    .then((items) => {
+    .then(items => {
       res.status(OK).send(items);
     })
     .catch(() => {
@@ -151,7 +156,9 @@ router.post('/edit', (req, res) => {
   let decoded = decodeToken(req);
   if (decoded.accessLevel === membershipState.MEMBER) {
     if (req.body.email && req.body.email != decoded.email) {
-      return res.status(UNAUTHORIZED).send('Unauthorized to edit another user');
+      return res
+        .status(UNAUTHORIZED)
+        .send('Unauthorized to edit another user');
     }
     if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
       return res
@@ -174,10 +181,11 @@ router.post('/edit', (req, res) => {
         ...req.body,
         membershipValidUntil: getMemberValidationDate(
           parseInt(req.body.numberOfSemestersToSignUpFor)
-        ),
+        )
       };
 
   delete user.numberOfSemestersToSignUpFor;
+
 
   // Remove the auth token from the form getting edited
   delete user.token;
@@ -187,7 +195,7 @@ router.post('/edit', (req, res) => {
       const info = {
         errorTime: new Date(),
         apiEndpoint: 'user/edit',
-        errorDescription: error,
+        errorDescription: error
       };
       addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
@@ -201,7 +209,7 @@ router.post('/edit', (req, res) => {
 
     return res.status(OK).send({
       message: `${query.email} was updated.`,
-      membershipValidUntil: user.membershipValidUntil,
+      membershipValidUntil: user.membershipValidUntil
     });
   });
 });
@@ -217,7 +225,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
       const info = {
         errorTime: new Date(),
         apiEndpoint: 'user/PagesPrintedCount',
-        errorDescription: error,
+        errorDescription: error
       };
       addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
@@ -235,12 +243,11 @@ router.post('/getPagesPrintedCount', (req, res) => {
 router.get('/callback', async function(req, res) {
   const code = req.query.code;
   const email = req.query.state;
-  discordConnection
-    .loginWithDiscord(code, email, discordRedirectUri)
+  discordConnection.loginWithDiscord(code, email, discordRedirectUri)
     .then((status) => {
       return res.status(OK).redirect('https://discord.com/oauth2/authorized');
     })
-    .catch((_) => {
+    .catch(_ => {
       return res.status(NOT_FOUND).send('Authorization unsuccessful!');
     });
 });
@@ -255,16 +262,13 @@ router.post('/connectToDiscord', function(req, res) {
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
   }
-  if (
-    discordApiKeys.CLIENT_ID === 'NOT_SET' &&
-    discordApiKeys.CLIENT_SECRET === 'NOT_SET'
-  ) {
+  if (discordApiKeys.CLIENT_ID === 'NOT_SET'
+    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
     return res.sendStatus(OK);
   }
   return res
     .status(OK)
-    .send(
-      'https://discord.com/api/oauth2/authorize?client_id=' +
+    .send('https://discord.com/api/oauth2/authorize?client_id=' +
         `${discordApiKeys.CLIENT_ID}` +
         `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
         `&state=${email}&response_type=code&scope=identify`
@@ -272,18 +276,21 @@ router.post('/connectToDiscord', function(req, res) {
 });
 
 
-router.get('/checkUserIDTest', (req, res) => {
+router.get('/checkUserID', (req, res) => {
   User.findOne({ discordID: req.query.discordID }, (error, result) => {
     let message = 'User exists';
+    let status = true;
     res.status(OK);
     if (error) {
       return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
     if (result === null) {
       message = 'User not found';
+      status = false;
     }
     let sendMessage = {
       mess: message,
+      exist: status
     };
     return res.send(sendMessage);
   });
