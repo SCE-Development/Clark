@@ -31,7 +31,7 @@ describe('<Profile />', () => {
 
   it('Should render 2 <div> components with one child', () => {
     expect(wrapper.find('div')).to.have.lengthOf(2);
-  })
+  });
 
   it('Should render a <h3 /> component with one child', () => {
     const component = wrapper.find('h3');
