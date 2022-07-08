@@ -19,7 +19,8 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND,
-  CONFLICT } = require('../../util/constants').STATUS_CODES;
+  CONFLICT
+} = require('../../util/constants').STATUS_CODES;
 const {
   discordApiKeys
 } = require('../../config/config.json');
@@ -244,7 +245,7 @@ router.get('/callback', async function(req, res) {
   const code = req.query.code;
   const email = req.query.state;
   discordConnection.loginWithDiscord(code, email, discordRedirectUri)
-    .then((status) => {
+    .then(status => {
       return res.status(OK).redirect('https://discord.com/oauth2/authorized');
     })
     .catch(_ => {
@@ -266,12 +267,11 @@ router.post('/connectToDiscord', function(req, res) {
     && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
     return res.sendStatus(OK);
   }
-  return res
-    .status(OK)
+  return res.status(OK)
     .send('https://discord.com/api/oauth2/authorize?client_id=' +
-        `${discordApiKeys.CLIENT_ID}` +
-        `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
-        `&state=${email}&response_type=code&scope=identify`
+      `${discordApiKeys.CLIENT_ID}` +
+      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
+      `&state=${email}&response_type=code&scope=identify`
     );
 });
 
