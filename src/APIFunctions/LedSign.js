@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 let config = require('../config/config.json');
-let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
+let PERIPHERAL_API_URL = process.env.PERIPHERAL_API_URL || 'localhost:8081/peripheralapi';
 
 /**
  * Checks to see if the sign is accepting requests. This is done

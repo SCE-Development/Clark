@@ -5,10 +5,8 @@ import {
 } from './ApiResponses';
 
 let config = require('../config/config.json');
-let GENERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.GENERAL_API_URL_PROD : config.GENERAL_API_URL;
-let PERIPHERAL_API_URL = process.env.NODE_ENV === 'production' ?
-  config.PERIPHERAL_API_URL_PROD : config.PERIPHERAL_API_URL;
+let GENERAL_API_URL = process.env.GENERAL_API_URL || 'localhost:8080/api'
+let PERIPHERAL_API_URL = process.env.PERIPHERAL_API_URL || 'localhost:8081/peripheralapi';
 
 /**
  * Return an array similar to python's range() function
