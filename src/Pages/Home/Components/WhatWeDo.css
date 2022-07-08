@@ -1,0 +1,97 @@
+/* IMG_3191 1 */
+
+
+/*position: absolute;*/
+/* width: 844px;
+height: 458px;
+left: 969px;
+top: 2513px;
+
+background: url(IMG_3191.jpg);
+border-radius: 23px; */
+
+
+/* What We Do */
+
+.what-we-do-header{
+    width: 289px;
+    height: 55px;
+    
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 42px;
+    /* or 120% */
+    
+    text-align: center;
+    
+    color: #FFFFFF;
+}
+/* position: absolute; */
+
+
+.what-we-do-p{
+    width: 816px;
+    height: 330px;
+    
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 25px;
+    /* or 104% */
+    
+    
+    color: #FFFFFF;
+}
+/* position: absolute; */
+
+
+
+
+
+/* Rectangle */
+
+
+/* box-sizing: border-box; */
+
+/* position: absolute; */
+/* width: 170px;
+height: 60px;
+
+background: rgba(13, 110, 253, 0.8);
+border: 3px solid #FFFFFF;
+border-radius: 8px; */
+
+
+/* Learn More */
+
+.learn-more-button{
+    width: 113px;
+    height: 34px;
+    
+    font-family: 'Mina';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 30px;
+    /* or 158% */
+    
+    text-align: center;
+    
+    color: #FFFFFF;
+}
+/* position: absolute; */
+
+
+
+
+/* image 11 */
+
+
+/* position: absolute; */
+/* width: 28px;
+height: 23px;
+
+background: url(image.png); */
