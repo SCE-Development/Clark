@@ -29,8 +29,7 @@ function testPasswordStrength(password) {
   return { success: mediumRegex.test(password), message: mediumMessage };
 }
 
-function getMemberExpirationDate(numberOfSemestersToSignUpFor = 0) {
-  /**
+/**
    * we get a int param, which can be 0, 1 or 2
    *  - represents the number of semesters from rn to extend membership
    * we want to return the appropriate date for when a membership expires
@@ -54,6 +53,7 @@ function getMemberExpirationDate(numberOfSemestersToSignUpFor = 0) {
    * I sign up in March for 1 sem -> May expire
    * I sign up in May for 1 sem -> May expire
    */
+function getMemberExpirationDate(numberOfSemestersToSignUpFor = 0) {
   const today = new Date();
 
   const endOfSpringSemThisYear = new Date(today.getFullYear(), 5, 1);
