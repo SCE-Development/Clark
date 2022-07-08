@@ -1,7 +1,7 @@
-.admin-dash-header h1 {
-    color: green;
-    padding: 3em;
-    text-align: center;
+.admin-dashboard-bg {
+    background-color: black;
+    max-width: 100%;
+    min-height: 94vh;
 }
 
 #admin-box>div {
@@ -17,14 +17,17 @@
     color: #333333;
     transition: all .3s ease-in;
     min-height: 50px !important;
-    height: 30vh;
-    width: 50%;
+    height: 20vh;
+    width: 20%;
     align-items: center;
     justify-content: center;
     display: inline-flex;
-    margin: auto;
+    margin: 2.5%;
     border-color: black;
     border-style: double;
     flex-direction: row;
 }
 
+.block{
+    margin: 10%;
+}
