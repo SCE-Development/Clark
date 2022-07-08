@@ -96,6 +96,12 @@ export default function Editor(props) {
     }
   ];
 
+  /**
+   * Checks if current semester is spring or fall. Initializes
+   * expDate1 and expDate2 to a String that represents the
+   * expiration date for one and two semesters, respectively.
+   * @returns {String[]} Array of two Strings: expDate1 and expDate2
+   */
   function membershipExpDate() {
     let expDate1 = '';
     let expDate2 = '';
