@@ -30,7 +30,7 @@ describe('<Profile />', () => {
   const wrapper = mount(<Profile user={user} />);
 
   it('Should render 2 <div> components with one child', () => {
-    expect(wrapper.find('div')).to.have.lengthOf(2);
+    expect(wrapper.find('div')).to.have.lengthOf(3);
   });
 
   it('Should render a <h3 /> component with one child', () => {
