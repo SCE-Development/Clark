@@ -30,28 +30,10 @@ function testPasswordStrength(password) {
 }
 
 /**
-   * we get a int param, which can be 0, 1 or 2
-   *  - represents the number of semesters from rn to extend membership
-   * we want to return the appropriate date for when a membership expires
-   *  - e.g. when numberOfSemestersToSignUpFor semester ends
-   *
-   * if the param is 0:
-   * change expiration date to today,
-   *
-   * if the param is 1:
-   * return the date of when the next semester ends
-   *
-   * if the param is 2:
-   * return the date of when the semester after the next semester ends
-   *
-   *
-   *
-   * Examples:
-   * I sign up in June for 1 sem -> December expire
-   * I sign up in October for 1 sem -> December expire
-   * I sign up in December for 1 sem -> December expire
-   * I sign up in March for 1 sem -> May expire
-   * I sign up in May for 1 sem -> May expire
+   * Calculates expiration date based on number of
+   * semesters to sign up for
+   * @param {Number} numberOfSemestersToSignUpFor numberOfSemestersToSignUpFor
+   * @returns {Date} calculated member expiration date
    */
 function getMemberExpirationDate(numberOfSemestersToSignUpFor = 0) {
   const today = new Date();
@@ -60,8 +42,6 @@ function getMemberExpirationDate(numberOfSemestersToSignUpFor = 0) {
   const endOfSpringSemNextYear = new Date(today.getFullYear() + 1, 5, 1);
   const endOfFallSemThisYear = new Date(today.getFullYear() + 1, 0, 1);
 
-  // first key is number of Semesters to sign up for,
-  // nested key checks whether or not it is spring
   let list = {
     0: {
       true: today,
