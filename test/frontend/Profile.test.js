@@ -29,15 +29,8 @@ describe('<Profile />', () => {
 
   const wrapper = mount(<Profile user={user} />);
 
-  it('Should render a <Badge /> component with one child', () => {
-    expect(wrapper.find(Badge)).to.have.lengthOf(1);
-    expect(wrapper.find(Badge).get(0).props.children).equal(
-      enums.membershipStateToString(user.accessLevel)
-    );
-  });
-
-  it('Should render a <Container /> component with one child', () => {
-    expect(wrapper.find(Container)).to.have.lengthOf(1);
+  it('Should render 2 <div> components with one child', () => {
+    expect(wrapper.find('div')).to.have.lengthOf(3);
   });
 
   it('Should render a <h3 /> component with one child', () => {
