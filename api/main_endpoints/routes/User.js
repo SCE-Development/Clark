@@ -7,7 +7,8 @@ require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
 const {CORE_V4_API_KEY} = require('../../config/config.json');
-const { getMemberExpirationDate, registerUser } = require('../util/registerUser');
+const { getMemberExpirationDate, registerUser } =
+require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
