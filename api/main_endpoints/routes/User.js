@@ -6,8 +6,8 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { registerUser } = require('../util/registerUser');
 const {CORE_V4_API_KEY} = require('../../config/config.json');
+const { getMemberExpirationDate, registerUser } = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -175,15 +175,13 @@ router.post('/edit', (req, res) => {
   }
 
   const query = { email: req.body.email };
-  const user =
-    typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
-      ? { ...req.body }
-      : {
-        ...req.body,
-        membershipValidUntil: getMemberValidationDate(
-          parseInt(req.body.numberOfSemestersToSignUpFor)
-        )
-      };
+  let user = req.body;
+
+  if (typeof req.body.numberOfSemestersToSignUpFor !== 'undefined') {
+    user.membershipValidUntil = getMemberExpirationDate(
+      parseInt(req.body.numberOfSemestersToSignUpFor)
+    );
+  }
 
   delete user.numberOfSemestersToSignUpFor;
 
