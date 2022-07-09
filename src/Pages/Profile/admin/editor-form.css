@@ -14,12 +14,12 @@
     background: white;
     justify-content: center;
   }
-h3 {
+.h3_outline {
     font-weight: bold;
     text-align: center;
 }
 
-h5 {
+.h5_outline {
     color:#201c1c;
     line-height: 20px;
     font-family: 'Times New Roman', Times, serif;

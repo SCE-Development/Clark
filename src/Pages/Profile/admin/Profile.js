@@ -5,14 +5,16 @@ const enums = require('../../../Enums.js');
 export default function displayProfile(props) {
   return (
     <div className='wrapper'>
-      <h3>
-        {props.user.firstName[0].toUpperCase() +
-        props.user.firstName.slice(1, props.user.firstName.length) +
-        ' ' +
-        props.user.lastName[0].toUpperCase() +
-        props.user.lastName.slice(1, props.user.lastName.length)}
-      </h3>
-      <div>
+      <div className='h3_outline'>
+        <h3>
+          {props.user.firstName[0].toUpperCase() +
+          props.user.firstName.slice(1, props.user.firstName.length) +
+          ' ' +
+          props.user.lastName[0].toUpperCase() +
+          props.user.lastName.slice(1, props.user.lastName.length)}
+        </h3>
+      </div>
+      <div className='h5_outline'>
         <h5> Doorcode: {props.user.doorCode} </h5>
         <h5>
           Member Since (yyyy-mm-dd): {props.user.joinDate.slice(0, 10)}
