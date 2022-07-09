@@ -7,6 +7,7 @@ require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
 const { registerUser } = require('../util/registerUser');
+const {CORE_V4_API_KEY} = require('../../config/config.json');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -274,8 +275,10 @@ router.post('/connectToDiscord', function(req, res) {
     );
 });
 
-
-router.get('/checkUserID', (req, res) => {
+router.get('/getUserFromDiscordId', (req, res) => {
+  if(req.query.apiKey !== CORE_V4_API_KEY){
+    return res.sendStatus(UNAUTHORIZED);
+  }
   User.findOne({ discordID: req.query.discordID }, (error, result) => {
     let message = 'User exists';
     let status = true;

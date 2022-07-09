@@ -13,7 +13,7 @@ const {
   ACCOUNT_ID,
   PAPER_PRINTING_QUEUE_NAME,
 } = require('../../config/config.json').Queue;
-const {DISCORD_SECRET_KEY} = require('../../config/config.json');
+const {CORE_V4_API_KEY} = require('../../config/config.json');
 const {
   verifyToken,
   checkIfTokenSent
@@ -92,7 +92,7 @@ router.post('/sendPrintRequest', async (req, res) => {
 });
 
 router.post('/validateDiscordReq', async (req, res) => {
-  if(req.body.apiKey !== DISCORD_SECRET_KEY){
+  if(req.body.apiKey !== CORE_V4_API_KEY){
     return res.sendStatus(UNAUTHORIZED);
   }
 
