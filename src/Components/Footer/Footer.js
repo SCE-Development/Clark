@@ -10,9 +10,9 @@ import YouTubeIcon from './Icons/YouTubeIcon';
 
 export default () => {
   return (
-    <footer className='text-left bg-dark text-white p-4'>
-      <Row className='footer-text'>
-        <Col>
+    <footer className='footer-wrap bg-dark text-white p-4'>
+      <Row className='footer-text align-items-center justify-content-center'>
+        <Col id='left-col'>
           <b>Software & Computer Engineering Society</b>
           <ul>
             <li>
@@ -26,34 +26,32 @@ export default () => {
             </li>
           </ul>
         </Col>
-        <Col>
+        {/* <Col id='right-col'>
           <b>Contact</b>
           <ul>
             <li>
-              General: <a href='mailto:asksce@gmail.com'>asksce@gmail.com</a>
-            </li>
-            <li>President:{' '}
-              <a href='mailto:sce.sjsu@gmail.com'>sce.sjsu@gmail.com</a>
+              <a href='mailto:asksce@gmail.com'>General Inquiry</a>
             </li>
             <li>
-              Vice-President:{' '}
-              <a href='mailto:sce.sjsu@gmail.com'>sce.sjsu@gmail.com</a>
+              <a href='mailto:sce.sjsu@gmail.com'>President</a>
             </li>
             <li>
-              Public Relations:{' '}
-              <a href='mailto:pr.sce.sjsu@gmail.com'>pr.sce.sjsu@gmail.com</a>
+              <a href='mailto:sce.sjsu@gmail.com'>Vice-President</a>
+            </li>
+            <li>
+              <a href='mailto:pr.sce.sjsu@gmail.com'>Public Relations</a>
             </li>
           </ul>
-        </Col>
-        <Col id='social-media'>
-          <LinkedinIcon/>
-          <FacebookIcon/>
-          <InstagramIcon/>
-          <DiscordIcon/>
-          <GitHubIcon/>
-          <YouTubeIcon/>
-          <p>Brought to you by SCE Dev-Team</p>
-        </Col>
+        </Col> */}
+        <div className='social-media'>
+          <LinkedinIcon />
+          <FacebookIcon />
+          <InstagramIcon />
+          <DiscordIcon />
+          <GitHubIcon />
+          <YouTubeIcon />
+        </div>
+        <p id='footer-note'>Brought to you by SCE Dev-Team</p>
       </Row>
     </footer>
   );

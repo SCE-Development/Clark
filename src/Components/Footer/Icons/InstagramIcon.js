@@ -4,8 +4,6 @@ function InstagramIcon() {
   return (
     <a href='https://www.instagram.com/sjsusce/'>
       <svg
-        width='50'
-        height='50'
         viewBox='0 0 48 48'
       >
         <radialGradient

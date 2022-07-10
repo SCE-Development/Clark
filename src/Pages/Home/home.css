@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
 .home {
 	background-color: black;
+  min-height: 100vh;
+}
+
+#content-wrap {
+  padding-bottom: 2.5rem;
 }
 
 .text-header {
@@ -14,13 +19,13 @@
 }
 
 .text-content {
-    font-family: 'Mina', sans-serif;
-    font-style: normal;
-    font-weight:lighter;
-    font-size: 20px;
-    line-height: 20px;
-    padding: 20px 0 0 0;
-	text-align:center;
+  font-family: 'Mina', sans-serif;
+  font-style: normal;
+  font-weight:lighter;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 20px 0 0 0;
+  text-align:center;
 }
 
 .join-sce{
