@@ -198,3 +198,50 @@
 .container-2D .healthCheck {
   padding-top: 32px;
 }
+
+@media only screen and (max-width: 768px) {
+
+  .container-2D {
+    background-color: #16252e;
+    border-radius: 25px;
+    height: 50%;
+    width: 80%;
+    padding: 0px;
+  }
+  
+  .container-2D .buttons {
+    background-color: rgba(61, 121, 138, 0.5);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    max-height: 52px;
+  }
+  
+  .container-2D .buttons a{
+    text-align: center;
+    width: 50%;
+  }
+  
+  .container-2D .paperPrinting {
+    font-size: 12px;
+  }
+  
+  .container-2D .threeDPrinting {
+    font-size: 12px;
+  }
+
+  .container-2D .printInfo {
+    min-width: 255px;
+    font-size: 18px;
+    line-height: 30px;
+  }
+  .container-2D .filepond--root .filepond--drop-label label {
+    padding-top: 25px;
+    line-height: 20px;
+    font-size: 14px;
+  }
+
+  .container-2D .filepond--root {
+    width: 60%;
+    height: 40%;
+  }
+}

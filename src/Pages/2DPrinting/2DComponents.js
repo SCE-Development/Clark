@@ -1,4 +1,5 @@
 import React from 'react';
+import Footer from '../../Components/Footer/Footer'
 import {
   Modal,
   ModalHeader,
@@ -11,8 +12,7 @@ import { FilePond } from 'react-filepond';
 
 export const PrintMessage = 'Insert or drag your file here';
 
-export const PrintInfo = `Each member can print up to 30 pages a week
-Pages left for this week: `;
+export const PrintInfo = `Each member can print up to 30 pages a week`;
 
 export const failPrintStatus = `Sorry! Our printing system is down 
 at the moment. Please see an officer or try again later`;
@@ -40,19 +40,15 @@ export function FileUpload(props) {
         <br/>
         <br/>
         <div className="printInfo">
-          <p>
-          Each member can print up to 30 pages a week <br /> Pages left for this
-          week: <span id="pagesLeft">{displayPagesLeft}</span>
-          </p>
+          <p>{PrintInfo}<br/>Pages left for this week: <span id="pagesLeft">{displayPagesLeft}</span></p>
           <br />
         </div>
         <FilePond {...filePond} />
         <Button {...printButton}> Print </Button>
         <br />
       </Container>
-      <div className="footerNote">
-        <p>{footerNote}</p>
-      </div>
+      <br/><br/><br/>
+      <Footer />
     </div>
   );
 }
