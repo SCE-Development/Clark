@@ -40,7 +40,7 @@ export default function UserNavBar(props) {
               alt={'sce-logo'} style={{ width: '70px' }} />
           </div>
         </NavbarBrand>
-        <NavbarToggler tag='h1'>
+        <NavbarToggler tag='h1' className='navbar-toggle'>
           <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
             <DropdownToggle className='hamburger-button'>
               <span className='border'></span>

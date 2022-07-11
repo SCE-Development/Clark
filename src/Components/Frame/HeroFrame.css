@@ -57,10 +57,36 @@
 	font-size: 20px;
 }
 
-@media screen and (max-width:400px) {
+@media screen and (max-width:500px) {
 	.name {
 		display: none !important
 	}
+    .hero-logo {
+        display: none !important;
+    }
+    .circles {
+        display: none !important;
+    }
+    .red {
+        display: none !important;
+    }
+    .green {
+        display: none !important;
+    }
+    .orange {
+        display: none !important;
+    }
+    .more {
+        display: none !important;  
+    }
+    .hero-image {
+        margin-top: 0px !important;
+        border-radius: 10px;
+    }
+    .hero-frame {
+        padding: 10px;
+        width: 369px;
+    }
 }
 
 .more {
@@ -72,6 +98,7 @@
 	top:89px;
 	right:10%;
 }
+
 .hero-image {
     margin-top: 20px;
     object-fit: cover;

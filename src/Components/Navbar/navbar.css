@@ -9,6 +9,12 @@
   width: 100%;
 }
 
+.navbar-toggle {
+  background-color: black !important;
+  padding: 0 !important;
+  margin-right: 25px;
+}
+
 .login-icon {
   margin-bottom: 20px;
 }
