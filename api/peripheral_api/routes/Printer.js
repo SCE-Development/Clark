@@ -13,7 +13,7 @@ const {
   ACCOUNT_ID,
   PAPER_PRINTING_QUEUE_NAME,
 } = require('../../config/config.json').Queue;
-const {CORE_V4_API_KEY} = require('../../config/config.json');
+const { DISCORD_PRINTING_KEY } = require('../../config/config.json');
 const {
   verifyToken,
   checkIfTokenSent
@@ -91,8 +91,10 @@ router.post('/sendPrintRequest', async (req, res) => {
   });
 });
 
-router.post('/validateDiscordReq', async (req, res) => {
-  if(req.body.apiKey !== CORE_V4_API_KEY){
+router.post('/pushDiscordPDF', async (req, res) => {
+  const { apiKey, fileURL } = req.body;
+
+  if(apiKey !== DISCORD_PRINTING_KEY){
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -103,7 +105,7 @@ router.post('/validateDiscordReq', async (req, res) => {
 
   const sqsParams = {
     MessageBody: JSON.stringify({
-      'fileURL': req.body.url
+      fileURL
     }),
     QueueUrl: `https://sqs.us-west-2.amazonaws.com/${accountId}/${queueName}`
   };

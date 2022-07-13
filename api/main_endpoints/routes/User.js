@@ -6,7 +6,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const {CORE_V4_API_KEY} = require('../../config/config.json');
+const { DISCORD_PRINTING_KEY } = require('../../config/config.json');
 const { getMemberExpirationDate, registerUser } =
 require('../util/registerUser');
 const {
@@ -275,27 +275,19 @@ router.post('/connectToDiscord', function(req, res) {
 });
 
 router.get('/getUserFromDiscordId', (req, res) => {
-  if(req.query.apiKey !== CORE_V4_API_KEY){
+  const { discordID, apiKey } = req.query;
+  if(apiKey !== DISCORD_PRINTING_KEY){
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ discordID: req.query.discordID }, (error, result) => {
-    let message = 'User exists';
-    let status = true;
-    res.status(OK);
+  User.findOne({ discordID: discordID }, (error, result) => {
     if (error) {
-      return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      res.sendStatus(BAD_REQUEST);
+    } else if (result) {
+      res.sendStatus(OK);
+    } else {
+      res.sendStatus(NOT_FOUND);
     }
-    if (result === null) {
-      message = 'User not found';
-      status = false;
-    }
-    let sendMessage = {
-      mess: message,
-      exist: status
-    };
-    return res.send(sendMessage);
   });
 });
-
 
 module.exports = router;
