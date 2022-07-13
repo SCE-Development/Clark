@@ -7,7 +7,7 @@ require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
 const { DISCORD_PRINTING_KEY } = require('../../config/config.json');
-const { getMemberExpirationDate, registerUser } =
+const { getMemberExpirationDate} =
 require('../util/registerUser');
 const {
   checkIfTokenSent,

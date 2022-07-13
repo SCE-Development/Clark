@@ -104,9 +104,7 @@ router.post('/pushDiscordPDF', async (req, res) => {
   const queueName = PAPER_PRINTING_QUEUE_NAME;
 
   const sqsParams = {
-    MessageBody: JSON.stringify({
-      fileURL
-    }),
+    MessageBody: JSON.stringify({ fileURL }),
     QueueUrl: `https://sqs.us-west-2.amazonaws.com/${accountId}/${queueName}`
   };
 
