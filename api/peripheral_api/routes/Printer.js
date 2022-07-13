@@ -18,6 +18,9 @@ const {
   verifyToken,
   checkIfTokenSent
 } = require('../../util/token-verification');
+const{ SceSqsApiHandler } = require('../util/SceSqsApiHandler');
+const sceSqsApiHandler = new SceSqsApiHandler(PAPER_PRINTING_QUEUE_NAME);
+
 
 const AWS = require('aws-sdk');
 
@@ -98,23 +101,13 @@ router.post('/pushDiscordPDFToSqs', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+  const isPushToSqs = sceSqsApiHandler.pushMessageToQueue(fileURL);
 
-  const accountId = ACCOUNT_ID;
-  const queueName = PAPER_PRINTING_QUEUE_NAME;
+  if(!isPushToSqs){
+    return res.sendStatus(BAD_REQUEST);
+  }
 
-  const sqsParams = {
-    MessageBody: JSON.stringify({ fileURL }),
-    QueueUrl: `https://sqs.us-west-2.amazonaws.com/${accountId}/${queueName}`
-  };
-
-  sqs.sendMessage(sqsParams, (err, data) => {
-    if (err) {
-      return res.sendStatus(BAD_REQUEST);
-    } else {
-      return res.sendStatus(OK);
-    }
-  });
+  return res.sendStatus(OK);
 });
 
 module.exports = router;
