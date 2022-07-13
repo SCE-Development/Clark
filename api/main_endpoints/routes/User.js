@@ -279,13 +279,13 @@ router.get('/getUserFromDiscordId', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ discordID }, (error, result) => {
+    let result = OK;
     if (error) {
-      res.sendStatus(BAD_REQUEST);
-    } else if (result) {
-      res.sendStatus(OK);
-    } else {
-      res.sendStatus(NOT_FOUND);
+      result = BAD_REQUEST;
+    } else if (!result) {
+      result = NOT_FOUND;
     }
+    return res.sendStatus(result);
   });
 });
 
