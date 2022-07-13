@@ -6,14 +6,14 @@ const {
   UNAUTHORIZED,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const { s3BucketKeys, printingS3Bucket }  = require('../../config/config.json');
+const { s3BucketKeys, printingS3Bucket, DISCORD_PRINTING_KEY }
+= require('../../config/config.json');
 const {
   CLIENT_ID,
   CLIENT_SECRET,
   ACCOUNT_ID,
   PAPER_PRINTING_QUEUE_NAME,
 } = require('../../config/config.json').Queue;
-const { DISCORD_PRINTING_KEY } = require('../../config/config.json');
 const {
   verifyToken,
   checkIfTokenSent
