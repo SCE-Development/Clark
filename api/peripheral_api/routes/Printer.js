@@ -91,7 +91,7 @@ router.post('/sendPrintRequest', async (req, res) => {
   });
 });
 
-router.post('/pushDiscordPDF', async (req, res) => {
+router.post('/pushDiscordPDFToSqs', async (req, res) => {
   const { apiKey, fileURL } = req.body;
 
   if(apiKey !== DISCORD_PRINTING_KEY){
