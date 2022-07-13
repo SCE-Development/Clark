@@ -278,7 +278,7 @@ router.get('/getUserFromDiscordId', (req, res) => {
   if(apiKey !== DISCORD_PRINTING_KEY){
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ discordID: discordID }, (error, result) => {
+  User.findOne({ discordID }, (error, result) => {
     if (error) {
       res.sendStatus(BAD_REQUEST);
     } else if (result) {
