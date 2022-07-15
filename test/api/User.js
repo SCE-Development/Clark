@@ -342,10 +342,10 @@ describe('User', () => {
         apiKey : 'Invalid api',
         discordID: '0123456789'
       };
-      const result = await test.sendPostRequestWithToken(
-        'api/user/getUserFromDiscordId',
-        {apiKey: body.apiKey, discordID: body.discordID}
-      );
+      const result = await test.sendPostRequest(
+        'api/user/getUserFromDiscordId', body);
+
+      console.log(result);
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
