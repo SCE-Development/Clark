@@ -338,13 +338,14 @@ describe('User', () => {
 
   describe('/POST getUserFromDiscordId', () => {
     it('Should return status code 401 if API key is invaid', async () => {
-      const user = {
+      const body = {
         apiKey : 'Invalid api',
         discordID: '0123456789'
       };
       const result = await test.sendPostRequestWithToken(
         'api/user/getUserFromDiscordId',
-        ...user);
+        {apiKey: body.apiKey, discordID: body.discordID}
+        );
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
