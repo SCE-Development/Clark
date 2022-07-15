@@ -13,7 +13,7 @@ function initializeTokenMock() {
   checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid');
   decodeTokenValidMock = sinon.stub(TokenFunctions, 'decodeToken');
   verifyTokenMock = sinon.stub(TokenValidation, 'verifyToken');
-  discordApiKeyMock = sinon.stub(TokenFunctions, 'checkDiscordKey')
+  discordApiKeyMock = sinon.stub(TokenFunctions, 'checkDiscordKey');
 }
 
 /**

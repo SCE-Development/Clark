@@ -46,10 +46,10 @@ function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
 
 /**
  * Checks API key value and return true or false depending on if it matches
- * @param {String} apiKey 
+ * @param {String} apiKey
  * @returns {boolean} whether the api key was valid or not
  */
-function checkDiscordKey (apiKey) {
+function checkDiscordKey(apiKey) {
   if(apiKey === DISCORD_PRINTING_KEY) {
     return true;
   }
