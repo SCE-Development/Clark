@@ -11,7 +11,8 @@ const { getMemberExpirationDate} = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
+  checkDiscordKey
 } = require('../util/token-functions');
 const {
   OK,
@@ -251,31 +252,9 @@ router.get('/callback', async function(req, res) {
     });
 });
 
-router.post('/connectToDiscord', function(req, res) {
-  const email = req.body.email;
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!email) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  if (discordApiKeys.CLIENT_ID === 'NOT_SET'
-    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
-    return res.sendStatus(OK);
-  }
-  return res.status(OK)
-    .send('https://discord.com/api/oauth2/authorize?client_id=' +
-      `${discordApiKeys.CLIENT_ID}` +
-      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
-      `&state=${email}&response_type=code&scope=identify`
-    );
-});
-
 router.post('/getUserFromDiscordId', (req, res) => {
   const { discordID, apiKey } = req.body;
-  if(apiKey !== DISCORD_PRINTING_KEY){
+  if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ discordID }, (error, result) => {
@@ -287,6 +266,28 @@ router.post('/getUserFromDiscordId', (req, res) => {
     }
     return res.sendStatus(status);
   });
+});
+
+router.post('/connectToDiscord', function(req, res) {
+  const email = req.body.email;
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!email) {
+    return res.sendStatus(BAD_REQUEST);
+  }
+  if (discordApiKeys.CLIENT_ID === 'beepbop'
+    && discordApiKeys.CLIENT_SECRET === 'beepbop') {
+    return res.sendStatus(OK);
+  }
+  return res.status(OK)
+    .send('https://discord.com/api/oauth2/authorize?client_id=' +
+      `${discordApiKeys.CLIENT_ID}` +
+      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
+      `&state=${email}&response_type=code&scope=identify`
+    );
 });
 
 module.exports = router;

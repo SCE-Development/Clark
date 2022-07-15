@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { secretKey } = require('../../config/config.json');
+const { secretKey, DISCORD_PRINTING_KEY } = require('../../config/config.json');
 const passport = require('passport');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
@@ -44,8 +44,21 @@ function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
   return response;
 }
 
+/**
+ * Checks API key value and return true or false depending on if it matches
+ * @param {String} apiKey 
+ * @returns {boolean} whether the api key was valid or not
+ */
+function checkDiscordKey (apiKey) {
+  if(apiKey === DISCORD_PRINTING_KEY) {
+    return true;
+  }
+  return false;
+}
+
 module.exports = {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
+  checkDiscordKey
 };
