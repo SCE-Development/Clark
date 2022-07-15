@@ -75,12 +75,12 @@ class SceApiTester{
     return response;
   }
 
-  async sendGetRequestWithToken(token, endpoint) {
+  async sendGetRequestWithToken(query, endpoint) {
     let response = null;
     await chai
       .request(this.app)
       .get(endpoint)
-      .send({token : token})
+      .send({...query})
       .then(function(res) {
         response = res;
       })

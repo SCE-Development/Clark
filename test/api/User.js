@@ -335,4 +335,31 @@ describe('User', () => {
       expect(result.text).to.equal('Authorization unsuccessful!');
     });
   });
+
+  describe('/POST getUserFromDiscordId', () => {
+    it('Should return status code 401 if API key is invaid', async () => {
+      const user = {
+        apiKey : 'Invalid api',
+        discordID: '0123456789'
+      }
+      const result = await test.sendPostRequestWithToken('api/user/getUserFromDiscordId', ...user);
+      expect(result).to.have.status(UNAUTHORIZED)
+    });
+    // it('Should return status code 404 if Discord ID is not found in database', async () => {
+    //   const user = {
+    //     apiKey,
+    //     discordID: 'Invalid Discord ID'
+    //   }
+    //   const result = await test.sendPostRequestWithToken('api/user/getUserFromDiscordId', ...user)
+    //   expect(result).to.have.status(NOT_FOUND);
+    // });
+    // it('Should return status code 200 if API key is match and Discord ID is in database', async () => {
+    //   const user = {
+    //     discordID,
+    //     apiKey
+    //   }
+    //   const result = await test.sendPostRequestWithToken('api/user/getUserFromDiscordId', apiKey, discordID);
+    //   expect(result).to.have.status(OK);
+    // });
+  });
 });

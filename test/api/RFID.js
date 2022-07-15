@@ -97,7 +97,7 @@ describe('RFID', () => {
   describe('/GET getRFIDs', () => {
     it('Should return 401 when supplied with invalid token',
       async () => {
-        const result = await test.sendGetRequestWithToken(token,
+        const result = await test.sendGetRequestWithToken({token},
           '/api/RFID/getRFIDs');
         expect(result).to.have.status(UNAUTHORIZED);
       }
@@ -107,7 +107,7 @@ describe('RFID', () => {
       async () => {
         setTokenStatus(true);
         tools.insertItem(RFID, { ...SAMPLE_RFID_BYTE, ...SAMPLE_USER_NAME });
-        const result = await test.sendGetRequestWithToken(token,
+        const result = await test.sendGetRequestWithToken({token},
           '/api/RFID/getRFIDs');
         const item = result.body[0];
         expect(result.body).to.have.length(1);
@@ -140,7 +140,7 @@ describe('RFID', () => {
       const result = await test.sendPostRequestWithToken(token,
         '/api/RFID/deleteRFID', { _id: VALID_ID });
       expect(result).to.have.status(OK);
-      const getReqResult = await test.sendGetRequestWithToken(token,
+      const getReqResult = await test.sendGetRequestWithToken({token},
         '/api/RFID/getRFIDs');
       expect(getReqResult).to.have.status(OK);
       const getRfidResponse = getReqResult.body;

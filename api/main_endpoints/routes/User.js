@@ -273,19 +273,19 @@ router.post('/connectToDiscord', function(req, res) {
     );
 });
 
-router.get('/getUserFromDiscordId', (req, res) => {
-  const { discordID, apiKey } = req.query;
+router.post('/getUserFromDiscordId', (req, res) => {
+  const { discordID, apiKey } = req.body;
   if(apiKey !== DISCORD_PRINTING_KEY){
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ discordID }, (error, result) => {
-    let findingResult = OK;
+    let status = OK;
     if (error) {
-      findingResult = BAD_REQUEST;
+      status = BAD_REQUEST;
     } else if (!result) {
-      findingResult = NOT_FOUND;
+      status = NOT_FOUND;
     }
-    return res.sendStatus(findingResult);
+    return res.sendStatus(status);
   });
 });
 
