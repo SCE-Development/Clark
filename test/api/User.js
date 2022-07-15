@@ -345,7 +345,7 @@ describe('User', () => {
       const result = await test.sendPostRequestWithToken(
         'api/user/getUserFromDiscordId',
         {apiKey: body.apiKey, discordID: body.discordID}
-        );
+      );
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
