@@ -278,8 +278,8 @@ router.post('/connectToDiscord', function(req, res) {
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
   }
-  if (discordApiKeys.CLIENT_ID === 'beepbop'
-    && discordApiKeys.CLIENT_SECRET === 'beepbop') {
+  if (discordApiKeys.CLIENT_ID === 'NOT_SET'
+    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
     return res.sendStatus(OK);
   }
   return res.status(OK)
