@@ -16,7 +16,8 @@ const {
 } = require('../../config/config.json').Queue;
 const {
   verifyToken,
-  checkIfTokenSent
+  checkIfTokenSent,
+  checkDiscordKey
 } = require('../../util/token-verification');
 const{ SceSqsApiHandler } = require('../util/SceSqsApiHandler');
 
@@ -96,8 +97,7 @@ router.post('/sendPrintRequest', async (req, res) => {
 
 router.post('/pushDiscordPDFToSqs', async (req, res) => {
   const { apiKey, fileURL } = req.body;
-
-  if(apiKey !== DISCORD_PRINTING_KEY){
+  if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
 
