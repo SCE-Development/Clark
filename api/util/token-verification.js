@@ -31,4 +31,15 @@ function checkIfTokenSent(request) {
   return request.body.token !== undefined;
 }
 
-module.exports = { verifyToken, checkIfTokenSent };
+/**
+ * Checks API key value and return true or false depending on if it matches
+ * @param {String} apiKey
+ * @returns {boolean} whether the api key was valid or not
+ */
+ function checkDiscordKey(apiKey) {
+  if(apiKey === DISCORD_PRINTING_KEY) {
+    return true;
+  }
+  return false;
+}
+module.exports = { verifyToken, checkIfTokenSent, checkDiscordKey };
