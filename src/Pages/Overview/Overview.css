@@ -6,9 +6,14 @@
 }
 
 .layout {
-  padding-top: 32px;
+  padding-top: 70px;
+  padding-left: 30px;
   margin: 10px auto;
-  width: 700px;
+  width: 800px;
+}
+
+.header-jumbo {
+  width: 100%;
 }
 
 .title {
@@ -22,8 +27,11 @@
 .content-table {
   border-collapse: collapse;
   font-size: 0.9em;
-  max-width: 700px;
+  max-width: 100%;
   min-width: 700px;
+  overflow: auto;
+  min-width: 500px;
+  
 }
 
 .content-table thead tr {
@@ -111,6 +119,13 @@ thead.td {
   animation: reverse;
 }
 
+.flexbox-container-user{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-flow: wrap;
+}
+
 #search-tag {
   display: inline;
 }
@@ -128,4 +143,35 @@ thead.td {
 
 #users-header {
   color: black;
+}
+
+@media screen and (min-width: 0px) and (max-width: 300px) {
+  .layout {
+    margin-left: 130%;
+  }
+}
+
+@media screen and (min-width: 377px) and (max-width: 487px) {
+  .layout{
+    margin-left: 60%;
+  }
+}
+
+@media screen and (min-width: 300px) and (max-width: 375px) {
+  .layout{
+    margin-left: 75%;
+  }
+}
+
+@media screen and (min-width: 487px) and (max-width: 700px) {
+  .layout{
+    margin-left: 20%;
+  }
+}
+
+@media screen and (min-width: 700px) and (max-width: 1280px) {
+  .layout{
+    padding-top: 70px;
+    height: 100%;
+  }
 }

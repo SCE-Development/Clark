@@ -61,7 +61,7 @@
 
 @media screen and (max-width:400px) {
 	.name {
-		display: none !important
+		/* display: none !important; */
 	}
 }
 
