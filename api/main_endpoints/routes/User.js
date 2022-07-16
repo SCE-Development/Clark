@@ -263,7 +263,7 @@ router.post('/getUserFromDiscordId', (req, res) => {
     } else if (!result) {
       status = NOT_FOUND;
     }
-    return res.sendStatus(status);
+    return res.status(status).send(result);
   });
 });
 
