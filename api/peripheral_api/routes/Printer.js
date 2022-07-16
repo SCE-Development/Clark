@@ -87,7 +87,7 @@ router.post('/sendPrintRequest', async (req, res) => {
     copies,
     pageRanges,
   });
-  const result  = SqsHandler.pushMessageToQueue(data);
+  const result = SqsHandler.pushMessageToQueue(data);
 
   if(!result){
     return res.sendStatus(BAD_REQUEST);
