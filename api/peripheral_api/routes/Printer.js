@@ -84,7 +84,7 @@ router.post('/sendPrintRequest', async (req, res) => {
   const data = JSON.stringify({
     location: response.Location,
     fileNo: fileName,
-    copies: copies,
+    copies,
     pageRanges,
   });
   const result  = SqsHandler.pushMessageToQueue(data);
