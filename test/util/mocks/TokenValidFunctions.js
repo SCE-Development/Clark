@@ -13,7 +13,6 @@ function initializeTokenMock() {
   checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid');
   decodeTokenValidMock = sinon.stub(TokenFunctions, 'decodeToken');
   verifyTokenMock = sinon.stub(TokenValidation, 'verifyToken');
-  discordApiKeyMock = sinon.stub(TokenValidation, 'checkDiscordKey');
 }
 
 /**
@@ -23,7 +22,6 @@ function restoreTokenMock() {
   checkifTokenValidMock.restore();
   decodeTokenValidMock.restore();
   verifyTokenMock.restore();
-  discordApiKeyMock.restore();
 }
 
 /**
@@ -33,7 +31,6 @@ function resetTokenMock() {
   checkifTokenValidMock.reset();
   decodeTokenValidMock.reset();
   verifyTokenMock.reset();
-  discordApiKeyMock.reset();
 }
 
 /**
@@ -47,11 +44,9 @@ function setTokenStatus(returnValue) {
   if (returnValue) {
     decodeTokenValidMock.returns({accessLevel: 10});
     verifyTokenMock.returns(true);
-    discordApiKeyMock.returns(true);
   } else {
     decodeTokenValidMock.returns(null);
     verifyTokenMock.returns(false);
-    discordApiKeyMock.returns(false);
   }
 }
 

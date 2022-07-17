@@ -33,6 +33,13 @@ const {
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
 
+const {
+  setDiscordAPIStatus,
+  resetDiscordAPIMock,
+  restoreDiscordAPIMock,
+  initializeDiscordAPIMock
+} = require('../util/mocks/DiscordApiFunction');
+
 chai.should();
 chai.use(chaiHttp);
 
@@ -52,15 +59,18 @@ describe('User', () => {
 
   after(done => {
     restoreTokenMock();
+    restoreDiscordAPIMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
+    setDiscordAPIStatus(false);
   });
 
   afterEach(() => {
     resetTokenMock();
+    resetDiscordAPIMock();
   });
 
   const token = '';
@@ -286,10 +296,9 @@ describe('User', () => {
     });
   });
 
-  /** CHANGE PACKAGE JSON LATER TO CONSIDER ALL TESTS **/
   describe('/POST getUserFromDiscordId', () => {
     it('Should return status code 401 if API key is invalid', async () => {
-      setTokenStatus(false);
+      initializeDiscordAPIMock(false);
       const body = {
         apiKey: 'Invalid api',
         discordID: '0987654321'
@@ -299,7 +308,7 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
     it('Should return status code 404 if user is not found', async () => {
-      setTokenStatus(true);
+      initializeDiscordAPIMock(true);
       const body = {
         apiKey: 'abc',
         discordID: 'invalid'
@@ -310,7 +319,7 @@ describe('User', () => {
     });
     it(`Should return status code 200 when a valid api key is provided along
       with a discord ID of a user`, async () => {
-      setTokenStatus(true);
+      initializeDiscordAPIMock(true);
       const body = {
         apiKey: 'abc',
         discordID: '0987654321'

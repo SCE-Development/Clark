@@ -1,6 +1,6 @@
 const axios = require('axios');
 const membershipState = require('./constants').MEMBERSHIP_STATE;
-const { DISCORD_PRINTING_KEY } = require('../config/config.json');
+const { DISCORD_COREV4_KEY } = require('../config/config.json');
 // If we are in a docker/prod environment, we can't rely on localhost
 // to route the request to the Auth API so we use the name of
 // the container instead,
@@ -38,6 +38,6 @@ function checkIfTokenSent(request) {
  * @returns {boolean} whether the api key was valid or not
  */
 function checkDiscordKey(apiKey) {
-  return apiKey === DISCORD_PRINTING_KEY;
+  return apiKey === DISCORD_COREV4_KEY;
 }
 module.exports = { verifyToken, checkIfTokenSent, checkDiscordKey };
