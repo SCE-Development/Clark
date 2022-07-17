@@ -1,30 +1,28 @@
 const axios = require('axios');
 const express = require('express');
-const router = express.Router();
+const { SceSqsApiHandler } = require('../util/SceSqsApiHandler');
+const AWS = require('aws-sdk');
+
+const {
+  verifyToken,
+  checkIfTokenSent,
+  checkDiscordKey
+} = require('../../util/token-verification');
 const {
   OK,
   UNAUTHORIZED,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const { s3BucketKeys, printingS3Bucket, DISCORD_PRINTING_KEY }
-= require('../../config/config.json');
+const { s3BucketKeys, printingS3Bucket }
+  = require('../../config/config.json');
 const {
   CLIENT_ID,
   CLIENT_SECRET,
   ACCOUNT_ID,
   PAPER_PRINTING_QUEUE_NAME,
 } = require('../../config/config.json').Queue;
-const {
-  verifyToken,
-  checkIfTokenSent,
-  checkDiscordKey
-} = require('../../util/token-verification');
-const{ SceSqsApiHandler } = require('../util/SceSqsApiHandler');
 
-const SqsHandler = new SceSqsApiHandler(PAPER_PRINTING_QUEUE_NAME);
-
-
-const AWS = require('aws-sdk');
+const router = express.Router();
 
 let creds = new
 AWS.Credentials(CLIENT_ID, CLIENT_SECRET);
@@ -35,10 +33,10 @@ AWS.config.update({
 });
 
 router.get('/healthCheck', async (req, res) => {
-/*
- * How these work with Quasar:
- * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
- */
+  /*
+   * How these work with Quasar:
+   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+   */
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
@@ -54,6 +52,7 @@ router.get('/healthCheck', async (req, res) => {
 
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
+  const sqsHandler = new SceSqsApiHandler(PAPER_PRINTING_QUEUE_NAME);
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -61,7 +60,7 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   if (s3BucketKeys.AWSACCESSKEYID === 'NOT_SET'
-  && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
+    && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
     return res.sendStatus(OK);
   }
   const { raw, copies, pageRanges } = req.body;
@@ -87,23 +86,24 @@ router.post('/sendPrintRequest', async (req, res) => {
     copies,
     pageRanges,
   });
-  const result = SqsHandler.pushMessageToQueue(data);
+  const result = sqsHandler.pushMessageToQueue(data);
 
-  if(!result){
+  if (!result) {
     return res.sendStatus(BAD_REQUEST);
   }
   return res.sendStatus(OK);
 });
 
 router.post('/pushDiscordPDFToSqs', async (req, res) => {
+  const sqsHandler = new SceSqsApiHandler(PAPER_PRINTING_QUEUE_NAME);
   const { apiKey, fileURL } = req.body;
-  if(!checkDiscordKey(apiKey)){
+  if (!checkDiscordKey(apiKey)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const result = await SqsHandler.pushMessageToQueue({fileURL});
+  const result = await sqsHandler.pushMessageToQueue({ fileURL });
 
-  if(!result){
+  if (!result) {
     return res.sendStatus(BAD_REQUEST);
   }
   return res.sendStatus(OK);
