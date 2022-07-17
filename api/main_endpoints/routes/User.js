@@ -27,8 +27,7 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
-const discordRedirectUri = process.env.NODE_ENV === 'production' ?
-  discordApiKeys.REDIRECT_URI_PROD : discordApiKeys.REDIRECT_URI_DEV;
+const discordRedirectUri = process.env.DISCORD_REDIRECT_URI || 'http://localhost:8080/api/user/callback';
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;

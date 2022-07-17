@@ -3,8 +3,6 @@ FROM node:14.10.0-alpine
 
 WORKDIR /app
 
-ENV DATABASE_HOST db
-
 COPY package.json ./
 
 RUN npm install --production
@@ -18,5 +16,9 @@ COPY ./config/config.json /app/config/config.json
 EXPOSE 8082
 
 ARG GENERAL_API_URL
+
+ARG DATABASE_HOST
+
+ARG VERIFICATION_BASE_URL
 
 CMD [ "node", "./cloud_api/server.js" ]

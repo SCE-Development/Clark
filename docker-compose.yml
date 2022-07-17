@@ -23,8 +23,8 @@ services:
     build:
       context: ./api
       dockerfile: ./cloud_api/Dockerfile
-      args:
-        GENERAL_API_URL: http://sce-main-endpoints:8080/api
+    environment:
+      - GENERAL_API_URL=http://sce-main-endpoints:8080/api
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -37,8 +37,10 @@ services:
     build:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile
-      args:
-        PERIPHERAL_API_URL: http://sce-peripheral-api:8081/peripheralapi
+    environement:
+      - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
+      - VERIFICATION_BASE_URL=https://sce.engr.sjsu.edu
+      - DISCORD_REDIRECT_URI=http://sce.engr.sjsu.edu/api/user/callback
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -51,8 +53,10 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-      args:
-        PERIPHERAL_API_URL: https://sce.engr.sjsu.edu/peripheralapi
+    environment:
+      - GENERAL_API_URL=https://sce.engr.sjsu.edu/api
+      - PERIPHERAL_API_URL=https://sce.engr.sjsu.edu/peripheralapi
+      - MAILER_API_URL=https://sce.engr.sjsu.edu/cloudapi
     restart: 'on-failure'
     stdin_open: true
     links:

@@ -4,9 +4,6 @@ FROM node:14.10.0-alpine
 WORKDIR /app
 #all commands will run in this directory
 
-ENV DATABASE_HOST db
-#database env variable
-
 COPY ./package.json .
 #copies all the dependenices into work directory (./app) (since you set the work dir before)
 
@@ -21,5 +18,7 @@ COPY ./util /app/util
 COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8081
+
+ARG DATABASE_HOST
 
 CMD [ "node", "./peripheral_api/server.js" ]

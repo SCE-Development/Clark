@@ -2,7 +2,6 @@ import axios from 'axios';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { updateLastLoginDate } from './User';
 
-let config = require('../config/config.json');
 let GENERAL_API_URL = process.env.GENERAL_API_URL || 'localhost:8080/api'
 
 /**
