@@ -1,4 +1,5 @@
 import React from 'react';
+import './SponsorUs.css';
 import { Button } from 'reactstrap';
 
 const SponsorUs = () => {

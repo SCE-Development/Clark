@@ -1,20 +1,16 @@
-/* IMG_3191 1 */
+@import url("https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap");
 
+.what-we-do {
+    padding-top: 50px;
+  }
 
-/*position: absolute;*/
-/* width: 844px;
-height: 458px;
-left: 969px;
-top: 2513px;
-
-background: url(IMG_3191.jpg);
-border-radius: 23px; */
-
-
-/* What We Do */
+.container-what-we-do {
+    display: flex;
+    align-items: center;
+  }
 
 .what-we-do-header{
-    width: 289px;
+    /* width: 289px;
     height: 55px;
     
     font-family: 'Montserrat';
@@ -22,52 +18,51 @@ border-radius: 23px; */
     font-weight: 700;
     font-size: 35px;
     line-height: 42px;
-    /* or 120% */
     
     text-align: center;
     
-    color: #FFFFFF;
+    color: #FFFFFF; */
+    padding-left: 40px;
+    padding-bottom: 10px;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 42px;
+  
+    color: #ffffff;
 }
-/* position: absolute; */
 
 
-.what-we-do-p{
-    width: 816px;
+.what-we-do-p {
+    /* width: 816px;
     height: 330px;
     
     font-family: 'Montserrat';
     font-style: normal;
     font-weight: 400;
     font-size: 24px;
-    line-height: 25px;
-    /* or 104% */
+    line-height: 25px; */
     
     
     color: #FFFFFF;
+    text-align: center;
+    font-family: "Mina", sans-serif;
+    width: 50%;
+    font-size: 18px;
 }
-/* position: absolute; */
 
+.what-we-do-img {
+    padding-left: 80px !important;
+  }
 
+.what-we-do-img img {
+    width: 600px;
+    height: auto;
+  }
 
-
-
-/* Rectangle */
-
-
-/* box-sizing: border-box; */
-
-/* position: absolute; */
-/* width: 170px;
-height: 60px;
-
-background: rgba(13, 110, 253, 0.8);
-border: 3px solid #FFFFFF;
-border-radius: 8px; */
-
-
-/* Learn More */
-
-.learn-more-button{
+.learn-more-button {
+    margin-left: 35%;
     width: 113px;
     height: 34px;
     
@@ -76,22 +71,8 @@ border-radius: 8px; */
     font-weight: 700;
     font-size: 19px;
     line-height: 30px;
-    /* or 158% */
     
     text-align: center;
     
     color: #FFFFFF;
 }
-/* position: absolute; */
-
-
-
-
-/* image 11 */
-
-
-/* position: absolute; */
-/* width: 28px;
-height: 23px;
-
-background: url(image.png); */
