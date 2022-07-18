@@ -1,7 +1,7 @@
 const TokenValidation = require('../../../api/util/token-verification');
 const sinon = require('sinon');
 
-let decodeTokenValidMock = null;
+let discordApiKeyMock = null;
 
 /**
  * Initialize the stub to be used in other functions.
@@ -31,7 +31,6 @@ function resetDiscordAPIMock() {
    * @returns return parameter (above)
    */
 function setDiscordAPIStatus(returnValue) {
-  checkifTokenValidMock.returns(returnValue);
   if (returnValue) {
     discordApiKeyMock.returns(true);
   } else {
