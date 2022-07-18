@@ -311,7 +311,7 @@ describe('User', () => {
       setDiscordAPIStatus(true);
       const body = {
         apiKey: 'abc',
-        discordID: 'invalid'
+        discordID: 'Invalid Discord ID'
       };
       const result = await test.sendPostRequest(
         '/api/user/getUserFromDiscordId', body);
@@ -323,6 +323,42 @@ describe('User', () => {
       const body = {
         apiKey: 'abc',
         discordID: '0987654321'
+      };
+      const result = await test.sendPostRequest(
+        '/api/user/getUserFromDiscordId', body);
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST updatePagesPrintedFromDiscord', () => {
+    it('Should return 401 if API key is invalid', async () => {
+      const body = {
+        apiKey: 'Invalid API key',
+        discordID: '0987654321',
+        pagesPrinted: 2
+      };
+      const result = await test.sendPostRequest(
+        '/api/user/updatePagesPrintedFromDiscord', body);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+    it('Should return status code 404 if user is not found', async () => {
+      setDiscordAPIStatus(true);
+      const body = {
+        apiKey: 'abc',
+        discordID: 'Invalid Discord ID',
+        pagesPrinted: 2
+      };
+      const result = await test.sendPostRequest(
+        '/api/user/getUserFromDiscordId', body);
+      expect(result).to.have.status(NOT_FOUND);
+    });
+    it(`Should return status code 200 when a valid api key is provided along
+      with a discord ID of a user and number of printed pages`, async () => {
+      setDiscordAPIStatus(true);
+      const body = {
+        apiKey: 'abc',
+        discordID: '0987654321',
+        pagesPrinted: 2
       };
       const result = await test.sendPostRequest(
         '/api/user/getUserFromDiscordId', body);

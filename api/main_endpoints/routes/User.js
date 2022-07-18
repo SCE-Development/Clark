@@ -271,12 +271,12 @@ router.post('/getUserFromDiscordId', (req, res) => {
     } else if (!result) {
       status = NOT_FOUND;
     }
-    return res.status(OK).send(result);
+    return res.status(status).send(result);
   });
 });
 
 router.post('/updatePagesPrintedFromDiscord', (req, res) => {
-  const { discordID, apiKey, newPagesPrinted } = req.body;
+  const { discordID, apiKey, pagesPrinted } = req.body;
   if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
