@@ -251,9 +251,9 @@ router.get('/callback', async function(req, res) {
     });
 });
 
-// /POST 'updatePagesPrintedFromDiscord' 
+// /POST 'updatePagesPrintedFromDiscord'
 // check api key
-// req.body.discordID req.body.printedPages 
+// req.body.discordID req.body.printedPages
 // User.edit({printedPages}, (err, result))
 // write api tests for this api endpoint as well
 // api function in discord repo, update command file
@@ -271,7 +271,25 @@ router.post('/getUserFromDiscordId', (req, res) => {
     } else if (!result) {
       status = NOT_FOUND;
     }
+    console.log(result);
     return res.status(OK).send(result);
+  });
+});
+
+router.post('/updatePagesPrintedFromDiscord', (req, res) => {
+  const { discordID, apiKey, newPagesPrinted } = req.body;
+  if(!checkDiscordKey(apiKey)){
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  // eslint-disable-next-line max-len
+  User.updateOne( { discordID }, {pagesPrinted: newPagesPrinted}, (error, result) => {
+    let status = OK;
+    if(error){
+      status = BAD_REQUEST;
+    } else if (result.n === 0){
+      status = NOT_FOUND;
+    }
+    return res.sendStatus(status);
   });
 });
 
