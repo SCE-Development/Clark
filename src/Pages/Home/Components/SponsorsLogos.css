@@ -1,0 +1,45 @@
+  .sponsors-row-1 {
+    padding-left: 70px;
+  }
+  .cisco-img {
+    width: 400px;
+    height: auto;
+  }
+  .echo3d-img {
+    width: 400px;
+    height: auto;
+    margin-left: 50px;
+  }
+  .google-img {
+    width: 400px;
+    height: auto;
+    margin-left: 50px;
+  }
+
+  .sponsors-row-2 {
+    padding-left: 500px;
+    margin-top: 50px;
+  }
+  .balsamiq-img {
+    width: 300px;
+    height: auto;
+  }
+  .xircle-img {
+    width: 100px;
+    height: auto;
+    margin-left: 50px;
+  }
+  
+  .sponsors-row-3 {
+    padding-left: 50px;
+  }
+  .microsoft-img {
+    width: 900px;
+    height: auto;
+  }
+  .tesla-img {
+    width: 400px;
+    height: auto;
+    margin-left: 50px;
+    margin-bottom: 60px;
+  }

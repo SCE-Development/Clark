@@ -4,11 +4,13 @@ import { Button } from 'reactstrap';
 
 const WhatWeDo = () => {
   return (
-    <div>
+    <div className='what-we-do'>
+      <div className='container-what-we-do'>
+      
+      <div className='what-we-do-p'>
       <div className='what-we-do-header'>
         <h1 >What We Do</h1>
       </div>
-      <div className='what-we-do-p'>
         <p >SCE provides a social space for students to congregate and
             collaborate. We encourage members to connect and make new
             friends through social events such as potlucks, game nights,
@@ -30,6 +32,8 @@ const WhatWeDo = () => {
               borderRadius:8, fontSize:'20px'}}>Learn More</Button>
         </a>
       </div>
+      </div>
+      
     </div>
   );
 };
