@@ -102,7 +102,6 @@ services:
       - ./src:/frontend/src/
       - ./util:/frontend/util/
       - ./public:/frontend/public/
-      - ./node_modules:/frontend/node_modules
   
   nginx:
     container_name: sce-nginx-dev

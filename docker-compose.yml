@@ -1,23 +1,25 @@
 version: '3.8'
 services:
-  db:
+  mongodb:
+    container_name: sce-mongodb
     restart: always
     image: 'mongo'
     volumes:
-      # - '/data/db:/data/db' 
-      - '~/data/db:/data/db'  # use this command instead for mac users
+      - '/data/db:/data/db' 
     command: 'mongod'
   sce-peripheral-api:
     container_name: sce-peripheral-api
     build:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile
+    environment:
+      - DATABASE_HOST=sce-mongodb
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
   sce-cloud-api:
     container_name: sce-cloud-api
     build:
@@ -25,55 +27,53 @@ services:
       dockerfile: ./cloud_api/Dockerfile
     environment:
       - GENERAL_API_URL=http://sce-main-endpoints:8080/api
+      - VERIFICATION_BASE_URL=https://sce.engr.sjsu.edu
+      - DATABASE_HOST=sce-mongodb
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
 
   main-endpoints:
     container_name: sce-main-endpoints
     build:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile
-    environement:
+    environment:
       - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
-      - VERIFICATION_BASE_URL=https://sce.engr.sjsu.edu
-      - DISCORD_REDIRECT_URI=http://sce.engr.sjsu.edu/api/user/callback
+      - DISCORD_REDIRECT_URI=https://sce.engr.sjsu.edu/api/user/callback
+      - DATABASE_HOST=sce-mongodb
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
   
   frontend:
     container_name: sce-frontend
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-    environment:
-      - GENERAL_API_URL=https://sce.engr.sjsu.edu/api
-      - PERIPHERAL_API_URL=https://sce.engr.sjsu.edu/peripheralapi
-      - MAILER_API_URL=https://sce.engr.sjsu.edu/cloudapi
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
 
   web:
     image: 'nginx'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    #   - ./sce_engr_sjsu_edu.cer:/etc/nginx/sce_engr_sjsu_edu.cer
-    #   - ./sce.key:/etc/nginx/sce.key
+      - ./sce_engr_sjsu_edu.cer:/etc/nginx/sce_engr_sjsu_edu.cer
+      - ./sce.key:/etc/nginx/sce.key
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
-      # - '443:443'
+      - '443:443'
     restart: 'on-failure'
     depends_on:
       - frontend
