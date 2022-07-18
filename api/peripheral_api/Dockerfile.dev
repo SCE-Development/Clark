@@ -1,19 +1,21 @@
-FROM node:14.10.0-alpine 
 #gets the base linux image
+FROM node:14.10.0-alpine 
 
-WORKDIR /app
 #all commands will run in this directory
+WORKDIR /app
 
-COPY ./package.json .
 #copies all the dependenices into work directory (./app) (since you set the work dir before)
+COPY ./package.json /app/
 
-RUN npm install 
+RUN npm install
+
 #installs packages
+RUN npm install -g nodemon
 
-COPY ./peripheral_api /app/peripheral_api
 #copies this file to the desination
+COPY ./peripheral_api /app/peripheral_api
 
-COPY ./util /app/util
+COPY ./util/ /app/util/
 
 COPY ./config/config.json /app/config/config.json
 
@@ -21,4 +23,4 @@ EXPOSE 8081
 
 ARG DATABASE_HOST
 
-CMD [ "node", "./peripheral_api/server.js" ]
+CMD [ "npm", "run", "peripheral_api" ]
