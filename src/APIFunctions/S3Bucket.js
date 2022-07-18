@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let MAILER_API_URL = process.env.MAILER_API_URL
+let MAILER_API_URL = process.env.REACT_APP_MAILER_API_URL
   || 'http://localhost:8082/cloudapi';
 
 /**

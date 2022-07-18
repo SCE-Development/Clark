@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-let PERIPHERAL_API_URL = process.env.PERIPHERAL_API_URL || 'localhost:8081/peripheralapi';
+let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
+  || 'localhost:8081/peripheralapi';
 
 /**
  * Retrieve all errors.

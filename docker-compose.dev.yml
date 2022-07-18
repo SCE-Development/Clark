@@ -25,6 +25,7 @@ services:
     depends_on:
       - mongodb
     volumes:
+      - ./api/config:/app/config
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/peripheral_api:/app/peripheral_api
@@ -36,8 +37,8 @@ services:
       context: ./api
       dockerfile: ./cloud_api/Dockerfile.dev
     environment:
-      - GENERAL_API_URL=http://sce-main-endpoints:8080/api
-      - VERIFICATION_BASE_URL=http://localhost:3000
+      - GENERAL_API_URL=http://sce-main-endpoints-dev:8080/api
+      - VERIFICATION_BASE_URL=http://localhost
       - DATABASE_HOST=sce-mongodb-dev
     ports:
         - '8082:8082'
@@ -48,6 +49,7 @@ services:
     depends_on:
       - mongodb
     volumes:
+      - ./api/config:/app/config
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/cloud_api:/app/cloud_api
@@ -58,8 +60,8 @@ services:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile.dev
     environment:
-      - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
-      - DISCORD_REDIRECT_URI=http://localhost:8080/api/user/callback
+      - PERIPHERAL_API_URL=http://sce-peripheral-api-dev:8081/peripheralapi
+      - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
       - DATABASE_HOST=sce-mongodb-dev
     ports:
       - '8080:8080'
@@ -70,6 +72,7 @@ services:
     depends_on:
       - mongodb
     volumes:
+      - ./api/config:/app/config
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/main_endpoints:/app/main_endpoints
@@ -82,9 +85,9 @@ services:
       dockerfile: ./docker/Dockerfile.dev
     environment:
       - NODE_ENV=dev
-      - GENERAL_API_URL=http://localhost:8080/api
-      - PERIPHERAL_API_URL=http://localhost:8081/peripheralapi
-      - MAILER_API_URL=http://localhost:8082/cloudapi
+      - REACT_APP_GENERAL_API_URL=http://localhost/api
+      - REACT_APP_PERIPHERAL_API_URL=http://localhost/peripheralapi
+      - REACT_APP_MAILER_API_URL=http://localhost/cloudapi
 
     ports:
       - '3000:3000'

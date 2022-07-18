@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let MAILER_API_URL = process.env.MAILER_API_URL || 'http://localhost:8082/cloudapi';
-
+let MAILER_API_URL = process.env.REACT_APP_MAILER_API_URL
+  || 'http://localhost:8082/cloudapi';
 /**
  * Invoke the gmail API to send an email to verify a user.
  * @param {string} email - The user's email

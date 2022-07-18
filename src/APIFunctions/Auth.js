@@ -2,7 +2,8 @@ import axios from 'axios';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { updateLastLoginDate } from './User';
 
-let GENERAL_API_URL = process.env.GENERAL_API_URL || 'localhost:8080/api'
+let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
+  || 'localhost:8080/api';
 
 /**
  * Add a new user to the database.
