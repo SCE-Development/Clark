@@ -27,6 +27,8 @@ import { membershipState } from './Enums';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 
+import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -40,12 +42,21 @@ export default function Routing({ appProps }) {
   const signedInRoutes = [
 
     {
-      Component: Overview,
+      Component: AdminDashboard,
       path: '/dashboard',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
     },
+    // new for Overview
+    {
+      Component: Overview,
+      path: '/user-manager',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    },
+    //
     {
       Component: EmailPage,
       path: '/email-list',
@@ -117,8 +128,8 @@ export default function Routing({ appProps }) {
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: VerifyEmailPage, path: '/verify' },
-    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
-    { Component: DiscordSJSU, path: '/discordSJSU'}
+    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
+    { Component: DiscordSJSU, path: '/discordSJSU' }
   ];
   return (
     <Router>
