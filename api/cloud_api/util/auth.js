@@ -1,6 +1,7 @@
 const axios = require('axios');
 
-const GENERAL_API_URL = process.env.GENERAL_API_URL || 'localhost:8080/api';
+const GENERAL_API_URL = process.env.GENERAL_API_URL
+  || 'http://localhost:8080/api';
 async function validateVerificationEmail(){
   let status = '';
   await axios

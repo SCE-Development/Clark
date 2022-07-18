@@ -5,9 +5,9 @@ import {
 } from './ApiResponses';
 
 let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'localhost:8080/api';
+  || 'http://localhost:8080/api';
 let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
-  || 'localhost:8081/peripheralapi';
+  || 'http://localhost:8081/peripheralapi';
 
 /**
  * Return an array similar to python's range() function
