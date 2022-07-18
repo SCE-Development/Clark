@@ -251,6 +251,14 @@ router.get('/callback', async function(req, res) {
     });
 });
 
+// /POST 'updatePagesPrintedFromDiscord' 
+// check api key
+// req.body.discordID req.body.printedPages 
+// User.edit({printedPages}, (err, result))
+// write api tests for this api endpoint as well
+// api function in discord repo, update command file
+// test
+
 router.post('/getUserFromDiscordId', (req, res) => {
   const { discordID, apiKey } = req.body;
   if(!checkDiscordKey(apiKey)){
@@ -263,7 +271,7 @@ router.post('/getUserFromDiscordId', (req, res) => {
     } else if (!result) {
       status = NOT_FOUND;
     }
-    return res.status(OK).send({pagesPrinted: result.pagesPrinted});
+    return res.status(OK).send(result);
   });
 });
 
