@@ -35,7 +35,7 @@ router.get('/healthCheck', async (req, res) => {
     return res.sendStatus(OK);
   }
   await axios
-    .get('http://localhost:14000/healthcheck/printer')
+    .get('http://localhost:14000/')
     .then(() => {
       return res.sendStatus(OK);
     })
