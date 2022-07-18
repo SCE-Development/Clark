@@ -23,7 +23,7 @@ export default class OverviewBoard extends Component {
       queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni']
     };
     this.headerProps = {
-      title: 'Users Dashboard'
+      title: 'User Manager'
     };
   }
 

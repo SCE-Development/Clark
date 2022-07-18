@@ -5,3 +5,23 @@
 #reset-pages-label{
     margin-right: 5px;
 }
+.wrapper {
+    width: 26rem;
+    height: fit-content;
+    border: 4px transparent rgb(134, 133, 133);
+    margin-top: 10px;
+    margin-left: 10px;
+    background: white;
+    justify-content: center;
+  }
+.profile_h3 {
+    font-weight: bold;
+    text-align: center;
+}
+
+.profile_h5 {
+    color:#201c1c;
+    line-height: 20px;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: left;
+}
