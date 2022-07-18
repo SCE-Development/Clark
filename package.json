@@ -6,7 +6,7 @@
     "api-test": "mocha test/api/*.js",
     "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js --exit",
     "start": "react-scripts start",
-    "server": "npm start --prefix api",
+    "server": "npm run dev --prefix api",
     "lint": "eslint .",
     "server-install": "npm install --prefix api",
     "build": "react-scripts build",
@@ -50,6 +50,7 @@
     "react-chartjs-2": "^2.11.1",
     "react-datepicker": "^4.7.0",
     "react-dom": "^16.13.1",
+    "react-error-overlay": "^6.0.9",
     "react-filepond": "^7.1.0",
     "react-google-login": "^5.2.2",
     "react-google-recaptcha": "^2.1.0",
@@ -58,7 +59,7 @@
     "react-scripts": "^4.0.3",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.10.0",
-    "serve": "^13.0.2",
+    "serve": "^14.0.1",
     "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
