@@ -27,21 +27,7 @@ AWS.config.update({
 });
 
 router.get('/healthCheck', async (req, res) => {
-/*
- * How these work with Quasar:
- * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
- */
-  if (process.env.NODE_ENV !== 'production') {
-    return res.sendStatus(OK);
-  }
-  await axios
-    .get('http://localhost:14000/')
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      return res.sendStatus(NOT_FOUND);
-    });
+  return res.sendStatus(OK);
 });
 
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
