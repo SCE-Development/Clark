@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
 let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'localhost:8080/api';
+  || 'http://localhost:8080/api';
 
 /**
  * Handles the edge case of a time being at midnight and must be converted

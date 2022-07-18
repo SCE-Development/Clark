@@ -3,7 +3,7 @@ import { UserApiResponse } from './ApiResponses';
 import { membershipState, userFilterType } from '../Enums';
 
 let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'localhost:8080/api';
+  || 'http://localhost:8080/api';
 
 /**
  * Queries the database for all users.
