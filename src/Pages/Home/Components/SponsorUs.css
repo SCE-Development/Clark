@@ -1,7 +1,27 @@
-.sponsors {
+.sponsor-us {
+    margin-top: 50px;
+    position: relative;
+    text-align: center;
+}
+
+.sponsors-header {
     margin-left: 350px;
+    position: absolute;
+    top: 40%;
+    bottom: 60%;
+}
+
+.sponsors-img {
+    opacity: 0.5;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
 }
 
 .sponsor-us-button {
     margin-left: 600px;
+    position: absolute;
+    top: 55%;
+    bottom: 45%;
 }
