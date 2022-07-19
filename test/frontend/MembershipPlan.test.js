@@ -14,7 +14,7 @@ import { mockMonth, revertClock } from '../util/mocks/Date';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<MembershipPlan />', () => {
-  after(done => {
+  afterEach(done => {
     // get rid of the stub
     revertClock();
     done();

@@ -12,7 +12,7 @@ function AdminDashboard() {
     { title: '3D Console', value: '', url: '/3DConsole' }
   ];
   return (
-    <div>
+    <div className='flexbox-container'>
       <body className='admin-dashboard-bg'>
         <Header title='Admin Dashboard'></Header>
         <div className='block'></div>
