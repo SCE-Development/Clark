@@ -1,4 +1,4 @@
-const TokenValidation = require('../../../api/util/token-verification');
+const DiscordValidation = require('../../../api/util/token-verification');
 const sinon = require('sinon');
 
 let discordApiKeyMock = null;
@@ -7,7 +7,7 @@ let discordApiKeyMock = null;
  * Initialize the stub to be used in other functions.
  */
 function initializeDiscordAPIMock() {
-  discordApiKeyMock = sinon.stub(TokenValidation, 'checkDiscordKey');
+  discordApiKeyMock = sinon.stub(DiscordValidation, 'checkDiscordKey');
 }
 
 /**
