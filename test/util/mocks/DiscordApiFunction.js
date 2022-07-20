@@ -26,9 +26,8 @@ function resetDiscordAPIMock() {
 
 /**
  *
- * @param {any} returnValue: value to be return back
-   *                           by the function 'checkIfTokenValid'
-   * @returns return parameter (above)
+ * @param {Boolean} returnValue
+   * @returns the value of the boolean param.
    */
 function setDiscordAPIStatus(returnValue) {
   if (returnValue) {
