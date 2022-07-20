@@ -37,12 +37,9 @@ router.get('/healthCheck', async (req, res) => {
   await axios
     .get('http://host.docker.internal:14000/healthcheck/printer')
     .then(() => {
-      console.log("quasar says hello through healthcheck!");
       return res.sendStatus(OK);
     })
     .catch((err) => {
-      console.log("errd");
-      console.log(err);
       return res.sendStatus(NOT_FOUND);
     });
 });
