@@ -1,24 +1,32 @@
+  .container-sponsors-logos {
+    margin-top: 300px;
+  }
   .sponsors-row-1 {
-    padding-left: 70px;
+    /* padding-left: 80px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .cisco-img {
-    width: 400px;
+    width: 300px;
     height: auto;
   }
   .echo3d-img {
-    width: 400px;
+    width: 300px;
     height: auto;
-    margin-left: 50px;
+    margin-left: 100px;
   }
   .google-img {
-    width: 400px;
+    width: 300px;
     height: auto;
-    margin-left: 50px;
+    margin-left: 100px;
   }
 
   .sponsors-row-2 {
-    padding-left: 500px;
-    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 70px;
   }
   .balsamiq-img {
     width: 300px;
@@ -27,19 +35,22 @@
   .xircle-img {
     width: 100px;
     height: auto;
-    margin-left: 50px;
+    margin-left: 100px;
   }
   
   .sponsors-row-3 {
-    padding-left: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .microsoft-img {
-    width: 900px;
+    width: 700px;
     height: auto;
   }
   .tesla-img {
-    width: 400px;
+    width: 300px;
     height: auto;
-    margin-left: 50px;
-    margin-bottom: 60px;
+    margin-left: 100px;
+    margin-top: 30px;
+    margin-bottom: 50px;
   }
