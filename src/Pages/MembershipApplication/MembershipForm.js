@@ -268,7 +268,9 @@ export default function MembershipForm(props) {
           <Form onSubmit={submitApplication}>
             <Row id='name-field-row'>
               {nameFields.map((input, index) => (
-                <FormGroup key={`name-field-input-${index}`}>
+                <FormGroup
+                  className='application-form-group'
+                  key={`name-field-input-${index}`}>
                   <Input
                     className='name-input membership-input'
                     type={input.type}
@@ -282,7 +284,9 @@ export default function MembershipForm(props) {
             </Row>
             <div id='email-input-container'>
               {accountFields.map((input, index) => (
-                <FormGroup key={`account-field-${index}`}>
+                <FormGroup
+                  className='application-form-group'
+                  key={`account-field-${index}`}>
                   <Input
                     className='membership-input email-input'
                     type={input.type}
