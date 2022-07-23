@@ -1,11 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Mina&display=swap%27');
+@import url('https://fonts.googleapis.com/css2?family=Mina:wght@400;700&display=swap');
 
 .planBody {
   background-color: black;
 }
 
+.white-text {
+  color: white;
+}
 
-h1 {
+#application-header {
   text-align: center;
   color: white;
   font-family: 'Mina', sans-serif;
@@ -16,7 +19,7 @@ h1 {
   letter-spacing: 0.085em;
 }
 
-h2 {
+#application-h2 {
   text-align: center;
   color: #FCA311;
   font-family: 'Mina', sans-serif;
@@ -25,16 +28,16 @@ h2 {
   font-size: 20px;
 }
 
-h6 {
+#application-dropdown {
   text-align: left;
   font-family: 'Mina', sans-serif;
   font-style: normal;
-  font-weight: normal;
+  font-weight: 700;
   color: white;
-  margin-top: 10px;
+  padding: 10px;
 }
 
-p {
+.application-text {
   line-height: 12px;
   font-family: 'Mina', sans-serif;
   font-style: normal;
@@ -148,6 +151,10 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
 
 .active-plan .membership-price {
   background-color: rgb(96, 122, 121);
+}
+
+.application-form-group {
+  padding: 0 0 15px 0;
 }
 
 .email-input {

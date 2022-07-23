@@ -5,7 +5,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  Input
+  Input,
 } from 'reactstrap';
 
 export default function PlanDropdown(props) {
@@ -20,14 +20,14 @@ export default function PlanDropdown(props) {
   const options = ['Semester', 'Annual'];
 
   return (
-    <>
-      <h6>Plan*</h6>
+    <div id='application-dropdown'>
+      <span style={{ paddingRight: '10px' }}>Plan*</span>
       <ButtonDropdown
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
         <DropdownToggle caret id='change-and-select-btns 1'>
-          {plan != null ? plan : 'Select membership plan'}
+          {plan != null ? plan : 'Select Membership Plan'}
         </DropdownToggle>
         <DropdownMenu id='change-and-select-btns'>
           {options.map((option, index) => {
@@ -43,6 +43,6 @@ export default function PlanDropdown(props) {
           })}
         </DropdownMenu>
       </ButtonDropdown>
-    </>
+    </div>
   );
 }

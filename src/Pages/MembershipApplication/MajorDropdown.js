@@ -5,7 +5,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  Input
+  Input,
 } from 'reactstrap';
 
 export default function MajorDropdown(props) {
@@ -22,14 +22,14 @@ export default function MajorDropdown(props) {
   const options = ['Computer Engineering', 'Software Engineering', 'Other'];
 
   return (
-    <>
-      <h6>Major*</h6>
+    <div id='application-dropdown'>
+      <span style={{paddingRight:'10px'}}>Major*</span>
       <ButtonDropdown
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
         <DropdownToggle caret id='change-and-select-btns 2'>
-          {!inputEnable ? major || 'Select major' : 'Other'}
+          {!inputEnable ? major || 'Select Major' : 'Other'}
         </DropdownToggle>
         <DropdownMenu id='change-and-select-btns'>
           {options.map((option, index) => {
@@ -48,9 +48,9 @@ export default function MajorDropdown(props) {
       {inputEnable ? (
         <Input
           placeholder='Enter major here...'
-          onChange={e => props.setMajor(e.target.value)}
+          onChange={(e) => props.setMajor(e.target.value)}
         />
       ) : null}
-    </>
+    </div>
   );
 }

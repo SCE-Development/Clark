@@ -49,17 +49,22 @@ export default function MembershipForm(props) {
   const invalidEmailAlert = () => {
     if (clickSubmitted) {
       if (!email) {
-        return <p className="unavailable">Email cannot be left empty</p>;
+        return <p
+          className='unavailable application-text'
+        >Email cannot be left empty</p>;
       }
       if (!checkValidEmail()) {
-        return <p className="unavailable">Your input email is invalid</p>;
+        return <p
+          className='unavailable application-text'
+        >Your input email is invalid</p>;
       }
       if (!usernameAvailable) {
         return (
-          <p className="unavailable">
+          <p className='unavailable application-text'>
             An account with this email already exists. Contact{' '}
-            <a href="mailto:asksce@gmail.com">asksce@gmail.com</a> if you forgot
-            your password.
+            <a href='mailto:asksce@gmail.com'>
+              asksce@gmail.com</a>
+              if you forgot your password.
           </p>
         );
       }
@@ -70,7 +75,9 @@ export default function MembershipForm(props) {
     if (!password) {
       return (
         clickSubmitted && (
-          <p className="unavailable">Password cannot be left empty</p>
+          <p
+            className='unavailable application-text'
+          >Password cannot be left empty</p>
         )
       );
     }
@@ -87,16 +94,16 @@ export default function MembershipForm(props) {
     return (
       !checkValidPassword() && (
         <ul>
-          <li id="passwordLengthRequirement" className={lengthClass}>
+          <li id='passwordLengthRequirement' className={lengthClass}>
             8 or more characters
           </li>
-          <li id="passwordLowercaseRequirement" className={lowercaseClass}>
+          <li id='passwordLowercaseRequirement' className={lowercaseClass}>
             a lowercase letter
           </li>
-          <li id="passwordUppercaseRequirement" className={uppercaseClass}>
+          <li id='passwordUppercaseRequirement' className={uppercaseClass}>
             an uppercase letter
           </li>
-          <li id="passwordNumberRequirement" className={numberClass}>
+          <li id='passwordNumberRequirement' className={numberClass}>
             a number 0-9
           </li>
         </ul>
@@ -109,12 +116,16 @@ export default function MembershipForm(props) {
       if (!confirmPassword) {
         return (
           clickSubmitted && (
-            <p className="unavailable">Please confirm your password</p>
+            <p
+              className='unavailable application-text'
+            >Please confirm your password</p>
           )
         );
       }
       if (password !== confirmPassword) {
-        return <p className="unavailable">Passwords do not match</p>;
+        return <p
+          className='unavailable application-text'
+        >Passwords do not match</p>;
       }
     }
   };
@@ -138,7 +149,9 @@ export default function MembershipForm(props) {
       type: 'text',
       handleChange: (e) => setFirstName(e.target.value),
       ifRequirementsNotMet: clickSubmitted && !firstName && (
-        <p className="unavailable">First name cannot be left empty</p>
+        <p
+          className='unavailable application-text'
+        >First name cannot be left empty</p>
       ),
     },
     {
@@ -146,7 +159,9 @@ export default function MembershipForm(props) {
       id: 'last-name-field',
       type: 'text',
       ifRequirementsNotMet: clickSubmitted && !lastName && (
-        <p className="unavailable">Last name cannot be left empty</p>
+        <p
+          className='unavailable application-text'
+        >Last name cannot be left empty</p>
       ),
       handleChange: (e) => setLastName(e.target.value),
     },
@@ -220,42 +235,42 @@ export default function MembershipForm(props) {
   };
 
   return (
-    <div className="planBody">
-      <Container className = "planContainer">
-        <div className="form-card">
-          <div className = "planHeaders">
+    <div className='planBody'>
+      <Container className = 'planContainer'>
+        <div className='form-card'>
+          <div className = 'planHeaders'>
             Semester Plan
           </div>
-          <div className = "circle">
-            <div className="circle-text">$20</div>
+          <div className = 'circle'>
+            <div className='circle-text'>$20</div>
           </div>
-          <div className = "planFooters">
+          <div className = 'planFooters'>
             Expires: May 20, {new Date().getFullYear()}
           </div>
-          <div className = "planHeaders">
+          <div className = 'planHeaders'>
             Annual Plan
           </div>
-          <div className = "circle">
-            <div className="circle-text">$30</div>
+          <div className = 'circle'>
+            <div className='circle-text'>$30</div>
           </div>
-          <div className = "planFooters">
+          <div className = 'planFooters'>
             Expires: December 20, {new Date().getFullYear()}
           </div>
         </div>
-        <div className="form-card2">
-          <h1>Membership Application</h1>
-          <h2>
+        <div className='form-card2'>
+          <h1 id='application-header'>Membership Application</h1>
+          <h2 id='application-h2'>
             Year: {new Date().getFullYear()}
           </h2>
-          <h6>
+          <h6 className='white-text'>
             * = Required field
           </h6>
           <Form onSubmit={submitApplication}>
-            <Row id="name-field-row">
+            <Row id='name-field-row'>
               {nameFields.map((input, index) => (
                 <FormGroup key={`name-field-input-${index}`}>
                   <Input
-                    className="name-input membership-input"
+                    className='name-input membership-input'
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
@@ -265,11 +280,11 @@ export default function MembershipForm(props) {
                 </FormGroup>
               ))}
             </Row>
-            <div id="email-input-container">
+            <div id='email-input-container'>
               {accountFields.map((input, index) => (
                 <FormGroup key={`account-field-${index}`}>
                   <Input
-                    className="membership-input email-input"
+                    className='membership-input email-input'
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
@@ -281,12 +296,12 @@ export default function MembershipForm(props) {
             </div>
             <MajorDropdown setMajor={setMajor} />
             <PlanDropdown setPlan={setPlan} />
-            <div id="recaptcha">
+            <div id='recaptcha'>
               {maybeShowCaptcha()}
             </div>
-            <div className="transition-button-wrapper">
-              <div className="center">
-                <Button className = "submit-btn" type="submit">
+            <div className='transition-button-wrapper'>
+              <div className='center'>
+                <Button className = 'submit-btn' type='submit'>
                   Submit Application
                 </Button>
               </div>
