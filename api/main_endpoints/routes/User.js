@@ -6,7 +6,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { registerUser } = require('../util/registerUser');
+const { getMemberExpirationDate } = require('../util/registerUser');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -27,8 +27,8 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const addErrorLog = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
-const discordRedirectUri = process.env.NODE_ENV === 'production' ?
-  discordApiKeys.REDIRECT_URI_PROD : discordApiKeys.REDIRECT_URI_DEV;
+const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
+  'http://localhost:8080/api/user/callback';
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
@@ -174,15 +174,13 @@ router.post('/edit', (req, res) => {
   }
 
   const query = { email: req.body.email };
-  const user =
-    typeof req.body.numberOfSemestersToSignUpFor === 'undefined'
-      ? { ...req.body }
-      : {
-        ...req.body,
-        membershipValidUntil: getMemberValidationDate(
-          parseInt(req.body.numberOfSemestersToSignUpFor)
-        )
-      };
+  let user = req.body;
+
+  if (typeof req.body.numberOfSemestersToSignUpFor !== 'undefined') {
+    user.membershipValidUntil = getMemberExpirationDate(
+      parseInt(req.body.numberOfSemestersToSignUpFor)
+    );
+  }
 
   delete user.numberOfSemestersToSignUpFor;
 
@@ -273,23 +271,5 @@ router.post('/connectToDiscord', function(req, res) {
       `&state=${email}&response_type=code&scope=identify`
     );
 });
-
-function checkIfPageCountResets(lastLogin) {
-  if (!lastLogin) return false;
-
-  const newDate = new Date();
-  // + 1 to account for daylight savings time
-  newDate.setDate(newDate.getDate() + 1);
-  const amountOfDaysToLastSunday = newDate.getDate() - newDate.getDay();
-  const lastSundayDate = new Date();
-  lastSundayDate.setDate(amountOfDaysToLastSunday); // last sunday
-  lastSundayDate.setHours(23, 59, 59); // 11:59:59 PM
-
-  // If the last login is before last Sunday
-  // at 1 second before midnight, return true
-  if (lastLogin < lastSundayDate) return true;
-
-  return false;
-}
 
 module.exports = router;

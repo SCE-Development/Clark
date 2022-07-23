@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let config = require('../config/config.json');
-let MAILER_API_URL = process.env.NODE_ENV === 'production' ?
-  config.MAILER_API_URL_PROD : config.MAILER_API_URL;
+let MAILER_API_URL = process.env.REACT_APP_MAILER_API_URL
+  || 'http://localhost:8082/cloudapi';
 
 /**
  * Return a url of the uploaded file from AWS

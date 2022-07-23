@@ -1,59 +1,68 @@
 version: '3.8'
 services:
-  db:
+  mongodb:
+    container_name: sce-mongodb
     restart: always
     image: 'mongo'
     volumes:
       - '/data/db:/data/db' 
-      # - '~/data/db:/data/db'  # use this command instead for mac users
     command: 'mongod'
   sce-peripheral-api:
     container_name: sce-peripheral-api
     build:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile
+    environment:
+      - DATABASE_HOST=sce-mongodb
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
   sce-cloud-api:
     container_name: sce-cloud-api
-    image: cloudapi:latest
     build:
       context: ./api
       dockerfile: ./cloud_api/Dockerfile
+    environment:
+      - GENERAL_API_URL=http://sce-main-endpoints:8080/api
+      - VERIFICATION_BASE_URL=https://sce.engr.sjsu.edu
+      - DATABASE_HOST=sce-mongodb
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
 
-  mainendpoints:
-    container_name: mainendpoints
-    image: mainendpoints:latest
+  main-endpoints:
+    container_name: sce-main-endpoints
     build:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile
+    environment:
+      - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
+      - DISCORD_REDIRECT_URI=https://sce.engr.sjsu.edu/api/user/callback
+      - DATABASE_HOST=sce-mongodb
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
   
   frontend:
+    container_name: sce-frontend
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-frontend
+      dockerfile: ./docker/Dockerfile
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
 
   web:
     image: 'nginx'

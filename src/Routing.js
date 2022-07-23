@@ -24,10 +24,10 @@ import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
 import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
-import UploadPic from './Pages/UploadPic/UploadPic.js';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
-import InventoryPage from './Pages/Inventory/InventoryPage.js';
+
+import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -42,12 +42,21 @@ export default function Routing({ appProps }) {
   const signedInRoutes = [
 
     {
-      Component: Overview,
+      Component: AdminDashboard,
       path: '/dashboard',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
     },
+    // new for Overview
+    {
+      Component: Overview,
+      path: '/user-manager',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    },
+    //
     {
       Component: EmailPage,
       path: '/email-list',
@@ -112,26 +121,15 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
-    },
-    { Component: UploadPic,
-      path: '/uploadPic',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/login',
-      inAdminNavbar: true
-    },
-    { Component: InventoryPage,
-      path: '/inventory',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/login',
-      inAdminNavbar: true}
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
     { Component: EventList, path: '/events' },
     { Component: OfficerDB, path: '/officerDB' },
     { Component: VerifyEmailPage, path: '/verify' },
-    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id'},
-    { Component: DiscordSJSU, path: '/discordSJSU'}
+    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
+    { Component: DiscordSJSU, path: '/discordSJSU' }
   ];
   return (
     <Router>

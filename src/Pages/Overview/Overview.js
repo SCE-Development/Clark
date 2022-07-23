@@ -23,7 +23,7 @@ export default class OverviewBoard extends Component {
       queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni']
     };
     this.headerProps = {
-      title: 'Users Dashboard'
+      title: 'User Manager'
     };
   }
 
@@ -134,8 +134,11 @@ export default class OverviewBoard extends Component {
 
   render() {
     return (
-      <div>
-        <Header {...this.headerProps} />
+      <div className='flexbox-container'>
+        <br>
+        </br>
+        <br>
+        </br>
         <div className='layout'>
           <h6 id='search-tag'>Search </h6>
           <ButtonDropdown

@@ -1,0 +1,22 @@
+FROM node:14.10.0-alpine 
+
+WORKDIR /app
+
+COPY package.json ./
+
+RUN npm install --production
+RUN npm install -g nodemon
+
+COPY ./main_endpoints /app/main_endpoints
+
+COPY ./util /app/util
+
+COPY ./config/config.json /app/config/config.json
+
+EXPOSE 8080
+
+ARG PERIPHERAL_API_URL
+ARG DISCORD_REDIRECT_URI
+ARG DATABASE_HOST
+
+CMD [ "npm", "run", "main_endpoints"]

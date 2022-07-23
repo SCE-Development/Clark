@@ -5,6 +5,8 @@ import DiscordIcon from './Icons/DiscordIcon';
 import LinkedinIcon from './Icons/LinkedinIcon';
 import FacebookIcon from './Icons/FacebookIcon';
 import InstagramIcon from './Icons/InstagramIcon';
+import GitHubIcon from './Icons/GitHubIcon';
+import YouTubeIcon from './Icons/YouTubeIcon';
 
 export default () => {
   return (
@@ -48,6 +50,8 @@ export default () => {
           <FacebookIcon/>
           <InstagramIcon/>
           <DiscordIcon/>
+          <GitHubIcon/>
+          <YouTubeIcon/>
           <p>Brought to you by SCE Dev-Team</p>
         </Col>
       </Row>

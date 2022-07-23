@@ -4,6 +4,13 @@
   padding: 32px;
 }
 
+.turn-off-sign-wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 130px;
+  justify-content: space-between;
+}
+
 .sign-status {
   width: 100%;
 }

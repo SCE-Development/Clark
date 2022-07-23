@@ -1,78 +1,119 @@
-version: '3.8'
+version: '3'
 services:
-  db:
+  mongodb:
+    container_name: sce-mongodb-dev
     restart: always
     image: 'mongo'
     ports:
       - '27017:27017'
     volumes:
-      - '/data/db:/data/db' 
-      # - '~/data/db:/data/db'  # use this command instead for mac users
+      - sce_mongodb_data_dev:/data/db
     command: 'mongod'
   sce-peripheral-api:
-    container_name: sce-peripheral-api
+    container_name: sce-peripheral-api-dev
     build:
       context: ./api
-      dockerfile: ./peripheral_api/Dockerfile
+      dockerfile: ./peripheral_api/Dockerfile.dev
+    environment:
+      - DATABASE_HOST=sce-mongodb-dev
     ports:
       - '8081:8081'
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
+      - mongodb
+    volumes:
+      - ./api/config:/app/config
+      - ./api/package.json:/app/package.json
+      - ./api/util:/app/util/
+      - ./api/peripheral_api:/app/peripheral_api
+      - ./api/node_modules:/app/node_modules
   sce-cloud-api:
-    container_name: sce-cloud-api
+    container_name: sce-cloud-api-dev
     image: cloudapi:latest
     build:
       context: ./api
-      dockerfile: ./cloud_api/Dockerfile
+      dockerfile: ./cloud_api/Dockerfile.dev
+    environment:
+      - GENERAL_API_URL=http://sce-main-endpoints-dev:8080/api
+      - VERIFICATION_BASE_URL=http://localhost
+      - DATABASE_HOST=sce-mongodb-dev
     ports:
         - '8082:8082'
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
-
-  mainendpoints:
-    container_name: mainendpoints
-    image: mainendpoints:latest
+      - mongodb
+    volumes:
+      - ./api/config:/app/config
+      - ./api/package.json:/app/package.json
+      - ./api/util:/app/util/
+      - ./api/cloud_api:/app/cloud_api
+      - ./api/node_modules:/app/node_modules
+  main-endpoints:
+    container_name: sce-main-endpoints-dev
     build:
       context: ./api
-      dockerfile: ./main_endpoints/Dockerfile
+      dockerfile: ./main_endpoints/Dockerfile.dev
+    environment:
+      - PERIPHERAL_API_URL=http://sce-peripheral-api-dev:8081/peripheralapi
+      - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
+      - DATABASE_HOST=sce-mongodb-dev
     ports:
       - '8080:8080'
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
-  
+      - mongodb
+    volumes:
+      - ./api/config:/app/config
+      - ./api/package.json:/app/package.json
+      - ./api/util:/app/util/
+      - ./api/main_endpoints:/app/main_endpoints
+      - ./api/node_modules:/app/node_modules
+
   frontend:
+    container_name: sce-frontend-dev
     build:
       context: .
-      dockerfile: ./docker/Dockerfile-frontend
+      dockerfile: ./docker/Dockerfile.dev
+    environment:
+      - NODE_ENV=dev
+      - REACT_APP_GENERAL_API_URL=http://localhost/api
+      - REACT_APP_PERIPHERAL_API_URL=http://localhost/peripheralapi
+      - REACT_APP_MAILER_API_URL=http://localhost/cloudapi
+
     ports:
       - '3000:3000'
     restart: 'on-failure'
     stdin_open: true
     links:
-      - db
+      - mongodb
     depends_on:
-      - db
-
-  web:
+      - mongodb
+    volumes:
+      - ./package.json:/frontend/package.json
+      - ./src:/frontend/src/
+      - ./util:/frontend/util/
+      - ./public:/frontend/public/
+  
+  nginx:
+    container_name: sce-nginx-dev
     image: 'nginx'
     volumes:
       - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
-      - '443:443'
     restart: 'on-failure'
     depends_on:
       - frontend
+
+volumes:
+  sce_mongodb_data_dev:

@@ -1,0 +1,82 @@
+.admin-dashboard-bg {
+    background-color: black;
+    max-width: 100%;
+    min-height: 100vh;
+}
+
+#admin-box>div {
+    background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
+    border-radius: 0.8rem;
+    background-attachment: fixed;
+    word-wrap: break-word;
+    cursor: pointer;
+    min-height: 300px;
+    max-width: 100%;
+    text-align: center;
+    padding: 0;
+    color: #333333;
+    transition: all .3s ease-in;
+    min-height: 50px !important;
+    height: 20vh;
+    width: 20%;
+    align-items: center;
+    justify-content: center;
+    display: inline-flex;
+    margin: 2.5%;
+    border-color: black;
+    border-style: double;
+    flex-direction: row;
+}
+
+.block{
+    margin: 10%;
+}
+
+.flexbox-container{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-flow: wrap;
+}
+@media screen and (min-width: 0px) and (max-width: 300px) {
+    .admin-dashboard-bg {
+        min-height: 110vh;
+    }
+    #admin-box>div{
+        width: 35%;
+        margin: 6.5%;
+    }
+    #inner-text-top {
+        font-size: 1.45rem;
+      }
+}
+
+@media screen and (min-width: 300px) and (max-width: 375px) {
+    #admin-box>div{
+        width: 39.5%;
+        margin: 4.5%;
+    }
+    #inner-text-top {
+        font-size: 1.65rem;
+      }
+}
+
+@media screen and (min-width: 377px) and (max-width: 487px) {
+    #admin-box>div{
+        width: 35%;
+        margin: 7.5%;
+    }
+    #inner-text-top {
+        font-size: 1.5rem;
+      }
+}
+
+
+@media screen and (min-width: 487px) and (max-width: 1200px) {
+    #admin-box>div{
+        width: 39.5%;
+        margin: 4.5%;
+    }
+
+}
