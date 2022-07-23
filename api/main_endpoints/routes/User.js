@@ -272,7 +272,7 @@ router.post('/updatePagesPrintedFromDiscord', (req, res) => {
   if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.updateOne( { discordID }, {pagesPrinted: pagesPrinted},
+  User.updateOne( { discordID }, {pagesPrinted},
     (error, result) => {
       let status = OK;
       if(error){
