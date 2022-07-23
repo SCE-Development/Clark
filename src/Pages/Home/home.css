@@ -4,9 +4,9 @@
 }
 
 .text-header {
-    font-family: 'Montserrat', sans-serif;
-    line-height: 25px;
-    padding: 130px 0 20px 0; 
+  font-family: 'Montserrat', sans-serif;
+  line-height: 25px;
+  padding: 130px 0 20px 0; 
 	text-align:center;
 }
 .text-header>h1{
@@ -14,12 +14,12 @@
 }
 
 .text-content {
-    font-family: 'Mina', sans-serif;
-    font-style: normal;
-    font-weight:lighter;
-    font-size: 20px;
-    line-height: 20px;
-    padding: 20px 0 0 0;
+  font-family: 'Mina', sans-serif;
+  font-style: normal;
+  font-weight:lighter;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 20px 0 0 0;
 	text-align:center;
 }
 
@@ -34,13 +34,10 @@
 	height: 60px
 }
 
-/* issue is here */
 .home-hero-frame {
   padding-top: 30px;
   position: relative;
-  left:20%;
 }
-
 
 .outer-div
 {
