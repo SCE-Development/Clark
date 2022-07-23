@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap");
 
 .what-we-do {
-    padding-top: 50px;
+    margin-top: 150px;
   }
 
 .container-what-we-do {
@@ -10,18 +10,6 @@
   }
 
 .what-we-do-header{
-    /* width: 289px;
-    height: 55px;
-    
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 35px;
-    line-height: 42px;
-    
-    text-align: center;
-    
-    color: #FFFFFF; */
     padding-left: 40px;
     padding-bottom: 10px;
     font-family: "Montserrat";
@@ -35,16 +23,6 @@
 
 
 .what-we-do-p {
-    /* width: 816px;
-    height: 330px;
-    
-    font-family: 'Montserrat';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 24px;
-    line-height: 25px; */
-    
-    
     color: #FFFFFF;
     text-align: center;
     font-family: "Mina", sans-serif;
@@ -53,16 +31,19 @@
 }
 
 .what-we-do-img {
-    padding-left: 80px !important;
+    margin-left: 50px !important;
+    
   }
 
 .what-we-do-img img {
     width: 600px;
     height: auto;
+    margin-right: 40px;
+    border-radius: 23px;
   }
 
 .learn-more-button {
-    margin-left: 35%;
+    margin-left: 40%;
     width: 113px;
     height: 34px;
     
