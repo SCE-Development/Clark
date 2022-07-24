@@ -294,8 +294,7 @@ router.post('/connectToDiscord', function(req, res) {
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
   }
-  if (discordApiKeys.CLIENT_ID === 'NOT_SET'
-    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
+  if (!discordApiKeys.ENABLED) {
     return res.sendStatus(OK);
   }
   return res.status(OK)

@@ -1,4 +1,4 @@
-const queueKeys = require('../../config/config.json').Queue;
+const AWS_KEYS = require('../../config/config.json').AWS;
 const AWS = require('aws-sdk');
 
 /**
@@ -9,8 +9,8 @@ const AWS = require('aws-sdk');
  */
 class SceSqsApiHandler {
   constructor(queueName) {
-    const creds = new AWS.Credentials(queueKeys.CLIENT_ID,
-      queueKeys.CLIENT_SECRET);
+    const creds = new AWS.Credentials(AWS_KEYS.ACCESS_KEY_ID,
+      AWS_KEYS.SECRET_ACCESS_KEY);
     AWS.config.update({
       region: 'us-west-2',
       credentials: creds
@@ -21,7 +21,7 @@ class SceSqsApiHandler {
     this.queueName = queueName;
     this.queueUrl =
       'https://sqs.us-west-2.amazonaws.com/'
-      + queueKeys.ACCOUNT_ID + '/' + this.queueName;
+      + AWS_KEYS.ACCOUNT_ID + '/' + this.queueName;
   }
   /**
    * Push a message to the queue with the body being the
@@ -31,8 +31,8 @@ class SceSqsApiHandler {
    */
   pushMessageToQueue(data) {
     return new Promise((resolve, reject) => {
-      if (queueKeys.ACCOUNT_ID === 'NOT_SET'
-        || this.queueName === 'NOT_SET') {
+      console.log("pushMessageToQueue called bro", AWS_KEYS)
+      if (!AWS_KEYS.ENABLED) {
         return resolve(true);
       }
       const sqsParams = {

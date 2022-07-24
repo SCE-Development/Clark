@@ -13,19 +13,14 @@ const {
   UNAUTHORIZED,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const { s3BucketKeys, printingS3Bucket }
-  = require('../../config/config.json');
-const {
-  CLIENT_ID,
-  CLIENT_SECRET,
-  ACCOUNT_ID,
-  PAPER_PRINTING_QUEUE_NAME,
-} = require('../../config/config.json').Queue;
+
+const AWS_KEYS = require('../../config/config.json').AWS;
+const {Queue, S3Bucket} = AWS_KEYS;
 
 const router = express.Router();
 
 let creds = new
-AWS.Credentials(CLIENT_ID, CLIENT_SECRET);
+AWS.Credentials(AWS_KEYS.ACCESS_KEY_ID, AWS_KEYS.SECRET_ACCESS_KEY);
 AWS.config.update({
   region: 'us-west-2',
   endpoint: 'https://s3.amazonaws.com',
@@ -52,15 +47,14 @@ router.get('/healthCheck', async (req, res) => {
 
 const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
-  const sqsHandler = new SceSqsApiHandler(PAPER_PRINTING_QUEUE_NAME);
+  const sqsHandler = new SceSqsApiHandler(Queue.PAPER_PRINTING_QUEUE_NAME);
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (s3BucketKeys.AWSACCESSKEYID === 'NOT_SET'
-    && s3BucketKeys.AWSSECRETKEY === 'NOT_SET') {
+  if (!AWS_KEYS.ENABLED) {
     return res.sendStatus(OK);
   }
   const { raw, copies, pageRanges } = req.body;
@@ -95,7 +89,7 @@ router.post('/sendPrintRequest', async (req, res) => {
 });
 
 router.post('/pushDiscordPDFToSqs', async (req, res) => {
-  const sqsHandler = new SceSqsApiHandler(PAPER_PRINTING_QUEUE_NAME);
+  const sqsHandler = new SceSqsApiHandler(Queue.PAPER_PRINTING_QUEUE_NAME);
   const { apiKey, fileURL } = req.body;
   if (!checkDiscordKey(apiKey)) {
     return res.sendStatus(UNAUTHORIZED);
