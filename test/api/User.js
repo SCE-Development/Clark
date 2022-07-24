@@ -362,6 +362,11 @@ describe('User', () => {
       };
       const result = await test.sendPostRequest(
         '/api/user/getUserFromDiscordId', body);
+      result.body.should.have.property('discordUsername');
+      result.body.should.have.property('discordDiscrim');
+      result.body.should.have.property('discordID');
+      result.body.should.have.property('accessLevel');
+      result.body.should.have.property('pagesPrinted');
       expect(result).to.have.status(OK);
     });
   });
