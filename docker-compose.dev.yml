@@ -16,6 +16,7 @@ services:
       dockerfile: ./peripheral_api/Dockerfile.dev
     environment:
       - DATABASE_HOST=sce-mongodb-dev
+      - NODE_ENV=development
     ports:
       - '8081:8081'
     restart: 'on-failure'
@@ -40,6 +41,7 @@ services:
       - GENERAL_API_URL=http://sce-main-endpoints-dev:8080/api
       - VERIFICATION_BASE_URL=http://localhost
       - DATABASE_HOST=sce-mongodb-dev
+      - NODE_ENV=development
     ports:
         - '8082:8082'
     restart: 'on-failure'
@@ -63,6 +65,7 @@ services:
       - PERIPHERAL_API_URL=http://sce-peripheral-api-dev:8081/peripheralapi
       - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
       - DATABASE_HOST=sce-mongodb-dev
+      - NODE_ENV=development
     ports:
       - '8080:8080'
     restart: 'on-failure'
@@ -88,6 +91,7 @@ services:
       - REACT_APP_GENERAL_API_URL=http://localhost/api
       - REACT_APP_PERIPHERAL_API_URL=http://localhost/peripheralapi
       - REACT_APP_MAILER_API_URL=http://localhost/cloudapi
+      - NODE_ENV=development
 
     ports:
       - '3000:3000'

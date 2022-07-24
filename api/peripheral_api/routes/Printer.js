@@ -33,16 +33,15 @@ AWS.config.update({
 });
 
 router.get('/healthCheck', async (req, res) => {
-
-  /*
-   * How these work with Quasar:
-   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
-   */
+/*
+ * How these work with Quasar:
+ * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+ */
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
   await axios
-    .get('http://localhost:14000/healthcheck/printer')
+    .get('http://host.docker.internal:14000/healthcheck/printer')
     .then(() => {
       return res.sendStatus(OK);
     })
