@@ -21,4 +21,6 @@ EXPOSE 8081
 
 ARG DATABASE_HOST
 
+ARG NODE_ENV
+
 CMD [ "node", "./peripheral_api/server.js" ]
