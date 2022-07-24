@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { secretKey } = require('../../config/config.json');
+const { secretKey, DISCORD_PRINTING_KEY } = require('../../config/config.json');
 const passport = require('passport');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 

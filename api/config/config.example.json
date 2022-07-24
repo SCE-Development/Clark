@@ -39,5 +39,6 @@
   },
   "AWS_IOT_ENDPOINT" : "NOT_SET",
   "PrintingS3Bucket": "NOT_SET",
-  "secretKey": "super duper secret key"
+  "secretKey": "super duper secret key",
+  "DISCORD_COREV4_KEY":"xxxxxxxxxxxxxxxx"
 }

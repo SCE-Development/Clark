@@ -6,11 +6,12 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { getMemberExpirationDate } = require('../util/registerUser');
+const { getMemberExpirationDate} = require('../util/registerUser');
+const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
 } = require('../util/token-functions');
 const {
   OK,
@@ -247,6 +248,39 @@ router.get('/callback', async function(req, res) {
     })
     .catch(_ => {
       return res.status(NOT_FOUND).send('Authorization unsuccessful!');
+    });
+});
+
+router.post('/getUserFromDiscordId', (req, res) => {
+  const { discordID, apiKey } = req.body;
+  if(!checkDiscordKey(apiKey)){
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.findOne({ discordID }, (error, result) => {
+    let status = OK;
+    if (error) {
+      status = BAD_REQUEST;
+    } else if (!result) {
+      status = NOT_FOUND;
+    }
+    return res.status(status).send(result);
+  });
+});
+
+router.post('/updatePagesPrintedFromDiscord', (req, res) => {
+  const { discordID, apiKey, pagesPrinted } = req.body;
+  if(!checkDiscordKey(apiKey)){
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.updateOne( { discordID }, {pagesPrinted},
+    (error, result) => {
+      let status = OK;
+      if(error){
+        status = BAD_REQUEST;
+      } else if (result.n === 0){
+        status = NOT_FOUND;
+      }
+      return res.sendStatus(status);
     });
 });
 
