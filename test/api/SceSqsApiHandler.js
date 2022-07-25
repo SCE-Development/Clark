@@ -45,29 +45,6 @@ function getSqsApiHandler(awsStub, awsEnabled, queueName) {
   return new SceSqsApiHandler(queueName);
 }
 
-// Import the class again, but this time mocking out the
-// config.json it imports. We are doing this because
-// we have logic in the pushMessageToQueue where if
-// the account id or queue name has a value of NOT_SET
-// we resolve true and don't bother writing to the queue.
-// NOT_SET is the default value of a lot of our keys in
-// config.json. We resolve true because in case someone
-// is running the backend and doesn't care for SQS logic,
-// we avoid uncecesarry errors.
-// let ENABLED = true
-// let {
-//   SceSqsApiHandler: SceSqsApiHandlerWithNoKeys
-// } = proxyquire(
-//   '../../api/peripheral_api/util/SceSqsApiHandler.js', {
-//     'aws-sdk': awsStub,
-//     '../../../api/config/config.json': {
-//       AWS: {
-//         ENABLED
-//       }
-//     }
-//   }
-// );
-
 describe('SceSqsApiHandler', () => {
   describe('pushMessageToQueue', () => {
     it('Should return data from SQS if successful', async () => {
