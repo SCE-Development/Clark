@@ -24,11 +24,11 @@ router.post("/getDoorCodeByDiscordID", (req, res) => {
         if (User.doorCode == null) {
           res.send("user does not have a door code.");
         } else {
-          res.status(OK).send(User.doorCode);
+          res.status(OK).send({ message: User.doorCode });
         }
       })
       .catch((error) => {
-        res.status(NOT_FOUND).send({ error, message: "door code not found" });
+        res.status(NOT_FOUND).send();
       });
   }
 });
