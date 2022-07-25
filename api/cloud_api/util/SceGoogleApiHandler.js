@@ -49,7 +49,7 @@ class SceGoogleApiHandler {
       });
     }
 
-    if(this.CLIENT_ID != 'NOT_SET' && this.CLIENT_SECRET != 'NOT_SET') {
+    if(apiConfigs.googleApiKeys.Enabled) {
       this.hasValidAPIKeys = true;
     }
   }
