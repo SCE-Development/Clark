@@ -72,7 +72,7 @@ describe('SceSqsApiHandler', () => {
   describe('pushMessageToQueue', () => {
     it('Should return data from SQS if successful', async () => {
       sqsStub.sendMessage.yields(false, 'hello from sqs');
-      sqsHandler = getSqsApiHandler(awsStub, true, "");
+      sqsHandler = getSqsApiHandler(awsStub, true, '');
       let result = await sqsHandler.pushMessageToQueue({
         name: 'mr krabs'
       });
@@ -80,13 +80,13 @@ describe('SceSqsApiHandler', () => {
     });
     it('Should return error if unsuccessful', async () => {
       sqsStub.sendMessage.yields(true, 'rip');
-      sqsHandler = getSqsApiHandler(awsStub, true, "");
+      sqsHandler = getSqsApiHandler(awsStub, true, '');
       let result = await sqsHandler.pushMessageToQueue({});
       expect(result).to.be.false;
     });
     it('Should return true even if the config disables AWS', async () => {
       sqsStub.sendMessage.yields(false, true);
-      sqsHandler = getSqsApiHandler(awsStub, false, "");
+      sqsHandler = getSqsApiHandler(awsStub, false, '');
       let result = await sqsHandler.pushMessageToQueue({});
       expect(result).to.be.true;
     });

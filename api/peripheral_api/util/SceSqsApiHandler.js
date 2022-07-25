@@ -31,7 +31,6 @@ class SceSqsApiHandler {
    */
   pushMessageToQueue(data) {
     return new Promise((resolve, reject) => {
-      console.log("pushMessageToQueue called bro", AWS_KEYS)
       if (!AWS_KEYS.ENABLED) {
         return resolve(true);
       }
