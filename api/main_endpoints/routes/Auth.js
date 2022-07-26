@@ -21,7 +21,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const addErrorLog = require('../util/logging-helpers');
+const { addErrorLog }  = require('../util/logging-helpers');
 
 /**
  * Check if a Sunday has passed in between the user's last login date and
