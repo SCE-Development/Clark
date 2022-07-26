@@ -29,42 +29,27 @@ let awsStub = {
 // so we can replace the aws-sdk import with our mock
 // stuff above. By doing so we can explicitly define the
 // behavior of aws-sdk, specifically SQS for testing.
-let {
-  SceSqsApiHandler
-} = proxyquire(
-  '../../api/peripheral_api/util/SceSqsApiHandler.js', {
-    'aws-sdk': awsStub
-  }
-);
-
-// Import the class again, but this time mocking out the
-// config.json it imports. We are doing this because
-// we have logic in the pushMessageToQueue where if
-// the account id or queue name has a value of NOT_SET
-// we resolve true and don't bother writing to the queue.
-// NOT_SET is the default value of a lot of our keys in
-// config.json. We resolve true because in case someone
-// is running the backend and doesn't care for SQS logic,
-// we avoid uncecesarry errors.
-
-let {
-  SceSqsApiHandler: SceSqsApiHandlerWithNoKeys
-} = proxyquire(
-  '../../api/peripheral_api/util/SceSqsApiHandler.js', {
-    'aws-sdk': awsStub,
-    '../../../api/config/config.json': {
-      Queue: {
-        ACCOUNT_ID: 'NOT_SET'
+function getSqsApiHandler(awsStub, awsEnabled, queueName) {
+  let {
+    SceSqsApiHandler
+  } = proxyquire(
+    '../../api/peripheral_api/util/SceSqsApiHandler.js', {
+      'aws-sdk': awsStub,
+      '../../../api/config/config.json': {
+        AWS: {
+          ENABLED: awsEnabled
+        }
       }
     }
-  }
-);
+  );
+  return new SceSqsApiHandler(queueName);
+}
 
 describe('SceSqsApiHandler', () => {
   describe('pushMessageToQueue', () => {
     it('Should return data from SQS if successful', async () => {
       sqsStub.sendMessage.yields(false, 'hello from sqs');
-      sqsHandler = new SceSqsApiHandler();
+      sqsHandler = getSqsApiHandler(awsStub, true, '');
       let result = await sqsHandler.pushMessageToQueue({
         name: 'mr krabs'
       });
@@ -72,26 +57,14 @@ describe('SceSqsApiHandler', () => {
     });
     it('Should return error if unsuccessful', async () => {
       sqsStub.sendMessage.yields(true, 'rip');
-      sqsHandler = new SceSqsApiHandler();
+      sqsHandler = getSqsApiHandler(awsStub, true, '');
       let result = await sqsHandler.pushMessageToQueue({});
       expect(result).to.be.false;
     });
-    it('Should return true even if queue url is NOT_SET', async () => {
-      sqsStub.sendMessage.yields(false, 'rip');
-      sqsHandler = new SceSqsApiHandler('NOT_SET');
+    it('Should return true even if the config disables AWS', async () => {
+      sqsStub.sendMessage.yields(false, true);
+      sqsHandler = getSqsApiHandler(awsStub, false, '');
       let result = await sqsHandler.pushMessageToQueue({});
-      expect(result).to.be.true;
-      sqsStub.sendMessage.yields(true, 'rip');
-      result = await sqsHandler.pushMessageToQueue({});
-      expect(result).to.be.true;
-    });
-    it('Should return true even if account ID is NOT_SET', async () => {
-      sqsStub.sendMessage.yields(false, 'rip');
-      sqsHandler = new SceSqsApiHandlerWithNoKeys();
-      let result = await sqsHandler.pushMessageToQueue({});
-      expect(result).to.be.true;
-      sqsStub.sendMessage.yields(true, 'rip');
-      result = await sqsHandler.pushMessageToQueue({});
       expect(result).to.be.true;
     });
   });

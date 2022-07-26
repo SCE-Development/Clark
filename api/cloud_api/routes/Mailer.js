@@ -8,11 +8,12 @@ const {
   BAD_REQUEST
 } = require('../../util/constants').STATUS_CODES;
 const { googleApiKeys } = require('../../config/config.json');
-const { USER } = googleApiKeys;
+const { USER, ENABLED } = googleApiKeys;
 
 // Routing post /sendVerificationEmail calls the sendEmail function
 // and sends the verification email with the verification email template
 router.post('/sendVerificationEmail', async (req, res) => {
+  if(!ENABLED) return res.sendStatus(OK);
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
@@ -42,6 +43,7 @@ router.post('/sendVerificationEmail', async (req, res) => {
 // Routing post /sendBlastEmail calls the sendEmail function
 // and sends the blast email with the blast email template
 router.post('/sendBlastEmail', async (req, res) => {
+  if(!ENABLED) return res.sendStatus(OK);
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);

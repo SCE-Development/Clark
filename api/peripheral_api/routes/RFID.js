@@ -5,7 +5,7 @@ const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 const { RfidHelper } = require('../util/RFID-helpers');
 const awsIot = require('aws-iot-device-sdk');
-const { AWS_IOT_ENDPOINT } = require('../../config/config.json');
+const { AWS_IOT_ENDPOINT } = require('../../config/config.json').AWS;
 const {
   verifyToken,
   checkIfTokenSent

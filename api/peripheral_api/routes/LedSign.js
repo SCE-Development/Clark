@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Queue } = require('../../config/config.json');
+const { AWS } = require('../../config/config.json');
 const { SceSqsApiHandler } = require('../util/SceSqsApiHandler');
 const {
   OK,
@@ -13,13 +13,14 @@ const {
 } = require('../../util/token-verification');
 
 
-const SqsHandler = new SceSqsApiHandler(Queue.LED_QUEUE_NAME);
+const SqsHandler = new SceSqsApiHandler(AWS.Queue.LED_QUEUE_NAME);
 
 router.get('/healthCheck', (req, res) => {
   res.sendStatus(OK);
 });
 
 router.post('/updateSignText', async (req, res) => {
+  if (!AWS.ENABLED) return res.sendStatus(OK);
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
