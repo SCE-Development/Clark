@@ -15,6 +15,7 @@ services:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile.dev
     environment:
+      - MAIN_ENDPOINT_URL=sce-main-endpoints-dev:8080
       - DATABASE_HOST=sce-mongodb-dev
       - NODE_ENV=development
     ports:
