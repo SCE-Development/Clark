@@ -22,6 +22,8 @@ services:
       - mongodb
     depends_on:
       - mongodb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   sce-cloud-api:
     container_name: sce-cloud-api
     build:
@@ -67,6 +69,7 @@ services:
       - mongodb
     depends_on:
       - mongodb
+      
 
   web:
     image: 'nginx'
