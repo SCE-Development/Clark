@@ -45,7 +45,10 @@
   color: white; 
 }
 
-input[type="text"], input[type="email"], input[type="password"], textarea {
+.application-form-group input[type="text"],
+.application-form-group input[type="email"],
+.application-form-group input[type="password"],
+.application-form-group textarea {
   background: rgba(171, 201, 207, 0.69);
   border-radius: 10px;
   font-family: 'Mina', sans-serif;
@@ -54,11 +57,14 @@ input[type="text"], input[type="email"], input[type="password"], textarea {
   color: white;
 }
 
-label {
+.application-form-group label {
   color: white;
 }
 
-input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="password"]::placeholder, textarea::placeholder {
+.application-form-group input[type="text"]::placeholder,
+.application-form-group input[type="email"]::placeholder,
+.application-form-group input[type="password"]::placeholder,
+.application-form-group textarea::placeholder {
   color: white;
 }
 
@@ -104,7 +110,7 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
 
 .form-card {
   margin: auto;
-  min-width: 400px;
+  min-width: 350px;
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -266,7 +272,7 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
 
 .center {
   position: relative;
-  left: 35%;
+  padding-left: 90px;
 }
 
 #submit-btn:hover:enabled {

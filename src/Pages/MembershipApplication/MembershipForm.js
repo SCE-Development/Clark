@@ -303,7 +303,7 @@ export default function MembershipForm(props) {
             <div id='recaptcha'>
               {maybeShowCaptcha()}
             </div>
-            <div className='transition-button-wrapper'>
+            <div className='transition-button-wrapper container-btn'>
               <div className='center'>
                 <Button className = 'submit-btn' type='submit'>
                   Submit Application
