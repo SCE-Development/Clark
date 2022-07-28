@@ -6,11 +6,12 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { getMemberExpirationDate } = require('../util/registerUser');
+const { getMemberExpirationDate} = require('../util/registerUser');
+const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
 } = require('../util/token-functions');
 const {
   OK,
@@ -24,7 +25,7 @@ const {
   discordApiKeys
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const addErrorLog = require('../util/logging-helpers');
+const { addErrorLog }  = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
@@ -250,6 +251,39 @@ router.get('/callback', async function(req, res) {
     });
 });
 
+router.post('/getUserFromDiscordId', (req, res) => {
+  const { discordID, apiKey } = req.body;
+  if(!checkDiscordKey(apiKey)){
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.findOne({ discordID }, (error, result) => {
+    let status = OK;
+    if (error) {
+      status = BAD_REQUEST;
+    } else if (!result) {
+      status = NOT_FOUND;
+    }
+    return res.status(status).send(result);
+  });
+});
+
+router.post('/updatePagesPrintedFromDiscord', (req, res) => {
+  const { discordID, apiKey, pagesPrinted } = req.body;
+  if(!checkDiscordKey(apiKey)){
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.updateOne( { discordID }, {pagesPrinted},
+    (error, result) => {
+      let status = OK;
+      if(error){
+        status = BAD_REQUEST;
+      } else if (result.n === 0){
+        status = NOT_FOUND;
+      }
+      return res.sendStatus(status);
+    });
+});
+
 router.post('/connectToDiscord', function(req, res) {
   const email = req.body.email;
   if (!checkIfTokenSent(req)) {
@@ -260,8 +294,7 @@ router.post('/connectToDiscord', function(req, res) {
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
   }
-  if (discordApiKeys.CLIENT_ID === 'NOT_SET'
-    && discordApiKeys.CLIENT_SECRET === 'NOT_SET') {
+  if (!discordApiKeys.ENABLED) {
     return res.sendStatus(OK);
   }
   return res.status(OK)

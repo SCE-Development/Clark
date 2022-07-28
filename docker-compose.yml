@@ -13,13 +13,17 @@ services:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile
     environment:
+      - MAIN_ENDPOINT_URL=sce-main-endpoints:8080
       - DATABASE_HOST=sce-mongodb
+      - NODE_ENV=production
     restart: 'on-failure'
     stdin_open: true
     links:
       - mongodb
     depends_on:
       - mongodb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   sce-cloud-api:
     container_name: sce-cloud-api
     build:
@@ -29,6 +33,7 @@ services:
       - GENERAL_API_URL=http://sce-main-endpoints:8080/api
       - VERIFICATION_BASE_URL=https://sce.engr.sjsu.edu
       - DATABASE_HOST=sce-mongodb
+      - NODE_ENV=production
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -45,6 +50,7 @@ services:
       - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
       - DISCORD_REDIRECT_URI=https://sce.engr.sjsu.edu/api/user/callback
       - DATABASE_HOST=sce-mongodb
+      - NODE_ENV=production
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -63,6 +69,7 @@ services:
       - mongodb
     depends_on:
       - mongodb
+      
 
   web:
     image: 'nginx'

@@ -15,7 +15,11 @@ COPY ./config/config.json /app/config/config.json
 EXPOSE 8080
 
 ARG PERIPHERAL_API_URL
+
 ARG DISCORD_REDIRECT_URI
+
+ARG NODE_ENV
+
 ARG DATABASE_HOST
 
 CMD [ "node", "./main_endpoints/server.js" ]

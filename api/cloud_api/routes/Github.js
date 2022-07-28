@@ -3,15 +3,14 @@ const router = express.Router();
 const { SceGithubApiHandler } = require('../util/SceGithubApiHandler');
 const {
   CLIENT_ID,
-  CLIENT_SECRET
+  CLIENT_SECRET,
+  ENABLED
 } = require('../../config/config.json').githubApiKeys;
 const {
   OK,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const NoGithubApiKeys = !(process.env.NODE_ENV === 'test')
-&& CLIENT_ID === 'NOT_SET'
-&& CLIENT_SECRET === 'NOT_SET';
+const NoGithubApiKeys = !(process.env.NODE_ENV === 'test') && !ENABLED;
 /**
  * Call to Github API to retrieve active Pull Requests in a given repository
  */
