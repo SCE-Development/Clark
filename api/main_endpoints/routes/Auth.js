@@ -251,29 +251,38 @@ router.post("/validateVerificationEmail", async (req, res) => {
 
 // Get a token for a user in discord
 router.get("/getTokenFromDiscordID", (req, res) => {
-  User.findOne({ discordID: req.query.discordID }, (error, result) => {
-    let status = OK;
-    if (error) {
-      status = BAD_REQUEST;
-    } else if (!result) {
-      status = NOT_FOUND;
+  User.findOne(
+    {
+      discordID: req.query.discordID(),
+    },
+    function (error, user) {
+      if (error) {
+        return res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      }
+
+      if (!user) {
+        res.status(UNAUTHORIZED).send({
+          message: "Discord ID does not match our records.",
+        });
+      } else {
+        // Check if password matches database
+        const jwtOptions = {
+          expiresIn: "2h",
+        };
+
+        const userToBeSigned = {
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+          accessLevel: result.accessLevel,
+          pagesPrinted: result.pagesPrinted,
+        };
+        const token = jwt.sign(userToBeSigned, config.secretKey, jwtOptions);
+
+        return res.send({ token: "JWT " + token });
+      }
     }
-
-    const jwtOptions = {
-      expiresIn: "2h",
-    };
-
-    const userToBeSigned = {
-      firstName: result.firstName,
-      lastName: result.lastName,
-      email: result.email,
-      accessLevel: result.accessLevel,
-      pagesPrinted: result.pagesPrinted,
-    };
-    const token = jwt.sign(userToBeSigned, config.secretKey, jwtOptions);
-
-    return res.status(status).send({ token: "JWT " + token });
-  });
+  );
 });
 
 module.exports = router;
