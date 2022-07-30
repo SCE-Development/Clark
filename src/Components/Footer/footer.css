@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
 
+.footer-wrap {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
 .footer-text p {
   font-family: 'Mina', sans-serif;
   color: rgb(180, 180, 180);
@@ -31,8 +37,33 @@
   margin: 5px;
 }
 
+.social-media {
+  width: 100%;
+  text-align: center;
+}
+
+.social-media a svg {
+  width: 30px;
+  height: 30px;
+}
+
+#footer-note {
+  width: 100%;
+  text-align: center;
+}
+
+#left-col {
+  text-align: center;
+  padding: 20px;
+}
+
 @media (max-width: 500px) {
-  #social-media {
-    margin-left: 50px;
+  .social-media {
+    align-items: center;
+    justify-content: center;
+  }
+  .social-media a svg {
+    width: 20px;
+    height: 20px;
   }
 }
