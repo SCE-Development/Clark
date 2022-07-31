@@ -1,5 +1,5 @@
-import React from 'react';
-import { Row, Col } from 'reactstrap';
+import React, { useState } from 'react';
+import { Row, Col, Button } from 'reactstrap';
 import './footer.css';
 import DiscordIcon from './Icons/DiscordIcon';
 import LinkedinIcon from './Icons/LinkedinIcon';
@@ -10,6 +10,12 @@ import YouTubeIcon from './Icons/YouTubeIcon';
 import FooterModal from './FooterModal';
 
 export default () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <footer className='footer-wrap bg-dark text-white p-4'>
       <Row className='footer-text align-items-center justify-content-center'>
@@ -27,7 +33,16 @@ export default () => {
             </li>
           </ul>
         </Col>
-        <FooterModal />
+        <div className='contact-us'>
+          <Button
+            outline color="primary"
+            className='contact-us-btn'
+            onClick={togglePopup}
+          >Contact Us</Button>
+        </div>
+        {
+          isOpen && <FooterModal handleClose={togglePopup} />
+        }
         <div className='social-media'>
           <LinkedinIcon/>
           <FacebookIcon/>
