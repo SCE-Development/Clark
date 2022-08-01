@@ -7,7 +7,11 @@ const WhatWeDo = () => {
     <div className='what-we-do'>
       <div className='container-what-we-do'>
         <div className='what-we-do-img'>
-          <img src="images/what-we-do-image.jpg" alt="SCE What We Do"/>
+          <img
+            src="images/what-we-do-image.jpg"
+            alt="SCE What We Do"
+            className='hide-images'
+          />
         </div>
         <div className='what-we-do-p'>
           <div className='what-we-do-header'>

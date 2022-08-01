@@ -13,7 +13,9 @@ const SponsorUs = () => {
       </div>
       <div className='sponsor-us-button'>
         {/* eslint-disable-next-line */}
-        <a href='https://www.canva.com/design/DAE2elflots/share/preview?token=_b1m7H5G7FeykfkUaR9JOw&role=EDITOR&utm_content=DAE2elflots&utm_campaign=designshare&utm_medium=link&utm_source=sharebutton#2'>
+        <a href='https://www.canva.com/design/DAE2elflots/share/preview?token=_b1m7H5G7FeykfkUaR9JOw&role=EDITOR&utm_content=DAE2elflots&utm_campaign=designshare&utm_medium=link&utm_source=sharebutton#2'
+          target='_blank'
+        >
           <Button outline color='primary' id='Sponsor-us-btn'
             // copied from home
             style={{width:'170px', border:'3px solid',

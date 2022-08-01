@@ -9,6 +9,8 @@
 .sponsors-img {
     opacity: 0.5;
     width: 100%;
+    height: 670px;
+    object-fit: cover;
 }
 
 .sponsors-header {

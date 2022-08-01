@@ -36,14 +36,13 @@
 }
 
 .who-we-are-img {
-  padding-left: 80px !important;
+  padding-right: 20px;
 }
 
 .who-we-are-img img {
   width: 600px;
   height: auto;
 }
-
 
 .join-sce-button {
   margin-left: 35%;
@@ -58,8 +57,22 @@
   color: #ffffff;
 }
 
-@media (max-width: 500px) {
-  .who-we-are-img img {
-    max-width: 300px !important;
+
+@media screen and (max-width:500px) {
+  .hide-images {
+    display: none !important;
   }
-}
+  .who-we-are-p {
+    width: 100%;
+    font-size: 16px;
+    padding: 0px !important;
+  }
+  .who-we-are-content {
+    padding-left: 35px !important;
+  }
+
+  .join-sce-button {
+    margin: 0 !important;
+    padding-left: 70px !important;
+  }
+} 

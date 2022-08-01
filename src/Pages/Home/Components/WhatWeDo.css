@@ -28,17 +28,18 @@
     font-family: "Mina", sans-serif;
     width: 50%;
     font-size: 18px;
+    margin-right: 25px;
 }
 
 .what-we-do-img {
-    margin-left: 50px !important;
+    margin-left: 30px !important;
     
   }
 
 .what-we-do-img img {
     width: 600px;
     height: auto;
-    margin-right: 40px;
+    margin-right: 25px;
     border-radius: 23px;
   }
 
@@ -57,3 +58,10 @@
     
     color: #FFFFFF;
 }
+
+@media screen and (max-width:500px) {
+  .hide-images {
+    display: none !important;
+  }
+}
+
