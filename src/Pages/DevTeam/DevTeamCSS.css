@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
+
+.main {
+    background-color: #000;
+    color: #F2EEE0;
+    font-family: 'Mina', sans-serif;
+    min-width: 30rem;
+}
+
+.page-title {
+    position: relative;
+    box-sizing: border-box;
+    padding: 130px 0 0px 0;
+    text-align: center;
+    width: 60%;
+    margin: auto;
+    text-align: center;
+}
+
+.border {
+    border-style: none;
+    padding: 0;
+    border-radius: 10px;
+    height: 0.3rem;
+    animation: underline 1.75s linear forwards;
+    background-color: #FFF;
+    margin: -0.5rem auto 2rem auto;
+}
+
+@keyframes underline {
+    0% {
+        width: 5%
+    }
+
+    25% {
+        width: 15%;
+    }
+
+    50% {
+        width: 25%;
+    }
+
+    75% {
+        width: 35%;
+    }
+
+    100% {
+        width: 45%;
+    }
+}
+
+.page-title p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 35px;
+    text-align: center;
+}
+
+.page-content {
+    margin: auto 20%;
+    text-align: center;
+}
+
+.page-content p {
+    font-size: 1rem;
+}
+
+.button-div {
+    margin: 3rem auto 0 auto;
+    width: 100%;
+    text-align: center;
+    font-family: "Mina";
+}
+
+.project-btn {
+    font-weight: 800;
+    border: 3px solid;
+    border-radius: 8;
+    padding: 0.8rem;
+    width: 8rem;
+}
+
+.project-btn:hover {
+    border-color: #fff;
+}
+
+.image-div {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1/2fr 1;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    margin: 3rem auto;
+}
+
+img{
+    max-width: 100%;
+}
+.img1 {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.img2 {
+    grid-area: 1 / 2 / 2 / 3;
+}
+
+.img3 {
+    grid-area: 2 / 1 / 3 / 3;
+}

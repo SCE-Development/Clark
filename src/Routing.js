@@ -26,6 +26,7 @@ import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
+import DevTeam from './Pages/DevTeam/DevTeam.js';
 
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 
@@ -129,7 +130,8 @@ export default function Routing({ appProps }) {
     { Component: OfficerDB, path: '/officerDB' },
     { Component: VerifyEmailPage, path: '/verify' },
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
-    { Component: DiscordSJSU, path: '/discordSJSU' }
+    { Component: DiscordSJSU, path: '/discordSJSU' },
+    { Component: DevTeam, path: '/team' }
   ];
   return (
     <Router>

@@ -20,7 +20,10 @@ export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const unauthedRoutes = [{ title: 'About', route: '/#about' },
-    { title: 'Events', route: '/events' }];
+    { title: 'Events', route: '/events' },
+    { title: 'Team', route: '/team' }];
+
+  const unauthedTeamRoutes = [{ title: 'Dev Team', route: '/team'}];
 
   const authedRoutes = [{ title: 'Printing', route: '/2DPrinting' }];
 
@@ -72,13 +75,42 @@ export default function UserNavBar(props) {
               {/* Display unauthedRoutes in hamburger button */}
               {unauthedRoutes.map((link, index) => {
                 return (
-                  <DropdownItem className='drp-item' key={index}>
-                    <NavItem>
-                      <NavLink id='btndrp-text' href={link.route}>
-                        {link.title}
-                      </NavLink>
-                    </NavItem>
-                  </DropdownItem>
+                  <>
+                    { link.title === 'Team' ?
+                      (
+                        <DropdownItem
+                          className='dropdown-submenu drp-item'
+                          key={index}>
+
+                          <DropdownItem className='drp-item' id='btndrp-text'>
+                            Team
+                          </DropdownItem>
+
+                          <DropdownMenu className='drp-menu'>
+                            {unauthedTeamRoutes.map((link, index) => {
+                              return (
+                                <DropdownItem
+                                  key={index}
+                                  className='drp-item'
+                                  href={link.route}
+                                >
+                                  {link.title}
+                                </DropdownItem>
+                              );
+                            })}
+                          </DropdownMenu>
+
+                        </DropdownItem>
+                      ) : (
+                        <DropdownItem className='drp-item' key={index}>
+                          <NavItem>
+                            <NavLink id='btndrp-text' href={link.route}>
+                              {link.title}
+                            </NavLink>
+                          </NavItem>
+                        </DropdownItem>
+                      )}
+                  </>
                 );
               })}
               {/* account icon */}
@@ -206,13 +238,43 @@ export default function UserNavBar(props) {
               {/* Display titles when and when not logged in */}
               {unauthedRoutes.map((link, index) => {
                 return (
-                  <NavItem key={index}>
-                    <NavLink id='navlink-text'
-                      className='routes'
-                      href={link.route}>
-                      {link.title}
-                    </NavLink>
-                  </NavItem>
+                  <>
+                    { link.title === 'Team'  ?
+                      (
+                        <UncontrolledDropdown nav inNavbar key={index}>
+                          <DropdownToggle
+                            className='authenticated-navlink'
+                            id='navlink-text'
+                            nav
+                            caret
+                          >
+                            Team
+                          </DropdownToggle>
+                          <DropdownMenu right>
+                            {unauthedTeamRoutes.map((link, index) => {
+                              return (
+                                <DropdownItem
+                                  key={index}
+                                  className='drp-item'
+                                  href={link.route}
+                                >
+                                  {link.title}
+                                </DropdownItem>
+                              );
+                            })}
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      ) : (
+                        <NavItem key={index}>
+                          <NavLink id='navlink-text'
+                            className='routes'
+                            href={link.route}>
+                            {link.title}
+                          </NavLink>
+                        </NavItem>
+                      )
+                    }
+                  </>
                 );
               })}
               {/* Display printing in nav when logged in */}
@@ -246,6 +308,6 @@ export default function UserNavBar(props) {
           </Nav>
         </Collapse>
       </Navbar>
-    </div >
+    </div>
   );
 }
