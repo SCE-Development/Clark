@@ -3,7 +3,7 @@ import React from 'react';
 function FacebookIcon() {
   return (
     <a href='https://www.facebook.com/sjsusce/'>
-      <svg width='50' height='50' viewBox='0 0 50 50'>
+      <svg viewBox='0 0 50 50'>
         <path
           fill='#3F51B5'
           d='M42 37a5 5 0 01-5 5H11a5 5 0 01-5-5V11a5 5 0 015-5h26a5 5 0

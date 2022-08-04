@@ -3,11 +3,7 @@ import React from 'react';
 function InstagramIcon() {
   return (
     <a href='https://www.instagram.com/sjsusce/'>
-      <svg
-        width='50'
-        height='50'
-        viewBox='0 0 48 48'
-      >
+      <svg viewBox='0 0 48 48'>
         <radialGradient
           id='yOrnnhliCrdS2gy~4tD8ma'
           cx='19.38'

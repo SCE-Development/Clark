@@ -5,7 +5,7 @@ function LinkedinIcon() {
     <a
       href='https://www.linkedin.com/company/sjsu-software
           -computer-engineering-society/'>
-      <svg width='50' height='50' viewBox='0 0 50 50'>
+      <svg viewBox='0 0 50 50'>
         <path
           fill='#0078d4'
           d='M42 37a5 5 0 01-5 5H11a5 5 0 01-5-5V11a5 5 0 015-5h26a5 5 0
