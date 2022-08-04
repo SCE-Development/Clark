@@ -4,8 +4,6 @@ function GitHubIcon() {
   return (
     <a href='https://github.com/SCE-Development'>
       <svg xmlns="http://www.w3.org/2000/svg"
-        width="40"
-        height="40"
         viewBox="0 0 24 24">
         <path fill='#FFFFFF'
         // split lines before spaces and dashes
