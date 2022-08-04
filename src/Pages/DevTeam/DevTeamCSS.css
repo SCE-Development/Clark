@@ -64,6 +64,10 @@
     font-size: 1rem;
 }
 
+.readmore-btn:hover {
+    cursor: pointer;
+}
+
 .button-div {
     margin: 3rem auto 0 auto;
     width: 100%;
