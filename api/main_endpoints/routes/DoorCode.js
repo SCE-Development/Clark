@@ -1,19 +1,18 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const DoorCode = require("../models/DoorCode");
-const User = require("../models/User");
+const DoorCode = require('../models/DoorCode');
+const User = require('../models/User');
 const {
   checkIfTokenSent,
-  checkIfTokenValid,
-} = require("../util/token-functions");
+  checkIfTokenValid
+} = require('../util/token-functions');
 const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
-  require("../../util/constants").STATUS_CODES;
-const addErrorLog = require("../util/logging-helpers");
-const membershipState = require("../../util/constants").MEMBERSHIP_STATE;
+  require('../../util/constants').STATUS_CODES;
+const addErrorLog = require('../util/logging-helpers');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
-//takes the discord user ID and a token as a parameter
-router.post("/getDoorCodeByDiscordID", (req, res) => {
-  //check if token is valid and if user is an officer/higher
+// takes the discord user ID and a token as a parameter
+router.post('/getDoorCodeByDiscord', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -22,40 +21,40 @@ router.post("/getDoorCodeByDiscordID", (req, res) => {
     User.findOne({ discordID: req.query.discordID })
       .then((User) => {
         if (User.doorCode == null) {
-          res.send("user does not have a door code.");
+          res.send('user does not have a door code.');
         } else {
           res.status(OK).send({ code: User.doorCode });
         }
       })
-      .catch((error) => {
+      .catch(() => {
         res.status(NOT_FOUND).send();
       });
   }
 });
 
-router.get("/getDoorCodes", (req, res) => {
+router.get('/getDoorCodes', (req, res) => {
   DoorCode.find()
     .then((doorcodes) => res.status(OK).send(doorcodes))
     .catch((error) => {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: "DoorCode/getDoorCodes",
-        errorDescription: error,
+        apiEndpoint: 'DoorCode/getDoorCodes',
+        errorDescription: error
       };
       addErrorLog(info);
-      res.status(BAD_REQUEST).send({ error, message: "Getting codes failed" });
+      res.status(BAD_REQUEST).send({ error, message: 'Getting codes failed' });
     });
 });
 
-router.get("/getAvailableDoorCode", (req, res) => {
+router.get('/getAvailableDoorCode', (req, res) => {
   DoorCode.findOne({ usersAssigned: { $lt: 2 } })
     .then((doorcodes) => res.status(OK).send(doorcodes))
     .catch(() => {
-      res.status(BAD_REQUEST).send({ message: "No codes left." });
+      res.status(BAD_REQUEST).send({ message: 'No codes left.' });
     });
 });
 
-router.post("/addCode", (req, res) => {
+router.post('/addCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -65,7 +64,7 @@ router.post("/addCode", (req, res) => {
   const newCode = new DoorCode({
     doorCode: req.body.doorCode,
     doorCodeValidUntil: req.body.doorCodeValidUntil,
-    usersAssigned: req.body.usersAssigned,
+    usersAssigned: req.body.usersAssigned
   });
 
   DoorCode.create(newCode, (error, post) => {
@@ -76,7 +75,7 @@ router.post("/addCode", (req, res) => {
   });
 });
 
-router.post("/editCode", (req, res) => {
+router.post('/editCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -97,16 +96,16 @@ router.post("/editCode", (req, res) => {
         .catch((error) => {
           res.status(BAD_REQUEST).send({
             error,
-            message: "door code was not updated",
+            message: 'door code was not updated'
           });
         });
     })
     .catch((error) => {
-      res.status(NOT_FOUND).send({ error, message: "door code not found" });
+      res.status(NOT_FOUND).send({ error, message: 'door code not found' });
     });
 });
 
-router.post("/removeCode", (req, res) => {
+router.post('/removeCode', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -117,8 +116,8 @@ router.post("/removeCode", (req, res) => {
     if (error) {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: "DoorCode/removeItem",
-        errorDescription: error,
+        apiEndpoint: 'DoorCode/removeItem',
+        errorDescription: error
       };
       return res.sendStatus(BAD_REQUEST);
     }
