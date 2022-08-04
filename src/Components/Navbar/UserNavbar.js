@@ -82,7 +82,9 @@ export default function UserNavBar(props) {
                           className='dropdown-submenu drp-item'
                           key={index}>
 
-                          <DropdownItem className='drp-item' key={index+20} id='btndrp-text'>
+                          <DropdownItem
+                            className='drp-item'
+                            id='btndrp-text'>
                             Team
                           </DropdownItem>
 
@@ -103,7 +105,7 @@ export default function UserNavBar(props) {
                         </DropdownItem>
                       ) : (
                         <DropdownItem className='drp-item' key={index}>
-                          <NavItem> 
+                          <NavItem>
                             <NavLink id='btndrp-text' href={link.route}>
                               {link.title}
                             </NavLink>
