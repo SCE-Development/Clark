@@ -75,18 +75,18 @@ export default function UserNavBar(props) {
               {/* Display unauthedRoutes in hamburger button */}
               {unauthedRoutes.map((link, index) => {
                 return (
-                  <>
+                  <div key={index}>
                     { link.title === 'Team' ?
                       (
                         <DropdownItem
                           className='dropdown-submenu drp-item'
                           key={index}>
 
-                          <DropdownItem className='drp-item' id='btndrp-text'>
+                          <DropdownItem className='drp-item' key={index+20} id='btndrp-text'>
                             Team
                           </DropdownItem>
 
-                          <DropdownMenu className='drp-menu'>
+                          <DropdownMenu key={index} className='drp-menu'>
                             {unauthedTeamRoutes.map((link, index) => {
                               return (
                                 <DropdownItem
@@ -103,14 +103,14 @@ export default function UserNavBar(props) {
                         </DropdownItem>
                       ) : (
                         <DropdownItem className='drp-item' key={index}>
-                          <NavItem>
+                          <NavItem> 
                             <NavLink id='btndrp-text' href={link.route}>
                               {link.title}
                             </NavLink>
                           </NavItem>
                         </DropdownItem>
                       )}
-                  </>
+                  </div>
                 );
               })}
               {/* account icon */}
@@ -238,7 +238,7 @@ export default function UserNavBar(props) {
               {/* Display titles when and when not logged in */}
               {unauthedRoutes.map((link, index) => {
                 return (
-                  <>
+                  <div key={index}>
                     { link.title === 'Team'  ?
                       (
                         <UncontrolledDropdown nav inNavbar key={index}>
@@ -273,7 +273,7 @@ export default function UserNavBar(props) {
                         </NavItem>
                       )
                     }
-                  </>
+                  </div>
                 );
               })}
               {/* Display printing in nav when logged in */}
