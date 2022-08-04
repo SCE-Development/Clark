@@ -48,7 +48,7 @@ describe('<UserNavbar />', () => {
     ' the authenticated user',
     () => {
       const wrapper = mount(<UserNavbar {...adminAppProps} />);
-      expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(2);
+      expect(wrapper.find(UncontrolledDropdown)).to.have.lengthOf(3);
     }
   );
   it(

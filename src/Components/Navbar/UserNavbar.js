@@ -243,7 +243,6 @@ export default function UserNavBar(props) {
                       (
                         <UncontrolledDropdown nav inNavbar key={index}>
                           <DropdownToggle
-                            className='authenticated-navlink'
                             id='navlink-text'
                             nav
                             caret
