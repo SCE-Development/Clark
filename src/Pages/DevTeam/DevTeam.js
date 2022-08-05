@@ -56,9 +56,9 @@ export default function DevTeam() {
             </a>
           </div>
           <div className = 'image-div'>
-            <img className = 'img1' src = { image1 } />
-            <img className = 'img2' src = { image2 } />
-            <img className = 'img3' src = { image3 } />
+            <img className = 'img1 single-image' src = { image1 } />
+            <img className = 'img2 single-image' src = { image2 } />
+            <img className = 'img3 single-image' src = { image3 } />
           </div>
 
         </div>

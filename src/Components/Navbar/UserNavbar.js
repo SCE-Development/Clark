@@ -53,10 +53,12 @@ export default function UserNavBar(props) {
             <DropdownMenu right>
               {props.user && props.user.accessLevel >=
                 membershipState.MEMBER && (
-                <DropdownItem  className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
+                <DropdownItem
+                  style={{textAlign: 'center'}}
+                  className='dropdown-submenu drp-item'>
+                  <span className='drp-item' id='btndrp-text'>
                       Printing
-                  </DropdownItem>
+                  </span>
                   <DropdownMenu className='drp-menu'>
                     {authedRoutes.map((link, index) => {
                       return (
@@ -79,14 +81,13 @@ export default function UserNavBar(props) {
                     { link.title === 'Team' ?
                       (
                         <DropdownItem
+                          style={{textAlign: 'center' }}
                           className='dropdown-submenu drp-item'
                           key={index}>
 
-                          <DropdownItem
-                            className='drp-item'
-                            id='btndrp-text'>
+                          <span className='drp-item' id='btndrp-text'>
                             Team
-                          </DropdownItem>
+                          </span>
 
                           <DropdownMenu key={index} className='drp-menu'>
                             {unauthedTeamRoutes.map((link, index) => {
