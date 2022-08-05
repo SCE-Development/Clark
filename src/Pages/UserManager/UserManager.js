@@ -5,11 +5,10 @@ import { Paginate } from './Paginate';
 import { Users } from './Users';
 import { Button, Table } from 'reactstrap';
 import Header from '../../Components/Header/Header';
-import OverviewProfile from '../Overview/OverviewProfile';
 
 import Dropdown from './Dropdown';
 
-export default function User() {
+export default function UserManager() {
 
   const usersPerPage = 5;
 
@@ -21,15 +20,6 @@ export default function User() {
     `${usersPerPage}&sort=First%20Name&filter=All`);
   const [searching, setSearching] = useState(false);
   const [search, setSearch] = useState('');
-
-  const [
-    FilterDropdownOpen,
-    setFilterDropdownOpen
-  ] = React.useState('All');
-  const [
-    SortDropdownOpen,
-    setSortDropdownOpen
-  ] = React.useState('First Name');
 
   const filterOptions = ['All', 'Admin', 'Pending'];
   const sortOptions = [
@@ -46,7 +36,7 @@ export default function User() {
       let sort = searchParams.get('sort') || 'First Name';
       let filter = searchParams.get('filter') || 'All';
 
-      await fetch(`api/User/davidUsers/?page=${page}&u=${usersPerPage}` +
+      await fetch(`api/User/getUsers/?page=${page}&u=${usersPerPage}` +
         `&search=${userSearch}&sort=${sort}&filter=${filter}`)
         .then(res => res.json())
         .then(data => {
@@ -115,12 +105,10 @@ export default function User() {
         <div className='toolbar'>
           <Dropdown options={filterOptions}
             selected={searchParams.get('filter')}
-            setSelected={setFilterDropdownOpen}
             filterBy={filterBy}
             title='Filter By: ' />
           <Dropdown options={sortOptions}
             selected={searchParams.get('sort')}
-            setSelected={setSortDropdownOpen}
             filterBy={sortBy}
             title='Sort By: ' />
         </div>

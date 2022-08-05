@@ -6,7 +6,6 @@ import './index.css';
 import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
-import Overview from './Pages/Overview/Overview';
 import EmailPage from './Pages/EmailList/EmailPage';
 import EventManager from './Pages/EventManager/EventManager';
 import Login from './Pages/Login/Login';
@@ -50,15 +49,6 @@ export default function Routing({ appProps }) {
       redirect: '/',
       inAdminNavbar: true
     },
-    // new for Overview
-    {
-      Component: Overview,
-      path: '/old-user-manager',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
-    //
     {
       Component: EmailPage,
       path: '/email-list',

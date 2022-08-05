@@ -2,7 +2,7 @@ import React from 'react';
 import './Dropdown.css';
 
 const Dropdown = (
-  { options, selected, setSelected, filterBy, title }) => {
+  { options, selected, filterBy, title }) => {
   const [isActive, setIsActive] = React.useState(false);
 
   return (
@@ -16,7 +16,6 @@ const Dropdown = (
             < div
               key={i}
               onClick={(e) => {
-                // setSelected(option);
                 setIsActive(false);
                 filterBy(option);
               }}
