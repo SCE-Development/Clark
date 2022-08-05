@@ -1,14 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const DoorCode = require('../models/DoorCode');
-const User = require('../models/User');
 const {
   checkIfTokenSent,
-  checkIfTokenValid
+  checkIfTokenValid,
 } = require('../util/token-functions');
-const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND } =
-  require('../../util/constants').STATUS_CODES;
-const addErrorLog = require('../util/logging-helpers');
+const {
+  OK,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+} = require('../../util/constants').STATUS_CODES;
+const { addErrorLog }  = require ('../util/logging-helpers');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 // takes the discord user ID and a token as a parameter

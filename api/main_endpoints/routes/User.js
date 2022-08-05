@@ -6,24 +6,30 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { registerUser } = require('../util/registerUser');
+const { getMemberExpirationDate} = require('../util/registerUser');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
 } = require('../util/token-functions');
-const { OK, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN, NOT_FOUND, CONFLICT } =
-  require('../../util/constants').STATUS_CODES;
-const { discordApiKeys } = require('../../config/config.json');
+const {
+  OK,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+  CONFLICT
+} = require('../../util/constants').STATUS_CODES;
+const {
+  discordApiKeys
+} = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const addErrorLog = require('../util/logging-helpers');
+const { addErrorLog }  = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
-const discordRedirectUri =
-  process.env.NODE_ENV === 'production'
-    ? discordApiKeys.REDIRECT_URI_PROD
-    : discordApiKeys.REDIRECT_URI_DEV;
+const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
+  'http://localhost:8080/api/user/callback';
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
