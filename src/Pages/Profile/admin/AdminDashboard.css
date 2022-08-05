@@ -1,7 +1,7 @@
 .admin-dashboard-bg {
     background-color: black;
     max-width: 100%;
-    min-height: 94vh;
+    min-height: 100vh;
 }
 
 #admin-box>div {
@@ -30,4 +30,53 @@
 
 .block{
     margin: 10%;
+}
+
+.flexbox-container{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-flow: wrap;
+}
+@media screen and (min-width: 0px) and (max-width: 300px) {
+    .admin-dashboard-bg {
+        min-height: 110vh;
+    }
+    #admin-box>div{
+        width: 35%;
+        margin: 6.5%;
+    }
+    #inner-text-top {
+        font-size: 1.45rem;
+      }
+}
+
+@media screen and (min-width: 300px) and (max-width: 375px) {
+    #admin-box>div{
+        width: 39.5%;
+        margin: 4.5%;
+    }
+    #inner-text-top {
+        font-size: 1.65rem;
+      }
+}
+
+@media screen and (min-width: 377px) and (max-width: 487px) {
+    #admin-box>div{
+        width: 35%;
+        margin: 7.5%;
+    }
+    #inner-text-top {
+        font-size: 1.5rem;
+      }
+}
+
+
+@media screen and (min-width: 487px) and (max-width: 1200px) {
+    #admin-box>div{
+        width: 39.5%;
+        margin: 4.5%;
+    }
+
 }

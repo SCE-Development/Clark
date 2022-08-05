@@ -21,7 +21,7 @@ class GoogleRecaptcha extends Component {
     return (
       <ReCAPTCHA
         size='normal'
-        theme='light'
+        theme='dark'
         ref={this.recapRef}
         sitekey={sitekey}
         onChange={this.handleChange}

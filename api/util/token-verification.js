@@ -1,10 +1,11 @@
 const axios = require('axios');
 const membershipState = require('./constants').MEMBERSHIP_STATE;
+const { DISCORD_COREV4_KEY } = require('../config/config.json');
 // If we are in a docker/prod environment, we can't rely on localhost
 // to route the request to the Auth API so we use the name of
 // the container instead,
-const MAIN_ENDPOINT_URL = process.env.NODE_ENV === 'production' ?
-  'mainendpoints:8080' : 'localhost:8080';
+const MAIN_ENDPOINT_URL = process.env.MAIN_ENDPOINT_URL
+  || 'localhost:8080';
 
 /**
  * Checks if the given token is valid
@@ -31,4 +32,12 @@ function checkIfTokenSent(request) {
   return request.body.token !== undefined;
 }
 
-module.exports = { verifyToken, checkIfTokenSent };
+/**
+ * Checks API key value and return true or false depending on if it matches
+ * @param {String} apiKey
+ * @returns {boolean} whether the api key was valid or not
+ */
+function checkDiscordKey(apiKey) {
+  return apiKey === DISCORD_COREV4_KEY;
+}
+module.exports = { verifyToken, checkIfTokenSent, checkDiscordKey };

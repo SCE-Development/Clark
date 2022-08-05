@@ -1,11 +1,7 @@
 
-FROM node:8.10.0-alpine
+FROM node:14.10.0-alpine
 
 WORKDIR /app
-
-ENV DATABASE_HOST db
-
-ENV NODE_ENV production
 
 COPY package.json ./
 
@@ -19,8 +15,12 @@ COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8082
 
-ENV DOCKER true
+ARG GENERAL_API_URL
 
-ENV NODE_ENV production
+ARG DATABASE_HOST
+
+ARG NODE_ENV
+
+ARG VERIFICATION_BASE_URL
 
 CMD [ "node", "./cloud_api/server.js" ]

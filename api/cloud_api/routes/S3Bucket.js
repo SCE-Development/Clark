@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { OK, NOT_FOUND } = require('../../util/constants').STATUS_CODES;
-const s3BucketKeys = require('../../config/config.json').S3Bucket;
+const {S3Bucket} = require('../../config/config.json').AWS;
 const { S3BucketApiHandler } = require('../util/S3BucketApiHandler');
 
 router.post('/getSignedUrl', (req, res) => {
   const fileName = req.body.fileName;
   const fileType = req.body.fileType;
-  const bucket = s3BucketKeys.BUCKET;
+  const bucket = S3Bucket.NAME;
 
   const s3Params = {
     Bucket: bucket,

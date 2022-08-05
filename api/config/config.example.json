@@ -1,18 +1,17 @@
 {
-  "CLOUD_API_URL": "http://localhost:8082/cloudapi",
   "discordApiKeys": {
+    "ENABLED": true,
     "CLIENT_ID": "NOT_SET",
     "CLIENT_SECRET": "NOT_SET",
-    "REDIRECT_URI_DEV": "http://localhost:8080/api/user/callback",
-    "REDIRECT_URI_PROD": "http://sce.engr.sjsu.edu/api/user/callback",
     "REFRESH_TOKEN": "NOT_SET"
   },
-  "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
+    "ENABLED": true,
     "CLIENT_ID": "NOT_SET",
     "CLIENT_SECRET": "NOT_SET"
   },
   "googleApiKeys": {
+    "ENABLED": true,
     "CLIENT_ID": "NOT_SET",
     "CLIENT_SECRET": "NOT_SET",
     "REDIRECT_URIS": [
@@ -25,25 +24,21 @@
     "PRIMARY_CAL": "primary",
     "SCE_EVENTS_CAL": "NOT_SET"
   },
-  "ledSignUrl": "XXXXXXX",
-  "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
   "passwordStrength": "medium",
-  "S3Bucket": {
-    "AWSACCESSKEYID": "NOT_SET",
-    "AWSSECRETKEY": "NOT_SET",
-    "BUCKET": "NOT_SET"
+  "AWS" : {
+    "ENABLED": true,
+    "ACCESS_KEY_ID": "NOT_SET",
+    "SECRET_ACCESS_KEY": "NOT_SET",
+    "ACCOUNT_ID": "NOT_SET",
+    "S3Bucket" : {
+      "NAME": "NOT_SET"
+    },
+    "Queue": {
+      "LED_QUEUE_NAME": "NOT_SET",
+      "PAPER_PRINTING_QUEUE_NAME": "NOT_SET"
+    },
+    "AWS_IOT_ENDPOINT" : "NOT_SET",
+    "PrintingS3Bucket": "NOT_SET"
   },
-  "Queue": {
-    "CLIENT_ID": "XXXXXXXXXXXXXXXXXXXX",
-    "CLIENT_SECRET": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "ACCOUNT_ID": "xxxxxxxxxxxx",
-    "LED_QUEUE_NAME": "xxxxxxxx",
-    "PAPER_PRINTING_QUEUE_NAME": "xxxxxxxx"
-  },
-  "AWS_IOT_ENDPOINT" : "NOT_SET",
-  "PrintingS3Bucket": "NOT_SET",
-  "secretKey": "super duper secret key",
-  "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
-  "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
-  "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi"
+  "secretKey": "super duper secret key"
 }

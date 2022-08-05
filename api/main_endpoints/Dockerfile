@@ -2,10 +2,6 @@ FROM node:alpine
 
 WORKDIR /app
 
-ENV DATABASE_HOST db
-
-ENV NODE_ENV production
-
 COPY package.json ./
 
 RUN npm install --production
@@ -18,8 +14,12 @@ COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8080
 
-ENV DOCKER true
+ARG PERIPHERAL_API_URL
 
-ENV NODE_ENV production
+ARG DISCORD_REDIRECT_URI
+
+ARG NODE_ENV
+
+ARG DATABASE_HOST
 
 CMD [ "node", "./main_endpoints/server.js" ]
