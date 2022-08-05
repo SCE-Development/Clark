@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap");
+
+.who-we-are {
+  margin-top: 150px;
+}
+
+.container-who-we-are {
+  display: flex;
+  align-items: center;
+}
+
+.who-we-are-header {
+  padding-left: 40px;
+  padding-bottom: 10px;
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 35px;
+  line-height: 42px;
+
+  color: #ffffff;
+}
+
+.who-we-are-p {
+  text-align: center;
+  font-family: "Mina", sans-serif;
+  width: 50%;
+  font-size: 18px;
+}
+
+.container-who-we-are {
+  margin-left: 15px;
+}
+.container-who-we-are div {
+  padding-left: 30px;
+}
+
+.who-we-are-img {
+  padding-right: 20px;
+}
+
+.who-we-are-img img {
+  width: 600px;
+  height: auto;
+}
+
+.join-sce-button {
+  margin-left: 35%;
+  width: 113px;
+  height: 34px;
+  font-family: "Mina";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 30px;
+
+  color: #ffffff;
+}
+
+
+@media screen and (max-width:500px) {
+  .hide-images {
+    display: none !important;
+  }
+  .who-we-are-p {
+    width: 100%;
+    font-size: 16px;
+    padding: 0px !important;
+  }
+  .who-we-are-content {
+    padding-left: 35px !important;
+  }
+
+  .join-sce-button {
+    margin: 0 !important;
+    padding-left: 90px !important;
+  }
+} 

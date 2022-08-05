@@ -29,6 +29,7 @@ import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import DevTeam from './Pages/DevTeam/DevTeam.js';
 
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
+import AboutPage from './Pages/About/About';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -132,6 +133,7 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: DevTeam, path: '/team' }
+    { Component: AboutPage, path: '/about'},
   ];
   return (
     <Router>

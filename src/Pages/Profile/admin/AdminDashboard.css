@@ -38,7 +38,7 @@
     flex-direction: row;
     justify-content: space-around;
     flex-flow: wrap;
-}
+} 
 @media screen and (min-width: 0px) and (max-width: 300px) {
     .admin-dashboard-bg {
         min-height: 110vh;
