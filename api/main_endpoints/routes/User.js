@@ -134,7 +134,7 @@ router.post('/users', function(req, res) {
   }
   User.find()
     .sort({ joinDate: -1 })
-    .then((items) => {
+    .then(items => {
       res.status(OK).send(items);
     })
     .catch(() => {
@@ -157,7 +157,9 @@ router.post('/edit', (req, res) => {
   let decoded = decodeToken(req);
   if (decoded.accessLevel === membershipState.MEMBER) {
     if (req.body.email && req.body.email != decoded.email) {
-      return res.status(UNAUTHORIZED).send('Unauthorized to edit another user');
+      return res
+        .status(UNAUTHORIZED)
+        .send('Unauthorized to edit another user');
     }
     if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
       return res
@@ -182,6 +184,7 @@ router.post('/edit', (req, res) => {
   }
 
   delete user.numberOfSemestersToSignUpFor;
+
 
   // Remove the auth token from the form getting edited
   delete user.token;
@@ -239,19 +242,18 @@ router.post('/getPagesPrintedCount', (req, res) => {
 router.get('/callback', async function(req, res) {
   const code = req.query.code;
   const email = req.query.state;
-  discordConnection
-    .loginWithDiscord(code, email, discordRedirectUri)
-    .then((status) => {
+  discordConnection.loginWithDiscord(code, email, discordRedirectUri)
+    .then(status => {
       return res.status(OK).redirect('https://discord.com/oauth2/authorized');
     })
-    .catch((_) => {
+    .catch(_ => {
       return res.status(NOT_FOUND).send('Authorization unsuccessful!');
     });
 });
 
 router.post('/getUserFromDiscordId', (req, res) => {
   const { discordID, apiKey } = req.body;
-  if (!checkDiscordKey(apiKey)) {
+  if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ discordID }, (error, result) => {
@@ -265,6 +267,23 @@ router.post('/getUserFromDiscordId', (req, res) => {
   });
 });
 
+router.post('/updatePagesPrintedFromDiscord', (req, res) => {
+  const { discordID, apiKey, pagesPrinted } = req.body;
+  if(!checkDiscordKey(apiKey)){
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.updateOne( { discordID }, {pagesPrinted},
+    (error, result) => {
+      let status = OK;
+      if(error){
+        status = BAD_REQUEST;
+      } else if (result.n === 0){
+        status = NOT_FOUND;
+      }
+      return res.sendStatus(status);
+    });
+});
+
 router.post('/connectToDiscord', function(req, res) {
   const email = req.body.email;
   if (!checkIfTokenSent(req)) {
@@ -275,19 +294,14 @@ router.post('/connectToDiscord', function(req, res) {
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
   }
-  if (
-    discordApiKeys.CLIENT_ID === 'NOT_SET' &&
-    discordApiKeys.CLIENT_SECRET === 'NOT_SET'
-  ) {
+  if (!discordApiKeys.ENABLED) {
     return res.sendStatus(OK);
   }
-  return res
-    .status(OK)
-    .send(
-      'https://discord.com/api/oauth2/authorize?client_id=' +
-        `${discordApiKeys.CLIENT_ID}` +
-        `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
-        `&state=${email}&response_type=code&scope=identify`
+  return res.status(OK)
+    .send('https://discord.com/api/oauth2/authorize?client_id=' +
+      `${discordApiKeys.CLIENT_ID}` +
+      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
+      `&state=${email}&response_type=code&scope=identify`
     );
 });
 
