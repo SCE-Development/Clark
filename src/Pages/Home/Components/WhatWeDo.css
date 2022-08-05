@@ -63,5 +63,20 @@
   .hide-images {
     display: none !important;
   }
+  .what-we-do-p {
+    width: 100%;
+    font-size: 16px;
+    padding: 0px !important;
+  }
+  .what-we-do-content {
+    padding-left: 0px !important;
+  }
+  .what-we-do-header{
+    padding-left: 0px !important;
+  }
+  .learn-more-button {
+    margin: 0 !important;
+    padding-left: 90px !important;
+  }
 }
 

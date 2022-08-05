@@ -50,4 +50,19 @@
     background-color: transparent;
     border-color: #0d6efd
  }
- 
+ @media screen and (max-width:500px) {
+    .sponsor-us-button {
+        position: absolute;
+        top: 65%;
+        bottom: 35%;
+        left: 30% !important;
+    
+        font-family: 'Mina';
+        font-style: normal;
+        
+        font-weight: 700;
+        font-size: 19px;
+        
+        line-height: 30px;
+    }
+ }

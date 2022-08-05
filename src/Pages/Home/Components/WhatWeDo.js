@@ -17,7 +17,8 @@ const WhatWeDo = () => {
           <div className='what-we-do-header'>
             <h1 >What We Do</h1>
           </div>
-          <p >SCE provides a social space for students to congregate and
+          <p className='what-we-do-content'>
+            SCE provides a social space for students to congregate and
             collaborate. We encourage members to connect and make new
             friends through social events such as potlucks, game nights,
             and movie nights. We also wish for members to facilitate
