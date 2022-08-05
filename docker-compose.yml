@@ -13,6 +13,7 @@ services:
       context: ./api
       dockerfile: ./peripheral_api/Dockerfile
     environment:
+      - MAIN_ENDPOINT_URL=sce-main-endpoints:8080
       - DATABASE_HOST=sce-mongodb
       - NODE_ENV=production
     restart: 'on-failure'
@@ -21,6 +22,8 @@ services:
       - mongodb
     depends_on:
       - mongodb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   sce-cloud-api:
     container_name: sce-cloud-api
     build:

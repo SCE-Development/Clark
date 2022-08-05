@@ -7,6 +7,10 @@ const { DISCORD_COREV4_KEY } = require('../config/config.json');
 const MAIN_ENDPOINT_URL = process.env.MAIN_ENDPOINT_URL
   || 'http://localhost:8080';
 
+console.log(process.env)
+
+console.log(MAIN_ENDPOINT_URL, "asdfasdfasdfasdf")
+
 /**
  * Checks if the given token is valid
  * @param {Object} token

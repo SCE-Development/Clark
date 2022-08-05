@@ -63,7 +63,7 @@ router.post('/sendPrintRequest', async (req, res) => {
   const params = {
     Key: `folder/${fileName}.pdf`,
     Body: Buffer.from(raw, 'base64'),
-    Bucket: printingS3Bucket,
+    Bucket: "sce-printing",
   };
 
   const response = await s3.upload(params, function(err, data) {
@@ -72,8 +72,7 @@ router.post('/sendPrintRequest', async (req, res) => {
 
   const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
 
-  const accountId = ACCOUNT_ID;
-  const queueName = PAPER_PRINTING_QUEUE_NAME;
+  const accountId = AWS_KEYS.ACCOUNT_ID;
   const data = JSON.stringify({
     location: response.Location,
     fileNo: fileName,
