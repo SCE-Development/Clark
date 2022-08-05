@@ -20,7 +20,7 @@ import MembershipApplication from
   '../../src/Pages/MembershipApplication/MembershipApplication.js';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from '../../src/Pages/OfficerDB/OfficerDB.js';
-import Overview from '../../src/Pages/Overview/Overview';
+import UserManager from '../../src/Pages/UserManager/UserManager';
 import AdminDashboard from '../../src/Pages/Profile/admin/AdminDashboard';
 import { membershipState } from '../../src/Enums';
 
@@ -208,6 +208,14 @@ describe('<Routing /> with <PrivateRoute />', () => {
       }
     );
     it(
+      'Should render a <UserManager /> component with the '
+      + '/user-manager' + 'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/user-manager', officerAppProps);
+        expect(wrapper.find(UserManager)).to.have.lengthOf(1);
+      }
+    );
+    it(
       'Should render a <EventManager /> component with the /event-manager' +
         'endpoint',
       () => {
@@ -223,14 +231,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       () => {
         const wrapper = getComponentFromRoute('/3DConsole', officerAppProps);
         expect(wrapper.find(SolidsConsole)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <Overview /> component with the '
-        + '/user-manager' + 'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/user-manager', officerAppProps);
-        expect(wrapper.find(Overview)).to.have.lengthOf(1);
       }
     );
   });
@@ -255,6 +255,15 @@ describe('<Routing /> with <PrivateRoute />', () => {
           '/dashboard endpoint',
         () => {
           const wrapper = getComponentFromRoute('/dashboard', memberAppProps);
+          expect(wrapper.find(Home)).to.have.lengthOf(1);
+        }
+      );
+      it(
+        'Should redirect the <UserManager /> component with the ' +
+          '/user-manager endpoint',
+        () => {
+          const wrapper = getComponentFromRoute('/user-manager',
+            memberAppProps);
           expect(wrapper.find(Home)).to.have.lengthOf(1);
         }
       );

@@ -1,4 +1,5 @@
 import React from 'react';
+import './UserManager.css';
 
 export const Paginate = ({ usersPerPage, totalUsers, paginate,
   searchParams, searching }) => {
@@ -9,14 +10,14 @@ export const Paginate = ({ usersPerPage, totalUsers, paginate,
   }
 
   return (
-    <nav>
+    <nav id='page-numbers'>
       <ul>
         {pageNumbers.map((pageNumber, key) => (
           <button {...{ key }} onClick={() => {
             paginate(pageNumber, searching);
           }
           } className={parseInt(searchParams.get('page')) === pageNumber
-            ? 'active' : ''}>
+            ? 'active-page-button' : 'nonactive-page-button'}>
             {pageNumber}
           </button>
         ))}

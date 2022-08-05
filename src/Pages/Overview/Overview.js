@@ -135,6 +135,7 @@ export default class OverviewBoard extends Component {
   render() {
     return (
       <div className='flexbox-container'>
+        <Header title='User Manager' />
         <br>
         </br>
         <br>

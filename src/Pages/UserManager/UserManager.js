@@ -1,32 +1,49 @@
 import './UserManager.css';
-import { React, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Paginate } from './Paginate';
 import { Users } from './Users';
-import { Button, DropdownToggle, DropdownMenu } from 'reactstrap';
-import { ButtonDropdown, DropdownItem } from 'reactstrap';
+import { Button, Table } from 'reactstrap';
 import Header from '../../Components/Header/Header';
 import OverviewProfile from '../Overview/OverviewProfile';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function NewUser() {
+import Dropdown from './Dropdown';
 
-  const usersPerPage = 10;
+export default function User() {
+
+  const usersPerPage = 5;
 
   const [data, setData] = useState();
   const [allData, setAllData] = useState(null);
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams('?page=1&u=' +
-    `${usersPerPage}&sort=firstName&filter=All`);
+    `${usersPerPage}&sort=First%20Name&filter=All`);
   const [searching, setSearching] = useState(false);
   const [search, setSearch] = useState('');
+
+  const [
+    FilterDropdownOpen,
+    setFilterDropdownOpen
+  ] = React.useState('All');
+  const [
+    SortDropdownOpen,
+    setSortDropdownOpen
+  ] = React.useState('First Name');
+
+  const filterOptions = ['All', 'Admin', 'Pending'];
+  const sortOptions = [
+    'First Name',
+    'Last Name',
+    'Join Date',
+    'Membership'
+  ];
 
   useEffect(() => {
     async function getData() {
       let page = searchParams.get('page') || 1;
       let userSearch = searchParams.get('search') || '';
-      let sort = searchParams.get('sort') || 'firstName';
+      let sort = searchParams.get('sort') || 'First Name';
       let filter = searchParams.get('filter') || 'All';
 
       await fetch(`api/User/davidUsers/?page=${page}&u=${usersPerPage}` +
@@ -42,10 +59,11 @@ export default function NewUser() {
     }
     getData();
   }, [searchParams]);
+
   function paginate(page, searching) {
 
     let userSearch = searchParams.get('search') || '';
-    let sort = searchParams.get('sort') || 'firstName';
+    let sort = searchParams.get('sort') || 'First Name';
     let filter = searchParams.get('filter') || 'All';
 
     if (searching) {
@@ -64,51 +82,28 @@ export default function NewUser() {
   }
   function filterBy(filter) {
     let userSearchGang = searchParams.get('search') || '';
-    let sortGang = searchParams.get('sort') || 'firstName';
+    let sortGang = searchParams.get('sort') || 'First Name';
     navigate(`?page=1&u${usersPerPage}&search=${userSearchGang}&sort=` +
       `${sortGang}&filter=${filter}`);
   }
 
   return (
-    <div className="App">
+    <div className="App user-manager-bg">
       <Header title='User Manager' />
-      <br/>
+      <br />
       <form>
         <label className="search-row">
-          <ButtonDropdown>
-            <DropdownToggle caret variant="secondary" id="dropdown-basic">
-              Filter: {searchParams.get('filter')}
-            </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem onClick={() => {
-                // setFilter('All')
-                filterBy('All');
-              }}>All</DropdownItem>
-              <DropdownItem onClick={() => {
-                // setFilter('Top G')
-                filterBy('Top G');
-              }}>Top G</DropdownItem>
-              <DropdownItem onClick={() => {
-                // setFilter('Papi')
-                filterBy('Papi');
-              }}>Papi</DropdownItem>
-              <DropdownItem onClick={() => {
-                // setFilter('Slave')
-                filterBy('Slave');
-              }}>Slave</DropdownItem>
-            </DropdownMenu>
-          </ButtonDropdown>
           <input placeholder='Search' id="search-bar" onChange={(e) => {
             setSearch(e.target.value);
           }
           }></input>
         </label>
-        {/* search submit, user clicks this when they wanna search something */}
-        <Button onClick={() => {
+        <Button id='user-manager-submit' onClick={() => {
           if (search.length > 0) {
             setSearching(true);
             navigate(`?page=1&u=${usersPerPage}&search=${search}&sort=` +
-            `${searchParams.get('sort')}&filter=${searchParams.get('filter')}`);
+              `${searchParams.get('sort')}` +
+              `&filter=${searchParams.get('filter')}`);
           } else {
             setSearching(false);
             navigate(`?page=${searchParams.get('page')}&u=${usersPerPage}&` +
@@ -116,26 +111,42 @@ export default function NewUser() {
               `filter=${searchParams.get('filter')}`);
           }
         }}>Submit</Button>
+        <br />
+        <div className='toolbar'>
+          <Dropdown options={filterOptions}
+            selected={searchParams.get('filter')}
+            setSelected={setFilterDropdownOpen}
+            filterBy={filterBy}
+            title='Filter By: ' />
+          <Dropdown options={sortOptions}
+            selected={searchParams.get('sort')}
+            setSelected={setSortDropdownOpen}
+            filterBy={sortBy}
+            title='Sort By: ' />
+        </div>
       </form>
-      <ButtonDropdown>
-        <DropdownToggle variant="success" id="dropdown-basic">
-          Sort By: {searchParams.get('sort')}
-        </DropdownToggle>
-        <DropdownMenu>
-          <DropdownItem onClick={() => {
-            sortBy('firstName');
-          }}>Name</DropdownItem>
-          <DropdownItem onClick={() => {
-            sortBy('wins');
-          }}>Wins</DropdownItem>
-          <DropdownItem onClick={() => {
-            sortBy('type');
-          }}>Type</DropdownItem>
-        </DropdownMenu>
-      </ButtonDropdown>
       {allData &&
-        (<div>
-          <Users data={data} />
+        (<div id='user-manager-table'>
+          <Table dark>
+            <thead>
+              <tr>
+                {[
+                  'Name',
+                  'Door Code',
+                  'Printing',
+                  'Email Verified',
+                  'Membership Type',
+                  '',
+                  ''
+                ].map((ele, ind) => {
+                  return <th key={ind}>{ele}</th>;
+                })}
+              </tr>
+              {data.map((user, id) => (
+                <Users user={user} key={id}/>
+              ))}
+            </thead>
+          </Table>
           <Paginate usersPerPage={usersPerPage} totalUsers={allData.length}
             paginate={paginate} searchParams={searchParams}
             searching={searching} />

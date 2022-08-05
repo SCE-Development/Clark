@@ -1,0 +1,112 @@
+.UserManager {
+  text-align: center;
+}
+
+.user-manager-bg {
+  background-color: #212529;
+  height: 100vh;
+}
+
+.active-page-button {
+  align-items: center;
+  background-color: #688cc4;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  fill: #000;
+  font-family: Inter,sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  height: 30px;
+  justify-content: center;
+  letter-spacing: -.8px;
+  line-height: 24px;
+  max-width: 20px;
+  outline: 0;
+  padding: 0 15px;
+  text-align: center;
+  text-decoration: none;
+  transition: all .3s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  border-radius: 0.5em;
+}
+
+.nonactive-page-button {
+  align-items: center;
+  background-color: #fff;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  color: #000;
+  cursor: pointer;
+  display: inline-flex;
+  fill: #000;
+  font-family: Inter,sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  height: 30px;
+  justify-content: center;
+  letter-spacing: -.8px;
+  line-height: 24px;
+  max-width: 20px;
+  outline: 0;
+  padding: 0 15px;
+  text-align: center;
+  text-decoration: none;
+  transition: all .3s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  border-radius: 0.5em;
+}
+
+.nonactive-page-button:focus {
+  color: #171e29;
+}
+
+.nonactive-page-button:hover {
+  border-color: #688cc4;
+  color: #688cc4;
+  fill: #688cc4;
+}
+
+.search-row {
+  display: inline-flex;
+  padding-inline: 5px;
+}
+
+#search-bar {
+  width: 750px;
+  height: 40px;
+  border-radius: 0.5rem;
+  font-size: 16px;
+}
+
+#page-numbers {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  background-color: transparent;
+  padding-bottom: 0.35em;
+}
+
+.toolbar {
+  display: inline-flex;
+  padding-block: 20px;
+}
+
+#user-manager-table {
+  background-color: #212529;
+}
+
+#user-manager-submit {
+  background-color: #688cc4;
+  font-size: 20px;
+}
+
+#user-manager-name {
+  font-size: 20px;
+}

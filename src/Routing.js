@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+// import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './index.css';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
@@ -26,6 +27,7 @@ import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
 import { membershipState } from './Enums';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
+import UserManager from './Pages/UserManager/UserManager.js';
 
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 
@@ -51,7 +53,7 @@ export default function Routing({ appProps }) {
     // new for Overview
     {
       Component: Overview,
-      path: '/user-manager',
+      path: '/old-user-manager',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
@@ -121,6 +123,13 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
+    },
+    {
+      Component: UserManager,
+      path: '/user-manager',
+      allowedIf:userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
     }
   ];
   const signedOutRoutes = [
@@ -133,45 +142,47 @@ export default function Routing({ appProps }) {
   ];
   return (
     <Router>
-      <Switch>
+      <Routes>
         {signedInRoutes.map(
-          ({ path, Component, allowedIf, redirect, inAdminNavbar }, index) => {
+          ({ path, Component, allowedIf, redirect, inAdminNavbar }, index) =>{
             return (
-              <PrivateRoute
-                key={index}
-                exact
-                path={path}
-                appProps={{
-                  allowed: allowedIf,
-                  user: appProps.user,
-                  redirect,
-                  ...appProps
-                }}
-                component={props => (
-                  <NavBarWrapper
-                    component={Component}
-                    enableAdminNavbar={inAdminNavbar}
-                    {...props}
-                  />
-                )}
-              />
+              <Route path={path} key={index} element={
+                <PrivateRoute
+                  key={index}
+                  exact
+                  path={path}
+                  appProps={{
+                    allowed: allowedIf,
+                    user: appProps.user,
+                    redirect,
+                    ...appProps
+                  }}
+                  component={props => (
+                    <NavBarWrapper
+                      component={Component}
+                      enableAdminNavbar={inAdminNavbar}
+                      {...props}
+                    />
+                  )}
+                />
+              } />
             );
-          }
-        )}
+          })
+        }
         {signedOutRoutes.map(({ path, Component }, index) => {
           return (
             <Route
               key={index}
               exact
               path={path}
-              render={props => (
-                <NavBarWrapper component={Component} {...props} {...appProps} />
-              )}
+              element={
+                <NavBarWrapper component={Component} {...appProps} />
+              }
             />
           );
         })}
-        <Route component={NotFoundPage} />
-      </Switch>
+        <Route path='*' element={<NotFoundPage/>} />
+      </Routes>
     </Router>
   );
 }
