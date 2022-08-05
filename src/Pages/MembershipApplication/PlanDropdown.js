@@ -8,34 +8,32 @@ import {
   Input,
 } from 'reactstrap';
 
-export default function MajorDropdown(props) {
-  const [inputEnable, setInputEnable] = useState(props.inputEnable);
-  const [major, setMajor] = useState();
+export default function PlanDropdown(props) {
+  const [plan, setPlan] = useState();
   const [dropdownOpen, setDropdownOpen] = useState();
 
-  function handleMajorChange(e) {
-    props.setMajor(e.target.value);
-    setMajor(e.target.value);
-    setInputEnable(e.target.value === 'Other');
+  function handlePlanChange(e) {
+    props.setPlan(e.target.value);
+    setPlan(e.target.value);
   }
 
-  const options = ['Computer Engineering', 'Software Engineering', 'Other'];
+  const options = ['Semester', 'Annual'];
 
   return (
     <div id='application-dropdown'>
-      <span style={{paddingRight:'10px'}}>Major*</span>
+      <span style={{ paddingRight: '10px' }}>Plan*</span>
       <ButtonDropdown
         isOpen={dropdownOpen}
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
-        <DropdownToggle caret id='change-and-select-btns 2'>
-          {!inputEnable ? major || 'Select Major' : 'Other'}
+        <DropdownToggle caret id='change-and-select-btns 1'>
+          {plan != null ? plan : 'Select Membership Plan'}
         </DropdownToggle>
         <DropdownMenu id='change-and-select-btns'>
           {options.map((option, index) => {
             return (
               <DropdownItem
-                onClick={handleMajorChange}
+                onClick={handlePlanChange}
                 key={index}
                 value={option}
               >
@@ -45,12 +43,6 @@ export default function MajorDropdown(props) {
           })}
         </DropdownMenu>
       </ButtonDropdown>
-      {inputEnable ? (
-        <Input
-          placeholder='Enter major here...'
-          onChange={(e) => props.setMajor(e.target.value)}
-        />
-      ) : null}
     </div>
   );
 }

@@ -19,7 +19,7 @@ import { membershipState } from '../../Enums';
 export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
-  const unauthedRoutes = [{ title: 'About', route: '/#about' },
+  const unauthedRoutes = [{ title: 'About', route: '/about' },
     { title: 'Events', route: '/events' }];
 
   const authedRoutes = [{ title: 'Printing', route: '/2DPrinting' }];

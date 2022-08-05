@@ -1,14 +1,10 @@
 {
-  "CLOUD_API_URL": "http://localhost:8082/cloudapi",
   "discordApiKeys": {
     "ENABLED": true,
     "CLIENT_ID": "NOT_SET",
     "CLIENT_SECRET": "NOT_SET",
-    "REDIRECT_URI_DEV": "http://localhost:8080/api/user/callback",
-    "REDIRECT_URI_PROD": "http://sce.engr.sjsu.edu/api/user/callback",
     "REFRESH_TOKEN": "NOT_SET"
   },
-  "GENERAL_API_URL": "http://localhost:8080/api",
   "githubApiKeys": {
     "ENABLED": true,
     "CLIENT_ID": "NOT_SET",
@@ -28,7 +24,6 @@
     "PRIMARY_CAL": "primary",
     "SCE_EVENTS_CAL": "NOT_SET"
   },
-  "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
   "passwordStrength": "medium",
   "AWS" : {
     "ENABLED": true,
@@ -45,8 +40,5 @@
     "AWS_IOT_ENDPOINT" : "NOT_SET",
     "PrintingS3Bucket": "NOT_SET"
   },
-  "secretKey": "super duper secret key",
-  "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
-  "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
-  "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi"
+  "secretKey": "super duper secret key"
 }

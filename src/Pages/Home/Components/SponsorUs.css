@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap");
+
+.sponsor-us {
+    margin-top: 200px;
+    position: relative;
+    text-align: center;
+}
+
+.sponsors-img {
+    opacity: 0.5;
+    width: 100%;
+    height: 670px;
+    object-fit: cover;
+}
+
+.sponsors-header {
+    position: absolute;
+    top: 35%;
+    bottom: 65%;
+    left: 25%;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 80px;
+    line-height: 60px;
+    width: 50%;
+}
+
+.sponsor-us-button {
+    position: absolute;
+    top: 65%;
+    bottom: 35%;
+    left: 45%;
+
+    font-family: 'Mina';
+    font-style: normal;
+    
+    font-weight: 700;
+    font-size: 19px;
+    
+    line-height: 30px;
+}
+
+#Sponsor-us-btn {
+    background-color: #0d6efd;
+    border-color: #fff;
+    color: #fff;
+ }
+ 
+ #sponsor-us-btn:hover {
+    background-color: transparent;
+    border-color: #0d6efd
+ }
+ @media screen and (max-width:500px) {
+    .sponsor-us-button {
+        position: absolute;
+        top: 65%;
+        bottom: 35%;
+        left: 30% !important;
+    
+        font-family: 'Mina';
+        font-style: normal;
+        
+        font-weight: 700;
+        font-size: 19px;
+        
+        line-height: 30px;
+    }
+ }

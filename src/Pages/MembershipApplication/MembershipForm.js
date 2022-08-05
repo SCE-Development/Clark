@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import './register-page.css';
+import './registerPage.css';
 import { Row, Form, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import MajorDropdown from './MajorDropdown';
+import PlanDropdown from './PlanDropdown';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
@@ -17,6 +18,7 @@ export default function MembershipForm(props) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassWord] = useState('');
   const [major, setMajor] = useState('');
+  const [plan, setPlan] = useState('');
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [clickSubmitted, setClickSubmitted] = useState(false);
   const VALID_EMAIL_REGEXP = new RegExp(
@@ -47,17 +49,22 @@ export default function MembershipForm(props) {
   const invalidEmailAlert = () => {
     if (clickSubmitted) {
       if (!email) {
-        return <p className="unavailable">Email cannot be left empty</p>;
+        return <p
+          className='unavailable application-text'
+        >Email cannot be left empty</p>;
       }
       if (!checkValidEmail()) {
-        return <p className="unavailable">Your input email is invalid</p>;
+        return <p
+          className='unavailable application-text'
+        >Your input email is invalid</p>;
       }
       if (!usernameAvailable) {
         return (
-          <p className="unavailable">
+          <p className='unavailable application-text'>
             An account with this email already exists. Contact{' '}
-            <a href="mailto:asksce@gmail.com">asksce@gmail.com</a> if you forgot
-            your password.
+            <a href='mailto:asksce@gmail.com'>
+              asksce@gmail.com</a>
+              if you forgot your password.
           </p>
         );
       }
@@ -68,7 +75,9 @@ export default function MembershipForm(props) {
     if (!password) {
       return (
         clickSubmitted && (
-          <p className="unavailable">Password cannot be left empty</p>
+          <p
+            className='unavailable application-text'
+          >Password cannot be left empty</p>
         )
       );
     }
@@ -85,16 +94,16 @@ export default function MembershipForm(props) {
     return (
       !checkValidPassword() && (
         <ul>
-          <li id="passwordLengthRequirement" className={lengthClass}>
+          <li id='passwordLengthRequirement' className={lengthClass}>
             8 or more characters
           </li>
-          <li id="passwordLowercaseRequirement" className={lowercaseClass}>
+          <li id='passwordLowercaseRequirement' className={lowercaseClass}>
             a lowercase letter
           </li>
-          <li id="passwordUppercaseRequirement" className={uppercaseClass}>
+          <li id='passwordUppercaseRequirement' className={uppercaseClass}>
             an uppercase letter
           </li>
-          <li id="passwordNumberRequirement" className={numberClass}>
+          <li id='passwordNumberRequirement' className={numberClass}>
             a number 0-9
           </li>
         </ul>
@@ -107,12 +116,16 @@ export default function MembershipForm(props) {
       if (!confirmPassword) {
         return (
           clickSubmitted && (
-            <p className="unavailable">Please confirm your password</p>
+            <p
+              className='unavailable application-text'
+            >Please confirm your password</p>
           )
         );
       }
       if (password !== confirmPassword) {
-        return <p className="unavailable">Passwords do not match</p>;
+        return <p
+          className='unavailable application-text'
+        >Passwords do not match</p>;
       }
     }
   };
@@ -136,7 +149,9 @@ export default function MembershipForm(props) {
       type: 'text',
       handleChange: (e) => setFirstName(e.target.value),
       ifRequirementsNotMet: clickSubmitted && !firstName && (
-        <p className="unavailable">First name cannot be left empty</p>
+        <p
+          className='unavailable application-text'
+        >First name cannot be left empty</p>
       ),
     },
     {
@@ -144,7 +159,9 @@ export default function MembershipForm(props) {
       id: 'last-name-field',
       type: 'text',
       ifRequirementsNotMet: clickSubmitted && !lastName && (
-        <p className="unavailable">Last name cannot be left empty</p>
+        <p
+          className='unavailable application-text'
+        >Last name cannot be left empty</p>
       ),
       handleChange: (e) => setLastName(e.target.value),
     },
@@ -173,6 +190,15 @@ export default function MembershipForm(props) {
       id: 'confirm-password-field',
       ifRequirementsNotMet: invalidConfirmPasswordAlert(),
       handleChange: (e) => setConfirmPassWord(e.target.value),
+    },
+
+  ];
+
+  const majorField = [
+    {
+      label: 'Major*',
+      type: 'text',
+      id: 'major-field',
     },
   ];
 
@@ -209,77 +235,84 @@ export default function MembershipForm(props) {
   };
 
   return (
-    <Container id="background" fluid>
-      <div className="form-card">
-        <h1>Membership Application</h1>
-        <hr />
-        <p>
-          Selected Membership Plan: {memberShipPlanToString(props.selectedPlan)}
-        </p>
-        <p>
-          <span color="red">*</span>= Required field
-        </p>
-        <Form onSubmit={submitApplication}>
-          <Row id="name-field-row">
-            {nameFields.map((input, index) => (
-              <FormGroup key={`name-field-input-${index}`}>
-                <Input
-                  className="name-input membership-input"
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={input.label}
-                />
-                {input.ifRequirementsNotMet}
-              </FormGroup>
-            ))}
-          </Row>
-          <div id="email-input-container">
-            {accountFields.map((input, index) => (
-              <FormGroup key={`account-field-${index}`}>
-                <Input
-                  className="membership-input email-input"
-                  type={input.type}
-                  onChange={input.handleChange}
-                  id={input.id}
-                  placeholder={input.label}
-                />
-                {input.ifRequirementsNotMet}
-              </FormGroup>
-            ))}
+    <div className='planBody'>
+      <Container className = 'planContainer'>
+        <div className='form-card'>
+          <div className = 'planHeaders'>
+            Semester Plan
+          </div>
+          <div className = 'circle'>
+            <div className='circle-text'>$20</div>
+          </div>
+          <div className = 'planFooters'>
+            Expires: May 20, {new Date().getFullYear()}
+          </div>
+          <div className = 'planHeaders'>
+            Annual Plan
+          </div>
+          <div className = 'circle'>
+            <div className='circle-text'>$30</div>
+          </div>
+          <div className = 'planFooters'>
+            Expires: December 20, {new Date().getFullYear()}
+          </div>
+        </div>
+        <div className='form-card2'>
+          <h1 id='application-header'>Membership Application</h1>
+          <h2 id='application-h2'>
+            Year: {new Date().getFullYear()}
+          </h2>
+          <h6 className='white-text'>
+            * = Required field
+          </h6>
+          <Form onSubmit={submitApplication}>
+            <Row id='name-field-row'>
+              {nameFields.map((input, index) => (
+                <FormGroup
+                  className='application-form-group'
+                  key={`name-field-input-${index}`}>
+                  <Input
+                    className='name-input membership-input'
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
+            </Row>
+            <div id='email-input-container'>
+              {accountFields.map((input, index) => (
+                <FormGroup
+                  className='application-form-group'
+                  key={`account-field-${index}`}>
+                  <Input
+                    className='membership-input email-input'
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
+            </div>
             <MajorDropdown setMajor={setMajor} />
-            {clickSubmitted && !major && (
-              <p className="unavailable">
-                You have to choose your major!
-              </p>
-            )}
-          </div>
-          <div id="recaptcha">
-            {maybeShowCaptcha()}
-          </div>
-          <div className="transition-button-wrapper">
-            <Button
-              id="change-and-select-btns"
-              onClick={() =>
-                props.setMembershipState(
-                  memberApplicationState.SELECT_MEMBERSHIP_PLAN
-                )
-              }
-            >
-              Change membership plan
-            </Button>
-            <Button id="submit-btn" color="primary" type="submit">
-              Submit application
-            </Button>
-          </div>
-        </Form>
-        <hr />
-        <p id="login-link">
-          <a href="/login" style={{ fontSize: '120%' }}>
-            Switch to Login
-          </a>
-        </p>
-      </div>
-    </Container>
+            <PlanDropdown setPlan={setPlan} />
+            <div id='recaptcha'>
+              {maybeShowCaptcha()}
+            </div>
+            <div className='transition-button-wrapper container-btn'>
+              <div className='center'>
+                <Button className = 'submit-btn' type='submit'>
+                  Submit Application
+                </Button>
+              </div>
+            </div>
+          </Form>
+        </div>
+      </Container>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ const { DISCORD_COREV4_KEY } = require('../config/config.json');
 // to route the request to the Auth API so we use the name of
 // the container instead,
 const MAIN_ENDPOINT_URL = process.env.MAIN_ENDPOINT_URL
-  || 'http://localhost:8080';
+  || 'localhost:8080';
 
 console.log(process.env)
 

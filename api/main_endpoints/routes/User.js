@@ -25,7 +25,7 @@ const {
   discordApiKeys
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const addErrorLog = require('../util/logging-helpers');
+const { addErrorLog }  = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||

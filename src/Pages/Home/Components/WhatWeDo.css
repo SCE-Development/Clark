@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap");
+
+.what-we-do {
+    margin-top: 150px;
+  }
+
+.container-what-we-do {
+    display: flex;
+    align-items: center;
+  }
+
+.what-we-do-header{
+    padding-left: 40px;
+    padding-bottom: 10px;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 42px;
+  
+    color: #ffffff;
+}
+
+
+.what-we-do-p {
+    color: #FFFFFF;
+    text-align: center;
+    font-family: "Mina", sans-serif;
+    width: 50%;
+    font-size: 18px;
+    margin-right: 25px;
+}
+
+.what-we-do-img {
+    margin-left: 30px !important;
+    
+  }
+
+.what-we-do-img img {
+    width: 600px;
+    height: auto;
+    margin-right: 25px;
+    border-radius: 23px;
+  }
+
+.learn-more-button {
+    margin-left: 40%;
+    width: 113px;
+    height: 34px;
+    
+    font-family: 'Mina';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 30px;
+    
+    text-align: center;
+    
+    color: #FFFFFF;
+}
+
+@media screen and (max-width:500px) {
+  .hide-images {
+    display: none !important;
+  }
+  .what-we-do-p {
+    width: 100%;
+    font-size: 16px;
+    padding: 0px !important;
+  }
+  .what-we-do-content {
+    padding-left: 0px !important;
+  }
+  .what-we-do-header{
+    padding-left: 0px !important;
+  }
+  .learn-more-button {
+    margin: 0 !important;
+    padding-left: 90px !important;
+  }
+}
+
