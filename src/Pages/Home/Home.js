@@ -3,6 +3,10 @@ import './home.css';
 import HeroFrame from '../../Components/Frame/HeroFrame.js';
 import Footer from '../../Components/Footer/Footer.js';
 import { Button } from 'reactstrap';
+import WhoWeAre from './Components/WhoWeAre';
+import WhatWeDo from './Components/WhatWeDo';
+import SponsorUs from './Components/SponsorUs';
+import SponsorsLogos from './Components/SponsorsLogos';
 
 class Home extends Component {
   render() {
@@ -22,13 +26,25 @@ class Home extends Component {
 
           <div className='join-sce'>
             <a href='/register'>
-              <Button outline color="primary" id='joinsce-btn'
+              <Button outline color='primary' id='joinsce-btn'
                 style={{width:'170px', border:'3px solid',
                   borderRadius:8, fontSize:'20px'}}>Join SCE</Button>
             </a>
           </div>
           <div className='home-hero-frame text-center mx-auto'>
             <HeroFrame />
+          </div>
+          <div className='who-we-are'>
+            <WhoWeAre />
+          </div>
+          <div className='what-we-do'>
+            <WhatWeDo />
+          </div>
+          <div>
+            <SponsorUs />
+          </div>
+          <div>
+            <SponsorsLogos />
           </div>
           <Footer />
         </div>
