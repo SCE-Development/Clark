@@ -132,8 +132,8 @@ export default function Routing({ appProps }) {
     { Component: VerifyEmailPage, path: '/verify' },
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
-    { Component: DevTeam, path: '/team' }
-    { Component: AboutPage, path: '/about'},
+    { Component: DevTeam, path: '/team' },
+    { Component: AboutPage, path: '/about'}
   ];
   return (
     <Router>
