@@ -1,4 +1,5 @@
 const { SceHttpServer } = require('../util/SceHttpServer');
+const logger = require('../util/logger');
 
 function main() {
   try {
