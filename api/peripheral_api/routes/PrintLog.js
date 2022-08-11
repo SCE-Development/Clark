@@ -28,7 +28,7 @@ router.get('/getPrintLogs', (req, res) => {
     .sort({ printedDate: -1 })
     .then(printLogs => {
       logger.info('Print logs found and sent');
-      res.status(OK).send(printLogs)
+      res.status(OK).send(printLogs);
     });
 });
 

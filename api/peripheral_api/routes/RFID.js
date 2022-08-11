@@ -22,12 +22,12 @@ if (rfidHelper.keysExist() && !rfidHelper.testing()) {
       clientId: 'CentauriServer',
       host: AWS_IOT_ENDPOINT
     });
-  
+
     device
       .on('connect', function() {
         device.subscribe('MessageForNode');
       });
-  
+
     device
       .on('message', async function(topic, payload) {
         rfidHelper.handleAwsIotMessage(device, payload);
@@ -67,7 +67,7 @@ router.get('/getRFIDs', async (req, res) => {
   RFID.find()
     .then((items) => res.status(OK).send(items))
     .catch((error) => {
-      logger.error('Something went wrong with finding the RFID',error);
+      logger.error('Something went wrong with finding the RFID', error);
       res.sendStatus(BAD_REQUEST);
     });
 });
@@ -92,7 +92,7 @@ router.post('/deleteRFID', async (req, res) => {
       }
     })
     .catch((error) => {
-      logger.error('Something went wrong with deleting the RFID: ',error);
+      logger.error('Something went wrong with deleting the RFID: ', error);
       res.sendStatus(BAD_REQUEST);
     });
 });

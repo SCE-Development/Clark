@@ -36,8 +36,7 @@ router.post('/updateSignText', async (req, res) => {
   const result = await SqsHandler.pushMessageToQueue(req.body);
   if (result) {
     res.sendStatus(OK);
-  }
-  else {
+  } else {
     res.sendStatus(BAD_REQUEST);
   }
 });

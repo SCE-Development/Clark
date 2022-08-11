@@ -77,7 +77,10 @@ class RfidHelper {
         }
         bcrypt.hash(byte, secretKey, function(hashError, hash) {
           if (hashError) {
-            logger.info('Something went wrong with hashing card data: ', hashError);
+            logger.info(
+              'Something went wrong with hashing card data: ',
+              hashError
+            );
             resolve(null);
           }
           logger.info('Card data hashed successfully');

@@ -7,7 +7,7 @@ const consoleColors = {
 };
 
 const util = require('util');
-  
+
 const LOG_LEVELS = {
   DEBUG: 'DEBUG',
   INFO: 'INFO',
@@ -41,21 +41,24 @@ function printToConsole(level, ...message) {
   formattedMessage += ` ${args}`;
   // Print the log as red or green if the level is error or warning
   if (level === LOG_LEVELS.ERROR) {
+    // eslint-disable-next-line max-len
     formattedMessage = `${consoleColors.red}${formattedMessage}${consoleColors.default}`;
   } else if (level === LOG_LEVELS.WARNING) {
+    // eslint-disable-next-line max-len
     formattedMessage = `${consoleColors.yellow}${formattedMessage}${consoleColors.default}`;
   }
+  // eslint-disable-next-line no-console
   console.log(formattedMessage);
 }
-  
+
 function debug(...message) {
   printToConsole(LOG_LEVELS.DEBUG, ...message);
 }
-  
+
 function info(...message) {
   printToConsole(LOG_LEVELS.INFO, ...message);
 }
-  
+
 function warn(...message) {
   printToConsole(LOG_LEVELS.WARNING, ...message);
 }
