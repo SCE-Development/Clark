@@ -4,7 +4,7 @@ const RFID = require('../models/RFID');
 const { OK, BAD_REQUEST, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 const fs = require('fs');
-
+const logger = require('../../util/logger');
 
 /**
  * Abstracts RFID card backend logic to a class to improve readability.
@@ -27,6 +27,7 @@ class RfidHelper {
    * else false for verifying.
    */
   addingRfid() {
+    logger.info('Adding RFID');
     return this.addRfid;
   }
 
@@ -42,9 +43,11 @@ class RfidHelper {
     for (const filePath of filePaths) {
       try {
         if (!fs.existsSync('../api/config/AWS-IOT/' + filePath)) {
+          logger.info('Missing AWS-IOT key file');
           return false;
         }
       } catch (e) {
+        logger.info('Something went wrong with AWS-IOT key file: ', e);
         return false;
       }
     }
@@ -56,6 +59,7 @@ class RfidHelper {
    * @return If running api tests then it return true else returns false
    */
   testing() {
+    logger.info('Testing');
     return this.inTesting;
   }
 
@@ -68,12 +72,15 @@ class RfidHelper {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(10, function(error, salt) {
         if (error) {
+          logger.info('Something went wrong with hashing card data: ', error);
           resolve(null);
         }
         bcrypt.hash(byte, secretKey, function(hashError, hash) {
           if (hashError) {
+            logger.info('Something went wrong with hashing card data: ', hashError);
             resolve(null);
           }
+          logger.info('Card data hashed successfully');
           resolve(hash);
         });
       });
@@ -86,9 +93,11 @@ class RfidHelper {
    */
   getCards() {
     return new Promise((resolve, reject) => {
+      logger.info('Getting cards');
       RFID.find()
         .then((items) => resolve(items))
         .catch((error) => {
+          logger.info('Something went wrong with getting cards: ', error);
           resolve([]);
         });
     });
@@ -114,10 +123,12 @@ class RfidHelper {
         for (let card of cards) {
           if (card.byte === hash) {
             found = true;
+            logger.info('Card found');
             resolve(OK);
           }
         }
         if (!found) {
+          logger.info('Card not found');
           resolve(NOT_FOUND);
         }
       }
@@ -139,12 +150,15 @@ class RfidHelper {
         byte: await this.hashCardData(JSON.parse(payload.toString()).message)
       });
       if (newRFID.name === null || newRFID.byte === null) {
+        logger.info('RFID name or byte is null');
         resolve(BAD_REQUEST);
       } else {
         RFID.create(newRFID, (error) => {
           if (error) {
+            logger.info('Something went wrong with creating RFID: ', error);
             resolve(BAD_REQUEST);
           } else {
+            logger.info('RFID created successfully');
             resolve(OK);
           }
         });
@@ -162,6 +176,7 @@ class RfidHelper {
   async handleAwsIotMessage(device, payload) {
     if (this.addRfid) {
       const creatorResponse = await this.createRfid(this.name, payload);
+      logger.info('Sending creation message to ESP32');
       device.publish('MessageForESP32', JSON.stringify({
         message: creatorResponse
       }));
@@ -170,6 +185,7 @@ class RfidHelper {
       clearTimeout();
     } else {
       const validateResponse = await this.validateCard(payload);
+      logger.info('Sending validation message to ESP32');
       device.publish('MessageForESP32', JSON.stringify({
         message: validateResponse
       }));

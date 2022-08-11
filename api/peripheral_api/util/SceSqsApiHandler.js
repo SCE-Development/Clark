@@ -1,6 +1,6 @@
 const AWS_KEYS = require('../../config/config.json').AWS;
 const AWS = require('aws-sdk');
-
+const logger = require('../../util/logger');
 /**
  * SQS API Handler
  * @member {Object} sqs  SQS service object
@@ -40,8 +40,10 @@ class SceSqsApiHandler {
       };
       this.sqs.sendMessage(sqsParams, function(err, data) {
         if (err) {
+          logger.error('Error pushing message to queue: ', err);
           resolve(false);
         } else {
+          logger.info('Message pushed to queue');
           resolve(data);
         }
       });
