@@ -17,7 +17,6 @@ router.post('/addPrintLog', (req, res) => {
       logger.error('Error saving print log: ', error);
       res.sendStatus(BAD_REQUEST);
     } else {
-      logger.info('Print log saved');
       res.sendStatus(OK);
     }
   });
@@ -26,10 +25,7 @@ router.post('/addPrintLog', (req, res) => {
 router.get('/getPrintLogs', (req, res) => {
   PrintLog.find()
     .sort({ printedDate: -1 })
-    .then(printLogs => {
-      logger.info('Print logs found and sent');
-      res.status(OK).send(printLogs);
-    });
+    .then(printLogs => res.status(OK).send(printLogs))
 });
 
 module.exports = router;

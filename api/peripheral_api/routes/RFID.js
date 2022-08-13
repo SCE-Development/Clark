@@ -50,7 +50,6 @@ router.post('/createRFID', async (req, res) => {
     logger.warn('RFID is already being added');
     return res.sendStatus(BAD_REQUEST);
   }
-  logger.info('Creating RFID...');
   rfidHelper.startCountdownToAddCard(req.body.name);
   return res.sendStatus(OK);
 });
@@ -84,10 +83,8 @@ router.post('/deleteRFID', async (req, res) => {
   RFID.deleteOne({ _id: req.body._id })
     .then((result) => {
       if (result.n < 1) {
-        logger.warn('RFID not found');
         return res.sendStatus(NOT_FOUND);
       } else {
-        logger.info('RFID deleted');
         return res.sendStatus(OK);
       }
     })

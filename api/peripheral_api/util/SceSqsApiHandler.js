@@ -43,7 +43,6 @@ class SceSqsApiHandler {
           logger.error('Error pushing message to queue: ', err);
           resolve(false);
         } else {
-          logger.info('Message pushed to queue');
           resolve(data);
         }
       });
