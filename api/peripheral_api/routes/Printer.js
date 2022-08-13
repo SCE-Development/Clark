@@ -73,7 +73,6 @@ router.post('/sendPrintRequest', async (req, res) => {
   const response = await s3.upload(params, function(err, data) {
     if (err) {
       logger.error('Unable to upload data: ', err);
-      throw err;
     }
   }).promise();
 
