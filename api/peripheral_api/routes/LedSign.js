@@ -26,11 +26,11 @@ router.post('/updateSignText', async (req, res) => {
   }
 
   if (!checkIfTokenSent(req)) {
-    logger.warn('No token sent');
+    logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('Invalid token');
+    logger.warn('/updateSignText was with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   const result = await SqsHandler.pushMessageToQueue(req.body);

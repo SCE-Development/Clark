@@ -38,11 +38,10 @@ router.get('/healthCheck', async (req, res) => {
   await axios
     .get('http://host.docker.internal:14000/healthcheck/printer')
     .then(() => {
-      logger.info('Printer up and running');
       return res.sendStatus(OK);
     })
     .catch((err) => {
-      logger.error('Printer healthcheck failed: ', err);
+      logger.error('Printer SSH tunnel is down: ', err);
       return res.sendStatus(NOT_FOUND);
     });
 });

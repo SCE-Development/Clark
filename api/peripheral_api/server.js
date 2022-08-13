@@ -19,7 +19,7 @@ function main() {
     });
     logger.info('Server started');
   } catch (e) {
-    logger.error('Error in peripheral server: ', e);
+    logger.error('Error starting peripheral API: ', e);
   }
 }
 

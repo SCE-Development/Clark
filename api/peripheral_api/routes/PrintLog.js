@@ -14,7 +14,7 @@ router.post('/addPrintLog', (req, res) => {
 
   newPrint.save(function(error) {
     if (error) {
-      logger.error('Error saving print log: ', error);
+      logger.error('Unable to save print log:', error);
       res.sendStatus(BAD_REQUEST);
     } else {
       res.sendStatus(OK);

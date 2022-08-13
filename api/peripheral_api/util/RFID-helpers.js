@@ -58,7 +58,6 @@ class RfidHelper {
    * @return If running api tests then it return true else returns false
    */
   testing() {
-    logger.info('Testing');
     return this.inTesting;
   }
 
