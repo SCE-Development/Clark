@@ -13,7 +13,7 @@ router.post('/addErrorLog', async (req, res) => {
   });
   newError.save(function(error) {
     if (error) {
-      logger.error('Error saving error log: ', error);
+      logger.error('Unable to save error log: ', error);
       res.sendStatus(BAD_REQUEST);
     } else {
       res.sendStatus(OK);
@@ -24,7 +24,7 @@ router.post('/addErrorLog', async (req, res) => {
 router.get('/getErrorLogs', (req, res) => {
   ErrorLog.find()
     .sort({ errorTime: -1 })
-    .then(errorLogs => res.status(OK).send(errorLogs))
+    .then(errorLogs => res.status(OK).send(errorLogs));
 });
 
 module.exports = router;

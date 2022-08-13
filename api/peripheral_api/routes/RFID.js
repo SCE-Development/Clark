@@ -56,11 +56,11 @@ router.post('/createRFID', async (req, res) => {
 
 router.get('/getRFIDs', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    logger.warn('No token sent');
+    logger.warn('/getRFIDs was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('Invalid token');
+    logger.warn('/getRFIDs was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.find()
@@ -73,11 +73,11 @@ router.get('/getRFIDs', async (req, res) => {
 
 router.post('/deleteRFID', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    logger.warn('No token sent');
+    logger.warn('/deleteRFID was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('Invalid token');
+    logger.warn('/deleteRFID was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   RFID.deleteOne({ _id: req.body._id })

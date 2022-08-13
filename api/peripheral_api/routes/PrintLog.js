@@ -25,7 +25,7 @@ router.post('/addPrintLog', (req, res) => {
 router.get('/getPrintLogs', (req, res) => {
   PrintLog.find()
     .sort({ printedDate: -1 })
-    .then(printLogs => res.status(OK).send(printLogs))
+    .then(printLogs => res.status(OK).send(printLogs));
 });
 
 module.exports = router;

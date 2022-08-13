@@ -50,11 +50,11 @@ const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
   const sqsHandler = new SceSqsApiHandler(Queue.PAPER_PRINTING_QUEUE_NAME);
   if (!checkIfTokenSent(req)) {
-    logger.warn('No token sent');
+    logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('Invalid token');
+    logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!AWS_KEYS.ENABLED) {
@@ -72,7 +72,7 @@ router.post('/sendPrintRequest', async (req, res) => {
 
   const response = await s3.upload(params, function(err, data) {
     if (err) {
-      logger.error('Error uploading data: ', err);
+      logger.error('Unable to upload data: ', err);
       throw err;
     }
   }).promise();
@@ -99,7 +99,7 @@ router.post('/pushDiscordPDFToSqs', async (req, res) => {
   const sqsHandler = new SceSqsApiHandler(Queue.PAPER_PRINTING_QUEUE_NAME);
   const { apiKey, fileURL } = req.body;
   if (!checkDiscordKey(apiKey)) {
-    logger.warn('Invalid discord key');
+    logger.warn('/pushDiscordPDFToSqs was requested with an invalid key');
     return res.sendStatus(UNAUTHORIZED);
   }
 
