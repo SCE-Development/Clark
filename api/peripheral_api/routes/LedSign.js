@@ -21,7 +21,7 @@ router.get('/healthCheck', (req, res) => {
 
 router.post('/updateSignText', async (req, res) => {
   if (!AWS.ENABLED) {
-    logger.warn('AWS is not enabled');
+    logger.warn('/updateSignText returning 200 because AWS is not enabled');
     return res.sendStatus(OK);
   }
 

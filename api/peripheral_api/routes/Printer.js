@@ -58,7 +58,7 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!AWS_KEYS.ENABLED) {
-    logger.warn('AWS is not enabled');
+    logger.warn('/sendPrintRequest returning 200 because AWS is not enabled');
     return res.sendStatus(OK);
   }
   const { raw, copies, pageRanges } = req.body;
@@ -72,7 +72,7 @@ router.post('/sendPrintRequest', async (req, res) => {
 
   const response = await s3.upload(params, function(err, data) {
     if (err) {
-      logger.error('Unable to upload data: ', err);
+      logger.error('/sendPrintRequest Unable to upload data to S3: ', err);
     }
   }).promise();
 
