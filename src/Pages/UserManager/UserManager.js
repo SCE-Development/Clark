@@ -5,8 +5,17 @@ import { Paginate } from './Paginate';
 import { Users } from './Users';
 import { Button, Table } from 'reactstrap';
 import Header from '../../Components/Header/Header';
+import { getData, getAllData } from '../../APIFunctions/User';
 
 import Dropdown from './Dropdown';
+
+// export default function UserManager() {
+//   return (
+//     <Router>
+//       <UserManagerApp />
+//     </Router>
+//   );
+// }
 
 export default function UserManager() {
 
@@ -21,7 +30,7 @@ export default function UserManager() {
   const [searching, setSearching] = useState(false);
   const [search, setSearch] = useState('');
 
-  const filterOptions = ['All', 'Admin', 'Pending'];
+  const filterOptions = ['All', 'Admin', 'Alumni', 'Pending'];
   const sortOptions = [
     'First Name',
     'Last Name',
@@ -30,28 +39,49 @@ export default function UserManager() {
   ];
 
   useEffect(() => {
-    async function getData() {
+    async function callDB() {
       let page = searchParams.get('page') || 1;
       let userSearch = searchParams.get('search') || '';
       let sort = searchParams.get('sort') || 'First Name';
       let filter = searchParams.get('filter') || 'All';
 
-      await fetch(`api/User/getUsers/?page=${page}&u=${usersPerPage}` +
-        `&search=${userSearch}&sort=${sort}&filter=${filter}`)
-        .then(res => res.json())
-        .then(data => {
-          setData(data.currentUsers);
-          setAllData(data.allUsers);
-        })
-        .catch(err => {
-          throw err;
-        });
+      const apiResponseData = await getData(page, usersPerPage,
+        userSearch, sort, filter);
+      if (!apiResponseData.error) {
+        setData(apiResponseData.responseData);
+      }
+
+      const apiResponseAllData = await getAllData(page, usersPerPage,
+        userSearch, sort, filter);
+      if (!apiResponseAllData.error) {
+        setAllData(apiResponseAllData.responseData);
+      }
     }
-    getData();
+    // async function getData() {
+    //   let page = searchParams.get('page') || 1;
+    //   let userSearch = searchParams.get('search') || '';
+    //   let sort = searchParams.get('sort') || 'First Name';
+    //   let filter = searchParams.get('filter') || 'All';
+
+    //   // this needs to be in api functions
+    //   // similar to src/APIFunctions/User.js and using axios
+    //   // pass page, usersPerPage, userSearch, sort, filter
+    //   await fetch(`api/User/getUsers/?page=${page}&u=${usersPerPage}` +
+    //     `&search=${userSearch}&sort=${sort}&filter=${filter}`)
+    //     .then(res => res.json())
+    //     .then(data => {
+    //       // setData(data.currentUsers);
+    //       setAllData(data.allUsers);
+    //     })
+    //     .catch(err => {
+    //       throw err;
+    //     });
+    // }
+    callDB();
+    // getData();
   }, [searchParams]);
 
   function paginate(page, searching) {
-
     let userSearch = searchParams.get('search') || '';
     let sort = searchParams.get('sort') || 'First Name';
     let filter = searchParams.get('filter') || 'All';
@@ -70,6 +100,7 @@ export default function UserManager() {
     navigate(`?page=1&u${usersPerPage}&search=${userSearchGang}&sort=` +
       `${sort}&filter=${filterGang}`);
   }
+
   function filterBy(filter) {
     let userSearchGang = searchParams.get('search') || '';
     let sortGang = searchParams.get('sort') || 'First Name';
@@ -131,7 +162,7 @@ export default function UserManager() {
                 })}
               </tr>
               {data.map((user, id) => (
-                <Users user={user} key={id}/>
+                <Users user={user} key={id} />
               ))}
             </thead>
           </Table>

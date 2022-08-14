@@ -3,44 +3,99 @@ import 'jsdom-global/register';
 import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
+import { BrowserRouter,
+  Routes,
+  Route,
+  Router,
+  unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { MemoryRouter } from '../util/mocks/react-router-dom';
 
-import Overview from '../../src/Pages/Overview/Overview';
+import UserManager from '../../src/Pages/UserManager/UserManager';
 import Adapter from 'enzyme-adapter-react-16';
-import OverviewProfile from '../../src/Pages/Overview/OverviewProfile';
+import Users from '../../src/Pages/UserManager/Users';
 import { membershipState } from '../../src/Enums';
+
+import * as UserAPI from '../../src/APIFunctions/User';
+import { UserApiResponse } from '../../src/APIFunctions/ApiResponses';
+import sinon from 'sinon';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-describe('<Overview />', () => {
-  const wrapper = mount(<Overview />);
+describe('<UserManager />', () => {
+  let stub = null;
+  let history = createBrowserHistory();
+  const RENDERED_USERS = new UserApiResponse(false, [
+    {
+      'emailVerified': false,
+      'accessLevel': 0.5,
+      'pagesPrinted': 0,
+      'firstName': 'Apple',
+      'lastName': 'Roll'
+    },
+    {
+      'emailVerified': false,
+      'accessLevel': -1,
+      'pagesPrinted': 0,
+      'firstName': 'Banana',
+      'lastName': 'Roll'
+    },
+    {
+      'emailVerified': false,
+      'accessLevel': -1,
+      'pagesPrinted': 0,
+      'firstName': 'Bozo',
+      'lastName': 'Roll'
+    },
+    {
+      'emailVerified': false,
+      'accessLevel': -1,
+      'pagesPrinted': 0,
+      'firstName': 'Detox',
+      'lastName': 'Roll'
+    },
+    {
+      'emailVerified': false,
+      'accessLevel': -1,
+      'pagesPrinted': 0,
+      'firstName': 'Dryer',
+      'lastName': 'Roll'
+    }
+  ]);
 
-  it('Should render a <table /> component with one child', () => {
-    expect(wrapper.find('table')).to.have.lengthOf(1);
+  before(done => {
+    stub = sinon.stub(UserAPI, 'getData');
+    done();
   });
 
-  it('Should render a <OverviewProfile /> component with 2 children', () => {
-    const user = {
-      accessLevel: membershipState.ADMIN,
-      firstName: 'First',
-      lastName: 'Last',
-      middleInitial: 'I',
-      joinDate: '12-32-2012htzs342',
-      membershipValidUntil: '12-32-2012htzs342',
-      email: 'email',
-      major: 'major',
-      doorCode: '123',
-      pagesPrinted: 20
-    };
-    // before setState
-    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(0);
-    // setState
-    wrapper.setState({ users: [user, user] });
-    // after setState
-    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(2);
+  after(done => {
+    if (stub) stub.restore();
+    done();
   });
+
+  function returnUserArray() {
+    if (stub) stub.returns(RENDERED_USERS);
+  }
+
+  function returnEmptyArray() {
+    if (stub) stub.returns([]);
+  }
 
   it('Should render a <tr /> component with 8 children', () => {
-    const component = wrapper.find('th');
+    returnUserArray();
+    history.push('/');
+    // Object.defineProperty(window.location, 'href', {
+    //   writable: true,
+    //   value: '/'
+    // });
+    window.history.pushState({}, 'idk', '/');
+    const idk = mount(<HistoryRouter history={history}>
+      <Routes>
+        <Route path="/" element={<UserManager />} />
+      </Routes>
+    </HistoryRouter>);
+    console.log(idk.html(), "hacks hacks  hacks")
+    const component = idk.find('th');
     const shouldRenderedtr = [
       'Name',
       'Door Code',
@@ -50,7 +105,6 @@ describe('<Overview />', () => {
       '',
       ''
     ];
-
     expect(component).to.have.lengthOf(7);
     for (let i = 0; i < shouldRenderedtr.length; i++) {
       expect(component.get(i).props.children).equals(shouldRenderedtr[i]);

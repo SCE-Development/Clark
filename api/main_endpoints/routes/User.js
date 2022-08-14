@@ -143,11 +143,11 @@ router.post('/users', function(req, res) {
 });
 
 router.get('/getUsers', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
   try {
     const limit = parseInt(req.query.u);
     const page = parseInt(req.query.page) - 1 || 0;

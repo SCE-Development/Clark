@@ -251,7 +251,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
         }
       );
       it(
-        'Should redirect the <Overview /> component with the ' +
+        'Should redirect the <AdminDashboard /> component with the ' +
           '/dashboard endpoint',
         () => {
           const wrapper = getComponentFromRoute('/dashboard', memberAppProps);

@@ -7,7 +7,7 @@ import { expect } from 'chai';
 import EventInfoModal from '../../src/Pages/Events/EventInfoModal';
 import Adapter from 'enzyme-adapter-react-16';
 import { getDateWithSlashes } from '../../src/APIFunctions/Event';
-import { clockSymbol, mapPinSymbol } from '../../src/Pages/Overview/SVG.js';
+import { clockSymbol, mapPinSymbol } from '../../src/Pages/UserManager/SVG.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 

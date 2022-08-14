@@ -4,7 +4,7 @@ import {
   CustomInput
 } from 'reactstrap';
 import { toggleDarkTheme } from '../../APIFunctions/dark-theme';
-import { sunIcon, moonIcon } from '../../Pages/Overview/SVG';
+import { sunIcon, moonIcon } from '../../Pages/UserManager/SVG';
 
 export default function DarkMode(props) {
   const [darkTheme, setDarkTheme] = useState(true);
