@@ -31,6 +31,10 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/updateSignText', async (req, res) => {
+  /*
+  * How these work with Quasar:
+  * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+  */
   if (!AWS.ENABLED) return res.sendStatus(OK);
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(UNAUTHORIZED);
