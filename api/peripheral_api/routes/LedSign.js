@@ -15,7 +15,7 @@ const {
 
 const SqsHandler = new SceSqsApiHandler(AWS.Queue.LED_QUEUE_NAME);
 
-router.get('/healthCheck', (req, res) => {
+router.get('/healthCheck', async (req, res) => {
   if (process.env.NODE_ENV !== 'production') {
      return res.sendStatus(OK);
    }
