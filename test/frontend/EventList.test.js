@@ -68,7 +68,7 @@ describe('<EventList />', () => {
     done();
   });
 
-  // these two functions u gotta 
+  // these two functions u gotta
   function returnEventArray() {
     if (stub) stub.returns(RENDERED_EVENTS);
   }

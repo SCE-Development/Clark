@@ -94,7 +94,7 @@ describe('<UserManager />', () => {
         <Route path="/" element={<UserManager />} />
       </Routes>
     </HistoryRouter>);
-    console.log(idk.html(), "hacks hacks  hacks")
+    // console.log(idk.html(), "hacks hacks  hacks")
     const component = idk.find('th');
     const shouldRenderedtr = [
       'Name',
