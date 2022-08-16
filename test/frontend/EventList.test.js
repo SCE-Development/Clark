@@ -57,15 +57,18 @@ describe('<EventList />', () => {
   ]);
 
   before(done => {
+    // create a sub for ur getData like this
     stub = sinon.stub(EventAPI, 'getUpcomingEvents');
     done();
   });
 
   after(done => {
+    // do this too
     if (stub) stub.restore();
     done();
   });
 
+  // these two functions u gotta
   function returnEventArray() {
     if (stub) stub.returns(RENDERED_EVENTS);
   }

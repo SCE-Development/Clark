@@ -16,7 +16,6 @@ export default function Editor(props) {
   const [doorCode, setDoorCode] = useState('');
   const [major, setMajor] = useState('');
   const [user, setUser] = useState({ ...props.user });
-  const [users] = useState( [...props.users] );
   const [toggle, setToggle] = useState(false);
   const [pagesPrinted, setPagesPrinted] = useState(user.pagesPrinted);
   const [toggleSubmit, setToggleSubmit] = useState(false);
@@ -54,17 +53,6 @@ export default function Editor(props) {
     }
     setToggle(false);
     setToggleSubmit(false);
-
-    // Map through users and dynamically update frontend
-    let newUsers = [];
-    for(let i = 0; i < users.length; i++){
-      if(users[i]._id === editedUser._id){
-        newUsers.push(editedUser);
-      }else{
-        newUsers.push(users[i]);
-      }
-    }
-    props.updateUserState(newUsers);
   }
 
   const formGroups = [
@@ -129,7 +117,7 @@ export default function Editor(props) {
       <ul className="profileInfo">
 
         <Display
-          user={{...user, membershipValidUntil}}
+          user={{ ...user, membershipValidUntil }}
         />
 
         <EditForm
@@ -159,7 +147,7 @@ export default function Editor(props) {
             {
               marginTop: '320px',
             }}
-          toggle={()=>setToggleSubmit(!toggleSubmit)}
+          toggle={() => setToggleSubmit(!toggleSubmit)}
           isOpen={toggleSubmit}>
           <Button
             onClick={async () => {

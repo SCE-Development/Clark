@@ -13,12 +13,12 @@ function AdminDashboard() {
   ];
   return (
     <div className='flexbox-container'>
-      <body className='admin-dashboard-bg'>
+      <div className='admin-dashboard-bg'>
         <Header title='Admin Dashboard'></Header>
         <div className='block'></div>
         {fields.map((elem, ind) => {
           return (
-            <Link to={elem.url} id='admin-box'
+            <Link key={ind} to={elem.url} id='admin-box'
               style={{ textDecoration: 'none' }}>
               <InfoCard
                 key={ind}
@@ -27,7 +27,7 @@ function AdminDashboard() {
             </Link>
           );
         })}
-      </body>
+      </div>
     </div>
   );
 }

@@ -142,6 +142,67 @@ router.post('/users', function(req, res) {
     });
 });
 
+router.get('/getUsers', async (req, res) => {
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
+  try {
+    const limit = parseInt(req.query.u);
+    const page = parseInt(req.query.page) - 1 || 0;
+    const search = req.query.search || '';
+    let filter = req.query.filter || 'All';
+
+    const toSort = {
+      'First Name': 'firstName',
+      'Last Name': 'lastName',
+      'Join Date': { joinDate: -1 },
+      'Membership Type': { accessLevel: -1 }
+    };
+    const sort = toSort[req.query.sort];
+
+    const membershipStateArray = [
+      membershipState.PENDING,
+      membershipState.ALUMNI,
+      membershipState.OFFICER,
+      membershipState.ADMIN
+    ];
+
+    const toNumber = {
+      Admin: [3],
+      Alumni: [0.5],
+      Officer: [2],
+      Pending: [-1],
+    };
+
+    filter === 'All'
+      ? (filter = [...membershipStateArray])
+      : filter = toNumber[req.query.filter];
+
+    const currentUsers = await User.find({ firstName: {
+      $regex: `^${search}`, $options: 'i' } })
+      .where('accessLevel')
+      .in([...filter])
+      .skip(page * limit)
+      .sort(sort)
+      .limit(limit);
+
+    const allUsers = await User.find({ firstName: {
+      $regex: `^${search}`, $options: 'i' } })
+      .where('accessLevel')
+      .in([...filter]);
+
+    const response = {
+      currentUsers,
+      allUsers
+    };
+    res.status(OK).send(response);
+  } catch (err) {
+    res.sendStatus(BAD_REQUEST);
+  }
+});
+
 // Edit/Update a member record
 router.post('/edit', (req, res) => {
   if (!checkIfTokenSent(req)) {

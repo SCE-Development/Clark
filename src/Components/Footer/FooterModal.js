@@ -4,7 +4,7 @@ import './footerModal.css';
 const FooterModal = (props) => {
   return (
     <div className="footer-modal-box">
-      <div className="box">
+      <div className="footer-box">
         <span className="close-icon" onClick={props.handleClose}>
           x
         </span>

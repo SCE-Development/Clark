@@ -28,6 +28,34 @@ export async function getAllUsers(token) {
   return status;
 }
 
+export async function getData(page, usersPerPage, userSearch, sort, filter) {
+  let status = new UserApiResponse();
+  await axios
+    .get(GENERAL_API_URL + `/User/getUsers/?page=${page}&u=${usersPerPage}` +
+      `&search=${userSearch}&sort=${sort}&filter=${filter}`)
+    .then(result => {
+      status.responseData = result.data.currentUsers;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+export async function getAllData(page, usersPerPage, userSearch, sort, filter) {
+  let status = new UserApiResponse();
+  await axios
+    .get(GENERAL_API_URL + `/User/getUsers/?page=${page}&u=${usersPerPage}` +
+      `&search=${userSearch}&sort=${sort}&filter=${filter}`)
+    .then(result => {
+      status.responseData = result.data.allUsers;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
 /**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated

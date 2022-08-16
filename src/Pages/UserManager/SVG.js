@@ -25,9 +25,9 @@ export function xMark() {
 
 export function editSymbol() {
   return (
-    <svg width='40' height='40' viewBox='0 0 24 24'>
+    <svg width='30' height='30' viewBox='0 0 24 24'>
       <path
-        fill='#000000'
+        fill='white'
         d='M21.7,13.35L20.7,14.35L18.65,12.3L19.65,11.3C19.86,11.09 20.21,11.09
     20.42,11.3L21.7,12.58C21.91,12.79 21.91,13.14 21.7,13.35M12,
     18.94L18.06,12.88L20.11,14.93L14.06,
@@ -41,10 +41,15 @@ export function editSymbol() {
 
 export function trashcanSymbol() {
   return (
-    <svg width='24' height='24' viewBox='0 0 24 24'>
-      <path
-        d='M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0
-      1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z'
+    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"
+      style={{ fill: '#fff' }}>
+      fill-rule="evenodd" clip-rule="evenodd"
+      <path d="M19 24h-14c-1.104 0-2-.896-2-2v-17h-1v-2h6v-1.5c0-.827.673-1.5
+        1.5-1.5h5c.825 0 1.5.671 1.5 1.5v1.5h6v2h-1v17c0 1.104-.896 2-2
+        2zm0-19h-14v16.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-16.5zm-9
+        4c0-.552-.448-1-1-1s-1 .448-1 1v9c0 .552.448 1 1 1s1-.448 1-1v-9zm6
+        0c0-.552-.448-1-1-1s-1 .448-1 1v9c0 .552.448 1 1 1s1-.448
+        1-1v-9zm-2-7h-4v1h4v-1z"
       />
     </svg>
   );

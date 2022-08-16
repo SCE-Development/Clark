@@ -8,7 +8,7 @@ import {
   Button
 } from 'reactstrap';
 import { getDateWithSlashes } from '../../APIFunctions/Event';
-import { clockSymbol, mapPinSymbol } from '../Overview/SVG';
+import { clockSymbol, mapPinSymbol } from '../UserManager/SVG';
 
 function EventInfoModal(props) {
   const { modal, toggle, currentEvent } = props;
