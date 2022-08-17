@@ -28,6 +28,7 @@ export default class OverviewBoard extends Component {
   }
 
   componentDidMount() {
+    console.log('wats up', this.props)
     if (this.props.user) {
       this.setState(
         {
@@ -40,6 +41,10 @@ export default class OverviewBoard extends Component {
         }
       );
     }
+  }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdate', this.props)
   }
 
   async callDatabase() {
@@ -171,6 +176,7 @@ export default class OverviewBoard extends Component {
             className='input-overview'
             placeholder="search by 'first name, last name, or email'"
             onChange={event => {
+              this.props.history.push("/user-manager", { state: 'sample data'}); 
               this.updateQuery(event.target.value);
             }}
           />
