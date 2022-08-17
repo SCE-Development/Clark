@@ -7,8 +7,8 @@ services:
     volumes:
       - '/data/db:/data/db' 
     command: 'mongod'
-  tunup:
-    container_name: tunup
+  keep-ssh-tunnel-open:
+    container_name: keep-ssh-tunnel-open
     build:
       context: ./tunup
       dockerfile: ./Dockerfile
