@@ -31,11 +31,7 @@ function App(props) {
   return (
     !isAuthenticating && (
       <>
-        <Routing appProps={{
-          authenticated,
-          setAuthenticated,
-          user,
-          ...props }} />
+        <Routing appProps={{ authenticated, setAuthenticated, user }} />
       </>
     )
   );
