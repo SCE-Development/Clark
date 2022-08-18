@@ -22,7 +22,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 hosts_list = [host.strip() for host in args.hosts.split(',')]
-print(hosts_list)
+logging.info(f"using hosts {hosts_list}")
 
 # iterate through hosts list and u can ping it easy
 
