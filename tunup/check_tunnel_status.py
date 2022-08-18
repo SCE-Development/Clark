@@ -44,5 +44,5 @@ def ping(host):
 
 while True:
     [ping(host) for host in hosts_list]
-    sleep(t)
+    sleep(args.request_interval_seconds)
 
