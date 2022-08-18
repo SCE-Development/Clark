@@ -26,7 +26,6 @@ logging.info(f"using hosts {hosts_list}")
 
 # iterate through hosts list and u can ping it easy
 
-t = int(args.request_interval_seconds)
 
 logging.Formatter.converter = gmtime
 logging.basicConfig(
