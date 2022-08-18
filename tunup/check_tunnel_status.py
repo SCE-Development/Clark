@@ -37,7 +37,6 @@ logging.basicConfig(
 
 logging.info("Starting tunnel routine...")
 def ping(host):
-    print(host)
     try:
         req = requests.get(host)
         logging.info(f"Success connecting to {host}: %s", req)
