@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './Overview.css';
 import OverviewProfile from './OverviewProfile.js';
 import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
-import { totalUsers } from '../../APIFunctions/User';
 import {
   ButtonDropdown,
   DropdownToggle,
@@ -41,12 +40,6 @@ export default class OverviewBoard extends Component {
         }
       );
     }
-  }
-
-  componentDidUpdate() {
-    console.log('componentDidUpdate', this.props);
-    totalUsers(location.search)
-      .then(res => console.log(res));
   }
 
   async callDatabase() {
