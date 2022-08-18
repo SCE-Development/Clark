@@ -31,6 +31,57 @@ const discordConnection = require('../util/discord-connection');
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
 
+router.get('/totalUsers', (req, res) => {
+  User.find()
+    .then(items => {
+      res.status(OK).send(items);
+    })
+    .catch(() => {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    });
+});
+
+router.get('/countAllUsers', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.u);
+    const page = parseInt(req.query.page) - 1 || 0;
+    const search = req.query.search || '';
+    let filter = req.query.filter || 'All';
+    const toSort = {
+      'First Name': 'firstName',
+      'Last Name': 'lastName',
+      'Join Date': { joinDate: -1 },
+      'Membership Type': { accessLevel: -1 }
+    };
+    const sort = toSort[req.query.sort];
+    const membershipStateArray = [
+      membershipState.PENDING,
+      membershipState.ALUMNI,
+      membershipState.OFFICER,
+      membershipState.ADMIN
+    ];
+    const toNumber = {
+      Admin: [3],
+      Alumni: [0.5],
+      Officer: [2],
+      Pending: [-1],
+    };
+    filter === 'All'
+      ? (filter = [...membershipStateArray])
+      : filter = toNumber[req.query.filter];
+    const count = await User.find({ firstName: {
+      $regex: `^${search}`, $options: 'i' } }).countDocuments()
+      .where('accessLevel')
+      .in([...filter]);
+    const response = {
+      count
+    };
+    res.status(OK).send(response);
+  } catch (err) {
+    res.sendStatus(BAD_REQUEST);
+  }
+});
+
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
   if (!email) {

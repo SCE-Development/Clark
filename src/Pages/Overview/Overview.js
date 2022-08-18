@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Overview.css';
 import OverviewProfile from './OverviewProfile.js';
 import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
+import { totalUsers } from '../../APIFunctions/User';
 import {
   ButtonDropdown,
   DropdownToggle,
@@ -44,7 +45,10 @@ export default class OverviewBoard extends Component {
   }
 
   componentDidUpdate() {
-    console.log('componentDidUpdate', this.props)
+    console.log('componentDidUpdate', this.props);
+    console.log(this.generateObjectFromParams(location.search));
+    totalUsers(location.search)
+      .then(res => console.log(res));
   }
 
   async callDatabase() {
@@ -56,6 +60,29 @@ export default class OverviewBoard extends Component {
 
   updateUserState(users) {
     this.setState({ users });
+  }
+
+  generateQueryParams(options) {
+    let queryParams = '';
+    for (let key in options) {
+      queryParams = queryParams + key + '=' +
+      encodeURIComponent(options[key]) + '&';
+    }
+    return '?' + queryParams.substring(0, queryParams.length - 1);
+  }
+
+  generateObjectFromParams(params) {
+    if (!params) {
+      return {};
+    }
+    const str = params.substring(1);
+    const pairs = str.split('&');
+    let obj = {};
+    const keyAndValue = pairs.map(pair => pair.split('='));
+    for (let pair in keyAndValue) {
+      obj[keyAndValue[pair][0]] = decodeURIComponent(keyAndValue[pair][1]);
+    }
+    return obj;
   }
 
   updateQuery(value) {
