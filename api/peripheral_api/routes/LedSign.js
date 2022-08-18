@@ -11,7 +11,7 @@ const {
   verifyToken,
   checkIfTokenSent
 } = require('../../util/token-verification');
-
+const logger = require('../../util/logger');
 
 const SqsHandler = new SceSqsApiHandler(AWS.Queue.LED_QUEUE_NAME);
 
@@ -34,16 +34,25 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/updateSignText', async (req, res) => {
-  if (!AWS.ENABLED) return res.sendStatus(OK);
+  if (!AWS.ENABLED) {
+    logger.warn('/updateSignText returning 200 because AWS is not enabled');
+    return res.sendStatus(OK);
+  }
+
   if (!checkIfTokenSent(req)) {
+    logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
+    logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   const result = await SqsHandler.pushMessageToQueue(req.body);
-  if (result) res.sendStatus(OK);
-  else res.sendStatus(BAD_REQUEST);
+  if (result) {
+    res.sendStatus(OK);
+  } else {
+    res.sendStatus(BAD_REQUEST);
+  }
 });
 
 
