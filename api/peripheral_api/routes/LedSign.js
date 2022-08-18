@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { AWS } = require('../../config/config.json');
-const { SceSqsApiHandler } = require('../util/SceSqsApiHandler');
 const {
   OK,
   BAD_REQUEST,
@@ -12,8 +11,6 @@ const {
   checkIfTokenSent
 } = require('../../util/token-verification');
 const logger = require('../../util/logger');
-
-const SqsHandler = new SceSqsApiHandler(AWS.Queue.LED_QUEUE_NAME);
 
 router.get('/healthCheck', async (req, res) => {
   /*
@@ -53,6 +50,17 @@ router.post('/updateSignText', async (req, res) => {
   } else {
     res.sendStatus(BAD_REQUEST);
   }
+  if (process.env.NODE_ENV !== 'production') {
+    return res.sendStatus(OK);
+  }
+  await axios
+    .post('http://host.docker.internal:11000/api/update-sign' {...req.body})
+    .then(() => {
+      return res.sendStatus(OK);
+    })
+    .catch((err) => {
+      return res.sendStatus(NOT_FOUND);
+    });
 });
 
 
