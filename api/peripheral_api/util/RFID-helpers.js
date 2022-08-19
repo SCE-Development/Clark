@@ -4,7 +4,7 @@ const RFID = require('../models/RFID');
 const { OK, BAD_REQUEST, NOT_FOUND } =
   require('../../util/constants').STATUS_CODES;
 const fs = require('fs');
-
+const logger = require('../../util/logger');
 
 /**
  * Abstracts RFID card backend logic to a class to improve readability.
@@ -42,9 +42,11 @@ class RfidHelper {
     for (const filePath of filePaths) {
       try {
         if (!fs.existsSync('../api/config/AWS-IOT/' + filePath)) {
+          logger.error('Missing AWS-IOT key file');
           return false;
         }
       } catch (e) {
+        logger.error('Something went wrong with AWS-IOT key file: ', e);
         return false;
       }
     }
@@ -68,10 +70,15 @@ class RfidHelper {
     return new Promise((resolve, reject) => {
       bcrypt.genSalt(10, function(error, salt) {
         if (error) {
+          logger.error('Something went wrong with generating salt: ', error);
           resolve(null);
         }
         bcrypt.hash(byte, secretKey, function(hashError, hash) {
           if (hashError) {
+            logger.error(
+              'Something went wrong with hashing card data: ',
+              hashError
+            );
             resolve(null);
           }
           resolve(hash);
@@ -89,6 +96,7 @@ class RfidHelper {
       RFID.find()
         .then((items) => resolve(items))
         .catch((error) => {
+          logger.error('Something went wrong with getting cards: ', error);
           resolve([]);
         });
     });
@@ -139,10 +147,12 @@ class RfidHelper {
         byte: await this.hashCardData(JSON.parse(payload.toString()).message)
       });
       if (newRFID.name === null || newRFID.byte === null) {
+        logger.warn('RFID name or byte is null');
         resolve(BAD_REQUEST);
       } else {
         RFID.create(newRFID, (error) => {
           if (error) {
+            logger.error('Something went wrong with creating RFID: ', error);
             resolve(BAD_REQUEST);
           } else {
             resolve(OK);

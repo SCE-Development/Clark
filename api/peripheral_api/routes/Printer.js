@@ -2,7 +2,7 @@ const axios = require('axios');
 const express = require('express');
 const { SceSqsApiHandler } = require('../util/SceSqsApiHandler');
 const AWS = require('aws-sdk');
-
+const logger = require('../../util/logger');
 const {
   verifyToken,
   checkIfTokenSent,
@@ -41,6 +41,7 @@ router.get('/healthCheck', async (req, res) => {
       return res.sendStatus(OK);
     })
     .catch((err) => {
+      logger.error('Printer SSH tunnel is down: ', err);
       return res.sendStatus(NOT_FOUND);
     });
 });
@@ -49,12 +50,15 @@ const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
   const sqsHandler = new SceSqsApiHandler(Queue.PAPER_PRINTING_QUEUE_NAME);
   if (!checkIfTokenSent(req)) {
+    logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
+    logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!AWS_KEYS.ENABLED) {
+    logger.warn('/sendPrintRequest returning 200 because AWS is not enabled');
     return res.sendStatus(OK);
   }
   const { raw, copies, pageRanges } = req.body;
@@ -67,7 +71,9 @@ router.post('/sendPrintRequest', async (req, res) => {
   };
 
   const response = await s3.upload(params, function(err, data) {
-    if (err) throw err;
+    if (err) {
+      logger.error('/sendPrintRequest Unable to upload data to S3: ', err);
+    }
   }).promise();
 
   const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
@@ -92,6 +98,7 @@ router.post('/pushDiscordPDFToSqs', async (req, res) => {
   const sqsHandler = new SceSqsApiHandler(Queue.PAPER_PRINTING_QUEUE_NAME);
   const { apiKey, fileURL } = req.body;
   if (!checkDiscordKey(apiKey)) {
+    logger.warn('/pushDiscordPDFToSqs was requested with an invalid key');
     return res.sendStatus(UNAUTHORIZED);
   }
 
