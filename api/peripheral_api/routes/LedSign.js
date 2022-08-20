@@ -54,7 +54,7 @@ router.post('/updateSignText', async (req, res) => {
     return res.sendStatus(OK);
   }
   await axios
-    .post('http://host.docker.internal:11000/api/update-sign' {...req.body})
+    .post('http://host.docker.internal:11000/api/update-sign' + {...req.body})
     .then(() => {
       return res.sendStatus(OK);
     })
