@@ -173,8 +173,8 @@ export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
   await axios.post(GENERAL_API_URL + '/User/checkIfUserExists',
     { email }).catch(() => {
-      status.error = true;
-    });
+    status.error = true;
+  });
   return status;
 }
 
