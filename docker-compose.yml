@@ -7,6 +7,13 @@ services:
     volumes:
       - '/data/db:/data/db' 
     command: 'mongod'
+  keep-ssh-tunnel-open:
+    container_name: keep-ssh-tunnel-open
+    build:
+      context: ./tunup
+      dockerfile: ./Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   sce-peripheral-api:
     container_name: sce-peripheral-api
     build:
