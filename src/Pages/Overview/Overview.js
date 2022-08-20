@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Overview.css';
 import OverviewProfile from './OverviewProfile.js';
 import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
+import { totalUsers } from '../../APIFunctions/User';
 import {
   ButtonDropdown,
   DropdownToggle,
@@ -12,6 +13,9 @@ import {
 import { membershipState } from '../../Enums';
 import Header from '../../Components/Header/Header';
 
+import UserManagerPageButton from './UserManagerPageButton';
+import { useLocation } from 'react-router-dom';
+
 export default class OverviewBoard extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +24,11 @@ export default class OverviewBoard extends Component {
       queryResult: [],
       toggle: false,
       currentQueryType: 'All',
-      queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni']
+      queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni'],
+      search: '',
+      count: 0,
+      usersPerPage: 5,
+      page: 1
     };
     this.headerProps = {
       title: 'User Manager'
@@ -44,8 +52,10 @@ export default class OverviewBoard extends Component {
 
   async callDatabase() {
     const apiResponse = await getAllUsers(this.state.authToken);
+    const countUsers = (await totalUsers(
+      `?search=${this.state.search}`)).responseData.count;
+    this.state.count = countUsers;
     // console.log(apiResponse);
-
     if (!apiResponse.error) this.setState({ users: apiResponse.responseData });
   }
 
@@ -53,11 +63,14 @@ export default class OverviewBoard extends Component {
     this.setState({ users });
   }
 
-  updateQuery(value) {
+  async updateQuery(value) {
     // taking care of empty values
     value = typeof value === 'undefined' ? '' : value;
     value = value.trim().toLowerCase();
 
+    const countUsers = (await totalUsers(
+      `?search=${this.state.search}`)).responseData.count;
+    this.state.count = countUsers;
     const userExists = user => {
       return (
         user.firstName.toLowerCase().includes(value) ||
@@ -78,24 +91,24 @@ export default class OverviewBoard extends Component {
 
   filterUserByAccessLevel(accessLevel) {
     switch (accessLevel) {
-    case 'Officer':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.OFFICER
-      );
-    case 'Admin':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.ADMIN
-      );
-    case 'Pending':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.PENDING
-      );
-    case 'Alumni':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.ALUMNI
-      );
-    default:
-      return this.state.users;
+      case 'Officer':
+        return this.state.users.filter(
+          data => data.accessLevel === membershipState.OFFICER
+        );
+      case 'Admin':
+        return this.state.users.filter(
+          data => data.accessLevel === membershipState.ADMIN
+        );
+      case 'Pending':
+        return this.state.users.filter(
+          data => data.accessLevel === membershipState.PENDING
+        );
+      case 'Alumni':
+        return this.state.users.filter(
+          data => data.accessLevel === membershipState.ALUMNI
+        );
+      default:
+        return this.state.users;
     }
   }
 
@@ -132,7 +145,31 @@ export default class OverviewBoard extends Component {
     this.setState({ toggle: !this.state.toggle });
   }
 
+  paginate(newPage) {
+    this.state.page = newPage;
+    this.props.history.push(`/user-manager?search=${this.state.search}` +
+      `&page=${this.state.page}`, { state: 'sample data' }
+    );
+    console.log(location.search);
+  }
+
   render() {
+    let numberofButtons = Math.ceil(this.state.count / this.state.usersPerPage);
+    const pageNumbers = new Array();
+    for (let i = 1; i <= numberofButtons; i++) {
+      pageNumbers.push(i);
+    }
+    const renderPageNumbers = pageNumbers.map(number => {
+      return (
+        <Button
+          key={number}
+          id={number}
+          onClick={() => this.paginate(number)}
+        >
+          {number}
+        </Button>
+      );
+    });
     return (
       <div className='flexbox-container'>
         <br>
@@ -171,7 +208,19 @@ export default class OverviewBoard extends Component {
             className='input-overview'
             placeholder="search by 'first name, last name, or email'"
             onChange={event => {
+              this.state.search = event.target.value;
               this.updateQuery(event.target.value);
+              if (event.target.value.length > 0) {
+                this.props.history.push(
+                  `/user-manager?search=${event.target.value}`,
+                  { state: 'sample data' }
+                );
+              } else {
+                this.props.history.push(
+                  '/user-manager?',
+                  { state: 'sample data' }
+                );
+              }
             }}
           />
 
@@ -234,6 +283,16 @@ export default class OverviewBoard extends Component {
                 })}
             </tbody>
           </table>
+          {/* <UserManagerPageButton users={this.state.count}
+            usersPerPage={this.state.usersPerPage}
+            page={this.state.page} paginate={this.paginate} /> */}
+          <div>
+            <nav>
+              <ul>
+                {renderPageNumbers}
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
     );
