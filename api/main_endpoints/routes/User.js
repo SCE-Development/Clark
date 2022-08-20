@@ -283,7 +283,7 @@ router.get('/callback', async function(req, res) {
 
 router.post('/getUserFromDiscordId', (req, res) => {
   const { discordID, apiKey } = req.body;
-  if (!checkDiscordKey(apiKey)) {
+  if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ discordID }, (error, result) => {
@@ -299,13 +299,13 @@ router.post('/getUserFromDiscordId', (req, res) => {
 
 router.post('/updatePagesPrintedFromDiscord', (req, res) => {
   const { discordID, apiKey, pagesPrinted } = req.body;
-  if (!checkDiscordKey(apiKey)) {
+  if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.updateOne({ discordID }, { pagesPrinted },
+  User.updateOne( { discordID }, { pagesPrinted },
     (error, result) => {
       let status = OK;
-      if (error) {
+      if(error){
         status = BAD_REQUEST;
       } else if (result.n === 0) {
         status = NOT_FOUND;
