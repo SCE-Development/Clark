@@ -44,12 +44,7 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  const result = await SqsHandler.pushMessageToQueue(req.body);
-  if (result) {
-    res.sendStatus(OK);
-  } else {
-    res.sendStatus(BAD_REQUEST);
-  }
+  
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
