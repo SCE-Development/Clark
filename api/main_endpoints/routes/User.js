@@ -6,7 +6,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { getMemberExpirationDate} = require('../util/registerUser');
+const { getMemberExpirationDate } = require('../util/registerUser');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
@@ -25,7 +25,7 @@ const {
   discordApiKeys
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const { addErrorLog }  = require('../util/logging-helpers');
+const { addErrorLog } = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
@@ -43,36 +43,15 @@ router.get('/totalUsers', (req, res) => {
 
 router.get('/countAllUsers', async (req, res) => {
   try {
-    const limit = parseInt(req.query.u);
-    const page = parseInt(req.query.page) - 1 || 0;
     const search = req.query.search || '';
-    let filter = req.query.filter || 'All';
-    const toSort = {
-      'First Name': 'firstName',
-      'Last Name': 'lastName',
-      'Join Date': { joinDate: -1 },
-      'Membership Type': { accessLevel: -1 }
-    };
-    const sort = toSort[req.query.sort];
-    const membershipStateArray = [
-      membershipState.PENDING,
-      membershipState.ALUMNI,
-      membershipState.OFFICER,
-      membershipState.ADMIN
-    ];
-    const toNumber = {
-      Admin: [3],
-      Alumni: [0.5],
-      Officer: [2],
-      Pending: [-1],
-    };
-    filter === 'All'
-      ? (filter = [...membershipStateArray])
-      : filter = toNumber[req.query.filter];
-    const count = await User.find({ firstName: {
-      $regex: `^${search}`, $options: 'i' } }).countDocuments()
-      .where('accessLevel')
-      .in([...filter]);
+    const count = await User.find({
+      $or:
+        [
+          { 'firstName': { '$regex': search, '$options': 'i' } },
+          { 'lastName': { '$regex': search, '$options': 'i' } },
+          { 'email': { '$regex': search, '$options': 'i' } }
+        ]
+    }).countDocuments();
     const response = {
       count
     };
@@ -91,7 +70,7 @@ router.post('/checkIfUserExists', (req, res) => {
     {
       email: email.toLowerCase()
     },
-    function(error, user) {
+    function (error, user) {
       if (error) {
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
@@ -115,7 +94,7 @@ router.post('/delete', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  User.deleteOne({ email: req.body.email }, function(error, user) {
+  User.deleteOne({ email: req.body.email }, function (error, user) {
     if (error) {
       const info = {
         userEmail: req.body.email,
@@ -136,13 +115,13 @@ router.post('/delete', (req, res) => {
 });
 
 // Search for a member
-router.post('/search', function(req, res) {
+router.post('/search', function (req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.ALUMNI)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function(error, result) {
+  User.findOne({ email: req.body.email }, function (error, result) {
     if (error) {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
@@ -177,7 +156,7 @@ router.post('/search', function(req, res) {
 });
 
 // Search for all members
-router.post('/users', function(req, res) {
+router.post('/users', function (req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -240,7 +219,7 @@ router.post('/edit', (req, res) => {
   // Remove the auth token from the form getting edited
   delete user.token;
 
-  User.updateOne(query, { ...user }, function(error, result) {
+  User.updateOne(query, { ...user }, function (error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
@@ -270,7 +249,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function(error, result) {
+  User.findOne({ email: req.body.email }, function (error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
@@ -290,7 +269,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
   });
 });
 
-router.get('/callback', async function(req, res) {
+router.get('/callback', async function (req, res) {
   const code = req.query.code;
   const email = req.query.state;
   discordConnection.loginWithDiscord(code, email, discordRedirectUri)
@@ -304,7 +283,7 @@ router.get('/callback', async function(req, res) {
 
 router.post('/getUserFromDiscordId', (req, res) => {
   const { discordID, apiKey } = req.body;
-  if(!checkDiscordKey(apiKey)){
+  if (!checkDiscordKey(apiKey)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ discordID }, (error, result) => {
@@ -320,22 +299,22 @@ router.post('/getUserFromDiscordId', (req, res) => {
 
 router.post('/updatePagesPrintedFromDiscord', (req, res) => {
   const { discordID, apiKey, pagesPrinted } = req.body;
-  if(!checkDiscordKey(apiKey)){
+  if (!checkDiscordKey(apiKey)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.updateOne( { discordID }, {pagesPrinted},
+  User.updateOne({ discordID }, { pagesPrinted },
     (error, result) => {
       let status = OK;
-      if(error){
+      if (error) {
         status = BAD_REQUEST;
-      } else if (result.n === 0){
+      } else if (result.n === 0) {
         status = NOT_FOUND;
       }
       return res.sendStatus(status);
     });
 });
 
-router.post('/connectToDiscord', function(req, res) {
+router.post('/connectToDiscord', function (req, res) {
   const email = req.body.email;
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
