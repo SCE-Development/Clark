@@ -44,7 +44,6 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
