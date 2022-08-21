@@ -2,6 +2,7 @@ const axios = require('axios');
 const logger = require('../../util/logger');
 
 
+
 /**
  * Helper function to perform a health check on update-sign.
  * @returns {bool} If we can sucesfully get

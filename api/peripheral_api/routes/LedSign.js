@@ -11,7 +11,7 @@ const {
   checkIfTokenSent
 } = require('../../util/token-verification');
 const logger = require('../../util/logger');
-const { updateSign, healthCheck } = require('../../util/LedSign.js');
+const { updateSign, healthCheck } = require('../util/LedSign.js');
 
 
 
@@ -23,17 +23,12 @@ router.get('/healthCheck', async (req, res) => {
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
-  isUp = await healthCheck();
+  const isUp = await healthCheck();
   if(isUp) return 200;
   return 500;
 });
 
 router.post('/updateSignText', async (req, res) => {
-  if (!AWS.ENABLED) {
-    logger.warn('/updateSignText returning 200 because AWS is not enabled');
-    return res.sendStatus(OK);
-  }
-
   if (!checkIfTokenSent(req)) {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -42,10 +37,10 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
-  isUp = await updateSign(...req.body);
+  const isUp = await updateSign(...req.body);
   if(isUp) return 200;
   return 500;
 });

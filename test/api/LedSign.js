@@ -1,5 +1,6 @@
 process.env.NODE_ENV = 'test';
 
+const sinon = require('sinon');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const tools = require('../util/tools/tools');
@@ -22,10 +23,14 @@ const {
   resetSqsMock,
   restoreSqsMock,
 } = require('../util/mocks/SceSqsApiHandler');
+const ledSign = require('../../api/peripheral_api/util/LedSign');
 
 let app = null;
 let test = null;
 const expect = chai.expect;
+
+let updateSignStub = null;
+let healthCheckStub = null;
 
 
 chai.should();
@@ -33,10 +38,16 @@ chai.use(chaiHttp);
 
 const token = '';
 
+
 describe('LED Sign', () => {
+  
+
   before(done => {
     initializeTokenMock();
     initializeSqsMock();
+    updateSignStub = sinon.stub(ledSign, 'updateSign')
+    healthCheckStub = sinon.stub(ledSign, 'healthCheck')
+    
     app = tools.initializeServer(
       __dirname + '/../../api/peripheral_api/routes/LedSign.js');
     test = new SceApiTester(app);
@@ -63,6 +74,7 @@ describe('LED Sign', () => {
     it('Should return 400 when token is not sent', async () => {
       const result = await test.sendPostRequest('/api/LedSign/updateSignText');
       expect(result).to.have.status(UNAUTHORIZED);
+      expect()
     });
 
     it('Should return 400 when invalid token is sent', async () => {
@@ -73,6 +85,7 @@ describe('LED Sign', () => {
 
     it('Should return 400 when error in queue', async () => {
       setTokenStatus(true);
+      updateSignStub.resolves(false);
       const result = await test.sendPostRequestWithToken(token,
         '/api/LedSign/updateSignText');
       expect(result).to.have.status(BAD_REQUEST);
@@ -81,7 +94,7 @@ describe('LED Sign', () => {
     it('Should return 200 when message is successfully pushed to the queue',
       async () => {
         setTokenStatus(true);
-        setSqsResponse(true);
+        updateSignStub.resolves(true);
         const result = await test.sendPostRequestWithToken(token,
           '/api/LedSign/updateSignText');
         expect(result).to.have.status(OK);
