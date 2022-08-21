@@ -24,7 +24,7 @@ router.get('/healthCheck', async (req, res) => {
     return res.sendStatus(OK);
   }
   isUp = await healthCheck();
-  if(usUp) return 200
+  if(isUp) return 200
   return 500
 });
 
@@ -46,7 +46,7 @@ router.post('/updateSignText', async (req, res) => {
     return res.sendStatus(OK);
   }
   isUp = await updateSign(..req.body);
-  if(usUp) return 200
+  if(isUp) return 200
   return 500
 });
 
