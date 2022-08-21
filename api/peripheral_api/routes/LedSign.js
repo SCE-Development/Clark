@@ -45,7 +45,7 @@ router.post('/updateSignText', async (req, res) => {
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
-  isUp = await updateSign(..req.body);
+  isUp = await updateSign(...req.body);
   if(isUp) return 200
   return 500
 });
