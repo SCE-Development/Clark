@@ -305,4 +305,25 @@ router.post('/connectToDiscord', function(req, res) {
     );
 });
 
+router.get('/getUserById', async (req, res) => {
+  User.findOne({ _id: req.query.userID}, (err, result) => {
+    if (err) {
+      const info = {
+        errorTime: new Date(),
+        apiEndpoint: 'user/getUserById',
+        errorDescription: error
+      };
+      addErrorLog(info);
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    }
+
+    if (!result) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.userID} not found.` });
+    }
+    return res.status(OK).json(result);
+  });
+});
+
 module.exports = router;
