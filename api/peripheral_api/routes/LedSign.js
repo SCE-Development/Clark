@@ -11,6 +11,9 @@ const {
   checkIfTokenSent
 } = require('../../util/token-verification');
 const logger = require('../../util/logger');
+const { updateSign, healthCheck } = require('../../util/LedSign.js');
+
+
 
 router.get('/healthCheck', async (req, res) => {
   /*
@@ -20,14 +23,9 @@ router.get('/healthCheck', async (req, res) => {
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
-  await axios
-    .get('http://host.docker.internal:11000/api/health-check')
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      return res.sendStatus(NOT_FOUND);
-    });
+  isUp = await healthCheck();
+  if(usUp) return 200
+  return 500
 });
 
 router.post('/updateSignText', async (req, res) => {
@@ -47,14 +45,9 @@ router.post('/updateSignText', async (req, res) => {
   if (process.env.NODE_ENV !== 'production') {
     return res.sendStatus(OK);
   }
-  await axios
-    .post('http://host.docker.internal:11000/api/update-sign' + {...req.body})
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      return res.sendStatus(NOT_FOUND);
-    });
+  isUp = await updateSign(..req.body);
+  if(usUp) return 200
+  return 500
 });
 
 
