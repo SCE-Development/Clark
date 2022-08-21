@@ -372,14 +372,14 @@ describe('User', () => {
   });
 
   describe('/GET countAllUsers', () => {
-    it('Should return statusCode 200 if count >= 1', async() => {
+    it('Should return statusCode 200 if count >= 1', async () => {
       const query = '?search=a';
       const result = await test.sendGetRequest(
         `/api/User/countAllUsers${query}`);
       expect(result).to.have.status(OK);
       result.body.count.should.be.greaterThanOrEqual(0);
     });
-    it('Should return statusCode 404 if count == 0', async() => {
+    it('Should return statusCode 404 if count == 0', async () => {
       const query = '?search=ab%cd%de';
       const result = await test.sendGetRequest(
         `/api/User/countAllUsers${query}`);
