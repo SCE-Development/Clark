@@ -1,6 +1,12 @@
 const axios = require('axios');
 const logger = require('../../util/logger');
 
+
+/**
+ * Helper function to perform a health check on update-sign.
+ * @returns {bool} If we can sucesfully get
+ * else false 
+ */
 async function updateSign(data) {
   return new Promise((resolve) => {
     axios
@@ -13,6 +19,11 @@ async function updateSign(data) {
       });
   });
 }
+/**
+ * Helper function to perform a health check.
+ * @returns {bool} If we can sucesfully get
+ * else false 
+ */
 async function healthCheck() {
   return new Promise((resolve) => {
     axios
