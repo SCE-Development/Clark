@@ -58,7 +58,7 @@ router.get('/countAllUsers', async (req, res) => {
   const response = {
     count
   };
-  res.status(status).send(response);
+  res.status(status).json(response);
 });
 
 router.post('/checkIfUserExists', (req, res) => {
