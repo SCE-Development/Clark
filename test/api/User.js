@@ -373,18 +373,34 @@ describe('User', () => {
 
   describe('/GET countAllUsers', () => {
     it('Should return statusCode 200 if count >= 1', async () => {
+      setTokenStatus(true);
       const query = '?search=a';
-      const result = await test.sendGetRequest(
-        `/api/User/countAllUsers${query}`);
+      const result = await test.sendGetRequestWithToken(
+        token, `/api/User/countAllUsers${query}`);
       expect(result).to.have.status(OK);
       result.body.count.should.be.greaterThanOrEqual(0);
     });
     it('Should return statusCode 404 if count == 0', async () => {
+      setTokenStatus(true);
       const query = '?search=ab%cd%de';
-      const result = await test.sendGetRequest(
-        `/api/User/countAllUsers${query}`);
+      const result = await test.sendGetRequestWithToken(
+        token, `/api/User/countAllUsers${query}`);
       expect(result).to.have.status(NOT_FOUND);
       result.body.count.should.be.equal(0);
+    });
+    it('Should return statusCode 403 if no token is passed in', async () => {
+      const query = '?search=a';
+      const result = await test.sendGetRequest(
+        `/api/User/countAllUsers${query}`);
+      expect(result).to.have.status(FORBIDDEN);
+    });
+    it('Should return statusCode 401 if an invalid ' +
+    'token was passed in', async () => {
+      setTokenStatus(false);
+      const query = '?search=a';
+      const result = await test.sendGetRequestWithToken(
+        token, `/api/User/countAllUsers${query}`);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
   });
 

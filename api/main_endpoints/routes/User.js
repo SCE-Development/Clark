@@ -32,6 +32,13 @@ const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
 
 router.get('/countAllUsers', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, (
+    membershipState.OFFICER
+  ))) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   const search = req.query.search;
   let status = OK;
   const count = await User.find({
