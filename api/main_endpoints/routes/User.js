@@ -6,7 +6,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { getMemberExpirationDate} = require('../util/registerUser');
+const { getMemberExpirationDate } = require('../util/registerUser');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
@@ -25,11 +25,41 @@ const {
   discordApiKeys
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const { addErrorLog }  = require('../util/logging-helpers');
+const { addErrorLog } = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
+
+router.get('/countAllUsers', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, (
+    membershipState.OFFICER
+  ))) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const search = req.query.search;
+  let status = OK;
+  const count = await User.find({
+    $or:
+      [
+        { 'firstName': { '$regex': search, '$options': 'i' } },
+        { 'lastName': { '$regex': search, '$options': 'i' } },
+        { 'email': { '$regex': search, '$options': 'i' } }
+      ]
+  }, function(error, result) {
+    if (error) {
+      status = BAD_REQUEST;
+    } else if (result == 0) {
+      status = NOT_FOUND;
+    }
+  }).countDocuments();
+  const response = {
+    count
+  };
+  res.status(status).json(response);
+});
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
