@@ -31,16 +31,6 @@ const discordConnection = require('../util/discord-connection');
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
 
-router.get('/totalUsers', (req, res) => {
-  User.find()
-    .then(items => {
-      res.status(OK).send(items);
-    })
-    .catch(() => {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    });
-});
-
 router.get('/countAllUsers', async (req, res) => {
   const search = req.query.search;
   let status = OK;
