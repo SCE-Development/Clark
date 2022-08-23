@@ -305,8 +305,8 @@ router.post('/connectToDiscord', function(req, res) {
     );
 });
 
-router.get('/getUserById', async (req, res) => {
-  User.findOne({ _id: req.query.userID}, (err, result) => {
+router.post('/getUserById', async (req, res) => {
+  User.findOne({ _id: req.body.userID}, (err, result) => {
     if (err) {
       const info = {
         errorTime: new Date(),

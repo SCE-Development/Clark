@@ -6,6 +6,9 @@ const User = require('../../api/main_endpoints/models/User.js');
 
 // Require the dev-dependencies
 const chai = require('chai');
+const mongoose = require('mongoose');
+let id = new mongoose.Types.ObjectId();
+
 const chaiHttp = require('chai-http');
 const {
   OK,
@@ -87,7 +90,7 @@ describe('User', () => {
 
     it('Should return statusCode 200 when a user does not exist', async () => {
       const user = {
-        email: 'a@b.c'
+        email: 'a@b.c',
       };
       const addUser = {
         email: 'a@b.c',
@@ -130,6 +133,7 @@ describe('User', () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/users', form);
+      id = result.body[0]._id;
       expect(result).to.have.status(OK);
     });
   });
@@ -326,6 +330,23 @@ describe('User', () => {
       };
       const result = await test.sendPostRequest(
         '/api/user/getUserFromDiscordId', body);
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST getUserById', () => {
+    it('Should return status code 404 if user is not found', async () => {
+      const user = {
+        userID: new mongoose.Types.ObjectId()
+      };
+      const result = await test.sendPostRequest('/api/user/getUserById', user);
+      expect(result).to.have.status(NOT_FOUND);
+    });
+    it('Should return status code 200 if user is found', async () => {
+      const user = {
+        userID: id
+      };
+      const result = await test.sendPostRequest('/api/User/getUserById', user);
       expect(result).to.have.status(OK);
     });
   });
