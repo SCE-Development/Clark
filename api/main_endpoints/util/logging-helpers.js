@@ -21,22 +21,4 @@ async function addErrorLog(errorToAdd) {
   return errorSaved;
 }
 
-/**
- * Add a log to the SignLog MongoDB collection
- * @param {Object} signRequest An object containing information about the
- * request some of the sign.
- * @returns {boolean} If the save was successful or not.
- */
-async function addSignLog(signRequest) {
-  let saveSuccessful = true;
-  await axios.post(PERIPHERAL_API_URL + 'api/SignLog/addSignLog', {
-    signText: signRequest.text,
-    firstName: signRequest.firstName,
-    email: signRequest.email
-  }).catch(err => {
-    saveSuccessful = false;
-  });
-  return saveSuccessful;
-}
-
 module.exports = { addErrorLog, addSignLog };
