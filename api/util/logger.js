@@ -1,3 +1,6 @@
+// dont get how this works? check out
+// https://www.youtube.com/watch?v=wPIT00eMEzg
+
 const consoleColors = {
   red: '\x1b[31m',
   green: '\x1b[32m',
