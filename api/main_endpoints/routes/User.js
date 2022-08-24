@@ -306,6 +306,13 @@ router.post('/connectToDiscord', function(req, res) {
 });
 
 router.post('/getUserById', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, (
+    membershipState.OFFICER
+  ))) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   User.findOne({ _id: req.body.userID}, (err, result) => {
     if (err) {
       const info = {
@@ -322,7 +329,9 @@ router.post('/getUserById', async (req, res) => {
         .status(NOT_FOUND)
         .send({ message: `${req.body.userID} not found.` });
     }
-    return res.status(OK).json(result);
+    const { password, ...omittedPassword } = result._doc;
+
+    return res.status(OK).json(omittedPassword);
   });
 });
 
