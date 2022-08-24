@@ -16,7 +16,7 @@ const {
   FORBIDDEN,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
-const { addErrorLog }  = require('../util/logging-helpers');
+
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 router.post('/submit', (req, res) => {
@@ -58,7 +58,7 @@ router.post('/GetForm', (req, res) => {
         apiEndpoint: 'officerManager/GetForm',
         errorDescription: error
       };
-      addErrorLog(info);
+      
       return res.sendStatus(BAD_REQUEST);
     }
 
@@ -82,7 +82,7 @@ router.post('/delete', (req, res) => {
         apiEndpoint: 'officerManager/delete',
         errorDescription: error
       };
-      addErrorLog(info);
+      
       return res.sendStatus(BAD_REQUEST);
     }
 
@@ -116,7 +116,7 @@ router.post('/edit', (req, res) => {
         apiEndpoint: 'officerManager/edit',
         errorDescription: error
       };
-      addErrorLog(info);
+      
       return res.sendStatus(BAD_REQUEST);
     }
     if (result.nModified < 1) {

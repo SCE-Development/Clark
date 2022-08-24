@@ -25,7 +25,6 @@ const {
   discordApiKeys
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const { addErrorLog } = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
@@ -102,7 +101,7 @@ router.post('/delete', (req, res) => {
         apiEndpoint: 'user/delete',
         errorDescription: error
       };
-      addErrorLog(info);
+    
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -226,7 +225,7 @@ router.post('/edit', (req, res) => {
         apiEndpoint: 'user/edit',
         errorDescription: error
       };
-      addErrorLog(info);
+    
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -256,7 +255,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
         apiEndpoint: 'user/PagesPrintedCount',
         errorDescription: error
       };
-      addErrorLog(info);
+    
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
