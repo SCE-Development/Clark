@@ -41,24 +41,24 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/updateSignText', async (req, res) => {
-    if (!checkIfTokenSent(req)) {
-      logger.warn('/updateSignText was requested without a token');
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    if (!await verifyToken(req.body.token)) {
-      logger.warn('/updateSignText was requested with an invalid token');
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    if (runningInDevelopment) {
-      return res.sendStatus(OK);
-    }
-    
-    const isUp = await updateSign(req.body);
-    let status = OK;
-    if(!isUp) {
-      status = SERVER_ERROR;
-    }
-    return res.sendStatus(status);
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/updateSignText was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
+    logger.warn('/updateSignText was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (runningInDevelopment) {
+    return res.sendStatus(OK);
+  }
+
+  const isUp = await updateSign(req.body);
+  let status = OK;
+  if(!isUp) {
+    status = SERVER_ERROR;
+  }
+  return res.sendStatus(status);
 });
 
 

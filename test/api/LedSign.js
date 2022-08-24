@@ -18,7 +18,6 @@ const {
 } = require('../util/mocks/TokenValidFunctions');
 const SshTunnelFunctions = require('../../api/peripheral_api/util/LedSign');
 
-console.log("asdfasdfasdfasdfasdf", {SshTunnelFunctions})
 
 let app = null;
 let test = null;
@@ -34,7 +33,7 @@ const token = '';
 describe('LED Sign', () => {
   let updateSignStub = null;
   let healthCheckStub = null;
-  
+
   before(done => {
     initializeTokenMock();
     updateSignStub = sandbox.stub(SshTunnelFunctions, 'updateSign');

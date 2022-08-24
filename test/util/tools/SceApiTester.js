@@ -41,7 +41,7 @@ class SceApiTester{
    * @param {Object} params the parameters specified for the test.
    * @returns {Promise} the outcome of the API call.
    */
-  async sendPostRequestWithToken(token, endpoint, params={}){
+  async sendPostRequestWithToken(token, endpoint, params = {}){
     let response = null;
     await chai
       .request(this.app)
