@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { AWS } = require('../../config/config.json');
 const {
   OK,
-  BAD_REQUEST,
+  SERVER_ERROR,
   UNAUTHORIZED
 } = require('../../util/constants').STATUS_CODES;
 const {
@@ -13,6 +12,8 @@ const {
 const logger = require('../../util/logger');
 const { updateSign, healthCheck } = require('../util/LedSign.js');
 
+const runningInDevelopment = process.env.NODE_ENV !== 'production'
+  && process.env.NODE_ENV !== 'test';
 
 
 router.get('/healthCheck', async (req, res) => {
@@ -20,30 +21,44 @@ router.get('/healthCheck', async (req, res) => {
   * How these work with Quasar:
   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
   */
-  if (process.env.NODE_ENV !== 'production') {
-    return res.sendStatus(OK);
-  }
-  const isUp = await healthCheck();
-  if(isUp) return 200;
-  return 500;
-});
-
-router.post('/updateSignText', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    logger.warn('/updateSignText was requested without a token');
+    logger.warn('/healthCheck was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('/updateSignText was requested with an invalid token');
+    logger.warn('/healthCheck was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (process.env.NODE_ENV !== 'production'
-    && process.env.NODE_ENV !== 'test') {
+  if (runningInDevelopment) {
     return res.sendStatus(OK);
   }
-  const isUp = await updateSign(...req.body);
-  if(isUp) return 200;
-  return 500;
+  const isUp = await healthCheck();
+  let status = OK;
+  if(!isUp) {
+    status = SERVER_ERROR;
+  }
+  return res.sendStatus(status);
+});
+
+router.post('/updateSignText', async (req, res) => {
+    if (!checkIfTokenSent(req)) {
+      logger.warn('/updateSignText was requested without a token');
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    if (!await verifyToken(req.body.token)) {
+      logger.warn('/updateSignText was requested with an invalid token');
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    if (runningInDevelopment) {
+      return res.sendStatus(OK);
+    }
+    
+    const isUp = await updateSign(req.body);
+    let status = OK;
+    if(!isUp) {
+      status = SERVER_ERROR;
+    }
+    return res.sendStatus(status);
 });
 
 

@@ -11,15 +11,16 @@ const logger = require('../../util/logger');
 async function updateSign(data) {
   return new Promise((resolve) => {
     axios
-      .post('http://host.docker.internal:11000/api/update-sign' + {...data})
+      .post('http://host.docker.internal:11000/api/update-sign', data)
       .then(() => {
         resolve(true);
       }).catch((err) => {
-        logger.error('updateSign had an error: ', e);
+        logger.error('updateSign had an error: ', err);
         resolve(false);
       });
   });
 }
+
 /**
  * Helper function to perform a health check.
  * @returns {bool} If we can sucesfully get
@@ -32,7 +33,7 @@ async function healthCheck() {
       .then(() => {
         resolve(true);
       }).catch((err) => {
-        logger.error('healthCheck had an error: ', e);
+        logger.error('healthCheck had an error: ', err);
         resolve(false);
       });
   });

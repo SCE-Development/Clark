@@ -1,15 +1,14 @@
 process.env.NODE_ENV = 'test';
 
-const sinon = require('sinon');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const sinon = require('sinon');
 const tools = require('../util/tools/tools');
 const SceApiTester = require('../util/tools/SceApiTester');
 const {
   OK,
-  NOT_FOUND,
-  BAD_REQUEST,
-  UNAUTHORIZED
+  SERVER_ERROR,
+  UNAUTHORIZED,
 } = require('../../api/util/constants').STATUS_CODES;
 const {
   initializeTokenMock,
@@ -17,21 +16,14 @@ const {
   resetTokenMock,
   restoreTokenMock,
 } = require('../util/mocks/TokenValidFunctions');
-const {
-  initializeSqsMock,
-  setSqsResponse,
-  resetSqsMock,
-  restoreSqsMock,
-} = require('../util/mocks/SceSqsApiHandler');
-const ledSign = require('../../api/peripheral_api/util/LedSign');
+const SshTunnelFunctions = require('../../api/peripheral_api/util/LedSign');
+
+console.log("asdfasdfasdfasdfasdf", {SshTunnelFunctions})
 
 let app = null;
 let test = null;
+let sandbox = sinon.createSandbox();
 const expect = chai.expect;
-
-let updateSignStub = null;
-let healthCheckStub = null;
-
 
 chai.should();
 chai.use(chaiHttp);
@@ -40,14 +32,15 @@ const token = '';
 
 
 describe('LED Sign', () => {
+  let updateSignStub = null;
+  let healthCheckStub = null;
   
-
   before(done => {
     initializeTokenMock();
-    initializeSqsMock();
-    updateSignStub = sinon.stub(ledSign, 'updateSign')
-    healthCheckStub = sinon.stub(ledSign, 'healthCheck')
-    
+    updateSignStub = sandbox.stub(SshTunnelFunctions, 'updateSign');
+    healthCheckStub = sandbox.stub(SshTunnelFunctions, 'healthCheck');
+    updateSignStub.resolves(false);
+    healthCheckStub.resolves(false);
     app = tools.initializeServer(
       __dirname + '/../../api/peripheral_api/routes/LedSign.js');
     test = new SceApiTester(app);
@@ -56,25 +49,26 @@ describe('LED Sign', () => {
 
   after(done => {
     restoreTokenMock();
-    restoreSqsMock();
+    if (updateSignStub) updateSignStub.restore();
+    if (healthCheckStub) healthCheckStub.restore();
+    sandbox.restore();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
-    setSqsResponse(false);
+    updateSignStub.resolves(false);
+    healthCheckStub.resolves(false);
   });
 
   afterEach(() => {
     resetTokenMock();
-    resetSqsMock();
   });
 
   describe('/POST updateSignText', () => {
     it('Should return 400 when token is not sent', async () => {
       const result = await test.sendPostRequest('/api/LedSign/updateSignText');
       expect(result).to.have.status(UNAUTHORIZED);
-      expect()
     });
 
     it('Should return 400 when invalid token is sent', async () => {
@@ -83,21 +77,49 @@ describe('LED Sign', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 400 when error in queue', async () => {
+    it('Should return 500 when the ssh tunnel is down', async () => {
       setTokenStatus(true);
       updateSignStub.resolves(false);
       const result = await test.sendPostRequestWithToken(token,
         '/api/LedSign/updateSignText');
-      expect(result).to.have.status(BAD_REQUEST);
+      expect(result).to.have.status(SERVER_ERROR);
     });
 
-    it('Should return 200 when message is successfully pushed to the queue',
-      async () => {
-        setTokenStatus(true);
-        updateSignStub.resolves(true);
-        const result = await test.sendPostRequestWithToken(token,
-          '/api/LedSign/updateSignText');
-        expect(result).to.have.status(OK);
-      });
+    it('Should return 200 when the ssh tunnel is up', async () => {
+      setTokenStatus(true);
+      updateSignStub.resolves(true);
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/LedSign/updateSignText');
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST healthCheck', () => {
+    it('Should return 400 when token is not sent', async () => {
+      const result = await test.sendGetRequest('/api/LedSign/healthCheck');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 400 when invalid token is sent', async () => {
+      const result = await test.sendGetRequestWithToken(token,
+        '/api/LedSign/healthCheck');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 500 when the ssh tunnel is down', async () => {
+      setTokenStatus(true);
+      healthCheckStub.resolves(false);
+      const result = await test.sendGetRequestWithToken(token,
+        '/api/LedSign/healthCheck');
+      expect(result).to.have.status(SERVER_ERROR);
+    });
+
+    it('Should return 200 when the ssh tunnel is up', async () => {
+      setTokenStatus(true);
+      healthCheckStub.resolves(true);
+      const result = await test.sendGetRequestWithToken(token,
+        '/api/LedSign/healthCheck');
+      expect(result).to.have.status(OK);
+    });
   });
 });
