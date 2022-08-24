@@ -22,7 +22,7 @@ import MembershipApplication from
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
 import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
-import PrintingAnalytics from './Pages/PrintingAnalytics/PrintingAnalytics.js';
+
 import { membershipState } from './Enums';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
@@ -115,13 +115,6 @@ export default function Routing({ appProps }) {
       path: '/profile',
       allowedIf: userIsAuthenticated,
       redirect: '/login'
-    },
-    {
-      Component: PrintingAnalytics,
-      path: '/printing-analytics',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
     }
   ];
   const signedOutRoutes = [
