@@ -10,7 +10,7 @@ const {
   checkIfTokenSent
 } = require('../../util/token-verification');
 const logger = require('../../util/logger');
-const { updateSign, healthCheck } = require('../util/LedSign.js');
+const { updateSign, healthCheck, turnOffSign } = require('../util/LedSign.js');
 
 const runningInDevelopment = process.env.NODE_ENV !== 'production'
   && process.env.NODE_ENV !== 'test';
@@ -52,10 +52,15 @@ router.post('/updateSignText', async (req, res) => {
   if (runningInDevelopment) {
     return res.sendStatus(OK);
   }
-
-  const isUp = await updateSign(req.body);
+  // need to make this its own api endpoint
+  let result = false;
+  if (req.body.ledIsOff) {
+    result = await turnOffSign();
+  } else {
+    result = await updateSign(req.body);
+  }
   let status = OK;
-  if(!isUp) {
+  if(!result) {
     status = SERVER_ERROR;
   }
   return res.sendStatus(status);
