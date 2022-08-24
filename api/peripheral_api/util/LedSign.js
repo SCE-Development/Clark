@@ -1,12 +1,24 @@
 const axios = require('axios');
 const logger = require('../../util/logger');
 
-
+/**
+ * These functions are meant only for use in production, where the
+ * LED sign can be reached from Core-v4 through an SSH tunnel. Want
+ * to learn more about how this works? Check out the below link:
+ * https://github.com/SCE-Development/Quasar/wiki/How-Does-the-LED-Sign-Work%3F
+ */
 
 /**
- * Helper function to perform a health check on update-sign.
- * @returns {bool} If we can sucesfully get
- * else false
+ * Send an object to update the LED sign with.
+ * @param {Object} data The new sign data, for example
+ * {
+ *   "scrollSpeed": 15,
+ *   "backgroundColor": "#0000FF",
+ *   "textColor": "#00FF00",
+ *   "borderColor": "#FF0000",
+ *   "text": "Welcome to SCE!",
+ * }
+ * @returns {Promise<boolean>} Whether the LED Sign's API can be reached or not.
  */
 async function updateSign(data) {
   return new Promise((resolve) => {
@@ -22,16 +34,46 @@ async function updateSign(data) {
 }
 
 /**
- * Helper function to perform a health check.
- * @returns {bool} If we can sucesfully get
- * else false
+ * Turn the led sign off using its REST API.
+ * @returns {Promise<Object>} Whether the turn off request worked or not.
+ */
+async function turnOffSign() {
+  return new Promise((resolve) => {
+    axios
+      .get('http://host.docker.internal:11000/api/turn-off')
+      .then(() => {
+        resolve(true);
+      }).catch((err) => {
+        logger.error('turnOffSign had an error: ', err);
+        resolve(false);
+      });
+  });
+}
+
+/**
+ * Send an HTTP GET request to the LED sign to see if it is up.
+ * @returns {Promise<Object|boolean>} If the sign is up, a JSON response
+ * is returned. If there is no message on the sign, the response looks like
+ * {
+ *   "success": true
+ * }
+ * If there is a message on the sign, the JSON returned looks like:
+ * {
+ *   "scrollSpeed": 15,
+ *   "backgroundColor": "#0000FF",
+ *   "textColor": "#00FF00",
+ *   "borderColor": "#FF0000",
+ *   "text": "Welcome to SCE!",
+ *   "success": true
+ * }
+ * If the sign is unreachable, false is returned.
  */
 async function healthCheck() {
   return new Promise((resolve) => {
     axios
       .get('http://host.docker.internal:11000/api/health-check')
-      .then(() => {
-        resolve(true);
+      .then(({data}) => {
+        resolve(data);
       }).catch((err) => {
         logger.error('healthCheck had an error: ', err);
         resolve(false);
@@ -39,4 +81,4 @@ async function healthCheck() {
   });
 }
 
-module.exports = { updateSign, healthCheck };
+module.exports = { updateSign, turnOffSign, healthCheck };
