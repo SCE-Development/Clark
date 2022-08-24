@@ -101,7 +101,7 @@ router.post('/delete', (req, res) => {
         apiEndpoint: 'user/delete',
         errorDescription: error
       };
-    
+
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -225,7 +225,7 @@ router.post('/edit', (req, res) => {
         apiEndpoint: 'user/edit',
         errorDescription: error
       };
-    
+
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -255,7 +255,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
         apiEndpoint: 'user/PagesPrintedCount',
         errorDescription: error
       };
-    
+
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 

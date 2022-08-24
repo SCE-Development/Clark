@@ -58,7 +58,7 @@ router.post('/GetForm', (req, res) => {
         apiEndpoint: 'officerManager/GetForm',
         errorDescription: error
       };
-      
+
       return res.sendStatus(BAD_REQUEST);
     }
 
@@ -82,7 +82,7 @@ router.post('/delete', (req, res) => {
         apiEndpoint: 'officerManager/delete',
         errorDescription: error
       };
-      
+
       return res.sendStatus(BAD_REQUEST);
     }
 
@@ -116,7 +116,7 @@ router.post('/edit', (req, res) => {
         apiEndpoint: 'officerManager/edit',
         errorDescription: error
       };
-      
+
       return res.sendStatus(BAD_REQUEST);
     }
     if (result.nModified < 1) {
