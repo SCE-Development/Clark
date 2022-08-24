@@ -2,7 +2,7 @@ const axios = require('axios');
 const logger = require('../../util/logger');
 
 /**
- * These function is meant only for use in production, where the
+ * These functions are meant only for use in production, where the
  * LED sign can be reached from Core-v4 through an SSH tunnel. Want
  * to learn more about how this works? Check out the below link:
  * https://github.com/SCE-Development/Quasar/wiki/How-Does-the-LED-Sign-Work%3F
