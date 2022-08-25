@@ -90,7 +90,7 @@ describe('User', () => {
 
     it('Should return statusCode 200 when a user does not exist', async () => {
       const user = {
-        email: 'a@b.c',
+        email: 'a@b.c'
       };
       const addUser = {
         email: 'a@b.c',
