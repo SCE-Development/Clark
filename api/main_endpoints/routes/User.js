@@ -319,7 +319,7 @@ router.post('/getUserById', async (req, res) => {
     }
 
     if (!result) {
-      return res.status(NOT_FOUND);
+      return res.sendStatus(NOT_FOUND);
     }
 
     const { password, ...omittedPassword } = result._doc;
