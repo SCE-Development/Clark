@@ -315,20 +315,13 @@ router.post('/getUserById', async (req, res) => {
   }
   User.findOne({ _id: req.body.userID}, (err, result) => {
     if (err) {
-      const info = {
-        errorTime: new Date(),
-        apiEndpoint: 'user/getUserById',
-        errorDescription: error
-      };
-      addErrorLog(info);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (!result) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.userID} not found.` });
+      return res.status(NOT_FOUND);
     }
+
     const { password, ...omittedPassword } = result._doc;
 
     return res.status(OK).json(omittedPassword);
