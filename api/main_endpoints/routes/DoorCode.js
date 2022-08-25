@@ -12,7 +12,6 @@ const {
   FORBIDDEN,
   NOT_FOUND,
 } = require('../../util/constants').STATUS_CODES;
-const { addErrorLog }  = require ('../util/logging-helpers');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 router.get('/getDoorCodes', (req, res) => {
@@ -24,7 +23,6 @@ router.get('/getDoorCodes', (req, res) => {
         apiEndpoint: 'DoorCode/getDoorCodes',
         errorDescription: error
       };
-      addErrorLog(info);
       res.status(BAD_REQUEST).send({ error, message: 'Getting codes failed' });
     });
 });
