@@ -4,8 +4,9 @@ const cors = require('cors');
 const http = require('http');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
-const path = require('path');
+
 const { PathParser } = require('./PathParser');
+const logger = require('./logger');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -55,7 +56,14 @@ class SceHttpServer {
   async initializeEndpoints() {
     const requireList = await PathParser.parsePath(this.pathToEndpoints);
     requireList.map((route) => {
-      this.app.use(this.prefix + route.endpointName, require(route.filePath));
+      try {
+        this.app.use(this.prefix + route.endpointName, require(route.filePath));
+      } catch (e) {
+        logger.error(
+          `error importing ${route.filePath} to handle: ${route.endpointName}:`,
+          e
+        );
+      }
     });
   }
 
