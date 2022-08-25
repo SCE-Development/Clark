@@ -10,7 +10,7 @@ services:
   keep-ssh-tunnel-open:
     container_name: keep-ssh-tunnel-open
     build:
-      context: ./tunup
+      context: ./tunnel
       dockerfile: ./Dockerfile
     extra_hosts:
       - "host.docker.internal:host-gateway"
