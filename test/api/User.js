@@ -411,6 +411,7 @@ describe('User', () => {
       const result = await test.sendGetRequestWithToken(
         token, `/api/User/currentUsers${query}`);
       expect(result).to.have.status(OK);
+      expect(result).to.be.json;
       result.body.users.length.should.equal(1);
     });
     it('Should return statusCode 404 if no users exist', async () => {
