@@ -55,9 +55,9 @@ router.post('/updateSignText', async (req, res) => {
   let result = false;
   if (req.body.ledIsOff) {
     result = await turnOffSign();
-    logger.info("turning sign off!");
+    logger.info('turning sign off!');
   } else {
-    logger.info("updating sign with:", req.body);
+    logger.info('updating sign with:', req.body);
     result = await updateSign(req.body);
   }
   let status = OK;
