@@ -412,6 +412,10 @@ describe('User', () => {
         token, `/api/User/currentUsers${query}`);
       expect(result).to.have.status(OK);
       expect(result).to.be.json;
+      result.body.users[0].email.should.equal('a@b.c');
+      result.body.users[0].firstName.should.equal('pinkUnicorn');
+      result.body.users[0].lastName.should.equal('last-name');
+      result.body.users[0].discordID.should.equal('0987654321');
       result.body.users.length.should.equal(1);
     });
     it('Should return statusCode 404 if no users exist', async () => {
