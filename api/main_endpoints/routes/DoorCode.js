@@ -14,6 +14,8 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
+const User = require('../models/User.js');
+
 // takes the discord user ID and a token as a parameter
 router.post('/getDoorCodeByDiscord', (req, res) => {
   if (!checkIfTokenSent(req)) {
