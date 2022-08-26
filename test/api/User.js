@@ -132,7 +132,7 @@ describe('User', () => {
         token, '/api/User/users', form);
       expect(result).to.have.status(OK);
     });
-});
+  });
 
   describe('/POST searchFor', () => {
     it('Should return statusCode 403 if no token is passed in', async () => {
@@ -260,7 +260,7 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
     it('Should return statusCode 400 if an incorrect or no ' +
-    'email was used', async () => {
+      'email was used', async () => {
       const user = {
         token
       };
@@ -270,7 +270,7 @@ describe('User', () => {
       expect(result).to.have.status(BAD_REQUEST);
     });
     it('Should return statusCode 200 ' +
-    'if Discord connection was successful', async () => {
+      'if Discord connection was successful', async () => {
       const user = {
         email: 'a@b.c',
         token
