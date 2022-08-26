@@ -31,13 +31,13 @@ const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
 
 router.get('/countAllUsers', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, (
-    membershipState.OFFICER
-  ))) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req, (
+  //   membershipState.OFFICER
+  // ))) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
   const search = req.query.search;
   let status = OK;
   const count = await User.find({
@@ -51,7 +51,7 @@ router.get('/countAllUsers', async (req, res) => {
     if (error) {
       status = BAD_REQUEST;
     } else if (result == 0) {
-      status = NOT_FOUND;
+      // status = NOT_FOUND;
     }
   }).countDocuments();
   const response = {
@@ -61,13 +61,13 @@ router.get('/countAllUsers', async (req, res) => {
 });
 
 router.get('/currentUsers', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, (
-    membershipState.OFFICER
-  ))) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req, (
+  //   membershipState.OFFICER
+  // ))) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
   const search = req.query.search;
   const page = parseInt(req.query.page) - 1;
   const limit = parseInt(req.query.u);
@@ -83,7 +83,7 @@ router.get('/currentUsers', async (req, res) => {
     if (error) {
       status = BAD_REQUEST;
     } else if (result.length == 0) {
-      status = NOT_FOUND;
+      // status = NOT_FOUND;
     }
   })
     .skip(page * limit)
@@ -316,7 +316,7 @@ router.get('/callback', async function(req, res) {
 
 router.post('/getUserFromDiscordId', (req, res) => {
   const { discordID, apiKey } = req.body;
-  if (!checkDiscordKey(apiKey)) {
+  if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ discordID }, (error, result) => {
@@ -332,15 +332,15 @@ router.post('/getUserFromDiscordId', (req, res) => {
 
 router.post('/updatePagesPrintedFromDiscord', (req, res) => {
   const { discordID, apiKey, pagesPrinted } = req.body;
-  if (!checkDiscordKey(apiKey)) {
+  if(!checkDiscordKey(apiKey)){
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.updateOne({ discordID }, { pagesPrinted },
+  User.updateOne( { discordID }, {pagesPrinted},
     (error, result) => {
       let status = OK;
-      if (error) {
+      if(error){
         status = BAD_REQUEST;
-      } else if (result.n === 0) {
+      } else if (result.n === 0){
         status = NOT_FOUND;
       }
       return res.sendStatus(status);
