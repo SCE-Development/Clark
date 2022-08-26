@@ -272,17 +272,16 @@ describe('DoorCode', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 404 when a code by an invalid id isn\'t found', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        token,
-        `/api/DoorCode/getDoorCodeByDiscord?discordID=${codeId}`,
-        CODE_WITH_INVALID_ID
-      );
-      expect(result).to.have.status(NOT_FOUND);
-    });
-
-    
+    it(
+      'Should return 404 when a code by an ' + 'invalid id isn\'t found',
+      async () => {
+        setTokenStatus(true);
+        const result = await test.sendPostRequestWithToken(
+          token,
+          `/api/DoorCode/getDoorCodeByDiscord?discordID=${codeId}`,
+          CODE_WITH_INVALID_ID
+        );
+        expect(result).to.have.status(NOT_FOUND);
+      });
   });
-  
 });
