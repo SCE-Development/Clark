@@ -18,7 +18,7 @@ function AdminDashboard() {
         <div className='block'></div>
         {fields.map((elem, ind) => {
           return (
-            <Link to={elem.url} id='admin-box'
+            <Link to={elem.url} key={ind} id='admin-box'
               style={{ textDecoration: 'none' }}>
               <InfoCard
                 key={ind}
