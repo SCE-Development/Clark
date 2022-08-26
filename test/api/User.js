@@ -6,6 +6,9 @@ const User = require('../../api/main_endpoints/models/User.js');
 
 // Require the dev-dependencies
 const chai = require('chai');
+const mongoose = require('mongoose');
+let id = new mongoose.Types.ObjectId();
+
 const chaiHttp = require('chai-http');
 const {
   OK,
@@ -130,6 +133,7 @@ describe('User', () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/users', form);
+      id = result.body[0]._id;
       expect(result).to.have.status(OK);
     });
   });
@@ -327,6 +331,45 @@ describe('User', () => {
       const result = await test.sendPostRequest(
         '/api/user/getUserFromDiscordId', body);
       expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST getUserById', () => {
+    it('Should return status code 403 if no token was passed in', async () => {
+      const user = {
+        userID: id,
+      };
+      const result = await test.sendPostRequest('/api/user/getUserById', user);
+      expect(result).to.have.status(FORBIDDEN);
+    });
+    it('Should return status code 403 if' +
+      ' an invalid token was passed in', async () => {
+      const user = {
+        userID: id,
+        token: 'Invalid Token'
+      };
+      const result = await test.sendPostRequest('/api/user/getUserById', user);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+    it('Should return status code 404 if user is not found', async () => {
+      const user = {
+        userID: new mongoose.Types.ObjectId(),
+        token: token,
+      };
+      setTokenStatus(true);
+      const result =
+        await test.sendPostRequest('/api/user/getUserById', user);
+      expect(result).to.have.status(NOT_FOUND);
+    });
+    it('Should return status code 200 if user is found', async () => {
+      const user = {
+        userID: id,
+        token: token
+      };
+      setTokenStatus(true);
+      const result = await test.sendPostRequest('/api/User/getUserById', user);
+      expect(result).to.have.status(OK);
+      result.body.should.not.have.property('password');
     });
   });
 
