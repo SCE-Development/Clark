@@ -194,13 +194,33 @@ export default function MembershipForm(props) {
 
   ];
 
-  const majorField = [
-    {
-      label: 'Major*',
-      type: 'text',
-      id: 'major-field',
-    },
-  ];
+  function membershipExpDate(semestersToSignUpFor=1) {
+    const today = new Date();
+
+    const endOfSpringSemThisYear = `June 1, ${today.getFullYear()}`;
+    const endOfSpringSemNextYear = `June 1, ${today.getFullYear() + 1}`;
+    const endOfFallSemThisYear = `January 1, ${today.getFullYear() + 1}`;
+    
+    // Lookup table to resolve a readble expiration date for a
+    // new member. The first key is the number of semesters they
+    // wish to sign up for and the second (nested) key is whether
+    // this page was rendered during spring time or not.
+    const expirationMap = {
+      1: {
+        true: endOfSpringSemThisYear,
+        false: endOfFallSemThisYear
+      },
+      2: {
+        true: endOfFallSemThisYear,
+        false: endOfSpringSemNextYear
+      }
+    };
+
+    // spring checks if current month is between January and May
+    const spring = today.getMonth() >= 0 && today.getMonth() <= 4;
+    
+    return expirationMap[semestersToSignUpFor][spring];
+  }
 
   const submitApplication = async (e) => {
     e.preventDefault();
@@ -245,7 +265,7 @@ export default function MembershipForm(props) {
             <div className='circle-text'>$20</div>
           </div>
           <div className = 'planFooters'>
-            Expires: May 20, {new Date().getFullYear()}
+            Expires: {membershipExpDate(1)}
           </div>
           <div className = 'planHeaders'>
             Annual Plan
@@ -254,7 +274,7 @@ export default function MembershipForm(props) {
             <div className='circle-text'>$30</div>
           </div>
           <div className = 'planFooters'>
-            Expires: December 20, {new Date().getFullYear()}
+            Expires: {membershipExpDate(2)}
           </div>
         </div>
         <div className='form-card2'>
