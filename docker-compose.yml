@@ -38,7 +38,7 @@ services:
       dockerfile: ./cloud_api/Dockerfile
     environment:
       - GENERAL_API_URL=http://sce-main-endpoints:8080/api
-      - VERIFICATION_BASE_URL=https://sce.engr.sjsu.edu
+      - VERIFICATION_BASE_URL=https://sce.sjsu.edu
       - DATABASE_HOST=sce-mongodb
       - NODE_ENV=production
     restart: 'on-failure'
@@ -55,7 +55,7 @@ services:
       dockerfile: ./main_endpoints/Dockerfile
     environment:
       - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
-      - DISCORD_REDIRECT_URI=https://sce.engr.sjsu.edu/api/user/callback
+      - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - DATABASE_HOST=sce-mongodb
       - NODE_ENV=production
     restart: 'on-failure'
