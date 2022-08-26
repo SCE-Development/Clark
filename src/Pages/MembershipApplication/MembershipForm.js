@@ -194,13 +194,13 @@ export default function MembershipForm(props) {
 
   ];
 
-  function membershipExpDate(semestersToSignUpFor=1) {
+  function membershipExpDate(semestersToSignUpFor = 1) {
     const today = new Date();
 
     const endOfSpringSemThisYear = `June 1, ${today.getFullYear()}`;
     const endOfSpringSemNextYear = `June 1, ${today.getFullYear() + 1}`;
     const endOfFallSemThisYear = `January 1, ${today.getFullYear() + 1}`;
-    
+
     // Lookup table to resolve a readble expiration date for a
     // new member. The first key is the number of semesters they
     // wish to sign up for and the second (nested) key is whether
@@ -218,7 +218,7 @@ export default function MembershipForm(props) {
 
     // spring checks if current month is between January and May
     const spring = today.getMonth() >= 0 && today.getMonth() <= 4;
-    
+
     return expirationMap[semestersToSignUpFor][spring];
   }
 
