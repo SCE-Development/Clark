@@ -21,14 +21,6 @@ router.get('/healthCheck', async (req, res) => {
   * How these work with Quasar:
   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
   */
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/healthCheck was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!await verifyToken(req.body.token)) {
-    logger.warn('/healthCheck was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
   if (runningInDevelopment) {
     return res.sendStatus(OK);
   }

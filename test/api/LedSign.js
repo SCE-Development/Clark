@@ -93,31 +93,18 @@ describe('LED Sign', () => {
     });
   });
 
-  describe('/POST healthCheck', () => {
-    it('Should return 400 when token is not sent', async () => {
-      const result = await test.sendGetRequest('/api/LedSign/healthCheck');
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
-    it('Should return 400 when invalid token is sent', async () => {
-      const result = await test.sendGetRequestWithToken(token,
-        '/api/LedSign/healthCheck');
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
+  describe('/GET healthCheck', () => {
     it('Should return 500 when the ssh tunnel is down', async () => {
       setTokenStatus(true);
       healthCheckStub.resolves(false);
-      const result = await test.sendGetRequestWithToken(token,
-        '/api/LedSign/healthCheck');
+      const result = await test.sendGetRequest('/api/LedSign/healthCheck');
       expect(result).to.have.status(SERVER_ERROR);
     });
 
     it('Should return 200 when the ssh tunnel is up', async () => {
       setTokenStatus(true);
       healthCheckStub.resolves(true);
-      const result = await test.sendGetRequestWithToken(token,
-        '/api/LedSign/healthCheck');
+      const result = await test.sendGetRequest('/api/LedSign/healthCheck');
       expect(result).to.have.status(OK);
     });
   });
