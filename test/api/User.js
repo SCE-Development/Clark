@@ -395,7 +395,7 @@ describe('User', () => {
       expect(result).to.have.status(FORBIDDEN);
     });
     it('Should return statusCode 401 if an invalid ' +
-      'token was passed in', async () => {
+    'token was passed in', async () => {
       setTokenStatus(false);
       const query = '?search=a';
       const result = await test.sendGetRequestWithToken(
