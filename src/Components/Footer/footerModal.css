@@ -9,7 +9,7 @@
   z-index: 99999;
 }
 
-.box {
+.footer-modal-box > .box {
   position: relative;
   width: 70%;
   margin: 0 auto;
@@ -23,7 +23,7 @@
   overflow: auto;
 }
 
-.close-icon {
+.footer-modal-box > .close-icon {
   content: 'x';
   cursor: pointer;
   position: fixed;
@@ -39,6 +39,6 @@
   font-size: 20px;
 }
 
-.footer-modal-text {
+.footer-modal-box > .footer-modal-text {
   text-align: center;
 }
