@@ -25,25 +25,6 @@ export async function healthCheck(officerName) {
 }
 
 /**
- * Retrieve all sign logs.
- * @returns {ApiResponse} Containing any error information related to the
- * request.
- */
-export async function getAllSignLogs() {
-  let result = new ApiResponse();
-  await axios
-    .get(PERIPHERAL_API_URL + '/SignLog/getSignLogs')
-    .then(res => {
-      result.responseData = res.data;
-    })
-    .catch(err => {
-      result.responseData = err;
-      result.error = true;
-    });
-  return result;
-}
-
-/**
  * Update the text of the sign.
  * @param {Object} signData - An object containing all of the sign data (text,
  * colors, etc.).

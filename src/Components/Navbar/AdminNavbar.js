@@ -18,7 +18,6 @@ export default function AdminNavbar(props) {
     { title: 'Event Manager', route: '/event-manager' },
     { title: 'LED Sign', route: '/led-sign' },
     { title: '3DConsole', route: '/3DConsole' },
-    { title: '2D Printing Analytics', route: '/printing-analytics' },
   ];
 
   return (

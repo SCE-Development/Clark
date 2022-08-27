@@ -6,6 +6,9 @@ const User = require('../../api/main_endpoints/models/User.js');
 
 // Require the dev-dependencies
 const chai = require('chai');
+const mongoose = require('mongoose');
+let id = new mongoose.Types.ObjectId();
+
 const chaiHttp = require('chai-http');
 const {
   OK,
@@ -130,6 +133,7 @@ describe('User', () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/users', form);
+      id = result.body[0]._id;
       expect(result).to.have.status(OK);
     });
   });
@@ -330,6 +334,45 @@ describe('User', () => {
     });
   });
 
+  describe('/POST getUserById', () => {
+    it('Should return status code 403 if no token was passed in', async () => {
+      const user = {
+        userID: id,
+      };
+      const result = await test.sendPostRequest('/api/user/getUserById', user);
+      expect(result).to.have.status(FORBIDDEN);
+    });
+    it('Should return status code 403 if' +
+      ' an invalid token was passed in', async () => {
+      const user = {
+        userID: id,
+        token: 'Invalid Token'
+      };
+      const result = await test.sendPostRequest('/api/user/getUserById', user);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+    it('Should return status code 404 if user is not found', async () => {
+      const user = {
+        userID: new mongoose.Types.ObjectId(),
+        token: token,
+      };
+      setTokenStatus(true);
+      const result =
+        await test.sendPostRequest('/api/user/getUserById', user);
+      expect(result).to.have.status(NOT_FOUND);
+    });
+    it('Should return status code 200 if user is found', async () => {
+      const user = {
+        userID: id,
+        token: token
+      };
+      setTokenStatus(true);
+      const result = await test.sendPostRequest('/api/User/getUserById', user);
+      expect(result).to.have.status(OK);
+      result.body.should.not.have.property('password');
+    });
+  });
+
   describe('/POST updatePagesPrintedFromDiscord', () => {
     it('Should return 401 if API key is invalid', async () => {
       const body = {
@@ -370,6 +413,40 @@ describe('User', () => {
       expect(result).to.have.status(OK);
     });
   });
+
+  describe('/GET countAllUsers', () => {
+    it('Should return statusCode 200 if count >= 1', async () => {
+      setTokenStatus(true);
+      const query = '?search=a';
+      const result = await test.sendGetRequestWithToken(
+        token, `/api/User/countAllUsers${query}`);
+      expect(result).to.have.status(OK);
+      result.body.count.should.be.greaterThanOrEqual(0);
+    });
+    it('Should return statusCode 404 if count == 0', async () => {
+      setTokenStatus(true);
+      const query = '?search=ab%cd%de';
+      const result = await test.sendGetRequestWithToken(
+        token, `/api/User/countAllUsers${query}`);
+      expect(result).to.have.status(NOT_FOUND);
+      result.body.count.should.be.equal(0);
+    });
+    it('Should return statusCode 403 if no token is passed in', async () => {
+      const query = '?search=a';
+      const result = await test.sendGetRequest(
+        `/api/User/countAllUsers${query}`);
+      expect(result).to.have.status(FORBIDDEN);
+    });
+    it('Should return statusCode 401 if an invalid ' +
+    'token was passed in', async () => {
+      setTokenStatus(false);
+      const query = '?search=a';
+      const result = await test.sendGetRequestWithToken(
+        token, `/api/User/countAllUsers${query}`);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+  });
+
 
   describe('/POST delete', () => {
     it('Should return statusCode 403 if no token is passed in', async () => {

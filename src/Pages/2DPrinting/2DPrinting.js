@@ -12,7 +12,6 @@ import {
   parseRange,
   printPage,
   getPagesPrinted,
-  logPrintRequest,
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 import {
@@ -208,20 +207,8 @@ export default function Printing(props) {
     if (!status.error) {
       editUser({ ...props.user, pagesPrinted }, props.user.token);
       setPrintStatus('Printing succeeded!');
-      logPrintRequest({
-        numPages: numPages * copies,
-        destination: status.responseData,
-        printedDate: new Date(),
-        memberName,
-      });
     } else {
       setPrintStatus(failPrintStatus);
-      logPrintRequest({
-        numPages: numPages * copies,
-        destination: 'Fail',
-        printedDate: new Date(),
-        memberName,
-      });
     }
     setStatusModal(true);
   }

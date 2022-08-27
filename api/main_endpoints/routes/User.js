@@ -6,7 +6,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const axios = require('axios');
-const { getMemberExpirationDate} = require('../util/registerUser');
+const { getMemberExpirationDate } = require('../util/registerUser');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
@@ -25,11 +25,40 @@ const {
   discordApiKeys
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const { addErrorLog }  = require('../util/logging-helpers');
 const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
+
+router.get('/countAllUsers', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, (
+    membershipState.OFFICER
+  ))) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const search = req.query.search;
+  let status = OK;
+  const count = await User.find({
+    $or:
+      [
+        { 'firstName': { '$regex': search, '$options': 'i' } },
+        { 'lastName': { '$regex': search, '$options': 'i' } },
+        { 'email': { '$regex': search, '$options': 'i' } }
+      ]
+  }, function(error, result) {
+    if (error) {
+      status = BAD_REQUEST;
+    } else if (result == 0) {
+      status = NOT_FOUND;
+    }
+  }).countDocuments();
+  const response = {
+    count
+  };
+  res.status(status).json(response);
+});
 
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
@@ -72,7 +101,7 @@ router.post('/delete', (req, res) => {
         apiEndpoint: 'user/delete',
         errorDescription: error
       };
-      addErrorLog(info);
+
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -196,7 +225,7 @@ router.post('/edit', (req, res) => {
         apiEndpoint: 'user/edit',
         errorDescription: error
       };
-      addErrorLog(info);
+
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -226,7 +255,7 @@ router.post('/getPagesPrintedCount', (req, res) => {
         apiEndpoint: 'user/PagesPrintedCount',
         errorDescription: error
       };
-      addErrorLog(info);
+
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
@@ -303,6 +332,29 @@ router.post('/connectToDiscord', function(req, res) {
       `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
       `&state=${email}&response_type=code&scope=identify`
     );
+});
+
+router.post('/getUserById', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, (
+    membershipState.OFFICER
+  ))) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.findOne({ _id: req.body.userID}, (err, result) => {
+    if (err) {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    }
+
+    if (!result) {
+      return res.sendStatus(NOT_FOUND);
+    }
+
+    const { password, ...omittedPassword } = result._doc;
+
+    return res.status(OK).json(omittedPassword);
+  });
 });
 
 module.exports = router;

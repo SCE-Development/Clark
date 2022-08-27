@@ -12,7 +12,7 @@ Enzyme.configure({ adapter: new Adapter() });
 describe('<RequestForm />', () => {
   const appProps = {
     item: {
-      projectLink: 'https://sce.engr.sjsu.edu',
+      projectLink: 'https://sce.sjsu.edu',
       projectComments: 'This is the project comment!',
       projectContact: 'test@gmail.com',
       color: 'blue',

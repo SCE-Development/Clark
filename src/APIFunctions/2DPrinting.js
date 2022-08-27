@@ -90,37 +90,6 @@ export async function printPage(data, token) {
 }
 
 /**
- * Log the print request
- * @param {Object} data         Encoded file
- * @returns {ApiResponse}  Containing information for if
- *                              the page is printing
- */
-export async function logPrintRequest(data) {
-  let status = new ApiResponse();
-  await axios.post(PERIPHERAL_API_URL + '/PrintLog/addPrintLog', data)
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
-/**
- * Retrieves all print logs
- * @returns {ApiResponse}  Containing all print logs
- */
-export async function getAllLogs() {
-  let status = new ApiResponse();
-  await axios.get(PERIPHERAL_API_URL + '/PrintLog/getPrintLogs')
-    .then(response => {
-      status.responseData = response.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
-/**
  * Return the number of pages the current user has printed
  * @param {string} email            email of the current user
  * @param {string} token            token of the current user

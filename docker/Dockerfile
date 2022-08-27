@@ -11,11 +11,11 @@ COPY ./package-lock.json /frontend/package-lock.json
 # We don't pass the environment variables as an argument
 # and instead define them inline here. We do this as multi-stage
 # builds and environment variables from docker-compose.yml weren't working.
-ENV REACT_APP_GENERAL_API_URL https://sce.engr.sjsu.edu/api
+ENV REACT_APP_GENERAL_API_URL https://sce.sjsu.edu/api
 
-ENV REACT_APP_PERIPHERAL_API_URL https://sce.engr.sjsu.edu/peripheralapi
+ENV REACT_APP_PERIPHERAL_API_URL https://sce.sjsu.edu/peripheralapi
 
-ENV REACT_APP_MAILER_API_URL https://sce.engr.sjsu.edu/cloudapi
+ENV REACT_APP_MAILER_API_URL https://sce.sjsu.edu/cloudapi
 
 RUN npm install --production
 
