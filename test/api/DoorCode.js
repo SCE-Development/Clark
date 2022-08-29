@@ -86,7 +86,6 @@ describe('DoorCode', () => {
     doorCodeValidUntil: new Date('12/25/20'),
     usersAssigned: 1,
   };
-  const VALID_ID = '454281712076193792';
   const INVALID_ID = 'invalid';
 
   describe('/POST addCode', () => {
@@ -284,14 +283,5 @@ describe('DoorCode', () => {
         );
         expect(result).to.have.status(NOT_FOUND);
       });
-
-    it('Should return 200 when a code is sucessfully retrieved', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        token,
-        `/api/DoorCode/getDoorCodeByDiscord?discordID=${VALID_ID}`,
-      );
-      expect(result).to.have.status(OK);
-    });
   });
 });
