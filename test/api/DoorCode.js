@@ -86,7 +86,6 @@ describe('DoorCode', () => {
     doorCodeValidUntil: new Date('12/25/20'),
     usersAssigned: 1,
   };
-  
   const VALID_ID = '454281712076193792';
   const INVALID_ID = 'invalid';
 
