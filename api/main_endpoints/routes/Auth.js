@@ -13,13 +13,8 @@ const {
   decodeToken
 } = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
-const {
-  OK,
-  BAD_REQUEST,
-  UNAUTHORIZED,
-  NOT_FOUND,
-  CONFLICT
-} = require('../../util/constants').STATUS_CODES;
+const { OK, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, CONFLICT } =
+  require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 
@@ -44,7 +39,7 @@ function checkIfPageCountResets(lastLogin) {
 
   while (date <= newDate) {
     let day = date.getDay();
-    isSunday = (day === 0);
+    isSunday = day === 0;
     if (isSunday) {
       return true;
     }
@@ -86,11 +81,9 @@ router.post('/login', function(req, res) {
       }
 
       if (!user) {
-        res
-          .status(UNAUTHORIZED)
-          .send({
-            message: 'Username or password does not match our records.'
-          });
+        res.status(UNAUTHORIZED).send({
+          message: 'Username or password does not match our records.'
+        });
       } else {
         // Check if password matches database
         user.comparePassword(req.body.password, function(error, isMatch) {
@@ -134,7 +127,9 @@ router.post('/login', function(req, res) {
               pagesPrinted: user.pagesPrinted
             };
             const token = jwt.sign(
-              userToBeSigned, config.secretKey, jwtOptions
+              userToBeSigned,
+              config.secretKey,
+              jwtOptions
             );
             res.status(OK).send({ token: 'JWT ' + token });
           } else {
@@ -227,27 +222,59 @@ router.post('/validateVerificationEmail', async (req, res) => {
       res.sendStatus(NOT_FOUND);
     }
 
-    bcrypt.compare(String(result._id), req.body.hashedId, async function(
-      error,
-      isMatch) {
-      if (error) {
-        res.sendStatus(BAD_REQUEST);
+    bcrypt.compare(
+      String(result._id),
+      req.body.hashedId,
+      async function(error, isMatch) {
+        if (error) {
+          res.sendStatus(BAD_REQUEST);
+        }
+        if (isMatch) {
+          result.emailVerified = true;
+          result.accessLevel = membershipState.NON_MEMBER;
+          await result
+            .save()
+            .then((_) => {
+              res.sendStatus(OK);
+            })
+            .catch((err) => {
+              res.sendStatus(BAD_REQUEST);
+            });
+        } else {
+          res.sendStatus(BAD_REQUEST);
+        }
       }
-      if (isMatch) {
-        result.emailVerified = true;
-        result.accessLevel = membershipState.NON_MEMBER;
-        await result
-          .save()
-          .then(_ => {
-            res.sendStatus(OK);
-          })
-          .catch(err => {
-            res.sendStatus(BAD_REQUEST);
-          });
-      } else {
-        res.sendStatus(BAD_REQUEST);
-      }
-    });
+    );
+  });
+});
+
+// Get a token for a user in discord
+router.get('/getTokenFromDiscordID', (req, res) => {
+  User.findOne({ discordID: req.query.discordID }, function(error, user) {
+    if (error) {
+      return res.status(BAD_REQUEST).send({ message: 'Bad Request. ' });
+    }
+
+    if (!user) {
+      res
+        .status(UNAUTHORIZED)
+        .send({ message: 'Discord ID does not match our records.' });
+    } else {
+      const jwtOptions = {
+        expiresIn: '2h'
+      };
+
+      const userToBeSigned = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        accessLevel: user.accessLevel,
+        pagesPrinted: user.pagesPrinted
+      };
+      const token = jwt.sign(userToBeSigned, config.secretKey, jwtOptions);
+
+      return res.status(OK).send({ token: 'JWT ' + token });
+    }
   });
 });
 

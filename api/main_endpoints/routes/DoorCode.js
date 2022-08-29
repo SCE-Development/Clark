@@ -14,10 +14,33 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
+const User = require('../models/User.js');
+
+// takes the discord user ID and a token as a parameter
+router.post('/getDoorCodeByDiscord', (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  } else {
+    User.findOne({ discordID: req.query.discordID })
+      .then((User) => {
+        if (User.doorCode == null) {
+          res.send('user does not have a door code.');
+        } else {
+          res.status(OK).send({ code: User.doorCode });
+        }
+      })
+      .catch(() => {
+        res.status(NOT_FOUND).send();
+      });
+  }
+});
+
 router.get('/getDoorCodes', (req, res) => {
   DoorCode.find()
-    .then(doorcodes => res.status(OK).send(doorcodes))
-    .catch(error => {
+    .then((doorcodes) => res.status(OK).send(doorcodes))
+    .catch((error) => {
       const info = {
         errorTime: new Date(),
         apiEndpoint: 'DoorCode/getDoorCodes',
@@ -28,11 +51,11 @@ router.get('/getDoorCodes', (req, res) => {
 });
 
 router.get('/getAvailableDoorCode', (req, res) => {
-  DoorCode.findOne({ usersAssigned: { $lt: 2 } }).then((doorcodes) =>
-    res.status(OK).send(doorcodes)
-  ).catch(() => {
-    res.status(BAD_REQUEST).send({ message: 'No codes left.' });
-  });
+  DoorCode.findOne({ usersAssigned: { $lt: 2 } })
+    .then((doorcodes) => res.status(OK).send(doorcodes))
+    .catch(() => {
+      res.status(BAD_REQUEST).send({ message: 'No codes left.' });
+    });
 });
 
 router.post('/addCode', (req, res) => {
@@ -45,7 +68,7 @@ router.post('/addCode', (req, res) => {
   const newCode = new DoorCode({
     doorCode: req.body.doorCode,
     doorCodeValidUntil: req.body.doorCodeValidUntil,
-    usersAssigned: req.body.usersAssigned,
+    usersAssigned: req.body.usersAssigned
   });
 
   DoorCode.create(newCode, (error, post) => {
@@ -63,12 +86,8 @@ router.post('/editCode', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const {
-    doorCode,
-    doorCodeValidUntil,
-    usersAssigned,
-  } = req.body;
-  DoorCode.findOne({ _id: req.body.id  })
+  const { doorCode, doorCodeValidUntil, usersAssigned } = req.body;
+  DoorCode.findOne({ _id: req.body.id })
     .then((code) => {
       code.doorCode = doorCode || code.doorCode;
       code.doorCodeValidUntil = doorCodeValidUntil || code.doorCodeValidUntil;
@@ -81,7 +100,7 @@ router.post('/editCode', (req, res) => {
         .catch((error) => {
           res.status(BAD_REQUEST).send({
             error,
-            message: 'door code was not updated',
+            message: 'door code was not updated'
           });
         });
     })
@@ -97,12 +116,12 @@ router.post('/removeCode', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  DoorCode.deleteOne({ _id: req.body.id  }, (error, form) => {
+  DoorCode.deleteOne({ _id: req.body.id }, (error, form) => {
     if (error) {
       const info = {
         errorTime: new Date(),
         apiEndpoint: 'DoorCode/removeItem',
-        errorDescription: error,
+        errorDescription: error
       };
       return res.sendStatus(BAD_REQUEST);
     }

@@ -86,6 +86,7 @@ describe('DoorCode', () => {
     doorCodeValidUntil: new Date('12/25/20'),
     usersAssigned: 1,
   };
+  const INVALID_ID = 'invalid';
 
   describe('/POST addCode', () => {
     it('Should return 403 when an invalid token is supplied', async () => {
@@ -260,5 +261,27 @@ describe('DoorCode', () => {
       );
       expect(result).to.have.status(OK);
     });
+  });
+
+  describe('/POST getDoorCodeByDiscord', () => {
+    it('Should return 401 when an invalid token is supplied', async () => {
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/DoorCode/getDoorCodeByDiscord',
+        CODE_WITH_INVALID_TOKEN
+      );
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it(
+      'Should return 404 when a code by an ' + 'invalid id isn\'t found',
+      async () => {
+        setTokenStatus(true);
+        const result = await test.sendPostRequestWithToken(
+          token,
+          `/api/DoorCode/getDoorCodeByDiscord?discordID=${INVALID_ID}`,
+        );
+        expect(result).to.have.status(NOT_FOUND);
+      });
   });
 });
