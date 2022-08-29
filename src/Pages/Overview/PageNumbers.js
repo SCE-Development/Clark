@@ -2,10 +2,10 @@ import React from 'react';
 
 function PageNumbers(props) {
   const numberOfButtons = Math.ceil(props.count / props.usersPerPage);
-  const pageNumbers = new Array();
-  for (let i = 1; i <= numberOfButtons; i++) {
-    pageNumbers.push(i);
-  }
+  // this generates array of page numbers
+  // for example, given numberOfButtons = 3:
+  // this generates [0,1,2,3]
+  const pageNumbers = [...Array(numberOfButtons + 1).keys()].slice(1);
   const params = props.parseQuery();
   const currentPage = params.page ? parseInt(params.page) : 1;
   return (
