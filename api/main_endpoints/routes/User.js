@@ -60,6 +60,40 @@ router.get('/countAllUsers', async (req, res) => {
   res.status(status).json(response);
 });
 
+router.get('/currentUsers', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, (
+    membershipState.OFFICER
+  ))) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const search = req.query.search;
+  const page = parseInt(req.query.page) - 1;
+  const limit = parseInt(req.query.u);
+  let status = OK;
+  const users = await User.find({
+    $or:
+      [
+        { 'firstName': { '$regex': search, '$options': 'i' } },
+        { 'lastName': { '$regex': search, '$options': 'i' } },
+        { 'email': { '$regex': search, '$options': 'i' } }
+      ]
+  }, function(error, result) {
+    if (error) {
+      status = BAD_REQUEST;
+    } else if (result.length == 0) {
+      status = NOT_FOUND;
+    }
+  })
+    .skip(page * limit)
+    .limit(limit);
+  const response = {
+    users
+  };
+  res.status(status).json(response);
+});
+
 router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
   if (!email) {
