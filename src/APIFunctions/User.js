@@ -28,19 +28,6 @@ export async function getAllUsers(token) {
   return status;
 }
 
-export async function totalUsers(query) {
-  let status = new UserApiResponse();
-  await axios
-    .get(GENERAL_API_URL + `/User/countAllUsers/${query}`)
-    .then(result => {
-      status.responseData = result.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
 /**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated
@@ -213,3 +200,14 @@ export async function connectToDiscord(email, token) {
   return status;
 }
 
+export async function getUserById(userID, token) {
+  let status = new UserApiResponse();
+  await axios.post(GENERAL_API_URL + '/user/getUserById', {userID, token})
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}
