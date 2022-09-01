@@ -16,6 +16,7 @@ export default function EditUserInfo(props) {
   const [ email, setEmail ] = useState('');
   const [ chosenUser, setChosenUser ] = useState([]);
   const [ isFinishedFetching, setIsFinishedFetching ] = useState(false);
+  const [isUserNotFound, setIsUserNotFound] = useState(false);
   const [ triggerSaveButton, setTriggerSaveButton ] = useState(false);
   const [ saveBtnText, setSaveBtnText ] = useState('Save');
   const [ triggerDeleteBtn, setTriggerDeleteBtn ] = useState(false);
@@ -25,9 +26,14 @@ export default function EditUserInfo(props) {
   useEffect( () => {
     async function getUser() {
       const user = await getUserById(ID, token);
-      setChosenUser(user.responseData);
-      setIsFinishedFetching(true);
-      setEmail(user.responseData.email);
+      if(user.error){
+        setIsUserNotFound(true);
+      } else {
+        setChosenUser(user.responseData);
+        setIsFinishedFetching(true);
+        setEmail(user.responseData.email);
+      }
+
     }
     getUser();
   }, []);
@@ -90,7 +96,7 @@ export default function EditUserInfo(props) {
   return (
     <div>
       <Header title='Edit User Information' />
-      {isFinishedFetching && (
+      {isFinishedFetching && isUserNoteFound === false ? (
         <form className='main-div' onSubmit={handleSubmitEdit}>
           <label htmlFor='firstName' className='label-text'>First name</label>
           <input
@@ -179,7 +185,11 @@ export default function EditUserInfo(props) {
             </Popup>
           </div>
         </form>
-      )}
+      ) :
+        <h1 style= {{ textAlign: 'center' }}>
+          User with ID: {props.match.params.id} not found!
+        </h1>
+      }
     </div>
   );
 }
