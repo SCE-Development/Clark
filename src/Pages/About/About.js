@@ -3,8 +3,8 @@ import React from 'react';
 import './About.css';
 
 export default function AboutPage() {
-  // eslint-disable max-len
-  let photos = [
+  /* eslint-disable max-len */
+  const photos = [
     'https://user-images.githubusercontent.com/36345325/183006899-43dd8a1d-748c-414d-9643-81fc420d6f6a.png',
     'https://user-images.githubusercontent.com/36345325/183006944-9ac31633-3651-41e7-95f2-36470cd2fb79.png',
     'https://user-images.githubusercontent.com/36345325/183007229-cf4719cb-c608-465d-a586-22a01c9d402b.png',
@@ -12,7 +12,7 @@ export default function AboutPage() {
     'https://user-images.githubusercontent.com/36345325/183007397-903b28d0-7519-4c09-a820-54884c385108.png',
     'https://user-images.githubusercontent.com/36345325/183007498-b9a87fc6-8f62-47bb-8518-4dfefa4c1060.png'
   ];
-  // eslint-enable max-len
+  /* eslint-enable max-len */
 
   return (
     <>
