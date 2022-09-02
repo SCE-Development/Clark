@@ -23,8 +23,10 @@
 }
 
 .button-div {
+    display: flex;
+    flex-direction: row;
     margin-top: 8px;
-    text-align: right;
+    justify-content: flex-end;
 }
 
 .btn {

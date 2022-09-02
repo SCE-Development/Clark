@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import
-{ getUserById,
+{
+  getUserById,
   editUser,
   deleteUserByEmail
 } from '../../APIFunctions/User';
 import Header from '../../Components/Header/Header';
-import Popup from './Popup';
 import { Button } from 'reactstrap';
+import ConfirmationModal from './ConfirmationModal';
 import './EditUserInfoCSS.css';
 
 export default function EditUserInfo(props) {
@@ -16,12 +17,11 @@ export default function EditUserInfo(props) {
   const [ email, setEmail ] = useState('');
   const [ chosenUser, setChosenUser ] = useState([]);
   const [ isFinishedFetching, setIsFinishedFetching ] = useState(false);
-  const [isUserNotFound, setIsUserNotFound] = useState(false);
+  const [ isUserNotFound, setIsUserNotFound] = useState(false);
   const [ triggerSaveButton, setTriggerSaveButton ] = useState(false);
-  const [ saveBtnText, setSaveBtnText ] = useState('Save');
-  const [ triggerDeleteBtn, setTriggerDeleteBtn ] = useState(false);
-  const [ popUpText, setPopupText ] =
-    useState('Are you sure you want to delete this user?');
+  const [ isSaved, setIsSaved] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [saveModal, setSaveModal] = useState(false);
 
   useEffect( () => {
     async function getUser() {
@@ -37,6 +37,8 @@ export default function EditUserInfo(props) {
     }
     getUser();
   }, []);
+
+  // FUNCTIONS
 
   function handleInputChange(e) {
     setTriggerSaveButton(true);
@@ -73,30 +75,32 @@ export default function EditUserInfo(props) {
     });
   }
 
-  function deleteButtonClicked(){
-    setTriggerDeleteBtn(true);
-  }
-
   async function deleteUser(){
     const result = deleteUserByEmail( email, token);
     if(!result.error){
       setPopupText('The user is deleted! Please navigate to the previous tab!');
     }
+    window.location.reload(false);
   }
 
   function handleSubmitEdit(e){
     e.preventDefault();
     async function submitEditToDB(){
-      await editUser(chosenUser, token);
+      const result = await editUser(chosenUser, token);
+      if(!result.error){
+        setIsSaved(true);
+      }
     }
     submitEditToDB();
-    setSaveBtnText('Saved');
   }
+
+  const toggle = () => setModal(!modal);
+  const toggleSave = () => setSaveModal(!saveModal);
 
   return (
     <div>
       <Header title='Edit User Information' />
-      {isFinishedFetching && isUserNoteFound === false ? (
+      {isFinishedFetching && isUserNotFound === false ? (
         <form className='main-div' onSubmit={handleSubmitEdit}>
           <label htmlFor='firstName' className='label-text'>First name</label>
           <input
@@ -162,27 +166,51 @@ export default function EditUserInfo(props) {
 
           <div className='button-div'>
             {triggerSaveButton &&
-              <Button
-                outline
-                color='primary'
-                type='submit'
-                className='save-button btn'>
-                {saveBtnText}
-              </Button>
+              (<div>
+                <Button
+                  outline
+                  color='primary'
+                  type='submit'
+                  className='save-button btn'
+                  onClick={toggleSave}>
+                  Save
+                </Button>
+                {isSaved ?
+                  <ConfirmationModal
+                    toggle={toggleSave}
+                    modal={saveModal}
+                    buttonFunction={()=> void 0}
+                    buttonText='OK'
+                    modalTitle='Save Status'
+                    modalContent='The edited fields were saved!'
+                  />
+                  :
+                  <ConfirmationModal
+                    toggle={toggleSave}
+                    modal={saveModal}
+                    buttonFunction={()=> void 0}
+                    buttonText='OK'
+                    modalTitle='Save Status'
+                    modalContent='Opps! The edited fields were NOT saved!'
+                  />
+                }
+              </div>)
             }
             <Button
               color='secondary'
               type='button'
               className='delete-button btn'
-              onClick={deleteButtonClicked}>
+              onClick={toggle}>
               Delete
             </Button>
-            <Popup
-              trigger={triggerDeleteBtn}
-              setTrigger={setTriggerDeleteBtn}
-              deleteUser={deleteUser}>
-              <h4>{popUpText}</h4>
-            </Popup>
+            <ConfirmationModal
+              toggle={toggle}
+              modal={modal}
+              buttonFunction={deleteUser}
+              buttonText='Yes'
+              modalTitle='Delete User Confirmation'
+              modalContent='Are you sure you want to delete this user?'
+            />
           </div>
         </form>
       ) :
