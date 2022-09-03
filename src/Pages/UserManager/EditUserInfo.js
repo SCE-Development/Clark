@@ -7,7 +7,8 @@ import
 } from '../../APIFunctions/User';
 import Header from '../../Components/Header/Header';
 import { Button } from 'reactstrap';
-import ConfirmationModal from './ConfirmationModal';
+import ConfirmationModal from
+  '../../Components/DecisionModal/ConfirmationModal';
 import './EditUserInfoCSS.css';
 
 export default function EditUserInfo(props) {
@@ -20,7 +21,7 @@ export default function EditUserInfo(props) {
   const [ isUserNotFound, setIsUserNotFound] = useState(false);
   const [ triggerSaveButton, setTriggerSaveButton ] = useState(false);
   const [ isSaved, setIsSaved] = useState(false);
-  const [modal, setModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
 
   useEffect( () => {
@@ -77,9 +78,6 @@ export default function EditUserInfo(props) {
 
   async function deleteUser(){
     const result = deleteUserByEmail( email, token);
-    if(!result.error){
-      setPopupText('The user is deleted! Please navigate to the previous tab!');
-    }
     window.location.reload(false);
   }
 
@@ -94,7 +92,7 @@ export default function EditUserInfo(props) {
     submitEditToDB();
   }
 
-  const toggle = () => setModal(!modal);
+  const toggleDelete = () => setDeleteModal(!deleteModal);
   const toggleSave = () => setSaveModal(!saveModal);
 
   return (
@@ -177,21 +175,27 @@ export default function EditUserInfo(props) {
                 </Button>
                 {isSaved ?
                   <ConfirmationModal
+                    open={saveModal}
                     toggle={toggleSave}
-                    modal={saveModal}
-                    buttonFunction={()=> void 0}
-                    buttonText='OK'
-                    modalTitle='Save Status'
-                    modalContent='The edited fields were saved!'
+                    handleConfirmation={ ()=> {
+                      toggleSave();
+                      setTriggerSaveButton(false);
+                    }}
+                    confirmText='OK'
+                    headerText='Save Status'
+                    bodyText='The edited fields were saved!'
                   />
                   :
                   <ConfirmationModal
+                    open={saveModal}
                     toggle={toggleSave}
-                    modal={saveModal}
-                    buttonFunction={()=> void 0}
-                    buttonText='OK'
-                    modalTitle='Save Status'
-                    modalContent='Opps! The edited fields were NOT saved!'
+                    handleConfirmation={ ()=> {
+                      toggleSave();
+                      setTriggerSaveButton(false);
+                    }}
+                    confirmText='OK'
+                    headerText='Save Status'
+                    bodyText='Opps! The edited fields were NOT saved!'
                   />
                 }
               </div>)
@@ -200,16 +204,16 @@ export default function EditUserInfo(props) {
               color='secondary'
               type='button'
               className='delete-button btn'
-              onClick={toggle}>
+              onClick={toggleDelete}>
               Delete
             </Button>
             <ConfirmationModal
-              toggle={toggle}
-              modal={modal}
-              buttonFunction={deleteUser}
-              buttonText='Yes'
-              modalTitle='Delete User Confirmation'
-              modalContent='Are you sure you want to delete this user?'
+              open={deleteModal}
+              toggle={toggleDelete}
+              handleConfirmation={deleteUser}
+              confirmText='Yes'
+              headerText='Delete User Confirmation'
+              bodyText='Are you sure you want to delete this user?'
             />
           </div>
         </form>
