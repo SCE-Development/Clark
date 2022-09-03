@@ -14,7 +14,7 @@ const { USER, ENABLED } = googleApiKeys;
 // Routing post /sendVerificationEmail calls the sendEmail function
 // and sends the verification email with the verification email template
 router.post('/sendVerificationEmail', async (req, res) => {
-  if(!ENABLED || process.env.NODE_ENV === 'test') {
+  if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
   const scopes = ['https://mail.google.com/'];
@@ -24,11 +24,11 @@ router.post('/sendVerificationEmail', async (req, res) => {
 
   if (tokenJson) {
     if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
-      logger.warning('refreshing token');
+      logger.warn('refreshing token');
       apiHandler.refreshToken();
     }
   } else {
-    logger.warning('getting new token! ', {tokenJson});
+    logger.warn('getting new token! ', { tokenJson });
     apiHandler.getNewToken();
   }
 
@@ -39,10 +39,14 @@ router.post('/sendVerificationEmail', async (req, res) => {
         .sendEmail(template)
         .then((_) => {
           res.sendStatus(OK);
+        })
+        .catch((err) => {
+          logger.error('unable to send verification email:', err);
+          res.sendStatus(BAD_REQUEST);
         });
     })
     .catch((err) => {
-      logger.error('unable to send verification email:', err);
+      logger.error('unable to generate verification template:', err);
       res.sendStatus(BAD_REQUEST);
     });
 });
@@ -50,7 +54,7 @@ router.post('/sendVerificationEmail', async (req, res) => {
 // Routing post /sendBlastEmail calls the sendEmail function
 // and sends the blast email with the blast email template
 router.post('/sendBlastEmail', async (req, res) => {
-  if(!ENABLED && process.env.NODE_ENV !== 'test') {
+  if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
   const scopes = ['https://mail.google.com/'];
