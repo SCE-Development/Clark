@@ -32,10 +32,12 @@ describe('<PageNumbers />', () => {
     />
   );
 
-  // should render expeced number of buttons given props.count / props.usersPerPage
+  // should render expected number of buttons given props.count
+  // and props.usersPerPage
   it('Should render 3 <button /> components', () => {
     expect(wrapper.find('button')).to.have.lengthOf(3);
   });
-  // should call paginate with correct number when button clicked, do this with evan later
+  // should call paginate with correct number when button clicked,
+  // do this with evan later
 
 });
