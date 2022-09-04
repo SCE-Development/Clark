@@ -46,5 +46,5 @@ export default function ExpirationDropdown(props) {
         ))}
       </select>
     </>
-  )
+  );
 }

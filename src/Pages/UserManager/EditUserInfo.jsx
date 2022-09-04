@@ -31,7 +31,10 @@ export default function EditUserInfo(props) {
   const [accessLevel, setAccessLevel] = useState();
   const [email, setEmail] = useState();
   const [emailOptIn, setEmailOptIn] = useState();
-  const [numberOfSemestersToSignUpFor, setNumberOfSemestersToSignUpFor] = useState();
+  const [
+    numberOfSemestersToSignUpFor,
+    setNumberOfSemestersToSignUpFor
+  ] = useState();
   const [discordId, setDiscordId] = useState();
   const [membershipExpiration, setMembershipExpiration] = useState(new Date());
   const [joinDate, setJoinDate] = useState();
@@ -260,7 +263,7 @@ export default function EditUserInfo(props) {
           </div>
         }
       </React.Fragment>
-    )
+    );
   }
 
   function renderExpirationDate() {
@@ -276,13 +279,15 @@ export default function EditUserInfo(props) {
     if (userIsOfficerOrAdmin) {
       maybeFontColor = 'green';
       message = (<>
-        Membership does not expire as the user is an <b>{membershipStateToString(accessLevel)}</b>)
-      </>)
+        Membership does not expire as the user is an{' '}
+        <b>{membershipStateToString(accessLevel)}</b>
+      </>);
     } else if (userIsPendingOrBanned) {
       maybeFontColor = 'red';
       message = (<>
-        Membership invalid, user has the <b>{membershipStateToString(accessLevel)}</b> role.
-      </>)
+        Membership invalid, user has the{' '}
+        <b>{membershipStateToString(accessLevel)}</b> role.
+      </>);
     } else {
       // Default case, if a user isn't in one of the above special roles
       // just render the status (valid or expired) of their membership
@@ -291,15 +296,16 @@ export default function EditUserInfo(props) {
         maybeFontColor = 'red';
       }
       message = <>
-        Membership {expiresOrExpired} on <b>{membershipExpiration.toDateString()}</b>
-      </>
+        Membership {expiresOrExpired} on{' '}
+        <b>{membershipExpiration.toDateString()}</b>
+      </>;
     }
 
     return (
       <span style={{ color: maybeFontColor }}>
         {message}
       </span>
-    )
+    );
   }
 
   function renderUserInfo() {

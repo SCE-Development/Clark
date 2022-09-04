@@ -9,7 +9,7 @@ import {
 } from 'reactstrap';
 
 export default function MajorDropdown(props) {
-  const [inputEnable, setInputEnable] = useState(props.inputEnable);
+  const [inputEnabled, setInputEnabled] = useState(props.inputEnable);
   const [major, setMajor] = useState();
   const [dropdownOpen, setDropdownOpen] = useState();
 
@@ -17,7 +17,7 @@ export default function MajorDropdown(props) {
   function handleMajorChange(e) {
     props.setMajor(e.target.value);
     setMajor(e.target.value);
-    setInputEnable(e.target.value === 'Other');
+    setInputEnabled(e.target.value === 'Other');
   }
 
   const options = ['Computer Engineering', 'Software Engineering', 'Other'];
@@ -33,7 +33,10 @@ export default function MajorDropdown(props) {
         toggle={() => setDropdownOpen(!dropdownOpen)}
       >
         <DropdownToggle caret id='change-and-select-btns 2'>
-          {!inputEnable ? major || props.defaultMajor || 'Select Major' : 'Other'}
+          {
+            !inputEnabled ?
+              major || props.defaultMajor || 'Select Major'
+              : 'Other'}
         </DropdownToggle>
         <DropdownMenu id='change-and-select-btns'>
           {options.map((option, index) => {
@@ -49,7 +52,7 @@ export default function MajorDropdown(props) {
           })}
         </DropdownMenu>
       </ButtonDropdown>
-      {inputEnable ? (
+      {inputEnabled ? (
         <Input
           placeholder='Enter major here...'
           onChange={(e) => props.setMajor(e.target.value)}

@@ -80,7 +80,7 @@ export async function getCurrentUsers(query) {
  * the user
  * @param {(string|undefined)} userToEdit.emailVerified - If the user's email
  * was verified
- * @param {(string|undefined)} userToEdit.emailOptIn - Opt into SCE's blast 
+ * @param {(string|undefined)} userToEdit.emailOptIn - Opt into SCE's blast
  * week emails
  * @param {string} token - The jwt token for authentication
  * @returns {UserApiResponse} containing if the search was successful

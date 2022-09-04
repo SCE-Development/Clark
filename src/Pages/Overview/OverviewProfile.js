@@ -37,13 +37,13 @@ export default function OverviewProfile(props) {
       </td>
 
       <td>
-        <Link target='_blank' to={`/user/edit/${props.user._id}`}>
+        <a target='_blank' href={`/user/edit/${props.user._id}`}>
           <button
             className='overview-icon'
           >
             {svg.editSymbol()}
           </button>
-        </Link>
+        </a>
       </td>
     </tr>
   );
