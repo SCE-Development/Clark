@@ -216,7 +216,6 @@ router.post('/edit', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  console.log(req.body, 'asdfasdfsadf')
   if (!req.body._id) {
     return res.sendStatus(BAD_REQUEST);
   }
@@ -269,7 +268,6 @@ router.post('/edit', async (req, res) => {
   delete user.token;
 
   User.updateOne(query, { ...user }, function(error, result) {
-    console.log("where result!?!?!?", {error, result})
     if (error) {
       const info = {
         errorTime: new Date(),
