@@ -78,6 +78,10 @@ export async function getCurrentUsers(query) {
  * the user
  * @param {(string|undefined)} userToEdit.lastLogin - The updated password of
  * the user
+ * @param {(string|undefined)} userToEdit.emailVerified - If the user's email
+ * was verified
+ * @param {(string|undefined)} userToEdit.emailOptIn - Opt into SCE's blast 
+ * week emails
  * @param {string} token - The jwt token for authentication
  * @returns {UserApiResponse} containing if the search was successful
  */
@@ -96,7 +100,9 @@ export async function editUser(userToEdit, token) {
     discordID,
     pagesPrinted,
     accessLevel,
-    lastLogin
+    lastLogin,
+    emailVerified,
+    emailOptIn,
   } = userToEdit;
   await axios
     .post(GENERAL_API_URL + '/User/edit', {
@@ -113,6 +119,8 @@ export async function editUser(userToEdit, token) {
       pagesPrinted,
       accessLevel,
       lastLogin,
+      emailVerified,
+      emailOptIn,
       token
     })
     .then(result => {

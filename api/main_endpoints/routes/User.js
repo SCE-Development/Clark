@@ -251,8 +251,9 @@ router.post('/edit', (req, res) => {
 
   // Remove the auth token from the form getting edited
   delete user.token;
-
+  console.log('editing user', {query, user})
   User.updateOne(query, { ...user }, function(error, result) {
+    console.log('result gang', {error, result})
     if (error) {
       const info = {
         errorTime: new Date(),

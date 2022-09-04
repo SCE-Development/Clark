@@ -8,7 +8,7 @@ import {
 const enums = require('../../Enums.js');
 
 
-export default function MembershipDropdown(props) {
+export default function RoleDropdown(props) {
   return (
     <FormGroup tag='fieldset'>
       <legend>Membership Status</legend>
