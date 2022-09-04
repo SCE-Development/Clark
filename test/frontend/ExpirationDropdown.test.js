@@ -58,7 +58,8 @@ describe('<ExpirationDropdown />', () => {
       const wrapper = mount(<ExpirationDropdown />);
       const optionArray = wrapper.find('option');
       optionArray.forEach((option, index) => {
-        expect(option.props().children).to.equal(EXPECTED_SPRING_OPTIONS[index]);
+        expect(option.props().children)
+          .to.equal(EXPECTED_SPRING_OPTIONS[index]);
       });
     });
   it('Should have four options with expected expiration dates for fall',
