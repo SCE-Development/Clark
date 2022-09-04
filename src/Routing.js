@@ -22,7 +22,7 @@ import MembershipApplication from
   './Pages/MembershipApplication/MembershipApplication.js';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
-import OfficerDB from './Pages/OfficerDB/OfficerDB.js';
+
 import { membershipState } from './Enums';
 import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
 import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
@@ -127,7 +127,6 @@ export default function Routing({ appProps }) {
   const signedOutRoutes = [
     { Component: Home, path: '/' },
     { Component: EventList, path: '/events' },
-    { Component: OfficerDB, path: '/officerDB' },
     { Component: VerifyEmailPage, path: '/verify' },
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
