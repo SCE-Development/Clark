@@ -4,6 +4,7 @@ const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
 const { consoleColors } = require('../../util/constants');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
+const logger = require('../../util/logger');
 
 const {
   redColor,
@@ -49,7 +50,7 @@ class SceGoogleApiHandler {
       });
     }
 
-    if(apiConfigs.googleApiKeys.Enabled) {
+    if(apiConfigs.googleApiKeys.ENABLED) {
       this.hasValidAPIKeys = true;
     }
   }
@@ -153,7 +154,9 @@ class SceGoogleApiHandler {
 
     this.oAuth2Client.getAccessToken().then(token => {
       fs.writeFile(this.tokenPath, JSON.stringify(token.res.data), err => {
-        if (err) return console.debug(err);
+        if (err) {
+          logger.error('unable to refresh token', err);
+        }
       });
     });
   }
@@ -340,6 +343,9 @@ class SceGoogleApiHandler {
   async sendEmail(mailTemplate) {
     return new Promise(async (resolve, reject) => {
       if (!this.hasValidAPIKeys) {
+        logger.warn(
+          'we do not have valid api keys so we are skipping sending an email'
+        );
         return resolve(true);
       }
       const smtpTransport = nodemailer.createTransport({
@@ -354,8 +360,13 @@ class SceGoogleApiHandler {
       });
 
       smtpTransport.sendMail(mailTemplate, (error, response) => {
-        error ? reject(error) : resolve(response);
         smtpTransport.close();
+        if (error) {
+          logger.error('sendMail returned an error:', error);
+          reject(error);
+        } else {
+          resolve(response);
+        }
       });
     });
   }

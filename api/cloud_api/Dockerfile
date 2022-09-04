@@ -11,7 +11,7 @@ COPY ./cloud_api /app/cloud_api
 
 COPY ./util /app/util
 
-COPY ./config/config.json /app/config/config.json
+COPY ./config /app/config/
 
 EXPOSE 8082
 
