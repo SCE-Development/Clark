@@ -13,11 +13,12 @@ import {
   Button,
   Row,
 } from 'reactstrap';
+
 import MajorDropdown from '../MembershipApplication/MajorDropdown';
 import RoleDropdown from './RoleDropdown';
 import ExpirationDropdown from './ExpirationDropdown';
 import { membershipState, membershipStateToString } from '../../Enums';
-
+import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 
 
 export default function EditUserInfo(props) {
@@ -40,6 +41,10 @@ export default function EditUserInfo(props) {
   const [joinDate, setJoinDate] = useState();
   const [submitButtonText, setSubmitButtonText] = useState('Submit');
   const [submitButtonColor, setSubmitButtonColor] = useState('primary');
+  const [
+    verificationEmailButtonText,
+    setVerificationEmailButtonText
+  ] = useState('Send');
   const [dataWasChanged, setDataWasChanged] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -101,6 +106,32 @@ export default function EditUserInfo(props) {
       },
       checked: !!emailVerified,
       type: 'checkbox',
+    },
+    {
+      label: 'Resend verification email (sends to most recently saved email):',
+      onChange: (e) => {
+        setDataWasChanged(true);
+        setEmailVerified(e.target.checked);
+      },
+      checked: !!emailVerified,
+      Component: <Button
+        outline
+        color='success'
+        onClick={async () => {
+          const result = await sendVerificationEmail(email, firstName);
+          if (result.error) {
+            return alert(
+              'unable to send verification email.' +
+              ' please contact dev team if retrying fails'
+            );
+          }
+          setVerificationEmailButtonText('Verification email sent!');
+          setTimeout(() => {
+            setVerificationEmailButtonText('Send');
+          }, 1500);
+        }}>
+        {verificationEmailButtonText}
+      </Button>
     },
     {
       label: 'Access Level',
@@ -193,6 +224,7 @@ export default function EditUserInfo(props) {
       return;
     }
     const result = await editUser({
+      _id: props.match.params.id,
       firstName,
       lastName,
       email,

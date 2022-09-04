@@ -216,7 +216,8 @@ router.post('/edit', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  if (!req.body.email) {
+  console.log(req.body, 'asdfasdfsadf')
+  if (!req.body._id) {
     return res.sendStatus(BAD_REQUEST);
   }
 
@@ -240,7 +241,7 @@ router.post('/edit', async (req, res) => {
     }
   }
 
-  const query = { email: req.body.email };
+  const query = { _id: req.body._id };
   let user = req.body;
 
   if (typeof req.body.numberOfSemestersToSignUpFor !== 'undefined') {
@@ -268,7 +269,7 @@ router.post('/edit', async (req, res) => {
   delete user.token;
 
   User.updateOne(query, { ...user }, function(error, result) {
-
+    console.log("where result!?!?!?", {error, result})
     if (error) {
       const info = {
         errorTime: new Date(),

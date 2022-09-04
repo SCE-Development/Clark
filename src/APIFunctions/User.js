@@ -57,6 +57,7 @@ export async function getCurrentUsers(query) {
 /**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated
+ * @param {(string|undefined)} userToEdit._id - MongoDB id of the user
  * @param {(string|undefined)} userToEdit.firstName - The updated first name of
  * the user
  * @param {(string|undefined)} userToEdit.lastName - The updated last name of
@@ -88,6 +89,7 @@ export async function getCurrentUsers(query) {
 export async function editUser(userToEdit, token) {
   let status = new UserApiResponse();
   const {
+    _id,
     firstName,
     lastName,
     email,
@@ -106,6 +108,7 @@ export async function editUser(userToEdit, token) {
   } = userToEdit;
   await axios
     .post(GENERAL_API_URL + '/User/edit', {
+      _id,
       firstName,
       lastName,
       email,
