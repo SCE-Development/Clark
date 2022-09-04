@@ -57,6 +57,7 @@ export async function getCurrentUsers(query) {
 /**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated
+ * @param {(string|undefined)} userToEdit._id - MongoDB id of the user
  * @param {(string|undefined)} userToEdit.firstName - The updated first name of
  * the user
  * @param {(string|undefined)} userToEdit.lastName - The updated last name of
@@ -78,12 +79,17 @@ export async function getCurrentUsers(query) {
  * the user
  * @param {(string|undefined)} userToEdit.lastLogin - The updated password of
  * the user
+ * @param {(string|undefined)} userToEdit.emailVerified - If the user's email
+ * was verified
+ * @param {(string|undefined)} userToEdit.emailOptIn - Opt into SCE's blast
+ * week emails
  * @param {string} token - The jwt token for authentication
  * @returns {UserApiResponse} containing if the search was successful
  */
 export async function editUser(userToEdit, token) {
   let status = new UserApiResponse();
   const {
+    _id,
     firstName,
     lastName,
     email,
@@ -96,10 +102,13 @@ export async function editUser(userToEdit, token) {
     discordID,
     pagesPrinted,
     accessLevel,
-    lastLogin
+    lastLogin,
+    emailVerified,
+    emailOptIn,
   } = userToEdit;
   await axios
     .post(GENERAL_API_URL + '/User/edit', {
+      _id,
       firstName,
       lastName,
       email,
@@ -113,6 +122,8 @@ export async function editUser(userToEdit, token) {
       pagesPrinted,
       accessLevel,
       lastLogin,
+      emailVerified,
+      emailOptIn,
       token
     })
     .then(result => {
@@ -226,3 +237,14 @@ export async function connectToDiscord(email, token) {
   return status;
 }
 
+export async function getUserById(userID, token) {
+  let status = new UserApiResponse();
+  await axios.post(GENERAL_API_URL + '/user/getUserById', {userID, token})
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}

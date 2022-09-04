@@ -197,7 +197,7 @@ describe('User', () => {
   describe('/POST edit', () => {
     it('Should return statusCode 403 if no token is passed in', async () => {
       const user = {
-        email: 'a@b.c'
+        _id: id,
       };
       const result = await test.sendPostRequest(
         '/api/User/edit', user);
@@ -217,7 +217,7 @@ describe('User', () => {
 
     it('Should return statusCode 404 if no user was found', async () => {
       const user = {
-        email: 'invalid@b.c',
+        _id: '63142b88a13c29e00b22d1f6',
         token: token
       };
       setTokenStatus(true);
@@ -229,7 +229,8 @@ describe('User', () => {
     it('Should return statusCode 200 and a message ' +
       'if a user was edited', async () => {
       const user = {
-        email: 'a@b.c',
+        _id: id,
+        email: 'd@e.f',
         token: token,
         firstName: 'pinkUnicorn',
         discordID: '0987654321',
@@ -455,7 +456,7 @@ describe('User', () => {
         token, `/api/User/currentUsers${query}`);
       expect(result).to.have.status(OK);
       expect(result).to.be.json;
-      result.body.users[0].email.should.equal('a@b.c');
+      result.body.users[0].email.should.equal('d@e.f');
       result.body.users[0].firstName.should.equal('pinkUnicorn');
       result.body.users[0].lastName.should.equal('last-name');
       result.body.users[0].discordID.should.equal('0987654321');
@@ -488,7 +489,7 @@ describe('User', () => {
   describe('/POST delete', () => {
     it('Should return statusCode 403 if no token is passed in', async () => {
       const user = {
-        email: 'a@b.c'
+        email: 'd@e.f'
       };
       const result = await test.sendPostRequest(
         '/api/User/delete', user);
@@ -498,7 +499,7 @@ describe('User', () => {
     it('Should return statusCode 403 if an invalid ' +
       'token was passed in', async () => {
       const user = {
-        email: 'a@b.c',
+        email: 'd@e.f',
         token: 'Invalid token'
       };
       const result = await test.sendPostRequest(
@@ -520,7 +521,7 @@ describe('User', () => {
     it('Should return statusCode 200 and a message ' +
       'if a user was deleted', async () => {
       const user = {
-        email: 'a@b.c',
+        email: 'd@e.f',
         token: token
       };
       setTokenStatus(true);
