@@ -378,7 +378,7 @@ router.post('/getUserById', async (req, res) => {
   }
   User.findOne({ _id: req.body.userID}, (err, result) => {
     if (err) {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      return res.sendStatus(BAD_REQUEST);
     }
 
     if (!result) {

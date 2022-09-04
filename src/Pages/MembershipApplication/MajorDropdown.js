@@ -10,7 +10,7 @@ import {
 
 export default function MajorDropdown(props) {
   const [inputEnable, setInputEnable] = useState(props.inputEnable);
-  const [major, setMajor] = useState();
+  const [major, setMajor] = useState(props.defaultMajor);
   const [dropdownOpen, setDropdownOpen] = useState();
 
   function handleMajorChange(e) {

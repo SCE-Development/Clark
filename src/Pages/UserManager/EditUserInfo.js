@@ -1,227 +1,183 @@
 import React, { useState, useEffect } from 'react';
-import
-{
+import {
   getUserById,
   editUser,
-  deleteUserByEmail
 } from '../../APIFunctions/User';
 import Header from '../../Components/Header/Header';
-import { Button } from 'reactstrap';
+import { Container, FormGroup, Label, Col, Input } from 'reactstrap';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal';
-import './EditUserInfoCSS.css';
+import MajorDropdown from '../MembershipApplication/MajorDropdown';
+import MembershipDropdown from './MembershipDropdown';
 
 export default function EditUserInfo(props) {
-  const ID = props.match.params.id;
   const token = props.user.token;
 
-  const [ email, setEmail ] = useState('');
-  const [ chosenUser, setChosenUser ] = useState([]);
-  const [ isFinishedFetching, setIsFinishedFetching ] = useState(false);
-  const [ isUserNotFound, setIsUserNotFound] = useState(false);
-  const [ triggerSaveButton, setTriggerSaveButton ] = useState(false);
-  const [ isSaved, setIsSaved] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
-  const [saveModal, setSaveModal] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
+  const [doorCode, setDoorCode] = useState('');
+  const [major, setMajor] = useState('');
+  const [pagesPrinted, setPagesPrinted] = useState();
+  const [emailVerified, setEmailVerified] = useState();
+  const [accessLevel, setAccessLevel] = useState();
+  const [email, setEmail] = useState();
+  const [emailOptIn, setEmailOptIn] = useState();
+  const [membershipExpiration, setMembershipExpiration] = useState();
+  const [discordId, setDiscordId] = useState();
 
-  useEffect( () => {
+  const [loading, setLoading] = useState(true);
+  const [userNotFound, setUserNotFound] = useState(false);
+
+  const fields = [
+    {
+      label: 'First Name',
+      defaultValue: firstName,
+      onChange: (e) => setFirstName(e.target.value),
+    },
+    {
+      label: 'Last Name',
+      defaultValue: lastName,
+      onChange: (e) => setLastName(e.target.value),
+    },
+    {
+      label: 'Password',
+      onChange: (e) => setPassword(e.target.value),
+      placeholder: 'intentionally blank',
+      type: 'text',
+    },
+    {
+      label: 'Door Code',
+      defaultValue: doorCode,
+      onChange: (e) => setDoorCode(e.target.value),
+      type: 'number',
+    },
+    {
+      label: 'major',
+      defaultValue: major,
+      onChange: (e) => setMajor(e.target.value),
+      Component:
+        <MajorDropdown defaultMajor={major} setMajor={setMajor} />,
+    },
+    {
+      label: 'pagesPrinted',
+      defaultValue: pagesPrinted,
+      onChange: (e) => setPagesPrinted(e.target.value),
+      type: 'number',
+    },
+    {
+      label: 'emailVerified',
+      defaultValue: emailVerified,
+      onChange: (e) => setEmailVerified(e.target.value),
+      type: 'checkbox',
+    },
+    {
+      label: 'accessLevel',
+      defaultValue: accessLevel,
+      onChange: (e) => setAccessLevel(e.target.value),
+      Component: <MembershipDropdown
+        setuserMembership={(value) => setAccessLevel(value)}
+        defaultValue={accessLevel}
+      />
+    },
+    {
+      label: 'email',
+      defaultValue: email,
+      onChange: (e) => setEmail(e.target.value),
+    },
+    {
+      label: 'emailOptIn',
+      defaultValue: emailOptIn,
+      onChange: (e) => setEmailOptIn(e.target.value),
+    },
+    {
+      label: 'membershipExpiration',
+      defaultValue: membershipExpiration,
+      onChange: (e) => setMembershipExpiration(e.target.value),
+    },
+    {
+      label: 'discordId',
+      defaultValue: discordId,
+      onChange: (e) => setDiscordId(e.target.value),
+      type: 'number',
+    },
+  ];
+
+  useEffect(() => {
     async function getUser() {
-      const user = await getUserById(ID, token);
-      if(user.error){
-        setIsUserNotFound(true);
+      const result = await getUserById(props.match.params.id, token);
+      setLoading(false);
+      console.log('we got baccc', result);
+      if (result.error) {
+        setUserNotFound(true);
       } else {
-        setChosenUser(user.responseData);
-        setIsFinishedFetching(true);
-        setEmail(user.responseData.email);
+        setFirstName(result.responseData.firstName)
+        setLastName(result.responseData.lastName)
+        setPassword(result.responseData.password)
+        setDoorCode(result.responseData.doorCode)
+        setMajor(result.responseData.major)
+        setPagesPrinted(result.responseData.pagesPrinted)
+        setEmailVerified(result.responseData.emailVerified)
+        setAccessLevel(result.responseData.accessLevel)
+        setEmailOptIn(result.responseData.emailOptIn)
+        setMembershipExpiration(result.responseData.membershipExpiration)
+        setDiscordId(result.responseData.discordId)
+        setEmail(result.responseData.email);
       }
-
     }
     getUser();
   }, []);
 
-  // FUNCTIONS
-
-  function handleInputChange(e) {
-    setTriggerSaveButton(true);
-    let { name, value } = e.target;
-    switch (value){
-    case 'BANNED':
-      value = -2;
-      break;
-    case 'PENDING':
-      value = -1;
-      break;
-    case 'NON_MEMBER':
-      value = 0;
-      break;
-    case 'ALUMNI':
-      value = 0.5;
-      break;
-    case 'MEMBER':
-      value = 1;
-      break;
-    case 'OFFICER':
-      value = 2;
-      break;
-    case 'ADMIN':
-      value = 3;
-      break;
-    }
-    setChosenUser((prev) => {
-      const updateField = {
-        ...prev,
-        [name]: value
-      };
-      return updateField;
-    });
-  }
-
-  async function deleteUser(){
-    const result = deleteUserByEmail( email, token);
-    window.location.reload(false);
-  }
-
-  function handleSubmitEdit(e){
-    e.preventDefault();
-    async function submitEditToDB(){
-      const result = await editUser(chosenUser, token);
-      if(!result.error){
-        setIsSaved(true);
-      }
-    }
-    submitEditToDB();
-  }
-
-  const toggleDelete = () => setDeleteModal(!deleteModal);
-  const toggleSave = () => setSaveModal(!saveModal);
-
-  return (
-    <div>
-      <Header title='Edit User Information' />
-      {isFinishedFetching && isUserNotFound === false ? (
-        <form className='main-div' onSubmit={handleSubmitEdit}>
-          <label htmlFor='firstName' className='label-text'>First name</label>
-          <input
-            type='text'
-            name='firstName'
-            id='input-box'
-            value={chosenUser.firstName}
-            onChange={handleInputChange}
-          />
-
-          <label htmlFor='lastName' className='label-text'>Last name</label>
-          <input
-            type='text'
-            name='lastName'
-            id='input-box'
-            value={chosenUser.lastName}
-            onChange={handleInputChange}
-          />
-
-          <label htmlFor='password' className='label-text'>Password</label>
-          <input
-            type='text'
-            name='password'
-            id='input-box'
-            value={chosenUser.password}
-            onChange={handleInputChange}
-          />
-
-          <label htmlFor='major' className='label-text'>Major</label>
-          <input
-            type='text'
-            name='major'
-            id='input-box'
-            placeholder={chosenUser.major}
-            onChange={handleInputChange}
-          />
-
-          <label htmlFor='accessLevel' className='label-text'>SCE's role</label>
-          <select
-            name='accessLevel'
-            id='input-box'
-            style ={{cursor: 'pointer'}}
-            onChange={handleInputChange}
-          >
-            <option value=''>Choose your role</option>
-            <option value='BANNED'>BANNED</option>
-            <option value='PENDING'>PENDING</option>
-            <option value='NON-MEMBER'>NON-MEMBER</option>
-            <option value='ALUMNI'>ALUMNI</option>
-            <option value='MEMBER'>MEMBER</option>
-            <option value='OFFICER'>OFFICER</option>
-            <option value='ADMIN'>ADMIN</option>
-          </select>
-
-          <label htmlFor='doorcode' className='label-text'>Doorcode</label>
-          <input
-            type='text'
-            name='doorcode'
-            id='input-box'
-            value={chosenUser.doorcode}
-            onChange={handleInputChange}
-          />
-
-          <div className='button-div'>
-            {triggerSaveButton &&
-              (<div>
-                <Button
-                  outline
-                  color='primary'
-                  type='submit'
-                  className='save-button btn'
-                  onClick={toggleSave}>
-                  Save
-                </Button>
-                {isSaved ?
-                  <ConfirmationModal
-                    open={saveModal}
-                    toggle={toggleSave}
-                    handleConfirmation={ ()=> {
-                      toggleSave();
-                      setTriggerSaveButton(false);
-                    }}
-                    confirmText='OK'
-                    headerText='Save Status'
-                    bodyText='The edited fields were saved!'
-                  />
-                  :
-                  <ConfirmationModal
-                    open={saveModal}
-                    toggle={toggleSave}
-                    handleConfirmation={ ()=> {
-                      toggleSave();
-                      setTriggerSaveButton(false);
-                    }}
-                    confirmText='OK'
-                    headerText='Save Status'
-                    bodyText='Opps! The edited fields were NOT saved!'
-                  />
-                }
-              </div>)
-            }
-            <Button
-              color='secondary'
-              type='button'
-              className='delete-button btn'
-              onClick={toggleDelete}>
-              Delete
-            </Button>
-            <ConfirmationModal
-              open={deleteModal}
-              toggle={toggleDelete}
-              handleConfirmation={deleteUser}
-              confirmText='Yes'
-              headerText='Delete User Confirmation'
-              bodyText='Are you sure you want to delete this user?'
+  function renderInputOrCustomComponent(field) {
+    const { label, ...inputProps } = field;
+    if (field.Component) {
+      return field.Component;
+    } else {
+      return (
+        <FormGroup row style={{ marginBottom: '10px' }}>
+          <Label for="exampleEmail" sm={2}>{label}</Label>
+          <Col sm={10}>
+            <Input
+              {...inputProps}
             />
-          </div>
-        </form>
-      ) :
-        <h1 style= {{ textAlign: 'center' }}>
+          </Col>
+        </FormGroup>
+      )
+    }
+  }
+
+  function renderEditInfo() {
+    return (
+      <Container>
+        {fields.map((field, index) => (
+          <React.Fragment key={index}>
+            {renderInputOrCustomComponent(field)}
+          </React.Fragment>
+        ))}
+      </Container>
+    )
+  }
+
+  function renderInfo() {
+    if (loading) {
+      return <h1 style={{ textAlign: 'center' }}>loading...</h1>
+    }
+
+    if (userNotFound) {
+      return (
+        <h1 style={{ textAlign: 'center' }}>
           User with ID: {props.match.params.id} not found!
         </h1>
-      }
+      )
+    } else {
+      return renderEditInfo();
+    }
+  }
+
+  return (
+    <div className='userEditPage'>
+      <Header title='Edit User Information' />
+      {renderInfo()}
     </div>
   );
 }

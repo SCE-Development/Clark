@@ -118,7 +118,7 @@ export default function Routing({ appProps }) {
     },
     {
       Component: EditUserInfo,
-      path: '/edit/user/:id',
+      path: '/user/edit/:id',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
