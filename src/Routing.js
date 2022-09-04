@@ -11,7 +11,7 @@ import EventManager from './Pages/EventManager/EventManager';
 import Login from './Pages/Login/Login';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
-import EditUserInfo from './Pages/UserManager/EditUserInfo.jsx';
+import EditUserInfo from './Pages/UserManager/EditUserInfo';
 
 import Home from './Pages/Home/Home.js';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';

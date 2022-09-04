@@ -5,8 +5,10 @@ const router = express.Router();
 const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
-const axios = require('axios');
-const { getMemberExpirationDate } = require('../util/registerUser');
+const {
+  getMemberExpirationDate,
+  hashPassword,
+} = require('../util/registerUser');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
@@ -19,7 +21,8 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND,
-  CONFLICT
+  CONFLICT,
+  SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const {
   discordApiKeys
@@ -206,7 +209,7 @@ router.post('/users', function(req, res) {
 });
 
 // Edit/Update a member record
-router.post('/edit', (req, res) => {
+router.post('/edit', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -248,6 +251,18 @@ router.post('/edit', (req, res) => {
 
   delete user.numberOfSemestersToSignUpFor;
 
+  if (!!user.password) {
+    // hash the password before storing
+    const result = await hashPassword(user.password);
+    if (!result) {
+      return res.sendStatus(SERVER_ERROR);
+    }
+    user.password = result;
+  } else {
+    // omit password from the object if it is falsy
+    // i.e. an empty string, undefined or null
+    delete user.password;
+  }
 
   // Remove the auth token from the form getting edited
   delete user.token;
@@ -269,7 +284,6 @@ router.post('/edit', (req, res) => {
         .status(NOT_FOUND)
         .send({ message: `${query.email} not found.` });
     }
-
     return res.status(OK).send({
       message: `${query.email} was updated.`,
       membershipValidUntil: user.membershipValidUntil

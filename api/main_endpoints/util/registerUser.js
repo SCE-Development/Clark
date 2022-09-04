@@ -1,5 +1,8 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/User');
 const config = require('../../config/config.json');
+const logger = require('../../util/logger');
 
 function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong';
@@ -115,5 +118,23 @@ async function registerUser(userToAdd) {
   return result;
 }
 
+function hashPassword(password) {
+  return new Promise((resolve, reject) => {
+    bcrypt.genSalt(10, function(error, salt) {
+      if (error) {
+        logger.error('unable to generate salt:', error);
+        return resolve(false);
+      }
+      bcrypt.hash(password, salt, function(error, hash) {
+        if (error) {
+          logger.error('unable to hash password:', password);
+          return resolve(false);
+        }
+        return resolve(hash);
+      });
+    });
+  });
+}
 
-module.exports = { registerUser, getMemberExpirationDate };
+
+module.exports = { registerUser, getMemberExpirationDate, hashPassword };

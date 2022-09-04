@@ -23,7 +23,7 @@ import { membershipState, membershipStateToString } from '../../Enums';
 export default function EditUserInfo(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(null);
   const [doorCode, setDoorCode] = useState('');
   const [major, setMajor] = useState('');
   const [pagesPrinted, setPagesPrinted] = useState();
@@ -51,14 +51,14 @@ export default function EditUserInfo(props) {
       defaultValue: email,
       onChange: (e) => {
         setDataWasChanged(true);
-        setEmail(e.target.value)
+        setEmail(e.target.value);
       },
     },
     {
       label: 'Password',
       onChange: (e) => {
         setDataWasChanged(true);
-        setPassword(e.target.value)
+        setPassword(e.target.value);
       },
       placeholder: 'intentionally blank',
       type: 'password',
@@ -68,7 +68,7 @@ export default function EditUserInfo(props) {
       defaultValue: pagesPrinted,
       onChange: (e) => {
         setDataWasChanged(true);
-        setPagesPrinted(e.target.value)
+        setPagesPrinted(e.target.value);
       },
       type: 'number',
     },
@@ -89,7 +89,7 @@ export default function EditUserInfo(props) {
       defaultValue: doorCode,
       onChange: (e) => {
         setDataWasChanged(true);
-        setDoorCode(e.target.value)
+        setDoorCode(e.target.value);
       },
       type: 'number',
     },
@@ -97,7 +97,7 @@ export default function EditUserInfo(props) {
       label: 'Email Verified?',
       onChange: (e) => {
         setDataWasChanged(true);
-        setEmailVerified(e.target.checked)
+        setEmailVerified(e.target.checked);
       },
       checked: !!emailVerified,
       type: 'checkbox',
@@ -108,7 +108,7 @@ export default function EditUserInfo(props) {
       Component: <RoleDropdown
         setuserMembership={(value) => {
           setDataWasChanged(true);
-          setAccessLevel(value)
+          setAccessLevel(value);
         }}
         defaultValue={accessLevel}
       />
@@ -117,17 +117,20 @@ export default function EditUserInfo(props) {
       label: 'Major',
       defaultValue: major,
       Component:
-        <MajorDropdown hideMajorPrompt={true} defaultMajor={major} setMajor={(value) => {
-          setDataWasChanged(true);
-          setMajor(value);
-        }} />,
+        <MajorDropdown
+          hideMajorPrompt={true}
+          defaultMajor={major}
+          setMajor={(value) => {
+            setDataWasChanged(true);
+            setMajor(value);
+          }} />,
     },
     {
       label: 'First Name',
       defaultValue: firstName,
       onChange: (e) => {
         setDataWasChanged(true);
-        setFirstName(e.target.value)
+        setFirstName(e.target.value);
       },
     },
     {
@@ -135,7 +138,7 @@ export default function EditUserInfo(props) {
       defaultValue: lastName,
       onChange: (e) => {
         setDataWasChanged(true);
-        setLastName(e.target.value)
+        setLastName(e.target.value);
       },
     },
     {
@@ -143,7 +146,7 @@ export default function EditUserInfo(props) {
       defaultValue: emailOptIn,
       onChange: (e) => {
         setDataWasChanged(true);
-        setEmailOptIn(e.target.checked)
+        setEmailOptIn(e.target.checked);
       },
       checked: !!emailOptIn,
       type: 'checkbox',
@@ -153,7 +156,7 @@ export default function EditUserInfo(props) {
       defaultValue: discordId,
       onChange: (e) => {
         setDataWasChanged(true);
-        setDiscordId(e.target.value)
+        setDiscordId(e.target.value);
       },
       type: 'number',
     },
@@ -165,18 +168,19 @@ export default function EditUserInfo(props) {
       if (result.error) {
         setUserNotFound(true);
       } else {
-        setFirstName(result.responseData.firstName)
-        setLastName(result.responseData.lastName)
-        setPassword(result.responseData.password)
-        setDoorCode(result.responseData.doorCode)
-        setMajor(result.responseData.major)
-        setPagesPrinted(result.responseData.pagesPrinted)
-        setEmailVerified(result.responseData.emailVerified)
-        setAccessLevel(result.responseData.accessLevel)
-        setEmailOptIn(result.responseData.emailOptIn)
-        setJoinDate(new Date(result.responseData.joinDate))
-        setMembershipExpiration(new Date(result.responseData.membershipValidUntil))
-        setDiscordId(result.responseData.discordId)
+        setFirstName(result.responseData.firstName);
+        setLastName(result.responseData.lastName);
+        setDoorCode(result.responseData.doorCode);
+        setMajor(result.responseData.major);
+        setPagesPrinted(result.responseData.pagesPrinted);
+        setEmailVerified(result.responseData.emailVerified);
+        setAccessLevel(result.responseData.accessLevel);
+        setEmailOptIn(result.responseData.emailOptIn);
+        setJoinDate(new Date(result.responseData.joinDate));
+        setMembershipExpiration(
+          new Date(result.responseData.membershipValidUntil)
+        );
+        setDiscordId(result.responseData.discordId);
         setEmail(result.responseData.email);
       }
       setLoading(false);
@@ -204,14 +208,14 @@ export default function EditUserInfo(props) {
     }, props.user.token);
     if (result.error) {
       alert(
-        'saving user failed. please try again or contact dev leads if it persists.'
+        'saving user failed. please contact dev team if retrying fails.'
       );
     } else {
-      setSubmitButtonText("Saved!")
-      setSubmitButtonColor('success')
+      setSubmitButtonText('Saved!');
+      setSubmitButtonColor('success');
       setTimeout(() => {
         setDataWasChanged(false);
-        setSubmitButtonText("Submit");
+        setSubmitButtonText('Submit');
       }, 1500);
     }
   }
@@ -231,7 +235,7 @@ export default function EditUserInfo(props) {
           }
         </Col>
       </FormGroup>
-    )
+    );
   }
 
   function renderEditInfo() {
@@ -244,7 +248,13 @@ export default function EditUserInfo(props) {
         ))}
         {
           dataWasChanged &&
-          <div style={{ display: 'flex', width: '10em', maxWidth: '15em', justifyContent: 'space-between' }}>
+          <div style={{
+            display: 'flex',
+            width: '10em',
+            maxWidth: '15em',
+            justifyContent: 'space-between'
+          }}
+          >
             {/*
               we can do better here, we can keep track of the user's
               initial state and just revert to it instead of reloading
@@ -310,7 +320,7 @@ export default function EditUserInfo(props) {
 
   function renderUserInfo() {
     if (loading) {
-      return <h1 style={{ textAlign: 'center' }}>loading...</h1>
+      return <h1 style={{ textAlign: 'center' }}>loading...</h1>;
     }
 
     if (userNotFound) {
@@ -318,7 +328,7 @@ export default function EditUserInfo(props) {
         <h1 style={{ textAlign: 'center' }}>
           User with ID: {props.match.params.id} not found!
         </h1>
-      )
+      );
     } else {
       return (
         <Container style={{ marginTop: '1em', marginBottom: '3em' }}>
