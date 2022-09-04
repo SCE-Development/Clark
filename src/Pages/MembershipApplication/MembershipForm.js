@@ -124,7 +124,11 @@ export default function MembershipForm(props) {
       }
       if (password !== confirmPassword) {
         return <p
-          className='passwordRequirementInvalid'
+        const validOrInvalid = password === confirmPassword ? 'Valid' : 'Invalid';
+        const maybeDoNot =  password === confirmPassword ? '' : 'do not';
+        return <p
+          className={'passwordRequirement' + validOrInvalid}
+        >Passwords {maybeDoNot} match</p>;
         >Passwords do not match</p>;
       } else{
         return <p
