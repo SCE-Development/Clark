@@ -92,7 +92,7 @@ export default function MembershipForm(props) {
       'passwordRequirement' + (/\d/.test(password) ? 'Valid' : 'Invalid');
 
     return (
-      !checkValidPassword() && (
+      (
         <ul>
           <li id='passwordLengthRequirement' className={lengthClass}>
             8 or more characters
@@ -124,8 +124,12 @@ export default function MembershipForm(props) {
       }
       if (password !== confirmPassword) {
         return <p
-          className='unavailable application-text'
+          className='passwordRequirementInvalid'
         >Passwords do not match</p>;
+      } else{
+        return <p
+          className='passwordRequirementValid'
+        >Passwords match</p>;
       }
     }
   };
