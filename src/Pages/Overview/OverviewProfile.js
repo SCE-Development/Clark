@@ -45,7 +45,6 @@ export default function OverviewProfile(props) {
         <button
           className='overview-icon'
           onClick={() => {
-            console.log('bruh')
             setToggleDelete(!toggleDelete);
           }}
         >
