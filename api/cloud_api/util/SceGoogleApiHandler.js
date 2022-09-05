@@ -161,8 +161,8 @@ class SceGoogleApiHandler {
     });
   }
 
-  
-  /** 
+
+  /**
  * Sends an email from sce.sjsu@gmail.com. The parameter defines recipient,
  * subject and email body.
  * @param {nodemailer.envelope} mailTemplate The email template to send.
