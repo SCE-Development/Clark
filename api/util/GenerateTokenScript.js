@@ -7,7 +7,6 @@ const configPath = __dirname + '/../config/config.json';
 authManager.setAuthCredentials(configPath, () => {
   const scopes = [
     'https://mail.google.com/',
-    'https://www.googleapis.com/auth/calendar'
   ];
   const tokenPath = __dirname + '/../config/token.json';
   const apiHandler = new SceGoogleApiHandler(

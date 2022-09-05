@@ -14,7 +14,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faExclamationTriangle,
   faDoorOpen,
-  faCalendarDay,
   faCubes,
   faPrint,
   faLock
@@ -74,7 +73,6 @@ export default class Profile extends Component {
         {
           title: 'Joined Date',
           value: this.state.user.joinDate.slice(0, 10),
-          icon: <FontAwesomeIcon icon={faCalendarDay} />
         },
         { title: `${this.state.user.email}`, value: '', style: '2.5rem' },
         {

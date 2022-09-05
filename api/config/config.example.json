@@ -20,10 +20,6 @@
     "REFRESH_TOKEN": "NOT_SET",
     "USER": "sce.sjsu@gmail.com"
   },
-  "googleCalendarIds": {
-    "PRIMARY_CAL": "primary",
-    "SCE_EVENTS_CAL": "NOT_SET"
-  },
   "passwordStrength": "medium",
   "AWS" : {
     "ENABLED": true,
