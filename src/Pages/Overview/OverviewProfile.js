@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
 import './Overview.css';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
-import { Link } from 'react-router-dom';
+import ConfirmationModal from
+  '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
 const svg = require('./SVG');
 
 export default function OverviewProfile(props) {
   const [toggleDelete, setToggleDelete] = useState(false);
+
+  const confirmModalProps = {
+    headerText: `Delete ${props.user.firstName} ${props.user.lastName} ?`,
+    bodyText: `Are you sure you want to delete 
+    ${props.user.firstName}? They're kinda cute and
+    they'll be gone forever if you do`,
+    confirmText: `Yes, ${props.user.firstName} is dead to me`,
+    cancelText: 'No, they\'re chill',
+    toggle: () => setToggleDelete(!toggleDelete),
+    handleConfirmation: () => {
+      props.deleteUser(props.user);
+      setToggleDelete(!toggleDelete);
+    },
+    open: toggleDelete
+  };
 
   function mark(bool) {
     return bool ? svg.checkMark() : svg.xMark();
@@ -29,6 +45,7 @@ export default function OverviewProfile(props) {
         <button
           className='overview-icon'
           onClick={() => {
+            console.log('bruh')
             setToggleDelete(!toggleDelete);
           }}
         >
@@ -45,6 +62,7 @@ export default function OverviewProfile(props) {
           </button>
         </a>
       </td>
+      <ConfirmationModal {...confirmModalProps} />
     </tr>
   );
 }
