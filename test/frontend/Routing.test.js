@@ -19,7 +19,7 @@ import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js';
 import MembershipApplication from
   '../../src/Pages/MembershipApplication/MembershipApplication.js';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
-import OfficerDB from '../../src/Pages/OfficerDB/OfficerDB.js';
+
 import Overview from '../../src/Pages/Overview/Overview';
 import AdminDashboard from '../../src/Pages/Profile/admin/AdminDashboard';
 import { membershipState } from '../../src/Enums';
@@ -76,14 +76,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       () => {
         const wrapper = getComponentFromRoute('/events');
         expect(wrapper.find(Events)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <OfficerDB /> component with the /officerDB' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/officerDB');
-        expect(wrapper.find(OfficerDB)).to.have.lengthOf(1);
       }
     );
     it(
@@ -154,14 +146,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       () => {
         const wrapper = getComponentFromRoute('/events', officerAppProps);
         expect(wrapper.find(Events)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <OfficerDB /> component with the /officerDB' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/officerDB', officerAppProps);
-        expect(wrapper.find(OfficerDB)).to.have.lengthOf(1);
       }
     );
     it(
