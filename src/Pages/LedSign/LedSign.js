@@ -9,7 +9,7 @@ import ConfirmationModal
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [text, setText] = useState('');
+  const [text, setText] = useState('Example Text');
   const [brightness, setBrightness] = useState(50);
   const [scrollSpeed, setScrollSpeed] = useState(25);
   const [backgroundColor, setBackgroundColor] = useState('#0000ff');
@@ -17,7 +17,7 @@ function LedSign(props) {
   const [borderColor, setBorderColor] = useState('#ff0000');
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [awaitingStopSignResponse, setAwaitingStopSignResponse]
-    = useState(false);
+  = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
   const [shutdownToggle, setShutdownToggle] = useState(false);
@@ -158,10 +158,25 @@ function LedSign(props) {
       <Header {...headerProps} />
       <div className="sign-wrapper">
         <Container>
-          <h1 className="sign-status">
+          <h2 className="sign-status">
             Sign Status:
             {renderSignHealth()}
-          </h1>
+          </h2>
+        </Container>
+        <Container className='mock-sign'>
+          <h1>LED Sign Preview</h1>
+          <div className="mock-signBorder"
+            style={{backgroundColor: borderColor}}>
+          </div>
+          <div className="mock-signBackground"
+            style={{backgroundColor: backgroundColor}}>
+            <h1 id="mock-signText"
+              style={{color: textColor}} placeholder="Sign Text">
+              {text}</h1>
+          </div>
+          <div className="mock-signBorder"
+            style={{backgroundColor: borderColor}}>
+          </div>
         </Container>
         {inputArray.map((input, index) => {
           return (

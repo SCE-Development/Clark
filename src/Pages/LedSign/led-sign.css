@@ -26,3 +26,23 @@
 #scroll-speed{
   direction: rtl;
 }
+
+.mock-sign {
+  margin: 0% 0% 0% 0%;
+  padding: 0;
+  margin-block-end: 0%;
+}
+
+.mock-signBorder {
+  background-color: #c7c7c7;
+  min-height: 10px;
+
+}
+
+.mock-signBackground {
+  background-color: #dee0df;
+  text-align: center;
+  white-space: nowrap;
+  overflow-x: auto;
+  min-height: 50px;
+}
