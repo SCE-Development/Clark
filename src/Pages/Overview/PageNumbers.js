@@ -6,8 +6,6 @@ function PageNumbers(props) {
   // for example, given numberOfButtons = 3:
   // this generates [0,1,2,3]
   const pageNumbers = [...Array(numberOfButtons + 1).keys()].slice(1);
-  // const params = props.parseQuery();
-  // const currentPage = params.page ? parseInt(params.page) : 1;
   const currentPage = props.pageNumber;
   return (
     <nav className='user-page-numbers'>
