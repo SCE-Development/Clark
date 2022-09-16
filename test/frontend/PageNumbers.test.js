@@ -1,4 +1,3 @@
-// https://masteringjs.io/tutorials/sinon/stub-called-with
 /* global describe it */
 import 'jsdom-global/register';
 import React from 'react';
@@ -36,6 +35,17 @@ describe('<PageNumbers />', () => {
   // and props.usersPerPage
   it('Should render 3 <button /> components', () => {
     expect(wrapper.find('button')).to.have.lengthOf(3);
+  });
+
+  it('Should mark the active button with the active-page-button class', () => {
+    const buttonArray = wrapper.find('button');
+    const activeButton = buttonArray.get(0);
+    expect(activeButton.props.className).to.equal('active-page-button');
+  });
+
+  it('Should only render one button with the active-page-button class', () => {
+    const activeButtonArray = wrapper.find('.active-page-button');
+    expect(activeButtonArray).to.have.lengthOf(1);
   });
   // should call paginate with correct number when button clicked,
   // do this with evan later
