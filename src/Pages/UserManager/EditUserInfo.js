@@ -320,16 +320,16 @@ export default function EditUserInfo(props) {
 
     if (userIsOfficerOrAdmin) {
       maybeFontColor = 'green';
-      message = (<>
+      message = (<div className="userRolePrompt">
         Membership does not expire as the user is an{' '}
         <b>{membershipStateToString(accessLevel)}</b>
-      </>);
+      </div>);
     } else if (userIsPendingOrBanned) {
       maybeFontColor = 'red';
-      message = (<>
+      message = (<div className="userRolePrompt">
         Membership invalid, user has the{' '}
         <b>{membershipStateToString(accessLevel)}</b> role.
-      </>);
+      </div>);
     } else {
       // Default case, if a user isn't in one of the above special roles
       // just render the status (valid or expired) of their membership
@@ -337,10 +337,10 @@ export default function EditUserInfo(props) {
         expiresOrExpired = 'expired';
         maybeFontColor = 'red';
       }
-      message = <>
+      message = <div className="userRolePrompt">
         Membership {expiresOrExpired} on{' '}
         <b>{membershipExpiration.toDateString()}</b>
-      </>;
+      </div>;
     }
 
     return (
