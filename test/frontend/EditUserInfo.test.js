@@ -46,7 +46,7 @@ describe('<EditUserInfo />', () => {
     emailVerified: true,
     emailOptIn: true,
     joinDate: '1992-02-19T04:40:35Z',
-    membershipValidUntil: '1992-07-19T04:40:35Z',
+    membershipValidUntil: '1992-07-19T18:40:35Z',
     email: 'e@e.e',
   };
 
@@ -61,15 +61,15 @@ describe('<EditUserInfo />', () => {
     },
     {
       role: membershipState.NON_MEMBER,
-      expected: 'Membership expires on Sat Jul 18 1992',
+      expected: 'Membership expires on Sun Jul 19 1992',
     },
     {
       role: membershipState.ALUMNI,
-      expected: 'Membership expires on Sat Jul 18 1992',
+      expected: 'Membership expires on Sun Jul 19 1992',
     },
     {
       role: membershipState.MEMBER,
-      expected: 'Membership expires on Sat Jul 18 1992',
+      expected: 'Membership expires on Sun Jul 19 1992',
     },
     {
       role: membershipState.OFFICER,
@@ -92,15 +92,15 @@ describe('<EditUserInfo />', () => {
     },
     {
       role: membershipState.NON_MEMBER,
-      expected: 'Membership expired on Sat Jul 18 1992',
+      expected: 'Membership expired on Sun Jul 19 1992',
     },
     {
       role: membershipState.ALUMNI,
-      expected: 'Membership expired on Sat Jul 18 1992',
+      expected: 'Membership expired on Sun Jul 19 1992',
     },
     {
       role: membershipState.MEMBER,
-      expected: 'Membership expired on Sat Jul 18 1992',
+      expected: 'Membership expired on Sun Jul 19 1992',
     },
     {
       role: membershipState.OFFICER,
