@@ -6,7 +6,6 @@ import { Button } from 'reactstrap';
 import WhoWeAre from './Components/WhoWeAre';
 import WhatWeDo from './Components/WhatWeDo';
 import SponsorUs from './Components/SponsorUs';
-import SponsorsLogos from './Components/SponsorsLogos';
 
 class Home extends Component {
   render() {
@@ -42,9 +41,6 @@ class Home extends Component {
           </div>
           <div>
             <SponsorUs />
-          </div>
-          <div>
-            <SponsorsLogos />
           </div>
           <Footer />
         </div>

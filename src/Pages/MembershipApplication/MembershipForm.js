@@ -269,7 +269,7 @@ export default function MembershipForm(props) {
             Semester Plan
           </div>
           <div className = 'circle'>
-            <div className='circle-text'>$20</div>
+            <div className='circle-text'>$30</div>
           </div>
           <div className = 'planFooters'>
             Expires: {membershipExpDate(1)}
@@ -278,7 +278,7 @@ export default function MembershipForm(props) {
             Annual Plan
           </div>
           <div className = 'circle'>
-            <div className='circle-text'>$30</div>
+            <div className='circle-text'>$40</div>
           </div>
           <div className = 'planFooters'>
             Expires: {membershipExpDate(2)}
