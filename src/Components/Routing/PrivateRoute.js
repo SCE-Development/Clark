@@ -1,18 +1,30 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 
-export default function PrivateRoute(
-  { component: Component, appProps, ...props }) {
+export default function PrivateRoute({
+  component: Component,
+  appProps,
+  ...params
+}) {
   return (
-    appProps.allowed ?
-      <Component {...appProps} {...props} />
-      : <Navigate
-        to={{
-          pathname: appProps.redirect ? appProps.redirect : '/login'
-        }}
-        state={{ from: props.location }}
-        replace
-      />
+    <Route
+      {...params}
+      render={props =>
+        appProps.allowed ? (
+          <Component {...appProps} {...props} />
+        ) : (
+          <Route
+            render={props => (
+              <Redirect
+                to={{
+                  pathname: appProps.redirect ? appProps.redirect : '/login',
+                  state: { from: props.location }
+                }}
+              />
+            )}
+          />
+        )}
+    />
   );
 }
 

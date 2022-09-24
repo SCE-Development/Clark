@@ -1,6 +1,6 @@
 import React from 'react';
 // import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.css';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
@@ -132,47 +132,45 @@ export default function Routing({ appProps }) {
   ];
   return (
     <Router>
-      <Routes>
+      <Switch>
         {signedInRoutes.map(
-          ({ path, Component, allowedIf, redirect, inAdminNavbar }, index) =>{
+          ({ path, Component, allowedIf, redirect, inAdminNavbar }, index) => {
             return (
-              <Route path={path} key={index} element={
-                <PrivateRoute
-                  key={index}
-                  exact
-                  path={path}
-                  appProps={{
-                    allowed: allowedIf,
-                    user: appProps.user,
-                    redirect,
-                    ...appProps
-                  }}
-                  component={props => (
-                    <NavBarWrapper
-                      component={Component}
-                      enableAdminNavbar={inAdminNavbar}
-                      {...props}
-                    />
-                  )}
-                />
-              } />
+              <PrivateRoute
+                key={index}
+                exact
+                path={path}
+                appProps={{
+                  allowed: allowedIf,
+                  user: appProps.user,
+                  redirect,
+                  ...appProps
+                }}
+                component={props => (
+                  <NavBarWrapper
+                    component={Component}
+                    enableAdminNavbar={inAdminNavbar}
+                    {...props}
+                  />
+                )}
+              />
             );
-          })
-        }
+          }
+        )}
         {signedOutRoutes.map(({ path, Component }, index) => {
           return (
             <Route
               key={index}
               exact
               path={path}
-              element={
-                <NavBarWrapper component={Component} {...appProps} />
-              }
+              render={props => (
+                <NavBarWrapper component={Component} {...props} {...appProps} />
+              )}
             />
           );
         })}
-        <Route path='*' element={<NotFoundPage/>} />
-      </Routes>
+        <Route component={NotFoundPage} />
+      </Switch>
     </Router>
   );
 }
