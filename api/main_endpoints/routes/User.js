@@ -185,7 +185,8 @@ router.post('/search', function(req, res) {
       lastLogin: result.lastLogin,
       membershipValidUntil: result.membershipValidUntil,
       pagesPrinted: result.pagesPrinted,
-      doorCode: result.doorCode
+      doorCode: result.doorCode,
+      _id: result._id
     };
     return res.status(OK).send(user);
   });

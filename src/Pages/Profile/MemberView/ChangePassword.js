@@ -4,26 +4,23 @@ import './profile-modifier.css';
 
 import { editUser } from '../../../APIFunctions/User';
 
-const bcrypt = require('bcryptjs');
+
 
 export default function ChangePassword(props) {
-  const [password, setPassword] = useState('New Password');
+  const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('Confirming New Password');
-  const [user, setUser] = useState('');
   const [toggle, setToggle] = useState(true);
 
   async function changePassword() {
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = password.trim() === '' ? user.password :
-      bcrypt.hashSync(password, salt);
+
 
     if (password === confirmPass) {
       const apiResponse = await editUser(
         {
-          ...user,
-          password: hashedPassword
+          ...props.user,
+          password
         },
-        user.token
+        props.user.token
       );
 
       if (!apiResponse.error) {
@@ -58,7 +55,6 @@ export default function ChangePassword(props) {
           <Input
             id="new-password"
             onChange={(e) => {
-              setUser(props.user);
               setPassword(e.target.value);
             }}
             type="password"
@@ -71,7 +67,6 @@ export default function ChangePassword(props) {
           <Input
             id="confirm-password"
             onChange={(e) => {
-              setUser(props.user);
               setConfirmPass(e.target.value);
             }}
             type="password"
