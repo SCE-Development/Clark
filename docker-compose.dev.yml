@@ -8,7 +8,7 @@ services:
       - '27017:27017'
     volumes:
       - sce_mongodb_data_dev:/data/db
-    command: 'mongod'
+    command: 'mongod --quiet --logpath /dev/null'
   sce-peripheral-api:
     container_name: sce-peripheral-api-dev
     build:
