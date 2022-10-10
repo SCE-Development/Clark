@@ -218,7 +218,6 @@ router.post('/edit', async (req, res) => {
   }
 
   if (!req.body._id) {
-    console.log(req.body);
     return res.sendStatus(BAD_REQUEST);
   }
 
