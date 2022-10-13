@@ -131,7 +131,8 @@ router.post('/login', function(req, res) {
               lastName: user.lastName,
               email: user.email,
               accessLevel: user.accessLevel,
-              pagesPrinted: user.pagesPrinted
+              pagesPrinted: user.pagesPrinted,
+              _id: user._id
             };
             const token = jwt.sign(
               userToBeSigned, config.secretKey, jwtOptions

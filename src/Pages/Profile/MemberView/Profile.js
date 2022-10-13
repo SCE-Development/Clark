@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './profile-modifier.css';
 import InfoCard from './InfoCard.js';
-import { searchUserByEmail } from '../../../APIFunctions/User';
+import { getUserById } from '../../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../../APIFunctions/Profile';
 import Header from '../../../Components/Header/Header';
 import PrintRequest from './PrintRequest';
@@ -40,10 +40,7 @@ export default class Profile extends Component {
   }
 
   async componentDidMount() {
-    const response = await searchUserByEmail(
-      this.props.user.email, this.props.user.token
-    );
-
+    const response = await getUserById(this.props.user._id, this.props.user.token);
     if (!response.error) {
       // concat user to full name
       this.setState({ user: response.responseData }, () => {

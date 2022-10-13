@@ -13,12 +13,12 @@ function App(props) {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [user, setUser] = useState();
-
+  
   async function getAuthStatus() {
     setIsAuthenticating(true);
     const authStatus = await checkIfUserIsSignedIn();
     setAuthenticated(!authStatus.error);
-    setUser({ token: authStatus.token, ...authStatus.responseData });
+    setUser({ token: authStatus.token, ...authStatus.responseData});
     setIsAuthenticating(false);
   }
 
