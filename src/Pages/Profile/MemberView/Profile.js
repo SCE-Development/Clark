@@ -40,7 +40,9 @@ export default class Profile extends Component {
   }
 
   async componentDidMount() {
-    const response = await getUserById(this.props.user._id, this.props.user.token);
+    const token = this.props.user.token;
+    const id = this.props.user._id;
+    const response = await getUserById(id, token);
     if (!response.error) {
       // concat user to full name
       this.setState({ user: response.responseData }, () => {
