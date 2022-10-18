@@ -85,7 +85,7 @@ export default function UserNavBar(props) {
               {props.authenticated && props.user ? (
                 <div className='dropdown-submenu drp-item'>
                   <DropdownItem className='drp-item' id='btndrp-text'>
-                    
+
                     {props.user.firstName}
                   </DropdownItem>
                   <DropdownMenu right className='drp-menu'>
