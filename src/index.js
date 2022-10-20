@@ -18,7 +18,7 @@ function App(props) {
     setIsAuthenticating(true);
     const authStatus = await checkIfUserIsSignedIn();
     setAuthenticated(!authStatus.error);
-    setUser({ token: authStatus.token, ...authStatus.responseData });
+    setUser({ token: authStatus.token, ...authStatus.responseData});
     setIsAuthenticating(false);
   }
 

@@ -165,29 +165,6 @@ export async function deleteUserByEmail(email, token) {
 }
 
 /**
- * Finds a user by a specific email
- * @param {string} email the email to search a user by
- * @param {string} token the jwt token to authorize the search
- * @returns {UserApiResponse} containing if the search was successful and the
- * data of a user if found.
- */
-export async function searchUserByEmail(email, token) {
-  let status = new UserApiResponse();
-  await axios
-    .post(GENERAL_API_URL + '/User/search', {
-      token,
-      email
-    })
-    .then(result => {
-      status.responseData = result.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
-/**
  * This function checks the user database to see if a given email already
  * exists or not.
  * @param {string} email The email value to check
