@@ -100,10 +100,10 @@ router.post('/delete', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  User.deleteOne({ email: req.body.email }, function(error, user) {
+  User.deleteOne({ _id: req.body._id }, function(error, user) {
     if (error) {
       const info = {
-        userEmail: req.body.email,
+        userEmail: req.body._id,
         errorTime: new Date(),
         apiEndpoint: 'user/delete',
         errorDescription: error
@@ -115,7 +115,7 @@ router.post('/delete', (req, res) => {
     if (user.n < 1) {
       res.status(NOT_FOUND).send({ message: 'User not found.' });
     } else {
-      res.status(OK).send({ message: `${req.body.email} was deleted.` });
+      res.status(OK).send({ message: `${req.body._id} was deleted.` });
     }
   });
 });
