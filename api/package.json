@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "nodemon devServer.js",
     "peripheral_api": "nodemon peripheral_api/server.js",
-    "cloud_api" : "nodemon cloud_api/server.js",
-    "main_endpoints" : "nodemon main_endpoints/server.js",
+    "cloud_api": "nodemon cloud_api/server.js",
+    "main_endpoints": "nodemon main_endpoints/server.js",
     "main-endpoints": "npm start --prefix main_endpoints",
     "google-api": "npm start --prefix google_api",
     "peripheral-api": "npm start --prefix peripheral_api",
@@ -46,6 +46,7 @@
     "nodemailer": "^6.4.11",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",
-    "passport-jwt": "^4.0.0"
+    "passport-jwt": "^4.0.0",
+    "sce_core": "file:.."
   }
 }

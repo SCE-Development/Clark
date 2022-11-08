@@ -178,7 +178,14 @@
 }
 
 #dark-toggler {
-  margin-top: 0.18rem;
+  --rotation: 0;
+
+  flex: flexbox;
+  position: absolute;
+  top: -30px;
+  margin-left: 25px;
+  height: 50px;
+  transform: rotate(var(--rotation));
 }
 
 #admin-toggler{
