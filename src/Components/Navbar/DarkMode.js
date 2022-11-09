@@ -33,7 +33,7 @@ export default function DarkMode(props) {
   }, []);
 
   function rotateSunMoon(){
-    setDeg(deg += 180);
+    setDeg(deg -= 180);
   }
 
   function handleToggle(){
