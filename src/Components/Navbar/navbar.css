@@ -185,25 +185,23 @@
 }
 
 #moon-icon{
-  bottom: 5%;
+  bottom: 0%;
   width: 1.1rem;
   height: 1.9rem;
 }
 
 #dark-toggler {
-  --rotation: 0;
-
-  flex: flexbox;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
-  top: -30px;
+  top: -50px;
   margin-left: 25px;
-  height: 86px;
+  height: 100px;
+  transform: rotate(calc(var(--rotation) * 1deg));
   transition: 1s;
-  transform: rotate(var(--rotation) * 1deg);
 }
 
 #admin-toggler{
   margin-top: 0.32rem;
 }
-
-
