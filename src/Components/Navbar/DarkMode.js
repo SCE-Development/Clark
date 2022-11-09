@@ -43,12 +43,6 @@ export default function DarkMode(props) {
 
   return (
     <div id='toggler-left'>
-      {/* <div id='dark-toggler'>
-        <CustomInput
-          onChange={createCookie} className='darkToggle'//TODO: delete darkToggle css
-          type='switch' id='exampleCustomSwitch' name='customSwitch'
-          checked={darkTheme} />
-      </div> */}
       <div id="dark-toggler" onClick={handleToggle} style={{"--rotation": deg}}>
         <div id='sun-icon' >{sunIcon()}</div>
         <div id='moon-icon' >{moonIcon()}</div>
