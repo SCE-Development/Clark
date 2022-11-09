@@ -176,6 +176,12 @@
   position: absolute;
 }
 
+#sun-icon:hover,
+#moon-icon:hover {
+  transition: 0.5s;
+  scale: 1.1;
+}
+
 #sun-icon{
   fill:yellow;
   top: 0%;
