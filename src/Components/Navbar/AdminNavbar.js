@@ -50,9 +50,9 @@ export default function AdminNavbar(props) {
               navlink
               : navlink;
           })}
-          <NavLink onClick={props.handleLogout} className = "leave-button">
+          <div onClick={props.handleLogout} className = "leave-button nav-link">
             Logout
-          </NavLink>
+          </div>
         </Nav>
       </Collapse>
     </Navbar >
