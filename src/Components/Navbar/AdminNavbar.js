@@ -3,6 +3,7 @@ import {
   Navbar,
   NavLink,
   Nav,
+  NavbarBrand,
   NavbarToggler,
   Collapse,
 } from 'reactstrap';
@@ -26,6 +27,8 @@ export default function AdminNavbar(props) {
       navbar='true'
     >
       <div id='admin-title'>
+      <NavbarBrand href='/dashboard'>Admin Dashboard
+        </NavbarBrand>
         <div id='admin-toggler'>
           <DarkMode />
         </div>
