@@ -7,13 +7,13 @@ import { toggleDarkTheme } from '../../APIFunctions/dark-theme';
 import { sunIcon, moonIcon } from '../../Pages/Overview/SVG';
 
 export default function DarkMode(props) {
-  let [deg, setDeg] = useState(0);
+  let [degrees, setDegrees] = useState(0);
   const [darkTheme, setDarkTheme] = useState(true);
 
   function initializeSunMoon(){
     const cookie = new Cookies();
     if (cookie.get('dark') === 'false') {
-      setDeg(-180);
+      setDegrees(-180);
     }
   }
 
@@ -41,7 +41,7 @@ export default function DarkMode(props) {
   }, []);
 
   function rotateSunMoon(){
-    setDeg(deg -= 180);
+    setDegrees(degrees -= 180);
   }
 
   function handleToggle(){
@@ -50,7 +50,9 @@ export default function DarkMode(props) {
   }
 
   return (
-    <div id='dark-toggler' onClick={handleToggle} style={{'--rotation': deg}}>
+    <div id='dark-toggler'
+      onClick={handleToggle}
+      style={{'--rotation': degrees}}>
       <div id='sun-icon' >{sunIcon()}</div>
       <div id='moon-icon' >{moonIcon()}</div>
     </div>
