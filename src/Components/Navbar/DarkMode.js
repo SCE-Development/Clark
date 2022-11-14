@@ -50,11 +50,9 @@ export default function DarkMode(props) {
   }
 
   return (
-    <div id='toggler-left'>
-      <div id='dark-toggler' onClick={handleToggle} style={{'--rotation': deg}}>
-        <div id='sun-icon' >{sunIcon()}</div>
-        <div id='moon-icon' >{moonIcon()}</div>
-      </div>
+    <div id='dark-toggler' onClick={handleToggle} style={{'--rotation': deg}}>
+      <div id='sun-icon' >{sunIcon()}</div>
+      <div id='moon-icon' >{moonIcon()}</div>
     </div>
   );
 }
