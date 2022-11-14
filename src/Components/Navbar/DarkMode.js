@@ -10,6 +10,13 @@ export default function DarkMode(props) {
   let [deg, setDeg] = useState(0);
   const [darkTheme, setDarkTheme] = useState(true);
 
+  function initializeSunMoon(){
+    const cookie = new Cookies();
+    if (cookie.get('dark') === 'false') {
+      setDeg(-180);
+    }
+  }
+
   function createCookie() {
     if (document.body.className === 'light') {
       setDarkTheme(true);
@@ -29,6 +36,7 @@ export default function DarkMode(props) {
   }
 
   useEffect(() => {
+    initializeSunMoon();
     keepState();
   }, []);
 
