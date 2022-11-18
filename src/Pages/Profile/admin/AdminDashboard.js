@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 
 function AdminDashboard() {
   const fields = [
-    { title: 'User Manager', value: '', url: '/user-manager' },
-    { title: 'Event Manager', value: '', url: '/event-manager' },
-    { title: 'LED Sign', value: '', url: '/led-sign' },
-    { title: '3D Console', value: '', url: '/3DConsole' }
+    { title: 'User Manager', url: '/user-manager' },
+    { title: 'Event Manager', url: '/event-manager' },
+    { title: 'LED Sign', url: '/led-sign' },
+    { title: '3D Console', url: '/3DConsole' }
   ];
   return (
     <div className='flexbox-container'>

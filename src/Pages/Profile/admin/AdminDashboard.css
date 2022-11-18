@@ -1,11 +1,11 @@
 .admin-dashboard-bg {
-    background-color: black;
+    background-color: #0C1E2F;
     max-width: 100%;
     min-height: 100vh;
 }
 
 #admin-box>div {
-    background-image: linear-gradient(to bottom right, #5390d9, #84afe6, #79beee, #48bfe3, #90e0ef);
+    background-image: linear-gradient(to bottom right, #3E81A7, #3E81A5, #3E81A2, #3E81A1, #3E81A0);
     border-radius: 0.8rem;
     background-attachment: fixed;
     word-wrap: break-word;
@@ -14,7 +14,7 @@
     max-width: 100%;
     text-align: center;
     padding: 0;
-    color: #333333;
+    color: #ffffff;
     transition: all .3s ease-in;
     min-height: 50px !important;
     height: 20vh;
@@ -26,6 +26,9 @@
     border-color: black;
     border-style: double;
     flex-direction: row;
+}
+#admin-box>div:hover{
+    transform: scale(1.01); 
 }
 
 .block{
