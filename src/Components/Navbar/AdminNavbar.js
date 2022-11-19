@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {
   Navbar,
-  NavbarBrand,
   NavLink,
   Nav,
+  NavbarBrand,
   NavbarToggler,
   Collapse,
 } from 'reactstrap';
@@ -53,14 +53,7 @@ export default function AdminNavbar(props) {
               navlink
               : navlink;
           })}
-          <div onClick={props.handleLogout} className='nav-button nav-link'>
-            <svg style={{ width: '18px', height: '18px' }} viewBox='0 0 24 24'>
-              <path
-                d="M17,17.25V14H10V10H17V6.75L22.25,12L17,17.25M13,2A2,
-              2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,2 0 0,1 13,22H4A2,
-              2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z"
-              />
-            </svg>
+          <div onClick={props.handleLogout} className = "leave-button nav-link">
             Logout
           </div>
         </Nav>
