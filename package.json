@@ -55,7 +55,7 @@
     "react-google-login": "^5.2.2",
     "react-google-recaptcha": "^2.1.0",
     "react-iframe": "^1.8.0",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^6.4.5",
     "react-scripts": "^4.0.3",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.10.0",
