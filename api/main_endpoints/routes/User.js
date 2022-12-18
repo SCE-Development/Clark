@@ -387,7 +387,7 @@ router.post('/getUserById', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, (
-    membershipState.OFFICER
+    membershipState.MEMBER
   ))) {
     return res.sendStatus(UNAUTHORIZED);
   }

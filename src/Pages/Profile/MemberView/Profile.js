@@ -110,18 +110,10 @@ export default class Profile extends Component {
             user={{ ...this.state.user, token: this.props.user.token }}
           />,
           icon: <FontAwesomeIcon icon={faLock} />
-        }
+        },
       ]
       : [
-        { title: '', value: '' },
-        { title: 'Door Code', value: '' },
-        { title: 'Joined Date', value: '' },
-        { title: 'Email', value: '' },
-        { title: 'Membership Expiration', value: '' },
-        { title: '2D Prints', value: '' },
-        { title: 'Request 3D Printing', value: '' },
-        { title: 'Sign-in with Discord', value: '' },
-        { title: 'Change Password', value: '' }
+        { title: 'Become a member to access this page!', value: '' },
       ];
 
     return (
