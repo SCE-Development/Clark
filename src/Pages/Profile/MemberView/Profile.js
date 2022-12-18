@@ -114,6 +114,14 @@ export default class Profile extends Component {
       ]
       : [
         { title: 'Become a member to access this page!', value: '' },
+        { title: '', value: '' },
+        { title: '', value: '' },
+        { title: '', value: '' },
+        { title: '', value: '' },
+        { title: '', value: '' },
+        { title: '', value: '' },
+        { title: '', value: '' },
+        { title: '', value: '' }
       ];
 
     return (
