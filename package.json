@@ -59,7 +59,7 @@
     "react-scripts": "^4.0.3",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.10.0",
-    "serve": "^13.0.2",
+    "serve": "^14.2.0",
     "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
