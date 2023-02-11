@@ -44,7 +44,7 @@
     "googleapis": "^52.1.0",
     "mongoose": "^5.10.0",
     "nodemailer": "^6.4.11",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.20",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"
   }
