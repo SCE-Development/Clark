@@ -7,7 +7,15 @@ import { toggleDarkTheme } from '../../APIFunctions/dark-theme';
 import { sunIcon, moonIcon } from '../../Pages/Overview/SVG';
 
 export default function DarkMode(props) {
+  let [degrees, setDegrees] = useState(0);
   const [darkTheme, setDarkTheme] = useState(true);
+
+  function initializeSunMoon(){
+    const cookie = new Cookies();
+    if (cookie.get('dark') === 'false') {
+      setDegrees(-180);
+    }
+  }
 
   function createCookie() {
     if (document.body.className === 'light') {
@@ -28,18 +36,24 @@ export default function DarkMode(props) {
   }
 
   useEffect(() => {
+    initializeSunMoon();
     keepState();
   }, []);
 
+  function rotateSunMoon(){
+    setDegrees(degrees -= 180);
+  }
+
+  function handleToggle(){
+    rotateSunMoon();
+    createCookie();
+  }
+
   return (
-    <div id='toggler-left'>
+    <div id='dark-toggler'
+      onClick={handleToggle}
+      style={{'--rotation': degrees}}>
       <div id='sun-icon' >{sunIcon()}</div>
-      <div id='dark-toggler'>
-        <CustomInput
-          onChange={createCookie} className='darkToggle'
-          type='switch' id='exampleCustomSwitch' name='customSwitch'
-          checked={darkTheme} />
-      </div>
       <div id='moon-icon' >{moonIcon()}</div>
     </div>
   );

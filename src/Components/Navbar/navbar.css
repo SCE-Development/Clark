@@ -175,15 +175,37 @@
   display: inline-flex;
 }
 
+#sun-icon,
+#moon-icon {
+  fill: yellow;
+  position: absolute;
+}
+
+#sun-icon:hover,
+#moon-icon:hover {
+  transition: 0.5s;
+  scale: 1.1;
+}
+
 #sun-icon{
-  width: 0.7rem;
-  height: 1.6rem;
-  margin-right: 1.24rem;
-  
+  top: 0%;
+}
+
+#moon-icon{
+  bottom: 0%;
+  width: 1.2rem;
 }
 
 #dark-toggler {
-  margin-top: 0.18rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -50px;
+  margin-left: 25px;
+  height: 100px;
+  transform: rotate(calc(var(--rotation) * 1deg));
+  transition: 1s;
 }
 
 #admin-toggler{
