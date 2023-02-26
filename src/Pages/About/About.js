@@ -1,37 +1,99 @@
 import React from 'react';
+import {
+  Container,
+  Card,
+  CardBody,
+  CardText,
+  Row,
+  Col,
+} from 'reactstrap';
 
 import './About.css';
 
 export default function AboutPage() {
-  /* eslint-disable max-len */
-  const photos = [
-    'https://user-images.githubusercontent.com/36345325/183006899-43dd8a1d-748c-414d-9643-81fc420d6f6a.png',
-    'https://user-images.githubusercontent.com/36345325/183006944-9ac31633-3651-41e7-95f2-36470cd2fb79.png',
-    'https://user-images.githubusercontent.com/36345325/183007229-cf4719cb-c608-465d-a586-22a01c9d402b.png',
-    'https://user-images.githubusercontent.com/36345325/183007349-2717ab80-ab83-4f24-8c54-35d8fc99b945.png',
-    'https://user-images.githubusercontent.com/36345325/183007397-903b28d0-7519-4c09-a820-54884c385108.png',
-    'https://user-images.githubusercontent.com/36345325/183007498-b9a87fc6-8f62-47bb-8518-4dfefa4c1060.png'
-  ];
-  /* eslint-enable max-len */
-
   return (
     <>
       <div className='about-bg'>
-        <div className='about-header'>
-          <h1> The Next Frontier of Innovation at San Jose State</h1>
-        </div>
-        <div className='about-text'>
-          <h3>
-            The Software and Computer Engineering Society aims
-            to provide students with sense of community, industry-relevant
-            experience and mentorship.
-          </h3>
-        </div>
-        <div className='about-flexbox-img'>
-          {photos.map((photo, index) => (
-            <img className='img-size' src={photo} alt="scephoto" />
-          ))}
-        </div>
+        <Container>
+          <Row className='center about-text'>
+            <Row className='center'>
+              <Col className='text-col'>
+                <h1> The Next Frontier of Innovation at San Jose State.</h1>
+                <p>
+                  The Software and Computer Engineering Society aims
+                  to provide students with sense of community, industry-relevant
+                  experience and mentorship.
+                </p>
+              </Col>
+              <Col>
+                <Card style={{ minWidth: '40vw' }}>
+                  <CardBody>
+                    <CardText>
+                      Network with peers in similar majors and classes
+                    </CardText>
+                  </CardBody>
+                </Card>
+                <Card style={{ minWidth: '40vw' }}>
+                  <CardBody>
+                    <CardText>
+                      Visit company campuses, attend company info sessions and club events
+                    </CardText>
+                  </CardBody>
+                </Card>
+                <Card style={{ minWidth: '40vw' }}>
+                  <CardBody>
+                    <CardText>
+                      Set yourself apart from others by learning skills and resume help
+                    </CardText>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+            <Row className='center'>
+              <Col className='text-col'>
+                <h1>learn while having fun, making friends and eating pancakes</h1>
+                <h5>
+                  Come visit us in ENGR 294 or on Discord!
+                  (<a href='https://discord.gg/KZCKCEz5YA' target='_blank'>join here</a>)
+                </h5>
+              </Col>
+              <Col>
+                {/* eslint-disable max-len */}
+                <a href='https://user-images.githubusercontent.com/36345325/78325084-81350300-752b-11ea-8571-032ed04b3018.png' target="_blank">
+                  <img className='collage-photo' src='https://user-images.githubusercontent.com/36345325/78325084-81350300-752b-11ea-8571-032ed04b3018.png' alt="sce collage" />
+                </a>
+                {/* eslint-enable max-len */}
+              </Col>
+            </Row>
+            <Row className='center'>
+              <Col className='text-col'>
+                <h1>Join our dev team!</h1>
+                <h4>
+                  Contribute to a variety of large open source projects,
+                  adding contribution history to your GitHub profile and
+                  project experience on your resume.
+                </h4>
+              </Col>
+              <Col>
+                <div className="game-board">
+                  {/* eslint-disable max-len */}
+                  <div className="box"><img src="https://www.raspberrypi.com/app/uploads/2022/02/COLOUR-Raspberry-Pi-Symbol-Registered.png" /></div>
+                  <div className="box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2300px-React-icon.svg.png" /></div>
+                  <div className="box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/2560px-Node.js_logo.svg.png" /></div>
+
+                  <div className="box"><img src="https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/267_Python-512.png" /></div>
+                  <div className="box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/1024px-Amazon_Web_Services_Logo.svg.png" /></div>
+                  <div className="box"><img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" /></div>
+
+                  <div className="box"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/postman-icon.png" /></div>
+                  <div className="box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Prometheus_software_logo.svg/2066px-Prometheus_software_logo.svg.png" /></div>
+                  <div className="box"><img src="https://docs.checkmk.com/latest/images/grafana_logo.png" /></div>
+                  {/* eslint-enable max-len */}
+                </div>
+              </Col>
+            </Row>
+          </Row>
+        </Container>
       </div>
     </>
   );
