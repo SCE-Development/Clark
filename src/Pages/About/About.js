@@ -19,11 +19,11 @@ export default function AboutPage() {
             <Row className='center'>
               <Col className='text-col'>
                 <h1> The Next Frontier of Innovation at San Jose State.</h1>
-                <p>
+                <h5>
                   The Software and Computer Engineering Society aims
                   to provide students with sense of community, industry-relevant
                   experience and mentorship.
-                </p>
+                </h5>
               </Col>
               <Col>
                 <Card style={{ minWidth: '40vw' }}>
@@ -43,7 +43,7 @@ export default function AboutPage() {
                 <Card style={{ minWidth: '40vw' }}>
                   <CardBody>
                     <CardText>
-                      Set yourself apart from others by learning skills and resume help
+                      Set yourself apart from others by learning skills and building your resume
                     </CardText>
                   </CardBody>
                 </Card>
@@ -51,7 +51,7 @@ export default function AboutPage() {
             </Row>
             <Row className='center'>
               <Col className='text-col'>
-                <h1>learn while having fun, making friends and eating pancakes</h1>
+                <h1>Learn while having fun, making friends and eating pancakes</h1>
                 <h5>
                   Come visit us in ENGR 294 or on Discord!
                   (<a href='https://discord.gg/KZCKCEz5YA' target='_blank'>join here</a>)
@@ -68,11 +68,11 @@ export default function AboutPage() {
             <Row className='center'>
               <Col className='text-col'>
                 <h1>Join our dev team!</h1>
-                <h4>
+                <h5>
                   Contribute to a variety of large open source projects,
                   adding contribution history to your GitHub profile and
                   project experience on your resume.
-                </h4>
+                </h5>
               </Col>
               <Col>
                 <div className="game-board">
