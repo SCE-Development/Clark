@@ -1,30 +1,62 @@
 .about-bg {
     background-color: black;
-    max-width: fit-content;
-    min-height: 94vh;
+    /* height: 100%; */
+    min-height: 100% !important;
 }
-.about-header{
+
+.about-bg .text-col {
+    /* width: 41vw !important; */
+    margin-top: 1vh !important;
+}
+
+.about-bg .card-text {
+    font-weight: bold;
+}
+
+.about-header {
     margin-top: 50px;
     color: white;
     text-align: center;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding-left: 80px;
-    padding-top: 90px;
+    /* padding-left: 80px; */
     font-family: 'Montserrat', sans-serif;
 }
+
 .about-text {
-    margin-top: 50px;
     color: white;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    padding-left: 80px;
-    font-family: 'Mina', sans-serif;
+    margin-top: 93px !important;
 }
 
-.about-flexbox-img{
+.collage-photo {
+    width: 41vw;
+    border-radius: 50px;
+}
+
+.about-bg .row {
+    /* position: relative; */
+    margin-top: 9vh !important;
+    margin-bottom: 3vh !important;
+}
+
+
+@media (max-width: 576px) {
+    .about-bg .container {
+        max-width: 700px !important;
+    }
+    .collage-photo {
+        min-width: 60vw;
+    }
+}
+
+@media (width: 206px) {
+    .about-bg .container {
+        max-width: 300px !important;
+    }
+}
+
+.about-flexbox-img {
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -32,6 +64,39 @@
     flex-flow: wrap;
 }
 
-.img-size{
+.img-size {
     width: 35%;
+}
+
+.game-board {
+    width: 41vw;
+    height: 41vw;
+    margin: 0 auto;
+    background-color: #34495e;
+    color: #fff;
+    border: 6px solid #2c3e50;
+    border-radius: 10px;
+
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+.box {
+    border: 6px solid #2c3e50;
+    border-radius: 2px;
+    font-family: Helvetica;
+    font-weight: bold;
+    font-size: 4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.box>img {
+    width: 10vw;
+}
+
+
+.card {
+    background-color: #2c3e50;
 }
