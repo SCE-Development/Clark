@@ -1,62 +1,62 @@
 @import url("https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap");
 
 .what-we-do {
-    margin-top: 150px;
-  }
+  margin-top: 100px;
+  color:darkslategray;
+}
 
 .container-what-we-do {
-    display: flex;
-    align-items: center;
-  }
+  display: flex;
+  align-items: center;
+}
 
 .what-we-do-header{
-    padding-left: 40px;
-    padding-bottom: 10px;
-    font-family: "Montserrat";
-    font-style: normal;
-    font-weight: 700;
-    font-size: 35px;
-    line-height: 42px;
-  
-    color: #ffffff;
+  padding-left: 40px;
+  padding-bottom: 10px;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 35px;
+  line-height: 42px;
+
+  color: #005b96;
 }
 
 
 .what-we-do-p {
-    color: #FFFFFF;
-    text-align: center;
-    font-family: "Mina", sans-serif;
-    width: 50%;
-    font-size: 18px;
-    margin-right: 25px;
+  text-align: center;
+  font-family: "Mina", sans-serif;
+  width: 50%;
+  font-size: 18px;
+  margin-right: 25px;
 }
 
 .what-we-do-img {
-    margin-left: 30px !important;
-    
-  }
+  margin-left: 40px;
+  
+}
 
 .what-we-do-img img {
-    width: 600px;
-    height: auto;
-    margin-right: 25px;
-    border-radius: 23px;
-  }
+  width: 600px;
+  height: 300px;
+  object-fit: cover;
+  margin-right: 25px;
+}
 
 .learn-more-button {
-    margin-left: 40%;
-    width: 113px;
-    height: 34px;
-    
-    font-family: 'Mina';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 19px;
-    line-height: 30px;
-    
-    text-align: center;
-    
-    color: #FFFFFF;
+  margin-left: 40%;
+  width: 113px;
+  height: 34px;
+  
+  font-family: 'Mina';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 30px;
+  
+  text-align: center;
+  
+  color: #FFFFFF;
 }
 
 @media screen and (max-width:500px) {

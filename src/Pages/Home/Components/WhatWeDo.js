@@ -27,14 +27,6 @@ const WhatWeDo = () => {
             events and company tours with Tesla, Cisco, SAP, Capital One,
             Texas Instruments, and more.
           </p>
-          <div className='learn-more-button'>
-            <a href='/register'>
-              <Button outline color="primary" id='learn-more-btn'
-                // copied from home
-                style={{width:'170px', border:'3px solid',
-                  borderRadius:8, fontSize:'20px'}}>Learn More</Button>
-            </a>
-          </div>
         </div>
       </div>
     </div>

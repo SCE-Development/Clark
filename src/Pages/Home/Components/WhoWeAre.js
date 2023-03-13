@@ -20,26 +20,11 @@ const WhoWeAre = () => {
             network stretches to Google, Apple, Meta, HP, and many more.
           </p>
           <div className="join-sce-button who-we-are-content">
-            <a href="/register">
-              <Button
-                outline
-                color="primary"
-                id="joinsce-btn"
-                // copied from home
-                style={{
-                  width: '170px',
-                  border: '3px solid',
-                  borderRadius: 8,
-                  fontSize: '20px',
-                }}
-              >
-                Join SCE
-              </Button>
-            </a>
+            
           </div>
         </div>
         <div className="who-we-are-img">
-          <img className='hide-images'
+          <img className='image'
             src="images/who-we-are-image.png"
             alt="SCE Who We Are" />
         </div>
