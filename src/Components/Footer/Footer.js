@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import { Row, Col, Button } from 'reactstrap';
+import { Row } from 'reactstrap';
 import './footer.css';
 import DiscordIcon from './Icons/DiscordIcon';
-import LinkedinIcon from './Icons/LinkedinIcon';
-import FacebookIcon from './Icons/FacebookIcon';
 import InstagramIcon from './Icons/InstagramIcon';
 import GitHubIcon from './Icons/GitHubIcon';
-import YouTubeIcon from './Icons/YouTubeIcon';
-import FooterModal from './FooterModal';
+
 
 
 
