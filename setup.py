@@ -35,6 +35,9 @@ def add_alias_windows():
     subprocess.check_call("setx ESLINT_NO_DEV_ERRORS true",
                              stderr=subprocess.STDOUT, shell = True)
 
+def make_env(isWindows):
+    f = open(".env", "x")
+    f.write(f"CHOKIDAR_USEPOLLING={isWindows}\nWATCHPACK_POLLING={isWindows}")
 
 print('Welcome to SCE-Development Setup!\n')
 user_os = platform.system()
@@ -46,11 +49,13 @@ if user_os == 'Darwin' or user_os == 'Linux':
     if os.path.exists("src/config/config.json") == False:
         os.system("cp src/config/config.example.json  src/config/config.json")
     add_alias_unix()
+    make_env(False)
 elif user_os == 'Windows':
     if os.path.exists("api\config\config.json") == False:
         os.system("copy api\config\config.example.json  api\config\config.json")
     if os.path.exists("src\config\config.json") == False:
         os.system("copy src\config\config.example.json  src\config\config.json")
     add_alias_windows()
+    make_env(True)
 
 print('\nSetup complete! Bye!\n')
