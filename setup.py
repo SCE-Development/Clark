@@ -36,8 +36,11 @@ def add_alias_windows():
                              stderr=subprocess.STDOUT, shell = True)
 
 # This function is neccesary such that users from different operating systems can
-# both
-# 
+# both make use of hot reload
+# CHOKIDAR_USEPOLLING and WATCHPACK_POLLING are alternate methods of watching for changes on files
+# windows users need this because the docker containers are all running linux and since their
+# files are also being managed by windows it gets messy using the os default file watching protocal
+# the .env file will be user specific and not interfere with non-windows users
 def make_env(isWindows):
     f = open(".env", "x")
     f.write(f"CHOKIDAR_USEPOLLING={isWindows}\nWATCHPACK_POLLING={isWindows}")
