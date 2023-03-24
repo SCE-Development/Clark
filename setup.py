@@ -48,7 +48,7 @@ def add_alias_windows():
 # files are also being managed by windows it gets messy using the os default file watching protocal
 # the .env file will be user specific and not interfere with non-windows users
 def make_env(isWindows):
-    with open(".env", "x"):
+    with open(".env", "x") as f:
         f.write(f"CHOKIDAR_USEPOLLING={isWindows}\nWATCHPACK_POLLING={isWindows}")
 
 
