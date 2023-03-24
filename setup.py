@@ -48,8 +48,8 @@ def add_alias_windows():
 # files are also being managed by windows it gets messy using the os default file watching protocal
 # the .env file will be user specific and not interfere with non-windows users
 def make_env(isWindows):
-    f = open(".env", "x")
-    f.write(f"CHOKIDAR_USEPOLLING={isWindows}\nWATCHPACK_POLLING={isWindows}")
+    with open(".env", "x"):
+        f.write(f"CHOKIDAR_USEPOLLING={isWindows}\nWATCHPACK_POLLING={isWindows}")
 
 
 print('Welcome to SCE-Development Setup!\n')
