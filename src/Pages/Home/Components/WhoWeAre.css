@@ -76,4 +76,24 @@
     margin: 0 !important;
     padding-left: 90px !important;
   }
+  .who-we-are-p {
+    text-align: center;
+    font-family: "Mina", sans-serif;
+    width: 50%;
+    font-size: 18px;
+  }
 } 
+
+@media (max-width: 920px) {
+  .who-we-are-img img {
+    display: none !important;
+  }
+
+  .who-we-are-p {
+    text-align: center;
+    font-family: "Mina", sans-serif;
+    width: 100%;
+    font-size: 18px;
+  }
+  
+}

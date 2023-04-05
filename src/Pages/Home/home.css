@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
 .home {
 	color: white;
+  width: 100%;
 }
 
 .text-header {
