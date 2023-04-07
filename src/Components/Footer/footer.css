@@ -98,15 +98,15 @@
   }
 
   .text-box-header{
-    font-weight: bolder;
-    margin-top: -11rem;
-    margin-left: -5rem;
     width: 200%;
+    font-weight: bolder;
+    margin-top: -19vh;
+    margin-left: 0vw;
   }
   
 }
 
-@media (max-width: 920px) {
+@media (max-width: 1024px) {
   .social-media {
     align-items: center;
     justify-content: center;
@@ -118,8 +118,8 @@
 
   .text-box-header{
     font-weight: bolder;
-    margin-top: 8rem;
-    margin-left: 0rem;
+    margin-top: -28vh;
+    margin-left: 0vw;
   }
   
 }
