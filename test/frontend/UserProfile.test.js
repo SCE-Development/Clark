@@ -29,6 +29,6 @@ describe('<UserProfile />', () => {
   });
 
   it('Should render a <img /> component with 4 children', () => {
-    expect(wrapper.find('img')).to.have.lengthOf(0);
+    expect(wrapper.find('img')).to.have.lengthOf(1);
   });
 });
