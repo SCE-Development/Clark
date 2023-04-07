@@ -20,7 +20,7 @@ const WhoWeAre = () => {
             network stretches to Google, Apple, Meta, HP, and many more.
           </p>
           <div className="join-sce-button who-we-are-content">
-            
+
           </div>
         </div>
         <div className="who-we-are-img">

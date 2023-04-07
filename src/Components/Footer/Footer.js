@@ -18,39 +18,59 @@ export default () => {
   return (
     <>
       <head>
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"></link>
+        <link
+          rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+        </link>
       </head>
       <div className='text-box'>
         <h1 className='text-box-header'>
           Contact Us<br></br>
           <ul className='list'>
-            <li className='mail'> 
+            <li className='mail'>
 
               {/* Span Is to display an svg of an envelope  */}
-              <span class="svg"><i class="fas fa-envelope"></i></span> 
+              <span class="svg"><i class="fas fa-envelope"></i></span>
 
               General Inquries
               <li className='sub-list'>
-                <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Akshit Sharma</p>
+                <p
+                  style=
+                    {{color: 'rgb(172, 172, 172)'
+                      , fontWeight: 'bold'}}>
+                    Akshit Sharma
+                </p>
                 <p style={{fontSize: '0.75rem'}}>
-                    <a style={{color:'gray'}} href="mailto:akshit.sharma@sjsu.edu">akshit.sharma@sjsu.edu</a>
+                  <a
+                    style={{color:'gray'}}
+                    href="mailto:akshit.sharma@sjsu.edu">
+                      akshit.sharma@sjsu.edu
+                  </a>
                 </p>
               </li>
 
               {/* Span Is to display an svg of a suitcase  */}
-              <span class="svg"><i class="fas fa-suitcase"></i></span> 
+              <span class="svg"><i class="fas fa-suitcase"></i></span>
 
               Sponsor and Relations
               <li className='sub-list'>
-                  <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Jessabelle Ramos</p>
-                  <p style={{fontSize: '0.75rem'}}>
-                    <a href="mailto:jessabelle.ramos@sjsu.edu" style={{color:'gray'}}>jessabelle.ramos@sjsu.edu</a>
-                  </p>
+                <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Jessabelle Ramos</p>
+                <p style={{fontSize: '0.75rem'}}>
+                  <a
+                    href="mailto:jessabelle.ramos@sjsu.edu"
+                    style={{color:'gray'}}>
+                      jessabelle.ramos@sjsu.edu
+                  </a>
+                </p>
               </li>
               <li className='sub-list'>
                 <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Abbigel Palad</p>
                 <p style={{fontSize: '0.75rem'}}>
-                    <a href="mailto:abegail.palad@sjsu.edu" style={{color:'gray'}}>abegail.palad@sjsu.edu</a>
+                  <a
+                    href="mailto:abegail.palad@sjsu.edu"
+                    style={{color:'gray'}}>
+                      abegail.palad@sjsu.edu
+                  </a>
                 </p>
               </li>
 
@@ -70,7 +90,11 @@ export default () => {
             <InstagramIcon/>
             <GitHubIcon/>
           </div>
-          <p id='footer-note' style={{marginTop: '1rem', fontSize: '0.8rem'}}>Brought to you by SCE Dev-Team</p>
+          <p
+            id='footer-note'
+            style={{marginTop: '1rem', fontSize: '0.8rem'}}>
+              Brought to you by SCE Dev-Team
+          </p>
         </Row>
       </footer>
     </>
