@@ -3,6 +3,7 @@ import { Row, Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
+import Background from '../../Components/Background/background';
 import './login.css';
 
 export default function Login(props) {
@@ -38,6 +39,7 @@ export default function Login(props) {
 
   return (
     <Container fluid id='background'>
+      <Background size={Math.max(innerWidth, innerHeight)} />
       <Row className='form-card-login'>
         <form onSubmit={handleSubmit}>
           <img id='img' alt='sce logo' src='images/SCE-glow.png' />

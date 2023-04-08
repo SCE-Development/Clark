@@ -1,6 +1,7 @@
  .background-parent {
-    position: absolute;
+    position: fixed;
     overflow: hidden;
+    z-index: -10; /* ensures the background stays behind everything */
     width:100vw;
     height:100vh;
     margin:0;
