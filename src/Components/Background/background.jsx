@@ -20,24 +20,12 @@ export default function background(props) {
                         <circle cx="-382" cy="175" r="7" stroke="#B8B8B8" strokeWidth={props.size * 0.002}/>
                     </g>
                     <g id="electricity" transform={`translate(${props.size / 2}, ${props.size / 2})`} class="path" strokeWidth={props.size * 0.006} fill="none" fillRule="evenodd"  strokeLinejoin="round" strokeDasharray="30,150" strokeDashoffset="2000">
-                        <polyline id="path" points="125 -59 175 -109 375 -109"></polyline>
-                        <polyline id="path" points="125 59 175 109 375 109"></polyline>
-                        <polyline id="path" points="59 125 109 175 109 375"></polyline>
-                        <polyline id="path" points="-59 125 -109 175 -375 175"></polyline>
-                        <polyline id="path" points="-125 59 -175 109 -375 109"></polyline>
-                        <polyline id="path" points="-125 -59 -175 -109 -375 -109"></polyline>
-                        <polyline id="path" points="-59 -125 -109 -175 -109 -375"></polyline>
-                        <polyline id="path" points="59 -125 109 -175 375 -175"></polyline>
+                    <polyline id="path" points="88 -22 175 -109 375 -109"></polyline>
+                        {circuit()}
                     </g>
                     <g id="circuit" transform={`translate(${props.size / 2}, ${props.size / 2})`} strokeWidth={props.size * 0.002}>
                         <polyline id="path" points="88 -22 175 -109 375 -109"></polyline>
-                        <polyline id="path" points="88 22 175 109 375 109"></polyline>
-                        <polyline id="path" points="22 88 109 175 109 375"></polyline>
-                        <polyline id="path" points="-22 88 -109 175 -375 175"></polyline>
-                        <polyline id="path" points="-88 22 -175 109 -375 109"></polyline>
-                        <polyline id="path" points="-88 -22 -175 -109 -375 -109"></polyline>
-                        <polyline id="path" points="-22 -88 -109 -175 -109 -375"></polyline>
-                        <polyline id="path" points="22 -88 109 -175 375 -175"></polyline>
+                        {circuit()}
                     </g>
                 </g>
                 <defs>
@@ -48,4 +36,21 @@ export default function background(props) {
             </svg>
         </div>
     );
+}
+
+//abstracts circuit
+function circuit() {
+    return (
+        <>
+            <polyline id="path" points="88 -22 175 -109 375 -109"></polyline>
+            <polyline id="path" points="88 22 175 109 375 109"></polyline>
+            <polyline id="path" points="22 88 109 175 109 375"></polyline>
+            <polyline id="path" points="-22 88 -109 175 -375 175"></polyline>
+            <polyline id="path" points="-88 22 -175 109 -375 109"></polyline>
+            <polyline id="path" points="-88 -22 -175 -109 -375 -109"></polyline>
+            <polyline id="path" points="-22 -88 -109 -175 -109 -375"></polyline>
+            <polyline id="path" points="22 -88 109 -175 375 -175"></polyline>
+        </>
+    );
+
 }
