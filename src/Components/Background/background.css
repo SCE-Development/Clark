@@ -10,6 +10,7 @@
     top: 0;
     left: 0;
     background-color: #333;
+    overflow: none;
  }
  
  .background-child {
@@ -23,7 +24,7 @@
    transform: translate(-50%, -50%);
  }
  
- #curcuit, #boxes {
+ #circuit, #boxes {
    stroke: #ccc;
  }
  
