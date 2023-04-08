@@ -1,0 +1,45 @@
+ .background-parent {
+    position: absolute;
+    overflow: hidden;
+    width:100vw;
+    height:100vh;
+    margin:0;
+    padding: 0;
+    border: 0;
+    top: 0;
+    left: 0;
+    background-color: #333;
+ }
+ 
+ .background-child {
+    margin: auto;
+ }
+ 
+ svg {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+ }
+ 
+ #curcuit, #boxes {
+   stroke: #ccc;
+ }
+ 
+ #electricity {
+   stroke: #03d8f3;
+   stroke-width: 6;
+ }
+ .path {
+   animation: draw 20s infinite;
+   animation-timing-function: linear;
+ } 
+ 
+ @keyframes draw {
+   0% {
+   }
+   100% {
+     stroke-dashoffset: 0;
+     stroke-opacity: 1;
+   }
+ }
