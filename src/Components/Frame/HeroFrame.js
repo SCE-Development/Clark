@@ -1,9 +1,6 @@
 import React from 'react';
-import {
-  Card,
-  CardBody
-} from 'reactstrap';
 import './HeroFrame.css';
+import { Button } from 'reactstrap';
 
 function HeroFrame() {
   const icons = [
@@ -12,37 +9,35 @@ function HeroFrame() {
       title: 'sjsu.sce'
     }
   ];
+
+  let heroImage = 'https://user-images.githubusercontent.com' +
+  '/63530023/230752289-defefe87-354d-4fcc-9e60-17e4356ba17e.png';
   return(
-    <Card className='bg-light hero-frame'
-	 style={{ borderRadius: 18 }}>
-      <CardBody className='circles'>
-        <div className='red hide-this'></div>
-        <div className='orange hide-this'></div>
-        <div className='green hide-this'></div>
-      </CardBody>
-	    <div className='image-header hide-this'>
-        <img
-          className='hero-logo hide-this'
-          src='favicon.ico'
-          alt='hero-logo' />
-        <div>
-          {icons.map((icon, index) => {
-            return (
-              <a key={index} href={icon.link} className='text-dark ml-3 name'>
-                {icon.title}
-              </a>
-            );
-          })}
+    <>
+      <div className='text-box'>
+        <h1 className='hero-text'>
+          Software Computer and Engineering Society
+          <p className='hero-subtext'>SJSU's Largest Engineering Club</p>
+        </h1>
+        <div className='join-sce'>
+          <a href='/register'>
+            <Button id='joinsce-btn'
+              style={{width:'170px', opacity: '0.9',
+                border: '0px', borderRadius:4,
+                fontSize:'20px', textAlign:'center',
+                backgroundColor:'#0C1E2F', color:'white'}}>
+                Join SCE
+            </Button>
+          </a>
         </div>
-        <div className='text-dark more hide-this'>...</div>
       </div>
       <img
         alt='Card image cap'
-        src='images/sce-hero.webp'
+        src={heroImage}
         width='100%'
         className='hero-image'
       />
-    </Card>
+    </>
   );
 }
 export default HeroFrame;

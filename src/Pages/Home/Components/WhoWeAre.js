@@ -3,6 +3,8 @@ import './WhoWeAre.css';
 import { Button } from 'reactstrap';
 
 const WhoWeAre = () => {
+  let whoWeAre = 'https://user-images.githubusercontent.com' +
+    '/63530023/230752231-dcc68c0e-e3de-488c-8274-b02ce1d09ba6.png';
   return (
     <div className="who-we-are">
       <div className="container-who-we-are">
@@ -20,27 +22,12 @@ const WhoWeAre = () => {
             network stretches to Google, Apple, Meta, HP, and many more.
           </p>
           <div className="join-sce-button who-we-are-content">
-            <a href="/register">
-              <Button
-                outline
-                color="primary"
-                id="joinsce-btn"
-                // copied from home
-                style={{
-                  width: '170px',
-                  border: '3px solid',
-                  borderRadius: 8,
-                  fontSize: '20px',
-                }}
-              >
-                Join SCE
-              </Button>
-            </a>
+
           </div>
         </div>
         <div className="who-we-are-img">
-          <img className='hide-images'
-            src="images/who-we-are-image.png"
+          <img className='image'
+            src={whoWeAre}
             alt="SCE Who We Are" />
         </div>
       </div>

@@ -3,12 +3,14 @@ import './WhatWeDo.css';
 import { Button } from 'reactstrap';
 
 const WhatWeDo = () => {
+  let whatWeDo = 'https://user-images.githubusercontent.com' +
+    '/63530023/230752387-0e13522c-731b-4f7a-94ae-268f24ea0ddc.jpg';
   return (
     <div className='what-we-do'>
       <div className='container-what-we-do'>
         <div className='what-we-do-img'>
           <img
-            src="images/what-we-do-image.jpg"
+            src={whatWeDo}
             alt="SCE What We Do"
             className='hide-images'
           />
@@ -27,14 +29,6 @@ const WhatWeDo = () => {
             events and company tours with Tesla, Cisco, SAP, Capital One,
             Texas Instruments, and more.
           </p>
-          <div className='learn-more-button'>
-            <a href='/register'>
-              <Button outline color="primary" id='learn-more-btn'
-                // copied from home
-                style={{width:'170px', border:'3px solid',
-                  borderRadius:8, fontSize:'20px'}}>Learn More</Button>
-            </a>
-          </div>
         </div>
       </div>
     </div>
