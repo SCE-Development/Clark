@@ -39,7 +39,7 @@ export default function Login(props) {
 
   return (
     <Container fluid id='background'>
-      {/* <Row className='form-card-login'>
+      <Row className='form-card-login'>
         <form onSubmit={handleSubmit}>
           <img id='img' alt='sce logo' src='images/SCE-glow.png' />
 
@@ -56,7 +56,7 @@ export default function Login(props) {
             <Link to='/register'>Create an account</Link>
           </p>
         </form>
-      </Row> */}
+      </Row>
       <Background/>
     </Container>
   );
