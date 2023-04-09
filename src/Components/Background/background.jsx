@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './background.css';
 
 export default function background(props) {
-
+    
     return (
         <div className='background-parent'>
             <svg width={props.size} height={props.size} viewBox={`0 0 ${props.size} ${props.size}`} fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,7 +33,7 @@ export default function background(props) {
 
 //abstracts circuit
 function circuit(props) {
-    var lineStart = (props.innerRadius - props.lineStart) / Math.sqrt(2);
+    var lineStart = (props.innerRadius - props.lineStartOffset ) / Math.sqrt(2);
     var lineMid = props.outerRadius / Math.sqrt(2);
     var lineEnd = props.outerRadius * props.lineLength; 
     var radiusDifference = props.outerRadius - props.innerRadius;
