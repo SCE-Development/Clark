@@ -33,23 +33,32 @@ export default function background(props) {
 
 //abstracts circuit
 function circuit(props) {
-    var lineStart = props.innerRadius - props.lineStart
-    var lineMid = props.outerRadius;
-    var lineEnd = props.outerRadius * 2;    
+    var lineStart = (props.innerRadius - props.lineStart) / Math.sqrt(2);
+    var lineMid = props.outerRadius / Math.sqrt(2);
+    var lineEnd = props.outerRadius * props.lineLength; 
     var radiusDifference = props.outerRadius - props.innerRadius;
-    var spread = props.lineSpread * (2 * props.innerRadius);
+    var spread = (props.lineSpread * props.innerRadius) / Math.sqrt(2);
     
     return (
         <>
+            {/* <xDir,yDir>, <spreadXDir, spreadYDir>, <endXDir, endYDir> */}
             {/* (+/- lineStart  +/- spread), (+/- props.outerRadius +/- spread), (+/- (2 * props.outerRadius) +/- spread||0, +/-props.outerRadius +/- spread||0)  */}
-            <polyline id="path" points={`${lineStart} ${-(lineStart)} ${lineMid + spread} ${-(lineMid) + spread} ${lineEnd} ${-(lineMid) - spread}`}></polyline> {/*(+,-),(-,-),(+,0)*/}
-            <polyline id="path" points={`88 -22 175 -109 375 -109`}></polyline> {/*(+,-),(+,+),(+,0)*/}
-            <polyline id="path" points={`88 22 175 109 375 109`}></polyline> {/*(+,+),(+,-),()*/}
-            <polyline id="path" points={`22 88 109 175 109 375`}></polyline> {/*(+,+),(-,+)*/}
-            <polyline id="path" points={`-22 88 -109 175 -375 175`}></polyline> {/*(-,+),(+,+)*/}
-            <polyline id="path" points={`-88 22 -175 109 -375 109`}></polyline> {/*(-,+),(-,-)*/}
-            <polyline id="path" points={`-88 -22 -175 -109 -375 -109`}></polyline> {/*(-,-),(-,+)*/}
-            <polyline id="path" points={`-22 -88 -109 -175 -109 -375`}></polyline> {/*(-,-),(+,-)*/}
+            {/*(+,-),(-,-),(+,0)*/}
+            <polyline id="path" points={`${lineStart - spread} ${-(lineStart) - spread} ${lineMid - spread} ${-(lineMid) - spread} ${lineEnd} ${-(lineMid) - spread}`}></polyline> 
+            {/*(+,-),(+,+),(+,0)*/}
+            <polyline id="path" points={`${lineStart + spread} ${-(lineStart) + spread} ${lineMid + spread} ${-(lineMid) + spread} ${lineEnd} ${-(lineMid) + spread}`}></polyline> 
+            {/*(+,+),(+,-),(+,0)*/}
+            <polyline id="path" points={`${lineStart + spread} ${lineStart - spread} ${lineMid + spread} ${lineMid - spread} ${lineEnd} ${lineMid - spread}`}></polyline> 
+            {/*(+,+),(-,+),(0,+)*/}
+            <polyline id="path" points={`${lineStart - spread} ${lineStart + spread} ${lineMid - spread} ${lineMid + spread} ${lineMid - spread} ${lineEnd}`}></polyline> 
+            {/*(-,+),(+,+),(-,0)*/}
+            <polyline id="path" points={`${-(lineStart) + spread} ${lineStart + spread} ${-(lineMid) + spread} ${lineMid + spread} ${-lineEnd} ${lineMid + spread}`}></polyline> 
+            {/*(-,+),(-,-),(-,0)*/}
+            <polyline id="path" points={`${-(lineStart) - spread} ${lineStart - spread} ${-(lineMid) - spread} ${lineMid - spread} ${-lineEnd} ${lineMid - spread}`}></polyline> 
+            {/*(-,-),(-,+),(-,0)*/}
+            <polyline id="path" points={`${-(lineStart) - spread} ${-(lineStart) + spread} ${-(lineMid) - spread} ${-(lineMid) + spread} ${-lineEnd} ${-(lineMid) + spread}`}></polyline> 
+            {/*(-,-),(+,-),(0,-)*/}
+            <polyline id="path" points={`${-(lineStart) + spread} ${-(lineStart) - spread} ${-(lineMid) + spread} ${-(lineMid) - spread} ${-(lineMid) + spread} ${-lineEnd}`}></polyline> 
         </>
     );
 
