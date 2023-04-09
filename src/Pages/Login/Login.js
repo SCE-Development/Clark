@@ -57,7 +57,7 @@ export default function Login(props) {
           </p>
         </form>
       </Row> */}
-      <Background size={2000} innerRadius={125} outerRadius={200} radius={25} lineStart={200} lineLength={200} lineSpread={0.75}/> {/* Math.max(innerWidth, innerHeight) */}
+      <Background size={2000} innerRadius={125} outerRadius={200} radius={25} lineStart={0} lineLength={200} lineSpread={0.75}/> {/* Math.max(innerWidth, innerHeight) */}
     </Container>
   );
 }
