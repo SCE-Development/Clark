@@ -1,62 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&family=Open+Sans&display=swap');
 
-.hero-frame {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 30px 40px 40px;
-    margin: 0 auto;
-    width: 60%;
-}
-
-.circles {
-    display: flex;
-    margin-left: -0.5px;
-    width: 100%;
-    height: auto
-}
-
-.red {
-    border: 5px solid #BF0000;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px
-}
-
-.orange {
-    border: 5px solid #FF9C41;
-    ;
-    border-radius: 24.95px;
-    margin-left: 15px;
-    width: 30px;
-}
-
-.green {
-    border: 5px solid #308214;
-    border-radius: 24.95px;
-    margin-left: 15px;
-    width: 30px;
-}
-
-.image-header {
-    align-items: flex-start;
-    display: flex;
-    padding-left: 50px;
-    margin-top: 20px;
-    min-width: 365px;
-}
-
 .hero-logo {
     margin-top: -10px;
     margin-left: -60px;
     width: 15%;
 }
 
-.name {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: light;
-    font-size: 20px;
+.text-box {
+    width: 40%;
+    position: absolute;
+    margin: 44dvh 12dvh;
+    color: white;
+    z-index: 2;
+}
+
+.hero-text{
+    text-align: left;
+}
+
+.hero-subtext{
+    padding-top: 30px;
+    position: absolute;
+    font-size: 1rem;
+}
+
+.hero-image{
+    margin-top: 2rem;
+    height: 96.5dvh;
+    overflow: auto;
+    object-fit:cover;
+    z-index: -10;
+    filter: blur(1px) brightness(0.6);
 }
 
 .more {
@@ -65,14 +39,21 @@
     font-weight: 800;
     font-size: 250%;
     position: absolute;
-    top: 89px;
     right: 10%;
 }
 
-.hero-image {
-    margin-top: 20px;
-    object-fit: cover;
+.join-sce{
+	margin-top: 40px;
+	width:100%;
+	text-align:left;
+	font-family: "Mina";
+    padding-top: 60px;
 }
+
+#joinsce-btn {
+	height: 60px
+}
+
 
 @media screen and (max-width:500px) {
     .hide-this {
@@ -85,5 +66,14 @@
     .hero-frame {
         padding: 10px;
         width: 369px;
+    }   
+
+    .text-box {
+        width: 45%;
+        position: absolute;
+        color: white;
+        z-index: 2;
+        margin-left: 8vw;
     }
+    
 }
