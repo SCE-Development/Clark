@@ -3,12 +3,14 @@ import './WhatWeDo.css';
 import { Button } from 'reactstrap';
 
 const WhatWeDo = () => {
+  let whatWeDo = 'https://user-images.githubusercontent.com' +
+    '/63530023/230752387-0e13522c-731b-4f7a-94ae-268f24ea0ddc.jpg';
   return (
     <div className='what-we-do'>
       <div className='container-what-we-do'>
         <div className='what-we-do-img'>
           <img
-            src="images/what-we-do-image.jpg"
+            src={whatWeDo}
             alt="SCE What We Do"
             className='hide-images'
           />

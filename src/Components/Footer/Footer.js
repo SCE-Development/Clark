@@ -15,6 +15,9 @@ export default () => {
     setIsOpen(!isOpen);
   };
 
+  let getInTouch = 'https://user-images.githubusercontent.com' +
+    '/63530023/230752230-f8c42972-a0cc-4dfb-96fb-f44bb7d935c4.png';
+
   return (
     <>
       <head>
@@ -79,7 +82,8 @@ export default () => {
         </h1>
       </div>
       <img
-        src="images/getInTouch.png"
+        src={getInTouch}
+
         alt="SCE What We Do"
         className='get-in-touch'
       />

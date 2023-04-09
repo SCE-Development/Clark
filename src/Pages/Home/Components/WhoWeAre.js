@@ -3,6 +3,8 @@ import './WhoWeAre.css';
 import { Button } from 'reactstrap';
 
 const WhoWeAre = () => {
+  let whoWeAre = 'https://user-images.githubusercontent.com' +
+    '/63530023/230752231-dcc68c0e-e3de-488c-8274-b02ce1d09ba6.png';
   return (
     <div className="who-we-are">
       <div className="container-who-we-are">
@@ -25,7 +27,7 @@ const WhoWeAre = () => {
         </div>
         <div className="who-we-are-img">
           <img className='image'
-            src="images/who-we-are-image.png"
+            src={whoWeAre}
             alt="SCE Who We Are" />
         </div>
       </div>

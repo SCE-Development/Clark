@@ -9,6 +9,9 @@ function HeroFrame() {
       title: 'sjsu.sce'
     }
   ];
+
+  let heroImage = 'https://user-images.githubusercontent.com' +
+  '/63530023/230752289-defefe87-354d-4fcc-9e60-17e4356ba17e.png';
   return(
     <>
       <div className='text-box'>
@@ -30,7 +33,7 @@ function HeroFrame() {
       </div>
       <img
         alt='Card image cap'
-        src='images/sce-hero.webp'
+        src={heroImage}
         width='100%'
         className='hero-image'
       />
