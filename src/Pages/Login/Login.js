@@ -39,7 +39,7 @@ export default function Login(props) {
 
   return (
     <Container fluid id='background'>
-      {/* <Row className='form-card-login'>
+      <Row className='form-card-login'>
         <form onSubmit={handleSubmit}>
           <img id='img' alt='sce logo' src='images/SCE-glow.png' />
 
@@ -56,8 +56,8 @@ export default function Login(props) {
             <Link to='/register'>Create an account</Link>
           </p>
         </form>
-      </Row> */}
-      <Background size={2000} innerRadius={125} outerRadius={200} radius={25} lineStartOffset={50} lineLength={1.87} lineSpread={0.38}/> {/* Math.max(innerWidth, innerHeight) */}
+      </Row>
+      <Background size={2000} innerRadius={125} outerRadius={200} radius={25} lineStartOffset={50} lineLength={1.87} lineSpread={0.38}/> Math.max(innerWidth, innerHeight)
     </Container>
   );
 }
