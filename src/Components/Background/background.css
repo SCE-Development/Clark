@@ -22,15 +22,16 @@
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
+   margin: 0;
+   padding: 0;
  }
  
- #circuit, #boxes {
+ #circuit, #boxes, #circles{
    stroke: #ccc;
  }
  
  #electricity {
    stroke: #03d8f3;
-   stroke-width: 6;
  }
  .path {
    animation: draw 20s infinite;

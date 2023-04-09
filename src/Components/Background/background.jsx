@@ -25,22 +25,22 @@ export default function background(props) {
                             <rect x={-1 * outerRadius} y={-1 * outerRadius} width={2 * outerRadius} height={2 * outerRadius} rx={radius} strokeWidth={size * 0.004}/>
                             <rect x={-1 * innerRadius} y={-1 * innerRadius} width={2 * innerRadius} height={2 * innerRadius} rx={radius} strokeWidth={size * 0.004}/>
                         </g>
-                        <g>
-                            <circle cx={lineEnd + circleRadius} cy={-lineMid - spread} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
-                            <circle cx={lineEnd + circleRadius} cy={-lineMid + spread} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
+                        <g id="circles">
+                            <circle cx={lineEnd + circleRadius} cy={-lineMid - spread} r={circleRadius} strokeWidth={size * 0.004}/>
+                            <circle cx={lineEnd + circleRadius} cy={-lineMid + spread} r={circleRadius} strokeWidth={size * 0.004}/>
                             
-                            <circle cx={lineEnd + circleRadius} cy={lineMid - spread} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
-                            <circle cx={lineMid - spread} cy={lineEnd + circleRadius} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
+                            <circle cx={lineEnd + circleRadius} cy={lineMid - spread} r={circleRadius} strokeWidth={size * 0.004}/>
+                            <circle cx={lineMid - spread} cy={lineEnd + circleRadius} r={circleRadius} strokeWidth={size * 0.004}/>
 
-                            <circle cx={-lineEnd - circleRadius} cy={lineMid + spread} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
-                            <circle cx={-lineEnd - circleRadius} cy={lineMid - spread} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
+                            <circle cx={-lineEnd - circleRadius} cy={lineMid + spread} r={circleRadius} strokeWidth={size * 0.004}/>
+                            <circle cx={-lineEnd - circleRadius} cy={lineMid - spread} r={circleRadius} strokeWidth={size * 0.004}/>
 
-                            <circle cx={-lineEnd - circleRadius} cy={-lineMid + spread} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
-                            <circle cx={-lineMid + spread} cy={-lineEnd - circleRadius} r={circleRadius} stroke="#B8B8B8" strokeWidth={size * 0.004}/>
+                            <circle cx={-lineEnd - circleRadius} cy={-lineMid + spread} r={circleRadius} strokeWidth={size * 0.004}/>
+                            <circle cx={-lineMid + spread} cy={-lineEnd - circleRadius} r={circleRadius} strokeWidth={size * 0.004}/>
                         </g>
                         
                     </g>
-                    <g id="electricity" transform={`translate(${size / 2}, ${size / 2})`} className="path" strokeWidth={size * 0.004} fill="none" fillRule="evenodd"  strokeLinejoin="round" strokeDasharray="30,150" strokeDashoffset="2000">
+                    <g id="electricity" transform={`translate(${size / 2}, ${size / 2})`} className="path" strokeWidth={(size * 0.004) + (size * 0.004)} fill="none" fillRule="evenodd"  strokeLinejoin="round" strokeDasharray={`${size * 0.04},${size * 0.15}`} strokeDashoffset={size * 2}>
                         {circuit(props)}
                     </g>
                     <g id="circuit" transform={`translate(${size / 2}, ${size / 2})`} strokeWidth={size * 0.004}>
