@@ -92,7 +92,12 @@
     display: none !important;
   } 
 
+  .what-we-do {
+    width: 97%;
+  }
+
   .what-we-do-p {
+    
     text-align: center;
     font-family: "Mina", sans-serif;
     width: 100%;
