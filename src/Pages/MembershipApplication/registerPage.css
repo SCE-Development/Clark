@@ -123,7 +123,7 @@
   margin: auto;
   min-width: 400px;
   left: 50%;
-  background: black;
+  backdrop-filter: blur(10px);
   padding: 1.5rem;
 }
 

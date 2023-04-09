@@ -64,7 +64,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   border-radius: 20px;
   padding: 1.5rem;
-  background: white;
+  backdrop-filter: blur(10px);
   flex: none;
   margin: 0;
   justify-content: center;
