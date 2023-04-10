@@ -110,6 +110,7 @@
 .form-card, .form-card2 {
   border-radius: 20px;
   backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
 }
 
 .form-card {
