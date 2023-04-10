@@ -32,7 +32,7 @@ function EventCard(props) {
         <div className='event-title'>{title}</div>
         <div> {description}</div>
         <div><b>DATE </b>
-            : {getDateWithSlashes(eventDate.slice(0, 10))}
+            : {eventDate}
         </div>
         <div><b>TIME </b>: {startTime} - {endTime}</div>
         <div>
