@@ -1,6 +1,52 @@
 import React, { Component } from 'react';
 import './background.css';
 
+// abstracts circuit
+function circuit(props) {
+  // used for default props
+  const size = props.size || Math.min(window.innerWidth, window.innerHeight);
+  const innerRadius = props.innerRadius || size * 0.125;
+  const outerRadius = props.outerRadius || size * 0.2;
+  const lineSpread = props.lineSpread || 0.4;
+  const endDistance = props.endDistance || 1.85;
+  const lineStartOffset = props.lineStartOffset || 0;
+
+  // placement variables
+  const lineStart = (innerRadius - lineStartOffset ) / Math.sqrt(2);
+  const lineMid = outerRadius / Math.sqrt(2);
+  const lineEnd = outerRadius * endDistance;
+  const spread = (lineSpread * innerRadius) / Math.sqrt(2);
+
+  return (
+    <>
+      <polyline id="path"
+        points={`${lineStart - spread} ${-lineStart - spread}
+        ${lineMid - spread} ${-lineMid - spread} ${lineEnd} ${-lineMid - spread}`}/>
+      <polyline id="path"
+        points={`${lineStart + spread} ${-lineStart + spread}
+        ${lineMid + spread} ${-lineMid + spread} ${lineEnd} ${-lineMid + spread}`}/>
+      <polyline id="path"
+        points={`${lineStart + spread} ${lineStart - spread}
+        ${lineMid + spread} ${lineMid - spread} ${lineEnd} ${lineMid - spread}`}/>
+      <polyline id="path"
+        points={`${lineStart - spread} ${lineStart + spread}
+        ${lineMid - spread} ${lineMid + spread} ${lineMid - spread} ${lineEnd}`}/>
+      <polyline id="path"
+        points={`${-lineStart + spread} ${lineStart + spread}
+        ${-lineMid + spread} ${lineMid + spread} ${-lineEnd} ${lineMid + spread}`}/>
+      <polyline id="path"
+        points={`${-lineStart - spread} ${lineStart - spread}
+        ${-lineMid - spread} ${lineMid - spread} ${-lineEnd} ${lineMid - spread}`}/>
+      <polyline id="path"
+        points={`${-lineStart - spread} ${-lineStart + spread}
+        ${-lineMid - spread} ${-lineMid + spread} ${-lineEnd} ${-lineMid + spread}`}/>
+      <polyline id="path"
+        points={`${-lineStart + spread} ${-lineStart - spread}
+        ${-lineMid + spread} ${-lineMid - spread} ${-lineMid + spread} ${-lineEnd}`}/>
+    </>
+  );
+}
+
 export default function background(props) {
   // used for default props
   const size = props.size || Math.min(window.innerWidth, window.innerHeight);
@@ -33,7 +79,7 @@ export default function background(props) {
                 r={circleRadius} strokeWidth={size * 0.004}/>
               <circle cx={lineEnd + circleRadius} cy={-lineMid + spread}
                 r={circleRadius} strokeWidth={size * 0.004}/>
-              
+
               <circle cx={lineEnd + circleRadius} cy={lineMid - spread}
                 r={circleRadius} strokeWidth={size * 0.004}/>
               <circle cx={lineMid - spread} cy={lineEnd + circleRadius}
@@ -50,74 +96,19 @@ export default function background(props) {
                 r={circleRadius} strokeWidth={size * 0.004}/>
             </g>
           </g>
-          <g 
+          <g
             id="electricity" transform={`translate(${size / 2}, ${size / 2})`}
             className="path" strokeWidth={(size * 0.004) + (size * 0.004)} fill="none"
             fillRule="evenodd" strokeLinejoin="round"
             strokeDasharray={`${size * 0.04},${size * 0.15}`} strokeDashoffset={size * 2}>
-              {circuit(props)}
+            {circuit(props)}
           </g>
           <g id="circuit" transform={`translate(${size / 2}, ${size / 2})`}
             strokeWidth={size * 0.004}>
-              {circuit(props)}
+            {circuit(props)}
           </g>
         </g>
       </svg>
     </div>
-  );
-}
-
-// abstracts circuit
-function circuit(props) {
-  // used for default props
-  const size = props.size || Math.min(window.innerWidth, window.innerHeight);
-  const innerRadius = props.innerRadius || size * 0.125;
-  const outerRadius = props.outerRadius || size * 0.2;
-  const lineSpread = props.lineSpread || 0.4;
-  const endDistance = props.endDistance || 1.85;
-  const lineStartOffset = props.lineStartOffset || 0;
-
-  // placement variables
-  const lineStart = (innerRadius - lineStartOffset ) / Math.sqrt(2);
-  const lineMid = outerRadius / Math.sqrt(2);
-  const lineEnd = outerRadius * endDistance;
-  const spread = (lineSpread * innerRadius) / Math.sqrt(2);
-
-  return (
-    <>
-        {/* <xDir,yDir>, <spreadXDir, spreadYDir>, <endXDir, endYDir> */}
-        {/*(+,-),(-,-),(+,0)*/}
-        <polyline id="path"
-          points={`${lineStart - spread} ${-lineStart - spread}
-          ${lineMid - spread} ${-lineMid - spread} ${lineEnd} ${-lineMid - spread}`}/> 
-        {/*(+,-),(+,+),(+,0)*/}
-        <polyline id="path"
-          points={`${lineStart + spread} ${-lineStart + spread}
-          ${lineMid + spread} ${-lineMid + spread} ${lineEnd} ${-lineMid + spread}`}/> 
-        {/*(+,+),(+,-),(+,0)*/}
-        <polyline id="path"
-          points={`${lineStart + spread} ${lineStart - spread}
-          ${lineMid + spread} ${lineMid - spread} ${lineEnd} ${lineMid - spread}`}/> 
-        {/*(+,+),(-,+),(0,+)*/}
-        <polyline id="path"
-          points={`${lineStart - spread} ${lineStart + spread}
-          ${lineMid - spread} ${lineMid + spread} ${lineMid - spread} ${lineEnd}`}/> 
-        {/*(-,+),(+,+),(-,0)*/}
-        <polyline id="path"
-          points={`${-lineStart + spread} ${lineStart + spread}
-          ${-lineMid + spread} ${lineMid + spread} ${-lineEnd} ${lineMid + spread}`}/> 
-        {/*(-,+),(-,-),(-,0)*/}
-        <polyline id="path"
-          points={`${-lineStart - spread} ${lineStart - spread}
-          ${-lineMid - spread} ${lineMid - spread} ${-lineEnd} ${lineMid - spread}`}/> 
-        {/*(-,-),(-,+),(-,0)*/}
-        <polyline id="path"
-          points={`${-lineStart - spread} ${-lineStart + spread}
-          ${-lineMid - spread} ${-lineMid + spread} ${-lineEnd} ${-lineMid + spread}`}/> 
-        {/*(-,-),(+,-),(0,-)*/}
-        <polyline id="path"
-          points={`${-lineStart + spread} ${-lineStart - spread}
-          ${-lineMid + spread} ${-lineMid - spread} ${-lineMid + spread} ${-lineEnd}`}/> 
-    </>
   );
 }
