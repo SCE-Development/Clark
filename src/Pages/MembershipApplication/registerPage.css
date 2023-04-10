@@ -107,6 +107,10 @@
   margin-bottom: 30px;
 }
 
+.form-card, .form-card2 {
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
 
 .form-card {
   margin: auto;
@@ -122,7 +126,6 @@
   margin: auto;
   min-width: 400px;
   left: 50%;
-  backdrop-filter: blur(10px);
   padding: 1.5rem;
 }
 
