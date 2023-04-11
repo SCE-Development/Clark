@@ -82,7 +82,7 @@
   .planContainer {
     display: flex;
     position: relative;
-    padding-top: 20%;
+    padding-top: 5%;
     padding-bottom: 10%;
     flex-wrap: wrap;
   }
@@ -111,11 +111,14 @@
   border-radius: 20px;
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  margin-top: 25px;
+  margin-bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .form-card {
-  margin: auto;
-  min-width: 350px;
+  min-width: 300px;
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -124,8 +127,7 @@
 }
 
 .form-card2 {
-  margin: auto;
-  min-width: 400px;
+  min-width: 300px;
   left: 50%;
   padding: 1.5rem;
 }
