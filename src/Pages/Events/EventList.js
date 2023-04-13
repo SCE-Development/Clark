@@ -7,7 +7,8 @@ import Header from '../../Components/Header/Header';
 
 function AnnouncementList() {
 
-  const ANNOUNCEMENT_CHANNEL_ID = "1088216227278753802"
+  const ANNOUNCEMENT_CHANNEL_ID = "1088216227278753802" // testing channel
+  //const ANNOUNCEMENT_CHANNEL_ID = "1018778486221058061"   // announcement channel
   const MESSAGE_LIMIT = "100"
   const EVENT_MENTION = "1094797976406331432";
 
