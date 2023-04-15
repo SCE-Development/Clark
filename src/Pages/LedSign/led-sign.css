@@ -1,6 +1,7 @@
 .sign-wrapper {
   margin: auto;
-  width: 50%;
+  min-width: 350px;
+  width: 40%;
   padding: 32px;
 }
 

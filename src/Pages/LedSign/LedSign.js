@@ -172,9 +172,8 @@ function LedSign(props) {
             <marquee
               behavior="scroll"
               direction="left"
-              className="mock-signText"
             >
-              <h1 style={{ color: textColor }} placeholder="Sign Text">
+              <h1 className="mock-signText" style={{ color: textColor }} placeholder="Sign Text">
                 {text}
               </h1>
             </marquee>
