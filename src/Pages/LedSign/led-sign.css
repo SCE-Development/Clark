@@ -7,22 +7,66 @@
 .turn-off-sign-wrapper {
   display: flex;
   flex-direction: row;
-  width: 130px;
-  justify-content: space-between;
+  width: 100%;
 }
 
-.sign-status {
+.turn-off-sign-wrapper > * {
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.sliders {
   width: 100%;
 }
 
 .sign-available {
   color: green;
+  text-decoration: underline
 }
 
 .sign-unavailable {
   color: red;
+  text-decoration: underline
 }
 
-#scroll-speed{
-  direction: rtl;
+.mock-sign {
+  margin: 0% 0% 0% 0%;
+  padding: 0;
+  margin-block-end: 0%;
+}
+
+.mock-signText {
+  margin: 0;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.mock-signText > h1 {
+  margin: 0;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.mock-signBorderTop {
+  background-color: #c7c7c7;
+  min-height: 5px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.mock-signBorderBot {
+  background-color: #c7c7c7;
+  min-height: 5px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+}
+
+.mock-signBackground {
+  background-color: #dee0df;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow-x: auto;
+  min-height: 50px;
 }

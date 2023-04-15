@@ -3,73 +3,73 @@ import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { Spinner, Input, Button, Container } from 'reactstrap';
 import './led-sign.css';
 import Header from '../../Components/Header/Header';
-import ConfirmationModal
-  from '../../Components/DecisionModal/ConfirmationModal.js';
+import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
 
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [text, setText] = useState('');
+  const [text, setText] = useState('Welcome to SCE');
   const [brightness, setBrightness] = useState(50);
   const [scrollSpeed, setScrollSpeed] = useState(25);
-  const [backgroundColor, setBackgroundColor] = useState('#0000ff');
-  const [textColor, setTextColor] = useState('#00ff00');
-  const [borderColor, setBorderColor] = useState('#ff0000');
+  const [backgroundColor, setBackgroundColor] = useState('#000000');
+  const [textColor, setTextColor] = useState('#ffffff');
+  const [borderColor, setBorderColor] = useState('#0004ff');
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
-  const [awaitingStopSignResponse, setAwaitingStopSignResponse]
-    = useState(false);
+  const [awaitingStopSignResponse, setAwaitingStopSignResponse] =
+    useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
   const [shutdownToggle, setShutdownToggle] = useState(false);
   const inputArray = [
     {
-      title: 'Sign Text:',
+      title: 'Sign Text',
       placeholder: 'Enter Text',
       value: text,
       type: 'text',
-      onChange: e => setText(e.target.value),
-      maxLength: '50'
+      onChange: (e) => setText(e.target.value),
+      maxLength: '50',
     },
     {
       title: 'Background Color',
       value: backgroundColor,
       type: 'color',
-      onChange: e => setBackgroundColor(e.target.value)
+      onChange: (e) => setBackgroundColor(e.target.value),
     },
     {
       title: 'Text Color',
       value: textColor,
       type: 'color',
-      onChange: e => setTextColor(e.target.value)
+      onChange: (e) => setTextColor(e.target.value),
     },
     {
       title: 'Border Color',
       value: borderColor,
       type: 'color',
-      onChange: e => setBorderColor(e.target.value)
+      onChange: (e) => setBorderColor(e.target.value),
     },
     {
-      title: 'Brightness:',
+      title: 'Brightness',
       value: brightness,
+      className: 'sliders',
       min: '25',
       max: '75',
       step: '1',
       type: 'range',
-      onChange: e => setBrightness(e.target.value)
+      onChange: (e) => setBrightness(e.target.value),
     },
     {
-      title: 'Scroll Speed:',
-      id: 'scroll-speed',
+      title: 'Scroll Speed',
       value: scrollSpeed,
+      className: 'sliders',
       min: '0',
       max: '50',
       step: '1',
       type: 'range',
-      onChange: e => setScrollSpeed(e.target.value)
-    }
+      onChange: (e) => setScrollSpeed(e.target.value),
+    },
   ];
   const headerProps = {
-    title: 'LED Sign'
+    title: 'LED Sign',
   };
 
   async function handleSend() {
@@ -91,7 +91,7 @@ function LedSign(props) {
     setAwaitingSignResponse(false);
   }
 
-  async function handleStop(){
+  async function handleStop() {
     setAwaitingStopSignResponse(true);
     const signResponse = await updateSignText(
       {
@@ -106,16 +106,18 @@ function LedSign(props) {
   }
 
   function renderRequestStatus() {
-    if (awaitingSignResponse ||
-      (requestSuccessful === undefined && stopRequestSuccesful === undefined)) {
+    if (
+      awaitingSignResponse ||
+      (requestSuccessful === undefined && stopRequestSuccesful === undefined)
+    ) {
       return <></>;
     } else if (requestSuccessful) {
-      return <p className='sign-available'>Sign successfully updated!</p>;
-    } else if (stopRequestSuccesful){
+      return <p className="sign-available">Sign successfully updated!</p>;
+    } else if (stopRequestSuccesful) {
       return <p className="sign-available">Sign successfully stopped!</p>;
     } else {
       return (
-        <p className='sign-unavailable'>The request failed. Try again later.</p>
+        <p className="sign-unavailable">The request failed. Try again later.</p>
       );
     }
   }
@@ -141,15 +143,15 @@ function LedSign(props) {
     }
     checkSignHealth(props.user.firstName);
     // eslint-disable-next-line
-  }, [])
+  }, []);
 
   function renderSignHealth() {
     if (loading) {
       return <Spinner />;
     } else if (signHealthy) {
-      return <span className='sign-available'> Sign is up.</span>;
+      return <span className="sign-available">ON</span>;
     } else {
-      return <span className='sign-unavailable'> Sign is down!</span>;
+      return <span className="sign-unavailable">OFF</span>;
     }
   }
 
@@ -157,16 +159,36 @@ function LedSign(props) {
     <div>
       <Header {...headerProps} />
       <div className="sign-wrapper">
-        <Container>
-          <h1 className="sign-status">
-            Sign Status:
-            {renderSignHealth()}
-          </h1>
-        </Container>
+        <label>Preview</label>
+        <div>
+          <div
+            className="mock-signBorderTop"
+            style={{ backgroundColor: borderColor }}
+          ></div>
+          <div
+            className="mock-signBackground"
+            style={{ backgroundColor: backgroundColor }}
+          >
+            <marquee
+              behavior="scroll"
+              direction="left"
+              className="mock-signText"
+            >
+              <h1 style={{ color: textColor }} placeholder="Sign Text">
+                {text}
+              </h1>
+            </marquee>
+          </div>
+          <div
+            className="mock-signBorderBot"
+            style={{ backgroundColor: borderColor }}
+          ></div>
+        </div>
         {inputArray.map((input, index) => {
           return (
             <div key={index} className="full-width">
               <label>{input.title}</label>
+              <br />
               <Input disabled={loading || !signHealthy} {...input} />
             </div>
           );
@@ -174,6 +196,7 @@ function LedSign(props) {
         <div className="turn-off-sign-wrapper">
           <Button
             id="led-sign-send"
+            color="success"
             onClick={handleSend}
             disabled={loading || !signHealthy || awaitingSignResponse}
           >
@@ -186,7 +209,12 @@ function LedSign(props) {
           >
             {awaitingStopSignResponse ? <Spinner /> : 'Stop'}
           </Button>
+          <label>
+            Status&nbsp;
+            {renderSignHealth()}
+          </label>
         </div>
+
         {renderRequestStatus()}
       </div>
       <ConfirmationModal
