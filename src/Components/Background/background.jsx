@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
 import './background.css';
 
+// used for default props
+const size = props.size || Math.min(window.innerWidth, window.innerHeight);
+const innerRadius = props.innerRadius || size * 0.125;
+const outerRadius = props.outerRadius || size * 0.2;
+const lineSpread = props.lineSpread || 0.4;
+const endDistance = props.endDistance || 1.85;
+const radius = props.radius || 0;
+const lineStartOffset = props.lineStartOffset || 0;
+
+// used for circles
+const lineStart = (innerRadius - lineStartOffset ) / Math.sqrt(2);
+const lineMid = outerRadius / Math.sqrt(2);
+const lineEnd = outerRadius * endDistance;
+const spread = (lineSpread * innerRadius) / Math.sqrt(2);
+const circleRadius = size * 0.007;
+
 // abstracts circuit
 function circuit(props) {
-  // used for default props
-  const size = props.size || Math.min(window.innerWidth, window.innerHeight);
-  const innerRadius = props.innerRadius || size * 0.125;
-  const outerRadius = props.outerRadius || size * 0.2;
-  const lineSpread = props.lineSpread || 0.4;
-  const endDistance = props.endDistance || 1.85;
-  const lineStartOffset = props.lineStartOffset || 0;
-
-  // placement variables
-  const lineStart = (innerRadius - lineStartOffset ) / Math.sqrt(2);
-  const lineMid = outerRadius / Math.sqrt(2);
-  const lineEnd = outerRadius * endDistance;
-  const spread = (lineSpread * innerRadius) / Math.sqrt(2);
 
   return (
     <>
@@ -48,19 +51,6 @@ function circuit(props) {
 }
 
 export default function background(props) {
-  // used for default props
-  const size = props.size || Math.min(window.innerWidth, window.innerHeight);
-  const innerRadius = props.innerRadius || size * 0.125;
-  const outerRadius = props.outerRadius || size * 0.2;
-  const lineSpread = props.lineSpread || 0.4;
-  const endDistance = props.endDistance || 1.85;
-  const radius = props.radius || 0;
-
-  // used for circles
-  const lineMid = outerRadius / Math.sqrt(2);
-  const lineEnd = outerRadius * endDistance;
-  const spread = (lineSpread * innerRadius) / Math.sqrt(2);
-  const circleRadius = size * 0.007;
 
   return (
     <div className='background-parent'>
