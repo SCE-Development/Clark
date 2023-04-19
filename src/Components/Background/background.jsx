@@ -26,14 +26,14 @@ function defaultProps(props) {
     'endDistance' : endDistance,
     'radius' : radius,
     'lineStartOffset' : lineStartOffset,
-  
+
     // used for circles
     'lineStart' : lineStart,
     'lineMid' : lineMid,
     'lineEnd' : lineEnd,
     'spread' : spread,
     'circleRadius' : circleRadius,
-  }
+  };
 }
 
 // abstracts circuit
