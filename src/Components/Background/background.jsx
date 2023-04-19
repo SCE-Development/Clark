@@ -2,33 +2,48 @@ import React, { Component } from 'react';
 import './background.css';
 
 function defaultProps(props) {
+  const size = props.size || Math.min(window.innerWidth, window.innerHeight);
+  const innerRadius = props.innerRadius || size * 0.125;
+  const outerRadius = props.outerRadius || size * 0.2;
+  const lineSpread = props.lineSpread || 0.4;
+  const endDistance = props.endDistance || 1.85;
+  const radius = props.radius || 0;
+  const lineStartOffset = props.lineStartOffset || 0;
+
+  // used for circles
+  const lineStart = (innerRadius - lineStartOffset ) / Math.sqrt(2);
+  const lineMid = outerRadius / Math.sqrt(2);
+  const lineEnd = outerRadius * endDistance;
+  const spread = (lineSpread * innerRadius) / Math.sqrt(2);
+  const circleRadius = size * 0.007;
+
   return {
     // used for default props
-    'size' : props.size || Math.min(window.innerWidth, window.innerHeight),
-    'innerRadius' : props.innerRadius || size * 0.125,
-    'outerRadius' : props.outerRadius || size * 0.2,
-    'lineSpread' : props.lineSpread || 0.4,
-    'endDistance' : props.endDistance || 1.85,
-    'radius' : props.radius || 0,
-    'lineStartOffset' : props.lineStartOffset || 0,
+    'size' : size,
+    'innerRadius' : innerRadius,
+    'outerRadius' : outerRadius,
+    'lineSpread' : lineSpread,
+    'endDistance' : endDistance,
+    'radius' : radius,
+    'lineStartOffset' : lineStartOffset,
   
     // used for circles
-    'lineStart' : (innerRadius - lineStartOffset ) / Math.sqrt(2),
-    'lineMid' : outerRadius / Math.sqrt(2),
-    'lineEnd' : outerRadius * endDistance,
-    'spread' : (lineSpread * innerRadius) / Math.sqrt(2),
-    'circleRadius' : size * 0.007,
+    'lineStart' : lineStart,
+    'lineMid' : lineMid,
+    'lineEnd' : lineEnd,
+    'spread' : spread,
+    'circleRadius' : circleRadius,
   }
 }
 
 // abstracts circuit
-function circuit() {
+function circuit(props) {
   const {
     lineStart,
     lineMid,
     lineEnd,
     spread,
-  } = defaultProps();
+  } = defaultProps(props);
 
   return (
     <>
@@ -60,7 +75,7 @@ function circuit() {
   );
 }
 
-export default function background() {
+export default function background(props) {
   const {
     size,
     innerRadius,
@@ -70,7 +85,7 @@ export default function background() {
     lineEnd,
     spread,
     circleRadius
-  } = defaultProps();
+  } = defaultProps(props);
 
   return (
     <div className='background-parent'>
