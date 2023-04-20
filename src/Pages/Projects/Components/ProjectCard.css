@@ -1,0 +1,28 @@
+.project-photo {
+    height: auto;
+    margin: 0px 0px 15px 0px;
+    max-width: 100%;
+}
+
+.project-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 35px;
+}
+
+.project-subnote {
+    float:right;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+}
+
+.project-caption {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+}
+
+/* Table becomes one column */
+@media screen and (max-width: 910px) {
+    .project-box {
+        margin: 0px 50px 0px 50px;
+    }
+}

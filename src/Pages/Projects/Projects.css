@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
+.projects-bg {
+    background-color: black;
+    -webkit-text-size-adjust: 100%;
+}
+
+.divider {
+    width: 50px;
+}
+
+.project-row {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 50px 0px 50px;
+}
+
+@media (max-width: 576px) {
+    .projects-bg .container {
+        max-width: 700px !important;
+    }
+}
+
+/* Table becomes one column */
+@media screen and (max-width: 910px) {
+    .project-row {
+        display: inline;
+    }
+}
