@@ -7,6 +7,8 @@
   position: fixed;
   z-index: 4;
   width: 100%;
+  /*display: flex;*/
+  /*align-items: center;*/
 }
 
 .login-icon {
@@ -50,6 +52,7 @@
 
 .sce-nav {
   flex-flow:row wrap;
+  padding-right: 121s0px;
 }
 
 .navlink-items {
@@ -68,7 +71,7 @@
 .authentication {
   column-gap: 30px;
   position:absolute;
-  top:10px;
+  top:20px;
   right:20px;
   line-height: 190%;
   width:300px;
@@ -81,6 +84,7 @@
 	border-radius:10px;
 	font-size: 17px;
 	width: 120px;
+  /*align-items: center;*/
   }
   
   #signup-btn {
