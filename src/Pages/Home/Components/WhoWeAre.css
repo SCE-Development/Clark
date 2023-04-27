@@ -1,7 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap");
 
 .who-we-are {
-  margin-top: 150px;
+  margin-top: 100px;
+  color:darkslategray;
 }
 
 .container-who-we-are {
@@ -12,13 +13,13 @@
 .who-we-are-header {
   padding-left: 40px;
   padding-bottom: 10px;
-  font-family: "Montserrat";
+  font-family: sans-serif;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 900;
   font-size: 35px;
   line-height: 42px;
 
-  color: #ffffff;
+  color: #005b96;
 }
 
 .who-we-are-p {
@@ -41,7 +42,8 @@
 
 .who-we-are-img img {
   width: 600px;
-  height: auto;
+  height: 300px;
+  object-fit: cover;
 }
 
 .join-sce-button {
@@ -57,9 +59,8 @@
   color: #ffffff;
 }
 
-
 @media screen and (max-width:500px) {
-  .hide-images {
+  .image {
     display: none !important;
   }
   .who-we-are-p {
@@ -75,4 +76,24 @@
     margin: 0 !important;
     padding-left: 90px !important;
   }
+  .who-we-are-p {
+    text-align: center;
+    font-family: "Mina", sans-serif;
+    width: 50%;
+    font-size: 18px;
+  }
 } 
+
+@media (max-width: 920px) {
+  .who-we-are-img img {
+    display: none !important;
+  }
+
+  .who-we-are-p {
+    text-align: center;
+    font-family: "Mina", sans-serif;
+    width: 100%;
+    font-size: 18px;
+  }
+  
+}
