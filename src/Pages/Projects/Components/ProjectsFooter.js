@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Row } from 'reactstrap';
-import './ProjectsFooter.css';
-import DiscordIcon from './Icons/DiscordIcon';
-import InstagramIcon from './Icons/InstagramIcon';
-import GitHubIcon from './Icons/GitHubIcon';
+import '../../../Components/Footer/footer.css';
+import DiscordIcon from '../../../Components/Footer/Icons/DiscordIcon';
+import InstagramIcon from '../../../Components/Footer/Icons/InstagramIcon';
+import GitHubIcon from '../../../Components/Footer/Icons/GitHubIcon';
 
 export default () => {
     return (
