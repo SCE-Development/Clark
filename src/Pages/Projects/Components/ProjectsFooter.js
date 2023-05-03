@@ -6,7 +6,7 @@ import InstagramIcon from '../../../Components/Footer/Icons/InstagramIcon';
 import GitHubIcon from '../../../Components/Footer/Icons/GitHubIcon';
 
 export default () => {
-    return (
+  return (
     <>
       <footer className='footer-wrap bg-dark text-white p-4'>
         <Row  className='footer-text align-items-center justify-content-center'>

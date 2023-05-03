@@ -10,7 +10,7 @@ export default function ProjectCard({link, image, name, subnote, caption}) {
         </a>
         <p className='project-name'>
           {name}
-        <p className='project-subnote'>{subnote}</p>
+          <p className='project-subnote'>{subnote}</p>
         </p>
         <p className='project-caption'>
           {caption}
