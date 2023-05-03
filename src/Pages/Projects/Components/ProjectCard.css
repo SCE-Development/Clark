@@ -1,28 +1,49 @@
-.project-photo {
+.project-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+  }
+  
+  .project-photo {
+    width: 100%;
     height: auto;
-    margin: 0px 0px 15px 0px;
-    max-width: 100%;
-}
-
-.project-name {
+    margin-bottom: 10px;
+  }
+  
+  .project-name {
+    color: black;
     font-family: 'Montserrat', sans-serif;
-    font-size: 35px;
-}
-
-.project-subnote {
-    float:right;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .project-subnote {
+    color: black;
     font-family: 'Montserrat', sans-serif;
-    font-size: 10px;
-}
-
-.project-caption {
+    font-size: 18px;
+    font-weight: normal;
+    margin-left: 10px;
+  }
+  
+  .project-caption {
+    color: black;
     font-family: 'Montserrat', sans-serif;
-    font-size: 15px;
-}
-
-/* Table becomes one column */
+    width: 100%;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+  }
+  
+  /* Table becomes one column */
 @media screen and (max-width: 910px) {
     .project-box {
-        margin: 0px 50px 0px 50px;
+        margin: 0px 50px 25px 50px;
     }
 }
