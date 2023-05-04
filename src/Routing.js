@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.css';
-
+//import Project from './Pages/Projects';
 import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
-
+import ProjectsPage from './Pages/Projects/Projects';
 import Overview from './Pages/Overview/Overview';
 import EmailPage from './Pages/EmailList/EmailPage';
 import EventManager from './Pages/EventManager/EventManager';
@@ -131,6 +131,7 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
+    { Component: ProjectsPage, path: '/projects'}
   ];
   return (
     <Router>
