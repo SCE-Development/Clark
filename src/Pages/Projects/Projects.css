@@ -5,19 +5,19 @@
 }
 
 .divider {
-    width: 50px;
+    width: 5%;
 }
 
 .project-row {
     color: white;
     display: flex;
     justify-content: space-between;
-    margin: 0px 50px 0px 50px;
+    margin: 0% 5% 0% 5%;
 }
 
 @media (max-width: 576px) {
     .projects-bg .container {
-        max-width: 700px !important;
+        max-width: 70% !important;
     }
 }
 

@@ -16,7 +16,7 @@ export default function ProjectsPage() {
               image={'https://user-images.githubusercontent.com' +
               '/59713070/235862105-9606e862-e27e-40d4-8991-de1793c48dd0.png'}
               name={'Clark'}
-              subnote={'(formerly Core-v4)'}
+              subnote={' (formerly Core-v4)'}
               caption={'Made entirely by SJSU students, Clark is' +
               ' the Software and Computer Engineering Society\'s outward face on the internet.'} />
             <div className="divider"></div>

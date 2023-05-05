@@ -1,10 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.css';
-//import Project from './Pages/Projects';
+
 import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
-import ProjectsPage from './Pages/Projects/Projects';
 import Overview from './Pages/Overview/Overview';
 import EmailPage from './Pages/EmailList/EmailPage';
 import EventManager from './Pages/EventManager/EventManager';
@@ -29,6 +28,7 @@ import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 import AboutPage from './Pages/About/About';
+import ProjectsPage from './Pages/Projects/Projects';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;

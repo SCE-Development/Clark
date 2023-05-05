@@ -2,7 +2,7 @@
     background-color: #0C1E2F;
     color: white;
     font-family: 'Mina', sans-serif;
-    margin: 0px 25px 25px 25px;
+    margin: 0px 2.5% 2.5% 2.5%;
     padding-top: 100px;
 }
 
@@ -11,14 +11,14 @@ hr {
     border-top: 7px solid white;
     border-radius: 5px; 
     height: 0px;
-    margin: 50px 0px 30px 0px;
+    margin: 5% 0% 3% 0%;
     opacity: 100%;
 }
 
 .text-header {
     display: flex by final spec;
     font-size: 25px;
-    padding: 50px 50px 40px 50px;
+    padding: 5% 5% 4% 5%;
     text-align: left;
 }
 
@@ -30,15 +30,15 @@ hr {
 
 #btn {
     float: right;
-    height: 60px;
+    height: 50%;
 }
 
 @media screen and (max-width: 505px) {
     #btn {
         float: none;
-        margin: 25px 50px 0px 0px;
+        margin: 2.5% 5% 0% 0%;
     }
     hr {
-        margin: 35px 0px 0px 0px;
+        margin: 3.5% 0% 0% 0%;
     }
 }
