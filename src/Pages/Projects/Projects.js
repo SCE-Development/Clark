@@ -9,7 +9,7 @@ export default function ProjectsPage() {
     {'link': 'https://github.com/SCE-Development/Clark',
       'image': 'https://user-images.githubusercontent.com' +
       '/59713070/235862105-9606e862-e27e-40d4-8991-de1793c48dd0.png',
-      'name':'Clark', 'subnote':'',
+      'name':'Clark', 'subnote':'(formerly Core-v4)',
       'caption':'Made entirely by SJSU students, Clark is' +
       ' the Software and Computer Engineering Society\'s outward face on the internet.'
     },
@@ -34,8 +34,8 @@ export default function ProjectsPage() {
       '/59713070/235859723-cdea1a8e-5698-40c2-9755-9ec2e40984cd.jpeg',
       'name':'SCE Light-Emitting Display', 'subnote':'',
       'caption':'Produced as a part of our summer internship projects, ' +
-      ' SCE\'s clubroom features a student-controlled illuminated sign ' +
-      'to brighten the club\'s atmosphere.'
+      ' SCE interns designed an officer-controlled illuminated sign, ' +
+      'functioning to brighten the clubroom\'s atmosphere.'
     },
 
   ];
