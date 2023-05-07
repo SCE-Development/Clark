@@ -4,6 +4,7 @@ import { memberApplicationState } from '../../Enums';
 import MembershipForm from './MembershipForm';
 import ConfirmationPage from './ConfirmationPage';
 import { CSSTransition } from 'react-transition-group';
+import Background from '../../Components/Background/background';
 
 export default function MembershipApplication() {
   const [membershipState, setMembershipState] =
@@ -27,6 +28,7 @@ export default function MembershipApplication() {
 
   return (
     <div>
+      <Background/>
       {membershipArray.map((registerView, index) => {
         return (
           <div key={index}>

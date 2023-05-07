@@ -3,6 +3,7 @@ import { Row, Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
+import Background from '../../Components/Background/background';
 import './login.css';
 
 export default function Login(props) {
@@ -56,6 +57,7 @@ export default function Login(props) {
           </p>
         </form>
       </Row>
+      <Background/>
     </Container>
   );
 }

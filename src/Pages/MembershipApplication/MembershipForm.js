@@ -293,7 +293,7 @@ export default function MembershipForm(props) {
             * = Required field
           </h6>
           <Form onSubmit={submitApplication}>
-            <Row id='name-field-row'>
+            <div id='name-field-row'>
               {nameFields.map((input, index) => (
                 <FormGroup
                   className='application-form-group'
@@ -308,7 +308,7 @@ export default function MembershipForm(props) {
                   {input.ifRequirementsNotMet}
                 </FormGroup>
               ))}
-            </Row>
+            </div>
             <div id='email-input-container'>
               {accountFields.map((input, index) => (
                 <FormGroup
