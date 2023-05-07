@@ -6,11 +6,13 @@ export default function ProjectHeader() {
   return (
     <div className='projects-header'>
       <div className='text-header'>
-        <b>Our Projects</b>
-        <Button outline color='primary' id='btn' href='https://github.com/SCE-Development'
-          style={{width:'170px', border:'3px solid', borderRadius:8, fontSize:'20px'}}>
-            GitHub
-        </Button>
+        <div className='upper-header'>
+          <b>Our Projects</b>
+          <Button outline color='primary' id='btn' href='https://github.com/SCE-Development'
+            style={{width:'170px', border:'3px solid', borderRadius:8, fontSize:'20px'}}>
+              GitHub
+          </Button>
+        </div>
         <hr />
         <div className='text-header-box'>
           <p>

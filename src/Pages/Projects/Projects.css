@@ -24,6 +24,6 @@
 /* Table becomes one column */
 @media screen and (max-width: 910px) {
     .project-row {
-        display: inline;
+        display: inline-table;
     }
 }
