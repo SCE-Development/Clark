@@ -20,6 +20,7 @@ export default function UserNavBar(props) {
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const unauthedRoutes = [{ title: 'About', route: '/about' },
+    { title: 'Projects', route: '/projects' },
     { title: 'Events', route: '/events' }];
 
   const authedRoutes = [{ title: 'Printing', route: '/2DPrinting' }];
