@@ -7,11 +7,11 @@
 .projects-table {
     display: flex;
     flex-wrap: wrap;
+    padding: 0% 3% 0% 3%;
 }
 
 .project-container {
     display: flex;
-    justify-content: center;
     margin: 0% 1% 0% 1%;
     flex-grow: 2;
     flex-basis: 40%
