@@ -17,7 +17,6 @@
   }
   
   .project-name {
-    color: black;
     font-family: 'Montserrat', sans-serif;
     font-size: 24px;
     font-weight: bold;
@@ -25,7 +24,6 @@
   }
   
   .project-subnote {
-    color: black;
     font-family: 'Montserrat', sans-serif;
     font-size: 18px;
     font-weight: normal;
@@ -33,7 +31,6 @@
   }
   
   .project-caption {
-    color: black;
     font-family: 'Montserrat', sans-serif;
     width: 100%;
     font-size: 14px;

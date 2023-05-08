@@ -10,11 +10,15 @@
 }
 
 .project-container {
-    color: white;
     display: flex;
+    justify-content: center;
     margin: 0% 1% 0% 1%;
     flex-grow: 2;
     flex-basis: 40%
+}
+
+.project-container p {
+    color: black;
 }
 
 .divider {
