@@ -4,15 +4,21 @@
     -webkit-text-size-adjust: 100%;
 }
 
-.divider {
-    width: 5%;
+.projects-table {
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.project-row {
+.project-container {
     color: white;
     display: flex;
-    justify-content: space-between;
-    margin: 0% 5% 0% 5%;
+    margin: 0% 1% 0% 1%;
+    flex-grow: 2;
+    flex-basis: 40%
+}
+
+.divider {
+    padding: 12%;
 }
 
 @media (max-width: 576px) {
@@ -23,7 +29,10 @@
 
 /* Table becomes one column */
 @media screen and (max-width: 910px) {
-    .project-row {
-        display: inline-table;
+    .project-container {
+        flex-basis:100%;
+    }
+    .divider {
+        padding: 0%;
     }
 }

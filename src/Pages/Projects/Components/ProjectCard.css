@@ -1,13 +1,13 @@
-.project-box {
+.project-card {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 2%;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2.5%;
+    padding: 4%;
+    margin-bottom: 4%;
+    max-width: 100%;
   }
   
   .project-photo {
@@ -29,7 +29,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 18px;
     font-weight: normal;
-    margin-left: 10px; /* dealing with text so px */
+    margin-left: 10px;
   }
   
   .project-caption {
@@ -43,7 +43,7 @@
   
   /* Table becomes one column */
 @media screen and (max-width: 910px) {
-    .project-box {
-        margin: 0% 5% 2.5% 5%;
+    .project-card {
+        margin: 0% 3% 4% 3%;
     }
 }
