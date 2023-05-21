@@ -4,7 +4,6 @@ import './index.css';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
-
 import Overview from './Pages/Overview/Overview';
 import EmailPage from './Pages/EmailList/EmailPage';
 import EventManager from './Pages/EventManager/EventManager';
@@ -29,6 +28,7 @@ import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 import AboutPage from './Pages/About/About';
+import ProjectsPage from './Pages/Projects/Projects';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -131,6 +131,7 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
+    { Component: ProjectsPage, path: '/projects'}
   ];
   return (
     <Router>

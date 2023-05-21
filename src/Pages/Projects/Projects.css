@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Mina&family=Montserrat:wght@800&display=swap');
+.projects-bg {
+    background-color: black;
+    -webkit-text-size-adjust: 100%;
+}
+
+.projects-table {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0% 3% 0% 3%;
+}
+
+.project-container {
+    display: flex;
+    margin: 0% 1% 0% 1%;
+    flex-grow: 2;
+    flex-basis: 40%
+}
+
+.project-container p {
+    color: black;
+}
+
+.divider {
+    padding: 12%;
+}
+
+@media (max-width: 576px) {
+    .projects-bg .container {
+        max-width: 70% !important;
+    }
+}
+
+/* Table becomes one column */
+@media screen and (max-width: 910px) {
+    .project-container {
+        flex-basis:100%;
+    }
+    .divider {
+        padding: 0%;
+    }
+}
