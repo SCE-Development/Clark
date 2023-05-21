@@ -29,11 +29,11 @@ describe('<UserNavbar />', () => {
     const wrapper = mount(<UserNavbar />);
     expect(wrapper.find(Navbar)).to.have.lengthOf(1);
   });
-  it('Should render 4 routes by default', () => {
+  it('Should render 6 routes by default', () => {
     const wrapper = mount(<UserNavbar />);
-    // The reason there are 4 is due to the two
+    // The reason there are 6 is due to the three
     // routes being duplicated
-    expect(wrapper.find('.routes')).to.have.lengthOf(4);
+    expect(wrapper.find('.routes')).to.have.lengthOf(6);
   });
   it(
     'Should render two authentication buttons for' +

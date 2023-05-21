@@ -37,7 +37,6 @@ export default function ProjectsPage() {
       ' SCE interns designed an officer-controlled illuminated sign, ' +
       'functioning to brighten the clubroom\'s atmosphere.'
     },
-
   ];
 
   return (
@@ -46,13 +45,18 @@ export default function ProjectsPage() {
         <ProjectHeader />
         <div className='projects-table'>
           {projectData.map((project, index) => {
-            if (index % 2 === 0) { // skip odd indices b/c cards are in twos
-              const nextProject = projectData[index + 1];
+            if (index % 2 === 0 && projectData[index + 1] == null) {
               return (
-                <div className="project-row" key={index}>
+                <div className="project-container" id="alt" key={index}>
+                  <div className="divider"></div>
                   <ProjectCard {...project} />
-                  <div className="divider" />
-                  <ProjectCard {...nextProject} />
+                  <div className="divider"></div>
+                </div>
+              );
+            } else {
+              return (
+                <div className="project-container" key={index}>
+                  <ProjectCard {...project} />
                 </div>
               );
             }

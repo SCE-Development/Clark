@@ -11,7 +11,7 @@ hr {
     border-top: 7px solid white;
     border-radius: 5px; 
     height: 0px;
-    margin: 5% 0% 3% 0%;
+    margin: 3% 0% 3% 0%;
     opacity: 100%;
 }
 
@@ -28,17 +28,24 @@ hr {
     padding-right: 50%;
 }
 
-#btn {
-    float: right;
-    height: 50%;
+.upper-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0%;
 }
 
-@media screen and (max-width: 505px) {
-    #btn {
-        float: none;
-        margin: 2.5% 5% 0% 0%;
+@media screen and (max-width: 638px) {
+    .text-header-box {
+        padding-right: 0%;
     }
-    hr {
-        margin: 3.5% 0% 0% 0%;
+}
+
+@media screen and (max-width: 460px) {
+    #btn {
+        font-size: 16px !important;
+        width: 120px !important;
+    }
+    b {
+        font-size: 20px;
     }
 }
