@@ -1,9 +1,9 @@
-import axios from 'axios';
-import { UserApiResponse } from './ApiResponses';
-import { membershipState, userFilterType } from '../Enums';
+import axios from "axios";
+import { UserApiResponse } from "./ApiResponses";
+import { membershipState, userFilterType } from "../Enums";
 
-let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'http://localhost:8080/api';
+let GENERAL_API_URL =
+  process.env.REACT_APP_GENERAL_API_URL || "http://localhost:8080/api";
 
 /**
  * Queries the database for all users.
@@ -15,11 +15,11 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post(GENERAL_API_URL + '/User/users', {
+    .post(GENERAL_API_URL + "/User/users", {
       // don't need email
-      token
+      token,
     })
-    .then(result => {
+    .then((result) => {
       status.responseData = result.data;
     })
     .catch(() => {
@@ -32,7 +32,7 @@ export async function getCountAllUsers(query) {
   let status = new UserApiResponse();
   await axios
     .get(GENERAL_API_URL + `/User/countAllUsers/${query}`)
-    .then(result => {
+    .then((result) => {
       status.responseData = result.data;
     })
     .catch(() => {
@@ -45,7 +45,7 @@ export async function getCurrentUsers(query) {
   let status = new UserApiResponse();
   await axios
     .get(GENERAL_API_URL + `/User/currentUsers/${query}`)
-    .then(result => {
+    .then((result) => {
       status.responseData = result.data;
     })
     .catch(() => {
@@ -107,7 +107,7 @@ export async function editUser(userToEdit, token) {
     emailOptIn,
   } = userToEdit;
   await axios
-    .post(GENERAL_API_URL + '/User/edit', {
+    .post(GENERAL_API_URL + "/User/edit", {
       _id,
       firstName,
       lastName,
@@ -124,12 +124,12 @@ export async function editUser(userToEdit, token) {
       lastLogin,
       emailVerified,
       emailOptIn,
-      token
+      token,
     })
-    .then(result => {
+    .then((result) => {
       status.responseData = result.data;
     })
-    .catch(err => {
+    .catch((err) => {
       status.error = true;
       status.responseData = err.response;
     });
@@ -154,9 +154,9 @@ export async function updateLastLoginDate(email, token) {
 export async function deleteUserByEmail(email, token) {
   let status = new UserApiResponse();
   axios
-    .post(GENERAL_API_URL + '/User/delete', {
+    .post(GENERAL_API_URL + "/User/delete", {
       token,
-      email
+      email,
     })
     .catch(() => {
       status.error = true;
@@ -172,10 +172,11 @@ export async function deleteUserByEmail(email, token) {
  */
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/User/checkIfUserExists',
-    { email }).catch(() => {
-    status.error = true;
-  });
+  await axios
+    .post(GENERAL_API_URL + "/User/checkIfUserExists", { email })
+    .catch(() => {
+      status.error = true;
+    });
   return status;
 }
 
@@ -189,7 +190,7 @@ export async function checkIfUserExists(email) {
 export function filterUsers(users, filterID) {
   let filteredUsers = users.filter((user) => {
     if (filterID === userFilterType.VALID) {
-      return (user.accessLevel >= membershipState.ALUMNI);
+      return user.accessLevel >= membershipState.ALUMNI;
     } else if (filterID === userFilterType.NON_VALID) {
       return (
         user.accessLevel === membershipState.NON_MEMBER ||
@@ -204,7 +205,8 @@ export function filterUsers(users, filterID) {
 
 export async function connectToDiscord(email, token) {
   let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/user/connectToDiscord', { email, token })
+  await axios
+    .post(GENERAL_API_URL + "/user/connectToDiscord", { email, token })
     .then((res) => {
       status.responseData = res.data;
     })
@@ -216,7 +218,52 @@ export async function connectToDiscord(email, token) {
 
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/user/getUserById', {userID, token})
+  await axios
+    .post(GENERAL_API_URL + "/user/getUserById", { userID, token })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}
+
+export async function isUserSubscribed(email) {
+  let status = new UserApiResponse();
+  await axios
+    .get(GENERAL_API_URL + `/user/isUserSubscribed?=email${email}`)
+    .then((result) => {
+      status.responseData = result.data;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+export async function setUserEmailPreference(email, emailOptIn) {
+  let status = new UserApiResponse();
+  await axios
+    .post(GENERAL_API_URL + "/user/setUserEmailPreference", {
+      email,
+      emailOptIn,
+    })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}
+
+export async function getUserData(email) {
+  let status = new UserApiResponse();
+  await axios
+    .post(GENERAL_API_URL + "/user/getUserDataByEmail", {
+      email,
+    })
     .then((res) => {
       status.responseData = res.data;
     })
