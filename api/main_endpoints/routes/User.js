@@ -6,474 +6,487 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const User = require('../models/User.js');
 const {
-  getMemberExpirationDate,
-  hashPassword,
+	getMemberExpirationDate,
+	hashPassword,
 } = require('../util/registerUser');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
-  checkIfTokenSent,
-  checkIfTokenValid,
-  decodeToken,
+	checkIfTokenSent,
+	checkIfTokenValid,
+	decodeToken,
 } = require('../util/token-functions');
 const {
-  OK,
-  BAD_REQUEST,
-  UNAUTHORIZED,
-  FORBIDDEN,
-  NOT_FOUND,
-  CONFLICT,
-  SERVER_ERROR,
+	OK,
+	BAD_REQUEST,
+	UNAUTHORIZED,
+	FORBIDDEN,
+	NOT_FOUND,
+	CONFLICT,
+	SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const { discordApiKeys } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri =
-  process.env.DISCORD_REDIRECT_URI || 'http://localhost:8080/api/user/callback';
+	process.env.DISCORD_REDIRECT_URI ||
+	'http://localhost:8080/api/user/callback';
 
 router.get('/countAllUsers', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  const search = req.query.search;
-  let status = OK;
-  const count = await User.find(
-    {
-      $or: [
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-      ],
-    },
-    function(error, result) {
-      if (error) {
-        status = BAD_REQUEST;
-      } else if (result == 0) {
-        status = NOT_FOUND;
-      }
-    }
-  ).countDocuments();
-  const response = {
-    count,
-  };
-  res.status(status).json(response);
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	const search = req.query.search;
+	let status = OK;
+	const count = await User.find(
+		{
+			$or: [
+				{ firstName: { $regex: search, $options: 'i' } },
+				{ lastName: { $regex: search, $options: 'i' } },
+				{ email: { $regex: search, $options: 'i' } },
+			],
+		},
+		function (error, result) {
+			if (error) {
+				status = BAD_REQUEST;
+			} else if (result == 0) {
+				status = NOT_FOUND;
+			}
+		}
+	).countDocuments();
+	const response = {
+		count,
+	};
+	res.status(status).json(response);
 });
 
 router.get('/currentUsers', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  const search = req.query.search;
-  const page = parseInt(req.query.page) - 1;
-  const limit = parseInt(req.query.u);
-  let status = OK;
-  const users = await User.find(
-    {
-      $or: [
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-      ],
-    },
-    function(error, result) {
-      if (error) {
-        status = BAD_REQUEST;
-      } else if (result.length == 0) {
-        status = NOT_FOUND;
-      }
-    }
-  )
-    .skip(page * limit)
-    .limit(limit);
-  const response = {
-    users,
-  };
-  res.status(status).json(response);
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	const search = req.query.search;
+	const page = parseInt(req.query.page) - 1;
+	const limit = parseInt(req.query.u);
+	let status = OK;
+	const users = await User.find(
+		{
+			$or: [
+				{ firstName: { $regex: search, $options: 'i' } },
+				{ lastName: { $regex: search, $options: 'i' } },
+				{ email: { $regex: search, $options: 'i' } },
+			],
+		},
+		function (error, result) {
+			if (error) {
+				status = BAD_REQUEST;
+			} else if (result.length == 0) {
+				status = NOT_FOUND;
+			}
+		}
+	)
+		.skip(page * limit)
+		.limit(limit);
+	const response = {
+		users,
+	};
+	res.status(status).json(response);
 });
 
 router.post('/checkIfUserExists', (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  User.findOne(
-    {
-      email: email.toLowerCase(),
-    },
-    function(error, user) {
-      if (error) {
-        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-      }
+	const { email } = req.body;
+	if (!email) {
+		return res.sendStatus(BAD_REQUEST);
+	}
+	User.findOne(
+		{
+			email: email.toLowerCase(),
+		},
+		function (error, user) {
+			if (error) {
+				return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+			}
 
-      if (!user) {
-        // Member username does not exist
-        res.sendStatus(OK);
-      } else {
-        // User username does exist
-        res.sendStatus(CONFLICT);
-      }
-    }
-  );
+			if (!user) {
+				// Member username does not exist
+				res.sendStatus(OK);
+			} else {
+				// User username does exist
+				res.sendStatus(CONFLICT);
+			}
+		}
+	);
 });
 
 // Delete a member
 router.post('/delete', (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
 
-  User.deleteOne({ email: req.body.email }, function(error, user) {
-    if (error) {
-      const info = {
-        userEmail: req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: 'user/delete',
-        errorDescription: error,
-      };
+	User.deleteOne({ email: req.body.email }, function (error, user) {
+		if (error) {
+			const info = {
+				userEmail: req.body.email,
+				errorTime: new Date(),
+				apiEndpoint: 'user/delete',
+				errorDescription: error,
+			};
 
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
+			res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+		}
 
-    if (user.n < 1) {
-      res.status(NOT_FOUND).send({ message: 'User not found.' });
-    } else {
-      res.status(OK).send({ message: `${req.body.email} was deleted.` });
-    }
-  });
+		if (user.n < 1) {
+			res.status(NOT_FOUND).send({ message: 'User not found.' });
+		} else {
+			res.status(OK).send({ message: `${req.body.email} was deleted.` });
+		}
+	});
 });
 
 // Search for a member
-router.post('/search', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ALUMNI)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ email: req.body.email }, function(error, result) {
-    if (error) {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
+router.post('/search', function (req, res) {
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req, membershipState.ALUMNI)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	User.findOne({ email: req.body.email }, function (error, result) {
+		if (error) {
+			res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+		}
 
-    if (!result) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.email} not found.` });
-    }
+		if (!result) {
+			return res
+				.status(NOT_FOUND)
+				.send({ message: `${req.body.email} not found.` });
+		}
 
-    const user = {
-      firstName: result.firstName,
-      middleInitial: result.middleInitial,
-      lastName: result.lastName,
-      email: result.email,
-      emailVerified: result.emailVerified,
-      emailOptIn: result.emailOptIn,
-      discordUsername: result.discordUsername,
-      discordDiscrim: result.discordDiscrim,
-      discordID: result.discordID,
-      active: result.active,
-      accessLevel: result.accessLevel,
-      major: result.major,
-      joinDate: result.joinDate,
-      lastLogin: result.lastLogin,
-      membershipValidUntil: result.membershipValidUntil,
-      pagesPrinted: result.pagesPrinted,
-      doorCode: result.doorCode,
-      _id: result._id,
-    };
-    return res.status(OK).send(user);
-  });
+		const user = {
+			firstName: result.firstName,
+			middleInitial: result.middleInitial,
+			lastName: result.lastName,
+			email: result.email,
+			emailVerified: result.emailVerified,
+			emailOptIn: result.emailOptIn,
+			discordUsername: result.discordUsername,
+			discordDiscrim: result.discordDiscrim,
+			discordID: result.discordID,
+			active: result.active,
+			accessLevel: result.accessLevel,
+			major: result.major,
+			joinDate: result.joinDate,
+			lastLogin: result.lastLogin,
+			membershipValidUntil: result.membershipValidUntil,
+			pagesPrinted: result.pagesPrinted,
+			doorCode: result.doorCode,
+			_id: result._id,
+		};
+		return res.status(OK).send(user);
+	});
 });
 
 // Search for all members
-router.post('/users', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.find()
-    .sort({ joinDate: -1 })
-    .then((items) => {
-      res.status(OK).send(items);
-    })
-    .catch(() => {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    });
+router.post('/users', function (req, res) {
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	User.find()
+		.sort({ joinDate: -1 })
+		.then((items) => {
+			res.status(OK).send(items);
+		})
+		.catch(() => {
+			res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+		});
 });
 
 // Edit/Update a member record
 router.post('/edit', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
 
-  if (!req.body._id) {
-    return res.sendStatus(BAD_REQUEST);
-  }
+	if (!req.body._id) {
+		return res.sendStatus(BAD_REQUEST);
+	}
 
-  let decoded = decodeToken(req);
-  if (decoded.accessLevel === membershipState.MEMBER) {
-    if (req.body.email && req.body.email != decoded.email) {
-      return res.status(UNAUTHORIZED).send('Unauthorized to edit another user');
-    }
-    if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
-      return res
-        .status(UNAUTHORIZED)
-        .send('Unauthorized to change access level');
-    }
-  }
+	let decoded = decodeToken(req);
+	if (decoded.accessLevel === membershipState.MEMBER) {
+		if (req.body.email && req.body.email != decoded.email) {
+			return res
+				.status(UNAUTHORIZED)
+				.send('Unauthorized to edit another user');
+		}
+		if (
+			req.body.accessLevel &&
+			req.body.accessLevel !== decoded.accessLevel
+		) {
+			return res
+				.status(UNAUTHORIZED)
+				.send('Unauthorized to change access level');
+		}
+	}
 
-  if (decoded.accessLevel === membershipState.OFFICER) {
-    if (req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN) {
-      return res.sendStatus(UNAUTHORIZED);
-    }
-  }
+	if (decoded.accessLevel === membershipState.OFFICER) {
+		if (
+			req.body.accessLevel &&
+			req.body.accessLevel == membershipState.ADMIN
+		) {
+			return res.sendStatus(UNAUTHORIZED);
+		}
+	}
 
-  const query = { _id: req.body._id };
-  let user = req.body;
+	const query = { _id: req.body._id };
+	let user = req.body;
 
-  if (typeof req.body.numberOfSemestersToSignUpFor !== 'undefined') {
-    user.membershipValidUntil = getMemberExpirationDate(
-      parseInt(req.body.numberOfSemestersToSignUpFor)
-    );
-  }
+	if (typeof req.body.numberOfSemestersToSignUpFor !== 'undefined') {
+		user.membershipValidUntil = getMemberExpirationDate(
+			parseInt(req.body.numberOfSemestersToSignUpFor)
+		);
+	}
 
-  delete user.numberOfSemestersToSignUpFor;
+	delete user.numberOfSemestersToSignUpFor;
 
-  if (!!user.password) {
-    // hash the password before storing
-    const result = await hashPassword(user.password);
-    if (!result) {
-      return res.sendStatus(SERVER_ERROR);
-    }
-    user.password = result;
-  } else {
-    // omit password from the object if it is falsy
-    // i.e. an empty string, undefined or null
-    delete user.password;
-  }
+	if (!!user.password) {
+		// hash the password before storing
+		const result = await hashPassword(user.password);
+		if (!result) {
+			return res.sendStatus(SERVER_ERROR);
+		}
+		user.password = result;
+	} else {
+		// omit password from the object if it is falsy
+		// i.e. an empty string, undefined or null
+		delete user.password;
+	}
 
-  // Remove the auth token from the form getting edited
-  delete user.token;
+	// Remove the auth token from the form getting edited
+	delete user.token;
 
-  User.updateOne(query, { ...user }, function(error, result) {
-    if (error) {
-      const info = {
-        errorTime: new Date(),
-        apiEndpoint: 'user/edit',
-        errorDescription: error,
-      };
+	User.updateOne(query, { ...user }, function (error, result) {
+		if (error) {
+			const info = {
+				errorTime: new Date(),
+				apiEndpoint: 'user/edit',
+				errorDescription: error,
+			};
 
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
+			res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+		}
 
-    if (result.nModified < 1) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${query.email} not found.` });
-    }
-    return res.status(OK).send({
-      message: `${query.email} was updated.`,
-      membershipValidUntil: user.membershipValidUntil,
-    });
-  });
+		if (result.nModified < 1) {
+			return res
+				.status(NOT_FOUND)
+				.send({ message: `${query.email} not found.` });
+		}
+		return res.status(OK).send({
+			message: `${query.email} was updated.`,
+			membershipValidUntil: user.membershipValidUntil,
+		});
+	});
 });
 
 router.post('/getPagesPrintedCount', (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ email: req.body.email }, function(error, result) {
-    if (error) {
-      const info = {
-        errorTime: new Date(),
-        apiEndpoint: 'user/PagesPrintedCount',
-        errorDescription: error,
-      };
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	User.findOne({ email: req.body.email }, function (error, result) {
+		if (error) {
+			const info = {
+				errorTime: new Date(),
+				apiEndpoint: 'user/PagesPrintedCount',
+				errorDescription: error,
+			};
 
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
+			res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+		}
 
-    if (!result) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.email} not found.` });
-    }
-    return res.status(OK).json(result.pagesPrinted);
-  });
+		if (!result) {
+			return res
+				.status(NOT_FOUND)
+				.send({ message: `${req.body.email} not found.` });
+		}
+		return res.status(OK).json(result.pagesPrinted);
+	});
 });
 
-router.get('/callback', async function(req, res) {
-  const code = req.query.code;
-  const email = req.query.state;
-  discordConnection
-    .loginWithDiscord(code, email, discordRedirectUri)
-    .then((status) => {
-      return res.status(OK).redirect('https://discord.com/oauth2/authorized');
-    })
-    .catch((_) => {
-      return res.status(NOT_FOUND).send('Authorization unsuccessful!');
-    });
+router.get('/callback', async function (req, res) {
+	const code = req.query.code;
+	const email = req.query.state;
+	discordConnection
+		.loginWithDiscord(code, email, discordRedirectUri)
+		.then((status) => {
+			return res
+				.status(OK)
+				.redirect('https://discord.com/oauth2/authorized');
+		})
+		.catch((_) => {
+			return res.status(NOT_FOUND).send('Authorization unsuccessful!');
+		});
 });
 
 router.post('/getUserFromDiscordId', (req, res) => {
-  const { discordID, apiKey } = req.body;
-  if (!checkDiscordKey(apiKey)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ discordID }, (error, result) => {
-    let status = OK;
-    if (error) {
-      status = BAD_REQUEST;
-    } else if (!result) {
-      status = NOT_FOUND;
-    }
-    return res.status(status).send(result);
-  });
+	const { discordID, apiKey } = req.body;
+	if (!checkDiscordKey(apiKey)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	User.findOne({ discordID }, (error, result) => {
+		let status = OK;
+		if (error) {
+			status = BAD_REQUEST;
+		} else if (!result) {
+			status = NOT_FOUND;
+		}
+		return res.status(status).send(result);
+	});
 });
 
 router.post('/updatePagesPrintedFromDiscord', (req, res) => {
-  const { discordID, apiKey, pagesPrinted } = req.body;
-  if (!checkDiscordKey(apiKey)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.updateOne({ discordID }, { pagesPrinted }, (error, result) => {
-    let status = OK;
-    if (error) {
-      status = BAD_REQUEST;
-    } else if (result.n === 0) {
-      status = NOT_FOUND;
-    }
-    return res.sendStatus(status);
-  });
+	const { discordID, apiKey, pagesPrinted } = req.body;
+	if (!checkDiscordKey(apiKey)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	User.updateOne({ discordID }, { pagesPrinted }, (error, result) => {
+		let status = OK;
+		if (error) {
+			status = BAD_REQUEST;
+		} else if (result.n === 0) {
+			status = NOT_FOUND;
+		}
+		return res.sendStatus(status);
+	});
 });
 
-router.post('/connectToDiscord', function(req, res) {
-  const email = req.body.email;
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!email) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  if (!discordApiKeys.ENABLED) {
-    return res.sendStatus(OK);
-  }
-  return res
-    .status(OK)
-    .send(
-      'https://discord.com/api/oauth2/authorize?client_id=' +
-        `${discordApiKeys.CLIENT_ID}` +
-        `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
-        `&state=${email}&response_type=code&scope=identify`
-    );
+router.post('/connectToDiscord', function (req, res) {
+	const email = req.body.email;
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	if (!email) {
+		return res.sendStatus(BAD_REQUEST);
+	}
+	if (!discordApiKeys.ENABLED) {
+		return res.sendStatus(OK);
+	}
+	return res
+		.status(OK)
+		.send(
+			'https://discord.com/api/oauth2/authorize?client_id=' +
+				`${discordApiKeys.CLIENT_ID}` +
+				`&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
+				`&state=${email}&response_type=code&scope=identify`
+		);
 });
 
 router.post('/getUserById', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ _id: req.body.userID }, (err, result) => {
-    if (err) {
-      return res.sendStatus(BAD_REQUEST);
-    }
+	if (!checkIfTokenSent(req)) {
+		return res.sendStatus(FORBIDDEN);
+	} else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+		return res.sendStatus(UNAUTHORIZED);
+	}
+	User.findOne({ _id: req.body.userID }, (err, result) => {
+		if (err) {
+			return res.sendStatus(BAD_REQUEST);
+		}
 
-    if (!result) {
-      return res.sendStatus(NOT_FOUND);
-    }
+		if (!result) {
+			return res.sendStatus(NOT_FOUND);
+		}
 
-    const { password, ...omittedPassword } = result._doc;
+		const { password, ...omittedPassword } = result._doc;
 
-    return res.status(OK).json(omittedPassword);
-  });
+		return res.status(OK).json(omittedPassword);
+	});
 });
 
 router.get('/isUserSubscribed', (req, res) => {
-  User.findOne({ email: req.query.email }, function(error, result) {
-    if (error) {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
+	User.findOne({ email: req.query.email }, function (error, result) {
+		if (error) {
+			res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+		}
 
-    if (!result) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.query.email} not found.` });
-    }
-    if (result.emailOptIn)
-      return res.status(OK).send({ message: 'Subscribed!' });
-    else return res.status(OK).send({ message: 'No!' });
-  });
+		if (!result) {
+			return res
+				.status(NOT_FOUND)
+				.send({ message: `${req.query.email} not found.` });
+		}
+		if (result.emailOptIn)
+			return res.status(OK).send({ message: 'Subscribed!' });
+		else return res.status(OK).send({ message: 'No!' });
+	});
 });
 
 router.post('/setUserEmailPreference', (req, res) => {
-  const email = req.body.email;
-  const emailOptIn = req.body.emailOptIn;
-  User.updateOne(
-    { email: email },
-    { emailOptIn: emailOptIn },
-    function(error, result) {
-      if (error) {
-        res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-      }
+	const email = req.body.email;
+	const emailOptIn = req.body.emailOptIn;
+	User.updateOne(
+		{ email: email },
+		{ emailOptIn: emailOptIn },
+		function (error, result) {
+			if (error) {
+				res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+			}
 
-      if (result.n === 0) {
-        return res.status(NOT_FOUND).send({ message: `${email} not found.` });
-      }
-      return res.status(OK).send({
-        message: `${email} was updated.`,
-        emailOptIn: emailOptIn,
-      });
-    }
-  );
+			if (result.n === 0) {
+				return res
+					.status(NOT_FOUND)
+					.send({ message: `${email} not found.` });
+			}
+			return res.status(OK).send({
+				message: `${email} was updated.`,
+				emailOptIn: emailOptIn,
+			});
+		}
+	);
 });
 
 router.post('/getUserDataByEmail', (req, res) => {
-  User.findOne({ email: req.body.email }, function(error, result) {
-    if (error) {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
+	User.findOne({ email: req.body.email }, function (error, result) {
+		if (error) {
+			res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+		}
 
-    if (!result) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.email} not found.` });
-    }
-    const user = {
-      firstName: result.firstName,
-      middleInitial: result.middleInitial,
-      lastName: result.lastName,
-      email: result.email,
-      emailVerified: result.emailVerified,
-      emailOptIn: result.emailOptIn,
-      discordUsername: result.discordUsername,
-      discordDiscrim: result.discordDiscrim,
-      discordID: result.discordID,
-      active: result.active,
-      accessLevel: result.accessLevel,
-      major: result.major,
-      joinDate: result.joinDate,
-      lastLogin: result.lastLogin,
-      membershipValidUntil: result.membershipValidUntil,
-      pagesPrinted: result.pagesPrinted,
-      doorCode: result.doorCode,
-      _id: result._id,
-    };
-    return res.status(OK).send(user);
-  });
+		if (!result) {
+			return res
+				.status(NOT_FOUND)
+				.send({ message: `${req.body.email} not found.` });
+		}
+		const user = {
+			firstName: result.firstName,
+			middleInitial: result.middleInitial,
+			lastName: result.lastName,
+			email: result.email,
+			emailVerified: result.emailVerified,
+			emailOptIn: result.emailOptIn,
+			discordUsername: result.discordUsername,
+			discordDiscrim: result.discordDiscrim,
+			discordID: result.discordID,
+			active: result.active,
+			accessLevel: result.accessLevel,
+			major: result.major,
+			joinDate: result.joinDate,
+			lastLogin: result.lastLogin,
+			membershipValidUntil: result.membershipValidUntil,
+			pagesPrinted: result.pagesPrinted,
+			doorCode: result.doorCode,
+			_id: result._id,
+		};
+		return res.status(OK).send(user);
+	});
 });
 
 module.exports = router;
