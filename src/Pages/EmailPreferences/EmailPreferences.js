@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Container, Input, Button, Col } from "reactstrap";
+import React, { useEffect, useState } from 'react';
+import { Container, Input, Button, Col } from 'reactstrap';
 
-import Header from "../../Components/Header/Header";
-import { setUserEmailPreference, getUserData } from "../../APIFunctions/User";
+import Header from '../../Components/Header/Header';
+import { setUserEmailPreference, getUserData } from '../../APIFunctions/User';
 
 export default function EmailPreferencesPage(props) {
   const [isOptedIntoEmails, setIsOptedIntoEmails] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [userFirstName, setUserFirstName] = useState("");
-  const [userLastName, setUserLastName] = useState("");
-  const [message, setMessage] = useState("");
+  const [userEmail, setUserEmail] = useState('');
+  const [userFirstName, setUserFirstName] = useState('');
+  const [userLastName, setUserLastName] = useState('');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const userEmailParam = urlParams.get("user");
+      const userEmailParam = urlParams.get('user');
       setUserEmail(userEmailParam);
 
-      const response = await getUserData(urlParams.get("user"));
+      const response = await getUserData(urlParams.get('user'));
       setUserFirstName(response.responseData.firstName);
       setUserLastName(response.responseData.lastName);
       setIsOptedIntoEmails(response.responseData.emailOptIn);
@@ -28,7 +28,7 @@ export default function EmailPreferencesPage(props) {
 
   const handleSave = async () => {
     const response = await setUserEmailPreference(userEmail, isOptedIntoEmails);
-    if (!response.error) setMessage("Yay! You changed your email preference!");
+    if (!response.error) setMessage('Yay! You changed your email preference!');
   };
 
   return (
@@ -36,7 +36,7 @@ export default function EmailPreferencesPage(props) {
       <Header title="Email Preferences" />
       <Container
         style={{
-          textAlign: "center",
+          textAlign: 'center',
         }}
       >
         <h1>

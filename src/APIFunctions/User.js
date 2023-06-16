@@ -1,9 +1,9 @@
-import axios from "axios";
-import { UserApiResponse } from "./ApiResponses";
-import { membershipState, userFilterType } from "../Enums";
+import axios from 'axios';
+import { UserApiResponse } from './ApiResponses';
+import { membershipState, userFilterType } from '../Enums';
 
 let GENERAL_API_URL =
-  process.env.REACT_APP_GENERAL_API_URL || "http://localhost:8080/api";
+  process.env.REACT_APP_GENERAL_API_URL || 'http://localhost:8080/api';
 
 /**
  * Queries the database for all users.
@@ -15,7 +15,7 @@ export async function getAllUsers(token) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post(GENERAL_API_URL + "/User/users", {
+    .post(GENERAL_API_URL + '/User/users', {
       // don't need email
       token,
     })
@@ -107,7 +107,7 @@ export async function editUser(userToEdit, token) {
     emailOptIn,
   } = userToEdit;
   await axios
-    .post(GENERAL_API_URL + "/User/edit", {
+    .post(GENERAL_API_URL + '/User/edit', {
       _id,
       firstName,
       lastName,
@@ -154,7 +154,7 @@ export async function updateLastLoginDate(email, token) {
 export async function deleteUserByEmail(email, token) {
   let status = new UserApiResponse();
   axios
-    .post(GENERAL_API_URL + "/User/delete", {
+    .post(GENERAL_API_URL + '/User/delete', {
       token,
       email,
     })
@@ -173,7 +173,7 @@ export async function deleteUserByEmail(email, token) {
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL + "/User/checkIfUserExists", { email })
+    .post(GENERAL_API_URL + '/User/checkIfUserExists', { email })
     .catch(() => {
       status.error = true;
     });
@@ -206,7 +206,7 @@ export function filterUsers(users, filterID) {
 export async function connectToDiscord(email, token) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL + "/user/connectToDiscord", { email, token })
+    .post(GENERAL_API_URL + '/user/connectToDiscord', { email, token })
     .then((res) => {
       status.responseData = res.data;
     })
@@ -219,7 +219,7 @@ export async function connectToDiscord(email, token) {
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL + "/user/getUserById", { userID, token })
+    .post(GENERAL_API_URL + '/user/getUserById', { userID, token })
     .then((res) => {
       status.responseData = res.data;
     })
@@ -245,7 +245,7 @@ export async function isUserSubscribed(email) {
 export async function setUserEmailPreference(email, emailOptIn) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL + "/user/setUserEmailPreference", {
+    .post(GENERAL_API_URL + '/user/setUserEmailPreference', {
       email,
       emailOptIn,
     })
@@ -261,7 +261,7 @@ export async function setUserEmailPreference(email, emailOptIn) {
 export async function getUserData(email) {
   let status = new UserApiResponse();
   await axios
-    .post(GENERAL_API_URL + "/user/getUserDataByEmail", {
+    .post(GENERAL_API_URL + '/user/getUserDataByEmail', {
       email,
     })
     .then((res) => {

@@ -1,38 +1,39 @@
+// eslint-disable-next-line quotes
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import "./index.css";
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import './index.css';
 
-import PrivateRoute from "./Components/Routing/PrivateRoute";
-import NavBarWrapper from "./Components/Navbar/NavBarWrapper";
-import Overview from "./Pages/Overview/Overview";
-import EmailPage from "./Pages/EmailList/EmailPage";
-import EventManager from "./Pages/EventManager/EventManager";
-import Login from "./Pages/Login/Login";
-import Profile from "./Pages/Profile/MemberView/Profile";
-import LedSign from "./Pages/LedSign/LedSign";
-import EditUserInfo from "./Pages/UserManager/EditUserInfo";
+import PrivateRoute from './Components/Routing/PrivateRoute';
+import NavBarWrapper from './Components/Navbar/NavBarWrapper';
+import Overview from './Pages/Overview/Overview';
+import EmailPage from './Pages/EmailList/EmailPage';
+import EventManager from './Pages/EventManager/EventManager';
+import Login from './Pages/Login/Login';
+import Profile from './Pages/Profile/MemberView/Profile';
+import LedSign from './Pages/LedSign/LedSign';
+import EditUserInfo from './Pages/UserManager/EditUserInfo';
 
-import Home from "./Pages/Home/Home.js";
-import NotFoundPage from "./Pages/NotFoundPage/NotFoundPage";
-import EventList from "./Pages/Events/EventList";
-import PrintingSolids from "./Pages/3DPrinting/3DPrintForm.js";
-import SolidsConsole from "./Pages/3DPrintingConsole/3DConsole.js";
-import MembershipApplication from "./Pages/MembershipApplication/MembershipApplication.js";
-import VerifyEmailPage from "./Pages/MembershipApplication/VerifyEmail.js";
-import Printing from "./Pages/2DPrinting/2DPrinting.js";
+import Home from './Pages/Home/Home.js';
+import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
+import EventList from './Pages/Events/EventList';
+import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js';
+import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js';
+import MembershipApplication from './Pages/MembershipApplication/MembershipApplication.js';
+import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
+import Printing from './Pages/2DPrinting/2DPrinting.js';
 
-import { membershipState } from "./Enums";
-import GoogleLoginDiscord from "./Pages/SJSUDiscordBot/GoogleLogin.js";
-import DiscordSJSU from "./Pages/DiscordSJSU/DiscordSJSU.js";
+import { membershipState } from './Enums';
+import GoogleLoginDiscord from './Pages/SJSUDiscordBot/GoogleLogin.js';
+import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 
-import AdminDashboard from "./Pages/Profile/admin/AdminDashboard";
-import AboutPage from "./Pages/About/About";
-import ProjectsPage from "./Pages/Projects/Projects";
+import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
+import AboutPage from './Pages/About/About';
+import ProjectsPage from './Pages/Projects/Projects';
 
 // import DessertPage from "./Pages/Desserts/Desserts";
 // import DessertAdmin from "./Pages/Desserts/AdminDesserts";
 
-import EmailPreferencesPage from "./Pages/EmailPreferences/EmailPreferences";
+import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -47,83 +48,83 @@ export default function Routing({ appProps }) {
   const signedInRoutes = [
     {
       Component: AdminDashboard,
-      path: "/dashboard",
+      path: '/dashboard',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     // new for Overview
     {
       Component: Overview,
-      path: "/user-manager",
+      path: '/user-manager',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     //
     {
       Component: EmailPage,
-      path: "/email-list",
+      path: '/email-list',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
       Component: EventManager,
-      path: "/event-manager",
+      path: '/event-manager',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
       Component: SolidsConsole,
-      path: "/3DConsole",
+      path: '/3DConsole',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
       Component: LedSign,
-      path: "/led-sign",
+      path: '/led-sign',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     {
       Component: PrintingSolids,
-      path: "/3DPrintingForm",
+      path: '/3DPrintingForm',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: "/login",
+      redirect: '/login',
     },
     {
       Component: Printing,
-      path: "/2DPrinting",
+      path: '/2DPrinting',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: "/login",
+      redirect: '/login',
     },
     {
       Component: Login,
-      path: "/login",
+      path: '/login',
       allowedIf: !userIsAuthenticated,
-      redirect: "/",
+      redirect: '/',
     },
     {
       Component: MembershipApplication,
-      path: "/register",
+      path: '/register',
       allowedIf: !userIsAuthenticated,
-      redirect: "/",
+      redirect: '/',
     },
     {
       Component: Profile,
-      path: "/profile",
+      path: '/profile',
       allowedIf: userIsAuthenticated,
-      redirect: "/login",
+      redirect: '/login',
     },
     {
       Component: EditUserInfo,
-      path: "/user/edit/:id",
+      path: '/user/edit/:id',
       allowedIf: userIsOfficerOrAdmin,
-      redirect: "/",
+      redirect: '/',
       inAdminNavbar: true,
     },
     // {
@@ -135,15 +136,15 @@ export default function Routing({ appProps }) {
     // },
   ];
   const signedOutRoutes = [
-    { Component: Home, path: "/" },
-    { Component: EventList, path: "/events" },
-    { Component: VerifyEmailPage, path: "/verify" },
-    { Component: GoogleLoginDiscord, path: "/discordSJSU/LoginWithGoogle/:id" },
-    { Component: DiscordSJSU, path: "/discordSJSU" },
-    { Component: AboutPage, path: "/about" },
-    { Component: ProjectsPage, path: "/projects" },
+    { Component: Home, path: '/' },
+    { Component: EventList, path: '/events' },
+    { Component: VerifyEmailPage, path: '/verify' },
+    { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
+    { Component: DiscordSJSU, path: '/discordSJSU' },
+    { Component: AboutPage, path: '/about' },
+    { Component: ProjectsPage, path: '/projects' },
     // { Component: DessertPage, path: "/desserts" },
-    { Component: EmailPreferencesPage, path: "/emailPreferences" },
+    { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   return (
     <Router>

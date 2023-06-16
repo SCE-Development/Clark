@@ -1,20 +1,20 @@
-"use strict";
+'use strict';
 
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const passport = require("passport");
-require("../util/passport")(passport);
-const User = require("../models/User.js");
+const passport = require('passport');
+require('../util/passport')(passport);
+const User = require('../models/User.js');
 const {
   getMemberExpirationDate,
   hashPassword,
-} = require("../util/registerUser");
-const { checkDiscordKey } = require("../../util/token-verification");
+} = require('../util/registerUser');
+const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
   decodeToken,
-} = require("../util/token-functions");
+} = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,
@@ -23,15 +23,15 @@ const {
   NOT_FOUND,
   CONFLICT,
   SERVER_ERROR,
-} = require("../../util/constants").STATUS_CODES;
-const { discordApiKeys } = require("../../config/config.json");
-const membershipState = require("../../util/constants").MEMBERSHIP_STATE;
-const discordConnection = require("../util/discord-connection");
+} = require('../../util/constants').STATUS_CODES;
+const { discordApiKeys } = require('../../config/config.json');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri =
-  process.env.DISCORD_REDIRECT_URI || "http://localhost:8080/api/user/callback";
+  process.env.DISCORD_REDIRECT_URI || 'http://localhost:8080/api/user/callback';
 
-router.get("/countAllUsers", async (req, res) => {
+router.get('/countAllUsers', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -42,12 +42,12 @@ router.get("/countAllUsers", async (req, res) => {
   const count = await User.find(
     {
       $or: [
-        { firstName: { $regex: search, $options: "i" } },
-        { lastName: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
       ],
     },
-    function (error, result) {
+    function(error, result) {
       if (error) {
         status = BAD_REQUEST;
       } else if (result == 0) {
@@ -61,7 +61,7 @@ router.get("/countAllUsers", async (req, res) => {
   res.status(status).json(response);
 });
 
-router.get("/currentUsers", async (req, res) => {
+router.get('/currentUsers', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -74,12 +74,12 @@ router.get("/currentUsers", async (req, res) => {
   const users = await User.find(
     {
       $or: [
-        { firstName: { $regex: search, $options: "i" } },
-        { lastName: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
       ],
     },
-    function (error, result) {
+    function(error, result) {
       if (error) {
         status = BAD_REQUEST;
       } else if (result.length == 0) {
@@ -95,7 +95,7 @@ router.get("/currentUsers", async (req, res) => {
   res.status(status).json(response);
 });
 
-router.post("/checkIfUserExists", (req, res) => {
+router.post('/checkIfUserExists', (req, res) => {
   const { email } = req.body;
   if (!email) {
     return res.sendStatus(BAD_REQUEST);
@@ -104,9 +104,9 @@ router.post("/checkIfUserExists", (req, res) => {
     {
       email: email.toLowerCase(),
     },
-    function (error, user) {
+    function(error, user) {
       if (error) {
-        return res.status(BAD_REQUEST).send({ message: "Bad Request." });
+        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
 
       if (!user) {
@@ -121,27 +121,27 @@ router.post("/checkIfUserExists", (req, res) => {
 });
 
 // Delete a member
-router.post("/delete", (req, res) => {
+router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  User.deleteOne({ email: req.body.email }, function (error, user) {
+  User.deleteOne({ email: req.body.email }, function(error, user) {
     if (error) {
       const info = {
         userEmail: req.body.email,
         errorTime: new Date(),
-        apiEndpoint: "user/delete",
+        apiEndpoint: 'user/delete',
         errorDescription: error,
       };
 
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (user.n < 1) {
-      res.status(NOT_FOUND).send({ message: "User not found." });
+      res.status(NOT_FOUND).send({ message: 'User not found.' });
     } else {
       res.status(OK).send({ message: `${req.body.email} was deleted.` });
     }
@@ -149,15 +149,15 @@ router.post("/delete", (req, res) => {
 });
 
 // Search for a member
-router.post("/search", function (req, res) {
+router.post('/search', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.ALUMNI)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function (error, result) {
+  User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (!result) {
@@ -191,7 +191,7 @@ router.post("/search", function (req, res) {
 });
 
 // Search for all members
-router.post("/users", function (req, res) {
+router.post('/users', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -203,12 +203,12 @@ router.post("/users", function (req, res) {
       res.status(OK).send(items);
     })
     .catch(() => {
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     });
 });
 
 // Edit/Update a member record
-router.post("/edit", async (req, res) => {
+router.post('/edit', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -222,12 +222,12 @@ router.post("/edit", async (req, res) => {
   let decoded = decodeToken(req);
   if (decoded.accessLevel === membershipState.MEMBER) {
     if (req.body.email && req.body.email != decoded.email) {
-      return res.status(UNAUTHORIZED).send("Unauthorized to edit another user");
+      return res.status(UNAUTHORIZED).send('Unauthorized to edit another user');
     }
     if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
       return res
         .status(UNAUTHORIZED)
-        .send("Unauthorized to change access level");
+        .send('Unauthorized to change access level');
     }
   }
 
@@ -240,7 +240,7 @@ router.post("/edit", async (req, res) => {
   const query = { _id: req.body._id };
   let user = req.body;
 
-  if (typeof req.body.numberOfSemestersToSignUpFor !== "undefined") {
+  if (typeof req.body.numberOfSemestersToSignUpFor !== 'undefined') {
     user.membershipValidUntil = getMemberExpirationDate(
       parseInt(req.body.numberOfSemestersToSignUpFor)
     );
@@ -264,15 +264,15 @@ router.post("/edit", async (req, res) => {
   // Remove the auth token from the form getting edited
   delete user.token;
 
-  User.updateOne(query, { ...user }, function (error, result) {
+  User.updateOne(query, { ...user }, function(error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: "user/edit",
+        apiEndpoint: 'user/edit',
         errorDescription: error,
       };
 
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (result.nModified < 1) {
@@ -287,21 +287,21 @@ router.post("/edit", async (req, res) => {
   });
 });
 
-router.post("/getPagesPrintedCount", (req, res) => {
+router.post('/getPagesPrintedCount', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.findOne({ email: req.body.email }, function (error, result) {
+  User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
       const info = {
         errorTime: new Date(),
-        apiEndpoint: "user/PagesPrintedCount",
+        apiEndpoint: 'user/PagesPrintedCount',
         errorDescription: error,
       };
 
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (!result) {
@@ -313,20 +313,20 @@ router.post("/getPagesPrintedCount", (req, res) => {
   });
 });
 
-router.get("/callback", async function (req, res) {
+router.get('/callback', async function(req, res) {
   const code = req.query.code;
   const email = req.query.state;
   discordConnection
     .loginWithDiscord(code, email, discordRedirectUri)
     .then((status) => {
-      return res.status(OK).redirect("https://discord.com/oauth2/authorized");
+      return res.status(OK).redirect('https://discord.com/oauth2/authorized');
     })
     .catch((_) => {
-      return res.status(NOT_FOUND).send("Authorization unsuccessful!");
+      return res.status(NOT_FOUND).send('Authorization unsuccessful!');
     });
 });
 
-router.post("/getUserFromDiscordId", (req, res) => {
+router.post('/getUserFromDiscordId', (req, res) => {
   const { discordID, apiKey } = req.body;
   if (!checkDiscordKey(apiKey)) {
     return res.sendStatus(UNAUTHORIZED);
@@ -342,7 +342,7 @@ router.post("/getUserFromDiscordId", (req, res) => {
   });
 });
 
-router.post("/updatePagesPrintedFromDiscord", (req, res) => {
+router.post('/updatePagesPrintedFromDiscord', (req, res) => {
   const { discordID, apiKey, pagesPrinted } = req.body;
   if (!checkDiscordKey(apiKey)) {
     return res.sendStatus(UNAUTHORIZED);
@@ -358,7 +358,7 @@ router.post("/updatePagesPrintedFromDiscord", (req, res) => {
   });
 });
 
-router.post("/connectToDiscord", function (req, res) {
+router.post('/connectToDiscord', function(req, res) {
   const email = req.body.email;
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -374,14 +374,14 @@ router.post("/connectToDiscord", function (req, res) {
   return res
     .status(OK)
     .send(
-      "https://discord.com/api/oauth2/authorize?client_id=" +
+      'https://discord.com/api/oauth2/authorize?client_id=' +
         `${discordApiKeys.CLIENT_ID}` +
         `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
         `&state=${email}&response_type=code&scope=identify`
     );
 });
 
-router.post("/getUserById", async (req, res) => {
+router.post('/getUserById', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -402,10 +402,10 @@ router.post("/getUserById", async (req, res) => {
   });
 });
 
-router.get("/isUserSubscribed", (req, res) => {
-  User.findOne({ email: req.query.email }, function (error, result) {
+router.get('/isUserSubscribed', (req, res) => {
+  User.findOne({ email: req.query.email }, function(error, result) {
     if (error) {
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (!result) {
@@ -414,20 +414,20 @@ router.get("/isUserSubscribed", (req, res) => {
         .send({ message: `${req.query.email} not found.` });
     }
     if (result.emailOptIn)
-      return res.status(OK).send({ message: "Subscribed!" });
-    else return res.status(OK).send({ message: "No!" });
+      return res.status(OK).send({ message: 'Subscribed!' });
+    else return res.status(OK).send({ message: 'No!' });
   });
 });
 
-router.post("/setUserEmailPreference", (req, res) => {
+router.post('/setUserEmailPreference', (req, res) => {
   const email = req.body.email;
   const emailOptIn = req.body.emailOptIn;
   User.updateOne(
     { email: email },
     { emailOptIn: emailOptIn },
-    function (error, result) {
+    function(error, result) {
       if (error) {
-        res.status(BAD_REQUEST).send({ message: "Bad Request." });
+        res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
 
       if (result.n === 0) {
@@ -441,10 +441,10 @@ router.post("/setUserEmailPreference", (req, res) => {
   );
 });
 
-router.post("/getUserDataByEmail", (req, res) => {
-  User.findOne({ email: req.body.email }, function (error, result) {
+router.post('/getUserDataByEmail', (req, res) => {
+  User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
-      res.status(BAD_REQUEST).send({ message: "Bad Request." });
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (!result) {
