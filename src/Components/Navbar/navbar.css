@@ -173,6 +173,7 @@
 
 #admin-title{
   display: inline-flex;
+  padding-left: 3vw;
 }
 
 #sun-icon,
