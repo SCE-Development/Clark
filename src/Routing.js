@@ -36,167 +36,167 @@ import ProjectsPage from './Pages/Projects/Projects';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
 export default function Routing({ appProps }) {
-	const userIsAuthenticated = appProps.authenticated;
-	const userIsMember =
-		userIsAuthenticated &&
-		appProps.user &&
-		appProps.user.accessLevel === membershipState.MEMBER;
-	const userIsOfficerOrAdmin =
-		userIsAuthenticated &&
-		appProps.user &&
-		appProps.user.accessLevel >= membershipState.OFFICER;
-	const signedInRoutes = [
-		{
-			Component: AdminDashboard,
-			path: '/dashboard',
-			allowedIf: userIsOfficerOrAdmin,
-			redirect: '/',
-			inAdminNavbar: true,
-		},
-		// new for Overview
-		{
-			Component: Overview,
-			path: '/user-manager',
-			allowedIf: userIsOfficerOrAdmin,
-			redirect: '/',
-			inAdminNavbar: true,
-		},
-		//
-		{
-			Component: EmailPage,
-			path: '/email-list',
-			allowedIf: userIsOfficerOrAdmin,
-			redirect: '/',
-			inAdminNavbar: true,
-		},
-		{
-			Component: EventManager,
-			path: '/event-manager',
-			allowedIf: userIsOfficerOrAdmin,
-			redirect: '/',
-			inAdminNavbar: true,
-		},
-		{
-			Component: SolidsConsole,
-			path: '/3DConsole',
-			allowedIf: userIsOfficerOrAdmin,
-			redirect: '/',
-			inAdminNavbar: true,
-		},
-		{
-			Component: LedSign,
-			path: '/led-sign',
-			allowedIf: userIsOfficerOrAdmin,
-			redirect: '/',
-			inAdminNavbar: true,
-		},
-		{
-			Component: PrintingSolids,
-			path: '/3DPrintingForm',
-			allowedIf: userIsMember || userIsOfficerOrAdmin,
-			redirect: '/login',
-		},
-		{
-			Component: Printing,
-			path: '/2DPrinting',
-			allowedIf: userIsMember || userIsOfficerOrAdmin,
-			redirect: '/login',
-		},
-		{
-			Component: Login,
-			path: '/login',
-			allowedIf: !userIsAuthenticated,
-			redirect: '/',
-		},
-		{
-			Component: MembershipApplication,
-			path: '/register',
-			allowedIf: !userIsAuthenticated,
-			redirect: '/',
-		},
-		{
-			Component: Profile,
-			path: '/profile',
-			allowedIf: userIsAuthenticated,
-			redirect: '/login',
-		},
-		{
-			Component: EditUserInfo,
-			path: '/user/edit/:id',
-			allowedIf: userIsOfficerOrAdmin,
-			redirect: '/',
-			inAdminNavbar: true,
-		},
-		// {
-		//   Component: DessertAdmin,
-		//   path: "/dessert-admin",
-		//   allowedIf: userIsOfficerOrAdmin,
-		//   redirect: "/",
-		//   inAdminNavbar: true,
-		// },
-	];
-	const signedOutRoutes = [
-		{ Component: Home, path: '/' },
-		{ Component: EventList, path: '/events' },
-		{ Component: VerifyEmailPage, path: '/verify' },
-		{
-			Component: GoogleLoginDiscord,
-			path: '/discordSJSU/LoginWithGoogle/:id',
-		},
-		{ Component: DiscordSJSU, path: '/discordSJSU' },
-		{ Component: AboutPage, path: '/about' },
-		{ Component: ProjectsPage, path: '/projects' },
-		// { Component: DessertPage, path: "/desserts" },
-		{ Component: EmailPreferencesPage, path: '/emailPreferences' },
-	];
-	return (
-		<Router>
-			<Switch>
-				{signedInRoutes.map(
-					(
-						{ path, Component, allowedIf, redirect, inAdminNavbar },
-						index
-					) => {
-						return (
-							<PrivateRoute
-								key={index}
-								exact
-								path={path}
-								appProps={{
-									allowed: allowedIf,
-									user: appProps.user,
-									redirect,
-									...appProps,
-								}}
-								component={(props) => (
-									<NavBarWrapper
-										component={Component}
-										enableAdminNavbar={inAdminNavbar}
-										{...props}
-									/>
-								)}
-							/>
-						);
-					}
-				)}
-				{signedOutRoutes.map(({ path, Component }, index) => {
-					return (
-						<Route
-							key={index}
-							exact
-							path={path}
-							render={(props) => (
-								<NavBarWrapper
-									component={Component}
-									{...props}
-									{...appProps}
-								/>
-							)}
-						/>
-					);
-				})}
-				<Route component={NotFoundPage} />
-			</Switch>
-		</Router>
-	);
+  const userIsAuthenticated = appProps.authenticated;
+  const userIsMember =
+    userIsAuthenticated &&
+    appProps.user &&
+    appProps.user.accessLevel === membershipState.MEMBER;
+  const userIsOfficerOrAdmin =
+    userIsAuthenticated &&
+    appProps.user &&
+    appProps.user.accessLevel >= membershipState.OFFICER;
+  const signedInRoutes = [
+    {
+      Component: AdminDashboard,
+      path: '/dashboard',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    },
+    // new for Overview
+    {
+      Component: Overview,
+      path: '/user-manager',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    },
+    //
+    {
+      Component: EmailPage,
+      path: '/email-list',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    },
+    {
+      Component: EventManager,
+      path: '/event-manager',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    },
+    {
+      Component: SolidsConsole,
+      path: '/3DConsole',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    },
+    {
+      Component: LedSign,
+      path: '/led-sign',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    },
+    {
+      Component: PrintingSolids,
+      path: '/3DPrintingForm',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login',
+    },
+    {
+      Component: Printing,
+      path: '/2DPrinting',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login',
+    },
+    {
+      Component: Login,
+      path: '/login',
+      allowedIf: !userIsAuthenticated,
+      redirect: '/',
+    },
+    {
+      Component: MembershipApplication,
+      path: '/register',
+      allowedIf: !userIsAuthenticated,
+      redirect: '/',
+    },
+    {
+      Component: Profile,
+      path: '/profile',
+      allowedIf: userIsAuthenticated,
+      redirect: '/login',
+    },
+    {
+      Component: EditUserInfo,
+      path: '/user/edit/:id',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    },
+    // {
+    //   Component: DessertAdmin,
+    //   path: "/dessert-admin",
+    //   allowedIf: userIsOfficerOrAdmin,
+    //   redirect: "/",
+    //   inAdminNavbar: true,
+    // },
+  ];
+  const signedOutRoutes = [
+    { Component: Home, path: '/' },
+    { Component: EventList, path: '/events' },
+    { Component: VerifyEmailPage, path: '/verify' },
+    {
+      Component: GoogleLoginDiscord,
+      path: '/discordSJSU/LoginWithGoogle/:id',
+    },
+    { Component: DiscordSJSU, path: '/discordSJSU' },
+    { Component: AboutPage, path: '/about' },
+    { Component: ProjectsPage, path: '/projects' },
+    // { Component: DessertPage, path: "/desserts" },
+    { Component: EmailPreferencesPage, path: '/emailPreferences' },
+  ];
+  return (
+    <Router>
+      <Switch>
+        {signedInRoutes.map(
+          (
+            { path, Component, allowedIf, redirect, inAdminNavbar },
+            index
+          ) => {
+            return (
+              <PrivateRoute
+                key={index}
+                exact
+                path={path}
+                appProps={{
+                  allowed: allowedIf,
+                  user: appProps.user,
+                  redirect,
+                  ...appProps,
+                }}
+                component={(props) => (
+                  <NavBarWrapper
+                    component={Component}
+                    enableAdminNavbar={inAdminNavbar}
+                    {...props}
+                  />
+                )}
+              />
+            );
+          }
+        )}
+        {signedOutRoutes.map(({ path, Component }, index) => {
+          return (
+            <Route
+              key={index}
+              exact
+              path={path}
+              render={(props) => (
+                <NavBarWrapper
+                  component={Component}
+                  {...props}
+                  {...appProps}
+                />
+              )}
+            />
+          );
+        })}
+        <Route component={NotFoundPage} />
+      </Switch>
+    </Router>
+  );
 }
