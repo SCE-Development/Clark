@@ -54,7 +54,7 @@ router.post('/sendVerificationEmail', async (req, res) => {
 
 // Routing post /sendUnsubscribeEmail calls the unsubscribeEmail function
 // and sends the unsubscribe email with the unsubscribe email template
-router.post('/sendUnsubscribeEmail', async (req,res) => {
+router.post('/sendUnsubscribeEmail', async (req, res) => {
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
@@ -74,8 +74,8 @@ router.post('/sendUnsubscribeEmail', async (req,res) => {
           logger.error('unable to send unsubscribe email:', err);
           res.sendStatus(BAD_REQUEST);
         });
-    })
-})
+    });
+});
 
 
 // Routing post /sendBlastEmail calls the sendEmail function

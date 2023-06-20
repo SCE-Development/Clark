@@ -1,15 +1,15 @@
 function unsubscribeEmail(user, recipient, name) {
   return new Promise((resolve, reject) => {
-  const url =
+    const url =
     process.env.VERIFICATION_BASE_URL || 'http://localhost:3000';
-  const verifyLink =
+    const verifyLink =
     `${url}/emailPreferences?user=${recipient}`;
-  return resolve({
-    from: user,
-    to: recipient,
-    subject: 'Unsubscribe from SCE Emails',
-    generateTextFromHTML: true,
-    html: `
+    return resolve({
+      from: user,
+      to: recipient,
+      subject: 'Unsubscribe from SCE Emails',
+      generateTextFromHTML: true,
+      html: `
       Hi ${name || ''},<br />
       <p>We appreciate you reducing email spam. 
       To opt out of all our emails, click the link below 
