@@ -489,4 +489,21 @@ router.post('/getUserDataByEmail', (req, res) => {
   });
 });
 
+// Search for all members with verified emails and subscribed
+router.post('/usersSubscribedAndVerified', function(req, res) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.find({ emailVerified: true, emailOptIn: true })
+    .then((users) => {
+      const emails = users.map((user) => user.email);
+      res.status(OK).send(emails);
+    })
+    .catch(() => {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    });
+});
+
 module.exports = router;
