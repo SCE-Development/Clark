@@ -272,3 +272,18 @@ export async function getUserData(email) {
     });
   return status;
 }
+
+export async function getAllUserSubscribedAndVerified() {
+  let status = new UserApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/user/usersSubscribedAndVerified', {
+      
+    })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}

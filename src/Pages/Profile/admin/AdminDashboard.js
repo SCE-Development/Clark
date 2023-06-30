@@ -3,14 +3,38 @@ import './AdminDashboard.css';
 import Header from '../../../Components/Header/Header';
 import InfoCard from '../MemberView/InfoCard';
 import { Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
+import { getAllUserSubscribedAndVerified } from '../../../APIFunctions/User';
 
 function AdminDashboard() {
   const fields = [
     { title: 'User Manager', url: '/user-manager' },
     { title: 'Event Manager', url: '/event-manager' },
     { title: 'LED Sign', url: '/led-sign' },
-    { title: '3D Console', url: '/3DConsole' }
+    { title: '3D Console', url: '/3DConsole' },
+    
   ];
+  const handleButtonClick = async () => {
+    const users = await getAllUserSubscribedAndVerified();
+    const MAILER_API_URL_PROD = process.env.MAILER_API_URL_PROD
+      || 'http://localhost:8082/cloudapi';
+    console.log(users)
+    users.map(async function(user) {
+      let status = '';
+      let fullName = user.firstName + ' ' + user.lastName
+      let email = user.email
+      // await axios
+      //   .post(`${MAILER_API_URL_PROD}/Mailer/sendUnsubscribeEmail`, {email, fullName})
+      //   .then(res =>{
+      //     status = res.data;
+      //   })
+      //   .catch(err => {
+      //     status = err.data;
+      // });
+      // return status;
+    })
+  };
+
   return (
     <div className='flexbox-container'>
       <body className='admin-dashboard-bg'>
@@ -27,6 +51,9 @@ function AdminDashboard() {
             </Link>
           );
         })}
+        <Button onClick={handleButtonClick}>
+          Send Unsubscribe Email to All
+        </Button>
       </body>
     </div>
   );
