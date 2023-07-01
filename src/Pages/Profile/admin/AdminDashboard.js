@@ -5,6 +5,7 @@ import InfoCard from '../MemberView/InfoCard';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import { getAllUserSubscribedAndVerified } from '../../../APIFunctions/User';
+import axios from 'axios';
 
 function AdminDashboard() {
   const fields = [
@@ -18,21 +19,16 @@ function AdminDashboard() {
     const users = await getAllUserSubscribedAndVerified();
     const MAILER_API_URL_PROD = process.env.MAILER_API_URL_PROD
       || 'http://localhost:8082/cloudapi';
-    console.log(users)
-    users.map(async function(user) {
-      let status = '';
-      let fullName = user.firstName + ' ' + user.lastName
-      let email = user.email
-      // await axios
-      //   .post(`${MAILER_API_URL_PROD}/Mailer/sendUnsubscribeEmail`, {email, fullName})
-      //   .then(res =>{
-      //     status = res.data;
-      //   })
-      //   .catch(err => {
-      //     status = err.data;
-      // });
-      // return status;
-    })
+    let status;
+    await axios
+      .post(`${MAILER_API_URL_PROD}/Mailer/sendUnsubscribeEmail`, {users})
+      .then(res =>{
+      status = res.data;
+      })
+      .catch(err => {
+        status = err.data;
+      });
+      return status;
   };
 
   return (
