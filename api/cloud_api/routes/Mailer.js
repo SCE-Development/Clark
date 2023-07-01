@@ -62,23 +62,22 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-  console.log(req.body)
 
   req.body.users.responseData.data.map(async (user) => {
-    let fullName = user.firstName + ' ' + user.lastName
+    let fullName = user.firstName + ' ' + user.lastName;
     await unsubscribeEmail(USER, user.email, fullName)
-    .then((template) => {
-      apiHandler
-      .sendEmail(template)
-      .then((_) => {
-      })
-      .catch((err) => {
-        logger.error('unable to send unsubscribe email:', err);
+      .then((template) => {
+        apiHandler
+          .sendEmail(template)
+          .then((_) => {
+          })
+          .catch((err) => {
+            logger.error('unable to send unsubscribe email:', err);
+          });
       });
-    });
   });
   res.sendStatus(OK);
-})
+});
 
 
 // Routing post /sendBlastEmail calls the sendEmail function
