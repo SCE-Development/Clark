@@ -3,6 +3,7 @@ const router = express.Router();
 const { SceGoogleApiHandler } = require('../util/SceGoogleApiHandler');
 const { verification } = require('../email_templates/verification');
 const { blastEmail } = require('../email_templates/blastEmail');
+const { unsubscribeEmail } = require('../email_templates/unsubscribeEmail');
 const {
   OK,
   BAD_REQUEST
@@ -50,6 +51,35 @@ router.post('/sendVerificationEmail', async (req, res) => {
       res.sendStatus(BAD_REQUEST);
     });
 });
+
+// Routing post /sendUnsubscribeEmail calls the unsubscribeEmail function
+// and sends the unsubscribe email with the unsubscribe email template
+router.post('/sendUnsubscribeEmail', async (req, res) => {
+  if (!ENABLED && process.env.NODE_ENV !== 'test') {
+    return res.sendStatus(OK);
+  }
+
+  const scopes = ['https://mail.google.com/'];
+  const pathToToken = __dirname + '/../../config/token.json';
+  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
+  console.log(req.body)
+
+  req.body.users.responseData.data.map(async (user) => {
+    let fullName = user.firstName + ' ' + user.lastName
+    await unsubscribeEmail(USER, user.email, fullName)
+    .then((template) => {
+      apiHandler
+      .sendEmail(template)
+      .then((_) => {
+      })
+      .catch((err) => {
+        logger.error('unable to send unsubscribe email:', err);
+      });
+    });
+  });
+  res.sendStatus(OK);
+})
+
 
 // Routing post /sendBlastEmail calls the sendEmail function
 // and sends the blast email with the blast email template
