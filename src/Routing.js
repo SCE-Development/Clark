@@ -31,6 +31,8 @@ import AboutPage from './Pages/About/About';
 import ProjectsPage from './Pages/Projects/Projects';
 import URLShortenerPage from './Pages/URLShortener/URLShortener';
 
+import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -132,7 +134,8 @@ export default function Routing({ appProps }) {
       path: '/short',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/'
-    }
+    },
+    { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

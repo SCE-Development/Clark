@@ -225,3 +225,62 @@ export async function getUserById(userID, token) {
     });
   return status;
 }
+
+export async function isUserSubscribed(email) {
+  let status = new UserApiResponse();
+  await axios
+    .get(GENERAL_API_URL + `/user/isUserSubscribed?=email${email}`)
+    .then((result) => {
+      status.responseData = result.data;
+    })
+    .catch(() => {
+      status.error = true;
+    });
+  return status;
+}
+
+export async function setUserEmailPreference(email, emailOptIn) {
+  let status = new UserApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/user/setUserEmailPreference', {
+      email,
+      emailOptIn,
+    })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}
+
+export async function getUserData(email) {
+  let status = new UserApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/user/getUserDataByEmail', {
+      email,
+    })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}
+
+export async function getAllUserSubscribedAndVerified() {
+  let status = new UserApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/user/usersSubscribedAndVerified', {
+
+    })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}
