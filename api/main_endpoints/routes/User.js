@@ -406,4 +406,104 @@ router.post('/getUserById', async (req, res) => {
   });
 });
 
+router.get('/isUserSubscribed', (req, res) => {
+  User.findOne({ email: req.query.email }, function(error, result) {
+    if (error) {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    }
+
+    if (!result) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.query.email} not found.` });
+    }
+    if (result.emailOptIn)
+      return res.status(OK).send({ message: 'Subscribed!' });
+    else return res.status(OK).send({ message: 'No!' });
+  });
+});
+
+router.post('/setUserEmailPreference', (req, res) => {
+  const email = req.body.email;
+  const emailOptIn = req.body.emailOptIn;
+  User.updateOne(
+    { email: email },
+    { emailOptIn: emailOptIn },
+    function(error, result) {
+      if (error) {
+        res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      }
+
+      if (result.n === 0) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: `${email} not found.` });
+      }
+      return res.status(OK).send({
+        message: `${email} was updated.`,
+        emailOptIn: emailOptIn,
+      });
+    }
+  );
+});
+
+router.post('/getUserDataByEmail', (req, res) => {
+  User.findOne({ email: req.body.email }, function(error, result) {
+    if (error) {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    }
+
+    if (!result) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.email} not found.` });
+    }
+    const user = {
+      firstName: result.firstName,
+      middleInitial: result.middleInitial,
+      lastName: result.lastName,
+      email: result.email,
+      emailVerified: result.emailVerified,
+      emailOptIn: result.emailOptIn,
+      discordUsername: result.discordUsername,
+      discordDiscrim: result.discordDiscrim,
+      discordID: result.discordID,
+      active: result.active,
+      accessLevel: result.accessLevel,
+      major: result.major,
+      joinDate: result.joinDate,
+      lastLogin: result.lastLogin,
+      membershipValidUntil: result.membershipValidUntil,
+      pagesPrinted: result.pagesPrinted,
+      doorCode: result.doorCode,
+      _id: result._id,
+    };
+    return res.status(OK).send(user);
+  });
+});
+
+// Search for all members with verified emails and subscribed
+router.post('/usersSubscribedAndVerified', function(req, res) {
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
+  User.find({ emailVerified: true, emailOptIn: true })
+    .then((users) => {
+      console.log(users)
+      const userEmailAndName = users.map((user) => { 
+        return {
+          email : user.email,  
+          firstName : user.firstName, 
+          lastName : user.lastName
+        }
+        });
+      res.status(OK).send({data : userEmailAndName});
+    })
+    .catch(() => {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    });
+});
+
 module.exports = router;
