@@ -15,7 +15,7 @@ function unsubscribeEmail(user, recipient, name) {
       To opt out of all our emails, click the link below 
       and we’ll take care of the rest.</p>
       <a href='${verifyLink}'>Update Email Preferences</a>
-      <p> Thanks,</p>
+      <p>Thanks,</p>
       <p>The Software and Computer Engineering Society</p>
     `
     });
