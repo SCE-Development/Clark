@@ -66,17 +66,15 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
   req.body.users.map(async (user) => {
-    let fullName = user.firstName + ' ' + user.lastName;
-    await unsubscribeEmail(USER, user.email, fullName)
-      .then((template) => {
-        apiHandler
-          .sendEmail(template)
-          .then((_) => {
-          })
-          .catch((err) => {
-            logger.error('unable to send unsubscribe email:', err);
-          });
-      });
+    try {
+      let fullName = user.firstName + ' ' + user.lastName;
+      await unsubscribeEmail(USER, user.email, fullName)
+        .then((template) => {
+          apiHandler.sendEmail(template);
+        });
+    } catch (error) {
+      logger.error('unable to send unsubscribe email:', error);
+    }
   });
   res.sendStatus(OK);
 });
