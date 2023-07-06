@@ -411,7 +411,7 @@ router.post('/getUserById', async (req, res) => {
 router.get('/isUserSubscribed', (req, res) => {
   User.findOne({ email: req.query.email }, function(error, result) {
     if (error) {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      res.sendStatus(BAD_REQUEST);
     }
 
     if (!result) {
