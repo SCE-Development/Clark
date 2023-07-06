@@ -32,6 +32,9 @@ const discordRedirectUri =
   process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
 
+const {sendUnsubscribeEmail} = require('../util/EmailHelpers')
+
+
 router.get('/countAllUsers', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -498,7 +501,6 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
   // }
   User.find({ emailVerified: true, emailOptIn: true })
     .then((users) => {
-      console.log(users)
       const userEmailAndName = users.map((user) => { 
         return {
           email : user.email,  
@@ -506,9 +508,11 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
           lastName : user.lastName
         }
         });
-      res.status(OK).send({data : userEmailAndName});
+        sendUnsubscribeEmail(userEmailAndName);
+      res.sendStatus(OK)
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err)
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     });
 });

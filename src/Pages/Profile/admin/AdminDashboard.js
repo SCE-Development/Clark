@@ -15,20 +15,9 @@ function AdminDashboard() {
     { title: '3D Console', url: '/3DConsole' },
     
   ];
+
   const handleButtonClick = async () => {
     const users = await getAllUserSubscribedAndVerified();
-    const MAILER_API_URL_PROD = process.env.MAILER_API_URL_PROD
-      || 'http://localhost:8082/cloudapi';
-    let status;
-    await axios
-      .post(`${MAILER_API_URL_PROD}/Mailer/sendUnsubscribeEmail`, {users})
-      .then(res =>{
-      status = res.data;
-      })
-      .catch(err => {
-        status = err.data;
-      });
-      return status;
   };
 
   return (
