@@ -50,7 +50,7 @@ services:
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
     ports:
-        - '8082:8082'
+      - '8082:8082'
     restart: 'on-failure'
     stdin_open: true
     links:
@@ -115,13 +115,13 @@ services:
       - ./src:/frontend/src/
       - ./util:/frontend/util/
       - ./public:/frontend/public/
-  
+
   nginx:
     container_name: sce-nginx-dev
     image: 'nginx'
     volumes:
       - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
-    command: [nginx-debug, '-g', 'daemon off;']
+    command: [ nginx-debug, '-g', 'daemon off;' ]
     ports:
       - '80:80'
     restart: 'on-failure'
