@@ -63,7 +63,7 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
 
-  req.body.users.responseData.data.map(async (user) => {
+  req.body.users.map(async (user) => {
     let fullName = user.firstName + ' ' + user.lastName;
     await unsubscribeEmail(USER, user.email, fullName)
       .then((template) => {
