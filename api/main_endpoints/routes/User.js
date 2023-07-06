@@ -419,9 +419,7 @@ router.get('/isUserSubscribed', (req, res) => {
         .status(NOT_FOUND)
         .send({ message: `${req.query.email} not found.` });
     }
-    if (result.emailOptIn)
-      return res.status(OK).send({ message: 'Subscribed!' });
-    else return res.status(OK).send({ message: 'No!' });
+    return res.status(OK).send({ result: !!result.emailOptIn });
   });
 });
 
