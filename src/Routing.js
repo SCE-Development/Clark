@@ -29,6 +29,7 @@ import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 import AboutPage from './Pages/About/About';
 import ProjectsPage from './Pages/Projects/Projects';
+import URLShortenerPage from './Pages/URLShortener/URLShortener';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -122,7 +123,7 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
-    }
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -131,7 +132,8 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
-    { Component: ProjectsPage, path: '/projects'}
+    { Component: ProjectsPage, path: '/projects'},
+    { Component: URLShortenerPage, path: '/s' }
   ];
   return (
     <Router>
