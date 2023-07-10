@@ -482,11 +482,11 @@ router.post('/getUserDataByEmail', (req, res) => {
 
 // Search for all members with verified emails and subscribed
 router.post('/usersSubscribedAndVerified', function(req, res) {
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(FORBIDDEN);
-  // } else if (!checkIfTokenValid(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   User.find({ emailVerified: true, emailOptIn: true })
     .then((users) => {
       const userEmailAndName = users.map((user) => {
