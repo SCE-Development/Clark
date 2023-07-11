@@ -55,6 +55,11 @@ router.post('/sendVerificationEmail', async (req, res) => {
 // Routing post /sendUnsubscribeEmail calls the unsubscribeEmail function
 // and sends the unsubscribe email with the unsubscribe email template
 router.post('/sendUnsubscribeEmail', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   } else if (!req.body.users || !req.body.users.length) {
