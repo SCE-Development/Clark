@@ -23,7 +23,6 @@ router.post('/createURL', async (req, res) => {
       res.json({ status: response.status });
     })
     .catch(err => {
-      console.log(err.response.status);
       res.json({ error: err.response.status });
     });
 });
@@ -37,7 +36,6 @@ router.post('/deleteURL', async (req, res) => {
       res.json({ status: response.status });
     })
     .catch(err => {
-      console.log(err.response.status);
       res.json({ error: err.response.status });
     });
 });
