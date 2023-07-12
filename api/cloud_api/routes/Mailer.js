@@ -55,11 +55,6 @@ router.post('/sendVerificationEmail', async (req, res) => {
 // Routing post /sendUnsubscribeEmail calls the unsubscribeEmail function
 // and sends the unsubscribe email with the unsubscribe email template
 router.post('/sendUnsubscribeEmail', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   } else if (!req.body.users || !req.body.users.length) {
@@ -70,6 +65,18 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
+  const tokenJson = await apiHandler.checkIfTokenFileExists();
+
+  if (tokenJson) {
+    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
+      logger.warn('refreshing token');
+      apiHandler.refreshToken();
+    }
+  } else {
+    logger.warn('getting new token! ', { tokenJson });
+    apiHandler.getNewToken();
+  }
+  
   req.body.users.map(async (user) => {
     let fullName = user.firstName + ' ' + user.lastName;
     await unsubscribeEmail(USER, user.email, fullName)
