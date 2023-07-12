@@ -423,7 +423,8 @@ router.get('/isUserSubscribed', (req, res) => {
 
 router.post('/setUserEmailPreference', (req, res) => {
   const email = req.body.email;
-  const emailOptIn = req.body.emailOptIn;
+  const emailOptIn = !!req.body.emailOptIn;
+
   User.updateOne(
     { email: email },
     { emailOptIn: emailOptIn },
@@ -458,23 +459,8 @@ router.post('/getUserDataByEmail', (req, res) => {
     }
     const user = {
       firstName: result.firstName,
-      middleInitial: result.middleInitial,
       lastName: result.lastName,
-      email: result.email,
-      emailVerified: result.emailVerified,
       emailOptIn: result.emailOptIn,
-      discordUsername: result.discordUsername,
-      discordDiscrim: result.discordDiscrim,
-      discordID: result.discordID,
-      active: result.active,
-      accessLevel: result.accessLevel,
-      major: result.major,
-      joinDate: result.joinDate,
-      lastLogin: result.lastLogin,
-      membershipValidUntil: result.membershipValidUntil,
-      pagesPrinted: result.pagesPrinted,
-      doorCode: result.doorCode,
-      _id: result._id,
     };
     return res.status(OK).send(user);
   });
