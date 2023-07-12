@@ -1,0 +1,41 @@
+.body-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-container {
+  display: flex;
+  margin-top: 1rem;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+} 
+
+.submit-button {
+  width: 8rem;
+  height: 3rem;
+  margin-left: 1rem;
+  transition: transform 200ms ease-in-out;
+  background-color: rgb(118, 204, 118);
+}
+
+.submit-button:hover {
+  transform: scale(1.04);
+  background-color: rgb(118, 204, 118);
+}
+
+.textbox {
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+  height: 2rem;
+  padding-left: 8px;
+  font-weight: 400;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.textbox:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
