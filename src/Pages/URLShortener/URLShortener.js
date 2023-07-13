@@ -5,14 +5,14 @@ import './URLShortener-page.css';
 import { getAllURLs, createURL, deleteURL } from '../../APIFunctions/URLShortener';
 import { Container, Button, Row, Col, Input } from 'reactstrap';
 
-export default function URLShortenerPage() {
+export default function URLShortenerPage(props) {
   const [URL, setURL] = useState();
   const [alias, setAlias] = useState();
   const [allURLs, setAllURLs] = useState([]);
   const [deleteAlias, setDeleteAlias] = useState();
 
   async function getURLsFromDB() {
-    const URLsFromDB = await getAllURLs();
+    const URLsFromDB = await getAllURLs(props.user.token);
     if (!URLsFromDB.error) {
       setAllURLs(URLsFromDB.responseData);
     }
@@ -52,8 +52,7 @@ export default function URLShortenerPage() {
                 <Button
                   className='submit-button'
                   disabled={!URL}
-                  style={{width: '10rem', marginLeft: '1rem'}}
-                  onClick={() => createURL(URL, alias)}>
+                  onClick={() => createURL(URL, alias, props.user.token)}>
                     Submit
                 </Button>
               </Col>
@@ -75,7 +74,7 @@ export default function URLShortenerPage() {
                 <Button
                   className='submit-button'
                   disabled={!deleteAlias}
-                  onClick={() => deleteURL(deleteAlias)}>
+                  onClick={() => deleteURL(deleteAlias, props.user.token)}>
                     Delete URL
                 </Button>
               </Col>

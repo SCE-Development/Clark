@@ -123,6 +123,12 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
+    },
+    {
+      Component: URLShortenerPage,
+      path: '/s',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/'
     }
   ];
   const signedOutRoutes = [
@@ -132,8 +138,7 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
-    { Component: ProjectsPage, path: '/projects'},
-    { Component: URLShortenerPage, path: '/s' }
+    { Component: ProjectsPage, path: '/projects'}
   ];
   return (
     <Router>

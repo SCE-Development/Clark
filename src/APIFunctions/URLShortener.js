@@ -3,10 +3,12 @@ import { ApiResponse } from './ApiResponses';
 
 let URL_SHORTENER_URL = 'http://localhost:8080/api';
 
-export async function getAllURLs() {
+export async function getAllURLs(token) {
   let status = new ApiResponse();
   await axios
-    .get(URL_SHORTENER_URL + '/URLShortener-Endpoints/listAll')
+    .get(URL_SHORTENER_URL + '/URLShortener-Endpoints/listAll', {
+      params: { token }
+    })
     .then(res => {
       status.responseData = res.data;
     })
@@ -17,10 +19,11 @@ export async function getAllURLs() {
   return status;
 }
 
-export async function createURL(url, alias = null) {
+export async function createURL(url, alias = null, token) {
   let status = new ApiResponse();
+  const URLToAdd = { url, alias };
   await axios
-    .post(URL_SHORTENER_URL + '/URLShortener-Endpoints/createURL', { 'url': url, 'alias': alias })
+    .post(URL_SHORTENER_URL + '/URLShortener-Endpoints/createURL', { token, ...URLToAdd })
     .catch(err => {
       status.responseData = err;
       status.error = true;
@@ -28,10 +31,11 @@ export async function createURL(url, alias = null) {
   return status;
 }
 
-export async function deleteURL(alias) {
+export async function deleteURL(aliasIn, token) {
   let status = new ApiResponse();
+  const alias = { 'alias': aliasIn };
   await axios
-    .post(URL_SHORTENER_URL + '/URLShortener-Endpoints/deleteURL', { alias })
+    .post(URL_SHORTENER_URL + '/URLShortener-Endpoints/deleteURL', { token, ...alias })
     .catch(err => {
       status.responseData = err;
       status.error = true;
