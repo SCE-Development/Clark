@@ -19,8 +19,7 @@ let URL_SHORTENER_BASE_URL = 'http://localhost:8000';
 router.get('/listAll', async (req, res) => {
   const token = req.query.token;
   const tokenReq = { body: { token } };
-  console.log(tokenReq);
-  if (!token) {   
+  if (!token) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(tokenReq, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
@@ -30,7 +29,11 @@ router.get('/listAll', async (req, res) => {
     const data = response.data;
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to list URLs' });
+    if (err.response && err.response.data) {
+      res.json({ error: err.response.data });
+    } else {
+      res.status(500).json({ error: 'Failed to list URLs' });
+    }
   }
 });
 
