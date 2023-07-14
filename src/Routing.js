@@ -126,7 +126,7 @@ export default function Routing({ appProps }) {
     },
     {
       Component: URLShortenerPage,
-      path: '/s',
+      path: '/short',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/'
     }
