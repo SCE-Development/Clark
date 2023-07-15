@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import Header from '../../Components/Header/Header';
 import './URLShortener-page.css';
-import { getAllURLs, createURL, deleteURL } from '../../APIFunctions/URLShortener';
+import { getAllURLs, createURL, deleteURL } from '../../APIFunctions/Cleezy';
 import { Container, Button, Row, Col, Input } from 'reactstrap';
 
 export default function URLShortenerPage(props) {
@@ -12,6 +12,7 @@ export default function URLShortenerPage(props) {
   const [deleteAlias, setDeleteAlias] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
+  const [createURLResponse, setCreateURLResponse] = useState({});
 
   async function getURLsFromDB() {
     const URLsFromDB = await getAllURLs(props.user.token);
@@ -20,6 +21,13 @@ export default function URLShortenerPage(props) {
       setLoading(false);
     } else {
       setError(URLsFromDB.responseData);
+    }
+  }
+
+  async function handleCreateURL() {
+    const response = await createURL(URL, alias, props.user.token);
+    if (!response.error) {
+      setCreateURLResponse(response.responseData);
     }
   }
 
@@ -59,11 +67,19 @@ export default function URLShortenerPage(props) {
                   <Button
                     className='submit-button'
                     disabled={!URL}
-                    onClick={() => createURL(URL, alias, props.user.token)}>
+                    onClick={() => handleCreateURL()}>
                       Submit
                   </Button>
                 </Col>
               </Row>
+              {Object.keys(createURLResponse).length > 0 && (
+                <Row>
+                  <Col>
+                    <p> URL saved with {String(createURLResponse.url)}
+                        &nbsp;and alias { String(createURLResponse.alias) }</p>
+                  </Col>
+                </Row>
+              )}
             </div>
             <div>
               <h1>Delete a URL</h1>

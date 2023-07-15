@@ -4,11 +4,7 @@ const logger = require('../util/logger');
 function main() {
   try {
     logger.info('Starting server...');
-    const API_ENDPOINTS = [
-      __dirname + '/routes/LedSign.js',
-      __dirname + '/routes/Printer.js',
-      __dirname + '/routes/RFID.js'
-    ];
+    const API_ENDPOINTS = __dirname + '/routes/';
     const peripheralServer = new
     SceHttpServer(API_ENDPOINTS, 8081, '/peripheralapi/');
     peripheralServer.initializeEndpoints().then(() => {
