@@ -12,11 +12,24 @@ function AdminDashboard() {
     { title: 'Event Manager', url: '/event-manager' },
     { title: 'LED Sign', url: '/led-sign' },
     { title: '3D Console', url: '/3DConsole' },
+    { title: 'Send Unsubscribe Email to All', url: '/send-blast-unsub-email' },
     
   ];
 
   const handleButtonClick = async () => {
-    await getAllUserSubscribedAndVerified();
+    const users = await getAllUserSubscribedAndVerified();
+    const MAILER_API_URL_PROD = process.env.MAILER_API_URL_PROD
+      || 'http://localhost:8082/cloudapi';
+    let status;
+    await axios
+      .post(`${MAILER_API_URL_PROD}/Mailer/sendUnsubscribeEmail`, {users})
+      .then(res =>{
+        status = res.data;
+      })
+      .catch(err => {
+        status = err.data;
+      });
+    return status;
   };
 
   return (
@@ -35,9 +48,6 @@ function AdminDashboard() {
             </Link>
           );
         })}
-        <Button onClick={handleButtonClick}>
-          Send Unsubscribe Email to All
-        </Button>
       </body>
     </div>
   );

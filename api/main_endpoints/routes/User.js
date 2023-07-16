@@ -494,27 +494,29 @@ router.post('/getUserDataByEmail', (req, res) => {
 
 // Search for all members with verified emails and subscribed
 router.post('/usersSubscribedAndVerified', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.find({ emailVerified: true, emailOptIn: true })
-    .then((users) => {
-      const userEmailAndName = users.map((user) => { 
-        return {
-          email : user.email,  
-          firstName : user.firstName, 
-          lastName : user.lastName
-        }
-        });
-        sendUnsubscribeEmail(userEmailAndName);
-      res.sendStatus(OK)
-    })
-    .catch((err) => {
-      console.log(err)
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    });
+  return res.sendStatus(OK);
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
+  // User.find({ emailVerified: true, emailOptIn: true })
+  //   .then((users) => {
+  //     const userEmailAndName = users.map((user) => { 
+  //       return {
+  //         email : user.email,  
+  //         firstName : user.firstName, 
+  //         lastName : user.lastName
+  //       }
+  //       });
+  //       sendUnsubscribeEmail(userEmailAndName);
+  //     res.sendStatus(OK)
+  //   })
+  //   .catch((err) => {
+  //     console.log(err)
+  //     res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+  //   });
 });
+
 
 module.exports = router;

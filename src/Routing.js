@@ -35,6 +35,9 @@ import ProjectsPage from './Pages/Projects/Projects';
 
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
+import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
+
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -127,13 +130,13 @@ export default function Routing({ appProps }) {
       redirect: '/',
       inAdminNavbar: true,
     },
-    // {
-    //   Component: DessertAdmin,
-    //   path: "/dessert-admin",
-    //   allowedIf: userIsOfficerOrAdmin,
-    //   redirect: "/",
-    //   inAdminNavbar: true,
-    // },
+    {
+      Component: sendUnsubscribeEmail,
+      path: '/send-blast-unsub-email',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+    },
+    { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
