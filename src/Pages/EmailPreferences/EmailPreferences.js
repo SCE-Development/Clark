@@ -16,11 +16,14 @@ export default function EmailPreferencesPage(props) {
       const urlParams = new URLSearchParams(window.location.search);
       const userEmailParam = urlParams.get('user');
       setUserEmail(userEmailParam);
-
-      const response = await getUserData(urlParams.get('user'));
-      setUserFirstName(response.responseData.firstName);
-      setUserLastName(response.responseData.lastName);
-      setIsOptedIntoEmails(response.responseData.emailOptIn);
+      if (userEmailParam === null) {
+        window.location = window.location.origin;
+      } else {
+        const response = await getUserData(urlParams.get('user'));
+        setUserFirstName(response.responseData.firstName);
+        setUserLastName(response.responseData.lastName);
+        setIsOptedIntoEmails(response.responseData.emailOptIn);
+      }
     };
 
     fetchData();

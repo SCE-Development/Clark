@@ -33,6 +33,9 @@ import URLShortenerPage from './Pages/URLShortener/URLShortener';
 
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
+import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
+
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -134,6 +137,12 @@ export default function Routing({ appProps }) {
       path: '/short',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/'
+    },
+    {
+      Component: sendUnsubscribeEmail,
+      path: '/send-blast-unsub-email',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
     },
     { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
