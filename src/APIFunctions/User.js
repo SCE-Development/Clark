@@ -273,11 +273,11 @@ export async function getUserData(email) {
   return status;
 }
 
-export async function getAllUserSubscribedAndVerified() {
+export async function getAllUserSubscribedAndVerified(token) {
   let status = new UserApiResponse();
   await axios
     .post(GENERAL_API_URL + '/user/usersSubscribedAndVerified', {
-      
+      token
     })
     .then((res) => {
       status.responseData = res.data;

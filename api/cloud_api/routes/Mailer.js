@@ -59,13 +59,23 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
     return res.sendStatus(OK);
   } else if (!req.body.users || !req.body.users.length) {
     res.sendStatus(BAD_REQUEST)
-  }
-  
+  }  
 
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-  console.log(req.body)
+
+  const tokenJson = await apiHandler.checkIfTokenFileExists();
+
+  if (tokenJson) {
+    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
+      logger.warn('refreshing token');
+      apiHandler.refreshToken();
+    }
+  } else {
+    logger.warn('getting new token! ', { tokenJson });
+    apiHandler.getNewToken();
+  }
   
   req.body.users.map(async (user) => {
     let fullName = user.firstName + ' ' + user.lastName
@@ -82,7 +92,6 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   });
   res.sendStatus(OK);
 })
-
 
 // Routing post /sendBlastEmail calls the sendEmail function
 // and sends the blast email with the blast email template
