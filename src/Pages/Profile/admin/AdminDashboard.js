@@ -5,7 +5,6 @@ import InfoCard from '../MemberView/InfoCard';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import { getAllUserSubscribedAndVerified } from '../../../APIFunctions/User';
-import axios from 'axios';
 
 function AdminDashboard() {
   const fields = [
@@ -17,7 +16,7 @@ function AdminDashboard() {
   ];
 
   const handleButtonClick = async () => {
-    const users = await getAllUserSubscribedAndVerified();
+    await getAllUserSubscribedAndVerified();
   };
 
   return (
