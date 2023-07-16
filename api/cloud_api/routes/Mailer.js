@@ -57,6 +57,8 @@ router.post('/sendVerificationEmail', async (req, res) => {
 router.post('/sendUnsubscribeEmail', async (req, res) => {
     if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
+  } else if (!req.body.users || !req.body.users.length) {
+    res.sendStatus(BAD_REQUEST)
   }
   
 
@@ -64,7 +66,7 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
   console.log(req.body)
-
+  
   req.body.users.map(async (user) => {
     let fullName = user.firstName + ' ' + user.lastName
     await unsubscribeEmail(USER, user.email, fullName)
