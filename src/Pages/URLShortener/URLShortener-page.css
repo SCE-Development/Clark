@@ -39,3 +39,10 @@
   transform: scale(1.02);
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+
+.url-table thead tr {
+  background-color: #3a5f7f;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}

@@ -4,6 +4,7 @@ import Header from '../../Components/Header/Header';
 import './URLShortener-page.css';
 import { getAllURLs, createURL, deleteURL } from '../../APIFunctions/Cleezy';
 import { Container, Button, Row, Col, Input } from 'reactstrap';
+import { trashcanSymbol } from '../Overview/SVG';
 
 export default function URLShortenerPage(props) {
   const [URL, setURL] = useState();
@@ -29,6 +30,10 @@ export default function URLShortenerPage(props) {
     if (!response.error) {
       setCreateURLResponse(response.responseData);
     }
+  }
+
+  async function handleDeleteURL(alias) {
+    const response = await deleteURL(alias, props.user.token);
   }
 
   useEffect(() => {
@@ -97,7 +102,7 @@ export default function URLShortenerPage(props) {
                   <Button
                     className='submit-button'
                     disabled={!deleteAlias}
-                    onClick={() => deleteURL(deleteAlias, props.user.token)}>
+                    onClick={() => handleDeleteURL()}>
                       Delete URL
                   </Button>
                 </Col>
@@ -105,15 +110,51 @@ export default function URLShortenerPage(props) {
             </div>
           </Container>
         )}
-        <div className='map-urls'>
-          <h1>List of URLs:</h1>
-          {allURLs.map((URL, index) => (
-            <div key={index}>
-              <h2>{index}</h2>
-              <p>{URL.url} saved with alias: {URL.alias}</p>
-            </div>
-          ))}
-        </div>
+        {allURLs.length > 0 && (
+          <div className='map-urls'>
+            <h1>List of URLs:</h1>
+            <table className = 'url-table'>
+              <thead className = 'url-table-header'>
+                <tr>
+                  {[
+                    'URL',
+                    'Alias',
+                    'Link',
+                    ''
+                  ].map((element, index) => {
+                    return <th key={index}>{ element }</th>;
+                  })}
+                </tr>
+              </thead>
+
+              <tbody>
+                {allURLs.map((URL, index) => {
+                  return (
+                    <tr key= { index }>
+                      <td>{  URL.url }</td>
+                      <td>{ URL.alias}</td>
+                      <td>sce.sjsu.edu/s/{ URL.alias }</td>
+                      <td>
+                        <button
+                          onClick={() => handleDeleteURL(URL.alias)}>
+                          {trashcanSymbol()}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                  // <Row key={index}>
+                  //   <Col>
+                  //     <h2>{index}</h2>
+                  //     <p>{URL.url} saved with alias: {URL.alias}</p>
+                  //   </Col>
+                  //   <Col>
+                  //   </Col>
+                  // </Row>
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
