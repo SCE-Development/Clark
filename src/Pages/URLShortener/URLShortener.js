@@ -8,11 +8,12 @@ import { trashcanSymbol } from '../Overview/SVG';
 
 export default function URLShortenerPage(props) {
   const [URL, setURL] = useState();
+  const [invalidURL, setInvalidURL] = useState();
   const [alias, setAlias] = useState();
   const [allURLs, setAllURLs] = useState([]);
-  const [deleteAlias, setDeleteAlias] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
+  const [aliasTaken, setAliasTaken] = useState();
   const [createURLResponse, setCreateURLResponse] = useState({});
 
   async function getURLsFromDB() {
@@ -27,13 +28,41 @@ export default function URLShortenerPage(props) {
 
   async function handleCreateURL() {
     const response = await createURL(URL, alias, props.user.token);
+    console.debug(response);
     if (!response.error) {
       setCreateURLResponse(response.responseData);
+      setAllURLs([response.responseData, ...allURLs]);
+      setAliasTaken(false);
+      setURL('');
+      setAlias('');
+      document.getElementById('url-box').value = '';
+      document.getElementById('alias-box').value = '';
+      return true;
+    } else if(response.error === 409) {
+      setAliasTaken(true);
+      return false;
+    } else {
+      return false;
+    }
+  }
+
+  async function checkValidURL(URL) {
+    const regex =
+      /^(http(s)?:\/\/)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.+~#?&//=]*)$/;
+    if (regex.test(URL)) {
+      setInvalidURL(false);
+      handleCreateURL();
+    } else {
+      setInvalidURL(true);
+      return false;
     }
   }
 
   async function handleDeleteURL(alias) {
     const response = await deleteURL(alias, props.user.token);
+    if (!response.error) {
+      setAllURLs(allURLs.filter(url => url.alias !== alias));
+    }
   }
 
   useEffect(() => {
@@ -55,14 +84,22 @@ export default function URLShortenerPage(props) {
                     type='text'
                     placeholder='Enter URL'
                     className='textbox'
+                    id='url-box'
                     onChange={e => setURL(e.target.value)} />
+                  {invalidURL && (
+                    <p className = 'invalid-text'>Please enter a valid URL</p>
+                  )}
                 </Col>
                 <Col>
                   <input
                     type='text'
-                    className='textbox'
                     placeholder='Enter alias'
+                    className='textbox'
+                    id='alias-box'
                     onChange={e => setAlias(e.target.value)} />
+                  {aliasTaken && (
+                    <p className = 'invalid-text'>Alias already in use</p>
+                  )}
                 </Col>
               </Row>
             </div>
@@ -72,89 +109,49 @@ export default function URLShortenerPage(props) {
                   <Button
                     className='submit-button'
                     disabled={!URL}
-                    onClick={() => handleCreateURL()}>
+                    onClick={() => checkValidURL(URL)}>
                       Submit
-                  </Button>
-                </Col>
-              </Row>
-              {Object.keys(createURLResponse).length > 0 && (
-                <Row>
-                  <Col>
-                    <p> URL saved with {String(createURLResponse.url)}
-                        &nbsp;and alias { String(createURLResponse.alias) }</p>
-                  </Col>
-                </Row>
-              )}
-            </div>
-            <div>
-              <h1>Delete a URL</h1>
-              <Row>
-                <Col>
-                  <input
-                    type='text'
-                    className='textbox'
-                    placeholder='Enter alias to delete'
-                    onChange={e => setDeleteAlias(e.target.value)}/>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Button
-                    className='submit-button'
-                    disabled={!deleteAlias}
-                    onClick={() => handleDeleteURL()}>
-                      Delete URL
                   </Button>
                 </Col>
               </Row>
             </div>
           </Container>
         )}
-        {allURLs.length > 0 && (
-          <div className='map-urls'>
-            <h1>List of URLs:</h1>
-            <table className = 'url-table'>
-              <thead className = 'url-table-header'>
-                <tr>
-                  {[
-                    'URL',
-                    'Alias',
-                    'Link',
-                    ''
-                  ].map((element, index) => {
-                    return <th key={index}>{ element }</th>;
-                  })}
-                </tr>
-              </thead>
-
-              <tbody>
-                {allURLs.map((URL, index) => {
-                  return (
-                    <tr key= { index }>
-                      <td>{  URL.url }</td>
-                      <td>{ URL.alias}</td>
-                      <td>sce.sjsu.edu/s/{ URL.alias }</td>
-                      <td>
-                        <button
-                          onClick={() => handleDeleteURL(URL.alias)}>
-                          {trashcanSymbol()}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                  // <Row key={index}>
-                  //   <Col>
-                  //     <h2>{index}</h2>
-                  //     <p>{URL.url} saved with alias: {URL.alias}</p>
-                  //   </Col>
-                  //   <Col>
-                  //   </Col>
-                  // </Row>
+        <div className='map-urls'>
+          <h1>List of URLs:</h1>
+          <table className = 'url-table'>
+            <thead className = 'url-table-header'>
+              <tr>
+                {[
+                  'URL',
+                  'Alias',
+                  'Link',
+                  ''
+                ].map((element, index) => {
+                  return <th key={index}>{ element }</th>;
                 })}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </tr>
+            </thead>
+
+            <tbody>
+              {allURLs.map((URL, index) => {
+                return (
+                  <tr key= { index }>
+                    <td>{  URL.url }</td>
+                    <td>{ URL.alias}</td>
+                    <td><a href = { URL.link } target="_blank">{ URL.link }</a></td>
+                    <td>
+                      <button
+                        onClick={() => handleDeleteURL(URL.alias)}>
+                        {trashcanSymbol()}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

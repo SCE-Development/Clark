@@ -13,11 +13,16 @@
   align-items: center;
 } 
 
+.invalid-text {
+  font-size: 12px;
+  color: red;
+}
+
 .submit-button {
   width: 8rem;
   height: 3rem;
   margin-left: 1rem;
-  transition: transform 200ms ease-in-out;
+  transition: transform 100ms ease-in-out;
   background-color: rgb(118, 204, 118);
 }
 
@@ -40,9 +45,23 @@
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
+.url-table {
+  border-collapse: collapse;
+  font-size: 0.9em;
+  max-width: 100%;
+  min-width: 600px;
+  overflow: auto;
+  
+}
+
 .url-table thead tr {
   background-color: #3a5f7f;
   color: #ffffff;
   text-align: left;
   font-weight: bold;
+}
+
+th, td {
+  padding: 15px 15px 15px 8px;
+  align-content: left;
 }

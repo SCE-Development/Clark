@@ -29,8 +29,8 @@ export async function createURL(url, alias = null, token) {
     const data = response.data;
     status.responseData = data;
   } catch (err) {
-    status.responseData = err;
     status.error = true;
+    status.responseData = err;
   }
   return status;
 }

@@ -14,8 +14,9 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
-let URL_SHORTENER_BASE_URL = process.env.URL_SHORTENER_BASE_URL
+let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
+let URL_SHORTENER_BASE_URL = process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
 
 router.get('/listAll', async (req, res) => {
   const token = req.query.token;
@@ -26,15 +27,19 @@ router.get('/listAll', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
-    const response = await axios.get(URL_SHORTENER_BASE_URL + '/list');
+    const response = await axios.get(CLEEZY_URL + '/list');
     const data = response.data;
-    res.json(data);
+    const returnData = data.map(element => {
+      const u = new URL(element.alias, URL_SHORTENER_BASE_URL);
+      return { ...element, link: u.href };
+    });
+    res.json(returnData);
   } catch (err) {
-    if (err.response && err.response.data) {
-      res.json({ error: err.response.data });
-    } else {
-      res.status(500).json({ error: 'Failed to list URLs' });
-    }
+      if (err.response && err.response.data) {
+        res.status(err.response.status).json({ error: err.response.data });
+      } else {
+        res.status(500).json({ error: 'Failed to list URLs' });
+      }
   }
 });
 
@@ -47,11 +52,12 @@ router.post('/createURL', async (req, res) => {
   const { url, alias } = req.body;
   let jsonbody = { url, alias: alias || null };
   try {
-    const response = await axios.post(URL_SHORTENER_BASE_URL + '/create_url', jsonbody);
+    const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
     const data = response.data;
-    res.json(data);
+    const u = new URL( data.alias, URL_SHORTENER_BASE_URL);
+    res.json({ ...data, link: u });
   } catch (err) {
-    res.json({ error: err.response.status });
+    res.status(err.response.status).json({ error: err.response.status });
   }
 });
 
@@ -63,12 +69,12 @@ router.post('/deleteURL', async (req, res) => {
   }
   const { alias } = req.body;
   const response = await axios
-    .post(URL_SHORTENER_BASE_URL + '/delete/' + alias)
+    .post(CLEEZY_URL + '/delete/' + alias)
     .then(response => {
       res.json({ status: response.status });
     })
     .catch(err => {
-      res.json({ error: err.response.status });
+      res.status(err.response.status).json({ error: err.response.status });
     });
 });
 
