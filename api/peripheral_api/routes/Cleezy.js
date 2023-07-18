@@ -16,7 +16,8 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
-let URL_SHORTENER_BASE_URL = process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
+let URL_SHORTENER_BASE_URL = 
+  process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
 
 router.get('/listAll', async (req, res) => {
   const token = req.query.token;
@@ -35,11 +36,11 @@ router.get('/listAll', async (req, res) => {
     });
     res.json(returnData);
   } catch (err) {
-      if (err.response && err.response.data) {
-        res.status(err.response.status).json({ error: err.response.data });
-      } else {
-        res.status(500).json({ error: 'Failed to list URLs' });
-      }
+    if (err.response && err.response.data) {
+      res.status(err.response.status).json({ error: err.response.data });
+    } else {
+      res.status(500).json({ error: 'Failed to list URLs' });
+    }
   }
 });
 
