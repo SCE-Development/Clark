@@ -4,7 +4,7 @@ import { ApiResponse } from './ApiResponses';
 let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
   || 'http://localhost:8081/peripheralapi';
 
-export async function getAllURLs(token) {
+export async function getAllUrls(token) {
   let status = new ApiResponse();
   await axios
     .get(PERIPHERAL_API_URL + '/Cleezy/listAll', {
@@ -20,12 +20,12 @@ export async function getAllURLs(token) {
   return status;
 }
 
-export async function createURL(url, alias = null, token) {
+export async function createUrl(url, alias = null, token) {
   let status = new ApiResponse();
-  const URLToAdd = { url, alias };
+  const urlToAdd = { url, alias };
   try {
     const response = await axios
-      .post(PERIPHERAL_API_URL + '/Cleezy/createURL', { token, ...URLToAdd });
+      .post(PERIPHERAL_API_URL + '/Cleezy/createUrl', { token, ...urlToAdd });
     const data = response.data;
     status.responseData = data;
   } catch (err) {
@@ -35,11 +35,11 @@ export async function createURL(url, alias = null, token) {
   return status;
 }
 
-export async function deleteURL(aliasIn, token) {
+export async function deleteUrl(aliasIn, token) {
   let status = new ApiResponse();
   const alias = { 'alias': aliasIn };
   await axios
-    .post(PERIPHERAL_API_URL + '/Cleezy/deleteURL', { token, ...alias })
+    .post(PERIPHERAL_API_URL + '/Cleezy/deleteUrl', { token, ...alias })
     .catch(err => {
       status.responseData = err;
       status.error = true;

@@ -1,67 +1,64 @@
 import React, { useEffect, useState } from 'react';
 
 import Header from '../../Components/Header/Header';
-import './URLShortener-page.css';
-import { getAllURLs, createURL, deleteURL } from '../../APIFunctions/Cleezy';
+import './URLShortener.css';
+import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { Container, Button, Row, Col, Input } from 'reactstrap';
 import { trashcanSymbol } from '../Overview/SVG';
 
 export default function URLShortenerPage(props) {
-  const [URL, setURL] = useState();
-  const [invalidURL, setInvalidURL] = useState();
+  const [url, setUrl] = useState();
+  const [invalidUrl, setInvalidUrl] = useState();
   const [alias, setAlias] = useState();
-  const [allURLs, setAllURLs] = useState([]);
+  const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
   const [aliasTaken, setAliasTaken] = useState();
-  const [createURLResponse, setCreateURLResponse] = useState({});
+  const [createUrlResponse, setCreateUrlResponse] = useState({});
 
   async function getURLsFromDB() {
-    const URLsFromDB = await getAllURLs(props.user.token);
+    const URLsFromDB = await getAllUrls(props.user.token);
     if (!URLsFromDB.error) {
-      setAllURLs(URLsFromDB.responseData);
+      setAllUrls(URLsFromDB.responseData);
       setLoading(false);
     } else {
       setError(URLsFromDB.responseData);
     }
   }
 
-  async function handleCreateURL() {
-    const response = await createURL(URL, alias, props.user.token);
-    console.debug(response);
+  async function handleCreateUrl() {
+    const response = await createUrl(url, alias, props.user.token);
     if (!response.error) {
-      setCreateURLResponse(response.responseData);
-      setAllURLs([response.responseData, ...allURLs]);
+      setCreateUrlResponse(response.responseData);
+      setAllUrls([response.responseData, ...allUrls]);
       setAliasTaken(false);
-      setURL('');
+      setUrl('');
       setAlias('');
       document.getElementById('url-box').value = '';
       document.getElementById('alias-box').value = '';
       return true;
-    } else if(response.error === 409) {
+    } else {
       setAliasTaken(true);
       return false;
-    } else {
-      return false;
     }
   }
 
-  async function checkValidURL(URL) {
+  async function maybeSubmitUrl(url) {
     const regex =
       /^(http(s)?:\/\/)[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_.+~#?&//=]*)$/;
-    if (regex.test(URL)) {
-      setInvalidURL(false);
-      handleCreateURL();
+    if (regex.test(url)) {
+      setInvalidUrl(false);
+      handleCreateUrl();
     } else {
-      setInvalidURL(true);
+      setInvalidUrl(true);
       return false;
     }
   }
 
-  async function handleDeleteURL(alias) {
-    const response = await deleteURL(alias, props.user.token);
+  async function handleDeleteUrl(alias) {
+    const response = await deleteUrl(alias, props.user.token);
     if (!response.error) {
-      setAllURLs(allURLs.filter(url => url.alias !== alias));
+      setAllUrls(allUrls.filter(url => url.alias !== alias));
     }
   }
 
@@ -71,13 +68,13 @@ export default function URLShortenerPage(props) {
 
   return (
     <div>
-      <Header title="Welcome to the URL Shortener!!" />
+      <Header title="Welcome to the url Shortener!!" />
       <div className='body-container'>
         {error && <p> {String(error)} </p>}
         {!loading && !error && (
           <Container className='content-container'>
             <div>
-              <h1>Create a new URL</h1>
+              <h1>Create a new link</h1>
               <Row>
                 <Col>
                   <input
@@ -85,8 +82,8 @@ export default function URLShortenerPage(props) {
                     placeholder='Enter URL'
                     className='textbox'
                     id='url-box'
-                    onChange={e => setURL(e.target.value)} />
-                  {invalidURL && (
+                    onChange={e => setUrl(e.target.value)} />
+                  {invalidUrl && (
                     <p className = 'invalid-text'>Please enter a valid URL</p>
                   )}
                 </Col>
@@ -108,8 +105,8 @@ export default function URLShortenerPage(props) {
                 <Col>
                   <Button
                     className='submit-button'
-                    disabled={!URL}
-                    onClick={() => checkValidURL(URL)}>
+                    disabled={!url}
+                    onClick={() => maybeSubmitUrl(url)}>
                       Submit
                   </Button>
                 </Col>
@@ -123,7 +120,7 @@ export default function URLShortenerPage(props) {
             <thead className = 'url-table-header'>
               <tr>
                 {[
-                  'URL',
+                  'Url',
                   'Alias',
                   'Link',
                   ''
@@ -134,15 +131,15 @@ export default function URLShortenerPage(props) {
             </thead>
 
             <tbody>
-              {allURLs.map((URL, index) => {
+              {allUrls.map((url, index) => {
                 return (
                   <tr key= { index }>
-                    <td>{  URL.url }</td>
-                    <td>{ URL.alias}</td>
-                    <td><a href = { URL.link } target="_blank">{ URL.link }</a></td>
+                    <td>{  url.url }</td>
+                    <td>{ url.alias}</td>
+                    <td><a href = { url.link } target="_blank">{ url.link }</a></td>
                     <td>
                       <button
-                        onClick={() => handleDeleteURL(URL.alias)}>
+                        onClick={() => handleDeleteUrl(url.alias)}>
                         {trashcanSymbol()}
                       </button>
                     </td>
