@@ -36,5 +36,8 @@
     "AWS_IOT_ENDPOINT" : "NOT_SET",
     "PrintingS3Bucket": "NOT_SET"
   },
+  "Cleezy": {
+    "ENABLED": false
+  },
   "secretKey": "super duper secret key"
 }

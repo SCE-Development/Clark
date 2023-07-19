@@ -12,7 +12,9 @@ const {
   FORBIDDEN,
   NOT_FOUND,
 } = require('../../util/constants').STATUS_CODES;
-const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const logger = require('../../util/logger');
+const { Cleezy } = require('../../config/config.json');
+const { ENABLED } = Cleezy;
 
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
@@ -20,8 +22,12 @@ let URL_SHORTENER_BASE_URL =
   process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
 
 router.get('/listAll', async (req, res) => {
+  if(!ENABLED) {
+    return res.json({
+      disabled: true
+    });
+  }
   const token = req.query.token;
-  const tokenReq = { body: { token } };
   if (!token) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await verifyToken(req.query.token)) {
@@ -36,6 +42,7 @@ router.get('/listAll', async (req, res) => {
     });
     res.json(returnData);
   } catch (err) {
+    logger.error('/listAll had an error', err);
     if (err.response && err.response.data) {
       res.status(err.response.status).json({ error: err.response.data });
     } else {
@@ -44,7 +51,7 @@ router.get('/listAll', async (req, res) => {
   }
 });
 
-router.post('/createURL', async (req, res) => {
+router.post('/createUrl', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await verifyToken(req.body.token)) {
@@ -58,11 +65,12 @@ router.post('/createURL', async (req, res) => {
     const u = new URL( data.alias, URL_SHORTENER_BASE_URL);
     res.json({ ...data, link: u });
   } catch (err) {
+    logger.error('/createUrl had an error', err);
     res.status(err.response.status).json({ error: err.response.status });
   }
 });
 
-router.post('/deleteURL', async (req, res) => {
+router.post('/deleteUrl', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await verifyToken(req.body.token)) {
