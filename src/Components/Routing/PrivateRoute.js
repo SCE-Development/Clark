@@ -19,7 +19,7 @@ export default function PrivateRoute({
                 pathname: "/",
               }}
             />
-          );
+        );
         } else { 
           return (
             <Route
