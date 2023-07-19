@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Row, Container } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
 import Background from '../../Components/Background/background';
 import './login.css';
 
 export default function Login(props) {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  console.log("Query Param is " + queryParams.get("redirect"))
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -24,12 +27,18 @@ export default function Login(props) {
   ];
 
   async function handleSubmit(e) {
+    //handle the route given in the link
+    //get the route from the URL
     e.preventDefault();
     const loginStatus = await loginUser(email, password);
     if (!loginStatus.error) {
+      console.log("LOGIN SUCCESS!")
       props.setAuthenticated(true);
       window.localStorage.setItem('jwtToken', loginStatus.token);
       window.location.reload();
+      if(queryParams.get("redirect")) {  //if there is a redirect value, then navigate
+        window.location.href=queryParams.get("redirect");
+      }
     } else {
       setErrorMsg(
         loginStatus.responseData && loginStatus.responseData.data.message
