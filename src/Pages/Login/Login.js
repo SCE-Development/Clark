@@ -9,7 +9,6 @@ import './login.css';
 export default function Login(props) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  console.log("Query Param is " + queryParams.get("redirect"))
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -17,27 +16,24 @@ export default function Login(props) {
     {
       type: 'email',
       placeholder: 'Email',
-      handleChange: e => setEmail(e.target.value)
+      handleChange: (e) => setEmail(e.target.value),
     },
     {
       type: 'password',
       placeholder: 'Password',
-      handleChange: e => setPassword(e.target.value)
-    }
+      handleChange: (e) => setPassword(e.target.value),
+    },
   ];
 
   async function handleSubmit(e) {
-    //handle the route given in the link
-    //get the route from the URL
     e.preventDefault();
     const loginStatus = await loginUser(email, password);
     if (!loginStatus.error) {
-      console.log("LOGIN SUCCESS!")
       props.setAuthenticated(true);
       window.localStorage.setItem('jwtToken', loginStatus.token);
       window.location.reload();
-      if(queryParams.get("redirect")) {  //if there is a redirect value, then navigate
-        window.location.href=queryParams.get("redirect");
+      if (queryParams.get('redirect')) {
+        window.location.href = queryParams.get('redirect');
       }
     } else {
       setErrorMsg(
@@ -56,7 +52,7 @@ export default function Login(props) {
             return <LoginInput key={index} field={field} />;
           })}
 
-          {errorMsg && <h6 className = 'login-error'>{errorMsg}*</h6>}
+          {errorMsg && <h6 className='login-error'>{errorMsg}*</h6>}
 
           <button type='submit' id='loginBtn'>
             Login
@@ -66,7 +62,7 @@ export default function Login(props) {
           </p>
         </form>
       </Row>
-      <Background/>
+      <Background />
     </Container>
   );
 }
