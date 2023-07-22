@@ -136,6 +136,7 @@ export default function Routing({ appProps }) {
       Component: URLShortenerPage,
       path: '/short',
       allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
       redirect: '/'
     },
     {
