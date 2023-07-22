@@ -1,0 +1,10 @@
+.email-preferences {
+    .row {
+        text-align: center;
+        margin: auto;
+    }
+    .email-submit-btn {
+        padding-top: 10px;
+        width: 50%;
+    }
+}

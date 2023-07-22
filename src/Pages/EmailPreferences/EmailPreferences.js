@@ -30,7 +30,7 @@ export default function EmailPreferencesPage(props) {
       const urlParams = new URLSearchParams(window.location.search);
       const userEmailParam = urlParams.get('user');
       setUserEmail(userEmailParam);
-      if (userEmailParam === null) {
+      if (!userEmailParam) {
         window.location = window.location.origin;
       } else {
         const response = await getUserData(urlParams.get('user'));
