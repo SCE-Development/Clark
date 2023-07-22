@@ -29,6 +29,7 @@ import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 import AboutPage from './Pages/About/About';
 import ProjectsPage from './Pages/Projects/Projects';
+import URLShortenerPage from './Pages/URLShortener/URLShortener';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -122,6 +123,12 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
+    },
+    {
+      Component: URLShortenerPage,
+      path: '/short',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/'
     }
   ];
   const signedOutRoutes = [
