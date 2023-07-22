@@ -140,7 +140,7 @@ export default function Routing({ appProps }) {
     },
     {
       Component: sendUnsubscribeEmail,
-      path: '/send-blast-unsub-email',
+      path: '/unsub',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
     },

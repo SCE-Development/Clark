@@ -11,14 +11,14 @@ function AdminDashboard(props) {
   const handleButtonClick = async () => {
     let status = await getAllUserSubscribedAndVerified(props.token);
     if (status.responseData === 'OK') {
-          setButtonText('Successfully sent unsubscribe emails!');
-            setButtonColor('green');
-          setTimeout(() => {
-            setButtonText('Send Unsubscribe Email to All');
-            setButtonColor('');
-          }, 3000);
-        }
-    };
+      setButtonText('Successfully sent unsubscribe emails!');
+      setButtonColor('green');
+      setTimeout(() => {
+        setButtonText('Send Unsubscribe Email to All');
+        setButtonColor('');
+      }, 3000);
+    }
+  };
 
   return (
     <div className='flexbox-container'>
@@ -27,10 +27,10 @@ function AdminDashboard(props) {
         <p style={{
           color: 'white',
           textAlign: 'center',
-          }}>
+        }}>
           This button sends an email to all users that have a verified
           email are opted in to the email list.<br/>
-          The email will send them a link to where they can 
+          The email will send them a link to where they can
           unsubscribe from the email list.
         </p>
         <Button onClick={handleButtonClick} style={{ backgroundColor: buttonColor }}>
