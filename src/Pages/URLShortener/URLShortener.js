@@ -20,13 +20,13 @@ export default function URLShortenerPage(props) {
    * Cleezy page is disabled by default since you have to run the Cleezy server
    * separately. To enable, go to config.json and set ENABLED under Cleezy to true
    */
-  async function getURLsFromDB() {
-    const URLsFromDB = await getAllUrls(props.user.token);
-    setIsCleezyDisabled(!!URLsFromDB.responseData.disabled);
-    if (URLsFromDB.error) {
-      setError(URLsFromDB.responseData);
+  async function getCleezyUrls() {
+    const urlsFromDb = await getAllUrls(props.user.token);
+    setIsCleezyDisabled(!!urlsFromDb.responseData.disabled);
+    if (urlsFromDb.error) {
+      setError(urlsFromDb.responseData);
     } else {
-      setAllUrls(URLsFromDB.responseData);
+      setAllUrls(urlsFromDb.responseData);
     }
     setLoading(false);
   }
@@ -67,22 +67,8 @@ export default function URLShortenerPage(props) {
   }
 
   useEffect(() => {
-    getURLsFromDB();
+    getCleezyUrls();
   }, []);
-  /**
-  The url shortener (Cleezy) page is currently disabled. If you care about
-  enabling it:
-  1. modify <pre>api/config/config.json</pre> to include
-  <code>
-   "Cleezy": {
-    "ENABLED": true
-   }
-   </code>
-   2. clone cleezy locally and follow the steps in
-   <a href="https://github.com/SCE-Development/cleezy#readme" target="_blank">
-   the readme
-   </a> to run locally.
-   */
 
   if (isCleezyDisabled) {
     return (
