@@ -142,9 +142,9 @@ export default function Routing({ appProps }) {
       Component: sendUnsubscribeEmail,
       path: '/unsub',
       allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
       redirect: '/',
     },
-    { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -153,7 +153,8 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
-    { Component: ProjectsPage, path: '/projects'}
+    { Component: ProjectsPage, path: '/projects'},
+    { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   return (
     <Router>

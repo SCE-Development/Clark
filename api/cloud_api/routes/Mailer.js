@@ -58,7 +58,7 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   } else if (!req.body.users || !req.body.users.length) {
-    res.sendStatus(BAD_REQUEST);
+    return res.sendStatus(BAD_REQUEST);
   }
 
 
@@ -76,7 +76,7 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
       logger.error('unable to send unsubscribe email:', error);
     }
   });
-  res.sendStatus(OK);
+  return res.sendStatus(OK);
 });
 
 
