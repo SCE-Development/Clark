@@ -79,10 +79,6 @@ export default function URLShortenerPage(props) {
         <br/>
         <br/>
         <br/>
-        <ol>
-          <li>bread</li>
-          <li>kool aid</li>
-        </ol>
         <h1>
           Cleezy page is disabled by default since you have to run the Cleezy server
           separately.
@@ -96,13 +92,13 @@ export default function URLShortenerPage(props) {
             </code>
           </li>
           <li>
-            Clone cleezy locally and follow the steps in
+            Clone Cleezy locally and follow the steps in
             {' '}<a href="https://github.com/SCE-Development/cleezy#readme" target="_blank">
               the readme
             </a> to run locally.
           </li>
           <li>
-            number 3
+            Run Clark and log in with an Admin account.
           </li>
         </ol>
       </>
