@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Row, Container } from 'reactstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
 import Background from '../../Components/Background/background';
 import './login.css';
 
 export default function Login(props) {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
+  const queryParams = new URLSearchParams(window.location.search);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -31,9 +30,10 @@ export default function Login(props) {
     if (!loginStatus.error) {
       props.setAuthenticated(true);
       window.localStorage.setItem('jwtToken', loginStatus.token);
-      window.location.reload();
       if (queryParams.get('redirect')) {
         window.location.href = queryParams.get('redirect');
+      } else {
+        window.location.reload();
       }
     } else {
       setErrorMsg(
