@@ -21,7 +21,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const {sendVerificationEmail} = require('../util/EmailHelpers');
+const {sendVerificationEmail} = require('../util/emailHelpers');
 
 
 /**

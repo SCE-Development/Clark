@@ -1,7 +1,7 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
 const User = require('../../api/main_endpoints/models/User');
-const EmailHelpers = require('../../api/main_endpoints/util/EmailHelpers');
+const EmailHelpers = require('../../api/main_endpoints/util/emailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
