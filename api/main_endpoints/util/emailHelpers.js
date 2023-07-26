@@ -17,19 +17,15 @@ async function sendUnsubscribeEmail(users){
 }
 
 async function sendVerificationEmail(name, email){
-    let status
-    await axios
+  return new Promise((resolve)=>{
+    axios
       .post(`${MAILER_API_URL}/Mailer/sendVerificationEmail`, {
         recipientName: name,
         recipientEmail: email
       })
-      .then(res =>{
-      status = res.data;
-      })
-      .catch(err => {
-        status = err.data;
-      });
-    return status
+      .then(() => resolve(true))
+      .catch(() => resolve(false));
+  });
 }
 
-module.exports = {sendUnsubscribeEmail, sendVerificationEmail}
+module.exports = {sendUnsubscribeEmail, sendVerificationEmail};

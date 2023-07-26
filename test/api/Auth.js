@@ -1,9 +1,11 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
 const User = require('../../api/main_endpoints/models/User');
+const EmailHelpers = require('../../api/main_endpoints/util/EmailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const sinon = require('sinon');
 const {
   OK,
   BAD_REQUEST,
@@ -14,6 +16,7 @@ const SceApiTester = require('../util/tools/SceApiTester');
 
 let app = null;
 let test = null;
+let sandbox = sinon.createSandbox();
 const expect = chai.expect;
 // tools for testing
 const tools = require('../util/tools/tools.js');
@@ -29,7 +32,12 @@ chai.use(chaiHttp);
 
 // Our parent block
 describe('Auth', () => {
+  let sendVerificationEmailStub = null;
   before(done => {
+    sendVerificationEmailStub = sandbox.stub(
+      EmailHelpers,
+      'sendVerificationEmail',
+    );
     initializeTokenMock();
     app = tools.initializeServer(__dirname +
       '/../../api/main_endpoints/routes/Auth.js');
@@ -40,11 +48,13 @@ describe('Auth', () => {
   });
 
   after(done => {
+    if(sendVerificationEmailStub) sendVerificationEmailStub.restore();
     restoreTokenMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
+    if(sendVerificationEmailStub) sendVerificationEmailStub.reset();
     setTokenStatus(false);
   });
 
@@ -78,6 +88,7 @@ describe('Auth', () => {
       };
       const result = await test.sendPostRequest(
         '/api/Auth/register', user);
+      expect(sendVerificationEmailStub.called).to.be.false;
       expect(result).to.have.status(CONFLICT);
     });
     it('Should not allow registration with a password without' +
@@ -90,6 +101,7 @@ describe('Auth', () => {
       };
       const result = await test.sendPostRequest(
         '/api/Auth/register', user);
+      expect(sendVerificationEmailStub.called).to.be.false;
       expect(result).to.have.status(BAD_REQUEST);
     });
 
@@ -103,7 +115,22 @@ describe('Auth', () => {
       };
       const result = await test.sendPostRequest(
         '/api/Auth/register', user);
+      expect(sendVerificationEmailStub.called).to.be.false;
       expect(result).to.have.status(BAD_REQUEST);
+    });
+    it('Should send a verification email after user signs up', async () => {
+      const user = {
+        email: 'x1@y.z',
+        password: 'Passw00rd',
+        firstName: 'first-name',
+        lastName: 'last-name'
+      };
+      const result = await test.sendPostRequest(
+        '/api/Auth/register', user);
+      expect(sendVerificationEmailStub.called).to.be.true;
+      const verificationArgs = sendVerificationEmailStub.getCall(-1).args;
+      expect(verificationArgs).to.eql([user.firstName + ' ' + user.lastName, user.email]);
+      expect(result).to.have.status(OK);
     });
   });
 

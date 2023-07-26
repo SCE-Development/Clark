@@ -21,7 +21,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const {sendVerificationEmail} = require('../util/EmailHelpers')
+const {sendVerificationEmail} = require('../util/EmailHelpers');
 
 
 /**
@@ -67,9 +67,9 @@ router.post('/register', async (req, res) => {
       res.status(CONFLICT).send({ message: registrationStatus.message });
     }
   } else {
-    //insert verification send here
-    let name = req.body.firstName + ' ' + req.body.lastName
-    sendVerificationEmail(name, req.body.email)
+    // insert verification send here
+    let name = req.body.firstName + ' ' + req.body.lastName;
+    sendVerificationEmail(name, req.body.email);
     res.sendStatus(OK);
   }
 });
