@@ -27,7 +27,7 @@ export default function PrivateRoute({
                 <Redirect
                   to={{
                     pathname:
-                      '/login?redirect=' + encodeURIComponent(params.path),
+                      '/login?redirect=' + encodeURIComponent(params.location.pathname),
                     state: { from: props.location },
                   }}
                 />
