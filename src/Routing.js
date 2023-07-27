@@ -101,9 +101,12 @@ export default function Routing({ appProps }) {
     },
     {
       Component: Login,
-      path: '/login',
+      path: '/login*',
       allowedIf: !userIsAuthenticated,
-      redirect: '/'
+      redirect: '/',
+      queryParams: {
+        redirect: 'redirect',
+      },
     },
     {
       Component: MembershipApplication,
@@ -154,6 +157,7 @@ export default function Routing({ appProps }) {
                   allowed: allowedIf,
                   user: appProps.user,
                   redirect,
+                  authenticated:userIsAuthenticated,
                   ...appProps
                 }}
                 component={props => (

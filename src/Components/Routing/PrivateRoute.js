@@ -9,21 +9,33 @@ export default function PrivateRoute({
   return (
     <Route
       {...params}
-      render={props =>
-        appProps.allowed ? (
-          <Component {...appProps} {...props} />
-        ) : (
-          <Route
-            render={props => (
-              <Redirect
-                to={{
-                  pathname: appProps.redirect ? appProps.redirect : '/login',
-                  state: { from: props.location }
-                }}
-              />
-            )}
-          />
-        )}
+      render={(props) => {
+        if (appProps.allowed) {
+          return <Component {...appProps} {...props} />;
+        } else if (appProps.authenticated) {
+          return (
+            <Redirect
+              to={{
+                pathname: '/',
+              }}
+            />
+          );
+        } else {
+          return (
+            <Route
+              render={(props) => (
+                <Redirect
+                  to={{
+                    pathname:
+                      '/login?redirect=' + encodeURIComponent(params.location.pathname),
+                    state: { from: props.location },
+                  }}
+                />
+              )}
+            />
+          );
+        }
+      }}
     />
   );
 }
