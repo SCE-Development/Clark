@@ -21,6 +21,7 @@ services:
       dockerfile: ./peripheral_api/Dockerfile
     environment:
       - MAIN_ENDPOINT_URL=sce-main-endpoints:8080
+      - CLEEZY_URL=http://cleezy-app.sce:8000
       - DATABASE_HOST=sce-mongodb
       - NODE_ENV=production
     restart: 'on-failure'
@@ -92,3 +93,8 @@ services:
     restart: 'on-failure'
     depends_on:
       - frontend
+
+networks:
+  default:
+    external:
+      name: sce
