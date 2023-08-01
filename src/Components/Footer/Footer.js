@@ -57,22 +57,22 @@ export default () => {
 
               Sponsor and Relations
               <li className='sub-list'>
-                <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Jessabelle Ramos</p>
+                <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Pablo Nava Barrera</p>
                 <p style={{fontSize: '0.75rem'}}>
                   <a
-                    href="mailto:jessabelle.ramos@sjsu.edu"
+                    href="mailto:pablo.navabarrera@sjsu.edu"
                     style={{color:'gray'}}>
-                      jessabelle.ramos@sjsu.edu
+                      pablo.navabarrera@sjsu.edu
                   </a>
                 </p>
               </li>
               <li className='sub-list'>
-                <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Abbigel Palad</p>
+                <p style={{color: 'rgb(172, 172, 172)', fontWeight: 'bold'}}>Sarah Singh</p>
                 <p style={{fontSize: '0.75rem'}}>
                   <a
-                    href="mailto:abegail.palad@sjsu.edu"
+                    href="mailto:sarah.singh@sjsu.edu"
                     style={{color:'gray'}}>
-                      abegail.palad@sjsu.edu
+                      sarah.singh@sjsu.edu
                   </a>
                 </p>
               </li>
