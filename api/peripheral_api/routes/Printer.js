@@ -57,6 +57,7 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
+  const { raw, copies, pageRanges } = req.body;
   axios
       .post('http://host.docker.internal:14000/print', {
         raw,
