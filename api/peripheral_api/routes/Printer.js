@@ -59,28 +59,23 @@ router.post('/sendPrintRequest', async (req, res) => {
 
   const { raw, copies, pageRanges } = req.body;
   axios
-      .post('http://host.docker.internal:14000/print', {
-        raw,
+    .post('http://host.docker.internal:14000/print', {
+      raw,
+      copies,
+      pageRanges,
+    })
+    .then(() => {
+      logger.warn('hello there', {
+        raw: typeof raw,
+        rawLength: raw.length,
         copies,
         pageRanges,
-      })
-      .then(() => {
-        logger.warn("hello there", {
-          raw: typeof raw,
-          rawLength: raw.length,
-          copies,
-          pageRanges,
-        })
-        res.sendStatus(OK);
-      }).catch((err) => {
-        logger.error('had an error: ', err);
-        res.sendStatus(500);
       });
-
-  if (!result) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  return res.sendStatus(OK);
+      res.sendStatus(OK);
+    }).catch((err) => {
+      logger.error('had an error: ', err);
+      res.sendStatus(500);
+    });
 });
 
 router.post('/pushDiscordPDFToSqs', async (req, res) => {
