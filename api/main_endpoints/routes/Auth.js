@@ -69,8 +69,7 @@ router.post('/register', async (req, res) => {
       res.status(CONFLICT).send({ message: registrationStatus.message });
     }
   } else {
-    // insert verification send here
-    let name = req.body.firstName + ' ' + req.body.lastName;
+    const name = req.body.firstName + ' ' + req.body.lastName;
     sendVerificationEmail(name, req.body.email);
     res.sendStatus(OK);
   }

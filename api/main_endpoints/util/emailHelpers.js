@@ -1,10 +1,10 @@
-const axios = require('axios')
+const axios = require('axios');
 
 const MAILER_API_URL = process.env.MAILER_API_URL
-  || 'http://localhost:8082/cloudapi'
+  || 'http://localhost:8082/cloudapi';
 
 async function sendUnsubscribeEmail(users) {
-  let status
+  let status;
   await axios
     .post(`${MAILER_API_URL}/Mailer/sendUnsubscribeEmail`, { users })
     .then(res => {
@@ -13,7 +13,7 @@ async function sendUnsubscribeEmail(users) {
     .catch(err => {
       status = err.data;
     });
-  return status
+  return status;
 }
 
 async function sendVerificationEmail(name, email) {

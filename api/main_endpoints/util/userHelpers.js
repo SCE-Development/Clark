@@ -126,7 +126,7 @@ function userWithEmailExists(email) {
         lastName: user.lastName,
       }))
       .catch(() => resolve(false));
-  })
+  });
 }
 
 function hashPassword(password) {
