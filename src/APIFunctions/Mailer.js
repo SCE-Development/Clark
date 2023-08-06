@@ -3,6 +3,10 @@ import { ApiResponse } from './ApiResponses';
 
 let MAILER_API_URL = process.env.REACT_APP_MAILER_API_URL
   || 'http://localhost:8082/cloudapi';
+
+let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
+  || 'http://localhost:8080/api';
+
 /**
  * Invoke the gmail API to send an email to verify a user.
  * @param {string} email - The user's email
@@ -10,12 +14,12 @@ let MAILER_API_URL = process.env.REACT_APP_MAILER_API_URL
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function sendVerificationEmail(email, firstName) {
+export async function sendVerificationEmail(email, token) {
   let status = new ApiResponse();
   await axios
-    .post(MAILER_API_URL + '/Mailer/sendVerificationEmail', {
-      recipientEmail: email,
-      recipientName: firstName,
+    .post(GENERAL_API_URL + '/Auth/resendVerificationEmail', {
+      email,
+      token,
     })
     .then((response) => {
       status.responseData = response;

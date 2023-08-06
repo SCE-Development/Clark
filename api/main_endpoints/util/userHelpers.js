@@ -118,6 +118,19 @@ async function registerUser(userToAdd) {
   return result;
 }
 
+function userWithEmailExists(email) {
+  return new Promise((resolve) => {
+    User.findOne({ email })
+      .then((user) => {
+        console.log(user)
+        resolve({
+        firstName: user.firstName,
+        lastName: user.lastName,
+      })})
+      .catch(() => resolve(false));
+  })
+}
+
 function hashPassword(password) {
   return new Promise((resolve, reject) => {
     bcrypt.genSalt(10, function(error, salt) {
@@ -137,4 +150,9 @@ function hashPassword(password) {
 }
 
 
-module.exports = { registerUser, getMemberExpirationDate, hashPassword };
+module.exports = {
+  registerUser,
+  getMemberExpirationDate,
+  hashPassword,
+  userWithEmailExists,
+};

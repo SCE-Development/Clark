@@ -8,7 +8,7 @@ const User = require('../models/User.js');
 const {
   getMemberExpirationDate,
   hashPassword,
-} = require('../util/registerUser');
+} = require('../util/userHelpers');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,

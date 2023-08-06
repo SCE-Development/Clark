@@ -58,14 +58,14 @@ export default function Routing({ appProps }) {
       redirect: '/',
       inAdminNavbar: true
     },
-    //
-    {
-      Component: EmailPage,
-      path: '/email-list',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
+    // commented out as the page is currently unused
+    // {
+    //   Component: EmailPage,
+    //   path: '/email-list',
+    //   allowedIf: userIsOfficerOrAdmin,
+    //   redirect: '/',
+    //   inAdminNavbar: true
+    // },
     {
       Component: EventManager,
       path: '/event-manager',

@@ -6,7 +6,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const config = require('../../config/config.json');
 const User = require('../models/User.js');
-const { registerUser } = require('../util/registerUser');
+const { registerUser } = require('../util/userHelpers');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -16,12 +16,14 @@ const jwt = require('jsonwebtoken');
 const {
   OK,
   BAD_REQUEST,
+  FORBIDDEN,
   UNAUTHORIZED,
   NOT_FOUND,
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const {sendVerificationEmail} = require('../util/emailHelpers');
+const { userWithEmailExists } = require('../util/userHelpers');
 
 
 /**
@@ -72,6 +74,21 @@ router.post('/register', async (req, res) => {
     sendVerificationEmail(name, req.body.email);
     res.sendStatus(OK);
   }
+});
+
+router.post('/resendVerificationEmail', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const maybeUser = await userWithEmailExists(req.body.email);
+  if (!maybeUser) {
+    return res.sendStatus(NOT_FOUND);
+  }
+  let name = maybeUser.firstName + ' ' + maybeUser.lastName;
+  sendVerificationEmail(name, req.body.email);
+  res.sendStatus(OK);
 });
 
 // User Login
