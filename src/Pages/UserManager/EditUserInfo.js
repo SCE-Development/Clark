@@ -118,7 +118,7 @@ export default function EditUserInfo(props) {
         outline
         color='success'
         onClick={async () => {
-          const result = await sendVerificationEmail(email, firstName);
+          const result = await sendVerificationEmail(email, props.user.token);
           if (result.error) {
             return alert(
               'unable to send verification email.' +
