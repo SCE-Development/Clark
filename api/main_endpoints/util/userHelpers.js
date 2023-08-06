@@ -121,12 +121,10 @@ async function registerUser(userToAdd) {
 function userWithEmailExists(email) {
   return new Promise((resolve) => {
     User.findOne({ email })
-      .then((user) => {
-        console.log(user)
-        resolve({
+      .then((user) => resolve({
         firstName: user.firstName,
         lastName: user.lastName,
-      })})
+      }))
       .catch(() => resolve(false));
   })
 }
