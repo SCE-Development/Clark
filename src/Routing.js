@@ -31,6 +31,11 @@ import AboutPage from './Pages/About/About';
 import ProjectsPage from './Pages/Projects/Projects';
 import URLShortenerPage from './Pages/URLShortener/URLShortener';
 
+import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
+
+import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
+
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -131,8 +136,16 @@ export default function Routing({ appProps }) {
       Component: URLShortenerPage,
       path: '/short',
       allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
       redirect: '/'
-    }
+    },
+    {
+      Component: sendUnsubscribeEmail,
+      path: '/unsub',
+      allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
+      redirect: '/',
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -141,7 +154,8 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
-    { Component: ProjectsPage, path: '/projects'}
+    { Component: ProjectsPage, path: '/projects'},
+    { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   return (
     <Router>

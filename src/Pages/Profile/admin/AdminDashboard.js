@@ -9,8 +9,9 @@ function AdminDashboard() {
     { title: 'User Manager', url: '/user-manager' },
     { title: 'Event Manager', url: '/event-manager' },
     { title: 'LED Sign', url: '/led-sign' },
-    { title: '3D Console', url: '/3DConsole' }
+    { title: '3D Console', url: '/3DConsole' },
   ];
+
   return (
     <div className='flexbox-container'>
       <body className='admin-dashboard-bg'>

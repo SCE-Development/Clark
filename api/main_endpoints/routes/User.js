@@ -475,15 +475,17 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
   }
   User.find({ emailVerified: true, emailOptIn: true })
     .then((users) => {
-      const userEmailAndName = users.map((user) => {
-        return {
-          email : user.email,
-          firstName : user.firstName,
-          lastName : user.lastName
-        };
-      });
-      sendUnsubscribeEmail(userEmailAndName);
-      res.sendStatus(OK);
+      if (users.length) {
+        const userEmailAndName = users.map((user) => {
+          return {
+            email : user.email,
+            firstName : user.firstName,
+            lastName : user.lastName
+          };
+        });
+        sendUnsubscribeEmail(userEmailAndName);
+      }
+      return res.sendStatus(OK);
     })
     .catch((err) => {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });

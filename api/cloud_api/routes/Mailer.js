@@ -58,25 +58,30 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   } else if (!req.body.users || !req.body.users.length) {
-    res.sendStatus(BAD_REQUEST);
+    return res.sendStatus(BAD_REQUEST);
   }
 
 
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-  req.body.users.map(async (user) => {
-    try {
-      let fullName = user.firstName + ' ' + user.lastName;
-      await unsubscribeEmail(USER, user.email, fullName)
-        .then((template) => {
-          apiHandler.sendEmail(template);
-        });
-    } catch (error) {
-      logger.error('unable to send unsubscribe email:', error);
-    }
-  });
-  res.sendStatus(OK);
+  for (let i = 0; i < req.body.users.length; i++) {
+    (function(i) {
+      setTimeout(async function() {
+        const user = req.body.users[i];
+        try {
+          let fullName = user.firstName + ' ' + user.lastName;
+          await unsubscribeEmail(USER, user.email, fullName)
+            .then((template) => {
+              apiHandler.sendEmail(template);
+            });
+        } catch (error) {
+          logger.error('unable to send unsubscribe email:', error);
+        }
+      }, 2000 * (i));
+    })(i);
+  }
+  return res.sendStatus(OK);
 });
 
 
