@@ -107,7 +107,10 @@ export default function URLShortenerPage(props) {
 
   return (
     <div className='url-shortener'>
-      <Header title="Welcome to the url Shortener!!" />
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
       {!isCleezyDisabled && (
         <div className='body-container'>
           {error && <p> {String(error)} </p>}
