@@ -38,7 +38,7 @@ function AdminDashboard(props) {
           </p>
           <p>
             For each email satisfying the above condition, an email is sent
-            to each user with a link to a page where they can manage their preferences
+            to each user with a link to a page where they can manage their preferences.
           </p>
         </div>
         <div style={{ margin: 'auto', width: '30%' }}>
