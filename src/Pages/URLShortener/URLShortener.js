@@ -68,7 +68,6 @@ export default function URLShortenerPage(props) {
 
   async function maybeSubmitUrlOnKeyPresses(e) {
     if ((e.ctrlKey || e.metaKey) && (e.key === 'Enter')) {
-      console.debug('ctrl and enter pressed');
       maybeSubmitUrl(url);
     }
   }
