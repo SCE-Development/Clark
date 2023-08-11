@@ -29,6 +29,7 @@ const {
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const discordConnection = require('../util/discord-connection');
+const { is } = require('bluebird');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
@@ -408,6 +409,7 @@ router.post('/getUserById', async (req, res) => {
   });
 });
 
+<<<<<<< Updated upstream
 router.get('/isUserSubscribed', (req, res) => {
   User.findOne({ email: req.query.email }, function(error, result) {
     if (error) {
@@ -418,10 +420,52 @@ router.get('/isUserSubscribed', (req, res) => {
       return res.sendStatus(NOT_FOUND);
     }
     return res.status(OK).send({ result: !!result.emailOptIn });
+=======
+router.get('/unsubscribe', async (req, res) => {
+  const {email} = req.query
+  User.findOne({ email }, (err, result) => {
+    if (err) {
+      return res.sendStatus(BAD_REQUEST);
+    }
+    if (!result) {
+      return res.sendStatus(NOT_FOUND);
+    }
+    
+    if (result.isOptedIntoEmails)
+      return res.status(OK).json("ok");
+    return res.status("Not subscribed");
+  });
+});
+
+router.get('/isUserSubscribed', async (req, res) => {
+  const email = req.query.email;
+  User.findOne({ email }, (err, result) => {
+    if (err) {
+      return res.sendStatus(BAD_REQUEST);
+    }
+    if (!result) {
+      return res.sendStatus(NOT_FOUND);
+    }
+
+    if (result.emailOptIn) {
+      return res.status(OK).json({
+        firstName: result.firstName, 
+        lastName: result.lastName,
+        subscribed: true
+        });
+    } else {
+      return res.status(OK).json({
+        firstName: result.firstName, 
+        lastName: result.lastName,
+        subscribed: false
+        });
+    }
+>>>>>>> Stashed changes
   });
 });
 
 router.post('/setUserEmailPreference', (req, res) => {
+<<<<<<< Updated upstream
   const email = req.body.email;
   const emailOptIn = !!req.body.emailOptIn;
 
@@ -491,5 +535,34 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     });
 });
+=======
+  console.log(req.body)
+  const { email, isOptedIntoEmails } = req.body;
+
+  console.log('set:')
+  console.log(email)
+  console.log(isOptedIntoEmails)
+
+  User.findOne({ email })
+  .then(User => {
+    console.log(User)
+    User.emailOptIn = isOptedIntoEmails;
+    User
+      .save()
+      .then(() => {
+        res.sendStatus(OK);
+      })
+      .catch(() => {
+        res.sendStatus(BAD_REQUEST);
+      });
+  })
+  .catch(() => {
+    res.sendStatus(NOT_FOUND);
+  });
+});
+
+
+
+>>>>>>> Stashed changes
 
 module.exports = router;

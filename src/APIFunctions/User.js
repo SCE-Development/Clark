@@ -226,26 +226,11 @@ export async function getUserById(userID, token) {
   return status;
 }
 
-export async function isUserSubscribed(email) {
-  let status = new UserApiResponse();
-  await axios
-    .get(GENERAL_API_URL + `/user/isUserSubscribed?=email${email}`)
-    .then((result) => {
-      status.responseData = result.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
 
-export async function setUserEmailPreference(email, emailOptIn) {
+export async function setUserEmailPreference(email, isOptedIntoEmails) {
   let status = new UserApiResponse();
-  await axios
-    .post(GENERAL_API_URL + '/user/setUserEmailPreference', {
-      email,
-      emailOptIn,
-    })
+  console.log('setted')
+  await axios.post(GENERAL_API_URL + '/user/setUserEmailPreference', {email, isOptedIntoEmails})
     .then((res) => {
       status.responseData = res.data;
     })
@@ -255,30 +240,19 @@ export async function setUserEmailPreference(email, emailOptIn) {
   return status;
 }
 
-export async function getUserData(email) {
+/**
+ * Checks the user database to see if given email is subscribed to emails.
+ * @param {string} email The email value to check
+ * @returns {UserApiResponse} containing if the user is subscribed and their first and last name
+ */
+export async function checkIfUserSubscribed(email) {
   let status = new UserApiResponse();
-  await axios
-    .post(GENERAL_API_URL + '/user/getUserDataByEmail', {
-      email,
-    })
+  await axios.get(GENERAL_API_URL + `/user/isUserSubscribed?email=${email}`)
     .then((res) => {
       status.responseData = res.data;
     })
     .catch((err) => {
       status.error = true;
-    });
-  return status;
-}
-
-export async function getAllUserSubscribedAndVerified(token) {
-  let status = new UserApiResponse();
-  await axios
-    .post(GENERAL_API_URL + '/user/usersSubscribedAndVerified', { token })
-    .then((res) => {
-      status.responseData = res.data;
     })
-    .catch((err) => {
-      status.error = true;
-    });
   return status;
 }

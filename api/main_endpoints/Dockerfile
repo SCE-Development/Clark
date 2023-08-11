@@ -14,7 +14,7 @@ COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8080
 
-ARG PERIPHERAL_API_URL
+ARG PERIPHERAL_API_URL 
 
 ARG DISCORD_REDIRECT_URI
 

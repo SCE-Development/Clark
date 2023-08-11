@@ -56,3 +56,19 @@ export async function sendBlastEmail(emailList, subject, content) {
     });
   return status;
 }
+
+export async function sendUnsubscribeEmail(email, firstName) {
+  let status = new ApiResponse();
+  await axios
+    .post(MAILER_API_URL + '/Mailer/sendUnsubscribeEmail', {
+      recipientEmail: email,
+      recipientName: firstName
+    })
+    .then((response) => {
+      status.responseData = response;
+    }).catch((error) => {
+      status.error = true;
+      status.responseData = error;
+    });
+  return status;
+}

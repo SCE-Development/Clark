@@ -36,6 +36,8 @@ import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
 
 
+import UnsubscribePage from './Pages/Unsubscribe/UnsubscribePage';
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -155,7 +157,7 @@ export default function Routing({ appProps }) {
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
     { Component: ProjectsPage, path: '/projects'},
-    { Component: EmailPreferencesPage, path: '/emailPreferences' },
+    { Component: UnsubscribePage, path: '/emailPreferences' }
   ];
   return (
     <Router>

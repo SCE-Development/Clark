@@ -18,7 +18,7 @@ import MajorDropdown from '../MembershipApplication/MajorDropdown';
 import RoleDropdown from './RoleDropdown';
 import ExpirationDropdown from './ExpirationDropdown';
 import { membershipState, membershipStateToString } from '../../Enums';
-import { sendVerificationEmail } from '../../APIFunctions/Mailer';
+import { sendVerificationEmail, sendUnsubscribeEmail } from '../../APIFunctions/Mailer';
 
 
 export default function EditUserInfo(props) {
@@ -45,6 +45,11 @@ export default function EditUserInfo(props) {
     verificationEmailButtonText,
     setVerificationEmailButtonText
   ] = useState('Send');
+  const [
+    unsubscribeEmailButtonText,
+    setUnsubscribeEmailButtonText
+  ] = useState('Send');
+
   const [dataWasChanged, setDataWasChanged] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -132,6 +137,28 @@ export default function EditUserInfo(props) {
         }}>
         {verificationEmailButtonText}
       </Button>
+    },
+    {
+      label: 'Send Unsubscribe email (sends to most recently saved email):',
+      onChange: (e) => {
+        setDataWasChanged(true);
+      },
+      Component: <Button
+        outline
+        color='success'
+        onClick={async () => {
+          const result = await sendUnsubscribeEmail(email, firstName);
+          if (result.error) {
+            return alert(
+              'unable to send unsubscribe email' +
+              ' please contact dev team if retrying fails'
+            );
+          }
+          setUnsubscribeEmailButtonText('Unsubscribe email sent!');
+          setTimeout(() => {
+            setUnsubscribeEmailButtonText('Send');
+          }, 1500);
+        }}>{unsubscribeEmailButtonText}</Button>
     },
     {
       label: 'Access Level',

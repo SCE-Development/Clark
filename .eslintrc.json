@@ -32,10 +32,6 @@
             "error",
             "single"
         ],
-        "semi": [
-            "error",
-            "always"
-        ],
         "camelcase": 2,
         "max-len": [
             2,
@@ -44,14 +40,7 @@
             }
         ],
         "comma-spacing": "error",
-        "no-console": [
-            "error",
-            {
-                "allow": [
-                    "debug"
-                ]
-            }
-        ],
+
         "no-empty": [
             "error",
             {
