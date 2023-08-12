@@ -64,13 +64,13 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true
     },
     //
-    {
-      Component: EmailPage,
-      path: '/email-list',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
+    // {
+    //   Component: EmailPage,
+    //   path: '/email-list',
+    //   allowedIf: userIsOfficerOrAdmin,
+    //   redirect: '/',
+    //   inAdminNavbar: true
+    // },
     {
       Component: EventManager,
       path: '/event-manager',
