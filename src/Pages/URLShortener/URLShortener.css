@@ -13,24 +13,35 @@
     justify-content: center;
     flex-direction: column;
     align-items: center;
-  } 
+  }
+
+  .create-new-link-header {
+    text-align: center;
+  }
 
   .invalid-text {
     font-size: 12px;
     color: red;
   }
 
+  .url-column {
+    display: flex;
+    align-items: center;
+  }
+
   .submit-button {
     width: 8rem;
-    height: 3rem;
+    height: 2rem;
     margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 100ms ease-in-out;
     background-color: rgb(118, 204, 118);
   }
 
   .submit-button:hover {
     transform: scale(1.04);
-    background-color: rgb(118, 204, 118);
   }
 
   .textbox {

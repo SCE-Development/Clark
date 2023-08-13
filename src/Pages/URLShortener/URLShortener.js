@@ -66,6 +66,12 @@ export default function URLShortenerPage(props) {
     }
   }
 
+  async function maybeSubmitUrlOnKeyPresses(e) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'Enter')) {
+      maybeSubmitUrl(url);
+    }
+  }
+
   useEffect(() => {
     getCleezyUrls();
   }, []);
@@ -73,12 +79,6 @@ export default function URLShortenerPage(props) {
   if (isCleezyDisabled) {
     return (
       <>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
         <h1>
           Cleezy page is disabled by default since you have to run the Cleezy server
           separately.
@@ -107,42 +107,42 @@ export default function URLShortenerPage(props) {
 
   return (
     <div className='url-shortener'>
-      <Header title="Welcome to the url Shortener!!" />
+      <br></br>
       {!isCleezyDisabled && (
         <div className='body-container'>
           {error && <p> {String(error)} </p>}
           {!loading && !error && (
             <Container className='content-container'>
               <div>
-                <h1>Create a new link</h1>
+                <h1 className='create-new-link-header'>Create a new link</h1>
                 <Row>
-                  <Col>
+                  <Col className='url-column'>
                     <input
                       type='text'
                       placeholder='Enter URL'
                       className='textbox'
                       id='url-box'
-                      onChange={e => setUrl(e.target.value)} />
+                      onChange={e => setUrl(e.target.value)}
+                      onKeyDown={e => maybeSubmitUrlOnKeyPresses(e)}
+                    />
                     {invalidUrl && (
                       <p className = 'invalid-text'>Please enter a valid URL</p>
                     )}
                   </Col>
-                  <Col>
+                  <Col className='url-column'>
                     <input
                       type='text'
                       placeholder='Enter alias'
                       className='textbox'
                       id='alias-box'
-                      onChange={e => setAlias(e.target.value)} />
+                      onChange={e => setAlias(e.target.value)}
+                      onKeyDown={e => maybeSubmitUrlOnKeyPresses(e)}
+                    />
                     {aliasTaken && (
                       <p className = 'invalid-text'>Alias already in use</p>
                     )}
                   </Col>
-                </Row>
-              </div>
-              <div>
-                <Row style={{marginTop: '1rem '}}>
-                  <Col>
+                  <Col className='url-column'>
                     <Button
                       className='submit-button'
                       disabled={!url}

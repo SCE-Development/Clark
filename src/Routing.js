@@ -63,7 +63,7 @@ export default function Routing({ appProps }) {
       redirect: '/',
       inAdminNavbar: true
     },
-    // commented out as the page is currently unused
+    //
     // {
     //   Component: EmailPage,
     //   path: '/email-list',
@@ -137,7 +137,8 @@ export default function Routing({ appProps }) {
       path: '/short',
       allowedIf: userIsOfficerOrAdmin,
       inAdminNavbar: true,
-      redirect: '/'
+      redirect: '/',
+      hideAdminNavbar: true,
     },
     {
       Component: sendUnsubscribeEmail,
@@ -161,7 +162,24 @@ export default function Routing({ appProps }) {
     <Router>
       <Switch>
         {signedInRoutes.map(
-          ({ path, Component, allowedIf, redirect, inAdminNavbar }, index) => {
+          ({
+            path,
+            Component,
+            allowedIf,
+            redirect,
+            inAdminNavbar,
+            hideAdminNavbar = false,
+          }, index) => {
+            function getCorrectComponent(privateRouteProps) {
+              if (hideAdminNavbar) {
+                return <Component {...privateRouteProps} />;
+              }
+              return (<NavBarWrapper
+                component={Component}
+                enableAdminNavbar={inAdminNavbar}
+                {...privateRouteProps}
+              />);
+            }
             return (
               <PrivateRoute
                 key={index}
@@ -174,13 +192,7 @@ export default function Routing({ appProps }) {
                   authenticated:userIsAuthenticated,
                   ...appProps
                 }}
-                component={props => (
-                  <NavBarWrapper
-                    component={Component}
-                    enableAdminNavbar={inAdminNavbar}
-                    {...props}
-                  />
-                )}
+                component={props => getCorrectComponent(props)}
               />
             );
           }
