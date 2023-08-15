@@ -1,12 +1,9 @@
 const axios = require('axios');
 const express = require('express');
-const { SceSqsApiHandler } = require('../util/SceSqsApiHandler');
-const AWS = require('aws-sdk');
 const logger = require('../../util/logger');
 const {
   verifyToken,
   checkIfTokenSent,
-  checkDiscordKey
 } = require('../../util/token-verification');
 const {
   OK,
@@ -14,18 +11,7 @@ const {
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 
-const AWS_KEYS = require('../../config/config.json').AWS;
-const {Queue, S3Bucket} = AWS_KEYS;
-
 const router = express.Router();
-
-let creds = new
-AWS.Credentials(AWS_KEYS.ACCESS_KEY_ID, AWS_KEYS.SECRET_ACCESS_KEY);
-AWS.config.update({
-  region: 'us-west-2',
-  endpoint: 'https://s3.amazonaws.com',
-  credentials: creds
-});
 
 router.get('/healthCheck', async (req, res) => {
 /*
@@ -46,7 +32,6 @@ router.get('/healthCheck', async (req, res) => {
     });
 });
 
-const s3 = new AWS.S3({ apiVersion: '2012-11-05' });
 router.post('/sendPrintRequest', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     logger.warn('/sendPrintRequest was requested without a token');
@@ -76,22 +61,6 @@ router.post('/sendPrintRequest', async (req, res) => {
       logger.error('had an error: ', err);
       res.sendStatus(500);
     });
-});
-
-router.post('/pushDiscordPDFToSqs', async (req, res) => {
-  const sqsHandler = new SceSqsApiHandler(Queue.PAPER_PRINTING_QUEUE_NAME);
-  const { apiKey, fileURL } = req.body;
-  if (!checkDiscordKey(apiKey)) {
-    logger.warn('/pushDiscordPDFToSqs was requested with an invalid key');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
-  const result = await sqsHandler.pushMessageToQueue({ fileURL });
-
-  if (!result) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  return res.sendStatus(OK);
 });
 
 module.exports = router;
