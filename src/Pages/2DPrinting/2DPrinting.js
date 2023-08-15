@@ -57,7 +57,7 @@ export default function Printing(props) {
   const [continueButn, setContinue] = useState(false);
   const [copies, setCopies] = useState(1);
   const [sides, setSides] = useState('one-sided');
-  const [pageRanges, setPageRanges] = useState('NA');
+  const [pageRanges, setPageRanges] = useState(null);
   const [numPages, setNumPages] = useState(0);
   const [usedPages, setUsedPages] = useState([]);
   const [canPrint, setCanPrint] = useState(false);
@@ -198,7 +198,7 @@ export default function Printing(props) {
     const memberName = props.user.firstName + ' ' + props.user.lastName;
     let data = {
       raw,
-      pageRanges: pageRanges.replace(/\s/g, ''),
+      pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
       sides,
       copies,
     };
@@ -272,7 +272,7 @@ export default function Printing(props) {
         name: 'Pages',
         onChange: () => {
           setPages(false);
-          setPageRanges('NA');
+          setPageRanges(null);
           handleCanPrint(new Set(range(1, numPages + 1)), copies);
           setLoadPreview(true);
         },
