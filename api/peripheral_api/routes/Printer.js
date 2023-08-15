@@ -50,12 +50,6 @@ router.post('/sendPrintRequest', async (req, res) => {
       pageRanges,
     })
     .then(() => {
-      logger.warn('hello there', {
-        raw: typeof raw,
-        rawLength: raw.length,
-        copies,
-        pageRanges,
-      });
       res.sendStatus(OK);
     }).catch((err) => {
       logger.error('had an error: ', err);
