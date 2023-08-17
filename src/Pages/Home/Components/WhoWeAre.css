@@ -7,7 +7,7 @@
 
 .container-who-we-are {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
 .who-we-are-header {
