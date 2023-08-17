@@ -7,7 +7,7 @@
 
 .container-what-we-do {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
 .what-we-do-header{
