@@ -15,7 +15,8 @@ export default () => {
     setIsOpen(!isOpen);
   };
 
-  let getInTouch = 'https://user-images.githubusercontent.com/63530023/230752230-f8c42972-a0cc-4dfb-96fb-f44bb7d935c4.png';
+  let getInTouch = 'https://user-images.githubusercontent.com' +
+    '/63530023/230752230-f8c42972-a0cc-4dfb-96fb-f44bb7d935c4.png';
 
   return (
     <>
@@ -81,12 +82,6 @@ export default () => {
           </ul>
         </p>
       </div>
-      {/* <img
-        src={getInTouch}
-
-        alt="SCE What We Do"
-        className='get-in-touch'
-      /> */}
       <footer className='footer-wrap bg-dark text-white p-4'>
         <Row  className='footer-text align-items-center justify-content-center'>
           <div className='social-media'>

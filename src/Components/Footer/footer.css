@@ -30,7 +30,6 @@
 }
 
 .mail{
-  /* padding-top: 2rem; */
   margin-left: -6%;
   font-size: large;
   list-style: none;
@@ -101,13 +100,6 @@
     width: 20px;
     height: 20px;
   }
-
-  /* .text-box-header{
-    width: 200%;
-    font-weight: bolder;
-    margin-top: -19vh;
-    margin-left: 0vw;
-  } */
   
 }
 
@@ -120,11 +112,5 @@
     width: 20px;
     height: 20px;
   }
-
-  /* .text-box-header{
-    font-weight: bolder;
-    margin-top: -28vh;
-    margin-left: 0vw;
-  } */
   
 }
