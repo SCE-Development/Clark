@@ -26,7 +26,6 @@ export default () => {
           href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
         </link>
       </head>
-      {/* <div className='text-box'> */}
       <div className='footer'>
         <p className='text-box-header'>
           Contact Us
