@@ -26,9 +26,9 @@ export default () => {
           href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
         </link>
       </head>
-      <div className='text-box'>
-        <h1 className='text-box-header'>
-          Contact Us<br></br>
+      <div className='footer'>
+        <p className='text-box-header'>
+          Contact Us
           <ul className='list'>
             <li className='mail'>
 
@@ -79,14 +79,8 @@ export default () => {
 
             </li>
           </ul>
-        </h1>
+        </p>
       </div>
-      <img
-        src={getInTouch}
-
-        alt="SCE What We Do"
-        className='get-in-touch'
-      />
       <footer className='footer-wrap bg-dark text-white p-4'>
         <Row  className='footer-text align-items-center justify-content-center'>
           <div className='social-media'>
