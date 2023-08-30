@@ -10,6 +10,7 @@ function AdminDashboard() {
     { title: 'Event Manager', url: '/event-manager' },
     { title: 'LED Sign', url: '/led-sign' },
     { title: '3D Console', url: '/3DConsole' },
+    { title: 'Speakers', url: '/speakers'}
   ];
 
   return (
