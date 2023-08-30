@@ -10,6 +10,9 @@ const {
   UNAUTHORIZED,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
+const {
+  PRINTING = {}
+} = require('../../config/config.json');
 
 const router = express.Router();
 
@@ -18,7 +21,8 @@ router.get('/healthCheck', async (req, res) => {
  * How these work with Quasar:
  * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
  */
-  if (process.env.NODE_ENV !== 'production') {
+  if (!PRINTING.ENABLED) {
+    logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
   await axios
@@ -40,6 +44,10 @@ router.post('/sendPrintRequest', async (req, res) => {
   if (!await verifyToken(req.body.token)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!PRINTING.ENABLED) {
+    logger.warn('Printing is disabled, returning 200 to mock the printing server');
+    return res.sendStatus(OK);
   }
 
   const { raw, copies, pageRanges } = req.body;
