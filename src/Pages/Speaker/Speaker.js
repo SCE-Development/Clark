@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { Spinner, Input, Button, Container, Row, Col } from 'reactstrap';
 import Header from '../../Components/Header/Header';
-import { addUrl, getQueued } from '../../APIFunctions/Speaker';
+import { addUrl, getQueued, pause, resume } from '../../APIFunctions/Speaker';
 
 function SpeakersPage(props) {
 
@@ -23,7 +23,7 @@ function SpeakersPage(props) {
 
   const handleSubmit = async () => {
     if (validateUrl()) {
-      await addUrl(url, props.user, props.user.token);
+      await addUrl(url);
     } else {
       alert('Invalid YouTube URL!');
     }
@@ -46,13 +46,8 @@ function SpeakersPage(props) {
         <br></br>
         {queue.length > 0 ?
           queue.map(song => (
-            <Row key={song._id}>
-              <Col>
-                <p>{song.url}</p>
-              </Col>
-              <Col>
-                <p>Queued by {song.requestedBy}</p>
-              </Col>
+            <Row key={song}>
+              <p>{song}</p>
             </Row>
           ))
           :
