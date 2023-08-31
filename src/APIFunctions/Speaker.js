@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let SPEAKER_API_URL = 'http://localhost:16000';
+const config  = require('../config/config.json');
+const speakerPort = config.speakerPort;
+
+let SPEAKER_API_URL = `http://localhost:${speakerPort}`;
 
 export async function addUrl(url) {
   let status = new ApiResponse();

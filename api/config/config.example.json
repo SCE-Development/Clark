@@ -27,5 +27,6 @@
   "Cleezy": {
     "ENABLED": false
   },
+  "speakerPort": "16000",
   "secretKey": "super duper secret key"
 }
