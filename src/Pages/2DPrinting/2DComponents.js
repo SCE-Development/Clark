@@ -41,8 +41,7 @@ export function FileUpload(props) {
         <br/>
         <div className="printInfo">
           <p>
-          Each member can print up to 30 pages a week <br /> Pages left for this
-          week: <span id="pagesLeft">{displayPagesLeft}</span>
+            Each member can print up to 30 pages a week
           </p>
           <br />
         </div>
