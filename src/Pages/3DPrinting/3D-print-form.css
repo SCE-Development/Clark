@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=Mina:wght@400;700&family=Ubuntu:wght@700&display=swap');
 
-.plastic{
+/* .plastic {
   background-color: #131516;
   max-width: 100%;
   min-height: 94vh;
@@ -16,7 +16,7 @@
   height: 40vmin;
 }
 
-.container-3D{
+.container-3D {
   background-color: #16252e;
   max-width: 80%;
   min-height: 80vh;
@@ -43,6 +43,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -62,7 +63,7 @@
   margin: 2em;
 }
 
-.container-3D .btns a {
+.container-3D .btn a {
   text-align: center;
   margin: 0 auto;
   display: inline-block;
@@ -167,9 +168,9 @@
   background-color: #f3a43b;
   color: black;
   margin-bottom: 50px;
-}
+} */
 
-.container-2D .additionalConcerns .printInfo {
+/* .container-2D .additionalConcerns .printInfo {
   position: relative;
   width: 100%;
   word-wrap: break-word;
@@ -183,16 +184,19 @@
   line-height: 40px;
   color: white;
   text-align: center;
-}
+} */
 
 .megan {
-  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
   font-size: 18px;
   font-family: Mina;
   font-style: normal;
   font-weight: normal;
   color: white;
-  width: 100%;
+  justify-content: center;
+  max-width: 360px;
+  margin-right: 3rem;
 }
 
 .footerNote {
@@ -217,10 +221,70 @@
 .plastic {
   background-color: #131516;
   max-width: 100%;
-  min-height: 94vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .colfor3dpage {
+  padding-right: 49px;
+  padding-left: 49px;
+} */
+
+.forminputs3d {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem 3rem 3rem 3rem;
+  min-width: 60%;
+}
+
+.form-3d {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 }
 
 .colfor3dpage {
-  padding-right: 49px;
-  padding-left: 49px;
+  font-size: 18px;
+  font-family: Mina;
+  font-style: normal;
+  font-weight: normal;
+  color:rgba(61, 121, 138, 0.5);
+  max-width: 480px;
+}
+
+#error-message {
+  display: none;
+  color: red;
+  font-weight: 500;
+}
+
+.submit {
+  max-height: 42px; 
+  font-family: Mina;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 32px;
+  text-align: center;
+  border-radius: 20px;
+  background-color: #f3a43b;
+  color: black;
+  min-width: 120px;
+  width: 65%;
+}
+
+#mail-image, #discord-image {
+  width: 20px;
+  height: 20px;
+  margin: 0px 10px;
+}
+
+.comments, .url, .projectType, .colors {
+  max-width: 480px;
 }

@@ -31,7 +31,7 @@ export default class PrintForm3D extends React.Component {
     // Variables that will be send to data base
     this.state = {
       name: this.props.user.firstName + ' ' + this.props.user.lastName,
-      color: 'Any Color',
+      color: 'Any color',
       url: '',
       projectType: '',
       contact: this.props.user.email,
@@ -96,6 +96,9 @@ export default class PrintForm3D extends React.Component {
     } else if (this.state.url.length === 0) {
       this.setState({ error: 'You must provide a url' });
       fill = false;
+    } else if (this.state.color === 'Select a color') {
+      this.setState({ error: 'You must provide a color' });
+      fill = false;
     }
     if (!fill) {
       this.displayErrorMessage();
@@ -133,6 +136,7 @@ export default class PrintForm3D extends React.Component {
   render() {
     const { fill } = this.state;
     const printingColors = [
+      'Select a color',
       'Any Color',
       'Black',
       'Blue',
@@ -147,132 +151,133 @@ export default class PrintForm3D extends React.Component {
       'White',
       'Transparent',
     ];
-    const reasons = ['School-related project', 'Personal project'];
+    const reasons = ['Reason for usage', 'School-related project', 'Personal project'];
 
     return (
       <>
-        <br />
-        <br />
-        <br />
+
 
         {fill === false ? (
-          <div className = "plastic">
+          <div className="plastic">
             <br />
             <br />
-            <Container className = "container-2D">
+            <Container className="container-2D">
               <div className="buttons">
                 <Button className="threeDPrinting printingBtn inactive"
                   href="/2DPrinting">
-                Paper Printing
+                  Paper Printing
                 </Button>
                 <Button
                   className="paperPrinting printingBtn active"
                   href="/3DPrintingForm"
                 >
-                3D Printing
+                  3D Printing
                 </Button>
               </div>
-              <Form>
-                <br />
-                <br />
-                <FormGroup className='forminputs3d'>
-                  <Row>
-                    <Col>
+              <div className='form-3d'>
+                <Form className='forminputs3d'>
+
+                  <FormGroup>
+                    <Row>
+                      {/* <Col>
                       <p className="printInfo colorSelect label">
                         Select a color:
                       </p>
-                    </Col>
-                    <Col className='colfor3dpage'>
-                      <Input
-                        type="select"
-                        name="colors"
-                        id="colors"
-                        onChange={this.handleColorChange.bind(this)}
-                      >
-                        {printingColors.map((color, itr) => {
-                          return <option key={itr}>{color}</option>;
-                        })}
-                      </Input>
-                    </Col>
-                  </Row>
-                </FormGroup>
-                <FormGroup>
-                  <Row>
-                    <Col>
+                    </Col> */}
+                      <Col className='colfor3dpage'>
+                        <Input
+                          type="select"
+                          name="colors"
+                          id="colors"
+                          onChange={this.handleColorChange.bind(this)}
+                        >
+                          {printingColors.map((color, itr) => {
+                            return <option key={itr}>{color}</option>;
+                          })}
+                        </Input>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                  <FormGroup>
+                    <Row>
+                      {/* <Col>
                       <p className="printInfo use label">Reason for usage:</p>
-                    </Col>
-                    <Col className='colfor3dpage'>
-                      <Input
-                        onChange={this.handleProjectTypeChange.bind(this)}
-                        type="select"
-                        name="projectType"
-                        id="projectType"
-                        placeholder="Type of Project"
-                      >
-                        {reasons.map((choice, itr) => {
-                          return <option key={itr}>{choice}</option>;
-                        })}
-                      </Input>
-                    </Col>
-                  </Row>
-                </FormGroup>
+                    </Col> */}
+                      <Col className='colfor3dpage'>
+                        <Input
+                          onChange={this.handleProjectTypeChange.bind(this)}
+                          type="select"
+                          name="projectType"
+                          className="projectType"
+                          id="projectType"
+                          placeholder="Type of Project"
+                        >
+                          {reasons.map((choice, itr) => {
+                            return <option key={itr}>{choice}</option>;
+                          })}
+                        </Input>
+                      </Col>
+                    </Row>
+                  </FormGroup>
 
-                <FormGroup>
-                  <Row>
-                    <Col>
+                  <FormGroup>
+                    <Row>
+                      {/* <Col>
                       <p className="printInfo stlFile label">
                       URL to your .stl file:
                       </p>{' '}
-                    </Col>
-                    <Col className='colfor3dpage'>
-                      <Input
-                        onChange={this.handleUrlChange.bind(this)}
-                        type="text"
-                        id="url"
-                      />
-                    </Col>
-                  </Row>
-                </FormGroup>
+                    </Col> */}
+                      <Col className='colfor3dpage'>
+                        <Input
+                          onChange={this.handleUrlChange.bind(this)}
+                          type="text"
+                          id="url"
+                          className="url"
+                          placeholder='URL to your .stl file'
+                        />
+                      </Col>
+                    </Row>
+                  </FormGroup>
 
-                <FormGroup>
-                  <Row>
-                    <Col>
+                  <FormGroup>
+                    <Row>
+                      {/* <Col>
                       <p className="printInfo additionalComments label">
                       Additional comments:
                       </p>
-                    </Col>
-                    <Col className='colfor3dpage'>
-                      <Input
-                        type='textarea'
-                        onChange={this.handleCommentChange.bind(this)}
-                        value={this.state.comment}
-                        className="comments"
-                        name="comments"
-                        id="comments">
-                      </Input>
-                    </Col>
-                  </Row>
-                </FormGroup>
-
-                <FormGroup>
-                  <p className='megan'>
-                    Please reach out to Andrew Emerson (3D and Hardware Chair)
-                    for any additional concerns. <br /> {mailIcon}
-                    andrew.emerson@sjsu.edu {discordIcon} AndrewE#6333
-                  </p>
+                    </Col> */}
+                      <Col className='colfor3dpage'>
+                        <Input
+                          type='textarea'
+                          onChange={this.handleCommentChange.bind(this)}
+                          value={this.state.comment}
+                          className="comments"
+                          name="comments"
+                          placeholder='Additional comments'
+                          id="comments">
+                        </Input>
+                      </Col>
+                    </Row>
+                  </FormGroup>
                   <Button
                     className="submit"
                     onClick={this.submitApplication.bind(this)}
                   >
-                  Submit
+                    Submit
                   </Button>
-                </FormGroup>
-                <p id="error-message">Error: {this.state.error}</p>
-              </Form>
+                  <p id="error-message">Error: {this.state.error}</p>
+                </Form>
+                <p className='megan'>
+                  Please reach out to Andrew Emerson (3D and Hardware Chair)
+                  for any additional concerns. <br /> <div>{mailIcon}
+                    andrew.emerson@sjsu.edu</div> <div>{discordIcon} AndrewE#6333</div>
+                </p>
+              </div>
+
             </Container>
-            <div className="footerNote">
+            {/* <div className="footerNote">
               <p className='printInfo'>{footerNote}</p>
-            </div>
+            </div> */}
           </div>
         ) : null}
 
