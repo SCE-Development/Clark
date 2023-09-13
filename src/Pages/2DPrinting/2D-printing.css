@@ -25,7 +25,7 @@
   border-top-right-radius: 20px;
 }
 
-.container-2D .buttons a{
+.container-2D .buttons a {
   text-align: center;
   margin: 0 auto;
   display: inline-block;
@@ -131,7 +131,7 @@
 
 .container-2D .printInfo {
   position: relative;
-  max-width: 50%;
+  max-width: 80%;
   word-wrap: break-word;
   height: auto;
   width: auto;
@@ -167,16 +167,22 @@
   width: 100%;
 }
 
-.paperContainer{
+.paperContainer {
   background-color: #131516;
   max-width: 100%;
-  min-height: 94vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
 }
 
 @keyframes fade-in {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }

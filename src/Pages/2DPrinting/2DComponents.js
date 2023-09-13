@@ -24,35 +24,33 @@ ${new Date().getFullYear()}`;
 export function FileUpload(props) {
   const { filePond, printButton, displayPagesLeft } = props;
   return (
-    <div className = "paperContainer">
-      <br/>
-      <br/>
-      <br/>
+    <div className="paperContainer">
+      <h1 className="printHeader">Printing Services</h1>
+
       <Container className="container-2D">
         <div className="buttons">
           <Button className="paperPrinting printingBtn" href="/2DPrinting">
-          Paper Printing
+            Paper
           </Button>
           <Button className="threeDPrinting printingBtn" href="/3DPrintingForm">
-          3D Printing
+            3D
           </Button>
         </div>
-        <br/>
-        <br/>
+        <br />
+        <br />
         <div className="printInfo">
           <p>
-          Each member can print up to 30 pages a week <br /> Pages left for this
-          week: <span id="pagesLeft">{displayPagesLeft}</span>
+            Each member can print up to 30 pages a week <br /> Pages left for this
+            week: <span id="pagesLeft">{displayPagesLeft}</span>
           </p>
-          <br />
         </div>
         <FilePond {...filePond} />
         <Button {...printButton}> Print </Button>
         <br />
       </Container>
-      <div className="footerNote">
+      {/* <div className="footerNote">
         <p>{footerNote}</p>
-      </div>
+      </div> */}
     </div>
   );
 }

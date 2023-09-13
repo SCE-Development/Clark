@@ -186,6 +186,14 @@
   text-align: center;
 } */
 
+.container-3D {
+  max-width: 80%;
+  display: flex;
+  border-radius: 25px;
+  padding: 24px;
+}
+
+
 .megan {
   display: flex;
   flex-direction: column;
@@ -196,7 +204,6 @@
   color: white;
   justify-content: center;
   max-width: 360px;
-  margin-right: 3rem;
 }
 
 .footerNote {
@@ -225,7 +232,14 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 12px;
   align-items: center;
+}
+
+.printHeader {
+  font-size: 24px;
+  color: white;
+  font-weight: 600;
 }
 
 /* .colfor3dpage {
@@ -254,7 +268,7 @@
   font-family: Mina;
   font-style: normal;
   font-weight: normal;
-  color:rgba(61, 121, 138, 0.5);
+  color: rgba(61, 121, 138, 0.5);
   max-width: 480px;
 }
 
@@ -265,7 +279,7 @@
 }
 
 .submit {
-  max-height: 42px; 
+  max-height: 42px;
   font-family: Mina;
   font-style: normal;
   font-weight: bold;
@@ -279,12 +293,26 @@
   width: 65%;
 }
 
-#mail-image, #discord-image {
+#mail-image,
+#discord-image {
   width: 20px;
   height: 20px;
   margin: 0px 10px;
 }
 
-.comments, .url, .projectType, .colors {
+.comments,
+.url,
+.projectType,
+.colors {
   max-width: 480px;
+}
+
+@media only screen and (max-width: 600px) {
+  .form-3d {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+  }
 }

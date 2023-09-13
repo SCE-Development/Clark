@@ -159,24 +159,22 @@ export default class PrintForm3D extends React.Component {
 
         {fill === false ? (
           <div className="plastic">
-            <br />
-            <br />
+            <h1 className="printHeader">Printing Services</h1>
             <Container className="container-2D">
               <div className="buttons">
                 <Button className="threeDPrinting printingBtn inactive"
                   href="/2DPrinting">
-                  Paper Printing
+                  Paper
                 </Button>
                 <Button
                   className="paperPrinting printingBtn active"
                   href="/3DPrintingForm"
                 >
-                  3D Printing
+                  3D
                 </Button>
               </div>
               <div className='form-3d'>
                 <Form className='forminputs3d'>
-
                   <FormGroup>
                     <Row>
                       {/* <Col>
