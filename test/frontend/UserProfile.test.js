@@ -28,7 +28,7 @@ describe('<UserProfile />', () => {
     expect(wrapper.find(InfoCard)).to.have.lengthOf(9);
   });
 
-  it('Should render a <img /> component with 4 children', () => {
-    expect(wrapper.find('img')).to.have.lengthOf(1);
+  it('Should not render a <img /> component', () => {
+    expect(wrapper.find('img')).to.have.lengthOf(0);
   });
 });

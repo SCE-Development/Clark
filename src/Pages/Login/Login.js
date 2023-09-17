@@ -7,6 +7,7 @@ import Background from '../../Components/Background/background';
 import './login.css';
 
 export default function Login(props) {
+  const queryParams = new URLSearchParams(window.location.search);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -14,13 +15,13 @@ export default function Login(props) {
     {
       type: 'email',
       placeholder: 'Email',
-      handleChange: e => setEmail(e.target.value)
+      handleChange: (e) => setEmail(e.target.value),
     },
     {
       type: 'password',
       placeholder: 'Password',
-      handleChange: e => setPassword(e.target.value)
-    }
+      handleChange: (e) => setPassword(e.target.value),
+    },
   ];
 
   async function handleSubmit(e) {
@@ -29,7 +30,11 @@ export default function Login(props) {
     if (!loginStatus.error) {
       props.setAuthenticated(true);
       window.localStorage.setItem('jwtToken', loginStatus.token);
-      window.location.reload();
+      if (queryParams.get('redirect')) {
+        window.location.href = queryParams.get('redirect');
+      } else {
+        window.location.reload();
+      }
     } else {
       setErrorMsg(
         loginStatus.responseData && loginStatus.responseData.data.message
@@ -47,7 +52,7 @@ export default function Login(props) {
             return <LoginInput key={index} field={field} />;
           })}
 
-          {errorMsg && <h6 className = 'login-error'>{errorMsg}*</h6>}
+          {errorMsg && <h6 className='login-error'>{errorMsg}*</h6>}
 
           <button type='submit' id='loginBtn'>
             Login
@@ -57,7 +62,7 @@ export default function Login(props) {
           </p>
         </form>
       </Row>
-      <Background/>
+      <Background />
     </Container>
   );
 }

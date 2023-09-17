@@ -2,12 +2,13 @@
 
 .what-we-do {
   margin-top: 100px;
+  margin-bottom: 100px;
   color:darkslategray;
 }
 
 .container-what-we-do {
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
 .what-we-do-header{

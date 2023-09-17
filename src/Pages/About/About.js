@@ -85,7 +85,7 @@ export default function AboutPage() {
                   <div className="box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/1024px-Amazon_Web_Services_Logo.svg.png" /></div>
                   <div className="box"><img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" /></div>
 
-                  <div className="box"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/postman-icon.png" /></div>
+                  <div className="box"><img src="https://seeklogo.com/images/P/postman-logo-F43375A2EB-seeklogo.com.png" /></div>
                   <div className="box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Prometheus_software_logo.svg/2066px-Prometheus_software_logo.svg.png" /></div>
                   <div className="box"><img src="https://docs.checkmk.com/latest/images/grafana_logo.png" /></div>
                   {/* eslint-enable max-len */}

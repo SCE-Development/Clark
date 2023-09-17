@@ -70,6 +70,7 @@ services:
     environment:
       - PERIPHERAL_API_URL=http://sce-peripheral-api-dev:8081/peripheralapi
       - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
+      - MAILER_API_URL=http://sce-cloud-api-dev:8082/cloudapi
       - DATABASE_HOST=sce-mongodb-dev
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}

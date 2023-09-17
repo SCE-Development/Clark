@@ -29,6 +29,12 @@ import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 import AdminDashboard from './Pages/Profile/admin/AdminDashboard';
 import AboutPage from './Pages/About/About';
 import ProjectsPage from './Pages/Projects/Projects';
+import URLShortenerPage from './Pages/URLShortener/URLShortener';
+
+import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
+
+import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
+
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -58,13 +64,13 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true
     },
     //
-    {
-      Component: EmailPage,
-      path: '/email-list',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
+    // {
+    //   Component: EmailPage,
+    //   path: '/email-list',
+    //   allowedIf: userIsOfficerOrAdmin,
+    //   redirect: '/',
+    //   inAdminNavbar: true
+    // },
     {
       Component: EventManager,
       path: '/event-manager',
@@ -100,9 +106,12 @@ export default function Routing({ appProps }) {
     },
     {
       Component: Login,
-      path: '/login',
+      path: '/login*',
       allowedIf: !userIsAuthenticated,
-      redirect: '/'
+      redirect: '/',
+      queryParams: {
+        redirect: 'redirect',
+      },
     },
     {
       Component: MembershipApplication,
@@ -122,7 +131,22 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
-    }
+    },
+    {
+      Component: URLShortenerPage,
+      path: '/short',
+      allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
+      redirect: '/',
+      hideAdminNavbar: true,
+    },
+    {
+      Component: sendUnsubscribeEmail,
+      path: '/unsub',
+      allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
+      redirect: '/',
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -131,13 +155,31 @@ export default function Routing({ appProps }) {
     { Component: GoogleLoginDiscord, path: '/discordSJSU/LoginWithGoogle/:id' },
     { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
-    { Component: ProjectsPage, path: '/projects'}
+    { Component: ProjectsPage, path: '/projects'},
+    { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   return (
     <Router>
       <Switch>
         {signedInRoutes.map(
-          ({ path, Component, allowedIf, redirect, inAdminNavbar }, index) => {
+          ({
+            path,
+            Component,
+            allowedIf,
+            redirect,
+            inAdminNavbar,
+            hideAdminNavbar = false,
+          }, index) => {
+            function getCorrectComponent(privateRouteProps) {
+              if (hideAdminNavbar) {
+                return <Component {...privateRouteProps} />;
+              }
+              return (<NavBarWrapper
+                component={Component}
+                enableAdminNavbar={inAdminNavbar}
+                {...privateRouteProps}
+              />);
+            }
             return (
               <PrivateRoute
                 key={index}
@@ -147,15 +189,10 @@ export default function Routing({ appProps }) {
                   allowed: allowedIf,
                   user: appProps.user,
                   redirect,
+                  authenticated:userIsAuthenticated,
                   ...appProps
                 }}
-                component={props => (
-                  <NavBarWrapper
-                    component={Component}
-                    enableAdminNavbar={inAdminNavbar}
-                    {...props}
-                  />
-                )}
+                component={props => getCorrectComponent(props)}
               />
             );
           }

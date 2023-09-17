@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test';
 const { getMemberExpirationDate } =
-  require('../../api/main_endpoints/util/registerUser.js');
+  require('../../api/main_endpoints/util/userHelpers.js');
 
 const chai = require('chai');
 const { expect, assert } = chai;

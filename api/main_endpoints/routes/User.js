@@ -8,7 +8,7 @@ const User = require('../models/User.js');
 const {
   getMemberExpirationDate,
   hashPassword,
-} = require('../util/registerUser');
+} = require('../util/userHelpers');
 const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
@@ -32,6 +32,8 @@ const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
+
+const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 
 router.get('/countAllUsers', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -404,6 +406,90 @@ router.post('/getUserById', async (req, res) => {
 
     return res.status(OK).json(omittedPassword);
   });
+});
+
+router.get('/isUserSubscribed', (req, res) => {
+  User.findOne({ email: req.query.email }, function(error, result) {
+    if (error) {
+      res.sendStatus(BAD_REQUEST);
+    }
+
+    if (!result) {
+      return res.sendStatus(NOT_FOUND);
+    }
+    return res.status(OK).send({ result: !!result.emailOptIn });
+  });
+});
+
+router.post('/setUserEmailPreference', (req, res) => {
+  const email = req.body.email;
+  const emailOptIn = !!req.body.emailOptIn;
+
+  User.updateOne(
+    { email: email },
+    { emailOptIn: emailOptIn },
+    function(error, result) {
+      if (error) {
+        res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      }
+
+      if (result.n === 0) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: `${email} not found.` });
+      }
+      return res.status(OK).send({
+        message: `${email} was updated.`,
+        emailOptIn: emailOptIn,
+      });
+    }
+  );
+});
+
+router.post('/getUserDataByEmail', (req, res) => {
+  User.findOne({ email: req.body.email }, function(error, result) {
+    if (error) {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    }
+
+    if (!result) {
+      return res
+        .status(NOT_FOUND)
+        .send({ message: `${req.body.email} not found.` });
+    }
+    const user = {
+      firstName: result.firstName,
+      lastName: result.lastName,
+      emailOptIn: result.emailOptIn,
+    };
+    return res.status(OK).send(user);
+  });
+});
+
+// Search for all members with verified emails and subscribed
+router.post('/usersSubscribedAndVerified', function(req, res) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.find({ emailVerified: true, emailOptIn: true })
+    .then((users) => {
+      if (users.length) {
+        const userEmailAndName = users.map((user) => {
+          return {
+            email : user.email,
+            firstName : user.firstName,
+            lastName : user.lastName
+          };
+        });
+        sendUnsubscribeEmail(userEmailAndName);
+      }
+      return res.sendStatus(OK);
+    })
+    .catch((err) => {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    });
 });
 
 module.exports = router;
