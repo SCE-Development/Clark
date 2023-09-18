@@ -74,6 +74,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
+    ports:
+      - '16000:16000'
     restart: 'on-failure'
     stdin_open: true
     links:
