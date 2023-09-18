@@ -11,7 +11,7 @@ export async function addUrl(url) {
   let status = new ApiResponse();
   console.debug(url);
   await axios
-    .get(SPEAKER_API_URL + `/stream/?url=${url}`)
+    .get(SPEAKER_API_URL + `/stream?url=${url}`)
     // .get(`http://localhost:16000/?`)
     .then(res => {
       status = res.data;
