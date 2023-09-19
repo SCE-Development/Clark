@@ -33,4 +33,6 @@ COPY --from=builder /frontend/build /usr/share/nginx/html
 
 EXPOSE 3000
 
+EXPOSE 18000
+
 CMD ["nginx", "-g", "daemon off;"]
