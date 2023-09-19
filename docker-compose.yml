@@ -80,6 +80,8 @@ services:
       - mongodb
     depends_on:
       - mongodb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
       
 
   web:
