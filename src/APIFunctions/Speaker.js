@@ -4,7 +4,9 @@ import { ApiResponse } from './ApiResponses';
 const config  = require('../config/config.json');
 const speakerPort = config.speakerPort;
 
-let SPEAKER_API_URL = `http://host.docker.internal:${speakerPort}`;
+let SPEAKER_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
+  || 'http://localhost:8081/peripheralapi';
+
 console.debug(SPEAKER_API_URL);
 
 export async function addUrl(url) {

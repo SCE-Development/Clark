@@ -75,6 +75,8 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile
     restart: 'on-failure'
+    environment:
+      - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
     stdin_open: true
     links:
       - mongodb
