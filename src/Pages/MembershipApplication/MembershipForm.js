@@ -297,55 +297,14 @@ export default function MembershipForm(props) {
           <h2 id='application-h2'>
             Year: {new Date().getFullYear()}
           </h2>
-          <h6 className='white-text'>
-            * = Required field
+          <br/><br/>
+          <h6 className='white-text'> Pay the SCE on Venmo
+            <a href="https://account.venmo.com/u/sce-treasurer"><b>@sce-treasurer</b> </a>
           </h6>
-          <Form onSubmit={submitApplication}>
-            <div id='name-field-row'>
-              {nameFields.map((input, index) => (
-                <FormGroup
-                  className='application-form-group'
-                  key={`name-field-input-${index}`}>
-                  <Input
-                    className='name-input membership-input'
-                    type={input.type}
-                    onChange={input.handleChange}
-                    id={input.id}
-                    placeholder={input.label}
-                  />
-                  {input.ifRequirementsNotMet}
-                </FormGroup>
-              ))}
-            </div>
-            <div id='email-input-container'>
-              {accountFields.map((input, index) => (
-                <FormGroup
-                  className='application-form-group'
-                  key={`account-field-${index}`}>
-                  <Input
-                    className='membership-input email-input'
-                    type={input.type}
-                    onChange={input.handleChange}
-                    id={input.id}
-                    placeholder={input.label}
-                  />
-                  {input.ifRequirementsNotMet}
-                </FormGroup>
-              ))}
-            </div>
-            <MajorDropdown setMajor={setMajor} />
-            <PlanDropdown setPlan={setPlan} />
-            <div id='recaptcha'>
-              {maybeShowCaptcha()}
-            </div>
-            <div className='transition-button-wrapper container-btn'>
-              <div className='center'>
-                <Button className = 'submit-btn' type='submit'>
-                  Submit Application
-                </Button>
-              </div>
-            </div>
-          </Form>
+          <br/><br/>
+          <h6 className='white-text'>Message our treasurer on discord to get a door code and shirt.
+            <a href="http://discordapp.com/users/239143229851697152"><b>@en4y</b></a>
+          </h6>
         </div>
       </Container>
     </div>
