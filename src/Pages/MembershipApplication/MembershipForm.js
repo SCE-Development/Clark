@@ -347,7 +347,7 @@ export default function MembershipForm(props) {
             </div>
           </Form>
           <p className='white-text'
-            style={{fontSize : '12px', paddingTop: '10px', paddingBottom : '-5px'}}>
+            style={{fontSize : '12px', paddingTop: '10px'}}>
             Signing up does not waive the fee
           </p>
         </div>
