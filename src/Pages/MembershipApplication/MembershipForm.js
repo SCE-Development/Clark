@@ -346,11 +346,12 @@ export default function MembershipForm(props) {
               </div>
             </div>
             <div>
-              <h4 id='application-header' style={{paddingTop : "1.5rem"}}>Please Note</h4>
+              <h4 id='application-header' style={{paddingTop : '1.5rem'}}>Please Note</h4>
               <h6 className='white-text'> Pay for SCE membership on Venmo
                 <a href="https://account.venmo.com/u/sce-treasurer"><b>@sce-treasurer</b> </a>
               </h6>
-              <h6 className='white-text'>Message our treasurer on Discord to get a door code and shirt.
+              <h6 className='white-text'>
+                Message our treasurer on Discord to get a door code and shirt.
                 <a href="http://discordapp.com/users/239143229851697152"><b>@en4y</b></a>
               </h6>
               <h6 className='white-text'>
