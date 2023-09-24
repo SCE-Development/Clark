@@ -285,7 +285,7 @@ export default function MembershipForm(props) {
           </div>
           <div className='venmo-link'>
             <a
-              href='https://venmo.com/u/sce-treasurer'
+              href='https://venmo.com/u/pnavab'
               style={{ color: 'white' }}
             >
               Click to pay fee
@@ -297,14 +297,68 @@ export default function MembershipForm(props) {
           <h2 id='application-h2'>
             Year: {new Date().getFullYear()}
           </h2>
-          <br/><br/>
-          <h6 className='white-text'> Pay for SCE membership on Venmo
-            <a href="https://account.venmo.com/u/sce-treasurer"><b>@sce-treasurer</b> </a>
+          <h6 className='white-text'>
+            * = Required field
           </h6>
-          <br/><br/>
-          <h6 className='white-text'>Message our treasurer on Discord to get a door code and shirt.
-            <a href="http://discordapp.com/users/239143229851697152"><b>@en4y</b></a>
-          </h6>
+          <Form onSubmit={submitApplication}>
+            <div id='name-field-row'>
+              {nameFields.map((input, index) => (
+                <FormGroup
+                  className='application-form-group'
+                  key={`name-field-input-${index}`}>
+                  <Input
+                    className='name-input membership-input'
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
+            </div>
+            <div id='email-input-container'>
+              {accountFields.map((input, index) => (
+                <FormGroup
+                  className='application-form-group'
+                  key={`account-field-${index}`}>
+                  <Input
+                    className='membership-input email-input'
+                    type={input.type}
+                    onChange={input.handleChange}
+                    id={input.id}
+                    placeholder={input.label}
+                  />
+                  {input.ifRequirementsNotMet}
+                </FormGroup>
+              ))}
+            </div>
+            <MajorDropdown setMajor={setMajor} />
+            <PlanDropdown setPlan={setPlan} />
+            <div id='recaptcha'>
+              {maybeShowCaptcha()}
+            </div>
+            <div className='transition-button-wrapper container-btn'>
+              <div className='center'>
+                <Button className = 'submit-btn' type='submit'>
+                Submit Application
+                </Button>
+              </div>
+            </div>
+            <div>
+              <h4 id='application-header' style={{paddingTop : '1.5rem'}}>Please Note</h4>
+              <h6 className='white-text'> Pay for SCE membership on Venmo
+                <a href="https://account.venmo.com/u/sce-treasurer"><b>@sce-treasurer</b> </a>
+              </h6>
+              <h6 className='white-text'>
+                Message our treasurer on Discord to get a door code and shirt.
+                <a href="http://discordapp.com/users/239143229851697152"><b>@en4y</b></a>
+              </h6>
+              <h6 className='white-text'>
+                Signing up does not waive the fee
+              </h6>
+            </div>
+          </Form>
         </div>
       </Container>
     </div>
