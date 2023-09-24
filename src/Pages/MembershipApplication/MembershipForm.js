@@ -341,15 +341,23 @@ export default function MembershipForm(props) {
             <div className='transition-button-wrapper container-btn'>
               <div className='center'>
                 <Button className = 'submit-btn' type='submit'>
-                  Submit Application
+                Submit Application
                 </Button>
               </div>
             </div>
+            <div>
+              <h4 id='application-header' style={{paddingTop : "1.5rem"}}>Please Note</h4>
+              <h6 className='white-text'> Pay for SCE membership on Venmo
+                <a href="https://account.venmo.com/u/sce-treasurer"><b>@sce-treasurer</b> </a>
+              </h6>
+              <h6 className='white-text'>Message our treasurer on Discord to get a door code and shirt.
+                <a href="http://discordapp.com/users/239143229851697152"><b>@en4y</b></a>
+              </h6>
+              <h6 className='white-text'>
+                Signing up does not waive the fee
+              </h6>
+            </div>
           </Form>
-          <p className='white-text'
-            style={{fontSize : '12px', paddingTop: '10px'}}>
-            Signing up does not waive the fee
-          </p>
         </div>
       </Container>
     </div>
