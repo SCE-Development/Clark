@@ -16,8 +16,6 @@ const logger = require('../../util/logger');
 const { music } = require('../../config/config.json');
 const { ENABLED } = music;
 
-let MUSIC_URL = 'http://localhost:18000';
-
 
 router.post('/stream', async (req, res) => {
     /*
