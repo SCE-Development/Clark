@@ -21,7 +21,7 @@ router.post('/stream', async (req, res) => {
      */
   console.error(req.body);
   await axios
-    .post(`http://host.docker.internal:18000/stream/?url=${encodeURIComponent(req.query.url)}`)
+    .get(`http://host.docker.internal:18000/stream/?url=${encodeURIComponent(req.query.url)}`)
     .then(() => {
       return res.sendStatus(OK);
     })
