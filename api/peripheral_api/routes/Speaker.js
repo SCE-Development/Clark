@@ -18,18 +18,18 @@ const { ENABLED } = music;
 
 
 router.post('/stream', async (req, res) => {
-    /*
+  /*
      * How these work with Quasar:
      * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
      */
-    console.log(req.body)
-    await axios
+  console.error(req.body);
+  await axios
     .post(`http://host.docker.internal:18000/stream/?url=${req.body}`)
     .then(() => {
-        return res.sendStatus(OK);
+      return res.sendStatus(OK);
     })
     .catch((err) => {
-        logger.error('Printer SSH tunnel is down: ', err);
-        return res.sendStatus(NOT_FOUND);
+      logger.error('Printer SSH tunnel is down: ', err);
+      return res.sendStatus(NOT_FOUND);
     });
 });
