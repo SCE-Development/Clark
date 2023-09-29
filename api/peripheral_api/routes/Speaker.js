@@ -33,3 +33,5 @@ router.post('/stream', async (req, res) => {
       return res.sendStatus(NOT_FOUND);
     });
 });
+
+module.exports = router;
