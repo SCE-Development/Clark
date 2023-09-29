@@ -14,7 +14,7 @@ export async function addUrl(url) {
   let status = new ApiResponse();
   console.debug(url);
   await axios
-    .post(PERIPHERAL_API_URL + `/stream?url=${url}`)
+    .post(PERIPHERAL_API_URL + `/Speaker/stream?url=${url}`)
     .then(res => {
       status = res.data;
     })
@@ -29,7 +29,7 @@ export async function addUrl(url) {
 export async function pause() {
   let status = new ApiResponse();
   await axios
-    .post(PERIPHERAL_API_URL + '/pause')
+    .post(PERIPHERAL_API_URL + '/Speaker/pause')
     .then(res => {
       status = res.data;
     })
@@ -43,7 +43,7 @@ export async function pause() {
 export async function resume() {
   let status = new ApiResponse();
   await axios
-    .post(PERIPHERAL_API_URL + '/resume')
+    .post(PERIPHERAL_API_URL + '/Speaker/resume')
     .then(res => {
       status = res.data;
     })
@@ -57,7 +57,7 @@ export async function resume() {
 export async function getQueued() {
   let status = new ApiResponse();
   await axios
-    .get(PERIPHERAL_API_URL + '/queued')
+    .get(PERIPHERAL_API_URL + '/Speaker/queued')
     .then(res => {
       status = res.data;
     })
