@@ -13,9 +13,6 @@ const {
   NOT_FOUND,
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
-const { music } = require('../../config/config.json');
-const { ENABLED } = music;
-
 
 router.post('/stream', async (req, res) => {
   /*
@@ -30,7 +27,7 @@ router.post('/stream', async (req, res) => {
     })
     .catch((err) => {
       logger.error('Printer SSH tunnel is down: ', err);
-      return res.sendStatus(NOT_FOUND);
+      return res.sendStatus(500);
     });
 });
 
