@@ -13,7 +13,7 @@ services:
       context: ./tunnel
       dockerfile: ./Dockerfile
     extra_hosts:
-      - "docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
   sce-peripheral-api:
     container_name: sce-peripheral-api
     build:
