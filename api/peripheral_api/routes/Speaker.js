@@ -21,7 +21,7 @@ router.post('/stream', async (req, res) => {
      */
   console.error(req.body);
   await axios
-    .get(`http://host.docker.internal:18000/stream/?url=${encodeURIComponent(req.query.url)}`)
+    .post(`http://host.docker.internal:18000/stream/?url=${encodeURIComponent(req.query.url)}`)
     .then(() => {
       return res.sendStatus(OK);
     })
@@ -38,7 +38,7 @@ router.post('/pause', async (req, res) => {
      */
   console.error(req.body);
   await axios
-    .get(`http://host.docker.internal:18000/pause`)
+    .post(`http://host.docker.internal:18000/pause`)
     .then(() => {
       return res.sendStatus(OK);
     })
@@ -55,7 +55,7 @@ router.post('/resume', async (req, res) => {
      */
   console.error(req.body);
   await axios
-    .get(`http://host.docker.internal:18000/resume`)
+    .post(`http://host.docker.internal:18000/resume`)
     .then(() => {
       return res.sendStatus(OK);
     })
