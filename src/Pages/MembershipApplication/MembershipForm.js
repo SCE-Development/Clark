@@ -285,7 +285,7 @@ export default function MembershipForm(props) {
           </div>
           <div className='venmo-link'>
             <a
-              href='https://venmo.com/u/pnavab'
+              href='https://venmo.com/u/sce-treasurer'
               style={{ color: 'white' }}
             >
               Click to pay fee
