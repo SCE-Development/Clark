@@ -74,7 +74,7 @@ router.get('/queued', async (req, res) => {
   await axios
     .get(`http://host.docker.internal:18000/queued`)
     .then(() => {
-      return res.json;
+      return res
     })
     .catch((err) => {
       logger.error('Printer SSH tunnel is down: ', err);
