@@ -72,6 +72,7 @@ export async function getQueued() {
   await axios
     .get(PERIPHERAL_API_URL + '/Speaker/queued')
     .then(res => {
+      console.debug(res);
       status = res
     })
     .catch(err => {
