@@ -23,6 +23,22 @@ export async function addUrl(url) {
   return status;
 }
 
+export async function skip(url) {
+  let status = new ApiResponse();
+  console.debug(url);
+  await axios
+    .post(PERIPHERAL_API_URL + `/Speaker/skip`)
+    .then(res => {
+      status = res.data;
+    })
+    .catch(err => {
+      console.debug(err);
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
 export async function pause() {
   let status = new ApiResponse();
   await axios

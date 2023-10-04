@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { Spinner, Input, Button, Container, Row, Col } from 'reactstrap';
 import Header from '../../Components/Header/Header';
-import { addUrl, getQueued, pause, resume } from '../../APIFunctions/Speaker';
+import { addUrl, getQueued, pause, resume, skip } from '../../APIFunctions/Speaker';
 
 function SpeakersPage(props) {
 
@@ -30,15 +30,15 @@ function SpeakersPage(props) {
     }
   };
   const skipSong = async () => {
-      await skip(url);
+      await skip();
   };
 
   const pauseSong = async () => {
-      await pause(url);
+      await pause();
   };
 
   const resumeSong = async () => {
-      await resume(url);
+      await resume();
   };
 
   return (
