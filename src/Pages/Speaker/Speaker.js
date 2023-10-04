@@ -17,13 +17,37 @@ function SpeakersPage(props) {
   useEffect(() => {
     getQueued()
       .then(queued => {
+        console.debug(queued)
         setQueue(queued);
       });
   }, []);
 
-  const handleSubmit = async () => {
+  const playSong = async () => {
     if (validateUrl()) {
       await addUrl(url);
+    } else {
+      alert('Invalid YouTube URL!');
+    }
+  };
+  const skipSong = async () => {
+    if (validateUrl()) {
+      await skip(url);
+    } else {
+      alert('Invalid YouTube URL!');
+    }
+  };
+
+  const pauseSong = async () => {
+    if (validateUrl()) {
+      await pause(url);
+    } else {
+      alert('Invalid YouTube URL!');
+    }
+  };
+
+  const resumeSong = async () => {
+    if (validateUrl()) {
+      await resume(url);
     } else {
       alert('Invalid YouTube URL!');
     }
@@ -40,9 +64,14 @@ function SpeakersPage(props) {
               {(e) => setUrl(e.target.value)}></Input>
           </Col>
           <Col>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button onClick={playSong}>Play</Button>
           </Col>
         </Row>
+        <Col>
+          <Button onClick={skipSong}>Skip</Button>
+          <Button style={{marginLeft : '1rem'}} onClick={pauseSong}>Puase</Button>
+          <Button style={{marginLeft : '1rem'}} onClick={resumeSong}>Resume</Button>
+        </Col>
         <br></br>
         {queue.length > 0 ?
           queue.map(song => (

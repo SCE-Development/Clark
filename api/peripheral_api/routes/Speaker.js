@@ -65,4 +65,21 @@ router.post('/resume', async (req, res) => {
     });
 });
 
+router.get('/queued', async (req, res) => {
+  /*
+     * How these work with Quasar:
+     * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+     */
+  console.error(req.body);
+  await axios
+    .post(`http://host.docker.internal:18000/queued`)
+    .then(() => {
+      return res.sendStatus(OK);
+    })
+    .catch((err) => {
+      logger.error('Printer SSH tunnel is down: ', err);
+      return res.sendStatus(500);
+    });
+});
+
 module.exports = router;
