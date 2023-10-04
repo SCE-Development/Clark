@@ -72,7 +72,7 @@ export async function getQueued() {
   await axios
     .get(PERIPHERAL_API_URL + '/Speaker/queued')
     .then(res => {
-      status = res.data.queued
+      status = res
     })
     .catch(err => {
       status.responseData = err;
