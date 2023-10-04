@@ -72,7 +72,7 @@ router.get('/queued', async (req, res) => {
      */
   console.error(req.body);
   await axios
-    .post(`http://host.docker.internal:18000/queued`)
+    .get(`http://host.docker.internal:18000/queued`)
     .then(() => {
       return res.sendStatus(OK);
     })
