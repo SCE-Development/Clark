@@ -30,27 +30,15 @@ function SpeakersPage(props) {
     }
   };
   const skipSong = async () => {
-    if (validateUrl()) {
       await skip(url);
-    } else {
-      alert('Invalid YouTube URL!');
-    }
   };
 
   const pauseSong = async () => {
-    if (validateUrl()) {
       await pause(url);
-    } else {
-      alert('Invalid YouTube URL!');
-    }
   };
 
   const resumeSong = async () => {
-    if (validateUrl()) {
       await resume(url);
-    } else {
-      alert('Invalid YouTube URL!');
-    }
   };
 
   return (
