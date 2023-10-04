@@ -61,12 +61,10 @@ function SpeakersPage(props) {
           <Button style={{marginLeft : '1rem'}} onClick={resumeSong}>Resume</Button>
         </Col>
         <br></br>
-        {queue.length > 0 ?
-          queue.map(song => (
-            <Row key={song}>
-              <p>{song}</p>
-            </Row>
-          ))
+        {queue.length > 0 ?  
+          <Row >
+            <p>{queue}</p>
+          </Row>
           :
           <p>Nothing Queued!</p>
         }
