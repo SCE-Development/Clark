@@ -1,6 +1,5 @@
 {
   "sitekey": "super secret key",
   "TINYMCE_API_KEY": "XXXXXXXXXXXXXXXXXXXXX",
-  "GOOGLE_API_CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com",
-  "speakerPort": "XXXXXXX"
+  "GOOGLE_API_CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com"
 }

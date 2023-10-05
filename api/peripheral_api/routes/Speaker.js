@@ -12,62 +12,63 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   NOT_FOUND,
+  SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
 
 router.post('/stream', async (req, res) => {
-  /*
-     * How these work with Quasar:
-     * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
-     */
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/updateSignText was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
   await axios
     .post(`http://host.docker.internal:18000/stream/?url=${encodeURIComponent(req.query.url)}`)
     .then(() => {
       return res.sendStatus(OK);
     })
     .catch((err) => {
-      logger.error('Printer SSH tunnel is down: ', err);
-      return res.sendStatus(500);
+      logger.error('/Speaker/stream had an error: ', err);
+      return res.sendStatus(SERVER_ERROR);
     });
 });
 
 router.post('/pause', async (req, res) => {
-  /*
-     * How these work with Quasar:
-     * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
-     */
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/updateSignText was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
   await axios
     .post('http://host.docker.internal:18000/pause')
     .then(() => {
       return res.sendStatus(OK);
     })
     .catch((err) => {
-      logger.error('Printer SSH tunnel is down: ', err);
-      return res.sendStatus(500);
+      logger.error('/Speaker/stream had an error: ', err);
+      return res.sendStatus(SERVER_ERROR);
     });
 });
 
 router.post('/resume', async (req, res) => {
-  /*
-     * How these work with Quasar:
-     * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
-     */
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/updateSignText was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
   await axios
     .post('http://host.docker.internal:18000/resume')
     .then(() => {
       return res.sendStatus(OK);
     })
     .catch((err) => {
-      logger.error('Printer SSH tunnel is down: ', err);
-      return res.sendStatus(500);
+      logger.error('/Speaker/stream had an error: ', err);
+      return res.sendStatus(SERVER_ERROR);
     });
 });
 
 router.get('/queued', async (req, res) => {
-  /*
-  * How these work with Quasar:
-  * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
-  */
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/updateSignText was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
   const dataFromQueued = await speakerQueued();
   console.debug(dataFromQueued);
   if(!dataFromQueued) {
