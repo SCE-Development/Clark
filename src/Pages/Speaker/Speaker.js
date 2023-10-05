@@ -14,14 +14,14 @@ function SpeakersPage(props) {
     return url.includes('youtube.com') || url.includes('youtu.be');
   };
 
-  useEffect(() => {
-    getQueued()
-      .then(queued => {
-        console.debug("HERE")
-        console.debug(queued)
-        setQueue(queued);
-      });
-  }, []);
+  // useEffect(() => {
+  //   getQueued()
+  //     .then(queued => {
+  //       console.debug("HERE")
+  //       console.debug(queued)
+  //       setQueue(queued);
+  //     });
+  // }, []);
 
   const playSong = async () => {
     if (validateUrl()) {
