@@ -7,7 +7,7 @@ import { addUrl, getQueued, pause, resume, skip } from '../../APIFunctions/Speak
 function SpeakersPage(props) {
 
   const [url, setUrl] = useState('');
-  const [queue, setQueue] = useState([]);
+  // const [queue, setQueue] = useState([]);
 
   const validateUrl = () => {
     setUrl(url.trim());
@@ -62,7 +62,6 @@ function SpeakersPage(props) {
           <Button style={{marginLeft : '1rem'}} onClick={resumeSong}>Resume</Button>
         </Col>
         <br></br>
-        {queue}
       </Container>
     </div>
   );
