@@ -72,6 +72,8 @@ router.get('/queued', async (req, res) => {
   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
   */
   const dataFromQueued = await speakerQueued();
+  console.error(req.body);
+  console.debug(dataFromQueued);
   if(!dataFromQueued) {
     return res.sendStatus(SERVER_ERROR);
   }

@@ -17,6 +17,7 @@ function SpeakersPage(props) {
   useEffect(() => {
     getQueued()
       .then(queued => {
+        console.debug("HERE")
         console.debug(queued)
         setQueue(queued);
       });
@@ -61,13 +62,7 @@ function SpeakersPage(props) {
           <Button style={{marginLeft : '1rem'}} onClick={resumeSong}>Resume</Button>
         </Col>
         <br></br>
-        {queue.length > 0 ?  
-          <Row >
-            <p>{queue}</p>
-          </Row>
-          :
-          <p>Nothing Queued!</p>
-        }
+        {queue}
       </Container>
     </div>
   );
