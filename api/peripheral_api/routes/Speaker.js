@@ -20,7 +20,6 @@ router.post('/stream', async (req, res) => {
      * How these work with Quasar:
      * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
      */
-  console.error(req.body);
   await axios
     .post(`http://host.docker.internal:18000/stream/?url=${encodeURIComponent(req.query.url)}`)
     .then(() => {
@@ -37,9 +36,8 @@ router.post('/pause', async (req, res) => {
      * How these work with Quasar:
      * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
      */
-  console.error(req.body);
   await axios
-    .post(`http://host.docker.internal:18000/pause`)
+    .post('http://host.docker.internal:18000/pause')
     .then(() => {
       return res.sendStatus(OK);
     })
@@ -54,9 +52,8 @@ router.post('/resume', async (req, res) => {
      * How these work with Quasar:
      * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
      */
-  console.error(req.body);
   await axios
-    .post(`http://host.docker.internal:18000/resume`)
+    .post('http://host.docker.internal:18000/resume')
     .then(() => {
       return res.sendStatus(OK);
     })
@@ -72,7 +69,6 @@ router.get('/queued', async (req, res) => {
   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
   */
   const dataFromQueued = await speakerQueued();
-  console.error(req.body);
   console.debug(dataFromQueued);
   if(!dataFromQueued) {
     return res.sendStatus(SERVER_ERROR);

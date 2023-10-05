@@ -27,7 +27,7 @@ export async function skip(url) {
   let status = new ApiResponse();
   console.debug(url);
   await axios
-    .post(PERIPHERAL_API_URL + `/Speaker/skip`)
+    .post(PERIPHERAL_API_URL + '/Speaker/skip')
     .then(res => {
       status = res.data;
     })
@@ -73,7 +73,7 @@ export async function getQueued() {
     .get(PERIPHERAL_API_URL + '/Speaker/queued')
     .then(res => {
       console.debug(res);
-      status = res
+      status = res;
     })
     .catch(err => {
       status.responseData = err;

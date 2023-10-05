@@ -31,15 +31,15 @@ function SpeakersPage(props) {
     }
   };
   const skipSong = async () => {
-      await skip();
+    await skip();
   };
 
   const pauseSong = async () => {
-      await pause();
+    await pause();
   };
 
   const resumeSong = async () => {
-      await resume();
+    await resume();
   };
 
   return (
