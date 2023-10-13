@@ -17,6 +17,7 @@ const {
 const logger = require('../../util/logger');
 
 router.post('/stream', async (req, res) => {
+  logger.error("IT IS HERE")
   if (!checkIfTokenSent(req)) {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
