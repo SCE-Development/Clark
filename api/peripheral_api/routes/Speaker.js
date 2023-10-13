@@ -21,8 +21,14 @@ router.post('/stream', async (req, res) => {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
+  if (!await verifyToken(req.body.token)) {
+    logger.warn('/updateSignText was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  console.log("Final")
+  console.log(req.body.url)
   await axios
-    .post(`http://host.docker.internal:18000/stream/?url=${encodeURIComponent(req.query.url)}`)
+    .post('http://host.docker.internal:18000/stream', {'url' : req.body.url})
     .then(() => {
       return res.sendStatus(OK);
     })
@@ -35,6 +41,10 @@ router.post('/stream', async (req, res) => {
 router.post('/pause', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     logger.warn('/updateSignText was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
+    logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   await axios
@@ -53,6 +63,10 @@ router.post('/resume', async (req, res) => {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
+  if (!await verifyToken(req.body.token)) {
+    logger.warn('/updateSignText was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
   await axios
     .post('http://host.docker.internal:18000/resume')
     .then(() => {
@@ -67,6 +81,10 @@ router.post('/resume', async (req, res) => {
 router.get('/queued', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     logger.warn('/updateSignText was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
+    logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   const dataFromQueued = await speakerQueued();
