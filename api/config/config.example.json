@@ -21,16 +21,6 @@
     "USER": "sce.sjsu@gmail.com"
   },
   "passwordStrength": "medium",
-  "AWS" : {
-    "ENABLED": true,
-    "ACCESS_KEY_ID": "NOT_SET",
-    "SECRET_ACCESS_KEY": "NOT_SET",
-    "ACCOUNT_ID": "NOT_SET",
-    "S3Bucket" : {
-      "NAME": "NOT_SET"
-    },
-    "AWS_IOT_ENDPOINT" : "NOT_SET"
-  },
   "PRINTING": {
     "ENABLED": false
   },

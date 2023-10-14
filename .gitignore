@@ -84,7 +84,6 @@ config.js
 config.json
 token.json
 sheets.json
-api/config/AWS-IOT/*pem*
 .env
 
 # CSR
