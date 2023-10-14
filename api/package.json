@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "nodemon devServer.js",
     "peripheral_api": "nodemon peripheral_api/server.js",
-    "cloud_api" : "nodemon cloud_api/server.js",
-    "main_endpoints" : "nodemon main_endpoints/server.js",
+    "cloud_api": "nodemon cloud_api/server.js",
+    "main_endpoints": "nodemon main_endpoints/server.js",
     "main-endpoints": "npm start --prefix main_endpoints",
     "google-api": "npm start --prefix google_api",
     "peripheral-api": "npm start --prefix peripheral_api",
@@ -33,8 +33,6 @@
   },
   "homepage": "https://github.com/SCE-Development/Core-v4#readme",
   "dependencies": {
-    "aws-iot-device-sdk": "^2.2.11",
-    "aws-sdk": "^2.1032.0",
     "axios": "^0.21.2",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
