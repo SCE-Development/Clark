@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Overview.css';
 import OverviewProfile from './OverviewProfile.js';
-import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
+import { getAllUsers, deleteUserByID } from '../../APIFunctions/User';
 import {
   ButtonDropdown,
   DropdownToggle,
@@ -104,12 +104,13 @@ export default class OverviewBoard extends Component {
   parameter: Json object of object to be deleted
   */
   async deleteUser(user) {
-    const deleteEmailResponse = await deleteUserByEmail(
-      user.email,
-      this.state.authToken
+    const deleteIDResponse = await deleteUserByID(
+      user._id,
+      this.state.authToken,
+      user.email
     );
-    if (!deleteEmailResponse.error) {
-      if (user.email === this.state.currentUser) {
+    if (!deleteIDResponse.error) {
+      if (user._id === this.state.currentUser) {
         // logout
         window.localStorage.removeItem('jwtToken');
         window.location.reload();
@@ -117,12 +118,12 @@ export default class OverviewBoard extends Component {
       }
       this.setState({
         users: this.state.users.filter(
-          child => !child.email.includes(user.email)
+          child => !child._id.includes(user._id)
         )
       });
       this.setState({
         queryResult: this.state.queryResult.filter(
-          child => !child.email.includes(user.email)
+          child => !child._id.includes(user._id)
         )
       });
     }
