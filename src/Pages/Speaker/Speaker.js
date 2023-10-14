@@ -25,7 +25,7 @@ function SpeakersPage(props) {
 
   const playSong = async () => {
     if (validateUrl()) {
-      logger.error("frontend", props.user.token)
+      logger.error('frontend', props.user.token);
       await addUrl(url, props.user.token);
     } else {
       alert('Invalid YouTube URL!');

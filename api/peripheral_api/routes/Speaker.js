@@ -17,7 +17,7 @@ const {
 const logger = require('../../util/logger');
 
 router.post('/stream', async (req, res) => {
-  logger.error("IT IS HERE")
+  logger.error('IT IS HERE');
   if (!checkIfTokenSent(req)) {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -26,8 +26,6 @@ router.post('/stream', async (req, res) => {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  console.log("Final")
-  console.log(req.body.url)
   await axios
     .post('http://host.docker.internal:18000/stream', {'url' : req.body.url})
     .then(() => {
@@ -89,7 +87,6 @@ router.get('/queued', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   const dataFromQueued = await speakerQueued();
-  console.debug(dataFromQueued);
   if(!dataFromQueued) {
     return res.sendStatus(SERVER_ERROR);
   }

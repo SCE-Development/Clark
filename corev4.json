@@ -1,0 +1,52 @@
+{
+    "CLOUD_API_URL": "http://localhost:8082/cloudapi",
+    "discordApiKeys": {
+      "ENABLED": true,
+      "CLIENT_ID": "969752842908868638",
+      "CLIENT_SECRET": "_S6FNnvKOoG3jaOmEbivlKnZqJuNlpjR",
+      "REDIRECT_URI_DEV": "http://localhost:8080/api/user/callback",
+      "REDIRECT_URI_PROD": "http://sce.engr.sjsu.edu/api/user/callback",
+      "REFRESH_TOKEN": "NOT_SET"
+    },
+    "GENERAL_API_URL": "http://localhost:8080/api",
+    "githubApiKeys": {
+      "ENABLED": true,
+      "CLIENT_ID": "NOT_SET",
+      "CLIENT_SECRET": "NOT_SET"
+    },
+    "googleApiKeys": {
+      "ENABLED": true,
+      "CLIENT_ID": "800298734437-le4udoacdudakfhjap1rrs641n6ijnhh.apps.googleusercontent.com",
+      "CLIENT_SECRET": "2e4g_2HcgvnmXGr_o8po8Xur",
+      "REDIRECT_URIS": [
+        "https://developers.google.com/oauthplayground"
+      ],
+      "REFRESH_TOKEN": "1//06UQkZYJozNKSCgYIARAAGAYSNwF-L9Irp8bVl8uImOoGY0Kj-kAe9NKavyhbQX3mrZ6XoznUi4Kcna4DWOLDY3YTiEF-pfajdBc",
+      "USER": "sce.sjsu@gmail.com"
+    },
+    "googleCalendarIds": {
+      "PRIMARY_CAL": "primary",
+      "SCE_EVENTS_CAL": "llv828585faitko1m2nh39s3js@group.calendar.google.com"
+    },
+    "PERIPHERAL_API_URL": "http://localhost:8081/peripheralapi",
+    "passwordStrength": "medium",
+    "AWS" : {
+      "ENABLED": true,
+      "ACCESS_KEY_ID": "AKIARDBH275VRJHYFCZB",
+      "SECRET_ACCESS_KEY": "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",
+      "ACCOUNT_ID": "075245485931",
+      "S3Bucket" : {
+        "NAME": "sce-printing"
+      },
+      "Queue": {
+        "LED_QUEUE_NAME": "led-sign",
+        "PAPER_PRINTING_QUEUE_NAME": "sce-printing"
+      },
+      "AWS_IOT_ENDPOINT" : "NOT_SET",
+      "PrintingS3Bucket": "sce-printing"
+    },
+    "secretKey": "s6p22tt5Y3+Wf4UmjdRL^aF4Q8^n@Z",
+    "GENERAL_API_URL_PROD": "http://mainendpoints:8080/api",
+    "PERIPHERAL_API_URL_PROD": "http://sce-peripheral-api:8081/peripheralapi",
+    "MAILER_API_URL_PROD": "http://sce-cloud-api:8082/cloudapi"
+ }
