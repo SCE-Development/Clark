@@ -44,7 +44,6 @@
     "filepond-plugin-file-encode": "^2.1.6",
     "filepond-plugin-file-validate-type": "^1.2.5",
     "filepond-plugin-image-preview": "^4.6.11",
-    "google-spreadsheet": "^4.1.0",
     "googleapis": "^126.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^5.11.18",

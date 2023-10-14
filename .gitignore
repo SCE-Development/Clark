@@ -83,7 +83,6 @@ build
 config.js 
 config.json
 token.json
-sheets.json
 .env
 
 # CSR

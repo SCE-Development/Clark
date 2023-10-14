@@ -3,7 +3,6 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const nodemailer = require('nodemailer');
 const { consoleColors } = require('../../util/constants');
-const { GoogleSpreadsheet } = require('google-spreadsheet');
 const logger = require('../../util/logger');
 
 const {
@@ -192,47 +191,6 @@ class SceGoogleApiHandler {
           logger.error('sendMail returned an error:', error);
           reject(error);
         } else {
-          resolve(response);
-        }
-      });
-    });
-  }
-  /**
- * Adds responses from officer app form to a google spreadsheet
- * @param {String} sheetsId spreadsheet id for the spreadsheet to add to
- * @param {object} data response data from the officer application form
- */
-  async writeToForm(sheetsId, data){
-    if (!this.hasValidAPIKeys) {
-      return resolve(true);
-    }
-    return new Promise(async (resolve, reject)=>{
-      GoogleSpreadsheet.openById(sheetsId, (error, response) => {
-        if (error){
-          reject(false);
-        }
-      });
-      const doc = new GoogleSpreadsheet(sheetsId);
-      this.checkIfTokenFileExists(this.tokenPath, (error, response)=> {
-        if(error){
-          reject(false);
-        }
-      });
-      await doc.useServiceAccountAuth(require(this.tokenPath));
-      await doc.loadInfo();
-      const sheet = doc.sheetsByIndex[0];
-      const row = {
-        Name: data.name,
-        Email: data.email,
-        'Graduation Month': data.gradMonth,
-        'Graduation Year': data.gradYear,
-        'Work Experience': data.experience,
-        LinkedIn: data.linkedin
-      };
-      sheet.addRow(row, (error, response) => {
-        if(error){
-          reject(false);
-        } else{
           resolve(response);
         }
       });
