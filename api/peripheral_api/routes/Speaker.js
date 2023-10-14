@@ -19,11 +19,11 @@ const logger = require('../../util/logger');
 router.post('/stream', async (req, res) => {
   logger.error('IT IS HERE');
   if (!checkIfTokenSent(req)) {
-    logger.warn('/updateSignText was requested without a token');
+    logger.warn('/stream was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('/updateSignText was requested with an invalid token');
+    logger.warn('/stream was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   await axios
@@ -39,11 +39,11 @@ router.post('/stream', async (req, res) => {
 
 router.post('/pause', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    logger.warn('/updateSignText was requested without a token');
+    logger.warn('/pause was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('/updateSignText was requested with an invalid token');
+    logger.warn('/pause was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   await axios
@@ -52,18 +52,17 @@ router.post('/pause', async (req, res) => {
       return res.sendStatus(OK);
     })
     .catch((err) => {
-      logger.error('/Speaker/stream had an error: ', err);
       return res.sendStatus(SERVER_ERROR);
     });
 });
 
 router.post('/resume', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    logger.warn('/updateSignText was requested without a token');
+    logger.warn('/resume was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('/updateSignText was requested with an invalid token');
+    logger.warn('/resume was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   await axios
@@ -72,18 +71,17 @@ router.post('/resume', async (req, res) => {
       return res.sendStatus(OK);
     })
     .catch((err) => {
-      logger.error('/Speaker/stream had an error: ', err);
       return res.sendStatus(SERVER_ERROR);
     });
 });
 
 router.get('/queued', async (req, res) => {
   if (!checkIfTokenSent(req)) {
-    logger.warn('/updateSignText was requested without a token');
+    logger.warn('/queued was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!await verifyToken(req.body.token)) {
-    logger.warn('/updateSignText was requested with an invalid token');
+    logger.warn('/queued was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   const dataFromQueued = await speakerQueued();
