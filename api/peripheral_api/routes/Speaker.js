@@ -16,7 +16,6 @@ let SPEAKER_URL = process.env.SPEAKER_URL
   || 'http://localhost:8000';
 
 router.post('/stream', async (req, res) => {
-  logger.error('IT IS HERE');
   if (!checkIfTokenSent(req)) {
     logger.warn('/stream was requested without a token');
     return res.sendStatus(UNAUTHORIZED);

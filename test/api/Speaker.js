@@ -66,10 +66,10 @@ describe('LED Sign', () => {
 
   beforeEach(() => {
     setTokenStatus(false);
-    streamStub.resolves(false)
-    pauseStub.resolves(false)
-    skipStub.resolves(false)
-    resumeStub.resolves(false)
+    streamStub.resolves(false);
+    pauseStub.resolves(false);
+    skipStub.resolves(false);
+    resumeStub.resolves(false);
   });
 
   afterEach(() => {

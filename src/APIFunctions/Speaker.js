@@ -4,15 +4,6 @@ import { ApiResponse } from './ApiResponses';
 let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
   || 'http://localhost:8081/peripheralapi';
 
-
-console.debug(PERIPHERAL_API_URL);
-
-// export async function updateSignText(signData, token) {
-//   let status = new ApiResponse();
-//   await axios
-//     .post(PERIPHERAL_API_URL + '/LedSign/updateSignText',
-//       { token, ...signData })
-
 export async function addUrl(url, token) {
   let status = new ApiResponse();
   console.debug(url);
