@@ -1,31 +1,20 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { Spinner, Input, Button, Container, Row, Col } from 'reactstrap';
+import { useState } from 'react';
+import { Input, Button, Container, Row, Col } from 'reactstrap';
 import Header from '../../Components/Header/Header';
-import { addUrl, getQueued, pause, resume, skip } from '../../APIFunctions/Speaker';
+import { addUrl, pause, resume, skip } from '../../APIFunctions/Speaker';
 
 function SpeakersPage(props) {
 
   const [url, setUrl] = useState('');
-  // const [queue, setQueue] = useState([]);
 
   const validateUrl = () => {
     setUrl(url.trim());
     return url.includes('youtube.com') || url.includes('youtu.be');
   };
 
-  // useEffect(() => {
-  //   getQueued()
-  //     .then(queued => {
-  //       console.debug("HERE")
-  //       console.debug(queued)
-  //       setQueue(queued);
-  //     });
-  // }, []);
-
   const playSong = async () => {
     if (validateUrl()) {
-      logger.error('frontend', props.user.token);
       await addUrl(url, props.user.token);
     } else {
       alert('Invalid YouTube URL!');
