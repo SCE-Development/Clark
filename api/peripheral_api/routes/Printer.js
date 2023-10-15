@@ -8,11 +8,16 @@ const {
 const {
   OK,
   UNAUTHORIZED,
-  NOT_FOUND
+  NOT_FOUND,
+  SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const {
   PRINTING = {}
 } = require('../../config/config.json');
+
+// see https://github.com/SCE-Development/Quasar/blob/65151f81ba4375069c5b851d241f462ff6e09f13/docker-compose.dev.yml#L11
+let PRINTER_URL = process.env.PRINTER_URL
+  || 'http://localhost:14000';
 
 const router = express.Router();
 
@@ -26,7 +31,7 @@ router.get('/healthCheck', async (req, res) => {
     return res.sendStatus(OK);
   }
   await axios
-    .get('http://host.docker.internal:14000/healthcheck/printer')
+    .get(PRINTER_URL + '/healthcheck/printer')
     .then(() => {
       return res.sendStatus(OK);
     })
@@ -52,7 +57,7 @@ router.post('/sendPrintRequest', async (req, res) => {
 
   const { raw, copies, pageRanges } = req.body;
   axios
-    .post('http://host.docker.internal:14000/print', {
+    .post(PRINTER_URL + '/print', {
       raw,
       copies,
       pageRanges,
@@ -60,8 +65,8 @@ router.post('/sendPrintRequest', async (req, res) => {
     .then(() => {
       res.sendStatus(OK);
     }).catch((err) => {
-      logger.error('had an error: ', err);
-      res.sendStatus(500);
+      logger.error('/sendPrintRequest had an error: ', err);
+      res.sendStatus(SERVER_ERROR);
     });
 });
 

@@ -1,6 +1,11 @@
 const axios = require('axios');
 const logger = require('../../util/logger');
 
+
+// see https://github.com/SCE-Development/rpi-led-controller/blob/4005181f4e8e80ddfb045a81de66bbfe8fd4718e/server.py#L126
+let LED_SIGN_URL = process.env.LED_SIGN_URL
+  || 'http://localhost';
+
 /**
  * These functions are meant only for use in production, where the
  * LED sign can be reached from Core-v4 through an SSH tunnel. Want
@@ -23,7 +28,7 @@ const logger = require('../../util/logger');
 async function updateSign(data) {
   return new Promise((resolve) => {
     axios
-      .post('http://host.docker.internal:11000/api/update-sign', data)
+      .post(LED_SIGN_URL+ '/api/update-sign', data)
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -40,7 +45,7 @@ async function updateSign(data) {
 async function turnOffSign() {
   return new Promise((resolve) => {
     axios
-      .get('http://host.docker.internal:11000/api/turn-off')
+      .get(LED_SIGN_URL+ '/api/turn-off')
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -71,7 +76,7 @@ async function turnOffSign() {
 async function healthCheck() {
   return new Promise((resolve) => {
     axios
-      .get('http://host.docker.internal:11000/api/health-check')
+      .get(LED_SIGN_URL+ '/api/health-check')
       .then(({data}) => {
         resolve(data);
       }).catch((err) => {
