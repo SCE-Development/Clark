@@ -2,7 +2,7 @@ const axios = require('axios');
 const logger = require('../../util/logger');
 
 
-// see https://github.com/SCE-Development/rpi-led-controller/blob/4005181f4e8e80ddfb045a81de66bbfe8fd4718e/server.py#L126
+// see https://github.com/SCE-Development/rpi-led-controller/tree/master/server.py#L126
 let LED_SIGN_URL = process.env.LED_SIGN_URL
   || 'http://localhost';
 
@@ -28,7 +28,7 @@ let LED_SIGN_URL = process.env.LED_SIGN_URL
 async function updateSign(data) {
   return new Promise((resolve) => {
     axios
-      .post(LED_SIGN_URL+ '/api/update-sign', data)
+      .post(LED_SIGN_URL + '/api/update-sign', data)
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -45,7 +45,7 @@ async function updateSign(data) {
 async function turnOffSign() {
   return new Promise((resolve) => {
     axios
-      .get(LED_SIGN_URL+ '/api/turn-off')
+      .get(LED_SIGN_URL + '/api/turn-off')
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -76,8 +76,8 @@ async function turnOffSign() {
 async function healthCheck() {
   return new Promise((resolve) => {
     axios
-      .get(LED_SIGN_URL+ '/api/health-check')
-      .then(({data}) => {
+      .get(LED_SIGN_URL + '/api/health-check')
+      .then(({ data }) => {
         resolve(data);
       }).catch((err) => {
         logger.error('healthCheck had an error: ', err);

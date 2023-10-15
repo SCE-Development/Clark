@@ -15,7 +15,7 @@ const {
   PRINTING = {}
 } = require('../../config/config.json');
 
-// see https://github.com/SCE-Development/Quasar/blob/65151f81ba4375069c5b851d241f462ff6e09f13/docker-compose.dev.yml#L11
+// see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
   || 'http://localhost:14000';
 
