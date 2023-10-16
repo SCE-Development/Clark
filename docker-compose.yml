@@ -22,6 +22,8 @@ services:
     environment:
       - MAIN_ENDPOINT_URL=sce-main-endpoints:8080
       - CLEEZY_URL=http://cleezy-app.sce:8000
+      - PRINTER_URL=http://host.docker.internal:14000
+      - LED_SIGN_URL=http://host.docker.internal:11000
       - DATABASE_HOST=sce-mongodb
       - NODE_ENV=production
     restart: 'on-failure'

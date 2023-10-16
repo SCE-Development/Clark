@@ -7,10 +7,9 @@ const {
 } = require('../../util/token-verification');
 const {
   OK,
-  BAD_REQUEST,
   UNAUTHORIZED,
   FORBIDDEN,
-  NOT_FOUND,
+  SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
 const { Cleezy } = require('../../config/config.json');
@@ -46,7 +45,7 @@ router.get('/listAll', async (req, res) => {
     if (err.response && err.response.data) {
       res.status(err.response.status).json({ error: err.response.data });
     } else {
-      res.status(500).json({ error: 'Failed to list URLs' });
+      res.status(SERVER_ERROR).json({ error: 'Failed to list URLs' });
     }
   }
 });
@@ -77,12 +76,13 @@ router.post('/deleteUrl', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { alias } = req.body;
-  const response = await axios
+  axios
     .post(CLEEZY_URL + '/delete/' + alias)
-    .then(response => {
-      res.json({ status: response.status });
+    .then(() => {
+      res.sendStatus(OK);
     })
     .catch(err => {
+      logger.error('/deleteUrl had an error', err);
       res.status(err.response.status).json({ error: err.response.status });
     });
 });
