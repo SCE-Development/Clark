@@ -6,6 +6,7 @@ let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
 
 export async function addUrl(url, token) {
   let status = new ApiResponse();
+  console.error(token)
   await axios
     .post(PERIPHERAL_API_URL + '/Speaker/stream', {token, url})
     .then(res => {
@@ -16,12 +17,13 @@ export async function addUrl(url, token) {
       status.responseData = err;
       status.error = true;
     });
-  return status;
-}
-
-export async function skip(token) {
-  let status = new ApiResponse();
-  await axios
+    return status;
+  }
+  
+  export async function skip(token) {
+    let status = new ApiResponse();
+    console.error(token)
+    await axios
     .post(PERIPHERAL_API_URL + '/Speaker/skip', {token})
     .then(res => {
       status = res.data;

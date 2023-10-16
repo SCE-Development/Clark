@@ -36,6 +36,7 @@ router.post('/stream', async (req, res) => {
 });
 
 router.post('/pause', async (req, res) => {
+  logger.warn(req.body.token)
   if (!checkIfTokenSent(req)) {
     logger.warn('/pause was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -55,6 +56,7 @@ router.post('/pause', async (req, res) => {
 });
 
 router.post('/resume', async (req, res) => {
+  logger.warn(req.body.token)
   if (!checkIfTokenSent(req)) {
     logger.warn('/resume was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -74,6 +76,7 @@ router.post('/resume', async (req, res) => {
 });
 
 router.post('/skip', async (req, res) => {
+  logger.warn(req.body.token)
   if (!checkIfTokenSent(req)) {
     logger.warn('/skip was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
