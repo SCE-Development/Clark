@@ -6,8 +6,6 @@ let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
 
 export async function addUrl(url, token) {
   let status = new ApiResponse();
-  console.debug(url);
-  logger.error('src');
   await axios
     .post(PERIPHERAL_API_URL + '/Speaker/stream', {token, url})
     .then(res => {
