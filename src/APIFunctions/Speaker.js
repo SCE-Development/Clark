@@ -19,11 +19,10 @@ export async function addUrl(url, token) {
   return status;
 }
 
-export async function skip(url, token) {
+export async function skip(token) {
   let status = new ApiResponse();
-  console.debug(url);
   await axios
-    .post(PERIPHERAL_API_URL + '/Speaker/skip')
+    .post(PERIPHERAL_API_URL + '/Speaker/skip', token)
     .then(res => {
       status = res.data;
     })
@@ -38,7 +37,7 @@ export async function skip(url, token) {
 export async function pause(token) {
   let status = new ApiResponse();
   await axios
-    .post(PERIPHERAL_API_URL + '/Speaker/pause')
+    .post(PERIPHERAL_API_URL + '/Speaker/pause', token)
     .then(res => {
       status = res.data;
     })
@@ -52,7 +51,7 @@ export async function pause(token) {
 export async function resume(token) {
   let status = new ApiResponse();
   await axios
-    .post(PERIPHERAL_API_URL + '/Speaker/resume')
+    .post(PERIPHERAL_API_URL + '/Speaker/resume', token)
     .then(res => {
       status = res.data;
     })
@@ -66,7 +65,7 @@ export async function resume(token) {
 export async function getQueued(token) {
   let status = new ApiResponse();
   await axios
-    .get(PERIPHERAL_API_URL + '/Speaker/queued')
+    .get(PERIPHERAL_API_URL + '/Speaker/queued', token)
     .then(res => {
       console.debug(res);
       status = res;
