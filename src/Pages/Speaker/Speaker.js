@@ -1,12 +1,14 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input, Button, Container, Row, Col } from 'reactstrap';
 import Header from '../../Components/Header/Header';
-import { addUrl, pause, resume, skip } from '../../APIFunctions/Speaker';
+import { queued, addUrl, pause, resume, skip } from '../../APIFunctions/Speaker';
 
 function SpeakersPage(props) {
 
   const [url, setUrl] = useState('');
+  const [queuedSongs, setQueuedSongs] = useState([]);
+  const [error, setError] = useState();
 
   const validateUrl = () => {
     setUrl(url.trim());
@@ -20,6 +22,21 @@ function SpeakersPage(props) {
       alert('Invalid YouTube URL!');
     }
   };
+
+  const getQueuedSongs = async () => {
+    try {
+      const songList = await queued(props.user.token);
+      if (Array.isArray(songList.responseData)) {
+        setQueuedSongs(songList.responseData);
+      } else {
+        console.debug('Invalid response from queued:', songList);
+      }
+    } catch (error) {
+      console.debug('Error fetching queued songs:', error);
+    }
+  };
+
+
   const skipSong = async () => {
     await skip(props.user.token);
   };
@@ -31,6 +48,10 @@ function SpeakersPage(props) {
   const resumeSong = async () => {
     await resume(props.user.token);
   };
+
+  useEffect(() => {
+    getQueuedSongs();
+  }, []);
 
   return (
     <div>
@@ -53,6 +74,7 @@ function SpeakersPage(props) {
         </Col>
         <br></br>
       </Container>
+      <div>Queued: {queuedSongs.map(song => <div key={song}>{song}</div>)}</div>
     </div>
   );
 }

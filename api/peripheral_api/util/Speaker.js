@@ -9,7 +9,7 @@ const logger = require('../../util/logger');
  */
 
 
-// Makes a post request to stream data, 
+// Makes a post request to stream data,
 // if success then returns true else will return false
 
 async function stream(data) {
@@ -25,7 +25,7 @@ async function stream(data) {
   });
 }
 
-// Makes a post request to stream data, 
+// Makes a post request to stream data,
 // if success then returns true else will return false
 async function pause() {
   return new Promise((resolve) => {
@@ -40,7 +40,7 @@ async function pause() {
   });
 }
 
-/** Makes a post request to stream data, 
+/** Makes a post request to stream data,
  * if success then returns true else will return false
  **/
 async function skip() {
@@ -56,7 +56,7 @@ async function skip() {
   });
 }
 
-/** Makes a post request to stream data, 
+/** Makes a post request to stream data,
  * if success then returns true else will return false
  **/
 async function resume() {

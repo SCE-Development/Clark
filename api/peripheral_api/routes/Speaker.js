@@ -13,7 +13,30 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
 let SPEAKER_URL = process.env.SPEAKER_URL
-  || 'http://localhost:8000';
+|| 'http://localhost:8000';
+
+
+router.get('/queued', async (req, res) => {
+  const token = req.query.token;
+  if (!token) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await verifyToken(req.query.token)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  try {
+    const response = await axios.get(SPEAKER_URL + '/queued');
+    const data = response.data;
+    return res.json(data);
+  } catch (err) {
+    logger.error('/getQueued had an error', err);
+    if (err.response && err.response.data) {
+      res.status(err.response.status).json({ error: err.response.data });
+    } else {
+      res.status(500).json({ error: 'Failed to get queued songs' });
+    }
+  }
+});
 
 router.post('/stream', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -36,7 +59,6 @@ router.post('/stream', async (req, res) => {
 });
 
 router.post('/pause', async (req, res) => {
-  logger.warn(req.body.token)
   if (!checkIfTokenSent(req)) {
     logger.warn('/pause was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -56,7 +78,7 @@ router.post('/pause', async (req, res) => {
 });
 
 router.post('/resume', async (req, res) => {
-  logger.warn(req.body.token)
+  logger.warn(req.body.token);
   if (!checkIfTokenSent(req)) {
     logger.warn('/resume was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -76,7 +98,7 @@ router.post('/resume', async (req, res) => {
 });
 
 router.post('/skip', async (req, res) => {
-  logger.warn(req.body.token)
+  logger.warn(req.body.token);
   if (!checkIfTokenSent(req)) {
     logger.warn('/skip was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
