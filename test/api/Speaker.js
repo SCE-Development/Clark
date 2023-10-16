@@ -16,7 +16,7 @@ const {
   resetTokenMock,
   restoreTokenMock,
 } = require('../util/mocks/TokenValidFunctions');
-const SshTunnelFunctions = require('../../api/peripheral_api/util/LedSign');
+const SshTunnelFunctions = require('../../api/peripheral_api/util/Speaker.js');
 
 
 let app = null;
@@ -30,7 +30,7 @@ chai.use(chaiHttp);
 const token = '';
 
 
-describe('LED Sign', () => {
+describe('Speaker', () => {
   let streamStub = null;
   let pauseStub = null;
   let skipStub = null;
@@ -42,11 +42,13 @@ describe('LED Sign', () => {
     pauseStub = sandbox.stub(SshTunnelFunctions, 'pause');
     skipStub = sandbox.stub(SshTunnelFunctions, 'skip');
     resumeStub = sandbox.stub(SshTunnelFunctions, 'resume');
+    healthcheckStub = sandbox.stub(SshTunnelFunctions, 'healthcheck');
 
     updateSignStub.resolves(false);
     pauseStub.resolves(false);
     skipStub.resolves(false);
     resumeStub.resolves(false);
+    healthcheckStub.resolves(false);
 
     app = tools.initializeServer(
       __dirname + '/../../api/peripheral_api/routes/Speaker.js');
@@ -60,6 +62,7 @@ describe('LED Sign', () => {
     if (pauseStub) pauseStub.restore();
     if (skipStub) skipStub.restore();
     if (resumeStub) resumeStub.restore();
+    if (healthcheckStub) healthcheckStub.restore();
     sandbox.restore();
     tools.terminateServer(done);
   });
@@ -70,6 +73,7 @@ describe('LED Sign', () => {
     pauseStub.resolves(false);
     skipStub.resolves(false);
     resumeStub.resolves(false);
+    healthcheckStub.resolves(false);
   });
 
   afterEach(() => {
@@ -192,3 +196,20 @@ describe('LED Sign', () => {
     });
   });
 });
+
+describe('/GET healthCheck', () => {
+  it('Should return 500 when the ssh tunnel is down', async () => {
+    setTokenStatus(true);
+    healthCheckStub.resolves(false);
+    const result = await test.sendGetRequest('/api/Speaker/healthCheck');
+    expect(result).to.have.status(SERVER_ERROR);
+  });
+
+  it('Should return 200 when the ssh tunnel is up', async () => {
+    setTokenStatus(true);
+    healthCheckStub.resolves(true);
+    const result = await test.sendGetRequest('/api/Speaker/healthCheck');
+    expect(result).to.have.status(OK);
+  });
+});
+
