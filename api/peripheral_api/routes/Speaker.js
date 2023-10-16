@@ -73,4 +73,23 @@ router.post('/resume', async (req, res) => {
     });
 });
 
+router.post('/skip', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/skip was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
+    logger.warn('/skip was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  await axios
+    .post(SPEAKER_URL + '/skip')
+    .then(() => {
+      return res.sendStatus(OK);
+    })
+    .catch((err) => {
+      return res.sendStatus(SERVER_ERROR);
+    });
+});
+
 module.exports = router;
