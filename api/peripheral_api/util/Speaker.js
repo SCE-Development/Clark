@@ -1,5 +1,7 @@
 const axios = require('axios');
 const logger = require('../../util/logger');
+let SPEAKER_URL = process.env.SPEAKER_URL
+|| 'http://localhost:8000';
 
 /**
  * These functions are meant only for use in production, where the
@@ -15,7 +17,7 @@ const logger = require('../../util/logger');
 async function stream(data) {
   return new Promise((resolve) => {
     axios
-      .post('http://host.docker.internal:18000/stream', data)
+      .post(SPEAKER_URL + '/stream', data)
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -30,7 +32,7 @@ async function stream(data) {
 async function pause() {
   return new Promise((resolve) => {
     axios
-      .post('http://host.docker.internal:18000/pause')
+      .post(SPEAKER_URL + '/pause')
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -46,7 +48,7 @@ async function pause() {
 async function skip() {
   return new Promise((resolve) => {
     axios
-      .post('http://host.docker.internal:18000/skip')
+      .post(SPEAKER_URL + '/skip')
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -62,7 +64,7 @@ async function skip() {
 async function resume() {
   return new Promise((resolve) => {
     axios
-      .post('http://host.docker.internal:18000/resume')
+      .post(SPEAKER_URL + '/resume')
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -86,7 +88,7 @@ async function resume() {
 async function healthCheck() {
   return new Promise((resolve) => {
     axios
-      .get('http://host.docker.internal:18000/health-check')
+      .get(SPEAKER_URL + '/health-check')
       .then(({data}) => {
         resolve(data);
       }).catch((err) => {
