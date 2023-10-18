@@ -6,7 +6,6 @@ let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
 
 
 export async function queued(token) {
-  console.debug(token);
   let status = new ApiResponse();
   await axios
     .get(PERIPHERAL_API_URL + '/Speaker/queued', { params: { token } })

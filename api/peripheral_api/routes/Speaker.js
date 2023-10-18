@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const { speakerQueued } = require('../util/Speaker.js');
+const { healthCheck } = require('../util/Speaker.js');
 const {
   verifyToken,
   checkIfTokenSent,
@@ -33,88 +33,52 @@ router.get('/queued', async (req, res) => {
     if (err.response && err.response.data) {
       res.status(err.response.status).json({ error: err.response.data });
     } else {
-      res.status(500).json({ error: 'Failed to get queued songs' });
+      res.status(SERVER_ERROR).json({ error: 'Failed to get queued songs' });
     }
   }
 });
 
+async function sendSpeakerRequest(req, res, body={}) {
+  // path looks like /createEvent
+  const { path } = req.route;
+  if (!checkIfTokenSent(req)) {
+    logger.warn(`${path} was requested without a token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await verifyToken(req.body.token)) {
+    logger.warn(`${path} was requested with an invalid token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  await axios
+    .post(SPEAKER_URL + path, body)
+    .then(() => {
+      return res.sendStatus(OK);
+    })
+    .catch((err) => {
+      return res.sendStatus(SERVER_ERROR);
+    });
+}
+
+router.post('/pause', sendSpeakerRequest);
+
+router.post('/resume', sendSpeakerRequest);
+
+router.post('/skip', sendSpeakerRequest);
+
 router.post('/stream', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/stream was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!await verifyToken(req.body.token)) {
-    logger.warn('/stream was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  await axios
-    .post(SPEAKER_URL + '/stream', {'url' : req.body.url})
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      logger.error('/Speaker/stream had an error: ', err);
-      return res.sendStatus(SERVER_ERROR);
-    });
+  sendSpeakerRequest(req, res, { url: req.body.url});
 });
 
-router.post('/pause', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/pause was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
+router.get('/healthCheck', async (req, res) => {
+  if (runningInDevelopment) {
+    return res.sendStatus(OK);
   }
-  if (!await verifyToken(req.body.token)) {
-    logger.warn('/pause was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
+  const dataFromSign = await healthCheck();
+  if(!dataFromSign) {
+    return res.sendStatus(SERVER_ERROR);
   }
-  await axios
-    .post(SPEAKER_URL + '/pause')
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      return res.sendStatus(SERVER_ERROR);
-    });
-});
-
-router.post('/resume', async (req, res) => {
-  logger.warn(req.body.token);
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/resume was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!await verifyToken(req.body.token)) {
-    logger.warn('/resume was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  await axios
-    .post(SPEAKER_URL + '/resume')
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      return res.sendStatus(SERVER_ERROR);
-    });
-});
-
-router.post('/skip', async (req, res) => {
-  logger.warn(req.body.token);
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/skip was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!await verifyToken(req.body.token)) {
-    logger.warn('/skip was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  await axios
-    .post(SPEAKER_URL + '/skip')
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      return res.sendStatus(SERVER_ERROR);
-    });
+  return res.sendStatus(OK);
 });
 
 module.exports = router;
+  
