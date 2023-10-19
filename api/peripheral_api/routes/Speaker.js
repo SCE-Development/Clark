@@ -69,15 +69,4 @@ router.post('/stream', async (req, res) => {
   sendSpeakerRequest(req, res, { url: req.body.url});
 });
 
-router.get('/healthCheck', async (req, res) => {
-  if (runningInDevelopment) {
-    return res.sendStatus(OK);
-  }
-  const dataFromSign = await healthCheck();
-  if(!dataFromSign) {
-    return res.sendStatus(SERVER_ERROR);
-  }
-  return res.sendStatus(OK);
-});
-
 module.exports = router;
