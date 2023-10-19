@@ -56,7 +56,7 @@ function SpeakersPage(props) {
   return (
     <div>
       <Container>
-        <div className="wrapper">
+        <div className="speaker-page-wrapper">
           <Row>
             <Col>
               <Input placeholder='Enter YouTube Link' onChange=
