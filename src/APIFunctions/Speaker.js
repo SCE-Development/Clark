@@ -27,7 +27,6 @@ export async function addUrl(url, token) {
       status = res.data;
     })
     .catch(err => {
-      console.debug(err);
       status.responseData = err;
       status.error = true;
     });
@@ -42,7 +41,6 @@ export async function skip(token) {
       status = res.data;
     })
     .catch(err => {
-      console.debug(err);
       status.responseData = err;
       status.error = true;
     });

@@ -30,10 +30,8 @@ function SpeakersPage(props) {
       if (Array.isArray(songList.responseData)) {
         setQueuedSongs(songList.responseData);
       } else {
-        console.debug('Invalid response from queued:', songList);
       }
     } catch (error) {
-      console.debug('Error fetching queued songs:', error);
     }
   };
 
