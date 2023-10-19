@@ -38,7 +38,7 @@ router.get('/queued', async (req, res) => {
   }
 });
 
-async function sendSpeakerRequest(req, res, body={}) {
+async function sendSpeakerRequest(req, res, body = {}) {
   // path looks like /createEvent
   const { path } = req.route;
   if (!checkIfTokenSent(req)) {
@@ -81,4 +81,3 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 module.exports = router;
-  
