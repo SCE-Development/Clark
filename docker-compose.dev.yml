@@ -117,7 +117,6 @@ services:
     volumes:
       - ./package.json:/frontend/package.json
       - ./src:/frontend/src/
-      - ./util:/frontend/util/
       - ./public:/frontend/public/
   
   nginx:
