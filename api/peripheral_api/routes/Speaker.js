@@ -63,6 +63,7 @@ async function sendSpeakerRequest(req, res, body = {}) {
       return res.sendStatus(OK);
     })
     .catch((err) => {
+      logger.error(`${path} had an error:`, err);
       return res.sendStatus(SERVER_ERROR);
     });
 }
