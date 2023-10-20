@@ -27,5 +27,8 @@
   "Cleezy": {
     "ENABLED": false
   },
+  "Speakers": {
+    "ENABLED": false
+  },
   "secretKey": "super duper secret key"
 }

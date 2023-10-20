@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Input, Button, Container, Row, Col } from 'reactstrap';
-import Header from '../../Components/Header/Header';
 import { queued, addUrl, pause, resume, skip } from '../../APIFunctions/Speaker';
 import './speaker.css';
 
@@ -9,6 +8,7 @@ function SpeakersPage(props) {
 
   const [url, setUrl] = useState('');
   const [playText, setPlayText] = useState('Play');
+  const [playButtonColor, setPlayButtonColor] = useState('secondary');
   const [queuedSongs, setQueuedSongs] = useState([]);
   const [error, setError] = useState();
 
@@ -23,11 +23,12 @@ function SpeakersPage(props) {
       if (result.error) {
         setError(String(result.responseData));
       } else {
-        // this means 
+        setPlayButtonColor('success');
         setPlayText('Success!');
         setTimeout(() => {
           setPlayText('Play');
-        }, 1500)
+          setPlayButtonColor('secondary');
+        }, 1500);
       }
     } else {
       setError(`"${url}" is not a valid YouTube URL!`);
@@ -36,6 +37,9 @@ function SpeakersPage(props) {
 
   const getQueuedSongs = async () => {
     const songList = await queued(props.user.token);
+    if (songList.error) {
+      setError('Unable to reach speaker: ' + String(songList.responseData));
+    }
     if (Array.isArray(songList.responseData)) {
       setQueuedSongs(songList.responseData);
     }
@@ -61,8 +65,8 @@ function SpeakersPage(props) {
             <Col>
               <Input placeholder='Enter YouTube Link' onChange=
                 {(e) => setUrl(e.target.value)}
-                className="sign-input"
-                style={{ width: '100%', height: '2rem' }}
+              className="sign-input"
+              style={{ width: '100%', height: '2rem' }}
               >
               </Input>
             </Col>
@@ -73,13 +77,26 @@ function SpeakersPage(props) {
           <Col>
             <Row>
               <Col>
-                <Button className="sign-input" onClick={() => modifySpeakerWrapper(pause)}>Puase</Button>
+                <Button
+                  className="sign-input"
+                  onClick={() => modifySpeakerWrapper(pause)}>
+                  Puase
+                </Button>
               </Col>
               <Col>
-                <Button className="sign-input" onClick={() => modifySpeakerWrapper(resume)}>Resume</Button>
+                <Button
+                  className="sign-input"
+                  onClick={() => modifySpeakerWrapper(resume)}>
+                  Resume
+                </Button>
               </Col>
               <Col>
-                <Button className="sign-input" onClick={playSong} disabled={!url}>
+                <Button
+                  className="sign-input"
+                  onClick={playSong}
+                  disabled={!url}
+                  color={playButtonColor}
+                >
                   {playText}
                 </Button>
               </Col>

@@ -11,11 +11,20 @@ const {
   SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
+const { Speakers = {} } = require('../../config/config.json');
+const { ENABLED = false } = Speakers;
+
 let SPEAKER_URL = process.env.SPEAKER_URL
 || 'http://localhost:8000';
 
 
 router.get('/queued', async (req, res) => {
+  if(!ENABLED) {
+    logger.warn('Speakers are disabled, returning 200 to mock the speaker server');
+    return res.json({
+      disabled: true
+    });
+  }
   const token = req.query.token;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
@@ -48,7 +57,6 @@ async function sendSpeakerRequest(req, res, body = {}) {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  return res.status(OK).json({asdf: 1});
   await axios
     .post(SPEAKER_URL + path, body)
     .then(() => {
