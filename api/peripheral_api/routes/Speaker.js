@@ -68,13 +68,19 @@ async function sendSpeakerRequest(req, res, body = {}) {
     });
 }
 
-router.post('/pause', sendSpeakerRequest);
+router.post('/pause', (req, res) => {
+  sendSpeakerRequest(req, res);
+});
 
-router.post('/resume', sendSpeakerRequest);
+router.post('/resume', (req, res) => {
+  sendSpeakerRequest(req, res);
+});
 
-router.post('/skip', sendSpeakerRequest);
+router.post('/skip', (req, res) => {
+  sendSpeakerRequest(req, res);
+});
 
-router.post('/stream', async (req, res) => {
+router.post('/stream', (req, res) => {
   sendSpeakerRequest(req, res, { url: req.body.url});
 });
 
