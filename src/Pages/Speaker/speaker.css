@@ -1,7 +1,7 @@
 .speaker-page-wrapper {
-    margin-top: 5rem;
-    padding: 10em;
-    padding: 32 px;
+    padding-top: 5em;
+    width: 60em;
+    margin: auto;
 }
 
 .sign-input {
@@ -19,13 +19,13 @@
     max-width: 90%;
 }
 
-.button-container > button {
+.button-container>button {
     width: 100%;
     margin: 0.5rem;
 }
 
 .speaker-page-wrapper label {
-    font-size: large;   
+    font-size: large;
 }
 
 .speaker-page-wrapper input {
@@ -36,9 +36,9 @@
 }
 
 .speaker-page-wrapper input[type="text"] {
-    width: 97%; 
-    padding: 5px 10px; 
-    }
+    width: 97%;
+    padding: 5px 10px;
+}
 
 .speaker-page-wrapper button {
     /*
@@ -52,9 +52,9 @@
     line-height: 1.5;
     border-radius: 0.25rem;
     transition: color 0.15s ease-in-out,
-    background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out,
+        box-shadow 0.15s ease-in-out;
 }
 
 .speaker-page-wrapper button:active {
@@ -63,16 +63,21 @@
 }
 
 @media only screen and (max-width: 1000px) {
-.speaker-page-wrapper {
-    margin-top: 5rem;
-    padding: 3em;
-    /* margin: auto; */
-    width: 16em;
-}
-.speaker-page-wrapper input {
-    font-size: 1.5em;
-}
-.speaker-page-wrapper input[type="text" i] {
+    .speaker-page-wrapper {
+        width: 28em;
+    }
+
+    @media only screen and (max-width: 800px) {
+        .speaker-page-wrapper {
+            width: 32em;
+        }
+    }
+
+    .speaker-page-wrapper input {
+        font-size: 1.5em;
+    }
+
+    .speaker-page-wrapper input[type="text" i] {
         width: 8.5em;
     }
 }
