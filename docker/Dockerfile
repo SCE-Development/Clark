@@ -20,7 +20,7 @@ ENV REACT_APP_MAILER_API_URL https://sce.sjsu.edu/cloudapi
 RUN npm install --production
 
 COPY public ./public
-COPY util ./util
+
 COPY src ./src
 
 RUN npm run build --production

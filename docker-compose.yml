@@ -26,6 +26,7 @@ services:
       - LED_SIGN_URL=http://host.docker.internal:11000
       - DATABASE_HOST=sce-mongodb
       - NODE_ENV=production
+      - SPEAKER_URL=http://host.docker.internal:18000
     restart: 'on-failure'
     stdin_open: true
     links:

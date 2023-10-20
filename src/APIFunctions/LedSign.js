@@ -37,7 +37,7 @@ export async function updateSignText(signData, token) {
     .post(PERIPHERAL_API_URL + '/LedSign/updateSignText',
       { token, ...signData })
     .then(res => {
-      status = res.data;
+      status.responseData = res.data;
     })
     .catch(err => {
       status.responseData = err;
