@@ -1,7 +1,6 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const { healthCheck } = require('../util/Speaker.js');
 const {
   verifyToken,
   checkIfTokenSent,
@@ -49,6 +48,7 @@ async function sendSpeakerRequest(req, res, body = {}) {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
+  return res.status(OK).json({asdf: 1});
   await axios
     .post(SPEAKER_URL + path, body)
     .then(() => {
