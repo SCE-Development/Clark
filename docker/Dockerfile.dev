@@ -20,7 +20,7 @@ ENV DANGEROUSLY_DISABLE_HOST_CHECK true
 RUN npm install
 
 COPY public ./public
-COPY util ./util
+
 COPY src ./src
 
 CMD ["npm", "start"]
