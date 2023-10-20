@@ -53,7 +53,7 @@ router.post('/pause', async (req, res) => {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  const result = await sendSpeakerRequest(path, res);
+  const result = await sendSpeakerRequest(path);
   if (result) {
     return res.sendStatus(OK);
   }
@@ -70,7 +70,7 @@ router.post('/resume', async (req, res) => {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  const result = await sendSpeakerRequest(path, res);
+  const result = await sendSpeakerRequest(path);
   if (result) {
     return res.sendStatus(OK);
   }
@@ -87,7 +87,7 @@ router.post('/skip', async (req, res) => {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  const result = await sendSpeakerRequest(path, res);
+  const result = await sendSpeakerRequest(path);
   if (result) {
     return res.sendStatus(OK);
   }
@@ -104,7 +104,7 @@ router.post('/stream', async (req, res) => {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  const result = await sendSpeakerRequest(path, res, { url: req.body.url });
+  const result = await sendSpeakerRequest(path, { url: req.body.url });
   if (result) {
     return res.sendStatus(OK);
   }
