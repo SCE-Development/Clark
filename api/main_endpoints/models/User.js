@@ -69,6 +69,15 @@ const UserSchema = new Schema(
     pagesPrinted: {
       type: Number,
       default: 0
+    },
+    filesList: {
+      type: Array,
+      default: []
+      // [{"poo.txt": "lkj232kj89uasdf", "pee.pdf": "j299999fjjl"}]
+    },
+    filesUploadedSize: {
+      type: Number,
+      default: 0
     }
   },
   { collection: 'User' }
