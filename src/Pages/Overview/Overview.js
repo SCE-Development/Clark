@@ -18,12 +18,16 @@ const enums = require('../../Enums.js');
 
 export default function Overview(props) {
   const [toggleDelete, setToggleDelete] = useState(false);
-  const [users, setUsers] = useState([],);
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
   const [userToDelete, setUserToDelete] = useState({});
-  const [queryResult, setQueryResult] = useState([],);
+  const [queryResult, setQueryResult] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(0);
   const [query, setQuery] = useState('');
-  const [toggle, setToggle] = useState(false,);
-  const [currentQueryType, setCurrentQueryType] = useState('All',);
+  const [toggle, setToggle] = useState(false);
+  const [currentQueryType, setCurrentQueryType] = useState('All');
   const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
 
   async function deleteUser(user) {
@@ -56,33 +60,40 @@ export default function Overview(props) {
   }
 
   async function callDatabase() {
-    const apiResponse = await getAllUsers(props.user.token, query);
-    if (!apiResponse.error) setUsers(apiResponse.responseData.items);
+    setLoading(true);
+    const apiResponse = await getAllUsers(props.user.token, query, page);
+    if (!apiResponse.error) {
+      setUsers(apiResponse.responseData.items);
+      setTotal(apiResponse.responseData.total);
+      setRowsPerPage(apiResponse.responseData.rowsPerPage);
+    }
+    setLoading(false);
   }
+
   useEffect(() => {
     callDatabase();
-  }, []);
+  }, [page]);
 
   function filterUserByAccessLevel(accessLevel) {
     switch (accessLevel) {
-      case 'Officer':
-        return users.filter(
-          data => data.accessLevel === membershipState.OFFICER
-        );
-      case 'Admin':
-        return users.filter(
-          data => data.accessLevel === membershipState.ADMIN
-        );
-      case 'Pending':
-        return users.filter(
-          data => data.accessLevel === membershipState.PENDING
-        );
-      case 'Alumni':
-        return users.filter(
-          data => data.accessLevel === membershipState.ALUMNI
-        );
-      default:
-        return users;
+    case 'Officer':
+      return users.filter(
+        data => data.accessLevel === membershipState.OFFICER
+      );
+    case 'Admin':
+      return users.filter(
+        data => data.accessLevel === membershipState.ADMIN
+      );
+    case 'Pending':
+      return users.filter(
+        data => data.accessLevel === membershipState.PENDING
+      );
+    case 'Alumni':
+      return users.filter(
+        data => data.accessLevel === membershipState.ALUMNI
+      );
+    default:
+      return users;
     }
   }
 
@@ -112,6 +123,41 @@ export default function Overview(props) {
     setToggle(!toggle);
   }
 
+  function maybeRenderPagination() {
+    const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, users.length);
+    const pageOffset = page * rowsPerPage;
+    if (users.length) {
+      return (
+        <Col style={{
+          right: '-87%',
+          position: 'relative',
+          width: '18%',
+        }}>
+          <Row>
+            <Col sm={4}>
+              <button onClick={() => setPage(page - 1)} disabled={page === 0}>prev</button>
+            </Col>
+            <Col sm={4}>
+              <button
+                onClick={() => setPage(page + 1)}
+                disabled={amountOfUsersOnCurrentPage + pageOffset >= total}
+              >
+                next
+              </button>
+            </Col>
+          </Row>
+          {!loading && (
+            <Row>
+              <Col style={{ marginLeft: '20%' }}>
+                {amountOfUsersOnCurrentPage + pageOffset} / {total}
+              </Col>
+            </Row>
+          )}
+        </Col>
+      );
+    }
+    return <></>;
+  }
 
   return (
     <div className='flexbox-container'>
@@ -148,7 +194,6 @@ export default function Overview(props) {
               }}
               onChange={event => {
                 setQuery(event.target.value);
-                updateQuery(event.target.value);
               }}
             />
           </Col>
@@ -167,7 +212,6 @@ export default function Overview(props) {
                     key={type}
                     onClick={() => {
                       setCurrentQueryType(type);
-                      updateQuery('#InvalidSearch#');
                     }}
                   >
                     {type}
@@ -177,58 +221,60 @@ export default function Overview(props) {
             </ButtonDropdown>
           </Col>
         </Row>
+        <div>
+          <table className='content-table' id='users'>
+            <thead>
+              <tr id='users-header'>
+                {[
+                  'Name',
+                  'Email',
+                  'Printing',
+                  'Verified',
+                  'Membership Type',
+                  ' ',
+                  ''
+                ].map((columnName) => {
+                  return <th key={columnName}>{columnName}</th>;
+                })}
+              </tr>
+            </thead>
 
-        <table className='content-table' id='users'>
-          <thead>
-            <tr id='users-header'>
-              {[
-                'Name',
-                'Email',
-                'Printing',
-                'Verified',
-                'Membership Type',
-                ' ',
-                ''
-              ].map((columnName) => {
-                return <th key={columnName}>{columnName}</th>;
-              })}
-            </tr>
-          </thead>
-
-          <tbody>
-            {users.map((user) => {
-              return (
-                <tr key={user.email}>
-                  <td>
-                    <div className='name'>{formatFirstAndLastName(user)}</div>
-                  </td>
-                  <td>{user.email}</td>
-                  <td>{user.pagesPrinted}/30</td>
-                  <td>{mark(user.emailVerified)}</td>
-                  <td>{enums.membershipStateToString(user.accessLevel)}</td>
-                  <td>
-                    <button
-                      className='overview-icon'
-                      onClick={() => {
-                        setToggleDelete(!toggleDelete);
-                        setUserToDelete(user);
-                      }}
-                    >
-                      {svg.trashcanSymbol()}
-                    </button>
-                  </td>
-                  <td>
-                    <a target='_blank' href={`/user/edit/${user._id}`}>
-                      <button className='overview-icon'>
-                        {svg.editSymbol()}
+            <tbody>
+              {users.map((user) => {
+                return (
+                  <tr key={user.email}>
+                    <td>
+                      <div className='name'>{formatFirstAndLastName(user)}</div>
+                    </td>
+                    <td>{user.email}</td>
+                    <td>{user.pagesPrinted}/30</td>
+                    <td>{mark(user.emailVerified)}</td>
+                    <td>{enums.membershipStateToString(user.accessLevel)}</td>
+                    <td>
+                      <button
+                        className='overview-icon'
+                        onClick={() => {
+                          setToggleDelete(!toggleDelete);
+                          setUserToDelete(user);
+                        }}
+                      >
+                        {svg.trashcanSymbol()}
                       </button>
-                    </a>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    </td>
+                    <td>
+                      <a target='_blank' href={`/user/edit/${user._id}`}>
+                        <button className='overview-icon'>
+                          {svg.editSymbol()}
+                        </button>
+                      </a>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {maybeRenderPagination()}
+        </div>
       </div>
     </div>
   );

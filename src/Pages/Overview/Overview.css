@@ -27,11 +27,8 @@
 .content-table {
   border-collapse: collapse;
   font-size: 0.9em;
-  max-width: 100%;
-  min-width: 700px;
   overflow: auto;
-  min-width: 500px;
-  
+  min-width: 53.5em;
 }
 
 .content-table thead tr {

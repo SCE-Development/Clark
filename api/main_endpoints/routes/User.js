@@ -35,6 +35,8 @@ const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 
+const ROWS_PER_PAGE = 5;
+
 router.get('/countAllUsers', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -195,7 +197,7 @@ router.post('/search', function(req, res) {
 });
 
 // Search for all members
-router.post('/users', async function (req, res) {
+router.post('/users', async function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -206,18 +208,18 @@ router.post('/users', async function (req, res) {
       // req.body, req.query, req.body.query, oh man
       $regex: RegExp(req.body.query, 'i'),
     }
-  }))
+  }));
   // make sure that the page we want to see is 0 by default
   // and avoid negative page numbers
-  const skip = Math.max(Number(req.body.page) || 0, 0);
+  let skip = Math.max(Number(req.body.page) || 0, 0);
+  skip *= ROWS_PER_PAGE;
   const total = await User.count({ $or: or, });
   User.find({ $or: or, }, { password: 0, }, { skip, limit: 20, })
     .sort({ joinDate: -1 })
     .then(items => {
-      res.status(OK).send({items, total});
+      res.status(OK).send({ items, total, rowsPerPage: ROWS_PER_PAGE, });
     })
     .catch((e) => {
-      console.log(e)
       res.sendStatus(BAD_REQUEST);
     });
 });
