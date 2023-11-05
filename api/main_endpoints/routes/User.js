@@ -35,7 +35,7 @@ const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 
-const ROWS_PER_PAGE = 5;
+const ROWS_PER_PAGE = 20;
 
 router.get('/countAllUsers', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -186,7 +186,7 @@ router.post('/users', async function(req, res) {
   let skip = Math.max(Number(req.body.page) || 0, 0);
   skip *= ROWS_PER_PAGE;
   const total = await User.count(maybeOr);
-  User.find(maybeOr, { password: 0, }, { skip, limit: 20, })
+  User.find(maybeOr, { password: 0, }, { skip, limit: ROWS_PER_PAGE, })
     .sort({ joinDate: -1 })
     .then(items => {
       res.status(OK).send({ items, total, rowsPerPage: ROWS_PER_PAGE, });
