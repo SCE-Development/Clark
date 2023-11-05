@@ -94,7 +94,6 @@ export function clockSymbol() {
   );
 }
 
-// Especially for OverviewProfile.js only
 export function cancelEditSymbol(setToggle) {
   return (
     <svg

@@ -4,21 +4,44 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 
+import sinon from 'sinon';
+import * as UserAPI from '../../src/APIFunctions/User';
+import { UserApiResponse } from '../../src/APIFunctions/ApiResponses';
 import Overview from '../../src/Pages/Overview/Overview';
 import Adapter from 'enzyme-adapter-react-16';
-import OverviewProfile from '../../src/Pages/Overview/OverviewProfile';
 import { membershipState } from '../../src/Enums';
 
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<Overview />', () => {
-  const wrapper = mount(<Overview />);
+  const defaultProps = {
+    user: {
+      token: '1234',
+    },
+  };
+  let stub = null;
+  before(done => {
+    stub = sinon.stub(UserAPI, 'getAllUsers');
+    done();
+  });
+
+  after(done => {
+    if (stub) stub.restore();
+    done();
+  });
+
 
   it('Should render a <table /> component with one child', () => {
+    const wrapper = mount(<Overview {...defaultProps} />);
     expect(wrapper.find('table')).to.have.lengthOf(1);
   });
 
-  it('Should render a <OverviewProfile /> component with 2 children', () => {
+  it('Should render a table row for each user', async () => {
+    const wrapper = await mount(<Overview {...defaultProps} />);
+    expect(wrapper.find('tr')).to.have.lengthOf(1);
+  });
+
+  it('Should render a table row for each user 2', async () => {
     const user = {
       accessLevel: membershipState.ADMIN,
       firstName: 'First',
@@ -31,23 +54,22 @@ describe('<Overview />', () => {
       doorCode: '123',
       pagesPrinted: 20
     };
-    // before setState
-    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(0);
-    // setState
-    wrapper.setState({ users: [user, user] });
-    // after setState
-    expect(wrapper.find(OverviewProfile)).to.have.lengthOf(2);
+    stub.returns(new UserApiResponse(false, { items: [user, user] }));
+    const wrapper = await mount(<Overview {...defaultProps} />);
+    wrapper.update();
+    expect(wrapper.find('tr')).to.have.lengthOf(3);
   });
 
   it('Should render a <tr /> component with 8 children', () => {
+    const wrapper = mount(<Overview {...defaultProps} />);
     const component = wrapper.find('th');
     const shouldRenderedtr = [
       'Name',
-      'Door Code',
+      'Email',
       'Printing',
-      'Email Verified',
+      'Verified',
       'Membership Type',
-      '',
+      ' ',
       ''
     ];
 

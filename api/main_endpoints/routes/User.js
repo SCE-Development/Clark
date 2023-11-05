@@ -195,19 +195,30 @@ router.post('/search', function(req, res) {
 });
 
 // Search for all members
-router.post('/users', function(req, res) {
+router.post('/users', async function (req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  User.find()
+  const or = ['firstName', 'lastName', 'email'].map((fieldName) => ({
+    [fieldName]: {
+      // req.body, req.query, req.body.query, oh man
+      $regex: RegExp(req.body.query, 'i'),
+    }
+  }))
+  // make sure that the page we want to see is 0 by default
+  // and avoid negative page numbers
+  const skip = Math.max(Number(req.body.page) || 0, 0);
+  const total = await User.count({ $or: or, });
+  User.find({ $or: or, }, { password: 0, }, { skip, limit: 20, })
     .sort({ joinDate: -1 })
     .then(items => {
-      res.status(OK).send(items);
+      res.status(OK).send({items, total});
     })
-    .catch(() => {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    .catch((e) => {
+      console.log(e)
+      res.sendStatus(BAD_REQUEST);
     });
 });
 

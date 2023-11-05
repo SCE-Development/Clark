@@ -1,59 +1,92 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Overview.css';
-import OverviewProfile from './OverviewProfile.js';
+const svg = require('./SVG');
 import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
+import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 import {
   ButtonDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  Button
+  Row,
+  Col
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
-import Header from '../../Components/Header/Header';
+import ConfirmationModal from
+  '../../Components/DecisionModal/ConfirmationModal.js';
+const enums = require('../../Enums.js');
 
-export default class OverviewBoard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      users: [],
-      queryResult: [],
-      toggle: false,
-      currentQueryType: 'All',
-      queryTypes: ['All', 'Pending', 'Officer', 'Admin', 'Alumni']
-    };
-    this.headerProps = {
-      title: 'User Manager'
-    };
-  }
+export default function Overview(props) {
+  const [toggleDelete, setToggleDelete] = useState(false);
+  const [users, setUsers] = useState([],);
+  const [userToDelete, setUserToDelete] = useState({});
+  const [queryResult, setQueryResult] = useState([],);
+  const [query, setQuery] = useState('');
+  const [toggle, setToggle] = useState(false,);
+  const [currentQueryType, setCurrentQueryType] = useState('All',);
+  const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
 
-  componentDidMount() {
-    if (this.props.user) {
-      this.setState(
-        {
-          authToken: this.props.user.token,
-          currentUser: this.props.user.email,
-          currentUserLevel: this.props.user.accessLevel
-        },
-        () => {
-          this.callDatabase();
-        }
+  async function deleteUser(user) {
+    const deleteEmailResponse = await deleteUserByEmail(
+      user.email,
+      props.user.token
+    );
+    if (!deleteEmailResponse.error) {
+      if (user.email === props.user.email) {
+        // logout
+        window.localStorage.removeItem('jwtToken');
+        window.location.reload();
+        return window.alert('Self-deprecation is an art');
+      }
+      setUsers(
+        users.filter(
+          child => !child.email.includes(user.email)
+        )
+      );
+      setQueryResult(
+        queryResult.filter(
+          child => !child.email.includes(user.email)
+        )
       );
     }
   }
 
-  async callDatabase() {
-    const apiResponse = await getAllUsers(this.state.authToken);
-    // console.log(apiResponse);
-
-    if (!apiResponse.error) this.setState({ users: apiResponse.responseData });
+  function mark(bool) {
+    return bool ? svg.checkMark() : svg.xMark();
   }
 
-  updateUserState(users) {
-    this.setState({ users });
+  async function callDatabase() {
+    const apiResponse = await getAllUsers(props.user.token, query);
+    if (!apiResponse.error) setUsers(apiResponse.responseData.items);
+  }
+  useEffect(() => {
+    callDatabase();
+  }, []);
+
+  function filterUserByAccessLevel(accessLevel) {
+    switch (accessLevel) {
+      case 'Officer':
+        return users.filter(
+          data => data.accessLevel === membershipState.OFFICER
+        );
+      case 'Admin':
+        return users.filter(
+          data => data.accessLevel === membershipState.ADMIN
+        );
+      case 'Pending':
+        return users.filter(
+          data => data.accessLevel === membershipState.PENDING
+        );
+      case 'Alumni':
+        return users.filter(
+          data => data.accessLevel === membershipState.ALUMNI
+        );
+      default:
+        return users;
+    }
   }
 
-  updateQuery(value) {
+  function updateQuery(value) {
     // taking care of empty values
     value = typeof value === 'undefined' ? '' : value;
     value = value.trim().toLowerCase();
@@ -66,176 +99,137 @@ export default class OverviewBoard extends Component {
       );
     };
 
-    const { currentQueryType } = this.state;
-    const filteredUsersByLevel = this.filterUserByAccessLevel(currentQueryType);
+    const filteredUsersByLevel = filterUserByAccessLevel(currentQueryType);
     const searchResult = filteredUsersByLevel.filter(data => userExists(data));
-    const queryResult = searchResult.length
+    const newQueryResult = searchResult.length
       ? searchResult
       : filteredUsersByLevel;
 
-    this.setState({ queryResult });
+    setQueryResult(newQueryResult);
   }
 
-  filterUserByAccessLevel(accessLevel) {
-    switch (accessLevel) {
-    case 'Officer':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.OFFICER
-      );
-    case 'Admin':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.ADMIN
-      );
-    case 'Pending':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.PENDING
-      );
-    case 'Alumni':
-      return this.state.users.filter(
-        data => data.accessLevel === membershipState.ALUMNI
-      );
-    default:
-      return this.state.users;
-    }
+  function handleToggle() {
+    setToggle(!toggle);
   }
 
-  /*
-  Delete api
-  parameter: Json object of object to be deleted
-  */
-  async deleteUser(user) {
-    const deleteEmailResponse = await deleteUserByEmail(
-      user.email,
-      this.state.authToken
-    );
-    if (!deleteEmailResponse.error) {
-      if (user.email === this.state.currentUser) {
-        // logout
-        window.localStorage.removeItem('jwtToken');
-        window.location.reload();
-        return window.alert('Self-deprecation is an art');
+
+  return (
+    <div className='flexbox-container'>
+
+      <ConfirmationModal {... {
+        headerText: `Delete ${userToDelete.firstName} ${userToDelete.lastName} ?`,
+        bodyText: `Are you sure you want to delete 
+          ${userToDelete.firstName}? They'll be gone forever if you do.`,
+        confirmText: `Yes, goodbye ${userToDelete.firstName}`,
+        cancelText: 'No, they\'re chill',
+        toggle: () => setToggleDelete(!toggleDelete),
+        handleConfirmation: () => {
+          deleteUser(userToDelete);
+          setToggleDelete(!toggleDelete);
+        },
+        open: toggleDelete
       }
-      this.setState({
-        users: this.state.users.filter(
-          child => !child.email.includes(user.email)
-        )
-      });
-      this.setState({
-        queryResult: this.state.queryResult.filter(
-          child => !child.email.includes(user.email)
-        )
-      });
-    }
-  }
+      } />
+      <br>
+      </br>
+      <br>
+      </br>
+      <div className='layout'>
+        <h6 id='search-tag'>Type a search, followed by the enter key </h6>
+        <Row>
+          <Col>
+            <input
+              className='input-overview'
+              placeholder="search by 'first name, last name, or email'"
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  callDatabase();
+                }
+              }}
+              onChange={event => {
+                setQuery(event.target.value);
+                updateQuery(event.target.value);
+              }}
+            />
+          </Col>
+          <Col md={3}>
+            <ButtonDropdown
+              isOpen={toggle}
+              toggle={() => {
+                handleToggle();
+              }}
+              style={{ width: '100%', top: '20%' }}
+            >
+              <DropdownToggle caret>{currentQueryType}</DropdownToggle>
+              <DropdownMenu>
+                {queryTypes.map((type) => (
+                  <DropdownItem
+                    key={type}
+                    onClick={() => {
+                      setCurrentQueryType(type);
+                      updateQuery('#InvalidSearch#');
+                    }}
+                  >
+                    {type}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </ButtonDropdown>
+          </Col>
+        </Row>
 
-  handleToggle() {
-    this.setState({ toggle: !this.state.toggle });
-  }
+        <table className='content-table' id='users'>
+          <thead>
+            <tr id='users-header'>
+              {[
+                'Name',
+                'Email',
+                'Printing',
+                'Verified',
+                'Membership Type',
+                ' ',
+                ''
+              ].map((columnName) => {
+                return <th key={columnName}>{columnName}</th>;
+              })}
+            </tr>
+          </thead>
 
-  render() {
-    return (
-      <div className='flexbox-container'>
-        <br>
-        </br>
-        <br>
-        </br>
-        <div className='layout'>
-          <h6 id='search-tag'>Search </h6>
-          <ButtonDropdown
-            isOpen={this.state.toggle}
-            toggle={() => {
-              this.handleToggle();
-            }}
-          >
-            <DropdownToggle caret>{this.state.currentQueryType}</DropdownToggle>
-            <DropdownMenu>
-              {this.state.queryTypes.map((type, ind) => (
-                <DropdownItem
-                  key={ind}
-                  onClick={() =>
-                    this.setState({ currentQueryType: type }, () =>
-                      this.updateQuery('#InvalidSearch#')
-                    )}
-                >
-                  {type}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </ButtonDropdown>
-
-          <a href="/email-list">
-            <Button outline id="view-email-button">View Emails</Button>
-          </a>
-
-          <input
-            className='input-overview'
-            placeholder="search by 'first name, last name, or email'"
-            onChange={event => {
-              this.updateQuery(event.target.value);
-            }}
-          />
-
-          <table className='content-table' id='users'>
-            <thead>
-              <tr id='users-header'>
-                {[
-                  'Name',
-                  'Door Code',
-                  'Printing',
-                  'Email Verified',
-                  'Membership Type',
-                  '',
-                  ''
-                ].map((ele, ind) => {
-                  return <th key={ind}>{ele}</th>;
-                })}
-              </tr>
-            </thead>
-
-            <tbody>
-              {this.state.queryResult.length > 0
-                ? this.state.queryResult.map((user, index) => {
-                  return (
-                    <OverviewProfile
-                      key={index}
-                      users={this.state.users}
-                      user={user}
-                      index={index}
-                      token={this.state.authToken}
-                      deleteUser={this.deleteUser.bind(this)}
-                      updateQuery={() => {
-                        this.setState(
-                          { currentQueryType: 'All', queryResult: [] },
-                          this.updateQuery('#InvalidSearch#')
-                        );
+          <tbody>
+            {users.map((user) => {
+              return (
+                <tr key={user.email}>
+                  <td>
+                    <div className='name'>{formatFirstAndLastName(user)}</div>
+                  </td>
+                  <td>{user.email}</td>
+                  <td>{user.pagesPrinted}/30</td>
+                  <td>{mark(user.emailVerified)}</td>
+                  <td>{enums.membershipStateToString(user.accessLevel)}</td>
+                  <td>
+                    <button
+                      className='overview-icon'
+                      onClick={() => {
+                        setToggleDelete(!toggleDelete);
+                        setUserToDelete(user);
                       }}
-                      updateUserState={this.updateUserState}
-                    />
-                  );
-                })
-                : this.state.users.map((user, index) => {
-                  return (
-                    <OverviewProfile
-                      key={index}
-                      users={this.state.users}
-                      user={user}
-                      index={index}
-                      token={this.state.authToken}
-                      deleteUser={this.deleteUser.bind(this)}
-                      updateQuery={() => {
-                        this.setState(
-                          { currentQueryType: 'All', queryResult: [] },
-                          this.updateQuery('#InvalidSearch#')
-                        );
-                      }}
-                      updateUserState={this.updateUserState.bind(this)}
-                    />
-                  );
-                })}
-            </tbody>
-          </table>
-        </div>
+                    >
+                      {svg.trashcanSymbol()}
+                    </button>
+                  </td>
+                  <td>
+                    <a target='_blank' href={`/user/edit/${user._id}`}>
+                      <button className='overview-icon'>
+                        {svg.editSymbol()}
+                      </button>
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
-    );
-  }
+    </div>
+  );
 }
