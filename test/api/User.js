@@ -133,7 +133,7 @@ describe('User', () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/users', form);
-      id = result.body[0]._id;
+      id = result.body.items[0]._id;
       expect(result).to.have.status(OK);
     });
   });
