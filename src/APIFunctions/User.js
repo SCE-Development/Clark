@@ -42,19 +42,6 @@ export async function getCountAllUsers(query) {
   return status;
 }
 
-export async function getCurrentUsers(query) {
-  let status = new UserApiResponse();
-  await axios
-    .get(GENERAL_API_URL + `/User/currentUsers/${query}`)
-    .then(result => {
-      status.responseData = result.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
 /**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated
