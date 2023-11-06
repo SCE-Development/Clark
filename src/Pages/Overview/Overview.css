@@ -1,6 +1,7 @@
 .layout {
   padding-top: 70px;
-  margin: 10px auto;
+  margin-left: auto;
+  margin-right: auto;
   right: 50%;
   width: 90vw;
 }
@@ -9,34 +10,34 @@
   height: calc(68vh - 80px);
   /* width: 70vw; */
   overflow: scroll;
+}
 
-  .first-name-cell {
-    width: 15em;
-    overflow: scroll;
-  }
+.user-table-body-container .first-name-cell {
+  width: 15em;
+  overflow: scroll;
+}
 /* calc(100% - 80px); */
-  .email-cell {
-    width: 23em;
-    overflow: scroll;
-  }
+.user-table-body-container .email-cell {
+  width: 23em;
+  overflow: scroll;
+}
 
-  .printed-cell {
-    width: 5em;
-  }
-  
-  .verified-cell {
-    width: 5em;
-  }
-  .membership-cell {
-    width: 7.5em;
-  }
-  
-  .delete-cell {
-    width: 4em;
-  }
-  .edit-cell {
-    width: 5em;
-  }
+.user-table-body-container .printed-cell {
+  width: 5em;
+}
+
+.user-table-body-container .verified-cell {
+  width: 5em;
+}
+.user-table-body-container .membership-cell {
+  width: 7.5em;
+}
+
+.user-table-body-container .delete-cell {
+  width: 4em;
+}
+.user-table-body-container .edit-cell {
+  width: 5em;
 }
 
 .user-table-container th {
@@ -57,23 +58,28 @@
   overflow: hidden;
 }
 
+.overview-search-container {
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+  width: 64.5em;
+}
+
 .overview-container td, th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
 }
 
-.overview-container {
-  table {
-    margin-left: auto;
-    margin-right: auto;
-  }
+.overview-container table {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .pagination-control {
   position: absolute;
   padding-top: 10px;
-  right: -58em;
+  right: -72em;
   position: relative;
   width: 9em;
 }
@@ -89,8 +95,10 @@
 .input-overview {
   width: 100%;
   padding: 12px 20px;
-  margin: 8px 0px;
-  display: inline-block;
+  /* margin: 8px 0px; */
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: block;
   border-radius: 4px;
   box-sizing: border-box;
   initial-letter-align: left;
@@ -146,6 +154,6 @@
 
 @media screen and (max-width:600px) {
   .pagination-control {
-    width: 13em;
-  }  
+    right: -52em;
+  }
 }

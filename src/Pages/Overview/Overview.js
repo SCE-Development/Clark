@@ -4,15 +4,15 @@ const svg = require('./SVG');
 import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 import {
-  ButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
+  // ButtonDropdown,
+  // DropdownToggle,
+  // DropdownMenu,
+  // DropdownItem,
   Row,
   Col,
-  Table,
+  // Table,
 } from 'reactstrap';
-import { membershipState } from '../../Enums';
+// import { membershipState } from '../../Enums';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
@@ -27,9 +27,9 @@ export default function Overview(props) {
   const [queryResult, setQueryResult] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [query, setQuery] = useState('');
-  const [toggle, setToggle] = useState(false);
-  const [currentQueryType, setCurrentQueryType] = useState('All');
-  const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
+  // const [toggle, setToggle] = useState(false);
+  // const [currentQueryType, setCurrentQueryType] = useState('All');
+  // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
 
   async function deleteUser(user) {
     const deleteEmailResponse = await deleteUserByEmail(
@@ -127,11 +127,13 @@ export default function Overview(props) {
   function maybeRenderPagination() {
     const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, users.length);
     const pageOffset = page * rowsPerPage;
+    const startingElementNumber = (page * rowsPerPage) + 1;
+    const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
     if (users.length) {
       return (
         <Col className='pagination-control'>
-          <Row>
-            <Col sm={4}>
+          <Row className='flex-nowrap'>
+            <Col>
               <button
                 onClick={() => setPage(page - 1)}
                 disabled={page === 0 || loading}
@@ -139,10 +141,10 @@ export default function Overview(props) {
                 prev
               </button>
             </Col>
-            <Col sm={4}>
+            <Col>
               <button
                 onClick={() => setPage(page + 1)}
-                disabled={amountOfUsersOnCurrentPage + pageOffset >= total || loading}
+                disabled={endingElementNumber >= total || loading}
               >
                 next
               </button>
@@ -151,7 +153,7 @@ export default function Overview(props) {
           {!loading && (
             <Row>
               <Col style={{ marginLeft: '1.6em' }}>
-                {amountOfUsersOnCurrentPage + pageOffset} / {total}
+                {startingElementNumber} - {endingElementNumber} / {total}
               </Col>
             </Row>
           )}
@@ -178,23 +180,30 @@ export default function Overview(props) {
       }
       } />
       <div className='layout'>
-        <h6 id='search-tag'>Type a search, followed by the enter key </h6>
-        <Row className='overview-search flex-nowrap'>
-          <Col /* md={9} */>
-            <input
-              className='input-overview'
-              placeholder="search by 'first name, last name, or email'"
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  callDatabase();
-                }
-              }}
-              onChange={event => {
-                setQuery(event.target.value);
-              }}
-            />
-          </Col>
-          {/* <Col md={3}>
+        <div className='overview-search-container'>
+          <h6 id='search-tag'>Type a search, followed by the enter key </h6>
+              <input
+                className='input-overview'
+                placeholder="search by 'first name, last name, or email'"
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    // instead of calling the backend directory, set
+                    // the page we are on to zero if the current page
+                    // we are on isn't the first page (value of 0).
+                    // by doing this, the useEffect will call the backend
+                    // for us with the correct page and query.
+                    if (page) {
+                      setPage(0);
+                    } else {
+                      callDatabase();
+                    }
+                  }
+                }}
+                onChange={event => {
+                  setQuery(event.target.value);
+                }}
+              />
+            {/* <Col md={3}>
             <ButtonDropdown
               isOpen={toggle}
               toggle={() => {
@@ -217,7 +226,7 @@ export default function Overview(props) {
               </DropdownMenu>
             </ButtonDropdown>
           </Col> */}
-        </Row>
+        </div>
         <table>
           <thead>
             <div className='user-table-container'>
@@ -244,7 +253,7 @@ export default function Overview(props) {
           </thead>
 
           <div className='user-table-body-container'>
-            <tbody>
+            <tbody className='user-table-body-container'>
               {users.map((user) => {
                 return (
                   <tr key={user.email}>

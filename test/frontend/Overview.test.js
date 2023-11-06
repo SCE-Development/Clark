@@ -68,8 +68,8 @@ describe('<Overview />', () => {
       'Email',
       'Printing',
       'Verified',
-      'Membership Type',
-      ' ',
+      'Membership',
+      '',
       ''
     ];
 
