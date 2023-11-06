@@ -178,7 +178,7 @@ router.post('/users', async function(req, res) {
           $regex: RegExp(req.body.query, 'i'),
         }
       }))
-    }
+    };
   }
 
   // make sure that the page we want to see is 0 by default

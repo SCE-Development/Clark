@@ -9,7 +9,8 @@ import {
   DropdownMenu,
   DropdownItem,
   Row,
-  Col
+  Col,
+  Table,
 } from 'reactstrap';
 import { membershipState } from '../../Enums';
 import ConfirmationModal from
@@ -74,54 +75,54 @@ export default function Overview(props) {
     callDatabase();
   }, [page]);
 
-  function filterUserByAccessLevel(accessLevel) {
-    switch (accessLevel) {
-    case 'Officer':
-      return users.filter(
-        data => data.accessLevel === membershipState.OFFICER
-      );
-    case 'Admin':
-      return users.filter(
-        data => data.accessLevel === membershipState.ADMIN
-      );
-    case 'Pending':
-      return users.filter(
-        data => data.accessLevel === membershipState.PENDING
-      );
-    case 'Alumni':
-      return users.filter(
-        data => data.accessLevel === membershipState.ALUMNI
-      );
-    default:
-      return users;
-    }
-  }
+  // function filterUserByAccessLevel(accessLevel) {
+  //   switch (accessLevel) {
+  //     case 'Officer':
+  //       return users.filter(
+  //         data => data.accessLevel === membershipState.OFFICER
+  //       );
+  //     case 'Admin':
+  //       return users.filter(
+  //         data => data.accessLevel === membershipState.ADMIN
+  //       );
+  //     case 'Pending':
+  //       return users.filter(
+  //         data => data.accessLevel === membershipState.PENDING
+  //       );
+  //     case 'Alumni':
+  //       return users.filter(
+  //         data => data.accessLevel === membershipState.ALUMNI
+  //       );
+  //     default:
+  //       return users;
+  //   }
+  // }
 
-  function updateQuery(value) {
-    // taking care of empty values
-    value = typeof value === 'undefined' ? '' : value;
-    value = value.trim().toLowerCase();
+  // function updateQuery(value) {
+  //   // taking care of empty values
+  //   value = typeof value === 'undefined' ? '' : value;
+  //   value = value.trim().toLowerCase();
 
-    const userExists = user => {
-      return (
-        user.firstName.toLowerCase().includes(value) ||
-        user.lastName.toLowerCase().includes(value) ||
-        user.email.toLowerCase().includes(value)
-      );
-    };
+  //   const userExists = user => {
+  //     return (
+  //       user.firstName.toLowerCase().includes(value) ||
+  //       user.lastName.toLowerCase().includes(value) ||
+  //       user.email.toLowerCase().includes(value)
+  //     );
+  //   };
 
-    const filteredUsersByLevel = filterUserByAccessLevel(currentQueryType);
-    const searchResult = filteredUsersByLevel.filter(data => userExists(data));
-    const newQueryResult = searchResult.length
-      ? searchResult
-      : filteredUsersByLevel;
+  //   const filteredUsersByLevel = filterUserByAccessLevel(currentQueryType);
+  //   const searchResult = filteredUsersByLevel.filter(data => userExists(data));
+  //   const newQueryResult = searchResult.length
+  //     ? searchResult
+  //     : filteredUsersByLevel;
 
-    setQueryResult(newQueryResult);
-  }
+  //   setQueryResult(newQueryResult);
+  // }
 
-  function handleToggle() {
-    setToggle(!toggle);
-  }
+  // function handleToggle() {
+  //   setToggle(!toggle);
+  // }
 
   function maybeRenderPagination() {
     const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, users.length);
@@ -129,18 +130,24 @@ export default function Overview(props) {
     if (users.length) {
       return (
         <Col style={{
-          right: '-87%',
+          paddingTop: '10px',
+          right: '-58em',
           position: 'relative',
-          width: '18%',
+          width: '9em',
         }}>
           <Row>
             <Col sm={4}>
-              <button onClick={() => setPage(page - 1)} disabled={page === 0}>prev</button>
+              <button
+                onClick={() => setPage(page - 1)}
+                disabled={page === 0 || loading}
+              >
+                prev
+              </button>
             </Col>
             <Col sm={4}>
               <button
                 onClick={() => setPage(page + 1)}
-                disabled={amountOfUsersOnCurrentPage + pageOffset >= total}
+                disabled={amountOfUsersOnCurrentPage + pageOffset >= total || loading}
               >
                 next
               </button>
@@ -148,7 +155,7 @@ export default function Overview(props) {
           </Row>
           {!loading && (
             <Row>
-              <Col style={{ marginLeft: '20%' }}>
+              <Col style={{ marginLeft: '1.6em' }}>
                 {amountOfUsersOnCurrentPage + pageOffset} / {total}
               </Col>
             </Row>
@@ -160,8 +167,7 @@ export default function Overview(props) {
   }
 
   return (
-    <div className='flexbox-container'>
-
+    <div className='overview-container'>
       <ConfirmationModal {... {
         headerText: `Delete ${userToDelete.firstName} ${userToDelete.lastName} ?`,
         bodyText: `Are you sure you want to delete 
@@ -176,14 +182,10 @@ export default function Overview(props) {
         open: toggleDelete
       }
       } />
-      <br>
-      </br>
-      <br>
-      </br>
       <div className='layout'>
         <h6 id='search-tag'>Type a search, followed by the enter key </h6>
-        <Row>
-          <Col>
+        <Row className='overview-search flex-nowrap'>
+          <Col /* md={9} */>
             <input
               className='input-overview'
               placeholder="search by 'first name, last name, or email'"
@@ -197,7 +199,7 @@ export default function Overview(props) {
               }}
             />
           </Col>
-          <Col md={3}>
+          {/* <Col md={3}>
             <ButtonDropdown
               isOpen={toggle}
               toggle={() => {
@@ -219,38 +221,48 @@ export default function Overview(props) {
                 ))}
               </DropdownMenu>
             </ButtonDropdown>
-          </Col>
+          </Col> */}
         </Row>
-        <div>
-          <table className='content-table' id='users'>
-            <thead>
+        <table>
+          <thead>
+            <div className='user-table-container'>
               <tr id='users-header'>
                 {[
-                  'Name',
-                  'Email',
-                  'Printing',
-                  'Verified',
-                  'Membership Type',
-                  ' ',
-                  ''
-                ].map((columnName) => {
-                  return <th key={columnName}>{columnName}</th>;
+                  { title: 'Name', minWidth: '15em' },
+                  { title: 'Email', minWidth: '23em' },
+                  { title: 'Printing', minWidth: '5em' },
+                  { title: 'Verified', minWidth: '5em' },
+                  { title: 'Membership', minWidth: '7.5em' },
+                  { title: '', minWidth: '4em' },
+                  { title: '', minWidth: '5em' },
+                ].map(({ title, minWidth }) => {
+                  return (<th
+                    className='text-center'
+                    style={{ minWidth }}
+                    key={title + minWidth}
+                  >
+                    {title}
+                  </th>);
                 })}
               </tr>
-            </thead>
+            </div>
+          </thead>
 
+          <div className='user-table-body-container'>
             <tbody>
               {users.map((user) => {
                 return (
                   <tr key={user.email}>
-                    <td>
-                      <div className='name'>{formatFirstAndLastName(user)}</div>
+                    <td className='first-name-cell'>
+                      {formatFirstAndLastName(user)}
                     </td>
-                    <td>{user.email}</td>
-                    <td>{user.pagesPrinted}/30</td>
-                    <td>{mark(user.emailVerified)}</td>
-                    <td>{enums.membershipStateToString(user.accessLevel)}</td>
-                    <td>
+                    <td className='email-cell'>{user.email}</td>
+                    <td className='printed-cell text-center'>{user.pagesPrinted}/30</td>
+                    <td className='verified-cell text-center'>{mark(user.emailVerified)}</td>
+                    <td className='membership-cell'>
+                      {enums.membershipStateToString(user.accessLevel)}
+                    </td>
+                    <td className='delete-cell'>
                       <button
                         className='overview-icon'
                         onClick={() => {
@@ -261,7 +273,7 @@ export default function Overview(props) {
                         {svg.trashcanSymbol()}
                       </button>
                     </td>
-                    <td>
+                    <td className='edit-cell'>
                       <a target='_blank' href={`/user/edit/${user._id}`}>
                         <button className='overview-icon'>
                           {svg.editSymbol()}
@@ -272,9 +284,9 @@ export default function Overview(props) {
                 );
               })}
             </tbody>
-          </table>
-          {maybeRenderPagination()}
-        </div>
+          </div>
+        </table>
+        {maybeRenderPagination()}
       </div>
     </div>
   );
