@@ -129,12 +129,7 @@ export default function Overview(props) {
     const pageOffset = page * rowsPerPage;
     if (users.length) {
       return (
-        <Col style={{
-          paddingTop: '10px',
-          right: '-58em',
-          position: 'relative',
-          width: '9em',
-        }}>
+        <Col className='pagination-control'>
           <Row>
             <Col sm={4}>
               <button
