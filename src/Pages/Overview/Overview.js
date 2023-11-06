@@ -182,28 +182,28 @@ export default function Overview(props) {
       <div className='layout'>
         <div className='overview-search-container'>
           <h6 id='search-tag'>Type a search, followed by the enter key </h6>
-              <input
-                className='input-overview'
-                placeholder="search by 'first name, last name, or email'"
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    // instead of calling the backend directory, set
-                    // the page we are on to zero if the current page
-                    // we are on isn't the first page (value of 0).
-                    // by doing this, the useEffect will call the backend
-                    // for us with the correct page and query.
-                    if (page) {
-                      setPage(0);
-                    } else {
-                      callDatabase();
-                    }
-                  }
-                }}
-                onChange={event => {
-                  setQuery(event.target.value);
-                }}
-              />
-            {/* <Col md={3}>
+          <input
+            className='input-overview'
+            placeholder="search by 'first name, last name, or email'"
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                // instead of calling the backend directory, set
+                // the page we are on to zero if the current page
+                // we are on isn't the first page (value of 0).
+                // by doing this, the useEffect will call the backend
+                // for us with the correct page and query.
+                if (page) {
+                  setPage(0);
+                } else {
+                  callDatabase();
+                }
+              }
+            }}
+            onChange={event => {
+              setQuery(event.target.value);
+            }}
+          />
+          {/* <Col md={3}>
             <ButtonDropdown
               isOpen={toggle}
               toggle={() => {
