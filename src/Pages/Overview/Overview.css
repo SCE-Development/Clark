@@ -6,25 +6,14 @@
   width: 90vw;
 }
 
-.user-table-body-container {
-  height: calc(68vh - 80px);
-  /* width: 70vw; */
-  overflow: scroll;
-}
-
 .overview-center {
   display: table-cell; 
   vertical-align: middle;
   justify-content: center;
 }
 
-.overview-search {
-  width: 66em;
-  min-width: 66em;
-  overflow: hidden;
-}
-
 .overview-search-container {
+  padding-top: 20px;
   flex-direction: column;
   float: none;
   display: flex;
@@ -38,10 +27,6 @@
   right: -72em;
   position: relative;
   width: 9em;
-}
-
-.overview-container tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
 }
 
 .input-overview {
@@ -154,10 +139,6 @@
   /* flex-grow: 2; */
 }
 
-.table svg {
-  /* position: fixed; */
-}
-
 @media screen and (max-width: 1150px) {
   .table {
     font-size: 0.75em;
@@ -166,9 +147,10 @@
 
 @media screen and (max-width: 910px) {
   .table {
-    font-size: 0.5em;
+    font-size: 0.75em;
   }
   .table svg {
+    transform: scale(0.75);
     /* width: calc(100% - 3vw); */
   }
 }

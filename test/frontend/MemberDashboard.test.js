@@ -17,13 +17,8 @@ describe('<MemberDashboard />', () => {
     writable: true
   });
 
-  it('Should render a <table /> component with one child', () => {
+  it('Should render a <table /> component with one row (the table header)', () => {
     const wrapper = mount(<MemberDashboard />);
-    expect(wrapper.find('table')).to.have.lengthOf(1);
-  });
-
-  it('Should render a <tbody /> component with one child', () => {
-    const wrapper = mount(<MemberDashboard />);
-    expect(wrapper.find('tbody')).to.have.lengthOf(1);
+    expect(wrapper.find('.tr')).to.have.lengthOf(1);
   });
 });

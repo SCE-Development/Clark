@@ -33,15 +33,10 @@ describe('<Overview />', () => {
 
   it('Should render a <table /> component with one child', () => {
     const wrapper = mount(<Overview {...defaultProps} />);
-    expect(wrapper.find('table')).to.have.lengthOf(1);
+    expect(wrapper.find('.table')).to.have.lengthOf(1);
   });
 
   it('Should render a table row for each user', async () => {
-    const wrapper = await mount(<Overview {...defaultProps} />);
-    expect(wrapper.find('tr')).to.have.lengthOf(1);
-  });
-
-  it('Should render a table row for each user 2', async () => {
     const user = {
       accessLevel: membershipState.ADMIN,
       firstName: 'First',
@@ -57,23 +52,22 @@ describe('<Overview />', () => {
     stub.returns(new UserApiResponse(false, { items: [user, user] }));
     const wrapper = await mount(<Overview {...defaultProps} />);
     wrapper.update();
-    expect(wrapper.find('tr')).to.have.lengthOf(3);
+    expect(wrapper.find('.tr')).to.have.lengthOf(3);
   });
 
-  it('Should render a <tr /> component with 8 children', () => {
+  it('Should render a table header with 6 columns', () => {
     const wrapper = mount(<Overview {...defaultProps} />);
-    const component = wrapper.find('th');
+    const component = wrapper.find('.td');
     const shouldRenderedtr = [
       'Name',
       'Email',
       'Printing',
       'Verified',
       'Membership',
-      '',
-      ''
+      'Delete',
     ];
 
-    expect(component).to.have.lengthOf(7);
+    expect(component).to.have.lengthOf(6);
     for (let i = 0; i < shouldRenderedtr.length; i++) {
       expect(component.get(i).props.children).equals(shouldRenderedtr[i]);
     }
