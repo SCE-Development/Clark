@@ -140,14 +140,14 @@
 }
 
 @media screen and (max-width: 1150px) {
-  .table {
-    font-size: 0.75em;
+  .printing-cell {
+    display: none !important;
   }
 }
 
-@media screen and (max-width: 910px) {
+@media screen and (max-width: 950px) {
   .table {
-    font-size: 0.75em;
+    font-size: 0.9em;
   }
   .table svg {
     transform: scale(0.75);
@@ -155,32 +155,32 @@
   }
 }
 
-@media screen and (max-width: 835px) {
+@media screen and (max-width: 870px) {
   .table {
-    font-size: 0.6em;
+    font-size: 0.8em;
   }
 }
 
-@media screen and (max-width: 680px) {
+@media screen and (max-width: 785px) {
   .table {
-    font-size: 0.55em;
+    font-size: 0.7em;
   }
 }
 
-@media screen and (max-width: 630px) {
+@media screen and (max-width: 690px) {
+  .table {
+    font-size: 0.65em;
+  }
+}
+
+@media screen and (max-width: 645px) {
   .table {
     font-size: 0.5em;
   }
 }
 
-@media screen and (max-width: 575px) {
+@media screen and (max-width: 511px) {
   .table {
     font-size: 0.45em;
-  }
-}
-
-@media screen and (max-width: 525px) {
-  .table {
-    font-size: 0.4em;
   }
 }

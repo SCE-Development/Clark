@@ -209,7 +209,7 @@ export default function Overview(props) {
             {[
               {title: 'Name', className: 'name-cell'},
               {title: 'Email', className: 'email-cell'},
-              {title: 'Printing', className: 'printing--cell'},
+              {title: 'Printing', className: 'printing-cell'},
               {title: 'Verified', className: 'verified-cell'},
               {title: 'Membership', className: 'membership-cell'},
               {title: 'Delete', className: 'delete-cell'},
@@ -231,7 +231,7 @@ export default function Overview(props) {
                   </a>
                 </div>
                 <div className='td email-cell'>{user.email}</div>
-                <div className='td printed-cell overview-center'>{user.pagesPrinted}/30</div>
+                <div className='td printing-cell overview-center'>{user.pagesPrinted}/30</div>
                 <div className='td verified-cell overview-center'>{mark(user.emailVerified)}</div>
                 <div className='td membership-cell overview-center'>
                   {enums.membershipStateToString(user.accessLevel)}
