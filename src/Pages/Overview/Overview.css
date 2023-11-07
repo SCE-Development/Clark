@@ -21,14 +21,6 @@
   margin-right: auto;
 }
 
-.pagination-control {
-  position: absolute;
-  padding-top: 10px;
-  right: -72em;
-  position: relative;
-  width: 9em;
-}
-
 .input-overview {
   width: 100%;
   padding: 12px 20px;
@@ -69,24 +61,17 @@
   margin-right: auto;  
 }
 
-@media screen and (max-width:600px) {
-  .pagination-control {
-    right: -52em;
-  }
-}
-
 .table {
   display: flex;
   flex-flow: column nowrap;
-  /* font-size: .8rem; */
-  margin: 0.5rem;
-  line-height: 1.5;
+  text-wrap: nowrap;
   flex: 1 1 auto;
 }
 
 .th {
   display: none;
   font-weight: bold;
+  text-wrap: nowrap;
   background-color: #f2f2f2;
 }
 
@@ -121,7 +106,8 @@
   overflow: scroll;
   text-overflow: ellipsis;
   min-width: 0px;
-  white-space: nowrap;
+  white-space: nowrap !important;
+  text-wrap: nowrap !important;
 }
 
 .email-cell {
