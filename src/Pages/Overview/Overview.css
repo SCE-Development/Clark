@@ -154,3 +154,33 @@
     /* width: calc(100% - 3vw); */
   }
 }
+
+@media screen and (max-width: 835px) {
+  .table {
+    font-size: 0.6em;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .table {
+    font-size: 0.55em;
+  }
+}
+
+@media screen and (max-width: 630px) {
+  .table {
+    font-size: 0.5em;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .table {
+    font-size: 0.45em;
+  }
+}
+
+@media screen and (max-width: 525px) {
+  .table {
+    font-size: 0.4em;
+  }
+}
