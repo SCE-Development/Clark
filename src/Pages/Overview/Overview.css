@@ -124,14 +124,19 @@
   white-space: nowrap;
 }
 
+.email-cell {
+  justify-content: left !important;
+}
+
 .name-cell {
+  justify-content: left !important;
   flex: 2;
+  /* align-self: flex-start; */
   /* flex-grow: 2; */
 }
 
-.printing-cell {
-  flex: 1;
-  /* flex-grow: 2; */
+.name-cell> a {
+  padding-left: 0 !important;
 }
 
 .email-cell {
