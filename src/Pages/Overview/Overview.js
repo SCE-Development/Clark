@@ -20,6 +20,7 @@ const enums = require('../../Enums.js');
 export default function Overview(props) {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [paginationText, setPaginationText] = useState('');
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
@@ -75,6 +76,15 @@ export default function Overview(props) {
     callDatabase();
   }, [page]);
 
+  useEffect(() => {
+
+    const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, users.length);
+    const pageOffset = page * rowsPerPage;
+    const startingElementNumber = (page * rowsPerPage) + 1;
+    const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
+    setPaginationText(`${startingElementNumber} - ${endingElementNumber} / ${total}`);
+  }, [page, rowsPerPage, users, total]);
+
   // function filterUserByAccessLevel(accessLevel) {
   //   switch (accessLevel) {
   //     case 'Officer':
@@ -127,37 +137,27 @@ export default function Overview(props) {
   function maybeRenderPagination() {
     const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, users.length);
     const pageOffset = page * rowsPerPage;
-    const startingElementNumber = (page * rowsPerPage) + 1;
     const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
     if (users.length) {
       return (
-        <Col className='pagination-control'>
-          <Row className='flex-nowrap'>
-            <Col>
-              <button
-                onClick={() => setPage(page - 1)}
-                disabled={page === 0 || loading}
-              >
-                prev
-              </button>
-            </Col>
-            <Col>
-              <button
-                onClick={() => setPage(page + 1)}
-                disabled={endingElementNumber >= total || loading}
-              >
-                next
-              </button>
-            </Col>
-          </Row>
-          {!loading && (
-            <Row>
-              <Col style={{ marginLeft: '1.6em' }}>
-                {startingElementNumber} - {endingElementNumber} / {total}
-              </Col>
-            </Row>
-          )}
-        </Col>
+        <div className='pagination-container'>
+          <button
+            onClick={() => setPage(page - 1)}
+            disabled={page === 0 || loading}
+          >
+            prev
+          </button>
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={endingElementNumber >= total || loading}
+          >
+            next
+          </button>
+          <span>
+            <br></br>
+            {loading ? '...' : paginationText}
+          </span>
+        </div>
       );
     }
     return <></>;
@@ -203,93 +203,54 @@ export default function Overview(props) {
               setQuery(event.target.value);
             }}
           />
-          {/* <Col md={3}>
-            <ButtonDropdown
-              isOpen={toggle}
-              toggle={() => {
-                handleToggle();
-              }}
-              style={{ width: '100%', top: '20%' }}
-            >
-              <DropdownToggle caret>{currentQueryType}</DropdownToggle>
-              <DropdownMenu>
-                {queryTypes.map((type) => (
-                  <DropdownItem
-                    key={type}
+        </div>
+        <div className='table'>
+          <div className='tr th' id='users-header'>
+            {[
+              {title: 'Name', className: 'name-cell'},
+              {title: 'Email', className: 'email-cell'},
+              {title: 'Printing', className: 'printing--cell'},
+              {title: 'Verified', className: 'verified-cell'},
+              {title: 'Membership', className: 'membership-cell'},
+              {title: 'Delete', className: 'delete-cell'},
+            ].map(({title, className}) => {
+              return (<div
+                className={`td text-center ${className}`}
+                key={title}
+              >
+                {title}
+              </div>);
+            })}
+          </div>
+          {users.map((user) => {
+            return (
+              <div className='tr' key={user.email}>
+                <div className='td name-cell'>
+                  <a target='_blank' href={`/user/edit/${user._id}`}>
+                    {formatFirstAndLastName(user)}
+                  </a>
+                </div>
+                <div className='td email-cell'>{user.email}</div>
+                <div className='td printed-cell overview-center'>{user.pagesPrinted}/30</div>
+                <div className='td verified-cell overview-center'>{mark(user.emailVerified)}</div>
+                <div className='td membership-cell overview-center'>
+                  {enums.membershipStateToString(user.accessLevel)}
+                </div>
+                <div className='td delete-cell overview-center'>
+                  <button
+                    className='overview-icon'
                     onClick={() => {
-                      setCurrentQueryType(type);
+                      setToggleDelete(!toggleDelete);
+                      setUserToDelete(user);
                     }}
                   >
-                    {type}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </ButtonDropdown>
-          </Col> */}
+                    {svg.trashcanSymbol()}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
-        <table>
-          <thead>
-            <div className='user-table-container'>
-              <tr id='users-header'>
-                {[
-                  { title: 'Name', minWidth: '15em' },
-                  { title: 'Email', minWidth: '23em' },
-                  { title: 'Printing', minWidth: '5em' },
-                  { title: 'Verified', minWidth: '5em' },
-                  { title: 'Membership', minWidth: '7.5em' },
-                  { title: '', minWidth: '4em' },
-                  { title: '', minWidth: '5em' },
-                ].map(({ title, minWidth }) => {
-                  return (<th
-                    className='text-center'
-                    style={{ minWidth }}
-                    key={title + minWidth}
-                  >
-                    {title}
-                  </th>);
-                })}
-              </tr>
-            </div>
-          </thead>
-
-          <div className='user-table-body-container'>
-            <tbody className='user-table-body-container'>
-              {users.map((user) => {
-                return (
-                  <tr key={user.email}>
-                    <td className='first-name-cell'>
-                      {formatFirstAndLastName(user)}
-                    </td>
-                    <td className='email-cell'>{user.email}</td>
-                    <td className='printed-cell text-center'>{user.pagesPrinted}/30</td>
-                    <td className='verified-cell text-center'>{mark(user.emailVerified)}</td>
-                    <td className='membership-cell'>
-                      {enums.membershipStateToString(user.accessLevel)}
-                    </td>
-                    <td className='delete-cell'>
-                      <button
-                        className='overview-icon'
-                        onClick={() => {
-                          setToggleDelete(!toggleDelete);
-                          setUserToDelete(user);
-                        }}
-                      >
-                        {svg.trashcanSymbol()}
-                      </button>
-                    </td>
-                    <td className='edit-cell'>
-                      <a target='_blank' href={`/user/edit/${user._id}`}>
-                        <button className='overview-icon'>
-                          {svg.editSymbol()}
-                        </button>
-                      </a>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </div>
-        </table>
         {maybeRenderPagination()}
       </div>
     </div>

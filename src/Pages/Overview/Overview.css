@@ -12,44 +12,10 @@
   overflow: scroll;
 }
 
-.user-table-body-container .first-name-cell {
-  width: 15em;
-  overflow: scroll;
-}
-/* calc(100% - 80px); */
-.user-table-body-container .email-cell {
-  width: 23em;
-  overflow: scroll;
-}
-
-.user-table-body-container .printed-cell {
-  width: 5em;
-}
-
-.user-table-body-container .verified-cell {
-  width: 5em;
-}
-.user-table-body-container .membership-cell {
-  width: 7.5em;
-}
-
-.user-table-body-container .delete-cell {
-  width: 4em;
-}
-.user-table-body-container .edit-cell {
-  width: 5em;
-}
-
-.user-table-container th {
-  /* need uneven spacing, maybe modify array for mapping colukn name? */
-  text-align: left;
-}
-
-.content-table {
-  border-collapse: collapse;
-  font-size: 0.9em;
-  overflow-x: scroll;
-  table-layout: fixed;
+.overview-center {
+  display: table-cell; 
+  vertical-align: middle;
+  justify-content: center;
 }
 
 .overview-search {
@@ -59,19 +25,9 @@
 }
 
 .overview-search-container {
+  flex-direction: column;
   float: none;
-  margin-left: auto;
-  margin-right: auto;
-  width: 64.5em;
-}
-
-.overview-container td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-.overview-container table {
+  display: flex;
   margin-left: auto;
   margin-right: auto;
 }
@@ -82,10 +38,6 @@
   right: -72em;
   position: relative;
   width: 9em;
-}
-
-#users-header th {
-  border: 1px solid #dddddd;
 }
 
 .overview-container tbody tr:nth-of-type(even) {
@@ -118,32 +70,6 @@
   margin: 5px;
 }
 
-.overview-icon:hover {
-  padding: 5px;
-  border-radius: 20px;
-
-  outline: none;
-  color: red;
-  animation: reverse;
-  cursor: pointer;
-}
-
-.icon-button:hover {
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 20px;
-  outline: none;
-  color: rgb(8, 185, 117);
-  animation: reverse;
-}
-
-.flexbox-container-user{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  flex-flow: wrap;
-}
-
 #search-tag {
   display: inline;
 }
@@ -152,8 +78,97 @@
   color: black;
 }
 
+.pagination-container {
+  float: right;
+  margin-top: 10px;
+  margin-right: auto;  
+}
+
 @media screen and (max-width:600px) {
   .pagination-control {
     right: -52em;
+  }
+}
+
+.table {
+  display: flex;
+  flex-flow: column nowrap;
+  /* font-size: .8rem; */
+  margin: 0.5rem;
+  line-height: 1.5;
+  flex: 1 1 auto;
+}
+
+.th {
+  display: none;
+  font-weight: bold;
+  background-color: #f2f2f2;
+}
+
+.th > .td {
+  white-space: normal;
+  justify-content: center;
+  overflow:visible;
+}
+
+.tr {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.tr:nth-of-type(even) {
+  background-color: #f2f2f2;
+}
+
+.tr:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+
+.td {
+  display: flex;
+  flex-flow: row nowrap;
+  flex-grow: 1;
+  flex-basis: 0;
+  padding: 0.5em;
+  word-break: break-word;
+  overflow: scroll;
+  text-overflow: ellipsis;
+  min-width: 0px;
+  white-space: nowrap;
+}
+
+.name-cell {
+  flex: 2;
+  /* flex-grow: 2; */
+}
+
+.printing-cell {
+  flex: 1;
+  /* flex-grow: 2; */
+}
+
+.email-cell {
+  flex: 3;
+  /* flex-grow: 2; */
+}
+
+.table svg {
+  /* position: fixed; */
+}
+
+@media screen and (max-width: 1150px) {
+  .table {
+    font-size: 0.75em;
+  }
+}
+
+@media screen and (max-width: 910px) {
+  .table {
+    font-size: 0.5em;
+  }
+  .table svg {
+    /* width: calc(100% - 3vw); */
   }
 }
