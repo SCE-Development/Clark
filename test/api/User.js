@@ -133,7 +133,7 @@ describe('User', () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/users', form);
-      id = result.body[0]._id;
+      id = result.body.items[0]._id;
       expect(result).to.have.status(OK);
     });
   });
@@ -444,44 +444,6 @@ describe('User', () => {
       const query = '?search=a';
       const result = await test.sendGetRequestWithToken(
         token, `/api/User/countAllUsers${query}`);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-  });
-
-  describe('/GET currentUsers', () => {
-    it('Should return statusCode 200 if users exist', async () => {
-      setTokenStatus(true);
-      const query = '?search=&page=1&u=5';
-      const result = await test.sendGetRequestWithToken(
-        token, `/api/User/currentUsers${query}`);
-      expect(result).to.have.status(OK);
-      expect(result).to.be.json;
-      result.body.users[0].email.should.equal('d@e.f');
-      result.body.users[0].firstName.should.equal('pinkUnicorn');
-      result.body.users[0].lastName.should.equal('last-name');
-      result.body.users[0].discordID.should.equal('0987654321');
-      result.body.users.length.should.equal(1);
-    });
-    it('Should return statusCode 404 if no users exist', async () => {
-      setTokenStatus(true);
-      const query = '?search=ab%cd%de';
-      const result = await test.sendGetRequestWithToken(
-        token, `/api/User/currentUsers${query}`);
-      expect(result).to.have.status(NOT_FOUND);
-      result.body.users.length.should.equal(0);
-    });
-    it('Should return statusCode 403 if no token is passed in', async () => {
-      const query = '?search=';
-      const result = await test.sendGetRequest(
-        `/api/User/currentUsers${query}`);
-      expect(result).to.have.status(FORBIDDEN);
-    });
-    it('Should return statusCode 401 if an invalid ' +
-      'token was passed in', async () => {
-      setTokenStatus(false);
-      const query = '?search=';
-      const result = await test.sendGetRequestWithToken(
-        token, `/api/User/currentUsers${query}`);
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
