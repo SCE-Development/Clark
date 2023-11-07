@@ -19,10 +19,10 @@ describe('<Admin Dashboard />', () => {
     </BrowserRouter>
   );
 
-  it('Should render 5 Links', () => {
-    expect(wrapper.find(Link)).to.have.lengthOf(5);
+  it('Should render 6 Links', () => {
+    expect(wrapper.find(Link)).to.have.lengthOf(6);
   });
-  it('Shoulder render 5 InfoCards', () => {
-    expect(wrapper.find(InfoCard)).to.have.lengthOf(5);
+  it('Shoulder render 6 InfoCards', () => {
+    expect(wrapper.find(InfoCard)).to.have.lengthOf(6);
   });
 });
