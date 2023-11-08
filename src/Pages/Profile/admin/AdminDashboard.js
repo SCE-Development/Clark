@@ -11,7 +11,7 @@ function AdminDashboard() {
     { title: 'LED Sign', url: '/led-sign' },
     { title: '3D Console', url: '/3DConsole' },
     { title: 'Speakers', url: '/speakers'},
-    { title: 'URL Shortener', url: '/short'}
+    { title: 'URL Shortener', url: '/short'},
   ];
 
   return (
