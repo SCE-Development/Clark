@@ -5,7 +5,7 @@ services:
     restart: always
     image: 'mongo'
     volumes:
-      - '/data/db:/data/db' 
+      - '/data/db:/data/db'
     command: 'mongod'
   keep-ssh-tunnel-open:
     container_name: keep-ssh-tunnel-open
@@ -69,7 +69,7 @@ services:
       - mongodb
     depends_on:
       - mongodb
-  
+ 
   frontend:
     container_name: sce-frontend
     build:
@@ -81,7 +81,15 @@ services:
       - mongodb
     depends_on:
       - mongodb
-      
+ 
+  prometheus:
+    image: prom/prometheus:latest
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - '127.0.0.1:9090:9090'
 
   web:
     image: 'nginx'
