@@ -21,6 +21,10 @@
     color: black;
 }
 
+#alt {
+    justify-content: center
+}
+
 .divider {
     padding: 12%;
 }

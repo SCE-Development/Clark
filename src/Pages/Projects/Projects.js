@@ -37,6 +37,11 @@ export default function ProjectsPage() {
       ' SCE interns designed an officer-controlled illuminated sign, ' +
       'functioning to brighten the clubroom\'s atmosphere.'
     },
+    {'link': 'https://github.com/SCE-Development/sce-speaker',
+      'image': 'https://i.imgur.com/GWRcv1u.jpg',
+      'name': 'Speaker', 'subnote':'',
+      'caption': 'lorem ipsum'
+    },
   ];
 
   return (
