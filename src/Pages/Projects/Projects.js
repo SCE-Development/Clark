@@ -38,9 +38,12 @@ export default function ProjectsPage() {
       'functioning to brighten the clubroom\'s atmosphere.'
     },
     {'link': 'https://github.com/SCE-Development/sce-speaker',
-      'image': 'https://i.imgur.com/GWRcv1u.jpg',
-      'name': 'Speaker', 'subnote':'',
-      'caption': 'lorem ipsum'
+      'image': 'https://user-images.githubusercontent.com/55469119' +
+      '/290972846-734e90ab-73f8-4460-a24a-2fdb601874ce.jpg',
+      'name': 'Sce Speaker', 'subnote':'',
+      'caption': 'In the spirit of our love for speakers, SCE\'s dev team ' +
+      'constructed a speaker api, which streams youtube audio which is ' +
+      'requested  by a user on clark through an ssh tunnel!'
     },
   ];
 
