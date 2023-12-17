@@ -23,39 +23,7 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const {sendVerificationEmail} = require('../util/emailHelpers');
-const { userWithEmailExists } = require('../util/userHelpers');
-
-
-/**
- * Check if a Sunday has passed in between the user's last login date and
- * today's date. This is because the printing pages reset every Sunday.
- * @param {Date} lastLogin the date when the user last logged in
- * @returns {Boolean} returns boolean representing if the pages need to be
- * reset
- */
-function checkIfPageCountResets(lastLogin) {
-  if (!lastLogin) return false;
-
-  let date = new Date(lastLogin.getTime());
-  const newDate = new Date();
-  let isSunday = false;
-
-  // If last login was today, don't check.
-  if (date.toDateString() === newDate.toDateString()) {
-    return false;
-  }
-
-  while (date <= newDate) {
-    let day = date.getDay();
-    isSunday = (day === 0);
-    if (isSunday) {
-      return true;
-    }
-    date.setDate(date.getDate() + 1);
-  }
-
-  return false;
-}
+const { userWithEmailExists, checkIfPageCountResets } = require('../util/userHelpers');
 
 // Register a member
 router.post('/register', async (req, res) => {

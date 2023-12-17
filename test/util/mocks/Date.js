@@ -4,6 +4,22 @@ const sinon = require('sinon');
 let clock = null;
 
 /**
+ * Mock current time to desired day, month and year
+ * @param {Number} day - day to mock
+ * @param {Number} month - month to mock
+ * @param {Number} year - month to mock
+ */
+function mockDayMonthAndYear(day, month, year) {
+  clock = sinon.useFakeTimers({
+    now: new Date(year, month, day),
+    toFake: [
+      'setTimeout', 'clearTimeout', 'setImmediate', 'clearImmediate',
+      'setInterval', 'clearInterval', 'Date'
+    ],
+  });
+}
+
+/**
  * Mock current time to desired month and year
  * @param {Number} month - month to mock
  * @param {Number} year - month to mock
@@ -34,4 +50,4 @@ function revertClock() {
   if (clock) clock.restore();
 }
 
-module.exports = { mockMonthAndYear, mockMonth, revertClock };
+module.exports = { mockDayMonthAndYear, mockMonthAndYear, mockMonth, revertClock };
