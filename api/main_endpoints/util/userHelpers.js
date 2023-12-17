@@ -173,5 +173,10 @@ function checkIfPageCountResets(lastLogin) {
   return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
 
-
-
+module.exports = {
+  registerUser,
+  getMemberExpirationDate,
+  hashPassword,
+  userWithEmailExists,
+  checkIfPageCountResets,
+};
