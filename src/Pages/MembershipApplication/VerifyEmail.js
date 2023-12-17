@@ -14,23 +14,14 @@ export default class VerifyEmail extends React.Component {
   }
 
   componentDidMount() {
-    let querystring = this.props.location.search;
-    querystring = querystring.substring(
-      querystring.indexOf('?') + 1
-    ).split('&');
-    const params = {};
-    let pair;
-    const d = decodeURIComponent;
-
-    for (let i = querystring.length - 1; i >= 0; i--) {
-      pair = querystring[i].split('=');
-      params[d(pair[0])] = d(pair[1] || '');
-    }
+    const urlParams = new URLSearchParams(this.props.location.search);
+    const email = urlParams.get('user');
+    const hashedId = urlParams.get('id');
 
     this.setState(
       {
-        email: params.user,
-        hashedId: params.id
+        email: email,
+        hashedId: hashedId
       },
       () => {
         this.validateVerificationEmail();
