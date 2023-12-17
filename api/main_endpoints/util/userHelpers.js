@@ -166,20 +166,10 @@ function checkIfPageCountResets(lastLogin) {
   // tomorrow, last week etc
   const now = new Date();
   
-  // If last login was today, don't check (page count won't reset)
-  // if (oldDate.toDateString() === now.toDateString()) {
-  //   return false;
-  // }
-
   const week = 7 * 24 * 60 * 60 * 1000; // a week in milliseconds
   
-  // if users last login was >= week ago, reset is allowed
-  if (now.getTime() - oldDate.getTime() >= week) {
-    return true;
-  }
-
-  // otherwise, if there was a sunday between the last login and now, reset
-  if (oldDate.getDay() >= now.getDay()) {
+  // if users last login was >= week ago OR there was a sunday between the last login and now, reset is allowed
+  if (now.getTime() - oldDate.getTime() >= week || oldDate.getDay() > now.getDay()) { 
     return true;
   }
 
