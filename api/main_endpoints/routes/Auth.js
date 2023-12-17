@@ -169,33 +169,6 @@ router.post('/login', function(req, res) {
   );
 });
 
-// Edit/Update a member record
-router.post('/setEmailToVerified', (req, res) => {
-  const query = { email: req.body.email };
-
-  User.updateOne(query, { emailVerified: true }, function(error, result) {
-    if (error) {
-      const info = {
-        userEmail: req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: 'user/setEmailToVerified',
-        errorDescription: error
-      };
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-    }
-
-    if (result.nModified < 1) {
-      return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.queryEmail} not found.` });
-    }
-
-    return res.status(OK).send({
-      message: `${req.body.queryEmail} was updated.`
-    });
-  });
-});
-
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
