@@ -165,21 +165,13 @@ function checkIfPageCountResets(lastLogin) {
   // by mocking, we can have `new Date` return
   // tomorrow, last week etc
   const now = new Date();
-  const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000; // a week in milliseconds
+  const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
   // reset if users last login was >= week ago OR there was a sunday between the last login and now
-  if (now.getTime() - oldDate.getTime() >= oneWeekInMilliseconds
-  || oldDate.getDay() > now.getDay()) {
-    return true;
-  }
+  const lastLoginWasOverOneWeekAgo  = now.getTime() - oldDate.getTime() >= oneWeekInMilliseconds;
+  const aSundayHasPassedSinceLastLogin = oldDate.getDay() > now.getDay();
 
-  return false;
+  return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
 
 
-module.exports = {
-  registerUser,
-  getMemberExpirationDate,
-  hashPassword,
-  userWithEmailExists,
-  checkIfPageCountResets,
-};
+
