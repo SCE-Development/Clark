@@ -165,11 +165,9 @@ function checkIfPageCountResets(lastLogin) {
   // by mocking, we can have `new Date` return
   // tomorrow, last week etc
   const now = new Date();
-  
   const week = 7 * 24 * 60 * 60 * 1000; // a week in milliseconds
-  
-  // if users last login was >= week ago OR there was a sunday between the last login and now, reset is allowed
-  if (now.getTime() - oldDate.getTime() >= week || oldDate.getDay() > now.getDay()) { 
+  // reset if users last login was >= week ago OR there was a sunday between the last login and now
+  if (now.getTime() - oldDate.getTime() >= week || oldDate.getDay() > now.getDay()) {
     return true;
   }
 
