@@ -26,6 +26,8 @@ const {
   restoreTokenMock,
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
+const { checkIfPageCountResets } = require('../../api/main_endpoints/util/userHelpers.js');
+const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
 
 chai.should();
 chai.use(chaiHttp);
@@ -60,6 +62,7 @@ describe('Auth', () => {
 
   afterEach(() => {
     resetTokenMock();
+    revertClock();
   });
 
   const token = '';
@@ -186,6 +189,46 @@ describe('Auth', () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/Auth/verify', {});
       expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('checkIfPageCountResets()', () => {
+    it('Should reset page count when the last login was over 7 days ago',
+      async () => {
+        // mock current day to January 10th, 2023 (Tuesday)
+        const mockCurrentDate = mockDayMonthAndYear(10, 0, 2023);
+        // mock last login to January 1st, 2023 (Sunday)
+        const mockLastLogin = new Date(2023, 0, 1);
+        const result = checkIfPageCountResets(mockLastLogin);
+        expect(result).to.be.true;
+      });
+
+    it('Should reset page count when there is a Sunday between last login and now',
+      async () => {
+        // mock current day to January 8th, 2023 (Sunday)
+        const mockCurrentDate = mockDayMonthAndYear(9, 0, 2023);
+        // mock last login to January 7th, 2023 (Saturday)
+        const mockLastLogin = new Date(2023, 0, 7);
+        const result = checkIfPageCountResets(mockLastLogin);
+        expect(result).to.be.true;
+      });
+
+    it('Should not reset page count when the last login was less than 7 days ago ' +
+      'and there is no Sunday between logins', async () => {
+      // mock current day to January 2nd, 2023 (Monday)
+      const mockCurrentDate = mockDayMonthAndYear(2, 0, 2023);
+      // mock last login to January 1st, 2023 (Sunday)
+      const mockLastLogin = new Date(2023, 0, 1);
+      const result = checkIfPageCountResets(mockLastLogin);
+      expect(result).to.be.false;
+    });
+
+    it('Should not reset page count if today is Sunday, user has logged in once, ' +
+      'and user logs in a second time', async () => {
+      const mockCurrentDate = mockDayMonthAndYear(1, 0, 2023);
+      const mockLastLogin = new Date(2023, 0, 1);
+      const result = checkIfPageCountResets(mockLastLogin);
+      expect(result).to.be.false;
     });
   });
 

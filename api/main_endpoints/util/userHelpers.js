@@ -147,10 +147,36 @@ function hashPassword(password) {
   });
 }
 
+/**
+ * Check if a Sunday has passed in between the user's last login date and
+ * today's date. This is because the printing pages reset every Sunday.
+ * @param {Date} lastLogin the date when the user last logged in
+ * @returns {Boolean} returns boolean representing if the pages need to be
+ * reset
+ */
+function checkIfPageCountResets(lastLogin) {
+  if (!lastLogin) return false;
+
+  let oldDate = new Date(lastLogin.getTime());
+
+  // this returns "right now" when called
+  // to unit test, we mock when "right now" is
+  //
+  // by mocking, we can have `new Date` return
+  // tomorrow, last week etc
+  const now = new Date();
+  const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+  // reset if users last login was >= week ago OR there was a sunday between the last login and now
+  const lastLoginWasOverOneWeekAgo  = now.getTime() - oldDate.getTime() >= oneWeekInMilliseconds;
+  const aSundayHasPassedSinceLastLogin = oldDate.getDay() > now.getDay();
+
+  return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
+}
 
 module.exports = {
   registerUser,
   getMemberExpirationDate,
   hashPassword,
   userWithEmailExists,
+  checkIfPageCountResets,
 };
