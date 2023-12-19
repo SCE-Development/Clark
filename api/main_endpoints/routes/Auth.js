@@ -104,12 +104,7 @@ router.post('/login', function(req, res) {
 
             // check here to see if we should reset the pagecount. If so, do it
             if (checkIfPageCountResets(user.lastLogin)) {
-              User.updateOne(
-                // query
-                { email: user.email },
-                // update this field
-                { pagesPrinted: 0 }
-              );
+              user.pagesPrinted = 0;
             }
 
             // Include fields from the User model that should
@@ -122,10 +117,18 @@ router.post('/login', function(req, res) {
               pagesPrinted: user.pagesPrinted,
               _id: user._id
             };
-            const token = jwt.sign(
-              userToBeSigned, config.secretKey, jwtOptions
-            );
-            res.status(OK).send({ token: 'JWT ' + token });
+            user
+              .save()
+              .then(() => {
+                const token = jwt.sign(
+                  userToBeSigned, config.secretKey, jwtOptions
+                );
+                res.json({ token: 'JWT ' + token });
+              })
+              .catch((error) => {
+                logger.error('unable to login user', error);
+                res.sendStatus(SERVER_ERROR);
+              });
           } else {
             res.status(UNAUTHORIZED).send({
               message: 'Username or password does not match our records.'
