@@ -16,10 +16,6 @@ export default function Home(props) {
   const [error, setError] = useState();
   const [aliasTaken, setAliasTaken] = useState();
 
-  /**
-   * Cleezy page is disabled by default since you have to run the Cleezy server
-   * separately. To enable, go to config.json and set ENABLED under Cleezy to true
-   */
   async function getCleezyUrls() {
     const urlsFromDb = await getAllUrls();
     console.log("on frontend ", urlsFromDb);

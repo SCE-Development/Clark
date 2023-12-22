@@ -1,0 +1,157 @@
+.largestHeader {
+    margin-top: 1vh;
+    font-size: 48pt;
+    text-align: center;
+}
+
+.pillLabel {
+    background-color: #2c3c8c;
+    border-radius: 38pt;
+    font-size: 3.9vw;
+    font-style: bold;
+    width: 95%;
+    text-align: center;
+    display: inline-block;
+    color: white;
+}
+
+.missionPillLabel {
+    background-color: #2c3c8c;
+    border-radius: 38pt;
+    font-size: 3.9vw;
+    font-style: bold;
+    width: 50%;
+    text-align: center;
+    display: inline-block;
+    color: white;
+}
+
+.aboutParagraph {
+    font-size: 1.2vw;
+    text-align: center;
+    font-style: bold;
+    margin-left: 2vw;
+    margin-right: 2vw;
+}
+
+.quarterDiv {
+    width: 45vw;
+    text-align: center;
+}
+
+.aboutUsRowDiv {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2%;
+    margin-left: 1vw;
+    margin-right: 1vw;
+    justify-content: center;
+}
+
+.placeHolder {
+    background-color: #3d3e3e;
+    border-radius: 30pt;
+    font-size: 5vw;
+    color: white;
+    font-style: bold;
+    width: 40vw;
+    height: 20vw;
+    text-align: center;
+    display: inline-block;
+    margin-top: 2%;
+}
+
+.centerDiv {
+    text-align: center;
+}
+
+.glasspane {
+    flex-shrink: 0;
+    border-radius: 20px;
+    border: 3px solid #000;
+    background: rgba(63, 130, 169, 0.05);
+    box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(15px);
+}
+
+@media screen and (max-width: 1140px) {
+    .largestHeader {
+        margin-top: 1vh;
+        font-size: 5vw;
+        text-align: center;
+    }
+
+    .pillLabel {
+        background-color: #2c3c8c;
+        border-radius: 38pt;
+        font-size: 6.8vw;
+        font-style: bold;
+        width: 90%;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .missionPillLabel {
+        background-color: #2c3c8c;
+        border-radius: 38pt;
+        font-size: 7vw;
+        font-style: bold;
+        width: 50vw;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .aboutParagraph {
+        font-size: 2.2vw;
+        text-align: center;
+        font-style: bold;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
+    .quarterDiv {
+        margin-top: 2%;
+        width: 90vw;
+        text-align: center;
+    }
+
+    .flexDiv {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 0;
+        margin-left: 2%;
+        margin-right: 2%;
+        justify-content: center;
+    }
+
+    .placeHolder {
+        background-color: #3d3e3e;
+        border-radius: 30pt;
+        font-size: 7vw;
+        color: white;
+        font-style: bold;
+        width: 80vw;
+        height: 40vw;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .aboutUsRowDiv {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 0;
+        margin-left: 1vw;
+        margin-right: 1vw;
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .aboutParagraph {
+        font-size: 12pt;
+        text-align: center;
+        font-style: bold;
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+}

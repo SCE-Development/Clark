@@ -2,13 +2,6 @@
 
 import { NextResponse } from 'next/server';
 
-const { Cleezy } = require('../../config/config.json');
-const { ENABLED } = true;
-// ENABLED = true;
-
-let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
-  || 'http://localhost:8000';
-
 let CLEEZY_URL = 'http://localhost:8000';
 
 export async function getAllUrls() {
@@ -26,30 +19,3 @@ export async function getAllUrls() {
         }
       }
 }
-
-// export async function createUrl(url, alias = null, token) {
-//   let status = new ApiResponse();
-//   const urlToAdd = { url, alias };
-//   try {
-//     const response = await axios
-//       .post(PERIPHERAL_API_URL + '/Cleezy/createUrl', { token, ...urlToAdd });
-//     const data = response.data;
-//     status.responseData = data;
-//   } catch (err) {
-//     status.error = true;
-//     status.responseData = err;
-//   }
-//   return status;
-// }
-
-// export async function deleteUrl(aliasIn, token) {
-//   let status = new ApiResponse();
-//   const alias = { 'alias': aliasIn };
-//   await axios
-//     .post(PERIPHERAL_API_URL + '/Cleezy/deleteUrl', { token, ...alias })
-//     .catch(err => {
-//       status.responseData = err;
-//       status.error = true;
-//     });
-//   return status;
-// }
