@@ -76,6 +76,7 @@ util/common/security.js
 *.code-workspace
 .DS_Store
 .prettierrc.js
+.idea/
 
 build
 
