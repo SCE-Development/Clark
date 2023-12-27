@@ -36,7 +36,11 @@ export default () => {
               <span class="svg"><i class="fas fa-envelope"></i></span>
 
               General Inquries
+              {/* <h1 className="text-3xl font-bold underline">
+                Hello world!
+              </h1> */}
               <li className='sub-list'>
+
                 <p
                   style=
                     {{color: 'rgb(172, 172, 172)'

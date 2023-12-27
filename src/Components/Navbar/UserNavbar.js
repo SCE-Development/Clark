@@ -34,6 +34,9 @@ export default function UserNavBar(props) {
 
   return (
     <div className={'user-nav'}>
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
       <Navbar expand='xl' className = "navbar">
         <NavbarBrand href='/'>
           <div>
