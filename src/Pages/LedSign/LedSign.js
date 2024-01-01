@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-import { Spinner, Input, Button, Container } from 'reactstrap';
 
 
 import ConfirmationModal

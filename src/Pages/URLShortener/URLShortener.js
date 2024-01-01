@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
-import { Container, Button, Row, Col, Input } from 'reactstrap';
 import { trashcanSymbol } from '../Overview/SVG';
 
 export default function URLShortenerPage(props) {

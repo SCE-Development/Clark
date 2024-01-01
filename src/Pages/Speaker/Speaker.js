@@ -1,6 +1,5 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Input, button, Container, Row, Col } from 'reactstrap';
 import { queued, addUrl, pause, resume, skip } from '../../APIFunctions/Speaker';
 
 

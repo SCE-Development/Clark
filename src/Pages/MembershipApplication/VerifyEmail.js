@@ -54,7 +54,7 @@ export default class VerifyEmail extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className='flex justify-center'>
         {!this.state.componentLoaded ? (
           <div>
             <h3>Verifying</h3>
@@ -74,7 +74,7 @@ export default class VerifyEmail extends React.Component {
             <p
               style={
                 {
-                  margin: '2em',
+                  margin: '1em',
                   cursor: 'pointer',
                   color:'blue',
                   textDecoration: 'underline'

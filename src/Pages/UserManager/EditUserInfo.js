@@ -3,13 +3,6 @@ import {
   getUserById,
   editUser,
 } from '../../APIFunctions/User';
-import {
-  FormGroup,
-  Label,
-  Col,
-  Input,
-  Button,
-} from 'reactstrap';
 
 import MajorDropdown from '../MembershipApplication/MajorDropdown';
 import RoleDropdown from './RoleDropdown';

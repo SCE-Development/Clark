@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import { Row, Container } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
 import Background from '../../Components/Background/background';
-
-import { error } from 'pdf-lib';
 
 export default function Login(props) {
   const queryParams = new URLSearchParams(window.location.search);
@@ -79,9 +74,6 @@ export default function Login(props) {
           </div>
         </form>
       </div>
-      {/* <Row className='form-card-login'>
-
-      </Row> */}
       <Background />
     </div>
   );
