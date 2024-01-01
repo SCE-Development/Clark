@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './background.css';
 
 function defaultProps(props) {
   const size = props.size || Math.min(window.innerWidth, window.innerHeight);
