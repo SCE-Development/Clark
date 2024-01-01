@@ -3,15 +3,12 @@ import {
   getUserById,
   editUser,
 } from '../../APIFunctions/User';
-import Header from '../../Components/Header/Header';
 import {
-  Container,
   FormGroup,
   Label,
   Col,
   Input,
   Button,
-  Row,
 } from 'reactstrap';
 
 import MajorDropdown from '../MembershipApplication/MajorDropdown';
@@ -47,151 +44,10 @@ export default function EditUserInfo(props) {
   ] = useState('Send');
   const [dataWasChanged, setDataWasChanged] = useState(false);
 
+  const INPUT_CLASS_NAME = 'indent-2 block w-full rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6';
+
   const [loading, setLoading] = useState(true);
   const [userNotFound, setUserNotFound] = useState(false);
-
-  let initialState = [
-    {
-      label: 'Email',
-      defaultValue: email,
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setEmail(e.target.value);
-      },
-    },
-    {
-      label: 'Password',
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setPassword(e.target.value);
-      },
-      placeholder: 'intentionally blank',
-      type: 'password',
-    },
-    {
-      label: 'Pages Printed',
-      defaultValue: pagesPrinted,
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setPagesPrinted(e.target.value);
-      },
-      type: 'number',
-    },
-    {
-      label: 'Membership Expiration',
-      Component: (
-        <ExpirationDropdown
-          defaultValue={'asdfasf'}
-          setNumberOfSemestersToSignUpFor={(value) => {
-            setDataWasChanged(true);
-            setNumberOfSemestersToSignUpFor(value);
-          }}
-        />
-      ),
-    },
-    {
-      label: 'Door Code',
-      defaultValue: doorCode,
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setDoorCode(e.target.value);
-      },
-      type: 'number',
-    },
-    {
-      label: 'Email Verified?',
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setEmailVerified(e.target.checked);
-      },
-      checked: !!emailVerified,
-      type: 'checkbox',
-    },
-    {
-      label: 'Resend verification email (sends to most recently saved email):',
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setEmailVerified(e.target.checked);
-      },
-      checked: !!emailVerified,
-      Component: <Button
-        outline
-        color='success'
-        onClick={async () => {
-          const result = await sendVerificationEmail(email, props.user.token);
-          if (result.error) {
-            return alert(
-              'unable to send verification email.' +
-              ' please contact dev team if retrying fails'
-            );
-          }
-          setVerificationEmailButtonText('Verification email sent!');
-          setTimeout(() => {
-            setVerificationEmailButtonText('Send');
-          }, 1500);
-        }}>
-        {verificationEmailButtonText}
-      </Button>
-    },
-    {
-      label: 'Access Level',
-      defaultValue: accessLevel,
-      Component: <RoleDropdown
-        setuserMembership={(value) => {
-          setDataWasChanged(true);
-          setAccessLevel(value);
-        }}
-        defaultValue={accessLevel}
-      />
-    },
-    {
-      label: 'Major',
-      defaultValue: major,
-      Component:
-        <MajorDropdown
-          hideMajorPrompt={true}
-          defaultMajor={major}
-          setMajor={(value) => {
-            setDataWasChanged(true);
-            setMajor(value);
-          }} />,
-    },
-    {
-      label: 'First Name',
-      defaultValue: firstName,
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setFirstName(e.target.value);
-      },
-    },
-    {
-      label: 'Last Name',
-      defaultValue: lastName,
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setLastName(e.target.value);
-      },
-    },
-    {
-      label: 'Opt into Blast Emails?',
-      defaultValue: emailOptIn,
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setEmailOptIn(e.target.checked);
-      },
-      checked: !!emailOptIn,
-      type: 'checkbox',
-    },
-    {
-      label: 'Discord ID',
-      defaultValue: discordId,
-      onChange: (e) => {
-        setDataWasChanged(true);
-        setDiscordId(e.target.value);
-      },
-      type: 'number',
-    },
-  ];
 
   useEffect(() => {
     async function getUser() {
@@ -252,62 +108,6 @@ export default function EditUserInfo(props) {
     }
   }
 
-  function renderInputOrCustomComponent(field) {
-    const { label, ...inputProps } = field;
-    return (
-      <FormGroup row style={{ marginBottom: '10px' }}>
-        <Label for="exampleEmail" sm={2}>{label}</Label>
-        <Col sm={10}>
-          {
-            field.Component
-            ||
-            <Input
-              {...inputProps}
-            />
-          }
-        </Col>
-      </FormGroup>
-    );
-  }
-
-  function renderEditInfo() {
-    return (
-      <React.Fragment>
-        {initialState.map((field, index) => (
-          <React.Fragment key={index}>
-            {renderInputOrCustomComponent(field)}
-          </React.Fragment>
-        ))}
-        {
-          dataWasChanged &&
-          <div style={{
-            display: 'flex',
-            width: '10em',
-            maxWidth: '15em',
-            justifyContent: 'space-between'
-          }}
-          >
-            {/*
-              we can do better here, we can keep track of the user's
-              initial state and just revert to it instead of reloading
-              the page
-            */}
-            <Button
-              onClick={() => window.location.reload()}
-              color="secondary">
-              Cancel
-            </Button>
-            <Button
-              color={submitButtonColor}
-              onClick={() => handleSubmit()}>
-              {submitButtonText}
-            </Button>
-          </div>
-        }
-      </React.Fragment>
-    );
-  }
-
   function renderExpirationDate() {
     // default case, render the users expiration
     let expiresOrExpired = 'expires';
@@ -357,31 +157,266 @@ export default function EditUserInfo(props) {
 
     if (userNotFound) {
       return (
-        <h1 style={{ textAlign: 'center' }}>
-          User with ID: {props.match.params.id} not found!
-        </h1>
+        <div className="flex flex-row min-h-screen justify-center items-center">
+          <div role="alert" className="alert alert-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            <span>
+              User with ID: {props.match.params.id} not found.
+            </span>
+          </div>
+        </div>
       );
     } else {
       return (
-        <Container style={{ marginTop: '1em', marginBottom: '3em' }}>
-          <Row style={{ marginBottom: '3em', fontSize: '1.5em' }}>
-            <Col>
-              Joined SCE: <b>{joinDate.toDateString()}</b>
-            </Col>
-            <Col>
-              {renderExpirationDate()}
-            </Col>
-          </Row>
+        <div>
+          <div className="space-y-12">
+            <div className="border-b border-gray-900/10 mt-10 pb-12">
+              <h2 className="text-base font-semibold leading-7">Edit Member Information</h2>
+              <div className='flex flex-col md:flex-row mt-5'>
+                <div className='md:w-3/6'>
+                  Joined SCE: <b>{joinDate.toDateString()}</b>
+                </div>
+                <div className='flex w-auto md:w-5/6 md:justify-end'>
+                  <div >
+                    {renderExpirationDate()}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-10 sm:col-span-4">
+                <label htmlFor="email" className="block text-sm font-medium leading-6">Email address</label>
+                <div className="mt-2">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    defaultValue={email}
+                    onChange={(e) => {
+                      setDataWasChanged(true);
+                      setEmail(e.target.value);
+                    }}
+                    className={INPUT_CLASS_NAME}
+                  />
+                </div>
+              </div>
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div className="sm:col-span-2 sm:col-start-1">
+                  <label htmlFor="password" className="block text-sm font-medium leading-6">Password</label>
+                  <div className="mt-2">
+                    <input
+                      type="password"
+                      name="password"
+                      id="password"
+                      className={INPUT_CLASS_NAME}
+                      placeholder='intentionally blank'
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setPassword(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
 
-          {renderEditInfo()}
-        </Container>
+                <div className="sm:col-span-2">
+                  <label htmlFor="pages-printed" className="block text-sm font-medium leading-6">Pages Printed</label>
+                  <div className="mt-2">
+                    <input
+                      type="number"
+                      name="pages-printed"
+                      id="pages-printed"
+                      defaultValue={pagesPrinted}
+                      autoComplete="address-level1"
+                      className={INPUT_CLASS_NAME}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setPagesPrinted(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="door-code" className="block text-sm font-medium leading-6">Door Code</label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="door-code"
+                      id="door-code"
+                      className={INPUT_CLASS_NAME}
+                      defaultValue={doorCode}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setDoorCode(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-3">
+                  <ExpirationDropdown
+                    defaultValue={'asdfasf'}
+                    setNumberOfSemestersToSignUpFor={(value) => {
+                      setDataWasChanged(true);
+                      setNumberOfSemestersToSignUpFor(value);
+                    }}
+                  />
+                </div>
+                <div className="sm:col-span-4 w-4/6">
+                  <div className="form-control">
+                    <label className="label cursor-pointer">
+                      <span className="label-text">Email Verified?</span>
+                      <input
+                        type="checkbox"
+                        className="toggle"
+                        checked={!!emailVerified}
+                        onChange={(e) => {
+                          setDataWasChanged(true);
+                          setEmailVerified(e.target.checked);
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
+                <div className="sm:col-span-4 w-4/6">
+                  <div className="form-control">
+                    <label className="label cursor-pointer">
+                      <span className="label-text">Resend verification email (sends to most recently saved email):</span>
+                      <div
+                        className="btn btn-success w-auto"
+                        checked={emailOptIn}
+                        onClick={async () => {
+                          const result = await sendVerificationEmail(email, props.user.token);
+                          if (result.error) {
+                            return alert(
+                              'unable to send verification email.' +
+                              ' please contact dev team if retrying fails'
+                            );
+                          }
+                          setVerificationEmailButtonText('Email sent!');
+                          setTimeout(() => {
+                            setVerificationEmailButtonText('Send');
+                          }, 1500);
+                        }}
+                      >
+                        {verificationEmailButtonText}
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                <div className="sm:col-span-3">
+                  <RoleDropdown
+                    setuserMembership={(value) => {
+                      setDataWasChanged(true);
+                      setAccessLevel(value);
+                    }}
+                    defaultValue={accessLevel}
+                  />
+                </div>
+                <div className="sm:col-span-3">
+                  <MajorDropdown
+                    defaultMajor={major}
+                    setMajor={(value) => {
+                      setDataWasChanged(true);
+                      setMajor(value);
+                    }} />
+                </div>
+              </div>
+
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div className="col-span-4 sm:col-span-3">
+                  <label htmlFor="first-name" className="block text-sm font-medium leading-6">First name</label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="first-name"
+                      id="first-name"
+                      autoComplete="given-name"
+                      className={INPUT_CLASS_NAME}
+                      defaultValue={firstName}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setFirstName(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-span-4 sm:col-span-3">
+                  <label htmlFor="last-name" className="block text-sm font-medium leading-6">Last name</label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="last-name"
+                      id="last-name"
+                      autoComplete="family-name"
+                      className={INPUT_CLASS_NAME}
+                      defaultValue={lastName}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setLastName(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+
+
+                <div className="col-span-4 w-4/6">
+                  <div className="form-control">
+                    <label className="label cursor-pointer">
+                      <span className="label-text">Opt into blast emails?</span>
+                      <input type="checkbox" className="toggle" checked={emailOptIn} onChange={(e) => setEmailOptIn(e.target.checked)} />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="col-span-4">
+                  <label htmlFor="discord-id" className="block text-sm font-medium leading-6">Discord ID</label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="discord-id"
+                      id="discord-id"
+                      className={INPUT_CLASS_NAME}
+                      defaultValue={discordId}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setDiscordId(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {dataWasChanged && (
+            <div className="pb-6 flex items-center justify-end gap-x-6">
+              <button
+                type="button"
+                className="text-sm font-semibold leading-6"
+                // we can do better here, we can keep track of the user's
+                // initial state and just revert to it instead of reloading
+                // the page
+                onClick={() => window.location.reload()}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                onClick={() => handleSubmit()}
+              >
+                {submitButtonText}
+              </button>
+            </div>
+          )}
+        </div>
       );
     }
   }
 
   return (
-    <div className='userEditPage'>
-      <Header title='Edit User Information' />
+    <div className='px-6 bg-base-300 text-slate-20'>
       {renderUserInfo()}
     </div>
   );

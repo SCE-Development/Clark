@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'reactstrap';
-import './email-template.css';
+
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 

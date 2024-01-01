@@ -8,9 +8,7 @@ import {
   Label,
 } from 'reactstrap';
 
-import Header from '../../Components/Header/Header';
 import { setUserEmailPreference, getUserData } from '../../APIFunctions/User';
-import './EmailPreferences.css';
 
 export default function EmailPreferencesPage(props) {
   const BLUE = '#2d75eb';
@@ -98,7 +96,6 @@ export default function EmailPreferencesPage(props) {
 
   return (
     <div className='email-preferences'>
-      <Header title='Email Preferences' />
       <Container
         style={{
           textAlign: 'center',

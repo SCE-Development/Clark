@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import './profile-modifier.css';
+
 
 export default function ProfileCard(props) {
   const [toggle, setToggle] = useState(false);

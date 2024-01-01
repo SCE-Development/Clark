@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import LoginInput from './LoginInput';
 import { loginUser } from '../../APIFunctions/Auth';
 import Background from '../../Components/Background/background';
-import './login.css';
+
+import { error } from 'pdf-lib';
 
 export default function Login(props) {
   const queryParams = new URLSearchParams(window.location.search);
@@ -36,33 +37,52 @@ export default function Login(props) {
         window.location.reload();
       }
     } else {
-      setErrorMsg(
-        loginStatus.responseData && loginStatus.responseData.data.message
-      );
+      if(loginStatus.responseData === undefined || loginStatus.responseData.data.message === undefined){
+        setErrorMsg('Backend May Be down, check with dev team!');
+      }else{
+        setErrorMsg(
+          loginStatus.responseData && loginStatus.responseData.data.message
+        );
+      }
     }
   }
 
   return (
-    <Container fluid id='background'>
-      <Row className='form-card-login'>
-        <form onSubmit={handleSubmit}>
-          <img id='img' alt='sce logo' src='images/SCE-glow.png' />
-
-          {fields.map((field, index) => {
-            return <LoginInput key={index} field={field} />;
-          })}
-
-          {errorMsg && <h6 className='login-error'>{errorMsg}*</h6>}
-
-          <button type='submit' id='loginBtn'>
-            Login
-          </button>
-          <p id='SignUp'>
-            <Link to='/register'>Create an account</Link>
-          </p>
+    <div className = 'flex-none md:flex  pt-4 '>
+      <div className='rounded-3xl backdrop-blur-sm shadow-2xl md:w-1/3  mt-20 pb-4 mb-auto ml-auto mr-auto px-5 text-center items-center justify-center'>
+        <div className='flex justify-center'>
+          <img id='img' alt='sce logo' src='https://sce.sjsu.edu/images/SCE-glow.png' width='2rem'  className='w-2/3 px-auto'/>
+        </div>
+        <form onSubmit={handleSubmit} className=''>
+          <div className='flex flex-col items-center'>
+            <label className="form-control w-full max-w-xs">
+              <div className="label">
+                <span className="label-text">Email</span>
+              </div>
+              <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
+            </label>
+            <label className="form-control w-full max-w-xs">
+              <div className="label">
+                <span className="label-text">Password</span>
+              </div>
+              <input type="password" placeholder="Password" className="input input-bordered w-full max-w-xs" onChange={(e) => setPassword(e.target.value)}/>
+            </label>
+            {errorMsg && <p className='text-red-500 text-sm md:text-md pt-2 w-full max-w-xs'>{errorMsg}*</p>}
+            <button type='submit' id='loginBtn' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
+              Login
+            </button>
+            <a className='btn mt-5 w-full max-w-xs' href='/register'>
+              <button type='submit'>
+                Create an Account
+              </button>
+            </a>
+          </div>
         </form>
-      </Row>
+      </div>
+      {/* <Row className='form-card-login'>
+
+      </Row> */}
       <Background />
-    </Container>
+    </div>
   );
 }

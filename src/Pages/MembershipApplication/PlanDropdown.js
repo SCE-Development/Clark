@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './registerPage.css';
+
 import {
   ButtonDropdown,
   DropdownToggle,

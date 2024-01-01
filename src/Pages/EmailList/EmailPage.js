@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import './email-page.css';
 import EmailList from './EmailList';
 import EmailTemplate from './EmailTemplate';
-import Header from '../../Components/Header/Header';
+
 import { Row, TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 
 export default class EmailPage extends Component {

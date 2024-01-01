@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import './AdminDashboard.css';
-import Header from '../../../Components/Header/Header';
+
 import { Button, Container } from 'reactstrap';
 import { getAllUserSubscribedAndVerified } from '../../../APIFunctions/User';
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import './navbar.css';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
 
@@ -14,6 +13,30 @@ function NavBarWrapper({
     window.location.reload();
   }
 
+  // basically if we are on an admin page, make the navbar
+  // appear on the side with instead of on top. Wrapping
+  // the component with the below div allows the navbar
+  // to appear on the side in a clean way. See below for more info
+  // https://flowbite.com/docs/components/sidebar/#default-sidebar
+  function maybeWrapComponentForAdminNavbar() {
+    if (enableAdminNavbar) {
+      return (
+        <div className="p-4">
+          <Component {...appProps} />
+        </div>
+      );
+    }
+    return <Component {...appProps} />;
+  }
+
+  if (enableAdminNavbar) {
+    return (
+      <AdminNavbar {...appProps} handleLogout={handleLogout} >
+        <Component {...appProps} />
+      </AdminNavbar>
+    );
+  }
+
   return (
     <>
       {enableAdminNavbar ? (
@@ -21,7 +44,7 @@ function NavBarWrapper({
       ) : (
         <UserNavbar {...appProps} handleLogout={handleLogout} />
       )}
-      <Component {...appProps} />
+      {maybeWrapComponentForAdminNavbar()}
     </>
   );
 }

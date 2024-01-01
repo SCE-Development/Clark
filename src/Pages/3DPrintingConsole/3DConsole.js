@@ -1,14 +1,12 @@
 import React from 'react';
 import RequestForm from './RequestForm';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './3D-console.css';
 import { Form, Container } from 'reactstrap';
 import {
   getAll3DPrintRequests,
   delete3DPrintRequest,
   update3DPrintRequestProgress
 } from '../../APIFunctions/3DPrinting';
-import Header from '../../Components/Header/Header';
+
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal';
 

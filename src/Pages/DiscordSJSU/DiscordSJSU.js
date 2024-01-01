@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './DiscordSJSU.css';
 import {Button} from 'reactstrap';
 import rolesIMG from './pics/roles.png';
 

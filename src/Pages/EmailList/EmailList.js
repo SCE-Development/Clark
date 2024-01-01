@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './email-list.css';
+
 import { getAllUsers, filterUsers } from '../../APIFunctions/User';
 import {
   Button,

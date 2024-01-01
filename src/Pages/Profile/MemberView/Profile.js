@@ -1,147 +1,117 @@
-import React, { Component } from 'react';
-import './profile-modifier.css';
-import InfoCard from './InfoCard.js';
+import React, { useEffect, useState } from 'react';
 import { getUserById } from '../../../APIFunctions/User';
-import { formatFirstAndLastName } from '../../../APIFunctions/Profile';
-import Header from '../../../Components/Header/Header';
-import PrintRequest from './PrintRequest';
-import ChangePassword from './ChangePassword';
-import Footer from '../../../Components/Footer/Footer.js';
-import { connectToDiscord } from '../../../APIFunctions/User';
+import ChangePasswordModal from './ChangePassword';
+import { membershipState, membershipStateToString } from '../../../Enums';
 
-// Font Awesome Imports
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faExclamationTriangle,
-  faDoorOpen,
-  faCalendarDay,
-  faCubes,
-  faPrint,
-  faLock
-} from '@fortawesome/free-solid-svg-icons';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { fab } from '@fortawesome/free-brands-svg-icons';
-library.add(fab);
+export default function Profile(props) {
+  const [response, setResponse] = useState({});
+  const [bannerMessage, setBannerMessage] = useState('');
+  const [bannerColor, setBannerColor] = useState('');
 
-const membershipStatus = require('../../../Enums').membershipState;
-
-export default class Profile extends Component {
-  constructor(props) {
-    super(props);
-
-    // Variables that will be send to data base
-    this.state = {
-      user: '',
-      fullName: ''
-    };
-    this.headerProps = {
-      title: 'SCE Member Profile'
-    };
+  async function getUserFromApi() {
+    const response = await getUserById(props.user._id, props.user.token);
+    setResponse(response.responseData);
   }
+  useEffect(() => {
+    getUserFromApi();
+  }, []);
 
-  async componentDidMount() {
-    const token = this.props.user.token;
-    const id = this.props.user._id;
-    const response = await getUserById(id, token);
-    if (!response.error) {
-      // concat user to full name
-      this.setState({ user: response.responseData }, () => {
-        const name = formatFirstAndLastName(this.props.user);
-
-        this.setState({ fullName: name });
-      });
+  function renderExpirationDate() {
+    if (response.accessLevel >= membershipState.OFFICER) {
+      return (
+        <span>
+          N/A due to {membershipStateToString(response.accessLevel)} account
+        </span>
+      );
     }
+    const formattedExpiration = new Date(response.membershipValidUntil).toDateString();
+    <div className="px-4 py-2">{formattedExpiration}</div>;
   }
 
-  async handleDiscordAuth() {
-    const response = await connectToDiscord(
-      this.props.user.email, this.props.user.token
-    );
+  return (
+    <div className='flex justify-center items-center mt-10'>
 
-    window.open(response.responseData);
-  }
-
-  render() {
-    const fields = this.state.user
-      ? [
-        { title: `Welcome, ${this.state.fullName}!`, value: '', style: '4rem' },
-        {
-          title: 'Door Code',
-          value: this.state.user.doorCode,
-          icon: <FontAwesomeIcon icon={faDoorOpen} />
-        },
-        {
-          title: 'Joined Date',
-          value: this.state.user.joinDate.slice(0, 10),
-          icon: <FontAwesomeIcon icon={faCalendarDay} />
-        },
-        { title: `${this.state.user.email}`, value: '', style: '2.5rem' },
-        {
-          title: 'Membership Expiration',
-          value:
-						this.props.user.accessLevel < membershipStatus.MEMBER
-						  ? 'Not Valid'
-						  : this.state.user.membershipValidUntil.slice(0, 10),
-          icon: <FontAwesomeIcon icon={faExclamationTriangle} />
-        },
-        {
-          title: '2D Prints',
-          value: '',
-          icon: <FontAwesomeIcon icon={faPrint} />,
-          function: () => {
-            window.location.href = '/2DPrinting';
-          }
-        },
-        {
-          title: 'Request 3D Printing',
-          value: <PrintRequest />,
-          icon: <FontAwesomeIcon icon={faCubes} /> },
-        {
-          title: 'Change Discord Account',
-          value: '',
-          icon: <FontAwesomeIcon icon={['fab', 'discord']} />,
-          function: () => {
-            this.handleDiscordAuth();
-          }
-        },
-        {
-          title: 'Change Password',
-          value: <ChangePassword
-            user={{ ...this.state.user, token: this.props.user.token }}
-          />,
-          icon: <FontAwesomeIcon icon={faLock} />
+      <div className="bg-slate-300 p-3 shadow-sm rounded-sm w-11/12">
+        {bannerMessage &&
+        <div role="alert" className={`alert alert-${bannerColor} mb-10`}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          <p className=''>
+            {bannerMessage}
+          </p>
+        </div>
         }
-      ]
-      : [
-        { title: '', value: '' },
-        { title: 'Door Code', value: '' },
-        { title: 'Joined Date', value: '' },
-        { title: 'Email', value: '' },
-        { title: 'Membership Expiration', value: '' },
-        { title: '2D Prints', value: '' },
-        { title: 'Request 3D Printing', value: '' },
-        { title: 'Sign-in with Discord', value: '' },
-        { title: 'Change Password', value: '' }
-      ];
-
-    return (
-      <div id="profile">
-        <Header {...this.headerProps} />
-        <div id="enclose">
-          <div id="profile-box">
-            {fields.map((elem, ind) => {
-              return (
-                <InfoCard
-                  key={ind}
-                  field={elem}
-                  user={{ ...this.state.user, token: this.props.user.token }}
-                />
-              );
-            })}
+        <div className="flex justify-between items-center space-x-2 font-semibold text-gray-900 leading-8">
+          <div className='flex space-x-3'>
+            <span clas="text-green-500">
+              <svg className="mt-1 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </span>
+            <span className="tracking-wide">About</span>
+          </div>
+          <div>
+            <button
+              className="btn btn-primary"
+              onClick={() =>
+                document.getElementById('change-password-modal').showModal()
+              }
+            >
+              Change Password
+            </button>
           </div>
         </div>
-        <Footer />
+        <div className="text-gray-700">
+          <div className="grid md:grid-cols-2 text-sm">
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Email</div>
+              <div className="px-4 py-2">
+                <a className="text-blue-800" href="mailto:jane@example.com">{response.email}</a>
+              </div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Door Code (for ENGR 294)</div>
+              <div className="px-4 py-2">{response.doorCode}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Pages printed this week<br />(resets Sunday)</div>
+              <div className="px-4 py-2">{response.pagesPrinted}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">First Name</div>
+              <div className="px-4 py-2">{response.firstName}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Last Name</div>
+              <div className="px-4 py-2">{response.lastName}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Account Type</div>
+              <div className="px-4 py-2">{membershipStateToString(response.accessLevel)}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Account Created</div>
+              <div className="px-4 py-2">{new Date(response.joinDate).toDateString()}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Membership Expiration</div>
+              <div className="px-4 py-2">{renderExpirationDate()}</div>
+            </div>
+          </div>
+        </div>
       </div>
-    );
-  }
+      <ChangePasswordModal
+        user={{ ...props.user, token: props.user.token }}
+        bannerCallback={(message, color, delay = 3000) => {
+          setBannerMessage(message);
+          setBannerColor(color);
+          setTimeout(() => {
+            setBannerMessage('');
+            setBannerColor('');
+          }, delay);
+        }}
+      />
+    </div>
+  );
 }

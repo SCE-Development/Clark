@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Container } from 'reactstrap';
-import './event-page.css';
+
 import { getUpcomingEvents } from '../../APIFunctions/Event';
 import EventCard from './EventCard';
-import Header from '../../Components/Header/Header';
+
 
 function AnnouncementList() {
   const [eventList, setEventList] = useState();

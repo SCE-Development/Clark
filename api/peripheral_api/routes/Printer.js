@@ -55,12 +55,13 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { raw, copies, pageRanges } = req.body;
+  const { raw, copies, pageRanges, sides } = req.body;
   axios
     .post(PRINTER_URL + '/print', {
       raw,
       copies,
       pageRanges,
+      sides,
     })
     .then(() => {
       res.sendStatus(OK);

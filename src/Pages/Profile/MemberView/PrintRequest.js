@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
-import './profile-modifier.css';
+
 import { search3DPrintRequests } from '../../../APIFunctions/3DPrinting';
 
 export default function PrintRequest(props) {

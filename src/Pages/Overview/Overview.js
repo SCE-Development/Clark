@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './Overview.css';
+
 const svg = require('./SVG');
 import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
-import {
-  // ButtonDropdown,
-  // DropdownToggle,
-  // DropdownMenu,
-  // DropdownItem,
-  Row,
-  Col,
-  // Table,
-} from 'reactstrap';
 // import { membershipState } from '../../Enums';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -82,7 +73,16 @@ export default function Overview(props) {
     const pageOffset = page * rowsPerPage;
     const startingElementNumber = (page * rowsPerPage) + 1;
     const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
-    setPaginationText(`${startingElementNumber} - ${endingElementNumber} / ${total}`);
+    setPaginationText(
+      <>
+        <p className='md:hidden'>
+          {startingElementNumber} - {endingElementNumber} / {total}
+        </p>
+        <p className="hidden md:inline-block">
+          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total}</span> results
+        </p>
+      </>
+    );
   }, [page, rowsPerPage, users, total]);
 
   // function filterUserByAccessLevel(accessLevel) {
@@ -140,24 +140,29 @@ export default function Overview(props) {
     const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
     if (users.length) {
       return (
-        <div className='pagination-container'>
-          <button
-            onClick={() => setPage(page - 1)}
-            disabled={page === 0 || loading}
-          >
-            prev
-          </button>
-          <button
-            onClick={() => setPage(page + 1)}
-            disabled={endingElementNumber >= total || loading}
-          >
-            next
-          </button>
-          <span>
-            <br></br>
-            {loading ? '...' : paginationText}
-          </span>
-        </div>
+        <nav className='flex justify-start mt-2 mb-6 mx-6'>
+          <div className='navbar-start flex items-center'>
+            <span>
+              {loading ? '...' : paginationText}
+            </span>
+          </div>
+          <div className='navbar-end flex justify-end space-x-3'>
+            <button
+              className='btn'
+              onClick={() => setPage(page - 1)}
+              disabled={page === 0 || loading}
+            >
+              previous
+            </button>
+            <button
+              className='btn'
+              onClick={() => setPage(page + 1)}
+              disabled={endingElementNumber >= total || loading}
+            >
+              next
+            </button>
+          </div>
+        </nav>
       );
     }
     return <></>;
@@ -171,7 +176,7 @@ export default function Overview(props) {
           ${userToDelete.firstName}? They'll be gone forever if you do.`,
         confirmText: `Yes, goodbye ${userToDelete.firstName}`,
         cancelText: 'No, they\'re chill',
-        toggle: () => setToggleDelete(!toggleDelete),
+        confirmClassAddons: 'bg-red-600 hover:bg-red-500',
         handleConfirmation: () => {
           deleteUser(userToDelete);
           setToggleDelete(!toggleDelete);
@@ -179,78 +184,89 @@ export default function Overview(props) {
         open: toggleDelete
       }
       } />
-      <div className='layout'>
-        <div className='overview-search-container'>
-          <h6 id='search-tag'>Type a search, followed by the enter key </h6>
-          <input
-            className='input-overview'
-            placeholder="search by 'first name, last name, or email'"
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                // instead of calling the backend directory, set
-                // the page we are on to zero if the current page
-                // we are on isn't the first page (value of 0).
-                // by doing this, the useEffect will call the backend
-                // for us with the correct page and query.
-                if (page) {
-                  setPage(0);
-                } else {
-                  callDatabase();
+      <div className='mx-6'>
+        <div className='overview-search-container mt-5 mb-7 mx-6'>
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text text-md">Type a search, followed by the enter key</span>
+            </div>
+            <input
+              className="input input-bordered w-full"
+              type="text"
+              placeholder="search by 'first name, last name, or email'"
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  // instead of calling the backend directory, set
+                  // the page we are on to zero if the current page
+                  // we are on isn't the first page (value of 0).
+                  // by doing this, the useEffect will call the backend
+                  // for us with the correct page and query.
+                  if (page) {
+                    setPage(0);
+                  } else {
+                    callDatabase();
+                  }
                 }
-              }
-            }}
-            onChange={event => {
-              setQuery(event.target.value);
-            }}
-          />
+              }}
+              onChange={event => {
+                setQuery(event.target.value);
+              }}
+            />
+          </label>
         </div>
-        <div className='table'>
-          <div className='tr th' id='users-header'>
-            {[
-              {title: 'Name', className: 'name-cell'},
-              {title: 'Email', className: 'email-cell'},
-              {title: 'Printing', className: 'printing-cell'},
-              {title: 'Verified', className: 'verified-cell'},
-              {title: 'Membership', className: 'membership-cell'},
-              {title: 'Delete', className: 'delete-cell'},
-            ].map(({title, className}) => {
-              return (<div
-                className={`td text-center ${className}`}
-                key={title}
-              >
-                {title}
-              </div>);
+        <table className='table mx-3'>
+          <thead>
+            <tr>
+              {[
+                { title: 'Name', className: 'name-cell' },
+                { title: 'Email', className: 'email-cell' },
+                { title: 'Printing', className: 'printing-cell hidden md:flex' },
+                { title: 'Verified', className: 'verified-cell' },
+                { title: 'Membership', className: 'membership-cell hidden sm:flex' },
+                { title: 'Delete', className: 'delete-cell' },
+              ].map(({ title, className }) => {
+                return (<th
+                  className={`${className}`}
+                  key={title}
+                >
+                  {title}
+                </th>);
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => {
+              return (
+                <tr className='tr break-all md:break-keep' key={user.email}>
+                  <td className='td name-cell'>
+                    <span className='text-blue-600 hover:underline'>
+                      <a target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
+                        {formatFirstAndLastName(user)}
+                      </a>
+                    </span>
+                  </td>
+                  <td className='td email-cell'>{user.email}</td>
+                  <td className='td printing-cell overview-center printing-cell hidden md:flex'>{user.pagesPrinted}/30</td>
+                  <td className='td verified-cell overview-center'>{mark(user.emailVerified)}</td>
+                  <td className='td break-keep hidden sm:flex'>
+                    {enums.membershipStateToString(user.accessLevel)}
+                  </td>
+                  <td className='td delete-cell overview-center'>
+                    <button
+                      className='overview-icon'
+                      onClick={() => {
+                        setToggleDelete(!toggleDelete);
+                        setUserToDelete(user);
+                      }}
+                    >
+                      {svg.trashcanSymbol()}
+                    </button>
+                  </td>
+                </tr>
+              );
             })}
-          </div>
-          {users.map((user) => {
-            return (
-              <div className='tr' key={user.email}>
-                <div className='td name-cell'>
-                  <a target='_blank' href={`/user/edit/${user._id}`}>
-                    {formatFirstAndLastName(user)}
-                  </a>
-                </div>
-                <div className='td email-cell'>{user.email}</div>
-                <div className='td printing-cell overview-center'>{user.pagesPrinted}/30</div>
-                <div className='td verified-cell overview-center'>{mark(user.emailVerified)}</div>
-                <div className='td membership-cell overview-center'>
-                  {enums.membershipStateToString(user.accessLevel)}
-                </div>
-                <div className='td delete-cell overview-center'>
-                  <button
-                    className='overview-icon'
-                    onClick={() => {
-                      setToggleDelete(!toggleDelete);
-                      setUserToDelete(user);
-                    }}
-                  >
-                    {svg.trashcanSymbol()}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+          </tbody>
+        </table>
         {maybeRenderPagination()}
       </div>
     </div>

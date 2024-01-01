@@ -1,231 +1,142 @@
-import React, { useState } from 'react';
-import {
-  ButtonDropdown,
-  Collapse,
-  NavbarToggler,
-  Navbar,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
-import DarkMode from './DarkMode';
+import React from 'react';
 import { membershipState } from '../../Enums';
 
 export default function UserNavBar(props) {
-  const [menuIsOpen, setMenuIsOpen] = useState(false);
-
-  const unauthedRoutes = [{ title: 'About', route: '/about' },
+  let initials = '';
+  if (props.user.firstName && props.user.lastName) {
+    initials = props.user.firstName[0] + props.user.lastName[0];
+  }
+  const unauthedRoutes = [
+    { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
-    { title: 'Events', route: '/events' }];
+  ];
+
 
   const authedRoutes = [{ title: 'Printing', route: '/2DPrinting' }];
 
-  const authentication = [{ title: 'Sign Up', route: '/register' },
-    { title: 'Sign In', route: '/login' }];
+  const authentication = [
+    { title: 'Sign Up', route: '/register' },
+    { title: 'Sign In', route: '/login' },
+  ];
 
-  const toggler = () => {
-    setMenuIsOpen(!menuIsOpen);
+  const getRoutesForNavbar = () => {
+    let routesList = unauthedRoutes;
+    if (props.user.accessLevel >= membershipState.MEMBER) {
+      routesList = authedRoutes;
+    }
+    return (
+      <>
+        {routesList.map((link) => {
+          return (
+            <li key={link.route}><a href={link.route}>{link.title}</a></li>
+          );
+        })}
+        {props.user.accessLevel >= membershipState.OFFICER && (
+          <li>
+            <a href='/user-manager'>
+              Admin
+            </a>
+          </li>
+        )}
+      </>
+    );
+  };
+
+  const getSignedOutDropdownRoutes = () => {
+    const routesList = [...unauthedRoutes, ...authentication];
+    return (
+      <>
+        {routesList.map((link) => {
+          return (
+            <li key={link.route}><a href={link.route}>{link.title}</a></li>
+          );
+        })}
+      </>
+    );
   };
 
   return (
-    <div className={'user-nav'}>
-      <Navbar expand='xl' className = "navbar">
-        <NavbarBrand href='/'>
-          <div>
-            <img id='logo-image' src='favicon.ico'
-              alt={'sce-logo'} style={{ width: '70px' }} />
-          </div>
-        </NavbarBrand>
-        <NavbarToggler tag='h1'>
-          <ButtonDropdown isOpen={menuIsOpen} toggle={toggler}>
-            <DropdownToggle className='hamburger-button'>
-              <span className='border'></span>
-              <span className='border'></span>
-              <span className='border'></span>
-            </DropdownToggle>
-            <DropdownMenu right>
-              {props.user && props.user.accessLevel >=
-                membershipState.MEMBER && (
-                <DropdownItem  className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
-                      Printing
-                  </DropdownItem>
-                  <DropdownMenu className='drp-menu'>
-                    {authedRoutes.map((link, index) => {
-                      return (
-                        <DropdownItem
-                          key={index}
-                          className='drp-item'
-                          href={link.route}
-                        >
-                          {link.title}
-                        </DropdownItem>
-                      );
-                    })}
-                  </DropdownMenu>
-                </DropdownItem>
-              )}
-              {/* Display unauthedRoutes in hamburger button */}
-              {unauthedRoutes.map((link, index) => {
-                return (
-                  <DropdownItem className='drp-item' key={index}>
-                    <NavItem>
-                      <NavLink id='btndrp-text' href={link.route}>
-                        {link.title}
-                      </NavLink>
-                    </NavItem>
-                  </DropdownItem>
-                );
-              })}
-              {/* account icon */}
-              {props.authenticated && props.user ? (
-                <div className='dropdown-submenu drp-item'>
-                  <DropdownItem className='drp-item' id='btndrp-text'>
+    <div className="navbar bg-base-100">
+      <div className="navbar-start">
+        <a href='/'>
+          <img id='logo-image' src='favicon.ico'
+            alt={'sce-logo'} style={{ width: '70px' }} />
+        </a>
+      </div>
 
-                    {props.user.firstName}
-                  </DropdownItem>
-                  <DropdownMenu right className='drp-menu'>
-                    <DropdownItem
-                      className='authenticated-navlink drp-item'
-                      href='/profile'
-                    >
-                      Profile
-                    </DropdownItem>
-                    {/* Display admin in hamburger if user is admin */}
-                    {props.user.accessLevel >= membershipState.OFFICER && (
-                      <DropdownItem className='drp-item' href='/dashboard'>
-                        Admin
-                      </DropdownItem>
-                    )}
-                    <DropdownItem className='drp-item'>
-                      <div onClick={() => props.handleLogout()}>
-                        <svg className='logout-image' viewBox='0 0 24 24'>
-                          <path
-                            d='M17,17.25V14H10V10H17V6.75L22.25,12L17,
-                            17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,
-                            2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z'
-                          />
-                        </svg>
-                        Logout
-                      </div>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </div>
-                // display sign in, sign up in hamburger if not logged in
-              ) : (
-                <NavItem className='drp-item'>
-                  {authentication.map((link, index) => {
-                    return (
-                      <DropdownItem className='drp-item' key={index}>
-                        <NavItem>
-                          <NavLink id='btndrp-text' href={link.route}>
-                            {link.title}
-                          </NavLink>
-                        </NavItem>
-                      </DropdownItem>
-                    );
-                  })}
-                </NavItem>
-              )}
-            </DropdownMenu>
-          </ButtonDropdown>
-        </NavbarToggler>
+      <div className="navbar-center hidden sm:flex">
+        <ul className="menu menu-horizontal">
+          {getRoutesForNavbar()}
+        </ul>
+      </div>
 
-        <Collapse navbar>
-          <Nav className='mx-auto d-flex sce-nav' navbar>
-            <div className='navlink-items'>
-              {/* Display user's first name in nav*/}
-              {props.authenticated && props.user ? (
-                <div className='profile'>
-                  <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle className='text-white' nav caret>
-                      {props.user.firstName}
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem className='drp-item'
-                        href='/profile'>
-                        Profile
-                      </DropdownItem>
-                      {/* Display admin if user is admin */}
-                      {props.user.accessLevel >= membershipState.OFFICER && (
-                        <DropdownItem className='drp-item' href='/dashboard'>
-                          Admin
-                        </DropdownItem>
-                      )}
-                      <DropdownItem className='drp-item'>
-                        <div onClick={() => props.handleLogout()}>
-                          <svg className='logout-image' viewBox='0 0 24 24'>
-                            <path
-                              d='M17,17.25V14H10V10H17V6.75L22.25,12L17,
-                            17.25M13,2A2,2 0 0,1 15,4V8H13V4H4V20H13V16H15V20A2,
-                            2 0 0,1 13,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2H13Z'
-                            />
-                          </svg>
-                          Logout
-                        </div>
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                </div>
-              ) : (
-                <NavItem className='mx-auto d-flex authentication'>
-                  <NavLink id='signin-btn' href='/login'>
-                    Sign In
-                  </NavLink>
-                  <NavLink id='signup-btn' href='/register'>
-                    Sign Up
-                  </NavLink>
-                </NavItem>
-              )}
-
-              {/* Display titles when and when not logged in */}
-              {unauthedRoutes.map((link, index) => {
-                return (
-                  <NavItem key={index}>
-                    <NavLink id='navlink-text'
-                      className='routes'
-                      href={link.route}>
-                      {link.title}
-                    </NavLink>
-                  </NavItem>
-                );
-              })}
-              {/* Display printing in nav when logged in */}
-              {props.user && props.user.accessLevel >= membershipState.MEMBER
-                && (
-                  <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle
-                      className='authenticated-navlink'
-                      id='navlink-text'
-                      nav
-                      caret
-                    >
-                      Services
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      {authedRoutes.map((link, index) => {
-                        return (
-                          <DropdownItem
-                            key={index}
-                            className='drp-item'
-                            href={link.route}
-                          >
-                            {link.title}
-                          </DropdownItem>
-                        );
-                      })}
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                )}
+      <div className="navbar-end">
+        {props.authenticated && props.user ? (
+          <>
+            <div className="dropdown dropdown-end sm:hidden">
+              <div tabIndex={0} role="button" className="btn btn-ghost rounded-btn">Services</div>
+              <ul tabIndex={0} className="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4">
+                {getRoutesForNavbar()}
+              </ul>
             </div>
-          </Nav>
-        </Collapse>
-      </Navbar>
-    </div >
+
+
+            <div className="dropdown dropdown-bottom dropdown-end">
+              <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
+                <div className="bg-neutral text-neutral-content rounded-full w-12">
+                  <span>{initials}</span>
+                </div>
+              </summary>
+              <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>
+                <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                  <div>{props.user.firstName} {props.user.lastName}</div>
+                  <div className="font-medium truncate">{props.user.email}</div>
+                </div>
+                <ul className='p-2 shadow menu rounded-b-xl dropdown-content z-[1] bg-base-100  w-52'>
+                  <li>
+                    <a href='/profile'>
+                      Profile
+                    </a>
+                  </li>
+                  <li>
+                    <button onClick={() => props.handleLogout()}>
+                      Log out
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="dropdown dropdown-end sm:hidden">
+              <div tabIndex={0} role="button" className="btn btn-ghost rounded-btn">
+                <button className="btn btn-square btn-ghost">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+                </button>
+              </div>
+              <ul tabIndex={0} className="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4">
+                {getSignedOutDropdownRoutes()}
+              </ul>
+            </div>
+
+            <div className="hidden sm:flex">
+              <ul className="menu menu-horizontal px-1">
+                <li>
+                  <a href='/login'>
+                    Sign In
+                  </a>
+                </li>
+                <li>
+                  <a href='/register'>
+                    Sign Up
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

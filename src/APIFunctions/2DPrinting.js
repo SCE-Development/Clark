@@ -98,7 +98,7 @@ export async function printPage(data, token) {
  * @returns {PrintApiResponse}      Returns if user can print, number of pages
  *                                  user can print, and total pages left
  */
-export async function getPagesPrinted(email, token, totalPages, copies) {
+export async function getPagesPrinted(email, token) {
   let status = new PrintApiResponse();
   await axios
     .post(GENERAL_API_URL + '/user/getPagesPrintedCount', {
@@ -106,8 +106,7 @@ export async function getPagesPrinted(email, token, totalPages, copies) {
       token
     })
     .then(res => {
-      status.canPrint = copies * totalPages.size + res.data <= 30;
-      status.remainingPages = 30 - res.data;
+      status.pagesUsed = res.data;
     })
     .catch(() => {
       status.error = true;

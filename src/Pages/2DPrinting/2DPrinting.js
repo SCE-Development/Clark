@@ -1,73 +1,32 @@
-import React, { useState, useEffect} from 'react';
-import './2D-printing.css';
-import ConfirmationModal from
-  '../../Components/DecisionModal/ConfirmationModal.js';
-import { registerPlugin } from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
-import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
-import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
-import { PDFDocument } from 'pdf-lib';
+import React, { useState, useEffect, useRef } from 'react';
+import PageSelectDropdown from './PageSelectDropdown';
 import {
-  range,
   parseRange,
   printPage,
   getPagesPrinted,
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
-import {
-  PrintMessage,
-  StatusModal,
-  failPrintStatus,
-  FileUpload,
-} from './2DComponents';
-import { PrintPageModal } from './2DPrintPageModal';
-import PrintingHealthCheck from './2DPrintingHealthCheck';
-import { healthCheck } from '../../APIFunctions/2DPrinting';
-import {Container} from 'reactstrap';
 
-registerPlugin(FilePondPluginFileValidateType, FilePondPluginFileEncode);
+import { PDFDocument } from 'pdf-lib';
+import { healthCheck } from '../../APIFunctions/2DPrinting';
+import ConfirmationModal from
+  '../../Components/DecisionModal/ConfirmationModal.js';
 
 export default function Printing(props) {
-  /**
-   * State variables:
-   * files - pdf file stored in filepond
-   * confirmModal - pop up confirm modal
-   * pages - set radio to select page range or use all
-   * previewModal - enable print page modal
-   * dataURI - used for updating embed
-   * encodedFile - encoded file to be printed
-   * copies - copies of file to be printed
-   * sides - sides of file
-   * pageRanges - page ranges to be printed
-   * numPages - number of pages included in page range
-   * usedPages - array of all pages to be printed
-   * canPrint - checks if user has enough pages to print
-   * displayPagesLeft - pages left
-   * previewDisplay - iframe content
-   * loadPreview - loading indicator of iframe
-   * statusModal - status modal toggle
-   * printStatus - status in statusModal
-   */
-  const [files, setFiles] = useState([]);
+  const [dragActive, setDragActive] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
-  const [pages, setPages] = useState(false);
-  const [previewModal, setPreviewModal] = useState(false);
-  const [dataURI, setDataURI] = useState('');
-  const [encodedFile, setEncodedFile] = useState();
-  const [continueButn, setContinue] = useState(false);
-  const [copies, setCopies] = useState(1);
+  const [numberOfPagesInPdfPreview, setNumberOfPagesInPdfPreview] = useState(0);
+  const [pagesPrinted, setPagesPrinted] = useState(0);
+  const [pagesToBeUsedInPrintRequest, setPagesToBeUsedInPrintRequest] = useState(0);
+  const [dataUrl, setDataUrl] = useState('');
   const [sides, setSides] = useState('one-sided');
-  const [pageRanges, setPageRanges] = useState(null);
-  const [numPages, setNumPages] = useState(0);
-  const [usedPages, setUsedPages] = useState([]);
-  const [canPrint, setCanPrint] = useState(false);
-  const [displayPagesLeft, setDisplayPagesLeft] = useState(
-    props.user.pagesPrinted
-  );
   const [previewDisplay, setPreviewDisplay] = useState('');
-  const [loadPreview, setLoadPreview] = useState(true);
-  const [statusModal, setStatusModal] = useState(false);
+  const [pageRanges, setPageRanges] = useState('');
+  const [copies, setCopies] = useState(1);
+  const inputRef = useRef(null);
   const [printStatus, setPrintStatus] = useState('');
+  const [printStatusColor, setPrintStatusColor] = useState('success');
+  const [files, setFiles] = useState(null);
 
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -79,294 +38,330 @@ export default function Printing(props) {
     setLoading(false);
   }
 
-  useEffect(() => {
-    checkPrinterHealth();
-  }, []);
-
-  async function updateEmbed(totalPages) {
-    try {
-      const pdf = await PDFDocument.load(dataURI);
-      const display = await PDFDocument.create();
-      const copiedPages = await display.copyPages(
-        pdf,
-        Array.from(totalPages).map((x) => x - 1)
-      );
-      copiedPages.forEach((element) => {
-        display.addPage(element);
-      });
-      const data = await display.saveAsBase64({ dataUri: true });
-      setPreviewDisplay(data);
-    } catch {
-      setStatusModal(true);
-      setCanPrint(false);
-      setPrintStatus('Cannot print encrypted PDF');
-    }
-  }
-
-  async function handleUpdate(file) {
-    try {
-      setDataURI(file.getFileEncodeDataURL());
-      setPreviewDisplay(file.getFileEncodeDataURL());
-      setEncodedFile(file);
-      setContinue(true);
-      const pdf = await PDFDocument.load(file.getFileEncodeDataURL());
-      setNumPages(pdf.getPages().length);
-      let tmp = new Set(range(1, pdf.getPages().length + 1));
-      setUsedPages(tmp);
-    } catch {
-      setStatusModal(true);
-      setCanPrint(false);
-      setPrintStatus('Cannot print encrypted PDF');
-    }
-  }
-
-  async function handleCanPrint(totalPages, copy) {
+  async function getNumberOfPagesPrintedSoFar() {
     const result = await getPagesPrinted(
       props.user.email,
       props.user.token,
-      totalPages,
-      copy
     );
-    setCanPrint(result.canPrint);
-    setDisplayPagesLeft(result.remainingPages);
-    updateEmbed(totalPages);
+    setPrinterHealthy(!result.error);
+    if (!result.error) {
+      setPagesPrinted(result.pagesUsed);
+    }
   }
 
-  function finishPrinting() {
-    setConfirmModal(false);
-    setPreviewModal(false);
-    setFiles([]);
-    setContinue(false);
-    setPages(false);
+  useEffect(() => {
+    checkPrinterHealth();
+    getNumberOfPagesPrintedSoFar();
+  }, []);
+
+  const INPUT_CLASS_NAME = 'indent-2 block rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6';
+
+  const sideOptions = [
+    { label: 'Single Sided', value: 'one-sided' },
+    { label: 'Double Sided', value: 'two-sided' },
+  ];
+
+
+  async function getUri() {
+    const pdf = await PDFDocument.load(dataUrl);
+    const display = await PDFDocument.create();
+    const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
+    const copiedPages = await display.copyPages(
+      pdf,
+      Array.from(pagesWeWantToPrint).map((x) => x - 1),
+    );
+    copiedPages.forEach((element) => {
+      display.addPage(element);
+    });
+    setNumberOfPagesInPdfPreview(display.getPages().length);
+    const data = await display.saveAsBase64({ dataUri: true });
+    setPreviewDisplay(data);
   }
 
-  const previewLabels = {
-    copies: 'Number of Copies',
-    sides: 'Type of print',
-    pages: 'Pages',
-  };
+  useEffect(() => {
+    if (dataUrl) {
+      getUri();
+    }
+  }, [dataUrl, pageRanges]);
 
-  const fileUploadProps = {
-    filePond: {
-      files: files,
-      allowMultiple: false,
-      acceptedFileTypes: ['application/pdf'],
-      maxFileSize: '10MB',
-      onupdatefiles: (fileItems) => {
-        const tmp = fileItems.map((fileItem) => fileItem.file);
-        setFiles(tmp);
-      },
-      onaddfile: async (err, file) => {
-        if (!err) await handleUpdate(file);
-      },
-      onremovefile: (err) => {
-        setContinue(false);
-        setPages(false);
-        if (!err) setFiles([]);
-      },
-      labelIdle: PrintMessage,
-    },
-    printButton: {
-      color: 'primary',
-      className: 'print',
-      hidden: !continueButn,
-      onClick: () => {
-        handleCanPrint(usedPages, copies); // ->
-        setPreviewModal(true);
-      },
-      text: 'Print',
-    },
-    displayPagesLeft: 30 - props.user.pagesPrinted,
-  };
+  useEffect(() => {
+    if (previewDisplay) {
+      let divisor = 1;
+      if (sides === 'two-sided') {
+        divisor = 2;
+      }
+      const pagesUsedPerCopy = Math.floor(numberOfPagesInPdfPreview / divisor) + (numberOfPagesInPdfPreview % divisor);
+      const totalPagesUsed = pagesUsedPerCopy * Math.floor(copies);
+      setPagesToBeUsedInPrintRequest(totalPagesUsed);
+    }
+  }, [previewDisplay, copies, sides]);
 
-  const maybeShowFileUpload =  () => {
-    return printerHealthy ?
-      <FileUpload {...fileUploadProps} /> :
-      <Container className='healthCheck'>
-        <br/>
-        <br/>
-        <h3>
-          Printing is down at the moment. Reach out to an officer
-           through Discord for help.
-        </h3>
-      </Container>;
-  };
+  useEffect(() => {
+    if (confirmModal) {
+      setConfirmModal(false);
+    }
+  }, [confirmModal]);
 
-  async function handlePrinting(file) {
-    const raw = file.getFileEncodeBase64String();
-    const pagesPrinted = usedPages.size * copies + (30 - displayPagesLeft);
-    const memberName = props.user.firstName + ' ' + props.user.lastName;
+  async function handleChange(e) {
+    e.preventDefault();
+    if (e.target.files && e.target.files[0]) {
+      let a = new FileReader();
+      // https://stackoverflow.com/a/43894750
+      a.onload = function(event) {
+        setDataUrl(event.target.result);
+      };
+      a.readAsDataURL(e.target.files[0]);
+      setFiles(e.target.files[0]);
+    }
+  }
+
+  async function handlePrinting() {
+    const pdf = await PDFDocument.load(previewDisplay);
     let data = {
-      raw,
-      pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
+      raw: await pdf.saveAsBase64(),
+      // maybe we dont need to send this? since in the frontend
+      // we update the embed when the user specifies which
+      // pages they want to print
+      // pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
       sides,
       copies,
     };
-
     let status = await printPage(data, props.user.token);
     if (!status.error) {
-      editUser({ ...props.user, pagesPrinted }, props.user.token);
+      // this should not be done in the frontend and instead be part of the printing api
+      editUser(
+        { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
+        props.user.token,
+      );
       setPrintStatus('Printing succeeded!');
+      setPrintStatusColor('success');
     } else {
-      setPrintStatus(failPrintStatus);
+      setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
+      setPrintStatusColor('error');
     }
-    setStatusModal(true);
+    getNumberOfPagesPrintedSoFar();
+    setTimeout(() => {
+      setPrintStatus(null);
+    }, 5000);
   }
 
-  const printPageModalProps = {
-    isOpen: previewModal,
-    toggle: () => {
-      setPreviewModal(!previewModal);
-    },
-    size: 'xl',
-    ModalHeader: {
-      toggle: () => {
-        setPreviewModal(!previewModal);
-      },
-    },
-    ModalBody: {
-      Col: {
-        sm: { size: 8 },
-      },
-      Spinner: {
-        className: 'loading-spinner',
-        animation: 'border',
-        variant: 'primary',
-      },
-      iFrame: {
-        hidden: loadPreview,
-        onLoad: () =>
-          setTimeout(() => {
-            setLoadPreview(false);
-          }, 300),
-        src: files[0] && previewDisplay,
-        width: '100%',
-        height: '100%',
-      },
-      pagesLeft: {
-        size: '4',
-        color: 'red',
-      },
-      legend: {
-        className: 'center-blocks',
-      },
-      copyInput: {
-        className: 'center-blocks',
-        type: 'number',
-        name: 'numbers',
-        min: '1',
-        max: '30',
-        id: 'numcopy',
-        defaultValue: '1',
-        onChange: (e) => {
-          setCopies(e.target.value);
-          handleCanPrint(usedPages, e.target.value);
-        },
-      },
-      sideInput: {
-        type: 'radio',
-        name: 'pType',
-      },
-      pagesAll: {
-        type: 'radio',
-        name: 'Pages',
-        onChange: () => {
-          setPages(false);
-          setPageRanges(null);
-          handleCanPrint(new Set(range(1, numPages + 1)), copies);
-          setLoadPreview(true);
-        },
-        defaultChecked: true,
-      },
-      pagesSelect: {
-        type: 'radio',
-        name: 'Pages',
-        checked: pages,
-        onChange: () => {
-          setPages(true);
-          handleCanPrint(usedPages, copies);
-          setLoadPreview(true);
-        },
-      },
-      pagesRange: {
-        type: 'text',
-        disabled: !pages,
-        placeholder: '1-5, 7, 9-11',
-        onChange: async (e) => {
-          setPageRanges(e.target.value);
-          const x = await parseRange(e.target.value, numPages);
-          setUsedPages(x);
-          handleCanPrint(x, copies);
-          setLoadPreview(true);
-        },
-      },
-    },
-    ModalFooter: {
-      backButton: {
-        color: 'danger',
-        onClick: () => {
-          setPreviewModal(false);
-          setPages(false);
-          // Reset the pages selection to "All"
-          let arr = new Set(range(1, numPages + 1));
-          setUsedPages(arr);
-        },
-        text: 'Back',
-      },
-      printButton: {
-        color: 'success',
-        onClick: () => {
-          setConfirmModal(!confirmModal);
-        },
-        disabled: !canPrint,
-        text: 'Print!',
-      },
-    },
-    // Additional imports to be unpacked
-    loadPreview,
-    displayPagesLeft,
-    previewLabels,
-    setSides,
-  };
+  function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setFiles(e.dataTransfer.files[0]);
+    }
+  }
 
-  const confirmModalProps = {
-    headerText: 'Are you sure you want to print?',
-    bodyText: '',
-    confirmText: 'Yes!',
-    cancelText: 'Go Back',
-    confirmColor: 'success',
-    toggle: () => {
-      setConfirmModal(!confirmModal);
-    },
-    handleConfirmation: () => {
-      handlePrinting(encodedFile);
-    },
-    open: confirmModal,
-  };
+  function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  }
 
-  const statusModalProps = {
-    headerText: 'Printing Status',
-    bodyText: printStatus,
-    confirmText: 'Finish!',
-    confirmColor: 'success',
-    toggle: () => {
-      setStatusModal(!statusModal);
-      setConfirmModal(false);
-    },
-    handleConfirmation: () => {
-      finishPrinting();
-      setStatusModal(!statusModal);
-    },
-    open: statusModal,
-  };
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  }
+
+  function handleDragEnter(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  }
+
+  function clearPrint() {
+    setCopies(1);
+    setDataUrl('');
+    setPageRanges('');
+    setFiles(null);
+  }
+
+  function getRemainingPageBalance() {
+    return 30 - pagesPrinted;
+  }
+
+  function requestExceedsAllowedPages() {
+    const remainingPageBalance = getRemainingPageBalance();
+    return pagesToBeUsedInPrintRequest > (remainingPageBalance);
+  }
+
+  function renderFileUploadOrPrint() {
+    if (files) {
+      return (
+        <div className="grid grid-cols-1 sm:mt-32 lg:mt-5 lg:grid-cols-6 space-x-10 h-fit w-screen w-[80vw] lg:h-5/6 lg:mx-5">
+          <div className='mt-32 lg:col-span-4 sm:mt-0'>
+            <iframe
+              title='Preview'
+              className='h-[60vh] w-[80vw] lg:h-5/6 lg:w-full'
+              src={previewDisplay}
+            />
+          </div>
+          <div className="lg:col-span-2 h-auto ml-10 mt-10 lg:mt-0">
+            <div className="grid grid-cols-1 text-xl">
+              {/*
+                the below is a stupid bug, it uses the cookie of the user
+                to determine how many pages they have printed. the cookie
+                does not update unless the user signs in again. to fix
+                we should ask the api to tell us the pages printined
+              */}
+              You have {30 - pagesPrinted} page(s) left
+            </div>
+            <div className="grid grid-cols-1">
+              <div className="">
+                <label htmlFor="copies" className="block text-sm font-medium leading-6">Number of Copies</label>
+                <div className="mt-2">
+                  <input
+                    type="number"
+                    min={0}
+                    step={1}
+                    value={copies}
+                    name="copies"
+                    id="copies"
+                    className={INPUT_CLASS_NAME}
+                    placeholder='intentionally blank'
+                    onChange={(e) => {
+                      setCopies(Number(e.target.value));
+                    }}
+                  />
+                </div>
+              </div>
+              <div className=" my-3">
+                <div id=''>
+                  <label htmlFor="major" className="block text-sm font-medium leading-6">
+                    <span style={{ paddingRight: '10px' }}>Sides</span>
+                  </label>
+                  <div className="mt-2">
+                    <select
+                      id="sides" name="sides" className="block w-full rounded-md border-0 py-2   shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      onChange={(e) => {
+                        setSides(e.target.value);
+                      }}
+                    >
+                      {sideOptions.map((option) => {
+                        return (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className=" mt-3 mb-6">
+                <PageSelectDropdown
+                  setPageRanges={setPageRanges}
+                />
+              </div>
+              <div className=" space-x-5">
+                {requestExceedsAllowedPages() && (
+                  <div role="alert" className="alert alert-warning mb-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <p className=''>
+                      Current print request would use {pagesToBeUsedInPrintRequest} pages which exceeds allowed limit of {getRemainingPageBalance()}
+                    </p>
+                  </div>
+                )}
+                <button className="btn btn-outline w-3/12" onClick={clearPrint}>Cancel</button>
+                <button
+                  className="btn btn-success w-3/12"
+                  onClick={() => setConfirmModal(true)}
+                  disabled={!pagesToBeUsedInPrintRequest || requestExceedsAllowedPages()}
+                >
+                  Print
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (!loading && !printerHealthy) {
+      return (
+        <div className='flex justify-center items-center mt-10 w-full'>
+          <div role="alert" className="w-1/2 text-center alert alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p className=''>Printing is down. Reach out to SCE Development team if refreshing doesn't fix</p>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className='flex flex-col w-full items-center'>
+        <div className='mb-10 mx-12'>
+          <span className='text-3xl flex justify-center items-center mb-5'>How does printing work?</span>
+          <ol className="list-decimal">
+            <li>Members can print up to 30 pages per week.</li>
+            <li>The allowed print amount reset on Sundays.</li>
+            <li>printed documents can be found in in the SCE room (ENGR 294).</li>
+          </ol>
+        </div>
+        <form
+          className="w-5/6"
+          onDragEnter={handleDragEnter}
+          onSubmit={(e) => e.preventDefault()}
+          onDrop={handleDrop}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+        >
+          {/* this input element allows us to select files for upload. We make it hidden so we can activate it when the user clicks select files */}
+          <label
+            htmlFor="dropzone-file"
+            className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer dark:hover:bg-bray-800 ${dragActive ? 'bg-gray-600' : 'bg-gray-700'} hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600`}
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+              </svg>
+              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">PDF only, max 10MB</p>
+            </div>
+          </label>
+          <input id="dropzone-file" type="file"
+            disabled={loading}
+            placeholder="fileInput"
+            className="hidden"
+            ref={inputRef}
+            onChange={handleChange}
+            accept=".pdf"
+          />
+        </form>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <PrintingHealthCheck {...{loading, printerHealthy}}/>
-      {maybeShowFileUpload({...fileUploadProps})}
-      <PrintPageModal {...printPageModalProps} />
-      <ConfirmationModal {...confirmModalProps} />
-      <StatusModal {...statusModalProps} />
+    <div className='w-full'>
+      <ConfirmationModal {... {
+        headerText: 'Submit print request?',
+        bodyText: `The request will use ${pagesToBeUsedInPrintRequest} page(s) out of the ${getRemainingPageBalance()} pages remaining.`,
+        confirmText: 'Print',
+        cancelText: 'Cancel',
+        confirmClassAddons: 'bg-green-600 hover:bg-green-500',
+        handleConfirmation: () => {
+          handlePrinting();
+          setConfirmModal(false);
+        },
+        handleCancel: () => setConfirmModal(false),
+        open: confirmModal,
+      }
+      } />
+
+      {printStatus && (
+        <div className='flex justify-center items-center mt-10 w-full'>
+          <div role="alert" className={'w-1/2 text-center alert alert-' + printStatusColor}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p className=''>{printStatus}</p>
+          </div>
+        </div>
+      )}
+      <div className="flex flex-col items-center justify-center h-screen h-[90vh]">
+        {renderFileUploadOrPrint()}
+      </div>
     </div>
   );
 }

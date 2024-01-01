@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './email-template.css';
+
 import { getAllEvents } from '../../APIFunctions/Event';
 import { Button } from 'reactstrap';
 import BlastMailForm from './BlastMailForm.js';
