@@ -88,9 +88,6 @@ function LedSign(props) {
       onChange: e => setScrollSpeed(e.target.value)
     }
   ];
-  const headerProps = {
-    title: 'LED Sign'
-  };
 
   async function handleSend() {
     setAwaitingSignResponse(true);
@@ -209,6 +206,7 @@ function LedSign(props) {
             <button className='btn w-1/3 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
               Send
             </button>
+            {renderRequestStatus()}
           </div>
         </div>
 
