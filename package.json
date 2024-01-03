@@ -28,7 +28,7 @@
   "author": "SCE Development Team Officers",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^1.6.3",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",
