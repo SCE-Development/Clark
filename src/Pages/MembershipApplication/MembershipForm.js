@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { Row, Form, FormGroup, Input, Button, Container } from 'reactstrap';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
@@ -266,7 +265,7 @@ export default function MembershipForm(props) {
 
   return (
     <div className=''>
-      <Container className = 'flex-none md:flex mt-0 pt-20 '>
+      <div className = 'flex-none md:flex mt-0 pt-20 '>
         <div className='rounded-3xl backdrop-blur-sm shadow-2xl mt-20 mb-auto ml-auto mr-auto px-10 text-center items-center justify-center'>
           <div className = 'text-lg md:text-3xl font-bold pb-2'>
             Semester Plan
@@ -280,7 +279,7 @@ export default function MembershipForm(props) {
 
             <div className="stat">
               <div className="stat-title text-2xl md:text-3xl">Expires</div>
-              <div className="stat-value text-2xl md:text-3xl">May 13th 2024</div>
+              <div className="stat-value text-2xl md:text-3xl">{membershipExpDate()}</div>
               <div className="stat-desc">↗︎ Only Up From here</div>
             </div>
           </div>
@@ -296,7 +295,7 @@ export default function MembershipForm(props) {
 
             <div className="stat">
               <div className="stat-title text-2xl md:text-3xl">Expires</div>
-              <div className="stat-value text-2xl md:text-3xl">January 1st 2024</div>
+              <div className="stat-value text-2xl md:text-3xl">{membershipExpDate(2)}</div>
               <div className="stat-desc">↗︎ Only Up From here</div>
             </div>
           </div>
@@ -319,13 +318,13 @@ export default function MembershipForm(props) {
           <h6 className='text-lg'>
             * = Required field
           </h6>
-          <Form onSubmit={submitApplication}>
+          <form onSubmit={submitApplication}>
             <div id='name-field-row'>
               {nameFields.map((input, index) => (
-                <FormGroup
+                <div
                   className=' opacity-70 rounded-sm font-sans text-white'
                   key={`name-field-input-${index}`}>
-                  <Input
+                  <input
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
@@ -333,15 +332,15 @@ export default function MembershipForm(props) {
                     className='w-full bg-[#ABC9CF] rounded-full mb-4 text-white pl-2'
                   />
                   {input.ifRequirementsNotMet}
-                </FormGroup>
+                </div>
               ))}
             </div>
             <div id='email-input-container'>
               {accountFields.map((input, index) => (
-                <FormGroup
+                <div
                   className='opacity-70 rounded-sm font-sans text-black'
                   key={`account-field-${index}`}>
-                  <Input
+                  <input
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
@@ -349,7 +348,7 @@ export default function MembershipForm(props) {
                     className='w-full bg-[#ABC9CF] rounded-full mb-4 text-black pl-2'
                   />
                   {input.ifRequirementsNotMet}
-                </FormGroup>
+                </div>
               ))}
             </div>
             {/* <MajorDropdown setMajor={setMajor} />
@@ -389,14 +388,14 @@ export default function MembershipForm(props) {
             </div>
             <div className=''>
               <div className=''>
-                <Button className = 'mt-20' type='submit'>
+                <button className = 'btn mt-20' type='submit'>
                 Submit Application
-                </Button>
+                </button>
               </div>
             </div>
-          </Form>
+          </form>
         </div>
-      </Container>
+      </div>
     </div>
   );
 }
