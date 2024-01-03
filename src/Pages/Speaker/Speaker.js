@@ -60,12 +60,12 @@ function SpeakersPage(props) {
     <div>
       <div className='flex justify-center pt-10'>
         <div className="md:w-1/2">
-          <Input placeholder='Enter YouTube Link' onChange=
+          <input placeholder='Enter YouTube Link' onChange=
             {(e) => setUrl(e.target.value)}
-          className="sign-input"
+          className="sign-input indent-2"
           style={{ width: '100%', height: '2rem' }}
           >
-          </Input>
+          </input>
           {
             error && <p style={{ color: 'red', paddingTop: '7px' }}>{error}</p>
           }
