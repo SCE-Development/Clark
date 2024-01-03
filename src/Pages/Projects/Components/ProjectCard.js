@@ -1,5 +1,5 @@
 import React from 'react';
-import './ProjectCard.css';
+
 
 export default function ProjectCard({link, image, name, subnote, caption}) {
   return (

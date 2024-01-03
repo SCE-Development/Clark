@@ -1,14 +1,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Input, Button, Container, Row, Col } from 'reactstrap';
 import { queued, addUrl, pause, resume, skip } from '../../APIFunctions/Speaker';
-import './speaker.css';
+
 
 function SpeakersPage(props) {
 
   const [url, setUrl] = useState('');
   const [playText, setPlayText] = useState('Play');
-  const [playButtonColor, setPlayButtonColor] = useState('secondary');
+  const [playbuttonColor, setPlaybuttonColor] = useState('secondary');
   const [queuedSongs, setQueuedSongs] = useState([]);
   const [error, setError] = useState();
 
@@ -23,11 +22,11 @@ function SpeakersPage(props) {
       if (result.error) {
         setError(String(result.responseData));
       } else {
-        setPlayButtonColor('success');
+        setPlaybuttonColor('success');
         setPlayText('Success!');
         setTimeout(() => {
           setPlayText('Play');
-          setPlayButtonColor('secondary');
+          setPlaybuttonColor('secondary');
         }, 1500);
       }
     } else {
@@ -59,82 +58,61 @@ function SpeakersPage(props) {
 
   return (
     <div>
-      <Container>
-        <div className="speaker-page-wrapper">
-          <Row>
-            <Col>
-              <Input placeholder='Enter YouTube Link' onChange=
-                {(e) => setUrl(e.target.value)}
-              className="sign-input"
-              style={{ width: '100%', height: '2rem' }}
-              >
-              </Input>
-            </Col>
-            {
-              error && <p style={{ color: 'red', paddingTop: '7px' }}>{error}</p>
-            }
-          </Row>
-          <Col>
-            <Row>
-              <Col>
-                <Button
-                  className="sign-input"
-                  onClick={() => modifySpeakerWrapper(pause)}>
-                  Puase
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  className="sign-input"
-                  onClick={() => modifySpeakerWrapper(resume)}>
-                  Resume
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  className="sign-input"
-                  onClick={playSong}
-                  disabled={!url}
-                  color={playButtonColor}
-                >
-                  {playText}
-                </Button>
-              </Col>
-              <Row>
-                <Button onClick={() => modifySpeakerWrapper(skip)} className="sign-input"
-                  style={{
-                    marginTop: '0.5rem',
-                    background: 'red',
-                    borderColor: 'red',
-                    marginLeft: '0.75rem',
-                    height: '5rem',
-                    fontWeight: '900',
-                    fontSize: '40px'
-                  }}>Skip</Button>
-              </Row>
-              <div style={{ marginTop: '5rem', alignItems: 'center' }}>
-                <h2 style={{ textAlign: 'center' }}>Queued</h2>
-                <table>
-                  <thead>
-                    <th>Position</th>
-                    <th style={{ textAlign: 'left', paddingLeft: '2rem' }}>Name</th>
-                  </thead>
-                  <tbody>
-                    {
-                      queuedSongs.map((song, index) => (
-                        <tr key={index}>
-                          <td>{index}</td>
-                          <td style={{ paddingLeft: '2rem' }}><a href={song}>{song}</a></td>
-                        </tr>
-                      ))
-                    }
-                  </tbody>
-                </table>
-              </div>
-            </Row>
-          </Col>
+      <div className='flex justify-center pt-10'>
+        <div className="md:w-1/2">
+          <Input placeholder='Enter YouTube Link' onChange=
+            {(e) => setUrl(e.target.value)}
+          className="sign-input"
+          style={{ width: '100%', height: '2rem' }}
+          >
+          </Input>
+          {
+            error && <p style={{ color: 'red', paddingTop: '7px' }}>{error}</p>
+          }
+          <div className='w-full py-4'>
+            <button
+              className="btn w-1/3"
+              onClick={() => modifySpeakerWrapper(pause)}>
+                Puase
+            </button>
+            <button
+              className="btn w-1/3"
+              onClick={() => modifySpeakerWrapper(resume)}>
+                Resume
+            </button>
+            <button
+              className="btn w-1/3"
+              onClick={playSong}
+              disabled={!url}
+              color={playbuttonColor}
+            >
+              {playText}
+            </button>
+          </div>
+          <button onClick={() => modifySpeakerWrapper(skip)} className="btn w-full bg-red-600 hover:bg-red-700 text-white text-3xl">
+                Skip
+          </button>
+          <div className='mt-20 items-center'>
+            <h2 className='text-center' >Queued</h2>
+            <table>
+              <thead>
+                <th>Position</th>
+                <th className='text-left pl-2'>Name</th>
+              </thead>
+              <tbody>
+                {
+                  queuedSongs.map((song, index) => (
+                    <tr key={index}>
+                      <td>{index}</td>
+                      <td className='pl-8'><a href={song}>{song}</a></td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
-      </Container>
+      </div>
     </div>
   );
 }

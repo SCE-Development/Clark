@@ -1,106 +1,91 @@
-import React, { useState } from 'react';
-import { Input, Button, Modal, ModalFooter } from 'reactstrap';
-import './profile-modifier.css';
-
+import React, { useEffect, useState } from 'react';
 import { editUser } from '../../../APIFunctions/User';
 
-
-
-export default function ChangePassword(props) {
+export default function ChangePasswordModal(props) {
+  const { bannerCallback = (message, color) => { }, confirmClassAddons } = props;
   const [password, setPassword] = useState('');
-  const [confirmPass, setConfirmPass] = useState('Confirming New Password');
-  const [toggle, setToggle] = useState(true);
+  const [confirmPassword, setConfirmPassword] = useState('Confirming New Password');
+
+  const INPUT_CLASS_NAME = 'indent-2 block w-full rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
 
   async function changePassword() {
+    const apiResponse = await editUser(
+      {
+        ...props.user,
+        password
+      },
+      props.user.token
+    );
 
-
-    if (password === confirmPass) {
-      const apiResponse = await editUser(
-        {
-          ...props.user,
-          password
-        },
-        props.user.token
-      );
-
-      if (!apiResponse.error) {
-        setPassword('');
-        window.alert('Success!!');
-      }
+    if (!apiResponse.error) {
+      bannerCallback('Password Updated', 'success');
+    } else {
+      bannerCallback('Unable to update password. Please try again or reach out to dev team if error persists.', 'error', 7000);
     }
+    setPassword('');
+    setConfirmPassword('');
   }
 
-  function buttonStyle() {
-    let style = { marginTop: '10px' };
-    password === confirmPass
-      ? (style = {
-        ...style,
-        color: 'white'
-      })
-      : (style = {
-        ...style,
-        color: '#333333',
-        cursor: 'not-allowed'
-      });
-    return style;
-  }
-
-  return (
-    <div id="password-div">
-      <Modal isOpen={toggle}>
-        <h4 id="inner-text-top" style={{ marginTop: '10px' }}>
-          <span className="password-span">
-            <b>New Password: </b>
-          </span>
-          <Input
+  return (<>
+    <dialog id="change-password-modal" className="modal modal-bottom sm:modal-middle">
+      <div className="modal-box">
+        <h3 className="font-bold text-lg">Reset Password</h3>
+        <label htmlFor="new-password" className="block text-sm font-medium leading-6 ">
+            New Password
+        </label>
+        <div className="mt-2">
+          <input
+            value={password}
             id="new-password"
+            name="email"
             onChange={(e) => {
               setPassword(e.target.value);
             }}
-            type="password"
+            className={INPUT_CLASS_NAME}
           />
-        </h4>
-        <h4 id="inner-text-top">
-          <span className="password-span">
-            <b>Confirm Password: </b>
-          </span>
-          <Input
-            id="confirm-password"
+        </div>
+        <label htmlFor="confirm" className="block mt-2 text-sm font-medium leading-6 ">
+            Confirm Password
+        </label>
+        <div className="mt-2">
+          <input
+            id="confirm"
+            value={confirmPassword}
+            name="confirm"
+            type="email"
             onChange={(e) => {
-              setConfirmPass(e.target.value);
+              setConfirmPassword(e.target.value);
             }}
-            type="password"
+            className={INPUT_CLASS_NAME}
           />
-        </h4>
+        </div>
+        <div className="modal-action">
 
-        <ModalFooter>
-          <Button
-            id="change-password-button"
-            color="info"
-            style={
-              (buttonStyle(),
-              {
-                background: '#0779e4',
-                marginRight: '1rem',
-                border: 'none',
-                fontSize: '1.5rem',
-                fontWeight: 'bolder'
-              })
-            }
-            onClick={() => {
-              changePassword();
-            }}>
-            Change Password
-          </Button>
-          <Button
-            id="change-password-close-button"
-            onClick={() => {
-              setToggle(!toggle);
-            }}>
-            Close
-          </Button>
-        </ModalFooter>
-      </Modal>
-    </div>
+          <form method="dialog">
+            <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button
+                disabled={password != confirmPassword || !password}
+                onClick={() => {
+                  changePassword();
+                }}
+                className={`btn inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ${confirmClassAddons} sm:ml-3 sm:w-auto`}
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => {
+                  setPassword('');
+                  setConfirmPassword('');
+                }}
+                className="btn mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+  </>
   );
 }

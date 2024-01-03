@@ -4,9 +4,7 @@ import { withRouter } from 'react-router-dom';
 import './index.css';
 
 import Routing from './Routing';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
-import { checkIfDarkThemeActive } from './APIFunctions/dark-theme';
 
 
 function App(props) {
@@ -24,7 +22,6 @@ function App(props) {
 
   useEffect(() => {
     getAuthStatus();
-    checkIfDarkThemeActive();
     // eslint-disable-next-line
   }, [])
 

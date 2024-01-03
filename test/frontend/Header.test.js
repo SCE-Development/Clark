@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import Adapter from 'enzyme-adapter-react-16';
 import { Jumbotron } from 'reactstrap';
 
-import Header from '../../src/Components/Header/Header';
+
 
 Enzyme.configure({ adapter: new Adapter() });
 const headerProps = {

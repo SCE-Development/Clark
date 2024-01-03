@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import './registerPage.css';
-import { Row, Form, FormGroup, Input, Button, Container } from 'reactstrap';
+
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
-import MajorDropdown from './MajorDropdown';
-import PlanDropdown from './PlanDropdown';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
@@ -17,7 +14,7 @@ export default function MembershipForm(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassWord] = useState('');
-  const [major, setMajor] = useState('');
+  const [major, setMajor] = useState('Other');
   const [plan, setPlan] = useState('');
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [clickSubmitted, setClickSubmitted] = useState(false);
@@ -50,17 +47,17 @@ export default function MembershipForm(props) {
     if (clickSubmitted) {
       if (!email) {
         return <p
-          className='unavailable application-text'
+          className=''
         >Email cannot be left empty</p>;
       }
       if (!checkValidEmail()) {
         return <p
-          className='unavailable application-text'
+          className=''
         >Your input email is invalid</p>;
       }
       if (!usernameAvailable) {
         return (
-          <p className='unavailable application-text'>
+          <p className=''>
             An account with this email already exists. Contact{' '}
             <a href='mailto:asksce@gmail.com'>
               asksce@gmail.com</a>
@@ -76,20 +73,20 @@ export default function MembershipForm(props) {
       return (
         clickSubmitted && (
           <p
-            className='unavailable application-text'
+            className=''
           >Password cannot be left empty</p>
         )
       );
     }
 
     const lengthClass =
-      'passwordRequirement' + (password.length >= 8 ? 'Valid' : 'Invalid');
+      (password.length >= 8 ? 'hidden' : 'text-red-500');
     const lowercaseClass =
-      'passwordRequirement' + (/[a-z]/.test(password) ? 'Valid' : 'Invalid');
+      (/[a-z]/.test(password) ? 'hidden ' : 'text-red-500');
     const uppercaseClass =
-      'passwordRequirement' + (/[A-Z]/.test(password) ? 'Valid' : 'Invalid');
+      (/[A-Z]/.test(password) ? 'hidden' : 'text-red-500');
     const numberClass =
-      'passwordRequirement' + (/\d/.test(password) ? 'Valid' : 'Invalid');
+      (/\d/.test(password) ? 'hidden' : 'text-red-500');
 
     return (
       (
@@ -117,22 +114,18 @@ export default function MembershipForm(props) {
         return (
           clickSubmitted && (
             <p
-              className='unavailable application-text'
+              className='text-red'
             >Please confirm your password</p>
           )
         );
       }
       if (password !== confirmPassword) {
         const validOrInvalid =
-         password === confirmPassword ? 'Valid' : 'Invalid';
+         password === confirmPassword ? 'hidden' : 'text-red-500';
         const maybeDoNot =  password === confirmPassword ? '' : 'do not';
         return <p
-          className={'passwordRequirement' + validOrInvalid}
+          className={validOrInvalid}
         >Passwords {maybeDoNot} match</p>;
-      } else{
-        return <p
-          className='passwordRequirementValid'
-        >Passwords match</p>;
       }
     }
   };
@@ -157,7 +150,7 @@ export default function MembershipForm(props) {
       handleChange: (e) => setFirstName(e.target.value),
       ifRequirementsNotMet: clickSubmitted && !firstName && (
         <p
-          className='unavailable application-text'
+          className='text-red'
         >First name cannot be left empty</p>
       ),
     },
@@ -167,7 +160,7 @@ export default function MembershipForm(props) {
       type: 'text',
       ifRequirementsNotMet: clickSubmitted && !lastName && (
         <p
-          className='unavailable application-text'
+          className='text-red'
         >Last name cannot be left empty</p>
       ),
       handleChange: (e) => setLastName(e.target.value),
@@ -261,106 +254,148 @@ export default function MembershipForm(props) {
     }
   };
 
+  const handleMajorChange = (event) => {
+    setMajor(event.target.value);
+  };
+
+  const handlePlanChange = (event) => {
+    setPlan(event.target.value);
+  };
+
+
   return (
-    <div className='planBody'>
-      <Container className = 'planContainer'>
-        <div className='form-card'>
-          <div className = 'planHeaders'>
+    <div className=''>
+      <div className = 'flex-none md:flex mt-0 pt-20 '>
+        <div className='rounded-3xl backdrop-blur-sm shadow-2xl mt-20 mb-auto ml-auto mr-auto px-10 text-center items-center justify-center'>
+          <div className = 'text-lg md:text-3xl font-bold pb-2'>
             Semester Plan
           </div>
-          <div className = 'circle'>
-            <div className='circle-text'>$20</div>
+          <div className="stats stats-vertical text-lg md:text-3xl shadow">
+            <div className="stat text-lg md:text-3xl">
+              <div className="stat-title text-2xl md:text-3xl">Price</div>
+              <div className="stat-value text-2xl md:text-3xl">$20</div>
+              <div className="stat-desc">1 semester</div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-title text-2xl md:text-3xl">Expires</div>
+              <div className="stat-value text-2xl md:text-3xl">{membershipExpDate()}</div>
+              <div className="stat-desc">↗︎ Only Up From here</div>
+            </div>
           </div>
-          <div className = 'planFooters'>
-            Expires: {membershipExpDate(1)}
+          <div className = 'text-lg md:text-3xl font-bold  pb-2 pt-4'>
+            Yearly Plan
           </div>
-          <div className = 'planHeaders'>
-            Annual Plan
+          <div className="stats stats-vertical shadow">
+            <div className="stat">
+              <div className="stat-title text-2xl md:text-3xl">Price</div>
+              <div className="stat-value text-2xl md:text-3xl">$30</div>
+              <div className="stat-desc">2 semester</div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-title text-2xl md:text-3xl">Expires</div>
+              <div className="stat-value text-2xl md:text-3xl">{membershipExpDate(2)}</div>
+              <div className="stat-desc">↗︎ Only Up From here</div>
+            </div>
           </div>
-          <div className = 'circle'>
-            <div className='circle-text'>$30</div>
-          </div>
-          <div className = 'planFooters'>
-            Expires: {membershipExpDate(2)}
-          </div>
-          <div className='venmo-link'>
+          <div className='venmo-link text-2xl  md:text-3xl  py-3'>
             <a
               href='https://venmo.com/u/sce-treasurer'
               style={{ color: 'white' }}
+              className='opacity-50 hover:opacity-100 font-bold underline duration-300'
             >
               Click to pay fee
             </a>
+            <p className='text-sm no-underline '> You do not need to pay to make an account</p>
           </div>
         </div>
-        <div className='form-card2'>
-          <h1 id='application-header'>Membership Application</h1>
-          <h2 id='application-h2'>
+        <div className='rounded-3xl backdrop-blur-sm shadow-2xl  mt-20  ml-auto mr-auto px-10 text-center items-center justify-center'>
+          <p className='text-3xl font-bold' >Membership Application</p>
+          <p className='text-2xl font-bold '>
             Year: {new Date().getFullYear()}
-          </h2>
-          <h6 className='white-text'>
+          </p>
+          <h6 className='text-lg'>
             * = Required field
           </h6>
-          <Form onSubmit={submitApplication}>
+          <form onSubmit={submitApplication}>
             <div id='name-field-row'>
               {nameFields.map((input, index) => (
-                <FormGroup
-                  className='application-form-group'
+                <div
+                  className=' opacity-90 rounded-sm font-sans placeholder-gray-800 text-black'
                   key={`name-field-input-${index}`}>
-                  <Input
-                    className='name-input membership-input'
+                  <input
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={input.label}
+                    className='w-full bg-[#ABC9CF] rounded-full mb-4 placeholder-gray-800 text-black pl-2'
                   />
                   {input.ifRequirementsNotMet}
-                </FormGroup>
+                </div>
               ))}
             </div>
             <div id='email-input-container'>
               {accountFields.map((input, index) => (
-                <FormGroup
-                  className='application-form-group'
+                <div
+                  className='opacity-70 rounded-sm font-sans placeholder-gray-800 text-black'
                   key={`account-field-${index}`}>
-                  <Input
-                    className='membership-input email-input'
+                  <input
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={input.label}
+                    className='w-full bg-[#ABC9CF] rounded-full mb-4 placeholder-gray-800 text-black pl-2'
                   />
                   {input.ifRequirementsNotMet}
-                </FormGroup>
+                </div>
               ))}
             </div>
-            <MajorDropdown setMajor={setMajor} />
-            <PlanDropdown setPlan={setPlan} />
+            {/* <MajorDropdown setMajor={setMajor} />
+            <PlanDropdown setPlan={setPlan} /> */}
+            <p className='text-xl text-center'> Select Major </p>
+            <div className='flex text-center text-gray-100 justify-center gap-4'>
+              <label className="label">
+                <p className='text-bold'> CS </p>
+                <input type="radio" name="radio-10" className="radio" value='CS'   onClick={handleMajorChange}/>
+              </label>
+              <label className="label">
+                <p className='text-bold'> SWE </p>
+                <input type="radio" name="radio-10" className="radio" value='SWE'  onClick={handleMajorChange}/>
+              </label>
+              <label className="label">
+                <p className='text-bold'> Other </p>
+                <input type="radio" name="radio-10" className="radio" value='Other'  onClick={handleMajorChange}/>
+              </label>
+            </div>
+            <p className='text-xl text-center'> Select Plan </p>
+            <div className='flex text-center text-gray-100 justify-center gap-4'>
+              <label className="label">
+                <p className='text-bold'> Semester </p>
+                <input type="radio" name="radio-11" className="radio" value='Semester'   onClick={handlePlanChange}/>
+              </label>
+              <label className="label">
+                <p className='text-bold'> Annual </p>
+                <input type="radio" name="radio-11" className="radio" value='Annual'  onClick={handlePlanChange}/>
+              </label>
+              <label className="label">
+                <p className='text-bold'> None </p>
+                <input type="radio" name="radio-11" className="radio" value='None'  onClick={handlePlanChange}/>
+              </label>
+            </div>
             <div id='recaptcha'>
               {maybeShowCaptcha()}
             </div>
-            <div className='transition-button-wrapper container-btn'>
-              <div className='center'>
-                <Button className = 'submit-btn' type='submit'>
+            <div className=''>
+              <div className=''>
+                <button className = 'btn mt-20' type='submit'>
                 Submit Application
-                </Button>
+                </button>
               </div>
             </div>
-            <div>
-              <h4 id='application-header' style={{paddingTop : '1.5rem'}}>Please Note</h4>
-              <h6 className='white-text'> Pay for SCE membership on Venmo
-                <a href="https://account.venmo.com/u/sce-treasurer"><b>@sce-treasurer</b> </a>
-              </h6>
-              <h6 className='white-text'>
-                Message our treasurer on Discord to get a door code and shirt.
-                <a href="http://discordapp.com/users/239143229851697152"><b>@en4y</b></a>
-              </h6>
-              <h6 className='white-text'>
-                Signing up does not waive the fee
-              </h6>
-            </div>
-          </Form>
+          </form>
         </div>
-      </Container>
+      </div>
     </div>
   );
 }

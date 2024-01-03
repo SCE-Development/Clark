@@ -34,17 +34,21 @@ export default function ExpirationDropdown(props) {
 
   return (
     <>
-      <select
-        onChange={event => {
-          props.setNumberOfSemestersToSignUpFor(event.target.value);
-        }}
-      >
-        {membership.map((x, ind) => (
-          <option key={ind} value={x.value}>
-            {x.name}
-          </option>
-        ))}
-      </select>
+      <label htmlFor="membership" className="block text-sm font-medium leading-6  ">Membership Expiration</label>
+      <div className="mt-2">
+        <select
+          id="membership" name="membership" autoComplete="country-name" className="block w-full rounded-md border-0 py-2   shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+          onChange={event => {
+            props.setNumberOfSemestersToSignUpFor(event.target.value);
+          }}
+        >
+          {membership.map((x) => (
+            <option key={x.value} value={x.value}>
+              {x.name}
+            </option>
+          ))}
+        </select>
+      </div>
     </>
   );
 }

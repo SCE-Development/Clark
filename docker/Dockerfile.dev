@@ -1,5 +1,4 @@
-# Build steps for production frontend
-FROM node:14.10.0-alpine as builder
+FROM node:20.10.0-alpine as builder
 
 WORKDIR /frontend
 
@@ -22,5 +21,7 @@ RUN npm install
 COPY public ./public
 
 COPY src ./src
+
+RUN npx tailwindcss -o public/output.css --minify
 
 CMD ["npm", "start"]

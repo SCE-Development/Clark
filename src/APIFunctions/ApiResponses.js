@@ -30,13 +30,12 @@ export class UserApiResponse extends ApiResponse {
  * @extends {ApiResponse}
  * @member {bool} canPrint - If the user can print given the number of pages
  * they have left
- * @member {number} remainingPages - The number of remaining pages a user has
+ * @member {number} pagesUsed - The number of remaining pages a user has
  * to print
  */
 export class PrintApiResponse extends ApiResponse {
   constructor(error = false, responseData = null) {
     super(error, responseData);
-    this.canPrint = false;
-    this.remainingPages = 0;
+    this.pagesUsed = 0;
   }
 }

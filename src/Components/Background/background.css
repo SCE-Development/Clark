@@ -1,46 +1,50 @@
- .background-parent {
+.background-parent {
     position: fixed;
     overflow: hidden;
-    z-index: -1; /* ensures the background stays behind everything */
-    width:100vw;
-    height:100vh;
+    z-index: -1;
+    /* ensures the background stays behind everything */
+    width: 100vw;
+    height: 100vh;
     border: 0;
     top: 0;
     left: 0;
     background-color: #333;
     overflow: none;
- }
- 
- .background-child {
+}
+
+.background-child {
     margin: auto;
- }
- 
- .background-parent svg {
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
-   margin: 0;
-   padding: 0;
- }
- 
- #circuit, #boxes, #circles{
-   stroke: #ccc;
- }
- 
- #electricity {
-   stroke: #03d8f3;
- }
- .path {
-   animation: draw 20s infinite;
-   animation-timing-function: linear;
- } 
- 
- @keyframes draw {
-   0% {
-   }
-   100% {
-     stroke-dashoffset: 0;
-     stroke-opacity: 1;
-   }
- }
+}
+
+.background-parent svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    padding: 0;
+}
+
+#circuit,
+#boxes,
+#circles {
+    stroke: #ccc;
+}
+
+#electricity {
+    stroke: #03d8f3;
+}
+
+.path {
+    animation: draw 20s infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes draw {
+    0% {}
+
+    100% {
+        stroke-dashoffset: 0;
+        stroke-opacity: 1;
+    }
+}

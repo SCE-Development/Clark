@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-import { Spinner, Input, Button, Container } from 'reactstrap';
-import './led-sign.css';
-import Header from '../../Components/Header/Header';
+
+
 import ConfirmationModal
   from '../../Components/DecisionModal/ConfirmationModal.js';
 
@@ -21,6 +20,26 @@ function LedSign(props) {
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
   const [shutdownToggle, setShutdownToggle] = useState(false);
+  const colorInputs = [
+    {
+      title: 'Background Color',
+      value: backgroundColor,
+      type: 'color',
+      onChange: e => setBackgroundColor(e.target.value)
+    },
+    {
+      title: 'Text Color',
+      value: textColor,
+      type: 'color',
+      onChange: e => setTextColor(e.target.value)
+    },
+    {
+      title: 'Border Color',
+      value: borderColor,
+      type: 'color',
+      onChange: e => setBorderColor(e.target.value)
+    },
+  ];
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -68,9 +87,6 @@ function LedSign(props) {
       onChange: e => setScrollSpeed(e.target.value)
     }
   ];
-  const headerProps = {
-    title: 'LED Sign'
-  };
 
   async function handleSend() {
     setAwaitingSignResponse(true);
@@ -91,7 +107,7 @@ function LedSign(props) {
     setAwaitingSignResponse(false);
   }
 
-  async function handleStop(){
+  async function handleStop() {
     setAwaitingStopSignResponse(true);
     const signResponse = await updateSignText(
       {
@@ -111,7 +127,7 @@ function LedSign(props) {
       return <></>;
     } else if (requestSuccessful) {
       return <p className='sign-available'>Sign successfully updated!</p>;
-    } else if (stopRequestSuccesful){
+    } else if (stopRequestSuccesful) {
       return <p className="sign-available">Sign successfully stopped!</p>;
     } else {
       return (
@@ -143,65 +159,58 @@ function LedSign(props) {
     // eslint-disable-next-line
   }, [])
 
-  function renderSignHealth() {
-    if (loading) {
-      return <Spinner />;
-    } else if (signHealthy) {
-      return <span className='sign-available'> Sign is up.</span>;
-    } else {
-      return <span className='sign-unavailable'> Sign is down!</span>;
-    }
+  if (loading) {
+    return (
+      <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+      </svg>
+    );
+  } else if (!signHealthy) {
+    return (
+      <div className='flex justify-center items-center mt-10 w-full'>
+        <div role="alert" className="w-1/2 text-center alert alert-error">
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <p className=''>The LED sign is down. Reach out to SCE Development team if refreshing doesn't fix</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div>
-      <Header {...headerProps} />
-      <div className="sign-wrapper">
-        <Container>
-          <h1 className="sign-status">
-            Sign Status:
-            {renderSignHealth()}
-          </h1>
-        </Container>
-        {inputArray.map((input, index) => {
-          return (
-            <div key={index} className="full-width">
-              <label>{input.title}</label>
-              <Input disabled={loading || !signHealthy} {...input} />
-            </div>
-          );
-        })}
-        <div className="turn-off-sign-wrapper">
-          <Button
-            id="led-sign-send"
-            onClick={handleSend}
-            disabled={loading || !signHealthy || awaitingSignResponse}
-          >
-            {awaitingSignResponse ? <Spinner /> : 'Send'}
-          </Button>
-          <Button
-            id="led-sign-stop"
-            color="danger"
-            onClick={() => setShutdownToggle(true)}
-          >
-            {awaitingStopSignResponse ? <Spinner /> : 'Stop'}
-          </Button>
+      <div className="space-y-12 mt-10  gap-x-6 gap-y-8 w-full sm:grid-cols-6">
+        <div className="flex border-b border-gray-900/10 pb-12 w-full">
+          <div className="flex flex-col justify-center items-center sm:col-span-3 w-full">
+            {
+              inputArray.map((input) => (
+                <div key={input.title} className="sm:col-span-2 sm:col-start-1 w-1/3 ">
+                  <div className="mt-2 ">
+                    <label htmlFor="copies" className="block text-sm font-medium leading-6">{input.title}</label>
+                    <input
+                      type={input.type}
+                      value={input.value}
+                      name="city"
+                      id="city"
+                      autocomplete="address-level2"
+                      onChange={input.onChange}
+                      className="indent-2 text-white block w-full rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+              ))
+            }
+
+            <button className='btn w-1/3 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
+              Stop
+            </button>
+            <button className='btn w-1/3 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
+              Send
+            </button>
+            {renderRequestStatus()}
+          </div>
         </div>
-        {renderRequestStatus()}
+
       </div>
-      <ConfirmationModal
-        headerText={'Turn Off LED'}
-        bodyText={'Are you sure you want to turn off the LED?'}
-        confirmText={'Turn Off'}
-        cancelText={'Cancel'}
-        toggle={() => setShutdownToggle(!shutdownToggle)}
-        handleConfirmation={() => {
-          setRequestSuccessful();
-          setShutdownToggle(!shutdownToggle);
-          handleStop();
-        }}
-        open={shutdownToggle}
-      />
+
     </div>
   );
 }

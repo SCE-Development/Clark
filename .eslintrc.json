@@ -37,12 +37,6 @@
             "always"
         ],
         "camelcase": 2,
-        "max-len": [
-            2,
-            {
-                "code": 100
-            }
-        ],
         "comma-spacing": "error",
         "no-console": [
             "error",
