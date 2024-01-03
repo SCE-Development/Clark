@@ -63,7 +63,6 @@ function SpeakersPage(props) {
           <input placeholder='Enter YouTube Link' onChange=
             {(e) => setUrl(e.target.value)}
           className="sign-input indent-2 w-full h-8"
-          style={{ width: '100%', height: '2rem' }}
           >
           </input>
           {
