@@ -35,7 +35,7 @@
     "darkreader": "^4.9.27",
     "googleapis": "^126.0.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^5.11.18",
+    "mongoose": "^8.0.3",
     "nodemailer": "^6.9.5",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
