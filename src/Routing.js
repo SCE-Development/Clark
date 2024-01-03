@@ -12,16 +12,12 @@ import EditUserInfo from './Pages/UserManager/EditUserInfo';
 
 import Home from './Pages/Home/Home.js';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
-import EventList from './Pages/Events/EventList';
-import PrintingSolids from './Pages/3DPrinting/3DPrintForm.js';
-import SolidsConsole from './Pages/3DPrintingConsole/3DConsole.js';
 import MembershipApplication from
   './Pages/MembershipApplication/MembershipApplication.js';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
 
 import { membershipState } from './Enums';
-import DiscordSJSU from './Pages/DiscordSJSU/DiscordSJSU.js';
 
 import AboutPage from './Pages/About/About';
 import ProjectsPage from './Pages/Projects/Projects';
@@ -60,13 +56,6 @@ export default function Routing({ appProps }) {
     //   inAdminNavbar: true
     // },
     {
-      Component: SolidsConsole,
-      path: '/3DConsole',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
-    {
       Component: LedSign,
       path: '/led-sign',
       allowedIf: true,
@@ -79,12 +68,6 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
-    },
-    {
-      Component: PrintingSolids,
-      path: '/3DPrintingForm',
-      allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: '/login'
     },
     {
       Component: Printing,
@@ -137,9 +120,7 @@ export default function Routing({ appProps }) {
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
-    { Component: EventList, path: '/events' },
     { Component: VerifyEmailPage, path: '/verify' },
-    { Component: DiscordSJSU, path: '/discordSJSU' },
     { Component: AboutPage, path: '/about'},
     { Component: ProjectsPage, path: '/projects'},
     { Component: EmailPreferencesPage, path: '/emailPreferences' },

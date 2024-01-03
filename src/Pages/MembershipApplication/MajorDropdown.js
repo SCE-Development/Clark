@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
 
-import {
-  ButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Input,
-} from 'reactstrap';
-
 export default function MajorDropdown(props) {
   const [inputEnabled, setInputEnabled] = useState(props.inputEnable);
   const [major, setMajor] = useState();

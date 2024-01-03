@@ -322,14 +322,14 @@ export default function MembershipForm(props) {
             <div id='name-field-row'>
               {nameFields.map((input, index) => (
                 <div
-                  className=' opacity-70 rounded-sm font-sans text-white'
+                  className=' opacity-90 rounded-sm font-sans placeholder-gray-800 text-black'
                   key={`name-field-input-${index}`}>
                   <input
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={input.label}
-                    className='w-full bg-[#ABC9CF] rounded-full mb-4 text-white pl-2'
+                    className='w-full bg-[#ABC9CF] rounded-full mb-4 placeholder-gray-800 text-black pl-2'
                   />
                   {input.ifRequirementsNotMet}
                 </div>
@@ -338,14 +338,14 @@ export default function MembershipForm(props) {
             <div id='email-input-container'>
               {accountFields.map((input, index) => (
                 <div
-                  className='opacity-70 rounded-sm font-sans text-black'
+                  className='opacity-70 rounded-sm font-sans placeholder-gray-800 text-black'
                   key={`account-field-${index}`}>
                   <input
                     type={input.type}
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={input.label}
-                    className='w-full bg-[#ABC9CF] rounded-full mb-4 text-black pl-2'
+                    className='w-full bg-[#ABC9CF] rounded-full mb-4 placeholder-gray-800 text-black pl-2'
                   />
                   {input.ifRequirementsNotMet}
                 </div>
@@ -354,7 +354,7 @@ export default function MembershipForm(props) {
             {/* <MajorDropdown setMajor={setMajor} />
             <PlanDropdown setPlan={setPlan} /> */}
             <p className='text-xl text-center'> Select Major </p>
-            <div className='flex text-center justify-center gap-4'>
+            <div className='flex text-center text-gray-100 justify-center gap-4'>
               <label className="label">
                 <p className='text-bold'> CS </p>
                 <input type="radio" name="radio-10" className="radio" value='CS'   onClick={handleMajorChange}/>
@@ -369,7 +369,7 @@ export default function MembershipForm(props) {
               </label>
             </div>
             <p className='text-xl text-center'> Select Plan </p>
-            <div className='flex text-center justify-center gap-4'>
+            <div className='flex text-center text-gray-100 justify-center gap-4'>
               <label className="label">
                 <p className='text-bold'> Semester </p>
                 <input type="radio" name="radio-11" className="radio" value='Semester'   onClick={handlePlanChange}/>
