@@ -61,7 +61,7 @@
     "@babel/register": "^7.17.7",
     "chai": "^4.3.0",
     "chai-http": "^4.3.0",
-    "daisyui": "^4.4.24",
+    "daisyui": "^4.5.0",
     "eslint": "^7.32.0",
     "ignore-styles": "^5.0.1",
     "inquirer": "^8.2.4",

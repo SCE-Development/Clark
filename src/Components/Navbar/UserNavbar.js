@@ -56,7 +56,7 @@ export default function UserNavBar(props) {
   };
 
   return (
-    <div className="navbar bg-base-100">
+    <div className="fixed top-0 left-0 w-full navbar bg-base-100">
       <div className="navbar-start">
         <a href='/'>
           <img id='logo-image' src='favicon.ico'
@@ -64,7 +64,7 @@ export default function UserNavBar(props) {
         </a>
       </div>
 
-      <div className="navbar-center hidden sm:flex">
+      <div className="hidden navbar-center sm:flex">
         <ul className="menu menu-horizontal">
           {getRoutesForNavbar()}
         </ul>
@@ -83,7 +83,7 @@ export default function UserNavBar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-12">
+                <div className="w-12 rounded-full bg-neutral text-neutral-content">
                   <span>{initials}</span>
                 </div>
               </summary>
@@ -121,7 +121,7 @@ export default function UserNavBar(props) {
             </div>
 
             <div className="hidden sm:flex">
-              <ul className="menu menu-horizontal px-1">
+              <ul className="px-1 menu menu-horizontal">
                 <li>
                   <a href='/login'>
                     Sign In
