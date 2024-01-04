@@ -9,7 +9,6 @@ import ConfirmationModal from
 const enums = require('../../Enums.js');
 
 export default function Overview(props) {
-  const [toggleDelete, setToggleDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paginationText, setPaginationText] = useState('');
   const [users, setUsers] = useState([]);
@@ -179,9 +178,7 @@ export default function Overview(props) {
         confirmClassAddons: 'bg-red-600 hover:bg-red-500',
         handleConfirmation: () => {
           deleteUser(userToDelete);
-          setToggleDelete(!toggleDelete);
         },
-        open: toggleDelete
       }
       } />
       <div className='mx-6'>
@@ -253,9 +250,9 @@ export default function Overview(props) {
                   </td>
                   <td className='td delete-cell overview-center'>
                     <button
-                      className='overview-icon'
+                      className='overview-icon hover:bg-white/10 rounded-lg p-2'
                       onClick={() => {
-                        setToggleDelete(!toggleDelete);
+                        document.getElementById('confirmation-modal').showModal();
                         setUserToDelete(user);
                       }}
                     >
