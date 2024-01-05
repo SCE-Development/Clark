@@ -4,44 +4,39 @@ import Footer from '../../Components/Footer/Footer.js';
 class Home extends Component {
   render() {
     return (
-      <div className='h-[84vh]'>
-        <div className="flex flex-wrap flex-col md:flex-row justify-center items-center h-full">
-          <div className="flex flex-col w-full xl:w-2/5 justify-center items-center  overflow-y-hidden">
-            <div className="flex flex-col ml-10 justify-center items-center">
-              <h1 className="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center lg:text-left">
+      <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
+        <div className='h-[86px]'/>
+        <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full md:flex-row">
+          <div className="flex flex-col items-center justify-center w-full overflow-y-hidden xl:w-2/5">
+            <div className="flex flex-col mb-8 ml-10">
+              <h1 className="my-4 text-3xl font-bold text-center text-white opacity-75 md:text-5xl xl:text-left">
                 The Software and Computer Engineering Society
               </h1>
-              <p className="leading-normal text-base md:text-2xl mb-8 text-left">
+              <h3 className="text-base text-center xl:text-left md:text-2xl">
                 SJSU's largest Engineering Club
-              </p>
+              </h3>
             </div>
-            <div className='space-x-3'>
-              <a href="/about"
-                rel="nofollow noreferrer"
-                target="_blink"
-              >
-                <button className="btn btn-outline btn-primary">Learn More</button>
+            <div className='flex justify-center space-x-3'>
+              <a href="/about" rel="nofollow noreferrer" target="_blank">
+                <button className="btn btn-outline btn-primary hover:!text-white">Learn More</button>
               </a>
-              <a href="/register"
-                rel="nofollow noreferrer"
-                target="_blink"
-              >
-                <button className="btn btn-outline btn-accent">Join Us!</button>
+              <a href="/register" rel="nofollow noreferrer" target="_blank">
+                <button className="btn btn-outline btn-accent hover:!text-white">Join Us!</button>
               </a>
             </div>
           </div>
 
-          <div className="w-full xl:w-3/5 p-12 overflow-hidden">
+
+          <div className="w-full h-full p-12 overflow-hidden xl:w-3/5">
             <img
-              className="mx-auto w-full md:w-4/5 transform"
+              className="w-full mx-auto transform md:w-4/5"
               src="https://user-images.githubusercontent.com/63530023/230752289-defefe87-354d-4fcc-9e60-17e4356ba17e.png"
             />
           </div>
 
         </div>
-        <div className='flex-grow'>
-          <Footer />
-        </div>
+
+        <Footer />
       </div>
     );
   }
