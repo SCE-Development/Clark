@@ -22,6 +22,6 @@ COPY public ./public
 
 COPY src ./src
 
-RUN npx tailwindcss -o public/output.css --minify
+RUN npx tailwindcss build -i src/input.css -o public/output.css --minify
 
 CMD ["npm", "start"]

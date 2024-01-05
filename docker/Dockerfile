@@ -19,12 +19,11 @@ ENV REACT_APP_MAILER_API_URL https://sce.sjsu.edu/cloudapi
 
 RUN npm install
 
-RUN npx tailwindcss -o public/output.css --minify
-
-
 COPY public ./public
 
 COPY src ./src
+
+RUN npx tailwindcss build -i src/input.css -o public/output.css --minify
 
 RUN npm run build --production
 
