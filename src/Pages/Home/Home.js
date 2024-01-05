@@ -5,10 +5,9 @@ class Home extends Component {
   render() {
     return (
       <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
-        <div className='h-[86px]'/>
-        <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full md:flex-row">
-          <div className="flex flex-col items-center justify-center w-full overflow-y-hidden xl:w-2/5">
-            <div className="flex flex-col mb-8 ml-10">
+        <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
+          <div className="flex flex-col items-center justify-center w-full p-4 overflow-y-hidden xl:w-2/5">
+            <div className="flex flex-col mb-8 xl:ml-10">
               <h1 className="my-4 text-3xl font-bold text-center text-white opacity-75 md:text-5xl xl:text-left">
                 The Software and Computer Engineering Society
               </h1>
