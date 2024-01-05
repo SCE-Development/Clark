@@ -1,5 +1,5 @@
 # Build steps for production frontend
-FROM node:14.10.0-alpine as builder
+FROM node:20.10.0-alpine as builder
 
 WORKDIR /frontend
 
@@ -19,12 +19,13 @@ ENV REACT_APP_MAILER_API_URL https://sce.sjsu.edu/cloudapi
 
 RUN npm install
 
-RUN npx tailwindcss -o public/output.css --minify
-
-
 COPY public ./public
 
 COPY src ./src
+
+COPY tailwind.config.js ./tailwind.config.js
+
+RUN npx tailwindcss build -i src/input.css -o public/output.css --minify
 
 RUN npm run build --production
 
