@@ -23,6 +23,8 @@ COPY public ./public
 
 COPY src ./src
 
+COPY tailwind.config.js ./tailwind.config.js
+
 RUN npx tailwindcss build -i src/input.css -o public/output.css --minify
 
 RUN npm run build --production
