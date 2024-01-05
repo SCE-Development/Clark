@@ -56,7 +56,7 @@ export default function UserNavBar(props) {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full navbar bg-base-100">
+    <div className="navbar bg-base-100">
       <div className="navbar-start">
         <a href='/'>
           <img id='logo-image' src='favicon.ico'

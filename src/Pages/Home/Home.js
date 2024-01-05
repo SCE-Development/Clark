@@ -4,23 +4,37 @@ import Footer from '../../Components/Footer/Footer.js';
 class Home extends Component {
   render() {
     return (
-      <div className='flex flex-col min-h-[calc(100vh-80px)] bg-gradient-to-br from-[#000000] via-[#0c143f] to-[#000000]'>
-        <div className='h-4 sm:h-16' />
-
-        <div className='items-center justify-center flex-1 px-4 mx-auto text-white'>
-          <h1 className='text-4xl font-bold text-center'>Redeem Code</h1>
-
-          <div className='relative w-full max-w-5xl p-8 mt-8 border bg-black/40 transform-gpu rounded-xl border-white/10 backdrop-blur'>
-            <h3 className='text-lg text-center text-white'>Paste Your Code Below</h3>
-            <input
-              type="text"
-              placeholder="Paste Code Here!"
-              className="my-5 w-full outline-none text-center text-sm bg-transparent hover:bg-[#30313D]/50 focus:bg-[#30313D]/50 border-white/10 focus:border-blue-500 border-[1px] focus:border-2 placeholder-grey-300 hover:placeholder-grey-100 focus:placeholder-grey-100 transition ease-in-out duration-300 rounded-md px-8 py-4 sm:py-3 text-white"
-            />
-            <button className='text-white btn btn-info btn-block hover:bg-cyan-700'>Redeem Code</button>
+      <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
+        <div className='h-[86px]'/>
+        <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full md:flex-row">
+          <div className="flex flex-col items-center justify-center w-full overflow-y-hidden xl:w-2/5">
+            <div className="flex flex-col mb-8 ml-10">
+              <h1 className="my-4 text-3xl font-bold text-center text-white opacity-75 md:text-5xl xl:text-left">
+                The Software and Computer Engineering Society
+              </h1>
+              <h3 className="text-base text-center xl:text-left md:text-2xl">
+                SJSU's largest Engineering Club
+              </h3>
+            </div>
+            <div className='flex justify-center space-x-3'>
+              <a href="/about" rel="nofollow noreferrer" target="_blank">
+                <button className="btn btn-outline btn-primary hover:!text-white">Learn More</button>
+              </a>
+              <a href="/register" rel="nofollow noreferrer" target="_blank">
+                <button className="btn btn-outline btn-accent hover:!text-white">Join Us!</button>
+              </a>
+            </div>
           </div>
+
+
+          <div className="w-full h-full p-12 overflow-hidden xl:w-3/5">
+            <img
+              className="w-full mx-auto transform md:w-4/5"
+              src="https://user-images.githubusercontent.com/63530023/230752289-defefe87-354d-4fcc-9e60-17e4356ba17e.png"
+            />
+          </div>
+
         </div>
-        <div className='h-8 sm:h-16' />
 
         <Footer />
       </div>
