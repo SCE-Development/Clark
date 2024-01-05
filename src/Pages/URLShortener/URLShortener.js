@@ -18,6 +18,7 @@ export default function URLShortenerPage(props) {
   const [aliasTaken, setAliasTaken] = useState();
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
+  const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
 
   /**
    * Cleezy page is disabled by default since you have to run the Cleezy server
@@ -144,7 +145,7 @@ export default function URLShortenerPage(props) {
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 grid-cols-full sm:grid-cols-6">
             {maybeRenderErrorAlert()}
             <div className="col-span-full sm:col-span-4">
-              <label htmlFor="url" className="block text-sm font-medium leading-6 text-gray-300">
+              <label htmlFor="url" className={LABEL_CLASS}>
                 Original URL
               </label>
               <div className="mt-2">
@@ -171,7 +172,7 @@ export default function URLShortenerPage(props) {
             {!useGeneratedAlias && (
 
               <div className="sm:col-span-4">
-                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-300">
+                <label htmlFor="email" className={LABEL_CLASS}>
                   Alias
                 </label>
                 <div className="mt-2">
