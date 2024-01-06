@@ -43,36 +43,38 @@ export default function Login(props) {
   }
 
   return (
-    <div className = 'flex-none md:flex  pt-4 '>
-      <div className='rounded-3xl backdrop-blur-sm shadow-2xl md:w-1/3  mt-20 pb-4 mb-auto ml-auto mr-auto px-5 text-center items-center justify-center'>
-        <div className='flex justify-center'>
-          <img id='img' alt='sce logo' src='https://sce.sjsu.edu/images/SCE-glow.png' width='2rem'  className='w-2/3 px-auto'/>
-        </div>
-        <form onSubmit={handleSubmit} className=''>
-          <div className='flex flex-col items-center'>
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text">Email</span>
-              </div>
-              <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
-            </label>
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text">Password</span>
-              </div>
-              <input type="password" placeholder="Password" className="input input-bordered w-full max-w-xs" onChange={(e) => setPassword(e.target.value)}/>
-            </label>
-            {errorMsg && <p className='text-red-500 text-sm md:text-md pt-2 w-full max-w-xs'>{errorMsg}*</p>}
-            <button type='submit' id='loginBtn' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
-              Login
-            </button>
-            <a className='btn mt-5 w-full max-w-xs' href='/register'>
-              <button type='submit'>
-                Create an Account
+    <div className='flex-col flex-initial min-h-[calc(100vh-86px)]'>
+      <div className='flex-none m-auto'>
+        <div className='items-center justify-center p-8 mx-auto mt-auto text-center shadow-2xl rounded-3xl backdrop-blur-sm max-h-[1184px] max-w-xl'>
+          <img id='img' alt='sce logo' src='https://sce.sjsu.edu/images/SCE-glow.png' className='flex mx-auto w-[50%]'/>
+          {/* <div className='flex justify-center max-w-xl'>
+          </div> */}
+          <form onSubmit={handleSubmit}>
+            <div className='flex flex-col items-center'>
+              <label className="w-full max-w-xs form-control">
+                <div className="label">
+                  <span className="label-text">Email</span>
+                </div>
+                <input type="email" placeholder="Email" className="w-full max-w-xs input input-bordered" onChange={(e) => setEmail(e.target.value)}/>
+              </label>
+              <label className="w-full max-w-xs form-control">
+                <div className="label">
+                  <span className="label-text">Password</span>
+                </div>
+                <input type="password" placeholder="Password" className="w-full max-w-xs input input-bordered" onChange={(e) => setPassword(e.target.value)}/>
+              </label>
+              {errorMsg && <p className='w-full max-w-xs pt-2 text-sm text-red-500 md:text-md'>{errorMsg}*</p>}
+              <button type='submit' id='loginBtn' className='w-full max-w-xs mt-5 btn' onClick={(e) => handleSubmit(e)}>
+                Login
               </button>
-            </a>
-          </div>
-        </form>
+              <a className='w-full max-w-xs mt-5 btn' href='/register'>
+                <button type='submit'>
+                  Create an Account
+                </button>
+              </a>
+            </div>
+          </form>
+        </div>
       </div>
       <Background />
     </div>
