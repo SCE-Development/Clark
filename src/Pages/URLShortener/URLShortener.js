@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useEffect, useState } from 'react';
 
 
@@ -16,6 +17,10 @@ export default function URLShortenerPage(props) {
   const [error, setError] = useState();
   const [successMessage, setSuccessMessage] = useState();
   const [aliasTaken, setAliasTaken] = useState();
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [paginationText, setPaginationText] = useState('');
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
@@ -24,13 +29,17 @@ export default function URLShortenerPage(props) {
    * Cleezy page is disabled by default since you have to run the Cleezy server
    * separately. To enable, go to config.json and set ENABLED under Cleezy to true
    */
-  async function getCleezyUrls() {
-    const urlsFromDb = await getAllUrls(props.user.token);
+  async function getCleezyUrls(page) {
+    console.log('getting urls' + page);
+    const urlsFromDb = await getAllUrls(props.user.token, page);
     setIsCleezyDisabled(!!urlsFromDb.responseData.disabled);
     if (urlsFromDb.error) {
       setError(urlsFromDb.responseData);
     } else {
-      setAllUrls(urlsFromDb.responseData);
+      console.log(urlsFromDb.responseData.data);
+      setAllUrls(urlsFromDb.responseData.data);
+      setTotal(urlsFromDb.responseData.total - 1);
+      setRowsPerPage(urlsFromDb.responseData.data.length);
     }
     setLoading(false);
   }
@@ -78,10 +87,6 @@ export default function URLShortenerPage(props) {
   }
 
   useEffect(() => {
-    getCleezyUrls();
-  }, []);
-
-  useEffect(() => {
     if (useGeneratedAlias) {
       setAlias('');
     }
@@ -102,6 +107,28 @@ export default function URLShortenerPage(props) {
     setAliasTaken(false);
   }, [alias]);
 
+  useEffect(() => {
+    getCleezyUrls(page);
+  }, [page]);
+
+  useEffect(() => {
+
+    const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
+    const pageOffset = page * rowsPerPage;
+    const startingElementNumber = (page * rowsPerPage) + 1;
+    const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
+    setPaginationText(
+      <>
+        <p className='md:hidden'>
+          {startingElementNumber} - {endingElementNumber} / {total}
+        </p>
+        <p className="hidden md:inline-block">
+          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total}</span> results
+        </p>
+      </>
+    );
+  }, [page, rowsPerPage, allUrls, total]);
+
   function maybeRenderErrorAlert() {
     if (invalidUrl) {
       return (
@@ -119,6 +146,40 @@ export default function URLShortenerPage(props) {
         </div>
       );
     }
+  }
+
+  function maybeRenderPagination() {
+    const amountOfUrlsOnPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
+    const pageOffset = page * rowsPerPage;
+    const endingElementNumber = amountOfUrlsOnPage + pageOffset;
+    if (allUrls.length) {
+      return (
+        <nav className='flex justify-start mt-2 mb-6 mx-6'>
+          <div className='navbar-start flex items-center'>
+            <span>
+              {loading ? '...' : paginationText}
+            </span>
+          </div>
+          <div className='navbar-end flex justify-end space-x-3'>
+            <button
+              className='btn'
+              onClick={() => setPage(page - 1)}
+              disabled={page === 0 || loading}
+            >
+              previous
+            </button>
+            <button
+              className='btn'
+              onClick={() => setPage(page + 1)}
+              disabled={endingElementNumber >= total || loading}
+            >
+              next
+            </button>
+          </div>
+        </nav>
+      );
+    }
+    return <></>;
   }
 
   function renderUrlButtonOrForm() {
@@ -312,6 +373,7 @@ export default function URLShortenerPage(props) {
                 })}
               </tbody>
             </table>
+            {maybeRenderPagination()}
           </div>
         </div>
       )}
