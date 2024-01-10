@@ -220,55 +220,60 @@ export default function Overview(props) {
               <tr>
                 {[
                   { title: 'Name/Email', className: 'text-base text-white/70' },
-                  { title: 'Printing', className: 'text-base text-white/70 hidden md:flex justify-center' },
-                  { title: 'Verified', className: 'text-base text-white/70 text-center' },
-                  { title: 'Membership', className: 'text-base text-white/70 hidden sm:flex justify-center' },
+                  { title: 'Printing', className: 'text-base text-white/70 hidden text-center md:table-cell' },
+                  { title: 'Verified', className: 'text-base text-white/70 text-center hidden sm:table-cell' },
+                  { title: 'Membership', className: 'text-base text-white/70 hidden text-center sm:table-cell' },
                   { title: 'Delete', className: 'text-base text-white/70 text-center' },
-                ].map(({ title, className }) => {
-                  return (<th
+                ].map(({ title, className }) => (
+                  <th
                     className={`${className}`}
                     key={title}
                   >
                     {title}
-                  </th>);
-                })}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => {
-                return (
-                  <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={user.email}>
-                    <td className=''>
-                      <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
-                        {formatFirstAndLastName(user)}
-                      </a>
-                      <p>{user.email}</p>
-                    </td>
-                    <td className='h-[65px] hidden mx-auto md:flex justify-center items-center'>{user.pagesPrinted}/30</td>
-                    <td className=''>
-                      <div className='flex items-center justify-center'>
-                        {mark(user.emailVerified)}
-                      </div>
-                    </td>
-                    <td className='items-center justify-center hidden break-keep sm:flex'>
+              {users.map((user) => (
+                <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={user.email}>
+                  <td className=''>
+                    <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
+                      {formatFirstAndLastName(user)}
+                    </a>
+                    <p>{user.email}</p>
+                  </td>
+                  <td className='hidden md:table-cell'>
+                    <div className='flex items-center justify-center'>
+                      {user.pagesPrinted}/30
+                    </div>
+                  </td>
+                  <td className='hidden sm:table-cell'>
+                    <div className='flex items-center justify-center'>
+                      {mark(user.emailVerified)}
+                    </div>
+                  </td>
+                  <td className='hidden sm:table-cell'>
+                    <div className='flex items-center justify-center'>
                       {enums.membershipStateToString(user.accessLevel)}
-                    </td>
-                    <td>
-                      <div className='flex items-center justify-center'>
-                        <button
-                          className='p-2 hover:bg-white/30 rounded-xl'
-                          onClick={() => {
-                            setToggleDelete(!toggleDelete);
-                            setUserToDelete(user);
-                          }}
-                        >
-                          {svg.trashcanSymbol()}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                    </div>
+                  </td>
+                  <td>
+                    <div className='flex items-center justify-center'>
+                      <button
+                        className='p-2 hover:bg-white/30 rounded-xl'
+                        onClick={() => {
+                          setToggleDelete(!toggleDelete);
+                          setUserToDelete(user);
+                        }}
+                      >
+                        {svg.trashcanSymbol()}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
             </tbody>
           </table>
           {maybeRenderPagination()}
