@@ -110,7 +110,7 @@ export default function URLShortenerPage(props) {
 
   useEffect(() => {
 
-    const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
+    const amountOfRowsOnCurrentPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
     const pageOffset = page * rowsPerPage;
     const startingElementNumber = (page * rowsPerPage) + 1;
     const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
