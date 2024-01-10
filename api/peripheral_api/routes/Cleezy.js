@@ -33,7 +33,7 @@ router.get('/list', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
-    const page = req.query.page || 0;
+    const { page = 0 } = req.query;
     const response = await axios.get(CLEEZY_URL + '/list', {
       params: { page }
     });
