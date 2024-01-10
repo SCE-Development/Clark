@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useEffect, useState } from 'react';
 
 
@@ -30,13 +29,11 @@ export default function URLShortenerPage(props) {
    * separately. To enable, go to config.json and set ENABLED under Cleezy to true
    */
   async function getCleezyUrls(page) {
-    console.log('getting urls' + page);
     const urlsFromDb = await getAllUrls(props.user.token, page);
     setIsCleezyDisabled(!!urlsFromDb.responseData.disabled);
     if (urlsFromDb.error) {
       setError(urlsFromDb.responseData);
     } else {
-      console.log(urlsFromDb.responseData.data);
       setAllUrls(urlsFromDb.responseData.data);
       setTotal(urlsFromDb.responseData.total - 1);
       setRowsPerPage(urlsFromDb.responseData.data.length);
