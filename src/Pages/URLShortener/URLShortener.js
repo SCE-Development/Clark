@@ -106,21 +106,21 @@ export default function URLShortenerPage(props) {
 
   useEffect(() => {
     getCleezyUrls(page);
-  }, [page]);
+  }, [page, allUrls]);
 
   useEffect(() => {
 
     const amountOfRowsOnCurrentPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
     const pageOffset = page * rowsPerPage;
     const startingElementNumber = (page * rowsPerPage) + 1;
-    const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
+    const endingElementNumber = amountOfRowsOnCurrentPage + pageOffset;
     setPaginationText(
       <>
         <p className='md:hidden'>
           {startingElementNumber} - {endingElementNumber} / {total}
         </p>
         <p className="hidden md:inline-block">
-          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total}</span> results
+          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total + 1}</span> results
         </p>
       </>
     );
