@@ -191,7 +191,7 @@ export default function Printing(props) {
   function renderFileUploadOrPrint() {
     if (files) {
       return (
-        <div className="grid grid-cols-1 sm:mt-32 lg:mt-5 lg:grid-cols-6 space-x-10 h-fit w-screen w-[80vw] lg:h-5/6 lg:mx-5">
+        <div className="grid grid-cols-1 sm:mt-32 lg:mt-5 lg:grid-cols-6 space-x-10 h-fit w-[80vw] lg:h-5/6 lg:mx-5">
           <div className='mt-32 lg:col-span-4 sm:mt-0'>
             <iframe
               title='Preview'
@@ -199,7 +199,7 @@ export default function Printing(props) {
               src={previewDisplay}
             />
           </div>
-          <div className="lg:col-span-2 h-auto ml-10 mt-10 lg:mt-0">
+          <div className="h-auto mt-10 ml-10 lg:col-span-2 lg:mt-0">
             <div className="grid grid-cols-1 text-xl">
               {/*
                 the below is a stupid bug, it uses the cookie of the user
@@ -228,14 +228,14 @@ export default function Printing(props) {
                   />
                 </div>
               </div>
-              <div className=" my-3">
+              <div className="my-3 ">
                 <div id=''>
                   <label htmlFor="major" className="block text-sm font-medium leading-6">
                     <span style={{ paddingRight: '10px' }}>Sides</span>
                   </label>
                   <div className="mt-2">
                     <select
-                      id="sides" name="sides" className="block w-full rounded-md border-0 py-2   shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      id="sides" name="sides" className="block w-full py-2 border-0 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                       onChange={(e) => {
                         setSides(e.target.value);
                       }}
@@ -251,23 +251,23 @@ export default function Printing(props) {
                   </div>
                 </div>
               </div>
-              <div className=" mt-3 mb-6">
+              <div className="mt-3 mb-6 ">
                 <PageSelectDropdown
                   setPageRanges={setPageRanges}
                 />
               </div>
-              <div className=" space-x-5">
+              <div className="space-x-5 ">
                 {requestExceedsAllowedPages() && (
-                  <div role="alert" className="alert alert-warning mb-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                  <div role="alert" className="mb-10 alert alert-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                     <p className=''>
                       Current print request would use {pagesToBeUsedInPrintRequest} pages which exceeds allowed limit of {getRemainingPageBalance()}
                     </p>
                   </div>
                 )}
-                <button className="btn btn-outline w-3/12" onClick={clearPrint}>Cancel</button>
+                <button className="w-3/12 btn btn-outline" onClick={clearPrint}>Cancel</button>
                 <button
-                  className="btn btn-success w-3/12"
+                  className="w-3/12 btn btn-success"
                   onClick={() => setConfirmModal(true)}
                   disabled={!pagesToBeUsedInPrintRequest || requestExceedsAllowedPages()}
                 >
@@ -282,18 +282,18 @@ export default function Printing(props) {
 
     if (!loading && !printerHealthy) {
       return (
-        <div className='flex justify-center items-center mt-10 w-full'>
+        <div className='flex items-center justify-center w-full mt-10'>
           <div role="alert" className="w-1/2 text-center alert alert-error">
-            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <p className=''>Printing is down. Reach out to SCE Development team if refreshing doesn't fix</p>
           </div>
         </div>
       );
     }
     return (
-      <div className='flex flex-col w-full items-center'>
-        <div className='mb-10 mx-12'>
-          <span className='text-3xl flex justify-center items-center mb-5'>How does printing work?</span>
+      <div className='flex flex-col items-center w-full'>
+        <div className='mx-12 mb-10'>
+          <span className='flex items-center justify-center mb-5 text-3xl'>How does printing work?</span>
           <ol className="list-decimal">
             <li>Members can print up to 30 pages per week.</li>
             <li>The allowed print amount reset on Sundays.</li>
@@ -352,14 +352,14 @@ export default function Printing(props) {
       } />
 
       {printStatus && (
-        <div className='flex justify-center items-center mt-10 w-full'>
+        <div className='flex items-center justify-center w-full mt-10'>
           <div role="alert" className={'w-1/2 text-center alert alert-' + printStatusColor}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <p className=''>{printStatus}</p>
           </div>
         </div>
       )}
-      <div className="flex flex-col items-center justify-center h-screen h-[90vh]">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100dvh-86px)]">
         {renderFileUploadOrPrint()}
       </div>
     </div>
