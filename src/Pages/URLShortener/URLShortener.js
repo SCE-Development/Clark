@@ -53,6 +53,7 @@ export default function URLShortenerPage(props) {
       setUrl('');
       setAlias('');
       setShowUrlInput(false);
+      setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
       setTimeout(() => {
         setSuccessMessage(null);
@@ -80,6 +81,7 @@ export default function URLShortenerPage(props) {
     const response = await deleteUrl(alias, props.user.token);
     if (!response.error) {
       setAllUrls(allUrls.filter(url => url.alias !== alias));
+      setTotal(total - 1);
     }
   }
 
