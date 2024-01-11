@@ -104,6 +104,28 @@ export default function URLShortenerPage(props) {
     setAliasTaken(false);
   }, [alias]);
 
+  useEffect(() => {
+    getCleezyUrls(page);
+  }, [page]);
+
+  useEffect(() => {
+
+    const amountOfRowsOnCurrentPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
+    const pageOffset = page * rowsPerPage;
+    const startingElementNumber = (page * rowsPerPage) + 1;
+    const endingElementNumber = amountOfRowsOnCurrentPage + pageOffset;
+    setPaginationText(
+      <>
+        <p className='md:hidden'>
+          {startingElementNumber} - {endingElementNumber} / {total}
+        </p>
+        <p className="hidden md:inline-block">
+          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total + 1}</span> results
+        </p>
+      </>
+    );
+  }, [page, rowsPerPage, allUrls, total]);
+
   function maybeRenderErrorAlert() {
     if (invalidUrl) {
       return (
