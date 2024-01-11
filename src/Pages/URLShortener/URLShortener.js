@@ -48,7 +48,7 @@ export default function URLShortenerPage(props) {
       props.user.token
     );
     if (!response.error) {
-      setAllUrls([response.responseData, ...allUrls]);
+      setAllUrls([...allUrls, response.responseData]);
       setAliasTaken(false);
       setUrl('');
       setAlias('');
