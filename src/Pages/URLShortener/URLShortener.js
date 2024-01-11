@@ -104,28 +104,6 @@ export default function URLShortenerPage(props) {
     setAliasTaken(false);
   }, [alias]);
 
-  useEffect(() => {
-    getCleezyUrls(page);
-  }, [page, allUrls]);
-
-  useEffect(() => {
-
-    const amountOfRowsOnCurrentPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
-    const pageOffset = page * rowsPerPage;
-    const startingElementNumber = (page * rowsPerPage) + 1;
-    const endingElementNumber = amountOfRowsOnCurrentPage + pageOffset;
-    setPaginationText(
-      <>
-        <p className='md:hidden'>
-          {startingElementNumber} - {endingElementNumber} / {total}
-        </p>
-        <p className="hidden md:inline-block">
-          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total + 1}</span> results
-        </p>
-      </>
-    );
-  }, [page, rowsPerPage, allUrls, total]);
-
   function maybeRenderErrorAlert() {
     if (invalidUrl) {
       return (
@@ -149,7 +127,9 @@ export default function URLShortenerPage(props) {
     const amountOfUrlsOnPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
     const pageOffset = page * rowsPerPage;
     const endingElementNumber = amountOfUrlsOnPage + pageOffset;
-    if (allUrls.length) {
+    if (!allUrls.length) {
+      return <></>;
+    } else {
       return (
         <nav className='flex justify-start mt-2 mb-6 mx-6'>
           <div className='navbar-start flex items-center'>
@@ -176,7 +156,6 @@ export default function URLShortenerPage(props) {
         </nav>
       );
     }
-    return <></>;
   }
 
   function renderUrlButtonOrForm() {
