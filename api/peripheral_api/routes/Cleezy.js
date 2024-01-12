@@ -20,7 +20,7 @@ let CLEEZY_URL = process.env.CLEEZY_URL
 let URL_SHORTENER_BASE_URL =
   process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
 
-router.get('/listAll', async (req, res) => {
+router.get('/list', async (req, res) => {
   if(!ENABLED) {
     return res.json({
       disabled: true
@@ -33,13 +33,16 @@ router.get('/listAll', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
-    const response = await axios.get(CLEEZY_URL + '/list');
-    const data = response.data;
+    const { page = 0 } = req.query;
+    const response = await axios.get(CLEEZY_URL + '/list', {
+      params: { page }
+    });
+    const { data = [], total, rows_per_page: rowsPerPage } = response.data;
     const returnData = data.map(element => {
       const u = new URL(element.alias, URL_SHORTENER_BASE_URL);
       return { ...element, link: u.href };
     });
-    res.json(returnData);
+    res.json({ data: returnData, total, rowsPerPage });
   } catch (err) {
     logger.error('/listAll had an error', err);
     if (err.response && err.response.data) {
