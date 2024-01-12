@@ -37,12 +37,12 @@ router.get('/list', async (req, res) => {
     const response = await axios.get(CLEEZY_URL + '/list', {
       params: { page }
     });
-    const { data = [], total } = response.data;
+    const { data = [], total, rows_per_page: rowsPerPage } = response.data;
     const returnData = data.map(element => {
       const u = new URL(element.alias, URL_SHORTENER_BASE_URL);
       return { ...element, link: u.href };
     });
-    res.json({ data: returnData, total });
+    res.json({ data: returnData, total, rowsPerPage });
   } catch (err) {
     logger.error('/listAll had an error', err);
     if (err.response && err.response.data) {

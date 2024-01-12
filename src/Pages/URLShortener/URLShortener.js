@@ -29,6 +29,7 @@ export default function URLShortenerPage(props) {
    * separately. To enable, go to config.json and set ENABLED under Cleezy to true
    */
   async function getCleezyUrls(page) {
+    setLoading(true);
     const urlsFromDb = await getAllUrls(props.user.token, page);
     setIsCleezyDisabled(!!urlsFromDb.responseData.disabled);
     if (urlsFromDb.error) {
@@ -36,7 +37,7 @@ export default function URLShortenerPage(props) {
     } else {
       setAllUrls(urlsFromDb.responseData.data);
       setTotal(urlsFromDb.responseData.total - 1);
-      setRowsPerPage(urlsFromDb.responseData.data.length);
+      setRowsPerPage(urlsFromDb.responseData.rowsPerPage);
     }
     setLoading(false);
   }
@@ -110,24 +111,6 @@ export default function URLShortenerPage(props) {
     getCleezyUrls(page);
   }, [page]);
 
-  useEffect(() => {
-
-    const amountOfRowsOnCurrentPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
-    const pageOffset = page * rowsPerPage;
-    const startingElementNumber = (page * rowsPerPage) + 1;
-    const endingElementNumber = amountOfRowsOnCurrentPage + pageOffset;
-    setPaginationText(
-      <>
-        <p className='md:hidden'>
-          {startingElementNumber} - {endingElementNumber} / {total}
-        </p>
-        <p className="hidden md:inline-block">
-          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total + 1}</span> results
-        </p>
-      </>
-    );
-  }, [page, rowsPerPage, allUrls, total]);
-
   function maybeRenderErrorAlert() {
     if (invalidUrl) {
       return (
@@ -151,6 +134,7 @@ export default function URLShortenerPage(props) {
     const amountOfUrlsOnPage = Math.min((page + 1) * rowsPerPage, allUrls.length);
     const pageOffset = page * rowsPerPage;
     const endingElementNumber = amountOfUrlsOnPage + pageOffset;
+    const startingElementNumber = (page * rowsPerPage) + 1;
     if (!allUrls.length) {
       return <></>;
     } else {
@@ -158,7 +142,14 @@ export default function URLShortenerPage(props) {
         <nav className='flex justify-start mt-2 mb-6 mx-6'>
           <div className='navbar-start flex items-center'>
             <span>
-              {loading ? '...' : paginationText}
+              {loading ? '...' : (<>
+                <p className='md:hidden'>
+                  {startingElementNumber} - {endingElementNumber} / {total}
+                </p>
+                <p className="hidden md:inline-block">
+          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total + 1}</span> results
+                </p>
+              </>)}
             </span>
           </div>
           <div className='navbar-end flex justify-end space-x-3'>
