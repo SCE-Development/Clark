@@ -27,15 +27,19 @@ router.get('/list', async (req, res) => {
     });
   }
   const token = req.query.token;
+  const { page = 0, search } = req.query;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await verifyToken(req.query.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
-    const { page = 0 } = req.query;
+    const params = { page };
+    if (search !== undefined) {
+      params.search = search;
+    }
     const response = await axios.get(CLEEZY_URL + '/list', {
-      params: { page }
+      params: params
     });
     const { data = [], total, rows_per_page: rowsPerPage } = response.data;
     const returnData = data.map(element => {
