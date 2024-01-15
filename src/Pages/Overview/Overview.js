@@ -236,7 +236,7 @@ export default function Overview(props) {
             </thead>
             {users.length === 0 && (
               <tbody>
-                <p className='text-base text-white/70'>No results found!</p>
+                <p className='text-base text-white/70 mt-1 mb-1 ml-1'>No results found!</p>
               </tbody>
             )}
             <tbody>
