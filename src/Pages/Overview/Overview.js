@@ -234,6 +234,11 @@ export default function Overview(props) {
                 ))}
               </tr>
             </thead>
+            {users.length === 0 && (
+              <tbody>
+                <p className='text-base text-white/70'>No results found!</p>
+              </tbody>
+            )}
             <tbody>
               {users.map((user) => (
                 <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={user.email}>
