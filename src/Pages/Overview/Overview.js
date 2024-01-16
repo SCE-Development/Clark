@@ -234,11 +234,6 @@ export default function Overview(props) {
                 ))}
               </tr>
             </thead>
-            {users.length === 0 && (
-              <tbody>
-                <p className='text-base text-white/70 mt-1 mb-1 ml-1'>No results found!</p>
-              </tbody>
-            )}
             <tbody>
               {users.map((user) => (
                 <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={user.email}>
@@ -281,6 +276,11 @@ export default function Overview(props) {
 
             </tbody>
           </table>
+          {users.length === 0 && (
+            <div className='flex flex-row w-100 justify-center'>
+              <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
+            </div>
+          )}
           {maybeRenderPagination()}
         </div>
       </div>
