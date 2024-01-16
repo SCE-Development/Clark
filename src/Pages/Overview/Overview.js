@@ -276,6 +276,11 @@ export default function Overview(props) {
 
             </tbody>
           </table>
+          {users.length === 0 && (
+            <div className='flex flex-row w-100 justify-center'>
+              <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
+            </div>
+          )}
           {maybeRenderPagination()}
         </div>
       </div>
