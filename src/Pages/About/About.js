@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function AboutPage() {
   return (
@@ -37,7 +37,7 @@ export default function AboutPage() {
           </div>
           <div className="hidden md:flex md:justify-center md:items-center">
             <h3 className="text-xl text-center">
-              Come visit us in ENGR 294 or on Discord at:{" "}
+              Come visit us in ENGR 294 or on Discord at:
               <span className="text-blue-600 hover:underline">
                 <a
                   href="https://sce.sjsu.edu/s/discord"
@@ -183,7 +183,7 @@ export default function AboutPage() {
                   font-family="none"
                   font-weight="none"
                   font-size="none"
-                  text-anchor="none"
+                  text-anchor='none'
                   style={{ mixBlendMode: "normal" }}
                 >
                   <g transform="scale(5.12,5.12)">
@@ -292,7 +292,7 @@ export default function AboutPage() {
               Join Our Development Team! <br /> <br />
               <span className="text-m md:text-xl w-3/4 py-10">
                 Get exposed to industry standards in Web Development, API
-                design, Code Reviews and more! For more info,{" "}
+                design, Code Reviews and more! For more info,
                 <span className="text-blue-600 hover:underline">
                   <a
                     href="https://sce.sjsu.edu/s/discord"
@@ -447,7 +447,7 @@ export default function AboutPage() {
                     font-family="none"
                     font-weight="none"
                     font-size="none"
-                    text-anchor="none"
+                    text-anchor='none'
                     style={{ mixBlendMode: "normal" }}
                   >
                     <g transform="scale(5.33333,5.33333)">
