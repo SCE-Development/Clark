@@ -267,7 +267,7 @@ export default function URLShortenerPage(props) {
       </div><input
         className="w-full text-sm input input-bordered sm:text-base"
         type="text"
-        placeholder="search by first name, last name, or email"
+        placeholder="search by alias or url"
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
             // instead of calling the backend directory, set

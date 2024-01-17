@@ -8,7 +8,7 @@ export async function getAllUrls(token, page, search) {
   let status = new ApiResponse();
   let params = { token, page };
   if (search !== undefined) {
-    params.searcj = search;
+    params.search = search;
   }
   await axios
     .get(PERIPHERAL_API_URL + '/Cleezy/list', {
