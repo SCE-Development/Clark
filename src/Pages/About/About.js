@@ -53,7 +53,7 @@ export default function AboutPage() {
         <div className="px-4 py-10 mx-auto text-center max-w-8xl lg:px-36">
           <span className="text-md font-semibold text-gray-500">COMPANIES WITH SCE ALUMNI INCLUDE</span>
           <div className="flex flex-wrap justify-center items-center mt-8 lg:justify-between">
-            <a className="mr-6 mb-5 text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 lg:mb-0" href="https://dev.to/themesberg/flowbite-tailwind-css-components-library-1g5o" rel="nofollow noreferrer noopener">
+            <a className="mr-6 mb-5 text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 lg:mb-0" href="#" rel="nofollow noreferrer noopener">
               {/* fb */}
               <svg className='fill-gray-700' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
                 <path fill="#0081fb" d="M47,29.36l-2.193,1.663L42.62,29.5c0-0.16,0-0.33-0.01-0.5c0-0.16,0-0.33-0.01-0.5	c-0.14-3.94-1.14-8.16-3.14-11.25c-1.54-2.37-3.51-3.5-5.71-3.5c-2.31,0-4.19,1.38-6.27,4.38c-0.06,0.09-0.13,0.18-0.19,0.28	c-0.04,0.05-0.07,0.1-0.11,0.16c-0.1,0.15-0.2,0.3-0.3,0.46c-0.9,1.4-1.84,3.03-2.86,4.83c-0.09,0.17-0.19,0.34-0.28,0.51	c-0.03,0.04-0.06,0.09-0.08,0.13l-0.21,0.37l-1.24,2.19c-2.91,5.15-3.65,6.33-5.1,8.26C14.56,38.71,12.38,40,9.51,40	c-3.4,0-5.56-1.47-6.89-3.69C1.53,34.51,1,32.14,1,29.44l4.97,0.17c0,1.76,0.38,3.1,0.89,3.92C7.52,34.59,8.49,35,9.5,35	c1.29,0,2.49-0.27,4.77-3.43c1.83-2.53,3.99-6.07,5.44-8.3l1.37-2.09l0.29-0.46l0.3-0.45l0.5-0.77c0.76-1.16,1.58-2.39,2.46-3.57	c0.1-0.14,0.2-0.28,0.31-0.42c0.1-0.14,0.21-0.28,0.31-0.41c0.9-1.15,1.85-2.22,2.87-3.1c1.85-1.61,3.84-2.5,5.85-2.5	c3.37,0,6.58,1.95,9.04,5.61c2.51,3.74,3.82,8.4,3.97,13.25c0.01,0.16,0.01,0.33,0.01,0.5C47,29.03,47,29.19,47,29.36z">
@@ -80,7 +80,7 @@ export default function AboutPage() {
                 </path>
               </svg>
             </a>
-            <a className="mr-3 mb-5 text-gray-500 hover:text-ycombinator lg:mb-0" href="https://news.ycombinator.com/item?id=28561468" rel="nofollow noreferrer noopener">
+            <a className="mr-3 mb-5 text-gray-500 hover:text-ycombinator lg:mb-0" href="#" rel="nofollow noreferrer noopener">
               {/* amazon */}
               <svg className='fill-gray-700' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0,0,256,256">
                 <g fill="none" fillRule="nonzero" stroke="none" strokeWidth="1" strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit="10" strokeDasharray="" strokeDashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style={{ mixBlendMode: 'normal' }}>
@@ -93,7 +93,7 @@ export default function AboutPage() {
                 </g>
               </svg>
             </a>
-            <a className="mr-3 mb-5 text-gray-500 hover:text-reddit lg:mb-0" href="https://www.reddit.com/r/webdev/comments/pm4xz8/flowbite_tailwind_css_components_library_mit/" rel="nofollow noreferrer noopener">
+            <a className="mr-3 mb-5 text-gray-500 hover:text-reddit lg:mb-0" href="#" rel="nofollow noreferrer noopener">
               {/* netflix */}
               <svg className='fill-gray-700' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0,0,256,256">
                 <g fill="#d0d1d1" fillRule="nonzero" stroke="none" strokeWidth="1" strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit="10" strokeDasharray="" strokeDashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style={{ mixBlendMode: 'normal' }}>
@@ -104,7 +104,7 @@ export default function AboutPage() {
                 </g>
               </svg>
             </a>
-            <a className="mr-3 mb-5 text-gray-500 hover:text-producthunt lg:mb-0" href="https://www.producthunt.com/posts/flowbite" rel="nofollow noreferrer noopener">
+            <a className="mr-3 mb-5 text-gray-500 hover:text-producthunt lg:mb-0" href="#" rel="nofollow noreferrer noopener">
               {/* google */}
               <svg className='fill-gray-700' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
                 <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z">
@@ -118,7 +118,7 @@ export default function AboutPage() {
                 </path>
               </svg>
             </a>
-            <a className="mr-5 mb-5 text-gray-500 hover:text-red-500 lg:mb-0" href="https://www.youtube.com/results?search_query=flowbite" rel="nofollow noreferrer noopener">
+            <a className="mr-5 mb-5 text-gray-500 hover:text-red-500 lg:mb-0" href="#" rel="nofollow noreferrer noopener">
               {/* salesforce */}
               <svg className='fill-gray-700' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
                 <path fill="#039be5" d="M36.5,12c-1.326,0-2.59,0.256-3.758,0.705C31.321,10.48,28.836,9,26,9c-2.107,0-4.018,0.821-5.447,2.152C18.815,9.221,16.303,8,13.5,8C8.253,8,4,12.253,4,17.5c0,0.792,0.108,1.558,0.29,2.293C2.291,21.349,1,23.771,1,26.5C1,31.194,4.806,35,9.5,35c0.413,0,0.816-0.039,1.214-0.096C12.027,37.903,15.017,40,18.5,40c3.162,0,5.916-1.731,7.38-4.293C26.556,35.893,27.265,36,28,36c2.62,0,4.938-1.265,6.398-3.211C35.077,32.927,35.78,33,36.5,33C42.299,33,47,28.299,47,22.5C47,16.701,42.299,12,36.5,12z">
@@ -131,7 +131,8 @@ export default function AboutPage() {
                 </path>
               </svg>
             </a>
-            <a className="mr-5 mb-5 text-gray-500 hover:text-red-500 lg:mb-0" href="https://www.youtube.com/results?search_query=flowbite" rel="nofollow noreferrer noopener">
+            <a className="mr-5 mb-5 text-gray-500 hover:text-red-500 lg:mb-0" href="#" rel="nofollow noreferrer noopener">
+              {/* tesla */}
               <svg className='fill-gray-700' xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
                 <path fill="#b71c1c" fillRule="evenodd" d="M5.271,10.155c4.896-1.983,12.974-2.241,16.483-2.109l2.246,2.884l2.247-2.884c3.509-0.132,11.587,0.125,16.482,2.109c-0.676,1.284-3.617,3.11-5.233,3.516c-0.092-2.523-3.658-3.049-7.079-3.049L23.999,45.04l-6.417-34.419c-3.425,0-6.991,0.526-7.083,3.049C8.885,13.265,5.946,11.439,5.271,10.155L5.271,10.155z" clip-rule="evenodd">
                 </path>
