@@ -34,15 +34,11 @@ router.get('/list', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
-    const params = { page };
-    if (search !== undefined) {
-      params.search = search;
-    }
     const response = await axios.get(CLEEZY_URL + '/list', {
       params: {
-            page,
-            { ...(search && { search }) },
-      }
+        page,
+        ...(search !== undefined && { search }),
+      },
     });
     const { data = [], total, rows_per_page: rowsPerPage } = response.data;
     const returnData = data.map(element => {

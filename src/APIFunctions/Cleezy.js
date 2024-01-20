@@ -6,13 +6,13 @@ let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
 
 export async function getAllUrls(token, page, search) {
   let status = new ApiResponse();
-  let params = { token, page };
-  if (search !== undefined) {
-    params.search = search;
-  }
   await axios
     .get(PERIPHERAL_API_URL + '/Cleezy/list', {
-      params: params
+      params: {
+        token,
+        page,
+        ...(search !== undefined && { search }),
+      },
     })
     .then(res => {
       status.responseData = res.data;
