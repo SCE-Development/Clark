@@ -39,7 +39,10 @@ router.get('/list', async (req, res) => {
       params.search = search;
     }
     const response = await axios.get(CLEEZY_URL + '/list', {
-      params: params
+      params: {
+            page,
+            { ...(search && { search }) },
+      }
     });
     const { data = [], total, rows_per_page: rowsPerPage } = response.data;
     const returnData = data.map(element => {
