@@ -80,7 +80,7 @@ function SpeakersPage(props) {
                 <Button
                   className="sign-input"
                   onClick={() => modifySpeakerWrapper(pause)}>
-                  Puase
+                  Pause
                 </Button>
               </Col>
               <Col>
