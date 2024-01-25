@@ -72,7 +72,7 @@ function SpeakersPage(props) {
             <button
               className="btn w-1/3"
               onClick={() => modifySpeakerWrapper(pause)}>
-                Puase
+                Pause
             </button>
             <button
               className="btn w-1/3"

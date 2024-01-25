@@ -18,8 +18,8 @@ export default function URLShortenerPage(props) {
   const [aliasTaken, setAliasTaken] = useState();
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
-  const [paginationText, setPaginationText] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
@@ -28,9 +28,9 @@ export default function URLShortenerPage(props) {
    * Cleezy page is disabled by default since you have to run the Cleezy server
    * separately. To enable, go to config.json and set ENABLED under Cleezy to true
    */
-  async function getCleezyUrls(page) {
+  async function getCleezyUrls(page, searchQuery) {
     setLoading(true);
-    const urlsFromDb = await getAllUrls(props.user.token, page);
+    const urlsFromDb = await getAllUrls(props.user.token, page, searchQuery);
     setIsCleezyDisabled(!!urlsFromDb.responseData.disabled);
     if (urlsFromDb.error) {
       setError(urlsFromDb.responseData);
@@ -108,7 +108,7 @@ export default function URLShortenerPage(props) {
   }, [alias]);
 
   useEffect(() => {
-    getCleezyUrls(page);
+    getCleezyUrls(page, searchQuery);
   }, [page]);
 
   function maybeRenderErrorAlert() {
@@ -260,6 +260,34 @@ export default function URLShortenerPage(props) {
     </div>);
   }
 
+  function maybeRenderSearch() {
+    return (
+      <><div className="label">
+        <span className="label-text text-md">Type a search, followed by the enter key</span>
+      </div><input
+        className="w-full text-sm input input-bordered sm:text-base"
+        type="text"
+        placeholder="search by alias or url"
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            // instead of calling the backend directory, set
+            // the page we are on to zero if the current page
+            // we are on isn't the first page (value of 0).
+            // by doing this, the useEffect will call the backend
+            // for us with the correct page and query.
+            if (page) {
+              setPage(0);
+            } else {
+              getCleezyUrls(page, searchQuery);
+            }
+          }
+        } }
+        onChange={event => {
+          setSearchQuery(event.target.value);
+        } } /></>
+    );
+  }
+
   if (isCleezyDisabled) {
     return (
       <div className='container mx-auto px-10 pt-10'>
@@ -307,6 +335,7 @@ export default function URLShortenerPage(props) {
       {!loading && (
         <div className='body-container'>
           {renderUrlButtonOrForm()}
+          {maybeRenderSearch()}
           {successMessage &&
             <div className='pb-10'>
               <div role="alert" className="alert alert-success">
