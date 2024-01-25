@@ -191,11 +191,11 @@ export default function Printing(props) {
   function renderFileUploadOrPrint() {
     if (files) {
       return (
-        <div className="grid grid-cols-1 sm:mt-32 lg:mt-5 lg:grid-cols-6 space-x-10 h-fit w-[80vw] lg:h-5/6 lg:mx-5">
-          <div className='mt-32 lg:col-span-4 sm:mt-0'>
+        <div className="grid grid-cols-1 mt-0 sm:mt-16 lg:mt-5 lg:grid-cols-6 space-x-10 h-[100dvh] w-[80vw] lg:h-5/6 lg:mx-5">
+          <div className='mt-16 lg:col-span-4 sm:mt-0'>
             <iframe
               title='Preview'
-              className='h-[60vh] w-[80vw] lg:h-5/6 lg:w-full'
+              className='sm:h-[calc(100vh-130px)] h-[calc(75vh-130px)] w-full lg:w-80vw'
               src={previewDisplay}
             />
           </div>
