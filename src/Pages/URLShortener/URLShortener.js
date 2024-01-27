@@ -20,6 +20,8 @@ export default function URLShortenerPage(props) {
   const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
+  const [invalidSearch, setInvalidSearch] = useState(false);
+  const [errorAlertMessage, setErrorAlertMessage] = useState('');
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
@@ -62,6 +64,7 @@ export default function URLShortenerPage(props) {
       return true;
     } else {
       setAliasTaken(true);
+      setErrorAlertMessage('That alias is taken!');
       return false;
     }
   }
@@ -74,6 +77,20 @@ export default function URLShortenerPage(props) {
       handleCreateUrl();
     } else {
       setInvalidUrl(true);
+      setErrorAlertMessage('URL must be valid');
+      return false;
+    }
+  }
+
+  async function maybeSubmitSearch() {
+    console.debug('reached this call');
+    const regex = /^[a-zA-Z0-9]+$/;
+    if (regex.test(searchQuery)) {
+      setInvalidSearch(false);
+      getCleezyUrls(page, searchQuery);
+    } else {
+      setInvalidSearch(true);
+      setErrorAlertMessage('Search query cannot contain special characters');
       return false;
     }
   }
@@ -104,6 +121,10 @@ export default function URLShortenerPage(props) {
   }, [url]);
 
   useEffect(() => {
+    setInvalidSearch(false);
+  }, [searchQuery]);
+
+  useEffect(() => {
     setAliasTaken(false);
   }, [alias]);
 
@@ -112,19 +133,11 @@ export default function URLShortenerPage(props) {
   }, [page]);
 
   function maybeRenderErrorAlert() {
-    if (invalidUrl) {
+    if (invalidUrl || aliasTaken || invalidSearch) {
       return (
-        <div role="alert" className="alert alert-error sm:col-span-4">
+        <div role="alert" className="alert alert-error sm:col-span-4 mb-1">
           <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <span>Please enter a valid URL.</span>
-        </div>
-      );
-    }
-    if (aliasTaken) {
-      return (
-        <div role="alert" className="alert alert-error sm:col-span-4">
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <span>The alias "{alias}" already in use.</span>
+          <span>{ errorAlertMessage }</span>
         </div>
       );
     }
@@ -195,7 +208,6 @@ export default function URLShortenerPage(props) {
           </h2>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 grid-cols-full sm:grid-cols-6">
-            {maybeRenderErrorAlert()}
             <div className="col-span-full sm:col-span-4">
               <label htmlFor="url" className={LABEL_CLASS}>
                 Original URL
@@ -278,7 +290,7 @@ export default function URLShortenerPage(props) {
             if (page) {
               setPage(0);
             } else {
-              getCleezyUrls(page, searchQuery);
+              maybeSubmitSearch();
             }
           }
         } }
@@ -334,6 +346,7 @@ export default function URLShortenerPage(props) {
     <div className='container mx-auto px-10 pt-10'>
       {!loading && (
         <div className='body-container'>
+          {maybeRenderErrorAlert()}
           {renderUrlButtonOrForm()}
           {maybeRenderSearch()}
           {successMessage &&
