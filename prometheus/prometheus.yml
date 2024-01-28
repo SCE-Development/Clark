@@ -5,6 +5,9 @@ scrape_configs:
   - job_name: 'cleezy'
     static_configs:
       - targets: ['cleezy-app:8000']
+  - job_name: 'sceta-server'
+    static_configs:
+      - targets: ['server:8001']
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
