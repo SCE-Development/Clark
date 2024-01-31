@@ -340,22 +340,21 @@ export default function URLShortenerPage(props) {
   }
 
   return (
-    // the below input layout is taken from
-    // https://tailwindui.com/components/application-ui/forms/form-layouts
-    
+  // the below input layout is taken from
+  // https://tailwindui.com/components/application-ui/forms/form-layouts
     <div className='overview-container bg-gradient-to-r from-gray-800 to-gray-600 min-h-[100dvh]'>
       <div className='px-4'>
         {!loading && (
           <div className='body-container'>
             {maybeRenderErrorAlert()}
             {successMessage &&
-                  <div>
-                    <div role="alert" className="alert alert-success mt-6">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      <span>{successMessage}</span>
-                    </div>
-                  </div>
-                }
+              <div>
+                <div role="alert" className="alert alert-success mt-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>{successMessage}</span>
+                </div>
+              </div>
+            }
             <div className='px-6 py-6 mt-8 border rounded-lg border-white/10'>
               {renderUrlButtonOrForm()}
             </div>
@@ -364,7 +363,7 @@ export default function URLShortenerPage(props) {
                 {maybeRenderSearch()}
               </div>
               <div className='overflow-x-auto transition'>
-              <table className='table px-3'>
+                <table className='table px-3'>
                   <thead>
                     <tr>
                       {[
@@ -390,11 +389,11 @@ export default function URLShortenerPage(props) {
                             <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.url}`}>
                               {url.alias}
                             </a>
-                            <p>{url.url.length > 60 ? url.url.slice(0, 50) + "..." : url.url}</p>
+                            <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                           </td>
                           <td className='hidden md:table-cell'>
                             <div className='flex items-center justify-center'>
-                              {new Date(url.created_at).toDateString().slice(4,15)}
+                              {new Date(url.created_at).toDateString().slice(4, 15)}
                             </div>
                           </td>
                           <td>
@@ -405,7 +404,7 @@ export default function URLShortenerPage(props) {
                               </button>
                             </div>
                           </td>
-                        </tr> 
+                        </tr>
                       );
                     })}
                   </tbody>
