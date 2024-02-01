@@ -349,8 +349,8 @@ export default function URLShortenerPage(props) {
             {successMessage &&
               <div>
                 <div role="alert" className="alert alert-success mt-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span>{successMessage}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="text-white fill-none stroke-current shrink-0 h-6 w-6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span className='text-white'>{successMessage}</span>
                 </div>
               </div>
             }
@@ -392,8 +392,7 @@ export default function URLShortenerPage(props) {
                           </td>
                           <td className='hidden md:table-cell'>
                             <div className='flex items-center justify-center'>
-                              {new Date(url.created_at).toDateString().slice(4, 15)}
-                            </div>
+                              {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
                           </td>
                           <td>
                             <div className='flex items-center justify-center'>
