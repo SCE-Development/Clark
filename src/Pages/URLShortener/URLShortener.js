@@ -135,7 +135,7 @@ export default function URLShortenerPage(props) {
   function maybeRenderErrorAlert() {
     if (invalidUrl || aliasTaken || invalidSearch) {
       return (
-        <div role="alert" className="alert alert-error sm:col-span-4 mb-1">
+        <div role="alert" className="alert alert-error sm:col-span-4 mt-6">
           <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           <span>{ errorAlertMessage }</span>
         </div>
@@ -189,14 +189,12 @@ export default function URLShortenerPage(props) {
   function renderUrlButtonOrForm() {
     if (!showUrlInput) {
       return (
-        <div className='pb-10'>
-          <button
-            className="btn btn-outline"
-            onClick={() => setShowUrlInput(true)}
-          >
-            + Create a new link
-          </button>
-        </div>
+        <button
+          className="btn btn-outline"
+          onClick={() => setShowUrlInput(true)}
+        >
+          + Create a new link
+        </button>
       );
     }
 
@@ -341,75 +339,86 @@ export default function URLShortenerPage(props) {
   }
 
   return (
-    // the below input layout is taken from
-    // https://tailwindui.com/components/application-ui/forms/form-layouts
-    <div className='container mx-auto px-10 pt-10'>
-      {!loading && (
-        <div className='body-container'>
-          {maybeRenderErrorAlert()}
-          {renderUrlButtonOrForm()}
-          {maybeRenderSearch()}
-          {successMessage &&
-            <div className='pb-10'>
-              <div role="alert" className="alert alert-success">
-                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>{successMessage}</span>
+  // the below input layout is taken from
+  // https://tailwindui.com/components/application-ui/forms/form-layouts
+    <div className='overview-container bg-gradient-to-r from-gray-800 to-gray-600 min-h-[100dvh]'>
+      <div className='px-4'>
+        {!loading && (
+          <div className='body-container'>
+            {maybeRenderErrorAlert()}
+            {successMessage &&
+              <div>
+                <div role="alert" className="alert alert-success mt-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>{successMessage}</span>
+                </div>
+              </div>
+            }
+            <div className='px-6 py-6 mt-8 border rounded-lg border-white/10'>
+              {renderUrlButtonOrForm()}
+            </div>
+            <div className='px-6 mt-8 border rounded-lg border-white/10'>
+              <div className='py-6'>
+                {maybeRenderSearch()}
+              </div>
+              <div className='overflow-x-auto transition'>
+                <table className='table px-3'>
+                  <thead>
+                    <tr>
+                      {[
+                        { title: 'URL', className: 'text-base text-white/70' },
+                        { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell' },
+                        { title: 'Delete', className: 'text-base text-white/70 text-center' },
+                      ].map(({ title, className }) => (
+                        <th
+                          className={`${className}`}
+                          key={title}
+                        >
+                          {title}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {allUrls.map((url, index) => {
+                      return (
+                        <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
+                          <td className=''>
+                            <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.url}`}>
+                              {url.alias}
+                            </a>
+                            <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
+                          </td>
+                          <td className='hidden md:table-cell'>
+                            <div className='flex items-center justify-center'>
+                              {new Date(url.created_at).toDateString().slice(4, 15)}
+                            </div>
+                          </td>
+                          <td>
+                            <div className='flex items-center justify-center'>
+                              <button
+                                onClick={() => handleDeleteUrl(url.alias)}>
+                                {trashcanSymbol()}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {allUrls.length === 0 && (
+                  <div className='flex flex-row w-100 justify-center'>
+                    <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
+                  </div>
+                )}
+                {maybeRenderPagination()}
               </div>
             </div>
-          }
-          <div className='overflow-x-auto transition'>
-            <h1>List of URLs:</h1>
-            <table className='table table-xs'>
-              <thead>
-                <tr>
-                  {[
-                    { title: 'Url', },
-                    { title: 'Alias', },
-                    { title: 'Link', className: 'hidden md:flex'},
-                    { title: '' },
-                  ].map((element) => {
-                    return <th key={element.title} className={element.className}>{element.title}</th>;
-                  })}
-                </tr>
-              </thead>
-
-              <tbody>
-                {allUrls.map((url, index) => {
-                  return (
-                    <tr key={index}>
-                      <td className='break-all w-8/12 md:w-auto'>{url.url}</td>
-                      <td>
-                        <span className='hidden md:flex'>
-                          {url.alias}
-                        </span>
-                        <span className='flex md:hidden text-blue-600 hover:underline'>
-                          <a href={url.link} target="_blank" rel="noopener noreferrer">
-                            {url.alias}
-                          </a>
-                        </span>
-                      </td>
-                      <td className='hidden md:flex'>
-                        <span className='text-blue-600 hover:underline'>
-                          <a href={url.link} target="_blank" rel="noopener noreferrer">
-                            {url.link}
-                          </a>
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => handleDeleteUrl(url.alias)}>
-                          {trashcanSymbol()}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {maybeRenderPagination()}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
