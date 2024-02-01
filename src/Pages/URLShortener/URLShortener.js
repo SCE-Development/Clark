@@ -385,7 +385,7 @@ export default function URLShortenerPage(props) {
                       return (
                         <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
                           <td className=''>
-                            <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.url}`}>
+                            <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.link}`}>
                               {url.alias}
                             </a>
                             <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
