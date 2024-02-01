@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { trashcanSymbol } from '../Overview/SVG';
-import { all } from 'bluebird';
 
 export default function URLShortenerPage(props) {
   const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
