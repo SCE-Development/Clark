@@ -85,10 +85,7 @@ export default function URLShortenerPage(props) {
   async function maybeSubmitSearch() {
     console.debug('reached this call');
     const regex = /^[a-zA-Z0-9]+$/;
-    if (searchQuery === '') {
-      setInvalidSearch(false);
-      getCleezyUrls(undefined, searchQuery);
-    } else if (regex.test(searchQuery)) {
+    if (searchQuery === '' || regex.test(searchQuery)) {
       setInvalidSearch(false);
       getCleezyUrls(page, searchQuery);
     } else {
