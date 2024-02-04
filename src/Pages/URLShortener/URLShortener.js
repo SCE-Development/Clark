@@ -19,7 +19,7 @@ export default function URLShortenerPage(props) {
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(null);
   const [invalidSearch, setInvalidSearch] = useState(false);
   const [errorAlertMessage, setErrorAlertMessage] = useState('');
 
@@ -85,7 +85,10 @@ export default function URLShortenerPage(props) {
   async function maybeSubmitSearch() {
     console.debug('reached this call');
     const regex = /^[a-zA-Z0-9]+$/;
-    if (regex.test(searchQuery)) {
+    if (searchQuery === '') {
+      setInvalidSearch(false);
+      getCleezyUrls(undefined, searchQuery);
+    } else if (regex.test(searchQuery)) {
       setInvalidSearch(false);
       getCleezyUrls(page, searchQuery);
     } else {
@@ -277,9 +280,11 @@ export default function URLShortenerPage(props) {
       </div><input
         className="w-full text-sm input input-bordered sm:text-base"
         type="text"
+        value={searchQuery}
         placeholder="search by alias or url"
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
+            event.preventDefault();
             // instead of calling the backend directory, set
             // the page we are on to zero if the current page
             // we are on isn't the first page (value of 0).
