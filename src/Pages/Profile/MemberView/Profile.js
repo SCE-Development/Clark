@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getUserById } from '../../../APIFunctions/User';
+import { getSelfId } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
 import { membershipState, membershipStateToString } from '../../../Enums';
 
@@ -9,8 +9,9 @@ export default function Profile(props) {
   const [bannerColor, setBannerColor] = useState('');
 
   async function getUserFromApi() {
-    const response = await getUserById(props.user._id, props.user.token);
+    const response = await getSelfId(props.user._id, props.user.token);
     setResponse(response.responseData);
+    // console.debug("response is " + response.responseData);
   }
   useEffect(() => {
     getUserFromApi();
@@ -24,8 +25,9 @@ export default function Profile(props) {
         </span>
       );
     }
-    const formattedExpiration = new Date(response.membershipValidUntil).toDateString();
-    <div className="px-4 py-2">{formattedExpiration}</div>;
+    return (
+      <span>{new Date(response.membershipValidUntil).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+    );
   }
 
   return (
@@ -71,10 +73,6 @@ export default function Profile(props) {
               </div>
             </div>
             <div className="grid grid-cols-2">
-              <div className="px-4 py-2 font-semibold">Door Code (for ENGR 294)</div>
-              <div className="px-4 py-2">{response.doorCode}</div>
-            </div>
-            <div className="grid grid-cols-2">
               <div className="px-4 py-2 font-semibold">Pages printed this week<br />(resets Sunday)</div>
               <div className="px-4 py-2">{response.pagesPrinted}</div>
             </div>
@@ -92,7 +90,7 @@ export default function Profile(props) {
             </div>
             <div className="grid grid-cols-2">
               <div className="px-4 py-2 font-semibold">Account Created</div>
-              <div className="px-4 py-2">{new Date(response.joinDate).toDateString()}</div>
+              <div className="px-4 py-2">{new Date(response.joinDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
             </div>
             <div className="grid grid-cols-2">
               <div className="px-4 py-2 font-semibold">Membership Expiration</div>

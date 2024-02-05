@@ -393,6 +393,29 @@ router.post('/getUserById', async (req, res) => {
   });
 });
 
+router.post('/getSelfId', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, (
+    membershipState.MEMBER
+  ))) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.findOne({ _id: req.body.userID}, (err, result) => {
+    if (err) {
+      return res.sendStatus(BAD_REQUEST);
+    }
+
+    if (!result) {
+      return res.sendStatus(NOT_FOUND);
+    }
+
+    const { password, ...omittedPassword } = result._doc;
+
+    return res.status(OK).json(omittedPassword);
+  });
+});
+
 router.get('/isUserSubscribed', (req, res) => {
   User.findOne({ email: req.query.email }, function(error, result) {
     if (error) {
