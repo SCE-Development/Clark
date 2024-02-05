@@ -397,7 +397,7 @@ router.post('/getSelfId', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, (
-    membershipState.MEMBER
+    membershipState.PENDING
   ))) {
     return res.sendStatus(UNAUTHORIZED);
   }
