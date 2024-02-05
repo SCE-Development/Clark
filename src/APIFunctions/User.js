@@ -214,6 +214,18 @@ export async function getUserById(userID, token) {
   return status;
 }
 
+export async function getSelfId(userID, token) {
+  let status = new UserApiResponse();
+  await axios.post(GENERAL_API_URL + '/user/getSelfId', {userID, token})
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}
+
 export async function isUserSubscribed(email) {
   let status = new UserApiResponse();
   await axios
