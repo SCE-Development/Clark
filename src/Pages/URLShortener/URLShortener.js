@@ -356,10 +356,10 @@ export default function URLShortenerPage(props) {
                 </div>
               </div>
             }
-            <div className='px-6 py-6 mt-8 border rounded-lg border-white/10'>
+            <div className='p-6 mt-6 border rounded-lg border-white/10'>
               {renderUrlButtonOrForm()}
             </div>
-            <div className='px-6 mt-8 border rounded-lg border-white/10'>
+            <div className='px-6 mt-6 border rounded-lg border-white/10'>
               <div className='py-6'>
                 {maybeRenderSearch()}
               </div>

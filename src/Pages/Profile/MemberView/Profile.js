@@ -31,27 +31,22 @@ export default function Profile(props) {
   }
 
   return (
-    <div className='flex justify-center items-center mt-10'>
-
-      <div className="bg-slate-300 p-3 shadow-sm rounded-sm w-11/12">
-        {bannerMessage &&
-        <div role="alert" className={`alert alert-${bannerColor} mb-10`}>
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-          <p className=''>
-            {bannerMessage}
-          </p>
-        </div>
-        }
+    <div className='bg-gradient-to-r from-gray-800 to-gray-600 min-h-[calc(100dvh-86px)] px-6'>
+      {bannerMessage &&
+      <div role="alert" className={`alert alert-${bannerColor} my-6`}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+        <p>{bannerMessage}</p>
+      </div>
+      }
+      <div className='h-6'/>
+      <div className="bg-slate-300 p-6 shadow-sm rounded-lg w-full">
         <div className="flex justify-between items-center space-x-2 font-semibold text-gray-900 leading-8">
           <div className='flex space-x-3'>
-            <span clas="text-green-500">
-              <svg className="mt-1 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </span>
-            <span className="tracking-wide">About</span>
+            <svg className="mt-1 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span className="tracking-wide text-lg">{response.firstName} {response.lastName}</span>
           </div>
           <div>
             <button
@@ -65,7 +60,7 @@ export default function Profile(props) {
           </div>
         </div>
         <div className="text-gray-700">
-          <div className="grid md:grid-cols-2 text-sm">
+          <div className="grid text-sm">
             <div className="grid grid-cols-2">
               <div className="px-4 py-2 font-semibold">Email</div>
               <div className="px-4 py-2">
@@ -73,16 +68,8 @@ export default function Profile(props) {
               </div>
             </div>
             <div className="grid grid-cols-2">
-              <div className="px-4 py-2 font-semibold">Pages printed this week<br />(resets Sunday)</div>
-              <div className="px-4 py-2">{response.pagesPrinted}</div>
-            </div>
-            <div className="grid grid-cols-2">
-              <div className="px-4 py-2 font-semibold">First Name</div>
-              <div className="px-4 py-2">{response.firstName}</div>
-            </div>
-            <div className="grid grid-cols-2">
-              <div className="px-4 py-2 font-semibold">Last Name</div>
-              <div className="px-4 py-2">{response.lastName}</div>
+              <div className="px-4 py-2 font-semibold">Pages printed this week (resets Sunday)</div>
+              <div className="px-4 py-2">{response.pagesPrinted} pages</div>
             </div>
             <div className="grid grid-cols-2">
               <div className="px-4 py-2 font-semibold">Account Type</div>

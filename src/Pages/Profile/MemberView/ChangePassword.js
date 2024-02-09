@@ -4,7 +4,7 @@ import { editUser } from '../../../APIFunctions/User';
 export default function ChangePasswordModal(props) {
   const { bannerCallback = (message, color) => { }, confirmClassAddons } = props;
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('Confirming New Password');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const INPUT_CLASS_NAME = 'indent-2 block w-full rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
 
