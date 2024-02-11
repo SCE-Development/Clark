@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { trashcanSymbol } from '../Overview/SVG';
+import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
 
 export default function URLShortenerPage(props) {
   const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
@@ -22,6 +23,8 @@ export default function URLShortenerPage(props) {
   const [searchQuery, setSearchQuery] = useState(null);
   const [invalidSearch, setInvalidSearch] = useState(false);
   const [errorAlertMessage, setErrorAlertMessage] = useState('');
+  const [urlToDelete, setUrlToDelete] = useState({});
+  const [toggleDelete, setToggleDelete] = useState(false);
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
@@ -96,6 +99,7 @@ export default function URLShortenerPage(props) {
   }
 
   async function handleDeleteUrl(alias) {
+
     const response = await deleteUrl(alias, props.user.token);
     if (!response.error) {
       setAllUrls(allUrls.filter(url => url.alias !== alias));
@@ -344,6 +348,22 @@ export default function URLShortenerPage(props) {
   // the below input layout is taken from
   // https://tailwindui.com/components/application-ui/forms/form-layouts
     <div className='overview-container bg-gradient-to-r from-gray-800 to-gray-600 min-h-[100dvh]'>
+      <ConfirmationModal {... {
+        headerText: `Delete ${urlToDelete.alias} for ${urlToDelete.url} ?`,
+        bodyText: `Are you sure you want to delete 
+          ${urlToDelete.alias}? It'll be gone forever if you do.`,
+        confirmText: `Yes, delete ${urlToDelete.alias}`,
+        confirmClassAddons: 'bg-red-600 hover:bg-red-500',
+        handleConfirmation: () => {
+          handleDeleteUrl(urlToDelete.alias);
+          setToggleDelete(false);
+        },
+        handleCancel: () => {
+          setToggleDelete(false);
+        },
+        open: toggleDelete
+      }
+      } />
       <div className='px-4'>
         {!loading && (
           <div className='body-container'>
@@ -399,7 +419,10 @@ export default function URLShortenerPage(props) {
                           <td>
                             <div className='flex items-center justify-center'>
                               <button
-                                onClick={() => handleDeleteUrl(url.alias)}>
+                                className ='p-2 hover:bg-white/30 rounded-xl'
+                                onClick={() => {
+                                  setUrlToDelete(url); setToggleDelete(true);
+                                }}>
                                 {trashcanSymbol()}
                               </button>
                             </div>
