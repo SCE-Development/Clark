@@ -352,8 +352,7 @@ export default function URLShortenerPage(props) {
         headerText: `Delete ${urlToDelete.alias} for ${urlToDelete.url} ?`,
         bodyText: `Are you sure you want to delete 
           ${urlToDelete.alias}? It'll be gone forever if you do.`,
-        confirmText: `Yes, goodbye ${urlToDelete.alias}`,
-        cancelText: 'No, it\'s chill',
+        confirmText: `Yes, delete ${urlToDelete.alias}`,
         confirmClassAddons: 'bg-red-600 hover:bg-red-500',
         handleConfirmation: () => {
           handleDeleteUrl(urlToDelete.alias);
