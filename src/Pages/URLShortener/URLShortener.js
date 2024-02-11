@@ -358,8 +358,8 @@ export default function URLShortenerPage(props) {
           handleDeleteUrl(urlToDelete.alias);
           setToggleDelete(false);
         },
-        handleCancel: () => { 
-          setToggleDelete(false); 
+        handleCancel: () => {
+          setToggleDelete(false);
         },
         open: toggleDelete
       }
