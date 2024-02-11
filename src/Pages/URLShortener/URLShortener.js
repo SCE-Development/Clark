@@ -356,7 +356,10 @@ export default function URLShortenerPage(props) {
         confirmClassAddons: 'bg-red-600 hover:bg-red-500',
         handleConfirmation: () => {
           handleDeleteUrl(urlToDelete.alias);
-          setToggleDelete(!toggleDelete);
+          setToggleDelete(false);
+        },
+        handleCancel: () => { 
+          setToggleDelete(false); 
         },
         open: toggleDelete
       }
@@ -418,7 +421,7 @@ export default function URLShortenerPage(props) {
                               <button
                                 className ='p-2 hover:bg-white/30 rounded-xl'
                                 onClick={() => {
-                                  setUrlToDelete(url); setToggleDelete(!toggleDelete);
+                                  setUrlToDelete(url); setToggleDelete(true);
                                 }}>
                                 {trashcanSymbol()}
                               </button>
