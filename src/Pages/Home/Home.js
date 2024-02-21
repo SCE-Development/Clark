@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Footer from '../../Components/Footer/Footer.js';
 import { motion } from 'framer-motion';
+import './Home.css';
 
 class Home extends Component {
   render() {
@@ -17,9 +18,9 @@ class Home extends Component {
                 The Software and Computer Engineering Society
               </motion.h1>
               <motion.h3
-                initial={{ opacity: 0, x: 100}}
+                initial={{ opacity: 0, x: 150}}
                 animate={{ opacity: 1, x:0}}
-                transition={{ duration: 1, delay: 0.5}}
+                transition={{ duration: 1, delay: 0}}
                 className="text-base text-center xl:text-left md:text-2xl">
                 SJSU's Largest Engineering Club
               </motion.h3>
