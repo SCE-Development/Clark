@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Footer from '../../Components/Footer/Footer.js';
 import { motion } from 'framer-motion';
+import './Home.css';
 
 class Home extends Component {
   render() {
