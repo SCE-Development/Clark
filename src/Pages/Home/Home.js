@@ -46,7 +46,7 @@ class Home extends Component {
               animate={{ opacity: 1}}
               transition={{ duration: 1.5, delay: 0.5, ease: [0.7, 0, 0.58, 1]}}
               className="w-full mx-auto transform md:w-4/5 rounded-xl"
-              src="https://github.com/SCE-Development/Clark/assets/116464215/8f667fac-e37a-4d6e-bc9a-77723962b03f"
+              src="https://private-user-images.githubusercontent.com/116464215/306809558-65bb6628-7b22-488c-89ca-fd6a9811f6d5.jpg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDg1NjA1MDEsIm5iZiI6MTcwODU2MDIwMSwicGF0aCI6Ii8xMTY0NjQyMTUvMzA2ODA5NTU4LTY1YmI2NjI4LTdiMjItNDg4Yy04OWNhLWZkNmE5ODExZjZkNS5qcGc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwMjIyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDIyMlQwMDAzMjFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lMmE2NDFlMzUxZWM0NzYxMTJkMWM0OTk1NGUxNzcxYmZiODY2MDQ3NGE0NTA2OGJlNWU5NDA1NGJiODRkOGRkJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.Jc9BgCscAosTdgjawgU12FGymmzardnlCYGOnrwRRy0"
             />
           </div>
 
