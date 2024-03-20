@@ -1,9 +1,6 @@
-# Core-v4
-Welcome to the respository for the Software and Computer Engineering Society's 
-offical website!
-![image](https://user-images.githubusercontent.com/36345325/78325084-81350300-752b-11ea-8571-032ed04b3018.png)
-To learn more, check out our 
-[wiki page](https://github.com/SCE-Development/Core-v4/wiki)!
-You can get started running this project locally 
-[here](https://github.com/SCE-Development/Core-v4/wiki/Getting-Started).
-
+    .aMMMb  dMMMMb  dMP dMMMMMMP .aMMMb         dMMMMMMMMb  .aMMMb  dMP dMP        dMP dMP dMP dMP dMP dMMMMb 
+   dMP"dMP dMP dMP amr    dMP   dMP"dMP        dMP"dMP"dMP dMP"dMP dMK.dMP        dMP dMP dMP dMP.dMP dMP dMP 
+  dMMMMMP dMP dMP dMP    dMP   dMMMMMP        dMP dMP dMP dMMMMMP .dMMMK"        dMP dMP dMP  VMMMMP dMP dMP  
+ dMP dMP dMP dMP dMP    dMP   dMP dMP        dMP dMP dMP dMP dMP dMP"AMF        dMP.dMP.dMP dA .dMP dMP dMP   
+dMP dMP dMP dMP dMP    dMP   dMP dMP        dMP dMP dMP dMP dMP dMP dMP         VMMMPVMMP"  VMMMP" dMP dMP    
+                                                                                                              
