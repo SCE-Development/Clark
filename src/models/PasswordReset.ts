@@ -1,0 +1,24 @@
+
+import mongoose from "mongoose";
+const Schema = mongoose.Schema;
+
+const PasswordResetSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true
+    },
+    token: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      required: true,
+      index: {  expires: '1h' }
+    }
+  }
+);
+
+export const PasswordResetModel = mongoose.models.PasswordReset || mongoose.model('PasswordReset', PasswordReset);
