@@ -9,18 +9,8 @@ type ResponseData = any;
 
 export async function POST(req: Request) {
     try {
-        const body = await parseJSON(req)
-        // .catch(() => ({
-        //     token: "abc",
-        //     name: "a",
-        //     color: "b",
-        //     projectType: "c",
-        //     url: "d",
-        //     contact: "e",
-        //     comment: "f",
-        //     progress: "g",
-        //     email: "h"
-        // }))
+        const body = await parseJSON(req);
+        
         const tokenPayload = await authenticate(body, MEMBERSHIP_STATE.OFFICER);
         
         const data = {

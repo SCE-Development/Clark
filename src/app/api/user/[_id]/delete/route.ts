@@ -11,14 +11,14 @@ type ResponseData = {
 };
 
 
-export async function POST(req: Request) {
+export async function DELETE(req: Request, { params }: { params: { _id: string } }) {
     try {
-        const body = await parseJSON(req).catch(() => ({ token: "abc", _id: "6601e0f271f5fd4eed922822" }))
+        const body = await parseJSON(req).catch(() => ({ token: "abc" }));
         const tokenPayload = await authenticate(body, MEMBERSHIP_STATE.OFFICER);
         
         await Database.connect();
         
-        const result = await UserModel.deleteOne({ /* _id: body._id */ email: body.email }).catch(() => { throw new BadRequest() } );
+        const result = await UserModel.deleteOne({ _id: params._id }).catch(() => { throw new BadRequest() } );
         if (result.deletedCount < 1) {
             return Response.json({ message: `User "${body.email}" was not found.` }, { status: STATUS_CODES.NOT_FOUND });
         }else {

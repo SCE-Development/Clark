@@ -3,6 +3,7 @@ import { MEMBERSHIP_STATE } from "@/util/Constants";
 import mongoose from "mongoose";
 // const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+// import * as bcrypt from "bcrypt"
 // const bcrypt = require('bcryptjs');
 // const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
@@ -77,41 +78,41 @@ const UserSchema = new Schema(
   { collection: 'User' }
 );
 
-UserSchema.pre('save', function(next) {
-  const member = this;
-  let emailRegExp = new RegExp(['^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0',
-    '-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61',
-    '}[a-zA-Z0-9])?)*$'].join(''));
-  if (!this.email.match(emailRegExp)) {
-    return next('Bad email tried to be save (email format is: example@domain)');
-  }
-  if (this.isModified('password') || this.isNew) {
-    bcrypt.genSalt(10, function(error, salt) {
-      if (error) {
-        return next(error);
-      }
-      bcrypt.hash(member.password, salt, function(error, hash) {
-        if (error) {
-          return next(error);
-        }
+// UserSchema.pre('save', function(next) {
+//   const member = this;
+//   let emailRegExp = new RegExp(['^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0',
+//     '-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61',
+//     '}[a-zA-Z0-9])?)*$'].join(''));
+//   if (!this.email.match(emailRegExp)) {
+//     return next('Bad email tried to be save (email format is: example@domain)');
+//   }
+//   if (this.isModified('password') || this.isNew) {
+//     bcrypt.genSalt(10, function(error, salt) {
+//       if (error) {
+//         return next(error);
+//       }
+//       bcrypt.hash(member.password, salt, function(error, hash) {
+//         if (error) {
+//           return next(error);
+//         }
 
-        member.password = hash;
-        return next();
-      });
-    });
-  } else {
-    return next();
-  }
-});
+//         member.password = hash;
+//         return next();
+//       });
+//     });
+//   } else {
+//     return next();
+//   }
+// });
 
-UserSchema.methods.comparePassword = function(passwd, callback) {
-  bcrypt.compare(passwd, this.password, function(error, isMatch) {
-    if (error) {
-      return callback(error);
-    }
+// UserSchema.methods.comparePassword = function(passwd, callback) {
+//   // bcrypt.compare(passwd, this.password, function(error, isMatch) {
+//   //   if (error) {
+//   //     return callback(error);
+//   //   }
 
-    callback(null, isMatch);
-  });
-};
+//   //   callback(null, isMatch);
+//   // });
+// };
 
 export const UserModel = mongoose.models.User ||  mongoose.model('User', UserSchema);
