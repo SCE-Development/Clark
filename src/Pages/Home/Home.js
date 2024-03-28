@@ -46,7 +46,7 @@ class Home extends Component {
               animate={{ opacity: 1}}
               transition={{ duration: 1.5, delay: 0.5, ease: [0.7, 0, 0.58, 1]}}
               className="w-full mx-auto transform md:w-4/5 rounded-xl"
-              src="https://user-images.githubusercontent.com/63530023/230752289-defefe87-354d-4fcc-9e60-17e4356ba17e.png"
+              src="https://cdn.discordapp.com/attachments/692922348810272829/1210015190708650055/sce_home_page_photo.jpg?ex=65e90576&is=65d69076&hm=edf8812a334ffed9fbfac95b588c41be66bb96d786501391e9886256e7edc71a&"
             />
           </div>
 
