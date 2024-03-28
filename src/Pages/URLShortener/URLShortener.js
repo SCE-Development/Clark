@@ -390,7 +390,8 @@ export default function URLShortenerPage(props) {
                       {[
                         { title: 'URL', className: 'text-base text-white/70' },
                         { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell' },
-                        { title: 'Delete', className: 'text-base text-white/70 text-center' },
+                        { title: 'Times Used', className: 'text-base text-white/70 text-center' },
+                        { title: 'Delete', className: 'text-base text-white/70 text-center' }
                       ].map(({ title, className }) => (
                         <th
                           className={`${className}`}
@@ -415,6 +416,11 @@ export default function URLShortenerPage(props) {
                           <td className='hidden md:table-cell'>
                             <div className='flex items-center justify-center'>
                               {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
+                          </td>
+                          <td className='hidden md:table-cell'>
+                            <div className='flex items-center justify-center'>
+                              {url.used}
+                            </div>
                           </td>
                           <td>
                             <div className='flex items-center justify-center'>
