@@ -12,6 +12,8 @@ export interface ObjectMaybeWithToken {
 export interface TokenPayload {
   name: string,
   accessLevel: number,
+  email: string,
+  _id: string,
 };
 
 import { MEMBERSHIP_STATE } from "./Constants";
@@ -26,18 +28,21 @@ export function decodeToken(token : string) : Promise<TokenPayload> {
 
   return new Promise((res, rej) => {
       // Auth logic here.
-      if(token === "abc") {
+      if(token) {
         return res({
           name: "SCE Officer",
-          accessLevel: MEMBERSHIP_STATE.OFFICER
+          accessLevel: MEMBERSHIP_STATE.OFFICER,
+          email: "a@b.c",
+          _id: token,
         });
 
       }else {
         return res({
           name: "SCE Not Officer",
-          accessLevel: MEMBERSHIP_STATE.NON_MEMBER
+          accessLevel: MEMBERSHIP_STATE.NON_MEMBER,
+          email: "a@b.c",
+          _id: "",
         });
-
       }
 
       const secretKey = '';

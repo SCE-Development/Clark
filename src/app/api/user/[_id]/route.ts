@@ -5,6 +5,7 @@ import { UserModel } from "@/models/User";
 import { authenticate } from "@/util/Authenticate";
 import { parseJSON } from "@/util/ResponseHelpers";
 import ItemNotFound from "@/util/responses/ItemNotFound";
+import Unauthorized from "@/util/responses/Unauthorized";
 
 type ResponseData = {
     message: string;
@@ -17,7 +18,9 @@ export async function POST(req: Request, { params }: { params: { _id: string } }
         const body = await parseJSON(req); // .catch(() => ({ token: "abc", _id: _id }))
         
         const tokenPayload = await authenticate(body, MEMBERSHIP_STATE.OFFICER);
-        console.log(_id);
+        
+        if(tokenPayload._id !== _id) return new Unauthorized();
+
         await Database.connect();
         
         const result = await UserModel.findOne({ _id: _id }).catch(() => { throw new BadRequest() } );
