@@ -22,6 +22,8 @@ import { membershipState } from './Enums';
 import AboutPage from './Pages/About/About';
 import ProjectsPage from './Pages/Projects/Projects';
 import URLShortenerPage from './Pages/URLShortener/URLShortener';
+import DessertPage from './Pages/Desserts/Desserts';
+import DessertAdmin from './Pages/Desserts/AdminDesserts';
 
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
@@ -117,6 +119,13 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true,
       redirect: '/',
     },
+    {
+      Component: DessertAdmin,
+      path: '/dessert-admin',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -124,6 +133,7 @@ export default function Routing({ appProps }) {
     { Component: AboutPage, path: '/about'},
     { Component: ProjectsPage, path: '/projects'},
     { Component: EmailPreferencesPage, path: '/emailPreferences' },
+    { Component: DessertPage, path: '/desserts'},
   ];
   return (
     <Router>
