@@ -1,40 +1,36 @@
 import React from 'react';
-import {
-  Modal,
-  ModalHeader,
-  Container,
-  ModalBody,
-  ModalFooter,
-  Button
-} from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-function DessertEditModal(props) {
-  const { modal, toggle, currentDessert } = props;
+export default function DessertEditModal({ isOpen, toggle, dessert, onSave, onCancel }) {
+  const handleSave = () => {
+    onSave(); 
+    toggle(); 
+  };
+
+  const handleCancel = () => {
+    onCancel(); 
+    toggle();
+  };
+
+  console.log(isOpen);
+  
   return (
-    <Modal
-      isOpen={modal}
-      toggle={toggle}
-      size='lg'
-      centered
-    >
-      <ModalHeader toggle={toggle}>
-        <div>{currentDessert.title}</div>
-      </ModalHeader>
-
-      <ModalBody>
-        <div>
-          {currentEvent.description}
-        </div>
-      </ModalBody>
-
-      <ModalFooter>
-        <Container/>
-        <Button color='primary' onClick={toggle}>
-          Close
-        </Button>
-      </ModalFooter>
-    </Modal>
+    <div>
+      <Modal isOpen={isOpen} toggle={toggle}>
+        <ModalHeader toggle={toggle}>Edit Dessert</ModalHeader>
+        <ModalBody>
+          {/* edit form inputs here */}
+          Hello pooping
+        </ModalBody>
+        <ModalFooter>
+            <Button color="primary" onClick={handleSave}>
+            Save Changes
+          </Button>{' '}
+          <Button color="secondary" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </div>
   );
 }
-
-export default DessertEditModal;

@@ -2,27 +2,41 @@ import React, { useEffect, useState } from 'react';
 
 import { getAllDesserts, createDessert, editDessert, deleteDessert } from '../../APIFunctions/Desserts';
 import { Container, Row, Col, Input, Button } from 'reactstrap';
-import DessertCard from './DessertCard';
+
+import DessertEditModal from './DessertEditModal';
 
 export default function DessertPage(props) {
   const [desserts, setDesserts] = useState([]);
   const [description, setDescription] = useState();
   const [title, setTitle] = useState();
   const [rating, setRating] = useState();
-  const [modal, setModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function getDessertsFromDB() {
     const dessertsFromDB = await getAllDesserts();
     if (!dessertsFromDB.error) setDesserts(dessertsFromDB.responseData);
   }
 
+  const handleEditClick = (dessert) => {
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleSaveChanges = () => {
+    // Implement logic to save changes to dessert
+    setIsModalOpen(false); // Close the modal after saving changes
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false); // Close the modal without saving changes
+  };
+
+  const handleDeleteClick = (dessert) => {
+    deleteDessert(dessert, props.user.token); // Call deleteDessert function passing dessert and token
+  };
+
   useEffect(() => {
     getDessertsFromDB();
   }, []);
-
-  function toggle(dessert) {
-    setModal(!modal);
-  }
 
   return (
     <div>
@@ -53,12 +67,34 @@ export default function DessertPage(props) {
           </Col>
         </Row>
         {desserts.map((dessert, index) => (
-          <DessertCard 
-            key={index}
-            isDessertManager = {false}
-            {...dessert}
-          />
+          
+          <div key={index}>
+            <h1>{dessert.name}</h1>
+            <p>description: {dessert.description}</p>
+            <Button onClick={() => {
+                handleEditClick(dessert);
+            }}
+            style={{width: '10rem'}}>
+              Edit
+            </Button>
+            <Button onClick={() => {
+                handleDeleteClick(dessert);
+            }}
+            style={{width: '10rem'}}>
+              Delete
+            </Button>
+          </div>
+          
         ))}
+        
+          <DessertEditModal
+            isOpen={isModalOpen}
+            toggle={() => setIsModalOpen(!isModalOpen)}
+            dessert
+            onSave={handleSaveChanges}
+            onCancel={handleCancel}
+          />
+        
       </Container>
     </div>
   );
