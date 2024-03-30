@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 
-import './ledsign.css'
+import './ledsign.css';
 
 
 function LedSign(props) {
@@ -154,27 +154,19 @@ function LedSign(props) {
     );
   }
 
-  function maybeScrollText() {
-    // scrollSpeed can be anywhere from 0 to 100.
-      let real = (101 - scrollSpeed) / 10;
-
-      if (scrollSpeed === 0) {
-        real = 0
-      }
-      console.log({scrollSpeed, real})
-      return (
-        <div className="marquee-container">
-          <div className="marquee" style={{ animationDuration: `${real}s` }}>
-            <h1 className="mock-signText text-3xl" style={{ color: textColor }} placeholder="Sign Text">
-              {text}
-            </h1>
-          </div>
-        </div>
-      )
+  function getAnimationDuration() {
+    if (scrollSpeed === 0) {
+      return 0;
+    }
+    // the scrollSpeed input can be can be anywhere from 0 to 100. the
+    // lower the duration is, the faster the text scrolls. we divide by
+    // 10 to lower the duration so the preview scrolls faster instead of
+    // using the scrollSpeed directly.
+    return (101 - scrollSpeed) / 10;
   }
 
   return (
-    <div>
+    <div className="led-sign-page">
       <div className="space-y-12 mt-10  gap-x-6 gap-y-8 w-full sm:grid-cols-6">
         <div className="flex border-b border-gray-900/10 pb-12 md:w-full">
           <div className="flex flex-col justify-center items-center sm:col-span-3 w-full">
@@ -182,17 +174,28 @@ function LedSign(props) {
               <label>Preview</label>
               <div>
                 <div
-                  className="mock-signBorderTop"
+                  className="led-sign-preview-border-top"
                   style={{ backgroundColor: borderColor }}
                 ></div>
                 <div
-                  className="mock-signBackground"
+                  className="led-sign-preview-background"
                   style={{ backgroundColor: backgroundColor }}
                 >
-                  {maybeScrollText()}
+                  <div className="led-sign-marquee-container">
+                    <div className="led-sign-marquee" style={{ animationDuration: `${getAnimationDuration()}s` }}>
+                      <h1 className="led-sign-preview-text text-3xl" style={{ color: textColor }} placeholder="Sign Text">
+                        {/*
+                          we add a padding of 28 characters of whitespace so the entire message
+                          scrolls to the end of the preview before repeating. the preview has a
+                          width of about 28 characters.
+                        */}
+                        {text.padEnd(28, ' ')}
+                      </h1>
+                    </div>
+                  </div>
                 </div>
                 <div
-                  className="mock-signBorderBot"
+                  className="led-sign-preview-border-bottom"
                   style={{ backgroundColor: borderColor }}
                 ></div>
               </div>
