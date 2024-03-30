@@ -35,27 +35,24 @@ export function decodeToken(token : string) : Promise<TokenPayload> {
   });
 }
 
-export function encryptPassword(password: string) {
-  return new Promise<string>((res, rej) => {
-    bcrypt.genSalt(10, function(error, salt) {
-        if (error) return rej(new InternalServerError());
-          bcrypt.hash(password, salt, function(error, hash) {
-          if (error) return rej(new InternalServerError());
-          return res(hash);
-        });
-      });
-  });
+export async function encryptPassword(password: string) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  }catch(error) {
+    throw new InternalServerError();
+  }
 }
 
 
-export function comparePassword(inputPassword: string, encryptedPassword: string) {
-  return new Promise<void>((res, rej) => {
-    bcrypt.compare(inputPassword, encryptedPassword, (error, isMatch) => {
-      if (error) return rej(new InternalServerError());
-      if(!isMatch) return rej(new InvalidPassword());
-      return res();
-    });
-  });
+export async function comparePassword(inputPassword: string, encryptedPassword: string) {
+  try {
+    const isMatch = await bcrypt.compare(inputPassword, encryptedPassword);
+    if(!isMatch) throw new InvalidPassword();
+    return;
+  }catch(error) {
+    throw new InternalServerError();
+  }
 }
 
 function authenticate(body : ObjectMaybeWithToken, requiredAccessLevel : number = -Infinity, _id : string|undefined = undefined) {
