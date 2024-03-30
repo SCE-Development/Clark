@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 
+import './ledsign.css'
 
-import ConfirmationModal
-  from '../../Components/DecisionModal/ConfirmationModal.js';
 
 function LedSign(props) {
   const [signHealthy, setSignHealthy] = useState(false);
@@ -19,27 +18,7 @@ function LedSign(props) {
     = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
-  const [shutdownToggle, setShutdownToggle] = useState(false);
-  const colorInputs = [
-    {
-      title: 'Background Color',
-      value: backgroundColor,
-      type: 'color',
-      onChange: e => setBackgroundColor(e.target.value)
-    },
-    {
-      title: 'Text Color',
-      value: textColor,
-      type: 'color',
-      onChange: e => setTextColor(e.target.value)
-    },
-    {
-      title: 'Border Color',
-      value: borderColor,
-      type: 'color',
-      onChange: e => setBorderColor(e.target.value)
-    },
-  ];
+
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -84,7 +63,7 @@ function LedSign(props) {
       max: '50',
       step: '1',
       type: 'range',
-      onChange: e => setScrollSpeed(e.target.value)
+      onChange: e => setScrollSpeed(Number(e.target.value) || 0)
     }
   ];
 
@@ -175,14 +154,52 @@ function LedSign(props) {
     );
   }
 
+  function maybeScrollText() {
+    // scrollSpeed can be anywhere from 0 to 100.
+      let real = (101 - scrollSpeed) / 10;
+
+      if (scrollSpeed === 0) {
+        real = 0
+      }
+      console.log({scrollSpeed, real})
+      return (
+        <div className="marquee-container">
+          <div className="marquee" style={{ animationDuration: `${real}s` }}>
+            <h1 className="mock-signText text-3xl" style={{ color: textColor }} placeholder="Sign Text">
+              {text}
+            </h1>
+          </div>
+        </div>
+      )
+  }
+
   return (
     <div>
       <div className="space-y-12 mt-10  gap-x-6 gap-y-8 w-full sm:grid-cols-6">
-        <div className="flex border-b border-gray-900/10 pb-12 w-full">
+        <div className="flex border-b border-gray-900/10 pb-12 md:w-full">
           <div className="flex flex-col justify-center items-center sm:col-span-3 w-full">
+            <div className='w-2/3 lg:w-1/2'>
+              <label>Preview</label>
+              <div>
+                <div
+                  className="mock-signBorderTop"
+                  style={{ backgroundColor: borderColor }}
+                ></div>
+                <div
+                  className="mock-signBackground"
+                  style={{ backgroundColor: backgroundColor }}
+                >
+                  {maybeScrollText()}
+                </div>
+                <div
+                  className="mock-signBorderBot"
+                  style={{ backgroundColor: borderColor }}
+                ></div>
+              </div>
+            </div>
             {
               inputArray.map((input) => (
-                <div key={input.title} className="sm:col-span-2 sm:col-start-1 w-1/3 ">
+                <div key={input.title} className="sm:col-span-2 sm:col-start-1 w-2/3 lg:w-1/2">
                   <div className="mt-2 ">
                     <label htmlFor="copies" className="block text-sm font-medium leading-6">{input.title}</label>
                     <input
@@ -199,10 +216,10 @@ function LedSign(props) {
               ))
             }
 
-            <button className='btn w-1/3 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
+            <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
               Stop
             </button>
-            <button className='btn w-1/3 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
+            <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
               Send
             </button>
             {renderRequestStatus()}

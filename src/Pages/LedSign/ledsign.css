@@ -1,0 +1,60 @@
+.mock-sign {
+    margin: 0% 0% 0% 0%;
+    padding: 0;
+    margin-block-end: 0%;
+  }
+  
+  .mock-signText {
+    margin: 0;
+    vertical-align: middle;
+    height: 100%;
+  }
+  
+  .mock-signText > h1 {
+    margin: 0;
+    vertical-align: middle;
+    height: 100%;
+  }
+  
+  .mock-signBorderTop {
+    background-color: #c7c7c7;
+    min-height: 5px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+  
+  .mock-signBorderBot {
+    background-color: #c7c7c7;
+    min-height: 5px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  
+  }
+  
+  .mock-signBackground {
+    background-color: #dee0df;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow-x: auto;
+    min-height: 50px;
+  }
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-animation linear infinite;
+}
+
+@keyframes marquee-animation {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
