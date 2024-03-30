@@ -11,8 +11,7 @@
     "server-install": "npm install --prefix api",
     "build": "react-scripts build",
     "create-user": "npm run create-user --prefix api",
-    "generate-token": "npm run generate-token --prefix api",
-    "deploy-production-frontend": "serve -s build -l 3000"
+    "generate-token": "npm run generate-token --prefix api"
   },
   "keywords": [
     "sce_core",
@@ -32,7 +31,6 @@
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",
-    "darkreader": "^4.9.27",
     "framer-motion": "^11.0.5",
     "googleapis": "^126.0.1",
     "jsonwebtoken": "^9.0.2",
@@ -50,7 +48,6 @@
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.10.0",
-    "serve": "^13.0.2",
     "universal-cookie": "^4.0.4"
   },
   "devDependencies": {
