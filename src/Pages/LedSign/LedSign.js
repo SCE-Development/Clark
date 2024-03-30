@@ -166,7 +166,7 @@ function LedSign(props) {
   }
 
   return (
-    <div className="led-sign-page">
+    <div>
       <div className="space-y-12 mt-10  gap-x-6 gap-y-8 w-full sm:grid-cols-6">
         <div className="flex border-b border-gray-900/10 pb-12 md:w-full">
           <div className="flex flex-col justify-center items-center sm:col-span-3 w-full">
