@@ -7,26 +7,37 @@ import BadRequest from "@/util/responses/BadRequest";
 
 type ResponseData = any;
 
+export interface Advertisement {
+    pictureUrl: string,
+    createDate: string,
+    expireDate: string
+}
+
+export interface RequestBody {
+    token: string,
+    advertisment: Advertisement
+};
+
+
 export async function GET(req: Request) {
     try {
-        const body = await parseJSON(req)
-        .catch(() => ({
-            token: "abc",
-            pictureUrl: "DAsfsadfdsaf",
-            createDate: Date.now(),
-            expireDate: Date.now(),
-        }))
-        // const tokenPayload = await authenticate(body, MEMBERSHIP_STATE.OFFICER);
+        const body = await parseJSON(req) as RequestBody;
+        const tokenPayload = await authenticate(body, MEMBERSHIP_STATE.OFFICER);
         
+        if(typeof(body.advertisment) !== "object") throw new BadRequest();
+        if(typeof(body.advertisment?.pictureUrl) !== "string") throw new BadRequest();
+        if(typeof(body.advertisment?.createDate) !== "string") throw new BadRequest();
+        if(typeof(body.advertisment?.expireDate) !== "string") throw new BadRequest();
+
         await Database.connect();
 
         const newAd = new AdvertisementModel({
-            pictureUrl: body.pictureUrl,
-            createDate: body.createDate,
-            expireDate: body.expireDate
+            pictureUrl: body.advertisment.pictureUrl,
+            createDate: body.advertisment.createDate,
+            expireDate: body.advertisment.expireDate
         });
 
-        const result = await newAd.save().catch((e) => { console.log(e); throw new BadRequest() });
+        const result = await newAd.save().catch((e:any) => { console.log(e); throw new BadRequest() });
 
         return Response.json({ success: true, result });
     }catch(response) {

@@ -40,13 +40,16 @@ export async function POST(req: Request) {
         if(typeof(body.displayed?.backgroundColor) !== "string") throw new BadRequest();
         if(typeof(body.displayed?.textColor) !== "string") throw new BadRequest();
         if(typeof(body.displayed?.text) !== "string") throw new BadRequest();
+
+        const { scrollSpeed, backgroundColor, borderColor, text, textColor } = body.displayed;
+        
         /*
         * How these work with Quasar:
         * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
         */
 
         const result = await fetch(`${LED_SIGN_URL}/api/update-sign`, {
-            body: JSON.stringify(body.displayed),
+            body: JSON.stringify({ scrollSpeed, backgroundColor, borderColor, text, textColor }),
             method: "POST",
             headers: {
                 "content-type": "application/json"

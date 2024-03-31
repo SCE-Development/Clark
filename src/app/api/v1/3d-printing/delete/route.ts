@@ -10,12 +10,21 @@ type ResponseData = {
 };
 
 
+
+export interface RequestBody {
+    _id: string
+    token: string,
+}
+
+
 export async function POST(req: Request) {
     try {
-        const body = await parseJSON(req);
+        const body = await parseJSON(req) as RequestBody;
         const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.OFFICER);
         
         await Database.connect();
+
+        if(typeof(body._id) !== "string") throw new BadRequest();
         
         const result = await PrintingForm3DModel.deleteOne({ _id: body._id }).catch(() => { throw new BadRequest() } );
         if (result.deletedCount < 1) {

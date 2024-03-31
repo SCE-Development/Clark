@@ -3,6 +3,8 @@ import Database from "@/util/MongoHelper";
 
 type ResponseData = any;
 
+
+
 export async function GET(req: Request) {
     try {
         await Database.connect();

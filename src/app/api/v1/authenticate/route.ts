@@ -8,15 +8,24 @@ import InvalidEmail from "@/util/responses/InvalidEmail";
 import UserBanned from "@/util/responses/UserBanned";
 import UserEmailUnverified from "@/util/responses/UserEmailUnverified";
 
+
+
+export interface RequestBody {
+    email: string,
+    password: string,
+};
+
+
 export async function POST(req : Request) {
     try {
-        const body = await parseJSON(req)
+        const body = await parseJSON(req) as RequestBody;
         await Database.connect();
+    
+        if(typeof(body.email) !== "string") throw new BadRequest();
+        if(typeof(body.password) !== "string") throw new BadRequest();
 
-        if(!body.email || !body.password) throw new BadRequest();
-
-        const email = (body.email as string).toLowerCase();
-        const password = body.password as string;
+        const email = body.email.toLowerCase();
+        const password = body.password;
 
         const user = await UserModel.findOne({ email }).catch(() => { throw new BadRequest(); });
         
