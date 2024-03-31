@@ -19,6 +19,8 @@ export default function Overview(props) {
   const [queryResult, setQueryResult] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [query, setQuery] = useState('');
+  const [sortedUsers, setSortedUsers] = useState([]);
+  const [sortingColumn, setSortingColumn] = useState(null);
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
@@ -84,6 +86,28 @@ export default function Overview(props) {
       </>
     );
   }, [page, rowsPerPage, users, total]);
+
+  useEffect(() => {
+    if (sortingColumn) { 
+      const sortedUsers = sortUsers(users, sortingColumn); 
+      setSortedUsers(sortedUsers);
+    }
+  }, [sortingColumn, users]);
+
+    function sortUsers(users, columnName) { 
+      switch(columnName) { 
+        case 'Name/Email':
+          return [...users].sort((a, b) => a.email.localeCompare(b.email));
+        case 'Printing':
+          return [...users].sort((a, b) => b.pagesPrinted - a.pagesPrinted); 
+        case 'Verified':
+          return [...users].sort((a, b) => b.emailVerified - a.emailVerified);
+        case 'Membership':
+          return [...users].sort((a,b) => b.accessLevel - a.accessLevel); 
+        default:
+          return users;
+      }
+    }
 
   // function filterUserByAccessLevel(accessLevel) {
   //   switch (accessLevel) {
@@ -229,13 +253,13 @@ export default function Overview(props) {
                     className={`${className}`}
                     key={title}
                   >
-                    {title}
+                    <button onClick={() => setSortingColumn(title)}>{title}</button>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {(sortingColumn ? sortedUsers : users).map((user) => (
                 <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={user.email}>
                   <td className=''>
                     <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
