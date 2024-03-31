@@ -43,3 +43,5 @@ export const CONSOLE_COLOR = {
     YELLOW: '\x1b[33m',
     DEFAULT: '\x1b[0m',
 };
+
+export const IN_DEVELOPMENT_MODE = true;

@@ -6,6 +6,12 @@ import InternalServerError from "@/util/responses/InternalServerError";
 
 // const ROWS_PER_PAGE = 20;
 
+
+export interface RequestBody {
+    token: string
+};
+
+
 export async function POST(req: Request) {
     try {
         if(!ENABLED) {
