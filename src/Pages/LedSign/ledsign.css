@@ -1,0 +1,56 @@
+.led-sign-preview-text {
+  margin: 0;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.led-sign-preview-text>h1 {
+  margin: 0;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.led-sign-preview-border-top {
+  background-color: #c7c7c7;
+  min-height: 5px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.led-sign-preview-border-bottom {
+  background-color: #c7c7c7;
+  min-height: 5px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.led-sign-preview-background {
+  background-color: #dee0df;
+  text-align: center;
+  vertical-align: middle;
+  /* white-space: nowrap; */
+  overflow-x: auto;
+  min-height: 50px;
+}
+
+.led-sign-marquee-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.led-sign-marquee {
+  display: inline-block;
+  text-wrap: nowrap;
+  white-space-collapse: preserve;
+  animation: led-sign-marquee-animation linear infinite;
+}
+
+@keyframes led-sign-marquee-animation {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
