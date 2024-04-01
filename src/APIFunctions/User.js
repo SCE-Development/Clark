@@ -11,11 +11,11 @@ let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
  * @returns {UserApiResponse} Containing any error information or the array of
  * users.
  */
-export async function getAllUsers(token, query = null, page = null) {
+export async function getAllUsers(token, query = null, page = null, sortColumn = null, sortOrder = null) {
   let status = new UserApiResponse();
   await axios
     // get all user!
-    .post(GENERAL_API_URL + '/User/users', {
+    .post(GENERAL_API_URL + '/User/users' + `?sort=${sortColumn}&order=${sortOrder}`, {
       token,
       query,
       page,
