@@ -62,7 +62,13 @@ export default function Overview(props) {
 
   async function callDatabase() {
     setLoading(true);
-    const apiResponse = await getAllUsers(props.user.token, query, page, sortColumn, sortOrder);
+    const apiResponse = await getAllUsers({
+      token: props.user.token,
+      query: query,
+      page: page,
+      sortColumn: sortColumn,
+      sortOrder: sortOrder
+  });
     if (!apiResponse.error) {
       setUsers(apiResponse.responseData.items);
       setTotal(apiResponse.responseData.total);
