@@ -21,6 +21,12 @@ export default function Overview(props) {
   const [query, setQuery] = useState('');
   const [sortColumn, setSortColumn] = useState('joinDate');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [columnStates, setColumnStates] = useState({
+    'Name/Email': 'unused',
+    'Printing': 'unused',
+    'Verified': 'unused',
+    'Membership': 'unused'
+  });
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
@@ -67,7 +73,7 @@ export default function Overview(props) {
 
   useEffect(() => {
     callDatabase();
-  }, [page, sortColumn]);
+  }, [page, sortColumn, sortOrder]);
 
   useEffect(() => {
 
@@ -88,21 +94,35 @@ export default function Overview(props) {
   }, [page, rowsPerPage, users, total]);
 
   function handleSortUsers(columnName) {
-    switch(columnName) {
-    case 'Name/Email':
-      setSortColumn('email');
-      break;
-    case 'Printing':
-      setSortColumn('pagesPrinted');
-      break;
-    case 'Verified':
-      setSortColumn('emailVerified');
-      break;
-    case 'Membership':
-      setSortColumn('accessLevel');
-      break;
-    default:
-      break;
+    const columnMap = {
+      'Name/Email': 'email',
+      'Printing': 'pagesPrinted',
+      'Verified': 'emailVerified',
+      'Membership': 'accessLevel'
+    };
+
+    let newColumnStates = {...columnStates};
+    if (newColumnStates[columnName] === 'desc') {
+      newColumnStates[columnName] = 'asc';
+    } else if (newColumnStates[columnName] === 'asc') {
+      newColumnStates[columnName] = 'unused';
+    } else {
+      newColumnStates[columnName] = 'desc';
+    }
+
+    for (const key in newColumnStates) {
+      if (key !== columnName) {
+        newColumnStates[key] = 'unused';
+      }
+    }
+    setColumnStates(newColumnStates);
+
+    if (newColumnStates[columnName] === 'unused') {
+      setSortColumn('joinDate');
+      setSortOrder('desc');
+    } else {
+      setSortColumn(columnMap[columnName]);
+      setSortOrder(newColumnStates[columnName]);
     }
   }
 
