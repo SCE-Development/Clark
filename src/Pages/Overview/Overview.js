@@ -19,14 +19,8 @@ export default function Overview(props) {
   const [queryResult, setQueryResult] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [query, setQuery] = useState('');
-  const [sortColumn, setSortColumn] = useState('joinDate');
-  const [sortOrder, setSortOrder] = useState('desc');
-  const [columnStates, setColumnStates] = useState({
-    'Name/Email': 'unused',
-    'Printing': 'unused',
-    'Verified': 'unused',
-    'Membership': 'unused'
-  });
+  const [currentSortColumn, setCurrentSortColumn] = useState('joinDate');
+  const [currentSortOrder, setCurrentSortOrder] = useState('desc');
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
@@ -62,6 +56,8 @@ export default function Overview(props) {
 
   async function callDatabase() {
     setLoading(true);
+    const sortColumn = currentSortOrder === 'none' ? 'joinDate' : currentSortColumn;
+    const sortOrder = currentSortOrder === 'none' ? 'desc' : currentSortOrder;
     const apiResponse = await getAllUsers({
       token: props.user.token,
       query: query,
@@ -79,7 +75,7 @@ export default function Overview(props) {
 
   useEffect(() => {
     callDatabase();
-  }, [page, sortColumn, sortOrder]);
+  }, [page, currentSortColumn, currentSortOrder]);
 
   useEffect(() => {
 
@@ -100,35 +96,17 @@ export default function Overview(props) {
   }, [page, rowsPerPage, users, total]);
 
   function handleSortUsers(columnName) {
-    const columnMap = {
-      'Name/Email': 'email',
-      'Printing': 'pagesPrinted',
-      'Verified': 'emailVerified',
-      'Membership': 'accessLevel'
-    };
-
-    let newColumnStates = {...columnStates};
-    if (newColumnStates[columnName] === 'desc') {
-      newColumnStates[columnName] = 'asc';
-    } else if (newColumnStates[columnName] === 'asc') {
-      newColumnStates[columnName] = 'unused';
-    } else {
-      newColumnStates[columnName] = 'desc';
-    }
-
-    for (const key in newColumnStates) {
-      if (key !== columnName) {
-        newColumnStates[key] = 'unused';
+    if(currentSortColumn === columnName) {
+      if (currentSortOrder === 'asc') {
+        setCurrentSortOrder('desc');
+      } else if (currentSortOrder === 'desc') {
+        setCurrentSortOrder('none');
+      } else {
+        setCurrentSortOrder('asc');
       }
-    }
-    setColumnStates(newColumnStates);
-
-    if (newColumnStates[columnName] === 'unused') {
-      setSortColumn('joinDate');
-      setSortOrder('desc');
     } else {
-      setSortColumn(columnMap[columnName]);
-      setSortOrder(newColumnStates[columnName]);
+      setCurrentSortColumn(columnName);
+      setCurrentSortOrder('asc');
     }
   }
 
@@ -266,17 +244,17 @@ export default function Overview(props) {
             <thead>
               <tr>
                 {[
-                  { title: 'Name/Email', className: 'text-base text-white/70' },
-                  { title: 'Printing', className: 'text-base text-white/70 hidden text-center md:table-cell' },
-                  { title: 'Verified', className: 'text-base text-white/70 text-center hidden sm:table-cell' },
-                  { title: 'Membership', className: 'text-base text-white/70 hidden text-center sm:table-cell' },
-                  { title: 'Delete', className: 'text-base text-white/70 text-center' },
-                ].map(({ title, className }) => (
+                  { title: 'Name/Email', className: 'text-base text-white/70', columnName: 'email'},
+                  { title: 'Printing', className: 'text-base text-white/70 hidden text-center md:table-cell', columnName: 'pagesPrinted'},
+                  { title: 'Verified', className: 'text-base text-white/70 text-center hidden sm:table-cell', columnName: 'emailVerified'},
+                  { title: 'Membership', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'accessLevel'},
+                  { title: 'Delete', className: 'text-base text-white/70 text-center', columnName: 'delete'},
+                ].map(({ title, className, columnName }) => (
                   <th
                     className={`${className}`}
                     key={title}
                   >
-                    <button onClick={() => handleSortUsers(title)}>{title}</button>
+                    <button onClick={() => handleSortUsers(columnName)}>{title}</button>
                   </th>
                 ))}
               </tr>
