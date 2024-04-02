@@ -18,12 +18,12 @@ export async function getAllUsers({
   sortColumn = null,
   sortOrder = null,
 }) {
-  const url = new URL(GENERAL_API_URL + '/User/users')
+  const url = new URL(GENERAL_API_URL + '/User/users');
 
   if (sortColumn) {
     url.searchParams.set('sort', sortColumn);
   }
-  
+
   if (sortOrder) {
     url.searchParams.set('order', sortOrder);
   }

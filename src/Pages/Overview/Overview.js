@@ -68,7 +68,7 @@ export default function Overview(props) {
       page: page,
       sortColumn: sortColumn,
       sortOrder: sortOrder
-  });
+    });
     if (!apiResponse.error) {
       setUsers(apiResponse.responseData.items);
       setTotal(apiResponse.responseData.total);
