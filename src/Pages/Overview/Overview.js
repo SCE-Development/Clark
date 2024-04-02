@@ -96,6 +96,9 @@ export default function Overview(props) {
   }, [page, rowsPerPage, users, total]);
 
   function handleSortUsers(columnName) {
+    if (columnName == null) {
+      return;
+    }
     if(currentSortColumn === columnName) {
       if (currentSortOrder === 'asc') {
         setCurrentSortOrder('desc');
@@ -248,8 +251,8 @@ export default function Overview(props) {
                   { title: 'Printing', className: 'text-base text-white/70 hidden text-center md:table-cell', columnName: 'pagesPrinted'},
                   { title: 'Verified', className: 'text-base text-white/70 text-center hidden sm:table-cell', columnName: 'emailVerified'},
                   { title: 'Membership', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'accessLevel'},
-                  { title: 'Delete', className: 'text-base text-white/70 text-center', columnName: 'delete'},
-                ].map(({ title, className, columnName }) => (
+                  { title: 'Delete', className: 'text-base text-white/70 text-center'},
+                ].map(({ title, className, columnName = null}) => (
                   <th
                     className={`${className}`}
                     key={title}
