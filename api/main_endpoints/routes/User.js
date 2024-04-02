@@ -182,7 +182,13 @@ router.post('/users', async function(req, res) {
   }
 
   const sortColumn = req.query.sort || 'joinDate';
-  const sortOrder = req.query.order === 'desc' ? -1 : (req.query.order === 'asc' ? 1 : -1);
+
+  const orderToInteger = {
+    desc: -1,
+    asc: 1,
+    default: -1
+  }
+  const sortOrder = orderToInteger[req.query.order] || orderToInteger.default
 
   // make sure that the page we want to see is 0 by default
   // and avoid negative page numbers
