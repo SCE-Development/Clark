@@ -2,3 +2,5 @@ node_modules
 .next
 **/secrets*
 **/tmp
+.next
+.env

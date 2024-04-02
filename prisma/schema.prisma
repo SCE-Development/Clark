@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+enum AccessLevel {
+    ADMIN
+    OFFICER
+    MEMBER
+    NONMEMBER
+    PENDING
+}
+
+model User {
+    id        String @id @default(cuid()) @map("_id")
+    email     String @unique
+    firstName String
+    lastName  String
+    password  String
+
+    accessLevel          AccessLevel @default(PENDING)
+    membershipValidUntil DateTime    @default(now())
+    doorCode             String?
+    lastLogin            DateTime    @default(now())
+
+    major           String   @default("")
+    discordUsername String   @default("")
+    emailVerified   Boolean  @default(false)
+    emailOptIn      Boolean  @default(true)
+    pagesPrinted    Int      @default(0)
+    joinDate        DateTime @default(now())
+}
