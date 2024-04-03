@@ -96,7 +96,7 @@ export default function Overview(props) {
   }, [page, rowsPerPage, users, total]);
 
   function handleSortUsers(columnName) {
-    if (columnName == null) {
+    if (columnName === null) {
       return;
     }
     if(currentSortColumn === columnName) {
