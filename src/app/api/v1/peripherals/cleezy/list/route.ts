@@ -26,15 +26,12 @@ export async function POST(req: Request) {
         
         const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.MEMBER);
 
+        const query = "?" + (search ? `search=${search}` : "") + `page=${page}`;
 
-        const response = await fetch(`${CLEEZY_URL}/list`, {
+        const response = await fetch(`${CLEEZY_URL}/list${query}`, {
             headers: {
                 "content-type": "application/json"
-            },
-            body: JSON.stringify({
-                page,
-                ...(search !== undefined && { search }),
-            })
+            }
         }).then(res => res.json()).catch(() => { throw new InternalServerError(); });
 
         const { aliases = [], total, rows_per_page: rowsPerPage } = response.data;
