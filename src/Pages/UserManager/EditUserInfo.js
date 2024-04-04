@@ -72,7 +72,7 @@ export default function EditUserInfo(props) {
     const handleBeforeUnload = (ev) => {
       if (dataWasChanged) {
         ev.preventDefault();
-        ev.returnValue = ''; // Required for Chrome
+        ev.returnValue = '';
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
