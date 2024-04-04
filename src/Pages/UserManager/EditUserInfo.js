@@ -68,6 +68,19 @@ export default function EditUserInfo(props) {
     getUser();
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = (ev) => {
+      if (dataWasChanged) {
+        ev.preventDefault();
+        ev.returnValue = ''; // Required for Chrome
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [dataWasChanged]);
+
   async function handleSubmit() {
     if (!dataWasChanged) {
       return;
