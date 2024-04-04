@@ -19,6 +19,8 @@ export default function Overview(props) {
   const [queryResult, setQueryResult] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [query, setQuery] = useState('');
+  const [currentSortColumn, setCurrentSortColumn] = useState('joinDate');
+  const [currentSortOrder, setCurrentSortOrder] = useState('desc');
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
@@ -54,7 +56,15 @@ export default function Overview(props) {
 
   async function callDatabase() {
     setLoading(true);
-    const apiResponse = await getAllUsers(props.user.token, query, page);
+    const sortColumn = currentSortOrder === 'none' ? 'joinDate' : currentSortColumn;
+    const sortOrder = currentSortOrder === 'none' ? 'desc' : currentSortOrder;
+    const apiResponse = await getAllUsers({
+      token: props.user.token,
+      query: query,
+      page: page,
+      sortColumn: sortColumn,
+      sortOrder: sortOrder
+    });
     if (!apiResponse.error) {
       setUsers(apiResponse.responseData.items);
       setTotal(apiResponse.responseData.total);
@@ -65,7 +75,7 @@ export default function Overview(props) {
 
   useEffect(() => {
     callDatabase();
-  }, [page]);
+  }, [page, currentSortColumn, currentSortOrder]);
 
   useEffect(() => {
 
@@ -84,6 +94,24 @@ export default function Overview(props) {
       </>
     );
   }, [page, rowsPerPage, users, total]);
+
+  function handleSortUsers(columnName) {
+    if (columnName === null) {
+      return;
+    }
+    if(currentSortColumn === columnName) {
+      if (currentSortOrder === 'asc') {
+        setCurrentSortOrder('desc');
+      } else if (currentSortOrder === 'desc') {
+        setCurrentSortOrder('none');
+      } else {
+        setCurrentSortOrder('asc');
+      }
+    } else {
+      setCurrentSortColumn(columnName);
+      setCurrentSortOrder('asc');
+    }
+  }
 
   // function filterUserByAccessLevel(accessLevel) {
   //   switch (accessLevel) {
@@ -219,17 +247,17 @@ export default function Overview(props) {
             <thead>
               <tr>
                 {[
-                  { title: 'Name/Email', className: 'text-base text-white/70' },
-                  { title: 'Printing', className: 'text-base text-white/70 hidden text-center md:table-cell' },
-                  { title: 'Verified', className: 'text-base text-white/70 text-center hidden sm:table-cell' },
-                  { title: 'Membership', className: 'text-base text-white/70 hidden text-center sm:table-cell' },
-                  { title: 'Delete', className: 'text-base text-white/70 text-center' },
-                ].map(({ title, className }) => (
+                  { title: 'Name/Email', className: 'text-base text-white/70', columnName: 'email'},
+                  { title: 'Printing', className: 'text-base text-white/70 hidden text-center md:table-cell', columnName: 'pagesPrinted'},
+                  { title: 'Verified', className: 'text-base text-white/70 text-center hidden sm:table-cell', columnName: 'emailVerified'},
+                  { title: 'Membership', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'accessLevel'},
+                  { title: 'Delete', className: 'text-base text-white/70 text-center'},
+                ].map(({ title, className, columnName = null}) => (
                   <th
                     className={`${className}`}
                     key={title}
                   >
-                    {title}
+                    <button onClick={() => handleSortUsers(columnName)}>{title}</button>
                   </th>
                 ))}
               </tr>

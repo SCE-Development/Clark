@@ -181,13 +181,22 @@ router.post('/users', async function(req, res) {
     };
   }
 
+  const sortColumn = req.query.sort || 'joinDate';
+
+  const orderToInteger = {
+    desc: -1,
+    asc: 1,
+    default: -1
+  };
+  const sortOrder = orderToInteger[req.query.order] || orderToInteger.default;
+
   // make sure that the page we want to see is 0 by default
   // and avoid negative page numbers
   let skip = Math.max(Number(req.body.page) || 0, 0);
   skip *= ROWS_PER_PAGE;
   const total = await User.count(maybeOr);
   User.find(maybeOr, { password: 0, }, { skip, limit: ROWS_PER_PAGE, })
-    .sort({ joinDate: -1 })
+    .sort({ [sortColumn] : sortOrder })
     .then(items => {
       res.status(OK).send({ items, total, rowsPerPage: ROWS_PER_PAGE, });
     })
