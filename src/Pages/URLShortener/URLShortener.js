@@ -37,8 +37,8 @@ export default function URLShortenerPage(props) {
    */
   async function getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder) {
     setLoading(true);
-    const sortColumn = currentSortOrder === 'none' ? 'created_at' : currentSortColumn;
-    const sortOrder = currentSortOrder === 'none' ? 'DESC' : currentSortOrder;
+    const sortColumn = currentSortColumn ?? 'created_at';
+    const sortOrder = currentSortOrder ?? 'DESC';
     const urlsFromDb = await getAllUrls({
       token: props.user.token,
       page: page,
@@ -125,9 +125,8 @@ export default function URLShortenerPage(props) {
       if (currentSortOrder === 'ASC') {
         setCurrentSortOrder('DESC');
       } else if (currentSortOrder === 'DESC') {
-        setCurrentSortOrder('none');
-      } else {
-        setCurrentSortOrder('ASC');
+        setCurrentSortOrder(null);
+        setCurrentSortColumn(null);
       }
     } else {
       setCurrentSortColumn(columnName);
