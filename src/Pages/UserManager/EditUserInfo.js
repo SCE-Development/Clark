@@ -26,7 +26,7 @@ export default function EditUserInfo(props) {
     numberOfSemestersToSignUpFor,
     setNumberOfSemestersToSignUpFor
   ] = useState();
-  const [discordId, setDiscordId] = useState();
+  const [discordID, setDiscordID] = useState('');
   const [membershipExpiration, setMembershipExpiration] = useState(new Date());
   const [joinDate, setJoinDate] = useState();
   const [submitButtonText, setSubmitButtonText] = useState('Submit');
@@ -56,7 +56,7 @@ export default function EditUserInfo(props) {
     OriginalNumberOfSemestersToSignUpFor,
     setOriginalNumberOfSemestersToSignUpFor
   ] = useState();
-  const [OriginalDiscordId, setOriginalDiscordId] = useState();
+  const [OriginalDiscordID, setOriginalDiscordID] = useState('');
   const [OriginalMembershipExpiration, setOriginalMembershipExpiration] = useState(new Date());
 
 
@@ -87,8 +87,8 @@ export default function EditUserInfo(props) {
           new Date(result.responseData.membershipValidUntil)
         );
         setOriginalMembershipExpiration(new Date(result.responseData.membershipValidUntil));
-        setDiscordId(result.responseData.discordId);
-        setOriginalDiscordId(result.responseData.discordId);
+        setDiscordID(result.responseData.discordID);
+        setOriginalDiscordID(result.responseData.discordID);
         setEmail(result.responseData.email);
         setOriginalEmail(result.responseData.email);
       }
@@ -105,9 +105,6 @@ export default function EditUserInfo(props) {
         return '';
       }
     };
-    console.log(dataWasChanged);
-    console.log(OriginalMajor);
-    console.log(major);
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -300,7 +297,7 @@ export default function EditUserInfo(props) {
                       defaultValue={doorCode}
                       onChange={(e) => {
                         const newDoorCode = e.target.value;
-                        if(OriginalDoorCode == newDoorCode){
+                        if(newDoorCode == OriginalDoorCode){
                           setDataWasChanged(false);
                         } else {
                           setDataWasChanged(true);
@@ -334,11 +331,11 @@ export default function EditUserInfo(props) {
                         checked={!!emailVerified}
                         onChange={(e) => {
                           const newEmailVerified = e.target.checked;
-                          if(OriginalEmailVerified == newEmailVerified){
+                          if(OriginalEmailVerified === newEmailVerified){
                             setDataWasChanged(false);
                           } else {
                             setDataWasChanged(true);
-                            setEmailVerified(e.target.checked);
+                            setEmailVerified(newEmailVerified);
                           }
                         }}
                       />
@@ -456,7 +453,7 @@ export default function EditUserInfo(props) {
                         onChange={(e) => {
                           const newEmailOptIn = e.target.checked;
                           if(OriginalEmailOptIn === newEmailOptIn){
-                            //setDataWasChanged(false);
+                            setDataWasChanged(false);
                           } else {
                             setDataWasChanged(true);
                             setEmailOptIn(e.target.checked);
@@ -475,14 +472,14 @@ export default function EditUserInfo(props) {
                       name="discord-id"
                       id="discord-id"
                       className={INPUT_CLASS_NAME}
-                      defaultValue={discordId}
+                      defaultValue={discordID}
                       onChange={(e) => {
-                        const newDiscordId = e.target.value;
-                        if(OriginalDiscordId == newDiscordId){
+                        const newDiscordID = e.target.value;
+                        if(OriginalDiscordID == newDiscordID){
                           setDataWasChanged(false);
                         } else {
                           setDataWasChanged(true);
-                          setDiscordId(e.target.value);
+                          setDiscordID(e.target.value);
                         }
                       }}
                     />
