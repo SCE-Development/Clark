@@ -14,13 +14,13 @@ import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 export default function EditUserInfo(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [password, setPassword] = useState(null);
+  const [password, setPassword] = useState('');
   const [doorCode, setDoorCode] = useState('');
-  const [major, setMajor] = useState('');
+  const [major, setMajor] = useState();
   const [pagesPrinted, setPagesPrinted] = useState();
   const [emailVerified, setEmailVerified] = useState();
-  const [accessLevel, setAccessLevel] = useState();
-  const [email, setEmail] = useState();
+  const [accessLevel, setAccessLevel] = useState('');
+  const [email, setEmail] = useState('');
   const [emailOptIn, setEmailOptIn] = useState();
   const [
     numberOfSemestersToSignUpFor,
@@ -42,6 +42,24 @@ export default function EditUserInfo(props) {
   const [loading, setLoading] = useState(true);
   const [userNotFound, setUserNotFound] = useState(false);
 
+  const [OriginalFirstName, setOriginalFirstName] = useState('');
+  const [OriginalLastName, setOriginalLastName] = useState('');
+  const [OriginalPassword, setOriginalPassword] = useState('');
+  const [OriginalDoorCode, setOriginalDoorCode] = useState('');
+  const [OriginalMajor, setOriginalMajor] = useState();
+  const [OriginalPagesPrinted, setOriginalPagesPrinted] = useState();
+  const [OriginalEmailVerified, setOriginalEmailVerified] = useState();
+  const [OriginalAccessLevel, setOriginalAccessLevel] = useState();
+  const [OriginalEmail, setOriginalEmail] = useState('');
+  const [OriginalEmailOptIn, setOriginalEmailOptIn] = useState();
+  const [
+    OriginalNumberOfSemestersToSignUpFor,
+    setOriginalNumberOfSemestersToSignUpFor
+  ] = useState();
+  const [OriginalDiscordId, setOriginalDiscordId] = useState();
+  const [OriginalMembershipExpiration, setOriginalMembershipExpiration] = useState(new Date());
+
+
   useEffect(() => {
     async function getUser() {
       const result = await getUserById(props.match.params.id, props.user.token);
@@ -49,19 +67,30 @@ export default function EditUserInfo(props) {
         setUserNotFound(true);
       } else {
         setFirstName(result.responseData.firstName);
+        setOriginalFirstName(result.responseData.firstName);
         setLastName(result.responseData.lastName);
+        setOriginalLastName(result.responseData.lastName);
         setDoorCode(result.responseData.doorCode);
+        setOriginalDoorCode(result.responseData.doorCode);
         setMajor(result.responseData.major);
+        setOriginalMajor(result.responseData.major);
         setPagesPrinted(result.responseData.pagesPrinted);
+        setOriginalPagesPrinted(result.responseData.pagesPrinted);
         setEmailVerified(result.responseData.emailVerified);
+        setOriginalEmailVerified(result.responseData.emailVerified);
         setAccessLevel(result.responseData.accessLevel);
+        setOriginalAccessLevel(result.responseData.accessLevel);
         setEmailOptIn(result.responseData.emailOptIn);
+        setOriginalEmailOptIn(result.responseData.emailOptIn);
         setJoinDate(new Date(result.responseData.joinDate));
         setMembershipExpiration(
           new Date(result.responseData.membershipValidUntil)
         );
+        setOriginalMembershipExpiration(new Date(result.responseData.membershipValidUntil));
         setDiscordId(result.responseData.discordId);
+        setOriginalDiscordId(result.responseData.discordId);
         setEmail(result.responseData.email);
+        setOriginalEmail(result.responseData.email);
       }
       setLoading(false);
     }
@@ -72,14 +101,18 @@ export default function EditUserInfo(props) {
     const handleBeforeUnload = (ev) => {
       if (dataWasChanged) {
         ev.preventDefault();
-        ev.returnValue = ''; // Required for Chrome
+        ev.returnValue = '';
+        return ''; // required for safari
       }
     };
+    console.log(dataWasChanged);
+    console.log(OriginalMajor);
+    console.log(major);
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [dataWasChanged]);
+  }, [dataWasChanged, []]);
 
   async function handleSubmit() {
     if (!dataWasChanged) {
@@ -198,8 +231,13 @@ export default function EditUserInfo(props) {
                     autoComplete="email"
                     defaultValue={email}
                     onChange={(e) => {
-                      setDataWasChanged(true);
-                      setEmail(e.target.value);
+                      const newEmail = e.target.value;
+                      if(OriginalEmail == newEmail){
+                        setDataWasChanged(false);
+                      } else {
+                        setDataWasChanged(true);
+                        setEmail(e.target.value);
+                      }
                     }}
                     className={INPUT_CLASS_NAME}
                   />
@@ -216,8 +254,13 @@ export default function EditUserInfo(props) {
                       className={INPUT_CLASS_NAME}
                       placeholder='intentionally blank'
                       onChange={(e) => {
-                        setDataWasChanged(true);
-                        setPassword(e.target.value);
+                        const newPassword = e.target.value;
+                        if(OriginalPassword == newPassword){
+                          setDataWasChanged(false);
+                        } else {
+                          setDataWasChanged(true);
+                          setPassword(e.target.value);
+                        }
                       }}
                     />
                   </div>
@@ -234,8 +277,13 @@ export default function EditUserInfo(props) {
                       autoComplete="address-level1"
                       className={INPUT_CLASS_NAME}
                       onChange={(e) => {
-                        setDataWasChanged(true);
-                        setPagesPrinted(e.target.value);
+                        const newPagesPrinted = e.target.value;
+                        if(OriginalPagesPrinted == newPagesPrinted){
+                          setDataWasChanged(false);
+                        } else {
+                          setDataWasChanged(true);
+                          setPagesPrinted(e.target.value);
+                        }
                       }}
                     />
                   </div>
@@ -251,8 +299,13 @@ export default function EditUserInfo(props) {
                       className={INPUT_CLASS_NAME}
                       defaultValue={doorCode}
                       onChange={(e) => {
-                        setDataWasChanged(true);
-                        setDoorCode(e.target.value);
+                        const newDoorCode = e.target.value;
+                        if(OriginalDoorCode == newDoorCode){
+                          setDataWasChanged(false);
+                        } else {
+                          setDataWasChanged(true);
+                          setDoorCode(e.target.value);
+                        }
                       }}
                     />
                   </div>
@@ -261,8 +314,13 @@ export default function EditUserInfo(props) {
                   <ExpirationDropdown
                     defaultValue={'asdfasf'}
                     setNumberOfSemestersToSignUpFor={(value) => {
-                      setDataWasChanged(true);
-                      setNumberOfSemestersToSignUpFor(value);
+                      const newNumberOfSemestersToSignUpFor = value;
+                      if(OriginalNumberOfSemestersToSignUpFor == newNumberOfSemestersToSignUpFor){
+                        setDataWasChanged(false);
+                      } else {
+                        setDataWasChanged(true);
+                        setNumberOfSemestersToSignUpFor(value);
+                      }
                     }}
                   />
                 </div>
@@ -275,8 +333,13 @@ export default function EditUserInfo(props) {
                         className="toggle"
                         checked={!!emailVerified}
                         onChange={(e) => {
-                          setDataWasChanged(true);
-                          setEmailVerified(e.target.checked);
+                          const newEmailVerified = e.target.checked;
+                          if(OriginalEmailVerified == newEmailVerified){
+                            setDataWasChanged(false);
+                          } else {
+                            setDataWasChanged(true);
+                            setEmailVerified(e.target.checked);
+                          }
                         }}
                       />
                     </label>
@@ -311,8 +374,13 @@ export default function EditUserInfo(props) {
                 <div className="sm:col-span-3">
                   <RoleDropdown
                     setuserMembership={(value) => {
-                      setDataWasChanged(true);
-                      setAccessLevel(value);
+                      const newAccessLevel = value;
+                      if(OriginalAccessLevel == newAccessLevel){
+                        setDataWasChanged(false);
+                      } else {
+                        setDataWasChanged(true);
+                        setAccessLevel(value);
+                      }
                     }}
                     defaultValue={accessLevel}
                   />
@@ -321,8 +389,13 @@ export default function EditUserInfo(props) {
                   <MajorDropdown
                     defaultMajor={major}
                     setMajor={(value) => {
-                      setDataWasChanged(true);
-                      setMajor(value);
+                      const newMajor = value;
+                      if(OriginalMajor == newMajor){
+                        setDataWasChanged(false);
+                      } else {
+                        setDataWasChanged(true);
+                        setMajor(value);
+                      }
                     }} />
                 </div>
               </div>
@@ -339,8 +412,13 @@ export default function EditUserInfo(props) {
                       className={INPUT_CLASS_NAME}
                       defaultValue={firstName}
                       onChange={(e) => {
-                        setDataWasChanged(true);
-                        setFirstName(e.target.value);
+                        const newFirstName = e.target.value;
+                        if(OriginalFirstName == newFirstName){
+                          setDataWasChanged(false);
+                        } else {
+                          setDataWasChanged(true);
+                          setFirstName(e.target.value);
+                        }
                       }}
                     />
                   </div>
@@ -357,8 +435,13 @@ export default function EditUserInfo(props) {
                       className={INPUT_CLASS_NAME}
                       defaultValue={lastName}
                       onChange={(e) => {
-                        setDataWasChanged(true);
-                        setLastName(e.target.value);
+                        const newLastName = e.target.value;
+                        if(OriginalLastName == newLastName){
+                          setDataWasChanged(false);
+                        } else {
+                          setDataWasChanged(true);
+                          setLastName(e.target.value);
+                        }
                       }}
                     />
                   </div>
@@ -369,7 +452,17 @@ export default function EditUserInfo(props) {
                   <div className="form-control">
                     <label className="label cursor-pointer">
                       <span className="label-text">Opt into blast emails?</span>
-                      <input type="checkbox" className="toggle" checked={emailOptIn} onChange={(e) => setEmailOptIn(e.target.checked)} />
+                      <input type="checkbox" className="toggle" checked={emailOptIn}
+                        onChange={(e) => {
+                          const newEmailOptIn = e.target.checked;
+                          if(OriginalEmailOptIn === newEmailOptIn){
+                            //setDataWasChanged(false);
+                          } else {
+                            setDataWasChanged(true);
+                            setEmailOptIn(e.target.checked);
+                          }
+                        }}
+                      />
                     </label>
                   </div>
                 </div>
@@ -384,8 +477,13 @@ export default function EditUserInfo(props) {
                       className={INPUT_CLASS_NAME}
                       defaultValue={discordId}
                       onChange={(e) => {
-                        setDataWasChanged(true);
-                        setDiscordId(e.target.value);
+                        const newDiscordId = e.target.value;
+                        if(OriginalDiscordId == newDiscordId){
+                          setDataWasChanged(false);
+                        } else {
+                          setDataWasChanged(true);
+                          setDiscordId(e.target.value);
+                        }
                       }}
                     />
                   </div>
