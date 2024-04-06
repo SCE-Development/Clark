@@ -4,7 +4,9 @@ import { ApiResponse } from './ApiResponses';
 let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
   || 'http://localhost:8081/peripheralapi';
 
-export async function getAllUrls(token, page, search) {
+export async function getAllUrls({
+  token, page, search, sortColumn, sortOrder
+}) {
   let status = new ApiResponse();
   await axios
     .get(PERIPHERAL_API_URL + '/Cleezy/list', {
@@ -12,6 +14,8 @@ export async function getAllUrls(token, page, search) {
         token,
         page,
         ...(search !== undefined && { search }),
+        sortColumn,
+        sortOrder
       },
     })
     .then(res => {

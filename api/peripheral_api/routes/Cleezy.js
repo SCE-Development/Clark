@@ -27,7 +27,7 @@ router.get('/list', async (req, res) => {
     });
   }
   const token = req.query.token;
-  const { page = 0, search } = req.query;
+  const { page = 0, search, sortColumn = "created_at", sortOrder = "DESC"} = req.query;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await verifyToken(req.query.token)) {
@@ -38,6 +38,8 @@ router.get('/list', async (req, res) => {
       params: {
         page,
         ...(search !== undefined && { search }),
+        sort_by: sortColumn,
+        order: sortOrder
       },
     });
     const { data = [], total, rows_per_page: rowsPerPage } = response.data;

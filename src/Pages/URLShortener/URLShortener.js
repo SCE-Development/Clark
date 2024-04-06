@@ -25,6 +25,8 @@ export default function URLShortenerPage(props) {
   const [errorAlertMessage, setErrorAlertMessage] = useState('');
   const [urlToDelete, setUrlToDelete] = useState({});
   const [toggleDelete, setToggleDelete] = useState(false);
+  const [currentSortColumn, setCurrentSortColumn] = useState('created_at');
+  const [currentSortOrder, setCurrentSortOrder] = useState('DESC');
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
@@ -33,9 +35,17 @@ export default function URLShortenerPage(props) {
    * Cleezy page is disabled by default since you have to run the Cleezy server
    * separately. To enable, go to config.json and set ENABLED under Cleezy to true
    */
-  async function getCleezyUrls(page, searchQuery) {
+  async function getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder) {
     setLoading(true);
-    const urlsFromDb = await getAllUrls(props.user.token, page, searchQuery);
+    const sortColumn = currentSortOrder === 'none' ? 'created_at' : currentSortColumn;
+    const sortOrder = currentSortOrder === 'none' ? 'DESC' : currentSortOrder;
+    const urlsFromDb = await getAllUrls({
+      token: props.user.token,
+      page: page,
+      searchQuery: searchQuery,
+      sortColumn: sortColumn,
+      sortOrder: sortOrder
+    });
     setIsCleezyDisabled(!!urlsFromDb.responseData.disabled);
     if (urlsFromDb.error) {
       setError(urlsFromDb.responseData);
@@ -107,6 +117,24 @@ export default function URLShortenerPage(props) {
     }
   }
 
+  function handleSortUrls(columnName) {
+    if (columnName === null) {
+      return;
+    }
+    if(currentSortColumn === columnName) {
+      if (currentSortOrder === 'ASC') {
+        setCurrentSortOrder('DESC');
+      } else if (currentSortOrder === 'DESC') {
+        setCurrentSortOrder('none');
+      } else {
+        setCurrentSortOrder('ASC');
+      }
+    } else {
+      setCurrentSortColumn(columnName);
+      setCurrentSortOrder('ASC');
+    }
+  }
+
   useEffect(() => {
     if (useGeneratedAlias) {
       setAlias('');
@@ -133,8 +161,8 @@ export default function URLShortenerPage(props) {
   }, [alias]);
 
   useEffect(() => {
-    getCleezyUrls(page, searchQuery);
-  }, [page]);
+    getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
+  }, [page, currentSortColumn, currentSortOrder]);
 
   function maybeRenderErrorAlert() {
     if (invalidUrl || aliasTaken || invalidSearch) {
@@ -388,16 +416,16 @@ export default function URLShortenerPage(props) {
                   <thead>
                     <tr>
                       {[
-                        { title: 'URL', className: 'text-base text-white/70' },
-                        { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell' },
-                        { title: 'Times Used', className: 'text-base text-white/70 text-center' },
+                        { title: 'URL', className: 'text-base text-white/70', columnName: 'alias' },
+                        { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
+                        { title: 'Times Used', className: 'text-base text-white/70 text-center', columnName: 'used' },
                         { title: 'Delete', className: 'text-base text-white/70 text-center' }
-                      ].map(({ title, className }) => (
+                      ].map(({ title, className, columnName = null }) => (
                         <th
                           className={`${className}`}
                           key={title}
                         >
-                          {title}
+                          <button onClick={() => handleSortUrls(columnName)}>{title}</button>
                         </th>
                       ))}
                     </tr>
