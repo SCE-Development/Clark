@@ -102,7 +102,7 @@ export default function EditUserInfo(props) {
       if (dataWasChanged) {
         ev.preventDefault();
         ev.returnValue = '';
-        return ''; // required for safari
+        return '';
       }
     };
     console.log(dataWasChanged);
