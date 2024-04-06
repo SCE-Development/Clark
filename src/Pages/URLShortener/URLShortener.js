@@ -25,8 +25,8 @@ export default function URLShortenerPage(props) {
   const [errorAlertMessage, setErrorAlertMessage] = useState('');
   const [urlToDelete, setUrlToDelete] = useState({});
   const [toggleDelete, setToggleDelete] = useState(false);
-  const [currentSortColumn, setCurrentSortColumn] = useState('created_at');
-  const [currentSortOrder, setCurrentSortOrder] = useState('DESC');
+  const [currentSortColumn, setCurrentSortColumn] = useState(null);
+  const [currentSortOrder, setCurrentSortOrder] = useState(null);
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
@@ -96,7 +96,6 @@ export default function URLShortenerPage(props) {
   }
 
   async function maybeSubmitSearch() {
-    console.debug('reached this call');
     const regex = /^[a-zA-Z0-9]+$/;
     if (searchQuery === '' || regex.test(searchQuery)) {
       setInvalidSearch(false);
@@ -105,6 +104,9 @@ export default function URLShortenerPage(props) {
       setInvalidSearch(true);
       setErrorAlertMessage('Search query cannot contain special characters');
       return false;
+    }
+    if (loading && !allUrls.length) {
+      return <div></div>;
     }
   }
 
@@ -392,89 +394,87 @@ export default function URLShortenerPage(props) {
       }
       } />
       <div className='px-4'>
-        {!loading && (
-          <div className='body-container'>
-            {maybeRenderErrorAlert()}
-            {successMessage &&
-              <div>
-                <div role="alert" className="alert alert-success mt-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="text-white fill-none stroke-current shrink-0 h-6 w-6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span className='text-white'>{successMessage}</span>
-                </div>
+        <div className='body-container'>
+          {maybeRenderErrorAlert()}
+          {successMessage &&
+            <div>
+              <div role="alert" className="alert alert-success mt-6">
+                <svg xmlns="http://www.w3.org/2000/svg" className="text-white fill-none stroke-current shrink-0 h-6 w-6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span className='text-white'>{successMessage}</span>
               </div>
-            }
-            <div className='p-6 mt-6 border rounded-lg border-white/10'>
-              {renderUrlButtonOrForm()}
             </div>
-            <div className='px-6 mt-6 border rounded-lg border-white/10'>
-              <div className='py-6'>
-                {maybeRenderSearch()}
-              </div>
-              <div className='overflow-x-auto transition'>
-                <table className='table px-3'>
-                  <thead>
-                    <tr>
-                      {[
-                        { title: 'URL', className: 'text-base text-white/70', columnName: 'alias' },
-                        { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
-                        { title: 'Times Used', className: 'text-base text-white/70 text-center', columnName: 'used' },
-                        { title: 'Delete', className: 'text-base text-white/70 text-center' }
-                      ].map(({ title, className, columnName = null }) => (
-                        <th
-                          className={`${className}`}
-                          key={title}
-                        >
-                          <button onClick={() => handleSortUrls(columnName)}>{title}</button>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
+          }
+          <div className='p-6 mt-6 border rounded-lg border-white/10'>
+            {renderUrlButtonOrForm()}
+          </div>
+          <div className='px-6 mt-6 border rounded-lg border-white/10'>
+            <div className='py-6'>
+              {maybeRenderSearch()}
+            </div>
+            <div className='overflow-x-auto transition'>
+              <table className='table px-3'>
+                <thead>
+                  <tr>
+                    {[
+                      { title: 'URL', className: 'text-base text-white/70', columnName: 'alias' },
+                      { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
+                      { title: 'Times Used', className: 'text-base text-white/70 text-center', columnName: 'used' },
+                      { title: 'Delete', className: 'text-base text-white/70 text-center' }
+                    ].map(({ title, className, columnName = null }) => (
+                      <th
+                        className={`${className}`}
+                        key={title}
+                      >
+                        <button onClick={() => handleSortUrls(columnName)}>{title}</button>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
 
-                  <tbody>
-                    {allUrls.map((url, index) => {
-                      return (
-                        <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
-                          <td className=''>
-                            <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.link}`}>
-                              {url.alias}
-                            </a>
-                            <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
-                          </td>
-                          <td className='hidden md:table-cell'>
-                            <div className='flex items-center justify-center'>
-                              {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
-                          </td>
-                          <td className='hidden md:table-cell'>
-                            <div className='flex items-center justify-center'>
-                              {url.used}
-                            </div>
-                          </td>
-                          <td>
-                            <div className='flex items-center justify-center'>
-                              <button
-                                className ='p-2 hover:bg-white/30 rounded-xl'
-                                onClick={() => {
-                                  setUrlToDelete(url); setToggleDelete(true);
-                                }}>
-                                {trashcanSymbol()}
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                {allUrls.length === 0 && (
-                  <div className='flex flex-row w-100 justify-center'>
-                    <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
-                  </div>
-                )}
-                {maybeRenderPagination()}
-              </div>
+                <tbody>
+                  {allUrls.map((url, index) => {
+                    return (
+                      <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
+                        <td className=''>
+                          <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.link}`}>
+                            {url.alias}
+                          </a>
+                          <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
+                        </td>
+                        <td className='hidden md:table-cell'>
+                          <div className='flex items-center justify-center'>
+                            {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
+                        </td>
+                        <td className='hidden md:table-cell'>
+                          <div className='flex items-center justify-center'>
+                            {url.used}
+                          </div>
+                        </td>
+                        <td>
+                          <div className='flex items-center justify-center'>
+                            <button
+                              className ='p-2 hover:bg-white/30 rounded-xl'
+                              onClick={() => {
+                                setUrlToDelete(url); setToggleDelete(true);
+                              }}>
+                              {trashcanSymbol()}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {allUrls.length === 0 && (
+                <div className='flex flex-row w-100 justify-center'>
+                  <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
+                </div>
+              )}
+              {maybeRenderPagination()}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
