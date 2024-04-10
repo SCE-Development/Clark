@@ -4,10 +4,7 @@ import { redirect } from 'next/navigation'
 
 export default function Login() {
 
-    // this is a server action, new with nextjs14. it's code that performs mutations on the backend securely.
-    // it also supports server side rendering more.
-    // https://blog.logrocket.com/diving-into-server-actions-next-js-14/
-    // https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations
+    // this is NOT a server action. signIn is a client side method only, and cannot be used in a server action.
     async function login(formData: FormData) {
         const signInResponse = await signIn('credentials', {
             email: formData.get('email')!.toString(),
@@ -20,7 +17,6 @@ export default function Login() {
         } else {
             console.error(signInResponse!.error);
         }
-        redirect('/')
     }
 
     return (
