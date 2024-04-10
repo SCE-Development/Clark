@@ -1,20 +1,20 @@
-import prismaClient from "@/lib/prisma";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { NextAuthOptions } from "next-auth";
+import prismaClient from '@/lib/prisma';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { NextAuthOptions } from 'next-auth';
 import type { Adapter } from 'next-auth/adapters';
-import CredentialsProvider from "next-auth/providers/credentials";
+import CredentialsProvider from 'next-auth/providers/credentials';
 
 const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prismaClient) as Adapter,
     session: {
-        strategy: "database",
+        strategy: 'jwt',
     },
     providers: [
         CredentialsProvider({
-            name: "Credentials",
+            name: 'Credentials',
             credentials: {
-                email: { label: "Email", type: "text", placeholder: "poop@sjsu.edu" },
-                password: { label: "Password", type: "password" },
+                email: { label: 'Email', type: 'text', placeholder: 'poop@sjsu.edu' },
+                password: { label: 'Password', type: 'password' },
             },
             authorize: async (credentials, req) => {
                 const user = await prismaClient.user.findFirst({
@@ -22,13 +22,18 @@ const authOptions: NextAuthOptions = {
                         email: credentials?.email,
                         password: credentials?.password,
                     },
-                });
-                if (user)
-                    return user;
-                return null;
+                })
+                if (user) {
+                    return user
+                }
+                return null
             }
         })
-    ]
+    ],
+    pages: {
+        signIn: '/login',
+        newUser: '/register'
+    }
 }
 
 export default authOptions; 
