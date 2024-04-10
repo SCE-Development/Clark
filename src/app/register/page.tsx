@@ -65,9 +65,3 @@ export default function Register() {
         </>
     )
 }
-
-
-
-
-
-
