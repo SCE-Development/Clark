@@ -397,7 +397,7 @@ router.post('/getUserById', async (req, res) => {
     }
 
     const { password, ...omittedPassword } = result._doc;
-    console.log(res.json)
+    
     return res.status(OK).json(omittedPassword);
   });
 });
