@@ -5,6 +5,12 @@ type ResponseData = any;
 
 
 
+/**
+ * Get all advertisements sorted by newest to oldest
+ * This endpoint does NOT require authentication.
+ * @param req 
+ * @returns 
+ */
 export async function GET(req: Request) {
     try {
         await Database.connect();

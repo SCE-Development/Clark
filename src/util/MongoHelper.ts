@@ -19,7 +19,20 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+/**
+ * Server-Side Database Utilities.
+ */
 const Database = {
+    /**
+     * Returns a promise that is resolved when the connection to the database succeeds. 
+     * If another call is made to `connect()`, it returns the first promise. Thus it only
+     * maintains one connection per server.
+     * 
+     * @throws {DatabaseDown} Thrown when the connection to the database fails.
+     * 
+     * @returns A cached promise that is resolved when either the connection to the database succeeds. The promise
+     * is rejected with a DatabaseDown response if the connection fails. 
+     */
     async connect() {
         if(cached.conn) return cached.conn;
         
@@ -33,6 +46,7 @@ const Database = {
                 return mongoose;
             }).catch((e) => {
                 console.log(e);
+                throw new DatabaseDown();
             });
         }
         try {

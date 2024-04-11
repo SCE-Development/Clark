@@ -16,6 +16,15 @@ export interface UserUpdatable {
     major?: string,
 };
 
+/**
+ * Edit the email of the user that is currently authenticated with their authentication JWT.
+ * This endpoint requires authentication.
+ * 
+ * @note Should require more verification (email?)
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request) {
     try {
         const body = await parseJSON(req);

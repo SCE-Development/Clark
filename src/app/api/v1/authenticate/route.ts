@@ -16,6 +16,13 @@ export interface RequestBody {
 };
 
 
+/**
+ * Authenticate a user
+ * Returns an authentication JWT if a valid email and password are supplied.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req : Request) {
     try {
         const body = await parseJSON(req) as RequestBody;

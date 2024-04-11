@@ -70,12 +70,19 @@ const UPDATABLE = [
     }
 ]
 
-function includeUpdate(bodyUpdates : any, updates: AdminUpdatable, key : keyof AdminUpdatable, type: string) {
-    if(bodyUpdates[key])
-        if(typeof(bodyUpdates[key]) == type) updates[key] = bodyUpdates[key]
-        else throw new BadRequest();
-}
-
+/**
+ * Edit the info of a user with a given `_id`.
+ * This endpoint requires OFFICER authentication.
+ * 
+ * Only `firstName`, `lastName`, `discordUsername`, `emailOptIn`, `discordDiscrim`, 
+ * `discordID`, `major`, `accessLevel`, `pagesPrinted`, and `membershipValidUntil` are editable from this endpoint.
+ * 
+ * Fields not specified will keep their original values in the database.
+ * Fields specified will be updated.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request, { params }: { params: { _id: string } }) {
     try {
         const body = await parseJSON(req);
@@ -83,6 +90,7 @@ export async function POST(req: Request, { params }: { params: { _id: string } }
         const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.OFFICER);
 
         if(!body.updates) throw new BadRequest();
+        
         // Fill the updates and verify types
         const updates : any = {};
         UPDATABLE.forEach(({key, type}) => {

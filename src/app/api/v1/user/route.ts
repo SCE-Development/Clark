@@ -12,6 +12,15 @@ type ResponseData = {
 };
 
 
+/**
+ * Return the info of the user that is currently authenticated with their authentication JWT.
+ * This endpoint requires authentication.
+ * 
+ * Password and database id is omitted from the returned info.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request) {
     try {
         const body = await parseJSON(req);

@@ -19,6 +19,13 @@ export interface RequestBody {
 };
 
 
+
+/**
+ * Create an advertisement
+ * This endpoint requires OFFICER authentication.
+ * @param req 
+ * @returns 
+ */
 export async function GET(req: Request) {
     try {
         const body = await parseJSON(req) as RequestBody;

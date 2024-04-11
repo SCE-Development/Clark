@@ -12,6 +12,15 @@ type ResponseData = {
 };
 
 
+/**
+ * Return the info of a user with a given `_id`.
+ * This endpoint requires OFFICER authentication.
+ * 
+ * Password is omitted from the returned info.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request, { params }: { params: { _id: string } }) {
     try {
         const _id = params._id;

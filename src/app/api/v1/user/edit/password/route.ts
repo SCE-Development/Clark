@@ -7,22 +7,27 @@ import BadRequest from "@/util/responses/BadRequest";
 import ItemNotFound from "@/util/responses/ItemNotFound";
 import Ok from "@/util/responses/Ok";
 
-
-export interface UserUpdatable {
-    discordUsername?: string,
-    emailOptIn?: boolean,
-    discordDiscrim?: string,
-    discordID?: string,
-    major?: string,
+export interface ResponseBody {
+    token: string;
+    password: string;
 };
 
+/**
+ * Edit the password of the user that is currently authenticated with their authentication JWT.
+ * This endpoint requires authentication.
+ * 
+ * @note Should require more verification (email?)
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request) {
     try {
-        const body = await parseJSON(req);
+        const body = (await parseJSON(req)) as ResponseBody;
         const tokenPayload = await Session.authenticate(body);
-        if(!(body.updates?.password)) throw new BadRequest();
+        if(typeof(body.password) !== "string") throw new BadRequest();
         
-        const password = body.updates.password;
+        const password = body.password;
         // Possibly send verification email?
         const hashed = await encryptPassword(password);
 

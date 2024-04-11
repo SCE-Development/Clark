@@ -11,6 +11,16 @@ type ResponseData = {
 };
 
 
+
+/**
+ * Delete the user that is currently authenticated with their authentication JWT.
+ * This endpoint requires authentication.
+ * 
+ * @note Should require more verification (email?)
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function DELETE(req: Request, { params }: { params: { _id: string } }) {
     try {
         const _id = params._id;

@@ -3,17 +3,24 @@
 import { UserModel } from "@/models/User";
 import { MEMBERSHIP_STATE } from "@/util/Constants";
 import Database from "@/util/MongoHelper";
-import Registration, { RegistrationData } from "@/util/Registration";
+import Registration from "@/util/Registration";
 import BadRequest from "@/util/responses/BadRequest";
 import InternalServerError from "@/util/responses/InternalServerError";
 
 
+/**
+ * Address verification endpoint.
+ * Once this endpoint is visited, the user will be added to the database.
+ * This endpoint does NOT requires authentication.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function GET(req: Request) {
     try {
         const url = new URL(req.url);
         const token = url.searchParams.get("token");
         if(!token) throw new BadRequest();
-        console.log(token);
 
         const payload = await Registration.token.decode(token);
         const user = new UserModel({

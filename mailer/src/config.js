@@ -1,35 +1,26 @@
 
 const path = require("path");
 
-const readline = require('node:readline');
-const { stdin: input, stdout: output } = require('node:process');
-
+/** Port to listen on */
 const PORT = 4234;
+/** Hostname of this server */
 const HOSTNAME = "localhost";
+/** Base URL of this server */
 const BASE_URL = `http://${HOSTNAME}:${PORT}/`
+/** Public Directory. Holds template html files and stuff */
 const PUBLIC_DIR = path.join(__dirname, "../public");
+/** tmp Directory. Holds runtime token files. */
 const TMP_DIR = path.join(__dirname, "tmp")
+/** Google Token File, stored in the tmp directory. Holds a previously saved access token*/
 const GOOGLE_TOKEN_FILE = path.join(TMP_DIR, "token-google.json");
 
 const Config = {
-    get() {
-
-        const rl = readline.createInterface({ input, output });
-
-        rl.question('What do you think of Node.js? ', (answer) => {
-          // TODO: Log the answer in a database
-          console.log(`Thank you for your valuable feedback: ${answer}`);
-        
-          rl.close();
-        });
-    },
     TMP_DIR,
     GOOGLE_TOKEN_FILE,
     PUBLIC_DIR,
     PORT,
     HOSTNAME,
     BASE_URL
-
 };
 
 module.exports = { Config }

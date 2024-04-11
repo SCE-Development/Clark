@@ -19,6 +19,18 @@ export interface RequestBody {
     password: string,
 };
 
+
+/**
+ * Initiate the registration process of a given user.
+ * Fails if the email is already registered in the database.
+ * Sends a verification email with a link.
+ * 
+ * This endpoint does NOT requires authentication.
+ * 
+ * @throws {EmailConflict} if the email is already registered in the database.
+ * @param req 
+ * @returns Ok response
+ */
 export async function POST(req: Request) {
     try {
         const body = await parseJSON(req) as RequestBody;

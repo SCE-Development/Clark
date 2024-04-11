@@ -8,6 +8,17 @@ function clamp(x : number, min: number, max: number) {
     return Math.max(Math.min(x, max), min);
 }
 
+
+/**
+ * Return the list of users stored in the user database.
+ * This endpoint requires OFFICER authentication.
+ * 
+ * Supports pagination.
+ * Password is omitted from the returned users.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request) {
     try {
         const url = new URL(req.url);

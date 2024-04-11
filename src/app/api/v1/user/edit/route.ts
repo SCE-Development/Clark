@@ -49,10 +49,19 @@ const UPDATABLE = [
 ]
 
 
+/**
+ * Edit the info of the user that is currently authenticated with their authentication JWT.
+ * This endpoint requires authentication.
+ * 
+ * Only `firstName`, `lastName`, `discordUsername`, `emailOptIn`, `discordDiscrim`, `discordID`, and `major` are editable from this endpoint.
+ * Fields not specified will keep their original values in the database.
+ * Fields specified will be updated.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request) {
     try {
-        
-        
         const body = await parseJSON(req);
         const tokenPayload = await Session.authenticate(body);
 

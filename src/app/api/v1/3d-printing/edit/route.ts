@@ -10,6 +10,13 @@ type ResponseData = {
 };
 
 
+/**
+ * Edit a 3d print request in the database.
+ * This endpoint requires OFFICER authentication.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function POST(req: Request) {
     try {
         const body = await parseJSON(req);

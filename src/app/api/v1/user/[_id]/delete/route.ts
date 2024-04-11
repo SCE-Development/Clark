@@ -11,6 +11,13 @@ type ResponseData = {
 };
 
 
+/**
+ * Delete the user with a given `_id`.
+ * This endpoint requires OFFICER authentication.
+ * 
+ * @param req 
+ * @returns 
+ */
 export async function DELETE(req: Request, { params }: { params: { _id: string } }) {
     try {
         const _id = params._id;
