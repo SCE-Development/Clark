@@ -20,7 +20,6 @@ import InvalidPassword from "./responses/InvalidPassword";
 
 
 export function decodeToken(token : string) : Promise<TokenPayload> {
-
   return new Promise((res, rej) => {
       jwt.verify(token, JWT_SECRET_KEY, (error, decoded) => {
         if(error) {
