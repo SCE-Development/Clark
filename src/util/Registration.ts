@@ -43,22 +43,27 @@ function generate(payload : RegistrationData) {
 }
 
 async function sendVerificationEmail(payload : RegistrationData) {
-    const token = await generate(payload);
-    const verificationURL = new URL(`/v1/register/verify`, BASE_URL);
-    verificationURL.searchParams.set("token", token);
-
-    const body = {
-        name: `${payload.firstName} ${payload.lastName}`,
-        email: payload.email,
-        verifyLink: verificationURL.href
-    }
-    const result = await fetch(new URL("/v1/mail/send-verification-email", CLOUD_API_SERVER), {
-        body: JSON.stringify(body),
-        method: "POST",
-        headers: {
-            "content-type": "application/json"
+    try {
+        const token = await generate(payload);
+        console.log(token)
+        const verificationURL = new URL(`/api/v1/register/verify`, BASE_URL);
+        verificationURL.searchParams.set("token", token);
+    
+        const body = {
+            name: `${payload.firstName} ${payload.lastName}`,
+            email: payload.email,
+            verifyLink: verificationURL.href
         }
-    }).then((res) => res.json());
+        const result = await fetch(new URL("/v1/mail/send-verification-email", CLOUD_API_SERVER), {
+            body: JSON.stringify(body),
+            method: "POST",
+            headers: {
+                "content-type": "application/json"
+            }
+        }).then((res) => res.json());
+    }catch(e) {
+        console.log(e);
+    }
 }
 
 const Registration = {

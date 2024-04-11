@@ -34,6 +34,7 @@ class GoogleAuthenticationHandler {
         console.info(`Saved token in "${Config.GOOGLE_TOKEN_FILE}"`);
     }
     async setToken(token) {
+        console.log(token);
         this.token = token;
         this.oauth2.setCredentials(this.token);
     }
@@ -71,7 +72,7 @@ class GmailHandler {
      */
     send(envelope) {
         envelope.from = this.user;
-
+        // console.log(this.auth);
         const transport = nodemailer.createTransport({
             service: "gmail",
             auth: {

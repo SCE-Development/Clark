@@ -5,6 +5,7 @@ import { MEMBERSHIP_STATE } from "@/util/Constants";
 import Database from "@/util/MongoHelper";
 import Registration, { RegistrationData } from "@/util/Registration";
 import BadRequest from "@/util/responses/BadRequest";
+import InternalServerError from "@/util/responses/InternalServerError";
 
 
 export async function GET(req: Request) {
@@ -12,6 +13,7 @@ export async function GET(req: Request) {
         const url = new URL(req.url);
         const token = url.searchParams.get("token");
         if(!token) throw new BadRequest();
+        console.log(token);
 
         const payload = await Registration.token.decode(token);
         const user = new UserModel({
@@ -20,10 +22,11 @@ export async function GET(req: Request) {
             accessLevel: MEMBERSHIP_STATE.OFFICER,
             lastName: payload.lastName,
             firstName: payload.firstName,
+            emailVerified: true
         });
         await Database.connect();
         
-        const result = await user.save();
+        const result = await user.save().catch((e : any) => { console.log(e); throw new InternalServerError(); });
         return Response.json({ success: true });
     }catch(response) {
         return response;

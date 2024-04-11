@@ -10,13 +10,24 @@ const router = express.Router();
 
 router.use(express.json());
 router.post("/send-verification-email", async (req, res) => {
-    await Google.gmail.send(new VerificationEmail(req.body.email, req.body.name, req.body.verifyLink));
-    res.json({ success: true });
+    console.log(req.body);
+    try {
+        await Google.gmail.send(new VerificationEmail(req.body.email, req.body.name, req.body.verifyLink));
+        res.json({ success: true });
+    }catch(e) {
+        console.error(e);
+        res.status(500).json({ success: false });
+    }
 });
 
 router.post('/send-blast-email', async (req, res) => {
-    await Google.gmail.send(new BlastEmail(req.body.recipients, req.body.subject, req.body.content));
-    res.json({ success: true });
+    try {
+        await Google.gmail.send(new BlastEmail(req.body.recipients, req.body.subject, req.body.content));
+        res.json({ success: true });
+    }catch(e) {
+        console.error(e);
+        res.status(500).json({ success: false });
+    }
 });
 
 module.exports = router;

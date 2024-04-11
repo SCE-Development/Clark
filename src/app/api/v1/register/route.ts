@@ -27,9 +27,8 @@ export async function POST(req: Request) {
         if(typeof(body.lastName) !== "string") throw new BadRequest();
         if(typeof(body.email) !== "string") throw new BadRequest();
         if(typeof(body.password) !== "string") throw new BadRequest();
-
         await Database.connect();
-        const result = await UserModel.findOne({ email: body.email }).then(() => { throw new InternalServerError(); });
+        const result = await UserModel.findOne({ email: body.email }).catch((e) => { throw new InternalServerError(); });
         if(result) throw new EmailConflict();
 
         const payload : RegistrationData = {
@@ -38,9 +37,9 @@ export async function POST(req: Request) {
             email: body.email,
             encryptedPassword: await encryptPassword(body.password)
         };
+        
 
         await Registration.sendVerificationEmail(payload);
-
         return new Ok();
     }catch(response) {
         return response;
