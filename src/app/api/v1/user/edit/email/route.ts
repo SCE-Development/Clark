@@ -6,6 +6,7 @@ import { parseJSON } from "@/util/ResponseHelpers";
 import BadRequest from "@/util/responses/BadRequest";
 import ItemNotFound from "@/util/responses/ItemNotFound";
 import Ok from "@/util/responses/Ok";
+import { NextRequest } from "next/server";
 
 
 export interface UserUpdatable {
@@ -25,10 +26,10 @@ export interface UserUpdatable {
  * @param req 
  * @returns 
  */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const body = await parseJSON(req);
-        const tokenPayload = await Session.authenticate(body);
+        const tokenPayload = await Session.get(req, body);
         if(!(body.updates?.email)) throw new BadRequest();
         
         const email = body.updates.email;

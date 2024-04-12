@@ -7,6 +7,7 @@ import BadRequest from "@/util/responses/BadRequest";
 import InvalidEmail from "@/util/responses/InvalidEmail";
 import UserBanned from "@/util/responses/UserBanned";
 import UserEmailUnverified from "@/util/responses/UserEmailUnverified";
+import { NextRequest } from "next/server";
 
 
 
@@ -23,7 +24,7 @@ export interface RequestBody {
  * @param req 
  * @returns 
  */
-export async function POST(req : Request) {
+export async function POST(req : NextRequest) {
     try {
         const body = await parseJSON(req) as RequestBody;
         await Database.connect();
@@ -46,7 +47,6 @@ export async function POST(req : Request) {
             _id: user._id,
             accessLevel: user.accessLevel,
             email: user.email,
-            name: user.name
         };
 
         const token = await Session.generateJWT(tokenPayload);

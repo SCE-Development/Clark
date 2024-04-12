@@ -3,6 +3,7 @@ import { PrintingForm3DModel } from "@/models/PrintingForm3D";
 import Database from "@/util/MongoHelper";
 import { parseJSON } from "@/util/ResponseHelpers";
 import BadRequest from "@/util/responses/BadRequest";
+import { NextRequest } from "next/server";
 
 type ResponseData = any; // What the fuck is the return type.
 
@@ -17,7 +18,7 @@ interface RequestBody {
  * @param req 
  * @returns 
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         
         let query = {};

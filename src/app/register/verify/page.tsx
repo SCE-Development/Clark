@@ -21,13 +21,11 @@ export default function RegisterVerificationSent() {
         setPending(true);
         setSuccess(false);
         
-        const verifyEndpoint = new URL("/api/v1/register/verify");
-        verifyEndpoint.searchParams.set("token", token);
-
-        fetch(verifyEndpoint, {})
+        fetch(`/api/v1/register/verify?token=${token}`, {})
             .then(() => {
                 setSuccess(true);
-            }).catch(() => {
+            }).catch((e) => {
+                console.log(e);
                 setSuccess(false);
             }).finally(() => {
                 setPending(false);
@@ -41,8 +39,10 @@ export default function RegisterVerificationSent() {
 
     if(success) 
         return <>
-            Verification successful.
-            <a href="/profile">Continue</a>
+            <p>
+                Email verified.
+            </p>
+            <a href="/log-in">Sign in</a>
         </>;
 
 

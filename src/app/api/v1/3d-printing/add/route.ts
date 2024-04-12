@@ -4,6 +4,7 @@ import { MEMBERSHIP_STATE } from "@/util/Constants";
 import Database from "@/util/MongoHelper";
 import { parseJSON } from "@/util/ResponseHelpers";
 import BadRequest from "@/util/responses/BadRequest";
+import { NextRequest } from "next/server";
 
 type ResponseData = any;
 
@@ -30,10 +31,10 @@ export interface RequestBody {
  * @param req 
  * @returns 
  */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const body = await parseJSON(req) as RequestBody;
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.OFFICER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.OFFICER);
         
         if(typeof(body.print) !== "object") throw new BadRequest();
         if(typeof(body.print?.name) !== "string") throw new BadRequest();

@@ -1,7 +1,6 @@
 import { UserModel } from "@/models/User";
 import { encryptPassword } from "@/util/Authenticate";
 import { MEMBERSHIP_STATE } from "@/util/Constants";
-import Fake from "@/util/Fake";
 import Database from "@/util/MongoHelper";
 
 

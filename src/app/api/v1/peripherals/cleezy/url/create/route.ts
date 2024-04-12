@@ -3,6 +3,7 @@ import { MEMBERSHIP_STATE } from "@/util/Constants";
 import { parseJSON } from "@/util/ResponseHelpers";
 import BadRequest from "@/util/responses/BadRequest";
 import InternalServerError from "@/util/responses/InternalServerError";
+import { NextRequest } from "next/server";
 
 
 
@@ -14,7 +15,7 @@ export interface RequestBody {
 
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         if(!ENABLED) {
             return Response.json({
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
         }
         const body = await parseJSON(req) as RequestBody;
         
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.MEMBER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.MEMBER);
 
         if(typeof(body.url) !== "string") throw new BadRequest();
         if(body.alias && typeof(body.alias) !== "string") throw new BadRequest();

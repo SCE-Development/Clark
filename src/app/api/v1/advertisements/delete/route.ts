@@ -4,6 +4,7 @@ import { MEMBERSHIP_STATE, STATUS_CODES } from "@/util/Constants";
 import Database from "@/util/MongoHelper";
 import { parseJSON } from "@/util/ResponseHelpers";
 import BadRequest from "@/util/responses/BadRequest";
+import { NextRequest } from "next/server";
 
 export interface RequestBody {
     token: string,
@@ -18,10 +19,10 @@ export interface RequestBody {
  * @param req 
  * @returns 
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         const body = await parseJSON(req) as RequestBody;
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.OFFICER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.OFFICER);
         
         await Database.connect();
 

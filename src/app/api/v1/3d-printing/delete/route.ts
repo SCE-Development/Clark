@@ -4,6 +4,7 @@ import Database from "@/util/MongoHelper";
 import { parseJSON } from "@/util/ResponseHelpers";
 import { Session } from "@/util/Authenticate";
 import BadRequest from "@/util/responses/BadRequest";
+import { NextRequest } from "next/server";
 
 type ResponseData = {
     message: string;
@@ -24,10 +25,10 @@ export interface RequestBody {
  * @returns 
  */
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const body = await parseJSON(req) as RequestBody;
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.OFFICER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.OFFICER);
         
         await Database.connect();
 

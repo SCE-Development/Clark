@@ -12,6 +12,11 @@ import Unauthenticated from "./responses/Unauthenticated";
 import { JWT_SECRET_KEY } from "./Config";
 import SessionExpired from "./responses/SessionExpired";
 import InvalidPassword from "./responses/InvalidPassword";
+import { getServerSession } from "next-auth";
+import { getToken } from "next-auth/jwt";
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
+import { IncomingMessage } from "http";
 
 export interface ObjectMaybeWithToken {
   token?: any
@@ -21,7 +26,6 @@ export interface ObjectMaybeWithToken {
  * Payload from an authentication JWT
  */
 export interface TokenPayload {
-  name: string,
   accessLevel: number,
   email: string,
   _id: string,
@@ -108,24 +112,31 @@ export async function comparePassword(inputPassword: string, encryptedPassword: 
  * @param requiredAccessLevel Required access level to access a resources. Defaults to -Infinity (all access levels allowed)
  * @param _id Allowed _id to access a resource. Defaults to undefined (no specified _id)
  * 
- * @returns A promise that resolves if authentication succeeds, otherwise rejects with one of the aforemetioned errors.
+ * @returns A promise that resolves with the authentication payload if authentication succeeds, otherwise rejects with one of the aforemetioned errors.
  */
-function authenticate(body : ObjectMaybeWithToken, requiredAccessLevel : number = -Infinity, _id : string|undefined = undefined) {
-  console.log(body.token, requiredAccessLevel);
-  return new Promise<string>((res, rej) => {
-      console.log(body.token);
-      if(body.token === undefined) {
-        return rej(new Unauthenticated());
-      }
-      return res(body.token);
-    })
-    .then(decodeToken)
-    .then((decoded) => {
-      if(_id && decoded._id === _id) return decoded;
-      if(decoded.accessLevel < requiredAccessLevel) throw new Unauthorized();
-      return decoded;
-    });
+async function authenticate(req : NextRequest | IncomingMessage, body : ObjectMaybeWithToken = {}, requiredAccessLevel : number = -Infinity, _id : string|undefined = undefined) {
+  const decoded = await getAuthToken(req, body);
+  if(_id && decoded._id === _id) return decoded;
+  if(decoded.accessLevel >= requiredAccessLevel) return decoded;
 
+  throw new Unauthorized();
+}
+
+
+async function getAuthToken(req : NextRequest | IncomingMessage, body : ObjectMaybeWithToken = {}) : Promise<TokenPayload> {
+  const nextAuthToken = await getToken({ req, secret: JWT_SECRET_KEY });
+
+  if (nextAuthToken) 
+    return {
+      _id: nextAuthToken._id as string,
+      email: nextAuthToken.email as string,
+      accessLevel: nextAuthToken.accessLevel as number
+    };
+
+  if(body.token === undefined) 
+    return await decodeToken(body.token);
+
+  throw new Unauthenticated();
 }
 
 const SESSION_EXPIRE_DURATION = "2h";
@@ -157,5 +168,7 @@ function generateJWT(payload : TokenPayload) {
  */
 export const Session = {
   authenticate,
-  generateJWT
+  generateJWT,
+  decodeToken,
+  get: getAuthToken,
 }

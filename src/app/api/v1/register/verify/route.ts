@@ -7,6 +7,7 @@ import Registration from "@/util/Registration";
 import BadRequest from "@/util/responses/BadRequest";
 import EmailConflict from "@/util/responses/EmailConflict";
 import InternalServerError from "@/util/responses/InternalServerError";
+import { NextRequest } from "next/server";
 
 
 /**
@@ -19,7 +20,7 @@ import InternalServerError from "@/util/responses/InternalServerError";
  * @param req 
  * @returns 
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         const url = new URL(req.url);
         const token = url.searchParams.get("token");

@@ -9,6 +9,7 @@ import BadRequest from "@/util/responses/BadRequest";
 import EmailConflict from "@/util/responses/EmailConflict";
 import InternalServerError from "@/util/responses/InternalServerError";
 import Ok from "@/util/responses/Ok";
+import { NextRequest } from "next/server";
 
 
 
@@ -31,7 +32,7 @@ export interface RequestBody {
  * @param req 
  * @returns Ok response
  */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const body = await parseJSON(req) as RequestBody;
 

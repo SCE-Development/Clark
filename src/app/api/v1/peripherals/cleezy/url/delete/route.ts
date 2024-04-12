@@ -4,6 +4,7 @@ import { parseJSON } from "@/util/ResponseHelpers";
 import BadRequest from "@/util/responses/BadRequest";
 import InternalServerError from "@/util/responses/InternalServerError";
 import Ok from "@/util/responses/Ok";
+import { NextRequest } from "next/server";
 
 
 export interface RequestBody {
@@ -12,7 +13,7 @@ export interface RequestBody {
 };
 
 
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
     try {
         if(!ENABLED) {
             return Response.json({
@@ -21,7 +22,7 @@ export async function DELETE(req: Request) {
         }
         const body = await parseJSON(req) as RequestBody;
         
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.MEMBER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.MEMBER);
 
         if(typeof(body.alias) !== "string") throw new BadRequest();
         const { alias } = body;

@@ -5,6 +5,7 @@ import { Session } from "@/util/Authenticate";
 import BadRequest from "@/util/responses/BadRequest";
 import { UserModel } from "@/models/User";
 import ItemNotFound from "@/util/responses/ItemNotFound";
+import { NextRequest } from "next/server";
 
 type ResponseData = {
     message: string;
@@ -18,12 +19,12 @@ type ResponseData = {
  * @param req 
  * @returns 
  */
-export async function DELETE(req: Request, { params }: { params: { _id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { _id: string } }) {
     try {
         const _id = params._id;
         const body = await parseJSON(req); // .catch(() => ({ token: "abc", _id: _id }))
         
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.OFFICER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.OFFICER);
 
         await Database.connect();
         

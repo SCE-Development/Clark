@@ -3,6 +3,7 @@ import { MEMBERSHIP_STATE } from "@/util/Constants";
 import { parseJSON } from "@/util/ResponseHelpers";
 import { CLEEZY_URL } from "../config";
 import InternalServerError from "@/util/responses/InternalServerError";
+import { NextRequest } from "next/server";
 
 // const ROWS_PER_PAGE = 20;
 
@@ -12,7 +13,7 @@ export interface RequestBody {
 };
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         if(!ENABLED) {
             return Response.json({
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
         const search = url.searchParams.get("search") ?? null;
         const body = await parseJSON(req);
         
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.MEMBER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.MEMBER);
 
         const query = "?" + (search ? `search=${search}` : "") + `page=${page}`;
 

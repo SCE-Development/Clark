@@ -1,0 +1,22 @@
+
+
+
+.form-container {
+    border-radius: 16px;
+    border: #ffffff19 solid 1px;
+    padding: 32px;
+    max-width: 400px;
+}
+
+.form-container input {
+    background-color: #00000056;
+    border: #ffffff19 solid 1px;
+    padding: 8px;
+    border-radius: 8px;
+    display: inline-block;
+    width: 100%;
+    margin-top: 4px;
+}
+.form-container form>div {
+    margin: 16px 8px;
+}

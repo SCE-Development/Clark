@@ -4,6 +4,7 @@ import Database from "@/util/MongoHelper";
 import { parseJSON } from "@/util/ResponseHelpers";
 import { authenticate } from "@/util/Authenticate";
 import BadRequest from "@/util/responses/BadRequest";
+import { NextRequest } from "next/server";
 
 type ResponseData = any;
 
@@ -26,7 +27,7 @@ export interface RequestBody {
  * @param req 
  * @returns 
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         const body = await parseJSON(req) as RequestBody;
         const tokenPayload = await authenticate(body, MEMBERSHIP_STATE.OFFICER);

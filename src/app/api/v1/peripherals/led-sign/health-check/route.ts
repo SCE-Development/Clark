@@ -3,6 +3,7 @@ import { IN_DEVELOPMENT_MODE } from "@/util/Constants";
 import { parseJSON } from "@/util/ResponseHelpers";
 import InternalServerError from "@/util/responses/InternalServerError";
 import Ok from "@/util/responses/Ok";
+import { NextRequest } from "next/server";
 
 const LED_SIGN_URL = process.env.LED_SIGN_URL || 'http://localhost';
 
@@ -11,12 +12,12 @@ export interface RequestBody {
     token: string
 };
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
 
         
         const body = await parseJSON(req) as RequestBody;
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.MEMBER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.MEMBER);
 
 
         if(IN_DEVELOPMENT_MODE) {

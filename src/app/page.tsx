@@ -1,6 +1,7 @@
 'use client'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 export default function Home() {
 
@@ -8,21 +9,20 @@ export default function Home() {
     // https://next-auth.js.org/getting-started/client
     const { status, data } = useSession()
 
-    console.log(data)
 
     return (
-        <>
+        <div>
             {status === 'authenticated' ?
-                <div className='bg-green-500'>locked in as {data.user?.email}</div>
+                <div >locked in as {data.user?.email}</div>
                 :
-                <div className='bg-red-500'>tweakin</div>
+                <div>tweakin</div>
             }
             {status === 'authenticated' ?
                 <button className='block' onClick={() => { signOut() }}>sign out</button>
                 :
                 <button className='block' onClick={() => { signIn() }}>sign in</button>
             }
-            <Link href='/register'>register</Link>
-        </>
+            <Link href='/register' className="link">register</Link>
+        </div>
     )
 }

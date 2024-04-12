@@ -13,14 +13,14 @@ export default function Login() {
         })
 
         if (signInResponse!.ok) {
-            redirect('/')
+            redirect('/profile');
         } else {
             console.error(signInResponse!.error);
         }
     }
 
     return (
-        <>
+        <div>
             <form action={login}>
                 <div>
                     <label htmlFor='email'>Email</label>
@@ -28,10 +28,10 @@ export default function Login() {
                 </div>
                 <div>
                     <label htmlFor='password'>Password</label>
-                    <input className='border-2 border-black' name='password' type='text' />
+                    <input className='border-2 border-black' name='password' type='password' />
                 </div>
-                <button type='submit'>login</button>
+                <button type='submit'>Sign in</button>
             </form>
-        </>
+        </div>
     )
 }

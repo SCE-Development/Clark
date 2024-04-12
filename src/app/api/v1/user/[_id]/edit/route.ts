@@ -7,6 +7,7 @@ import BadRequest from "@/util/responses/BadRequest";
 import ItemNotFound from "@/util/responses/ItemNotFound";
 import Ok from "@/util/responses/Ok";
 import { NotFoundBoundary } from "next/dist/client/components/not-found-boundary";
+import { NextRequest } from "next/server";
 
 
 export interface AdminUpdatable {
@@ -83,11 +84,11 @@ const UPDATABLE = [
  * @param req 
  * @returns 
  */
-export async function POST(req: Request, { params }: { params: { _id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: { _id: string } }) {
     try {
         const body = await parseJSON(req);
         const _id = params._id;
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.OFFICER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.OFFICER);
 
         if(!body.updates) throw new BadRequest();
         

@@ -4,6 +4,7 @@ import { parseJSON } from "@/util/ResponseHelpers";
 import BadRequest from "@/util/responses/BadRequest";
 import InternalServerError from "@/util/responses/InternalServerError";
 import Ok from "@/util/responses/Ok";
+import { NextRequest } from "next/server";
 
 export interface LedSignConfig {
     scrollSpeed: number,
@@ -22,12 +23,12 @@ export interface RequestBody {
 
 const LED_SIGN_URL = process.env.LED_SIGN_URL || 'http://localhost';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
 
         
         const body = await parseJSON(req) as RequestBody;
-        const tokenPayload = await Session.authenticate(body, MEMBERSHIP_STATE.MEMBER);
+        const tokenPayload = await Session.authenticate(req, body, MEMBERSHIP_STATE.MEMBER);
 
 
 

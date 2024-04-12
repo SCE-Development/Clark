@@ -1,5 +1,6 @@
 import { AdvertisementModel } from "@/models/Advertisement";
 import Database from "@/util/MongoHelper";
+import { NextRequest } from "next/server";
 
 type ResponseData = any;
 
@@ -11,7 +12,7 @@ type ResponseData = any;
  * @param req 
  * @returns 
  */
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         await Database.connect();
 
