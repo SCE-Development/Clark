@@ -1,10 +1,10 @@
 {
-  "name": "mailer",
+  "name": "cloud_api",
   "version": "1.0.0",
-  "description": "Handles emails for the SCE website",
+  "description": "Handles api hooks that are used with the SCE website",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/server.js"
   },
   "author": "",
   "license": "ISC",
