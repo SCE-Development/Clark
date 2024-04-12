@@ -22,8 +22,8 @@ export default function RegisterVerificationSent() {
         setSuccess(false);
         
         fetch(`/api/v1/register/verify?token=${token}`, {})
-            .then(() => {
-                setSuccess(true);
+            .then((res) => {
+                setSuccess(res.ok);
             }).catch((e) => {
                 console.log(e);
                 setSuccess(false);
@@ -48,5 +48,6 @@ export default function RegisterVerificationSent() {
 
     return <>
         <p>Something went wrong.</p>
+            <a href="/">Return to home.</a>
     </>
 }

@@ -104,7 +104,7 @@ class GmailHandler {
      * @param {Mail.Options} envelope Email to send
      */
     send(envelope) {
-        envelope.from = this.user;
+        envelope.from = `SCE <${this.user}>`;
         // console.log(this.auth);
         const transport = nodemailer.createTransport({
             service: "gmail",

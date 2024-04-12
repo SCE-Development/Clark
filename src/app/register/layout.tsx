@@ -3,6 +3,8 @@ import styles from "./style.module.css"
 import { permanentRedirect } from "next/navigation";
 import { encryptPassword } from "@/util/Authenticate";
 import Link from "next/link";
+import Database from "@/util/MongoHelper";
+import { UserModel } from "@/models/User";
 
 export default function RegisterFormLayout({
     children,
@@ -18,14 +20,19 @@ export default function RegisterFormLayout({
     async function register(formData: FormData) {
       "use server"
 
+      
       const encryptedPassword = await encryptPassword(formData.get('password')!.toString())
-
+      
       const data : RegistrationData = {
-          email: formData.get('email')!.toString(),
-          encryptedPassword,
-          firstName: formData.get('firstName')!.toString(),
-          lastName: formData.get('lastName')!.toString(),
+        email: formData.get('email')!.toString(),
+        encryptedPassword,
+        firstName: formData.get('firstName')!.toString(),
+        lastName: formData.get('lastName')!.toString(),
       };
+
+      await Database.connect();
+      const result = await UserModel.findOne({ email: data.email });
+      if(result) return;
 
       await Registration.sendVerificationEmail(data);
 
