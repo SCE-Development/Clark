@@ -83,7 +83,7 @@ async function sendVerificationEmail(payload : RegistrationData) {
     try {
         const token = await generate(payload);
         console.log(token)
-        const verificationURL = new URL(`/api/v1/register/verify`, BASE_URL);
+        const verificationURL = new URL(`/register/verify`, BASE_URL);
         verificationURL.searchParams.set("token", token);
     
         const body = {
