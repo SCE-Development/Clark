@@ -26,7 +26,7 @@ export default function EditUserInfo(props) {
     numberOfSemestersToSignUpFor,
     setNumberOfSemestersToSignUpFor
   ] = useState();
-  const [discordID, setDiscordID] = useState('');
+  const [discordId, setDiscordId] = useState('');
   const [membershipExpiration, setMembershipExpiration] = useState(new Date());
   const [joinDate, setJoinDate] = useState();
   const [submitButtonText, setSubmitButtonText] = useState('Submit');
@@ -60,7 +60,7 @@ export default function EditUserInfo(props) {
         setMembershipExpiration(
           new Date(result.responseData.membershipValidUntil)
         );
-        setDiscordID(result.responseData.discordID);
+        setDiscordId(result.responseData.discordId);
         setEmail(result.responseData.email);
       }
       setLoading(false);
@@ -97,7 +97,7 @@ export default function EditUserInfo(props) {
       major,
       numberOfSemestersToSignUpFor,
       doorCode,
-      discordID: discordId,
+      discordId: discordId,
       pagesPrinted,
       accessLevel,
       emailVerified,
@@ -390,10 +390,10 @@ export default function EditUserInfo(props) {
                       name="discord-id"
                       id="discord-id"
                       className={INPUT_CLASS_NAME}
-                      defaultValue={discordID}
+                      defaultValue={discordId}
                       onChange={(e) => {
                         setDataWasChanged(true);
-                        setDiscordID(e.target.value);
+                        setDiscordId(e.target.value);
                       }}
                     />
                   </div>
