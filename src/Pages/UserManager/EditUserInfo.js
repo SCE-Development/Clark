@@ -14,13 +14,13 @@ import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 export default function EditUserInfo(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(null);
   const [doorCode, setDoorCode] = useState('');
-  const [major, setMajor] = useState();
+  const [major, setMajor] = useState('');
   const [pagesPrinted, setPagesPrinted] = useState();
   const [emailVerified, setEmailVerified] = useState();
-  const [accessLevel, setAccessLevel] = useState('');
-  const [email, setEmail] = useState('');
+  const [accessLevel, setAccessLevel] = useState();
+  const [email, setEmail] = useState();
   const [emailOptIn, setEmailOptIn] = useState();
   const [
     numberOfSemestersToSignUpFor,
@@ -279,7 +279,7 @@ export default function EditUserInfo(props) {
                         checked={!!emailVerified}
                         onChange={(e) => {
                           setDataWasChanged(true);
-                          setEmailVerified(newEmailVerified);
+                          setEmailVerified(e.target.checked);
                         }}
                       />
                     </label>
