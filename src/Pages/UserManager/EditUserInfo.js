@@ -60,7 +60,7 @@ export default function EditUserInfo(props) {
         setMembershipExpiration(
           new Date(result.responseData.membershipValidUntil)
         );
-        setDiscordId(result.responseData.discordId);
+        setDiscordId(result.responseData.discordID);
         setEmail(result.responseData.email);
       }
       setLoading(false);
