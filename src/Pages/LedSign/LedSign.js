@@ -9,7 +9,7 @@ function LedSign(props) {
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [brightness, setBrightness] = useState(50);
-  const [scrollSpeed, setScrollSpeed] = useState(25);
+  const [scrollSpeed, setScrollSpeed] = useState(50);
   const [backgroundColor, setBackgroundColor] = useState('#0000ff');
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
@@ -59,8 +59,8 @@ function LedSign(props) {
       title: 'Scroll Speed:',
       id: 'scroll-speed',
       value: scrollSpeed,
-      min: '0',
-      max: '50',
+      min: '25',
+      max: '75',
       step: '1',
       type: 'range',
       onChange: e => setScrollSpeed(Number(e.target.value) || 0)
@@ -206,17 +206,24 @@ function LedSign(props) {
               </div>
             </div>
             {
-              inputArray.map((input) => (
-                <div key={input.title} className="sm:col-span-2 sm:col-start-1 w-2/3 lg:w-1/2">
+              inputArray.map(({
+                title,
+                type,
+                value,
+                onChange,
+                ...rest
+              }) => (
+                <div key={title} className="sm:col-span-2 sm:col-start-1 w-2/3 lg:w-1/2">
                   <div className="mt-2 ">
-                    <label htmlFor="copies" className="block text-sm font-medium leading-6">{input.title}</label>
+                    <label htmlFor="copies" className="block text-sm font-medium leading-6">{title}</label>
                     <input
-                      type={input.type}
-                      value={input.value}
+                      type={type}
+                      value={value}
+                      {...rest}
                       name="city"
                       id="city"
                       autocomplete="address-level2"
-                      onChange={input.onChange}
+                      onChange={onChange}
                       className="indent-2 text-white block w-full rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
