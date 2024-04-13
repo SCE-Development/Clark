@@ -1,30 +1,54 @@
+import { NextRequest } from "next/server";
+import { POST } from "../../../3d-printing/route";
+import { parseJSON } from "@/util/ResponseHelpers";
+import { Session } from "@/util/Authenticate";
+import { MEMBERSHIP_STATE } from "@/util/Constants";
+import BadRequest from "@/util/responses/BadRequest";
+import { Printer } from "../config";
+import InternalServerError from "@/util/responses/InternalServerError";
+import Ok from "@/util/responses/Ok";
+import PeripheralNotAvaliable from "@/util/responses/PeripheralNotAvaliable";
 
-router.post('/sendPrintRequest', async (req, res) => {
-    if (!checkIfTokenSent(req)) {
-      logger.warn('/sendPrintRequest was requested without a token');
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    if (!await verifyToken(req.body.token)) {
-      logger.warn('/sendPrintRequest was requested with an invalid token');
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    if (!PRINTING.ENABLED) {
-      logger.warn('Printing is disabled, returning 200 to mock the printing server');
-      return res.sendStatus(OK);
-    }
-  
-    const { raw, copies, pageRanges, sides } = req.body;
-    axios
-      .post(PRINTER_URL + '/print', {
-        raw,
-        copies,
-        pageRanges,
-        sides,
+
+export interface RequestBody {
+  raw: any,
+  copies: number,
+  pageRanges: any,
+  sides: any,
+  token?: string,
+}
+
+
+export async function POST(req: NextRequest) {
+  try {
+    if(!Printer.enabled) throw new PeripheralNotAvaliable();
+
+    const body = await parseJSON(req) as RequestBody;
+    const tokenPayload = Session.authenticate(req, body, MEMBERSHIP_STATE.MEMBER);
+
+    if(body.raw == null) throw new BadRequest();
+    if(typeof(body.copies) === "number") throw new BadRequest();
+    if(body.pageRanges == null) throw new BadRequest();
+    if(body.sides == null) throw new BadRequest();
+
+    const { raw, copies, pageRanges, sides } = body;
+
+    const url = new URL("/print", Printer.url);
+
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        raw, copies, pageRanges, sides
       })
-      .then(() => {
-        res.sendStatus(OK);
-      }).catch((err) => {
-        logger.error('/sendPrintRequest had an error: ', err);
-        res.sendStatus(SERVER_ERROR);
-      });
-  });
+    }).catch(() => {
+      throw new InternalServerError();
+    });
+
+    return new Ok();
+  }catch(response) {
+    return response;
+  }
+}
