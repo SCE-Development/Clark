@@ -69,11 +69,16 @@ function LedSign(props) {
 
   async function handleSend() {
     setAwaitingSignResponse(true);
+    // on the led sign server, a lower value for scroll speed means that
+    // the message scrolls faster. In the frontend, the speed input can be
+    // from 0 to 101. If the speed is 0, we need the corrected scroll speed
+    // to also be zero, hence the modulo (i.e. 101 - 0 = 101, 101 % 101 = 0).
+    let correctedScrollSpeed = (101 - scrollSpeed) % 101;
     const signResponse = await updateSignText(
       {
         text,
         brightness,
-        scrollSpeed,
+        scrollSpeed: correctedScrollSpeed,
         backgroundColor,
         textColor,
         borderColor,
