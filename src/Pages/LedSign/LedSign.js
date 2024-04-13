@@ -59,8 +59,8 @@ function LedSign(props) {
       title: 'Scroll Speed:',
       id: 'scroll-speed',
       value: scrollSpeed,
-      min: '25',
-      max: '75',
+      min: '0',
+      max: '50',
       step: '1',
       type: 'range',
       onChange: e => setScrollSpeed(Number(e.target.value) || 0)
