@@ -45,10 +45,6 @@
   animation: led-sign-marquee-animation linear infinite;
 }
 
-#scroll-speed{
-  direction: rtl;
-}
-
 @keyframes led-sign-marquee-animation {
   0% {
     transform: translateX(100%);

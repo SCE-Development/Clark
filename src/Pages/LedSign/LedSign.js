@@ -9,7 +9,7 @@ function LedSign(props) {
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [brightness, setBrightness] = useState(50);
-  const [scrollSpeed, setScrollSpeed] = useState(50);
+  const [scrollSpeed, setScrollSpeed] = useState(5);
   const [backgroundColor, setBackgroundColor] = useState('#0000ff');
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
@@ -60,8 +60,8 @@ function LedSign(props) {
       id: 'scroll-speed',
       value: scrollSpeed,
       min: '0',
-      max: '50',
-      step: '1',
+      max: '10',
+      step: '0.1',
       type: 'range',
       onChange: e => setScrollSpeed(Number(e.target.value) || 0)
     }
@@ -69,11 +69,16 @@ function LedSign(props) {
 
   async function handleSend() {
     setAwaitingSignResponse(true);
+    // on the led sign server, a lower value for scroll speed means that
+    // the message scrolls faster. In the frontend, the speed input can be
+    // from 0 to 10. If the speed is 0, the sign doesn't stop, but instead
+    // just scrolls really fast.
+    let correctedScrollSpeed = 10 - scrollSpeed;
     const signResponse = await updateSignText(
       {
         text,
         brightness,
-        scrollSpeed,
+        scrollSpeed: correctedScrollSpeed,
         backgroundColor,
         textColor,
         borderColor,
@@ -155,14 +160,11 @@ function LedSign(props) {
   }
 
   function getAnimationDuration() {
-    if (scrollSpeed === 0) {
-      return 0;
-    }
-    // the scrollSpeed input can be can be anywhere from 0 to 100. the
+    // the scrollSpeed input can be can be anywhere from 0 to 10. the
     // lower the duration is, the faster the text scrolls. we divide by
     // 10 to lower the duration so the preview scrolls faster instead of
     // using the scrollSpeed directly.
-    return (101 - scrollSpeed) / 10;
+    return (11 - scrollSpeed);
   }
 
   return (
@@ -215,12 +217,10 @@ function LedSign(props) {
                     <input
                       type={type}
                       value={value}
-                      {...rest}
-                      name="city"
                       id={id}
-                      autocomplete="address-level2"
                       onChange={onChange}
                       className="indent-2 text-white block w-full rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...rest}
                     />
                   </div>
                 </div>
