@@ -1,13 +1,12 @@
 import { NextRequest } from "next/server";
-import { POST } from "../../../3d-printing/route";
 import { parseJSON } from "@/util/ResponseHelpers";
 import { Session } from "@/util/Authenticate";
 import { MEMBERSHIP_STATE } from "@/util/Constants";
 import BadRequest from "@/util/responses/BadRequest";
-import { Printer } from "../config";
 import InternalServerError from "@/util/responses/InternalServerError";
 import Ok from "@/util/responses/Ok";
 import PeripheralNotAvaliable from "@/util/responses/PeripheralNotAvaliable";
+import { Printer } from "@/util/Config";
 
 
 export interface RequestBody {

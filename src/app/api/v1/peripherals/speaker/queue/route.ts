@@ -1,46 +1,51 @@
-router.get('/queued', async (req, res) => {
-    if (!ENABLED) {
-      logger.warn('Speakers are disabled, returning 200 to mock the speaker server');
-      return res.json({
-        disabled: true
-      });
-    }
-    const token = req.query.token;
-    if (!token) {
-      return res.sendStatus(FORBIDDEN);
-    } else if (!await verifyToken(req.query.token)) {
-      return res.sendStatus(UNAUTHORIZED);
-    }
-  
-    try {
-      const response = await getQueued();
-      const data = response.data;
-      return res.json(data);
-    } catch (err) {
-      logger.error('/getQueued had an error', err);
-      if (err.response && err.response.data) {
-        res.status(err.response.status).json({ error: err.response.data });
-      } else {
-        res.status(SERVER_ERROR).json({ error: 'Failed to get queued songs' });
-      }
-    }
-  });
+import { Session } from "@/util/Authenticate";
+import { Speaker } from "@/util/Config";
+import { MEMBERSHIP_STATE } from "@/util/Constants";
+import { parseJSON } from "@/util/ResponseHelpers";
+import InternalServerError from "@/util/responses/InternalServerError";
+import Ok from "@/util/responses/Ok";
+import PeripheralNotAvaliable from "@/util/responses/PeripheralNotAvaliable";
+import { NextRequest } from "next/server";
 
-  
-router.post('/stream', async (req, res) => {
-    const { path } = req.route;
-    if (!checkIfTokenSent(req)) {
-      logger.warn(`${path} was requested without a token`);
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    if (!await verifyToken(req.body.token)) {
-      logger.warn(`${path} was requested with an invalid token`);
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    const result = await sendSpeakerRequest(path, { url: req.body.url });
-    if (result) {
-      return res.sendStatus(OK);
-    }
-    return res.sendStatus(SERVER_ERROR);
-  });
-  
+export async function GET(req: NextRequest) {
+  try {
+    if(!Speaker.enabled) throw new PeripheralNotAvaliable();
+
+    // const body = await parseJSON(req);
+    const tokenPayload = Session.authenticate(req, {}, MEMBERSHIP_STATE.MEMBER);
+    
+    const url = new URL("/queued", Speaker.url);
+
+    await fetch(url, {
+      method: "GET"
+    }).catch(() => {
+      throw new InternalServerError();
+    });
+
+    return new Ok();
+  }catch(response) {
+    return response;
+  }
+}
+
+
+export async function POST(req: NextRequest) {
+  try {
+    if(!Speaker.enabled) throw new PeripheralNotAvaliable();
+
+    const body = await parseJSON(req);
+    const tokenPayload = Session.authenticate(req, body, MEMBERSHIP_STATE.MEMBER);
+    
+    const url = new URL("/queued", Speaker.url);
+
+    await fetch(url, {
+      method: "GET"
+    }).catch(() => {
+      throw new InternalServerError();
+    });
+
+    return new Ok();
+  }catch(response) {
+    return response;
+  }
+}
