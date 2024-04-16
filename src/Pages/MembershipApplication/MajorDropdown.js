@@ -12,7 +12,7 @@ export default function MajorDropdown(props) {
     setInputEnabled(e.target.value === 'Other');
   }
 
-  const options = ['Computer Engineering', 'Software Engineering', 'Other'];
+  const options = ['Computer Engineering', 'Software Engineering', 'Computer Science','Other'];
 
   return (
     <div id='application-dropdown'>
