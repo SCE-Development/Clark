@@ -357,11 +357,15 @@ export default function MembershipForm(props) {
             <div className='flex text-center text-gray-100 justify-center gap-4'>
               <label className="label">
                 <p className='text-bold'> CS </p>
-                <input type="radio" name="radio-10" className="radio" value='CS'   onClick={handleMajorChange}/>
+                <input type="radio" name="radio-10" className="radio" value='Computer Science'   onClick={handleMajorChange}/>
               </label>
               <label className="label">
                 <p className='text-bold'> SWE </p>
-                <input type="radio" name="radio-10" className="radio" value='SWE'  onClick={handleMajorChange}/>
+                <input type="radio" name="radio-10" className="radio" value='Software Engineering'  onClick={handleMajorChange}/>
+              </label>
+              <label className="label">
+                <p className='text-bold'> CMPE </p>
+                <input type="radio" name="radio-10" className="radio" value='Computer Engineering'  onClick={handleMajorChange}/>
               </label>
               <label className="label">
                 <p className='text-bold'> Other </p>
