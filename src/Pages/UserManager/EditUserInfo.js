@@ -97,7 +97,7 @@ export default function EditUserInfo(props) {
       major,
       numberOfSemestersToSignUpFor,
       doorCode,
-      discordId: discordId,
+      discordID: discordId,
       pagesPrinted,
       accessLevel,
       emailVerified,
