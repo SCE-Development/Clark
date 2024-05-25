@@ -26,7 +26,7 @@ export default function EditUserInfo(props) {
     numberOfSemestersToSignUpFor,
     setNumberOfSemestersToSignUpFor
   ] = useState();
-  const [discordId, setDiscordId] = useState('');
+  const [discordID, setDiscordID] = useState();
   const [membershipExpiration, setMembershipExpiration] = useState(new Date());
   const [joinDate, setJoinDate] = useState();
   const [submitButtonText, setSubmitButtonText] = useState('Submit');
