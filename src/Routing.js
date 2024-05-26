@@ -58,7 +58,7 @@ export default function Routing({ appProps }) {
     {
       Component: LedSign,
       path: '/led-sign',
-      allowedIf: true,
+      allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
     },
