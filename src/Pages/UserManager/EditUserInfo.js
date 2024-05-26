@@ -60,13 +60,29 @@ export default function EditUserInfo(props) {
         setMembershipExpiration(
           new Date(result.responseData.membershipValidUntil)
         );
-        setDiscordId(result.responseData.discordId);
+        setDiscordId(result.responseData.discordID);
         setEmail(result.responseData.email);
       }
       setLoading(false);
     }
     getUser();
   }, []);
+
+  const handleBeforeUnload = (ev) => {
+    if (dataWasChanged) {
+      ev.preventDefault();
+      ev.returnValue = '';
+      return '';
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [dataWasChanged]);
 
   async function handleSubmit() {
     if (!dataWasChanged) {
@@ -356,7 +372,12 @@ export default function EditUserInfo(props) {
                   <div className="form-control">
                     <label className="label cursor-pointer">
                       <span className="label-text">Opt into blast emails?</span>
-                      <input type="checkbox" className="toggle" checked={emailOptIn} onChange={(e) => setEmailOptIn(e.target.checked)} />
+                      <input type="checkbox" className="toggle" checked={emailOptIn}
+                        onChange={(e) => {
+                          setDataWasChanged(true);
+                          setEmailOptIn(e.target.checked);
+                        }}
+                      />
                     </label>
                   </div>
                 </div>
@@ -390,7 +411,11 @@ export default function EditUserInfo(props) {
                 // we can do better here, we can keep track of the user's
                 // initial state and just revert to it instead of reloading
                 // the page
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  setDataWasChanged(false);
+                  window.removeEventListener('beforeunload', handleBeforeUnload);
+                  window.location.reload();
+                }}
               >
                 Cancel
               </button>
