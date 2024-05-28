@@ -47,6 +47,34 @@ export async function skip(token) {
   return status;
 }
 
+export async function rewind(token) {
+  let status = new ApiResponse();
+  await axios
+    .post(PERIPHERAL_API_URL + '/Speaker/rewind', {token})
+    .then(res => {
+      status = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+export async function forward(token) {
+  let status = new ApiResponse();
+  await axios
+    .post(PERIPHERAL_API_URL + '/Speaker/forward', {token})
+    .then(res => {
+      status = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
 export async function pause(token) {
   let status = new ApiResponse();
   await axios

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { queued, addUrl, pause, resume, skip } from '../../APIFunctions/Speaker';
+import { queued, addUrl, pause, resume, skip, rewind, forward } from '../../APIFunctions/Speaker';
 
 
 function SpeakersPage(props) {
@@ -88,9 +88,17 @@ function SpeakersPage(props) {
               {playText}
             </button>
           </div>
-          <button onClick={() => modifySpeakerWrapper(skip)} className="btn w-full bg-red-600 hover:bg-red-700 text-white text-3xl">
-                Skip
-          </button>
+          <div className=' grid grid-cols-3'> 
+            <button onClick={() => modifySpeakerWrapper(rewind)} className="btn w-full text-white text-3xl">
+                  ◅◅
+            </button>
+            <button onClick={() => modifySpeakerWrapper(skip)} className="btn w-full text-white text-3xl">
+                  ▻︳
+            </button>
+            <button onClick={() => modifySpeakerWrapper(forward)} className="btn w-full text-white text-3xl">
+                  ▻▻
+            </button>
+          </div>
           <div className='mt-20 items-center'>
             <h2 className='text-center' >Queued</h2>
             <table>
