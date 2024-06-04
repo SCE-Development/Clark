@@ -10,7 +10,7 @@ export default function ProjectsPage() {
         '/59713070/235862105-9606e862-e27e-40d4-8991-de1793c48dd0.png',
       'name': 'Clark', 'subnote': '(formerly Core-v4)',
       information: 'Full Stack',
-      'caption': 'Written in React, Express.js and MongoDB Clark is club\'s website. It supports printing services for members and allows officers to control various devices in the clubroom.',
+      'caption': 'React, Express.js, and MongoDB; Clark is the club\'s website. It supports printing services for members and allows officers to control various devices in the clubroom.',
       iconDivClassName: 'size-1/5 space-x-4 w-4/12 lg:w-6/12 bottom-0',
       icons: (<>
         {/* react */}
@@ -66,7 +66,7 @@ export default function ProjectsPage() {
       </>)
     },
     {
-      'link': 'https://github.com/SCE-Development/Clark',
+      'link': 'https://github.com/SCE-Development/RFID-door-lock',
       'image': 'https://user-images.githubusercontent.com' +
         '/59713070/235862570-70f92c0a-8e18-4ddf-b7c8-bdb21723480f.jpeg',
       'name': 'RFID Door System',
@@ -98,7 +98,7 @@ export default function ProjectsPage() {
       ),
     },
     {
-      'link': 'https://github.com/SCE-Development/Clark',
+      'link': 'https://github.com/SCE-Development/',
       'image': 'https://user-images.githubusercontent.com' +
         '/59713070/235861717-5315d9df-fb5e-4414-84bb-0334fe769271.jpeg',
       'name': '3D Pancake Printer',
@@ -117,7 +117,7 @@ export default function ProjectsPage() {
       ),
     },
     {
-      'link': 'https://github.com/SCE-Development/Clark',
+      'link': 'https://github.com/SCE-Development/rpi-led-controller',
       'image': 'https://user-images.githubusercontent.com' +
         '/59713070/235859723-cdea1a8e-5698-40c2-9755-9ec2e40984cd.jpeg',
       'name': 'SCE Light-Emitting Display',
