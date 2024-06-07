@@ -298,3 +298,16 @@ export async function getAllUserSubscribedAndVerified(token) {
     });
   return status;
 }
+
+export async function getAllUsersValidVerifiedAndSubscribed(token) {
+  let status = new UserApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/user/usersValidVerifiedAndSubscribed', { token })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = true;
+    });
+  return status;
+}

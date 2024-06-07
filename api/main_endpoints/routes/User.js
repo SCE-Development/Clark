@@ -509,4 +509,26 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
     });
 });
 
+// Search for all members with verified emails, subscribed, and not banned or pending
+router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  User.find({
+    emailVerified: true,
+    emailOptIn: true,
+    accessLevel: { $gte: membershipState.NON_MEMBER }
+  })
+    .then((users) => {
+      const emails = users.map(user => user.email);
+      return res.status(200).json({ emails });
+    })
+    .catch((err) => {
+      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+    });
+});
+
 module.exports = router;
