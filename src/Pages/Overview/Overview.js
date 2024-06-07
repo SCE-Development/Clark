@@ -213,7 +213,12 @@ export default function Overview(props) {
       }
       } />
       <div className='px-4'>
-        <div className='px-6 mt-8 border rounded-lg border-white/10'>
+        <button className="my-8 btn btn-primary lg:max-w-[20%]" onClick={async () => {
+          
+        }}>
+            Download subscribed emails
+        </button>
+        <div className='px-6 border rounded-lg border-white/10'>
           <div className='py-6'>
             <label className="w-full form-control">
               <div className="label">
