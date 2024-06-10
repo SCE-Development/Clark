@@ -32,6 +32,7 @@ const discordConnection = require('../util/discord-connection');
 
 const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
   'http://localhost:8080/api/user/callback';
+const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 
@@ -102,18 +103,12 @@ router.post('/delete', (req, res) => {
 
   User.deleteOne({ _id: req.body._id }, function(error, user) {
     if (error) {
-      const info = {
-        userEmail: req.body._id,
-        errorTime: new Date(),
-        apiEndpoint: 'user/delete',
-        errorDescription: error
-      };
-
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      logger.error('Unable to delete user with id', req.body._id, error);
+      return res.sendStatus(BAD_REQUEST);
     }
 
     if (user.n < 1) {
-      res.status(NOT_FOUND).send({ message: 'User not found.' });
+      return res.sendStatus(NOT_FOUND);
     } else {
       res.status(OK).send({ message: `${req.body._id} was deleted.` });
     }
@@ -384,29 +379,6 @@ router.post('/getUserById', async (req, res) => {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, (
     membershipState.OFFICER
-  ))) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ _id: req.body.userID}, (err, result) => {
-    if (err) {
-      return res.sendStatus(BAD_REQUEST);
-    }
-
-    if (!result) {
-      return res.sendStatus(NOT_FOUND);
-    }
-
-    const { password, ...omittedPassword } = result._doc;
-
-    return res.status(OK).json(omittedPassword);
-  });
-});
-
-router.post('/getSelfId', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, (
-    membershipState.PENDING
   ))) {
     return res.sendStatus(UNAUTHORIZED);
   }

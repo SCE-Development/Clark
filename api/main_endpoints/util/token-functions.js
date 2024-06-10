@@ -34,6 +34,7 @@ function decodeToken(request){
  * Checks if the request token is valid and returns either a valid response
  * or undefined
  * @param {object} request the HTTP request from the client
+ * @param {number} accessLevel the minimum access level to consider the token valid
  * @param {boolean} returnDecoded optional parameter to return the decoded
  * response to the user
  * @returns {boolean} whether the user token is valid or not

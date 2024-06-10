@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 
 const svg = require('./SVG');
-import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
+import { getAllUsers, deleteUserByID } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 // import { membershipState } from '../../Enums';
 import ConfirmationModal from
@@ -27,28 +26,30 @@ export default function Overview(props) {
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
 
   async function deleteUser(user) {
-    const deleteEmailResponse = await deleteUserByEmail(
-      user.email,
+    const response = await deleteUserByID(
+      user._id,
       props.user.token
     );
-    if (!deleteEmailResponse.error) {
-      if (user.email === props.user.email) {
-        // logout
-        window.localStorage.removeItem('jwtToken');
-        window.location.reload();
-        return window.alert('Self-deprecation is an art');
-      }
-      setUsers(
-        users.filter(
-          child => !child.email.includes(user.email)
-        )
-      );
-      setQueryResult(
-        queryResult.filter(
-          child => !child.email.includes(user.email)
-        )
-      );
+    if (response.error) {
+      alert('unable to delete user, check logs');
     }
+    if (user._id === props.user._id) {
+      // logout
+      window.localStorage.removeItem('jwtToken');
+      window.location.reload();
+      return window.alert('Self-deprecation is an art');
+    }
+    setUsers(
+      users.filter(
+        child => !child._id.includes(user._id)
+      )
+    );
+    setTotal(total - 1);
+    setQueryResult(
+      queryResult.filter(
+        child => !child._id.includes(user._id)
+      )
+    );
   }
 
   function mark(bool) {

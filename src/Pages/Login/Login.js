@@ -62,7 +62,7 @@ export default function Login(props) {
               </div>
               <input type="password" placeholder="Password" className="input input-bordered w-full max-w-xs" onChange={(e) => setPassword(e.target.value)}/>
             </label>
-            {errorMsg && <p className='text-red-500 text-sm md:text-md pt-2 w-full max-w-xs'>{errorMsg}*</p>}
+            {errorMsg && <p className='text-red-500 text-sm md:text-md pt-2 w-full max-w-xs'>{errorMsg}</p>}
             <button type='submit' id='loginBtn' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
               Login
             </button>
