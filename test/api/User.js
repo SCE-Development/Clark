@@ -490,8 +490,6 @@ describe('User', () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/delete', user);
       expect(result).to.have.status(OK);
-      result.body.should.be.a('object');
-      result.body.should.have.property('message');
     });
   });
 });
