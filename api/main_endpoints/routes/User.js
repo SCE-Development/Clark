@@ -109,9 +109,8 @@ router.post('/delete', (req, res) => {
 
     if (user.n < 1) {
       return res.sendStatus(NOT_FOUND);
-    } else {
-      res.status(OK).send({ message: `${req.body._id} was deleted.` });
     }
+    return res.sendStatus(OK);
   });
 });
 
