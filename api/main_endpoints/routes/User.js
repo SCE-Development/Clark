@@ -523,15 +523,11 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
     accessLevel: { $gte: membershipState.NON_MEMBER }
   })
     .then((users) => {
-      const data = users.map(user => [user.email]);
-      data.unshift(['email']);
-
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/csv');
-      data.forEach(function(item) {
-        res.write(item.map(function(field) {
-          return '"' + field.toString().replace(/\"/g, '""') + '"';
-        }).toString() + '\r\n');
+      res.write('email\r\n');
+      users.forEach(function(user) {
+        res.write(user.email + '\r\n');
       });
       return res.end();
     })
