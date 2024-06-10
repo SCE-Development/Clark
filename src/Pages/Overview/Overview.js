@@ -221,8 +221,7 @@ export default function Overview(props) {
               'unable to download email list: ' + result.error
             );
           }
-          const data = ['email', ...result.responseData.emails].join('\n');
-          const blob = new Blob([data], { type: 'text/csv' });
+          const blob = new Blob([result.responseData]);
           const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
 
           const a = document.createElement('a');

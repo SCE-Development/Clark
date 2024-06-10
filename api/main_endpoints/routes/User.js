@@ -523,8 +523,17 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
     accessLevel: { $gte: membershipState.NON_MEMBER }
   })
     .then((users) => {
-      const emails = users.map(user => user.email);
-      return res.status(200).json({ emails });
+      const data = users.map(user => [user.email]);
+      data.unshift(['email']);
+
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/csv');
+      data.forEach(function(item) {
+        res.write(item.map(function(field) {
+          return '"' + field.toString().replace(/\"/g, '""') + '"';
+        }).toString() + '\r\n');
+      });
+      return res.end();
     })
     .catch((err) => {
       logger.error('/usersValidVerifiedAndSubscribed/ had an error:', err);
