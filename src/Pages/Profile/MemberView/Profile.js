@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getSelfId } from '../../../APIFunctions/User';
+import { getUserById } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
 import { membershipState, membershipStateToString } from '../../../Enums';
 
@@ -9,13 +9,11 @@ export default function Profile(props) {
   const [bannerColor, setBannerColor] = useState('');
 
   async function getUserFromApi() {
-    const response = await getSelfId(props.user._id, props.user.token);
+    const response = await getUserById(props.user._id, props.user.token);
     setResponse(response.responseData);
-    // console.debug("response is " + response.responseData);
   }
-  useEffect(() => {
-    getUserFromApi();
-  }, []);
+
+  useEffect(getUserFromApi, []);
 
   function renderExpirationDate() {
     if (response.accessLevel >= membershipState.OFFICER) {

@@ -150,17 +150,17 @@ export async function updateLastLoginDate(email, token) {
 }
 
 /**
- * Deletes a user by an email
- * @param {string} email The email of the user to delete
+ * Deletes a user by an ID
+ * @param {string} _id The ID of the user to delete
  * @param {string} token jwt token to authorize deletion
  * @returns {UserApiResponse} containing if the search was successful
  */
-export async function deleteUserByEmail(email, token) {
+export async function deleteUserByID(_id, token) {
   let status = new UserApiResponse();
   axios
     .post(GENERAL_API_URL + '/User/delete', {
       token,
-      email
+      _id,
     })
     .catch(() => {
       status.error = true;
@@ -221,18 +221,6 @@ export async function connectToDiscord(email, token) {
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   await axios.post(GENERAL_API_URL + '/user/getUserById', {userID, token})
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = true;
-    });
-  return status;
-}
-
-export async function getSelfId(userID, token) {
-  let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/user/getSelfId', {userID, token})
     .then((res) => {
       status.responseData = res.data;
     })
