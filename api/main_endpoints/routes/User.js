@@ -527,6 +527,7 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
       return res.status(200).json({ emails });
     })
     .catch((err) => {
+      logger.error('/usersValidVerifiedAndSubscribed/ had an error:', err);
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     });
 });

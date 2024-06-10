@@ -307,7 +307,7 @@ export async function getAllUsersValidVerifiedAndSubscribed(token) {
       status.responseData = res.data;
     })
     .catch((err) => {
-      status.error = true;
+      status.error = err;
     });
   return status;
 }
