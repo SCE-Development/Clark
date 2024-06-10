@@ -218,7 +218,7 @@ export default function Overview(props) {
           const result = await getAllUsersValidVerifiedAndSubscribed(props.user.token);
           if (result.error) {
             return alert(
-              'unable to download email list.' + result.error
+              'unable to download email list: ' + result.error
             );
           }
           const data = ['email', ...result.responseData.emails].join('\n');
