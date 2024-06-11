@@ -300,9 +300,10 @@ export async function getAllUserSubscribedAndVerified(token) {
 }
 
 export async function countMembers(token) {
+  console.log(token);
   let status = new UserApiResponse();
   await axios
-    .get(GENERAL_API_URL + '/user/countMembers', { token })
+    .post(GENERAL_API_URL + '/user/countMembers', { token })
     .then((res) => {
       status.responseData = res.data;
     })

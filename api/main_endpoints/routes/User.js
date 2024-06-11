@@ -509,13 +509,15 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
     });
 });
 
-router.get('/countMembers', async (req, res) => {
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(FORBIDDEN);
-  // } else if (!checkIfTokenValid(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
+//For Club Revenue page 
+router.post('/countMembers', async (req, res) => {
 
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  
   const currentYear = new Date().getFullYear();
 
   const jan1ThisYear = new Date(`January 1, ${currentYear}`);
@@ -526,7 +528,6 @@ router.get('/countMembers', async (req, res) => {
 
   const today = new Date();
 
-  
   let count, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers;
 
   totalNewMembersThisYear = await User.countDocuments({
@@ -603,9 +604,7 @@ router.get('/countMembers', async (req, res) => {
       membershipValidUntil: june1NextYear
     });
   }
-
-  return res.json({ count, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers });
-  
+  return res.json({ count, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers }); //count = newSingleSemester + new AnnualMembers
 });
 
 module.exports = router;
