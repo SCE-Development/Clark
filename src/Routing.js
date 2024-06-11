@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
@@ -26,9 +26,10 @@ import URLShortenerPage from './Pages/URLShortener/URLShortener';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
-
+import ClubRevenue from './Pages/ClubRevenue/ClubRevenue.js';
 
 export default function Routing({ appProps }) {
+
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
     userIsAuthenticated &&
@@ -113,6 +114,13 @@ export default function Routing({ appProps }) {
     {
       Component: sendUnsubscribeEmail,
       path: '/unsub',
+      allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
+      redirect: '/',
+    },
+    {
+      Component: ClubRevenue,
+      path: '/club-revenue',
       allowedIf: userIsOfficerOrAdmin,
       inAdminNavbar: true,
       redirect: '/',
