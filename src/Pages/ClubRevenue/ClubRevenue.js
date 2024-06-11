@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { countMembers } from '../../APIFunctions/User';
 
-export default function ClubRevenue() {
+
+export default function ClubRevenue(props) {
+  
+  useEffect(() => {
+    async function fetchMembers() {
+      const status = await countMembers(props.user.token);
+      console.log(status.responseData.count);
+    }
+
+    fetchMembers();
+  }, [props.user.token]);
+
   return (
-    <div className='m-10'>
-      <h1 className="text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-        Club Revenue
-      </h1>
+    <div className="m-10">
+      
     </div>
   );
 }

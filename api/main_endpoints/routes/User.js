@@ -509,11 +509,12 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
     });
 });
 
-router.get('/countNewMembers', async (req, res) => {
+router.get('/countMembers', async (req, res) => {
   // if (!checkIfTokenSent(req)) {
   //   return res.sendStatus(FORBIDDEN);
   // } else if (!checkIfTokenValid(req)) {
   //   return res.sendStatus(UNAUTHORIZED);
+  // }
 
   const currentYear = new Date().getFullYear();
 
