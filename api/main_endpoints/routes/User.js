@@ -116,7 +116,6 @@ router.post('/delete', (req, res) => {
     }
 
     if (user.n < 1) {
-      console.log('asd', req.body._id, decoded._id);
       return res.sendStatus(NOT_FOUND);
     }
     return res.sendStatus(OK);
