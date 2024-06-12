@@ -510,10 +510,10 @@ describe('User', () => {
       const user = {
         _id: getUser.body._id,
         token: token
-      }
+      };
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/delete', user);
       expect(result).to.have.status(OK);
-      });
+    });
   });
 });
