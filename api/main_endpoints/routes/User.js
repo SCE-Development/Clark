@@ -480,4 +480,32 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
     });
 });
 
+// Search for all members with verified emails, subscribed, and not banned or pending
+router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  User.find({
+    emailVerified: true,
+    emailOptIn: true,
+    accessLevel: { $gte: membershipState.NON_MEMBER }
+  })
+    .then((users) => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/csv');
+      res.write('email\r\n');
+      users.forEach(function(user) {
+        res.write(user.email + '\r\n');
+      });
+      return res.end();
+    })
+    .catch((err) => {
+      logger.error('/usersValidVerifiedAndSubscribed/ had an error:', err);
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
 module.exports = router;

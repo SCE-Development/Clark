@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const svg = require('./SVG');
 import { getAllUsers, deleteUserByID } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
+import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 // import { membershipState } from '../../Enums';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -215,7 +216,24 @@ export default function Overview(props) {
       }
       } />
       <div className='px-4'>
-        <div className='px-6 mt-8 border rounded-lg border-white/10'>
+        <button className="my-8 btn btn-primary lg:max-w-[20%]" onClick={async () => {
+          const result = await getAllUsersValidVerifiedAndSubscribed(props.user.token);
+          if (result.error) {
+            return alert(
+              'unable to download email list: ' + result.error
+            );
+          }
+          const blob = new Blob([result.responseData]);
+          const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `${date}_sce_emails_export.csv`;
+          a.click();
+        }}>
+            Download subscribed emails
+        </button>
+        <div className='px-6 border rounded-lg border-white/10'>
           <div className='py-6'>
             <label className="w-full form-control">
               <div className="label">
