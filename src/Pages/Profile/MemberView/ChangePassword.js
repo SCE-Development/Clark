@@ -27,10 +27,6 @@ export default function ChangePasswordModal(props) {
     setConfirmPassword('');
   }
 
-  async function togglePassword() {
-    setShowPassword(!showPassword);
-  }
-
   return (<>
     <dialog id="change-password-modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box">
@@ -73,7 +69,7 @@ export default function ChangePasswordModal(props) {
               type="checkbox"
               className="toggle"
               checked={showPassword}
-              onChange={togglePassword}
+              onChange={() => setShowPassword(!showPassword)}
             />
           </label>
         </div>
