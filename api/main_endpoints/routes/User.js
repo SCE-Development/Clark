@@ -97,8 +97,16 @@ router.post('/checkIfUserExists', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
+  }
+
+  // If not officer, only allow deletion of own account
+  let decoded = decodeToken(req);
+  if (decoded.accessLevel === membershipState.MEMBER) {
+    if (req.body._id && req.body._id !== decoded._id) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
   }
 
   User.deleteOne({ _id: req.body._id }, function(error, user) {
@@ -108,6 +116,7 @@ router.post('/delete', (req, res) => {
     }
 
     if (user.n < 1) {
+      console.log('asd', req.body._id, decoded._id);
       return res.sendStatus(NOT_FOUND);
     }
     return res.sendStatus(OK);

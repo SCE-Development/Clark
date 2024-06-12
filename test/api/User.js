@@ -491,5 +491,27 @@ describe('User', () => {
         token, '/api/User/delete', user);
       expect(result).to.have.status(OK);
     });
+
+    it('Should return statusCode 200 if user deletes themself', async () => {
+      setTokenStatus(true);
+      const deleteUser = {
+        _id: id,
+        email: 'h@i.j',
+        password: 'Passw0rd',
+        firstName: 'first-name',
+        lastName: 'last-name',
+      };
+      const register = await test.sendPostRequest('/api/Auth/register', deleteUser);
+      console.log('OH YEA', register.status)
+      console.log(register)
+      const user = {
+        _id: id,
+        token: token
+      };
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/delete', user);
+      console.log("right before we crash", { user, deleteUser, token });
+      expect(result).to.have.status(OK);
+      });
   });
 });
