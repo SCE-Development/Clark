@@ -1,13 +1,6 @@
-import React, { useState } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import React from 'react';
 
 export default function UserNavBar(props) {
-
-  // const [clubRevenueModalOpen, setClubRevenueModalOpen] = useState(false);
-
-  // const toggleClubRevenueModal = () => {
-  //   setClubRevenueModalOpen(!clubRevenueModalOpen);
-  // };
 
   const getLinkClassName = (path) => {
     const weAreAtGivenPath = path === window.location.pathname;

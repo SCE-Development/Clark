@@ -4,8 +4,6 @@ import { countMembers } from '../../APIFunctions/User';
 
 export default function ClubRevenue(props) {
   
-  //{ count, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers }
-
   const [newSingleSemester, setNewSingleSemester] = useState();
   const [newAnnualMembers, setNewAnnualMembers] = useState();
   const [totalNewMembersThisYear, setNewTotalMembers] = useState();
