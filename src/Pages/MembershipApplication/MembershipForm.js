@@ -4,7 +4,7 @@ import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
-import GoogleRecaptcha from './GoogleRecaptcha';
+import GoogleRecaptcha from '../../Components/Captcha/GoogleRecaptcha';
 export default function MembershipForm(props) {
   // we skip captcha verification if the environment is dev
   const [verified, setVerified] = useState(
@@ -24,10 +24,7 @@ export default function MembershipForm(props) {
     '|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))\\s*$'
   );
 
-  const maybeShowCaptcha = () => {
-    return process.env.NODE_ENV === 'production' ?
-      <GoogleRecaptcha setVerified={setVerified} /> : null;
-  };
+  const [captchaValue, setCaptchaValue] = useState(null);
 
   const checkValidEmail = () => {
     return email && VALID_EMAIL_REGEXP.test(email);
@@ -388,7 +385,7 @@ export default function MembershipForm(props) {
               </label>
             </div>
             <div id='recaptcha'>
-              {maybeShowCaptcha()}
+              <GoogleRecaptcha setCaptchaValue={setCaptchaValue} />
             </div>
             <div className=''>
               <div className=''>
