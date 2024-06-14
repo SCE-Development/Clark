@@ -1,6 +1,7 @@
 const axios = require('axios');
 
-const config = require('../../../config/config.json');
+const logger = require('../../util/logger');
+const config = require('../../config/config.json');
 
 async function verifyCaptcha(responseToken) {
   const secretKey = config.googleApiKeys.SECRET_KEY;
@@ -11,7 +12,8 @@ async function verifyCaptcha(responseToken) {
     );
     return { success: response.data.success };
   } catch (error) {
-    return { error };
+    logger.error('Error verifying captcha:', error);
+    return { success: false };
   }
 }
 
