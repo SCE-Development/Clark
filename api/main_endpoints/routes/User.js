@@ -105,7 +105,9 @@ router.post('/delete', (req, res) => {
   let decoded = decodeToken(req);
   if (decoded.accessLevel === membershipState.MEMBER) {
     if (req.body._id && req.body._id !== decoded._id) {
-      return res.sendStatus(UNAUTHORIZED);
+      return res
+        .status(FORBIDDEN)
+        .json({ message: 'you must be an officer or admin to delete other users' });
     }
   }
 

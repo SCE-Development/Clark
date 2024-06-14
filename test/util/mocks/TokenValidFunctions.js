@@ -1,6 +1,7 @@
 const TokenFunctions = require(
   '../../../api/main_endpoints/util/token-functions');
 const TokenValidation = require('../../../api/util/token-verification');
+const { MEMBERSHIP_STATE } = require('../../../api/util/constants');
 const sinon = require('sinon');
 
 let checkifTokenValidMock = null;
@@ -39,10 +40,10 @@ function resetTokenMock() {
  *                           by the function 'checkIfTokenValid'
  * @returns return parameter (above)
  */
-function setTokenStatus(returnValue) {
+function setTokenStatus(returnValue, accessLevel = MEMBERSHIP_STATE.ADMIN) {
   checkifTokenValidMock.returns(returnValue);
   if (returnValue) {
-    decodeTokenValidMock.returns({accessLevel: 10});
+    decodeTokenValidMock.returns({ accessLevel });
     verifyTokenMock.returns(true);
   } else {
     decodeTokenValidMock.returns(null);
