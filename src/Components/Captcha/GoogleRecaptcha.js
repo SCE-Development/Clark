@@ -8,6 +8,7 @@ const GoogleRecaptcha = ({ setCaptchaValue }) => {
       sitekey={config.sitekey}
       onChange={setCaptchaValue}
       theme='dark'
+      style={{ display: 'inline-block' }}
     />
   );
 };
