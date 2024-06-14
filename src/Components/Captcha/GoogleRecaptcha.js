@@ -8,7 +8,12 @@ const GoogleRecaptcha = ({ setCaptchaValue }) => {
       sitekey={config.sitekey}
       onChange={setCaptchaValue}
       theme='dark'
-      style={{ display: 'inline-block' }}
+      style={{
+        display: 'inline-block',
+        overflow: 'hidden',
+        width: '302px',
+        height: '76px',
+      }}
     />
   );
 };
