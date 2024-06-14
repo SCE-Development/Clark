@@ -127,7 +127,7 @@ export default function MembershipForm(props) {
 
   const requiredFieldsMet = () => {
     return (
-      captchaValue &&
+      (process.env.NODE_ENV !== 'production' || captchaValue) &&
       firstName &&
       lastName &&
       checkValidEmail() &&
@@ -384,7 +384,7 @@ export default function MembershipForm(props) {
             </div>
             <div id='recaptcha'>
               <GoogleRecaptcha setCaptchaValue={setCaptchaValue} />
-              {clickSubmitted && !captchaValue && (
+              {clickSubmitted && (process.env.NODE_ENV === 'production' && !captchaValue) && (
                 <p
                   className='text-red-500'
                 >Please complete the reCAPTCHA</p>
