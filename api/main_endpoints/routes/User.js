@@ -386,10 +386,17 @@ router.post('/connectToDiscord', function(req, res) {
 router.post('/getUserById', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, (
-    membershipState.OFFICER
-  ))) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
+  }
+  // If not officer, only allow reading of own account
+  let decoded = decodeToken(req);
+  if (decoded.accessLevel === membershipState.MEMBER) {
+    if (req.body.userID && req.body.userID !== decoded._id) {
+      return res
+        .status(FORBIDDEN)
+        .json({ message: 'you must be an officer or admin to read other users\' data' });
+    }
   }
   User.findOne({ _id: req.body.userID}, (err, result) => {
     if (err) {
