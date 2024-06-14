@@ -97,8 +97,18 @@ router.post('/checkIfUserExists', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
+  }
+
+  // If not officer, only allow deletion of own account
+  let decoded = decodeToken(req);
+  if (decoded.accessLevel === membershipState.MEMBER) {
+    if (req.body._id && req.body._id !== decoded._id) {
+      return res
+        .status(FORBIDDEN)
+        .json({ message: 'you must be an officer or admin to delete other users' });
+    }
   }
 
   User.deleteOne({ _id: req.body._id }, function(error, user) {

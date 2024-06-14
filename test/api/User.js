@@ -42,6 +42,7 @@ const {
   restoreDiscordAPIMock,
   initializeDiscordAPIMock
 } = require('../util/mocks/DiscordApiFunction');
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
 chai.should();
 chai.use(chaiHttp);
@@ -490,6 +491,58 @@ describe('User', () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/delete', user);
       expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 200 if user deletes themself', async () => {
+      setTokenStatus(true);
+      const deleteUser = {
+        email: 'h@i.j',
+        password: 'Passw0rd',
+        firstName: 'first-name',
+        lastName: 'last-name',
+      };
+      const searchUser = {
+        email: 'h@i.j',
+        token: token
+      };
+      await test.sendPostRequest('/api/Auth/register', deleteUser);
+      const getUser = await test.sendPostRequestWithToken(
+        token, '/api/User/search', searchUser);
+      const user = {
+        _id: getUser.body._id,
+        token: token
+      };
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/delete', user);
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 200 if user deletes poopself', async () => {
+      setTokenStatus(true, MEMBERSHIP_STATE.MEMBER);
+      const deleteUser = {
+        email: 'h@i.j',
+        password: 'Passw0rd',
+        firstName: 'first-name',
+        lastName: 'last-name',
+      };
+      const searchUser = {
+        email: 'h@i.j',
+        token: token
+      };
+      await test.sendPostRequest('/api/Auth/register', deleteUser);
+      const getUser = await test.sendPostRequestWithToken(
+        token, '/api/User/search', searchUser);
+      const user = {
+        _id: getUser.body._id,
+        token: token
+      };
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/delete', user);
+      expect(result).to.have.status(FORBIDDEN);
+      result.body.should.have.property('message');
+      result.body.message.should.equal(
+        'you must be an officer or admin to delete other users',
+      );
     });
   });
 });
