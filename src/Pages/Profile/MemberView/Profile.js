@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getUserById } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
-import DeleteAccountModal from './DeleteAccount';
 import { membershipState, membershipStateToString } from '../../../Enums';
 
 export default function Profile(props) {
@@ -47,27 +46,15 @@ export default function Profile(props) {
             </svg>
             <span className="tracking-wide text-lg">{response.firstName} {response.lastName}</span>
           </div>
-          <div className="flex flex-col items-end">
-            <div>
-              <button
-                className="btn btn-primary"
-                onClick={() =>
-                  document.getElementById('change-password-modal').showModal()
-                }
-              >
+          <div>
+            <button
+              className="btn btn-primary"
+              onClick={() =>
+                document.getElementById('change-password-modal').showModal()
+              }
+            >
               Change Password
-              </button>
-            </div>
-            <div className="mt-5">
-              <button
-                className="btn bg-red-600 hover:bg-red-700 text-slate-950 border-none"
-                onClick={() =>
-                  document.getElementById('delete-account-modal').showModal()
-                }
-              >
-              Delete Account
-              </button>
-            </div>
+            </button>
           </div>
         </div>
         <div className="text-gray-700">
@@ -98,17 +85,6 @@ export default function Profile(props) {
         </div>
       </div>
       <ChangePasswordModal
-        user={{ ...props.user, token: props.user.token }}
-        bannerCallback={(message, color, delay = 3000) => {
-          setBannerMessage(message);
-          setBannerColor(color);
-          setTimeout(() => {
-            setBannerMessage('');
-            setBannerColor('');
-          }, delay);
-        }}
-      />
-      <DeleteAccountModal
         user={{ ...props.user, token: props.user.token }}
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);
