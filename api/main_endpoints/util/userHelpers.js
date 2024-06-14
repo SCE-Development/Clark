@@ -81,12 +81,18 @@ async function registerUser(userToAdd) {
     message: '',
     status: 'OK'
   };
-  const captchaValid = await verifyCaptcha(userToAdd.captchaToken);
-  if (!captchaValid.success) {
-    result.userSaved = false;
-    result.message = 'Captcha verification failed.';
-    result.status = 'BAD_REQUEST';
-  } else if (userToAdd.email && userToAdd.password) {
+
+  if (process.env.NODE_ENV === 'production') {
+    const captchaValid = await verifyCaptcha(userToAdd.captchaToken);
+    if (!captchaValid.success) {
+      result.userSaved = false;
+      result.message = 'Captcha verification failed.';
+      result.status = 'BAD_REQUEST';
+      return result;
+    }
+  }
+
+  if (userToAdd.email && userToAdd.password) {
     const newUser = new User({
       password: userToAdd.password,
       firstName: userToAdd.firstName,
