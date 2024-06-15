@@ -276,8 +276,8 @@ export default function Printing(props) {
               <div className="space-x-5 ">
                 {requestExceedsAllowedPages() && (
                   <div role="alert" className="mb-10 alert alert-warning">
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/> </svg>                    <p className=''>
-                      Current print request would use {pagesToBeUsedInPrintRequest} pages which exceeds allowed limit of {getRemainingPageBalance()}
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <p className=''>                      Current print request would use {pagesToBeUsedInPrintRequest} pages which exceeds allowed limit of {getRemainingPageBalance()}
                     </p>
                   </div>
                 )}
