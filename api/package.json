@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "contains all the APIs used by the SCE website",
   "main": "",
+  "type":"commonjs",
   "scripts": {
     "dev": "nodemon devServer.js",
     "peripheral_api": "nodemon peripheral_api/server.js",

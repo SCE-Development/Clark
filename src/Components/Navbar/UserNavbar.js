@@ -9,6 +9,7 @@ export default function UserNavBar(props) {
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
+    {title: 'Desserts', route: '/desserts'},
   ];
 
 

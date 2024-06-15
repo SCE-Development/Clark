@@ -45,7 +45,7 @@
     "react-google-recaptcha": "^2.1.0",
     "react-iframe": "^1.8.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.10.0",
     "universal-cookie": "^4.0.4"

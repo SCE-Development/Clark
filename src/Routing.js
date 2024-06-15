@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import DessertPage from './Pages/Desserts/Dessert.js';
+import DessertAdmin from './Pages/Desserts/AdminDesserts.js';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
@@ -47,6 +49,7 @@ export default function Routing({ appProps }) {
       redirect: '/',
       inAdminNavbar: true
     },
+ 
     //
     // {
     //   Component: EmailPage,
@@ -117,6 +120,13 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true,
       redirect: '/',
     },
+    {
+      Component: DessertAdmin,
+      path: '/dessert-admin',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true,
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -124,7 +134,10 @@ export default function Routing({ appProps }) {
     { Component: AboutPage, path: '/about'},
     { Component: ProjectsPage, path: '/projects'},
     { Component: EmailPreferencesPage, path: '/emailPreferences' },
+    {Component:DessertPage, path:'/desserts'},
+
   ];
+
   return (
     <Router>
       <Switch>
