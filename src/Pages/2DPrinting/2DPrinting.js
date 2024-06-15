@@ -64,34 +64,34 @@ export default function Printing(props) {
 
   async function getUri() {
     try {
-    const pdf = await PDFDocument.load(dataUrl);
-    const display = await PDFDocument.create();
-    const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
-    const copiedPages = await display.copyPages(
-      pdf,
-      Array.from(pagesWeWantToPrint).map((x) => x - 1),
-    );
-    copiedPages.forEach((element) => {
-      display.addPage(element);
-    });
-    setNumberOfPagesInPdfPreview(display.getPages().length);
-    const data = await display.saveAsBase64({ dataUri: true });
-    setPreviewDisplay(data);
-  }
-  catch (e) {
-    if (e.message.includes('Input document to `PDFDocument.load` is encrypted')) {
-      clearPrint();
-      setPrintStatus("This PDF is encrypted and cannot be printed");
-      setPrintStatusColor('error');
-      setTimeout(() => {
-        setPrintStatus(null);
-      }, 5000);
-    } else {
-      setPrintStatus('Failed to load PDF');
-      setPrintStatusColor('error');
+      const pdf = await PDFDocument.load(dataUrl);
+      const display = await PDFDocument.create();
+      const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
+      const copiedPages = await display.copyPages(
+        pdf,
+        Array.from(pagesWeWantToPrint).map((x) => x - 1),
+      );
+      copiedPages.forEach((element) => {
+        display.addPage(element);
+      });
+      setNumberOfPagesInPdfPreview(display.getPages().length);
+      const data = await display.saveAsBase64({ dataUri: true });
+      setPreviewDisplay(data);
+    } catch (e) {
+      if (e.message.includes('Input document to `PDFDocument.load` is encrypted')) {
+        setFiles(null);
+        setDataUrl('');
+        setPrintStatus('This PDF is encrypted and cannot be printed');
+        setPrintStatusColor('error');
+        setTimeout(() => {
+          setPrintStatus(null);
+        }, 5000);
+      } else {
+        setPrintStatus('Failed to load PDF');
+        setPrintStatusColor('error');
+      }
     }
   }
-}
 
   useEffect(() => {
     if (dataUrl) {
@@ -124,7 +124,7 @@ export default function Printing(props) {
       // https://stackoverflow.com/a/43894750
       a.onload = function(event) {
         setDataUrl(event.target.result);
-        setPrintStatus(null); 
+        setPrintStatus(null);
       };
       a.readAsDataURL(e.target.files[0]);
       setFiles(e.target.files[0]);
@@ -276,8 +276,7 @@ export default function Printing(props) {
               <div className="space-x-5 ">
                 {requestExceedsAllowedPages() && (
                   <div role="alert" className="mb-10 alert alert-warning">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                    <p className=''>
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"> <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/> </svg>                    <p className=''>
                       Current print request would use {pagesToBeUsedInPrintRequest} pages which exceeds allowed limit of {getRemainingPageBalance()}
                     </p>
                   </div>
@@ -371,7 +370,7 @@ export default function Printing(props) {
       {printStatus && (
         <div className='flex items-center justify-center w-full mt-10'>
           <div role="alert" className={'w-1/2 text-center alert alert-' + printStatusColor}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
             <p className=''>{printStatus}</p>
           </div>
         </div>
