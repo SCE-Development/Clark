@@ -7,7 +7,7 @@ import {
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, EncryptedPDFError } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -63,6 +63,7 @@ export default function Printing(props) {
 
 
   async function getUri() {
+    try {
     const pdf = await PDFDocument.load(dataUrl);
     const display = await PDFDocument.create();
     const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
@@ -77,6 +78,20 @@ export default function Printing(props) {
     const data = await display.saveAsBase64({ dataUri: true });
     setPreviewDisplay(data);
   }
+  catch (e) {
+    if (e.message.includes('Input document to `PDFDocument.load` is encrypted')) {
+      clearPrint();
+      setPrintStatus("This PDF is encrypted and cannot be printed");
+      setPrintStatusColor('error');
+      setTimeout(() => {
+        setPrintStatus(null);
+      }, 5000);
+    } else {
+      setPrintStatus('Failed to load PDF');
+      setPrintStatusColor('error');
+    }
+  }
+}
 
   useEffect(() => {
     if (dataUrl) {
@@ -109,6 +124,7 @@ export default function Printing(props) {
       // https://stackoverflow.com/a/43894750
       a.onload = function(event) {
         setDataUrl(event.target.result);
+        setPrintStatus(null); 
       };
       a.readAsDataURL(e.target.files[0]);
       setFiles(e.target.files[0]);
@@ -177,6 +193,7 @@ export default function Printing(props) {
     setDataUrl('');
     setPageRanges('');
     setFiles(null);
+    setPrintStatus(null);
   }
 
   function getRemainingPageBalance() {
