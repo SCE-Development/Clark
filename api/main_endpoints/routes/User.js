@@ -519,11 +519,11 @@ router.post('/countMembers', async (req, res) => {
   
   const currentYear = new Date().getFullYear();
 
-  const jan1ThisYear = new Date(`January 1, ${currentYear}`);
-  const june1ThisYear = new Date(`June 1, ${currentYear}`);
-  const jan1NextYear = new Date(`January 1, ${currentYear + 1}`);
-  const june1NextYear = new Date(`June 1, ${currentYear + 1}`);
-  const dec31ThisYear = new Date(`December 31, ${currentYear}`);
+  const jan1ThisYear = new Date(currentYear, 0, 1);
+  const june1ThisYear = new Date(currentYear, 5, 1);
+  const jan1NextYear = new Date(currentYear + 1, 0, 1);
+  const june1NextYear = new Date(currentYear + 1, 5, 1);
+  const dec31ThisYear = new Date(currentYear, 11, 31);
 
   const today = new Date();
 
