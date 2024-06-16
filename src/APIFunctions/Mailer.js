@@ -37,11 +37,12 @@ export async function sendVerificationEmail(email, token) {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function sendPasswordReset(email) {
+export async function sendPasswordReset(email, captchaToken) {
   let status = new ApiResponse();
   await axios
     .post(GENERAL_API_URL + '/Auth/sendPasswordReset', {
       email,
+      captchaToken,
     })
     .then((response) => {
       status.responseData = response;

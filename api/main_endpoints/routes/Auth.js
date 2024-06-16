@@ -7,6 +7,7 @@ require('../util/passport')(passport);
 const config = require('../../config/config.json');
 const User = require('../models/User.js');
 const { registerUser } = require('../util/userHelpers');
+const { verifyCaptcha } = require('../util/captcha');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -59,8 +60,21 @@ router.post('/resendVerificationEmail', async (req, res) => {
 });
 
 router.post('/sendPasswordReset', async (req, res) => {
-  if (!req.body.email || !(req.body.email.includes('@') && req.body.email.includes('.'))) {
+  if (
+    !req.body.email ||
+    !(req.body.email.includes('@') && req.body.email.includes('.')) ||
+    !req.body.captchaToken
+  ) {
     return res.sendStatus(BAD_REQUEST);
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    const captchaValid = await verifyCaptcha(req.body.captchaToken);
+    if (!captchaValid.success) {
+      return res.status(BAD_REQUEST).send({
+        message: 'Captcha verification failed.'
+      });
+    }
   }
 
   const maybeUser = await userWithEmailExists(req.body.email);
