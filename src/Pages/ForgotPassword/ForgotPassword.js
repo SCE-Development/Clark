@@ -1,19 +1,27 @@
 import { useState } from 'react';
 import { sendPasswordReset } from '../../APIFunctions/Mailer';
 import Background from '../../Components/Background/background';
+import GoogleRecaptcha from '../../Components/Captcha/GoogleRecaptcha';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const [captchaRef, setCaptchaRef] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (process.env.NODE_ENV === 'production' && !captchaValue) {
+      setMessage('Please complete the reCAPTCHA.');
+      return;
+    }
     if (!(email.includes('@') && email.includes('.'))) {
       setMessage('Please enter a valid email address.');
       return;
     }
 
-    const resetStatus = await sendPasswordReset(email);
+    captchaRef.reset();
+    const resetStatus = await sendPasswordReset(email, captchaValue);
     if (resetStatus.error) {
       setMessage('An error occurred. Please try again later.');
     } else {
@@ -28,12 +36,15 @@ const ForgotPassword = () => {
           <img id='img' alt='sce logo' src='https://sce.sjsu.edu/images/SCE-glow.png' width='2rem' className='w-2/3 px-auto'/>
         </div>
         <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-          <label className="form-control w-full max-w-xs">
+          <label className="form-control w-full max-w-xs mb-4">
             <div className="label">
               <span className="label-text">Email</span>
             </div>
             <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
           </label>
+          <div id='recaptcha'>
+            <GoogleRecaptcha setCaptchaValue={setCaptchaValue} setCaptchaRef={setCaptchaRef}/>
+          </div>
           {message && <p
             className={`${message.includes('email has been sent') ? 'text-green-500' : 'text-red-500'}` +
             ' text-sm md:text-md pt-2 w-full max-w-xs'}
