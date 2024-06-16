@@ -5,6 +5,7 @@ import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 import Overview from './Pages/Overview/Overview';
 import Login from './Pages/Login/Login';
+import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
 import SpeakerPage from './Pages/Speaker/Speaker';
@@ -83,6 +84,12 @@ export default function Routing({ appProps }) {
       queryParams: {
         redirect: 'redirect',
       },
+    },
+    {
+      Component: ForgotPassword,
+      path: '/forgot',
+      allowedIf: !userIsAuthenticated,
+      redirect: '/'
     },
     {
       Component: MembershipApplication,
