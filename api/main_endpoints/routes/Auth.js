@@ -22,7 +22,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const {sendVerificationEmail} = require('../util/emailHelpers');
+const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets } = require('../util/userHelpers');
 
 // Register a member
@@ -56,6 +56,18 @@ router.post('/resendVerificationEmail', async (req, res) => {
   let name = maybeUser.firstName + ' ' + maybeUser.lastName;
   sendVerificationEmail(name, req.body.email);
   res.sendStatus(OK);
+});
+
+router.post('/sendPasswordReset', async (req, res) => {
+  if (!req.body.email || !(req.body.email.includes('@') && req.body.email.includes('.'))) {
+    return res.sendStatus(BAD_REQUEST);
+  }
+
+  const maybeUser = await userWithEmailExists(req.body.email);
+  if (maybeUser) {
+    await sendPasswordReset(maybeUser.firstName, req.body.email);
+  }
+  return res.sendStatus(OK);
 });
 
 // User Login

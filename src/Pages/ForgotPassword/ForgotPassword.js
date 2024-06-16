@@ -1,13 +1,24 @@
 import { useState } from 'react';
+import { sendPasswordReset } from '../../APIFunctions/Mailer';
 import Background from '../../Components/Background/background';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('In development.');
+    if (!(email.includes('@') && email.includes('.'))) {
+      setMessage('Please enter a valid email address.');
+      return;
+    }
+
+    const resetStatus = await sendPasswordReset(email);
+    if (resetStatus.error) {
+      setMessage('An error occurred. Please try again later.');
+    } else {
+      setMessage('A password reset email has been sent to you if your email exists in our system.');
+    }
   }
 
   return (
@@ -23,7 +34,10 @@ const ForgotPassword = () => {
             </div>
             <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
           </label>
-          {error && <p className='text-red-500 text-sm md:text-md pt-2 w-full max-w-xs'>{error}</p>}
+          {message && <p
+            className={`${message.includes('email has been sent') ? 'text-green-500' : 'text-red-500'}` +
+            ' text-sm md:text-md pt-2 w-full max-w-xs'}
+          >{message}</p>}
           <button type='submit' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
             Reset Password
           </button>
