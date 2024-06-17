@@ -69,6 +69,10 @@ const UserSchema = new Schema(
     pagesPrinted: {
       type: Number,
       default: 0
+    },
+    apiKey: {
+      type: String,
+      default: ''
     }
   },
   { collection: 'User' }
