@@ -48,7 +48,8 @@
     "react-scripts": "^5.0.1",
     "react-transition-group": "^4.4.2",
     "reactstrap": "^8.10.0",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^4.0.4",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",

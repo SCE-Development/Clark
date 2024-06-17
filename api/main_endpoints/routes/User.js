@@ -3,13 +3,16 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 require('../util/passport')(passport);
+const config = require('../../config/config.json');
 const User = require('../models/User.js');
+const {v4: uuidv4} = require('uuid');
 const {
   getMemberExpirationDate,
   hashPassword,
 } = require('../util/userHelpers');
-const { checkDiscordKey } = require('../../util/token-verification');
+const { checkDiscordKey, verifyToken } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -507,6 +510,43 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
     .catch((err) => {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     });
+});
+
+const getUserId = (token) => {
+  try {
+      if (token.startsWith('JWT ')) {
+          token = token.slice(4);
+      }
+      const decoded = jwt.verify(token, config.secretKey);
+      return decoded._id;
+  } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+  }
+}
+
+router.post('/apiKey', async (req, res) => {
+  const token = req.body.token;
+
+  if (!verifyToken(token)) {
+      return res.sendStatus(STATUS_CODES.UNAUTHORIZED);
+  }
+
+  const userId = getUserId(token);
+
+  try {
+      const user = await User.findOne({ _id: userId }).exec();
+
+      if (!user.apiKey) {
+          user.apiKey =  uuidv4();
+          await user.save();
+      }
+
+      res.json({ apiKey: user.apiKey });
+  } catch (error) {
+      console.error('Error generating API key:', error);
+      res.sendStatus(STATUS_CODES.SERVER_ERROR);
+  }
 });
 
 module.exports = router;
