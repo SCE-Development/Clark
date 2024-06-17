@@ -40,7 +40,6 @@ export default function UserNavBar(props) {
   ];
 
   const adminLinks = [
-    
     {
       title: 'User Manager',
       route: '/user-manager',

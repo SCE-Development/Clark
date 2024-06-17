@@ -529,7 +529,7 @@ router.post('/apiKey', async (req, res) => {
   const token = req.body.token;
 
   if (!verifyToken(token)) {
-      return res.sendStatus(STATUS_CODES.UNAUTHORIZED);
+      return res.sendStatus(UNAUTHORIZED);
   }
 
   const userId = getUserId(token);
@@ -545,7 +545,7 @@ router.post('/apiKey', async (req, res) => {
       res.json({ apiKey: user.apiKey });
   } catch (error) {
       console.error('Error generating API key:', error);
-      res.sendStatus(STATUS_CODES.SERVER_ERROR);
+      res.sendStatus(BAD_REQUEST);
   }
 });
 

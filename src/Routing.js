@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import DessertPage from './Pages/Desserts/Dessert.js';
-
+import MessagesPage from './Pages/Messages/Messages';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
