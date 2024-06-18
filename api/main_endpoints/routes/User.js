@@ -519,27 +519,26 @@ router.post('/countMembers', async (req, res) => {
   
   const currentYear = new Date().getFullYear();
 
+  const today = new Date();
   const jan1ThisYear = new Date(currentYear, 0, 1);
   const june1ThisYear = new Date(currentYear, 5, 1);
   const jan1NextYear = new Date(currentYear + 1, 0, 1);
   const june1NextYear = new Date(currentYear + 1, 5, 1);
   const dec31ThisYear = new Date(currentYear, 11, 31);
 
-  const today = new Date();
+  let count, newSingleSemester, newAnnualMembers;
 
-  let count, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers;
-
-  totalNewMembersThisYear = await User.countDocuments({ emailVerified: true, accessLevel: 1, joinDate: { $gte: jan1ThisYear, $lte: today } });
-  currentActiveMembers = await User.countDocuments({ emailVerified: true, accessLevel: 1, });
+  const totalNewMembersThisYear = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: jan1ThisYear, $lte: today } });
+  const currentActiveMembers = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, });
 
   if (today < june1ThisYear) {
-    count = await User.countDocuments({ emailVerified: true, accessLevel: 1, joinDate: { $gte: jan1ThisYear, $lt: june1ThisYear}});
-    newSingleSemester = await User.countDocuments({ emailVerified: true, accessLevel: 1, joinDate: { $gte: jan1ThisYear, $lt: june1ThisYear }, membershipValidUntil: june1ThisYear });
-    newAnnualMembers = await User.countDocuments({ emailVerified: true, accessLevel: 1, joinDate: { $gte: jan1ThisYear, $lt: june1ThisYear }, membershipValidUntil: june1NextYear });
+    count = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: jan1ThisYear, $lt: june1ThisYear}});
+    newSingleSemester = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: jan1ThisYear, $lt: june1ThisYear }, membershipValidUntil: june1ThisYear });
+    newAnnualMembers = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: jan1ThisYear, $lt: june1ThisYear }, membershipValidUntil: june1NextYear });
   } else {
-    count = await User.countDocuments({ emailVerified: true, accessLevel: 1, joinDate: { $gte: june1ThisYear, $lte: dec31ThisYear } });
-    newSingleSemester = await User.countDocuments({ emailVerified: true, accessLevel: 1, joinDate: { $gte: june1ThisYear, $lte: dec31ThisYear }, membershipValidUntil: jan1NextYear });
-    newAnnualMembers = await User.countDocuments({ emailVerified: true, accessLevel: 1, joinDate: { $gte: june1ThisYear, $lte: dec31ThisYear }, membershipValidUntil: june1NextYear });
+    count = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: june1ThisYear, $lte: dec31ThisYear } });
+    newSingleSemester = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: june1ThisYear, $lte: dec31ThisYear }, membershipValidUntil: jan1NextYear });
+    newAnnualMembers = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: june1ThisYear, $lte: dec31ThisYear }, membershipValidUntil: june1NextYear });
   }
   return res.json({ count, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers }); //count = newSingleSemester + new AnnualMembers
 });
