@@ -538,7 +538,7 @@ router.post(('/apikey'), async (req, res) => {
     User.findOne({_id})
       .then((user) => {
         if (!user) {
-          return res.sendStatus(UNAUTHORIZED);
+          return res.sendStatus(NOT_FOUND);
         } else {
         // logic to generate api key or return existing api key
           if (!user.apiKey) {
