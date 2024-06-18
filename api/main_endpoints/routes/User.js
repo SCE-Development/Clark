@@ -527,7 +527,7 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
 });
 
 // Generate an API key for the Messages API if the user does not have an API key; otherwise, return the existing API key
-router.post(('/retrieveAPIKey'), async (req, res) => {
+router.post(('/apikey'), async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
