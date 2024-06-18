@@ -530,11 +530,11 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
 router.post('/apikey', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } 
+  }
   if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  
+
   let { _id } = decodeToken(req);
 
   User.findOne({_id})
