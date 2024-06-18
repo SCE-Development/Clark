@@ -545,4 +545,11 @@ describe('User', () => {
       );
     });
   });
+
+  describe('POST /apikey', () => {
+    it('Should return status code 403 if no token is passed through', async () => {
+      const result = await test.sendPostRequest('/api/user/apikey', {});
+      expect(result).to.have.status(FORBIDDEN);
+    })
+  })
 });
