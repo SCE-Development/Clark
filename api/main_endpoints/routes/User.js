@@ -538,7 +538,6 @@ router.post('/apikey', async (req, res) => {
   if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  console.log('balls', decodeToken(req))
   let { _id } = decodeToken(req);
 
   User.findOne({_id})
