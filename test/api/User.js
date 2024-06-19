@@ -547,9 +547,51 @@ describe('User', () => {
   });
 
   describe('POST /apikey', () => {
+    // let user;
+    // let token;
+
+    // before(async () => {
+    //   user = new User({
+    //     _id: id,
+    //     firstName: 'first-name',
+    //     lastName: 'last-name',
+    //     email: 'test@user.com',
+    //     password: 'Passw0rd',
+    //     emailVerified: true,
+    //     apiKey: null
+    //   });
+    //   await user.save();
+
+    //   const loginResponse = await test.sendPostRequest('/api/Auth/login', {
+    //     email: user.email,
+    //     password: 'Passw0rd'
+    //   });
+    //   token = loginResponse.body.token;
+    // });
+
+    // // valid token
+    // it('Should return status code 200 and valid token was sent', async () => {
+    //   setTokenStatus(true);
+    //   const result = await test.sendPostRequestWithToken(token, '/api/user/apikey', {token});
+    //   expect(result).to.have.status(OK);
+    // });
+
+    // no token
     it('Should return status code 403 if no token is passed through', async () => {
       const result = await test.sendPostRequest('/api/user/apikey', {});
       expect(result).to.have.status(FORBIDDEN);
+    });
+
+    // invalid token
+    it('Should return statusCode 401 if an invalid ' +
+      'token was passed in', async () => {
+      const user = {
+        _id: id,
+        token: 'Invalid token'
+      };
+      const result = await test.sendPostRequest(
+        '/api/User/apikey', user);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
   });
 });

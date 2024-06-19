@@ -36,6 +36,7 @@ const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
+const { decode } = require('punycode');
 
 const ROWS_PER_PAGE = 20;
 
@@ -505,7 +506,6 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-
   User.find({
     emailVerified: true,
     emailOptIn: true,
@@ -534,7 +534,6 @@ router.post('/apikey', async (req, res) => {
   if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-
   let { _id } = decodeToken(req);
 
   User.findOne({_id})
