@@ -531,10 +531,6 @@ router.post('/apikey', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   }
-  // console.log("HELP!!!!!!!! ME!!!!!!!!", {
-  //   'req.body': req.body,
-  //   'checkIfTokenValid(req)': checkIfTokenValid(req),
-  // })
   if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
