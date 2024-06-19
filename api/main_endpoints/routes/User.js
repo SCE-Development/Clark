@@ -539,20 +539,19 @@ router.post('/apikey', async (req, res) => {
     .then((user) => {
       if (!user) {
         return res.sendStatus(NOT_FOUND);
-      } else {
+      }
       // logic to generate api key or return existing api key
-        if (!user.apiKey) {
-          let apiKey = crypto.randomUUID();
-          User.updateOne({_id}, {apiKey})
-            .then((result) => {
-              if (result.n == 0) {
-                return res.sendStatus(UNAUTHORIZED);
-              }
-              return res.status(OK).send({apiKey});
-            });
-        } else {
-          return res.status(OK).send({apiKey: user.apiKey});
-        }
+      if (user.apiKey) {
+        return res.status(OK).send({apiKey: user.apiKey});
+      }
+      let apiKey = crypto.randomUUID();
+      User.updateOne({_id}, {apiKey})
+        .then((result) => {
+          if (result.n == 0) {
+            return res.sendStatus(UNAUTHORIZED);
+          }
+          return res.status(OK).send({apiKey});
+        });
       }
     })
     .catch(() => {
