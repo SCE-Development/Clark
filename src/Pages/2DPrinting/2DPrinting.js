@@ -61,7 +61,6 @@ export default function Printing(props) {
     { label: 'Double Sided', value: 'two-sided' },
   ];
 
-
   async function getUri() {
     try {
       const pdf = await PDFDocument.load(dataUrl);
@@ -74,11 +73,11 @@ export default function Printing(props) {
       copiedPages.forEach((element) => {
         display.addPage(element);
       });
-      const pdfBytes = await display.save(); // Save PDF data as bytes
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' }); // Create a blob from bytes
-        const objectUrl = URL.createObjectURL(blob);
+      const pdfBytes = await display.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const objectUrl = URL.createObjectURL(blob);
       setNumberOfPagesInPdfPreview(display.getPages().length);
-      setPreviewDisplay(objectUrl);
+      setPreviewDisplay(objectUrl); 
     } catch (e) {
       if (e.message.includes('Input document to `PDFDocument.load` is encrypted')) {
         setFiles(null);
@@ -111,7 +110,7 @@ export default function Printing(props) {
       const totalPagesUsed = pagesUsedPerCopy * Math.floor(copies);
       setPagesToBeUsedInPrintRequest(totalPagesUsed);
     }
-  }, [copies, sides]);
+  }, [previewDisplay, copies, sides]);
 
   useEffect(() => {
     if (confirmModal) {
@@ -134,31 +133,11 @@ export default function Printing(props) {
     }
   }
   
-/*
-  function handleChange(e) {
-    e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        
-
-        // Keep using Data URL for other operations
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            setDataUrl(event.target.result); // Save Data URL for other uses
-        };
-        reader.readAsDataURL(file);
-
-        setFiles(file); // Store the file for potential other operations
-    }
-}
-    */
-
-
   async function handlePrinting() {
     
-    const arrayBuffer = await files.arrayBuffer(); // Read the file data as ArrayBuffer
-        const pdf = await PDFDocument.load(arrayBuffer); // Load PDF from ArrayBuffer
-        const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
+    const arrayBuffer = await files.arrayBuffer();
+    const pdf = await PDFDocument.load(arrayBuffer);
+    const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
     let data = {
       raw: pdfBytes,
       // maybe we dont need to send this? since in the frontend
@@ -303,7 +282,8 @@ export default function Printing(props) {
                 {requestExceedsAllowedPages() && (
                   <div role="alert" className="mb-10 alert alert-warning">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                    <p className=''>                      Current print request would use {pagesToBeUsedInPrintRequest} pages which exceeds allowed limit of {getRemainingPageBalance()}
+                    <p className=''>
+                      Current print request would use {pagesToBeUsedInPrintRequest} pages which exceeds allowed limit of {getRemainingPageBalance()}
                     </p>
                   </div>
                 )}
