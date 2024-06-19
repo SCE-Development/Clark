@@ -36,7 +36,6 @@ const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
-const { decode } = require('punycode');
 
 const ROWS_PER_PAGE = 20;
 
