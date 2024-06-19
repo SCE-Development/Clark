@@ -77,7 +77,7 @@ export default function Printing(props) {
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const objectUrl = URL.createObjectURL(blob);
       setNumberOfPagesInPdfPreview(display.getPages().length);
-      setPreviewDisplay(objectUrl); 
+      setPreviewDisplay(objectUrl);
     } catch (e) {
       // the error looks like Input document to `PDFDocument.load` is encrypted
       if (e.message.includes('is encrypted')) {
@@ -119,7 +119,7 @@ export default function Printing(props) {
     }
   }, [confirmModal]);
 
-  
+
   async function handleChange(e) {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
@@ -133,9 +133,8 @@ export default function Printing(props) {
       setFiles(e.target.files[0]);
     }
   }
-  
+
   async function handlePrinting() {
-    
     const arrayBuffer = await files.arrayBuffer();
     const pdf = await PDFDocument.load(arrayBuffer);
     const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
@@ -278,7 +277,7 @@ export default function Printing(props) {
                 <PageSelectDropdown
                   setPageRanges={setPageRanges}
                 />
-              </div>  
+              </div>
               <div className="space-x-5 ">
                 {requestExceedsAllowedPages() && (
                   <div role="alert" className="mb-10 alert alert-warning">
