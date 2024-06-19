@@ -1,5 +1,6 @@
 const {
     UNAUTHORIZED,
+    FORBIDDEN
 } = require('../../util/constants').STATUS_CODES;
 const express = require('express');
 const router = express.Router();
@@ -23,16 +24,28 @@ const writeMessaage = ((roomId, message) => {
 
 router.post('/send', (req, res) => {
     const {apiKey, message, id} = req.body;
-    if(Object.values(apiKeys).includes(apiKey)){
-        writeMessaage(id, message);
-        return res.json({status: 'Message sent'});
+    if(!apiKey || !message || !id){
+        res.sendStatus(FORBIDDEN);
+        return;
+    }else if(!Object.values(apiKeys).includes(apiKey)){
+        res.sendStatus(UNAUTHORIZED);
+        return;
     }
-    res.sendStatus(UNAUTHORIZED);
-
+    writeMessaage(id, message);
+    return res.json({status: 'Message sent'});
 
 });
 
-router.post ('/listen', (req, res) => {
+router.get('/listen', (req, res) => {
+    const {apiKey, id} = req.query;
+    if(!apiKey || !id){
+        res.sendStatus(FORBIDDEN);
+        return;
+    } else if(!Object.values(apiKeys).includes(apiKey)){
+        res.sendStatus(UNAUTHORIZED);
+        return;
+    }
+
     const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
@@ -41,18 +54,19 @@ router.post ('/listen', (req, res) => {
 
     res.writeHead(200, headers);
 
-    const {apiKey, id} = req.body;
-    if(Object.values(apiKeys).includes(apiKey)){
-        if(!clients[id]){
-            clients[id] = [];
-        }
-        clients[id].push({res});
-    } else {
-        res.sendStatus(UNAUTHORIZED);
+    if(!clients[id]){
+        clients[id] = [];
     }
 
+    clients[id].push({res});
+
     req.on('close', () => {
-        clients[id] = clients[id].filter(client => client !== res);
+        if(clients[id]){
+            clients[id] = clients[id].filter(client => client !== res);
+        }
+        if(clients[id].length === 0){
+            delete clients[id];
+        }
     });
 
 });
