@@ -41,6 +41,7 @@ function decodeToken(request){
  */
 function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
   let decoded = decodeToken(request);
+  console.log('the mystery of tokens', decodeToken(request));
   let response = decoded && decoded.accessLevel >= accessLevel;
   return response;
 }

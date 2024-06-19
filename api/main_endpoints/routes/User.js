@@ -36,6 +36,7 @@ const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
+const { decode } = require('punycode');
 
 const ROWS_PER_PAGE = 20;
 
@@ -530,9 +531,14 @@ router.post('/apikey', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   }
+  // console.log("HELP!!!!!!!! ME!!!!!!!!", {
+  //   'req.body': req.body,
+  //   'checkIfTokenValid(req)': checkIfTokenValid(req),
+  // })
   if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
+  console.log('balls', decodeToken(req))
   let { _id } = decodeToken(req);
 
   User.findOne({_id})

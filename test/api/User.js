@@ -517,8 +517,8 @@ describe('User', () => {
       expect(result).to.have.status(OK);
     });
 
-    it('Should return statusCode 200 if user deletes poopself', async () => {
-      setTokenStatus(true, MEMBERSHIP_STATE.MEMBER);
+    it('Should return statusCode 200 if user deletes themself as a member', async () => {
+      setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER});
       const deleteUser = {
         email: 'h@i.j',
         password: 'Passw0rd',
@@ -572,6 +572,7 @@ describe('User', () => {
 
     // valid token
     it('Should return status code 200 and valid token was sent', async () => {
+      setTokenStatus(true, { _id: id });
       const result = await test.sendPostRequestWithToken(usertoken, '/api/user/apikey', {});
       expect(result).to.have.status(OK);
     });
