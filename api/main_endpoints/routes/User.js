@@ -552,7 +552,6 @@ router.post('/apikey', async (req, res) => {
           }
           return res.status(OK).send({apiKey});
         });
-      }
     })
     .catch(() => {
       return res.sendStatus(BAD_REQUEST);
