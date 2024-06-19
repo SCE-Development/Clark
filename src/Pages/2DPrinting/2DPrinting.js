@@ -78,7 +78,8 @@ export default function Printing(props) {
       const data = await display.saveAsBase64({ dataUri: true });
       setPreviewDisplay(data);
     } catch (e) {
-      if (e.message.includes('Input document to `PDFDocument.load` is encrypted')) {
+      // the error looks like Input document to `PDFDocument.load` is encrypted
+      if (e.message.includes('is encrypted')) {
         setFiles(null);
         setDataUrl('');
         setPrintStatus('This PDF is encrypted and cannot be printed');
