@@ -547,34 +547,34 @@ describe('User', () => {
   });
 
   describe('POST /apikey', () => {
-    // let user;
-    // let token;
+    let user;
+    let usertoken;
 
-    // before(async () => {
-    //   user = new User({
-    //     _id: id,
-    //     firstName: 'first-name',
-    //     lastName: 'last-name',
-    //     email: 'test@user.com',
-    //     password: 'Passw0rd',
-    //     emailVerified: true,
-    //     apiKey: null
-    //   });
-    //   await user.save();
+    before(async () => {
+      user = new User({
+        _id: id,
+        firstName: 'first-name',
+        lastName: 'last-name',
+        email: 'test@user.com',
+        password: 'Passw0rd',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+        apiKey: null
+      });
+      await user.save();
 
-    //   const loginResponse = await test.sendPostRequest('/api/Auth/login', {
-    //     email: user.email,
-    //     password: 'Passw0rd'
-    //   });
-    //   token = loginResponse.body.token;
-    // });
+      const loginResponse = await test.sendPostRequest('/api/Auth/login', {
+        email: user.email,
+        password: 'Passw0rd'
+      });
+      usertoken = loginResponse.body.token;
+    });
 
-    // // valid token
-    // it('Should return status code 200 and valid token was sent', async () => {
-    //   setTokenStatus(true);
-    //   const result = await test.sendPostRequestWithToken(token, '/api/user/apikey', {token});
-    //   expect(result).to.have.status(OK);
-    // });
+    // valid token
+    it('Should return status code 200 and valid token was sent', async () => {
+      const result = await test.sendPostRequestWithToken(usertoken, '/api/user/apikey', {});
+      expect(result).to.have.status(OK);
+    });
 
     // no token
     it('Should return status code 403 if no token is passed through', async () => {
