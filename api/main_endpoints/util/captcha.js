@@ -4,7 +4,7 @@ const logger = require('../../util/logger');
 const config = require('../../config/config.json');
 
 async function verifyCaptcha(responseToken) {
-  const secretKey = config.googleApiKeys.SECRET_KEY;
+  const secretKey = config.googleApiKeys.CAPTCHA_SECRET_KEY;
 
   try {
     const url = new URL('https://www.google.com/recaptcha/api/siteverify');

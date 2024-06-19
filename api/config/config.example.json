@@ -19,7 +19,7 @@
     ],
     "REFRESH_TOKEN": "NOT_SET",
     "USER": "sce.sjsu@gmail.com",
-    "SECRET_KEY": "NOT_SET"
+    "CAPTCHA_SECRET_KEY": "NOT_SET"
   },
   "passwordStrength": "medium",
   "PRINTING": {
