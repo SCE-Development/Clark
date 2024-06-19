@@ -73,6 +73,7 @@ export default function Printing(props) {
       copiedPages.forEach((element) => {
         display.addPage(element);
       });
+      // convert pdf to blob url (allows display of larger pdfs)
       const pdfBytes = await display.save();
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const objectUrl = URL.createObjectURL(blob);
@@ -119,7 +120,6 @@ export default function Printing(props) {
     }
   }, [confirmModal]);
 
-
   async function handleChange(e) {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
@@ -135,6 +135,7 @@ export default function Printing(props) {
   }
 
   async function handlePrinting() {
+    // send print request in base64 format
     const arrayBuffer = await files.arrayBuffer();
     const pdf = await PDFDocument.load(arrayBuffer);
     const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
