@@ -264,11 +264,7 @@ router.post('/resetPassword', async (req, res) => {
         res.sendStatus(BAD_REQUEST);
       }
       if (isMatch) {
-        const hashedPassword = await hashPassword(req.body.password);
-        if (!result) {
-          return res.sendStatus(SERVER_ERROR);
-        }
-        result.password = hashedPassword;
+        result.password = req.body.password;
         await result
           .save()
           .then(_ => {
