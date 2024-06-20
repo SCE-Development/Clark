@@ -188,6 +188,7 @@ function checkIfPageCountResets(lastLogin) {
 module.exports = {
   registerUser,
   getMemberExpirationDate,
+  testPasswordStrength,
   hashPassword,
   userWithEmailExists,
   checkIfPageCountResets,

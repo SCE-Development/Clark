@@ -125,3 +125,24 @@ export async function validateVerificationEmail(email, hashedId) {
     });
   return status;
 }
+
+/**
+ * Reset a user's password after the visiting the link sent to their email.
+ * @param {string} hashedId - A hashed value of the user's mongoDB _id field
+ * @param {string} password - The user's password
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
+ */
+export async function resetPassword(hashedId, password, email) {
+  let status = new ApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/Auth/resetPassword', {
+      password,
+      hashedId,
+      email
+    })
+    .catch(err => {
+      status.error = err;
+    });
+  return status;
+}
