@@ -7,6 +7,10 @@ const ForgotPassword = () => {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState({
+    color: null,
+    message: ''
+  });
   const searchParams = new URLSearchParams(useLocation().search);
 
   const checkValidPassword = () => {
@@ -67,11 +71,17 @@ const ForgotPassword = () => {
       return;
     }
 
-    const resetStatus = await resetPassword(searchParams.get('id'), password, searchParams.get('user'));
+    const resetStatus = await resetPassword(password, searchParams.get('id'), searchParams.get('resetToken'));
     if (resetStatus.error) {
-      window.alert('An error occurred. Please try again later.');
+      setStatus({
+        color: 'text-red-500',
+        message: resetStatus.responseData.data.message || 'An error occurred. Please try again later.'
+      });
     } else {
-      window.alert('Your password has been reset.');
+      setStatus({
+        color: 'text-green-500',
+        message: 'Your password has been reset.'
+      });
     }
   }
 
@@ -98,6 +108,8 @@ const ForgotPassword = () => {
             <input type="password" placeholder="Confirm password" className="input input-bordered w-full max-w-xs" onChange={(e) => setConfirm(e.target.value)}/>
           </label>
           {submitted && confirm !== password && <p className='text-red-500'>Passwords do not match</p>}
+
+          {status.message && <p className={`${status.color}` + ' mt-5'}>{status.message}</p>}
 
           <button type='submit' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
             Reset Password

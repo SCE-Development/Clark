@@ -74,7 +74,7 @@ router.post('/sendPasswordReset', async (req, res) => {
     apiHandler.getNewToken();
   }
 
-  await passwordReset(USER, req.body.recipientEmail, req.body.recipientName)
+  await passwordReset(USER, req.body.resetToken, req.body.recipientEmail)
     .then((template) => {
       apiHandler
         .sendEmail(template)

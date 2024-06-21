@@ -133,16 +133,17 @@ export async function validateVerificationEmail(email, hashedId) {
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function resetPassword(hashedId, password, email) {
+export async function resetPassword(password, hashedId, resetToken) {
   let status = new ApiResponse();
   await axios
     .post(GENERAL_API_URL + '/Auth/resetPassword', {
       password,
       hashedId,
-      email
+      resetToken
     })
     .catch(err => {
       status.error = err;
+      status.responseData = err.response;
     });
   return status;
 }

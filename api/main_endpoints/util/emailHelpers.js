@@ -28,11 +28,11 @@ async function sendVerificationEmail(name, email) {
   });
 }
 
-async function sendPasswordReset(name, email) {
+async function sendPasswordReset(resetToken, email) {
   return new Promise((resolve) => {
     axios
       .post(`${MAILER_API_URL}/Mailer/sendPasswordReset`, {
-        recipientName: name,
+        resetToken: resetToken,
         recipientEmail: email
       })
       .then(() => resolve(true))

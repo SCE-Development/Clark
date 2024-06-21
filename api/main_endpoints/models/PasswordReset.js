@@ -3,8 +3,10 @@ const Schema = mongoose.Schema;
 
 const PasswordResetSchema = new Schema(
   {
-    email: {
-      type: String,
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      unique: true,
       required: true
     },
     token: {
@@ -14,10 +16,10 @@ const PasswordResetSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      required: true,
-      index: {  expires: '1h' }
+      expires: '24h'
     }
-  }
+  },
+  { collection: 'PasswordResets' }
 );
 
-module.exports = mongoose.model('PasswordReset', PasswordReset);
+module.exports = mongoose.models.PasswordReset || mongoose.model('PasswordReset', PasswordResetSchema);
