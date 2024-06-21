@@ -7,7 +7,7 @@ async function verifyCaptcha(responseToken) {
   if (!responseToken) {
     return { success: false };
   }
-
+  
   const secretKey = config.googleApiKeys.CAPTCHA_SECRET_KEY;
 
   try {

@@ -517,8 +517,8 @@ describe('User', () => {
       expect(result).to.have.status(OK);
     });
 
-    it('Should return statusCode 200 if user deletes poopself', async () => {
-      setTokenStatus(true, MEMBERSHIP_STATE.MEMBER);
+    it('Should return statusCode 200 if user deletes themself as a member', async () => {
+      setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER});
       const deleteUser = {
         email: 'h@i.j',
         password: 'Passw0rd',
@@ -543,6 +543,56 @@ describe('User', () => {
       result.body.message.should.equal(
         'you must be an officer or admin to delete other users',
       );
+    });
+  });
+
+  describe('POST /apikey', () => {
+    let user;
+    let usertoken;
+
+    before(async () => {
+      user = new User({
+        _id: id,
+        firstName: 'first-name',
+        lastName: 'last-name',
+        email: 'test@user.com',
+        password: 'Passw0rd',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+        apiKey: null
+      });
+      await user.save();
+
+      const loginResponse = await test.sendPostRequest('/api/Auth/login', {
+        email: user.email,
+        password: 'Passw0rd'
+      });
+      usertoken = loginResponse.body.token;
+    });
+
+    // valid token
+    it('Should return status code 200 and valid token was sent', async () => {
+      setTokenStatus(true, { _id: id });
+      const result = await test.sendPostRequestWithToken(usertoken, '/api/user/apikey', {});
+      expect(result).to.have.status(OK);
+    });
+
+    // no token
+    it('Should return status code 403 if no token is passed through', async () => {
+      const result = await test.sendPostRequest('/api/user/apikey', {});
+      expect(result).to.have.status(FORBIDDEN);
+    });
+
+    // invalid token
+    it('Should return statusCode 401 if an invalid ' +
+      'token was passed in', async () => {
+      const user = {
+        _id: id,
+        token: 'Invalid token'
+      };
+      const result = await test.sendPostRequest(
+        '/api/User/apikey', user);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
   });
 });

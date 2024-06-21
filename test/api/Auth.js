@@ -185,9 +185,9 @@ describe('Auth', () => {
 
     it('Should return statusCode 200 when a ' +
       'token is passed in', async () => {
-      setTokenStatus(true);
+      setTokenStatus(true, { _id: 'some id' });
       const result = await test.sendPostRequestWithToken(
-        token, '/api/Auth/verify', {});
+        token, '/api/Auth/verify');
       expect(result).to.have.status(OK);
     });
   });
