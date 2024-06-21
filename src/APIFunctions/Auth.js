@@ -27,7 +27,8 @@ export async function registerUser(userToRegister) {
     email,
     password,
     major,
-    numberOfSemestersToSignUpFor
+    numberOfSemestersToSignUpFor,
+    captchaToken
   } = userToRegister;
   await axios
     .post(GENERAL_API_URL + '/Auth/register', {
@@ -36,7 +37,8 @@ export async function registerUser(userToRegister) {
       email,
       password,
       major,
-      numberOfSemestersToSignUpFor
+      numberOfSemestersToSignUpFor,
+      captchaToken
     })
     .then(res => {
       status.responseData = res.data;
