@@ -35,6 +35,7 @@ const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
 const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
+const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
 
@@ -504,7 +505,6 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-
   User.find({
     emailVerified: true,
     emailOptIn: true,
@@ -525,4 +525,36 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
     });
 });
 
+// Generate an API key for the Messages API if the user does not have an API key; otherwise, return the existing API key
+router.post('/apikey', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  }
+  if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  let { _id } = decodeToken(req);
+
+  User.findOne({_id})
+    .then((user) => {
+      if (!user) {
+        return res.sendStatus(NOT_FOUND);
+      }
+      // logic to generate api key or return existing api key
+      if (user.apiKey) {
+        return res.status(OK).send({apiKey: user.apiKey});
+      }
+      let apiKey = crypto.randomUUID();
+      User.updateOne({_id}, {apiKey})
+        .then((result) => {
+          if (result.n == 0) {
+            return res.sendStatus(UNAUTHORIZED);
+          }
+          return res.status(OK).send({apiKey});
+        });
+    })
+    .catch(() => {
+      return res.sendStatus(BAD_REQUEST);
+    });
+});
 module.exports = router;

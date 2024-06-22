@@ -38,12 +38,17 @@ function resetTokenMock() {
  *
  * @param {any} returnValue: value to be return back
  *                           by the function 'checkIfTokenValid'
+ * @param {Object} data: optional value that will be the result
+ *                       of the decoded token value
  * @returns return parameter (above)
  */
-function setTokenStatus(returnValue, accessLevel = MEMBERSHIP_STATE.ADMIN) {
+function setTokenStatus(
+  returnValue,
+  data = {},
+) {
   checkifTokenValidMock.returns(returnValue);
   if (returnValue) {
-    decodeTokenValidMock.returns({ accessLevel });
+    decodeTokenValidMock.returns(data);
     verifyTokenMock.returns(true);
   } else {
     decodeTokenValidMock.returns(null);
