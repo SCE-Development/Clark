@@ -7,7 +7,7 @@ import {
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, EncryptedPDFError } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -61,21 +61,39 @@ export default function Printing(props) {
     { label: 'Double Sided', value: 'two-sided' },
   ];
 
-
   async function getUri() {
-    const pdf = await PDFDocument.load(dataUrl);
-    const display = await PDFDocument.create();
-    const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
-    const copiedPages = await display.copyPages(
-      pdf,
-      Array.from(pagesWeWantToPrint).map((x) => x - 1),
-    );
-    copiedPages.forEach((element) => {
-      display.addPage(element);
-    });
-    setNumberOfPagesInPdfPreview(display.getPages().length);
-    const data = await display.saveAsBase64({ dataUri: true });
-    setPreviewDisplay(data);
+    try {
+      const pdf = await PDFDocument.load(dataUrl);
+      const display = await PDFDocument.create();
+      const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
+      const copiedPages = await display.copyPages(
+        pdf,
+        Array.from(pagesWeWantToPrint).map((x) => x - 1),
+      );
+      copiedPages.forEach((element) => {
+        display.addPage(element);
+      });
+      // convert pdf to blob url (allows display of larger pdfs)
+      const pdfBytes = await display.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const objectUrl = URL.createObjectURL(blob);
+      setNumberOfPagesInPdfPreview(display.getPages().length);
+      setPreviewDisplay(objectUrl);
+    } catch (e) {
+      // the error looks like Input document to `PDFDocument.load` is encrypted
+      if (e.message.includes('is encrypted')) {
+        setFiles(null);
+        setDataUrl('');
+        setPrintStatus('This PDF is encrypted and cannot be printed');
+        setPrintStatusColor('error');
+        setTimeout(() => {
+          setPrintStatus(null);
+        }, 5000);
+      } else {
+        setPrintStatus('Failed to load PDF');
+        setPrintStatusColor('error');
+      }
+    }
   }
 
   useEffect(() => {
@@ -109,6 +127,7 @@ export default function Printing(props) {
       // https://stackoverflow.com/a/43894750
       a.onload = function(event) {
         setDataUrl(event.target.result);
+        setPrintStatus(null);
       };
       a.readAsDataURL(e.target.files[0]);
       setFiles(e.target.files[0]);
@@ -116,9 +135,12 @@ export default function Printing(props) {
   }
 
   async function handlePrinting() {
-    const pdf = await PDFDocument.load(previewDisplay);
+    // send print request in base64 format
+    const arrayBuffer = await files.arrayBuffer();
+    const pdf = await PDFDocument.load(arrayBuffer);
+    const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
     let data = {
-      raw: await pdf.saveAsBase64(),
+      raw: pdfBytes,
       // maybe we dont need to send this? since in the frontend
       // we update the embed when the user specifies which
       // pages they want to print
@@ -177,6 +199,7 @@ export default function Printing(props) {
     setDataUrl('');
     setPageRanges('');
     setFiles(null);
+    setPrintStatus(null);
   }
 
   function getRemainingPageBalance() {
@@ -354,7 +377,7 @@ export default function Printing(props) {
       {printStatus && (
         <div className='flex items-center justify-center w-full mt-10'>
           <div role="alert" className={'w-1/2 text-center alert alert-' + printStatusColor}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
             <p className=''>{printStatus}</p>
           </div>
         </div>
