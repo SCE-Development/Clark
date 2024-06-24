@@ -147,3 +147,14 @@ export async function resetPassword(password, hashedId, resetToken) {
     });
   return status;
 }
+
+export async function validatePasswordReset(resetToken) {
+  let status = new ApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/Auth/validatePasswordReset', { resetToken })
+    .catch(err => {
+      status.error = true;
+      status.responseData = err.response;
+    });
+  return status;
+}

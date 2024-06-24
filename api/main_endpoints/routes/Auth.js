@@ -26,7 +26,7 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
-const { userWithEmailExists, checkIfPageCountResets } = require('../util/userHelpers');
+const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
 // Register a member
 router.post('/register', async (req, res) => {
@@ -258,6 +258,19 @@ router.post('/validateVerificationEmail', async (req, res) => {
   });
 });
 
+router.post('/validatePasswordReset', async (req, res) => {
+  try {
+    const passwordReset = await findPasswordReset(req.body.resetToken);
+    if (!passwordReset) {
+      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
+    }
+    res.sendStatus(OK);
+  } catch (error) {
+    logger.error('Unable to validate password reset:', error);
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
 router.post('/resetPassword', async (req, res) => {
   const testPassword = testPasswordStrength(req.body.password);
   if (!testPassword.success) {
@@ -267,9 +280,9 @@ router.post('/resetPassword', async (req, res) => {
   }
 
   try {
-    const passwordReset = await PasswordReset.findOne({ token: req.body.resetToken });
+    const passwordReset = await findPasswordReset(req.body.resetToken);
     if (!passwordReset) {
-      return res.status(NOT_FOUND).send({ message: 'Invalid reset token.' });
+      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
     }
     const validId = await bcrypt.compare(String(passwordReset.userId), req.body.hashedId);
     if (!validId) {
@@ -283,7 +296,7 @@ router.post('/resetPassword', async (req, res) => {
     await user.save();
     await passwordReset.delete();
   } catch (error) {
-    logger.error('unable to reset password:', error);
+    logger.error('Unable to reset password:', error);
     return res.sendStatus(BAD_REQUEST);
   }
 

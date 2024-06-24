@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
+const PasswordReset = require('../models/PasswordReset');
 const config = require('../../config/config.json');
 const logger = require('../../util/logger');
 const { verifyCaptcha } = require('./captcha');
@@ -159,6 +160,14 @@ function hashPassword(password) {
   });
 }
 
+function findPasswordReset(resetToken) {
+  return new Promise((resolve, reject) => {
+    PasswordReset.findOne({ token: resetToken })
+      .then(passwordReset => resolve(passwordReset))
+      .catch(err => reject(err));
+  });
+}
+
 /**
  * Check if a Sunday has passed in between the user's last login date and
  * today's date. This is because the printing pages reset every Sunday.
@@ -192,4 +201,5 @@ module.exports = {
   hashPassword,
   userWithEmailExists,
   checkIfPageCountResets,
+  findPasswordReset,
 };
