@@ -169,6 +169,96 @@ describe('Auth', () => {
     });
   });
 
+  describe('/POST sendPasswordReset', () => {
+    it('Should return statusCode 401 if the email is invalid', async () => {
+      const data = {
+        email: 'notanemail',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return statusCode 200 if the email does not exist in the database', async () => {
+      const data = {
+        email: 'test122342423@gmail.com',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 200 if the email does exist in the database', async () => {
+      const addUser = {
+        email: 'abcdef@gmail.com',
+        password: 'Passw0rd',
+        firstName: 'first-name',
+        lastName: 'last-name'
+      };
+      await test.sendPostRequest('/api/Auth/register', addUser);
+      const data = {
+        email: 'abcdef@gmail.com',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST validatePasswordReset', () => {
+    it('Should return statusCode 404 if the token is invalid', async () => {
+      const data = {
+        resetToken: 'invalid token'
+      };
+      const result = await test.sendPostRequest('/api/Auth/validatePasswordReset', data);
+      expect(result).to.have.status(404);
+    });
+
+    it('Should return statusCode 200 if the token is valid', async () => {
+      const data = {
+        resetToken: 'valid token'
+      };
+      const result = await test.sendPostRequest('/api/Auth/validatePasswordReset', data);
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST resetPassword', () => {
+    it('Should return statusCode 401 if the password is too weak', async () => {
+      const data = {
+        password: 'weak password',
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return statusCode 404 if the password rest token is invalid', async () => {
+      const data = {
+        password: 'Passw0rd',
+        resetToken: 'invalid token',
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(404);
+    });
+
+    it('Should return statusCode 401 if the user id hash is not matching', async () => {
+      const data = {
+        password: 'Passw0rd',
+        resetToken: 'working token',
+        userId: 'invalid id hash',
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return statusCode 200 if the password was reset', async () => {
+      const data = {
+        password: 'Passw0rd',
+        resetToken: 'working token',
+        userId: 'valid id hash',
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(OK);
+    });
+  });
+
   describe('/POST verify', () => {
     it('Should return statusCode 401 when a token is not passed in',
       async () => {
