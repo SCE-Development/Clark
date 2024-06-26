@@ -101,6 +101,15 @@ router.post('/delete', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
+  const decoded = decodeToken(req)
+
+  const targetUser = User.findById(req.body._id)
+  //Check if req has lower privilege than the account they wish to delete
+
+  if (decoded.accessLevel < targetUser.accessLevel) {
+    return res.sendStatus(FORBIDDEN)
+  }
+
   User.deleteOne({ _id: req.body._id }, function(error, user) {
     if (error) {
       logger.error('Unable to delete user with id', req.body._id, error);
