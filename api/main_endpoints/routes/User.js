@@ -35,6 +35,7 @@ const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
 const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
+const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
 
@@ -97,7 +98,7 @@ router.post('/checkIfUserExists', (req, res) => {
 router.post('/delete', (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -108,6 +109,15 @@ router.post('/delete', (req, res) => {
 
   if (decoded.accessLevel < targetUser.accessLevel) {
     return res.sendStatus(FORBIDDEN)
+    .json( {message: 'you cannot delete a role above your own'} )
+  }
+  // If not officer, only allow deletion of own account
+  if (decoded.accessLevel <= membershipState.OFFICER) {
+    if (req.body._id && req.body._id !== decoded._id) {
+      return res
+        .status(FORBIDDEN)
+        .json({ message: 'you must be an officer or admin to delete other users' });
+    }
   }
 
   User.deleteOne({ _id: req.body._id }, function(error, user) {
@@ -221,7 +231,7 @@ router.post('/edit', async (req, res) => {
   }
 
   let decoded = decodeToken(req);
-  if (decoded.accessLevel === membershipState.MEMBER) {
+  if (decoded.accessLevel <= membershipState.OFFICER) {
     if (req.body.email && req.body.email != decoded.email) {
       return res
         .status(UNAUTHORIZED)
@@ -385,10 +395,17 @@ router.post('/connectToDiscord', function(req, res) {
 router.post('/getUserById', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, (
-    membershipState.OFFICER
-  ))) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
+  }
+  // If not officer, only allow reading of own account
+  let decoded = decodeToken(req);
+  if (decoded.accessLevel <= membershipState.OFFICER) {
+    if (req.body.userID && req.body.userID !== decoded._id) {
+      return res
+        .status(FORBIDDEN)
+        .json({ message: 'you must be an officer or admin to read other users\' data' });
+    }
   }
   User.findOne({ _id: req.body.userID}, (err, result) => {
     if (err) {
@@ -496,7 +513,6 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-
   User.find({
     emailVerified: true,
     emailOptIn: true,
@@ -517,4 +533,36 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
     });
 });
 
+// Generate an API key for the Messages API if the user does not have an API key; otherwise, return the existing API key
+router.post('/apikey', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  }
+  if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  let { _id } = decodeToken(req);
+
+  User.findOne({_id})
+    .then((user) => {
+      if (!user) {
+        return res.sendStatus(NOT_FOUND);
+      }
+      // logic to generate api key or return existing api key
+      if (user.apiKey) {
+        return res.status(OK).send({apiKey: user.apiKey});
+      }
+      let apiKey = crypto.randomUUID();
+      User.updateOne({_id}, {apiKey})
+        .then((result) => {
+          if (result.n == 0) {
+            return res.sendStatus(UNAUTHORIZED);
+          }
+          return res.status(OK).send({apiKey});
+        });
+    })
+    .catch(() => {
+      return res.sendStatus(BAD_REQUEST);
+    });
+});
 module.exports = router;

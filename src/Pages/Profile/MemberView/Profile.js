@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUserById } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
+import DeleteAccountModal from './DeleteAccountModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
 
 export default function Profile(props) {
@@ -30,15 +31,15 @@ export default function Profile(props) {
 
   return (
     <div className='bg-gradient-to-r from-gray-800 to-gray-600 min-h-[calc(100dvh-86px)] px-6'>
+      <div className='h-6'/>
       {bannerMessage &&
-      <div role="alert" className={`alert alert-${bannerColor} my-6`}>
+      <div role="alert" className={`alert alert-${bannerColor} mb-6`}>
         <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
         <p>{bannerMessage}</p>
       </div>
       }
-      <div className='h-6'/>
       <div className="bg-slate-300 p-6 shadow-sm rounded-lg w-full">
-        <div className="flex justify-between items-center space-x-2 font-semibold text-gray-900 leading-8">
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-2 mb-2 font-semibold text-gray-900 leading-8">
           <div className='flex space-x-3'>
             <svg className="mt-1 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
@@ -46,7 +47,7 @@ export default function Profile(props) {
             </svg>
             <span className="tracking-wide text-lg">{response.firstName} {response.lastName}</span>
           </div>
-          <div>
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               className="btn btn-primary"
               onClick={() =>
@@ -54,6 +55,14 @@ export default function Profile(props) {
               }
             >
               Change Password
+            </button>
+            <button
+              className="btn btn-error"
+              onClick={() =>
+                document.getElementById('delete-account-modal').showModal()
+              }
+            >
+              Delete Account
             </button>
           </div>
         </div>
@@ -85,6 +94,17 @@ export default function Profile(props) {
         </div>
       </div>
       <ChangePasswordModal
+        user={{ ...props.user, token: props.user.token }}
+        bannerCallback={(message, color, delay = 3000) => {
+          setBannerMessage(message);
+          setBannerColor(color);
+          setTimeout(() => {
+            setBannerMessage('');
+            setBannerColor('');
+          }, delay);
+        }}
+      />
+      <DeleteAccountModal
         user={{ ...props.user, token: props.user.token }}
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);

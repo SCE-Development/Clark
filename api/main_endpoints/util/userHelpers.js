@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const config = require('../../config/config.json');
 const logger = require('../../util/logger');
+const { verifyCaptcha } = require('./captcha');
 
 function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong';
@@ -80,6 +81,17 @@ async function registerUser(userToAdd) {
     message: '',
     status: 'OK'
   };
+
+  if (process.env.NODE_ENV === 'production') {
+    const captchaValid = await verifyCaptcha(userToAdd.captchaToken);
+    if (!captchaValid.success) {
+      result.userSaved = false;
+      result.message = 'Captcha verification failed.';
+      result.status = 'BAD_REQUEST';
+      return result;
+    }
+  }
+
   if (userToAdd.email && userToAdd.password) {
     const newUser = new User({
       password: userToAdd.password,
