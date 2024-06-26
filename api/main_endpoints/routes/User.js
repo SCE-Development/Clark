@@ -102,14 +102,13 @@ router.post('/delete', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const decoded = decodeToken(req)
+  const decoded = decodeToken(req);
 
-  const targetUser = User.findById(req.body._id)
-  //Check if req has lower privilege than the account they wish to delete
+  const targetUser = User.findById(req.body._id);
+  // Check if req has lower privilege than the account they wish to delete
 
   if (decoded.accessLevel < targetUser.accessLevel) {
-    return res.sendStatus(FORBIDDEN)
-    .json( {message: 'you cannot delete a role above your own'} )
+    return res.sendStatus(FORBIDDEN);
   }
   // If not officer, only allow deletion of own account
   if (decoded.accessLevel <= membershipState.OFFICER) {
