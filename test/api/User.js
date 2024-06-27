@@ -567,7 +567,7 @@ describe('User', () => {
       };
 
       const result = await test.sendPostRequestWithToken(
-        officerToken, '/api/Auth/login', deleteUserRequest
+        officerToken, '/api/User/search', deleteUserRequest
       );
 
       expect(result).to.have.status(FORBIDDEN);
