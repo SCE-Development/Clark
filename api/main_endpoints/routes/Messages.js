@@ -1,33 +1,43 @@
 const {
   UNAUTHORIZED,
-  FORBIDDEN
+  FORBIDDEN,
+  SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
+const User = require('../models/User.js');
 
 router.use(bodyParser.json());
-
-const apiKeys = {
-  user1: 'apikey1',
-  user2: 'apiKey2',
-  user3: 'apiKey3',
-};
 
 const clients = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
-    clients[roomId].forEach(client => client.res.write(`${JSON.stringify(message)}\n\n`));
+    clients[roomId].forEach(client => client.res.write(`data: ${JSON.stringify(message)}\n\n`));
   }
 });
 
-router.post('/send', (req, res) => {
+router.post('/send', async (req, res) => {
+
   const {apiKey, message, id} = req.body;
+
+  let apiKeyFound = false;
+
+  await User.findOne({apiKey}, (error, result) => {
+    if (error) {
+      res.sendStatus(SERVER_ERROR);
+      return;
+    }
+    if (result) {
+      apiKeyFound = true;
+    }
+  });
+
   if(!apiKey || !message || !id){
     res.sendStatus(FORBIDDEN);
     return;
-  }else if(!Object.values(apiKeys).includes(apiKey)){
+  } else if (apiKeyFound === false) {
     res.sendStatus(UNAUTHORIZED);
     return;
   }
@@ -36,12 +46,25 @@ router.post('/send', (req, res) => {
 
 });
 
-router.get('/listen', (req, res) => {
+router.get('/listen', async (req, res) => {
   const {apiKey, id} = req.query;
+
+  let apiKeyFound = false;
+
+  await User.findOne({apiKey}, (error, result) => {
+    if (error) {
+      res.sendStatus(SERVER_ERROR);
+      return;
+    }
+    if (result) {
+      apiKeyFound = true;
+    }
+  });
+
   if(!apiKey || !id){
     res.sendStatus(FORBIDDEN);
     return;
-  } else if(!Object.values(apiKeys).includes(apiKey)){
+  } else if(apiKeyFound === false){
     res.sendStatus(UNAUTHORIZED);
     return;
   }
