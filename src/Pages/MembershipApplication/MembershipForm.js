@@ -5,9 +5,6 @@ import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import GoogleRecaptcha from './GoogleRecaptcha';
 export default function MembershipForm(props) {
-  // we skip captcha verification if the environment is dev
-  const [verified, setVerified] = useState(
-    process.env.NODE_ENV !== 'production');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -15,6 +12,8 @@ export default function MembershipForm(props) {
   const [confirmPassword, setConfirmPassWord] = useState('');
   const [major, setMajor] = useState('Other');
   const [plan, setPlan] = useState('');
+  const [captchaValue, setCaptchaValue] = useState(null);
+
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [clickSubmitted, setClickSubmitted] = useState(false);
   const VALID_EMAIL_REGEXP = new RegExp(
@@ -22,11 +21,6 @@ export default function MembershipForm(props) {
     '|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])' +
     '|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))\\s*$'
   );
-
-  const maybeShowCaptcha = () => {
-    return process.env.NODE_ENV === 'production' ?
-      <GoogleRecaptcha setVerified={setVerified} /> : null;
-  };
 
   const checkValidEmail = () => {
     return email && VALID_EMAIL_REGEXP.test(email);
@@ -46,20 +40,20 @@ export default function MembershipForm(props) {
     if (clickSubmitted) {
       if (!email) {
         return <p
-          className=''
+          className='text-red-500'
         >Email cannot be left empty</p>;
       }
       if (!checkValidEmail()) {
         return <p
-          className=''
+          className='text-red-500'
         >Your input email is invalid</p>;
       }
       if (!usernameAvailable) {
         return (
-          <p className=''>
+          <p className='text-red-500'>
             An account with this email already exists. Contact{' '}
             <a href='mailto:asksce@gmail.com'>
-              asksce@gmail.com</a>
+              asksce@gmail.com</a>{' '}
               if you forgot your password.
           </p>
         );
@@ -72,7 +66,7 @@ export default function MembershipForm(props) {
       return (
         clickSubmitted && (
           <p
-            className=''
+            className='text-red-500'
           >Password cannot be left empty</p>
         )
       );
@@ -113,7 +107,7 @@ export default function MembershipForm(props) {
         return (
           clickSubmitted && (
             <p
-              className='text-red'
+              className='text-red-500'
             >Please confirm your password</p>
           )
         );
@@ -131,7 +125,7 @@ export default function MembershipForm(props) {
 
   const requiredFieldsMet = () => {
     return (
-      verified &&
+      (process.env.NODE_ENV !== 'production' || captchaValue) &&
       firstName &&
       lastName &&
       checkValidEmail() &&
@@ -149,7 +143,7 @@ export default function MembershipForm(props) {
       handleChange: (e) => setFirstName(e.target.value),
       ifRequirementsNotMet: clickSubmitted && !firstName && (
         <p
-          className='text-red'
+          className='text-red-500'
         >First name cannot be left empty</p>
       ),
     },
@@ -159,7 +153,7 @@ export default function MembershipForm(props) {
       type: 'text',
       ifRequirementsNotMet: clickSubmitted && !lastName && (
         <p
-          className='text-red'
+          className='text-red-500'
         >Last name cannot be left empty</p>
       ),
       handleChange: (e) => setLastName(e.target.value),
@@ -233,6 +227,7 @@ export default function MembershipForm(props) {
         password,
         major,
         numberOfSemestersToSignUpFor: props.selectedPlan,
+        captchaToken: captchaValue,
       });
 
       if (!registrationStatus.error) {
@@ -242,7 +237,7 @@ export default function MembershipForm(props) {
           setUsernameAvailable(false);
           window.alert('An account with this email already exists');
         } else if (registrationStatus.responseData.status === 400) {
-          window.alert('Password requirements not met');
+          window.alert(registrationStatus.responseData.data.message);
         }
       }
     }
@@ -256,10 +251,9 @@ export default function MembershipForm(props) {
     setPlan(event.target.value);
   };
 
-
   return (
     <div className=''>
-      <div className = 'flex-none md:flex mt-0 pt-20 '>
+      <div className = 'flex-none md:flex mb-20'>
         <div className='rounded-3xl backdrop-blur-sm shadow-2xl mt-20 mb-auto ml-auto mr-auto px-10 text-center items-center justify-center'>
           <div className = 'text-lg md:text-3xl font-bold pb-2'>
             Semester Plan
@@ -304,7 +298,7 @@ export default function MembershipForm(props) {
             <p className='text-sm no-underline '> You do not need to pay to make an account</p>
           </div>
         </div>
-        <div className='rounded-3xl backdrop-blur-sm shadow-2xl  mt-20  ml-auto mr-auto px-10 text-center items-center justify-center'>
+        <div className='rounded-3xl backdrop-blur-sm shadow-2xl mt-20 ml-auto mr-auto px-10 text-center items-center justify-center xl:max-w-[35%]'>
           <p className='text-3xl font-bold' >Membership Application</p>
           <p className='text-2xl font-bold '>
             Year: {new Date().getFullYear()}
@@ -323,7 +317,7 @@ export default function MembershipForm(props) {
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={input.label}
-                    className='w-full bg-[#ABC9CF] rounded-full mb-4 placeholder-gray-800 text-black pl-2'
+                    className='w-full bg-[#ABC9CF] rounded-full mt-4 placeholder-gray-800 text-black pl-2'
                   />
                   {input.ifRequirementsNotMet}
                 </div>
@@ -339,7 +333,7 @@ export default function MembershipForm(props) {
                     onChange={input.handleChange}
                     id={input.id}
                     placeholder={input.label}
-                    className='w-full bg-[#ABC9CF] rounded-full mb-4 placeholder-gray-800 text-black pl-2'
+                    className='w-full bg-[#ABC9CF] rounded-full mt-4 placeholder-gray-800 text-black pl-2'
                   />
                   {input.ifRequirementsNotMet}
                 </div>
@@ -347,46 +341,51 @@ export default function MembershipForm(props) {
             </div>
             {/* <MajorDropdown setMajor={setMajor} />
             <PlanDropdown setPlan={setPlan} /> */}
-            <p className='text-xl text-center'> Select Major </p>
+            <p className='text-xl text-center mt-4'> Select Major </p>
             <div className='flex text-center text-gray-100 justify-center gap-4'>
-              <label className="label">
+              <label className="label gap-1.5">
                 <p className='text-bold'> CS </p>
                 <input type="radio" name="radio-10" className="radio" value='Computer Science'   onClick={handleMajorChange}/>
               </label>
-              <label className="label">
+              <label className="label gap-1.5">
                 <p className='text-bold'> SWE </p>
                 <input type="radio" name="radio-10" className="radio" value='Software Engineering'  onClick={handleMajorChange}/>
               </label>
-              <label className="label">
+              <label className="label gap-1.5">
                 <p className='text-bold'> CMPE </p>
                 <input type="radio" name="radio-10" className="radio" value='Computer Engineering'  onClick={handleMajorChange}/>
               </label>
-              <label className="label">
+              <label className="label gap-1.5">
                 <p className='text-bold'> Other </p>
                 <input type="radio" name="radio-10" className="radio" value='Other'  onClick={handleMajorChange}/>
               </label>
             </div>
             <p className='text-xl text-center'> Select Plan </p>
-            <div className='flex text-center text-gray-100 justify-center gap-4'>
-              <label className="label">
+            <div className='flex text-center text-gray-100 justify-center gap-4 mb-4'>
+              <label className="label gap-1.5">
                 <p className='text-bold'> Semester </p>
                 <input type="radio" name="radio-11" className="radio" value='Semester'   onClick={handlePlanChange}/>
               </label>
-              <label className="label">
+              <label className="label gap-1.5">
                 <p className='text-bold'> Annual </p>
                 <input type="radio" name="radio-11" className="radio" value='Annual'  onClick={handlePlanChange}/>
               </label>
-              <label className="label">
+              <label className="label gap-1.5">
                 <p className='text-bold'> None </p>
                 <input type="radio" name="radio-11" className="radio" value='None'  onClick={handlePlanChange}/>
               </label>
             </div>
             <div id='recaptcha'>
-              {maybeShowCaptcha()}
+              <GoogleRecaptcha setCaptchaValue={setCaptchaValue} />
+              {clickSubmitted && (process.env.NODE_ENV === 'production' && !captchaValue) && (
+                <p
+                  className='text-red-500'
+                >Please complete the reCAPTCHA</p>
+              )}
             </div>
             <div className=''>
               <div className=''>
-                <button className = 'btn mt-20' type='submit'>
+                <button className = 'btn my-8' type='submit'>
                 Submit Application
                 </button>
               </div>

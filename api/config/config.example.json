@@ -18,7 +18,8 @@
       "https://developers.google.com/oauthplayground"
     ],
     "REFRESH_TOKEN": "NOT_SET",
-    "USER": "sce.sjsu@gmail.com"
+    "USER": "sce.sjsu@gmail.com",
+    "CAPTCHA_SECRET_KEY": "NOT_SET"
   },
   "passwordStrength": "medium",
   "PRINTING": {
