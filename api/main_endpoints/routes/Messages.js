@@ -16,7 +16,7 @@ const apiKeys = {
 
 const clients = {};
 
-const writeMessaage = ((roomId, message) => {
+const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
     clients[roomId].forEach(client => client.res.write(`${JSON.stringify(message)}\n\n`));
   }
@@ -31,7 +31,7 @@ router.post('/send', (req, res) => {
     res.sendStatus(UNAUTHORIZED);
     return;
   }
-  writeMessaage(id, message);
+  writeMessage(id, message);
   return res.json({status: 'Message sent'});
 
 });
