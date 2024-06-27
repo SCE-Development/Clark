@@ -546,7 +546,7 @@ describe('User', () => {
     });
 
     // New test case for lower privileges
-    it('Should return statusCode 200 if users with lower privileges tries to delete accounts with higher privileges', async () => {
+    it('Should return statusCode 403 if users with lower privileges tries to delete accounts with higher privileges', async () => {
       setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER});
 
       const lowerPrivilegedUser = {
@@ -567,7 +567,7 @@ describe('User', () => {
       };
 
       const result = await test.sendPostRequestWithToken(
-        officerToken, '/api/User/search', deleteUserRequest
+        officerToken, '/api/User/delete', deleteUserRequest
       );
 
       expect(result).to.have.status(FORBIDDEN);
