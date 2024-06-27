@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
-import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 import GoogleRecaptcha from './GoogleRecaptcha';
 export default function MembershipForm(props) {
   // we skip captcha verification if the environment is dev
@@ -227,11 +226,6 @@ export default function MembershipForm(props) {
     if (!clickSubmitted) setClickSubmitted(true);
     if (requiredFieldsMet()) {
       const userResponse = await checkIfUserExists(email);
-      if (userResponse.error) {
-        setUsernameAvailable(false);
-        return;
-      }
-
       const registrationStatus = await registerUser({
         firstName: firstName.trim(),
         lastName: lastName.trim(),
@@ -242,10 +236,10 @@ export default function MembershipForm(props) {
       });
 
       if (!registrationStatus.error) {
-        sendVerificationEmail(email, firstName);
         props.setMembershipState(memberApplicationState.CONFIRMATION);
       } else {
-        if (registrationStatus.responseData.status === 409) {
+        if (registrationStatus.responseData.status === 409 && userResponse.error) {
+          setUsernameAvailable(false);
           window.alert('An account with this email already exists');
         } else if (registrationStatus.responseData.status === 400) {
           window.alert('Password requirements not met');
