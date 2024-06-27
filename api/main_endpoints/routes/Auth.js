@@ -77,7 +77,7 @@ router.post('/sendPasswordReset', async (req, res) => {
     }
   }
 
-  User.findOne({ email: req.body.email }, async function(error, result) {
+  await User.findOne({ email: req.body.email }, async function(error, result) {
     if (error) {
       return res.sendStatus(BAD_REQUEST);
     }

@@ -1,6 +1,9 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const User = require('../../api/main_endpoints/models/User');
+const PasswordReset = require('../../api/main_endpoints/models/PasswordReset');
 const EmailHelpers = require('../../api/main_endpoints/util/emailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
@@ -203,6 +206,20 @@ describe('Auth', () => {
   });
 
   describe('/POST validatePasswordReset', () => {
+    let createdPasswordReset = null;
+
+    before(async () => {
+      const newPasswordReset = new PasswordReset({
+        userId: mongoose.Types.ObjectId('valid id 321'),
+        token: 'valid token',
+      });
+      createdPasswordReset = await newPasswordReset.save();
+    });
+
+    after(async () => {
+      if (createdPasswordReset) await PasswordReset.deleteOne({ _id: createdPasswordReset._id});
+    });
+
     it('Should return statusCode 404 if the token is invalid', async () => {
       const data = {
         resetToken: 'invalid token'
@@ -221,6 +238,30 @@ describe('Auth', () => {
   });
 
   describe('/POST resetPassword', () => {
+    let createdPasswordReset = null;
+    let createdUser = null;
+
+    before(async () => {
+      const newPasswordReset = new PasswordReset({
+        userId: mongoose.Types.ObjectId('valid id 123'),
+        token: 'valid token',
+      });
+      createdPasswordReset = await newPasswordReset.save();
+      const newUser = new User({
+        _id: createdPasswordReset.userId,
+        email: 'abcdef123@gmail.com',
+        password: 'Passw0rd',
+        firstName: 'first-name',
+        lastName: 'last-name',
+      });
+      createdUser = await newUser.save();
+    });
+
+    after(async () => {
+      if (createdPasswordReset) await PasswordReset.deleteOne({ _id: createdPasswordReset._id});
+      if (createdUser) await User.deleteOne({ _id: createdUser._id});
+    });
+
     it('Should return statusCode 401 if the password is too weak', async () => {
       const data = {
         password: 'weak password',
@@ -241,8 +282,8 @@ describe('Auth', () => {
     it('Should return statusCode 401 if the user id hash is not matching', async () => {
       const data = {
         password: 'Passw0rd',
-        resetToken: 'working token',
-        userId: 'invalid id hash',
+        resetToken: 'valid token',
+        hashedId: 'invalid id',
       };
       const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
       expect(result).to.have.status(BAD_REQUEST);
@@ -251,8 +292,8 @@ describe('Auth', () => {
     it('Should return statusCode 200 if the password was reset', async () => {
       const data = {
         password: 'Passw0rd',
-        resetToken: 'working token',
-        userId: 'valid id hash',
+        resetToken: 'valid token',
+        hashedId: await bcrypt.hash(String(createdPasswordReset.userId), await bcrypt.genSalt(10)),
       };
       const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
       expect(result).to.have.status(OK);
