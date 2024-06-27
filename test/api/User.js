@@ -544,6 +544,38 @@ describe('User', () => {
         'you must be an officer or admin to delete other users',
       );
     });
+
+    // New test case for lower privileges
+    it('Should return statusCode 200 if users with lower privileges tries to delete accounts with higher privileges', async () => {
+      setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER})
+
+      const lowerPrivilegedUser = {
+        _id: id,
+        email: 'h@i.j',
+        accessLevel: MEMBERSHIP_STATE.MEMBER
+      }
+
+      const officerTokenResponse = await test.sendPostRequestWithToken(
+        token, '/api/Auth/login', { email }
+      )
+
+      const officerToken = officerTokenResponse.body.token;
+
+      const deleteUserRequest = {
+        _id: lowerPrivilegedUser._id,
+        token: officerToken
+      }
+
+      const result = await test.sendPostRequestWithToken(
+        officerToken, '/api/Auth/login', deleteUserRequest
+      )
+
+      expect(result).to.have.status(FORBIDDEN);
+      result.body.should.have.property('message');
+      result.body.message.should.equal(
+        'you must have higher privileges to delete users with lower privileges'
+      )
+    })
   });
 
   describe('POST /apikey', () => {
