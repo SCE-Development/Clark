@@ -556,7 +556,7 @@ describe('User', () => {
       };
 
       const officerTokenResponse = await test.sendPostRequestWithToken(
-        token, '/api/Auth/login', { email }
+        token, '/api/Auth/login', { email: lowerPrivilegedUser.email }
       );
 
       const officerToken = officerTokenResponse.body.token;
