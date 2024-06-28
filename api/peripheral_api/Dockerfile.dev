@@ -1,5 +1,5 @@
 #gets the base linux image
-FROM node:14.10.0-alpine 
+FROM node:alpine
 
 #all commands will run in this directory
 WORKDIR /app

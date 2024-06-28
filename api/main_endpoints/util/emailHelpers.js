@@ -28,4 +28,16 @@ async function sendVerificationEmail(name, email) {
   });
 }
 
-module.exports = { sendUnsubscribeEmail, sendVerificationEmail };
+async function sendPasswordReset(resetToken, email) {
+  return new Promise((resolve) => {
+    axios
+      .post(`${MAILER_API_URL}/Mailer/sendPasswordReset`, {
+        resetToken: resetToken,
+        recipientEmail: email
+      })
+      .then(() => resolve(true))
+      .catch(() => resolve(false));
+  });
+}
+
+module.exports = { sendUnsubscribeEmail, sendVerificationEmail, sendPasswordReset };

@@ -4,6 +4,10 @@ const logger = require('../../util/logger');
 const config = require('../../config/config.json');
 
 async function verifyCaptcha(responseToken) {
+  if (!responseToken) {
+    return { success: false };
+  }
+
   const secretKey = config.googleApiKeys.CAPTCHA_SECRET_KEY;
 
   try {
