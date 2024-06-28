@@ -1,10 +1,10 @@
 'use strict';
 const bcrypt = require('bcryptjs');
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const passport = require('passport');
 require('../util/passport')(passport);
-const { nanoid } = require('nanoid');
 const config = require('../../config/config.json');
 const User = require('../models/User.js');
 const PasswordReset = require('../models/PasswordReset.js');
@@ -85,7 +85,10 @@ router.post('/sendPasswordReset', async (req, res) => {
       return res.sendStatus(OK);
     }
 
-    const resetToken = nanoid();
+    const buffer = crypto.randomBytes(12);
+    let id = buffer.toString('base64');
+
+    const resetToken = id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     try {
       await PasswordReset.updateOne(
         { userId: result._id },
