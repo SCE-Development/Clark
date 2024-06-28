@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
 import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
-import GoogleRecaptcha from './GoogleRecaptcha';
+import GoogleRecaptcha from '../../Components/Captcha/GoogleRecaptcha';
 export default function MembershipForm(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
