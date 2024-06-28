@@ -1,4 +1,4 @@
-FROM alpine
+FROm node:alpine
 #gets the base linux image
 
 WORKDIR /app
