@@ -48,10 +48,6 @@ export default class VerifyEmail extends React.Component {
       });
   }
 
-  resendVerificationEmail() {
-    sendVerificationEmail(this.state.email);
-  }
-
   render() {
     return (
       <div className='flex justify-center'>
@@ -71,18 +67,8 @@ export default class VerifyEmail extends React.Component {
             <h3 style={{ margin: '1em' }}>
               There was a problem verifying your email.
             </h3>
-            <p
-              style={
-                {
-                  margin: '1em',
-                  cursor: 'pointer',
-                  color:'blue',
-                  textDecoration: 'underline'
-                }
-              }
-              onClick={this.resendVerificationEmail.bind(this)}
-            >
-              Click here to resend the verification email.
+            <p>
+              Reach out to us in our discord to quickly resolve the issue.
             </p>
           </div>
         )}
