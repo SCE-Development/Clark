@@ -24,6 +24,11 @@ router.post('/send', async (req, res) => {
 
   let apiKeyFound = false;
 
+  if(!apiKey || !message || !id){
+    res.sendStatus(FORBIDDEN);
+    return;
+  }
+
   await User.findOne({apiKey}, (error, result) => {
     if (error) {
       res.sendStatus(SERVER_ERROR);
@@ -34,10 +39,7 @@ router.post('/send', async (req, res) => {
     }
   });
 
-  if(!apiKey || !message || !id){
-    res.sendStatus(FORBIDDEN);
-    return;
-  } else if (apiKeyFound === false) {
+  if (apiKeyFound === false) {
     res.sendStatus(UNAUTHORIZED);
     return;
   }
