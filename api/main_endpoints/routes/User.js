@@ -102,8 +102,22 @@ router.post('/delete', (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
+  const decoded = decodeToken(req);
+
+  const targetUser = User.findById(req.body._id);
+  // Check if req has lower privilege than the account they wish to delete
+console.log('Running before accessLevel check')
+  if (decoded.accessLevel < targetUser.accessLevel) {
+    console.log('Running after accessLevel check')
+
+    return res
+    .status(FORBIDDEN)
+    .json( { message: 'you must have higher privileges to delete users with lower privileges'})
+  }
   // If not officer, only allow deletion of own account
-  let decoded = decodeToken(req);
+  // console.log('Decoded access level: ', decoded.accessLevel)
+  // console.log('Decoded access level: ', targetUser.accessLevel)
+  // console.log('Target:', targetUser)
   if (decoded.accessLevel <= membershipState.OFFICER) {
     if (req.body._id && req.body._id !== decoded._id) {
       return res
