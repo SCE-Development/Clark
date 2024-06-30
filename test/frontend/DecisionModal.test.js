@@ -15,10 +15,10 @@ describe('<ConfirmationModal />', () => {
   }
   const wrapper = mount(<ConfirmationModal {...modalProps} />);
   it('Should render the headerText prop in a h3 tag', () => {
-    expect(wrapper.find('h3').text()).to.equal('This the test header');
+    expect(wrapper.find('h3').text()).to.equal(modalProps.headerText);
   });
   it('Should render the bodyText prop in a p tag', () => {
-    expect(wrapper.find('p').text()).to.equal('test body');
+    expect(wrapper.find('p').text()).to.equal(modalProps.bodyText);
   });
   it("Should render 'Confirm' when no prop is passed", () => {
     const wrapper = mount(<ConfirmationModal />);
