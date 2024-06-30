@@ -99,11 +99,14 @@ describe('Messages', () => {
       });
       await user.save();
 
-      const loginResponse = await test.sendPostRequest('/api/Auth/login', {
-        email: user.email,
-        password: 'Passw0rd'
+      it('Should return status code 200 if valid api-key, room-id, and message was sent', async () => {
+        const result = await test.sendPostRequest('/api/messages/send', {
+          apiKey: 123,
+          message: 'Hello',
+          id: 'general'
+        });
+        expect(result).to.have.status(OK);
       });
-      usertoken = loginResponse.body.token;
     });
   });
 });
