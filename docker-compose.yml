@@ -81,6 +81,8 @@ services:
       - mongodb
     depends_on:
       - mongodb
+    environment:
+      - NODE_ENV=production
  
   prometheus:
     image: prom/prometheus:latest

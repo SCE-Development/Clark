@@ -32,6 +32,28 @@ export async function sendVerificationEmail(email, token) {
 }
 
 /**
+ * Invoke the gmail API to send an email to password reset a user.
+ * @param {string} email - The user's email
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
+ */
+export async function sendPasswordReset(email, captchaToken) {
+  let status = new ApiResponse();
+  await axios
+    .post(GENERAL_API_URL + '/Auth/sendPasswordReset', {
+      email,
+      captchaToken,
+    })
+    .then((response) => {
+      status.responseData = response;
+    })
+    .catch((error) => {
+      status.error = error;
+    });
+  return status;
+}
+
+/**
  * Invoke the gmail API to send an email blast to specified users.
  * @param {Array} emailList - String array of user email addresses
  * @param {string} subject - The subject of the email
