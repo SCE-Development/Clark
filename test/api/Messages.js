@@ -76,7 +76,7 @@ describe('Messages', () => {
         _id: id,
         firstName: 'first-name',
         lastName: 'last-name',
-        email: 'test@user.com',
+        email: 'test1@user.com',
         password: 'Passw0rd',
         emailVerified: true,
         accessLevel: MEMBERSHIP_STATE.MEMBER,
@@ -93,6 +93,23 @@ describe('Messages', () => {
         id: 'general'
       });
       expect(result).to.have.status(OK);
+    });
+
+    it('Should return status code 401 if no api key is found', async () => {
+      const result = await test.sendPostRequest('/api/messages/send', {
+        message: 'Hello',
+        id: 'general'
+      });
+      expect(result).to.have.status(FORBIDDEN);
+    });
+
+    it('Should return status code 403 if api key is invalid', async () => {
+      const result = await test.sendPostRequest('/api/messages/send', {
+        apiKey: 'invalid',
+        message: 'Hello',
+        id: 'general'
+      });
+      expect(result).to.have.status(UNAUTHORIZED);
     });
   });
 });
