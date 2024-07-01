@@ -145,6 +145,64 @@ describe('Speaker', () => {
     });
   });
 
+  describe('/POST forward', () => {
+    it('Should return 400 when token is not sent', async () => {
+      const result = await test.sendPostRequest('/api/Speaker/forward');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 400 when invalid token is sent', async () => {
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/Speaker/forward');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 500 when the ssh tunnel is down', async () => {
+      setTokenStatus(true);
+      sendSpeakerRequestStub.resolves(false);
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/Speaker/forward');
+      expect(result).to.have.status(SERVER_ERROR);
+    });
+
+    it('Should return 200 when the ssh tunnel is up', async () => {
+      setTokenStatus(true);
+      sendSpeakerRequestStub.resolves(true);
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/Speaker/forward');
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST rewind', () => {
+    it('Should return 400 when token is not sent', async () => {
+      const result = await test.sendPostRequest('/api/Speaker/rewind');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 400 when invalid token is sent', async () => {
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/Speaker/rewind');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 500 when the ssh tunnel is down', async () => {
+      setTokenStatus(true);
+      sendSpeakerRequestStub.resolves(false);
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/Speaker/rewind');
+      expect(result).to.have.status(SERVER_ERROR);
+    });
+
+    it('Should return 200 when the ssh tunnel is up', async () => {
+      setTokenStatus(true);
+      sendSpeakerRequestStub.resolves(true);
+      const result = await test.sendPostRequestWithToken(token,
+        '/api/Speaker/rewind');
+      expect(result).to.have.status(OK);
+    });
+  });
+
   describe('/POST resume', () => {
     it('Should return 400 when token is not sent', async () => {
       const result = await test.sendPostRequest('/api/Speaker/resume');
