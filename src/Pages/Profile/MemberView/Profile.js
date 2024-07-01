@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getUserById } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
+import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
 
 export default function Profile(props) {
@@ -64,6 +65,14 @@ export default function Profile(props) {
             >
               Delete Account
             </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() =>
+                document.getElementById('get-apikey-modal').showModal()
+              }
+            >
+              Get API Key
+            </button>
           </div>
         </div>
         <div className="text-gray-700">
@@ -106,6 +115,17 @@ export default function Profile(props) {
       />
       <DeleteAccountModal
         user={{ ...props.user, token: props.user.token }}
+        bannerCallback={(message, color, delay = 3000) => {
+          setBannerMessage(message);
+          setBannerColor(color);
+          setTimeout(() => {
+            setBannerMessage('');
+            setBannerColor('');
+          }, delay);
+        }}
+      />
+      <GetApiKeyModal
+        user={{ ...props.user, token: props.user.token, apiKey: response.apiKey }}
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);
           setBannerColor(color);

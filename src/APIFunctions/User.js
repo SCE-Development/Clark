@@ -299,3 +299,14 @@ export async function getAllUsersValidVerifiedAndSubscribed(token) {
     });
   return status;
 }
+
+export async function getApiKey(token) {
+  let status = new UserApiResponse();
+  try {
+    const response = await axios.post(`${GENERAL_API_URL}/user/apikey`, { token });
+    status.responseData = response.data;
+  } catch (error) {
+    status.error = true;
+  }
+  return status;
+}
