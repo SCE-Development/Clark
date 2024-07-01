@@ -19,8 +19,6 @@ const {
 } = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
-const discordModule
-  = require('../../api/main_endpoints/util/discord-connection');
 
 
 let app = null;
@@ -36,12 +34,6 @@ const {
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
 
-const {
-  setDiscordAPIStatus,
-  resetDiscordAPIMock,
-  restoreDiscordAPIMock,
-  initializeDiscordAPIMock
-} = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
 chai.should();
@@ -51,9 +43,7 @@ chai.use(chaiHttp);
 describe('Messages', () => {
   before(done => {
     initializeTokenMock();
-    initializeDiscordAPIMock();
     app = tools.initializeServer([
-      __dirname + '/../../api/main_endpoints/routes/User.js',
       __dirname + '/../../api/main_endpoints/routes/Auth.js',
       __dirname + '/../../api/main_endpoints/routes/Messages.js',
     ]);
@@ -65,48 +55,44 @@ describe('Messages', () => {
 
   after(done => {
     restoreTokenMock();
-    restoreDiscordAPIMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
-    setDiscordAPIStatus(false);
   });
 
   afterEach(() => {
     resetTokenMock();
-    resetDiscordAPIMock();
   });
 
   const token = '';
 
   describe('POST /send', () => {
-
     let user;
-    let usertoken;
 
     before(async () => {
       user = new User({
         _id: id,
         firstName: 'first-name',
         lastName: 'last-name',
-        email: 'test1@user.com',
+        email: 'test@user.com',
         password: 'Passw0rd',
         emailVerified: true,
         accessLevel: MEMBERSHIP_STATE.MEMBER,
-        apiKey: 123
+        apiKey: '123'
       });
       await user.save();
+    
+    });
 
-      it('Should return status code 200 if valid api-key, room-id, and message was sent', async () => {
-        const result = await test.sendPostRequest('/api/messages/send', {
-          apiKey: 123,
-          message: 'Hello',
-          id: 'general'
-        });
-        expect(result).to.have.status(OK);
+    it('Should return status code 200 if valid api-key, room-id, and message was sent', async () => {
+      const result = await test.sendPostRequest('/api/messages/send', {
+        apiKey: '123',
+        message: 'Hello',
+        id: 'general'
       });
+      expect(result).to.have.status(OK);
     });
   });
 });
