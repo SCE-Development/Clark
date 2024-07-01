@@ -83,7 +83,7 @@ describe('Messages', () => {
         apiKey: '123'
       });
       await user.save();
-    
+
     });
 
     it('Should return status code 200 if valid api-key, room-id, and message was sent', async () => {
