@@ -169,11 +169,19 @@ router.post('/search', function(req, res) {
 
 // Search for all members
 router.post('/users', async function(req, res) {
-  if (!checkIfTokenSent(req)) {
+  const authorization = req.headers.authorization
+  const token = authorization.split(' ')[1] //get token from header
+
+  if (!checkIfTokenSent(token)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
+  } else if (!checkIfTokenValid(token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!checkIfTokenValid(req)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
   let maybeOr = {};
   if (req.body.query) {
     maybeOr = {
