@@ -171,6 +171,7 @@ router.post('/search', function(req, res) {
 router.post('/users', async function(req, res) {
   const authorization = req.headers.authorization
   const token = authorization.split(' ')[1] //get token from header
+  
 
   if (!checkIfTokenSent(token)) {
     return res.sendStatus(FORBIDDEN);
