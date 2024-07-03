@@ -80,7 +80,7 @@ router.get('/listen', async (req, res) => {
         res.sendStatus(SERVER_ERROR);
         return;
       }
-      if (!result || (numberOfConnections[apiKey] && numberOfConnections[apiKey] >= MAX_AMOUNT_OF_CONNECTIONS)) { // no api key found; unauthorized
+      if (!result || (numberOfConnections[apiKey] && numberOfConnections[apiKey] >= MAX_AMOUNT_OF_CONNECTIONS)) { // no api key found or 3 connections per api key; unauthorized
         return res.sendStatus(UNAUTHORIZED);
       }
 
