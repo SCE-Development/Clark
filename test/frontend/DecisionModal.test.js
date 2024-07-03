@@ -2,7 +2,7 @@ import 'jsdom-global/register';
 import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from "@cfaester/enzyme-adapter-react-18";
 
 import ConfirmationModal from '../../src/Components/DecisionModal/ConfirmationModal';
 
