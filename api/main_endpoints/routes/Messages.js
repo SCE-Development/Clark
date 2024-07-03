@@ -3,15 +3,18 @@ const {
   BAD_REQUEST,
   SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
+const { MAX_AMOUNT_OF_CONNECTIONS } = require('../../util/constants').MESSAGES_API;
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
 
+
 router.use(bodyParser.json());
 
 const clients = {};
+const numberOfConnections = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
@@ -77,9 +80,12 @@ router.get('/listen', async (req, res) => {
         res.sendStatus(SERVER_ERROR);
         return;
       }
-      if (!result) { // no api key found; unauthorized
+      if (!result || (numberOfConnections[apiKey] && numberOfConnections[apiKey] >= MAX_AMOUNT_OF_CONNECTIONS)) { // no api key found; unauthorized
         return res.sendStatus(UNAUTHORIZED);
       }
+
+      numberOfConnections[apiKey] = numberOfConnections[apiKey] ? numberOfConnections[apiKey] + 1 : 1;
+
       const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
@@ -101,6 +107,7 @@ router.get('/listen', async (req, res) => {
         if(clients[id].length === 0){
           delete clients[id];
         }
+        numberOfConnections[apiKey] -= 1;
       });
     });
   } catch (error) {
