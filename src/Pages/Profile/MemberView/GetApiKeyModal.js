@@ -5,8 +5,6 @@ const GetApiKeyModal = (props) => {
   const { bannerCallback = () => {} } = props;
   const [apiKey, setApiKey] = useState('');
 
-  const INPUT_CLASS_NAME = 'indent-2 block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-insetfocus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
-
   async function generateKey() {
     const apiResponse = await getApiKey(props.user.token);
 
@@ -23,8 +21,6 @@ const GetApiKeyModal = (props) => {
     }
   }, [props]);
 
-
-
   return (
     <dialog id="get-apikey-modal" className="modal modal-bottom sm:modal-middle">
       <div className='modal-box'>
@@ -37,22 +33,22 @@ const GetApiKeyModal = (props) => {
             value={apiKey || ''}
             id="generate-apikey"
             name="generate-apikey"
-            className={INPUT_CLASS_NAME}
+            className= "indent-2 block w-full rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white"
             readOnly
           />
         </div>
 
 
         <div className="modal-action">
-          <div className="sm:flex sm:flex-row-reverse">
+          <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
             <button
               onClick={() => generateKey()}
-              className={'bg-green-600 btn inline-flex w-full justify-center rounded-md px-3 py-2 text-sm text-white shadow-sm sm:ml-3 sm:w-auto'}                    >
+              className={'btn inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto'}                    >
                     Generate Key
             </button>
             <form method="dialog">
 
-              <button className="bg-red-600 btn mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm text-white shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto">
+              <button className="btn mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto">
                   Cancel
               </button>
             </form>
