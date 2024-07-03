@@ -77,32 +77,31 @@ router.get('/listen', async (req, res) => {
         res.sendStatus(SERVER_ERROR);
         return;
       }
-      if (result) { // logic to keep the connection alive
-        const headers = {
-          'Content-Type': 'text/event-stream',
-          'Connection': 'keep-alive',
-          'Cache-Control': 'no-cache',
-        };
-
-        res.writeHead(200, headers);
-
-        if(!clients[id]){
-          clients[id] = [];
-        }
-
-        clients[id].push(res);
-
-        req.on('close', () => {
-          if(clients[id]){
-            clients[id] = clients[id].filter(client => client !== res);
-          }
-          if(clients[id].length === 0){
-            delete clients[id];
-          }
-        });
-      } else { // otherwise, unauthorized request because no api key was found
+      if (!result) { // no api key found; unauthorized
         return res.sendStatus(UNAUTHORIZED);
       }
+      const headers = {
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache',
+      };
+
+      res.writeHead(200, headers);
+
+      if(!clients[id]){
+        clients[id] = [];
+      }
+
+      clients[id].push(res);
+
+      req.on('close', () => {
+        if(clients[id]){
+          clients[id] = clients[id].filter(client => client !== res);
+        }
+        if(clients[id].length === 0){
+          delete clients[id];
+        }
+      });
     });
   } catch (error) {
     logger.error('Error in /listen: ', error);
