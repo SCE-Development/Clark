@@ -49,7 +49,7 @@ const GetApiKeyModal = (props) => {
             <form method="dialog">
 
               <button className="bg-red-600 btn mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm text-white shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto">
-                  Cancel
+                  Close
               </button>
             </form>
           </div>
