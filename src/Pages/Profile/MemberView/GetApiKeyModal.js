@@ -40,15 +40,15 @@ const GetApiKeyModal = (props) => {
 
 
         <div className="modal-action">
-          <div className="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <div className="sm:flex sm:flex-row-reverse">
             <button
               onClick={() => generateKey()}
-              className={'btn inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto'}                    >
+              className={'bg-green-600 btn inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto'}                    >
                     Generate Key
             </button>
             <form method="dialog">
 
-              <button className="btn mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto">
+              <button className="bg-red-600 btn mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm text-white shadow-sm ring-1 ring-inset sm:mt-0 sm:w-auto">
                   Cancel
               </button>
             </form>
