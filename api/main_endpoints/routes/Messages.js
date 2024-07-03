@@ -39,7 +39,7 @@ router.post('/send', async (req, res) => {
 
   User.findOne({apiKey}, (error, result) => {
     if (error) {
-      logger.error('Messages API endpoint /send had an error: ', error);
+      logger.error('/send received an invalid API key: ', error);
       res.sendStatus(SERVER_ERROR);
       return;
     }
@@ -68,7 +68,7 @@ router.get('/listen', async (req, res) => {
 
   User.findOne({apiKey}, (error, result) => {
     if (error) {
-      logger.error('Messages API endpoint /listen had an error: ', error);
+      logger.error('/listen received an invalid API key: ', error);
       res.sendStatus(SERVER_ERROR);
       return;
     }
