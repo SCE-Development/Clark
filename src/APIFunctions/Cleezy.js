@@ -11,11 +11,12 @@ export async function getAllUrls({
   await axios
     .get(PERIPHERAL_API_URL + '/Cleezy/list', {
       params: {
-        token,
         page,
         ...(search !== undefined && { search }),
         sortColumn,
         sortOrder
+      }, headers: {
+        'Authorization': `Bearer ${token}`,
       },
     })
     .then(res => {

@@ -26,11 +26,15 @@ router.get('/list', async (req, res) => {
       disabled: true
     });
   }
-  const token = req.query.token;
+  const authHeader = req.headers['authorization'];
+  let token;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  }
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.query.token)) {
+  } else if (!await verifyToken(token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
