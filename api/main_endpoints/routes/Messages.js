@@ -1,6 +1,7 @@
 const {
   UNAUTHORIZED,
   FORBIDDEN,
+  BAD_REQUEST,
   SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
 const express = require('express');
@@ -22,14 +23,14 @@ router.post('/send', async (req, res) => {
 
   const {apiKey, message, id} = req.body;
 
-  let apiKeyFound = false;
-
   const required = [
     {value: apiKey, title: 'API Key', },
     {value: message, title: 'Message', },
     {value: id, title: 'Room ID', },
   ];
+
   const missingValue = required.find(({value}) => !value);
+
   if (missingValue){
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
@@ -40,20 +41,12 @@ router.post('/send', async (req, res) => {
       res.sendStatus(SERVER_ERROR);
       return;
     }
-      if (result) {
-        writeMessage(id, message);
-        return res.json({status: 'Message sent'});
-     }
+    if (result) {
+      writeMessage(id, message);
+      return res.json({status: 'Message sent'});
+    }
     return res.sendStatus(UNAUTHORIZED);
   });
-
-  if (apiKeyFound === false) {
-    res.sendStatus(UNAUTHORIZED);
-    return;
-  }
-  writeMessage(id, message);
-  return res.json({status: 'Message sent'});
-
 });
 
 router.get('/listen', async (req, res) => {
