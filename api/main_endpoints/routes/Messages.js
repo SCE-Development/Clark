@@ -95,8 +95,7 @@ router.get('/listen', async (req, res) => {
           delete clients[id];
         }
       });
-    }
-    else { // otherwise, unauthorized request because no api key was found
+    } else { // otherwise, unauthorized request because no api key was found
       return res.sendStatus(UNAUTHORIZED);
     }
   });
