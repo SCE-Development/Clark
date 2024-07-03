@@ -23,7 +23,7 @@ const DEFAULT_PHOTO_URL =
 
 const MESSAGES_API = {
   MAX_AMOUNT_OF_CONNECTIONS: 3
-}
+};
 
 const teamType = {
   DEVELOPMENT: 'Development',
