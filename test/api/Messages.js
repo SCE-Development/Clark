@@ -95,12 +95,12 @@ describe('Messages', () => {
       expect(result).to.have.status(OK);
     });
 
-    it('Should return status code 401 if no api key is found', async () => {
+    it('Should return status code 400 if no api key is found', async () => {
       const result = await test.sendPostRequest('/api/messages/send', {
         message: 'Hello',
         id: 'general'
       });
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(BAD_REQUEST);
     });
 
     it('Should return status code 403 if api key is invalid', async () => {
