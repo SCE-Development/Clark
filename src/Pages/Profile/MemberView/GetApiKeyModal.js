@@ -16,7 +16,7 @@ const GetApiKeyModal = (props) => {
   }
 
   useEffect(() => {
-    if (!props.user.apiKey !== '') {
+    if (props.user.apiKey) {
       setApiKey(props.user.apiKey);
     }
   }, [props]);
