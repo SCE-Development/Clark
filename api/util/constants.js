@@ -21,6 +21,10 @@ const MEMBERSHIP_STATE = {
 const DEFAULT_PHOTO_URL =
   'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png';
 
+const MESSAGES_API = {
+  MAX_AMOUNT_OF_CONNECTIONS: 3
+};
+
 const teamType = {
   DEVELOPMENT: 'Development',
   PUBLIC_RELATIONS: 'Public Relations',
@@ -48,6 +52,7 @@ module.exports = {
   STATUS_CODES,
   DEFAULT_PHOTO_URL,
   MEMBERSHIP_STATE,
+  MESSAGES_API,
   teamType,
   consoleColors,
 };
