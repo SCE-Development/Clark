@@ -8,6 +8,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
+const logger = require('../../util/logger');
 
 router.use(bodyParser.json());
 
@@ -38,6 +39,7 @@ router.post('/send', async (req, res) => {
 
   await User.findOne({apiKey}, (error, result) => {
     if (error) {
+      logger.error('Messages API endpoint /send had an error: ', error);
       res.sendStatus(SERVER_ERROR);
       return;
     }
@@ -52,51 +54,50 @@ router.post('/send', async (req, res) => {
 router.get('/listen', async (req, res) => {
   const {apiKey, id} = req.query;
 
-  let apiKeyFound = false;
+  const required = [
+    {value: apiKey, title: 'API Key', },
+    {value: id, title: 'Room ID', }
+  ];
 
-  if(!apiKey || !id) {
-    res.sendStatus(FORBIDDEN);
+  const missingValue = required.find(({value}) => !value);
+
+  if (missingValue){
+    res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
 
   await User.findOne({apiKey}, (error, result) => {
     if (error) {
+      logger.error('Messages API endpoint /listen had an error: ', error);
       res.sendStatus(SERVER_ERROR);
       return;
     }
     if (result) {
-      apiKeyFound = true;
+      const headers = {
+        'Content-Type': 'text/event-stream',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache',
+      };
+
+      res.writeHead(200, headers);
+
+      if(!clients[id]){
+        clients[id] = [];
+      }
+
+      clients[id].push({res});
+
+      req.on('close', () => {
+        if(clients[id]){
+          clients[id] = clients[id].filter(client => client !== res);
+        }
+        if(clients[id].length === 0){
+          delete clients[id];
+        }
+      });
     }
+    return res.sendStatus(UNAUTHORIZED);
   });
-
-  if(apiKeyFound === false) {
-    res.sendStatus(UNAUTHORIZED);
-    return;
-  }
-
-  const headers = {
-    'Content-Type': 'text/event-stream',
-    'Connection': 'keep-alive',
-    'Cache-Control': 'no-cache',
-  };
-
-  res.writeHead(200, headers);
-
-  if(!clients[id]){
-    clients[id] = [];
-  }
-
-  clients[id].push({res});
-
-  req.on('close', () => {
-    if(clients[id]){
-      clients[id] = clients[id].filter(client => client !== res);
-    }
-    if(clients[id].length === 0){
-      delete clients[id];
-    }
-  });
-
 });
 
 module.exports = router;
