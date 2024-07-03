@@ -37,7 +37,7 @@ router.post('/send', async (req, res) => {
     return;
   }
 
-  await User.findOne({apiKey}, (error, result) => {
+  User.findOne({apiKey}, (error, result) => {
     if (error) {
       logger.error('Messages API endpoint /send had an error: ', error);
       res.sendStatus(SERVER_ERROR);
@@ -66,13 +66,13 @@ router.get('/listen', async (req, res) => {
     return;
   }
 
-  await User.findOne({apiKey}, (error, result) => {
+  User.findOne({apiKey}, (error, result) => {
     if (error) {
       logger.error('Messages API endpoint /listen had an error: ', error);
       res.sendStatus(SERVER_ERROR);
       return;
     }
-    if (result) {
+    if (result) { // logic to keep the connection alive
       const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
@@ -96,7 +96,9 @@ router.get('/listen', async (req, res) => {
         }
       });
     }
-    return res.sendStatus(UNAUTHORIZED);
+    else { // otherwise, unauthorized request because no api key was found
+      return res.sendStatus(UNAUTHORIZED);
+    }
   });
 });
 
