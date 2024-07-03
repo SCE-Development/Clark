@@ -15,7 +15,7 @@ const clients = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
-    clients[roomId].forEach(client => client.res.write(`data: ${JSON.stringify(message)}\n\n`));
+    clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(message)}\n\n`));
   }
 });
 
@@ -90,7 +90,7 @@ router.get('/listen', async (req, res) => {
           clients[id] = [];
         }
 
-        clients[id].push({res});
+        clients[id].push(res);
 
         req.on('close', () => {
           if(clients[id]){
