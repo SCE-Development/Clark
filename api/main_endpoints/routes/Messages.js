@@ -40,9 +40,11 @@ router.post('/send', async (req, res) => {
       res.sendStatus(SERVER_ERROR);
       return;
     }
-    if (result) {
-      apiKeyFound = true;
-    }
+      if (result) {
+        writeMessage(id, message);
+        return res.json({status: 'Message sent'});
+     }
+    return res.sendStatus(UNAUTHORIZED);
   });
 
   if (apiKeyFound === false) {
