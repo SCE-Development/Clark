@@ -303,7 +303,8 @@ export async function getAllUsersValidVerifiedAndSubscribed(token) {
 export async function getApiKey(token) {
   let status = new UserApiResponse();
   try {
-    const response = await axios.post(`${GENERAL_API_URL}/user/apikey`, { token });
+    const url = new URL('/user/apikey', GENERAL_API_URL).href;
+    const response = await axios.post(url.href, { token });
     status.responseData = response.data;
   } catch (error) {
     status.error = true;
