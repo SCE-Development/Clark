@@ -1,6 +1,5 @@
 const {
   UNAUTHORIZED,
-  FORBIDDEN,
   BAD_REQUEST,
   SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
@@ -37,18 +36,23 @@ router.post('/send', async (req, res) => {
     return;
   }
 
-  User.findOne({apiKey}, (error, result) => {
-    if (error) {
-      logger.error('/send received an invalid API key: ', error);
-      res.sendStatus(SERVER_ERROR);
-      return;
-    }
-    if (result) {
-      writeMessage(id, message);
-      return res.json({status: 'Message sent'});
-    }
-    return res.sendStatus(UNAUTHORIZED);
-  });
+  try {
+    User.findOne({apiKey}, (error, result) => {
+      if (error) {
+        logger.error('/send received an invalid API key: ', error);
+        res.sendStatus(SERVER_ERROR);
+        return;
+      }
+      if (result) {
+        writeMessage(id, message);
+        return res.json({status: 'Message sent'});
+      }
+      return res.sendStatus(UNAUTHORIZED);
+    });
+  } catch (error) {
+    logger.error('Error in /send: ', error);
+    res.sendStatus(SERVER_ERROR);
+  }
 });
 
 router.get('/listen', async (req, res) => {
@@ -66,39 +70,44 @@ router.get('/listen', async (req, res) => {
     return;
   }
 
-  User.findOne({apiKey}, (error, result) => {
-    if (error) {
-      logger.error('/listen received an invalid API key: ', error);
-      res.sendStatus(SERVER_ERROR);
-      return;
-    }
-    if (result) { // logic to keep the connection alive
-      const headers = {
-        'Content-Type': 'text/event-stream',
-        'Connection': 'keep-alive',
-        'Cache-Control': 'no-cache',
-      };
-
-      res.writeHead(200, headers);
-
-      if(!clients[id]){
-        clients[id] = [];
+  try {
+    User.findOne({apiKey}, (error, result) => {
+      if (error) {
+        logger.error('/listen received an invalid API key: ', error);
+        res.sendStatus(SERVER_ERROR);
+        return;
       }
+      if (result) { // logic to keep the connection alive
+        const headers = {
+          'Content-Type': 'text/event-stream',
+          'Connection': 'keep-alive',
+          'Cache-Control': 'no-cache',
+        };
 
-      clients[id].push({res});
+        res.writeHead(200, headers);
 
-      req.on('close', () => {
-        if(clients[id]){
-          clients[id] = clients[id].filter(client => client !== res);
+        if(!clients[id]){
+          clients[id] = [];
         }
-        if(clients[id].length === 0){
-          delete clients[id];
-        }
-      });
-    } else { // otherwise, unauthorized request because no api key was found
-      return res.sendStatus(UNAUTHORIZED);
-    }
-  });
+
+        clients[id].push({res});
+
+        req.on('close', () => {
+          if(clients[id]){
+            clients[id] = clients[id].filter(client => client !== res);
+          }
+          if(clients[id].length === 0){
+            delete clients[id];
+          }
+        });
+      } else { // otherwise, unauthorized request because no api key was found
+        return res.sendStatus(UNAUTHORIZED);
+      }
+    });
+  } catch (error) {
+    logger.error('Error in /listen: ', error);
+    res.sendStatus(SERVER_ERROR);
+  }
 });
 
 module.exports = router;
