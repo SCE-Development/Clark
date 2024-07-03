@@ -199,12 +199,6 @@ export default function URLShortenerPage(props) {
             </span>
           </div>
           <div className='navbar-end flex justify-end space-x-3'>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`w-12 h-12 ${currentSortOrder === 'ASC' ? `` : `hidden`}`}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5V4.5m0 0l-6 6m6-6l6 6" />
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`w-12 h-12 ${currentSortOrder === 'DESC' ? `` : `hidden`}`}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m0 0l6-6m-6 6l-6-6" />
-            </svg>
             <button
               className='btn'
               onClick={() => setPage(page - 1)}
@@ -431,7 +425,15 @@ export default function URLShortenerPage(props) {
                         className={`${className}`}
                         key={title}
                       >
-                        <button onClick={() => handleSortUrls(columnName)}>{title}</button>
+                        <div className="flex items-center justify-center">
+                          <button onClick={() => handleSortUrls(columnName)}>{title}</button>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`w-5 h-5 ${(currentSortOrder === 'ASC' && currentSortColumn === columnName) ? `` : 'hidden'}`}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5V4.5m0 0l-6 6m6-6l6 6" />
+                          </svg>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`w-5 h-5 ${(currentSortOrder === 'DESC' && currentSortColumn === columnName) ? `` : 'hidden'}`}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m0 0l6-6m-6 6l-6-6" />
+                          </svg>
+                        </div>
                       </th>
                     ))}
                   </tr>
