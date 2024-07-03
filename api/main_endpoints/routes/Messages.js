@@ -24,8 +24,14 @@ router.post('/send', async (req, res) => {
 
   let apiKeyFound = false;
 
-  if(!apiKey || !message || !id){
-    res.sendStatus(FORBIDDEN);
+  const required = [
+    {value: apiKey, title: 'API Key', },
+    {value: message, title: 'Message', },
+    {value: id, title: 'Room ID', },
+  ];
+  const missingValue = required.find(({value}) => !value);
+  if (missingValue){
+    res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
 
