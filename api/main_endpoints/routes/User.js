@@ -174,7 +174,7 @@ router.post('/users', async function(req, res) {
     return res.sendStatus(FORBIDDEN)
   }
   const token = authorization.split(' ')[1] //get token from header
-  console.log("can you see me?")
+  console.log("can you see")
   if (!checkIfTokenSent(token)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(token)) {
