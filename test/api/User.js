@@ -118,11 +118,11 @@ describe('User', () => {
 
     it('Should return statusCode 401 if an invalid ' +
       'token was passed in', async () => {
-      const user = {
-        token: 'Invalid token'
+      const headers = {
+        Authorization: 'Bearer InvalidToken'
       };
       const result = await test.sendPostRequest(
-        '/api/User/users', user);
+        '/api/User/users', {}, headers);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -131,9 +131,12 @@ describe('User', () => {
       const form = {
         token: token
       };
+      const headers = {
+        Authorization: `Bearer ${token}`
+      };
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(
-        token, '/api/User/users', form);
+        {}, '/api/User/users', headers);
       id = result.body.items[0]._id;
       expect(result).to.have.status(OK);
     });

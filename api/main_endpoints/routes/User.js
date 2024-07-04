@@ -169,10 +169,12 @@ router.post('/search', function(req, res) {
 
 // Search for all members
 router.post('/users', async function(req, res) {
-  const authorization = req.headers.authorization
+  const authorization = req.headers['authorization']
+  if(!authorization) {
+    return res.sendStatus(FORBIDDEN)
+  }
   const token = authorization.split(' ')[1] //get token from header
-  
-
+  console.log("can you see me?")
   if (!checkIfTokenSent(token)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(token)) {
