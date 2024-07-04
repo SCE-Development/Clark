@@ -520,22 +520,13 @@ router.post('/countMembers', async (req, res) => {
   const currentYear = new Date().getFullYear();
   const today = new Date();
 
-  let beginningOfSemester, endOfThisSemester, endOfNextSemester;
+  let beginningOfSemester = new Date(currentYear, 5, 1);
+  let endOfThisSemester = new Date(currentYear + 1, 0, 1);
+  let endOfNextSemester = new Date(currentYear + 1, 5, 1);
 
   if (today < new Date(currentYear, 5, 1)) {
     beginningOfSemester = new Date(currentYear, 0, 1); 
-    endOfThisSemester = new Date(currentYear + 1, 0, 1); 
-    endOfNextSemester = new Date(currentYear + 1, 0, 1);
-  } else {
-    beginningOfSemester = new Date(currentYear, 5, 1); 
-    endOfThisSemester = new Date(currentYear + 1, 0, 1); 
-    endOfNextSemester = new Date(currentYear + 1, 5, 1);
-  }
-
-  console.log("Today:", today);
-  console.log("Beginning of Semester:", beginningOfSemester);
-  console.log("End of This Semester:", endOfThisSemester);
-  console.log("End of Next Semester:", endOfNextSemester);
+  } 
 
   const totalNewMembersThisYear = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: new Date(currentYear, 0, 1), $lte: today } });
   const currentActiveMembers = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, membershipValidUntil: { $gte: today } });
