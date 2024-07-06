@@ -6,7 +6,7 @@ const {
   checkIfTokenSent,
 } = require('../util/token-functions.js');
 const {
-  OK,
+  OK, 
   UNAUTHORIZED,
   FORBIDDEN,
   SERVER_ERROR,
