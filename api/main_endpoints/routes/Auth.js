@@ -25,6 +25,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const { membershipStateToString } = require('../../../src/Enums');
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
@@ -84,14 +85,16 @@ router.post('/sendPasswordReset', async (req, res) => {
     if (!result) {
       return res.sendStatus(OK);
     }
-    if (result.accessLevel === membershipState.PENDING) {
+    if (
+      [
+        membershipState.PENDING,
+        membershipState.BANNED,
+      ].includes(result.accessLevel)
+    ) {
       return res.status(UNAUTHORIZED).send({
-        message: 'Email has not been verified.'
-      });
-    }
-    if (result.accessLevel === membershipState.BANNED) {
-      return res.status(UNAUTHORIZED).send({
-        message: 'User is banned.'
+        message: 'Cannot reset password, account is in ' +
+        membershipStateToString(result.accessLevel) +
+        ' state.'
       });
     }
 
