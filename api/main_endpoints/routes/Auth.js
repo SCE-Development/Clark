@@ -84,6 +84,16 @@ router.post('/sendPasswordReset', async (req, res) => {
     if (!result) {
       return res.sendStatus(OK);
     }
+    if (result.accessLevel === membershipState.PENDING) {
+      return res.status(UNAUTHORIZED).send({
+        message: 'Email has not been verified.'
+      });
+    }
+    if (result.accessLevel === membershipState.BANNED) {
+      return res.status(UNAUTHORIZED).send({
+        message: 'User is banned.'
+      });
+    }
 
     const buffer = crypto.randomBytes(12);
     let id = buffer.toString('base64');
@@ -99,8 +109,8 @@ router.post('/sendPasswordReset', async (req, res) => {
     } catch (error) {
       logger.error('unable to save password reset token:', error);
     }
+    res.sendStatus(OK);
   });
-  res.sendStatus(OK);
 });
 
 // User Login
