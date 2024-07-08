@@ -73,13 +73,12 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { copies, sides, pageRanges } = req.body;
+  const { copies, sides } = req.body;
   const file = req.file;
   const data = new FormData();
   data.append('file', fs.createReadStream(file.path), { filename: file.originalname });
   data.append('copies', copies);
   data.append('sides', sides);
-  data.append('pageRanges', pageRanges);
   axios.post(PRINTER_URL + '/print',
     data,
     {

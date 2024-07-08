@@ -29,6 +29,7 @@ export default function Printing(props) {
   const [files, setFiles] = useState(null);
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [PdfFile, setPdfFile] = useState(null);
 
   async function checkPrinterHealth() {
     setLoading(true);
@@ -74,10 +75,11 @@ export default function Printing(props) {
       });
       // convert pdf to blob url (allows display of larger pdfs)
       const pdfBytes = await display.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const objectUrl = URL.createObjectURL(blob);
+      const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
+      const objectUrl = URL.createObjectURL(file);
       setNumberOfPagesInPdfPreview(display.getPages().length);
       setPreviewDisplay(objectUrl);
+      setPdfFile(file);
     } catch (e) {
       // the error looks like Input document to `PDFDocument.load` is encrypted
       if (e.message.includes('is encrypted')) {
@@ -136,17 +138,9 @@ export default function Printing(props) {
   async function handlePrinting() {
     // send print request with files and configuratiosn in formData
     const data = new FormData();
-    data.append('file', files);
+    data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    if (!pageRanges) {
-      const pdfBytes = await files.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(pdfBytes);
-      const totalPages = pdfDoc.getPageCount();
-      data.append('pageRanges', `1-${totalPages}`);
-    } else {
-      data.append('pageRanges', pageRanges);
-    }
     data.append('token', props.user.token);
 
     let status = await printPage(data);
