@@ -20,7 +20,10 @@ export async function sendMessage(id, apiKey, message) {
 }
 
 export async function connectToRoom(room, apiKey, onMessage, onError) {
-  const eventSource = new EventSource(`${GENERAL_API_URL}/messages/listen?id=${encodeURIComponent(room)}&apiKey=${encodeURIComponent(apiKey)}`);
+  const url = new URL(`${GENERAL_API_URL}/messages/listen`);
+  url.searchParams.append('id', room);
+  url.searchParams.append('apiKey', apiKey);
+  const eventSource = new EventSource(url.href);
 
   eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
