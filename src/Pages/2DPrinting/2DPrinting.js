@@ -5,7 +5,6 @@ import {
   printPage,
   getPagesPrinted,
 } from '../../APIFunctions/2DPrinting';
-import { editUser } from '../../APIFunctions/User';
 
 import { PDFDocument, EncryptedPDFError } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
@@ -147,14 +146,11 @@ export default function Printing(props) {
       // pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
       sides,
       copies,
+      pagesPrinted,
+      pagesToBeUsedInPrintRequest,
     };
-    let status = await printPage(data, props.user.token);
+    let status = await printPage(data, props.user.email, props.user.token);
     if (!status.error) {
-      // this should not be done in the frontend and instead be part of the printing api
-      editUser(
-        { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        props.user.token,
-      );
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
     } else {

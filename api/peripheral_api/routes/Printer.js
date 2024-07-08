@@ -10,11 +10,12 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  BAD_REQUEST,
 } = require('../../util/constants').STATUS_CODES;
 const {
   PRINTING = {}
 } = require('../../config/config.json');
-
+const User = require('../../main_endpoints/models/User')
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
   || 'http://localhost:14000';
@@ -55,7 +56,13 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { raw, copies, pageRanges, sides } = req.body;
+  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest } = req.body;
+
+  if (pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
+    logger.warn('Print request exceeded weekly limit');
+    return res.sendStatus(BAD_REQUEST);
+  }
+
   axios
     .post(PRINTER_URL + '/print', {
       raw,
@@ -64,6 +71,11 @@ router.post('/sendPrintRequest', async (req, res) => {
       sides,
     })
     .then(() => {
+      User.findOne({ email: req.body.email })
+        .then((user) => {
+          user.pagesPrinted += pagesToBeUsedInPrintRequest;
+          user.save();
+        });
       res.sendStatus(OK);
     }).catch((err) => {
       logger.error('/sendPrintRequest had an error: ', err);

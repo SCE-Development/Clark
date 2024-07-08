@@ -79,7 +79,7 @@ export function parseRange(pages, maxPages) {
 export async function printPage(data, token) {
   let status = new ApiResponse();
   await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest',
-    {...data, token})
+    {...data, email, token})
     .then(response => {
       status.responseData = response.data.message;
     })
