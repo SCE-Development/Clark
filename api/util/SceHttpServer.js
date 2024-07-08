@@ -7,6 +7,7 @@ mongoose.Promise = require('bluebird');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
+const { router: metricsRouter } = require('../main_endpoints/util/metrics');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -47,6 +48,8 @@ class SceHttpServer {
         extended: true,
       })
     );
+
+	this.app.use(metricsRouter);
   }
 
   /**

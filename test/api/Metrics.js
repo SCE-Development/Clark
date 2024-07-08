@@ -32,15 +32,15 @@ describe('Metrics', () => {
 		tools.terminateServer(done);
 	});
 
-	describe('GET /api/Metrics', () => {
+	describe('GET /metrics', () => {
 		it('should return the metrics for the Prometheus server', async () => {
-			const res = await test.sendGetRequest('/api/Metrics');
+			const res = await test.sendGetRequest('/metrics');
 			expect(res).to.have.status(OK);
 			expect(res).to.be.text;
 		});
 
 		it('should consist of the string # HELP and # TYPE', async () => {
-			const res = await test.sendGetRequest('/api/Metrics');
+			const res = await test.sendGetRequest('/metrics');
 			expect (res.text).to.have.string('# HELP');
 			expect (res.text).to.have.string('# TYPE');
 		});
