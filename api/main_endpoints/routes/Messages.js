@@ -27,9 +27,9 @@ router.post('/send', async (req, res) => {
   const {apiKey, message, id} = req.body;
 
   const required = [
-    {value: id, title: 'Room ID', },
     {value: apiKey, title: 'API Key', },
     {value: message, title: 'Message', },
+    {value: id, title: 'Room ID', },
   ];
 
   const missingValue = required.find(({value}) => !value);
@@ -80,11 +80,14 @@ router.get('/listen', async (req, res) => {
         res.sendStatus(SERVER_ERROR);
         return;
       }
-      if (!result || (numberOfConnections[apiKey] && numberOfConnections[apiKey] >= MAX_AMOUNT_OF_CONNECTIONS)) { // no api key found or 3 connections per api key; unauthorized
+      
+      if (!result || (numberOfConnections[result._id] && numberOfConnections[result._id] >= MAX_AMOUNT_OF_CONNECTIONS)) { // no api key found or 3 connections per api key; unauthorized
         return res.sendStatus(UNAUTHORIZED);
       }
 
-      numberOfConnections[apiKey] = numberOfConnections[apiKey] ? numberOfConnections[apiKey] + 1 : 1;
+      const { _id } = result;
+      
+      numberOfConnections[_id] = numberOfConnections[_id] ? numberOfConnections[_id] + 1 : 1;
 
       const headers = {
         'Content-Type': 'text/event-stream',
@@ -107,7 +110,7 @@ router.get('/listen', async (req, res) => {
         if(clients[id].length === 0){
           delete clients[id];
         }
-        numberOfConnections[apiKey] -= 1;
+        numberOfConnections[_id] -= 1;
       });
     });
   } catch (error) {
