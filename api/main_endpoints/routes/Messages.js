@@ -61,7 +61,7 @@ router.post('/send', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  const {token, apiKey, id} = req.query;  
+  const {token, apiKey, id} = req.query;
 
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
