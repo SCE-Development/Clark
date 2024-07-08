@@ -26,6 +26,7 @@ let PRINTER_URL = process.env.PRINTER_URL
 
 const router = express.Router();
 
+// stores file inside temp folder
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, path.join(__dirname, '../../temp'));
@@ -74,19 +75,20 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
 
   const { copies, sides, pageRanges } = req.body;
   const file = req.file;
-  const form = new FormData();
-  form.append('file', fs.createReadStream(file.path), { filename: file.originalname });
-  form.append('copies', copies);
-  form.append('sides', sides);
-  form.append('pageRanges', pageRanges);
+  const data = new FormData();
+  data.append('file', fs.createReadStream(file.path), { filename: file.originalname });
+  data.append('copies', copies);
+  data.append('sides', sides);
+  data.append('pageRanges', pageRanges);
   axios.post(PRINTER_URL + '/print',
-    form,
+    data,
     {
       headers: {
-        ...form.getHeaders(),
+        ...data.getHeaders(),
       }
     })
     .then(() => {
+      // delete file from temp folder after printing
       fs.unlink(file.path, (err) => {
         if (err) {
           logger.error('Error removing file:', err);
