@@ -21,28 +21,28 @@ chai.use(chaiHttp);
 
 describe('Metrics', () => {
 	  before(done => {
-		app = tools.initializeServer([
-		__dirname + '/../../api/main_endpoints/routes/Metrics.js',
-		]);
-		test = new SceApiTester(app);
-		done();
+    app = tools.initializeServer([
+      __dirname + '/../../api/main_endpoints/routes/Metrics.js',
+    ]);
+    test = new SceApiTester(app);
+    done();
   	});
 
-	after(done => {
-		tools.terminateServer(done);
-	});
+  after(done => {
+    tools.terminateServer(done);
+  });
 
-	describe('GET /metrics', () => {
-		it('should return the metrics for the Prometheus server', async () => {
-			const res = await test.sendGetRequest('/metrics');
-			expect(res).to.have.status(OK);
-			expect(res).to.be.text;
-		});
+  describe('GET /metrics', () => {
+    it('should return the metrics for the Prometheus server', async () => {
+      const res = await test.sendGetRequest('/metrics');
+      expect(res).to.have.status(OK);
+      expect(res).to.be.text;
+    });
 
-		it('should consist of the string # HELP and # TYPE', async () => {
-			const res = await test.sendGetRequest('/metrics');
-			expect (res.text).to.have.string('# HELP');
-			expect (res.text).to.have.string('# TYPE');
-		});
-	});
-})
+    it('should consist of the string # HELP and # TYPE', async () => {
+      const res = await test.sendGetRequest('/metrics');
+      expect (res.text).to.have.string('# HELP');
+      expect (res.text).to.have.string('# TYPE');
+    });
+  });
+});

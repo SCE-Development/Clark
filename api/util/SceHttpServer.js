@@ -49,7 +49,7 @@ class SceHttpServer {
       })
     );
 
-	this.app.use(metricsRouter);
+    this.app.use(metricsRouter);
   }
 
   /**

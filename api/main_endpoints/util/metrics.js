@@ -16,12 +16,12 @@ client.collectDefaultMetrics({ register });
  * @Returns the metrics for the Prometheus server
  */
 router.get('/metrics', async (_, res) => {
-	res.setHeader('Content-Type', register.contentType);
-	res.end(await register.metrics());
-})
+  res.setHeader('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
 
 module.exports = {
-	register,
-	client,
-	router,
-}
+  register,
+  client,
+  router,
+};
