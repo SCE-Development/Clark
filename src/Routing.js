@@ -28,7 +28,7 @@ import URLShortenerPage from './Pages/URLShortener/URLShortener';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
-
+import Messaging from './Pages/Messaging/Messaging.js';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -125,6 +125,12 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true,
       redirect: '/',
     },
+    {
+      Component: Messaging,
+      path: '/messaging',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login'
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

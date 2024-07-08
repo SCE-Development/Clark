@@ -27,9 +27,9 @@ router.post('/send', async (req, res) => {
   const {apiKey, message, id} = req.body;
 
   const required = [
+    {value: id, title: 'Room ID', },
     {value: apiKey, title: 'API Key', },
     {value: message, title: 'Message', },
-    {value: id, title: 'Room ID', },
   ];
 
   const missingValue = required.find(({value}) => !value);
