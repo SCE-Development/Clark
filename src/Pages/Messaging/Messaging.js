@@ -113,26 +113,12 @@ function MessagingForm() {
 function Feed(props) {
   const { token } = props;
   const [messages, setMessages] = useState([]);
-  const [apiKey, setApiKey] = useState('');
   const [error, setError] = useState('');
   const roomId = 'general';
   let eventSource;
 
   useEffect(() => {
-    const fetchApiKey = async () => {
-      try {
-        const apiKey = await getApiKey(token);
-        setApiKey(apiKey.responseData.apiKey);
-      } catch (error) {
-        setError('Failed to fetch API key');
-      }
-    };
-
-    fetchApiKey();
-  }, [token]);
-
-  useEffect(() => {
-    if (!apiKey) return;
+    if (!token) return;
 
     const handleNewMessage = (data) => {
       setMessages(prevMessages => [...prevMessages, `${data}`]);
@@ -142,14 +128,14 @@ function Feed(props) {
       setError('Error connecting to SSE');
     };
 
-    eventSource = connectToRoom(roomId, apiKey, handleNewMessage, handleError);
+    eventSource = connectToRoom(roomId, token, handleNewMessage, handleError);
 
     return () => {
       if (eventSource) {
         eventSource.close();
       }
     };
-  }, [roomId, apiKey]);
+  }, [roomId, token]);
 
   return (
     <div className="w-full flex flex-col items-center">

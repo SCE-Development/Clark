@@ -19,10 +19,10 @@ export async function sendMessage(id, apiKey, message) {
   return status;
 }
 
-export async function connectToRoom(room, apiKey, onMessage, onError) {
+export async function connectToRoom(room, token, onMessage, onError) {
   const url = new URL(`${GENERAL_API_URL}/messages/listen`);
   url.searchParams.append('id', room);
-  url.searchParams.append('apiKey', apiKey);
+  url.searchParams.append('token', token);
   const eventSource = new EventSource(url.href);
 
   eventSource.onmessage = (event) => {
