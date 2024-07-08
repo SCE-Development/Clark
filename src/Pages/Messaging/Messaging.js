@@ -154,7 +154,7 @@ function Feed(props) {
   return (
     <div className="w-full flex flex-col items-center">
       {error && (
-        <div className="w-1/2 p-3 my-2 text-red-700 bg-red-100 border border-red-300 rounded">
+        <div className="w-1/2 p-3 my-2 flex items-center justify-center text-red-700 bg-red-100 border border-red-300 rounded">
           {error}
         </div>
       )}
