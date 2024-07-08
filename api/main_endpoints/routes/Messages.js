@@ -9,6 +9,8 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
+const { verifyToken } = require('../../util/token-verification.js');
+const { decodeToken } = require('../util/token-functions.js');
 
 
 router.use(bodyParser.json());
@@ -59,10 +61,10 @@ router.post('/send', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  const {apiKey, id} = req.query;
+  const {token, apiKey, id} = req.query;  
 
   const required = [
-    {value: apiKey, title: 'API Key', },
+    {value: token || apiKey, title: 'Token or API Key', },
     {value: id, title: 'Room ID', }
   ];
 
@@ -73,8 +75,16 @@ router.get('/listen', async (req, res) => {
     return;
   }
 
+  let filterQuery = {}; // filter to find user in the database
+  if (token) {
+    userObj = await decodeToken(req);
+    filterQuery._id = userObj._id;
+  } else {
+    filterQuery.apiKey = apiKey;
+  }
+
   try {
-    User.findOne({apiKey}, (error, result) => {
+    User.findOne(filterQuery, (error, result) => {
       if (error) {
         logger.error('/listen received an invalid API key: ', error);
         res.sendStatus(SERVER_ERROR);
