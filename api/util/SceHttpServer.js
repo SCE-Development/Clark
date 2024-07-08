@@ -7,17 +7,6 @@ mongoose.Promise = require('bluebird');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
-const promBundle = require('express-prom-bundle');
-const metricsMiddleware = promBundle({
-	includeMethod: true,
-	includePath: true,
-	includeStatusCode: true,
-	includeUp: true,
-	customLabels: { project_name: 'Clark' },
-	promClient: {
-		collectDefaultMetrics: {},
-	},
-});
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -58,7 +47,6 @@ class SceHttpServer {
         extended: true,
       })
     );
-	this.app.use(metricsMiddleware);
   }
 
   /**
