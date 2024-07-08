@@ -114,6 +114,7 @@ function Feed(props) {
   const { token } = props;
   const [messages, setMessages] = useState([]);
   const [apiKey, setApiKey] = useState('');
+  const [error, setError] = useState('');
   const roomId = 'general';
   let eventSource;
 
@@ -123,7 +124,7 @@ function Feed(props) {
         const apiKey = await getApiKey(token);
         setApiKey(apiKey.responseData.apiKey);
       } catch (error) {
-        console.error('Failed to fetch API key:', error);
+        setError('Failed to fetch API key');
       }
     };
 
@@ -138,7 +139,7 @@ function Feed(props) {
     };
 
     const handleError = (event) => {
-      console.error('Error connecting to SSE:', event);
+      setError('Error connecting to SSE');
     };
 
     eventSource = connectToRoom(roomId, apiKey, handleNewMessage, handleError);
@@ -152,6 +153,11 @@ function Feed(props) {
 
   return (
     <div className="w-full flex flex-col items-center">
+      {error && (
+        <div className="w-1/2 p-3 my-2 text-red-700 bg-red-100 border border-red-300 rounded">
+          {error}
+        </div>
+      )}
       <div className="border border-gray-300 p-3 h-52 overflow-y-auto bg-gray-100 w-1/2 rounded-lg mt-3">
         {messages.map((message, index) => (
           <div key={index} className="p-2 mb-1 border-b border-gray-200 text-gray-700">{message}</div>
