@@ -15,7 +15,6 @@ export async function sendMessage(id, apiKey, message) {
     .catch(err => {
       status.error = true;
       status.responseData = err;
-      console.log(status)
     });
   return status;
 }

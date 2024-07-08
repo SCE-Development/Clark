@@ -10,7 +10,7 @@ export default function Messaging(props) {
       <h1 className="text-3xl font-bold text-gray-200 mt-8">Feed</h1>
       <Feed token={props.user.token}/>
     </div>
-  )
+  );
 }
 
 function MessagingForm() {
@@ -114,7 +114,7 @@ function Feed(props) {
   const { token } = props;
   const [messages, setMessages] = useState([]);
   const [apiKey, setApiKey] = useState('');
-  const roomId = 'general'; 
+  const roomId = 'general';
   let eventSource;
 
   useEffect(() => {
@@ -138,7 +138,7 @@ function Feed(props) {
     };
 
     const handleError = (event) => {
-      console.error("Error connecting to SSE:", event);
+      console.error('Error connecting to SSE:', event);
     };
 
     eventSource = connectToRoom(roomId, apiKey, handleNewMessage, handleError);
