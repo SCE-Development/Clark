@@ -13,9 +13,11 @@ const logger = require('../../util/logger');
 const { googleApiKeys } = require('../../config/config.json');
 const { USER, ENABLED } = googleApiKeys;
 
+const { flipCount } = require('../../util/metrics.js');
 // Routing post /sendVerificationEmail calls the sendEmail function
 // and sends the verification email with the verification email template
 router.post('/sendVerificationEmail', async (req, res) => {
+  flipCount.inc();
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }

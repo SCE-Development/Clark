@@ -8,6 +8,7 @@ mongoose.Promise = require('bluebird');
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
 const client = require('prom-client');
+const {flipCount} = require('./metrics');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -51,8 +52,9 @@ class SceHttpServer {
 
     // metrics for prometheus
     let register = new client.Registry();
+    register.registerMetric(flipCount);
     register.setDefaultLabels({
-	  app: 'sce-core',
+      app: prefix,
     });
     client.collectDefaultMetrics({ register });
     this.app.get('/metrics', async (_, res) => {

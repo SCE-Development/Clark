@@ -37,9 +37,12 @@ const logger = require('../../util/logger');
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
 
+const { flipCount } = require('../../util/metrics.js');
+
 const ROWS_PER_PAGE = 20;
 
 router.get('/countAllUsers', async (req, res) => {
+  flipCount.inc();
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, (
