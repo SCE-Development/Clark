@@ -12,14 +12,14 @@ require('./passport')(passport);
  * @returns {boolean} if the token exists in the request body
  */
 function checkIfTokenSent(request) {
-  return request.body.token !== undefined;
+  return request.headers.authorization !== undefined;
 }
 
 /**
 * @param {object} request the HTTP request from the client
 */
 function decodeToken(request){
-  const token = request.body.token;
+  const token = request.headers.authorization;
   const userToken = token.replace(/^JWT\s/, '');
   let decodedResponse = {};
   jwt.verify(userToken, secretKey, function(error, decoded) {

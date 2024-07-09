@@ -84,7 +84,6 @@ export async function checkIfUserIsSignedIn() {
   const token = window.localStorage
     ? window.localStorage.getItem('jwtToken')
     : '';
-
   // If there is not token in local storage,
   // we cant do anything and return
   if (!token) {
@@ -93,7 +92,11 @@ export async function checkIfUserIsSignedIn() {
   }
 
   await axios
-    .post(GENERAL_API_URL + '/Auth/verify', { token })
+    .post(GENERAL_API_URL + '/Auth/verify', {}, {
+      headers: {
+        Authorization: `${token}`
+      }
+    })
     .then(res => {
       status.responseData = res.data;
       status.token = token;
