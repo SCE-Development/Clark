@@ -19,6 +19,8 @@ const User = require('../../main_endpoints/models/User')
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
   || 'http://localhost:14000';
+let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
+  || 'http://localhost:8080/api';
 
 const router = express.Router();
 
@@ -56,31 +58,32 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest } = req.body;
+  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest, _id, token } = req.body;
 
   if (pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
     logger.warn('Print request exceeded weekly limit');
     return res.sendStatus(BAD_REQUEST);
   }
 
-  axios
-    .post(PRINTER_URL + '/print', {
+  try {
+    await axios.post(PRINTER_URL + '/print', {
       raw,
       copies,
       pageRanges,
       sides,
-    })
-    .then(() => {
-      User.findOne({ email: req.body.email })
-        .then((user) => {
-          user.pagesPrinted += pagesToBeUsedInPrintRequest;
-          user.save();
-        });
-      res.sendStatus(OK);
-    }).catch((err) => {
+    });
+
+    await axios.post(GENERAL_API_URL + '/User/edit', {
+      _id: _id, 
+      pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest,
+      token: token,
+    });
+
+    res.sendStatus(OK);
+  } catch(err) {
       logger.error('/sendPrintRequest had an error: ', err);
       res.sendStatus(SERVER_ERROR);
-    });
+    };
 });
 
 module.exports = router;
