@@ -8,7 +8,7 @@ mongoose.Promise = require('bluebird');
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
 const client = require('prom-client');
-const {flipCount} = require('./metrics');
+const onFinished = require('on-finished');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -33,6 +33,8 @@ class SceHttpServer {
     this.app = express();
     this.app.locals.title = 'Core v4';
     this.app.locals.email = 'test@test.com';
+    // prometheus hit counters that tracks hit count and status code for each endpoint
+    this.hitCounters = {};
 
     this.app.use(cors());
     this.app.use(
@@ -51,16 +53,34 @@ class SceHttpServer {
     );
 
     // metrics for prometheus
-    let register = new client.Registry();
-    register.registerMetric(flipCount);
-    register.setDefaultLabels({
+    this.register = new client.Registry();
+    this.register.setDefaultLabels({
       app: prefix,
     });
-    client.collectDefaultMetrics({ register });
+    client.collectDefaultMetrics({ register: this.register });
     this.app.get('/metrics', async (_, res) => {
-      res.setHeader('Content-Type', register.contentType);
-      res.end(await register.metrics());
+      res.setHeader('Content-Type', this.register.contentType);
+      res.end(await this.register.metrics());
     });
+  }
+
+  // generate counter name for each endpoint, eg. User::addUser
+  getCounterName(router, path) {
+    return `${router}::${path.replace(/\//g, '')}`;
+  }
+
+  // creates a hit counter for each endpoint
+  createCounter(router, path) {
+    const counterName = this.getCounterName(router, path);
+    if (this.hitCounters[counterName]) {
+      return;
+    }
+    this.hitCounters[counterName] = new client.Counter({
+	  name: counterName,
+	  help: `Number of hits to ${counterName}`,
+	  labelNames: ['statusCode'],
+    });
+    this.register.registerMetric(this.hitCounters[counterName]);
   }
 
   /**
@@ -72,6 +92,26 @@ class SceHttpServer {
     requireList.map((route) => {
       try {
         this.app.use(this.prefix + route.endpointName, require(route.filePath));
+        const router = require(route.filePath);
+        router.stack.forEach((layer) => {
+          if (!layer.route) {
+            return;
+          }
+          const methods = Object.keys(layer.route.methods);
+          methods.forEach((_) => {
+            const handler = layer.route.stack[0].handle;
+            layer.route.stack[0].handle = async (req, res, next) => {
+              this.createCounter(route.endpointName, layer.route.path);
+              const counterName = this.getCounterName(route.endpointName, layer.route.path);
+              onFinished(res, (err, res) => {
+                const statusCode = res.statusCode;
+                this.hitCounters[counterName].inc({ statusCode });
+              });
+              handler(req, res, next);
+            };
+          });
+        });
+
       } catch (e) {
         logger.error(
           `error importing ${route.filePath} to handle: ${route.endpointName}:`,
