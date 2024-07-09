@@ -64,7 +64,7 @@ class SceHttpServer {
     });
   }
 
-  // generate counter name for each endpoint, eg. User::addUser
+  // generate counter name for each endpoint, eg. User::countAllUsers
   getCounterName(router, path) {
     return `${router}::${path.replace(/\//g, '')}`;
   }
