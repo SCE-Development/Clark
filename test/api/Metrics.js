@@ -7,14 +7,12 @@ const chaiHttp = require('chai-http');
 
 const { OK } = require('../../api/util/constants').STATUS_CODES;
 
-const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
 const expect = chai.expect;
 const tools = require('../util/tools/tools.js');
 
 let app = null;
 let test = null;
-let sandbox = sinon.createSandbox();
 
 chai.should();
 chai.use(chaiHttp);
@@ -22,7 +20,6 @@ chai.use(chaiHttp);
 describe('Metrics', () => {
 	  before(done => {
     app = tools.initializeServer([
-      __dirname + '/../../api/main_endpoints/routes/Metrics.js',
     ]);
     test = new SceApiTester(app);
     done();

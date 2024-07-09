@@ -7,7 +7,7 @@ mongoose.Promise = require('bluebird');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
-const { router: metricsRouter } = require('../main_endpoints/util/metrics');
+const client = require('prom-client');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -49,7 +49,16 @@ class SceHttpServer {
       })
     );
 
-    this.app.use(metricsRouter);
+    // metrics for prometheus
+    let register = new client.Registry();
+    register.setDefaultLabels({
+	  app: 'sce-core',
+    });
+    client.collectDefaultMetrics({ register });
+    this.app.get('/metrics', async (_, res) => {
+      res.setHeader('Content-Type', register.contentType);
+      res.end(await register.metrics());
+    });
   }
 
   /**
