@@ -37,7 +37,6 @@ const logger = require('../../util/logger');
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
 
-
 const ROWS_PER_PAGE = 20;
 
 router.get('/countAllUsers', async (req, res) => {
