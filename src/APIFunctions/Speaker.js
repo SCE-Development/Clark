@@ -5,7 +5,7 @@ import { BASE_API_URL } from '../Enums';
 
 export async function queued(token) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Speaker/queued', BASE_API_URL);
+  const url = new URL('/api/Speaker/queued', BASE_API_URL);
   await axios
     .get(url.href, { params: { token } })
     .then(res => {
@@ -20,7 +20,7 @@ export async function queued(token) {
 
 export async function addUrl(urlToAdd, token) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Speaker/stream', BASE_API_URL);
+  const url = new URL('/api/Speaker/stream', BASE_API_URL);
   await axios
     .post(url.href, {token, url: urlToAdd})
     .then(res => {
@@ -35,7 +35,7 @@ export async function addUrl(urlToAdd, token) {
 
 export async function skip(token) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Speaker/skip');
+  const url = new URL('/api/Speaker/skip');
   await axios
     .post(url.href, {token})
     .then(res => {
@@ -50,7 +50,7 @@ export async function skip(token) {
 
 export async function pause(token) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Speaker/pause');
+  const url = new URL('/api/Speaker/pause');
   await axios
     .post(url.href, {token})
     .then(res => {
@@ -65,7 +65,7 @@ export async function pause(token) {
 
 export async function resume(token) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Speaker/resume');
+  const url = new URL('/api/Speaker/resume');
   await axios
     .post(url.href, {token})
     .then(res => {

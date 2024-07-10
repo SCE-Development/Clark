@@ -8,7 +8,7 @@ export async function getAllUrls({
   token, page, search, sortColumn, sortOrder
 }) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Cleezy/list', BASE_API_URL);
+  const url = new URL('/api/Cleezy/list', BASE_API_URL);
   await axios
     .get(url.href, {
       params: {
@@ -33,7 +33,7 @@ export async function createUrl(url, alias = null, token) {
   let status = new ApiResponse();
   const urlToAdd = { url, alias };
   try {
-    const url = new URL('/peripheralapi/Cleezy/createUrl', BASE_API_URL);
+    const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const response = await axios
       .post(url.href, { token, ...urlToAdd });
     const data = response.data;
@@ -48,7 +48,7 @@ export async function createUrl(url, alias = null, token) {
 export async function deleteUrl(aliasIn, token) {
   let status = new ApiResponse();
   const alias = { 'alias': aliasIn };
-  const url = new URL('/peripheralapi/Cleezy/createUrl', BASE_API_URL);
+  const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
   await axios
     .post(url.href, { token, ...alias })
     .catch(err => {

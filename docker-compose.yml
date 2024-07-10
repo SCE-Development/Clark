@@ -14,27 +14,6 @@ services:
       dockerfile: ./Dockerfile
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  sce-peripheral-api:
-    container_name: sce-peripheral-api
-    build:
-      context: ./api
-      dockerfile: ./peripheral_api/Dockerfile
-    environment:
-      - MAIN_ENDPOINT_URL=sce-main-endpoints:8080
-      - CLEEZY_URL=http://cleezy-app.sce:8000
-      - PRINTER_URL=http://host.docker.internal:14000
-      - LED_SIGN_URL=http://host.docker.internal:11000
-      - DATABASE_HOST=sce-mongodb
-      - NODE_ENV=production
-      - SPEAKER_URL=http://host.docker.internal:18000
-    restart: 'on-failure'
-    stdin_open: true
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
   sce-cloud-api:
     container_name: sce-cloud-api
     build:
@@ -58,7 +37,10 @@ services:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile
     environment:
-      - PERIPHERAL_API_URL=http://sce-peripheral-api:8081/peripheralapi
+      - CLEEZY_URL=http://cleezy-app.sce:8000
+      - PRINTER_URL=http://host.docker.internal:14000
+      - LED_SIGN_URL=http://host.docker.internal:11000
+      - SPEAKER_URL=http://host.docker.internal:18000
       - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb

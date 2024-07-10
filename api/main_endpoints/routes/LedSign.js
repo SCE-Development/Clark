@@ -6,9 +6,9 @@ const {
   UNAUTHORIZED
 } = require('../../util/constants').STATUS_CODES;
 const {
-  verifyToken,
+  decodeToken,
   checkIfTokenSent
-} = require('../../util/token-verification');
+} = require('../util/token-functions.js');
 const logger = require('../../util/logger');
 const { updateSign, healthCheck, turnOffSign } = require('../util/LedSign.js');
 
@@ -36,7 +36,7 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await verifyToken(req.body.token)) {
+  if (!await decodeToken(req.body.token)) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }

@@ -11,7 +11,7 @@ import { BASE_API_URL } from '../Enums';
  */
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/LedSign/healthCheck', BASE_API_URL);
+  const url = new URL('/api/LedSign/healthCheck', BASE_API_URL);
   await axios
     .get(url.href, { officerName })
     .then(res => {
@@ -33,7 +33,7 @@ export async function healthCheck(officerName) {
  */
 export async function updateSignText(signData, token) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/LedSign/updateSignText', BASE_API_URL);
+  const url = new URL('/api/LedSign/updateSignText', BASE_API_URL);
   await axios
     .post(url.href,
       { token, ...signData })

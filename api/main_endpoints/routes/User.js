@@ -9,7 +9,7 @@ const {
   getMemberExpirationDate,
   hashPassword,
 } = require('../util/userHelpers');
-const { checkDiscordKey } = require('../../util/token-verification');
+const { checkDiscordKey } = require('../../util/token-verification.js');
 const {
   checkIfTokenSent,
   checkIfTokenValid,

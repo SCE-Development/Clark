@@ -21,7 +21,7 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Printer/healthCheck', BASE_API_URL);
+  const url = new URL('/api/Printer/healthCheck', BASE_API_URL);
   await axios.get(url.href)
     .then(res => {
       status.reponseData = res.data;
@@ -76,7 +76,7 @@ export function parseRange(pages, maxPages) {
  */
 export async function printPage(data, token) {
   let status = new ApiResponse();
-  const url = new URL('/peripheralapi/Printer/sendPrintRequest', BASE_API_URL);
+  const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
   await axios.post(url.href,
     {...data, token})
     .then(response => {

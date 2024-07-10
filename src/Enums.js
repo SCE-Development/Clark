@@ -14,12 +14,6 @@ const membershipPlans = {
   YEAR: 2
 };
 
-const itemCategories = {
-  DRINK: 'DRINK',
-  SNACK: 'SNACK',
-  ELECTRONICS: 'ELECTRONICS'
-};
-
 function memberShipPlanToString(key) {
   const plans = require('./Pages/MembershipApplication/GetPlans');
   let correctPlan = '';
@@ -65,12 +59,6 @@ const userFilterType = {
   ALL: 2
 };
 
-const DEFAULT_PICS = {
-  EVENT: 'https://i.gyazo.com/640f22609f95f72a28afa0a130e557a1.png',
-  INVENTORY: 'https://user-images.githubusercontent.com/25803515/9' +
-    '9110346-1ce92000-259f-11eb-97df-7ed5c2284ef3.png'
-};
-
 
 const BASE_API_URL = process.env.REACT_APP_BASE_API_URL || 'http://localhost:8080/';
 
@@ -81,8 +69,6 @@ module.exports = {
   memberShipPlanToString,
   membershipState,
   membershipStateToString,
-  itemCategories,
   userFilterType,
-  DEFAULT_PICS,
   BASE_API_URL,
 };

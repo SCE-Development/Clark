@@ -2,9 +2,9 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 const {
-  verifyToken,
+  decodeToken,
   checkIfTokenSent,
-} = require('../../util/token-verification');
+} = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
@@ -30,7 +30,7 @@ router.get('/list', async (req, res) => {
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.query.token)) {
+  } else if (!await decodeToken(req.query.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
@@ -62,7 +62,7 @@ router.get('/list', async (req, res) => {
 router.post('/createUrl', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.body.token)) {
+  } else if (!await decodeToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { url, alias } = req.body;
@@ -81,7 +81,7 @@ router.post('/createUrl', async (req, res) => {
 router.post('/deleteUrl', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.body.token)) {
+  } else if (!await decodeToken(req.body.token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { alias } = req.body;

@@ -12,33 +12,6 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
-  sce-peripheral-api:
-    container_name: sce-peripheral-api-dev
-    build:
-      context: ./api
-      dockerfile: ./peripheral_api/Dockerfile.dev
-    environment:
-      - MAIN_ENDPOINT_URL=sce-main-endpoints-dev:8080
-      - CLEEZY_URL=http://host.docker.internal:8000
-      - PRINTER_URL=http://host.docker.internal:14000
-      - LED_SIGN_URL=http://host.docker.internal:11000
-      - DATABASE_HOST=sce-mongodb-dev
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
-      - WATCHPACK_POLLING=${WATCHPACK_POLLING}
-    ports:
-      - '8081:8081'
-    restart: 'on-failure'
-    stdin_open: true
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-    volumes:
-      - ./api/config:/app/config
-      - ./api/package.json:/app/package.json
-      - ./api/util:/app/util/
-      - ./api/peripheral_api:/app/peripheral_api
   sce-cloud-api:
     container_name: sce-cloud-api-dev
     image: cloudapi:latest
@@ -71,7 +44,10 @@ services:
       context: ./api
       dockerfile: ./main_endpoints/Dockerfile.dev
     environment:
-      - PERIPHERAL_API_URL=http://sce-peripheral-api-dev:8081/peripheralapi
+      - MAIN_ENDPOINT_URL=sce-main-endpoints-dev:8080
+      - CLEEZY_URL=http://host.docker.internal:8000
+      - PRINTER_URL=http://host.docker.internal:14000
+      - LED_SIGN_URL=http://host.docker.internal:11000
       - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api-dev:8082/cloudapi
       - DATABASE_HOST=sce-mongodb-dev
@@ -99,7 +75,7 @@ services:
       dockerfile: ./docker/Dockerfile.dev
     environment:
       - NODE_ENV=dev
-      - REACT_APP_BASE_URL=http://localhost
+      - REACT_APP_BASE_API_URL=http://localhost
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
