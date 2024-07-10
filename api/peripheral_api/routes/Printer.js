@@ -4,16 +4,16 @@ const logger = require('../../util/logger');
 const {
   verifyToken,
   checkIfTokenSent,
-} = require('../../util/token-verification'); 
-const { 
-  OK, 
-  UNAUTHORIZED, 
-  NOT_FOUND, 
-  SERVER_ERROR, 
+} = require('../../util/token-verification');
+const {
+  OK,
+  UNAUTHORIZED,
+  NOT_FOUND,
+  SERVER_ERROR,
   BAD_REQUEST,
 } = require('../../util/constants').STATUS_CODES;
-const { 
-  PRINTING = {} 
+const {
+  PRINTING = {}
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
