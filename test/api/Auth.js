@@ -309,7 +309,7 @@ describe('Auth', () => {
 
     it('Should return statusCode 401 when a token is invalid',
       async () => {
-        const result = await test.sendPostRequestWithToken(
+        const result = await test.sendPostRequestWithTokenInHeader(
           token, '/api/Auth/verify', {});
         expect(result).to.have.status(UNAUTHORIZED);
       });
@@ -317,7 +317,7 @@ describe('Auth', () => {
     it('Should return statusCode 200 when a ' +
       'token is passed in', async () => {
       setTokenStatus(true, { _id: 'some id' });
-      const result = await test.sendPostRequestWithToken(
+      const result = await test.sendPostRequestWithTokenInHeader(
         token, '/api/Auth/verify');
       expect(result).to.have.status(OK);
     });

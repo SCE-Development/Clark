@@ -14,8 +14,6 @@ const {
   checkIfTokenSent,
   checkIfTokenValid,
   decodeToken,
-  checkIfVerifyTokenSent,
-  decodeVerifyToken
 } = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
 const {
@@ -191,10 +189,11 @@ router.post('/login', function(req, res) {
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
 router.post('/verify', function(req, res) {
-  if (!checkIfVerifyTokenSent(req)) {
+  if (!checkIfTokenSent({ body: { token: req.headers.authorization } })) {
     return res.status(UNAUTHORIZED).json({});
   }
-  const token = decodeVerifyToken(req);
+  const token = decodeToken({ body: { token: req.headers.authorization } });
+  console.log("Token: ", token)
   if (token === null || Object.keys(token).length === 0) {
     res.status(UNAUTHORIZED).json({});
   } else {

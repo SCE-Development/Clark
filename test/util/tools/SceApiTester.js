@@ -29,6 +29,7 @@ class SceApiTester{
         response = res;
       })
       .catch(err =>{
+        console.log("!!!!!", err)
         throw err;
       });
     return response;
@@ -55,6 +56,24 @@ class SceApiTester{
       });
     return response;
   }
+
+  async sendPostRequestWithTokenInHeader(token, endpoint, params = {}) {
+    let response = null;
+    await chai
+      .request(this.app)
+      .post(endpoint)
+      .set('Authorization', `${token}`)
+      .send(params)
+      .then(function(res) {
+        response = res;
+      })
+      .catch(err => {
+        console.log("!!!!", err)
+        throw err;
+      });
+    return response;
+  }
+  
 
   /**
    * Creates a chai GET request to test an API route.

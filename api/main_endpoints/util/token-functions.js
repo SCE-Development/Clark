@@ -29,24 +29,6 @@ function decodeToken(request){
   });
   return decodedResponse;
 }
-function checkIfVerifyTokenSent(request) {
-  return request.headers.authorization !== undefined;
-}
-
-/**
-* @param {object} request the HTTP request from the client
-*/
-function decodeVerifyToken(request){
-  const token = request.headers.authorization;
-  const userToken = token.replace(/^JWT\s/, '');
-  let decodedResponse = {};
-  jwt.verify(userToken, secretKey, function(error, decoded) {
-    if (!error && decoded) {
-      decodedResponse = decoded;
-    }
-  });
-  return decodedResponse;
-}
 
 /**
  * Checks if the request token is valid and returns either a valid response
@@ -67,6 +49,4 @@ module.exports = {
   checkIfTokenSent,
   checkIfTokenValid,
   decodeToken,
-  checkIfVerifyTokenSent,
-  decodeVerifyToken
 };
