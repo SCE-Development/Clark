@@ -48,7 +48,7 @@ class SceHttpServer {
       })
     );
     this.app.get('/metrics', (_, res) => {
-      res.status(200).send('welcome to the dungeon')
+      res.status(200).send('welcome to the dungeon');
     });
   }
 
