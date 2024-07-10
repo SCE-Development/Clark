@@ -99,9 +99,7 @@ services:
       dockerfile: ./docker/Dockerfile.dev
     environment:
       - NODE_ENV=dev
-      - REACT_APP_GENERAL_API_URL=http://localhost/api
-      - REACT_APP_PERIPHERAL_API_URL=http://localhost/peripheralapi
-      - REACT_APP_MAILER_API_URL=http://localhost/cloudapi
+      - REACT_APP_BASE_URL=http://localhost
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}

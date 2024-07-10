@@ -71,6 +71,9 @@ const DEFAULT_PICS = {
     '9110346-1ce92000-259f-11eb-97df-7ed5c2284ef3.png'
 };
 
+
+const BASE_API_URL = process.env.REACT_APP_BASE_API_URL || 'http://localhost:8080/';
+
 module.exports = {
   eventModalState,
   memberApplicationState,
@@ -80,5 +83,6 @@ module.exports = {
   membershipStateToString,
   itemCategories,
   userFilterType,
-  DEFAULT_PICS
+  DEFAULT_PICS,
+  BASE_API_URL,
 };
