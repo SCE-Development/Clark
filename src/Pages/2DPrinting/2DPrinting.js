@@ -172,6 +172,12 @@ export default function Printing(props) {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      let a = new FileReader();
+      a.onload = function(event) {
+        setDataUrl(event.target.result);
+        setPrintStatus(null);
+      };
+      a.readAsDataURL(e.dataTransfer.files[0]);
       setFiles(e.dataTransfer.files[0]);
     }
   }
