@@ -25,7 +25,6 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const { membershipStateToString } = require('../../../src/Enums');
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
@@ -92,9 +91,7 @@ router.post('/sendPasswordReset', async (req, res) => {
       ].includes(result.accessLevel)
     ) {
       return res.status(UNAUTHORIZED).send({
-        message: 'Cannot reset password, account is in ' +
-        membershipStateToString(result.accessLevel) +
-        ' state.'
+        message: 'Cannot reset password, account is in a bad state!'
       });
     }
 
