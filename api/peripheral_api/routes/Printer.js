@@ -15,7 +15,6 @@ const {
 const {
   PRINTING = {}
 } = require('../../config/config.json');
-const User = require('../../main_endpoints/models/User')
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
   || 'http://localhost:14000';
