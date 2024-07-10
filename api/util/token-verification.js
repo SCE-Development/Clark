@@ -12,12 +12,12 @@ const MAIN_ENDPOINT_URL = process.env.MAIN_ENDPOINT_URL
  * @param {Object} token
  * @returns {Boolean} true if valid token else false
  */
-async function verifyToken(token) {
+async function verifyToken(token, lowestRole = membershipState.OFFICER) {
   let valid = false;
   await axios
     .post(`http://${MAIN_ENDPOINT_URL}/api/Auth/verify`, { token })
     .then(res => {
-      valid = res && res.data.accessLevel >= membershipState.OFFICER;
+      valid = res && res.data.accessLevel >= lowestRole;
     })
     .catch(() => { });
   return valid;
