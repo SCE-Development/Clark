@@ -572,9 +572,6 @@ describe('User', () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/delete', user);
 
-      // console.log('Result body:', result.body);
-
-
       expect(result).to.have.status(FORBIDDEN);
       result.body.should.have.property('message');
       result.body.message.should.equal(
