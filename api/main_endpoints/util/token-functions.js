@@ -20,7 +20,7 @@ function checkIfTokenSent(request) {
 */
 function decodeToken(request){
   const token = request.body.token;
-  const userToken = token.replace(/^JWT\s/, '');
+  const userToken = token.replace(/^Bearer JWT\s/, '');
   let decodedResponse = {};
   jwt.verify(userToken, secretKey, function(error, decoded) {
     if (!error && decoded) {

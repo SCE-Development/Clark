@@ -94,7 +94,7 @@ export async function checkIfUserIsSignedIn() {
   await axios
     .post(GENERAL_API_URL + '/Auth/verify', {}, {
       headers: {
-        Authorization: `${token}`
+        Authorization: `Bearer ${token}`
       }
     })
     .then(res => {
