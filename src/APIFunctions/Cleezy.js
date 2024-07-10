@@ -12,11 +12,12 @@ export async function getAllUrls({
   await axios
     .get(url.href, {
       params: {
-        token,
         page,
         ...(search !== undefined && { search }),
         sortColumn,
         sortOrder
+      }, headers: {
+        'Authorization': `Bearer ${token}`,
       },
     })
     .then(res => {
@@ -35,7 +36,12 @@ export async function createUrl(url, alias = null, token) {
   try {
     const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const response = await axios
-      .post(url.href, { token, ...urlToAdd });
+      .post(PERIPHERAL_API_URL + '/Cleezy/createUrl', urlToAdd,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
     const data = response.data;
     status.responseData = data;
   } catch (err) {
