@@ -46,7 +46,7 @@ router.post('/sendPrintRequest', async (req, res) => {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req.body.token)) {
+  if (!await decodeToken(req)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }

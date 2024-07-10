@@ -25,7 +25,7 @@ router.get('/queued', async (req, res) => {
   const token = req.query.token;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req.query.token)) {
+  } else if (!await decodeToken({ body: { token: req.query.token } })) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -49,7 +49,7 @@ router.post('/pause', async (req, res) => {
     logger.warn(`${path} was requested without a token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req.body.token)) {
+  if (!await decodeToken(req)) {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -66,7 +66,7 @@ router.post('/resume', async (req, res) => {
     logger.warn(`${path} was requested without a token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req.body.token)) {
+  if (!await decodeToken(req)) {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -83,7 +83,7 @@ router.post('/skip', async (req, res) => {
     logger.warn(`${path} was requested without a token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req.body.token)) {
+  if (!await decodeToken(req)) {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -100,7 +100,7 @@ router.post('/stream', async (req, res) => {
     logger.warn(`${path} was requested without a token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req.body.token)) {
+  if (!await decodeToken(req)) {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
