@@ -104,7 +104,7 @@ router.post('/delete', (req, res) => {
 
   // If not officer, only allow deletion of own account
   let decoded = decodeToken(req);
-  if (decoded.accessLevel <= membershipState.OFFICER) {
+  if (decoded.accessLevel < membershipState.OFFICER) {
     if (req.body._id && req.body._id !== decoded._id) {
       return res
         .status(FORBIDDEN)
@@ -223,7 +223,7 @@ router.post('/edit', async (req, res) => {
   }
 
   let decoded = decodeToken(req);
-  if (decoded.accessLevel <= membershipState.OFFICER) {
+  if (decoded.accessLevel < membershipState.OFFICER) {
     if (req.body.email && req.body.email != decoded.email) {
       return res
         .status(UNAUTHORIZED)
@@ -392,7 +392,7 @@ router.post('/getUserById', async (req, res) => {
   }
   // If not officer, only allow reading of own account
   let decoded = decodeToken(req);
-  if (decoded.accessLevel <= membershipState.OFFICER) {
+  if (decoded.accessLevel < membershipState.OFFICER) {
     if (req.body.userID && req.body.userID !== decoded._id) {
       return res
         .status(FORBIDDEN)

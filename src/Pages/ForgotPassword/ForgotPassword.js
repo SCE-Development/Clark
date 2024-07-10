@@ -23,7 +23,7 @@ const ForgotPassword = () => {
     captchaRef.reset();
     const resetStatus = await sendPasswordReset(email, captchaValue);
     if (resetStatus.error) {
-      setMessage('An error occurred. Please try again later.');
+      setMessage(resetStatus.error?.response?.data?.message || 'An error occurred. Please try again later.');
     } else {
       setMessage('A password reset email has been sent to you if your email exists in our system.');
     }

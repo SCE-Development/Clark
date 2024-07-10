@@ -25,6 +25,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const { membershipStateToString } = require('../../../src/Enums');
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
@@ -84,6 +85,18 @@ router.post('/sendPasswordReset', async (req, res) => {
     if (!result) {
       return res.sendStatus(OK);
     }
+    if (
+      [
+        membershipState.PENDING,
+        membershipState.BANNED,
+      ].includes(result.accessLevel)
+    ) {
+      return res.status(UNAUTHORIZED).send({
+        message: 'Cannot reset password, account is in ' +
+        membershipStateToString(result.accessLevel) +
+        ' state.'
+      });
+    }
 
     const buffer = crypto.randomBytes(12);
     let id = buffer.toString('base64');
@@ -99,8 +112,8 @@ router.post('/sendPasswordReset', async (req, res) => {
     } catch (error) {
       logger.error('unable to save password reset token:', error);
     }
+    res.sendStatus(OK);
   });
-  res.sendStatus(OK);
 });
 
 // User Login

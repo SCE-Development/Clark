@@ -31,8 +31,9 @@ const {
 } = require('../util/mocks/TokenValidFunctions');
 const { checkIfPageCountResets } = require('../../api/main_endpoints/util/userHelpers.js');
 const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
-
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 chai.should();
+
 chai.use(chaiHttp);
 
 // Our parent block
@@ -190,18 +191,41 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 200 if the email does exist in the database', async () => {
-      const addUser = {
-        email: 'abcdef@gmail.com',
-        password: 'Passw0rd',
+      user = new User({
+        _id: new mongoose.Types.ObjectId(),
         firstName: 'first-name',
-        lastName: 'last-name'
-      };
-      await test.sendPostRequest('/api/Auth/register', addUser);
+        lastName: 'last-name',
+        email: 'existing-member@gmail.com',
+        password: 'Passw0rd',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+        apiKey: null
+      });
+      await user.save();
       const data = {
-        email: 'abcdef@gmail.com',
+        email: 'existing-member@gmail.com',
       };
       const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
       expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 401 if the user is banned', async () => {
+      user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        firstName: 'first-name',
+        lastName: 'last-name',
+        email: 'banned-member@gmail.com',
+        password: 'Passw0rd',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.BANNED,
+        apiKey: null
+      });
+      await user.save();
+      const data = {
+        email: 'banned-member@gmail.com',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
   });
 
