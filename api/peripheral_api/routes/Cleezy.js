@@ -3,10 +3,9 @@ const axios = require('axios');
 const router = express.Router();
 const {
   verifyToken,
-  checkIfTokenSent,
 } = require('../../util/token-verification');
 const {
-  OK, 
+  OK,
   UNAUTHORIZED,
   FORBIDDEN,
   SERVER_ERROR,
@@ -20,17 +19,24 @@ let CLEEZY_URL = process.env.CLEEZY_URL
 let URL_SHORTENER_BASE_URL =
   process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
 
+function getToken(req) {
+  const { authorization } = req.headers;
+  return authorization?.startsWith('Bearer ') 
+    ? authorization.split(' ')[1] 
+    : null;
+}
+
 router.get('/list', async (req, res) => {
-  if(!ENABLED) {
+  if (!ENABLED) {
     return res.json({
       disabled: true
     });
   }
-  const token = req.query.token;
-  const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
+  const token = getToken(req);
+  const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC' } = req.query;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.query.token)) {
+  } else if (!await verifyToken(token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
@@ -60,9 +66,10 @@ router.get('/list', async (req, res) => {
 });
 
 router.post('/createUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
+  const token = getToken(req);
+  if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.body.token)) {
+  } else if (!await verifyToken(token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { url, alias } = req.body;
@@ -70,7 +77,7 @@ router.post('/createUrl', async (req, res) => {
   try {
     const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
     const data = response.data;
-    const u = new URL( data.alias, URL_SHORTENER_BASE_URL);
+    const u = new URL(data.alias, URL_SHORTENER_BASE_URL);
     res.json({ ...data, link: u });
   } catch (err) {
     logger.error('/createUrl had an error', err);
@@ -79,9 +86,10 @@ router.post('/createUrl', async (req, res) => {
 });
 
 router.post('/deleteUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
+  const token = getToken(req);
+  if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.body.token)) {
+  } else if (!await verifyToken(token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { alias } = req.body;
