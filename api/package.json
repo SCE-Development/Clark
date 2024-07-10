@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon devServer.js",
     "create-user": "node ./util/CreateUserScript.js",
-    "generate-token": "node ./util/GenerateTokenScript.js"
+    "generate-token": "node ./util/GenerateTokenScript.js",
+    "main_endpoints": "nodemon main_endpoints/server.js",
+    "cloud_api": "nodemon cloud_api/server.js"
   },
   "repository": {
     "type": "git",
