@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 const { SceSqsApiHandler } = require(
-  '../../../api/peripheral_api/util/SceSqsApiHandler.js');
+  '../../../api/main_endpoints/util/SceSqsApiHandler.js');
 
 
 let sqsHandlerConstructorMock = null;

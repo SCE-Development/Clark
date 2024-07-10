@@ -5,5 +5,4 @@ if (typeof module !== 'undefined' && !module.parent) {
   // Starting servers
   require('./main_endpoints/server');
   require('./cloud_api/server');
-  require('./peripheral_api/server');
 }

@@ -16,7 +16,7 @@ const {
   resetTokenMock,
   restoreTokenMock,
 } = require('../util/mocks/TokenValidFunctions');
-const SshTunnelFunctions = require('../../api/peripheral_api/util/Speaker.js');
+const SshTunnelFunctions = require('../../api/main_endpoints/util/Speaker.js');
 
 
 let app = null;
@@ -38,7 +38,7 @@ describe('Speaker', () => {
     sendSpeakerRequestStub = sandbox.stub(SshTunnelFunctions, 'sendSpeakerRequest');
 
     app = tools.initializeServer(
-      __dirname + '/../../api/peripheral_api/routes/Speaker.js');
+      __dirname + '/../../api/main_endpoints/routes/Speaker.js');
     test = new SceApiTester(app);
     done();
   });

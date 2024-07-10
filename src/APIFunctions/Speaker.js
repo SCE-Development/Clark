@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-
-let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
-  || 'http://localhost:8081/peripheralapi';
+import { BASE_API_URL } from '../Enums';
 
 
 export async function queued(token) {
   let status = new ApiResponse();
+  const url = new URL('/api/Speaker/queued', BASE_API_URL);
   await axios
-    .get(PERIPHERAL_API_URL + '/Speaker/queued', { params: { token } })
+    .get(url.href, { params: { token } })
     .then(res => {
       status.responseData = res.data.queue;
     })
@@ -19,10 +18,11 @@ export async function queued(token) {
   return status;
 }
 
-export async function addUrl(url, token) {
+export async function addUrl(urlToAdd, token) {
   let status = new ApiResponse();
+  const url = new URL('/api/Speaker/stream', BASE_API_URL);
   await axios
-    .post(PERIPHERAL_API_URL + '/Speaker/stream', {token, url})
+    .post(url.href, {token, url: urlToAdd})
     .then(res => {
       status = res.data;
     })
@@ -35,8 +35,9 @@ export async function addUrl(url, token) {
 
 export async function skip(token) {
   let status = new ApiResponse();
+  const url = new URL('/api/Speaker/skip');
   await axios
-    .post(PERIPHERAL_API_URL + '/Speaker/skip', {token})
+    .post(url.href, {token})
     .then(res => {
       status = res.data;
     })
@@ -49,8 +50,9 @@ export async function skip(token) {
 
 export async function pause(token) {
   let status = new ApiResponse();
+  const url = new URL('/api/Speaker/pause');
   await axios
-    .post(PERIPHERAL_API_URL + '/Speaker/pause', {token})
+    .post(url.href, {token})
     .then(res => {
       status = res.data;
     })
@@ -63,8 +65,9 @@ export async function pause(token) {
 
 export async function resume(token) {
   let status = new ApiResponse();
+  const url = new URL('/api/Speaker/resume');
   await axios
-    .post(PERIPHERAL_API_URL + '/Speaker/resume', {token})
+    .post(url.href, {token})
     .then(res => {
       status = res.data;
     })
