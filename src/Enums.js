@@ -1,8 +1,3 @@
-const eventModalState = {
-  SUBMIT: 0,
-  EDIT: 1
-};
-
 const memberApplicationState = {
   SELECT_MEMBERSHIP_PLAN: 0,
   FORM_INFO: 1,
@@ -63,7 +58,6 @@ const userFilterType = {
 const BASE_API_URL = process.env.REACT_APP_BASE_API_URL || 'http://localhost:8080/';
 
 module.exports = {
-  eventModalState,
   memberApplicationState,
   membershipPlans,
   memberShipPlanToString,
