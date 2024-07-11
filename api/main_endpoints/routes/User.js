@@ -414,19 +414,6 @@ router.post('/getUserById', async (req, res) => {
   });
 });
 
-router.get('/isUserSubscribed', (req, res) => {
-  User.findOne({ email: req.query.email }, function(error, result) {
-    if (error) {
-      res.sendStatus(BAD_REQUEST);
-    }
-
-    if (!result) {
-      return res.sendStatus(NOT_FOUND);
-    }
-    return res.status(OK).send({ result: !!result.emailOptIn });
-  });
-});
-
 router.post('/setUserEmailPreference', (req, res) => {
   const email = req.body.email;
   const emailOptIn = !!req.body.emailOptIn;

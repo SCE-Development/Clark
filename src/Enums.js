@@ -48,13 +48,6 @@ function membershipStateToString(accessLevel) {
   return membershipStatusArray[accessLevel + 2];
 }
 
-const userFilterType = {
-  VALID: 0,
-  NON_VALID: 1,
-  ALL: 2
-};
-
-
 const BASE_API_URL = process.env.REACT_APP_BASE_API_URL || 'http://localhost:8080/';
 
 module.exports = {
@@ -63,6 +56,5 @@ module.exports = {
   memberShipPlanToString,
   membershipState,
   membershipStateToString,
-  userFilterType,
   BASE_API_URL,
 };

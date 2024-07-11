@@ -25,21 +25,6 @@ const MESSAGES_API = {
   MAX_AMOUNT_OF_CONNECTIONS: 3
 };
 
-const teamType = {
-  DEVELOPMENT: 'Development',
-  PUBLIC_RELATIONS: 'Public Relations',
-  EVENT_PLANNING: 'Event Planning',
-  PRINTING_3D: '3D Printing',
-  ASSOCIATE: 'Associate',
-  PRESIDENT: 'President',
-  VICE_PRESIDENT: 'Vice President',
-  DEV_CHAIR: 'Software Development Chair',
-  EVENT_CHAIR: 'Event Planning Chair',
-  TREASURER: 'Treasurer',
-  STORE_MANAGER: 'Store Manager',
-  PRINTING_3D_CHAIR: '3D Printing/Hacking Station Specialist'
-};
-
 const consoleColors = {
   redColor: '\x1b[31m',
   greenColor: '\x1b[32m',
@@ -53,6 +38,5 @@ module.exports = {
   DEFAULT_PHOTO_URL,
   MEMBERSHIP_STATE,
   MESSAGES_API,
-  teamType,
   consoleColors,
 };
