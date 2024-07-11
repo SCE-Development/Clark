@@ -48,10 +48,22 @@ class SceHttpServer {
         extended: true,
       })
     );
+  }
 
+  async init() {
+    this.registerMetrics();
+    try {
+      await this.initializeEndpoints();
+    } catch (error) {
+      logger.error('Error initializing endpoints:', error);
+    }
+  }
+
+  registerMetrics() {
     // metrics
     this.app.use((req, res, next) => {
       res.on('finish', () => {
+        if (!this.endpointHitCounter) return;
         const route = req.route ? req.route.path : req.path;
         this.endpointHitCounter.inc({
           method: req.method,
@@ -64,7 +76,7 @@ class SceHttpServer {
 
     this.register = new promClient.Registry();
     this.register.setDefaultLabels({
-      app: prefix,
+      app: 'sce-core',
     });
     promClient.collectDefaultMetrics({ register: this.register });
 
