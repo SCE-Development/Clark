@@ -183,20 +183,6 @@ export async function checkIfUserExists(email) {
   });
   return status;
 }
-
-export async function connectToDiscord(email, token) {
-  let status = new UserApiResponse();
-  const url = new URL('/api/User/connectToDiscord', BASE_API_URL);
-  await axios.post(url.href, { email, token })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/getUserById', BASE_API_URL);

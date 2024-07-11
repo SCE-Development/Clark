@@ -9,7 +9,6 @@ const {
   getMemberExpirationDate,
   hashPassword,
 } = require('../util/userHelpers');
-const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -24,14 +23,8 @@ const {
   CONFLICT,
   SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
-const {
-  discordApiKeys
-} = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const discordConnection = require('../util/discord-connection');
 
-const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
-  'http://localhost:8080/api/user/callback';
 const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
@@ -316,72 +309,6 @@ router.post('/getPagesPrintedCount', (req, res) => {
     }
     return res.status(OK).json(result.pagesPrinted);
   });
-});
-
-router.get('/callback', async function(req, res) {
-  const code = req.query.code;
-  const email = req.query.state;
-  discordConnection.loginWithDiscord(code, email, discordRedirectUri)
-    .then(status => {
-      return res.status(OK).redirect('https://discord.com/oauth2/authorized');
-    })
-    .catch(_ => {
-      return res.status(NOT_FOUND).send('Authorization unsuccessful!');
-    });
-});
-
-router.post('/getUserFromDiscordId', (req, res) => {
-  const { discordID, apiKey } = req.body;
-  if(!checkDiscordKey(apiKey)){
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ discordID }, (error, result) => {
-    let status = OK;
-    if (error) {
-      status = BAD_REQUEST;
-    } else if (!result) {
-      status = NOT_FOUND;
-    }
-    return res.status(status).send(result);
-  });
-});
-
-router.post('/updatePagesPrintedFromDiscord', (req, res) => {
-  const { discordID, apiKey, pagesPrinted } = req.body;
-  if(!checkDiscordKey(apiKey)){
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.updateOne( { discordID }, {pagesPrinted},
-    (error, result) => {
-      let status = OK;
-      if(error){
-        status = BAD_REQUEST;
-      } else if (result.n === 0){
-        status = NOT_FOUND;
-      }
-      return res.sendStatus(status);
-    });
-});
-
-router.post('/connectToDiscord', function(req, res) {
-  const email = req.body.email;
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!email) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  if (!discordApiKeys.ENABLED) {
-    return res.sendStatus(OK);
-  }
-  return res.status(OK)
-    .send('https://discord.com/api/oauth2/authorize?client_id=' +
-      `${discordApiKeys.CLIENT_ID}` +
-      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
-      `&state=${email}&response_type=code&scope=identify`
-    );
 });
 
 router.post('/getUserById', async (req, res) => {
