@@ -58,7 +58,7 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest , email } = req.body;
+  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest, email } = req.body;
 
   if (pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
     logger.warn('Print request exceeded weekly limit');
@@ -74,10 +74,10 @@ router.post('/sendPrintRequest', async (req, res) => {
     });
 
     await User.findOne({ email: email })
-    .then((user) => {
-      user.pagesPrinted += pagesToBeUsedInPrintRequest;
-      user.save();
-    });
+      .then((user) => {
+        user.pagesPrinted += pagesToBeUsedInPrintRequest;
+        user.save();
+      });
 
     res.sendStatus(OK);
   } catch (err) {
