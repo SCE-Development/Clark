@@ -149,7 +149,7 @@ export default function Printing(props) {
       pagesPrinted,
       pagesToBeUsedInPrintRequest,
     };
-    let status = await printPage(data, props.user.email, props.user.token);
+    let status = await printPage(data, props.user.token);
     if (!status.error) {
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');

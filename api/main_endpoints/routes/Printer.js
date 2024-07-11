@@ -4,6 +4,7 @@ const logger = require('../../util/logger');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
+  decodeToken,
 } = require('../util/token-functions.js');
 const {
   OK,
@@ -58,7 +59,7 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest, email } = req.body;
+  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest } = req.body;
 
   if (pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
     logger.warn('Print request exceeded weekly limit');
@@ -73,7 +74,7 @@ router.post('/sendPrintRequest', async (req, res) => {
       sides,
     });
 
-    await User.findOne({ email: email })
+    await User.findOne({ email: decodeToken(req).email })
       .then((user) => {
         user.pagesPrinted += pagesToBeUsedInPrintRequest;
         user.save();
