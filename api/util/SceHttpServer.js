@@ -7,6 +7,7 @@ mongoose.Promise = require('bluebird');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
+const promClient = require('prom-client');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -47,8 +48,42 @@ class SceHttpServer {
         extended: true,
       })
     );
-    this.app.get('/metrics', (_, res) => {
-      res.status(200).send('welcome to the dungeon');
+
+    // metrics
+    this.app.use((req, res, next) => {
+      res.on('finish', () => {
+        const route = req.route ? req.route.path : req.path;
+        this.endpointHitCounter.inc({
+          method: req.method,
+          route: route,
+          statusCode: res.statusCode,
+        });
+      });
+	  next();
+    });
+
+    this.register = new promClient.Registry();
+    this.register.setDefaultLabels({
+      app: prefix,
+    });
+    promClient.collectDefaultMetrics({ register: this.register });
+
+    if(!promClient.register.getSingleMetric('endpoint_hits')) {
+      this.endpointHitCounter = new promClient.Counter({
+        name: 'endpoint_hits',
+        help: 'Counter for tracking endpoint hits with status codes',
+        labelNames: ['method', 'route', 'statusCode'],
+      });
+      this.register.registerMetric(this.endpointHitCounter);
+    } else {
+      this.endpointHitCounter =
+			promClient.register.getSingleMetric('endpoint_hits');
+    }
+
+    // metrics
+    this.app.get('/metrics', async (_, res) => {
+      res.setHeader('Content-Type', this.register.contentType);
+      res.end(await this.register.metrics());
     });
   }
 
