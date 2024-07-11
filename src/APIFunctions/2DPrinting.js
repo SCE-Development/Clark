@@ -74,11 +74,11 @@ export function parseRange(pages, maxPages) {
  * @returns {ApiResponse} - Containing information for if
  * the page successfully printed
  */
-export async function printPage(data, token) {
+export async function printPage(data, email, token) {
   let status = new ApiResponse();
   const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
   await axios.post(url.href,
-    {...data, token})
+    {...data, email, token})
     .then(response => {
       status.responseData = response.data.message;
     })
