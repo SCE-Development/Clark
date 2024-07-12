@@ -1,12 +1,41 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import Footer from '../../Components/Footer/Footer.js';
 import { motion } from 'framer-motion';
 import './Home.css';
 
-class Home extends Component {
-  render() {
+import { getTextFromApi } from "../../APIFunctions/HomePageText"
+
+const Home = () => {
+
+  const [text, setText] = useState("");
+  const [showText, setShowText] = useState(false);
+
+  async function getText() {
+    try {
+      const textFromApi = await getTextFromApi();
+      setText(textFromApi.responseData)
+    } finally {
+      setShowText(true)
+    }
+  }
+  
+  useEffect(() => {
+    getText();
+  }, [])
+  
     return (
       <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
+        <div className = "flex flex-col items-center justify-center my-4">
+          <motion.p
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 1 }}
+            className="text-white"
+            style={{ display: showText ? 'block' : 'none' }} // Conditional display based on state
+          >
+            {text}
+          </motion.p>
+        </div>
         <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
           <div className="flex flex-col items-center justify-center w-full p-4 overflow-y-hidden xl:w-2/5">
             <div className="flex flex-col mb-8 xl:ml-10">
@@ -55,7 +84,6 @@ class Home extends Component {
         <Footer />
       </div>
     );
-  }
 }
 
 export default Home;
