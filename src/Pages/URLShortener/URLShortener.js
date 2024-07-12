@@ -11,6 +11,8 @@ export default function URLShortenerPage(props) {
   const [invalidUrl, setInvalidUrl] = useState();
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [useGeneratedAlias, setUseGeneratedAlias] = useState(true);
+  const [useExpirationDate, setUseExpirationDate] = useState(true);
+  const [expirationDate, setExpirationDate] = useState(new Date());
   const [alias, setAlias] = useState('');
   const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,6 +63,7 @@ export default function URLShortenerPage(props) {
     const response = await createUrl(
       url.trim(),
       alias.trim(),
+      expirationDate.trim(),
       props.user.token
     );
     if (!response.error) {
@@ -68,6 +71,7 @@ export default function URLShortenerPage(props) {
       setAliasTaken(false);
       setUrl('');
       setAlias('');
+      setExpirationDate(new Date());
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
@@ -141,6 +145,12 @@ export default function URLShortenerPage(props) {
       setAlias('');
     }
   }, [useGeneratedAlias]);
+
+  useEffect(() => {
+    if (useExpirationDate) {
+      setExpirationDate(new Date());
+    }
+  }, [useExpirationDate]);
 
   useEffect(() => {
     if (!showUrlInput) {
@@ -281,10 +291,35 @@ export default function URLShortenerPage(props) {
                 </div>
               </div>
             )}
+            <div className="col-span-3">
+              <div className="form-control">
+                <label className="label cursor-pointer">
+                  <span className="label-text">Use Expiration Date</span>
+                  <input type="checkbox" className="toggle" checked={useExpirationDate} onChange={(e) => setUseExpirationDate(e.target.checked)} />
+                </label>
+              </div>
+            </div>
+            {!useExpirationDate && (
+
+              <div className="sm:col-span-4">
+                <label htmlFor="email" className={LABEL_CLASS}>
+                  Expiration Date
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="date"
+                    id="expiration_date"
+                    name="expiration_date"
+                    value={expirationDate}
+                    onChange={e => setExpirationDate(e.target.value)}
+                    className={INPUT_CLASS}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           onClick={() => setShowUrlInput(false)} type="button" className="text-sm font-semibold leading-6 text-gray-300">
@@ -419,6 +454,7 @@ export default function URLShortenerPage(props) {
                       { title: 'URL', className: 'text-base text-white/70', columnName: 'alias' },
                       { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
                       { title: 'Times Used', className: 'text-base text-white/70 text-center', columnName: 'used' },
+                      { title: 'Expiration Date', className: 'text-base text-white/70 text-center', columnName: 'expiration_date'},
                       { title: 'Delete', className: 'text-base text-white/70 text-center' }
                     ].map(({ title, className, columnName = null }) => (
                       <th
