@@ -19,8 +19,6 @@ const {
 } = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
-const discordModule
-  = require('../../api/main_endpoints/util/discord-connection');
 
 
 let app = null;
@@ -246,96 +244,6 @@ describe('User', () => {
     });
   });
 
-  describe('/POST connectToDiscord', () => {
-    it('Should return statusCode 403 if no token was passed in', async () => {
-      const user = {
-        email: 'a@b.c'
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/connectToDiscord', user);
-      expect(result).to.have.status(FORBIDDEN);
-    });
-    it('Should return statusCode 401 if an invalid ' +
-      'token was passed in', async () => {
-      const user = {
-        email: 'a@b.c',
-        token: 'Invalid token'
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/connectToDiscord', user);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-    it('Should return statusCode 400 if an incorrect or no ' +
-      'email was used', async () => {
-      const user = {
-        token
-      };
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/user/connectToDiscord', user);
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-    it('Should return statusCode 200 ' +
-      'if Discord connection was successful', async () => {
-      const user = {
-        email: 'a@b.c',
-        token
-      };
-    });
-  });
-
-  describe('/GET callback', () => {
-    let discordStub = sandbox.stub(discordModule,
-      'loginWithDiscord');
-    it('Should return statusCode 200 if connection is true', async () => {
-      discordStub.resolves(true);
-      const result = await test.sendGetRequest('/api/user/callback');
-      expect(result).to.have.status(OK);
-      expect(result.redirects).to.have.lengthOf(1);
-      expect(result.redirects[0]).to
-        .equal('https://discord.com/oauth2/authorized');
-    });
-    it('Should return statusCode 404 if connection is false', async () => {
-      discordStub.rejects({});
-      const result = await test.sendGetRequest('/api/user/callback');
-      expect(result).to.have.status(NOT_FOUND);
-      expect(result.text).to.equal('Authorization unsuccessful!');
-    });
-  });
-
-  describe('/POST getUserFromDiscordId', () => {
-    it('Should return status code 401 if API key is invalid', async () => {
-      const body = {
-        apiKey: 'Invalid api',
-        discordID: '0987654321'
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/getUserFromDiscordId', body);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-    it('Should return status code 404 if user is not found', async () => {
-      setDiscordAPIStatus(true);
-      const body = {
-        apiKey: 'abc',
-        discordID: 'Invalid Discord ID'
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/getUserFromDiscordId', body);
-      expect(result).to.have.status(NOT_FOUND);
-    });
-    it(`Should return status code 200 when a valid api key is provided along
-      with a discord ID of a user`, async () => {
-      setDiscordAPIStatus(true);
-      const body = {
-        apiKey: 'abc',
-        discordID: '0987654321'
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/getUserFromDiscordId', body);
-      expect(result).to.have.status(OK);
-    });
-  });
-
   describe('/POST getUserById', () => {
     it('Should return status code 403 if no token was passed in', async () => {
       const user = {
@@ -372,47 +280,6 @@ describe('User', () => {
       const result = await test.sendPostRequest('/api/User/getUserById', user);
       expect(result).to.have.status(OK);
       result.body.should.not.have.property('password');
-    });
-  });
-
-  describe('/POST updatePagesPrintedFromDiscord', () => {
-    it('Should return 401 if API key is invalid', async () => {
-      const body = {
-        apiKey: 'Invalid API key',
-        discordID: '0987654321',
-        pagesPrinted: 2
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/updatePagesPrintedFromDiscord', body);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-    it('Should return status code 404 if user is not found', async () => {
-      setDiscordAPIStatus(true);
-      const body = {
-        apiKey: 'abc',
-        discordID: 'Invalid Discord ID',
-        pagesPrinted: 2
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/getUserFromDiscordId', body);
-      expect(result).to.have.status(NOT_FOUND);
-    });
-    it(`Should return status code 200 when a valid api key is provided along
-      with a discord ID of a user and number of printed pages`, async () => {
-      setDiscordAPIStatus(true);
-      const body = {
-        apiKey: 'abc',
-        discordID: '0987654321',
-        pagesPrinted: 2
-      };
-      const result = await test.sendPostRequest(
-        '/api/user/getUserFromDiscordId', body);
-      result.body.should.have.property('discordUsername');
-      result.body.should.have.property('discordDiscrim');
-      result.body.should.have.property('discordID');
-      result.body.should.have.property('accessLevel');
-      result.body.should.have.property('pagesPrinted');
-      expect(result).to.have.status(OK);
     });
   });
 

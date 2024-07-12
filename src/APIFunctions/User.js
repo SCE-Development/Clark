@@ -183,43 +183,6 @@ export async function checkIfUserExists(email) {
   });
   return status;
 }
-
-/**
- * This function takes in a list of current users and returns a
- * filtered user list that is determined by the filter id.
- * @param {array} users array of all registered users
- * @param {integer} filterID represents what to filter email by
- * @returns {array} filtered array of users
- */
-export function filterUsers(users, filterID) {
-  let filteredUsers = users.filter((user) => {
-    if (filterID === userFilterType.VALID) {
-      return (user.accessLevel >= membershipState.ALUMNI);
-    } else if (filterID === userFilterType.NON_VALID) {
-      return (
-        user.accessLevel === membershipState.NON_MEMBER ||
-        user.accessLevel === membershipState.PENDING
-      );
-    } else {
-      return true;
-    }
-  });
-  return filteredUsers;
-}
-
-export async function connectToDiscord(email, token) {
-  let status = new UserApiResponse();
-  const url = new URL('/api/User/connectToDiscord', BASE_API_URL);
-  await axios.post(url.href, { email, token })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/getUserById', BASE_API_URL);
