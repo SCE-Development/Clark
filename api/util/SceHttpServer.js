@@ -52,11 +52,7 @@ class SceHttpServer {
 
   async init() {
     this.registerMetrics();
-    try {
-      await this.initializeEndpoints();
-    } catch (error) {
-      logger.error('Error initializing endpoints:', error);
-    }
+    await this.initializeEndpoints();
   }
 
   registerMetrics() {
