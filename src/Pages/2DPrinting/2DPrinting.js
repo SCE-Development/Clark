@@ -146,7 +146,6 @@ export default function Printing(props) {
       // pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
       sides,
       copies,
-      pagesPrinted,
       pagesToBeUsedInPrintRequest,
     };
     let status = await printPage(data, props.user.token);

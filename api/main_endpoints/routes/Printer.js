@@ -59,26 +59,26 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { raw, copies, pageRanges, sides, pagesPrinted, pagesToBeUsedInPrintRequest } = req.body;
-
-  if (pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
-    logger.warn('Print request exceeded weekly limit');
-    return req.sendStatus(BAD_REQUEST);
-  }
+  const { raw, copies, pageRanges, sides, pagesToBeUsedInPrintRequest } = req.body;
+  const email = decodeToken(req).email;
 
   try {
+    const user = await User.findOne({ email });
+    
+    if (user.pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
+      logger.warn('Print request exceeded weekly limit');
+      return req.sendStatus(BAD_REQUEST);
+    }
+
     await axios.post(PRINTER_URL + '/print', {
       raw,
       copies,
       pageRanges,
       sides,
     });
-
-    await User.findOne({ email: decodeToken(req).email })
-      .then((user) => {
-        user.pagesPrinted += pagesToBeUsedInPrintRequest;
-        user.save();
-      });
+    
+    user.pagesPrinted += pagesToBeUsedInPrintRequest;
+    await user.save();
 
     res.sendStatus(OK);
   } catch (err) {
