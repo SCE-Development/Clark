@@ -9,5 +9,5 @@ export async function getTextFromApi() {
     .then(res => {
       status.responseData = res.data;
     });
-return status;
+  return status;
 }
