@@ -32,8 +32,8 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, 'printing'));
   },
   filename: function(req, file, cb) {
-    const uniqueSuffix = Date.now();
-    cb(null, uniqueSuffix + file.originalname);
+    const uniqueSuffix = new Date().toISOString();
+    cb(null, uniqueSuffix + '_' + file.originalname);
   }
 });
 
