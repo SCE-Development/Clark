@@ -90,7 +90,7 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
       // delete file from temp folder after printing
       fs.unlink(file.path, (err) => {
         if (err) {
-          logger.error('Error removing file:', err);
+          logger.error(`Unable to delete file at path ${file.path}:`, err);
         }
       });
       res.sendStatus(OK);
