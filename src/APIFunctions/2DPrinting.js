@@ -69,21 +69,15 @@ export function parseRange(pages, maxPages) {
  * @param {Number|undefined} data.copies - Number of copies
  * @param {String|undefined} data.sides - Sides to print:
  * one-sided or two-sided
+ * @param {String|undefined} data.pageRanges - Pages to print:
+ * 1-2, 5, 7-10
  * @returns {ApiResponse} - Containing information for if
  * the page successfully printed
  */
 export async function printPage(data) {
   let status = new ApiResponse();
-<<<<<<< HEAD
-<<<<<<< HEAD
   const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
-  await axios.post(url.href, {
-=======
-  console.log(data);
-=======
->>>>>>> 211f2c3 (remove console log)
-  await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest', data, {
->>>>>>> 743e840 (remove pageRanges, use consistent pdf file)
+  await axios.post(url.href, data, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
