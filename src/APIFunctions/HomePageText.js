@@ -5,7 +5,7 @@ let GENERAL_API_URL = 'http://localhost:8080/api';
 
 export async function getTextFromApi() {
   let status = new ApiResponse();
-  await axios.get(GENERAL_API_URL + '/HomePageText/getText')
+  await axios.get(GENERAL_API_URL + '/Advertisement/getText')
     .then(res => {
       status.responseData = res.data;
     });

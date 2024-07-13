@@ -3,26 +3,10 @@ const router = express.Router();
 const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
 const Advertisement = require('../models/Advertisement');
 
-router.post('/addAdvertisement', (req, res) => {
-  const newAd = new Advertisement({
-    pictureUrl: req.body.pictureUrl,
-    createDate: req.body.createDate,
-    expireDate: req.body.expireDate
-  });
-
-  newAd.save(function(error) {
-    if (error) {
-      res.sendStatus(BAD_REQUEST);
-    } else {
-      res.sendStatus(OK);
-    }
-  });
-});
-
-router.get('/getAdvertisements', (req, res) => {
-  Advertisement.find()
-    .sort({ createDate: -1 })
-    .then(advertisement => res.status(OK).send(advertisement));
+router.get('/getText', (req, res) => {
+  const newAdd = ['Hello', 'Nuh uh', 'brotha', 'this is the best club ever :3'];
+  const index = Math.floor(Math.random() * (4));
+  res.send(newAdd[index]);
 });
 
 module.exports = router;
