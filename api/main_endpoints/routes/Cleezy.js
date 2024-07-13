@@ -2,11 +2,11 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 const {
-  verifyToken,
+  decodeToken,
   checkIfTokenSent,
-} = require('../../util/token-verification');
+} = require('../util/token-functions.js');
 const {
-  OK, 
+  OK,
   UNAUTHORIZED,
   FORBIDDEN,
   SERVER_ERROR,
@@ -20,17 +20,28 @@ let CLEEZY_URL = process.env.CLEEZY_URL
 let URL_SHORTENER_BASE_URL =
   process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
 
+
+// consider moving this function to the api/main_endpoints/util directory?
+function getToken(req) {
+  const { authorization } = req.headers;
+  if (authorization?.startsWith('Bearer ')) {
+    return authorization.split(' ')[1];
+  }
+  return null;
+}
+
+
 router.get('/list', async (req, res) => {
   if(!ENABLED) {
     return res.json({
       disabled: true
     });
   }
-  const token = req.query.token;
+  const token = getToken(req);
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.query.token)) {
+  } else if (!await decodeToken({ body: { token: token } })) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
@@ -59,10 +70,11 @@ router.get('/list', async (req, res) => {
   }
 });
 
+
 router.post('/createUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
+  if (!checkIfTokenSent({ body: { token: token } })) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.body.token)) {
+  } else if (!await decodeToken({ body: { token: token } })) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { url, alias } = req.body;
@@ -78,10 +90,11 @@ router.post('/createUrl', async (req, res) => {
   }
 });
 
+
 router.post('/deleteUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
+  if (!checkIfTokenSent({ body: { token: token } })) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await verifyToken(req.body.token)) {
+  } else if (!await decodeToken({ body: { token: token } })) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { alias } = req.body;
