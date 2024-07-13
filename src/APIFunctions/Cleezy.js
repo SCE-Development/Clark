@@ -17,8 +17,8 @@ export async function getAllUrls({
         sortColumn,
         sortOrder
       }, headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+        'Authorization': `Bearer ${token}`
+      }
     })
     .then(res => {
       status.responseData = res.data;
@@ -36,12 +36,11 @@ export async function createUrl(url, alias = null, token) {
   try {
     const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const response = await axios
-      .post(PERIPHERAL_API_URL + '/Cleezy/createUrl', urlToAdd,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+      .post(url.href, urlToAdd, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
     const data = response.data;
     status.responseData = data;
   } catch (err) {
@@ -56,7 +55,11 @@ export async function deleteUrl(aliasIn, token) {
   const alias = { 'alias': aliasIn };
   const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
   await axios
-    .post(url.href, { token, ...alias })
+    .post(url.href, alias, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    })
     .catch(err => {
       status.responseData = err;
       status.error = true;
