@@ -1,6 +1,11 @@
 const axios = require('axios');
 const express = require('express');
+const multer = require('multer');
+const FormData = require('form-data');
 const logger = require('../../util/logger');
+const fs = require('fs');
+const path = require('path');
+
 const {
   decodeToken,
   checkIfTokenSent,
@@ -20,6 +25,18 @@ let PRINTER_URL = process.env.PRINTER_URL
   || 'http://localhost:14000';
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, path.join(__dirname, '../../temp'));
+  },
+  filename: function(req, file, cb) {
+    const uniqueSuffix = Date.now();
+    cb(null, uniqueSuffix + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 router.get('/healthCheck', async (req, res) => {
 /*
@@ -41,7 +58,7 @@ router.get('/healthCheck', async (req, res) => {
     });
 });
 
-router.post('/sendPrintRequest', async (req, res) => {
+router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
   if (!checkIfTokenSent(req)) {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -55,15 +72,27 @@ router.post('/sendPrintRequest', async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { raw, copies, pageRanges, sides } = req.body;
-  axios
-    .post(PRINTER_URL + '/print', {
-      raw,
-      copies,
-      pageRanges,
-      sides,
+  const { copies, sides, pageRanges } = req.body;
+  const file = req.file;
+  const form = new FormData();
+  form.append('file', fs.createReadStream(file.path), { filename: file.originalname });
+  form.append('copies', copies);
+  form.append('sides', sides);
+  form.append('pageRanges', pageRanges);
+  axios.post(PRINTER_URL + '/print',
+    form,
+    {
+      headers: {
+        ...form.getHeaders(),
+      }
     })
     .then(() => {
+      fs.unlink(file.path, (err) => {
+        if (err) {
+          logger.error('Error removing file:', err);
+          return;
+        }
+      });
       res.sendStatus(OK);
     }).catch((err) => {
       logger.error('/sendPrintRequest had an error: ', err);

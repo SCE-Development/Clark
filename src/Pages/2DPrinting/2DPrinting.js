@@ -7,7 +7,7 @@ import {
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 
-import { PDFDocument, EncryptedPDFError } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -27,7 +27,6 @@ export default function Printing(props) {
   const [printStatus, setPrintStatus] = useState('');
   const [printStatusColor, setPrintStatusColor] = useState('success');
   const [files, setFiles] = useState(null);
-
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -135,22 +134,22 @@ export default function Printing(props) {
   }
 
   async function handlePrinting() {
-    // send print request in base64 format
-    const arrayBuffer = await files.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer);
-    const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
-    let data = {
-      raw: pdfBytes,
-      // maybe we dont need to send this? since in the frontend
-      // we update the embed when the user specifies which
-      // pages they want to print
-      // pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
-      sides,
-      copies,
-    };
-    let status = await printPage(data, props.user.token);
+    const data = new FormData();
+    data.append('file', files);
+    data.append('sides', sides);
+    data.append('copies', copies);
+    if (!pageRanges) {
+      const pdfBytes = await files.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const totalPages = pdfDoc.getPageCount();
+      data.append('pageRanges', `1-${totalPages}`);
+    } else {
+      data.append('pageRanges', pageRanges);
+    }
+    data.append('token', props.user.token);
+
+    let status = await printPage(data);
     if (!status.error) {
-      // this should not be done in the frontend and instead be part of the printing api
       editUser(
         { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
         props.user.token,
