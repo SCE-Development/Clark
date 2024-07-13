@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, 'printing'));
   },
   filename: function(req, file, cb) {
-    const uniqueSuffix = new Date().toISOString();
+    const uniqueSuffix = Date.now();
     cb(null, uniqueSuffix + '_' + file.originalname);
   }
 });
@@ -72,7 +72,6 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
-
   const { copies, sides } = req.body;
   const file = req.file;
   const data = new FormData();
