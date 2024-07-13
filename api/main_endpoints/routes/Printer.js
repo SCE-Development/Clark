@@ -29,7 +29,7 @@ const router = express.Router();
 // stores file inside temp folder
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, '../../temp'));
+    cb(null, path.join(__dirname, 'printing'));
   },
   filename: function(req, file, cb) {
     const uniqueSuffix = Date.now();
