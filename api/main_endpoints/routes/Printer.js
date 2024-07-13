@@ -91,7 +91,6 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
       fs.unlink(file.path, (err) => {
         if (err) {
           logger.error('Error removing file:', err);
-          return;
         }
       });
       res.sendStatus(OK);
