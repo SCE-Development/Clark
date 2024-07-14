@@ -7,7 +7,7 @@ mongoose.Promise = require('bluebird');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
-const promClient = require('prom-client');
+const { metrics, register } = require('./metrics');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -51,17 +51,15 @@ class SceHttpServer {
   }
 
   async init() {
-    this.registerMetrics();
+    this.registerMetricsMiddleware();
     await this.initializeEndpoints();
   }
 
-  registerMetrics() {
-    // metrics
+  registerMetricsMiddleware() {
     this.app.use((req, res, next) => {
       res.on('finish', () => {
-        if (!this.endpointHitCounter) return;
         const route = req.route ? req.route.path : req.path;
-        this.endpointHitCounter.inc({
+        metrics.endpointHits.inc({
           method: req.method,
           route: route,
           statusCode: res.statusCode,
@@ -70,28 +68,10 @@ class SceHttpServer {
 	  next();
     });
 
-    this.register = new promClient.Registry();
-    this.register.setDefaultLabels({
-      app: 'sce-core',
-    });
-    promClient.collectDefaultMetrics({ register: this.register });
-
-    if(!promClient.register.getSingleMetric('endpoint_hits')) {
-      this.endpointHitCounter = new promClient.Counter({
-        name: 'endpoint_hits',
-        help: 'Counter for tracking endpoint hits with status codes',
-        labelNames: ['method', 'route', 'statusCode'],
-      });
-      this.register.registerMetric(this.endpointHitCounter);
-    } else {
-      this.endpointHitCounter =
-			promClient.register.getSingleMetric('endpoint_hits');
-    }
-
     // metrics
     this.app.get('/metrics', async (_, res) => {
-      res.setHeader('Content-Type', this.register.contentType);
-      res.end(await this.register.metrics());
+      res.setHeader('Content-Type', register.contentType);
+      res.end(await register.metrics());
     });
   }
 
