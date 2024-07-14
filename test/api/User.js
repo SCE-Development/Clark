@@ -319,9 +319,11 @@ describe('User', () => {
   describe('/POST delete', () => {
     let userAdmin;
 
+    const userId = new mongoose.Types.ObjectId();
+
     before(async () => {
       userAdmin = new User({
-        _id: id,
+        _id: userId,
         firstName: 'first-name',
         lastName: 'last-name',
         email: 'test@user.com',
@@ -429,7 +431,7 @@ describe('User', () => {
     });
 
     // New test case for lower privileges
-    it.only('Should return statusCode 403 if users with lower privileges tries to delete accounts with higher privileges', async () => {
+    it('Should return statusCode 403 if users with lower privileges tries to delete accounts with higher privileges', async () => {
       setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.OFFICER});
 
       const user = {
@@ -456,7 +458,7 @@ describe('User', () => {
         _id: id,
         firstName: 'first-name',
         lastName: 'last-name',
-        email: 'test@user.com',
+        email: 'test@test.com',
         password: 'Passw0rd',
         emailVerified: true,
         accessLevel: MEMBERSHIP_STATE.MEMBER,
