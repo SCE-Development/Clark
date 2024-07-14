@@ -9,16 +9,20 @@ const path = require('path');
 const {
   decodeToken,
   checkIfTokenSent,
+  checkIfTokenValid,
 } = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  BAD_REQUEST,
 } = require('../../util/constants').STATUS_CODES;
 const {
   PRINTING = {}
 } = require('../../config/config.json');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const User = require('../models/User.js');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
@@ -26,10 +30,18 @@ let PRINTER_URL = process.env.PRINTER_URL
 
 const router = express.Router();
 
+// defines path to temp folder
+const printDirectory = path.join(__dirname, 'printing');
+
+// creates temp folder if it doesn't exist
+if (!fs.existsSync(printDirectory)) {
+  fs.mkdirSync(printDirectory);
+}
+
 // stores file inside temp folder
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, 'printing'));
+    cb(null, printDirectory);
   },
   filename: function(req, file, cb) {
     const uniqueSuffix = Date.now();
@@ -38,6 +50,14 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+async function deleteFile(filePath) {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      logger.error(`Unable to delete file at path ${filePath}:`, err);
+    }
+  });
+}
 
 router.get('/healthCheck', async (req, res) => {
 /*
@@ -64,7 +84,7 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req)) {
+  if (!await checkIfTokenValid(req, membershipState.MEMBER)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -73,30 +93,43 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
     return res.sendStatus(OK);
   }
   const { copies, sides } = req.body;
+  const pagesToBeUsedInPrintRequest = parseInt(req.body.pagesToBeUsedInPrintRequest, 10);
+  const email = decodeToken(req).email;
   const file = req.file;
   const data = new FormData();
   data.append('file', fs.createReadStream(file.path), { filename: file.originalname });
   data.append('copies', copies);
   data.append('sides', sides);
-  axios.post(PRINTER_URL + '/print',
-    data,
-    {
-      headers: {
-        ...data.getHeaders(),
-      }
-    })
-    .then(() => {
-      // delete file from temp folder after printing
-      fs.unlink(file.path, (err) => {
-        if (err) {
-          logger.error(`Unable to delete file at path ${file.path}:`, err);
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user.pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
+      logger.warn('Print request exceeded weekly limit');
+      return res.sendStatus(BAD_REQUEST);
+    }
+
+    await axios.post(PRINTER_URL + '/print',
+      data,
+      {
+        headers: {
+          ...data.getHeaders(),
         }
       });
-      res.sendStatus(OK);
-    }).catch((err) => {
-      logger.error('/sendPrintRequest had an error: ', err);
-      res.sendStatus(SERVER_ERROR);
-    });
+
+    user.pagesPrinted += pagesToBeUsedInPrintRequest;
+    await user.save();
+
+    await deleteFile(file.path);
+
+    res.sendStatus(OK);
+  } catch (err) {
+    if (file && file.path) {
+      await deleteFile(file.path);
+    }
+    logger.error('/sendPrintRequest had an error: ', err);
+    res.sendStatus(SERVER_ERROR);
+  }
 });
 
 module.exports = router;
