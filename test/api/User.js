@@ -138,6 +138,80 @@ describe('User', () => {
     });
   });
 
+  describe('/POST countMembers', () => {
+    it('Should return statusCode 403 if no token is passed in', async () => {
+      const user = {
+        email: 'a@b.c'
+      };
+      const result = await test.sendPostRequest('/api/User/countMembers', user);
+      expect(result).to.have.status(FORBIDDEN);
+    });
+
+    it('Should return statusCode 401 if an invalid token is passed in', async () => {
+      const user = {
+        token: 'Invalid token'
+      }
+      const result = await test.sendPostRequest('/api/User/users', user);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return statusCode 200 and the member counts if a valid token is passed in', async () => {
+      
+      const user = {
+        email: 'a@b.c',
+        token: token
+      };
+
+      setTokenStatus(true);
+
+      const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', user);
+
+      expect(result).to.have.status(OK);
+      result.body.should.be.a('object');
+      result.body.should.have.property('count').that.is.a('number');
+      result.body.should.have.property('newSingleSemester').that.is.a('number');
+      result.body.should.have.property('newAnnualMembers').that.is.a('number');
+      result.body.should.have.property('totalNewMembersThisYear').that.is.a('number');
+      result.body.should.have.property('currentActiveMembers').that.is.a('number');
+    });
+
+    // it('Should correctly count members before June 1', async () => {
+    //   const token = 'token';
+    //   setTokenStatus(true);
+
+    //   const users = [
+    //     {
+    //       email: 'user1@example.com',
+    //       password: 'password',
+    //       firstName: 'User',
+    //       lastName: 'One',
+    //       emailVerified: true,
+    //       accessLevel: 1,
+    //       joinDate: new Date('2024-01-15'),
+    //       membershipValidUntil: new Date('2024-06-01')
+    //     },
+    //     {
+    //       email: 'user2@example.com',
+    //       password: 'password',
+    //       firstName: 'User',
+    //       lastName: 'Two',
+    //       emailVerified: true,
+    //       accessLevel: 1,
+    //       joinDate: new Date('2024-01-20'),
+    //       membershipValidUntil: new Date('2025-01-01')
+    //     }
+    //   ];
+    //   const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', users);
+
+    //   expect(result).to.have.status(OK);
+    //   expect(result.body.count).to.equal(2);
+    //   expect(result.body.newSingleSemester).to;
+
+    // });
+
+      
+  });
+
   describe('/POST searchFor', () => {
     it('Should return statusCode 403 if no token is passed in', async () => {
       const user = {
