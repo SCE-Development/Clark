@@ -1,6 +1,9 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const User = require('../../api/main_endpoints/models/User');
+const PasswordReset = require('../../api/main_endpoints/models/PasswordReset');
 const EmailHelpers = require('../../api/main_endpoints/util/emailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
@@ -28,8 +31,9 @@ const {
 } = require('../util/mocks/TokenValidFunctions');
 const { checkIfPageCountResets } = require('../../api/main_endpoints/util/userHelpers.js');
 const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
-
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 chai.should();
+
 chai.use(chaiHttp);
 
 // Our parent block
@@ -166,6 +170,157 @@ describe('Auth', () => {
       const result = await test.sendPostRequest(
         '/api/Auth/login', user);
       expect(result).to.have.status(UNAUTHORIZED);
+    });
+  });
+
+  describe('/POST sendPasswordReset', () => {
+    it('Should return statusCode 401 if the email is invalid', async () => {
+      const data = {
+        email: 'notanemail',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return statusCode 200 if the email does not exist in the database', async () => {
+      const data = {
+        email: 'test122342423@gmail.com',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 200 if the email does exist in the database', async () => {
+      user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        firstName: 'first-name',
+        lastName: 'last-name',
+        email: 'existing-member@gmail.com',
+        password: 'Passw0rd',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+        apiKey: null
+      });
+      await user.save();
+      const data = {
+        email: 'existing-member@gmail.com',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 401 if the user is banned', async () => {
+      user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        firstName: 'first-name',
+        lastName: 'last-name',
+        email: 'banned-member@gmail.com',
+        password: 'Passw0rd',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.BANNED,
+        apiKey: null
+      });
+      await user.save();
+      const data = {
+        email: 'banned-member@gmail.com',
+      };
+      const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+  });
+
+  describe('/POST validatePasswordReset', () => {
+    let createdPasswordReset = null;
+
+    before(async () => {
+      const newPasswordReset = new PasswordReset({
+        userId: mongoose.Types.ObjectId('valid id 321'),
+        token: 'valid token',
+      });
+      createdPasswordReset = await newPasswordReset.save();
+    });
+
+    after(async () => {
+      if (createdPasswordReset) await PasswordReset.deleteOne({ _id: createdPasswordReset._id});
+    });
+
+    it('Should return statusCode 404 if the token is invalid', async () => {
+      const data = {
+        resetToken: 'invalid token'
+      };
+      const result = await test.sendPostRequest('/api/Auth/validatePasswordReset', data);
+      expect(result).to.have.status(404);
+    });
+
+    it('Should return statusCode 200 if the token is valid', async () => {
+      const data = {
+        resetToken: 'valid token'
+      };
+      const result = await test.sendPostRequest('/api/Auth/validatePasswordReset', data);
+      expect(result).to.have.status(OK);
+    });
+  });
+
+  describe('/POST resetPassword', () => {
+    let createdPasswordReset = null;
+    let createdUser = null;
+
+    before(async () => {
+      const newPasswordReset = new PasswordReset({
+        userId: mongoose.Types.ObjectId('valid id 123'),
+        token: 'valid token',
+      });
+      createdPasswordReset = await newPasswordReset.save();
+      const newUser = new User({
+        _id: createdPasswordReset.userId,
+        email: 'abcdef123@gmail.com',
+        password: 'Passw0rd',
+        firstName: 'first-name',
+        lastName: 'last-name',
+      });
+      createdUser = await newUser.save();
+    });
+
+    after(async () => {
+      if (createdPasswordReset) await PasswordReset.deleteOne({ _id: createdPasswordReset._id});
+      if (createdUser) await User.deleteOne({ _id: createdUser._id});
+    });
+
+    it('Should return statusCode 401 if the password is too weak', async () => {
+      const data = {
+        password: 'weak password',
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return statusCode 404 if the password rest token is invalid', async () => {
+      const data = {
+        password: 'Passw0rd',
+        resetToken: 'invalid token',
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(404);
+    });
+
+    it('Should return statusCode 401 if the user id hash is not matching', async () => {
+      const data = {
+        password: 'Passw0rd',
+        resetToken: 'valid token',
+        hashedId: 'invalid id',
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return statusCode 200 if the password was reset', async () => {
+      const data = {
+        password: 'Passw0rd',
+        resetToken: 'valid token',
+        hashedId: await bcrypt.hash(String(createdPasswordReset.userId), await bcrypt.genSalt(10)),
+      };
+      const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+      expect(result).to.have.status(OK);
     });
   });
 

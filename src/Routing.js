@@ -5,6 +5,8 @@ import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 import Overview from './Pages/Overview/Overview';
 import Login from './Pages/Login/Login';
+import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
+import ResetPasswordPage from './Pages/ForgotPassword/ResetPassword';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
 import SpeakerPage from './Pages/Speaker/Speaker';
@@ -85,6 +87,12 @@ export default function Routing({ appProps }) {
       },
     },
     {
+      Component: ForgotPassword,
+      path: '/forgot',
+      allowedIf: !userIsAuthenticated,
+      redirect: '/'
+    },
+    {
       Component: MembershipApplication,
       path: '/register',
       allowedIf: !userIsAuthenticated,
@@ -121,6 +129,7 @@ export default function Routing({ appProps }) {
   const signedOutRoutes = [
     { Component: Home, path: '/' },
     { Component: VerifyEmailPage, path: '/verify' },
+    { Component: ResetPasswordPage, path: '/reset' },
     { Component: AboutPage, path: '/about'},
     { Component: ProjectsPage, path: '/projects'},
     { Component: EmailPreferencesPage, path: '/emailPreferences' },

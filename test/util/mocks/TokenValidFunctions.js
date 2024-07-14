@@ -13,7 +13,6 @@ let decodeTokenValidMock = null;
 function initializeTokenMock() {
   checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid');
   decodeTokenValidMock = sinon.stub(TokenFunctions, 'decodeToken');
-  verifyTokenMock = sinon.stub(TokenValidation, 'verifyToken');
 }
 
 /**
@@ -22,7 +21,6 @@ function initializeTokenMock() {
 function restoreTokenMock() {
   checkifTokenValidMock.restore();
   decodeTokenValidMock.restore();
-  verifyTokenMock.restore();
 }
 
 /**
@@ -31,7 +29,6 @@ function restoreTokenMock() {
 function resetTokenMock() {
   checkifTokenValidMock.reset();
   decodeTokenValidMock.reset();
-  verifyTokenMock.reset();
 }
 
 /**
@@ -49,10 +46,8 @@ function setTokenStatus(
   checkifTokenValidMock.returns(returnValue);
   if (returnValue) {
     decodeTokenValidMock.returns(data);
-    verifyTokenMock.returns(true);
   } else {
     decodeTokenValidMock.returns(null);
-    verifyTokenMock.returns(false);
   }
 }
 

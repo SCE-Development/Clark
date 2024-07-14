@@ -1,12 +1,15 @@
 'use strict';
 const bcrypt = require('bcryptjs');
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const passport = require('passport');
 require('../util/passport')(passport);
 const config = require('../../config/config.json');
 const User = require('../models/User.js');
-const { registerUser } = require('../util/userHelpers');
+const PasswordReset = require('../models/PasswordReset.js');
+const { registerUser, testPasswordStrength } = require('../util/userHelpers');
+const { verifyCaptcha } = require('../util/captcha');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -22,8 +25,8 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const {sendVerificationEmail} = require('../util/emailHelpers');
-const { userWithEmailExists, checkIfPageCountResets } = require('../util/userHelpers');
+const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
+const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
 // Register a member
 router.post('/register', async (req, res) => {
@@ -56,6 +59,58 @@ router.post('/resendVerificationEmail', async (req, res) => {
   let name = maybeUser.firstName + ' ' + maybeUser.lastName;
   sendVerificationEmail(name, req.body.email);
   res.sendStatus(OK);
+});
+
+router.post('/sendPasswordReset', async (req, res) => {
+  if (!(req.body.email.includes('@') && req.body.email.includes('.'))) {
+    return res.status(BAD_REQUEST).send({
+      message: 'Invalid email.'
+    });
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    const captchaValid = await verifyCaptcha(req.body.captchaToken);
+    if (!captchaValid.success) {
+      return res.status(BAD_REQUEST).send({
+        message: 'Captcha verification failed.'
+      });
+    }
+  }
+
+  await User.findOne({ email: req.body.email }, async function(error, result) {
+    if (error) {
+      return res.sendStatus(BAD_REQUEST);
+    }
+    if (!result) {
+      return res.sendStatus(OK);
+    }
+    if (
+      [
+        membershipState.PENDING,
+        membershipState.BANNED,
+      ].includes(result.accessLevel)
+    ) {
+      return res.status(UNAUTHORIZED).send({
+        message: 'Cannot reset password, account is in a bad state!'
+      });
+    }
+
+    const buffer = crypto.randomBytes(12);
+    let id = buffer.toString('base64');
+
+    const resetToken = id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    try {
+      await PasswordReset.updateOne(
+        { userId: result._id },
+        { $set: { token: resetToken, createdAt: new Date() } },
+        { upsert: true }
+      );
+      await sendPasswordReset(resetToken, req.body.email);
+    } catch (error) {
+      logger.error('unable to save password reset token:', error);
+    }
+    res.sendStatus(OK);
+  });
 });
 
 // User Login
@@ -214,6 +269,51 @@ router.post('/validateVerificationEmail', async (req, res) => {
       }
     });
   });
+});
+
+router.post('/validatePasswordReset', async (req, res) => {
+  try {
+    const passwordReset = await findPasswordReset(req.body.resetToken);
+    if (!passwordReset) {
+      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
+    }
+    res.sendStatus(OK);
+  } catch (error) {
+    logger.error('Unable to validate password reset:', error);
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
+router.post('/resetPassword', async (req, res) => {
+  const testPassword = testPasswordStrength(req.body.password);
+  if (!testPassword.success) {
+    return res.status(BAD_REQUEST).send({
+      message: 'Password does not meet requirements.'
+    });
+  }
+
+  try {
+    const passwordReset = await findPasswordReset(req.body.resetToken);
+    if (!passwordReset) {
+      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
+    }
+    const validId = await bcrypt.compare(String(passwordReset.userId), req.body.hashedId);
+    if (!validId) {
+      return res.status(BAD_REQUEST).send({ message: 'Invalid user ID.' });
+    }
+    const user = await User.findOne({ _id: passwordReset.userId });
+    if (!user) {
+      return res.status(NOT_FOUND).send({ message: 'User not found.' });
+    }
+    user.password = req.body.password;
+    await user.save();
+    await passwordReset.delete();
+  } catch (error) {
+    logger.error('Unable to reset password:', error);
+    return res.sendStatus(BAD_REQUEST);
+  }
+
+  res.sendStatus(OK);
 });
 
 module.exports = router;

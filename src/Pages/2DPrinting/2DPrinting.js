@@ -7,7 +7,7 @@ import {
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 
-import { PDFDocument, EncryptedPDFError } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -27,9 +27,9 @@ export default function Printing(props) {
   const [printStatus, setPrintStatus] = useState('');
   const [printStatusColor, setPrintStatusColor] = useState('success');
   const [files, setFiles] = useState(null);
-
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [PdfFile, setPdfFile] = useState(null);
 
   async function checkPrinterHealth() {
     setLoading(true);
@@ -75,10 +75,11 @@ export default function Printing(props) {
       });
       // convert pdf to blob url (allows display of larger pdfs)
       const pdfBytes = await display.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const objectUrl = URL.createObjectURL(blob);
+      const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
+      const objectUrl = URL.createObjectURL(file);
       setNumberOfPagesInPdfPreview(display.getPages().length);
       setPreviewDisplay(objectUrl);
+      setPdfFile(file);
     } catch (e) {
       // the error looks like Input document to `PDFDocument.load` is encrypted
       if (e.message.includes('is encrypted')) {
@@ -135,22 +136,15 @@ export default function Printing(props) {
   }
 
   async function handlePrinting() {
-    // send print request in base64 format
-    const arrayBuffer = await files.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer);
-    const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
-    let data = {
-      raw: pdfBytes,
-      // maybe we dont need to send this? since in the frontend
-      // we update the embed when the user specifies which
-      // pages they want to print
-      // pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
-      sides,
-      copies,
-    };
-    let status = await printPage(data, props.user.token);
+    // send print request with files and configuratiosn in formData
+    const data = new FormData();
+    data.append('file', PdfFile);
+    data.append('sides', sides);
+    data.append('copies', copies);
+    data.append('token', props.user.token);
+
+    let status = await printPage(data);
     if (!status.error) {
-      // this should not be done in the frontend and instead be part of the printing api
       editUser(
         { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
         props.user.token,
@@ -172,6 +166,12 @@ export default function Printing(props) {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      let a = new FileReader();
+      a.onload = function(event) {
+        setDataUrl(event.target.result);
+        setPrintStatus(null);
+      };
+      a.readAsDataURL(e.dataTransfer.files[0]);
       setFiles(e.dataTransfer.files[0]);
     }
   }

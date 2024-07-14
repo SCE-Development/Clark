@@ -4,10 +4,7 @@ import {
   ApiResponse
 } from './ApiResponses';
 
-let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'http://localhost:8080/api';
-let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
-  || 'http://localhost:8081/peripheralapi';
+import { BASE_API_URL } from '../Enums';
 
 /**
  * Return an array similar to python's range() function
@@ -24,7 +21,8 @@ export const range = (start, end) => {
  */
 export async function healthCheck() {
   let status = new ApiResponse();
-  await axios.get(PERIPHERAL_API_URL + '/Printer/healthCheck')
+  const url = new URL('/api/Printer/healthCheck', BASE_API_URL);
+  await axios.get(url.href)
     .then(res => {
       status.reponseData = res.data;
     })
@@ -66,8 +64,8 @@ export function parseRange(pages, maxPages) {
 
 /**
  * Print the page
- * @param {Object} data - Encoded file and its configurations
- * @param {String|undefined} data.raw - Encoded file
+ * @param {Object} data - PDF File and its configurations
+ * @param {String|undefined} data.file - PDF file
  * @param {Number|undefined} data.copies - Number of copies
  * @param {String|undefined} data.sides - Sides to print:
  * one-sided or two-sided
@@ -76,10 +74,14 @@ export function parseRange(pages, maxPages) {
  * @returns {ApiResponse} - Containing information for if
  * the page successfully printed
  */
-export async function printPage(data, token) {
+export async function printPage(data) {
   let status = new ApiResponse();
-  await axios.post(PERIPHERAL_API_URL + '/Printer/sendPrintRequest',
-    {...data, token})
+  const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
+  await axios.post(url.href, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
     .then(response => {
       status.responseData = response.data.message;
     })
@@ -100,8 +102,9 @@ export async function printPage(data, token) {
  */
 export async function getPagesPrinted(email, token) {
   let status = new PrintApiResponse();
+  const url = new URL('/api/user/getPagesPrintedCount', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/user/getPagesPrintedCount', {
+    .post(url.href, {
       email,
       token
     })

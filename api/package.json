@@ -5,16 +5,10 @@
   "main": "",
   "scripts": {
     "dev": "nodemon devServer.js",
-    "peripheral_api": "nodemon peripheral_api/server.js",
-    "cloud_api": "nodemon cloud_api/server.js",
-    "main_endpoints": "nodemon main_endpoints/server.js",
-    "main-endpoints": "npm start --prefix main_endpoints",
-    "google-api": "npm start --prefix google_api",
-    "peripheral-api": "npm start --prefix peripheral_api",
-    "github-api": "npm start --prefix github_api",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "create-user": "node ./util/CreateUserScript.js",
-    "generate-token": "node ./util/GenerateTokenScript.js"
+    "generate-token": "node ./util/GenerateTokenScript.js",
+    "main_endpoints": "nodemon main_endpoints/server.js",
+    "cloud_api": "nodemon cloud_api/server.js"
   },
   "repository": {
     "type": "git",
@@ -40,6 +34,7 @@
     "express": "^4.17.1",
     "googleapis": "^52.1.0",
     "mongoose": "^5.10.0",
+    "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.4.11",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",

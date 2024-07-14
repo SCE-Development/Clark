@@ -1,4 +1,4 @@
-FROM node:14.10.0-alpine 
+FROM node:alpine
 
 WORKDIR /app
 
@@ -14,8 +14,6 @@ COPY ./util /app/util
 COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8080
-
-ARG PERIPHERAL_API_URL
 
 ARG DISCORD_REDIRECT_URI
 
