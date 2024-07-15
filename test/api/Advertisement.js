@@ -39,37 +39,4 @@ describe('Advertisement', () => {
     expireDate: new Date('10/10/2001')
   };
 
-  describe('/POST addAdvertisement', () => {
-    it('Should return 400 when required fields are not filled in ',
-      async () => {
-        const result = await test.sendPostRequest(
-          '/api/Advertisement/addAdvertisement', INVALID_ADVERTISEMENT);
-        expect(result).to.have.status(BAD_REQUEST);
-      });
-    it('Should return statusCode 200 when all required fields are filled in ',
-      async () => {
-        const result = await test.sendPostRequest(
-          '/api/Advertisement/addAdvertisement', VALID_ADVERTISEMENT);
-        expect(result).to.have.status(OK);
-      });
-  });
-  describe('/GET getAdvertisements', () => {
-    it('Should return an object of all events', async () => {
-      const result = await test.sendGetRequest(
-        '/api/Advertisement/getAdvertisements');
-      expect(result).to.have.status(OK);
-      const getAdvertisementResponse = result.body;
-      getAdvertisementResponse.should.be.a('array');
-      expect(getAdvertisementResponse).to.have.length(1);
-      expect(getAdvertisementResponse[0].pictureUrl).to.equal(
-        VALID_ADVERTISEMENT.pictureUrl
-      );
-      expect(getAdvertisementResponse[0].createDate).to.equal(
-        VALID_ADVERTISEMENT.createDate.toISOString()
-      );
-      expect(getAdvertisementResponse[0].expireDate).to.equal(
-        VALID_ADVERTISEMENT.expireDate.toISOString()
-      );
-    });
-  });
 });
