@@ -140,7 +140,6 @@ export default function Printing(props) {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    data.append('pagesToBeUsedInPrintRequest', pagesToBeUsedInPrintRequest);
     data.append('token', props.user.token);
 
     let status = await printPage(data);
