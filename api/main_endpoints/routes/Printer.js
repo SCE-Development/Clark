@@ -5,6 +5,7 @@ const FormData = require('form-data');
 const logger = require('../../util/logger');
 const fs = require('fs');
 const path = require('path');
+const { PDFDocument } = require('pdf-lib');
 
 const {
   decodeToken,
@@ -52,6 +53,12 @@ async function deleteFile(filePath) {
   });
 }
 
+async function getPageCount(filePath) {
+  const fileBuffer = await fs.promises.readFile(filePath);
+  const printFile = await PDFDocument.load(fileBuffer);
+  return printFile.getPageCount();
+}
+
 router.get('/healthCheck', async (req, res) => {
   /*
    * How these work with Quasar:
@@ -87,7 +94,6 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
     return res.sendStatus(OK);
   }
   const { copies, sides } = req.body;
-  const pagesToBeUsedInPrintRequest = parseInt(req.body.pagesToBeUsedInPrintRequest, 10);
   const email = decodeToken(req).email;
   const file = req.file;
   const data = new FormData();
@@ -98,7 +104,13 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
   try {
     const user = await User.findOne({ email });
 
+    const divisor = sides === 'one-sided' ? 1 : 2;
+    let pagesCount = await getPageCount(file.path);
+    let pagesPerCopy = Math.floor(pagesCount / divisor) + (pagesCount % divisor);
+    pagesToBeUsedInPrintRequest = pagesPerCopy * parseInt(copies);
+
     if (user.pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
+      await deleteFile(file.path);
       logger.warn('Print request exceeded weekly limit');
       return res.sendStatus(BAD_REQUEST);
     }
