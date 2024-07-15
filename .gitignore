@@ -102,3 +102,7 @@ token.json
 **/uuid*
 *.cmd
 *.ps1
+
+# Ignore everything in the printing folder except keep
+api/main_endpoints/routes/printing/*
+!api/main_endpoints/routes/printing/keep

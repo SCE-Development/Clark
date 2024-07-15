@@ -30,18 +30,10 @@ let PRINTER_URL = process.env.PRINTER_URL
 
 const router = express.Router();
 
-// defines path to temp folder
-const printDirectory = path.join(__dirname, 'printing');
-
-// creates temp folder if it doesn't exist
-if (!fs.existsSync(printDirectory)) {
-  fs.mkdirSync(printDirectory);
-}
-
 // stores file inside temp folder
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, printDirectory);
+    cb(null, path.join(__dirname, 'printing'));
   },
   filename: function(req, file, cb) {
     const uniqueSuffix = Date.now();
