@@ -102,10 +102,11 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
   try {
     const user = await User.findOne({ email });
 
-    const divisor = sides === 'one-sided' ? 1 : 2;
-    let pagesCount = await getPageCount(file.path);
-    let pagesPerCopy = Math.floor(pagesCount / divisor) + (pagesCount % divisor);
-    pagesToBeUsedInPrintRequest = pagesPerCopy * parseInt(copies);
+    const sidesUsed = sides === 'one-sided' ? 1 : 2;
+    const pagesCount = await getPageCount(file.path);
+    const wholePagesUsed = Math.floor(pagesCount / sidesUsed);
+    const remainder = pagesCount % sidesUsed;
+    const pagesToBeUsedInPrintRequest = (wholePagesUsed + remainder) * parseInt(copies);
 
     if (user.pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
       await deleteFile(file.path);
