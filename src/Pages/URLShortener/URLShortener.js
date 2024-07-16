@@ -12,7 +12,7 @@ export default function URLShortenerPage(props) {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [useGeneratedAlias, setUseGeneratedAlias] = useState(true);
   const [useExpirationDate, setUseExpirationDate] = useState(true);
-  const [expirationDate, setExpirationDate] = useState(new Date());
+  const [expirationDate, setExpirationDate] = useState(0);
   const [alias, setAlias] = useState('');
   const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,7 @@ export default function URLShortenerPage(props) {
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
+
 
   /**
    * Cleezy page is disabled by default since you have to run the Cleezy server
@@ -63,15 +64,16 @@ export default function URLShortenerPage(props) {
     const response = await createUrl(
       url.trim(),
       alias.trim(),
-      expirationDate.trim(),
+      expirationDate,
       props.user.token
     );
     if (!response.error) {
+      console.log(response);
+      console.log(expirationDate);
       setAllUrls([...allUrls, response.responseData]);
       setAliasTaken(false);
       setUrl('');
       setAlias('');
-      setExpirationDate(new Date());
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
@@ -122,6 +124,12 @@ export default function URLShortenerPage(props) {
       setTotal(total - 1);
     }
   }
+  const handleDateChange = (e) => {
+    const dateString = e.target.value; // This is a string in 'YYYY-MM-DD' format
+    const dateObject = new Date(dateString); // Convert string to Date object
+    const epochTime = dateObject.getTime(); // Get epoch time from Date object
+    setExpirationDate(epochTime); // Update state with epoch time
+  };
 
   function handleSortUrls(columnName) {
     if (columnName === null) {
@@ -310,8 +318,8 @@ export default function URLShortenerPage(props) {
                     type="date"
                     id="expiration_date"
                     name="expiration_date"
-                    value={expirationDate}
-                    onChange={e => setExpirationDate(e.target.value)}
+                    value={new Date(expirationDate).toISOString().split('T')[0]}
+                    onChange={handleDateChange}
                     className={INPUT_CLASS}
                   />
                 </div>
@@ -484,6 +492,11 @@ export default function URLShortenerPage(props) {
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
                             {url.used}
+                          </div>
+                        </td>
+                        <td className='hidden md:table-cell'>
+                          <div className='flex items-center justify-center'>
+                            {url.expiration_date}
                           </div>
                         </td>
                         <td>

@@ -29,10 +29,19 @@ export async function getAllUrls({
   return status;
 }
 
-export async function createUrl(url, alias = null, expiration = null, token) {
+export async function createUrl(url, alias = null, expirationDate, token) {
   let status = new ApiResponse();
-  const urlToAdd = { url, alias, expiration };
+  const urlToAdd = { url, alias, epoch_expiration: expirationDate };
+
+  console.log('Request payload:', {
+    token,
+    ...urlToAdd
+  });
+
+
   try {
+    console.log(expirationDate);
+    console.log(urlToAdd);
     const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const response = await axios
       .post(url.href, { token, ...urlToAdd });
@@ -48,7 +57,7 @@ export async function createUrl(url, alias = null, expiration = null, token) {
 export async function deleteUrl(aliasIn, token) {
   let status = new ApiResponse();
   const alias = { 'alias': aliasIn };
-  const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
+  const url = new URL('/api/Cleezy/deleteUrl', BASE_API_URL);
   await axios
     .post(url.href, { token, ...alias })
     .catch(err => {
