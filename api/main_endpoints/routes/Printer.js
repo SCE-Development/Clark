@@ -14,6 +14,7 @@ const {
 const {
   PRINTING = {}
 } = require('../../config/config.json');
+const { metrics } = require('../../util/metrics');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
@@ -37,6 +38,7 @@ router.get('/healthCheck', async (req, res) => {
     })
     .catch((err) => {
       logger.error('Printer SSH tunnel is down: ', err);
+	  metrics.sshTunnelErrors.inc({ type: 'Printer' });
       return res.sendStatus(NOT_FOUND);
     });
 });
