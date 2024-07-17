@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { PDFDocument } = require('pdf-lib');
 
+const { healthCheck } = require('../util/Printer.js');
 const {
   decodeToken,
   checkIfTokenSent,
@@ -67,15 +68,11 @@ router.get('/healthCheck', async (req, res) => {
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
-  await axios
-    .get(PRINTER_URL + '/healthcheck/printer')
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      logger.error('Printer SSH tunnel is down: ', err);
-      return res.sendStatus(NOT_FOUND);
-    });
+  const healthy = await healthCheck();
+  if (!healthy) {
+    return res.sendStatus(NOT_FOUND);
+  }
+  return res.sendStatus(OK);
 });
 
 router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
