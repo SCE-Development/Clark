@@ -290,7 +290,7 @@ describe('User', () => {
       const result = await test.sendGetRequestWithToken(
         token, `/api/User/countAllUsers${query}`);
       expect(result).to.have.status(OK);
-      result.body.count.should.be.greaterThanOrEqual(0);
+      result.body.count.should.be.greaterThanOrEqual(1);
     });
     it('Should return statusCode 404 if count == 0', async () => {
       setTokenStatus(true);
