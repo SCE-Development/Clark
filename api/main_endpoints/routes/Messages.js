@@ -114,7 +114,6 @@ router.get('/listen', async (req, res) => {
       };
 
       res.writeHead(200, headers);
-      
 
       if(!clients[id]){
         clients[id] = [];
