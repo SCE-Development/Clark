@@ -25,10 +25,10 @@ const writeMessage = ((roomId, message) => {
 
 router.post('/send', async (req, res) => {
 
-  const {apiKey, message, id} = req.body;
+  const {token, apiKey, message, id} = req.body;
 
   const required = [
-    {value: apiKey, title: 'API Key', },
+    {value: token || apiKey, title: 'Token or API Key', },
     {value: message, title: 'Message', },
     {value: id, title: 'Room ID', },
   ];
@@ -40,10 +40,18 @@ router.post('/send', async (req, res) => {
     return;
   }
 
+  let filterQuery = {}; // filter to find user in the database
+  if (token) {
+    userObj = await decodeToken(req);
+    filterQuery._id = userObj._id;
+  } else {
+    filterQuery.apiKey = apiKey;
+  }
+
   try {
-    User.findOne({apiKey}, (error, result) => {
+    User.findOne(filterQuery, (error, result) => {
       if (error) {
-        logger.error('/send received an invalid API key: ', error);
+        logger.error('/send received an invalid API key or token: ', error);
         res.sendStatus(SERVER_ERROR);
         return;
       }
