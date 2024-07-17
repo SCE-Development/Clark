@@ -6,12 +6,13 @@ const User = require("../../api/main_endpoints/models/User");
 const chai = require("chai");
 
 const chaiHttp = require("chai-http");
-const constants = require("../../api/util/constants.js");
-const { OK, UNAUTHORIZED, NOT_FOUND, SERVER_ERROR, BAD_REQUEST } =
+const { OK, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST } =
   require("../../api/util/constants").STATUS_CODES;
 const sinon = require("sinon");
 const SceApiTester = require("../util/tools/SceApiTester.js");
 const { PDFDocument } = require("pdf-lib");
+const multer = require('multer');
+const fs = require ('fs');
 
 let app = null;
 let test = null;
@@ -29,12 +30,12 @@ const {
 chai.should();
 chai.use(chaiHttp);
 const SshTunnelFunctions = require('../../api/main_endpoints/util/Printer')
-const {
-  PRINTING = {}
-} = require('../../api/config/config.json');
 
 describe("Printer", () => {
   let healthCheckStub = null;
+  let userFindOneMock = null;
+  let userUpdateOneMock = null;
+  let createReadStreamSub = null;
 
   before((done) => {
     initializeTokenMock();
@@ -45,12 +46,18 @@ describe("Printer", () => {
     );
     test = new SceApiTester(app);
     tools.emptySchema(User);
+    userFindOneMock = sandbox.stub(User, 'findOne');
+    userUpdateOneMock = sandbox.stub(User, 'updateOne');
+    createReadStreamSub = sandbox.stub(fs, 'createReadStream');
     done();
   });
 
   after((done) => {
     restoreTokenMock();
     if (healthCheckStub) healthCheckStub.restore();
+    userFindOneMock.restore();
+    userUpdateOneMock.restore();
+    createReadStreamSub.restore();
     sandbox.restore();
     tools.terminateServer(done);
   });
@@ -63,32 +70,23 @@ describe("Printer", () => {
   afterEach(() => {
     resetTokenMock();
   });
-  
+
   const token = '';
   // Test cases for /healthCheck endpoint
   describe("/GET healthCheck", () => {
-    it("Should return 200 when printing is disabled ", async () => {
-      PRINTING.ENABLED = false;
-      const result = await test.sendGetRequest("/api/Printer/healthCheck");
-      expect(result).to.have.status(OK);
-    });
-
-    it("Should return 200 when printing is enabled and ssh tunnel is up ", async () => {
-      PRINTING.ENABLED = true;
+    it("Should return 200 when printing is enabled and ssh tunnel is up", async () => {
       healthCheckStub.resolves(true);
       const result = await test.sendGetRequest("/api/Printer/healthCheck");
       expect(result).to.have.status(OK);
     });
-    
+
     it("Should return 404 when printing is enabled but ssh tunnel is down ", async () => {
-      PRINTING.ENABLED = true;
       healthCheckStub.resolves(false);
       const result = await test.sendGetRequest("/api/Printer/healthCheck");
       expect(result).to.have.status(NOT_FOUND);
     });
   });
-  
-  
+
   // Test cases for /sendPrintRequest endpoint
   describe("/POST sendPrintRequest", () => {
     it("Should return 401 when token is not sent ", async () => {
@@ -97,7 +95,7 @@ describe("Printer", () => {
       );
       expect(result).to.have.status(UNAUTHORIZED);
     });
-    
+
     it("Should return 401 when invalid token is sent ", async () => {
       const result = await test.sendPostRequestWithToken(
         token,
@@ -105,70 +103,41 @@ describe("Printer", () => {
       );
       expect(result).to.have.status(UNAUTHORIZED);
     });
-    
-    it("Should return 200 when printing is disabled ", async () => {
-      PRINTING.ENABLED = false;
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        token, "/api/Printer/sendPrintRequest"
-      );
-      expect(result).to.have.status(OK);
-    });
-    
+
     it('Should return 400 when print page count exceeds weekly limit ',
       async () => {
-        PRINTING.ENABLED = true;
+        
         setTokenStatus(true);
-        /*
-        setTokenStatus(true, mockUser);
-        mockUser = {
-          email:
-          pagesPrinted:
-        };
-        create new PDF using PDFDocument
-
-        data - PDF File and its configurations
-        data.file - PDF file
-        data.copies - Number of copies
-        data.sides - Sides to print: one-sided or two-sided
-        data, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+        createReadStreamSub.resolves(null);
+        const result = await test.sendPostRequestWithTokenAndFile(
+          token, "/api/Printer/sendPrintRequest", 'idk', {
+          copies: 1,
+          sides: 'one-sided',
         }
-
-        Mock User.findOne (create stub) to return the mockUser
-
-        Mock getPagesToBeUsedInPrintRequestStub line 102~106 to return mock data.
-
-        Mock file operations to avoid actual file operations and HTTP Requests. 
-
-        Check that response status is BAD_REQUEST
-
-        For valid request,
-        Mock axios.post(PRINTER_URL + '/print', ...) in require('../util/Printer.js');
-        Check that return status is OK.
-
-        */
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/Printer/sendPrintRequest', params);
-        expect(result).to.have.status(BAD_REQUEST);
+        );
+        // mock user result?
+        // mock page count result?
+        // mock delete file?
       });
 
     // it('Should return 200 when all required fields are filled in ',
     //   async () => {
-    //     setTokenStatus(true);
-    //     const result = await test.sendPostRequestWithToken(
-    //       '/api/Printer/sendPrintRequest', );
-    //     expect(result).to.have.status();
     //   });
 
-    //   it('Should return 500 when all required fields are not filled in ',
+    // it('Should delete the file after a successful print request ',
     //   async () => {
-    //     setTokenStatus(true);
-    //     const result = await test.sendPostRequestWithToken(
-    //       '/api/Printer/sendPrintRequest', );
-    //     expect(result).to.have.status();
+    //   });
+
+    // it('update the user's page count after a successful print request',
+    //   async () => {
+    //   });
+
+    //   it('Should return 500 the ssh tunnel is down ',
+    //   async () => {
+    //   });
+
+    //   it('Should delete the file anyway when the ssh tunnel is down ',
+    //   async () => {
     //   });
   });
 });

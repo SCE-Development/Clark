@@ -56,6 +56,22 @@ class SceApiTester{
     return response;
   }
 
+  async sendPostRequestWithTokenAndFile(token, endpoint, fileName, params = {}){
+    let response = null;
+    await chai
+      .request(this.app)
+      .post(endpoint)
+      .attach('file', fileName)
+      .send({ token, ...params })
+      .then(function(res) {
+        response = res;
+      })
+      .catch(err =>{
+        throw err;
+      });
+    return response;
+  }
+
   /**
    * Creates a chai GET request to test an API route.
    * @param {String} endpoint contains the path of the route being tested.

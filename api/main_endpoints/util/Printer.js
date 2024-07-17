@@ -17,6 +17,18 @@ async function healthCheck() {
   });
 }
 
+async function print(data) {
+  return new Promise((resolve, reject) => {
+    axios.post(PRINTER_URL + '/print',
+      data,
+      {
+        headers: {
+          ...data.getHeaders(),
+        }
+      })
+      .then(resolve)
+      .catch(reject);
+  });
+}
 
-
-module.exports = { healthCheck };
+module.exports = { healthCheck, print };
