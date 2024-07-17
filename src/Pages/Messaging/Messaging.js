@@ -22,7 +22,6 @@ function MessagingForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('room id is:', id);
 
     const status = await sendMessage(id, apiKey, message);
 
@@ -130,8 +129,6 @@ function Feed(props) {
     };
 
     eventSource = connectToRoom(roomId, token, handleNewMessage, handleError);
-
-    console.log('eventSource:', eventSource);
 
     return () => {
       if (eventSource) {
