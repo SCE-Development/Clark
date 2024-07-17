@@ -20,6 +20,7 @@ const numberOfConnections = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
+    console.log(clients[roomId])
     clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(message)}\n\n`));
   }
 });
@@ -103,6 +104,7 @@ router.get('/listen', async (req, res) => {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache',
+        'Transfer-Encoding': 'chunked',
       };
 
       res.writeHead(200, headers);
