@@ -9,6 +9,12 @@ class MetricsHandler {
 	  labelNames: ['method', 'route', 'statusCode'],
 	})
 
+	emailSent = new client.Counter({
+	  name: 'email_sent',
+	  help: 'Counter for tracking emails sent',
+	  labelNames: ['type'],
+	})
+
 	constructor() {
 	  register.setDefaultLabels({
 	    app: 'sce-core',

@@ -12,6 +12,7 @@ const {
 const logger = require('../../util/logger');
 const { googleApiKeys } = require('../../config/config.json');
 const { USER, ENABLED } = googleApiKeys;
+const { metrics } = require('../../util/metrics');
 
 // Routing post /sendVerificationEmail calls the sendEmail function
 // and sends the verification email with the verification email template
@@ -41,6 +42,7 @@ router.post('/sendVerificationEmail', async (req, res) => {
         .sendEmail(template)
         .then((_) => {
           res.sendStatus(OK);
+		  metrics.emailSent.inc({ type: 'verification' });
         })
         .catch((err) => {
           logger.error('unable to send verification email:', err);
@@ -80,6 +82,7 @@ router.post('/sendPasswordReset', async (req, res) => {
         .sendEmail(template)
         .then((_) => {
           res.sendStatus(OK);
+		  metrics.emailSent.inc({ type: 'passwordReset' });
         })
         .catch((err) => {
           logger.error('unable to send password reset email:', err);
@@ -113,7 +116,9 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
           let fullName = user.firstName + ' ' + user.lastName;
           await unsubscribeEmail(USER, user.email, fullName)
             .then((template) => {
-              apiHandler.sendEmail(template);
+              apiHandler.sendEmail(template).then((_) => {
+                metrics.emailSent.inc({ type: 'unsubscribe' });
+			  });
             });
         } catch (error) {
           logger.error('unable to send unsubscribe email:', error);
@@ -146,6 +151,7 @@ router.post('/sendBlastEmail', async (req, res) => {
         .sendEmail(template)
         .then((_) => {
           res.sendStatus(OK);
+		  metrics.emailSent.inc({ type: 'blast' });
         }).catch((_) => {
           res.sendStatus(BAD_REQUEST);
         });
