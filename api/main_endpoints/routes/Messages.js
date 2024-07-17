@@ -105,9 +105,11 @@ router.get('/listen', async (req, res) => {
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache',
         'Transfer-Encoding': 'chunked',
+        'Upgrade': 'HTTP/1.1'
       };
 
       res.writeHead(200, headers);
+      
 
       if(!clients[id]){
         clients[id] = [];
