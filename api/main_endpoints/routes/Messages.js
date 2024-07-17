@@ -9,7 +9,6 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
-const { verifyToken } = require('../../util/token-verification.js');
 const { decodeToken } = require('../util/token-functions.js');
 
 
@@ -20,7 +19,6 @@ const numberOfConnections = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
-    console.log(clients[roomId])
     clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(message)}\n\n`));
   }
 });
