@@ -34,6 +34,7 @@ async function print(data) {
   });
 }
 
+<<<<<<< HEAD
 async function getPageCount(filePath) {
   const fileBuffer = await fs.promises.readFile(filePath);
   const printFile = await PDFDocument.load(fileBuffer);
@@ -49,3 +50,6 @@ async function getFileAndFormData(req) {
 }
 
 module.exports = { healthCheck, print, getPageCount, getFileAndFormData };
+=======
+module.exports = { healthCheck, print };
+>>>>>>> 2568266 (work on tests with jko)

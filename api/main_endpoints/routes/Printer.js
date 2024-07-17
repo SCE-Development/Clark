@@ -5,7 +5,11 @@ const logger = require('../../util/logger');
 const fs = require('fs');
 const path = require('path');
 
+<<<<<<< HEAD
 const { healthCheck, print, getPageCount, getFileAndFormData } = require('../util/Printer.js');
+=======
+const { healthCheck, print } = require('../util/Printer.js');
+>>>>>>> 2568266 (work on tests with jko)
 const {
   decodeToken,
   checkIfTokenSent,
@@ -33,10 +37,10 @@ const router = express.Router();
 
 // stores file inside temp folder
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, path.join(__dirname, 'printing'));
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     const uniqueSuffix = Date.now();
     cb(null, uniqueSuffix + '_' + file.originalname);
   }
@@ -55,11 +59,20 @@ async function deleteFile(filePath) {
 const fileUpload = process.env.NODE_ENV !== 'test' ? upload.single('file') : (req, res, next) => next();
 
 router.get('/healthCheck', async (req, res) => {
+<<<<<<< HEAD
 /*
  * How these work with Quasar:
  * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
  */
   if (!PRINTING.ENABLED && process.env.NODE_ENV !== 'test') {
+=======
+  /*
+  * How these work with Quasar:
+  * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+  
+  */
+  if (!PRINTING.ENABLED && process.env.NODE_ENV !== "test") {
+>>>>>>> 2568266 (work on tests with jko)
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
@@ -70,11 +83,17 @@ router.get('/healthCheck', async (req, res) => {
   return res.sendStatus(OK);
 });
 
+<<<<<<< HEAD
 router.post('/sendPrintRequest', fileUpload, async (req, res) => {
+=======
+router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
+  console.log('hello jko')
+>>>>>>> 2568266 (work on tests with jko)
   if (!checkIfTokenSent(req)) {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
+<<<<<<< HEAD
   if (!checkIfTokenValid(req, membershipState.MEMBER)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
@@ -89,6 +108,30 @@ router.post('/sendPrintRequest', fileUpload, async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
+=======
+  console.log('hello jko1')
+  if (!await checkIfTokenValid(req, membershipState.MEMBER)) {
+    logger.warn('/sendPrintRequest was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  console.log('hello jko2')
+  if (!PRINTING.ENABLED && process.env.NODE_ENV !== "test") {
+    logger.warn('Printing is disabled, returning 200 to mock the printing server');
+    return res.sendStatus(OK);
+  }
+  try {
+    const { copies, sides } = req.body;
+    const email = decodeToken(req).email;
+    const file = req.file;
+    const data = new FormData();
+    data.append('file', fs.createReadStream(file.path), { filename: file.originalname });
+    data.append('copies', copies);
+    data.append('sides', sides);
+
+    // this will throw an error if the user isn't found
+    await User.findOne({ email });
+
+>>>>>>> 2568266 (work on tests with jko)
     const sidesUsed = sides === 'one-sided' ? 1 : 2;
     const pagesCount = await getPageCount(file.path);
     const wholePagesUsed = Math.floor(pagesCount / sidesUsed);
@@ -107,8 +150,14 @@ router.post('/sendPrintRequest', fileUpload, async (req, res) => {
       { email },
       {
         $inc: { pagesPrinted: pagesToBeUsedInPrintRequest },
+<<<<<<< HEAD
       }
     );
+=======
+      },
+    );
+
+>>>>>>> 2568266 (work on tests with jko)
     await deleteFile(file.path);
 
     res.sendStatus(OK);
