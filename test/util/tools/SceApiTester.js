@@ -81,6 +81,7 @@ class SceApiTester{
     await chai
       .request(this.app)
       .get(endpoint)
+      .set('Authorization', `Bearer ${token}`)
       .send({token : token})
       .then(function(res) {
         response = res;

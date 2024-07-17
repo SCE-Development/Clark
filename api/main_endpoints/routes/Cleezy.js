@@ -30,7 +30,7 @@ router.get('/list', async (req, res) => {
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
   if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken({ body: { token: req.query.token } })) {
+  } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {

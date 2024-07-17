@@ -29,10 +29,15 @@ export async function getAllUsers({
   await axios
     // get all user!
     .post(url.href, {
-      token,
       query,
       page,
-    })
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      } 
+    }
+    )
     .then(result => {
       status.responseData = result.data;
     })
