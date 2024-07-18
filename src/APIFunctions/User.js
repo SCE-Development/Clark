@@ -27,7 +27,7 @@ export async function getAllUsers({
 
   let status = new UserApiResponse();
   await axios
-    // get all user!
+    // get all users!
     .post(
       url.href,
       {
