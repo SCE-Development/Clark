@@ -29,7 +29,7 @@ export async function getAllUrls({
   return status;
 }
 
-export async function createUrl(url, alias = null, expirationDate, token) {
+export async function createUrl(url, alias = null, expirationDate = null, token) {
   let status = new ApiResponse();
   const urlToAdd = { url, alias, epoch_expiration: expirationDate };
 

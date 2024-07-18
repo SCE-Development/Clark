@@ -12,7 +12,7 @@ export default function URLShortenerPage(props) {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [useGeneratedAlias, setUseGeneratedAlias] = useState(true);
   const [useExpirationDate, setUseExpirationDate] = useState(true);
-  const [expirationDate, setExpirationDate] = useState(0);
+  const [expirationDate, setExpirationDate] = useState(null);
   const [alias, setAlias] = useState('');
   const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,12 +68,11 @@ export default function URLShortenerPage(props) {
       props.user.token
     );
     if (!response.error) {
-      console.log(response);
-      console.log(expirationDate);
       setAllUrls([...allUrls, response.responseData]);
       setAliasTaken(false);
       setUrl('');
       setAlias('');
+      setExpirationDate(null);
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
@@ -125,10 +124,14 @@ export default function URLShortenerPage(props) {
     }
   }
   const handleDateChange = (e) => {
-    const dateString = e.target.value; // This is a string in 'YYYY-MM-DD' format
-    const dateObject = new Date(dateString); // Convert string to Date object
-    const epochTime = dateObject.getTime(); // Get epoch time from Date object
-    setExpirationDate(epochTime); // Update state with epoch time
+    if (!useExpirationDate) {
+      const dateString = e.target.value;
+      const dateObject = new Date(dateString);
+      const epochTime = dateObject.getTime();
+      setExpirationDate(epochTime);
+    } else {
+      setExpirationDate(null);
+    }
   };
 
   function handleSortUrls(columnName) {
@@ -153,12 +156,6 @@ export default function URLShortenerPage(props) {
       setAlias('');
     }
   }, [useGeneratedAlias]);
-
-  useEffect(() => {
-    if (useExpirationDate) {
-      setExpirationDate(new Date());
-    }
-  }, [useExpirationDate]);
 
   useEffect(() => {
     if (!showUrlInput) {
@@ -303,7 +300,12 @@ export default function URLShortenerPage(props) {
               <div className="form-control">
                 <label className="label cursor-pointer">
                   <span className="label-text">Use Expiration Date</span>
-                  <input type="checkbox" className="toggle" checked={useExpirationDate} onChange={(e) => setUseExpirationDate(e.target.checked)} />
+                  <input type="checkbox" className="toggle" checked={useExpirationDate} onChange={(e) => {
+                    setUseExpirationDate(e.target.checked);
+                    if (!e.target.checked) {
+                      setExpirationDate(null);
+                    }
+                  }} />
                 </label>
               </div>
             </div>
@@ -318,7 +320,8 @@ export default function URLShortenerPage(props) {
                     type="date"
                     id="expiration_date"
                     name="expiration_date"
-                    value={new Date(expirationDate).toISOString().split('T')[0]}
+                    placeholder="mm/dd/yyyy"
+                    value={expirationDate ? new Date(expirationDate).toISOString().split('T')[0] : ''}
                     onChange={handleDateChange}
                     className={INPUT_CLASS}
                   />
@@ -496,7 +499,7 @@ export default function URLShortenerPage(props) {
                         </td>
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
-                            {url.expiration_date}
+                            {new Date(url.expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </div>
                         </td>
                         <td>
