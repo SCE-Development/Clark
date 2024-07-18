@@ -19,6 +19,7 @@ const {
 const {
   PRINTING = {}
 } = require('../../config/config.json');
+const { MetricsHandler } = require('../../util/metrics');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
@@ -40,10 +41,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get('/healthCheck', async (req, res) => {
-/*
- * How these work with Quasar:
- * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
- */
+  /*
+   * How these work with Quasar:
+   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+   */
   if (!PRINTING.ENABLED) {
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
@@ -55,6 +56,7 @@ router.get('/healthCheck', async (req, res) => {
     })
     .catch((err) => {
       logger.error('Printer SSH tunnel is down: ', err);
+      MetricsHandler.sshTunnelErrors.inc({ type: 'Printer' });
       return res.sendStatus(NOT_FOUND);
     });
 });
