@@ -109,8 +109,8 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
   for (let i = 0; i < req.body.users.length; i++) {
-    (function (i) {
-      setTimeout(async function () {
+    (function(i) {
+      setTimeout(async function() {
         const user = req.body.users[i];
         try {
           let fullName = user.firstName + ' ' + user.lastName;

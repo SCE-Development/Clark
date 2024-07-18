@@ -101,7 +101,7 @@ class SceHttpServer {
     const { port } = this;
     this.server = http.createServer(this.app);
     this.connectToMongoDb();
-    this.server.listen(port, function () {
+    this.server.listen(port, function() {
       console.debug(`Now listening on port ${port}`);
     });
   }
