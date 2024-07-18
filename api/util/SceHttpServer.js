@@ -7,7 +7,7 @@ mongoose.Promise = require('bluebird');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
-const { metrics, register } = require('./metrics');
+const { MetricsHandler, register } = require('./metrics');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -59,13 +59,13 @@ class SceHttpServer {
     this.app.use((req, res, next) => {
       res.on('finish', () => {
         const route = req.route ? req.route.path : req.path;
-        metrics.endpointHits.inc({
+        MetricsHandler.endpointHits.inc({
           method: req.method,
           route: route,
           statusCode: res.statusCode,
         });
       });
-	  next();
+      next();
     });
 
     // metrics
@@ -101,7 +101,7 @@ class SceHttpServer {
     const { port } = this;
     this.server = http.createServer(this.app);
     this.connectToMongoDb();
-    this.server.listen(port, function() {
+    this.server.listen(port, function () {
       console.debug(`Now listening on port ${port}`);
     });
   }

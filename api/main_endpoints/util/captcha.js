@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const logger = require('../../util/logger');
 const config = require('../../config/config.json');
-const { metrics } = require('../../util/metrics');
+const { MetricsHandler } = require('../../util/metrics');
 
 async function verifyCaptcha(responseToken) {
   if (!responseToken) {
@@ -19,7 +19,7 @@ async function verifyCaptcha(responseToken) {
     return { success: response.data.success };
   } catch (error) {
     logger.error('Error verifying captcha:', error);
-    metrics.captchaErrors.inc();
+    MetricsHandler.captchaErrors.inc();
     return { success: false };
   }
 }

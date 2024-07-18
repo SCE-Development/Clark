@@ -38,6 +38,6 @@ class MetricsHandler {
 }
 
 module.exports = {
-  metrics: new MetricsHandler(),
+  MetricsHandler: new MetricsHandler(),
   register,
 };
