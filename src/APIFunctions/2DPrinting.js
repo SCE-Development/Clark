@@ -105,9 +105,13 @@ export async function getPagesPrinted(email, token) {
   const url = new URL('/api/user/getPagesPrintedCount', BASE_API_URL);
   await axios
     .post(url.href, {
-      email,
-      token
-    })
+        email
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    )
     .then(res => {
       status.pagesUsed = res.data;
     })
