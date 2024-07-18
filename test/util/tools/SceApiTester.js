@@ -33,6 +33,7 @@ class SceApiTester{
       });
     return response;
   }
+  
 
   /**
    * Creates a chai POST request with an access token to test an API route.
@@ -47,6 +48,28 @@ class SceApiTester{
       .request(this.app)
       .post(endpoint)
       .send({ token, ...params })
+      .then(function(res) {
+        response = res;
+      })
+      .catch(err =>{
+        throw err;
+      });
+    return response;
+  }
+  /**
+   * Creates a chai POST request with an access token to test an API route.
+   * @param {Object} token the access token for the API call
+   * @param {String} endpoint contains the path of the route being tested.
+   * @param {Object} params the parameters specified for the test.
+   * @returns {Promise} the outcome of the API call.
+   */
+  async sendPostRequestWithTokenInHeader(token, endpoint, params={}) {
+    let response = null;
+    await chai
+      .request(this.app)
+      .post(endpoint)
+      .set('Authorization', `Bearer ${token}`)
+      .send(params)
       .then(function(res) {
         response = res;
       })

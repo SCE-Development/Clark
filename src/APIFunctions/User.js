@@ -36,7 +36,7 @@ export async function getAllUsers({
       page,
     },  {
       headers: {
-        Authorization: `Bearer ${token}`
+        "Authorization": `Bearer ${token}`
       }
     })
     .then(result => {

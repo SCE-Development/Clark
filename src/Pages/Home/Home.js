@@ -22,7 +22,7 @@ class Home extends Component {
                 animate={{ opacity: 1, x:0}}
                 transition={{ duration: 1, delay: 0.5}}
                 className="text-base text-center xl:text-left md:text-2xl">
-                SJSU's Largest Engineering Club
+                SJSU's Largest HELLO WORLD Club
               </motion.h3>
             </div>
             <motion.div

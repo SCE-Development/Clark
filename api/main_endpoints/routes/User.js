@@ -36,6 +36,7 @@ const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
+const { clouddebugger } = require('googleapis/build/src/apis/clouddebugger/index.js');
 
 const ROWS_PER_PAGE = 20;
 
@@ -169,17 +170,29 @@ router.post('/search', function(req, res) {
 
 // Search for all members
 router.post('/users', async function(req, res) {
-  const authorization = req.headers['authorization']
+  const authorization = req.headers.authorization
+  // if(!authorization) {
+  //   console.log("THERE IS NO AUTHORIZATION HEADER")
+  //   return res.sendStatus(FORBIDDEN)
+  // }
+  console.log(`Hello`, authorization)
+
+  //test
+  //Hello Bearer a@b.c
+  //Hello Bearer Bearer invalidToken
+  //Hello Bearer
+
+  const token = authorization.split(" ")[1];
   if(!authorization) {
+    console.log("THERE IS NO AUTHORIZATION HEADER")
     return res.sendStatus(FORBIDDEN)
   }
-  const token = authorization.split(' ')[1] //get token from header
-  console.log("can you see")
   if (!checkIfTokenSent(token)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(token)) {
     return res.sendStatus(UNAUTHORIZED);
   }
+
   // if (!checkIfTokenSent(req)) {
   //   return res.sendStatus(FORBIDDEN);
   // } else if (!checkIfTokenValid(req)) {

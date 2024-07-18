@@ -111,29 +111,35 @@ describe('User', () => {
       const user = {
         email: 'a@b.c'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/users', user);
+      const result = await test.sendPostRequestWithTokenInHeader(
+        user.email, '/api/User/users');
       expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return statusCode 401 if an invalid ' +
       'token was passed in', async () => {
-      const user = {
-        token: 'Invalid token'
-      };
-      const result = await test.sendPostRequest(
-        '/api/User/users', user);
+      // const user = {
+      //   token: 'Invalid token'
+      // };
+      const invalidToken= "invalidToken"
+      const result = await test.sendPostRequestWithTokenInHeader(
+        invalidToken, '/api/User/users');
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 200 and return an array ' +
       'of all objects in collection', async () => {
-      const form = {
-        token: token
-      };
+      // const form = {
+      //   token: token
+      // };
+      const header = {
+        Authorization: `Bearer SUCCESS` //change SUCCESS to ${token}
+      }
       setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/users', form);
+      // const result = await test.sendPostRequestWithToken(
+      //   token, '/api/User/users', form);
+      const result = await test.sendPostRequestWithTokenInHeader(
+        token, '/api/User/users');
       id = result.body.items[0]._id;
       expect(result).to.have.status(OK);
     });
