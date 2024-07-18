@@ -14,10 +14,10 @@ export async function sendVerificationEmail(email, token) {
   const url = new URL('/cloudapi/Auth/sendVerificationEmail', BASE_API_URL);
   await axios
     .post(
-      url.href, 
+      url.href,
       {
         email
-      }, 
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`

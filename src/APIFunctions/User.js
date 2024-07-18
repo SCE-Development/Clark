@@ -29,10 +29,10 @@ export async function getAllUsers({
   await axios
     // get all user!
     .post(
-      url.href, 
+      url.href,
       {
-      query,
-      page,
+        query,
+        page,
       },
       {
         headers: {
@@ -203,12 +203,12 @@ export async function checkIfUserExists(email) {
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/getUserById', BASE_API_URL);
-  await axios.post(url.href, 
-      {userID}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+  await axios.post(url.href,
+    {userID}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then((res) => {
       status.responseData = res.data;
     })

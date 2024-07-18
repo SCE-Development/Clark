@@ -8,10 +8,10 @@ export async function queued(token) {
   const url = new URL('/api/Speaker/queued', BASE_API_URL);
   await axios
     .get(url.href, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    }
     )
     .then(res => {
       status.responseData = res.data.queue;
@@ -28,12 +28,12 @@ export async function addUrl(urlToAdd, token) {
   const url = new URL('/api/Speaker/stream', BASE_API_URL);
   await axios
     .post(url.href, {
-        url: urlToAdd
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      url: urlToAdd
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    }
     )
     .then(res => {
       status = res.data;
@@ -50,10 +50,10 @@ export async function skip(token) {
   const url = new URL('/api/Speaker/skip');
   await axios
     .post(url.href, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    }
     )
     .then(res => {
       status = res.data;
@@ -70,10 +70,10 @@ export async function pause(token) {
   const url = new URL('/api/Speaker/pause');
   await axios
     .post(url.href, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    }
     )
     .then(res => {
       status = res.data;
@@ -90,10 +90,10 @@ export async function resume(token) {
   const url = new URL('/api/Speaker/resume');
   await axios
     .post(url.href, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    }
     )
     .then(res => {
       status = res.data;
