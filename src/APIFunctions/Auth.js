@@ -95,7 +95,7 @@ export async function checkIfUserIsSignedIn() {
 
   const url = new URL('/api/Auth/verify', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/Auth/verify', {}, {
+    .post(url.href, {}, {
       headers: {
         Authorization: `Bearer ${token}`
       }
