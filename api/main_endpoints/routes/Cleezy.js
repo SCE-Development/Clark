@@ -26,9 +26,8 @@ router.get('/list', async (req, res) => {
       disabled: true
     });
   }
-  const token = req.query.token;
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
-  if (!token) {
+  if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);

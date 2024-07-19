@@ -12,18 +12,16 @@ export async function getAllUrls({
   await axios
     .get(
       url.href, {
-        params: {
-          page,
-          ...(search !== undefined && { search }),
-          sortColumn,
-          sortOrder
-        }
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
+      params: {
+        page,
+        ...(search !== undefined && { search }),
+        sortColumn,
+        sortOrder
+      }, headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    },
+    )
     .then(res => {
       status.responseData = res.data;
     })
@@ -60,7 +58,7 @@ export async function createUrl(url, alias = null, token) {
 export async function deleteUrl(aliasIn, token) {
   let status = new ApiResponse();
   const alias = { 'alias': aliasIn };
-  const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
+  const url = new URL('/api/Cleezy/deleteUrl', BASE_API_URL);
   await axios
     .post(
       url.href,
