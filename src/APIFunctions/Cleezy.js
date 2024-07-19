@@ -12,15 +12,15 @@ export async function getAllUrls({
   await axios
     .get(
       url.href, {
-      params: {
-        page,
-        ...(search !== undefined && { search }),
-        sortColumn,
-        sortOrder
-      }, headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    },
+        params: {
+          page,
+          ...(search !== undefined && { search }),
+          sortColumn,
+          sortOrder
+        }, headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      },
     )
     .then(res => {
       status.responseData = res.data;
