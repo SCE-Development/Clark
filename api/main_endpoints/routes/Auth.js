@@ -66,7 +66,7 @@ router.post('/sendPasswordReset', async (req, res) => {
     !req.body.email.includes('@') ||
     !req.body.email.includes('.');
 
-    if (invalidEmail) {
+  if (invalidEmail) {
     return res.status(BAD_REQUEST).send({
       message: 'Invalid email.'
     });
