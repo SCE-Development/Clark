@@ -88,7 +88,8 @@ router.post('/checkIfUserExists', (req, res) => {
 });
 
 // Delete a member
-router.post('/delete', (req, res) => {
+// Delete a member
+router.post('/delete', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
@@ -96,16 +97,20 @@ router.post('/delete', (req, res) => {
   }
 
   const decoded = decodeToken(req);
-
-  const targetUser = User.findById(req.body._id);
+  const targetUser = await User.findById(req.body._id);
+  if (!targetUser) {
+    return res.sendStatus(NOT_FOUND);
+  }
   // Check if req has lower privilege than the account they wish to delete
-  if (decoded.accessLevel < targetUser.accessLevel) {
-    return res
-      .status(FORBIDDEN)
-      .json( { message: 'you must have higher privileges to delete users with lower privileges'});
+  if (targetUser.accessLevel !== 'undefined') {
+    if (decoded.accessLevel < targetUser.accessLevel) {
+      return res
+        .status(FORBIDDEN)
+        .json( { message: 'you must have higher privileges to delete users with lower privileges'});
+    }
   }
   // If not officer, only allow deletion of own account
-  if (decoded.accessLevel <= membershipState.OFFICER) {
+  if (decoded.accessLevel < membershipState.OFFICER) {
     if (req.body._id && req.body._id !== decoded._id) {
       return res
         .status(FORBIDDEN)
