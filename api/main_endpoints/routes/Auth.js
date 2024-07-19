@@ -62,13 +62,11 @@ router.post('/resendVerificationEmail', async (req, res) => {
 });
 
 router.post('/sendPasswordReset', async (req, res) => {
-  if (!req.body.email) {
-    return res.status(BAD_REQUEST).send({
-      message: 'Email is required.'
-    });
-  }
+  const invalidEmail = !req.body.email ||
+    !req.body.email.includes('@') ||
+    !req.body.email.includes('.');
 
-  if (!(req.body.email.includes('@') && req.body.email.includes('.'))) {
+    if (invalidEmail) {
     return res.status(BAD_REQUEST).send({
       message: 'Invalid email.'
     });
