@@ -27,11 +27,7 @@ function MessagingForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (id) {
-      history.push(`/messaging/${id}`);
-    } else {
-      history.push('/messaging/general');
-    }
+    history.push(`/messaging/${id || 'general'}`);
 
     const status = await sendMessage(id, apiKey, message);
 
