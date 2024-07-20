@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const router = express.Router();
 const {
   decodeToken,
@@ -9,6 +8,7 @@ const {
   OK,
   UNAUTHORIZED,
   SERVER_ERROR,
+  FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
 const { sendSpeakerRequest, getQueued } = require('../util/Speaker');
