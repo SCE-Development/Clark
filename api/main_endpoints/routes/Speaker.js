@@ -22,10 +22,15 @@ router.get('/queued', async (req, res) => {
       disabled: true
     });
   }
-  const token = req.query.token;
+  const { path } = req.route;
+  if (!checkIfTokenSent(req)) {
+    logger.warn(`${path} was requested without a token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
   if (!token) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken({ body: { token: req.query.token } })) {
+  } else if (!await decodeToken(req)) {
+    logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
 
