@@ -27,12 +27,19 @@ export async function getAllUsers({
 
   let status = new UserApiResponse();
   await axios
-    // get all user!
-    .post(url.href, {
-      token,
-      query,
-      page,
-    })
+    // get all users!
+    .post(
+      url.href,
+      {
+        query,
+        page,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
     .then(result => {
       status.responseData = result.data;
     })
@@ -126,8 +133,11 @@ export async function editUser(userToEdit, token) {
       accessLevel,
       lastLogin,
       emailVerified,
-      emailOptIn,
-      token
+      emailOptIn
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     .then(result => {
       status.responseData = result.data;
@@ -145,7 +155,11 @@ export async function editUser(userToEdit, token) {
  * @param {string} token The JWT token to allow the user to be edited
  */
 export async function updateLastLoginDate(email, token) {
-  await editUser({ email, lastLogin: Date.now() }, token);
+  await editUser({ email, lastLogin: Date.now() }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 }
 
 /**
@@ -159,8 +173,11 @@ export async function deleteUserByID(_id, token) {
   const url = new URL('/api/User/delete', BASE_API_URL);
   axios
     .post(url.href, {
-      token,
       _id,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     .catch(() => {
       status.error = true;
@@ -186,7 +203,12 @@ export async function checkIfUserExists(email) {
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/getUserById', BASE_API_URL);
-  await axios.post(url.href, {userID, token})
+  await axios.post(url.href,
+    {userID}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then((res) => {
       status.responseData = res.data;
     })
@@ -233,7 +255,11 @@ export async function getAllUserSubscribedAndVerified(token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/usersSubscribedAndVerified', BASE_API_URL);
   await axios
-    .post(url.href, { token })
+    .post(url.href, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then((res) => {
       status.responseData = res.data;
     })
@@ -247,7 +273,11 @@ export async function getAllUsersValidVerifiedAndSubscribed(token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/usersValidVerifiedAndSubscribed', BASE_API_URL);
   await axios
-    .post(url.href, { token }, { responseType: 'blob' })
+    .post(url.href, { responseType: 'blob' }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then((res) => {
       status.responseData = res.data;
     })
@@ -261,7 +291,11 @@ export async function getApiKey(token) {
   let status = new UserApiResponse();
   try {
     const url = new URL('/api/User/apiKey', BASE_API_URL);
-    const response = await axios.post(url.href, { token });
+    const response = await axios.post(url.href, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     status.responseData = response.data;
   } catch (error) {
     status.error = true;

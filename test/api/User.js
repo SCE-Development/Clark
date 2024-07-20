@@ -119,8 +119,8 @@ describe('User', () => {
       const user = {
         token: 'Invalid token'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/users', user);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/users', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -153,8 +153,8 @@ describe('User', () => {
         email: 'a@b.c',
         token: 'Invalid token'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/search', user);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/search', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -209,8 +209,8 @@ describe('User', () => {
         email: 'a@b.c',
         token: 'Invalid token'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/edit', user);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/edit', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -258,7 +258,7 @@ describe('User', () => {
         userID: id,
         token: 'Invalid Token'
       };
-      const result = await test.sendPostRequest('/api/user/getUserById', user);
+      const result = await test.sendPostRequestWithToken(token, '/api/user/getUserById', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
     it('Should return status code 404 if user is not found', async () => {
@@ -268,7 +268,7 @@ describe('User', () => {
       };
       setTokenStatus(true);
       const result =
-        await test.sendPostRequest('/api/user/getUserById', user);
+        await test.sendPostRequestWithToken(token, '/api/user/getUserById', user);
       expect(result).to.have.status(NOT_FOUND);
     });
     it('Should return status code 200 if user is found', async () => {
@@ -277,7 +277,7 @@ describe('User', () => {
         token: token
       };
       setTokenStatus(true);
-      const result = await test.sendPostRequest('/api/User/getUserById', user);
+      const result = await test.sendPostRequestWithToken(token, '/api/User/getUserById', user);
       expect(result).to.have.status(OK);
       result.body.should.not.have.property('password');
     });
@@ -290,7 +290,7 @@ describe('User', () => {
       const result = await test.sendGetRequestWithToken(
         token, `/api/User/countAllUsers${query}`);
       expect(result).to.have.status(OK);
-      result.body.count.should.be.greaterThanOrEqual(0);
+      result.body.count.should.be.greaterThanOrEqual(1);
     });
     it('Should return statusCode 404 if count == 0', async () => {
       setTokenStatus(true);
@@ -332,8 +332,8 @@ describe('User', () => {
         _id: id,
         token: 'Invalid token'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/delete', user);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/delete', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
@@ -457,8 +457,8 @@ describe('User', () => {
         _id: id,
         token: 'Invalid token'
       };
-      const result = await test.sendPostRequest(
-        '/api/User/apikey', user);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/apikey', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
