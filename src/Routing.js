@@ -127,7 +127,7 @@ export default function Routing({ appProps }) {
     },
     {
       Component: Messaging,
-      path: '/messaging',
+      path: '/messaging/:id?',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
       redirect: '/login'
     }

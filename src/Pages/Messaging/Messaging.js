@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { sendMessage, connectToRoom } from '../../APIFunctions/Messaging';
-import { getApiKey } from '../../APIFunctions/User';
+import { useParams, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 export default function Messaging(props) {
+  const { id } = useParams();
+
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <h1 className="text-3xl font-bold text-gray-200 mb-4">SCE Chatroom</h1>
       <MessagingForm />
       <h1 className="text-3xl font-bold text-gray-200 mt-8">Feed</h1>
-      <Feed token={props.user.token}/>
+      <Feed token={props.user.token} id={id} />
     </div>
   );
 }
@@ -20,8 +22,16 @@ function MessagingForm() {
   const [sent, setSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const history = useHistory();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (id) {
+      history.push(`/messaging/${id}`);
+    } else {
+      history.push('/messaging/general');
+    }
 
     const status = await sendMessage(id, apiKey, message);
 
@@ -111,13 +121,14 @@ function MessagingForm() {
 }
 
 function Feed(props) {
-  const { token } = props;
+  const { token, id } = props;
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState('');
-  const roomId = 'general';
   let eventSource;
 
   useEffect(() => {
+    const roomId = id || 'general';
+
     if (!token) return;
 
     const handleNewMessage = (data) => {
@@ -128,14 +139,18 @@ function Feed(props) {
       setError('Error connecting to SSE');
     };
 
-    eventSource = connectToRoom(roomId, token, handleNewMessage, handleError);
+    const initEventSource = async () => {
+      eventSource = await connectToRoom(roomId, token, handleNewMessage, handleError);
+    };
+
+    initEventSource();
 
     return () => {
       if (eventSource) {
         eventSource.close();
       }
     };
-  }, [roomId, token]);
+  }, [id, token]);
 
   return (
     <div className="w-full flex flex-col items-center">
