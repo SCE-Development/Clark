@@ -27,9 +27,7 @@ router.get('/queued', async (req, res) => {
     logger.warn(`${path} was requested without a token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!token) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
+  if (!await decodeToken(req)) {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
