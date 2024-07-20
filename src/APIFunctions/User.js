@@ -291,7 +291,7 @@ export async function getApiKey(token) {
   let status = new UserApiResponse();
   try {
     const url = new URL('/api/User/apiKey', BASE_API_URL);
-    const response = await axios.post(url.href, {
+    const response = await axios.post(url.href, {}, {
       headers: {
         Authorization: `Bearer ${token}`
       }

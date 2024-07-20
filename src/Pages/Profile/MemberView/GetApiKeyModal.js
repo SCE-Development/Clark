@@ -6,6 +6,7 @@ const GetApiKeyModal = (props) => {
   const [apiKey, setApiKey] = useState('');
 
   async function generateKey() {
+    console.log(props.user)
     const apiResponse = await getApiKey(props.user.token);
 
     if (!apiResponse.error) {
