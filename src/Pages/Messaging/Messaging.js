@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { sendMessage, connectToRoom } from '../../APIFunctions/Messaging';
 import { useParams, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { use } from 'chai';
 
 export default function Messaging(props) {
   const { id } = useParams();
