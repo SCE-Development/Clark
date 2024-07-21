@@ -143,6 +143,6 @@ setInterval(() => {
   Object.keys(clients).forEach(roomId => {
     clients[roomId].forEach(res => res.write('heartbeat:\n\n'));
   });
-}, 1000);
+}, 45000);
 
 module.exports = router;
