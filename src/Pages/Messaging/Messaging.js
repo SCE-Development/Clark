@@ -6,16 +6,15 @@ export default function Messaging(props) {
   const { id } = useParams();
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <h1 className="text-3xl font-bold text-gray-200 mb-4">SCE Chatroom</h1>
-      <MessagingForm />
-      <h1 className="text-3xl font-bold text-gray-200 mt-8">Feed</h1>
+    <div className="w-full flex flex-col items-center justify-center h-full">
+      <h1 className="text-3xl font-bold text-gray-200 mt-8">{id ? `room: ${id}` : 'no room connected'} </h1>
       <Feed token={props.user.token} id={id} />
+      <MessagingForm token ={props.user.token} />
     </div>
   );
 }
 
-function MessagingForm() {
+function MessagingForm(props) {
   const [id, setId] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [message, setMessage] = useState('');
@@ -23,13 +22,15 @@ function MessagingForm() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const history = useHistory();
+  const { token } = props;
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     history.push(`/messaging/${id || 'general'}`);
-
-    const status = await sendMessage(id, apiKey, message);
+    console.log('token', token);  
+    const status = await sendMessage(id, token, message);
 
     if (status.error) {
       setErrorMessage(status.responseData.response.data || 'An error occurred while sending the message.');
@@ -48,9 +49,9 @@ function MessagingForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-1/2 mx-auto p-6 bg-zinc-900 rounded-md shadow-lg"
+      className="w-2/3 mx-auto p-4 bg-zinc-900 rounded-md shadow-lg"
     >
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label htmlFor="room" className="block text-sm font-medium text-gray-400">
           Room
         </label>
@@ -63,9 +64,9 @@ function MessagingForm() {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter room name"
         />
-      </div>
+      </div> */}
 
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label htmlFor="key" className="block text-sm font-medium text-gray-400">
           Key
         </label>
@@ -78,28 +79,32 @@ function MessagingForm() {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter your key"
         />
-      </div>
+      </div> */}
 
-      <div className="mb-4">
-        <label htmlFor="message" className="block text-sm font-medium text-gray-400">
-          Message
-        </label>
+      <div className="flex flex-row items-center">
         <textarea
           id="message"
           autoComplete="off"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
+          className="block h-10 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           placeholder="Enter your message"
         ></textarea>
-      </div>
-
-      <button
+        <button 
         type="submit"
-        className="w-full px-4 py-2 text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="w-1/10 px-4 py-2 text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         Submit
       </button>
+      </div>
+
+      
 
       {sent && (
         errorMessage ? (
@@ -155,7 +160,7 @@ function Feed(props) {
           {error}
         </div>
       )}
-      <div className="border border-gray-300 p-3 h-52 overflow-y-auto bg-gray-100 w-1/2 rounded-lg mt-3">
+      <div className="border border-gray-300 p-3 h-96 overflow-y-auto bg-gray-100 w-2/3 rounded-lg mt-3">
         {messages.map((message, index) => (
           <div key={index} className="p-2 mb-1 border-b border-gray-200 text-gray-700">{message}</div>
         ))}

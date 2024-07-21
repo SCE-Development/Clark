@@ -4,11 +4,11 @@ import { ApiResponse } from './ApiResponses';
 let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
   || 'http://localhost:8080/api';
 
-export async function sendMessage(id, apiKey, message) {
+export async function sendMessage(id, token, message) {
   let status = new ApiResponse();
   const roomId = id || 'general';
   await axios
-    .post(GENERAL_API_URL + '/messages/send', { apiKey, message, id: roomId })
+    .post(GENERAL_API_URL + '/messages/send', { token, message, id: roomId })
     .then(res => {
       status.responseData = res.data;
     })
