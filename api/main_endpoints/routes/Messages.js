@@ -114,6 +114,7 @@ router.get('/listen', async (req, res) => {
       };
 
       res.writeHead(200, headers);
+      req.setTimeout(0);
 
       if(!clients[id]){
         clients[id] = [];
@@ -136,5 +137,12 @@ router.get('/listen', async (req, res) => {
     res.sendStatus(SERVER_ERROR);
   }
 });
+
+// heartbeat mechanism to bypass NGINX timeout
+setInterval(() => {
+  Object.keys(clients).forEach(roomId => {
+    clients[roomId].forEach(res => res.write('heartbeat:\n\n'));
+  });
+}, 1000);
 
 module.exports = router;
