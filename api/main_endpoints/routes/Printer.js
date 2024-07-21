@@ -23,6 +23,7 @@ const {
 } = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const User = require('../models/User.js');
+const { MetricsHandler } = require('../../util/metrics');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
@@ -64,6 +65,7 @@ router.get('/healthCheck', async (req, res) => {
   }
   const healthy = await healthCheck();
   if (!healthy) {
+    MetricsHandler.sshTunnelErrors.inc({ type: 'Printer' });
     return res.sendStatus(NOT_FOUND);
   }
   return res.sendStatus(OK);

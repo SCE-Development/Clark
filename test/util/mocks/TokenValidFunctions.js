@@ -1,7 +1,5 @@
 const TokenFunctions = require(
   '../../../api/main_endpoints/util/token-functions');
-const TokenValidation = require('../../../api/util/token-verification');
-const { MEMBERSHIP_STATE } = require('../../../api/util/constants');
 const sinon = require('sinon');
 
 let checkifTokenValidMock = null;

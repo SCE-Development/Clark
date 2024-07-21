@@ -24,7 +24,7 @@ export async function healthCheck() {
   const url = new URL('/api/Printer/healthCheck', BASE_API_URL);
   await axios.get(url.href)
     .then(res => {
-      status.reponseData = res.data;
+      status.responseData = res.data;
     })
     .catch(err => {
       status.responseData = err;
@@ -69,17 +69,19 @@ export function parseRange(pages, maxPages) {
  * @param {Number|undefined} data.copies - Number of copies
  * @param {String|undefined} data.sides - Sides to print:
  * one-sided or two-sided
+ * @param {string} token            token of the current user
  * @param {String|undefined} data.pageRanges - Pages to print:
  * 1-2, 5, 7-10
  * @returns {ApiResponse} - Containing information for if
  * the page successfully printed
  */
-export async function printPage(data) {
+export async function printPage(data, token) {
   let status = new ApiResponse();
   const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
   await axios.post(url.href, data, {
     headers: {
-      'Content-Type': 'multipart/form-data'
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${token}`
     }
   })
     .then(response => {
@@ -105,9 +107,13 @@ export async function getPagesPrinted(email, token) {
   const url = new URL('/api/user/getPagesPrintedCount', BASE_API_URL);
   await axios
     .post(url.href, {
-      email,
-      token
-    })
+      email
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+    )
     .then(res => {
       status.pagesUsed = res.data;
     })
