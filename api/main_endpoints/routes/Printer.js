@@ -87,7 +87,7 @@ router.post('/sendPrintRequest', fileUpload, async (req, res) => {
   const email = decodeToken(req).email;
   const {copies, sides} = req.body;
   const {file, data} = await getFileAndFormData(req);
-  
+
   try {
     const user = await User.findOne({ email });
     const sidesUsed = sides === 'one-sided' ? 1 : 2;
