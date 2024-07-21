@@ -123,6 +123,8 @@ function Feed(props) {
 
     const handleNewMessage = (data) => {
       setMessages(prevMessages => [...prevMessages, `${data}`]);
+      const element = document.getElementById('messages');
+      element.scrollTop = element.scrollHeight;
     };
 
     const handleError = (event) => {
@@ -142,6 +144,7 @@ function Feed(props) {
     };
   }, [id, token]);
 
+
   return (
     <div className="w-full flex flex-col items-center">
       {error && (
@@ -149,7 +152,7 @@ function Feed(props) {
           {error}
         </div>
       )}
-      <div className="border border-gray-300 p-3 h-96 overflow-y-auto bg-gray-100 w-2/3 rounded-lg mt-3">
+      <div id="messages" className="border border-gray-300 p-3 h-96 overflow-y-auto bg-gray-100 w-2/3 rounded-lg mt-3">
         {messages.map((message, index) => (
           <div key={index} className="p-2 mb-1 border-b border-gray-200 text-gray-700">{message}</div>
         ))}
