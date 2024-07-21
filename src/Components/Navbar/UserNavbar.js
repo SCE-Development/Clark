@@ -59,7 +59,7 @@ export default function UserNavBar(props) {
     <div className="navbar bg-base-100">
       <div className="navbar-start">
         <a href='/'>
-          <img id='logo-image' src='favicon.ico'
+          <img id='logo-image' src='/favicon.ico'
             alt={'sce-logo'} style={{ width: '70px' }} />
         </a>
       </div>
