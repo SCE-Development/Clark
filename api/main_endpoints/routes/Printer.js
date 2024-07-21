@@ -76,7 +76,7 @@ router.post('/sendPrintRequest', fileUpload, async (req, res) => {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await checkIfTokenValid(req, membershipState.MEMBER)) {
+  if (!checkIfTokenValid(req, membershipState.MEMBER)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }

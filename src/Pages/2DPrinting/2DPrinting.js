@@ -140,9 +140,8 @@ export default function Printing(props) {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    data.append('token', props.user.token);
 
-    let status = await printPage(data);
+    let status = await printPage(data, props.user.token);
     if (!status.error) {
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
