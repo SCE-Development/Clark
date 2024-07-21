@@ -1,13 +1,11 @@
 const axios = require('axios');
 const express = require('express');
 const multer = require('multer');
-const FormData = require('form-data');
 const logger = require('../../util/logger');
 const fs = require('fs');
 const path = require('path');
-const { PDFDocument } = require('pdf-lib');
 
-const { healthCheck } = require('../util/Printer.js');
+const { healthCheck, print, getPageCount, getFileAndFormData } = require('../util/Printer.js');
 const {
   decodeToken,
   checkIfTokenSent,
@@ -53,18 +51,14 @@ async function deleteFile(filePath) {
   });
 }
 
-async function getPageCount(filePath) {
-  const fileBuffer = await fs.promises.readFile(filePath);
-  const printFile = await PDFDocument.load(fileBuffer);
-  return printFile.getPageCount();
-}
+const fileUpload = process.env.NODE_ENV !== 'test' ? upload.single('file') : (req, res, next) => next();
 
 router.get('/healthCheck', async (req, res) => {
 /*
  * How these work with Quasar:
  * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
  */
-  if (!PRINTING.ENABLED) {
+  if (!PRINTING.ENABLED && process.env.NODE_ENV !== 'test') {
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
@@ -75,7 +69,7 @@ router.get('/healthCheck', async (req, res) => {
   return res.sendStatus(OK);
 });
 
-router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
+router.post('/sendPrintRequest', fileUpload, async (req, res) => {
   if (!checkIfTokenSent(req)) {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
@@ -84,21 +78,16 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!PRINTING.ENABLED) {
+  if (!PRINTING.ENABLED && process.env.NODE_ENV !== 'test') {
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
-  const { copies, sides } = req.body;
   const email = decodeToken(req).email;
-  const file = req.file;
-  const data = new FormData();
-  data.append('file', fs.createReadStream(file.path), { filename: file.originalname });
-  data.append('copies', copies);
-  data.append('sides', sides);
-
+  const {copies, sides} = req.body;
+  const {file, data} = await getFileAndFormData(req);
+  
   try {
     const user = await User.findOne({ email });
-
     const sidesUsed = sides === 'one-sided' ? 1 : 2;
     const pagesCount = await getPageCount(file.path);
     const wholePagesUsed = Math.floor(pagesCount / sidesUsed);
@@ -111,17 +100,14 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
       return res.sendStatus(BAD_REQUEST);
     }
 
-    await axios.post(PRINTER_URL + '/print',
-      data,
+    await print(data);
+
+    await User.updateOne(
+      { email },
       {
-        headers: {
-          ...data.getHeaders(),
-        }
-      });
-
-    user.pagesPrinted += pagesToBeUsedInPrintRequest;
-    await user.save();
-
+        $inc: { pagesPrinted: pagesToBeUsedInPrintRequest },
+      }
+    );
     await deleteFile(file.path);
 
     res.sendStatus(OK);
@@ -130,7 +116,7 @@ router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
       await deleteFile(file.path);
     }
     logger.error('/sendPrintRequest had an error: ', err);
-    res.sendStatus(SERVER_ERROR);
+    return res.sendStatus(SERVER_ERROR);
   }
 });
 

@@ -1,47 +1,55 @@
 /* global describe it before after */
-process.env.NODE_ENV = "test";
+process.env.NODE_ENV = 'test';
 
-const User = require("../../api/main_endpoints/models/User");
+const User = require('../../api/main_endpoints/models/User');
 
-const chai = require("chai");
+const chai = require('chai');
 
-const chaiHttp = require("chai-http");
-const constants = require("../../api/util/constants.js");
+const chaiHttp = require('chai-http');
+const constants = require('../../api/util/constants.js');
 const { OK, UNAUTHORIZED, NOT_FOUND, SERVER_ERROR, BAD_REQUEST } =
-  require("../../api/util/constants").STATUS_CODES;
-const sinon = require("sinon");
-const SceApiTester = require("../util/tools/SceApiTester.js");
-const { PDFDocument } = require("pdf-lib");
+  require('../../api/util/constants').STATUS_CODES;
+const sinon = require('sinon');
+const SceApiTester = require('../util/tools/SceApiTester.js');
+const fs = require('fs');
 
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
 
 const expect = chai.expect;
-const tools = require("../util/tools/tools.js");
+const tools = require('../util/tools/tools.js');
 const {
   setTokenStatus,
   resetTokenMock,
   restoreTokenMock,
   initializeTokenMock,
-} = require("../util/mocks/TokenValidFunctions");
+} = require('../util/mocks/TokenValidFunctions');
 
 chai.should();
 chai.use(chaiHttp);
-const SshTunnelFunctions = require('../../api/main_endpoints/util/Printer')
-const {
-  PRINTING = {}
-} = require('../../api/config/config.json');
+const SshTunnelFunctions = require('../../api/main_endpoints/util/Printer');
 
-describe("Printer", () => {
+describe('Printer', () => {
   let healthCheckStub = null;
+  let getFileAndFormDataStub = null;
+  let userFindOneStub = null;
+  let getPageCountStub = null;
+  let fsStub = null;
+  let printStub = null;
+  let userUpdateOneStub = null;
 
   before((done) => {
     initializeTokenMock();
     healthCheckStub = sandbox.stub(SshTunnelFunctions, 'healthCheck');
-    healthCheckStub.resolves(false);
+    getFileAndFormDataStub = sandbox.stub(SshTunnelFunctions, 'getFileAndFormData');
+    userFindOneStub = sandbox.stub(User, 'findOne');
+    getPageCountStub = sandbox.stub(SshTunnelFunctions, 'getPageCount');
+    fsStub = sandbox.stub(fs, 'unlink').resolves();
+    printStub = sandbox.stub(SshTunnelFunctions, 'print');
+    userUpdateOneStub = sandbox.stub(User, 'updateOne');
     app = tools.initializeServer(
-      __dirname + "/../../api/main_endpoints/routes/Printer.js"
+      __dirname + '/../../api/main_endpoints/routes/Printer.js'
     );
     test = new SceApiTester(app);
     tools.emptySchema(User);
@@ -51,124 +59,104 @@ describe("Printer", () => {
   after((done) => {
     restoreTokenMock();
     if (healthCheckStub) healthCheckStub.restore();
+    if (getFileAndFormDataStub) getFileAndFormDataStub.restore();
+    if (userFindOneStub) userFindOneStub.restore();
+    if (getPageCountStub) getPageCountStub.restore();
+    if (printStub) printStub.restore();
+    if (fsStub) fsStub.restore();
+    if (userUpdateOneStub) userUpdateOneStub.restore();
     sandbox.restore();
     tools.terminateServer(done);
-  });
-
-  beforeEach(() => {
-    setTokenStatus(false);
-    healthCheckStub.resolves(false);
   });
 
   afterEach(() => {
     resetTokenMock();
   });
-  
-  const token = '';
+
   // Test cases for /healthCheck endpoint
-  describe("/GET healthCheck", () => {
-    it("Should return 200 when printing is disabled ", async () => {
-      PRINTING.ENABLED = false;
-      const result = await test.sendGetRequest("/api/Printer/healthCheck");
+  describe('/GET healthCheck', () => {
+    it('Should return 200 when printing is enabled and ssh tunnel is up ', async () => {
+      healthCheckStub.resolves(true);
+      const result = await test.sendGetRequest('/api/Printer/healthCheck');
       expect(result).to.have.status(OK);
     });
 
-    it("Should return 200 when printing is enabled and ssh tunnel is up ", async () => {
-      PRINTING.ENABLED = true;
-      healthCheckStub.resolves(true);
-      const result = await test.sendGetRequest("/api/Printer/healthCheck");
-      expect(result).to.have.status(OK);
-    });
-    
-    it("Should return 404 when printing is enabled but ssh tunnel is down ", async () => {
-      PRINTING.ENABLED = true;
+    it('Should return 404 when printing is enabled but ssh tunnel is down ', async () => {
       healthCheckStub.resolves(false);
-      const result = await test.sendGetRequest("/api/Printer/healthCheck");
+      const result = await test.sendGetRequest('/api/Printer/healthCheck');
       expect(result).to.have.status(NOT_FOUND);
     });
   });
-  
-  
+
+
+  const token = '';
   // Test cases for /sendPrintRequest endpoint
-  describe("/POST sendPrintRequest", () => {
-    it("Should return 401 when token is not sent ", async () => {
+  describe('/POST sendPrintRequest', () => {
+    it('Should return 401 when token is not sent ', async () => {
       const result = await test.sendPostRequest(
-        "/api/Printer/sendPrintRequest"
+        '/api/Printer/sendPrintRequest'
       );
       expect(result).to.have.status(UNAUTHORIZED);
     });
-    
-    it("Should return 401 when invalid token is sent ", async () => {
+
+    it('Should return 401 when invalid token is sent ', async () => {
       const result = await test.sendPostRequestWithToken(
         token,
-        "/api/Printer/sendPrintRequest"
+        '/api/Printer/sendPrintRequest'
       );
       expect(result).to.have.status(UNAUTHORIZED);
     });
-    
-    it("Should return 200 when printing is disabled ", async () => {
-      PRINTING.ENABLED = false;
-      setTokenStatus(true);
+
+    it('Should return 400 when print request exceeds weekly limit', async () => {
+      setTokenStatus(true, {email: 'print@test.com'});
+      getFileAndFormDataStub.resolves({file: {path: 'temp', originalname: 'temp'}, data: 'mock-data'});
+      userFindOneStub.resolves({ email: 'print@test.com', pagesPrinted: 25});
+      getPageCountStub.resolves(6);
       const result = await test.sendPostRequestWithToken(
-        token, "/api/Printer/sendPrintRequest"
+        token,
+        '/api/Printer/sendPrintRequest',
+        {
+          copies: 1,
+          sides: 'one-sided'
+        }
+      );
+      expect(result).to.have.status(BAD_REQUEST);
+
+    });
+
+    it('Should return 200 when print request succeeds', async () => {
+      setTokenStatus(true, {email: 'print@test.com'});
+      getFileAndFormDataStub.resolves({file: {path: 'temp', originalname: 'temp'}, data: 'mock-data'});
+      userFindOneStub.resolves({ email: 'print@test.com', pagesPrinted: 22});
+      getPageCountStub.resolves(7);
+      printStub.resolves();
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/Printer/sendPrintRequest',
+        {
+          copies: 2,
+          sides: 'two-sided'
+        }
       );
       expect(result).to.have.status(OK);
+      expect(userUpdateOneStub.calledWith({ email: 'print@test.com' }, { $inc: { pagesPrinted: 8 } })).to.be.true;
     });
-    
-    it('Should return 400 when print page count exceeds weekly limit ',
-      async () => {
-        PRINTING.ENABLED = true;
-        setTokenStatus(true);
-        /*
-        setTokenStatus(true, mockUser);
-        mockUser = {
-          email:
-          pagesPrinted:
-        };
-        create new PDF using PDFDocument
 
-        data - PDF File and its configurations
-        data.file - PDF file
-        data.copies - Number of copies
-        data.sides - Sides to print: one-sided or two-sided
-        data, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+    it('Should return 500 when print request fails', async () => {
+      setTokenStatus(true, {email: 'print@test.com'});
+      getFileAndFormDataStub.resolves({file: {path: 'temp', originalname: 'temp'}, data: 'mock-data'});
+      userFindOneStub.resolves({ email: 'print@test.com', pagesPrinted: 25});
+      getPageCountStub.resolves(5);
+      printStub.rejects({});
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/Printer/sendPrintRequest',
+        {
+          copies: 1,
+          sides: 'one-sided'
         }
-
-        Mock User.findOne (create stub) to return the mockUser
-
-        Mock getPagesToBeUsedInPrintRequestStub line 102~106 to return mock data.
-
-        Mock file operations to avoid actual file operations and HTTP Requests. 
-
-        Check that response status is BAD_REQUEST
-
-        For valid request,
-        Mock axios.post(PRINTER_URL + '/print', ...) in require('../util/Printer.js');
-        Check that return status is OK.
-
-        */
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/Printer/sendPrintRequest', params);
-        expect(result).to.have.status(BAD_REQUEST);
-      });
-
-    // it('Should return 200 when all required fields are filled in ',
-    //   async () => {
-    //     setTokenStatus(true);
-    //     const result = await test.sendPostRequestWithToken(
-    //       '/api/Printer/sendPrintRequest', );
-    //     expect(result).to.have.status();
-    //   });
-
-    //   it('Should return 500 when all required fields are not filled in ',
-    //   async () => {
-    //     setTokenStatus(true);
-    //     const result = await test.sendPostRequestWithToken(
-    //       '/api/Printer/sendPrintRequest', );
-    //     expect(result).to.have.status();
-    //   });
+      );
+      expect(result).to.have.status(SERVER_ERROR);
+    });
   });
 });
