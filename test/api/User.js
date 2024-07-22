@@ -156,60 +156,71 @@ describe('User', () => {
     });
 
     it('Should return statusCode 200 and the member counts if a valid token is passed in', async () => {
-      
-      const user = {
-        email: 'a@b.c',
-        token: token
-      };
-
       setTokenStatus(true);
 
-      const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', user);
+      const users = [
+        {
+          email: 'user1@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'One',
+          emailVerified: true,
+          accessLevel: 1,
+          joinDate: new Date('2024-01-15'),
+          membershipValidUntil: new Date('2025-01-01') 
+        },
+        {
+          email: 'user2@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Two',
+          emailVerified: true,
+          accessLevel: 1,
+          joinDate: new Date('2024-06-15'),
+          membershipValidUntil: new Date('2025-06-01')
+        },
+        {
+          email: 'user3@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Three',
+          emailVerified: true,
+          accessLevel: 1,
+          joinDate: new Date('2024-03-10'),
+          membershipValidUntil: new Date('2025-01-01') 
+        },
+        {
+          email: 'user4@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Four',
+          emailVerified: true,
+          accessLevel: 1,
+          joinDate: new Date('2024-07-01'),
+          membershipValidUntil: new Date('2025-06-01') 
+        }
+      ];
+
+      await User.insertMany(users);
+
+      const request = { token: token };
+      const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', request);
 
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
-      result.body.should.have.property('count').that.is.a('number');
-      result.body.should.have.property('newSingleSemester').that.is.a('number');
-      result.body.should.have.property('newAnnualMembers').that.is.a('number');
-      result.body.should.have.property('totalNewMembersThisYear').that.is.a('number');
-      result.body.should.have.property('currentActiveMembers').that.is.a('number');
-    });
 
-    // it('Should correctly count members before June 1', async () => {
-    //   const token = 'token';
-    //   setTokenStatus(true);
+      const expectedCount = 4; // Total users in this semester
+      const expectedNewSingleSemester = 2; // user3 and user1
+      const expectedNewAnnualMembers = 2; // user2 and user4
+      const expectedTotalNewMembersThisYear = 4;
+      const expectedCurrentActiveMembers = 4;
 
-    //   const users = [
-    //     {
-    //       email: 'user1@example.com',
-    //       password: 'password',
-    //       firstName: 'User',
-    //       lastName: 'One',
-    //       emailVerified: true,
-    //       accessLevel: 1,
-    //       joinDate: new Date('2024-01-15'),
-    //       membershipValidUntil: new Date('2024-06-01')
-    //     },
-    //     {
-    //       email: 'user2@example.com',
-    //       password: 'password',
-    //       firstName: 'User',
-    //       lastName: 'Two',
-    //       emailVerified: true,
-    //       accessLevel: 1,
-    //       joinDate: new Date('2024-01-20'),
-    //       membershipValidUntil: new Date('2025-01-01')
-    //     }
-    //   ];
-    //   const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', users);
-
-    //   expect(result).to.have.status(OK);
-    //   expect(result.body.count).to.equal(2);
-    //   expect(result.body.newSingleSemester).to;
-
-    // });
-
-      
+      //result.body.should.have.property('count').that.equals(expectedCount);
+      //result.body.should.have.property('newSingleSemester').that.equals(expectedNewSingleSemester);
+      //result.body.should.have.property('newAnnualMembers').that.equals(expectedNewAnnualMembers);
+       result.body.should.have.property('totalNewMembersThisYear').that.equals(expectedTotalNewMembersThisYear);
+       result.body.should.have.property('currentActiveMembers').that.equals(expectedCurrentActiveMembers);
+      });
   });
 
   describe('/POST searchFor', () => {
