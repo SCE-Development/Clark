@@ -1,23 +1,27 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 
-let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
-  || 'http://localhost:8081/peripheralapi';
+import { BASE_API_URL } from '../Enums';
+
 
 export async function getAllUrls({
   token, page, search, sortColumn, sortOrder
 }) {
   let status = new ApiResponse();
+  const url = new URL('/api/Cleezy/list', BASE_API_URL);
   await axios
-    .get(PERIPHERAL_API_URL + '/Cleezy/list', {
-      params: {
-        token,
-        page,
-        ...(search !== undefined && { search }),
-        sortColumn,
-        sortOrder
+    .get(
+      url.href, {
+        params: {
+          page,
+          ...(search !== undefined && { search }),
+          sortColumn,
+          sortOrder
+        }, headers: {
+          'Authorization': `Bearer ${token}`
+        }
       },
-    })
+    )
     .then(res => {
       status.responseData = res.data;
     })
@@ -32,8 +36,16 @@ export async function createUrl(url, alias = null, token) {
   let status = new ApiResponse();
   const urlToAdd = { url, alias };
   try {
+    const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const response = await axios
-      .post(PERIPHERAL_API_URL + '/Cleezy/createUrl', { token, ...urlToAdd });
+      .post(
+        url.href,
+        urlToAdd,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
     const data = response.data;
     status.responseData = data;
   } catch (err) {
@@ -46,8 +58,16 @@ export async function createUrl(url, alias = null, token) {
 export async function deleteUrl(aliasIn, token) {
   let status = new ApiResponse();
   const alias = { 'alias': aliasIn };
+  const url = new URL('/api/Cleezy/deleteUrl', BASE_API_URL);
   await axios
-    .post(PERIPHERAL_API_URL + '/Cleezy/deleteUrl', { token, ...alias })
+    .post(
+      url.href,
+      alias,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
     .catch(err => {
       status.responseData = err;
       status.error = true;

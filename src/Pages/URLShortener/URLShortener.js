@@ -136,6 +136,13 @@ export default function URLShortenerPage(props) {
     }
   }
 
+  function handleArrowVisibility(sortOrder, columnName) {
+    if (currentSortOrder === sortOrder && currentSortColumn === columnName)
+      return '';
+    return 'hidden';
+  }
+
+
   useEffect(() => {
     if (useGeneratedAlias) {
       setAlias('');
@@ -425,7 +432,15 @@ export default function URLShortenerPage(props) {
                         className={`${className}`}
                         key={title}
                       >
-                        <button onClick={() => handleSortUrls(columnName)}>{title}</button>
+                        <div className="flex items-center justify-center">
+                          <button onClick={() => handleSortUrls(columnName)}>{title}</button>
+                          <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('ASC', columnName)}`}>
+                            <path strokeLinecap='round' strokeLinejoin='round' d='M12 19.5V4.5m0 0l-6 6m6-6l6 6' />
+                          </svg>
+                          <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('DESC', columnName)}`}>
+                            <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m0 0l6-6m-6 6l-6-6' />
+                          </svg>
+                        </div>
                       </th>
                     ))}
                   </tr>

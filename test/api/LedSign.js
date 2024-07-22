@@ -16,7 +16,7 @@ const {
   resetTokenMock,
   restoreTokenMock,
 } = require('../util/mocks/TokenValidFunctions');
-const SshTunnelFunctions = require('../../api/peripheral_api/util/LedSign');
+const SshTunnelFunctions = require('../../api/main_endpoints/util/LedSign');
 
 
 let app = null;
@@ -41,7 +41,7 @@ describe('LED Sign', () => {
     updateSignStub.resolves(false);
     healthCheckStub.resolves(false);
     app = tools.initializeServer(
-      __dirname + '/../../api/peripheral_api/routes/LedSign.js');
+      __dirname + '/../../api/main_endpoints/routes/LedSign.js');
     test = new SceApiTester(app);
     done();
   });

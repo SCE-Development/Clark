@@ -12,22 +12,33 @@ require('./passport')(passport);
  * @returns {boolean} if the token exists in the request body
  */
 function checkIfTokenSent(request) {
-  return request.body.token !== undefined;
+  try {
+    return !!request.headers.authorization;
+  } catch(_) {
+    return false;
+  }
 }
 
 /**
 * @param {object} request the HTTP request from the client
 */
 function decodeToken(request){
-  const token = request.body.token || request.query.token;
-  const userToken = token.replace(/^JWT\s/, '');
-  let decodedResponse = {};
-  jwt.verify(userToken, secretKey, function(error, decoded) {
-    if (!error && decoded) {
-      decodedResponse = decoded;
+  try {
+    let decodedResponse = {};
+    if (!request.headers.authorization || !request.headers.authorization.length) {
+      return decodedResponse;
     }
-  });
-  return decodedResponse;
+    const token = request.body.token || request.query.token;
+    const userToken = token.replace(/^JWT\s/, '');
+    jwt.verify(userToken, secretKey, function(error, decoded) {
+      if (!error && decoded) {
+        decodedResponse = decoded;
+      }
+    });
+    return decodedResponse;
+  } catch (_) {
+    return null;
+  }
 }
 
 /**
