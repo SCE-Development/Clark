@@ -23,6 +23,28 @@ function checkIfTokenSent(request) {
 * @param {object} request the HTTP request from the client
 */
 function decodeToken(request){
+  try {
+    let decodedResponse = {};
+    if (!request.headers.authorization || !request.headers.authorization.length) {
+      return decodedResponse;
+    }
+    const token = request.headers.authorization.split('Bearer ')[1];
+    const userToken = token.replace(/^JWT\s/, '');
+    jwt.verify(userToken, secretKey, function(error, decoded) {
+      if (!error && decoded) {
+        decodedResponse = decoded;
+      }
+    });
+    return decodedResponse;
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+* @param {object} request the HTTP request from the client
+*/
+function decodeTokenFromBodyOrQuery(request){
   const token = request.body.token || request.query.token;
   const userToken = token.replace(/^JWT\s/, '');
   let decodedResponse = {};
@@ -52,5 +74,6 @@ function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
 module.exports = {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
+  decodeTokenFromBodyOrQuery
 };

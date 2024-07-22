@@ -9,7 +9,7 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
-const { decodeToken } = require('../util/token-functions.js');
+const { decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 
 
 router.use(bodyParser.json());
@@ -42,7 +42,7 @@ router.post('/send', async (req, res) => {
 
   let filterQuery = {}; // filter to find user in the database
   if (token) {
-    userObj = await decodeToken(req);
+    userObj = await decodeTokenFromBodyOrQuery(req);
     filterQuery._id = userObj._id;
   } else {
     filterQuery.apiKey = apiKey;
@@ -84,7 +84,7 @@ router.get('/listen', async (req, res) => {
 
   let filterQuery = {}; // filter to find user in the database
   if (token) {
-    userObj = await decodeToken(req);
+    userObj = await decodeTokenFromBodyOrQuery(req);
     filterQuery._id = userObj._id;
   } else {
     filterQuery.apiKey = apiKey;
