@@ -81,7 +81,7 @@ export async function printPage(data, token) {
   await axios.post(url.href, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${data.token}`
     }
   })
     .then(response => {
