@@ -60,5 +60,6 @@ function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
 module.exports = {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
+  decodeTokenFromBodyOrQuery
 };
