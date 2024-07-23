@@ -18,7 +18,7 @@
   },
   "passwordStrength": "medium",
   "PRINTING": {
-    "ENABLED": true
+    "ENABLED": false
   },
   "Cleezy": {
     "ENABLED": false
