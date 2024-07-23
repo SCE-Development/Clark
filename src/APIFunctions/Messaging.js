@@ -8,7 +8,13 @@ export async function sendMessage(id, token, message) {
   let status = new ApiResponse();
   const roomId = id || 'general';
   await axios
-    .post(GENERAL_API_URL + '/messages/send', { token, message, id: roomId })
+    .post(GENERAL_API_URL + '/messages/send',
+      { message, id: roomId },
+      {
+        headers: {
+          'authorization' : 'Bearer ' + token
+        }
+      })
     .then(res => {
       status.responseData = res.data;
     })

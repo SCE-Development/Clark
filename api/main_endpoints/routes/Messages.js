@@ -9,7 +9,7 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
-const { decodeToken } = require('../util/token-functions.js');
+const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 
 
 router.use(bodyParser.json());
@@ -25,7 +25,10 @@ const writeMessage = ((roomId, message) => {
 
 router.post('/send', async (req, res) => {
 
-  const {token, apiKey, message, id} = req.body;
+  const {message, id} = req.body;
+  const token = req.headers['authorization'];
+  const apiKey = req.headers['x-api-key'];
+
 
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
@@ -42,7 +45,7 @@ router.post('/send', async (req, res) => {
 
   let filterQuery = {}; // filter to find user in the database
   if (token) {
-    userObj = await decodeToken(req);
+    userObj = decodeToken(req);
     filterQuery._id = userObj._id;
   } else {
     filterQuery.apiKey = apiKey;
@@ -68,6 +71,7 @@ router.post('/send', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
+
   const {token, apiKey, id} = req.query;
 
   const required = [
@@ -84,7 +88,10 @@ router.get('/listen', async (req, res) => {
 
   let filterQuery = {}; // filter to find user in the database
   if (token) {
-    userObj = await decodeToken(req);
+    let userObj = decodeTokenFromBodyOrQuery(req);
+    if (!userObj) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
     filterQuery._id = userObj._id;
   } else {
     filterQuery.apiKey = apiKey;
