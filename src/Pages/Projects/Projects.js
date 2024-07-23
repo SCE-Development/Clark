@@ -156,31 +156,31 @@ export default function ProjectsPage() {
           <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400">The SCE Development Team is open to all students, no prior experience is required.</p>
         </div>
         <div className="grid gap-8 lg:grid-rows-2 w-auto md:w-full">
-        {projectData.map((project) => (
-          <article className="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 flex flex-col md:flex-row gap-4">
-            <div className="flex justify-center md:justify-start">
-              <img className="max-w-full md:max-w-md" src={project.image} alt={project.name} />
-            </div>
-            <div className="flex flex-col justify-start">
-              <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                <a href="#">{project.name}</a>
-              </h2>
-              <p className="mb-5 font-light text-gray-500 dark:text-gray-400">{project.caption}</p>
-              <a
-                href={project.link}
-                className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub Link
-                <svg className="ml-2 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd">
-                  </path>
-                </svg>
-              </a>
-            </div>
-          </article>
-        ))}
+          {projectData.map((project) => (
+            <article className="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 flex flex-col md:flex-row gap-4">
+              <div className="flex justify-center md:justify-start">
+                <img className="max-w-full md:max-w-md" src={project.image} alt={project.name} />
+              </div>
+              <div className="flex flex-col justify-start">
+                <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                  <a href="#">{project.name}</a>
+                </h2>
+                <p className="mb-5 font-light text-gray-500 dark:text-gray-400">{project.caption}</p>
+                <a
+                  href={project.link}
+                  className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub Link
+                  <svg className="ml-2 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>
