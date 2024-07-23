@@ -317,6 +317,24 @@ describe('User', () => {
   });
 
   describe('/POST delete', () => {
+    let userAdmin;
+
+    const userId = new mongoose.Types.ObjectId();
+
+    before(async () => {
+      userAdmin = new User({
+        _id: userId,
+        firstName: 'first-name',
+        lastName: 'last-name',
+        email: 'test@user.com',
+        password: 'Passw0rd',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.ADMIN,
+        apiKey: null
+      });
+      await userAdmin.save();
+    });
+
     it('Should return statusCode 403 if no token is passed in', async () => {
       const user = {
         _id : id
@@ -411,6 +429,24 @@ describe('User', () => {
         'you must be an officer or admin to delete other users',
       );
     });
+
+    // New test case for lower privileges
+    it('Should return statusCode 403 if users with lower privileges tries to delete accounts with higher privileges', async () => {
+      setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.OFFICER});
+
+      const user = {
+        _id: userAdmin.id,
+        token: token
+      };
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/delete', user);
+
+      expect(result).to.have.status(FORBIDDEN);
+      result.body.should.have.property('message');
+      result.body.message.should.equal(
+        'you must have higher privileges to delete users with lower privileges'
+      );
+    });
   });
 
   describe('POST /apikey', () => {
@@ -422,7 +458,7 @@ describe('User', () => {
         _id: id,
         firstName: 'first-name',
         lastName: 'last-name',
-        email: 'test@user.com',
+        email: 'test@test.com',
         password: 'Passw0rd',
         emailVerified: true,
         accessLevel: MEMBERSHIP_STATE.MEMBER,
