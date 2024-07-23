@@ -7,6 +7,7 @@ mongoose.Promise = require('bluebird');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
+const { MetricsHandler, register } = require('./metrics');
 
 /**
  * Class responsible for resolving paths of API endpoints and combining them
@@ -47,6 +48,31 @@ class SceHttpServer {
         extended: true,
       })
     );
+  }
+
+  async init() {
+    this.registerMetricsMiddleware();
+    await this.initializeEndpoints();
+  }
+
+  registerMetricsMiddleware() {
+    this.app.use((req, res, next) => {
+      res.on('finish', () => {
+        const route = req.route ? req.route.path : req.path;
+        MetricsHandler.endpointHits.inc({
+          method: req.method,
+          route: route,
+          statusCode: res.statusCode,
+        });
+      });
+      next();
+    });
+
+    // metrics
+    this.app.get('/metrics', async (_, res) => {
+      res.setHeader('Content-Type', register.contentType);
+      res.end(await register.metrics());
+    });
   }
 
   /**

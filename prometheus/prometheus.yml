@@ -11,3 +11,6 @@ scrape_configs:
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
+  - job_name: 'clark'
+    static_configs:
+      - targets: ['main-endpoints:8080', 'main-endpoints:8082']

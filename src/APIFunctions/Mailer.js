@@ -1,11 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-
-let MAILER_API_URL = process.env.REACT_APP_MAILER_API_URL
-  || 'http://localhost:8082/cloudapi';
-
-let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'http://localhost:8080/api';
+import { BASE_API_URL } from '../Enums';
 
 /**
  * Invoke the gmail API to send an email to verify a user.
@@ -16,11 +11,19 @@ let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
  */
 export async function sendVerificationEmail(email, token) {
   let status = new ApiResponse();
+  const url = new URL('/cloudapi/Auth/sendVerificationEmail', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/Auth/resendVerificationEmail', {
-      email,
-      token,
-    })
+    .post(
+      url.href,
+      {
+        email
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      },
+    )
     .then((response) => {
       status.responseData = response;
     })
@@ -32,27 +35,24 @@ export async function sendVerificationEmail(email, token) {
 }
 
 /**
- * Invoke the gmail API to send an email blast to specified users.
- * @param {Array} emailList - String array of user email addresses
- * @param {string} subject - The subject of the email
- * @param {string} content - The contents of the email
+ * Invoke the gmail API to send an email to password reset a user.
+ * @param {string} email - The user's email
  * @returns {ApiResponse} Containing any error information related to the
  * request
  */
-export async function sendBlastEmail(emailList, subject, content) {
+export async function sendPasswordReset(email, captchaToken) {
   let status = new ApiResponse();
+  const url = new URL('/cloudapi/Auth/sendPasswordReset', BASE_API_URL);
   await axios
-    .post(MAILER_API_URL + '/Mailer/sendBlastEmail', {
-      emailList,
-      subject,
-      content,
+    .post(url.href, {
+      email,
+      captchaToken,
     })
     .then((response) => {
       status.responseData = response;
     })
     .catch((error) => {
-      status.error = true;
-      status.responseData = error;
+      status.error = error;
     });
   return status;
 }

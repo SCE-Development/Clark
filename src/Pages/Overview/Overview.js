@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
 const svg = require('./SVG');
-import { getAllUsers, deleteUserByEmail } from '../../APIFunctions/User';
+import { getAllUsers, deleteUserByID } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
+import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 // import { membershipState } from '../../Enums';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -26,28 +27,30 @@ export default function Overview(props) {
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
 
   async function deleteUser(user) {
-    const deleteEmailResponse = await deleteUserByEmail(
-      user.email,
+    const response = await deleteUserByID(
+      user._id,
       props.user.token
     );
-    if (!deleteEmailResponse.error) {
-      if (user.email === props.user.email) {
-        // logout
-        window.localStorage.removeItem('jwtToken');
-        window.location.reload();
-        return window.alert('Self-deprecation is an art');
-      }
-      setUsers(
-        users.filter(
-          child => !child.email.includes(user.email)
-        )
-      );
-      setQueryResult(
-        queryResult.filter(
-          child => !child.email.includes(user.email)
-        )
-      );
+    if (response.error) {
+      alert('unable to delete user, check logs');
     }
+    if (user._id === props.user._id) {
+      // logout
+      window.localStorage.removeItem('jwtToken');
+      window.location.reload();
+      return window.alert('Self-deprecation is an art');
+    }
+    setUsers(
+      users.filter(
+        child => !child._id.includes(user._id)
+      )
+    );
+    setTotal(total - 1);
+    setQueryResult(
+      queryResult.filter(
+        child => !child._id.includes(user._id)
+      )
+    );
   }
 
   function mark(bool) {
@@ -111,6 +114,12 @@ export default function Overview(props) {
       setCurrentSortColumn(columnName);
       setCurrentSortOrder('asc');
     }
+  }
+
+  function handleArrowVisibility(sortOrder, columnName) {
+    if (currentSortOrder === sortOrder && currentSortColumn === columnName)
+      return '';
+    return 'hidden';
   }
 
   // function filterUserByAccessLevel(accessLevel) {
@@ -213,7 +222,24 @@ export default function Overview(props) {
       }
       } />
       <div className='px-4'>
-        <div className='px-6 mt-8 border rounded-lg border-white/10'>
+        <button className="my-8 btn btn-primary lg:max-w-[20%]" onClick={async () => {
+          const result = await getAllUsersValidVerifiedAndSubscribed(props.user.token);
+          if (result.error) {
+            return alert(
+              'unable to download email list: ' + result.error
+            );
+          }
+          const blob = new Blob([result.responseData]);
+          const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `${date}_sce_emails_export.csv`;
+          a.click();
+        }}>
+            Download subscribed emails
+        </button>
+        <div className='px-6 border rounded-lg border-white/10'>
           <div className='py-6'>
             <label className="w-full form-control">
               <div className="label">
@@ -257,7 +283,15 @@ export default function Overview(props) {
                     className={`${className}`}
                     key={title}
                   >
-                    <button onClick={() => handleSortUsers(columnName)}>{title}</button>
+                    <div className="flex items-center justify-center">
+                      <button onClick={() => handleSortUsers(columnName)}>{title}</button>
+                      <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('asc', columnName)}`}>
+                        <path strokeLinecap='round' strokeLinejoin='round' d='M12 19.5V4.5m0 0l-6 6m6-6l6 6' />
+                      </svg>
+                      <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('desc', columnName)}`}>
+                        <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m0 0l6-6m-6 6l-6-6' />
+                      </svg>
+                    </div>
                   </th>
                 ))}
               </tr>

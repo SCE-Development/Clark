@@ -27,9 +27,9 @@ export default function Printing(props) {
   const [printStatus, setPrintStatus] = useState('');
   const [printStatusColor, setPrintStatusColor] = useState('success');
   const [files, setFiles] = useState(null);
-
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [PdfFile, setPdfFile] = useState(null);
 
   async function checkPrinterHealth() {
     setLoading(true);
@@ -61,21 +61,40 @@ export default function Printing(props) {
     { label: 'Double Sided', value: 'two-sided' },
   ];
 
-
   async function getUri() {
-    const pdf = await PDFDocument.load(dataUrl);
-    const display = await PDFDocument.create();
-    const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
-    const copiedPages = await display.copyPages(
-      pdf,
-      Array.from(pagesWeWantToPrint).map((x) => x - 1),
-    );
-    copiedPages.forEach((element) => {
-      display.addPage(element);
-    });
-    setNumberOfPagesInPdfPreview(display.getPages().length);
-    const data = await display.saveAsBase64({ dataUri: true });
-    setPreviewDisplay(data);
+    try {
+      const pdf = await PDFDocument.load(dataUrl);
+      const display = await PDFDocument.create();
+      const pagesWeWantToPrint = parseRange(pageRanges, pdf.getPages().length);
+      const copiedPages = await display.copyPages(
+        pdf,
+        Array.from(pagesWeWantToPrint).map((x) => x - 1),
+      );
+      copiedPages.forEach((element) => {
+        display.addPage(element);
+      });
+      // convert pdf to blob url (allows display of larger pdfs)
+      const pdfBytes = await display.save();
+      const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
+      const objectUrl = URL.createObjectURL(file);
+      setNumberOfPagesInPdfPreview(display.getPages().length);
+      setPreviewDisplay(objectUrl);
+      setPdfFile(file);
+    } catch (e) {
+      // the error looks like Input document to `PDFDocument.load` is encrypted
+      if (e.message.includes('is encrypted')) {
+        setFiles(null);
+        setDataUrl('');
+        setPrintStatus('This PDF is encrypted and cannot be printed');
+        setPrintStatusColor('error');
+        setTimeout(() => {
+          setPrintStatus(null);
+        }, 5000);
+      } else {
+        setPrintStatus('Failed to load PDF');
+        setPrintStatusColor('error');
+      }
+    }
   }
 
   useEffect(() => {
@@ -109,6 +128,7 @@ export default function Printing(props) {
       // https://stackoverflow.com/a/43894750
       a.onload = function(event) {
         setDataUrl(event.target.result);
+        setPrintStatus(null);
       };
       a.readAsDataURL(e.target.files[0]);
       setFiles(e.target.files[0]);
@@ -116,19 +136,15 @@ export default function Printing(props) {
   }
 
   async function handlePrinting() {
-    const pdf = await PDFDocument.load(previewDisplay);
-    let data = {
-      raw: await pdf.saveAsBase64(),
-      // maybe we dont need to send this? since in the frontend
-      // we update the embed when the user specifies which
-      // pages they want to print
-      // pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
-      sides,
-      copies,
-    };
-    let status = await printPage(data, props.user.token);
+    // send print request with files and configuratiosn in formData
+    const data = new FormData();
+    data.append('file', PdfFile);
+    data.append('sides', sides);
+    data.append('copies', copies);
+    data.append('token', props.user.token);
+
+    let status = await printPage(data);
     if (!status.error) {
-      // this should not be done in the frontend and instead be part of the printing api
       editUser(
         { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
         props.user.token,
@@ -150,6 +166,12 @@ export default function Printing(props) {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      let a = new FileReader();
+      a.onload = function(event) {
+        setDataUrl(event.target.result);
+        setPrintStatus(null);
+      };
+      a.readAsDataURL(e.dataTransfer.files[0]);
       setFiles(e.dataTransfer.files[0]);
     }
   }
@@ -177,6 +199,7 @@ export default function Printing(props) {
     setDataUrl('');
     setPageRanges('');
     setFiles(null);
+    setPrintStatus(null);
   }
 
   function getRemainingPageBalance() {
@@ -354,7 +377,7 @@ export default function Printing(props) {
       {printStatus && (
         <div className='flex items-center justify-center w-full mt-10'>
           <div role="alert" className={'w-1/2 text-center alert alert-' + printStatusColor}>
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
             <p className=''>{printStatus}</p>
           </div>
         </div>

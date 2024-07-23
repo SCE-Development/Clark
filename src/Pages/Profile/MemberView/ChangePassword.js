@@ -5,6 +5,7 @@ export default function ChangePasswordModal(props) {
   const { bannerCallback = (message, color) => { }, confirmClassAddons } = props;
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const INPUT_CLASS_NAME = 'indent-2 block w-full rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
 
@@ -30,14 +31,15 @@ export default function ChangePasswordModal(props) {
     <dialog id="change-password-modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box">
         <h3 className="font-bold text-lg">Reset Password</h3>
-        <label htmlFor="new-password" className="block text-sm font-medium leading-6 ">
+        <label htmlFor="new-password" className="block text-sm font-medium leading-6 mt-2">
             New Password
         </label>
         <div className="mt-2">
           <input
             value={password}
             id="new-password"
-            name="email"
+            name="new-password"
+            type={showPassword ? 'text' : 'password'}
             onChange={(e) => {
               setPassword(e.target.value);
             }}
@@ -52,13 +54,26 @@ export default function ChangePasswordModal(props) {
             id="confirm"
             value={confirmPassword}
             name="confirm"
-            type="email"
+            type={showPassword ? 'text' : 'password'}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
             }}
             className={INPUT_CLASS_NAME}
           />
         </div>
+
+        <div className="form-control mt-1">
+          <label className="label cursor-pointer">
+            <span className="label-text">Show Password</span>
+            <input
+              type="checkbox"
+              className="toggle"
+              checked={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
+            />
+          </label>
+        </div>
+
         <div className="modal-action">
 
           <form method="dialog">

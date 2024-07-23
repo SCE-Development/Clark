@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { updateLastLoginDate } from './User';
+import { BASE_API_URL } from '../Enums';
 
-let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'http://localhost:8080/api';
 
 /**
  * Add a new user to the database.
@@ -27,16 +26,19 @@ export async function registerUser(userToRegister) {
     email,
     password,
     major,
-    numberOfSemestersToSignUpFor
+    numberOfSemestersToSignUpFor,
+    captchaToken
   } = userToRegister;
+  const url = new URL('/Auth/register', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/Auth/register', {
+    .post(url.href, {
       firstName,
       lastName,
       email,
       password,
       major,
-      numberOfSemestersToSignUpFor
+      numberOfSemestersToSignUpFor,
+      captchaToken
     })
     .then(res => {
       status.responseData = res.data;
@@ -57,8 +59,9 @@ export async function registerUser(userToRegister) {
  */
 export async function loginUser(email, password) {
   let status = new UserApiResponse();
+  const url = new URL('/api/Auth/login', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/Auth/login', { email, password })
+    .post(url.href, { email, password })
     .then(async result => {
       status.token = result.data.token;
       await updateLastLoginDate(email, result.data.token);
@@ -90,8 +93,13 @@ export async function checkIfUserIsSignedIn() {
     return status;
   }
 
+  const url = new URL('/api/Auth/verify', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/Auth/verify', { token })
+    .post(url.href, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then(res => {
       status.responseData = res.data;
       status.token = token;
@@ -112,14 +120,50 @@ export async function checkIfUserIsSignedIn() {
  */
 export async function validateVerificationEmail(email, hashedId) {
   let status = new ApiResponse();
+  const url = new URL('/api/Auth/validateVerificationEmail', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/Auth/validateVerificationEmail', {
+    .post(url.href, {
       email,
       hashedId
     })
     .catch(err => {
       status.responseData = err;
       status.error = true;
+    });
+  return status;
+}
+
+/**
+ * Reset a user's password after the visiting the link sent to their email.
+ * @param {string} hashedId - A hashed value of the user's mongoDB _id field
+ * @param {string} password - The user's password
+ * @returns {ApiResponse} Containing any error information related to the
+ * request
+ */
+export async function resetPassword(password, hashedId, resetToken) {
+  let status = new ApiResponse();
+  const url = new URL('/api/Auth/resetPassword', BASE_API_URL);
+  await axios
+    .post(url.href, {
+      password,
+      hashedId,
+      resetToken
+    })
+    .catch(err => {
+      status.error = err;
+      status.responseData = err.response;
+    });
+  return status;
+}
+
+export async function validatePasswordReset(resetToken) {
+  let status = new ApiResponse();
+  const url = new URL('/api/Auth/validatePasswordReset', BASE_API_URL);
+  await axios
+    .post(url.href, { resetToken })
+    .catch(err => {
+      status.error = true;
+      status.responseData = err.response;
     });
   return status;
 }

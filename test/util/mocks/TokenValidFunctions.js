@@ -1,6 +1,5 @@
 const TokenFunctions = require(
   '../../../api/main_endpoints/util/token-functions');
-const TokenValidation = require('../../../api/util/token-verification');
 const sinon = require('sinon');
 
 let checkifTokenValidMock = null;
@@ -12,7 +11,6 @@ let decodeTokenValidMock = null;
 function initializeTokenMock() {
   checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid');
   decodeTokenValidMock = sinon.stub(TokenFunctions, 'decodeToken');
-  verifyTokenMock = sinon.stub(TokenValidation, 'verifyToken');
 }
 
 /**
@@ -21,7 +19,6 @@ function initializeTokenMock() {
 function restoreTokenMock() {
   checkifTokenValidMock.restore();
   decodeTokenValidMock.restore();
-  verifyTokenMock.restore();
 }
 
 /**
@@ -30,23 +27,25 @@ function restoreTokenMock() {
 function resetTokenMock() {
   checkifTokenValidMock.reset();
   decodeTokenValidMock.reset();
-  verifyTokenMock.reset();
 }
 
 /**
  *
  * @param {any} returnValue: value to be return back
  *                           by the function 'checkIfTokenValid'
+ * @param {Object} data: optional value that will be the result
+ *                       of the decoded token value
  * @returns return parameter (above)
  */
-function setTokenStatus(returnValue) {
+function setTokenStatus(
+  returnValue,
+  data = {},
+) {
   checkifTokenValidMock.returns(returnValue);
   if (returnValue) {
-    decodeTokenValidMock.returns({accessLevel: 10});
-    verifyTokenMock.returns(true);
+    decodeTokenValidMock.returns(data);
   } else {
     decodeTokenValidMock.returns(null);
-    verifyTokenMock.returns(false);
   }
 }
 

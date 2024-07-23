@@ -1,5 +1,6 @@
 const axios = require('axios');
 const logger = require('../../util/logger');
+const { MetricsHandler } = require('../../util/metrics');
 
 
 // see https://github.com/SCE-Development/rpi-led-controller/tree/master/server.py#L126
@@ -81,6 +82,7 @@ async function healthCheck() {
         resolve(data);
       }).catch((err) => {
         logger.error('healthCheck had an error: ', err);
+        MetricsHandler.sshTunnelErrors.inc({ type: 'LED' });
         resolve(false);
       });
   });

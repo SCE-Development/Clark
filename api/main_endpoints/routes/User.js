@@ -9,7 +9,6 @@ const {
   getMemberExpirationDate,
   hashPassword,
 } = require('../util/userHelpers');
-const { checkDiscordKey } = require('../../util/token-verification');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
@@ -24,16 +23,12 @@ const {
   CONFLICT,
   SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
-const {
-  discordApiKeys
-} = require('../../config/config.json');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const discordConnection = require('../util/discord-connection');
 
-const discordRedirectUri = process.env.DISCORD_REDIRECT_URI ||
-  'http://localhost:8080/api/user/callback';
+const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
+const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
 
@@ -93,30 +88,46 @@ router.post('/checkIfUserExists', (req, res) => {
 });
 
 // Delete a member
-router.post('/delete', (req, res) => {
+// Delete a member
+router.post('/delete', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  User.deleteOne({ email: req.body.email }, function(error, user) {
-    if (error) {
-      const info = {
-        userEmail: req.body.email,
-        errorTime: new Date(),
-        apiEndpoint: 'user/delete',
-        errorDescription: error
-      };
+  const decoded = decodeToken(req);
+  const targetUser = await User.findById(req.body._id);
+  if (!targetUser) {
+    return res.sendStatus(NOT_FOUND);
+  }
+  // Check if req has lower privilege than the account they wish to delete
+  if (targetUser.accessLevel !== 'undefined') {
+    if (decoded.accessLevel < targetUser.accessLevel) {
+      return res
+        .status(FORBIDDEN)
+        .json( { message: 'you must have higher privileges to delete users with lower privileges'});
+    }
+  }
+  // If not officer, only allow deletion of own account
+  if (decoded.accessLevel < membershipState.OFFICER) {
+    if (req.body._id && req.body._id !== decoded._id) {
+      return res
+        .status(FORBIDDEN)
+        .json({ message: 'you must be an officer or admin to delete other users' });
+    }
+  }
 
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+  User.deleteOne({ _id: req.body._id }, function(error, user) {
+    if (error) {
+      logger.error('Unable to delete user with id', req.body._id, error);
+      return res.sendStatus(BAD_REQUEST);
     }
 
     if (user.n < 1) {
-      res.status(NOT_FOUND).send({ message: 'User not found.' });
-    } else {
-      res.status(OK).send({ message: `${req.body.email} was deleted.` });
+      return res.sendStatus(NOT_FOUND);
     }
+    return res.sendStatus(OK);
   });
 });
 
@@ -218,7 +229,7 @@ router.post('/edit', async (req, res) => {
   }
 
   let decoded = decodeToken(req);
-  if (decoded.accessLevel === membershipState.MEMBER) {
+  if (decoded.accessLevel < membershipState.OFFICER) {
     if (req.body.email && req.body.email != decoded.email) {
       return res
         .status(UNAUTHORIZED)
@@ -313,79 +324,20 @@ router.post('/getPagesPrintedCount', (req, res) => {
   });
 });
 
-router.get('/callback', async function(req, res) {
-  const code = req.query.code;
-  const email = req.query.state;
-  discordConnection.loginWithDiscord(code, email, discordRedirectUri)
-    .then(status => {
-      return res.status(OK).redirect('https://discord.com/oauth2/authorized');
-    })
-    .catch(_ => {
-      return res.status(NOT_FOUND).send('Authorization unsuccessful!');
-    });
-});
-
-router.post('/getUserFromDiscordId', (req, res) => {
-  const { discordID, apiKey } = req.body;
-  if(!checkDiscordKey(apiKey)){
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ discordID }, (error, result) => {
-    let status = OK;
-    if (error) {
-      status = BAD_REQUEST;
-    } else if (!result) {
-      status = NOT_FOUND;
-    }
-    return res.status(status).send(result);
-  });
-});
-
-router.post('/updatePagesPrintedFromDiscord', (req, res) => {
-  const { discordID, apiKey, pagesPrinted } = req.body;
-  if(!checkDiscordKey(apiKey)){
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.updateOne( { discordID }, {pagesPrinted},
-    (error, result) => {
-      let status = OK;
-      if(error){
-        status = BAD_REQUEST;
-      } else if (result.n === 0){
-        status = NOT_FOUND;
-      }
-      return res.sendStatus(status);
-    });
-});
-
-router.post('/connectToDiscord', function(req, res) {
-  const email = req.body.email;
+router.post('/getUserById', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!email) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  if (!discordApiKeys.ENABLED) {
-    return res.sendStatus(OK);
-  }
-  return res.status(OK)
-    .send('https://discord.com/api/oauth2/authorize?client_id=' +
-      `${discordApiKeys.CLIENT_ID}` +
-      `&redirect_uri=${encodeURIComponent(discordRedirectUri)}` +
-      `&state=${email}&response_type=code&scope=identify`
-    );
-});
-
-router.post('/getUserById', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, (
-    membershipState.OFFICER
-  ))) {
-    return res.sendStatus(UNAUTHORIZED);
+  // If not officer, only allow reading of own account
+  let decoded = decodeToken(req);
+  if (decoded.accessLevel < membershipState.OFFICER) {
+    if (req.body.userID && req.body.userID !== decoded._id) {
+      return res
+        .status(FORBIDDEN)
+        .json({ message: 'you must be an officer or admin to read other users\' data' });
+    }
   }
   User.findOne({ _id: req.body.userID}, (err, result) => {
     if (err) {
@@ -399,42 +351,6 @@ router.post('/getUserById', async (req, res) => {
     const { password, ...omittedPassword } = result._doc;
 
     return res.status(OK).json(omittedPassword);
-  });
-});
-
-router.post('/getSelfId', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, (
-    membershipState.PENDING
-  ))) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  User.findOne({ _id: req.body.userID}, (err, result) => {
-    if (err) {
-      return res.sendStatus(BAD_REQUEST);
-    }
-
-    if (!result) {
-      return res.sendStatus(NOT_FOUND);
-    }
-
-    const { password, ...omittedPassword } = result._doc;
-
-    return res.status(OK).json(omittedPassword);
-  });
-});
-
-router.get('/isUserSubscribed', (req, res) => {
-  User.findOne({ email: req.query.email }, function(error, result) {
-    if (error) {
-      res.sendStatus(BAD_REQUEST);
-    }
-
-    if (!result) {
-      return res.sendStatus(NOT_FOUND);
-    }
-    return res.status(OK).send({ result: !!result.emailOptIn });
   });
 });
 
@@ -509,4 +425,63 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
     });
 });
 
+// Search for all members with verified emails, subscribed, and not banned or pending
+router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  User.find({
+    emailVerified: true,
+    emailOptIn: true,
+    accessLevel: { $gte: membershipState.NON_MEMBER }
+  })
+    .then((users) => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/csv');
+      res.write('email\r\n');
+      users.forEach(function(user) {
+        res.write(user.email + '\r\n');
+      });
+      return res.end();
+    })
+    .catch((err) => {
+      logger.error('/usersValidVerifiedAndSubscribed/ had an error:', err);
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
+// Generate an API key for the Messages API if the user does not have an API key; otherwise, return the existing API key
+router.post('/apikey', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  }
+  if (!checkIfTokenValid(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  let { _id } = decodeToken(req);
+
+  User.findOne({_id})
+    .then((user) => {
+      if (!user) {
+        return res.sendStatus(NOT_FOUND);
+      }
+      // logic to generate api key or return existing api key
+      if (user.apiKey) {
+        return res.status(OK).send({apiKey: user.apiKey});
+      }
+      let apiKey = crypto.randomUUID();
+      User.updateOne({_id}, {apiKey})
+        .then((result) => {
+          if (result.n == 0) {
+            return res.sendStatus(UNAUTHORIZED);
+          }
+          return res.status(OK).send({apiKey});
+        });
+    })
+    .catch(() => {
+      return res.sendStatus(BAD_REQUEST);
+    });
+});
 module.exports = router;

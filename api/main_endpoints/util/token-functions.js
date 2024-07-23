@@ -12,28 +12,41 @@ require('./passport')(passport);
  * @returns {boolean} if the token exists in the request body
  */
 function checkIfTokenSent(request) {
-  return request.body.token !== undefined;
+  try {
+    return !!request.headers.authorization;
+  } catch(_) {
+    return false;
+  }
 }
 
 /**
 * @param {object} request the HTTP request from the client
 */
 function decodeToken(request){
-  const token = request.body.token;
-  const userToken = token.replace(/^JWT\s/, '');
-  let decodedResponse = {};
-  jwt.verify(userToken, secretKey, function(error, decoded) {
-    if (!error && decoded) {
-      decodedResponse = decoded;
+  try {
+
+    let decodedResponse = {};
+    if (!request.headers.authorization || !request.headers.authorization.length) {
+      return decodedResponse;
     }
-  });
-  return decodedResponse;
+    const token = request.headers.authorization.split('Bearer ')[1];
+    const userToken = token.replace(/^JWT\s/, '');
+    jwt.verify(userToken, secretKey, function(error, decoded) {
+      if (!error && decoded) {
+        decodedResponse = decoded;
+      }
+    });
+    return decodedResponse;
+  } catch (_) {
+    return null;
+  }
 }
 
 /**
  * Checks if the request token is valid and returns either a valid response
  * or undefined
  * @param {object} request the HTTP request from the client
+ * @param {number} accessLevel the minimum access level to consider the token valid
  * @param {boolean} returnDecoded optional parameter to return the decoded
  * response to the user
  * @returns {boolean} whether the user token is valid or not

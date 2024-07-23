@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { UserApiResponse } from './ApiResponses';
-import { membershipState, userFilterType } from '../Enums';
-
-let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'http://localhost:8080/api';
+import { BASE_API_URL, membershipState, userFilterType } from '../Enums';
 
 /**
  * Queries the database for all users.
@@ -18,7 +15,7 @@ export async function getAllUsers({
   sortColumn = null,
   sortOrder = null,
 }) {
-  const url = new URL(GENERAL_API_URL + '/User/users');
+  const url = new URL('/api/User/users', BASE_API_URL);
 
   if (sortColumn) {
     url.searchParams.set('sort', sortColumn);
@@ -30,12 +27,19 @@ export async function getAllUsers({
 
   let status = new UserApiResponse();
   await axios
-    // get all user!
-    .post(url.href, {
-      token,
-      query,
-      page,
-    })
+    // get all users!
+    .post(
+      url.href,
+      {
+        query,
+        page,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
     .then(result => {
       status.responseData = result.data;
     })
@@ -47,8 +51,9 @@ export async function getAllUsers({
 
 export async function getCountAllUsers(query) {
   let status = new UserApiResponse();
+  const url = new URL(`/api/User/countAllUsers/${query}`, BASE_API_URL);
   await axios
-    .get(GENERAL_API_URL + `/User/countAllUsers/${query}`)
+    .get(url.href)
     .then(result => {
       status.responseData = result.data;
     })
@@ -110,8 +115,9 @@ export async function editUser(userToEdit, token) {
     emailVerified,
     emailOptIn,
   } = userToEdit;
+  const url = new URL('/api/User/edit', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/User/edit', {
+    .post(url.href, {
       _id,
       firstName,
       lastName,
@@ -127,8 +133,11 @@ export async function editUser(userToEdit, token) {
       accessLevel,
       lastLogin,
       emailVerified,
-      emailOptIn,
-      token
+      emailOptIn
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     .then(result => {
       status.responseData = result.data;
@@ -146,21 +155,29 @@ export async function editUser(userToEdit, token) {
  * @param {string} token The JWT token to allow the user to be edited
  */
 export async function updateLastLoginDate(email, token) {
-  await editUser({ email, lastLogin: Date.now() }, token);
+  await editUser({ email, lastLogin: Date.now() }, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 }
 
 /**
- * Deletes a user by an email
- * @param {string} email The email of the user to delete
+ * Deletes a user by an ID
+ * @param {string} _id The ID of the user to delete
  * @param {string} token jwt token to authorize deletion
  * @returns {UserApiResponse} containing if the search was successful
  */
-export async function deleteUserByEmail(email, token) {
+export async function deleteUserByID(_id, token) {
   let status = new UserApiResponse();
+  const url = new URL('/api/User/delete', BASE_API_URL);
   axios
-    .post(GENERAL_API_URL + '/User/delete', {
-      token,
-      email
+    .post(url.href, {
+      _id,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     .catch(() => {
       status.error = true;
@@ -176,80 +193,26 @@ export async function deleteUserByEmail(email, token) {
  */
 export async function checkIfUserExists(email) {
   let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/User/checkIfUserExists',
+  const url = new URL('/api/User/checkIfUserExists', BASE_API_URL);
+  await axios.post(url.href,
     { email }).catch(() => {
     status.error = true;
   });
   return status;
 }
-
-/**
- * This function takes in a list of current users and returns a
- * filtered user list that is determined by the filter id.
- * @param {array} users array of all registered users
- * @param {integer} filterID represents what to filter email by
- * @returns {array} filtered array of users
- */
-export function filterUsers(users, filterID) {
-  let filteredUsers = users.filter((user) => {
-    if (filterID === userFilterType.VALID) {
-      return (user.accessLevel >= membershipState.ALUMNI);
-    } else if (filterID === userFilterType.NON_VALID) {
-      return (
-        user.accessLevel === membershipState.NON_MEMBER ||
-        user.accessLevel === membershipState.PENDING
-      );
-    } else {
-      return true;
-    }
-  });
-  return filteredUsers;
-}
-
-export async function connectToDiscord(email, token) {
-  let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/user/connectToDiscord', { email, token })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/user/getUserById', {userID, token})
+  const url = new URL('/api/User/getUserById', BASE_API_URL);
+  await axios.post(url.href,
+    {userID}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then((res) => {
       status.responseData = res.data;
     })
     .catch((err) => {
-      status.error = true;
-    });
-  return status;
-}
-
-export async function getSelfId(userID, token) {
-  let status = new UserApiResponse();
-  await axios.post(GENERAL_API_URL + '/user/getSelfId', {userID, token})
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = true;
-    });
-  return status;
-}
-
-export async function isUserSubscribed(email) {
-  let status = new UserApiResponse();
-  await axios
-    .get(GENERAL_API_URL + `/user/isUserSubscribed?=email${email}`)
-    .then((result) => {
-      status.responseData = result.data;
-    })
-    .catch(() => {
       status.error = true;
     });
   return status;
@@ -257,8 +220,9 @@ export async function isUserSubscribed(email) {
 
 export async function setUserEmailPreference(email, emailOptIn) {
   let status = new UserApiResponse();
+  const url = new URL('/api/User/setUserEmailPreference', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/user/setUserEmailPreference', {
+    .post(url.href, {
       email,
       emailOptIn,
     })
@@ -273,8 +237,9 @@ export async function setUserEmailPreference(email, emailOptIn) {
 
 export async function getUserData(email) {
   let status = new UserApiResponse();
+  const url = new URL('/api/User/getUserDataByEmail', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/user/getUserDataByEmail', {
+    .post(url.href, {
       email,
     })
     .then((res) => {
@@ -288,13 +253,52 @@ export async function getUserData(email) {
 
 export async function getAllUserSubscribedAndVerified(token) {
   let status = new UserApiResponse();
+  const url = new URL('/api/User/usersSubscribedAndVerified', BASE_API_URL);
   await axios
-    .post(GENERAL_API_URL + '/user/usersSubscribedAndVerified', { token })
+    .post(url.href, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then((res) => {
       status.responseData = res.data;
     })
     .catch((err) => {
       status.error = true;
     });
+  return status;
+}
+
+export async function getAllUsersValidVerifiedAndSubscribed(token) {
+  let status = new UserApiResponse();
+  const url = new URL('/api/User/usersValidVerifiedAndSubscribed', BASE_API_URL);
+  await axios
+    .post(url.href, { responseType: 'blob' }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = err;
+    });
+  return status;
+}
+
+export async function getApiKey(token) {
+  let status = new UserApiResponse();
+  try {
+    const url = new URL('/api/User/apiKey', BASE_API_URL);
+    const response = await axios.post(url.href, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    status.responseData = response.data;
+  } catch (error) {
+    status.error = true;
+  }
   return status;
 }

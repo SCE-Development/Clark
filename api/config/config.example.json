@@ -5,11 +5,6 @@
     "CLIENT_SECRET": "NOT_SET",
     "REFRESH_TOKEN": "NOT_SET"
   },
-  "githubApiKeys": {
-    "ENABLED": true,
-    "CLIENT_ID": "NOT_SET",
-    "CLIENT_SECRET": "NOT_SET"
-  },
   "googleApiKeys": {
     "ENABLED": true,
     "CLIENT_ID": "NOT_SET",
@@ -18,7 +13,8 @@
       "https://developers.google.com/oauthplayground"
     ],
     "REFRESH_TOKEN": "NOT_SET",
-    "USER": "sce.sjsu@gmail.com"
+    "USER": "sce.sjsu@gmail.com",
+    "CAPTCHA_SECRET_KEY": "NOT_SET"
   },
   "passwordStrength": "medium",
   "PRINTING": {

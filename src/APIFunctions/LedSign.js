@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
+import { BASE_API_URL } from '../Enums';
 
-let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
-  || 'http://localhost:8081/peripheralapi';
 
 /**
  * Checks to see if the sign is accepting requests. This is done
@@ -12,8 +11,9 @@ let PERIPHERAL_API_URL = process.env.REACT_APP_PERIPHERAL_API_URL
  */
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
+  const url = new URL('/api/LedSign/healthCheck', BASE_API_URL);
   await axios
-    .get(PERIPHERAL_API_URL + '/LedSign/healthCheck', { officerName })
+    .get(url.href, { officerName })
     .then(res => {
       status.responseData = res.data;
     })
@@ -33,9 +33,17 @@ export async function healthCheck(officerName) {
  */
 export async function updateSignText(signData, token) {
   let status = new ApiResponse();
+  const url = new URL('/api/LedSign/updateSignText', BASE_API_URL);
   await axios
-    .post(PERIPHERAL_API_URL + '/LedSign/updateSignText',
-      { token, ...signData })
+    .post(
+      url.href,
+      signData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      },
+    )
     .then(res => {
       status.responseData = res.data;
     })
