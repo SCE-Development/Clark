@@ -98,30 +98,25 @@ export default function Printing(props) {
   }
 
 
-  //create the preview for image
+  //  create the preview for image
   async function getUriImage() {
-    //create a new pdf document
-    console.log('In image preview making function')
+    // create a new pdf document
     const display = await PDFDocument.create();
-
-    //embed the image into the pdf
-    let image = undefined
+    // embed the image into the pdf
+    let image = undefined;
     const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
     if (mediaType === 'jpg' || mediaType === 'jpeg') {
-      //return the PDFImage object
+      // return the PDFImage object
       image = await display.embedJpg(dataUrl);
     } else if (mediaType === 'png') {
       image = await display.embedPng(dataUrl);
-    } 
-
-    //scale the image to 25% of its original size
+    }
+    // scale the image to 25% of its original size
     const imgDims = image.scale(0.25);
-
-    //add a blank page to the pdf document
+    // add a blank page to the pdf document
     const page = display.addPage();
-
-    //draw the image in the center of the page
-    page.drawImage(image, 
+    // draw the image in the center of the page
+    page.drawImage(image,
       {
         x: page.getWidth() / 2 - imgDims.width / 2,
         y: page.getHeight() / 2 - imgDims.height / 2,
@@ -129,14 +124,11 @@ export default function Printing(props) {
         height: imgDims.height
       }
     );
-   
-    //serialize the image into a byte array (Unit8Array)
+    // serialize the image into a byte array (Unit8Array)
     const pdfBytes = await display.save();
-    
-    //create a File object from the byte array
+    // create a File object from the byte array
     const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
-
-    //generate a Blob URL for the preview
+    // generate a Blob URL for the preview
     const objectUrl = URL.createObjectURL(file);
     setNumberOfPagesInPdfPreview(display.getPages().length);
     setPreviewDisplay(objectUrl);
@@ -145,17 +137,18 @@ export default function Printing(props) {
 
   useEffect(() => {
     if (dataUrl) {
-       // get the file type
-       const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
-       // if the file type is pdf
-       if (mediaType === 'pdf') {
-         getUri();
-       }
-       // if the file type is image
-       else if (mediaType === 'jpg' || mediaType === 'png' || mediaType === 'jpeg') {
-          getUriImage();
-       }
-      
+      // get the file type
+      const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
+      // if the file type is pdf
+      if (
+        mediaType === 'pdf'
+      ) {
+        getUri();
+      } else if ( // if the file type is an image
+        mediaType === 'jpg' || mediaType === 'png' || mediaType === 'jpeg'
+      ) {
+        getUriImage();
+      }
     }
   }, [dataUrl, pageRanges]);
 
@@ -198,7 +191,6 @@ export default function Printing(props) {
     data.append('sides', sides);
     data.append('copies', copies);
     data.append('token', props.user.token);
-    
     let status = await printPage(data);
 
     if (!status.error) {
@@ -427,12 +419,13 @@ export default function Printing(props) {
           setConfirmModal(false);
         },
         handleCancel: () => {
-          setDataUrl('')
-          setFiles(null)
-          setConfirmModal(false)},
+          setDataUrl('');
+          setFiles(null);
+          setConfirmModal(false);
+        },
         open: confirmModal,
       }
-      } />
+      }/>
 
       {printStatus && (
         <div className='flex items-center justify-center w-full mt-10'>
