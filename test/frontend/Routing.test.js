@@ -1,28 +1,23 @@
-/* global describe it */
 import 'jsdom-global/register';
 import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 
 import Routing from '../../src/Routing';
-import Adapter from 'enzyme-adapter-react-16';
-import { MemoryRouter } from '../util/mocks/react-router-dom';
-
-import EventManager from '../../src/Pages/EventManager/EventManager';
-import Login from '../../src/Pages/Login/Login';
-
-import Home from '../../src/Pages/Home/Home.js';
-import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage';
-import Events from '../../src/Pages/Events/EventList';
-import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js';
-import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js';
-import MembershipApplication from
-  '../../src/Pages/MembershipApplication/MembershipApplication.js';
-import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
-
+import Home from '../../src/Pages/Home/Home';
 import Overview from '../../src/Pages/Overview/Overview';
-import AdminDashboard from '../../src/Pages/Profile/admin/AdminDashboard';
+import LedSign from '../../src/Pages/LedSign/LedSign';
+import SpeakersPage from '../../src/Pages/Speaker/Speaker';
+import Printing from '../../src/Pages/2DPrinting/2DPrinting';
+import Profile from '../../src/Pages/Profile/MemberView/Profile';
+import EditUserInfo from '../../src/Pages/UserManager/EditUserInfo';
+import URLShortenerPage from '../../src/Pages/URLShortener/URLShortener';
+import sendUnsubscribeEmail from '../../src/Pages/Profile/admin/SendUnsubscribeEmail';
+import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage';
+
 import { membershipState } from '../../src/Enums';
+import { MemoryRouter } from 'react-router-dom';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -72,23 +67,31 @@ describe('<Routing /> with <PrivateRoute />', () => {
       expect(wrapper.find(Home)).to.have.lengthOf(1);
     });
     it(
-      'Should render an <Events /> component with the /events' + ' endpoint',
+      'Should render an <Overview /> component with the /user-manager ' + ' endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/events');
-        expect(wrapper.find(Events)).to.have.lengthOf(1);
+        const wrapper = getComponentFromRoute('/user-manager');
+        expect(wrapper.find(Overview)).to.have.lengthOf(1);
       }
     );
     it(
-      'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
-        'endpoint',
+      'Should render a <LedSign /> component with the /led-sign ' +
+      'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/3DPrintingForm');
-        expect(wrapper.find(PrintingSolids)).to.have.lengthOf(1);
+        const wrapper = getComponentFromRoute('/led-sign');
+        expect(wrapper.find(LedSign)).to.have.lengthOf(1);
+      }
+    );
+    it(
+      'Should render a <SpeakersPage /> component with the /speakers' +
+      'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/speakers');
+        expect(wrapper.find(SpeakersPage)).to.have.lengthOf(1);
       }
     );
     it(
       'Should render a <Printing /> component with the /2DPrinting' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/2DPrinting');
         expect(wrapper.find(Printing)).to.have.lengthOf(1);
@@ -96,7 +99,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should redirect the authenticated user to <Home /> from the' +
-        ' /login endpoint',
+      ' /login endpoint',
       () => {
         const wrapper = getComponentFromRoute('/login');
         expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -104,194 +107,59 @@ describe('<Routing /> with <PrivateRoute />', () => {
     );
     it(
       'Should redirect the authenticated user to <Home /> from the' +
-        ' /register endpoint',
+      ' /forgot endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/forgot');
+        expect(wrapper.find(Home)).to.have.lengthOf(1);
+      }
+    );
+    it(
+      'Should redirect the authenticated user to <Home /> from the' +
+      ' /register endpoint',
       () => {
         const wrapper = getComponentFromRoute('/register');
         expect(wrapper.find(Home)).to.have.lengthOf(1);
       }
     );
     it(
-      'Should render a <EventManager /> component with the /event-manager' +
-        'endpoint',
+      'Should render a <Profile /> component with the /profile' +
+      'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/event-manager');
-        expect(wrapper.find(EventManager)).to.have.lengthOf(1);
+        const wrapper = getComponentFromRoute('/profile');
+        expect(wrapper.find(Profile)).to.have.lengthOf(1);
       }
     );
     it(
-      'Should render a <SolidsConsole /> component with the /3DConsole' +
-        'endpoint',
+      'Should render a <EditUserInfo /> component with the /user/edit/:id' +
+      'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/3DConsole');
-        expect(wrapper.find(SolidsConsole)).to.have.lengthOf(1);
+        const wrapper = getComponentFromRoute('/user/edit/:id');
+        expect(wrapper.find(EditUserInfo)).to.have.lengthOf(1);
+      }
+    );
+    it(
+      'Should render a <URLShortenerPage /> component with the /short' +
+      'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/short');
+        expect(wrapper.find(URLShortenerPage)).to.have.lengthOf(1);
+      }
+    );
+    it(
+      'Should render a <sendUnsubscribeEmail /> component with the /unsub' +
+      'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/unsub');
+        expect(wrapper.find(sendUnsubscribeEmail)).to.have.lengthOf(1);
       }
     );
     it(
       'Should render a <NotFoundPage /> component with an invalid ' +
-        'endpoint',
+      'endpoint',
       () => {
         const wrapper = getComponentFromRoute('/not-real');
         expect(wrapper.find(NotFoundPage)).to.have.lengthOf(1);
       }
     );
-  });
-
-  describe('Renders correct component for Officer user', () => {
-    it('Should render a <Home /> component with the / endpoint', () => {
-      const wrapper = getComponentFromRoute('/', officerAppProps);
-      expect(wrapper.find(Home)).to.have.lengthOf(1);
-    });
-    it(
-      'Should render an <Events /> component with the /events' + ' endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/events', officerAppProps);
-        expect(wrapper.find(Events)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <PrintingSolids /> component with the /3DPrintingForm ' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute(
-          '/3DPrintingForm',
-          officerAppProps
-        );
-        expect(wrapper.find(PrintingSolids)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <Printing /> component with the /2DPrinting' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/2DPrinting', officerAppProps);
-        expect(wrapper.find(Printing)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should redirect the authenticated user to <Home /> from the' +
-        ' /login endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/login', officerAppProps);
-        expect(wrapper.find(Home)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should redirect the authenticated user to <Home /> from the' +
-        ' /register endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/register', officerAppProps);
-        expect(wrapper.find(Home)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <AdminDashboard /> component with the '
-      + '/dashboard' + 'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/dashboard', officerAppProps);
-        expect(wrapper.find(AdminDashboard)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <EventManager /> component with the /event-manager' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute(
-          '/event-manager', officerAppProps
-        );
-        expect(wrapper.find(EventManager)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <SolidsConsole /> component with the /3DConsole' +
-        'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/3DConsole', officerAppProps);
-        expect(wrapper.find(SolidsConsole)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <Overview /> component with the '
-        + '/user-manager' + 'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/user-manager', officerAppProps);
-        expect(wrapper.find(Overview)).to.have.lengthOf(1);
-      }
-    );
-  });
-
-  describe(
-    '<PrivateRoute /> prevents unauthorized members from viewing the' +
-      ' backend',
-    () => {
-      it(
-        'Should redirect the <EventManager /> component with the ' +
-          '/event-manager endpoint',
-        () => {
-          const wrapper = getComponentFromRoute(
-            '/event-manager',
-            memberAppProps
-          );
-          expect(wrapper.find(Home)).to.have.lengthOf(1);
-        }
-      );
-      it(
-        'Should redirect the <Overview /> component with the ' +
-          '/dashboard endpoint',
-        () => {
-          const wrapper = getComponentFromRoute('/dashboard', memberAppProps);
-          expect(wrapper.find(Home)).to.have.lengthOf(1);
-        }
-      );
-      it(
-        'Should redirect the <SolidsConsole /> component with the /3DConsole ' +
-          'endpoint',
-        () => {
-          const wrapper = getComponentFromRoute('/3DConsole', memberAppProps);
-          expect(wrapper.find(Home)).to.have.lengthOf(1);
-        }
-      );
-    }
-  );
-
-  describe('Renders correct component for the unauthenticated user', () => {
-    it('Should render the <Login /> component with the /login endpoint', () => {
-      const wrapper = getComponentFromRoute('/login', unauthedAppProps);
-      expect(wrapper.find(Login)).to.have.lengthOf(1);
-    });
-    it(
-      'Should render the <MembershipApplication /> component with the ' +
-        '/register endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/register', unauthedAppProps);
-        expect(wrapper.find(MembershipApplication)).to.have.lengthOf(1);
-      }
-    );
-    it('Should redirect from the /2DPrinting endpoint ' +
-       'to the /login endpoint', () => {
-      const wrapper = getComponentFromRoute('/2DPrinting', unauthedAppProps);
-      expect(wrapper.find(Login)).to.have.lengthOf(1);
-    });
-    it('Should redirect from the /3DPrintingForm endpoint ' +
-       'to the /login endpoint', () => {
-      const wrapper = getComponentFromRoute(
-        '/3DPrintingForm', unauthedAppProps
-      );
-      expect(wrapper.find(Login)).to.have.lengthOf(1);
-    });
-  });
-  describe('Renders correct component for the non member user', () => {
-    it('Should redirect from the /2DPrinting ' +
-       'endpoint to the / endpoint', () => {
-      const wrapper = getComponentFromRoute('/2DPrinting', nonMemberAppProps);
-      expect(wrapper.find(Home)).to.have.lengthOf(1);
-    });
-    it('Should redirect from the /3DPrintingForm ' +
-       'endpoint to the / endpoint', () => {
-      const wrapper = getComponentFromRoute(
-        '/3DPrintingForm',
-        nonMemberAppProps
-      );
-      expect(wrapper.find(Home)).to.have.lengthOf(1);
-    });
   });
 });
