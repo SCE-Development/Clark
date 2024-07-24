@@ -123,7 +123,6 @@ describe('Auth', () => {
       };
       const result = await test.sendPostRequest(
         '/api/Auth/register', user);
-      
       expect(result).to.have.status(OK);
     });
   });
