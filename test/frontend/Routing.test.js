@@ -15,9 +15,10 @@ import EditUserInfo from '../../src/Pages/UserManager/EditUserInfo';
 import URLShortenerPage from '../../src/Pages/URLShortener/URLShortener';
 import sendUnsubscribeEmail from '../../src/Pages/Profile/admin/SendUnsubscribeEmail';
 import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage';
+import PrivateRoute from '../../src/Components/Routing/PrivateRoute';
 
 import { membershipState } from '../../src/Enums';
-import { MemoryRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -33,30 +34,9 @@ const adminAppProps = {
   authenticated: true
 };
 
-const officerAppProps = {
-  user: { accessLevel: membershipState.OFFICER },
-  authenticated: true
-};
-
-const memberAppProps = {
-  user: { accessLevel: membershipState.MEMBER },
-  authenticated: true
-};
-
-const nonMemberAppProps = {
-  user: { accessLevel: membershipState.NON_MEMBER },
-  authenticated: true
-};
-
-const unauthedAppProps = {
-  authenticated: false
-};
-
 function getComponentFromRoute(route, props = adminAppProps) {
   return mount(
-    <MemoryRouter initialEntries={[route]}>
-      <Routing appProps={props} />
-    </MemoryRouter>
+    <MemoryRouter initialEntries={[route]} appProps={props} />
   );
 }
 

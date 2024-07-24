@@ -4,14 +4,14 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 
-import Routing from '../../src/Routing';
+import Routing from '../../src/Routing.js';
 import Adapter from 'enzyme-adapter-react-16';
-import { MemoryRouter } from '../util/mocks/react-router-dom';
+import { MemoryRouter } from '../util/mocks/react-router-dom.js';
 
-import Login from '../../src/Pages/Login/Login';
+import Login from '../../src/Pages/Login/Login.js';
 
 import Home from '../../src/Pages/Home/Home.js';
-import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage';
+import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage.js';
 import Events from '../../src/Pages/Events/EventList';
 import PrintingSolids from '../../src/Pages/3DPrinting/3DPrintForm.js';
 import SolidsConsole from '../../src/Pages/3DPrintingConsole/3DConsole.js';
@@ -19,9 +19,9 @@ import MembershipApplication from
   '../../src/Pages/MembershipApplication/MembershipApplication.js';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting.js';
 
-import Overview from '../../src/Pages/Overview/Overview';
+import Overview from '../../src/Pages/Overview/Overview.js';
 import AdminDashboard from '../../src/Pages/Profile/admin/AdminDashboard';
-import { membershipState } from '../../src/Enums';
+import { membershipState } from '../../src/Enums.js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
