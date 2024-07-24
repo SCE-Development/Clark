@@ -17,7 +17,7 @@ router.post('/createAdvertisement', (req, res) => {
     expireDate: req.body.expireDate
   })
 
-  Advertisement.create(newAdd)
+  Advertisement.create(newAd)
     .then((post) => {
       return res.json(post)
     })
@@ -26,7 +26,7 @@ router.post('/createAdvertisement', (req, res) => {
     )
 })
 
-outer.post('/deleteAdvertisement', (req, res) => {
+router.post('/deleteAdvertisement', (req, res) => {
   Animal.deleteOne({ _id: req.body._id })
     .then(result => {
       if (result.n < 1) {
