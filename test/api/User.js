@@ -158,6 +158,8 @@ describe('User', () => {
     it('Should return statusCode 200 and the member counts if a valid token is passed in', async () => {
       setTokenStatus(true);
 
+      const currentYear = new Date().getFullYear();
+
       const users = [
         {
           email: 'user1@example.com',
@@ -166,8 +168,8 @@ describe('User', () => {
           lastName: 'One',
           emailVerified: true,
           accessLevel: 1,
-          joinDate: new Date('2024-01-15'),
-          membershipValidUntil: new Date('2025-01-01') 
+          joinDate: new Date(currentYear, 5, 1),
+          membershipValidUntil: new Date(currentYear + 1, 0, 1) 
         },
         {
           email: 'user2@example.com',
@@ -176,8 +178,8 @@ describe('User', () => {
           lastName: 'Two',
           emailVerified: true,
           accessLevel: 1,
-          joinDate: new Date('2024-06-15'),
-          membershipValidUntil: new Date('2025-06-01')
+          joinDate: new Date(currentYear, 5, 1),
+          membershipValidUntil: new Date(currentYear + 1, 5, 1) 
         },
         {
           email: 'user3@example.com',
@@ -186,8 +188,8 @@ describe('User', () => {
           lastName: 'Three',
           emailVerified: true,
           accessLevel: 1,
-          joinDate: new Date('2024-03-10'),
-          membershipValidUntil: new Date('2025-01-01') 
+          joinDate: new Date(currentYear, 6, 1),
+          membershipValidUntil: new Date(currentYear + 1, 0, 1)  
         },
         {
           email: 'user4@example.com',
@@ -196,8 +198,8 @@ describe('User', () => {
           lastName: 'Four',
           emailVerified: true,
           accessLevel: 1,
-          joinDate: new Date('2024-07-01'),
-          membershipValidUntil: new Date('2025-06-01') 
+          joinDate: new Date(currentYear, 5, 22),
+          membershipValidUntil: new Date(currentYear + 1, 5, 1) 
         }
       ];
 
@@ -215,12 +217,12 @@ describe('User', () => {
       const expectedTotalNewMembersThisYear = 4;
       const expectedCurrentActiveMembers = 4;
 
-      //result.body.should.have.property('count').that.equals(expectedCount);
-      //result.body.should.have.property('newSingleSemester').that.equals(expectedNewSingleSemester);
-      //result.body.should.have.property('newAnnualMembers').that.equals(expectedNewAnnualMembers);
-       result.body.should.have.property('totalNewMembersThisYear').that.equals(expectedTotalNewMembersThisYear);
-       result.body.should.have.property('currentActiveMembers').that.equals(expectedCurrentActiveMembers);
-      });
+      result.body.should.have.property('count').that.equals(expectedCount);
+      result.body.should.have.property('newSingleSemester').that.equals(expectedNewSingleSemester);
+      result.body.should.have.property('newAnnualMembers').that.equals(expectedNewAnnualMembers);
+      result.body.should.have.property('totalNewMembersThisYear').that.equals(expectedTotalNewMembersThisYear);
+      result.body.should.have.property('currentActiveMembers').that.equals(expectedCurrentActiveMembers);
+    });
   });
 
   describe('/POST searchFor', () => {
