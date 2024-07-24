@@ -36,7 +36,10 @@ const adminAppProps = {
 
 function getComponentFromRoute(route, props = adminAppProps) {
   return mount(
-    <MemoryRouter initialEntries={[route]} appProps={props} />
+    // <MemoryRouter initialEntries={[route]} appProps={props} />
+    <MemoryRouter initialEntries={[route]}>
+      <PrivateRoute path={route} component={Routing} appProps={props} />
+    </MemoryRouter>
   );
 }
 
