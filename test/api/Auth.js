@@ -42,6 +42,7 @@ describe('Auth', () => {
   before(done => {
     sendVerificationEmailStub = sandbox.stub(
       EmailHelpers,
+      'sendVerificationEmail'
     );
     initializeTokenMock();
     app = tools.initializeServer(__dirname +
