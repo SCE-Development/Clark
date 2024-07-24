@@ -62,9 +62,8 @@ router.post('/resendVerificationEmail', async (req, res) => {
 });
 
 router.post('/sendPasswordReset', async (req, res) => {
-  const invalidEmail = !req.body.email ||
-    !req.body.email.includes('@') ||
-    !req.body.email.includes('.');
+  const emailRegex = /[a-zA-Z0-9\.-]+@[a-zA-Z0-9\.-]+\.[a-zA-Z]{2,}/;
+  const invalidEmail = !req.body.email || !emailRegex.test(req.body.email);
 
   if (invalidEmail) {
     return res.status(BAD_REQUEST).send({
