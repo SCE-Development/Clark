@@ -46,7 +46,6 @@ router.post('/send', async (req, res) => {
   let filterQuery = {}; // filter to find user in the database
   if (token) {
     userObj = decodeToken(req);
-    console.log('user object:', userObj);
     if (!userObj) {
       return res.sendStatus(UNAUTHORIZED);
     }

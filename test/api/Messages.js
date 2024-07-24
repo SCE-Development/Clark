@@ -21,6 +21,7 @@ const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
 
 
+
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
@@ -70,6 +71,7 @@ describe('Messages', () => {
 
   describe('POST /send', () => {
     let user;
+    let userToken;
 
     before(async () => {
       user = new User({
@@ -84,16 +86,20 @@ describe('Messages', () => {
       });
       await user.save();
 
+      const loginResponse = await test.sendPostRequest('/api/Auth/login', {
+        email: user.email,
+        password: 'Passw0rd'
+      });
+      userToken = loginResponse.body.token;
     });
 
     it('Should return status code 200 if valid token, room-id, and message was sent', async () => {
       const form = {
-        token: token,
         message: 'Hello',
         id: 'general'
       };
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,'/api/messages/send', form);
+      setTokenStatus(true, {_id: id});
+      const result = await test.sendPostRequestWithToken(userToken, '/api/messages/send', form);
       expect(result).to.have.status(OK);
     });
 
@@ -109,11 +115,10 @@ describe('Messages', () => {
 
     it('Should return status code 401 if token is invalid', async () => {
       const form = {
-        token: 'invalid-token',
         message: 'Hello',
         id: 'general'
       };
-      const result = await test.sendPostRequestWithToken(token, '/api/messages/send',form);
+      const result = await test.sendPostRequestWithToken('invalid', '/api/messages/send', form);
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
