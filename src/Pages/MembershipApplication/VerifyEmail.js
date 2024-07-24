@@ -1,5 +1,4 @@
 import React from 'react';
-import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 import { validateVerificationEmail } from '../../APIFunctions/Auth';
 
 export default class VerifyEmail extends React.Component {

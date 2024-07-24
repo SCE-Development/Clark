@@ -5,7 +5,6 @@ const GENERAL_API_URL = process.env.GENERAL_API_URL
 async function validateVerificationEmail(){
   let status = '';
   await axios
-    .post(`${GENERAL_API_URL}/Auth/sendVerificationEmail`)
     .then(res =>{
       status = res.data;
     })

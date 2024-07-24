@@ -44,31 +44,6 @@ describe('Mailer', () => {
     recipientName: 'test'
   };
 
-  describe('/POST sendVerificationEmail', () => {
-    it('Should return 200 when an email is successfully sent', async () => {
-      sendEmailStub.resolves({});
-      verificationStub.resolves({});
-      const result = await test.sendPostRequest(
-        '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
-      expect(result).to.have.status(OK);
-    });
-
-    it('Should return 400 when we cannot generate a hashed ID', async () => {
-      sendEmailStub.resolves({});
-      verificationStub.rejects({});
-      const result = await test.sendPostRequest(
-        '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
-    it('Should return 400 when sending an email fails', async () => {
-      sendEmailStub.rejects({});
-      const result = await test.sendPostRequest(
-        '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-  });
-
   describe('/POST sendBlastEmail', () => {
     it('Should return 200 when an email is successfully sent', async () => {
       sendEmailStub.resolves({});

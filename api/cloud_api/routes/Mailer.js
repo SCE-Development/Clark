@@ -14,47 +14,6 @@ const { googleApiKeys } = require('../../config/config.json');
 const { USER, ENABLED } = googleApiKeys;
 const { MetricsHandler } = require('../../util/metrics');
 
-// Routing post /sendVerificationEmail calls the sendEmail function
-// and sends the verification email with the verification email template
-router.post('/sendVerificationEmail', async (req, res) => {
-  if (!ENABLED && process.env.NODE_ENV !== 'test') {
-    return res.sendStatus(OK);
-  }
-  const scopes = ['https://mail.google.com/'];
-  const pathToToken = __dirname + '/../../config/token.json';
-  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-  const tokenJson = await apiHandler.checkIfTokenFileExists();
-
-  if (tokenJson) {
-    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
-      logger.warn('refreshing token');
-      apiHandler.refreshToken();
-    }
-  } else {
-    logger.warn('getting new token! ', { tokenJson });
-    apiHandler.getNewToken();
-  }
-
-
-  await verification(USER, req.body.recipientEmail, req.body.recipientName)
-    .then((template) => {
-      apiHandler
-        .sendEmail(template)
-        .then((_) => {
-          res.sendStatus(OK);
-          MetricsHandler.emailSent.inc({ type: 'verification' });
-        })
-        .catch((err) => {
-          logger.error('unable to send verification email:', err);
-          res.sendStatus(BAD_REQUEST);
-        });
-    })
-    .catch((err) => {
-      logger.error('unable to generate verification template:', err);
-      res.sendStatus(BAD_REQUEST);
-    });
-});
-
 // Routing post /sendPasswordReset calls the sendEmail function
 // and sends the email with the password reset template
 router.post('/sendPasswordReset', async (req, res) => {

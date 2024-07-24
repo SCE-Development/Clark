@@ -16,18 +16,6 @@ async function sendUnsubscribeEmail(users) {
   return status;
 }
 
-async function sendVerificationEmail(name, email) {
-  return new Promise((resolve) => {
-    axios
-      .post(`${MAILER_API_URL}/Mailer/sendVerificationEmail`, {
-        recipientName: name,
-        recipientEmail: email
-      })
-      .then(() => resolve(true))
-      .catch(() => resolve(false));
-  });
-}
-
 async function sendPasswordReset(resetToken, email) {
   return new Promise((resolve) => {
     axios
@@ -40,4 +28,4 @@ async function sendPasswordReset(resetToken, email) {
   });
 }
 
-module.exports = { sendUnsubscribeEmail, sendVerificationEmail, sendPasswordReset };
+module.exports = { sendUnsubscribeEmail, sendPasswordReset };

@@ -8,7 +8,6 @@ import MajorDropdown from '../MembershipApplication/MajorDropdown';
 import RoleDropdown from './RoleDropdown';
 import ExpirationDropdown from './ExpirationDropdown';
 import { membershipState, membershipStateToString } from '../../Enums';
-import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 
 
 export default function EditUserInfo(props) {
@@ -293,7 +292,6 @@ export default function EditUserInfo(props) {
                         className="btn btn-success w-auto"
                         checked={emailOptIn}
                         onClick={async () => {
-                          const result = await sendVerificationEmail(email, props.user.token);
                           if (result.error) {
                             return alert(
                               'unable to send verification email.' +
