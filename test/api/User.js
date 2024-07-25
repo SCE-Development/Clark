@@ -156,10 +156,24 @@ describe('User', () => {
     });
 
     it('Should return statusCode 200 and the member counts if a valid token is passed in', async () => {
+      const user = {
+        email: 'a@b.c',
+        token: token
+      };
       setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', user);
+      expect(result).to.have.status(OK);
+      result.body.should.be.a('object');
+      result.body.should.have.property('count').that.is.a('number');
+      result.body.should.have.property('newSingleSemester').that.is.a('number');
+      result.body.should.have.property('newAnnualMembers').that.is.a('number');
+      result.body.should.have.property('totalNewMembersThisYear').that.is.a('number');
+      result.body.should.have.property('currentActiveMembers').that.is.a('number');
+    });
+
+    it('Should count members correctly when it is fall semester', async () => {
 
       const currentYear = new Date().getFullYear();
-
       const users = [
         {
           email: 'user1@example.com',
@@ -203,6 +217,8 @@ describe('User', () => {
         }
       ];
 
+      setTokenStatus(true);
+
       await User.insertMany(users);
 
       const request = { token: token };
@@ -210,18 +226,15 @@ describe('User', () => {
 
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
+      result.body.should.have.property('count').that.equals(4);
+      result.body.should.have.property('newSingleSemester').that.equals(2);
+      result.body.should.have.property('newAnnualMembers').that.equals(2);
+      result.body.should.have.property('totalNewMembersThisYear').that.equals(4);
+      result.body.should.have.property('currentActiveMembers').that.equals(4);
+    });
 
-      const expectedCount = 4; // Total users in this semester
-      const expectedNewSingleSemester = 2; // user3 and user1
-      const expectedNewAnnualMembers = 2; // user2 and user4
-      const expectedTotalNewMembersThisYear = 4;
-      const expectedCurrentActiveMembers = 4;
+    it('Should count members correctly when it is spring semester', async () => {
 
-      result.body.should.have.property('count').that.equals(expectedCount);
-      result.body.should.have.property('newSingleSemester').that.equals(expectedNewSingleSemester);
-      result.body.should.have.property('newAnnualMembers').that.equals(expectedNewAnnualMembers);
-      result.body.should.have.property('totalNewMembersThisYear').that.equals(expectedTotalNewMembersThisYear);
-      result.body.should.have.property('currentActiveMembers').that.equals(expectedCurrentActiveMembers);
     });
   });
 
