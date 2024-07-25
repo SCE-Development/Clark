@@ -14,3 +14,39 @@ export async function getAdsFromApi() {
     });
   return status;
 }
+
+export async function createAd(newAd, token) {
+  let status = new ApiResponse();
+  await axios.post(GENERAL_API_URL + '/Advertisement/createAdvertisement',
+    newAd,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(res => {
+      status.responseData = res.data;
+    }).catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+export async function deleteAd(newAd, token) {
+  let status = new ApiResponse();
+  await axios.post(GENERAL_API_URL + '/Advertisement/deleteAdvertisement',
+    newAd,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(res => {
+      status.responseData = res.data;
+    }).catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}

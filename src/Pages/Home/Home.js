@@ -16,7 +16,9 @@ const Home = () => {
       const adsList = allAdsFromApi.responseData
       const index = Math.floor(Math.random() * (adsList.length));
       setText(adsList[index]["saying"]);
-    } finally {
+    } catch {
+      setText("")
+    }finally {
       setShowText(true);
     }
   }

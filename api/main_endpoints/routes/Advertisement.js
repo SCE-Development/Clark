@@ -27,7 +27,7 @@ router.post('/createAdvertisement', (req, res) => {
 })
 
 router.post('/deleteAdvertisement', (req, res) => {
-  Animal.deleteOne({ _id: req.body._id })
+  Advertisement.deleteOne({ _id: req.body._id })
     .then(result => {
       if (result.n < 1) {
         res.sendStatus(NOT_FOUND);
@@ -39,5 +39,17 @@ router.post('/deleteAdvertisement', (req, res) => {
       res.sendStatus(BAD_REQUEST);
     });
 });
+
+// Delete all advertisements
+router.post('/deleteAllAdvertisements', (req, res) => {
+  Advertisement.deleteMany({})
+    .then(result => {
+      res.status(OK).json({ message: `${result.deletedCount} advertisements deleted` });
+    })
+    .catch(() => {
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
 
 module.exports = router;

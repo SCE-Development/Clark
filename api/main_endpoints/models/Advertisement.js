@@ -9,7 +9,7 @@ const AdvertisementSchema = new Schema(
       maxlength: [255, 'Saying must be at most 255 characters long'] 
     },
     expireDate: {
-      type: Date
+      type: Date,
     }
   },
   { collection: 'Advertisements' }
