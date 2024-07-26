@@ -145,7 +145,7 @@ export default function Printing(props) {
       ) {
         getUri();
       } else if ( // if the file type is an image
-        mediaType === 'jpg' || mediaType === 'png' || mediaType === 'jpeg'
+        ['jpg',  'png',  'jpeg'].includes(mediaType)
       ) {
         getUriImage();
       }
