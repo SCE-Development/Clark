@@ -3,7 +3,7 @@ import Footer from '../../Components/Footer/Footer.js';
 import { motion } from 'framer-motion';
 import './Home.css';
 
-import { getAdsFromApi } from '../../APIFunctions/HomePageText';
+import { getAds } from '../../APIFunctions/Advertisement.js';
 
 const Home = () => {
 
@@ -12,8 +12,8 @@ const Home = () => {
 
   async function getText() {
     try {
-      const allAdsFromApi = await getAdsFromApi();
-      const adsList = allAdsFromApi.responseData
+      const allAdsFromDB = await getAds();
+      const adsList = allAdsFromDB.responseData
       const index = Math.floor(Math.random() * (adsList.length));
       setText(adsList[index]["saying"]);
     } catch {

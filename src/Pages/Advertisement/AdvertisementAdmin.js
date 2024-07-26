@@ -1,5 +1,5 @@
 import React from 'react';
-import { createAd, getAdsFromApi, deleteAd } from '../../APIFunctions/HomePageText'
+import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js'
 import { useState, useEffect } from 'react';
 
 export default function AdvertisementAdmin(props) {
@@ -11,7 +11,7 @@ export default function AdvertisementAdmin(props) {
   const [day, setDay] = useState();
 
   async function getAdsFromDB() {
-    const adsFromDB = await getAdsFromApi();
+    const adsFromDB = await getAds();
     if (!adsFromDB.error) {
       setAds(adsFromDB.responseData);
     }
@@ -43,7 +43,7 @@ export default function AdvertisementAdmin(props) {
   }
 
   async function deleteExpiredAds() {
-    const adsFromDB = await getAdsFromApi();
+    const adsFromDB = await getAds();
     if (!adsFromDB.error) {
       const currentDate = new Date();
       const expiredAds = adsFromDB.responseData.filter(ad => {

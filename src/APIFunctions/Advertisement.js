@@ -3,7 +3,7 @@ import { ApiResponse } from './ApiResponses';
 
 let GENERAL_API_URL = 'http://localhost:8080/api';
 
-export async function getAdsFromApi() {
+export async function getAds() {
   let status = new ApiResponse();
   await axios.get(GENERAL_API_URL + '/Advertisement/getAllAdvertisements')
     .then(res => {
