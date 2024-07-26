@@ -92,7 +92,6 @@ async function registerUser(userToAdd) {
       return result;
     }
   }
-
   if (userToAdd.email && userToAdd.password) {
     const newUser = new User({
       password: userToAdd.password,
@@ -118,9 +117,13 @@ async function registerUser(userToAdd) {
     }
 
     await newUser.save()
-      .catch(_ => {
+      .catch(e => {
         result.userSaved = false;
-        result.message = 'Username already exists.';
+        if (e.code === 11000) {
+          result.message = 'Username already exists.';
+        } else {
+          result.message = 'Failed creating account.';
+        }
         result.status = 'CONFLICT';
       });
   } else {

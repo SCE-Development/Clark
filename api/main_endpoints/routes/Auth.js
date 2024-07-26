@@ -37,7 +37,7 @@ router.post('/register', async (req, res) => {
         message: registrationStatus.message
       });
     } else {
-      res.status(CONFLICT).send({ message: registrationStatus.message });
+      res.status(BAD_REQUEST).send({ message: registrationStatus.message });
     }
   } else {
     const name = req.body.firstName + ' ' + req.body.lastName;
