@@ -102,3 +102,6 @@ token.json
 **/uuid*
 *.cmd
 *.ps1
+
+api/main_endpoints/routes/printing/*
+!api/main_endpoints/routes/printing/keep
