@@ -49,7 +49,7 @@ export async function skip(token) {
   let status = new ApiResponse();
   const url = new URL('/api/Speaker/skip');
   await axios
-    .post(url.href, {
+    .post(url.href, {}, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -69,7 +69,7 @@ export async function pause(token) {
   let status = new ApiResponse();
   const url = new URL('/api/Speaker/pause');
   await axios
-    .post(url.href, {
+    .post(url.href, {}, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -89,7 +89,7 @@ export async function resume(token) {
   let status = new ApiResponse();
   const url = new URL('/api/Speaker/resume');
   await axios
-    .post(url.href, {
+    .post(url.href, {}, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
