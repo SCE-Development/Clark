@@ -118,11 +118,11 @@ async function registerUser(userToAdd) {
 
     await newUser.save()
       .catch(e => {
+        logger.error('Error saving user:', e);
         result.userSaved = false;
+        result.message = 'Failed creating account.';
         if (e.code === 11000) {
           result.message = 'Username already exists.';
-        } else {
-          result.message = 'Failed creating account.';
         }
         result.status = 'CONFLICT';
       });
