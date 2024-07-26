@@ -57,6 +57,14 @@ describe('User', () => {
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
+    const testUser = new User({
+      email: 'a@b.c',
+      password: 'Passw0rd',
+      firstName: 'first-name',
+      lastName: 'last-name',
+      major: 'Computer Science',
+    });
+    testUser.save();
     done();
   });
 
