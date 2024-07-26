@@ -42,8 +42,29 @@ export default function AdvertisementAdmin(props) {
     await getAdsFromDB();
   }
 
+  async function deleteExpiredAds() {
+    const adsFromDB = await getAdsFromApi();
+    if (!adsFromDB.error) {
+      const currentDate = new Date();
+      const expiredAds = adsFromDB.responseData.filter(ad => {
+        if (ad.expireDate === undefined) return false;
+        return new Date(ad.expireDate) < currentDate;
+      });
+
+      for (const ad of expiredAds) {
+        await deleteAd(ad, props.user.token);
+      }
+    }
+  }
+
   useEffect(() => {
     getAdsFromDB();
+
+    const intervalId = setInterval(async () => {
+      await deleteExpiredAds();
+      await getAdsFromDB();
+    }, 20); 
+
   }, []);
 
   return (
