@@ -45,6 +45,8 @@ services:
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb
       - NODE_ENV=production
+    volumes:
+      - ./api/main_endpoints/routes/printing:/app/main_endpoints/routes/printing:rw
     restart: 'on-failure'
     stdin_open: true
     links:
