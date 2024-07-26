@@ -13,11 +13,11 @@ const Home = () => {
   async function getText() {
     try {
       const allAdsFromDB = await getAds();
-      const adsList = allAdsFromDB.responseData
+      const adsList = allAdsFromDB.responseData;
       const index = Math.floor(Math.random() * (adsList.length));
-      setText(adsList[index]["saying"]);
+      setText(adsList[index]['message']);
     } catch {
-      setText("")
+      setText('');
     }finally {
       setShowText(true);
     }

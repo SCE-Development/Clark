@@ -7,24 +7,24 @@ router.get('/getAllAdvertisements', (req, res) => {
   Advertisement.find()
     .then(items => res.status(OK).send(items))
     .catch(error => {
-      res.sendStatus(BAD_REQUEST)
-    })
+      res.sendStatus(BAD_REQUEST);
+    });
 });
 
 router.post('/createAdvertisement', (req, res) => {
   const newAd = new Advertisement({
-    saying: req.body.saying,
+    message: req.body.message,
     expireDate: req.body.expireDate
-  })
+  });
 
   Advertisement.create(newAd)
     .then((post) => {
-      return res.json(post)
+      return res.json(post);
     })
     .catch(
       (error) => res.sendStatus(BAD_REQUEST)
-    )
-})
+    );
+});
 
 router.post('/deleteAdvertisement', (req, res) => {
   Advertisement.deleteOne({ _id: req.body._id })

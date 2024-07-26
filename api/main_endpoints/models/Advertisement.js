@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 
 const AdvertisementSchema = new Schema(
   {
-    saying: {
+    message: {
       type: String,
       required: true,
-      maxlength: [255, 'Saying must be at most 255 characters long'] 
+      maxlength: [255, 'message must be at most 255 characters long']
     },
     expireDate: {
       type: Date,

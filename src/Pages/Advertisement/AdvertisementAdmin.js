@@ -1,11 +1,11 @@
 import React from 'react';
-import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js'
+import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js';
 import { useState, useEffect } from 'react';
 
 export default function AdvertisementAdmin(props) {
 
   const [ads, setAds] = useState([]);
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState('');
   const [year, setYear] = useState();
   const [month, setMonth] = useState();
   const [day, setDay] = useState();
@@ -18,25 +18,25 @@ export default function AdvertisementAdmin(props) {
   }
 
   async function createAdHandler() {
-    //make sure empty inputs are properly set as undefined if empty
-    if (year === "") {
-      setYear(undefined)
+    // make sure empty inputs are properly set as undefined if empty
+    if (year === '') {
+      setYear(undefined);
     }
-    if (month === "") {
-      setMonth(undefined)
+    if (month === '') {
+      setMonth(undefined);
     }
-    if (day === "") {
-      setDay(undefined)
+    if (day === '') {
+      setDay(undefined);
     }
 
-    let expireDate = new Date(year, month-1, day);
+    let expireDate = new Date(year, month - 1, day);
     if (isNaN(expireDate.getTime())) {
       expireDate = undefined;
     }
 
     await createAd({
-      "saying": message,
-      "expireDate": expireDate,
+      message,
+      expireDate,
     }, props.user.token);
 
     await getAdsFromDB();
@@ -63,7 +63,7 @@ export default function AdvertisementAdmin(props) {
     const intervalId = setInterval(async () => {
       await deleteExpiredAds();
       await getAdsFromDB();
-    }, 20); 
+    }, 20);
 
   }, []);
 
@@ -84,7 +84,7 @@ export default function AdvertisementAdmin(props) {
               placeholder="Type at most 255 characters"
               maxlength="255"
               onChange={event => {
-                setMessage(event.target.value)
+                setMessage(event.target.value);
               }}
             />
           </label>
@@ -104,7 +104,7 @@ export default function AdvertisementAdmin(props) {
             type="text"
             placeholder="Year"
             onChange={event => {
-              setYear(event.target.value)
+              setYear(event.target.value);
             }}
           />
           <input
@@ -112,7 +112,7 @@ export default function AdvertisementAdmin(props) {
             type="text"
             placeholder="Month"
             onChange={event => {
-              setMonth(event.target.value)
+              setMonth(event.target.value);
             }}
           />
           <input
@@ -120,7 +120,7 @@ export default function AdvertisementAdmin(props) {
             type="text"
             placeholder="Day"
             onChange={event => {
-              setDay(event.target.value)
+              setDay(event.target.value);
             }}
           />
           <button
@@ -139,7 +139,7 @@ export default function AdvertisementAdmin(props) {
                 Advertisement Message
               </th>
               <th scope="col" className="px-6 py-3">
-                Expiriation Date 
+                Expiriation Date
               </th>
               <th scope="col" className="px-6 py-3">
                 Delete
@@ -151,21 +151,21 @@ export default function AdvertisementAdmin(props) {
               return (
                 <tr key={ad._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {ad.saying}
+                    {ad.message}
                   </th>
                   <td className="px-6 py-4">
-                    {ad.expireDate === undefined ? "N/A" : ad.expireDate} 
+                    {ad.expireDate === undefined ? 'N/A' : ad.expireDate}
                   </td>
                   <td className="px-6 py-4">
-                  <button
-                    className="text-sm btn btn-primary sm:text-base"
-                    onClick = {async () => {
-                      await deleteAd(ad, props.user.token);
-                      await getAdsFromDB();
-                    }}
-                  >
-                    Delete Ad
-                  </button>
+                    <button
+                      className="text-sm btn btn-primary sm:text-base"
+                      onClick = {async () => {
+                        await deleteAd(ad, props.user.token);
+                        await getAdsFromDB();
+                      }}
+                    >
+                      Delete Ad
+                    </button>
                   </td>
                 </tr>
               );
