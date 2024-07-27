@@ -38,6 +38,5 @@ router.post('/deleteAdvertisement', (req, res) => {
     .catch(() => {
       res.sendStatus(BAD_REQUEST);
     });
-});
 
 module.exports = router;
