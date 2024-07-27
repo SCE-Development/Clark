@@ -185,21 +185,6 @@ export async function deleteUserByID(_id, token) {
   return status;
 }
 
-/**
- * This function checks the user database to see if a given email already
- * exists or not.
- * @param {string} email The email value to check
- * @returns {UserApiResponse} containing if the search was successful
- */
-export async function checkIfUserExists(email) {
-  let status = new UserApiResponse();
-  const url = new URL('/api/User/checkIfUserExists', BASE_API_URL);
-  await axios.post(url.href,
-    { email }).catch(() => {
-    status.error = true;
-  });
-  return status;
-}
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/getUserById', BASE_API_URL);

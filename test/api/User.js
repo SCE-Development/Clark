@@ -57,6 +57,14 @@ describe('User', () => {
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
+    const testUser = new User({
+      email: 'a@b.c',
+      password: 'Passw0rd',
+      firstName: 'first-name',
+      lastName: 'last-name',
+      major: 'Computer Science',
+    });
+    testUser.save();
     done();
   });
 
@@ -77,32 +85,6 @@ describe('User', () => {
   });
 
   const token = '';
-
-  describe('/POST checkIfUserExists with no users added yet', () => {
-    it('Should return statusCode 400 when an email is not' +
-      'provided', async () => {
-      const user = {};
-      const result = await test.sendPostRequest(
-        '/api/User/checkIfUserExists', user);
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
-    it('Should return statusCode 200 when a user does not exist', async () => {
-      const user = {
-        email: 'a@b.c'
-      };
-      const addUser = {
-        email: 'a@b.c',
-        password: 'Passw0rd',
-        firstName: 'first-name',
-        lastName: 'last-name'
-      };
-      test.sendPostRequest('/api/Auth/register', addUser);
-      const result = await test.sendPostRequest(
-        '/api/User/checkIfUserExists', user);
-      expect(result).to.have.status(OK);
-    });
-  });
 
   describe('/POST search', () => {
     it('Should return statusCode 403 if no token is passed in', async () => {
