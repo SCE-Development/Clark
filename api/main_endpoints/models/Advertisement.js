@@ -3,17 +3,13 @@ const Schema = mongoose.Schema;
 
 const AdvertisementSchema = new Schema(
   {
-    pictureUrl: {
+    message: {
       type: String,
-      required: true
-    },
-    createDate: {
-      type: Date,
       required: true,
-      default: Date.now
+      maxlength: [255, 'message must be at most 255 characters long']
     },
     expireDate: {
-      type: Date
+      type: Date,
     }
   },
   { collection: 'Advertisements' }
