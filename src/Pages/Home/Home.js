@@ -14,10 +14,9 @@ const Home = () => {
     try {
       const messageData = await getAd();
       setMessage(messageData.responseData);
+      setShowMessage(true);
     } catch {
       setMessage('');
-    } finally {
-      setShowMessage(true);
     }
   }
 
