@@ -62,30 +62,6 @@ router.get('/countAllUsers', async (req, res) => {
   res.status(status).json(response);
 });
 
-router.post('/checkIfUserExists', (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.sendStatus(BAD_REQUEST);
-  }
-  User.findOne(
-    {
-      email: email.toLowerCase()
-    },
-    function(error, user) {
-      if (error) {
-        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-      }
-
-      if (!user) {
-        // Member username does not exist
-        res.sendStatus(OK);
-      } else {
-        // User username does exist
-        res.sendStatus(CONFLICT);
-      }
-    }
-  );
-});
 
 // Delete a member
 // Delete a member
