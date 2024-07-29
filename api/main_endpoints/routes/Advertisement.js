@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
+const {
+  decodeToken,
+  checkIfTokenSent,
+} = require('../util/token-functions.js');
 const Advertisement = require('../models/Advertisement');
 
 router.get('/getAllAdvertisements', (req, res) => {
@@ -11,7 +15,12 @@ router.get('/getAllAdvertisements', (req, res) => {
     });
 });
 
-router.post('/createAdvertisement', (req, res) => {
+router.post('/createAdvertisement', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   const newAd = new Advertisement({
     message: req.body.message,
     expireDate: req.body.expireDate
@@ -26,7 +35,12 @@ router.post('/createAdvertisement', (req, res) => {
     );
 });
 
-router.post('/deleteAdvertisement', (req, res) => {
+router.post('/deleteAdvertisement', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   Advertisement.deleteOne({ _id: req.body._id })
     .then(result => {
       if (result.n < 1) {
