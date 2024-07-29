@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
-
-let GENERAL_API_URL = process.env.REACT_APP_GENERAL_API_URL
-  || 'http://localhost:8080/api';
+import { BASE_API_URL } from '../Enums';
 
 export async function sendMessage(id, token, message) {
   let status = new ApiResponse();
   const roomId = id || 'general';
+
+  const url = new URL('/api/messages/send', BASE_API_URL);
+
   await axios
-    .post(GENERAL_API_URL + '/messages/send',
+    .post(url.href,
       { message, id: roomId },
       {
         headers: {
@@ -26,7 +27,7 @@ export async function sendMessage(id, token, message) {
 }
 
 export async function connectToRoom(room, token, onMessage, onError) {
-  const url = new URL(`${GENERAL_API_URL}/messages/listen`);
+  const url = new URL('/api/messages/listen', BASE_API_URL);
   url.searchParams.append('id', room);
   url.searchParams.append('token', token);
   const eventSource = new EventSource(url.href);
