@@ -135,10 +135,153 @@ export default function Printing(props) {
     setPdfFile(file);
   }
 
+  async function getUriTxt() {
+    try {
+      // if there is a file
+      if (files) {
+        // use file reader to read the file
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          // get the content of the file
+          const text = e.target.result;
+          // split the content by new line
+          const lines = text.split('\n');
+          // create a new pdf document
+          const display = await PDFDocument.create();
+          // add the first page to the pdf document
+          let page = display.addPage();
+          // get width and height of the page
+          const pageHeight = page.getHeight();
+          const pageWidth = page.getWidth();
+          // embed the font into the pdf
+          const font = await display.embedFont('Helvetica');
+          // define the font size, line height, and margin, maxWidth, maxHeight
+          const fontSize = 12;
+          const lineHeight = fontSize * 1.5;
+          const margin = 50;
+          const maxWidth = pageWidth - 2 * margin;
+          const maxHeight = pageHeight - 2 * margin;
+          // define the initial y position
+          let yPosition = pageHeight - margin;
+          // iterate through each line
+          lines.forEach((line, index) => {
+            // if the line is the white space, go to next line
+            if (line === '') {
+              yPosition -= lineHeight;
+            }
+            else { // if the line has words in it
+            // separate each word in the line by space
+            const words = line.split(' ');
+            // define a variable to store the content that will be inserted at the current line
+            let currentLine = '';
+            // iterate through each word
+            words.forEach((word) => {
+              // define a temp variable to store the current line with the new word
+              const testLine = currentLine + (currentLine ? ' ' : '') + word;
+              // get the width of the temp variable
+              const width  = font.widthOfTextAtSize(testLine, fontSize);
+              // if the width is less than or equal to the max width, add the word to the content that will be inserted at the current line
+              if (width <= maxWidth) {
+                currentLine = testLine;
+              } else { // if the width is greater than the max width
+                // two scenerios can happen
+                // 1. the overflow is a whole word
+                if (currentLine) {
+                  // insert the content that will not include the overflown word
+                  page.drawText(currentLine, {
+                    x: margin,
+                    y: yPosition,
+                    font: font,
+                    size: fontSize
+                  });
+                  // add the new word to the content that will be inserted in the next line 
+                  currentLine = word
+                  // go to the next line
+                  yPosition -= lineHeight;
+                }
+               // 2. the overflow is a part of the word
+               else {
+                // define a temp variable to store the content that will be inserted at the current line
+                let tempLine = '';
+                // iterate through each character in the word
+                for (let i = 0; i < testLine.length; i++) {
+                  // add the character to the temp variable
+                  tempLine += testLine[i];
+                  // get the width of the temp variable with a hyphen at the end;
+                  const tempWidth = font.widthOfTextAtSize(tempLine + '-', fontSize);
+                  // if the temp width is greater than the max width, overflow happened
+                  if (tempWidth > maxWidth) {
+                    // insert the current added characters to the current line with the hypen at the end
+                    page.drawText(tempLine + '-', {
+                      x: margin,
+                      y: yPosition,
+                      font: font,
+                      size: fontSize
+                    });
+                    // go to the next line
+                    yPosition -= lineHeight;
+                    // reset the temp variable
+                    tempLine = '';
+                  }
+                  // we need this if statement to insert all overflown characters
+                  if (i === testLine.length - 1 && tempWidth <= maxWidth) {
+                    page.drawText(tempLine, {
+                      x: margin,
+                      y: yPosition,
+                      font: font,
+                      size: fontSize
+                    });
+                    yPosition -= lineHeight;
+                  }
+                }
+               }
+              }
+              // if the y position is less than the margin, add a new page
+              if (yPosition < margin) {
+                yPosition = pageHeight - margin;
+                page = display.addPage();
+              }
+            })
+            // if after adding all the words in the line and overflow did not happen, insert the content to the current line
+            if (currentLine) {
+              page.drawText(currentLine, {
+                x: margin,
+                y: yPosition,
+                font: font,
+                size: fontSize
+              });
+              // go to the next line
+              yPosition -= lineHeight;
+            }
+            // if the y position is less than the margin and the current line is the not the last, add a new page
+            if (yPosition < margin && index !== lines.length - 1) {
+              yPosition = pageHeight - margin;
+              page = display.addPage();
+            }
+          }
+          });
+          // serialize the image into a byte array (Unit8Array)
+          const pdfBytes = await display.save();
+          // create a File object from the byte array
+          const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
+          // generate a Blob URL for the preview
+          const objectUrl = URL.createObjectURL(file);
+          setNumberOfPagesInPdfPreview(display.getPages().length);
+          setPreviewDisplay(objectUrl);
+          setPdfFile(file);
+        }
+        reader.readAsText(files); 
+      } 
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   useEffect(() => {
     if (dataUrl) {
       // get the file type
       const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
+      console.log(mediaType)
       // if the file type is pdf
       if (
         mediaType === 'pdf'
@@ -148,6 +291,12 @@ export default function Printing(props) {
         ['jpg',  'png',  'jpeg'].includes(mediaType)
       ) {
         getUriImage();
+      }
+      else if (
+        ['plain'].includes(mediaType)
+      )
+      {
+        getUriTxt();
       }
     }
   }, [dataUrl, pageRanges]);
@@ -398,7 +547,7 @@ export default function Printing(props) {
             className="hidden"
             ref={inputRef}
             onChange={handleChange}
-            accept=".pdf, .jpg, .jpeg, .png"
+            accept=".pdf, .jpg, .jpeg, .png, .txt"
           />
         </form>
       </div>
