@@ -245,8 +245,8 @@ export default function Printing(props) {
         setPreviewDisplay(objectUrl);
         setPdfFile(file);
       };
-      // Starts reading plain text file using UTF-8 encoding
-      reader.readAsText(files, 'UTF-8');
+      // Automatically detects encoding, defaults to UTF-8
+      reader.readAsText(files);
     } catch (e) {
       setFiles(null);
       setDataUrl('');
@@ -260,19 +260,18 @@ export default function Printing(props) {
 
   useEffect(() => {
     if (dataUrl) {
-      // get the file type
-      const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
-      // if the file type is pdf
+      const fullMimeType = dataUrl.split(';')[0].split(':')[1];
+      const [mediaType, fileType] = fullMimeType.split('/');
       if (
-        mediaType === 'pdf'
+        mediaType === 'application' && fileType === 'pdf'
       ) {
         getUri();
-      } else if ( // if the file type is an image
-        ['jpg',  'png',  'jpeg'].includes(mediaType)
+      } else if (
+        mediaType === 'image' && ['jpg', 'png', 'jpeg'].includes(fileType)
       ) {
         getUriImage();
       } else if (
-        ['plain'].includes(mediaType)
+        ['text', 'application'].includes(mediaType)
       ) {
         getUriTxt();
       }
@@ -525,7 +524,7 @@ export default function Printing(props) {
             className="hidden"
             ref={inputRef}
             onChange={handleChange}
-            accept=".pdf, .jpg, .jpeg, .png, .txt"
+            accept=".pdf, .jpg, .jpeg, .png, .txt, .py, .css, .js, .md, .json, .html, .java, .c, .cpp, .yml, .yaml"
           />
         </form>
       </div>
