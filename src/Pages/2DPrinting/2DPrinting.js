@@ -7,7 +7,7 @@ import {
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -137,143 +137,124 @@ export default function Printing(props) {
 
   async function getUriTxt() {
     try {
-      // if there is a file
-      if (files) {
-        // use file reader to read the file
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-          // get the content of the file
-          const text = e.target.result;
-          // split the content by new line
-          const lines = text.split('\n');
-          // create a new pdf document
-          const display = await PDFDocument.create();
-          // add the first page to the pdf document
-          let page = display.addPage();
-          // get width and height of the page
-          const pageHeight = page.getHeight();
-          const pageWidth = page.getWidth();
-          // embed the font into the pdf
-          const font = await display.embedFont('Helvetica');
-          // define the font size, line height, and margin, maxWidth, maxHeight
-          const fontSize = 12;
-          const lineHeight = fontSize * 1.5;
-          const margin = 50;
-          const maxWidth = pageWidth - 2 * margin;
-          const maxHeight = pageHeight - 2 * margin;
-          // define the initial y position
-          let yPosition = pageHeight - margin;
-          // iterate through each line
-          lines.forEach((line, index) => {
-            // if the line is the white space, go to next line
-            if (line === '') {
-              yPosition -= lineHeight;
-            }
-            else { // if the line has words in it
-            // separate each word in the line by space
-            const words = line.split(' ');
-            // define a variable to store the content that will be inserted at the current line
-            let currentLine = '';
-            // iterate through each word
-            words.forEach((word) => {
-              // define a temp variable to store the current line with the new word
-              const testLine = currentLine + (currentLine ? ' ' : '') + word;
-              // get the width of the temp variable
-              const width  = font.widthOfTextAtSize(testLine, fontSize);
-              // if the width is less than or equal to the max width, add the word to the content that will be inserted at the current line
-              if (width <= maxWidth) {
-                currentLine = testLine;
-              } else { // if the width is greater than the max width
-                // two scenerios can happen
-                // 1. the overflow is a whole word
-                if (currentLine) {
-                  // insert the content that will not include the overflown word
-                  page.drawText(currentLine, {
-                    x: margin,
-                    y: yPosition,
-                    font: font,
-                    size: fontSize
-                  });
-                  // add the new word to the content that will be inserted in the next line 
-                  currentLine = word
-                  // go to the next line
-                  yPosition -= lineHeight;
-                }
-               // 2. the overflow is a part of the word
-               else {
-                // define a temp variable to store the content that will be inserted at the current line
-                let tempLine = '';
-                // iterate through each character in the word
-                for (let i = 0; i < testLine.length; i++) {
-                  // add the character to the temp variable
-                  tempLine += testLine[i];
-                  // get the width of the temp variable with a hyphen at the end;
-                  const tempWidth = font.widthOfTextAtSize(tempLine + '-', fontSize);
-                  // if the temp width is greater than the max width, overflow happened
-                  if (tempWidth > maxWidth) {
-                    // insert the current added characters to the current line with the hypen at the end
-                    page.drawText(tempLine + '-', {
-                      x: margin,
-                      y: yPosition,
-                      font: font,
-                      size: fontSize
-                    });
-                    // go to the next line
-                    yPosition -= lineHeight;
-                    // reset the temp variable
-                    tempLine = '';
-                  }
-                  // we need this if statement to insert all overflown characters
-                  if (i === testLine.length - 1 && tempWidth <= maxWidth) {
-                    page.drawText(tempLine, {
-                      x: margin,
-                      y: yPosition,
-                      font: font,
-                      size: fontSize
-                    });
-                    yPosition -= lineHeight;
+      const reader = new FileReader();
+      // Callback function executed when plain text file is successfully read
+      reader.onload = async function(e) {
+        // Normalizes line endings and PUA Unicode characters
+        let text = e.target.result
+          .replace(/\r\n?/g, '\n')
+          .replace(/[^\u0000-\u00FF]/g, '?');
+        const lines = text.split('\n');
+        const display = await PDFDocument.create();
+        const font = await display.embedFont(StandardFonts.Helvetica);
+        // Constants to configure PDF layout
+        const fontSize = 12;
+        const lineHeight = fontSize * 1.2;
+        const margin = 50;
+        let page, pageHeight, pageWidth, maxWidth, yPosition;
+        // Initializes new page in PDF Document
+        function initializePage() {
+          page = display.addPage();
+          pageHeight = page.getHeight();
+          pageWidth = page.getWidth();
+          maxWidth = pageWidth - 2 * margin;
+          yPosition = pageHeight - margin;
+        }
+        // Creates a new page if the current position (yPosition) is too close to the bottom margin
+        function createNewPageIfNeeded(height) {
+          if (yPosition - height < margin) {
+            initializePage();
+            return true;
+          }
+          return false;
+        }
+        // Wraps text to fit within page width (maxWidth), preserves indentation
+        function wrapText(text) {
+          const wrappedLines = [];
+          const indentation = text.match(/^\s*/)[0];
+          let currentLine = indentation;
+
+          function addLine(line) {
+            wrappedLines.push(line);
+            currentLine = indentation;
+          }
+
+          function processWord(word) {
+            const testLine = currentLine + (currentLine === indentation ? '' : ' ') + word;
+            const width = font.widthOfTextAtSize(testLine, fontSize);
+            if (width <= maxWidth) {
+              // Word fits on current line
+              currentLine = testLine;
+            } else {
+              // Word doesn't fit, need to wrap
+              if (currentLine !== indentation) {
+                // Add current line if it's not empty
+                addLine(currentLine);
+              }
+              if (font.widthOfTextAtSize(indentation + word, fontSize) <= maxWidth) {
+                // Word fits on current line with indentation preserved
+                currentLine = indentation + word;
+              } else {
+                // Word is too long, need to wrap
+                let partialWord = indentation;
+                for (const char of word) {
+                  const testChar = partialWord + char;
+                  if (font.widthOfTextAtSize(testChar, fontSize) <= maxWidth) {
+                    partialWord = testChar;
+                  } else {
+                    addLine(partialWord);
+                    partialWord = indentation + char;
                   }
                 }
-               }
+                currentLine = partialWord;
               }
-              // if the y position is less than the margin, add a new page
-              if (yPosition < margin) {
-                yPosition = pageHeight - margin;
-                page = display.addPage();
-              }
-            })
-            // if after adding all the words in the line and overflow did not happen, insert the content to the current line
-            if (currentLine) {
-              page.drawText(currentLine, {
-                x: margin,
-                y: yPosition,
-                font: font,
-                size: fontSize
-              });
-              // go to the next line
-              yPosition -= lineHeight;
-            }
-            // if the y position is less than the margin and the current line is the not the last, add a new page
-            if (yPosition < margin && index !== lines.length - 1) {
-              yPosition = pageHeight - margin;
-              page = display.addPage();
             }
           }
-          });
-          // serialize the image into a byte array (Unit8Array)
-          const pdfBytes = await display.save();
-          // create a File object from the byte array
-          const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
-          // generate a Blob URL for the preview
-          const objectUrl = URL.createObjectURL(file);
-          setNumberOfPagesInPdfPreview(display.getPages().length);
-          setPreviewDisplay(objectUrl);
-          setPdfFile(file);
+          // Processes each word in line
+          text.trim().split(/\s+/).forEach(processWord);
+          if (currentLine !== indentation) {
+            addLine(currentLine);
+          }
+          return wrappedLines;
         }
-        reader.readAsText(files); 
-      } 
+
+        initializePage();
+        for (const line of lines) {
+          if (createNewPageIfNeeded(lineHeight)) {
+            yPosition = pageHeight - margin;
+          }
+          // Handles empty lines
+          if (line.trim() === '') {
+            yPosition -= lineHeight;
+          } else {
+            // Rewraps line to fit page (maxWidth and text overflow)
+            const wrappedLines = wrapText(line);
+            for (const wrappedLine of wrappedLines) {
+              if (createNewPageIfNeeded(lineHeight)) {
+                yPosition = pageHeight - margin;
+              }
+              page.drawText(wrappedLine, { x:margin, y:yPosition, font, size: fontSize });
+              yPosition -= lineHeight;
+            }
+          }
+        }
+        const pdfBytes = await display.save();
+        const file = new File([pdfBytes], files.name.replace(/\.[^/.]+$/, '') + '.pdf', { type: 'application/pdf' });
+        const objectUrl = URL.createObjectURL(file);
+        setNumberOfPagesInPdfPreview(display.getPages().length);
+        setPreviewDisplay(objectUrl);
+        setPdfFile(file);
+      };
+      // Starts reading plain text file using UTF-8 encoding
+      reader.readAsText(files, 'UTF-8');
     } catch (e) {
-      console.log(e)
+      setFiles(null);
+      setDataUrl('');
+      setPrintStatus('Plain text file print preview failed');
+      setPrintStatusColor('error');
+      setTimeout(() => {
+        setPrintStatus(null);
+      }, 5000);
     }
   }
 
@@ -281,7 +262,6 @@ export default function Printing(props) {
     if (dataUrl) {
       // get the file type
       const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
-      console.log(mediaType)
       // if the file type is pdf
       if (
         mediaType === 'pdf'
@@ -291,11 +271,9 @@ export default function Printing(props) {
         ['jpg',  'png',  'jpeg'].includes(mediaType)
       ) {
         getUriImage();
-      }
-      else if (
+      } else if (
         ['plain'].includes(mediaType)
-      )
-      {
+      ) {
         getUriTxt();
       }
     }
