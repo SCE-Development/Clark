@@ -1,13 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const { OK, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
+const { OK, BAD_REQUEST, FORBIDDEN, UNAUTHORIZED, NOT_FOUND } = require('../../util/constants').STATUS_CODES;
 const {
   decodeToken,
   checkIfTokenSent,
 } = require('../util/token-functions.js');
 const Advertisement = require('../models/Advertisement');
 
-router.get('/getAllAdvertisements', (req, res) => {
+router.get('/', async (req, res) => {
+  Advertisement.find()
+    .then(items => {
+      const randomIndex = Math.floor(Math.random() * items.length);
+      res.status(OK).send(items[randomIndex]);
+    })
+    .catch(error => {
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
+router.get('/getAllAdvertisements', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
   Advertisement.find()
     .then(items => res.status(OK).send(items))
     .catch(error => {

@@ -11,7 +11,7 @@ export default function AdvertisementAdmin(props) {
   const [day, setDay] = useState();
 
   async function getAdsFromDB() {
-    const adsFromDB = await getAds();
+    const adsFromDB = await getAds(props.user.token);
     if (!adsFromDB.error) {
       setAds(adsFromDB.responseData);
     }
@@ -43,7 +43,7 @@ export default function AdvertisementAdmin(props) {
   }
 
   async function deleteExpiredAds() {
-    const adsFromDB = await getAds();
+    const adsFromDB = await getAds(props.user.token);
     if (!adsFromDB.error) {
       const currentDate = new Date();
       const expiredAds = adsFromDB.responseData.filter(ad => {

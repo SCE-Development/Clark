@@ -3,9 +3,27 @@ import { ApiResponse } from './ApiResponses';
 
 let GENERAL_API_URL = 'http://localhost:8080/api';
 
-export async function getAds() {
+export async function getAd() {
   let status = new ApiResponse();
-  await axios.get(GENERAL_API_URL + '/Advertisement/getAllAdvertisements')
+  await axios.get(GENERAL_API_URL + '/Advertisement/')
+    .then(res => {
+      status.responseData = res.data;
+    }).catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+export async function getAds(token) {
+  let status = new ApiResponse();
+  await axios.get(GENERAL_API_URL + '/Advertisement/getAllAdvertisements',
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
     .then(res => {
       status.responseData = res.data;
     }).catch(err => {
