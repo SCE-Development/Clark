@@ -8,10 +8,12 @@ const {
 const Advertisement = require('../models/Advertisement');
 
 router.get('/', async (req, res) => {
-  Advertisement.find()
+  const count = await Advertisement.countDocuments();
+  const random = Math.floor(Math.random() * count);
+
+  Advertisement.findOne().skip(random)
     .then(items => {
-      const randomIndex = Math.floor(Math.random() * items.length);
-      res.status(OK).send(items[randomIndex]);
+      res.status(OK).send(items);
     })
     .catch(error => {
       res.sendStatus(BAD_REQUEST);
