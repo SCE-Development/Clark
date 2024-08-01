@@ -91,6 +91,15 @@ export default function UserNavBar(props) {
 
       ),
     },
+    {
+      title: 'Club Revenue',
+      route: '/club-revenue',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v20m5-17H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      ),
+    },
   ];
 
   const renderRoutesForNavbar = (navbarLinks) => {
