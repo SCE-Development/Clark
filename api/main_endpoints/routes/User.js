@@ -461,33 +461,32 @@ router.post('/apikey', async (req, res) => {
     });
 });
 
-// For Club Revenue page 
+// For Club Revenue page
 router.post('/countMembers', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  
   const currentYear = new Date().getFullYear();
   const today = new Date();
+
   let beginningOfSemester = new Date(currentYear, 5, 1);
   let endOfThisSemester = new Date(currentYear + 1, 0, 1);
   let endOfNextSemester = new Date(currentYear + 1, 5, 1);
 
   if (today < new Date(currentYear, 5, 1)) {
     beginningOfSemester = new Date(currentYear, 0, 1);
-    endOfThisSemester = new Date(currentYear, 5, 1); 
+    endOfThisSemester = new Date(currentYear, 5, 1);
     endOfNextSemester = new Date(currentYear + 1, 0, 1);
   }
-  
+
   const totalNewMembersThisYear = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: new Date(currentYear, 0, 1), $lte: today } });
   const currentActiveMembers = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, membershipValidUntil: { $gte: today } });
   const newSingleAndAnnualMembers = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: beginningOfSemester, $lte: today}});
   const newSingleSemester = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: beginningOfSemester, $lte: today }, membershipValidUntil: endOfThisSemester });
   const newAnnualMembers = await User.countDocuments({ emailVerified: true, accessLevel: membershipState.MEMBER, joinDate: { $gte: beginningOfSemester, $lte: today }, membershipValidUntil: endOfNextSemester });
-
-  return res.json({ newSingleAndAnnualMembers, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers }); 
+  return res.json({ newSingleAndAnnualMembers, newSingleSemester, newAnnualMembers, totalNewMembersThisYear, currentActiveMembers });
 });
 
 module.exports = router;
