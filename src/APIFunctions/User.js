@@ -287,3 +287,21 @@ export async function getApiKey(token) {
   }
   return status;
 }
+
+export async function countMembers(token) {
+  let status = new UserApiResponse();
+  const url = new URL('/api/User/countMembers', BASE_API_URL);
+  await axios
+    .post(url.href, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((res) => {
+      status.responseData = res.data;
+    })
+    .catch((err) => {
+      status.error = err;
+    });
+  return status;
+}

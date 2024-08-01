@@ -40,6 +40,7 @@ const {
   restoreDiscordAPIMock,
   initializeDiscordAPIMock
 } = require('../util/mocks/DiscordApiFunction');
+const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
 chai.should();
@@ -82,6 +83,7 @@ describe('User', () => {
   afterEach(() => {
     resetTokenMock();
     resetDiscordAPIMock();
+    revertClock();
   });
 
   const token = '';
@@ -478,6 +480,148 @@ describe('User', () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/apikey', user);
       expect(result).to.have.status(UNAUTHORIZED);
+    });
+  });
+
+  describe('/POST countMembers', () => {
+    it('Should return statusCode 403 if no token is passed in', async () => {
+      const user = {
+        _id : id
+      };
+      const result = await test.sendPostRequest(
+        '/api/User/countMembers', user);
+      expect(result).to.have.status(FORBIDDEN);
+    });
+    it('Should return statusCode 401 if an invalid ' +
+      'token was passed in', async () => {
+      const user = {
+        _id: id,
+        token: 'Invalid token'
+      };
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/countMembers', user);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+    it('Should return statusCode 200 and the member counts correctly for fall semester if a valid token is passed in', async () => {
+      const mockCurrentDate = mockDayMonthAndYear(31, 11, 2023); // December 31, 2023
+      const user = {
+        userID : id,
+        token: token
+      };
+      const addUsers = [
+        {
+          email: 'user1@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'One',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2023, 5, 1),
+          membershipValidUntil: new Date(2024, 0, 1) // 1 Semester
+        },
+        {
+          email: 'user2@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Two',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2023, 5, 1),
+          membershipValidUntil: new Date(2024, 5, 1) // 2 Semesters
+        },
+        {
+          email: 'user3@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Three',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2023, 7, 13),
+          membershipValidUntil: new Date(2024, 0, 1) // 1 Semester
+        },
+        {
+          email: 'user4@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Four',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2023, 4, 31),
+          membershipValidUntil: new Date(2024, 0, 1) // 2 Semesters but shouldn't be included since join date was last semester
+        }
+      ];
+      setTokenStatus(true);
+      await User.insertMany(addUsers);
+      const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', user);
+
+      expect(result).to.have.status(OK);
+      result.body.should.be.a('object');
+      result.body.should.have.property('newSingleAndAnnualMembers').that.equals(3);
+      result.body.should.have.property('newSingleSemester').that.equals(2);
+      result.body.should.have.property('newAnnualMembers').that.equals(1);
+      result.body.should.have.property('totalNewMembersThisYear').that.equals(4);
+      result.body.should.have.property('currentActiveMembers').that.equals(4);
+      tools.emptySchema(User);
+    });
+    it('Should return statusCode 200 and the member counts correctly for spring semester if a valid token is passed in', async () => {
+      const mockCurrentDate = mockDayMonthAndYear(2, 0, 2023); // January 2, 2023
+      const user = {
+        userID : id,
+        token: token
+      };
+      const addUsers = [
+        {
+          email: 'user5@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Five',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2023, 0, 1),
+          membershipValidUntil: new Date(2023, 5, 1) // 1 Semester
+        },
+        {
+          email: 'user6@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Six',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2023, 0, 2),
+          membershipValidUntil: new Date(2024, 0, 1) // 2 Semesters
+        },
+        {
+          email: 'user7@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Seven',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2023, 0, 2),
+          membershipValidUntil: new Date(2023, 5, 1) // 1 Semester
+        },
+        {
+          email: 'user8@example.com',
+          password: 'password',
+          firstName: 'User',
+          lastName: 'Eight',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          joinDate: new Date(2022, 11, 31),
+          membershipValidUntil: new Date(2023, 5, 1) // 2 Semesters but shouldn't be included since join date was last semester
+        }
+      ];
+      setTokenStatus(true);
+      await User.insertMany(addUsers);
+      const result = await test.sendPostRequestWithToken(token, '/api/User/countMembers', user);
+
+      expect(result).to.have.status(OK);
+      result.body.should.be.a('object');
+      result.body.should.have.property('newSingleAndAnnualMembers').that.equals(3);
+      result.body.should.have.property('newSingleSemester').that.equals(2);
+      result.body.should.have.property('newAnnualMembers').that.equals(1);
+      result.body.should.have.property('totalNewMembersThisYear').that.equals(3);
+      result.body.should.have.property('currentActiveMembers').that.equals(4);
     });
   });
 });

@@ -29,6 +29,7 @@ import URLShortenerPage from './Pages/URLShortener/URLShortener';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
+import ClubRevenue from './Pages/ClubRevenue/ClubRevenue.js';
 
 
 export default function Routing({ appProps }) {
@@ -132,6 +133,13 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
+    },
+    {
+      Component: ClubRevenue,
+      path: '/club-revenue',
+      allowedIf: userIsOfficerOrAdmin,
+      inAdminNavbar: true,
+      redirect: '/',
     },
   ];
   const signedOutRoutes = [
