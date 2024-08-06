@@ -21,7 +21,7 @@ const lastMessageSent = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
-    clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(message)}\n\n`));
+    clients[roomId].forEach(res => res.write(`data: ${message}\n\n`));
   }
   lastMessageSent[roomId] = message;
 });
