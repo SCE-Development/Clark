@@ -1,7 +1,8 @@
 const {
   UNAUTHORIZED,
   BAD_REQUEST,
-  SERVER_ERROR
+  SERVER_ERROR,
+  OK
 } = require('../../util/constants').STATUS_CODES;
 const { MAX_AMOUNT_OF_CONNECTIONS } = require('../../util/constants').MESSAGES_API;
 const express = require('express');
@@ -16,11 +17,13 @@ router.use(bodyParser.json());
 
 const clients = {};
 const numberOfConnections = {};
+const lastMessageSent = {}; 
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
     clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(message)}\n\n`));
   }
+  lastMessageSent[roomId] = message;
 });
 
 router.post('/send', async (req, res) => {
@@ -69,6 +72,46 @@ router.post('/send', async (req, res) => {
     });
   } catch (error) {
     logger.error('Error in /send: ', error);
+    res.sendStatus(SERVER_ERROR);
+  }
+});
+
+router.get('/getLatestMessage', async (req, res) => {
+  const {apiKey, id} = req.query;
+
+  const required = [
+    {value: apiKey, title: 'API Key'},
+    {value: id, title: 'Room ID'},
+  ];
+
+  const missingValue = required.find(({value}) => !value);
+
+  if (missingValue){
+    res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
+    return;
+  }
+
+  try {
+    User.findOne({ apiKey }, (error, result) => {
+      if (error) {
+        logger.error('/listen received an invalid API key: ', error);
+        res.sendStatus(SERVER_ERROR);
+        return;
+      }
+
+      if (!result) { // return unauthorized if no api key found
+        return res.sendStatus(UNAUTHORIZED);
+      }
+
+      if (!lastMessageSent[id]) {
+        return res.status(OK).send('Room closed');
+      }
+
+      return res.status(OK).send(lastMessageSent[id]);
+
+    });
+  } catch (error) {
+    logger.error('Error in /get: ', error);
     res.sendStatus(SERVER_ERROR);
   }
 });
@@ -138,6 +181,7 @@ router.get('/listen', async (req, res) => {
         }
         if(clients[id].length === 0){
           delete clients[id];
+          delete lastMessageSent[id];
         }
         numberOfConnections[_id] -= 1;
       });
