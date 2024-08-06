@@ -65,7 +65,7 @@ router.post('/send', async (req, res) => {
         return;
       }
       if (result) {
-        writeMessage(id, `${result.firstName} ${result.lastName} > ${message}`);
+        writeMessage(id, `${result.firstName}: ${message}`);
         return res.json({status: 'Message sent'});
       }
       return res.sendStatus(UNAUTHORIZED);
