@@ -17,7 +17,7 @@ router.use(bodyParser.json());
 
 const clients = {};
 const numberOfConnections = {};
-const lastMessageSent = {}; 
+const lastMessageSent = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {

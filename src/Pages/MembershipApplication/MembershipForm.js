@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { memberApplicationState, memberShipPlanToString } from '../../Enums';
-import { checkIfUserExists } from '../../APIFunctions/User';
 import { registerUser } from '../../APIFunctions/Auth';
 import GoogleRecaptcha from '../../Components/Captcha/GoogleRecaptcha';
 export default function MembershipForm(props) {
@@ -219,7 +218,6 @@ export default function MembershipForm(props) {
     e.preventDefault();
     if (!clickSubmitted) setClickSubmitted(true);
     if (requiredFieldsMet()) {
-      const userResponse = await checkIfUserExists(email);
       const registrationStatus = await registerUser({
         firstName: firstName.trim(),
         lastName: lastName.trim(),
@@ -233,7 +231,7 @@ export default function MembershipForm(props) {
       if (!registrationStatus.error) {
         props.setMembershipState(memberApplicationState.CONFIRMATION);
       } else {
-        if (registrationStatus.responseData.status === 409 && userResponse.error) {
+        if (registrationStatus.responseData.status === 409) {
           setUsernameAvailable(false);
           window.alert('An account with this email already exists');
         } else if (registrationStatus.responseData.status === 400) {

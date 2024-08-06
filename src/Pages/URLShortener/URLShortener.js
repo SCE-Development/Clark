@@ -42,7 +42,7 @@ export default function URLShortenerPage(props) {
     const urlsFromDb = await getAllUrls({
       token: props.user.token,
       page: page,
-      searchQuery: searchQuery,
+      search: searchQuery,
       sortColumn: sortColumn,
       sortOrder: sortOrder
     });
