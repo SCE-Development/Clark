@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function AboutPage() {
   return (
-    <div className='mb-10'>
+    <div className='mb-10 bg-gradient-to-r from-slate-900 via-blue-950 to-gray-800 bg-size-200 bg-pos-0'>
       <section id="hero">
         <div
           className="flex flex-col-reverse items-center space-y-0 md:space-y-0 md:flex-row"
@@ -29,18 +29,18 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      <section id="features">
+      <section className="bg-gradient-to-r from-gray-600 via-blue-950 to-gray-800 bg-size-200 bg-pos-0"
+        id="features">
         <div
           className="max-w grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mx-auto mt-10 space-y-10 md:flex-row justify-items-center"
         >
           <div className='hidden md:flex'>
-            <h2 className="max-w-md text-4xl font-bold md:text-left">
+            <h2 className="max-w-md text-4xl font-bold md:text-left mt-10 text-slate-100">
               Learn while having fun, making friends and eating pancakes
             </h2>
           </div>
           <div className='hidden md:flex md:justify-center md:items-center'>
-            <h3 className="text-xl text-center">
+            <h3 className="text-xl text-center text-slate-100">
               Come visit us in ENGR 294 or on Discord at: {' '}
               <span className='text-blue-600 hover:underline'>
                 <a href='https://sce.sjsu.edu/s/discord' target="_blank" rel="noopener noreferrer">
@@ -147,8 +147,8 @@ export default function AboutPage() {
           className="max-w grid grid-cols-1 md:grid-cols-2 gap-4 px-4 mx-auto mt-10 space-y-10 md:flex-row justify-items-center"
         >
 
-          <div className='flex justify-center items-center' >
-            <h2 className="max-w-md md:my-10 text-xl md:text-3xl font-bold md:text-left">
+          <div className='flex justify-center items-center ' >
+            <h2 className="max-w-md md:my-10 text-xl md:text-3xl font-bold md:text-left text-slate-100">
               Join Our Development Team! <br /> <br />
 
               <span className='text-m md:text-xl w-3/4 py-10'>
@@ -161,8 +161,14 @@ export default function AboutPage() {
 
             </h2>
           </div>
+          {/* node */}
+          {/* node */}
+          {/* node */}
+          {/* node */}
+          {/* node */}
+          {/* node */}
           <div>
-            <div className="grid grid-cols-3 gap-8 text-gray-500 sm:gap-11 dark:text-gray-400">
+            <div className="grid grid-cols-3 gap-8 text-gray-500 sm:gap-11 dark:text-gray-400 mb-10">
               <a href="#" className="flex justify-center items-center">
                 {/* node */}
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
