@@ -10,8 +10,8 @@ export default function URLShortenerPage(props) {
   const [url, setUrl] = useState('');
   const [invalidUrl, setInvalidUrl] = useState();
   const [showUrlInput, setShowUrlInput] = useState(false);
-  const [useGeneratedAlias, setUseGeneratedAlias] = useState(true);
-  const [useExpirationDate, setUseExpirationDate] = useState(true);
+  const [useGeneratedAlias, setUseGeneratedAlias] = useState(false);
+  const [useExpirationDate, setUseExpirationDate] = useState(false);
   const [expirationDate, setExpirationDate] = useState(null);
   const [alias, setAlias] = useState('');
   const [allUrls, setAllUrls] = useState([]);
@@ -123,16 +123,6 @@ export default function URLShortenerPage(props) {
       setTotal(total - 1);
     }
   }
-  const handleDateChange = (e) => {
-    if (!useExpirationDate) {
-      const dateString = e.target.value;
-      const dateObject = new Date(dateString);
-      const epochTime = dateObject.getTime();
-      setExpirationDate(epochTime);
-    } else {
-      setExpirationDate(null);
-    }
-  };
 
   function handleSortUrls(columnName) {
     if (columnName === null) {
@@ -271,7 +261,7 @@ export default function URLShortenerPage(props) {
               </div>
             </div>
 
-            <div className="col-span-3">
+            <div className="col-span-full">
               <div className="form-control">
                 <label className="label cursor-pointer">
                   <span className="label-text">Use Generated Alias</span>
@@ -296,7 +286,7 @@ export default function URLShortenerPage(props) {
                 </div>
               </div>
             )}
-            <div className="col-span-3">
+            <div className="col-span-full">
               <div className="form-control">
                 <label className="label cursor-pointer">
                   <span className="label-text">Use Expiration Date</span>
@@ -309,11 +299,11 @@ export default function URLShortenerPage(props) {
                 </label>
               </div>
             </div>
-            {!useExpirationDate && (
+            {useExpirationDate && (
 
               <div className="sm:col-span-4">
                 <label htmlFor="email" className={LABEL_CLASS}>
-                  Expiration Date
+                  Expiration Date (Expires at 11:59pm UTC on the selected day)
                 </label>
                 <div className="mt-2">
                   <input
@@ -321,8 +311,7 @@ export default function URLShortenerPage(props) {
                     id="expiration_date"
                     name="expiration_date"
                     placeholder="mm/dd/yyyy"
-                    value={expirationDate ? new Date(expirationDate).toISOString().split('T')[0] : ''}
-                    onChange={handleDateChange}
+                    onChange={(e) => setExpirationDate(e.target.value)}
                     className={INPUT_CLASS}
                   />
                 </div>
@@ -498,9 +487,9 @@ export default function URLShortenerPage(props) {
                           </div>
                         </td>
                         <td className='hidden md:table-cell'>
-                          <div className='flex items-center justify-center'>
-                            {new Date(url.expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </div>
+                        <div className='flex items-center justify-center'>
+                          {url.expiration_date ? new Date(url.expiration_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'null'}
+                        </div>
                         </td>
                         <td>
                           <div className='flex items-center justify-center'>

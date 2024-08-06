@@ -33,15 +33,7 @@ export async function createUrl(url, alias = null, expirationDate = null, token)
   let status = new ApiResponse();
   const urlToAdd = { url, alias, epoch_expiration: expirationDate };
 
-  console.log('Request payload:', {
-    token,
-    ...urlToAdd
-  });
-
-
   try {
-    console.log(expirationDate);
-    console.log(urlToAdd);
     const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const response = await axios
       .post(url.href, { token, ...urlToAdd });
