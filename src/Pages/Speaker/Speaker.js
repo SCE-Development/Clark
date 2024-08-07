@@ -1,7 +1,7 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { queued, addUrl, pause, resume, skip, forward, rewind } from '../../APIFunctions/Speaker';
-
+import { useState, useEffect, useCallback } from 'react';
+import { queued, addUrl, pause, resume, skip, forward, rewind, setVolume } from '../../APIFunctions/Speaker';
+import {debounce} from 'lodash'
 
 function SpeakersPage(props) {
 
@@ -76,10 +76,10 @@ function SpeakersPage(props) {
     setIsPlaying(!isPlaying);
   };
 
-  const handleVolumeChange = async (volume) => {
-    setVolumeState(volume); // Update local volume state
-    const result = await setVolume(volume, props.user.token);
-  };
+  const debouncedHandleVolumeChange = useCallback(
+    debounce((value) => setVolume(value, props.user.token), 1000),
+    []
+  );
 
   const handleForward = async () => {
     await modifySpeakerWrapper(forward);
@@ -115,9 +115,9 @@ function SpeakersPage(props) {
               {playText}
             </button>
           </div>
-          <div class="mt-6 mb-4 flex justify-center items-center">
-            <button class="p-3 rounded-full focus:outline-none bg-gray-200 hover:bg-gray-500" onClick={handleRewind}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="size-4">
+          <div className="mt-6 mb-4 flex justify-center items-center">
+            <button className="p-3 rounded-full focus:outline-none bg-gray-200 hover:bg-gray-500" onClick={handleRewind}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className="size-4">
                 <path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.029v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z" />
               </svg>
             </button>
@@ -137,15 +137,15 @@ function SpeakersPage(props) {
                 </svg>
               )}
             </button>
-            <button class="p-3 rounded-full focus:outline-none bg-gray-200 hover:bg-gray-500" onClick={handleForward}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="size-4">
+            <button className="p-3 rounded-full focus:outline-none bg-gray-200 hover:bg-gray-500" onClick={handleForward}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className="size-4">
                 <path d="M5.055 7.06C3.805 6.347 2.25 7.25 2.25 8.69v8.122c0 1.44 1.555 2.343 2.805 1.628L12 14.471v2.34c0 1.44 1.555 2.343 2.805 1.628l7.108-4.061c1.26-.72 1.26-2.536 0-3.256l-7.108-4.061C13.555 6.346 12 7.249 12 8.689v2.34L5.055 7.061Z" />
               </svg>
             </button>
           </div>
           <div className="flex justify-center items-center flex-col">
-            <button class="p-3 rounded-full focus:outline-none hover:bg-gray-700 transition-colors duration-300" onClick={() => modifySpeakerWrapper(skip)}>
-              <svg class="h-8 w-8 text-gray-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            <button className="p-3 rounded-full focus:outline-none hover:bg-gray-700 transition-colors duration-300" onClick={() => modifySpeakerWrapper(skip)}>
+              <svg className="h-8 w-8 text-gray-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
             <div><h2 className='text-center m-2 font-bold'>Next Up</h2></div>
             <div>
@@ -162,7 +162,7 @@ function SpeakersPage(props) {
             </div>
           </div>
           <div className='mt-10 mb-20 items-center'>
-            <table className="table-auto border-collapse w-full border-separate border-spacing-x-10 border-spacing-y-5">
+            <table className="table-auto border-collapse w-full border-spacing-x-10 border-spacing-y-5">
               <thead>
                 <th>Position</th>
                 <th className='text-left pl-2'>Name</th>
@@ -183,9 +183,9 @@ function SpeakersPage(props) {
             </table>
           </div>
           <div className="fixed bottom-0 left-0 w-full bg-cyan-950 text-white z-50">
-            <div class="mt-2 ml-5 flex items-center">
-              <button class="p-3 rounded-full focus:outline-none hover:bg-cyan-800" onClick={handleRewind}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="size-8">
+            <div className="mt-2 ml-5 flex items-center">
+              <button className="p-3 rounded-full focus:outline-none hover:bg-cyan-800" onClick={handleRewind}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="size-8">
                   <path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.029v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z" />
                 </svg>
               </button>
@@ -205,8 +205,8 @@ function SpeakersPage(props) {
                   </svg>
                 )}
               </button>
-              <button class="p-3 rounded-full focus:outline-none hover:bg-cyan-800" onClick={handleForward}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="size-8">
+              <button className="p-3 rounded-full focus:outline-none hover:bg-cyan-800" onClick={handleForward}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="size-8">
                   <path d="M5.055 7.06C3.805 6.347 2.25 7.25 2.25 8.69v8.122c0 1.44 1.555 2.343 2.805 1.628L12 14.471v2.34c0 1.44 1.555 2.343 2.805 1.628l7.108-4.061c1.26-.72 1.26-2.536 0-3.256l-7.108-4.061C13.555 6.346 12 7.249 12 8.689v2.34L5.055 7.061Z" />
                 </svg>
               </button>
@@ -216,11 +216,12 @@ function SpeakersPage(props) {
                   min="0"
                   max="100"
                   value={volume}
-                  onChange={(e) => handleVolumeChange(e.target.value)}
+                  onChangeCapture={(e) => setVolumeState(e.target.value)}
+                  onChange={(e) => debouncedHandleVolumeChange(e.target.value)}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                 />
                 <span className="mr-10 ml-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
                     <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" />
                     <path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z" />
                   </svg>
