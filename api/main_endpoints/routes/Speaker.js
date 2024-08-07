@@ -159,7 +159,6 @@ router.post('/volume', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   const result = await sendSpeakerRequest(path, { url: req.body.volume });
-  console.log(req.body.volume)
   if (result) {
     return res.sendStatus(OK);
   }

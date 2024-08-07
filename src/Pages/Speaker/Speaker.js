@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { queued, addUrl, pause, resume, skip, forward, rewind, setVolume } from '../../APIFunctions/Speaker';
-import {debounce} from 'lodash'
+import {debounce} from 'lodash';
 
 function SpeakersPage(props) {
 
