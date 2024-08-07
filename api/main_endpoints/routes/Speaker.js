@@ -97,6 +97,40 @@ router.post('/skip', async (req, res) => {
   return res.sendStatus(SERVER_ERROR);
 });
 
+router.post('/forward', async (req, res) => {
+  const { path } = req.route;
+  if (!checkIfTokenSent(req)) {
+    logger.warn(`${path} was requested without a token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await decodeToken(req)) {
+    logger.warn(`${path} was requested with an invalid token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const result = await sendSpeakerRequest(path);
+  if (result) {
+    return res.sendStatus(OK);
+  }
+  return res.sendStatus(SERVER_ERROR);
+});
+
+router.post('/rewind', async (req, res) => {
+  const { path } = req.route;
+  if (!checkIfTokenSent(req)) {
+    logger.warn(`${path} was requested without a token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await decodeToken(req)) {
+    logger.warn(`${path} was requested with an invalid token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const result = await sendSpeakerRequest(path);
+  if (result) {
+    return res.sendStatus(OK);
+  }
+  return res.sendStatus(SERVER_ERROR);
+});
+
 router.post('/stream', async (req, res) => {
   const { path } = req.route;
   if (!checkIfTokenSent(req)) {
@@ -108,6 +142,23 @@ router.post('/stream', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   const result = await sendSpeakerRequest(path, { url: req.body.url });
+  if (result) {
+    return res.sendStatus(OK);
+  }
+  return res.sendStatus(SERVER_ERROR);
+});
+
+router.post('/volume', async (req, res) => {
+  const { path } = req.route;
+  if (!checkIfTokenSent(req)) {
+    logger.warn(`${path} was requested without a token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await decodeToken(req)) {
+    logger.warn(`${path} was requested with an invalid token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const result = await sendSpeakerRequest(path, { url: req.body.volume });
   if (result) {
     return res.sendStatus(OK);
   }
