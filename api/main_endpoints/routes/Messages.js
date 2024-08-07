@@ -1,7 +1,8 @@
 const {
   UNAUTHORIZED,
   BAD_REQUEST,
-  SERVER_ERROR
+  SERVER_ERROR,
+  OK
 } = require('../../util/constants').STATUS_CODES;
 const { MAX_AMOUNT_OF_CONNECTIONS } = require('../../util/constants').MESSAGES_API;
 const express = require('express');
@@ -9,25 +10,31 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
+const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 
 
 router.use(bodyParser.json());
 
 const clients = {};
 const numberOfConnections = {};
+const lastMessageSent = {};
 
 const writeMessage = ((roomId, message) => {
   if (clients[roomId]) {
-    clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(message)}\n\n`));
+    clients[roomId].forEach(res => res.write(`data: ${message}\n\n`));
   }
+  lastMessageSent[roomId] = message;
 });
 
 router.post('/send', async (req, res) => {
 
-  const {apiKey, message, id} = req.body;
+  const {message, id} = req.body;
+  const token = req.headers['authorization'];
+  const apiKey = req.headers['x-api-key'];
+
 
   const required = [
-    {value: apiKey, title: 'API Key', },
+    {value: token || apiKey, title: 'Token or API Key', },
     {value: message, title: 'Message', },
     {value: id, title: 'Room ID', },
   ];
@@ -39,15 +46,26 @@ router.post('/send', async (req, res) => {
     return;
   }
 
+  let filterQuery = {}; // filter to find user in the database
+  if (token) {
+    userObj = decodeToken(req);
+    if (!userObj) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    filterQuery._id = userObj._id;
+  } else {
+    filterQuery.apiKey = apiKey;
+  }
+
   try {
-    User.findOne({apiKey}, (error, result) => {
+    User.findOne(filterQuery, (error, result) => {
       if (error) {
-        logger.error('/send received an invalid API key: ', error);
+        logger.error('/send received an invalid API key or token: ', error);
         res.sendStatus(SERVER_ERROR);
         return;
       }
       if (result) {
-        writeMessage(id, message);
+        writeMessage(id, `${result.firstName}: ${message}`);
         return res.json({status: 'Message sent'});
       }
       return res.sendStatus(UNAUTHORIZED);
@@ -58,12 +76,12 @@ router.post('/send', async (req, res) => {
   }
 });
 
-router.get('/listen', async (req, res) => {
+router.get('/getLatestMessage', async (req, res) => {
   const {apiKey, id} = req.query;
 
   const required = [
-    {value: apiKey, title: 'API Key', },
-    {value: id, title: 'Room ID', }
+    {value: apiKey, title: 'API Key'},
+    {value: id, title: 'Room ID'},
   ];
 
   const missingValue = required.find(({value}) => !value);
@@ -74,25 +92,82 @@ router.get('/listen', async (req, res) => {
   }
 
   try {
-    User.findOne({apiKey}, (error, result) => {
+    User.findOne({ apiKey }, (error, result) => {
       if (error) {
         logger.error('/listen received an invalid API key: ', error);
         res.sendStatus(SERVER_ERROR);
         return;
       }
-      if (!result || (numberOfConnections[apiKey] && numberOfConnections[apiKey] >= MAX_AMOUNT_OF_CONNECTIONS)) { // no api key found or 3 connections per api key; unauthorized
+
+      if (!result) { // return unauthorized if no api key found
         return res.sendStatus(UNAUTHORIZED);
       }
 
-      numberOfConnections[apiKey] = numberOfConnections[apiKey] ? numberOfConnections[apiKey] + 1 : 1;
+      if (!lastMessageSent[id]) {
+        return res.status(OK).send('Room closed');
+      }
+
+      return res.status(OK).send(lastMessageSent[id]);
+
+    });
+  } catch (error) {
+    logger.error('Error in /get: ', error);
+    res.sendStatus(SERVER_ERROR);
+  }
+});
+
+router.get('/listen', async (req, res) => {
+
+  const {token, apiKey, id} = req.query;
+
+  const required = [
+    {value: token || apiKey, title: 'Token or API Key', },
+    {value: id, title: 'Room ID', }
+  ];
+
+  const missingValue = required.find(({value}) => !value);
+
+  if (missingValue){
+    res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
+    return;
+  }
+
+  let filterQuery = {}; // filter to find user in the database
+  if (token) {
+    let userObj = decodeTokenFromBodyOrQuery(req);
+    if (!userObj) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    filterQuery._id = userObj._id;
+  } else {
+    filterQuery.apiKey = apiKey;
+  }
+
+  try {
+    User.findOne(filterQuery, (error, result) => {
+      if (error) {
+        logger.error('/listen received an invalid API key: ', error);
+        res.sendStatus(SERVER_ERROR);
+        return;
+      }
+
+      if (!result || (numberOfConnections[result._id] && numberOfConnections[result._id] >= MAX_AMOUNT_OF_CONNECTIONS)) { // no api key found or 3 connections per api key; unauthorized
+        return res.sendStatus(UNAUTHORIZED);
+      }
+
+      const { _id } = result;
+
+      numberOfConnections[_id] = numberOfConnections[_id] ? numberOfConnections[_id] + 1 : 1;
 
       const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache',
+        'X-Accel-Buffering': 'no'
       };
 
       res.writeHead(200, headers);
+      req.setTimeout(0);
 
       if(!clients[id]){
         clients[id] = [];
@@ -106,8 +181,9 @@ router.get('/listen', async (req, res) => {
         }
         if(clients[id].length === 0){
           delete clients[id];
+          delete lastMessageSent[id];
         }
-        numberOfConnections[apiKey] -= 1;
+        numberOfConnections[_id] -= 1;
       });
     });
   } catch (error) {
@@ -115,5 +191,12 @@ router.get('/listen', async (req, res) => {
     res.sendStatus(SERVER_ERROR);
   }
 });
+
+// heartbeat mechanism to bypass NGINX timeout
+setInterval(() => {
+  Object.keys(clients).forEach(roomId => {
+    clients[roomId].forEach(res => res.write('heartbeat:\n\n'));
+  });
+}, 45000);
 
 module.exports = router;

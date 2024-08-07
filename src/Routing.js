@@ -29,7 +29,7 @@ import URLShortenerPage from './Pages/URLShortener/URLShortener';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
-
+import Messaging from './Pages/Messaging/Messaging.js';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
@@ -127,12 +127,18 @@ export default function Routing({ appProps }) {
       redirect: '/',
     },
     {
+      Component: Messaging,
+      path: '/messaging/:id?',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login'
+    },
+    {
       Component: AdvertisementAdmin,
       path: '/advertisement-admin',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
-    },
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

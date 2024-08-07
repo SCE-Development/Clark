@@ -21,6 +21,7 @@ const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
 
 
+
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
@@ -70,6 +71,7 @@ describe('Messages', () => {
 
   describe('POST /send', () => {
     let user;
+    let userToken;
 
     before(async () => {
       user = new User({
@@ -84,31 +86,39 @@ describe('Messages', () => {
       });
       await user.save();
 
+      const loginResponse = await test.sendPostRequest('/api/Auth/login', {
+        email: user.email,
+        password: 'Passw0rd'
+      });
+      userToken = loginResponse.body.token;
     });
 
-    it('Should return status code 200 if valid api-key, room-id, and message was sent', async () => {
-      const result = await test.sendPostRequest('/api/messages/send', {
-        apiKey: '123',
+    it('Should return status code 200 if valid token, room-id, and message was sent', async () => {
+      const form = {
         message: 'Hello',
         id: 'general'
-      });
+      };
+      setTokenStatus(true, {_id: id});
+      const result = await test.sendPostRequestWithToken(userToken, '/api/messages/send', form);
       expect(result).to.have.status(OK);
     });
 
-    it('Should return status code 400 if no api key is found', async () => {
-      const result = await test.sendPostRequest('/api/messages/send', {
+    it('Should return status code 400 if no token is found', async () => {
+      const form = {
         message: 'Hello',
         id: 'general'
-      });
+      };
+      setTokenStatus(true);
+      const result = await test.sendPostRequest('/api/messages/send', form);
       expect(result).to.have.status(BAD_REQUEST);
     });
 
-    it('Should return status code 403 if api key is invalid', async () => {
-      const result = await test.sendPostRequest('/api/messages/send', {
-        apiKey: 'invalid',
+    it('Should return status code 401 if token is invalid', async () => {
+      const form = {
         message: 'Hello',
         id: 'general'
-      });
+      };
+      const result = await test.sendPostRequestWithToken('invalid', '/api/messages/send', form);
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
