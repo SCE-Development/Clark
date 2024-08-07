@@ -35,8 +35,15 @@ export async function updateSignText(signData, token) {
   let status = new ApiResponse();
   const url = new URL('/api/LedSign/updateSignText', BASE_API_URL);
   await axios
-    .post(url.href,
-      { token, ...signData })
+    .post(
+      url.href,
+      signData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      },
+    )
     .then(res => {
       status.responseData = res.data;
     })

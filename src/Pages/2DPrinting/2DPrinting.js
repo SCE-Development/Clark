@@ -7,7 +7,7 @@ import {
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 
-import { PDFDocument, EncryptedPDFError } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -27,9 +27,9 @@ export default function Printing(props) {
   const [printStatus, setPrintStatus] = useState('');
   const [printStatusColor, setPrintStatusColor] = useState('success');
   const [files, setFiles] = useState(null);
-
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [PdfFile, setPdfFile] = useState(null);
 
   async function checkPrinterHealth() {
     setLoading(true);
@@ -75,10 +75,11 @@ export default function Printing(props) {
       });
       // convert pdf to blob url (allows display of larger pdfs)
       const pdfBytes = await display.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const objectUrl = URL.createObjectURL(blob);
+      const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
+      const objectUrl = URL.createObjectURL(file);
       setNumberOfPagesInPdfPreview(display.getPages().length);
       setPreviewDisplay(objectUrl);
+      setPdfFile(file);
     } catch (e) {
       // the error looks like Input document to `PDFDocument.load` is encrypted
       if (e.message.includes('is encrypted')) {
@@ -96,9 +97,58 @@ export default function Printing(props) {
     }
   }
 
+
+  //  create the preview for image
+  async function getUriImage() {
+    // create a new pdf document
+    const display = await PDFDocument.create();
+    // embed the image into the pdf
+    let image = undefined;
+    const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
+    if (mediaType === 'jpg' || mediaType === 'jpeg') {
+      // return the PDFImage object
+      image = await display.embedJpg(dataUrl);
+    } else if (mediaType === 'png') {
+      image = await display.embedPng(dataUrl);
+    }
+    // scale the image to 25% of its original size
+    const imgDims = image.scale(0.25);
+    // add a blank page to the pdf document
+    const page = display.addPage();
+    // draw the image in the center of the page
+    page.drawImage(image,
+      {
+        x: page.getWidth() / 2 - imgDims.width / 2,
+        y: page.getHeight() / 2 - imgDims.height / 2,
+        width: imgDims.width,
+        height: imgDims.height
+      }
+    );
+    // serialize the image into a byte array (Unit8Array)
+    const pdfBytes = await display.save();
+    // create a File object from the byte array
+    const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
+    // generate a Blob URL for the preview
+    const objectUrl = URL.createObjectURL(file);
+    setNumberOfPagesInPdfPreview(display.getPages().length);
+    setPreviewDisplay(objectUrl);
+    setPdfFile(file);
+  }
+
   useEffect(() => {
     if (dataUrl) {
-      getUri();
+      // get the file type
+      const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
+      // if the file type is pdf
+      if (
+        mediaType === 'pdf'
+      ) {
+        getUri();
+      } else if ( // if the file type is an image
+        ['jpg',  'png',  'jpeg'].includes(mediaType)
+      ) {
+        getUriImage();
+      }
     }
   }, [dataUrl, pageRanges]);
 
@@ -135,22 +185,14 @@ export default function Printing(props) {
   }
 
   async function handlePrinting() {
-    // send print request in base64 format
-    const arrayBuffer = await files.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer);
-    const pdfBytes = await pdf.saveAsBase64({ dataUri: true });
-    let data = {
-      raw: pdfBytes,
-      // maybe we dont need to send this? since in the frontend
-      // we update the embed when the user specifies which
-      // pages they want to print
-      // pageRanges: pageRanges && pageRanges.replace(/\s/g, ''),
-      sides,
-      copies,
-    };
+    // send print request with files and configuratiosn in formData
+    const data = new FormData();
+    data.append('file', PdfFile);
+    data.append('sides', sides);
+    data.append('copies', copies);
     let status = await printPage(data, props.user.token);
+
     if (!status.error) {
-      // this should not be done in the frontend and instead be part of the printing api
       editUser(
         { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
         props.user.token,
@@ -172,6 +214,12 @@ export default function Printing(props) {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      let a = new FileReader();
+      a.onload = function(event) {
+        setDataUrl(event.target.result);
+        setPrintStatus(null);
+      };
+      a.readAsDataURL(e.dataTransfer.files[0]);
       setFiles(e.dataTransfer.files[0]);
     }
   }
@@ -350,7 +398,7 @@ export default function Printing(props) {
             className="hidden"
             ref={inputRef}
             onChange={handleChange}
-            accept=".pdf"
+            accept=".pdf, .jpg, .jpeg, .png"
           />
         </form>
       </div>
@@ -369,10 +417,14 @@ export default function Printing(props) {
           handlePrinting();
           setConfirmModal(false);
         },
-        handleCancel: () => setConfirmModal(false),
+        handleCancel: () => {
+          setDataUrl('');
+          setFiles(null);
+          setConfirmModal(false);
+        },
         open: confirmModal,
       }
-      } />
+      }/>
 
       {printStatus && (
         <div className='flex items-center justify-center w-full mt-10'>
