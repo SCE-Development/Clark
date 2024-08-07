@@ -125,3 +125,43 @@ export async function setVolume(volumeToSet, token) {
       status.error = true;
     });
 }
+
+export async function rewind(token) {
+  let status = new ApiResponse();
+  const url = new URL('/api/Speaker/rewind');
+  await axios
+    .post(url.href, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+    )
+    .then(res => {
+      status = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
+
+export async function forward(token) {
+  let status = new ApiResponse();
+  const url = new URL('/api/Speaker/forward');
+  await axios
+    .post(url.href, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+    )
+    .then(res => {
+      status = res.data;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+  return status;
+}
