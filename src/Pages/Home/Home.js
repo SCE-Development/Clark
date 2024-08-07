@@ -3,7 +3,7 @@ import Footer from '../../Components/Footer/Footer.js';
 import { motion } from 'framer-motion';
 import './Home.css';
 
-import { getAds } from '../../APIFunctions/Advertisement.js';
+import { getAd } from '../../APIFunctions/Advertisement.js';
 
 const Home = () => {
 
@@ -12,10 +12,9 @@ const Home = () => {
 
   async function getMessage() {
     try {
-      const messageData = await getAds();
+      const messageData = await getAd();
       const adsList = messageData.responseData;
-      const index = Math.floor(Math.random() * (adsList.length));
-      setMessage(adsList[index]['message']);
+      setMessage(adsList['message']);
       setShowMessage(true);
     } catch {
       setMessage('');
