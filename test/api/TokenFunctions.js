@@ -6,8 +6,10 @@ const expect = chai.expect;
 const proxyquire = require('proxyquire');
 
 const requestWithToken = {
+  headers: {
+    authorization: 'Bearer hi thai',
+  },
   body: {
-    token: 'hi thai',
     accessLevel: 2,
   }
 };

@@ -18,6 +18,7 @@ import MembershipApplication from
   './Pages/MembershipApplication/MembershipApplication.js';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
+import AdvertisementAdmin from './Pages/Advertisement/AdvertisementAdmin.js';
 
 import { membershipState } from './Enums';
 
@@ -124,6 +125,13 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       inAdminNavbar: true,
       redirect: '/',
+    },
+    {
+      Component: AdvertisementAdmin,
+      path: '/advertisement-admin',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
     },
   ];
   const signedOutRoutes = [

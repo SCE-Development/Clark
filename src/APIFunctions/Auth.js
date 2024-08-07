@@ -29,7 +29,7 @@ export async function registerUser(userToRegister) {
     numberOfSemestersToSignUpFor,
     captchaToken
   } = userToRegister;
-  const url = new URL('/Auth/register', BASE_API_URL);
+  const url = new URL('/api/Auth/register', BASE_API_URL);
   await axios
     .post(url.href, {
       firstName,
@@ -95,7 +95,11 @@ export async function checkIfUserIsSignedIn() {
 
   const url = new URL('/api/Auth/verify', BASE_API_URL);
   await axios
-    .post(url.href, { token })
+    .post(url.href, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     .then(res => {
       status.responseData = res.data;
       status.token = token;

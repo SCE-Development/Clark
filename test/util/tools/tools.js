@@ -20,7 +20,7 @@ function insertItem(schema, item) {
 
 function initializeServer(path, port = 7999) {
   serverInstance = new SceHttpServer(path, port);
-  serverInstance.initializeEndpoints();
+  serverInstance.init();
   serverInstance.openConnection();
   return serverInstance.getServerInstance();
 }
