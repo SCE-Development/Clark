@@ -79,7 +79,6 @@ function SpeakersPage(props) {
   const handleVolumeChange = async (volume) => {
     setVolumeState(volume); // Update local volume state
     const result = await setVolume(volume, props.user.token);
-    console.log('Volume set to: ' + volume);
   };
 
   const handleForward = async () => {
@@ -146,10 +145,7 @@ function SpeakersPage(props) {
           </div>
           <div className="flex justify-center items-center flex-col">
             <button class="p-3 rounded-full focus:outline-none hover:bg-gray-700 transition-colors duration-300" onClick={() => modifySpeakerWrapper(skip)}>
-              <svg class="h-8 w-8 text-gray-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> 
-                <polygon points="5 4 15 12 5 20 5 4"/>  
-                <line x1="19" y1="5" x2="19" y2="19"/>
-              </svg>
+              <svg class="h-8 w-8 text-gray-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
             <div><h2 className='text-center m-2 font-bold'>Next Up</h2></div>
             <div>
@@ -174,13 +170,13 @@ function SpeakersPage(props) {
               <tbody>
                 {
                   queue.map((song, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td className='pl-2'><a href={song.url} className="no-underline hover:underline">{song.title}</a></td>
-                        <img
-                          src = {song.thumbnail}
-                        />
-                      </tr>
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td className='pl-2'><a href={song.url} className="no-underline hover:underline">{song.title}</a></td>
+                      <img
+                        src = {song.thumbnail}
+                      />
+                    </tr>
                   ))
                 }
               </tbody>
@@ -232,7 +228,7 @@ function SpeakersPage(props) {
               </div>
             </div>
           </div>
-        </div>  
+        </div>
       </div>
     </div>
   );
