@@ -33,7 +33,10 @@ export async function connectToRoom(room, token, onMessage, onError) {
   const eventSource = new EventSource(url.href);
 
   eventSource.onmessage = (event) => {
-    onMessage(event.data);
+    let parsedMessage = JSON.parse(event.data);
+    console.log(parsedMessage);
+
+    onMessage(parsedMessage);
   };
 
   eventSource.onerror = (event) => {

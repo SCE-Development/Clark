@@ -20,10 +20,19 @@ const numberOfConnections = {};
 const lastMessageSent = {};
 
 const writeMessage = ((roomId, message) => {
+
+  const currentTimestamp = new Date();
+  
+  const messageObj = {
+    timestamp: currentTimestamp, 
+    message: message
+  };
+
   if (clients[roomId]) {
-    clients[roomId].forEach(res => res.write(`data: ${message}\n\n`));
+    clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(messageObj)}\n\n`));
   }
-  lastMessageSent[roomId] = message;
+
+  lastMessageSent[roomId] = JSON.stringify(messageObj);
 });
 
 router.post('/send', async (req, res) => {
