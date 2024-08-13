@@ -121,7 +121,7 @@ function Feed(props) {
     setMessages([]);
 
     const handleNewMessage = (data) => {
-      setMessages(prevMessages => [...prevMessages, `${data}`]);
+      setMessages(prevMessages => [...prevMessages, data]);
       const element = document.getElementById('messages');
       element.scrollTop = element.scrollHeight;
     };
@@ -153,7 +153,22 @@ function Feed(props) {
       )}
       <div id="messages" className="border border-gray-300 p-3 h-96 overflow-y-auto bg-gray-100 w-2/3 rounded-lg mt-3">
         {messages.map((message, index) => (
-          <div key={index} className="p-2 mb-1 border-b border-gray-200 text-gray-700">{message}</div>
+          <div key={index} className="p-2 mb-1 border-b border-gray-200 flex items-center">
+            <div className="text-gray-700 grow">{message['message']}</div>
+            <div className="text-gray-500 text-xs">
+              {
+                new Date(message['timestamp']).toLocaleString(
+                  [],
+                  {
+                    year: '2-digit',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }
+                ).replace(',', ' ')}
+            </div>
+          </div>
         ))}
       </div>
     </div>
