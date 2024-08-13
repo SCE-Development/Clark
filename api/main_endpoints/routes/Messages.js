@@ -34,7 +34,7 @@ const writeMessage = ((roomId, message) => {
           hour12: false
         }
       ),
-    message: message
+    message,
   };
 
   if (clients[roomId]) {
