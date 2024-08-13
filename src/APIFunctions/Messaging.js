@@ -34,7 +34,6 @@ export async function connectToRoom(room, token, onMessage, onError) {
 
   eventSource.onmessage = (event) => {
     let parsedMessage = JSON.parse(event.data);
-    console.log(parsedMessage);
 
     onMessage(parsedMessage);
   };

@@ -22,9 +22,9 @@ const lastMessageSent = {};
 const writeMessage = ((roomId, message) => {
 
   const currentTimestamp = new Date();
-  
+
   const messageObj = {
-    timestamp: currentTimestamp, 
+    timestamp: currentTimestamp,
     message: message
   };
 
