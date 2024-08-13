@@ -24,16 +24,7 @@ const writeMessage = ((roomId, message) => {
   const currentTimestamp = new Date();
 
   const messageObj = {
-    timestamp:
-      currentTimestamp.toLocaleDateString() + ' ' +
-      currentTimestamp.toLocaleTimeString(
-        [],
-        {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        }
-      ),
+    timestamp: Date.now(),
     message,
   };
 
