@@ -155,7 +155,20 @@ function Feed(props) {
         {messages.map((message, index) => (
           <div key={index} className="p-2 mb-1 border-b border-gray-200 flex items-center">
             <div className="text-gray-700 grow">{message['message']}</div>
-            <div className="text-gray-500 text-xs">{message['timestamp']}</div>
+            <div className="text-gray-500 text-xs">
+              {
+                new Date(message['timestamp']).toLocaleString(
+                  [],
+                  {
+                    year: '2-digit',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  }
+                ).replace(',', ' ')}
+            </div>
           </div>
         ))}
       </div>
