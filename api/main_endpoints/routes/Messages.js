@@ -12,7 +12,7 @@ const User = require('../models/User.js');
 const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
-const { MetricsHandler } = require('../../util/metrics.js');
+const { MetricsHandler, register } = require('../../util/metrics.js');
 
 
 router.use(bodyParser.json());
@@ -188,30 +188,22 @@ router.get('/listen', async (req, res) => {
 
       if(!clients[id]){
         clients[id] = [];
-
-        // increase total amount of rooms opened
-        MetricsHandler.totalRoomsOpened.inc();
-
-        // increase the current rooms open gauge
-        MetricsHandler.currentRoomsOpen.inc();
       }
 
       // add connection to the connections open gauge
-      MetricsHandler.currentConnectionsOpen.inc();
+      MetricsHandler.currentConnectionsOpen.labels(id).inc();
 
       clients[id].push(res);
 
       req.on('close', () => {
         if(clients[id]){
-          MetricsHandler.currentConnectionsOpen.dec();
+          MetricsHandler.currentConnectionsOpen.labels(id).dec();
           clients[id] = clients[id].filter(client => client !== res);
         }
         if(clients[id].length === 0){
           delete clients[id];
           delete lastMessageSent[id];
-
-          // if no more clients in the room, decrement the current rooms open gauge
-          MetricsHandler.currentRoomsOpen.dec();
+          MetricsHandler.currentConnectionsOpen.remove({ id });
         }
         numberOfConnections[_id] -= 1;
       });
