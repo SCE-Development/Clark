@@ -25,6 +25,32 @@ class MetricsHandler {
 	  labelNames: ['type'],
 	});
 
+	currentRoomsOpen = new client.Gauge({
+		name: 'current_rooms_open',
+		help: 'Number of chatrooms currently open'
+	  });
+	
+	  totalMessagesSent = new client.Counter({
+		name: 'total_messages_sent',
+		help: 'Total number of messages sent'
+	  });
+	
+	  totalRoomsOpened = new client.Counter({
+		name: 'total_rooms_opened',
+		help: 'Total rooms opened'
+	  });
+	
+	  currentConnectionsOpen = new client.Gauge({
+		name: 'current_connections_open',
+		help: 'Total number of connections open'
+	  });
+	
+	  totalChatMessagesPerChatRoom = new client.Counter({
+		name: 'total_chat_messages_per_chatroom',
+		help: 'Total number of messages sent per chatroom',
+		labelNames: ['id']
+	  });
+
 	constructor() {
 	  register.setDefaultLabels({
 	    app: 'sce-core',

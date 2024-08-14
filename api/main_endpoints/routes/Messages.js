@@ -12,53 +12,12 @@ const User = require('../models/User.js');
 const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { MetricsHandler } = require('../../util/metrics.js');
 
 
 router.use(bodyParser.json());
 
-// all data collected about server activity
-let register = new client.Registry();
 
-// all the metrics for the messages api
-const currentRoomsOpen = new client.Gauge({
-  name: 'current_rooms_open',
-  help: 'Number of chatrooms currently open'
-});
-
-const totalMessagesSent = new client.Counter({
-  name: 'total_messages_sent',
-  help: 'Total number of messages sent'
-});
-
-const totalRoomsOpened = new client.Counter({
-  name: 'total_rooms_opened',
-  help: 'Total rooms opened'
-});
-
-const currentConnectionsOpen = new client.Gauge({
-  name: 'current_connections_open',
-  help: 'Total number of connections open'
-});
-
-const totalChatMessagesPerChatRoom = new client.Counter({
-  name: 'total_chat_messages_per_chatroom',
-  help: 'Total number of messages sent per chatroom',
-  labelNames: ['id']
-});
-
-// register all the metrics for prometheus
-register.registerMetric(currentRoomsOpen);
-register.registerMetric(totalMessagesSent);
-register.registerMetric(currentConnectionsOpen);
-register.registerMetric(totalChatMessagesPerChatRoom);
-register.registerMetric(totalRoomsOpened);
-
-// set label for messages api prometheus label
-register.setDefaultLabels({
-  app: 'messages-api'
-});
-
-client.collectDefaultMetrics({ register });
 
 const clients = {};
 const numberOfConnections = {};
@@ -78,10 +37,10 @@ const writeMessage = ((roomId, message) => {
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
   // increase the total messages sent counter
-  totalMessagesSent.inc();
+  MetricsHandler.totalMessagesSent.inc();
 
   // increase the total amount of messages sent per chatroom counter
-  totalChatMessagesPerChatRoom.labels(roomId).inc();
+  MetricsHandler.totalChatMessagesPerChatRoom.labels(roomId).inc();
 });
 
 router.post('/send', async (req, res) => {
@@ -231,20 +190,20 @@ router.get('/listen', async (req, res) => {
         clients[id] = [];
 
         // increase total amount of rooms opened
-        totalRoomsOpened.inc();
+        MetricsHandler.totalRoomsOpened.inc();
 
         // increase the current rooms open gauge
-        currentRoomsOpen.inc();
+        MetricsHandler.currentRoomsOpen.inc();
       }
 
       // add connection to the connections open gauge
-      currentConnectionsOpen.inc();
+      MetricsHandler.currentConnectionsOpen.inc();
 
       clients[id].push(res);
 
       req.on('close', () => {
         if(clients[id]){
-          currentConnectionsOpen.dec();
+          MetricsHandler.currentConnectionsOpen.dec();
           clients[id] = clients[id].filter(client => client !== res);
         }
         if(clients[id].length === 0){
@@ -252,7 +211,7 @@ router.get('/listen', async (req, res) => {
           delete lastMessageSent[id];
 
           // if no more clients in the room, decrement the current rooms open gauge
-          currentRoomsOpen.dec();
+          MetricsHandler.currentRoomsOpen.dec();
         }
         numberOfConnections[_id] -= 1;
       });
