@@ -19,13 +19,14 @@ const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeMessage = ((roomId, message) => {
+const writeMessage = ((roomId, message, username) => {
 
   const currentTimestamp = new Date();
 
   const messageObj = {
     timestamp: Date.now(),
     message,
+    username
   };
 
   if (clients[roomId]) {
@@ -74,7 +75,7 @@ router.post('/send', async (req, res) => {
         return;
       }
       if (result) {
-        writeMessage(id, `${result.firstName}: ${message}`);
+        writeMessage(id, `${message}`, `${result.firstName}:`);
         return res.json({status: 'Message sent'});
       }
       return res.sendStatus(UNAUTHORIZED);
