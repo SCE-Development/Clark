@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function AboutPage() {
   return (
-    <div className='mb-10 bg-gradient-to-r from-slate-900 via-blue-950 to-gray-800 bg-size-200 bg-pos-0'>
+    <div className='bg-gradient-to-r from-slate-900 via-blue-950 to-gray-800 bg-size-200 bg-pos-0'>
       <section id="hero">
         <div
           className="flex flex-col-reverse items-center space-y-0 md:space-y-0 md:flex-row"
