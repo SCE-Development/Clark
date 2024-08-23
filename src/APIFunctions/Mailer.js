@@ -11,19 +11,11 @@ import { BASE_API_URL } from '../Enums';
  */
 export async function sendVerificationEmail(email, token) {
   let status = new ApiResponse();
-  const url = new URL('/cloudapi/Auth/sendVerificationEmail', BASE_API_URL);
   await axios
-    .post(
-      url.href,
-      {
-        email
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      },
-    )
+    .post(BASE_API_URL + '/api/EmailVerification/sendEmail', {
+        "email": email,
+        "token": token,
+    })
     .then((response) => {
       status.responseData = response;
     })
