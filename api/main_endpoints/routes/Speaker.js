@@ -158,7 +158,7 @@ router.post('/volume', async (req, res) => {
     logger.warn(`${path} was requested with an invalid token`);
     return res.sendStatus(UNAUTHORIZED);
   }
-  const result = await sendSpeakerRequest(path, { url: req.body.volume });
+  const result = await sendSpeakerRequest(path, { volume: req.body.volume });
   if (result) {
     return res.sendStatus(OK);
   }
