@@ -1,5 +1,13 @@
 version: '3'
 services:
+  redis:
+    container_name: sce-redis-dev
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    restart: always
+    volumes:
+      - sce_redis_data_dev:/data/redis
   mongodb:
     container_name: sce-mongodb-dev
     restart: always
@@ -60,8 +68,10 @@ services:
     stdin_open: true
     links:
       - mongodb
+      - redis
     depends_on:
       - mongodb
+      - redis
     volumes:
       - ./api/config:/app/config
       - ./api/package.json:/app/package.json
@@ -110,3 +120,4 @@ services:
 
 volumes:
   sce_mongodb_data_dev:
+  sce_redis_data_dev:
