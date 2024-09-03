@@ -287,7 +287,7 @@ export default function MembershipForm(props) {
           </div>
           <div className='venmo-link text-2xl  md:text-3xl  py-3'>
             <a
-              href='https://venmo.com/u/sce-treasurer'
+              href='https://venmo.com/u/steeevin'
               style={{ color: 'white' }}
               className='opacity-50 hover:opacity-100 font-bold underline duration-300'
             >
