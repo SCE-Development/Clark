@@ -174,6 +174,10 @@ describe('Auth', () => {
   });
 
   describe('/POST sendPasswordReset', () => {
+    before(async () => {
+      setStub = sinon.stub(redisClient, 'set');
+    });
+
     it('Should return statusCode 401 if the email is invalid', async () => {
       const data = {
         email: 'notanemail',
@@ -191,7 +195,9 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 200 if the email does exist in the database', async () => {
-      user = new User({
+      setStub.resolves('OK');
+
+      const user = new User({
         _id: new mongoose.Types.ObjectId(),
         firstName: 'first-name',
         lastName: 'last-name',
@@ -231,10 +237,16 @@ describe('Auth', () => {
 
   describe('/POST validatePasswordReset', () => {
     before(async () => {
-      await redisClient.set('valid token', 'valid id 321', { EX: 60 * 60 });
+      // await redisClient.set('valid token', 'valid id 321', { EX: 60 * 60 });
+      getStub = sinon.stub(redisClient, 'get');
+    });
+
+    after(() => {
+      getStub.restore();
     });
 
     it('Should return statusCode 404 if the token is invalid', async () => {
+      getStub.resolves(null);
       const data = {
         resetToken: 'invalid token'
       };
@@ -243,6 +255,7 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 200 if the token is valid', async () => {
+      getStub.resolves('valid id 321');
       const data = {
         resetToken: 'valid token'
       };
@@ -256,7 +269,9 @@ describe('Auth', () => {
     let createdUser = null;
 
     before(async () => {
-      await redisClient.set('valid token', String(createdId), { EX: 60 * 60 });
+      // await redisClient.set('valid token', String(createdId), { EX: 60 * 60 });
+      getStub = sinon.stub(redisClient, 'get');
+      delStub = sinon.stub(redisClient, 'del');
 
       const newUser = new User({
         _id: createdId,
@@ -270,6 +285,7 @@ describe('Auth', () => {
 
     after(async () => {
       if (createdUser) await User.deleteOne({ _id: createdUser._id});
+      getStub.restore();
     });
 
     it('Should return statusCode 401 if the password is too weak', async () => {
@@ -281,6 +297,7 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 404 if the password rest token is invalid', async () => {
+      getStub.resolves(null);
       const data = {
         password: 'Passw0rd',
         resetToken: 'invalid token',
@@ -290,6 +307,7 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 401 if the user id hash is not matching', async () => {
+      getStub.resolves('invalid return id');
       const data = {
         password: 'Passw0rd',
         resetToken: 'valid token',
@@ -300,6 +318,8 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 200 if the password was reset', async () => {
+      getStub.resolves(String(createdId));
+      delStub.resolves('OK');
       const data = {
         password: 'Passw0rd',
         resetToken: 'valid token',
