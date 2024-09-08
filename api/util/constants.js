@@ -30,9 +30,12 @@ const consoleColors = {
   defaultColor: '\x1b[0m',
 };
 
+const PASSWORD_RESET_EXPIRATION = 60 * 60 * 12;
+
 module.exports = {
   STATUS_CODES,
   MEMBERSHIP_STATE,
   MESSAGES_API,
   consoleColors,
+  PASSWORD_RESET_EXPIRATION,
 };

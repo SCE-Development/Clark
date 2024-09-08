@@ -26,6 +26,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const PASSWORD_RESET_EXPIRATION = require('../../util/constants').PASSWORD_RESET_EXPIRATION;
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
@@ -104,7 +105,7 @@ router.post('/sendPasswordReset', async (req, res) => {
 
     const resetToken = id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     try {
-      await redisClient.set(resetToken, String(result._id), {EX: 60 * 60 * 12}); // 12 hour expiration
+      await redisClient.set(resetToken, String(result._id), {EX: PASSWORD_RESET_EXPIRATION});
       await sendPasswordReset(resetToken, req.body.email);
     } catch (error) {
       logger.error('unable to save password reset token:', error);

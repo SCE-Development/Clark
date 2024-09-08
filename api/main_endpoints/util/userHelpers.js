@@ -164,13 +164,13 @@ function hashPassword(password) {
 }
 
 async function findPasswordReset(resetToken) {
+  let userId = null;
   try {
-    const userId = await redisClient.get(resetToken);
-    return userId;
+    userId = await redisClient.get(resetToken);
   } catch (error) {
     logger.error('Unable to get reset token:', error);
-    throw error;
   }
+  return userId;
 }
 
 /**
