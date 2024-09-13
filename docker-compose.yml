@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   redis:
-    container_name: sce-redis-dev
+    container_name: sce-redis
     image: redis:latest
     restart: always
     volumes:
@@ -50,7 +50,7 @@ services:
       - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb
-      - REDIS_HOST=sce-redis-dev
+      - REDIS_HOST=sce-redis
       - NODE_ENV=production
     volumes:
       - ./api/main_endpoints/routes/printing:/app/main_endpoints/routes/printing:rw
