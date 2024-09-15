@@ -59,7 +59,7 @@ services:
       - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api-dev:8082/cloudapi
       - DATABASE_HOST=sce-mongodb-dev
-      - REDIS_HOST=sce-redis-dev
+      - REDIS_HOST_URL=redis://sce-redis-dev:6379
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}

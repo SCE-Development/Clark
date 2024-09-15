@@ -1,40 +1,47 @@
 const { createClient } = require('redis');
 const logger = require('../../util/logger');
 
-class MockRedisClient {
+class SceRedisClient {
   constructor() {
-    this.store = new Map();
+    const redisHostUrl = process.env.REDIS_HOST_URL;
+
+    if (redisHostUrl) {
+      this.client = createClient({ url: redisHostUrl });
+      this.useRedis = true;
+    } else {
+      this.client = new Map();
+      this.useRedis = false;
+    }
   }
 
   async connect() {
+    if (this.useRedis) {
+      try {
+        await this.client.connect();
+      } catch (err) {
+        logger.error('Error connecting to Redis:', err);
+      }
+    }
   }
 
   async set(key, value, options = {}) {
-    this.store.set(key, value);
-    return true;
+    return this.client.set(key, value, options);
   }
 
   async get(key) {
-    return this.store.get(key) || null;
+    return this.client.get(key) || null;
   }
 
   async del(key) {
-    return this.store.delete(key) ? true : false;
+    if (this.useRedis) {
+      return this.client.del(key);
+    } else {
+      return this.client.delete(key) ? true : false;
+    }
   }
 }
 
-const redisHost = process.env.REDIS_HOST;
-
-const client = redisHost
-  ? createClient({ url: `redis://${redisHost}:6379` })
-  : new MockRedisClient();
-
-(async () => {
-  try {
-    await client.connect();
-  } catch (err) {
-    logger.error('Error connecting to Redis:', err);
-  }
-})();
+const client = new SceRedisClient();
+client.connect();
 
 module.exports = client;

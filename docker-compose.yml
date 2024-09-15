@@ -50,7 +50,7 @@ services:
       - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb
-      - REDIS_HOST=sce-redis
+      - REDIS_HOST_URL=redis://sce-redis:6379
       - NODE_ENV=production
     volumes:
       - ./api/main_endpoints/routes/printing:/app/main_endpoints/routes/printing:rw

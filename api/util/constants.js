@@ -30,6 +30,8 @@ const consoleColors = {
   defaultColor: '\x1b[0m',
 };
 
+// this is set to 12 hours by:
+// 60 seconds per minute * 60 minutes per hour * 12 hours
 const PASSWORD_RESET_EXPIRATION = 60 * 60 * 12;
 
 module.exports = {
