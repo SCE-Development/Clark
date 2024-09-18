@@ -48,7 +48,7 @@ function SpeakersPage(props) {
 
   const getCurrent = async () => {
     const currentSong = await currentlyPlaying(props.user.token);
-    let q = currentSong.responseData;
+    let q = currentSong;
     setCurrent(q);
     console.log(q, "here")
   }
