@@ -50,6 +50,7 @@ function SpeakersPage(props) {
     const currentSong = await currentlyPlaying(props.user.token);
     let q = currentSong.responseData;
     setCurrent(q);
+    console.log(q, "here")
   }
 
   const getQueuedSongs = async () => {
@@ -154,7 +155,6 @@ function SpeakersPage(props) {
             </button>
             <div><h2 className='text-center m-2 font-bold'>Currently Playing</h2></div>
             <div>
-              {current.current.title}
             </div>
           </div>
           <div className='mt-10 mb-20 items-center'>
