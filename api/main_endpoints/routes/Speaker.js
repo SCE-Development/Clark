@@ -46,7 +46,7 @@ router.get('/queued', async (req, res) => {
   }
 });
 
-router.get('/queued', async (req, res) => {
+router.get('/currentlyPlaying', async (req, res) => {
   if (!ENABLED) {
     logger.warn('Speakers are disabled, returning 200 to mock the speaker server');
     return res.json({
