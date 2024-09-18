@@ -26,23 +26,31 @@ export async function queued(token) {
 export async function currentlyPlaying(token) {
   let status = new ApiResponse();
   const url = new URL('/api/Speaker/currentlyPlaying', BASE_API_URL);
-  
-  await axios
-    .get(url.href, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }
-    )
-    .then(res => {
-      status.responseData = res.data.currentlyPlaying;
-    })
-    .catch(err => {
-      status.responseData = err;
-      status.error = true;
-    });
 
-  console.log("in here")
+  // await axios
+  //   .get(url.href, {
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`
+  //     }
+  //   }
+  //   )
+  //   .then(res => {
+  //     status.responseData = res.data.currentlyPlaying;
+  //   })
+  //   .catch(err => {
+  //     status.responseData = err;
+  //     status.error = true;
+  //   });
+
+  // console.log("in here")
+
+  status.responseData = {
+    "current": {
+        "title": "Raise Spirit - Don't Let Go",
+        "url": "https://www.youtube.com/watch?v=0yxJnmFsSzg",
+        "thumbnail": "https://i.ytimg.com/vi/0yxJnmFsSzg/hqdefault.jpg?sqp=-oaymwE8CKgBEF5IWvKriqkDLwgBFQAAAAAYASUAAMhCPQCAokN4AfABAfgB_gmAAtAFigIMCAAQARh_IBkoUjAP\\u0026rs=AOn4CLBcGkR2s6nlqK2qfekKwMTc-jpO2Q"
+    }
+}
   return status;
 }
 

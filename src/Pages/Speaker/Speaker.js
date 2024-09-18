@@ -48,6 +48,7 @@ function SpeakersPage(props) {
 
   const getCurrent = async () => {
     const currentSong = await currentlyPlaying(props.user.token);
+    console.log(currentSong, "HERE")
     setCurrent(currentSong.responseData.current)
   }
 
@@ -175,7 +176,7 @@ function SpeakersPage(props) {
                 {
                   queue.map((song, index) => (
                     <tr key={index}>
-                      <td>{index}</td>
+                      <td>{index + 1}</td>
                       <td className='pl-2'><a href={song.url} className="no-underline hover:underline">{song.title}</a></td>
                       <img
                         src = {song.thumbnail}
