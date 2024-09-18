@@ -51,6 +51,8 @@ function SpeakersPage(props) {
     let q = currentSong.responseData;
     setCurrent(q);
     console.log(q, "here")
+    console.log(q.title, "here")
+    console.log(q.thumbnail, "here")
   }
 
   const getQueuedSongs = async () => {
