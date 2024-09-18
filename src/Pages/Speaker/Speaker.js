@@ -48,7 +48,7 @@ function SpeakersPage(props) {
 
   const getCurrent = async () => {
     const currentSong = await currentlyPlaying(props.user.token);
-    let q = currentSong;
+    let q = currentSong.responseData;
     setCurrent(q);
     console.log(q, "here")
   }
@@ -155,6 +155,7 @@ function SpeakersPage(props) {
             </button>
             <div><h2 className='text-center m-2 font-bold'>Currently Playing</h2></div>
             <div>
+              
             </div>
           </div>
           <div className='mt-10 mb-20 items-center'>
