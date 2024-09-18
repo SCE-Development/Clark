@@ -23,6 +23,29 @@ export async function queued(token) {
   return status;
 }
 
+export async function currentlyPlaying(token) {
+  let status = new ApiResponse();
+  const url = new URL('/api/Speaker/currentlyPlaying', BASE_API_URL);
+  
+  await axios
+    .get(url.href, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+    )
+    .then(res => {
+      status.responseData = res.data.currentlyPlaying;
+    })
+    .catch(err => {
+      status.responseData = err;
+      status.error = true;
+    });
+
+  console.log("in here")
+  return status;
+}
+
 export async function addUrl(urlToAdd, token) {
   let status = new ApiResponse();
   const url = new URL('/api/Speaker/stream', BASE_API_URL);

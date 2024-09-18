@@ -11,7 +11,7 @@ const {
   FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
-const { sendSpeakerRequest, getQueued } = require('../util/Speaker');
+const { sendSpeakerRequest, getQueued, getCurrentlyPlaying } = require('../util/Speaker');
 const { Speakers = {} } = require('../../config/config.json');
 const { ENABLED = false } = Speakers;
 
@@ -34,6 +34,38 @@ router.get('/queued', async (req, res) => {
 
   try {
     const response = await getQueued();
+    const data = response.data;
+    return res.json(data);
+  } catch (err) {
+    logger.error('/getQueued had an error', err);
+    if (err.response && err.response.data) {
+      res.status(err.response.status).json({ error: err.response.data });
+    } else {
+      res.status(SERVER_ERROR).json({ error: 'Failed to get queued songs' });
+    }
+  }
+});
+
+router.get('/queued', async (req, res) => {
+  if (!ENABLED) {
+    logger.warn('Speakers are disabled, returning 200 to mock the speaker server');
+    return res.json({
+      disabled: true
+    });
+  }
+  const { path } = req.route;
+  if (!checkIfTokenSent(req)) {
+    logger.warn(`${path} was requested without a token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!await decodeToken(req)) {
+    logger.warn(`${path} was requested with an invalid token`);
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  try {
+    const response = await getCurrentlyPlaying();
+    console.log(response, "here")
     const data = response.data;
     return res.json(data);
   } catch (err) {

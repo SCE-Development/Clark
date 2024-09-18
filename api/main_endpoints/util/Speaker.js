@@ -20,4 +20,6 @@ async function sendSpeakerRequest(path, body = {}) {
 
 const getQueued = () => axios.get(SPEAKER_URL + '/queued');
 
-module.exports = { sendSpeakerRequest, getQueued };
+const getCurrentlyPlaying = () => axios.get(SPEAKER_URL + '/currentlyPlaying');
+
+module.exports = { sendSpeakerRequest, getQueued, getCurrentlyPlaying };
