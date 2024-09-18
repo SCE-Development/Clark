@@ -65,7 +65,7 @@ router.get('/currentlyPlaying', async (req, res) => {
 
   try {
     const response = await getCurrentlyPlaying();
-    console.log(response, "here")
+    console.log(response, "here in router")
     const data = response.data;
     return res.json(data);
   } catch (err) {
