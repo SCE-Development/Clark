@@ -155,7 +155,16 @@ function SpeakersPage(props) {
             </button>
             <div><h2 className='text-center m-2 font-bold'>Currently Playing</h2></div>
             <div>
-              
+            {current && (
+                <div className='flex items-center flex-col'>
+                  <img src={current.thumbnail} alt={current.title} className='w-3/4 h-3/4 m-4' />
+                  <div>
+                    <a href={current.url} target="_blank" rel="noopener noreferrer" className='no-underline hover:underline'>
+                      {current.title}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className='mt-10 mb-20 items-center'>
