@@ -35,7 +35,7 @@ export async function currentlyPlaying(token) {
     }
     )
     .then(res => {
-      status.responseData = res.data.currentlyPlaying;
+      status.responseData = res.data.current;
     })
     .catch(err => {
       status.responseData = err;
