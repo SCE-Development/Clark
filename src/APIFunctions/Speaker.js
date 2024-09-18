@@ -26,7 +26,6 @@ export async function queued(token) {
 export async function currentlyPlaying(token) {
   let status = new ApiResponse();
   const url = new URL('/api/Speaker/currentlyPlaying', BASE_API_URL);
-
   await axios
     .get(url.href, {
       headers: {
@@ -35,6 +34,7 @@ export async function currentlyPlaying(token) {
     }
     )
     .then(res => {
+      console.log(res.data)
       status.responseData = res.data.current;
     })
     .catch(err => {
