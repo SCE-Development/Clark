@@ -308,7 +308,7 @@ router.post('/resetPassword', async (req, res) => {
     }
     user.password = req.body.password;
     await user.save();
-    await redisClient.del(req.body.resetToken);
+    await redisClient.delete(req.body.resetToken);
   } catch (error) {
     logger.error('Unable to reset password:', error);
     return res.sendStatus(BAD_REQUEST);

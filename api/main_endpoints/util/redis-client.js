@@ -5,22 +5,25 @@ class SceRedisClient {
   constructor() {
     const redisHostUrl = process.env.REDIS_HOST_URL;
 
+    this.useRedis = !!redisHostUrl;
+    this.client = new Map();
+
     if (redisHostUrl) {
       this.client = createClient({ url: redisHostUrl });
-      this.useRedis = true;
-    } else {
-      this.client = new Map();
-      this.useRedis = false;
     }
   }
 
   async connect() {
-    if (this.useRedis) {
-      try {
-        await this.client.connect();
-      } catch (err) {
-        logger.error('Error connecting to Redis:', err);
-      }
+    // skip connecting to redis if it's not configured
+    // when we initialized the class
+    if (!this.useRedis) {
+      return;
+    }
+
+    try {
+      await this.client.connect();
+    } catch (err) {
+      logger.error('Error connecting to Redis:', err);
     }
   }
 
@@ -32,7 +35,7 @@ class SceRedisClient {
     return this.client.get(key) || null;
   }
 
-  async del(key) {
+  async delete(key) {
     if (this.useRedis) {
       return this.client.del(key);
     } else {
