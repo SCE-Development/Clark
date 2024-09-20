@@ -10,18 +10,20 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
+const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { MetricsHandler, register } = require('../../util/metrics.js');
 
 
 router.use(bodyParser.json());
+
+
 
 const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
 const writeMessage = ((roomId, message, username) => {
-
-  const currentTimestamp = new Date();
 
   const messageObj = {
     timestamp: Date.now(),
@@ -34,6 +36,12 @@ const writeMessage = ((roomId, message, username) => {
   }
 
   lastMessageSent[roomId] = JSON.stringify(messageObj);
+
+  // increase the total messages sent counter
+  MetricsHandler.totalMessagesSent.inc();
+
+  // increase the total amount of messages sent per chatroom counter
+  MetricsHandler.totalChatMessagesPerChatRoom.labels(roomId).inc();
 });
 
 router.post('/send', async (req, res) => {
@@ -183,15 +191,20 @@ router.get('/listen', async (req, res) => {
         clients[id] = [];
       }
 
+      // add connection to the connections open gauge
+      MetricsHandler.currentConnectionsOpen.labels(id).inc();
+
       clients[id].push(res);
 
       req.on('close', () => {
         if(clients[id]){
+          MetricsHandler.currentConnectionsOpen.labels(id).dec();
           clients[id] = clients[id].filter(client => client !== res);
         }
         if(clients[id].length === 0){
           delete clients[id];
           delete lastMessageSent[id];
+          MetricsHandler.currentConnectionsOpen.remove({ id });
         }
         numberOfConnections[_id] -= 1;
       });
@@ -200,6 +213,13 @@ router.get('/listen', async (req, res) => {
     logger.error('Error in /listen: ', error);
     res.sendStatus(SERVER_ERROR);
   }
+});
+
+
+// to get prometheus metrics
+router.get('/metrics', async (req, res) => {
+  res.setHeader('Content-Type', register.contentType);
+  res.end(await register.metrics());
 });
 
 // heartbeat mechanism to bypass NGINX timeout

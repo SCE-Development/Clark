@@ -25,7 +25,24 @@ class MetricsHandler {
 	  labelNames: ['type'],
 	});
 
-	constructor() {
+	  totalMessagesSent = new client.Counter({
+	    name: 'total_messages_sent',
+	    help: 'Total number of messages sent'
+	  });
+
+	  currentConnectionsOpen = new client.Gauge({
+	    name: 'current_connections_open',
+	    help: 'Total number of connections open',
+	    labelNames: ['id']
+	  });
+
+	  totalChatMessagesPerChatRoom = new client.Counter({
+	    name: 'total_chat_messages_per_chatroom',
+	    help: 'Total number of messages sent per chatroom',
+	    labelNames: ['id']
+	  });
+
+	  constructor() {
 	  register.setDefaultLabels({
 	    app: 'sce-core',
 	  });
@@ -34,7 +51,7 @@ class MetricsHandler {
 	  Object.keys(this).forEach(metric => {
 	    register.registerMetric(this[metric]);
 	  });
-	}
+	  }
 }
 
 module.exports = {
