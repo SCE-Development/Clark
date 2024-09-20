@@ -154,8 +154,11 @@ function Feed(props) {
       <div id="messages" className="border border-gray-300 p-3 h-96 overflow-y-auto bg-gray-100 w-2/3 rounded-lg mt-3">
         {messages.map((message, index) => (
           <div key={index} className="p-2 mb-1 border-b border-gray-200 flex items-center">
-            <div className="text-gray-700 grow">{message['message']}</div>
-            <div className="text-gray-500 text-xs">
+            <div className='flex flex-row'>
+              <div className="text-gray-700 grow" >{message['username']}</div>
+              <div className="text-gray-700 grow ml-1 whitespace-pre-wrap">{message['message']}</div>
+            </div>
+            <div className="text-gray-500 text-xs ml-auto">
               {
                 new Date(message['timestamp']).toLocaleString(
                   [],
