@@ -171,7 +171,7 @@ export default function ProjectsPage() {
                 {/* <span className="text-sm">14 days ago</span> */}
               </div>
               <img src={project.image} />
-              <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h2 className="mb-2 pt-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                 <a href="#">{project.name}</a>
               </h2>
               <p className="mb-5 font-light text-gray-500 dark:text-gray-400">{project.caption}</p>
