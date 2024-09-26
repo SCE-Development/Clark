@@ -1,24 +1,28 @@
 const axios = require('axios');
 const express = require('express');
 const multer = require('multer');
-const FormData = require('form-data');
 const logger = require('../../util/logger');
 const fs = require('fs');
 const path = require('path');
 
+const { healthCheck, print, getPageCount, getFileAndFormData } = require('../util/Printer.js');
 const {
   decodeToken,
   checkIfTokenSent,
+  checkIfTokenValid,
 } = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  BAD_REQUEST,
 } = require('../../util/constants').STATUS_CODES;
 const {
   PRINTING = {}
 } = require('../../config/config.json');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const User = require('../models/User.js');
 const { MetricsHandler } = require('../../util/metrics');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
@@ -40,65 +44,82 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+async function deleteFile(filePath) {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      logger.error(`Unable to delete file at path ${filePath}:`, err);
+    }
+  });
+}
+
+const fileUpload = process.env.NODE_ENV !== 'test' ? upload.single('file') : (req, res, next) => next();
+
 router.get('/healthCheck', async (req, res) => {
-  /*
-   * How these work with Quasar:
-   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
-   */
-  if (!PRINTING.ENABLED) {
+/*
+ * How these work with Quasar:
+ * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
+ */
+  if (!PRINTING.ENABLED && process.env.NODE_ENV !== 'test') {
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
-  await axios
-    .get(PRINTER_URL + '/healthcheck/printer')
-    .then(() => {
-      return res.sendStatus(OK);
-    })
-    .catch((err) => {
-      logger.error('Printer SSH tunnel is down: ', err);
-      MetricsHandler.sshTunnelErrors.inc({ type: 'Printer' });
-      return res.sendStatus(NOT_FOUND);
-    });
+  const healthy = await healthCheck();
+  if (!healthy) {
+    MetricsHandler.sshTunnelErrors.inc({ type: 'Printer' });
+    return res.sendStatus(NOT_FOUND);
+  }
+  return res.sendStatus(OK);
 });
 
-router.post('/sendPrintRequest', upload.single('file'), async (req, res) => {
+router.post('/sendPrintRequest', fileUpload, async (req, res) => {
   if (!checkIfTokenSent(req)) {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req)) {
+  if (!checkIfTokenValid(req, membershipState.MEMBER)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!PRINTING.ENABLED) {
+  if (!PRINTING.ENABLED && process.env.NODE_ENV !== 'test') {
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
-  const { copies, sides } = req.body;
-  const file = req.file;
-  const data = new FormData();
-  data.append('file', fs.createReadStream(file.path), { filename: file.originalname });
-  data.append('copies', copies);
-  data.append('sides', sides);
-  axios.post(PRINTER_URL + '/print',
-    data,
-    {
-      headers: {
-        ...data.getHeaders(),
+  const email = decodeToken(req).email;
+  const {copies, sides} = req.body;
+  const {file, data} = await getFileAndFormData(req);
+
+  try {
+    const user = await User.findOne({ email });
+    const sidesUsed = sides === 'one-sided' ? 1 : 2;
+    const pagesCount = await getPageCount(file.path);
+    const wholePagesUsed = Math.floor(pagesCount / sidesUsed);
+    const remainder = pagesCount % sidesUsed;
+    const pagesToBeUsedInPrintRequest = (wholePagesUsed + remainder) * parseInt(copies);
+
+    if (user.pagesPrinted + pagesToBeUsedInPrintRequest > 30) {
+      await deleteFile(file.path);
+      logger.warn('Print request exceeded weekly limit');
+      return res.sendStatus(BAD_REQUEST);
+    }
+
+    await print(data);
+
+    await User.updateOne(
+      { email },
+      {
+        $inc: { pagesPrinted: pagesToBeUsedInPrintRequest },
       }
-    })
-    .then(() => {
-      // delete file from temp folder after printing
-      fs.unlink(file.path, (err) => {
-        if (err) {
-          logger.error(`Unable to delete file at path ${file.path}:`, err);
-        }
-      });
-      res.sendStatus(OK);
-    }).catch((err) => {
-      logger.error('/sendPrintRequest had an error: ', err);
-      res.sendStatus(SERVER_ERROR);
-    });
+    );
+    await deleteFile(file.path);
+
+    res.sendStatus(OK);
+  } catch (err) {
+    if (file && file.path) {
+      await deleteFile(file.path);
+    }
+    logger.error('/sendPrintRequest had an error: ', err);
+    return res.sendStatus(SERVER_ERROR);
+  }
 });
 
 module.exports = router;

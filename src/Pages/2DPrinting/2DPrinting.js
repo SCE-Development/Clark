@@ -5,7 +5,6 @@ import {
   printPage,
   getPagesPrinted,
 } from '../../APIFunctions/2DPrinting';
-import { editUser } from '../../APIFunctions/User';
 
 import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
@@ -193,10 +192,6 @@ export default function Printing(props) {
     let status = await printPage(data, props.user.token);
 
     if (!status.error) {
-      editUser(
-        { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        props.user.token,
-      );
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
     } else {
