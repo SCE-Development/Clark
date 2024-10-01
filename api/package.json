@@ -31,7 +31,7 @@
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "express": "^4.21.0",
     "form-data": "^4.0.0",
     "googleapis": "^52.1.0",
     "mongoose": "^5.10.0",
