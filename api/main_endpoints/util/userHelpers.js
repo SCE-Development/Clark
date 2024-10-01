@@ -1,10 +1,10 @@
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/User');
-const PasswordReset = require('../models/PasswordReset');
 const config = require('../../config/config.json');
 const logger = require('../../util/logger');
 const { verifyCaptcha } = require('./captcha');
+const redisClient = require('./redis-client');
 
 function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong';
@@ -163,12 +163,14 @@ function hashPassword(password) {
   });
 }
 
-function findPasswordReset(resetToken) {
-  return new Promise((resolve, reject) => {
-    PasswordReset.findOne({ token: resetToken })
-      .then(passwordReset => resolve(passwordReset))
-      .catch(err => reject(err));
-  });
+async function findPasswordReset(resetToken) {
+  let userId = null;
+  try {
+    userId = await redisClient.get(resetToken);
+  } catch (error) {
+    logger.error('Unable to get reset token:', error);
+  }
+  return userId;
 }
 
 /**

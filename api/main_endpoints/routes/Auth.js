@@ -7,7 +7,8 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const config = require('../../config/config.json');
 const User = require('../models/User.js');
-const PasswordReset = require('../models/PasswordReset.js');
+const redisClient = require('../util/redis-client.js');
+const logger = require('../../util/logger');
 const { registerUser, testPasswordStrength } = require('../util/userHelpers');
 const { verifyCaptcha } = require('../util/captcha');
 const {
@@ -25,6 +26,7 @@ const {
   CONFLICT
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const PASSWORD_RESET_EXPIRATION = require('../../util/constants').PASSWORD_RESET_EXPIRATION;
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
@@ -103,11 +105,7 @@ router.post('/sendPasswordReset', async (req, res) => {
 
     const resetToken = id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     try {
-      await PasswordReset.updateOne(
-        { userId: result._id },
-        { $set: { token: resetToken, createdAt: new Date() } },
-        { upsert: true }
-      );
+      await redisClient.set(resetToken, String(result._id), {EX: PASSWORD_RESET_EXPIRATION});
       await sendPasswordReset(resetToken, req.body.email);
     } catch (error) {
       logger.error('unable to save password reset token:', error);
@@ -296,21 +294,21 @@ router.post('/resetPassword', async (req, res) => {
   }
 
   try {
-    const passwordReset = await findPasswordReset(req.body.resetToken);
-    if (!passwordReset) {
+    const userId = await findPasswordReset(req.body.resetToken);
+    if (!userId) {
       return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
     }
-    const validId = await bcrypt.compare(String(passwordReset.userId), req.body.hashedId);
+    const validId = await bcrypt.compare(String(userId), req.body.hashedId);
     if (!validId) {
       return res.status(BAD_REQUEST).send({ message: 'Invalid user ID.' });
     }
-    const user = await User.findOne({ _id: passwordReset.userId });
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return res.status(NOT_FOUND).send({ message: 'User not found.' });
     }
     user.password = req.body.password;
     await user.save();
-    await passwordReset.delete();
+    await redisClient.delete(req.body.resetToken);
   } catch (error) {
     logger.error('Unable to reset password:', error);
     return res.sendStatus(BAD_REQUEST);

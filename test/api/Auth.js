@@ -1,9 +1,9 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
 const mongoose = require('mongoose');
+const redisClient = require('../../api/main_endpoints/util/redis-client.js');
 const bcrypt = require('bcryptjs');
 const User = require('../../api/main_endpoints/models/User');
-const PasswordReset = require('../../api/main_endpoints/models/PasswordReset');
 const EmailHelpers = require('../../api/main_endpoints/util/emailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
@@ -191,7 +191,7 @@ describe('Auth', () => {
     });
 
     it('Should return statusCode 200 if the email does exist in the database', async () => {
-      user = new User({
+      const user = new User({
         _id: new mongoose.Types.ObjectId(),
         firstName: 'first-name',
         lastName: 'last-name',
@@ -230,18 +230,8 @@ describe('Auth', () => {
   });
 
   describe('/POST validatePasswordReset', () => {
-    let createdPasswordReset = null;
-
     before(async () => {
-      const newPasswordReset = new PasswordReset({
-        userId: mongoose.Types.ObjectId('valid id 321'),
-        token: 'valid token',
-      });
-      createdPasswordReset = await newPasswordReset.save();
-    });
-
-    after(async () => {
-      if (createdPasswordReset) await PasswordReset.deleteOne({ _id: createdPasswordReset._id});
+      await redisClient.set('valid token', 'valid id 321', { EX: 60 * 60 });
     });
 
     it('Should return statusCode 404 if the token is invalid', async () => {
@@ -262,17 +252,14 @@ describe('Auth', () => {
   });
 
   describe('/POST resetPassword', () => {
-    let createdPasswordReset = null;
+    let createdId = mongoose.Types.ObjectId('valid id 123');
     let createdUser = null;
 
     before(async () => {
-      const newPasswordReset = new PasswordReset({
-        userId: mongoose.Types.ObjectId('valid id 123'),
-        token: 'valid token',
-      });
-      createdPasswordReset = await newPasswordReset.save();
+      await redisClient.set('valid token', String(createdId), { EX: 60 * 60 });
+
       const newUser = new User({
-        _id: createdPasswordReset.userId,
+        _id: createdId,
         email: 'abcdef123@gmail.com',
         password: 'Passw0rd',
         firstName: 'first-name',
@@ -282,7 +269,6 @@ describe('Auth', () => {
     });
 
     after(async () => {
-      if (createdPasswordReset) await PasswordReset.deleteOne({ _id: createdPasswordReset._id});
       if (createdUser) await User.deleteOne({ _id: createdUser._id});
     });
 
@@ -317,7 +303,7 @@ describe('Auth', () => {
       const data = {
         password: 'Passw0rd',
         resetToken: 'valid token',
-        hashedId: await bcrypt.hash(String(createdPasswordReset.userId), await bcrypt.genSalt(10)),
+        hashedId: await bcrypt.hash(String(createdId), await bcrypt.genSalt(10)),
       };
       const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
       expect(result).to.have.status(OK);
