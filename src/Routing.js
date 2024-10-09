@@ -19,6 +19,7 @@ import MembershipApplication from
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
 import AdvertisementAdmin from './Pages/Advertisement/AdvertisementAdmin.js';
+import SCEatsAdmin from './Pages/SCEatsAdmin/SCEatsAdmin.js';
 
 import { membershipState } from './Enums';
 
@@ -135,6 +136,13 @@ export default function Routing({ appProps }) {
     {
       Component: AdvertisementAdmin,
       path: '/advertisement-admin',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    },
+    {
+      Component: SCEatsAdmin,
+      path: '/sceats-admin',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
