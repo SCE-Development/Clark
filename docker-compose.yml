@@ -36,7 +36,6 @@ services:
       - mongodb
     depends_on:
       - mongodb
-
   main-endpoints:
     container_name: sce-main-endpoints
     build:
@@ -75,7 +74,6 @@ services:
       - mongodb
     environment:
       - NODE_ENV=production
- 
   prometheus:
     image: prom/prometheus:latest
     restart: always
@@ -100,8 +98,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:rw
     devices:
       - /dev/kmsg:/dev/kmsg
-
-  web:
+  clark-node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+  nginx:
     image: 'nginx'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
