@@ -154,9 +154,20 @@ function Feed(props) {
       <div id="messages" className="border border-gray-300 p-3 h-96 overflow-y-auto bg-gray-100 w-2/3 rounded-lg mt-3">
         {messages.map((message, index) => (
           <div key={index} className="p-2 mb-1 border-b border-gray-200 flex items-center">
-            <div className='flex flex-row'>
-              <div className="text-gray-700 grow" >{message['username']}</div>
-              <div className="text-gray-700 grow ml-1 whitespace-pre-wrap">{message['message']}</div>
+            <div className='flex flex-col flex-grow'>
+              <div className='flex flex-row'>
+                <div className="text-gray-700 grow">{message['username']}</div>
+                <div className="text-gray-700 grow ml-1 whitespace-pre-wrap">{message['message']}</div>
+              </div>
+              {message['imageUrls'].length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {message['imageUrls'].map((imageUrl, imgIndex) => (
+                    <div key={imgIndex} className="max-w-xs">
+                      <img src={imageUrl} className="max-w-full h-auto rounded-lg shadow-md" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="text-gray-500 text-xs ml-auto">
               {
