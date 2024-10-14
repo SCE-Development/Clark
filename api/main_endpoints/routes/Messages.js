@@ -13,7 +13,7 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-
+const axios = require('axios');
 
 router.use(bodyParser.json());
 
@@ -23,12 +23,30 @@ const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeMessage = ((roomId, message, username) => {
+async function isImgUrl(url) {
+  try {
+    const res = await axios.head(url);
+    return res.headers['content-type'].startsWith('image');
+  } catch (error) {
+    return false;
+  }
+}
+
+const writeMessage = async (roomId, message, username) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const urls = message.match(urlRegex) || [];
+  const imageUrls = await Promise.all(urls.map(async (url) => {
+    return await isImgUrl(url) ? url : null;
+  }))
+    .catch(() => {
+      return [];
+    });
 
   const messageObj = {
     timestamp: Date.now(),
     message,
-    username
+    username,
+    imageUrls: imageUrls?.filter(url => url !== null),
   };
 
   if (clients[roomId]) {
@@ -42,7 +60,7 @@ const writeMessage = ((roomId, message, username) => {
 
   // increase the total amount of messages sent per chatroom counter
   MetricsHandler.totalChatMessagesPerChatRoom.labels(roomId).inc();
-});
+};
 
 router.post('/send', async (req, res) => {
 
