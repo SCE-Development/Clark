@@ -23,7 +23,40 @@ export async function createFood(newFood, token) {
     newFood,
     {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+      }
+    }).catch(err => {
+      status.error = true;
+      status.responseData = err;
+    });
+  return status;
+}
+
+export async function deleteFood(id, token) {
+  let status = new ApiResponse();
+  await axios
+    .post(
+      FOOD_API_URL + '/Food/deleteFood',
+      { _id: id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    ).catch((err) => {
+      status.error = true;
+      status.responseData = err;
+    });
+  return status; 
+}
+
+export async function editFood(food, token) {
+  let status = new ApiResponse();
+  await axios.post(FOOD_API_URL + '/Food/editFood',
+    food,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
       }
     }).catch(err => {
       status.error = true;
