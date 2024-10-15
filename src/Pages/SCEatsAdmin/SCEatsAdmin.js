@@ -19,7 +19,7 @@ export default function SCEatsAdmin(props) {
     expiration: ""
   });
 
-  const handleCreate = async() => {
+  const handleCreate = async () => {
     await createFood({
       name,
       photo,
@@ -30,7 +30,7 @@ export default function SCEatsAdmin(props) {
     getFoodsFromDB();
   }
 
-  const handleDelete = async(id) => {
+  const handleDelete = async (id) => {
     await deleteFood(id, props.user.token);
     getFoodsFromDB();
   }
@@ -46,7 +46,7 @@ export default function SCEatsAdmin(props) {
     });
   };
 
-  const handleSave = async() => {
+  const handleSave = async () => {
     await editFood({ ...editedFood, _id: editingId }, props.user.token);
     getFoodsFromDB();
     setEditingId(null);
@@ -165,23 +165,71 @@ export default function SCEatsAdmin(props) {
         {foods.map(food => (
           <div key={food._id} className="border p-4 rounded-lg shadow-md">
             <img src={food.photo} alt={food.name} className="w-full h-48 object-cover rounded-md" />
-            <h2 className="text-xl font-bold mt-4">{food.name}</h2>
-            <p className="text-gray-700">Price: ${food.price.toFixed(2)}</p>
-            <p className="text-gray-700 mt-1">Quantity: {food.quantity}</p>
+            <h2 className="text-xl font-bold mt-4">
+              {editingId === food._id ? (
+                <input
+                  type="text"
+                  value={editedFood.name}
+                  onChange={e =>
+                    setEditedFood({
+                      ...editedFood,
+                      name: e.target.value,
+                    })
+                  }
+                />
+              ) : (
+                food.name
+              )}
+            </h2>
+            <p className="text-gray-700 mt-1">
+              Price: {editingId === food._id ? (
+                <input
+                  type="text"
+                  value={editedFood.price}
+                  onChange={e =>
+                    setEditedFood({
+                      ...editedFood,
+                      price: e.target.value,
+                    })
+                  }
+                />
+              ) : (
+                `${food.price.toFixed(2)}`
+              )}
+            </p>
+            <p className="text-gray-700 mt-1">
+              Quantity: {editingId === food._id ? (
+                <input
+                  type="text"
+                  value={editedFood.quantity}
+                  onChange={e =>
+                    setEditedFood({
+                      ...editedFood,
+                      quantity: e.target.value,
+                    })
+                  }
+                />
+              ) : (
+                food.quantity
+              )}
+            </p>
             <div className="flex justify-between items-center">
               <p className="text-gray-700">Expiration: {food.expiration ? new Date(food.expiration).toLocaleDateString() : 'N/A'}</p>
               <div className="flex space-x-2">
-                <button
-                  onClick={() => handleEdit(food)}
-                  className="bg-blue-500 text-white px-2 py-2 rounded-md"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="20" stroke-dashoffset="20" d="M3 21h18"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.2s" values="20;0" /></path><path stroke-dasharray="48" stroke-dashoffset="48" d="M7 17v-4l10 -10l4 4l-10 10h-4"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.2s" dur="0.6s" values="48;0" /></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M14 6l4 4"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="8;0" /></path></g></svg>                </button>
-                <button
-                  onClick={async() => handleDelete(food._id)}
-                  className="bg-red-500 text-white px-2 py-2 rounded-md"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>
-                </button>
+                {editingId === food._id ? (
+                  <button
+                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={() => handleSave()}>Save</button>
+                ) : (
+                  <>
+                    <button onClick={() => handleEdit(food)} className="bg-blue-500 text-white px-2 py-2 rounded-md">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="20" stroke-dashoffset="20" d="M3 21h18"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.2s" values="20;0" /></path><path stroke-dasharray="48" stroke-dashoffset="48" d="M7 17v-4l10 -10l4 4l-10 10h-4"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.2s" dur="0.6s" values="48;0" /></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M14 6l4 4"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="8;0" /></path></g></svg>                
+                    </button>
+                    <button onClick={async () => handleDelete(food._id)} className="bg-red-500 text-white px-2 py-2 rounded-md">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z" /></svg>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
