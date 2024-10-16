@@ -86,6 +86,11 @@ export default function SCEatsAdmin(props) {
         SCEats Admin Page
       </h1>
 
+      {/*                                                                   
+          Field Inputs for Food name, photo URL, quantity, price, expiration 
+      */}
+
+
       <div className="mt-10 flex flex-col md:grid md:grid-cols-1 md:gap-x-6 md:gap-y-8 lg:flex lg:flex-row md:flex-wrap lg:gap-x-6 lg:gap-y-8">
         <div className="flex-1 min-w-[200px]">
           <label htmlFor="name" className='block text-sm font-medium leading-6 text-gray-300'>
@@ -173,6 +178,11 @@ export default function SCEatsAdmin(props) {
           Save
         </button>
       </div>
+
+
+      {/*                                                                   
+          Grid of Food 
+      */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {foods.map(food => (
