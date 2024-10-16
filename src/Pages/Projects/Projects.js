@@ -1,4 +1,5 @@
 import React from 'react';
+import ProjectCard from './Components/ProjectCard';
 
 const projects = [
   {
@@ -30,8 +31,6 @@ const projects = [
     'caption': 'Produced as a part of our summer internship projects, SCE interns designed an officer-controlled illuminated sign, functioning to brighten the clubroom\'s atmosphere.'
   }
 ];
-
-import ProjectCard from './Components/ProjectCard';
 
 export default function ProjectsPage() {
   return (
