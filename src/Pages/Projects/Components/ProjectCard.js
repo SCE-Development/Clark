@@ -4,12 +4,12 @@ import React from 'react';
 export default function ProjectCard({project}) {
   return (
     <div className="flex justify-center">
-      <div className="card md:card-side shadow-xl w-[75%] border dark:bg-gray-800 dark:border-gray-700">
-        <div className="flex justify-center items-center py-4 md:pl-4">
+      <div className="card md:card-side shadow-xl w-[85%] md:w-[75%] border dark:bg-gray-800 dark:border-gray-700">
+        <div className="flex justify-center items-center pb-0 md:pb-4 pt-4 md:pl-4">
           <img
             src={project.image}
             alt="Album"
-            className="max-w-80 h-auto rounded-lg"/>
+            className="max-w-60 md:max-w-80 h-auto rounded-lg"/>
         </div>
         <div className="card-body">
           <h2 className="card-title text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{project.name}</h2>
