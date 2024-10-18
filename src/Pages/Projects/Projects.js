@@ -1,4 +1,5 @@
 import React from 'react';
+import ProjectCard from './Components/ProjectCard';
 
 const projects = [
   {
@@ -51,8 +52,6 @@ const projects = [
     'caption': 'In the spirit of our love for pancakes, SCE\'s hardware team constructed a 3D Pancake Printer. Does it work? No. When completed it will create intricate pancake designs.'
   } */
 ];
-
-import ProjectCard from './Components/ProjectCard';
 
 export default function ProjectsPage() {
   return (
