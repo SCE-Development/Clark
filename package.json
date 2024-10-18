@@ -51,7 +51,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.2",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^7.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
