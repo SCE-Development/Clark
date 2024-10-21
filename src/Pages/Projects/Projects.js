@@ -18,21 +18,21 @@ const projects = [
   },
   {
     'link': 'https://github.com/SCE-Development/Clark',
-    'image': '/images/sceta.png ',
+    'image': 'https://github.com/user-attachments/assets/1637dc25-2073-43e5-a952-c1a3d50d16fe',
     'name': 'SCEta Transit',
     'information': 'Full Stack',
     'caption': 'SCETA Transit is a web application that provides real-time bus, Caltrain, and BART timing predictions for nearby stops.'
   },
   {
     'link': 'https://github.com/SCE-Development/Clark',
-    'image': '/images/messaging.png ',
+    'image': 'https://github.com/user-attachments/assets/204dc7d7-e7a1-4add-ae6b-37286ba1c510',
     'name': 'SCE Chatroom',
     'information': 'Full Stack',
     'caption': 'SCE\'s chatroom is a web application that allows members to communicate with each other in real-time.'
   },
   {
     'link': 'https://github.com/SCE-Development/cleezy',
-    'image': '/images/placeholder.jpg',
+    'image': 'https://github.com/user-attachments/assets/777307da-36b0-4255-a77d-87651bb253d1',
     'name': 'Cleezy',
     'information': 'FastAPI',
     'caption': 'A url shortening service created by SCE'
