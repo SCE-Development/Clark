@@ -49,9 +49,9 @@ export default function ProjectsPage() {
         <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400 mx-8">The SCE Development Team is open to all students, no prior experience is required!</p>
         <br />
       </div>
-      {projects.map((project, index) => (
+      {projects.map((project) => (
         <>
-          <ProjectCard key={index} project={project} />
+          <ProjectCard key={project.name} project={project} />
           <br />
           <br />
         </>
