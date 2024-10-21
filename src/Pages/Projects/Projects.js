@@ -37,20 +37,6 @@ const projects = [
     'information': 'FastAPI',
     'caption': 'A url shortening service created by SCE'
   },
-  /* {
-    'link': 'https://github.com/SCE-Development/RFID-door-lock',
-    'image': 'https://user-images.githubusercontent.com/59713070/235862570-70f92c0a-8e18-4ddf-b7c8-bdb21723480f.jpeg',
-    'name': 'RFID Door System',
-    'information': 'Firmware with Arduino',
-    'caption': 'SCE\'s development team officers created an RFID card reader and door control relay to allow entry into the clubroom\'s office using a Clipper card.'
-  },
-  {
-    'link': 'https://github.com/SCE-Development/',
-    'image': 'https://user-images.githubusercontent.com/59713070/235861717-5315d9df-fb5e-4414-84bb-0334fe769271.jpeg',
-    'name': '3D Pancake Printer',
-    'information': '3D Printing with Marlin Firmware',
-    'caption': 'In the spirit of our love for pancakes, SCE\'s hardware team constructed a 3D Pancake Printer. Does it work? No. When completed it will create intricate pancake designs.'
-  } */
 ];
 
 export default function ProjectsPage() {
