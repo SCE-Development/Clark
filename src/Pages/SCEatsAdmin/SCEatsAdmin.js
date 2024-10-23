@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { getAllFoods, createFood, deleteFood, editFood } from '../../APIFunctions/Foods';
 import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css"
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function SCEatsAdmin(props) {
   const [foods, setFoods] = useState([]);
@@ -12,44 +12,14 @@ export default function SCEatsAdmin(props) {
   const [quantity, setQuantity] = useState();
   const [expiration, setExpiration] = useState();
 
-  const [photoPreview, setPhotoPreview] = useState(null);
-
   const [editingId, setEditingId] = useState(null);
   const [editedFood, setEditedFood] = useState({
-    name: "",
-    photo: "",
-    price: "",
-    quantity: "",
-    expiration: ""
+    name: '',
+    photo: '',
+    price: '',
+    quantity: '',
+    expiration: ''
   });
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setPhoto(file)
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleCreate = async () => {
-    await createFood({
-      name,
-      photo,
-      price,
-      quantity,
-      expiration
-    }, props.user.token);
-    getFoodsFromDB();
-  }
-
-  const handleDelete = async (id) => {
-    await deleteFood(id, props.user.token);
-    getFoodsFromDB();
-  }
 
   const handleEdit = (food) => {
     setEditingId(food._id);
@@ -62,21 +32,38 @@ export default function SCEatsAdmin(props) {
     });
   };
 
-  const handleSave = async () => {
-    await editFood({ ...editedFood, _id: editingId }, props.user.token);
-    getFoodsFromDB();
-    setEditingId(null);
-  }
-
   async function getFoodsFromDB() {
     const foodsFromDB = await getAllFoods();
     if (!foodsFromDB.error) {
       setFoods(foodsFromDB.responseData);
     }
   }
+
+  const handleSave = async () => {
+    await editFood({ ...editedFood, _id: editingId }, props.user.token);
+    getFoodsFromDB();
+    setEditingId(null);
+  };
+
   useEffect(() => {
     getFoodsFromDB();
   }, []);
+
+  const handleCreate = async () => {
+    await createFood({
+      name,
+      photo,
+      price,
+      quantity,
+      expiration
+    }, props.user.token);
+    getFoodsFromDB();
+  };
+
+  const handleDelete = async (id) => {
+    await deleteFood(id, props.user.token);
+    getFoodsFromDB();
+  };
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
 
@@ -86,10 +73,9 @@ export default function SCEatsAdmin(props) {
         SCEats Admin Page
       </h1>
 
-      {/*                                                                   
-          Field Inputs for Food name, photo URL, quantity, price, expiration 
+      {/*
+          Field Inputs for Food name, photo URL, quantity, price, expiration
       */}
-
 
       <div className="mt-10 flex flex-col md:grid md:grid-cols-1 md:gap-x-6 md:gap-y-8 lg:flex lg:flex-row md:flex-wrap lg:gap-x-6 lg:gap-y-8">
         <div className="flex-1 min-w-[200px]">
@@ -172,7 +158,7 @@ export default function SCEatsAdmin(props) {
       <div className="flex-1 flex mt-8">
         <button
           type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           onClick={() => handleCreate()}
         >
           Save
@@ -180,15 +166,42 @@ export default function SCEatsAdmin(props) {
       </div>
 
 
-      {/*                                                                   
-          Grid of Food 
+      {/*
+          Grid of Food
       */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+
         {foods.map(food => (
           <div key={food._id} className="border p-4 rounded-lg shadow-md">
-            <img src={food.photo} alt={food.name} className="w-full h-48 object-cover rounded-md" />
-            <h2 className="text-xl font-bold mt-4">
+
+            <img
+              src={food.photo}
+              alt={food.name}
+              className={editingId === food._id ? 'w-full h-40 object-cover rounded-md' : 'w-full h-48 object-cover rounded-md'}
+            />
+
+            <p className="flex text-white-700 mt-1">
+              {editingId === food._id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editedFood.photo}
+                    onChange={e =>
+                      setEditedFood({
+                        ...editedFood,
+                        photo: e.target.value,
+                      })
+                    }
+                    className="indent-2 block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white"
+                  />
+                </>
+              ) : (
+                <p></p>
+              )}
+            </p>
+
+            <h2 className="text-xl font-bold">
               {editingId === food._id ? (
                 <input
                   type="text"
@@ -256,7 +269,7 @@ export default function SCEatsAdmin(props) {
               <div className="flex space-x-2">
                 {editingId === food._id ? (
                   <button
-                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="rounded-md bg-indigo-600 mt-1 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     onClick={() => handleSave()}>Save</button>
                 ) : (
                   <>
@@ -274,5 +287,5 @@ export default function SCEatsAdmin(props) {
         ))}
       </div>
     </div>
-  )
+  );
 }
