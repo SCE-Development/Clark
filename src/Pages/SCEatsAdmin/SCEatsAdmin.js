@@ -81,20 +81,12 @@ export default function SCEatsAdmin(props) {
 
       <div className="mt-10 flex flex-col md:grid md:grid-cols-1 md:gap-x-6 md:gap-y-8 lg:flex lg:flex-row md:flex-wrap lg:gap-x-6 lg:gap-y-8">
         <div className="flex-1 min-w-[200px]">
-          <label htmlFor="name" className='block text-sm font-medium leading-6 text-gray-300'>
-            Food Name
+          <label className="form-control w-full max-w-xs">
+            <div className="label">
+              <span className="label-text">Food Name</span>
+            </div>
+            <input type="text" placeholder="For example, Cheetos" className="input input-bordered w-full max-w-xs" onChange={e => setName(e.target.value)} />
           </label>
-          <div className="mt-2">
-            <input
-              type="text"
-              name="name"
-              id="name"
-              placeholder="For example, Cheetos"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </div>
         </div>
         <div className="flex-1 min-w-[200px]">
           <label htmlFor="photo" className='block text-sm font-medium leading-6 text-gray-300'>
