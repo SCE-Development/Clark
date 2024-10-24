@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ProjectCard({project}) {
+export default function ProjectCard(project) {
   return (
     <div className="flex justify-center">
       <div className="card md:card-side shadow-xl w-[85%] md:w-[75%] border dark:bg-gray-800 dark:border-gray-700">
