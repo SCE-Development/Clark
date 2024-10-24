@@ -32,7 +32,7 @@ const projects = [
   },
   {
     'link': 'https://github.com/SCE-Development/cleezy',
-    'image': 'https://github.com/user-attachments/assets/777307da-36b0-4255-a77d-87651bb253d1',
+    'image': 'https://github.com/user-attachments/assets/de1017ac-ca79-46e5-b3b4-5e62666713fb',
     'name': 'Cleezy',
     'information': 'FastAPI',
     'caption': 'A url shortening service created by SCE'
