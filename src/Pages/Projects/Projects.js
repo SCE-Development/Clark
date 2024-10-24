@@ -51,7 +51,7 @@ export default function ProjectsPage() {
       </div>
       {projects.map((project) => (
         <>
-          <ProjectCard key={project.name} project={project} />
+          <ProjectCard key={project.name} {...project} />
           <br />
           <br />
         </>
