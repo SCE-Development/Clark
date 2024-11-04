@@ -32,7 +32,7 @@ export async function getAllUrls({
   return status;
 }
 
-export async function createUrl(url, alias = null, expireDate, token) {
+export async function createUrl(url, alias = null, expireDate = null, token) {
   let status = new ApiResponse();
   const urlToAdd = { url, alias, expireDate };
   try {

@@ -180,7 +180,7 @@ export default function URLShortenerPage(props) {
 
   useEffect(() => {
     if (expireDate) {
-      setExpirationMessage(`The URL will expire on ${expireDate} at 12:00 AM PT.`);
+      setExpirationMessage(`The URL will expire on ${expireDate} at 12:00 AM Pacific Time.`);
     } else {
       setExpirationMessage('');
     }
