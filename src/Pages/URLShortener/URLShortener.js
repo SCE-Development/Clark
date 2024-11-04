@@ -30,8 +30,11 @@ export default function URLShortenerPage(props) {
   const [expireDate, setExpireDate] = useState('');
   const [expirationMessage, setExpirationMessage] = useState('');
 
-  const date = new Date();
-  const minDate = date.toISOString().split('T')[0];
+  const currentDate = new Date();
+  const nextDate = new Date(currentDate);
+  nextDate.setDate(currentDate.getDate() + 1);
+  nextDate.setHours(0, 0, 0, 0);
+  const minDate = nextDate.toISOString().split('T')[0];
   const INPUT_CLASS =
     'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';

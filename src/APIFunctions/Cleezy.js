@@ -34,10 +34,6 @@ export async function getAllUrls({
 
 export async function createUrl(url, alias = null, expireDate, token) {
   let status = new ApiResponse();
-  if (expireDate) {
-    const date = new Date(expireDate + 'T00:00:00');
-    expireDate = Math.floor(date.getTime() / 1000);
-  }
   const urlToAdd = { url, alias, expireDate };
   try {
     const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
