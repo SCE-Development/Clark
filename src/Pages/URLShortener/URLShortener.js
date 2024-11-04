@@ -30,6 +30,8 @@ export default function URLShortenerPage(props) {
   const [expireDate, setExpireDate] = useState('');
   const [expirationMessage, setExpirationMessage] = useState('');
 
+  // get the nearest midnight in the future,
+  // see https://stackoverflow.com/a/15790005
   const currentDate = new Date();
   const nextDate = new Date(currentDate);
   nextDate.setDate(currentDate.getDate() + 1);
