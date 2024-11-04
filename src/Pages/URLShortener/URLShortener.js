@@ -322,6 +322,9 @@ export default function URLShortenerPage(props) {
                   className={INPUT_CLASS}
                 />
               </div>
+              <p className="mt-2 text-sm text-gray-500">
+                  Upon choosing a date, the shortened link will expire at 12AM Pacific time on the selected date.
+              </p>
             </div>
           </div>
         </div>
