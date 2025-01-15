@@ -130,7 +130,8 @@ export default function Routing({ appProps }) {
       Component: Messaging,
       path: '/messaging/:id?',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: '/login'
+      redirect: '/login',
+      inAdminNavbar: false,
     },
     {
       Component: AdvertisementAdmin,
