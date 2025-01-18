@@ -13,11 +13,9 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-
+const ChatMessage = require('../models/ChatMessage.js')
 
 router.use(bodyParser.json());
-
-
 
 const clients = {};
 const numberOfConnections = {};
@@ -25,17 +23,25 @@ const lastMessageSent = {};
 
 const writeMessage = ((roomId, message, username) => {
 
-  const messageObj = {
-    timestamp: Date.now(),
-    message,
-    username
-  };
+  // const messageObj = {
+  //   timestamp: Date.now(),
+  //   message,
+  //   username
+  // };
+  const messageObj = new ChatMessage({
+    userId: username,
+    text: message,
+    chatRoomId: roomId,
+    createdAt: Date.now()
+  })
+
+  messageObj.save();
 
   if (clients[roomId]) {
     clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(messageObj)}\n\n`));
   }
 
-  lastMessageSent[roomId] = JSON.stringify(messageObj);
+  lastMessageSent[roomId] = JSON.stringify(ChatMessage);
 
   // increase the total messages sent counter
   MetricsHandler.totalMessagesSent.inc();
@@ -45,7 +51,11 @@ const writeMessage = ((roomId, message, username) => {
 });
 
 router.post('/send', async (req, res) => {
-
+  const newMessage = new ChatMessage({
+    userId: req.userId,
+    text: req.body.message,
+    chatId: req.body.chatId,
+  })
   const {message, id} = req.body;
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
@@ -83,7 +93,7 @@ router.post('/send', async (req, res) => {
         return;
       }
       if (result) {
-        writeMessage(id, `${message}`, `${result.firstName}:`);
+        writeMessage(id, `${message}`, `${result.firstName}`);
         return res.json({status: 'Message sent'});
       }
       return res.sendStatus(UNAUTHORIZED);
@@ -121,11 +131,15 @@ router.get('/getLatestMessage', async (req, res) => {
         return res.sendStatus(UNAUTHORIZED);
       }
 
-      if (!lastMessageSent[id]) {
+      const latestMessage = chatMesasge.findOne({chatRoomId: id})
+        .sort({createdAt: -1})
+        .limit(1);
+
+      if (!latestMessage) { //!lastMessageSent[id]
         return res.status(OK).send('Room closed');
       }
-
-      return res.status(OK).send(lastMessageSent[id]);
+        
+      return res.status(OK).send(latestMessage);  //!lastMessageSent[id]
 
     });
   } catch (error) {
