@@ -50,7 +50,7 @@ router.post('/send', async (req, res) => {
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
 
-
+  
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
     {value: message, title: 'Message', },
@@ -63,37 +63,31 @@ router.post('/send', async (req, res) => {
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
+
   if (apiKey) {
-    // apiKey being used, use old code with filterQuery
     let filterQuery = {};
     filterQuery.apiKey = apiKey;
     try {
-      User.findOne(filterQuery, (error, result) => {
-        if (error) {
-          logger.error('/send received an invalid API key or token: ', error);
-          res.sendStatus(SERVER_ERROR);
-          return;
-        }
-        if (result) {
-          writeMessage(id, `${message}`, `${result.firstName}:`);
-          return res.json({ status: 'Message sent' });
-        }
-        return res.sendStatus(UNAUTHORIZED);
-      });
-    } catch (error) {
-      logger.error('Error in /send: ', error);
-      res.sendStatus(SERVER_ERROR);
-    }
-  } else {
-    if (token) {
-      userObj = decodeToken(req);
-      if (!userObj) {
+      const result = await User.findOne(filterQuery).exec();
+      if (!result) {
         return res.sendStatus(UNAUTHORIZED);
       }
+      writeMessage(id, `${message}`, `${result.firstName}:`);
+      return res.json({ status: 'Message sent' });
+    } catch (error) {
+      logger.error('Error in /send: ', error);
+      return res.sendStatus(SERVER_ERROR);
     }
-    writeMessage(id, `${message}`, `${name}:`);
-    return res.json({ status: 'Message sent!' });
   }
+
+  if (token) {
+    userObj = decodeToken(req);
+    if (!userObj) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
+  }
+  writeMessage(id, `${message}`, `${name}:`);
+  return res.json({ status: 'Message sent!' });
 });
 
 router.get('/getLatestMessage', async (req, res) => {
