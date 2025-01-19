@@ -46,7 +46,7 @@ const writeMessage = ((roomId, message, username) => {
 
 router.post('/send', async (req, res) => {
 
-  const {message, id} = req.body;
+  const {message, id, name} = req.body;
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
 
@@ -63,34 +63,36 @@ router.post('/send', async (req, res) => {
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
-
-  let filterQuery = {}; // filter to find user in the database
-  if (token) {
-    userObj = decodeToken(req);
-    if (!userObj) {
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    filterQuery._id = userObj._id;
-  } else {
+  if (apiKey) {
+    // apiKey being used, use old code with filterQuery
+    let filterQuery = {};
     filterQuery.apiKey = apiKey;
-  }
-
-  try {
-    User.findOne(filterQuery, (error, result) => {
-      if (error) {
-        logger.error('/send received an invalid API key or token: ', error);
-        res.sendStatus(SERVER_ERROR);
-        return;
+    try {
+      User.findOne(filterQuery, (error, result) => {
+        if (error) {
+          logger.error('/send received an invalid API key or token: ', error);
+          res.sendStatus(SERVER_ERROR);
+          return;
+        }
+        if (result) {
+          writeMessage(id, `${message}`, `${result.firstName}:`);
+          return res.json({ status: 'Message sent' });
+        }
+        return res.sendStatus(UNAUTHORIZED);
+      });
+    } catch (error) {
+      logger.error('Error in /send: ', error);
+      res.sendStatus(SERVER_ERROR);
+    }
+  } else {
+    if (token) {
+      userObj = decodeToken(req);
+      if (!userObj) {
+        return res.sendStatus(UNAUTHORIZED);
       }
-      if (result) {
-        writeMessage(id, `${message}`, `${result.firstName}:`);
-        return res.json({status: 'Message sent'});
-      }
-      return res.sendStatus(UNAUTHORIZED);
-    });
-  } catch (error) {
-    logger.error('Error in /send: ', error);
-    res.sendStatus(SERVER_ERROR);
+    }
+    writeMessage(id, `${message}`, `${name}:`);
+    return res.json({ status: 'Message sent!' });
   }
 });
 

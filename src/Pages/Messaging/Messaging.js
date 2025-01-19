@@ -34,7 +34,7 @@ export default function Messaging(props) {
         </button>
       </form>
       <Feed token={props.user.token} id={roomIdSubmit || id} />
-      <MessagingForm token={props.user.token} id={roomIdSubmit || id} />
+      <MessagingForm token={props.user.token} id={roomIdSubmit || id} name={props.user.firstName}/>
     </div>
   );
 }
@@ -44,13 +44,12 @@ function MessagingForm(props) {
   const [sent, setSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { token, id } = props;
+  const { token, id, name } = props;
 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const status = await sendMessage(id, token, message);
+    const status = await sendMessage(id, token, message, name);
 
     if (status.error) {
       setErrorMessage(status.responseData.response.data || 'An error occurred while sending the message.');
