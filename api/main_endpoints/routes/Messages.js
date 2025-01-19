@@ -50,7 +50,6 @@ router.post('/send', async (req, res) => {
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
 
-  
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
     {value: message, title: 'Message', },
