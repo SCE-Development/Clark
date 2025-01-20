@@ -62,7 +62,7 @@ const Home = () => {
             transition={{ duration: 0.5, delay: 1.5}}
             className='flex justify-center space-x-3'>
             <a href="/about" rel="nofollow noreferrer" target="_blank">
-              <button className="btn btn-outline text-lg text-purple-400 hover:bg-purple-800 hover:!text-white">Learn More</button>
+              <button className="btn btn-outline text-lg text-blue-400 hover:bg-blue-700 hover:!text-white">Learn More</button>
             </a>
             <a href="/register">
               <button className="btn btn-outline text-lg btn-accent hover:!text-white">Join Us!</button>
