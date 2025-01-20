@@ -3,6 +3,7 @@
 // command line, we create a server instance and start listening for requests.
 if (typeof module !== 'undefined' && !module.parent) {
   // Starting servers
+  console.log('Starting servers...');
   require('./main_endpoints/server');
   require('./cloud_api/server');
 }
