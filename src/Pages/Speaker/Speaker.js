@@ -17,6 +17,22 @@ function SpeakersPage(props) {
 
   // New hooks 
   const [songIn, setSongIn] = useState(false);
+  const [q, setQ] = useState([]);
+
+  // New function to extract video id form URL 
+  const getVideoID = () => {
+    const currentURL = new URL(url);
+    return currentURL.searchParams.get('v');
+  }
+
+  // New function to retrieve video details from video id
+  const getVideoInfo = async (vidID) => {
+    const apiKey = "AIzaSyAMZxg8olNBCjPArzlRs_nlIG1gPdogjEs"
+    const searchURL = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vidID}&key=${apiKey}`;
+    const response = await fetch(searchURL);
+    const data = await response.json();
+    return data.items[0].snippet; // snippet contains the vital info, return the object
+  }
 
   const validateUrl = () => {
     setUrl(url.trim());
@@ -26,6 +42,30 @@ function SpeakersPage(props) {
   const playSong = async () => {
     setIsPlaying(true);
     setSongIn(true);
+    if (validateUrl()) {
+      const vidID = getVideoID();
+      console.log("Video ID:", vidID);
+      try {
+        const snippet = await getVideoInfo(vidID);
+        console.log('Title:', snippet.title);
+        console.log('Thumbnail URL:', snippet.thumbnails.default.url);
+  
+        // Create an object to hold the snippet title and thumbnail URL
+        const videoInfo = {
+          title: snippet.title,
+          thumbnailURL: snippet.thumbnails.default.url
+        };
+  
+        // Add current video to q
+        addSongToQueue(videoInfo);
+      } catch (error) {
+        console.error('Error fetching video info:', error);
+        setError('Failed to fetch video information.');
+      }
+    } else {
+      setError(`"${url}" is not a valid YouTube URL!`);
+    }
+  
     /*
     if (validateUrl()) {
       const result = await addUrl(url, props.user.token);
@@ -44,6 +84,19 @@ function SpeakersPage(props) {
     }
       */
   };
+
+  //New function to add a song to the q
+  const addSongToQueue = (videoInfo) => {
+    setQ(prevQ => {
+      const newQ = [...prevQ, videoInfo];
+      return newQ;
+    });
+  }
+
+  //New function to log when q is updated
+  useEffect(() => {
+    console.log("Updated Queue: ", q);
+  }, [q]);
 
   const updateDisplay = (queuedSongs) => {
     if (queuedSongs.length > 0) {
@@ -159,7 +212,7 @@ function SpeakersPage(props) {
             </button>
           </div>
           {/**Next up Div */}
-          <div className="flex justify-center items-center flex-col border-red-500 border-solid border-4">
+          {/**<div className="flex justify-center items-center flex-col border-red-500 border-solid border-4">
             <button className="p-3 rounded-full focus:outline-none hover:bg-gray-700 transition-colors duration-300" onClick={() => modifySpeakerWrapper(skip)}>
               <svg className="h-8 w-8 text-gray-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
@@ -177,8 +230,7 @@ function SpeakersPage(props) {
               )}
             </div>
           </div>
-          {/**Position and Name Div (FOR QUEUE?) */}
-          <div className='mt-10 mb-20 items-center border-red-500 border-solid border-4'>
+          {<div className='mt-10 mb-20 items-center border-red-500 border-solid border-4'>
             <table className="table-auto border-collapse w-full border-spacing-x-10 border-spacing-y-5">
               <thead>
                 <th>Position</th>
@@ -198,6 +250,12 @@ function SpeakersPage(props) {
                 }
               </tbody>
             </table>
+          </div>}**/}
+          {/**New Queue Bar */}
+          <div className='flex flex-col items-center  border-purple-500 border-solid border-4'>
+            {q.map((song, index) => {
+              return <SongCard key={index} title={song.title} thumbnailURL={song.thumbnailURL}/>
+            })}
           </div>
           {/**Bottom div bar */}
           {songIn ?
@@ -252,6 +310,16 @@ function SpeakersPage(props) {
       </div>
     </div>
   );
+}
+
+const SongCard = ({ title, thumbnailURL}) => {
+  //new component to represent a song 
+
+  return (
+  <div className="flex rounded-md items-center justify-center bg-gray-100 px-6 border-blue-500 border-solid border-4">
+    <div>{title}</div>
+    <img src={thumbnailURL} alt ="video thumbnail"/>
+  </div>)
 }
 
 export default SpeakersPage;
