@@ -50,7 +50,6 @@ router.get('/countAllUsers', async (req, res) => {
           { 'email': { '$regex': search, '$options': 'i' } }
         ]
     });
-    
     if (count === 0) {
       return res.status(NOT_FOUND).json({ count });
     }
