@@ -69,7 +69,7 @@ const Home = (props) => {
             <a href="/about" rel="nofollow noreferrer" target="_blank">
               <button className="btn btn-outline btn-primary hover:!text-white">Learn More</button>
             </a>
-            <a href={isLoggedIn ? "/profile" : "/register"} rel="nofollow noreferrer" target="_blank">
+            <a href={isLoggedIn ? '/profile' : '/register'} rel="nofollow noreferrer" target="_blank">
               <button className="btn btn-outline btn-accent hover:!text-white">{isLoggedIn ? 'View Profile' : 'Join Us!'}</button>
             </a>
           </motion.div>
