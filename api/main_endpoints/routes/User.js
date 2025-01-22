@@ -41,25 +41,23 @@ router.get('/countAllUsers', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   const search = req.query.search;
-  let status = OK;
-  const count = await User.find({
-    $or:
-      [
-        { 'firstName': { '$regex': search, '$options': 'i' } },
-        { 'lastName': { '$regex': search, '$options': 'i' } },
-        { 'email': { '$regex': search, '$options': 'i' } }
-      ]
-  }, function(error, result) {
-    if (error) {
-      status = BAD_REQUEST;
-    } else if (result == 0) {
-      status = NOT_FOUND;
+  try {
+    const count = await User.countDocuments({
+      $or:
+        [
+          { 'firstName': { '$regex': search, '$options': 'i' } },
+          { 'lastName': { '$regex': search, '$options': 'i' } },
+          { 'email': { '$regex': search, '$options': 'i' } }
+        ]
+    });
+    
+    if (count === 0) {
+      return res.status(NOT_FOUND).json({ count });
     }
-  }).countDocuments();
-  const response = {
-    count
-  };
-  res.status(status).json(response);
+    return res.status(OK).json({ count });
+  } catch (error) {
+    return res.sendStatus(BAD_REQUEST);
+  }
 });
 
 
