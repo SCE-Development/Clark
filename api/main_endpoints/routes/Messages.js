@@ -13,7 +13,7 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-const ChatMessage = require('../models/ChatMessage.js')
+const ChatMessage = require('../models/ChatMessage.js');
 
 router.use(bodyParser.json());
 
@@ -26,7 +26,7 @@ const writeMessage =  async (roomId, message, username) => {
     userId: username,
     text: message,
     chatRoomId: roomId,
-  })
+  });
 
   await messageObj.save();
 
@@ -105,7 +105,7 @@ router.post('/send', async (req, res) => {
 
 router.get('/getLatestMessage', async (req, res) => {
   const {
-    apiKey, 
+    apiKey,
     id
   } = req.query;
 
@@ -132,12 +132,12 @@ router.get('/getLatestMessage', async (req, res) => {
 
 
     const latestMessage = await ChatMessage.find({ chatRoomId: id })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 });
 
     if (!latestMessage) {
       return res.status(OK).send('Room closed');
     }
-    
+
     return res.status(OK).json(latestMessage);
 
   } catch (error) {
