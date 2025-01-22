@@ -13,6 +13,10 @@ const UserSchema = new Schema(
       type: String,
       required: true
     },
+    backgroundColor: {
+      type: String,
+      required: true
+    },
     joinDate: {
       type: Date,
       default: Date.now

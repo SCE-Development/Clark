@@ -97,6 +97,7 @@ router.post('/search', function(req, res) {
       firstName: result.firstName,
       middleInitial: result.middleInitial,
       lastName: result.lastName,
+      backgroundColor: result.backgroundColor,
       email: result.email,
       emailVerified: result.emailVerified,
       emailOptIn: result.emailOptIn,

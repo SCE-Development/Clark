@@ -1,7 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { membershipState } from '../../Enums';
+import { getUserById } from '../../APIFunctions/User';
 
 export default function UserNavBar(props) {
+  const [response, setResponse] = useState({});
+
+  function getColor(colorName) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) return null;
+  
+    context.fillStyle = colorName;
+
+    const hexColor = context.fillStyle;
+    const bigint = parseInt(hexColor.slice(1), 16);
+    const red = (bigint >> 16) & 255;
+    const green = (bigint >> 8) & 255;
+    const blue = bigint & 255;
+
+    console.log(red*.299 + green*.57 + blue*.114 > 150);
+
+    if (red*.299 + green*.57 + blue*.114 > 150) {
+      return 'black';
+    }
+    else {
+      return 'white';
+    }
+  }
+
+  async function getUserFromApi() {
+    const response = await getUserById(props.user._id, props.user.token);
+    setResponse(response.responseData);
+  }
+  
+  useEffect(getUserFromApi, []);
+
   let initials = '';
   if (props.user.firstName && props.user.lastName) {
     initials = props.user.firstName[0] + props.user.lastName[0];
@@ -86,7 +119,7 @@ export default function UserNavBar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content">
+                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{ backgroundColor: response.backgroundColor, color: getColor(response.backgroundColor) }}>
                   <span>{initials}</span>
                 </div>
               </summary>
