@@ -131,9 +131,8 @@ router.get('/getLatestMessage', async (req, res) => {
     }
 
 
-    const latestMessage = await ChatMessage.findOne({ chatRoomId: id })
+    const latestMessage = await ChatMessage.find({ chatRoomId: id })
       .sort({ createdAt: -1 })
-      .limit(1);
 
     if (!latestMessage) {
       return res.status(OK).send('Room closed');
