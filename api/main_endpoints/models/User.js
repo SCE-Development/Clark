@@ -15,7 +15,8 @@ const UserSchema = new Schema(
     },
     backgroundColor: {
       type: String,
-      required: true
+      required: true,
+      default: '#FFFFFF'
     },
     joinDate: {
       type: Date,

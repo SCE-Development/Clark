@@ -63,8 +63,9 @@ export async function loginUser(email, password) {
   await axios
     .post(url.href, { email, password })
     .then(async result => {
-      status.token = result.data.token;
+      status.token = result.data.token.replace('JWT ', '');
       await updateLastLoginDate(email, result.data.token);
+      window.localStorage.setItem('jwtToken', status.token);
       window.location.reload();
     })
     .catch(error => {

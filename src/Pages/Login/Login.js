@@ -25,7 +25,6 @@ export default function Login(props) {
     const loginStatus = await loginUser(email, password);
     if (!loginStatus.error) {
       props.setAuthenticated(true);
-      window.localStorage.setItem('jwtToken', loginStatus.token);
       if (queryParams.get('redirect')) {
         window.location.href = queryParams.get('redirect');
       } else {
