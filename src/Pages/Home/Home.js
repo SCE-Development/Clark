@@ -32,7 +32,7 @@ const Home = (props) => {
 
   return (
     <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
-      <div className = "flex flex-col items-center justify-center my-4">
+      <div className = 'flex flex-col items-center justify-center my-4'>
         <motion.p
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -45,7 +45,7 @@ const Home = (props) => {
       </div>
       <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
         <div className="flex flex-col items-center justify-center w-full p-4 overflow-y-hidden xl:w-2/5">
-          <div className="flex flex-col mb-8 xl:ml-10">
+          <div className='flex flex-col mb-8 xl:ml-10'>
             <motion.h1
               initial={{ opacity: 0, y: -75}}
               animate={{ opacity: 1, y:0}}

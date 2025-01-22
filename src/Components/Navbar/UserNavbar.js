@@ -9,7 +9,7 @@ export default function UserNavBar(props) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     if (!context) return null;
-  
+
     context.fillStyle = colorName;
 
     const hexColor = context.fillStyle;
@@ -18,12 +18,9 @@ export default function UserNavBar(props) {
     const green = (bigint >> 8) & 255;
     const blue = bigint & 255;
 
-    console.log(red*.299 + green*.57 + blue*.114 > 150);
-
-    if (red*.299 + green*.57 + blue*.114 > 150) {
+    if (red * .299 + green * .57 + blue * .114 > 150) {
       return 'black';
-    }
-    else {
+    } else {
       return 'white';
     }
   }
@@ -32,7 +29,7 @@ export default function UserNavBar(props) {
     const response = await getUserById(props.user._id, props.user.token);
     setResponse(response.responseData);
   }
-  
+
   useEffect(getUserFromApi, []);
 
   let initials = '';
