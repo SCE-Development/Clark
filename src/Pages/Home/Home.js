@@ -4,11 +4,13 @@ import { motion } from 'framer-motion';
 import './Home.css';
 
 import { getAd } from '../../APIFunctions/Advertisement.js';
+import { membershipState } from '../../Enums.js';
 
-const Home = () => {
+const Home = (props) => {
 
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
+  const [isLoggedIn, setisLoggedIn] = useState(false);
 
   async function getMessage() {
     try {
@@ -23,6 +25,9 @@ const Home = () => {
 
   useEffect(() => {
     getMessage();
+    if (props.user.accessLevel >= membershipState.MEMBER) {
+      setisLoggedIn(true);
+    }
   }, []);
 
   return (
@@ -64,8 +69,8 @@ const Home = () => {
             <a href="/about" rel="nofollow noreferrer" target="_blank">
               <button className="btn btn-outline btn-primary hover:!text-white">Learn More</button>
             </a>
-            <a href="/register" rel="nofollow noreferrer" target="_blank">
-              <button className="btn btn-outline btn-accent hover:!text-white">Join Us!</button>
+            <a href={isLoggedIn ? "/profile" : "/register"} rel="nofollow noreferrer" target="_blank">
+              <button className="btn btn-outline btn-accent hover:!text-white">{isLoggedIn ? 'View Profile' : 'Join Us!'}</button>
             </a>
           </motion.div>
         </div>
