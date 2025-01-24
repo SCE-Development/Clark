@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { queued, addUrl, pause, resume, skip, forward, rewind, setVolume } from '../../APIFunctions/Speaker';
 import {debounce} from 'lodash';
+import { setFontAndSize } from 'pdf-lib';
 
 function SpeakersPage(props) {
 
@@ -18,6 +19,7 @@ function SpeakersPage(props) {
   // New hooks 
   const [songIn, setSongIn] = useState(false);
   const [q, setQ] = useState([]);
+  const apiKey = "AIzaSyAMZxg8olNBCjPArzlRs_nlIG1gPdogjEs"
 
   // New function to extract video id form URL 
   const getVideoID = () => {
@@ -25,13 +27,35 @@ function SpeakersPage(props) {
     return currentURL.searchParams.get('v');
   }
 
-  // New function to retrieve video details from video id
-  const getVideoInfo = async (vidID) => {
-    const apiKey = "AIzaSyAMZxg8olNBCjPArzlRs_nlIG1gPdogjEs"
+  // New function to retrieve video snippet from video id
+  const getVideoSnippet = async (vidID) => {
     const searchURL = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vidID}&key=${apiKey}`;
     const response = await fetch(searchURL);
     const data = await response.json();
     return data.items[0].snippet; // snippet contains the vital info, return the object
+  }
+
+  // New function to retreive video content details from video id
+  const getVideoContent = async (vidID) => {
+    const searchURL = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${vidID}&key=${apiKey}`
+    const response = await fetch(searchURL);
+    const data = await response.json();
+    return data.items[0].contentDetails;
+  }
+
+  // New function to convert duration time from ISO to readable time
+  function parseISO(duration) { 
+    const regex = /PT(\d+H)?(\d+M)?(\d+S)?/; 
+    const matches = duration.match(regex); 
+    const hours = (matches[1] ? parseInt(matches[1].slice(0, -1)) : 0); const minutes = (matches[2] ? parseInt(matches[2].slice(0, -1)) : 0); 
+    const seconds = (matches[3] ? parseInt(matches[3].slice(0, -1)) : 0); let formattedDuration = ""; 
+    if (hours > 0) { 
+      formattedDuration += `${hours}:`; } if (minutes > 0 || hours > 0) { formattedDuration += `${minutes}:`;
+    } 
+    if (seconds > 0 || (hours === 0 && minutes === 0)) { 
+      formattedDuration += `${seconds}`; 
+    } 
+    return formattedDuration.trim(); 
   }
 
   const validateUrl = () => {
@@ -46,14 +70,20 @@ function SpeakersPage(props) {
       const vidID = getVideoID();
       console.log("Video ID:", vidID);
       try {
-        const snippet = await getVideoInfo(vidID);
+        const snippet = await getVideoSnippet(vidID);
+        const contentDetails = await getVideoContent(vidID);
         console.log('Title:', snippet.title);
+        console.log('Channel: ', snippet.channelTitle);
         console.log('Thumbnail URL:', snippet.thumbnails.default.url);
+        const duration = parseISO(contentDetails.duration)
+        console.log('Duration: ', duration);
   
         // Create an object to hold the snippet title and thumbnail URL
         const videoInfo = {
           title: snippet.title,
-          thumbnailURL: snippet.thumbnails.default.url
+          thumbnailURL: snippet.thumbnails.default.url,
+          channelTitle : snippet.channelTitle,
+          duration,
         };
   
         // Add current video to q
@@ -154,13 +184,13 @@ function SpeakersPage(props) {
   }, []);
 
   return (
-    <div className="h-3/4 lborder-black lborder-solid lborder-4">
+    <div className="h-3/4 llborder-black llborder-solid llborder-4">
       {/**Main div containing search bar,  play/skip/rewind, next-up, position/name */}
-      <div className='flex justify-center pt-10 h-full lborder-yellow-500 lborder-solid lborder-4'>
-        <div className="w-3/4 flex flex-col justify-between lborder-green-500 lborder-solid lborder-4">
-          <div className='lborder-pink-500 lborder-solid lborder-4'>
+      <div className='flex justify-center pt-10 h-full llborder-yellow-500 llborder-solid llborder-4'>
+        <div className="w-3/4 flex flex-col llborder-green-500 llborder-solid llborder-4">
+          <div className='llborder-pink-500 llborder-solid llborder-4'>
             {/** Div Containing Input and Play Button */}
-            <div className="flex justify-center items-center gap-2 lborder-red-500 lborder-solid lborder-4">
+            <div className="flex justify-center items-center gap-2 llborder-red-500 llborder-solid llborder-4">
               <input placeholder='Enter YouTube Link' onChange=
                 {(e) => setUrl(e.target.value)}
               className="sign-input indent-2 w-full h-8 inline-block"
@@ -180,7 +210,7 @@ function SpeakersPage(props) {
               <button onClick={() => setSongIn(false)}>Stop</button>
             </div>
             {/*Mini play bar */}
-            <div className="mt-6 mb-4 flex justify-center items-center lborder-red-500 lborder-solid lborder-4">
+            <div className="mt-6 mb-4 flex justify-center items-center llborder-red-500 llborder-solid llborder-4">
               <button 
               className="p-3 rounded-full focus:outline-none bg-cyan-700 hover:bg-cyan-600  disabled:bg-cyan-800 disabled:text-gray-400" 
               onClick={handleRewind}
@@ -214,7 +244,7 @@ function SpeakersPage(props) {
             </div>
           </div>
           {/**Next up Div */}
-          {/**<div className="flex justify-center items-center flex-col lborder-red-500 lborder-solid lborder-4">
+          {/**<div className="flex justify-center items-center flex-col llborder-red-500 llborder-solid llborder-4">
             <button className="p-3 rounded-full focus:outline-none hover:bg-gray-700 transition-colors duration-300" onClick={() => modifySpeakerWrapper(skip)}>
               <svg className="h-8 w-8 text-gray-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
@@ -232,8 +262,8 @@ function SpeakersPage(props) {
               )}
             </div>
           </div>
-          {<div className='mt-10 mb-20 items-center lborder-red-500 lborder-solid lborder-4'>
-            <table className="table-auto lborder-collapse w-full lborder-spacing-x-10 lborder-spacing-y-5">
+          {<div className='mt-10 mb-20 items-center llborder-red-500 llborder-solid llborder-4'>
+            <table className="table-auto llborder-collapse w-full llborder-spacing-x-10 llborder-spacing-y-5">
               <thead>
                 <th>Position</th>
                 <th className='text-left pl-2'>Name</th>
@@ -254,11 +284,17 @@ function SpeakersPage(props) {
             </table>
           </div>}**/}
           {/**New Queue Bar */}
-          <div className='flex flex-col items-center  lborder-purple-500 lborder-solid lborder-4'>
-            {q.map((song, index) => {
-              return <SongCard key={index} title={song.title} thumbnailURL={song.thumbnailURL}/>
-            })}
-          </div>
+          {(q.length > 0) ? (
+            <>
+              <div className="rounded-lg bg-cyan-700 text-white font-semibold text-md w-fit p-2 mb-2">NOW PLAYING</div>
+              <BigSongCard title={q[0].title} channelTitle={q[0].channelTitle} thumbnailURL={q[0].thumbnailURL} duration={q[0].duration} />
+              <div className='flex flex-col items-center gap-2 llborder-purple-500 llborder-solid llborder-4'>
+                {q.map((song, index) => (
+                  <SongCard key={index} title={song.title} channelTitle={song.channelTitle} thumbnailURL={song.thumbnailURL} duration={song.duration} />
+                ))}
+              </div>
+            </>
+          ) : <></>}
           {/**Bottom div bar */}
           {songIn ?
           <div className="fixed bottom-0 left-0 w-full bg-cyan-950 text-white z-50">
@@ -314,13 +350,27 @@ function SpeakersPage(props) {
   );
 }
 
-const SongCard = ({ title, thumbnailURL}) => {
+const BigSongCard = ({ key, title, channelTitle, thumbnailURL, duration }) => {
+  return(
+     <div className="w-full flex items-center gap-4 pb-4 lborder-orange-500 lborder-4">
+      <img src={thumbnailURL} alt ="video thumbnail" className="w-1/4 h-auto"/>
+      <div className="flex flex-col gap-2 lborder-black lborder-4">
+        <div className="text-2xl font-bold">{title}</div>
+        <div>{channelTitle}</div>
+      </div>
+     </div>
+  )
+}
+
+const SongCard = ({ key, title, channelTitle, thumbnailURL, duration}) => {
   //new component to represent a song 
 
   return (
-  <div className="w-3/4 flex rounded-md items-center justify-between bg-gray-100 px-6 lborder-blue-500 lborder-solid lborder-4">
-    <div>{title}</div>
+  <div className="w-full flex rounded-md items-center justify-between bg-gray-100 px-6 llborder-blue-500 llborder-solid llborder-4">
     <img src={thumbnailURL} alt ="video thumbnail"/>
+    <div className="w-1/2 overflow-hidden truncate whitespace-nowrap">{title}</div>
+    {/*{<div>{channelTitle}</div>}*/}
+    <div>{duration}</div>
   </div>)
 }
 
