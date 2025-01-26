@@ -1,6 +1,7 @@
 import React from 'react';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
+import SpeakerPlayBar from '../../Pages/Speaker/SpeakerPlayBar';
 
 function NavBarWrapper({
   enableAdminNavbar = false,
@@ -20,9 +21,16 @@ function NavBarWrapper({
   // https://flowbite.com/docs/components/sidebar/#default-sidebar
   function maybeWrapComponentForAdminNavbar() {
     if (enableAdminNavbar) {
+      console.log("enabled!!!");
       return (
         <div className="p-4">
           <Component {...appProps} />
+          <SpeakerPlayBar
+            isPlaying={true}
+            handleForward={appProps.handleForward}
+            handleRewind={appProps.handleRewind}
+            togglePlayback={appProps.togglePlayback}
+          />
         </div>
       );
     }
@@ -30,10 +38,19 @@ function NavBarWrapper({
   }
 
   if (enableAdminNavbar) {
+    console.log("OTHER THING HAPPENED");
     return (
-      <AdminNavbar {...appProps} handleLogout={handleLogout} >
-        <Component {...appProps} />
-      </AdminNavbar>
+      <div>
+        <AdminNavbar {...appProps} handleLogout={handleLogout} >
+          <Component {...appProps} />
+        </AdminNavbar>
+        <SpeakerPlayBar
+            isPlaying={true}
+            handleForward={appProps.handleForward}
+            handleRewind={appProps.handleRewind}
+            togglePlayback={appProps.togglePlayback}
+          />
+      </div>
     );
   }
 
