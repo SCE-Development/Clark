@@ -23,7 +23,7 @@ function SpeakersPage(props) {
   // New hooks 
   const [songIn, setSongIn] = useState(false);
   const [q, setQ] = useState([]);
-  const apiKey = "AIzaSyAMZxg8olNBCjPArzlRs_nlIG1gPdogjEs"
+  const apiKey = ""
 
   // New Context hook
   const {hasSong, setHasSong } = useContext(SpeakerContext);
