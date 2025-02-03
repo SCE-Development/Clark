@@ -33,7 +33,7 @@ export default function AboutPage() {
 
       <section>
         <h2 className="text-2xl font-semibold">Becoming an SCE Member</h2>
-        <p>Membership is limited to San Jose State students. Memberships last a semester and require a fee:</p>
+        <p>Membership is limited to San Jose State students. Membership duration is based on semesters and require a fee:</p>
         <pre>
           Single semester: $20
           <br></br>
@@ -67,7 +67,7 @@ export default function AboutPage() {
       <section>
         <h2 className="text-2xl font-semibold">Discord</h2>
         <p>
-          Join us using the link below. It’s an open space—feel free to ask questions in our discussion channels.
+          Join us using the link below. We encourage new users to ask questions in our discussion channels!
         </p>
         <br></br>
         <a href="https://sce.sjsu.edu/s/discord" className="text-blue-500 underline hover:text-blue-700" rel="nofollow noreferrer" target="_blank">
