@@ -28,8 +28,7 @@ export default function URLShortenerPage(props) {
   const [currentSortColumn, setCurrentSortColumn] = useState(null);
   const [currentSortOrder, setCurrentSortOrder] = useState(null);
 
-  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 bg-gray-100 dark:text-gray-400 dark:bg-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6';
-  // const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
+  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
 
   /**
@@ -286,7 +285,6 @@ export default function URLShortenerPage(props) {
                     value={alias}
                     onChange={e => setAlias(e.target.value)}
                     className="w-full text-sm input input-bordered sm:text-base"
-                    // className={INPUT_CLASS}
                   />
                 </div>
               </div>
