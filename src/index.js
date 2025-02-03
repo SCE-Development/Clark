@@ -6,6 +6,9 @@ import './index.css';
 import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
 
+// import Speaker context file 
+import { SpeakerProvider } from "./SpeakerContext.js"
+
 
 function App(props) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -36,4 +39,5 @@ function App(props) {
 
 export default withRouter(App);
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<SpeakerProvider><App /></SpeakerProvider>, document.getElementById('root'));
+// wrapped App in SpeakerProvider to use ReactContextAPI

@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
 import SpeakerPlayBar from '../../Pages/Speaker/SpeakerPlayBar';
+
+// import Context 
+import { SpeakerContext } from "../../SpeakerContext.js"
 
 function NavBarWrapper({
   enableAdminNavbar = false,
   component: Component,
   ...appProps
 }) {
+
+  // new variable for context
+  const { hasSong } = useContext(SpeakerContext);
+  console.log("hasSong: ", hasSong);
+
   function handleLogout() {
     appProps.setAuthenticated(false);
     window.localStorage.removeItem('jwtToken');
@@ -25,12 +33,12 @@ function NavBarWrapper({
       return (
         <div className="p-4">
           <Component {...appProps} />
-          <SpeakerPlayBar
+          {hasSong ? <SpeakerPlayBar
             isPlaying={true}
             handleForward={appProps.handleForward}
             handleRewind={appProps.handleRewind}
             togglePlayback={appProps.togglePlayback}
-          />
+          /> : <></>}
         </div>
       );
     }
@@ -44,12 +52,12 @@ function NavBarWrapper({
         <AdminNavbar {...appProps} handleLogout={handleLogout} >
           <Component {...appProps} />
         </AdminNavbar>
-        <SpeakerPlayBar
+        {hasSong ? <SpeakerPlayBar
             isPlaying={true}
             handleForward={appProps.handleForward}
             handleRewind={appProps.handleRewind}
             togglePlayback={appProps.togglePlayback}
-          />
+          /> : <></>}
       </div>
     );
   }

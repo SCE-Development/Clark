@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { queued, addUrl, pause, resume, skip, forward, rewind, setVolume } from '../../APIFunctions/Speaker';
 import {debounce} from 'lodash';
 import { setFontAndSize } from 'pdf-lib';
+import { SpeakerContext } from '../../SpeakerContext.js'; // added import for React Context
 
 // New import for SpeakerPlayBar
 import SpeakerPlayBar from "./SpeakerPlayBar.js";
@@ -23,6 +24,10 @@ function SpeakersPage(props) {
   const [songIn, setSongIn] = useState(false);
   const [q, setQ] = useState([]);
   const apiKey = "AIzaSyAMZxg8olNBCjPArzlRs_nlIG1gPdogjEs"
+
+  // New Context hook
+  const {hasSong, setHasSong } = useContext(SpeakerContext);
+  console.log("hasSong WASSS: ", hasSong);
 
   // New function to extract video id form URL 
   const getVideoID = () => {
@@ -68,6 +73,7 @@ function SpeakersPage(props) {
 
   const playSong = async () => {
     setIsPlaying(true);
+    setHasSong(true); // set context state to true
     setSongIn(true);
     if (validateUrl()) {
       const vidID = getVideoID();
@@ -210,7 +216,7 @@ function SpeakersPage(props) {
               >
                 {playText}
               </button>
-              <button onClick={() => setSongIn(false)}>Stop</button>
+              <button onClick={() => setHasSong(false)}>Stop</button>
             </div>
             {/*Mini play bar */}
             <div className="mt-6 mb-4 flex justify-center items-center llborder-red-500 llborder-solid llborder-4">
@@ -299,8 +305,8 @@ function SpeakersPage(props) {
             </>
           ) : <></>}
           {/**Bottom div bar */}
-          {songIn ?
-          <SpeakerPlayBar isPlaying={isPlaying} handleForward={handleForward} handleRewind={handleRewind} togglePlayback={togglePlayback}/>: <></>}
+          {/**{songIn ?
+          <SpeakerPlayBar isPlaying={isPlaying} handleForward={handleForward} handleRewind={handleRewind} togglePlayback={togglePlayback}/>: <></>} **/}
         </div>
       </div>
     </div>
