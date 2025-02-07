@@ -32,9 +32,9 @@ export async function getAllUrls({
   return status;
 }
 
-export async function createUrl(url, alias = null, expiration_date = null, token) {
+export async function createUrl(url, alias = null, expirationDate = null, token) {
   let status = new ApiResponse();
-  const urlToAdd = { url, alias, expiration_date };
+  const urlToAdd = { url, alias, expirationDate };
   try {
     const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const response = await axios

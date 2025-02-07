@@ -281,7 +281,7 @@ export default function URLShortenerPage(props) {
                 </label>
               </div>
             </div>
- 
+
             <div className="col-span-3">
               <div className="form-control">
                 <label className="label cursor-pointer">
@@ -320,7 +320,7 @@ export default function URLShortenerPage(props) {
                     id="expirationDate"
                     name="expirationDate"
                     value={expirationDate}
-                    onChange={e => setExpirationDate(e.target.value + ":00")}
+                    onChange={e => setExpirationDate(e.target.value + ':00')}
                     type="datetime-local"
                     className={INPUT_CLASS}
                   />
@@ -507,14 +507,14 @@ export default function URLShortenerPage(props) {
                               if (url.expires_at === null) {
                                 return (
                                   <div>No Expiration Date</div>
-                                )
+                                );
                               } else {
                                 return (
                                   <div>{new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
-                                )
+                                );
                               }
-                            })()}                             
-                            </div>
+                            })()}
+                          </div>
                         </td>
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
