@@ -4,7 +4,7 @@
   "description": "The SCE Website",
   "scripts": {
     "api-test": "mocha --exit test/api/*.js",
-    "frontend-test": "mocha --require @babel/register --require ignore-styles test/frontend/*.js --exit",
+    "frontend-test": "mocha --require @babel/register --require jsdom-global/register --require ignore-styles test/frontend/*.js --exit",
     "start": "react-scripts start",
     "server": "npm run dev --prefix api",
     "lint": "eslint .",
@@ -60,6 +60,8 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/register": "^7.17.7",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.2.0",
     "chai": "^4.3.0",
     "chai-http": "^4.3.0",
     "daisyui": "^4.4.24",

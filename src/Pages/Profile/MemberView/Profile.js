@@ -12,7 +12,9 @@ export default function Profile(props) {
 
   async function getUserFromApi() {
     const response = await getUserById(props.user._id, props.user.token);
-    setResponse(response.responseData);
+    if (response.responseData) {
+      setResponse(response.responseData);
+    }
   }
 
   useEffect(getUserFromApi, []);

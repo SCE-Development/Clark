@@ -1,5 +1,6 @@
 import 'jsdom-global/register';
 import React from 'react';
+import { act } from '@testing-library/react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
@@ -33,12 +34,13 @@ const adminAppProps = {
   user: { accessLevel: membershipState.ADMIN },
   authenticated: true
 };
-
+if (typeof SVGElement === 'undefined') {
+  global.SVGElement = class SVGElement extends HTMLElement {};
+}
 function getComponentFromRoute(route, props = adminAppProps) {
   return mount(
-    // <MemoryRouter initialEntries={[route]} appProps={props} />
-    <MemoryRouter initialEntries={[route]}>
-      <PrivateRoute path={route} component={Routing} appProps={props} />
+    <MemoryRouter initialEntries={[route]} appProps={props} >
+      <Routing appProps={props} />
     </MemoryRouter>
   );
 }
@@ -46,13 +48,20 @@ function getComponentFromRoute(route, props = adminAppProps) {
 describe('<Routing /> with <PrivateRoute />', () => {
   describe('Renders correct components for Admin user', () => {
     it('Should render a <Home /> component with the / endpoint', () => {
-      const wrapper = getComponentFromRoute('/');
+      let wrapper;
+      act(() => {
+        wrapper = getComponentFromRoute('/');
+      });
+      console.log("HELP", wrapper.debug())
       expect(wrapper.find(Home)).to.have.lengthOf(1);
     });
     it(
       'Should render an <Overview /> component with the /user-manager ' + ' endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/user-manager');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/user-manager');
+        });
         expect(wrapper.find(Overview)).to.have.lengthOf(1);
       }
     );
@@ -60,7 +69,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <LedSign /> component with the /led-sign ' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/led-sign');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/led-sign');
+        });
         expect(wrapper.find(LedSign)).to.have.lengthOf(1);
       }
     );
@@ -68,7 +80,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <SpeakersPage /> component with the /speakers' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/speakers');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/speakers');
+        });
         expect(wrapper.find(SpeakersPage)).to.have.lengthOf(1);
       }
     );
@@ -76,7 +91,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <Printing /> component with the /2DPrinting' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/2DPrinting');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/2DPrinting');
+        });
         expect(wrapper.find(Printing)).to.have.lengthOf(1);
       }
     );
@@ -84,7 +102,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should redirect the authenticated user to <Home /> from the' +
       ' /login endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/login');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/login');
+        });
         expect(wrapper.find(Home)).to.have.lengthOf(1);
       }
     );
@@ -92,7 +113,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should redirect the authenticated user to <Home /> from the' +
       ' /forgot endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/forgot');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/forgot');
+        });
         expect(wrapper.find(Home)).to.have.lengthOf(1);
       }
     );
@@ -100,7 +124,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should redirect the authenticated user to <Home /> from the' +
       ' /register endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/register');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/register');
+        });
         expect(wrapper.find(Home)).to.have.lengthOf(1);
       }
     );
@@ -108,7 +135,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <Profile /> component with the /profile' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/profile');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/profile');
+        });
         expect(wrapper.find(Profile)).to.have.lengthOf(1);
       }
     );
@@ -116,7 +146,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <EditUserInfo /> component with the /user/edit/:id' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/user/edit/:id');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/user/edit/:id');
+        });
         expect(wrapper.find(EditUserInfo)).to.have.lengthOf(1);
       }
     );
@@ -124,7 +157,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <URLShortenerPage /> component with the /short' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/short');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/short');
+        });
         expect(wrapper.find(URLShortenerPage)).to.have.lengthOf(1);
       }
     );
@@ -132,7 +168,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <sendUnsubscribeEmail /> component with the /unsub' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/unsub');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/unsub');
+        });
         expect(wrapper.find(sendUnsubscribeEmail)).to.have.lengthOf(1);
       }
     );
@@ -140,7 +179,10 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <NotFoundPage /> component with an invalid ' +
       'endpoint',
       () => {
-        const wrapper = getComponentFromRoute('/not-real');
+        let wrapper;
+        act(() => {
+          wrapper = getComponentFromRoute('/not-real');
+        });
         expect(wrapper.find(NotFoundPage)).to.have.lengthOf(1);
       }
     );
