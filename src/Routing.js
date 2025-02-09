@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -19,6 +18,7 @@ import MembershipApplication from
   './Pages/MembershipApplication/MembershipApplication.js';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
 import Printing from './Pages/2DPrinting/2DPrinting.js';
+import AdvertisementAdmin from './Pages/Advertisement/AdvertisementAdmin.js';
 
 import { membershipState } from './Enums';
 
@@ -29,6 +29,7 @@ import URLShortenerPage from './Pages/URLShortener/URLShortener';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
+import Messaging from './Pages/Messaging/Messaging.js';
 
 
 export default function Routing({ appProps }) {
@@ -126,6 +127,19 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true,
       redirect: '/',
     },
+    {
+      Component: Messaging,
+      path: '/messaging/:id?',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login'
+    },
+    {
+      Component: AdvertisementAdmin,
+      path: '/advertisement-admin',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },

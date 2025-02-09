@@ -1,6 +1,5 @@
 import 'jsdom-global/register';
 import React from 'react';
-import { act } from '@testing-library/react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
@@ -16,10 +15,9 @@ import EditUserInfo from '../../src/Pages/UserManager/EditUserInfo';
 import URLShortenerPage from '../../src/Pages/URLShortener/URLShortener';
 import sendUnsubscribeEmail from '../../src/Pages/Profile/admin/SendUnsubscribeEmail';
 import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage';
-import PrivateRoute from '../../src/Components/Routing/PrivateRoute';
 
 import { membershipState } from '../../src/Enums';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -34,6 +32,9 @@ const adminAppProps = {
   user: { accessLevel: membershipState.ADMIN },
   authenticated: true
 };
+
+// without this we get an error saying SVGElement
+// is not defined during the test
 if (typeof SVGElement === 'undefined') {
   global.SVGElement = class SVGElement extends HTMLElement {};
 }
