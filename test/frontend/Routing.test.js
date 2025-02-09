@@ -48,20 +48,13 @@ function getComponentFromRoute(route, props = adminAppProps) {
 describe('<Routing /> with <PrivateRoute />', () => {
   describe('Renders correct components for Admin user', () => {
     it('Should render a <Home /> component with the / endpoint', () => {
-      let wrapper;
-      act(() => {
-        wrapper = getComponentFromRoute('/');
-      });
-      console.log("HELP", wrapper.debug())
+      const wrapper = getComponentFromRoute('/');
       expect(wrapper.find(Home)).to.have.lengthOf(1);
     });
     it(
       'Should render an <Overview /> component with the /user-manager ' + ' endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/user-manager');
-        });
+        const wrapper = getComponentFromRoute('/user-manager');
         expect(wrapper.find(Overview)).to.have.lengthOf(1);
       }
     );
@@ -69,10 +62,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <LedSign /> component with the /led-sign ' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/led-sign');
-        });
+        const wrapper = getComponentFromRoute('/led-sign');
         expect(wrapper.find(LedSign)).to.have.lengthOf(1);
       }
     );
@@ -80,10 +70,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <SpeakersPage /> component with the /speakers' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/speakers');
-        });
+        const wrapper = getComponentFromRoute('/speakers');
         expect(wrapper.find(SpeakersPage)).to.have.lengthOf(1);
       }
     );
@@ -91,10 +78,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <Printing /> component with the /2DPrinting' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/2DPrinting');
-        });
+        const wrapper = getComponentFromRoute('/2DPrinting');
         expect(wrapper.find(Printing)).to.have.lengthOf(1);
       }
     );
@@ -102,10 +86,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should redirect the authenticated user to <Home /> from the' +
       ' /login endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/login');
-        });
+        const wrapper = getComponentFromRoute('/login');
         expect(wrapper.find(Home)).to.have.lengthOf(1);
       }
     );
@@ -113,10 +94,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should redirect the authenticated user to <Home /> from the' +
       ' /forgot endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/forgot');
-        });
+        const wrapper = getComponentFromRoute('/forgot');
         expect(wrapper.find(Home)).to.have.lengthOf(1);
       }
     );
@@ -124,10 +102,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should redirect the authenticated user to <Home /> from the' +
       ' /register endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/register');
-        });
+        const wrapper = getComponentFromRoute('/register');
         expect(wrapper.find(Home)).to.have.lengthOf(1);
       }
     );
@@ -135,10 +110,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <Profile /> component with the /profile' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/profile');
-        });
+        const wrapper = getComponentFromRoute('/profile');
         expect(wrapper.find(Profile)).to.have.lengthOf(1);
       }
     );
@@ -146,10 +118,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <EditUserInfo /> component with the /user/edit/:id' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/user/edit/:id');
-        });
+        const wrapper = getComponentFromRoute('/user/edit/:id');
         expect(wrapper.find(EditUserInfo)).to.have.lengthOf(1);
       }
     );
@@ -157,10 +126,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <URLShortenerPage /> component with the /short' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/short');
-        });
+        const wrapper = getComponentFromRoute('/short');
         expect(wrapper.find(URLShortenerPage)).to.have.lengthOf(1);
       }
     );
@@ -168,10 +134,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <sendUnsubscribeEmail /> component with the /unsub' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/unsub');
-        });
+        const wrapper = getComponentFromRoute('/unsub');
         expect(wrapper.find(sendUnsubscribeEmail)).to.have.lengthOf(1);
       }
     );
@@ -179,10 +142,7 @@ describe('<Routing /> with <PrivateRoute />', () => {
       'Should render a <NotFoundPage /> component with an invalid ' +
       'endpoint',
       () => {
-        let wrapper;
-        act(() => {
-          wrapper = getComponentFromRoute('/not-real');
-        });
+        const wrapper = getComponentFromRoute('/not-real');
         expect(wrapper.find(NotFoundPage)).to.have.lengthOf(1);
       }
     );
