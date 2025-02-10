@@ -31,7 +31,6 @@ import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
 import Messaging from './Pages/Messaging/Messaging.js';
 
-
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
