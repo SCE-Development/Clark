@@ -64,10 +64,8 @@ router.post('/send', async (req, res) => {
   }
 
   if (apiKey) {
-    let filterQuery = {};
-    filterQuery.apiKey = apiKey;
     try {
-      const result = await User.findOne(filterQuery).exec();
+      const result = await User.findOne({ apiKey }).exec();
       if (!result) {
         return res.sendStatus(UNAUTHORIZED);
       }
