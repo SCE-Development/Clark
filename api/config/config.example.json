@@ -26,5 +26,8 @@
   "Speakers": {
     "ENABLED": false
   },
+  "officeAccessCard": {
+    "API_KEY": "NOTHING_REALLY"
+  },
   "secretKey": "super duper secret key"
 }
