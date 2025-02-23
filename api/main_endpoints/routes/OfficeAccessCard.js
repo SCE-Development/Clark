@@ -10,8 +10,6 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
-const { decodeToken } = require('../util/token-functions.js');
-const { MetricsHandler, register } = require('../../util/metrics.js');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
 
@@ -37,12 +35,11 @@ function checkIfCardExists(cardBytes) {
 
 router.get('/verify', async (req, res) => {
   const { cardBytes, add = false } = req.query;
-  const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
 
   const required = [
-    { value: token || apiKey, title: 'Token or API Key', },
-    { value: cardBytes, title: 'cardBytes', },
+    { value: apiKey, title: 'X-API-Key HTTP header', },
+    { value: cardBytes, title: 'cardBytes query parameter', },
   ];
 
   const missingValue = required.find(({ value }) => !value);
@@ -52,12 +49,6 @@ router.get('/verify', async (req, res) => {
     return;
   }
 
-  if (token) {
-    userObj = decodeToken(req);
-    if (!userObj) {
-      return res.sendStatus(UNAUTHORIZED);
-    }
-  }
   if (apiKey !== API_KEY) {
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -88,8 +79,6 @@ router.get('/verify', async (req, res) => {
     logger.error('Error creating OfficeAccessCard: ', error);
     return res.sendStatus(SERVER_ERROR);
   }
-
 });
-
 
 module.exports = router;
