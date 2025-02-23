@@ -35,7 +35,7 @@ describe('OfficeAccessCard', () => {
   const VALID_CARD_BYTES = 'wesleys card';
   const NEW_CARD_BYTES = 'dials card';
   const VERIFY_API_PATH = '/api/OfficeAccessCard/verify';
-  before(done => {
+  before(() => {
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/OfficeAccessCard.js',
     ]);
@@ -45,8 +45,11 @@ describe('OfficeAccessCard', () => {
     const testOfficeAccessCard = new OfficeAccessCard({
       cardBytes: VALID_CARD_BYTES,
     });
-    testOfficeAccessCard.save();
-    done();
+    return new Promise((resolve, reject) => {
+      testOfficeAccessCard.save()
+        .then(resolve)
+        .catch(reject);
+    })
   });
 
   after(tools.terminateServer);
