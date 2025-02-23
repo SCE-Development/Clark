@@ -49,7 +49,7 @@ describe('OfficeAccessCard', () => {
       testOfficeAccessCard.save()
         .then(resolve)
         .catch(reject);
-    })
+    });
   });
 
   after(tools.terminateServer);
