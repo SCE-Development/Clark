@@ -28,7 +28,7 @@
   "license": "MIT",
   "dependencies": {
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
-    "axios": "^0.21.0",
+    "axios": "^1.8.1",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",
