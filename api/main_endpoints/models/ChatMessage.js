@@ -10,7 +10,7 @@ const ChatMessageSchema = new Schema(
     text: {
       type: String,
       required: true,
-      maxLength: [255, 'Messages are at most 255 characters long']
+      maxLength: [2000, 'Messages are at most 255 characters long']
     },
     chatRoomId: {
       type: String,
@@ -18,11 +18,14 @@ const ChatMessageSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     expireAt: {
       type: Date,
-      default: Date.now() + 10 * 60 * 1000 // expires in 10 minutes
+      default: function() {
+        // Calculate expiration using createdAt + 24 hours
+        return new Date(this.createdAt.getTime() + 24 * 60 * 60 * 1000);
+      }
     }
   },
   { collection: 'ChatMessage' }
