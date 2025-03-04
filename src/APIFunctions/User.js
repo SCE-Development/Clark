@@ -49,20 +49,6 @@ export async function getAllUsers({
   return status;
 }
 
-export async function getCountAllUsers(query) {
-  let status = new UserApiResponse();
-  const url = new URL(`/api/User/countAllUsers/${query}`, BASE_API_URL);
-  await axios
-    .get(url.href)
-    .then(result => {
-      status.responseData = result.data;
-    })
-    .catch(() => {
-      status.error = true;
-    });
-  return status;
-}
-
 /**
  * Edit an existing users
  * @param {Object} userToEdit - The user that is to be updated
