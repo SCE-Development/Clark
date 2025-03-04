@@ -198,8 +198,8 @@ export default function SCEatsAdmin(props) {
       <dialog id="confirm_delete" className="modal">
         <form method="dialog" className="modal-box w-1/2 max-w-md">
           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-          <h3 className="font-bold text-lg">Are you sure you want to delete {foodToDelete.name} ?</h3>
-          <p className="py-4">This action cannot be undone.</p>
+          <h3 className="font-bold text-lg">Delete {foodToDelete.name}?</h3>
+          <p className="py-4">This action cannot be undone!</p>
           <div className="modal-action">
             <button
               type="button"
