@@ -11,6 +11,7 @@ import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
 import SpeakerPage from './Pages/Speaker/Speaker';
 import EditUserInfo from './Pages/UserManager/EditUserInfo';
+import LeetCode from './Pages/LeetCode/LeetCode.js';
 
 import Home from './Pages/Home/Home.js';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
@@ -137,6 +138,13 @@ export default function Routing({ appProps }) {
       path: '/advertisement-admin',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
+      inAdminNavbar: true
+    },
+    {
+      Component: LeetCode,
+      path: '/leetcode',
+      allowedIf: userIsMember || userIsOfficerOrAdmin,
+      redirect: '/login',
       inAdminNavbar: true
     }
   ];
