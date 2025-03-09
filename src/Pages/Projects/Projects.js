@@ -1,6 +1,5 @@
 import React from 'react';
 import ProjectCard from './Components/ProjectCard';
-
 const projects = [
   {
     'link': 'https://github.com/SCE-Development/Clark',
@@ -37,6 +36,13 @@ const projects = [
     'information': 'FastAPI',
     'caption': 'A url shortening service created by SCE'
   },
+  {
+    'link': 'https://github.com/SCE-Development/LedMatrix',
+    'image': 'https://github.com/user-attachments/assets/03c1646d-5d64-448f-9c65-cffc9883b58e',
+    'name': 'LeetCode Leaderboard',
+    'information': 'Full Stack',
+    'caption': 'A leaderboard for LeetCode problems. View live leaderboard [here](http://192.168.69.123:5173)'
+  }
 ];
 
 export default function ProjectsPage() {
