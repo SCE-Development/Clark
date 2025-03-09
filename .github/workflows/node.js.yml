@@ -24,7 +24,7 @@ jobs:
     - run: python setup.py
     - name: cache frontend dependencies
       id: frontend-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ./node_modules
         key: modules-${{ hashFiles('package-lock.json') }}
@@ -52,7 +52,7 @@ jobs:
     # split api and frontend code completely
     - name: cache frontend dependencies
       id: frontend-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ./node_modules
         key: modules-${{ hashFiles('package-lock.json') }}
@@ -61,7 +61,7 @@ jobs:
       run: npm ci --ignore-scripts
     - name: cache backend dependencies
       id: cache-api
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ./api/node_modules
         key: modules-${{ hashFiles('api/package-lock.json') }}
@@ -85,7 +85,7 @@ jobs:
     # the frontend dependencies include eslint
     - name: cache frontend dependencies
       id: frontend-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ./node_modules
         key: modules-${{ hashFiles('package-lock.json') }}
@@ -109,7 +109,7 @@ jobs:
     # the frontend dependencies include eslint
     - name: cache frontend dependencies
       id: frontend-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ./node_modules
         key: modules-${{ hashFiles('package-lock.json') }}
