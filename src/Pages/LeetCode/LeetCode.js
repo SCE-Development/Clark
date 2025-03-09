@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { membershipState } from '../../Enums';
 
-export default function LeetCode() {
+export default function LeetCode({ user }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -13,6 +14,10 @@ export default function LeetCode() {
     setIsLoading(false);
     setHasError(true);
   };
+
+  // Determine if user is admin
+  const isAdmin = user?.accessLevel >= membershipState.OFFICER;
+  const iframeSrc = `http://192.168.69.123:5173?isAdmin=${isAdmin}`;
 
   return (
     <div className="fixed inset-0 w-full h-full">
@@ -33,7 +38,7 @@ export default function LeetCode() {
         </div>
       )}
       <iframe 
-        src="http://192.168.69.123:5173"
+        src={iframeSrc}
         className="w-full h-full border-0"
         style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: 0 }}
         title="LeetCode Leaderboard"

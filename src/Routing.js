@@ -143,8 +143,8 @@ export default function Routing({ appProps }) {
     {
       Component: LeetCode,
       path: '/leetcode',
-      allowedIf: userIsMember || userIsOfficerOrAdmin,
-      redirect: '/login',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
       inAdminNavbar: true
     }
   ];
