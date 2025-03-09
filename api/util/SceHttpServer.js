@@ -58,10 +58,10 @@ class SceHttpServer {
   registerMetricsMiddleware() {
     this.app.use((req, res, next) => {
       res.on('finish', () => {
-        const route = req.route ? req.route.path : req.path;
         MetricsHandler.endpointHits.inc({
           method: req.method,
-          route: route,
+          // for example "/api/Auth/verify"
+          route: req.originalUrl,
           statusCode: res.statusCode,
         });
       });
