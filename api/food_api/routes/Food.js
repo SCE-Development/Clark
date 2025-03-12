@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Food = require('../models/Food');
+const isValidNumber = require('../../util/ValidNumber');
 const {
   OK,
   BAD_REQUEST,
@@ -9,9 +10,6 @@ const {
 
 router.post('/createFood', (req, res) => {
   const { price, quantity } = req.body;
-  const isValidNumber = (value) => {
-    return !Number.isNaN(Number(value));
-  }
 
   const newFood = new Food({
     name: req.body.name,
