@@ -108,5 +108,16 @@ services:
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
 
+  portainer:
+    image: portainer/portainer-ce:lts
+    container_name: portainer-dev
+    ports:
+      - '9000:9000'
+      - '9443:9443'
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - portainer_data:/data
+
 volumes:
   sce_mongodb_data_dev:
+  portainer_data:
