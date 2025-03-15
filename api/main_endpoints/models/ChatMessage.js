@@ -22,10 +22,7 @@ const ChatMessageSchema = new Schema(
     },
     expireAt: {
       type: Date,
-      default: function () {
-        // Calculate expiration using createdAt + 24 hours
-        return new Date(this.createdAt.getTime() + 24 * 60 * 60 * 1000);
-      }
+      default: () => new Date(Date.now() + 24 * 60 * 60 * 1000)
     }
   },
   { collection: 'ChatMessage' }
