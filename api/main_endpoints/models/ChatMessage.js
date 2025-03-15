@@ -10,7 +10,7 @@ const ChatMessageSchema = new Schema(
     text: {
       type: String,
       required: true,
-      maxLength: [2000, 'Messages are at most 255 characters long']
+      maxLength: [2000, 'Messages are at most 2000 characters long']
     },
     chatRoomId: {
       type: String,
@@ -22,7 +22,7 @@ const ChatMessageSchema = new Schema(
     },
     expireAt: {
       type: Date,
-      default: function() {
+      default: function () {
         // Calculate expiration using createdAt + 24 hours
         return new Date(this.createdAt.getTime() + 24 * 60 * 60 * 1000);
       }
