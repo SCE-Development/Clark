@@ -13,39 +13,45 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-
+const ChatMessage = require('../models/ChatMessage.js');
 
 router.use(bodyParser.json());
-
-
 
 const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeMessage = ((roomId, message, username) => {
+const writeMessage =  async (roomId, message, username) => {
+  const messageObj = new ChatMessage({
+    userId: username,
+    text: message,
+    chatRoomId: roomId,
+  });
 
-  const messageObj = {
-    timestamp: Date.now(),
-    message,
-    username
+  await messageObj.save();
+
+  const messageToSend = {
+    username: username,
+    message: message,
+    timestamp: messageObj.createdAt.getTime(),  // Convert to timestamp for frontend
+    chatRoomId: roomId
   };
 
+
   if (clients[roomId]) {
-    clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(messageObj)}\n\n`));
+    clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(messageToSend)}\n\n`));
   }
 
-  lastMessageSent[roomId] = JSON.stringify(messageObj);
+  lastMessageSent[roomId] = JSON.stringify(messageToSend);
 
   // increase the total messages sent counter
   MetricsHandler.totalMessagesSent.inc();
 
   // increase the total amount of messages sent per chatroom counter
   MetricsHandler.totalChatMessagesPerChatRoom.labels(roomId).inc();
-});
+};
 
 router.post('/send', async (req, res) => {
-
   const {message, id} = req.body;
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
@@ -83,19 +89,25 @@ router.post('/send', async (req, res) => {
         return;
       }
       if (result) {
-        writeMessage(id, `${message}`, `${result.firstName}:`);
+        writeMessage(id, `${message}`, `${result.firstName}`);
         return res.json({status: 'Message sent'});
       }
       return res.sendStatus(UNAUTHORIZED);
     });
+
+
   } catch (error) {
     logger.error('Error in /send: ', error);
     res.sendStatus(SERVER_ERROR);
   }
 });
 
+
 router.get('/getLatestMessage', async (req, res) => {
-  const {apiKey, id} = req.query;
+  const {
+    apiKey,
+    id
+  } = req.query;
 
   const required = [
     {value: apiKey, title: 'API Key'},
@@ -104,35 +116,36 @@ router.get('/getLatestMessage', async (req, res) => {
 
   const missingValue = required.find(({value}) => !value);
 
-  if (missingValue){
-    res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
-    return;
+  if (missingValue) {
+    return res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
   }
 
   try {
-    User.findOne({ apiKey }, (error, result) => {
-      if (error) {
-        logger.error('/listen received an invalid API key: ', error);
-        res.sendStatus(SERVER_ERROR);
-        return;
-      }
+    // Using async/await with proper error handling
+    const user = await User.findOne(
+      { apiKey }
+    );
 
-      if (!result) { // return unauthorized if no api key found
-        return res.sendStatus(UNAUTHORIZED);
-      }
+    if (!user) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
 
-      if (!lastMessageSent[id]) {
-        return res.status(OK).send('Room closed');
-      }
 
-      return res.status(OK).send(lastMessageSent[id]);
+    const latestMessage = await ChatMessage.find({ chatRoomId: id })
+      .sort({ createdAt: -1 });
 
-    });
+    if (!latestMessage) {
+      return res.status(OK).send('Room closed');
+    }
+
+    return res.status(OK).json(latestMessage);
+
   } catch (error) {
     logger.error('Error in /get: ', error);
-    res.sendStatus(SERVER_ERROR);
+    return res.sendStatus(SERVER_ERROR);
   }
 });
+
 
 router.get('/listen', async (req, res) => {
 
