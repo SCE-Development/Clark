@@ -40,6 +40,9 @@ export default function AboutPage() {
           Two semesters:   $30
         </pre>
         <p>
+          The membership fee must be paid in the SCE room.
+        </p>
+        <p>
           Benefits include after-hours room access, free paper printing, free 3D printing, company tours, and a free T-shirt.
         </p>
       </section>
