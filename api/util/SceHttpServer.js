@@ -4,6 +4,7 @@ const cors = require('cors');
 const http = require('http');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+const url = require('url');
 
 const { PathParser } = require('./PathParser');
 const logger = require('./logger');
@@ -58,10 +59,12 @@ class SceHttpServer {
   registerMetricsMiddleware() {
     this.app.use((req, res, next) => {
       res.on('finish', () => {
+        // req.originalUrl can look like /api/path?key=value
+        const parsedUrl = url.parse(req.originalUrl, true);
         MetricsHandler.endpointHits.inc({
           method: req.method,
-          // for example "/api/Auth/verify"
-          route: req.baseUrl,
+          // using the above example, pathname looks like '/api/path'
+          route: parsedUrl.pathname,
           statusCode: res.statusCode,
         });
       });
