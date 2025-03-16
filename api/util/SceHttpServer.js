@@ -61,7 +61,7 @@ class SceHttpServer {
         MetricsHandler.endpointHits.inc({
           method: req.method,
           // for example "/api/Auth/verify"
-          route: req._parsedUrl.pathname,
+          route: req.baseUrl,
           statusCode: res.statusCode,
         });
       });
