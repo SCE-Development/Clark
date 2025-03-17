@@ -52,7 +52,7 @@ const Home = () => {
               initial={{ opacity: 0, x: 100}}
               animate={{ opacity: 1, x:0}}
               transition={{ duration: 1, delay: 0.5}}
-              className="text-base text-center xl:text-left md:text-2xl">
+              className="text-base text-gray-400 text-center xl:text-left md:text-2xl">
               SJSU's Largest Engineering Club
             </motion.h3>
           </div>
@@ -62,10 +62,10 @@ const Home = () => {
             transition={{ duration: 0.5, delay: 1.5}}
             className='flex justify-center space-x-3'>
             <a href="/about" rel="nofollow noreferrer" target="_blank">
-              <button className="btn btn-outline btn-primary hover:!text-white">Learn More</button>
+              <button className="btn btn-outline text-lg text-blue-400 hover:bg-blue-700 hover:!text-white">Learn More</button>
             </a>
-            <a href="/register" rel="nofollow noreferrer" target="_blank">
-              <button className="btn btn-outline btn-accent hover:!text-white">Join Us!</button>
+            <a href="/register">
+              <button className="btn btn-outline text-lg btn-accent hover:!text-white">Join Us!</button>
             </a>
           </motion.div>
         </div>

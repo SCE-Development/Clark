@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { withRouter } from 'react-router-dom';
+import { withRouter, BrowserRouter } from 'react-router-dom';
 import './index.css';
 
 import Routing from './Routing';
@@ -27,9 +27,9 @@ function App(props) {
 
   return (
     !isAuthenticating && (
-      <>
+      <BrowserRouter>
         <Routing appProps={{ authenticated, setAuthenticated, user }} />
-      </>
+      </BrowserRouter>
     )
   );
 }

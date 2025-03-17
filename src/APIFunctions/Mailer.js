@@ -42,7 +42,7 @@ export async function sendVerificationEmail(email, token) {
  */
 export async function sendPasswordReset(email, captchaToken) {
   let status = new ApiResponse();
-  const url = new URL('/cloudapi/Auth/sendPasswordReset', BASE_API_URL);
+  const url = new URL('/api/Auth/sendPasswordReset', BASE_API_URL);
   await axios
     .post(url.href, {
       email,
