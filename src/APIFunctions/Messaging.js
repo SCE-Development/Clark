@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 
-export async function sendMessage(id, token, message, name) {
+export async function sendMessage(id, token, message) {
   let status = new ApiResponse();
   const roomId = id || 'general';
 
@@ -10,7 +10,7 @@ export async function sendMessage(id, token, message, name) {
 
   await axios
     .post(url.href,
-      { message, id: roomId, name },
+      { message, id: roomId },
       {
         headers: {
           'authorization' : 'Bearer ' + token

@@ -46,9 +46,10 @@ const writeMessage = ((roomId, message, username) => {
 
 router.post('/send', async (req, res) => {
 
-  const {message, id, name} = req.body;
+  const {message, id} = req.body;
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
+
 
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
@@ -63,28 +64,35 @@ router.post('/send', async (req, res) => {
     return;
   }
 
+  let nameToUse = null;
+
   if (apiKey) {
     try {
       const result = await User.findOne({ apiKey }).exec();
       if (!result) {
         return res.sendStatus(UNAUTHORIZED);
       }
-      writeMessage(id, `${message}`, `${result.firstName}:`);
-      return res.json({ status: 'Message sent' });
+      nameToUse = result.firstName;
     } catch (error) {
-      logger.error('Error in /send: ', error);
+      logger.error('Error in /send User.findOne: ', error);
       return res.sendStatus(SERVER_ERROR);
     }
   }
 
-  if (token) {
-    userObj = decodeToken(req);
-    if (!userObj) {
-      return res.sendStatus(UNAUTHORIZED);
-    }
+  // Assume user passed a non null/undefined token
+  const userObj = decodeToken(req);
+  console.log(userObj)
+  if (!userObj) {
+    return res.sendStatus(UNAUTHORIZED);
   }
-  writeMessage(id, `${message}`, `${name}:`);
-  return res.json({ status: 'Message sent!' });
+  nameToUse = userObj.firstName;
+  try {
+    writeMessage(id, `${message}`, `${nameToUse}:`);
+    return res.json({ status: 'Message sent' });
+  } catch (error) {
+    logger.error('Error in /send writeMessage: ', error);
+    return res.sendStatus(SERVER_ERROR);
+  }
 });
 
 router.get('/getLatestMessage', async (req, res) => {
