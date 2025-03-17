@@ -49,6 +49,7 @@ function MessagingForm(props) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     const status = await sendMessage(id, token, message);
 
     if (status.error) {
