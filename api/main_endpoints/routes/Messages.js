@@ -81,7 +81,6 @@ router.post('/send', async (req, res) => {
 
   // Assume user passed a non null/undefined token
   const userObj = decodeToken(req);
-  console.log(userObj)
   if (!userObj) {
     return res.sendStatus(UNAUTHORIZED);
   }
