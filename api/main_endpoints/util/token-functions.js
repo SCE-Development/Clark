@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
-const { secretKey, DISCORD_PRINTING_KEY } = require('../../config/config.json');
-//const {secretKey}=require('../../config/config.json')
+const path=require('path')
+const {secretKey,discordApiKeys}=require(path.resolve(__dirname,'../../config/config.json')) //Added this line to pass one of the test cases that was causing a errors for my pr 
 const passport = require('passport');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 require('./passport')(passport);
-
 
 /**
  * Check if the request body contains a token
