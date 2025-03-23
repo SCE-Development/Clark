@@ -32,6 +32,7 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
+
 async function verifiedCountCard(cardBytes){
   try{
     const verifyCardInfo = await OfficeAccessCard.findOneAndUpdate(
@@ -61,7 +62,6 @@ async function verifiedCountCard(cardBytes){
 router.get('/verify', async (req, res) => { // Increment the verified count by 1
   const { cardBytes, add = false } = req.query;
   const apiKey = req.headers['x-api-key'];
-
   const required = [
     { value: apiKey, title: 'X-API-Key HTTP header', },
     { value: cardBytes, title: 'cardBytes query parameter', },
@@ -80,15 +80,14 @@ router.get('/verify', async (req, res) => { // Increment the verified count by 1
 
   const cardExists = await checkIfCardExists(cardBytes);
 
-  const cardVerify = await verifiedCountCard(cardBytes); // cardExists before the changes
+  const cardVerify = await verifiedCountCard(cardBytes);
 
   if (cardExists) {
-    // return res.sendStatus(OK); Commenting this out for now
-    // Going to add it
-    return {
-      'Status':res.sendStatus(OK),
-      'CardVerify':cardVerify
-    };
+    return res.sendStatus(OK);
+  }
+
+  if(cardVerify){
+    return res.sendStatus(OK);
   }
 
   // if a card doesnt exist and we arent trying
@@ -109,7 +108,7 @@ router.get('/verify', async (req, res) => { // Increment the verified count by 1
       return res.sendStatus(OK);
     }
   } catch (error) {
-    //logger.error('Error creating OfficeAccessCard: ', error); // I commented this out because it was causing the test to fail
+    logger.error('Error creating OfficeAccessCard: ', error);
     return res.sendStatus(SERVER_ERROR);
   }
 });
