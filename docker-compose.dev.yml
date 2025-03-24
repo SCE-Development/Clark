@@ -109,13 +109,15 @@ services:
     image: 'nginx'
     volumes:
       - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
-    command: [nginx-debug, '-g', 'daemon off;']
+      - ./logs:/var/log/nginx
+    command: [nginx-debug, '-g', "daemon off; error_log /var/log/nginx/error.log debug;"]
     ports:
       - '80:80'
     restart: 'on-failure'
     depends_on:
       - frontend
     environment:
+      - NGINX_DEBUG=1
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
 
