@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const OfficeAccessCardSchema = new Schema(
   {
-    cardBytes: { // Need to add a new field to increment by 1 each time verify was called
+    cardBytes: {
       type: String,
       required: true,
     },

@@ -125,7 +125,7 @@ async function registerUser(userToAdd) {
   try {
     await newUser.save();
   } catch (error) {
-    //logger.error('Error saving user:', error); // I commented this out because it was causing the test to fail
+    logger.error('Error saving user:', error);
     result.status = 'BAD_REQUEST';
     result.userSaved = false;
     result.message = 'Failed creating account.';
