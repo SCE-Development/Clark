@@ -41,23 +41,24 @@ async function verifiedCountCard(cardBytes){
         $inc: { verifiedCount: 1 },
         $set: { lastVerified: Date.now() }
       }, {
-        useFindAndModify: false //  Add this line to avoid deprecation warning
+        useFindAndModify: false, new:true //  Add this line to avoid deprecation warning
       }
     );
 
     const response = verifyCardInfo;
+
     return {
       'message':'Updated the verify count and last verified date',
       'response':response
     };
 
   }catch(error){
+    logger.error('Error updating verification count: ', error);
     return{
       'message':error.message,
     };
   }
 }
-
 
 router.get('/verify', async (req, res) => { // Increment the verified count by 1
   const { cardBytes, add = false } = req.query;
@@ -70,8 +71,7 @@ router.get('/verify', async (req, res) => { // Increment the verified count by 1
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
-    res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
-    return;
+    return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
   }
 
   if (apiKey !== API_KEY) {
@@ -80,13 +80,8 @@ router.get('/verify', async (req, res) => { // Increment the verified count by 1
 
   const cardExists = await checkIfCardExists(cardBytes);
 
-  const cardVerify = await verifiedCountCard(cardBytes);
-
   if (cardExists) {
-    return res.sendStatus(OK);
-  }
-
-  if(cardVerify){
+    await verifiedCountCard(cardBytes); // Increment the verified count by 1
     return res.sendStatus(OK);
   }
 
