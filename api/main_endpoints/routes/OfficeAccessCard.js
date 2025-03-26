@@ -90,7 +90,7 @@ router.get('/verify', async (req, res) => { // Increment the verified count by 1
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    return res.sendStatus(NOT_FOUND);
+    return res.sendStatus(NOT_FOUND); 
 
   }
 

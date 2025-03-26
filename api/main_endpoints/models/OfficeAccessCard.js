@@ -12,11 +12,11 @@ const OfficeAccessCardSchema = new Schema(
       type: Date,
       default: Date.now
     },
-    verifiedCount:{
+    verifiedCount:{ //Checks how many times the card has been verified
       type:Number,
       default:0
     },
-    lastVerified:{
+    lastVerified:{ //Checks last time the card was verified
       type:Date,
       default: Date.now
     }
