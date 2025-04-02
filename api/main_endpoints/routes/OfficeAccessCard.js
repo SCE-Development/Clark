@@ -79,12 +79,11 @@ router.get('/verify', async (req, res) => { // Increment the verified count by 1
   }
 
   const cardExists = await checkIfCardExists(cardBytes);
+  const verifyCount = await verifiedCountCard(cardBytes);
 
   if (cardExists) {
-    await verifiedCountCard(cardBytes); // Increment the verified count by 1
     return res.sendStatus(OK);
   }
-
   // if a card doesnt exist and we arent trying
   // to add a new one, that means we were trying
   // to verify a card, and that card isnt found.
