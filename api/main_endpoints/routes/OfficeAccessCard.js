@@ -32,7 +32,6 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
-
 async function verifiedCountCard(cardBytes){
   try{
     const verifyCardInfo = await OfficeAccessCard.findOneAndUpdate(
@@ -41,7 +40,7 @@ async function verifiedCountCard(cardBytes){
         $inc: { verifiedCount: 1 },
         $set: { lastVerified: Date.now() }
       }, {
-        useFindAndModify: false, new:true //  Add this line to avoid deprecation warning
+        useFindAndModify: false, new:true
       }
     );
 
@@ -60,7 +59,7 @@ async function verifiedCountCard(cardBytes){
   }
 }
 
-router.get('/verify', async (req, res) => { // Increment the verified count by 1
+router.get('/verify', async (req, res) =>{
   const { cardBytes, add = false } = req.query;
   const apiKey = req.headers['x-api-key'];
   const required = [
