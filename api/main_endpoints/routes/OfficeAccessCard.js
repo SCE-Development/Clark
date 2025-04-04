@@ -18,45 +18,30 @@ router.use(bodyParser.json());
 function checkIfCardExists(cardBytes) {
   return new Promise((resolve) => {
     try {
-      OfficeAccessCard.findOne({ cardBytes }, (error, result) => {
-        if (error) {
-          logger.error('checkIfCardExists got an error querying mongodb: ', error);
-          return resolve(false);
+      OfficeAccessCard.findOneAndUpdate(
+        { cardBytes:cardBytes},
+        {
+          $inc: { verifiedCount: 1 },
+          $set: { lastVerified: Date.now() }
+        }, {
+          useFindAndModify: false, new:true, upsert:false
         }
-        return resolve(!!result);
-      });
+        , (error, result) => {
+          if (error) {
+            logger.error('checkIfCardExists got an error querying mongodb: ', error);
+            return resolve(false);
+          }
+          if(!result){
+            logger.info(`Card:${cardBytes} not found in the database`);
+            return resolve(false);
+          }
+          return resolve(!!result);
+        });
     } catch (error) {
       logger.error('checkIfCardExists caught an error: ', error);
       return resolve(false);
     }
   });
-}
-
-async function verifiedCountCard(cardBytes){
-  try{
-    const verifyCardInfo = await OfficeAccessCard.findOneAndUpdate(
-      { cardBytes: cardBytes },
-      {
-        $inc: { verifiedCount: 1 },
-        $set: { lastVerified: Date.now() }
-      }, {
-        useFindAndModify: false, new:true
-      }
-    );
-
-    const response = verifyCardInfo;
-
-    return {
-      'message':'Updated the verify count and last verified date',
-      'response':response
-    };
-
-  }catch(error){
-    logger.error('Error updating verification count: ', error);
-    return{
-      'message':error.message,
-    };
-  }
 }
 
 router.get('/verify', async (req, res) =>{
@@ -78,8 +63,6 @@ router.get('/verify', async (req, res) =>{
   }
 
   const cardExists = await checkIfCardExists(cardBytes);
-  const verifyCount = await verifiedCountCard(cardBytes);
-
   if (cardExists) {
     return res.sendStatus(OK);
   }
