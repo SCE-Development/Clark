@@ -100,6 +100,7 @@ export async function editUser(userToEdit, token) {
     lastLogin,
     emailVerified,
     emailOptIn,
+    profileColor, // new property
   } = userToEdit;
   const url = new URL('/api/User/edit', BASE_API_URL);
   await axios
@@ -119,7 +120,8 @@ export async function editUser(userToEdit, token) {
       accessLevel,
       lastLogin,
       emailVerified,
-      emailOptIn
+      emailOptIn,
+      profileColor,
     }, {
       headers: {
         Authorization: `Bearer ${token}`

@@ -73,7 +73,11 @@ const UserSchema = new Schema(
     apiKey: {
       type: String,
       default: ''
-    }
+    },
+    profileColor: {
+      type: String,
+      default: 'bg-cyan-700' //default is cyan (TESTING)
+    },
   },
   { collection: 'User' }
 );
