@@ -163,13 +163,14 @@ router.post('/login', function(req, res) {
 
             // Include fields from the User model that should
             // be passed to the JSON Web Token (JWT)
-            const userToBeSigned = {
+            const userToBeSigned = { //maybe where to change to add profileColor
               firstName: user.firstName,
               lastName: user.lastName,
               email: user.email,
               accessLevel: user.accessLevel,
               pagesPrinted: user.pagesPrinted,
-              _id: user._id
+              _id: user._id,
+              profileColor: user.profileColor
             };
             user
               .save()
