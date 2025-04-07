@@ -159,9 +159,9 @@ export default function Profile(props) {
                 value={profileColor}
                 onChange={handleProfileChange}>  
                 </input>
-                <button type="submit">Enter</button>
+                <button type="submit" className='mx-4 rounded bg-cyan-700 p-2 text-white'>Enter</button>
               </form>
-              <div> {response.profileColor}</div>
+              {/*<div> {response.profileColor}</div>*/}
             </div>
           </div>
         </div>
