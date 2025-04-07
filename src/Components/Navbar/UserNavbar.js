@@ -93,10 +93,10 @@ export default function UserNavBar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className={`w-12 rounded-full ${bgColor} text-neutral-content`}>
+                <div className={`w-12 rounded-full ${props.user.profileColor} text-neutral-content`}>
                   <span>{initials}</span>
                 </div>
-                {/*<div className={`bg-cyan-400`}>Whatsup</div>*/}
+                {/*<div className={`bg-purple-500`}>Whatsup</div>*/}
               </summary>
               <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>
                 <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">

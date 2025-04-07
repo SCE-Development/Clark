@@ -4,11 +4,18 @@ import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
+import { editUser } from '../../../APIFunctions/User';
 
 export default function Profile(props) {
+  // console.log("Current Prop PF Color: ", props.user.profileColor);
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
+  const [profileColor, setProfileColor] = useState('');
+
+  const handleProfileChange = (e) => {
+    setProfileColor(e.target.value);
+  }
 
   async function getUserFromApi() {
     const response = await getUserById(props.user._id, props.user.token);
@@ -17,7 +24,48 @@ export default function Profile(props) {
     }
   }
 
-  useEffect(getUserFromApi, []);
+  const changeProfileColor = async (e) => {
+    e.preventDefault();
+    console.log("Profile Color: ", profileColor);
+    setProfileColor("");
+    
+    const response2 = await editUser(
+      {
+        ...props.user,
+        profileColor
+    },
+    props.user.token
+    );
+
+    if (!response2.error) {
+      console.log("Profile Color Updated!");
+
+      const refreshedUser = await getUserById(props.user._id, props.user.token);
+      if (refreshedUser.responseData) {
+        setResponse(refreshedUser.responseData);
+        if (props.onUserUpdate) {
+          props.onUserUpdate(refreshedUser.responseData);
+        }
+      }
+      setBannerMessage('Profile color updated successfully!');
+      setBannerColor('success');
+    } else {
+      console.log("Profile Color Update FAILED");
+    }
+    setProfileColor('');
+    
+  }
+
+  //useEffect(getUserFromApi, []);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await getUserById(props.user._id, props.user.token);
+      if(res.responseData) {
+        setResponse(res.responseData);
+      }
+    };
+    fetchUser();
+  },[props.user._id, props.user.token])
 
   function renderExpirationDate() {
     if (response.accessLevel >= membershipState.OFFICER) {
@@ -100,6 +148,20 @@ export default function Profile(props) {
             <div className="grid grid-cols-2">
               <div className="px-4 py-2 font-semibold">Membership Expiration</div>
               <div className="px-4 py-2">{renderExpirationDate()}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Change Profile Color</div>
+              <form onSubmit={changeProfileColor}>
+                <input 
+                className ="px-4 py-2" 
+                type='text' 
+                placeholder='Enter Profile Color'
+                value={profileColor}
+                onChange={handleProfileChange}>  
+                </input>
+                <button type="submit">Enter</button>
+              </form>
+              <div> {response.profileColor}</div>
             </div>
           </div>
         </div>
