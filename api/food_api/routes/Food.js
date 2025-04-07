@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Food = require('../models/Food');
-const isValidNumber = require('../../util/ValidNumber');
+const { isValidNumber } = require('../../util/ValidNumber');
 const {
   OK,
   BAD_REQUEST,
   NOT_FOUND
 } = require('../../util/constants').STATUS_CODES;
 
-router.post('/createFood', (req, res) => {
+router.post('/createFood', async (req, res) => {
   const { price, quantity } = req.body;
 
   const newFood = new Food({
@@ -20,25 +20,30 @@ router.post('/createFood', (req, res) => {
     expiration: req.body.expiration,
   });
 
-  Food.create(newFood)
-    .then((post) => {
-      return res.json(post);
-    })
-    .catch(
-      (error) => res.sendStatus(BAD_REQUEST)
-    );
+  try {
+    const post = await Food.create(newFood);
+    return res.json(post);
+  } catch(error) {
+    return res.sendStatus(BAD_REQUEST);
+  }
 });
 
-router.get('/getFoods', (req, res) => {
-  Food.find()
-    .then(items => res.status(OK).send(items))
-    .catch(error => {
-      res.sendStatus(BAD_REQUEST);
-    });
+router.get('/getFoods', async (req, res) => {
+  // Food.find()
+  //   .then(items => res.status(OK).send(items))
+  //   .catch(error => {
+  //     res.sendStatus(BAD_REQUEST);
+  //   });
 
+  try {
+    const items = await Food.find();
+    return res.status(OK).send(items)
+  } catch(error) {
+    return res.sendStatus(BAD_REQUEST);
+  }
 })
 
-router.post('/editFood', (req, res) => {
+router.post('/editFood', async (req, res) => {
   const {
     name,
     type,
@@ -49,40 +54,37 @@ router.post('/editFood', (req, res) => {
     _id,
   } = req.body;
 
-  Food.findOne({ _id })
-    .then(Food => {
-      Food.name = name || Food.name;
-      Food.type = type || Food.type;
-      Food.photo = photo || Food.photo;
-      Food.price = price || Food.price;
-      Food.quantity = quantity || Food.quantity;
-      Food.expiration = expiration || Food.expiration;
-      Food
-        .save()
-        .then(() => {
-          res.sendStatus(OK);
-        })
-        .catch(() => {
-          res.sendStatus(BAD_REQUEST);
-        });
-    })
-    .catch(() => {
-      res.sendStatus(NOT_FOUND);
-    });
+  try {
+    const food = await Food.findOne({ _id });
+    if (!food) {
+      return res.sendStatus(NOT_FOUND);
+    }
+    
+    food.name = name || food.name;
+    food.type = type || food.type;
+    food.photo = photo || food.photo;
+    food.price = price || food.price;
+    food.quantity = quantity || food.quantity;
+    food.expiration = expiration || food.expiration;
+
+    await food.save();
+    return res.sendStatus(OK);
+  } catch (error) {
+    return res.sendStatus(BAD_REQUEST);
+  }
 });
 
-router.post('/deleteFood', (req, res) => {
-  Food.deleteOne({ _id: req.body._id })
-    .then(result => {
-      if (result.n < 1) {
-        res.sendStatus(NOT_FOUND);
-      } else {
-        res.sendStatus(OK);
-      }
-    })
-    .catch(() => {
-      res.sendStatus(BAD_REQUEST);
-    });
+router.post('/deleteFood', async (req, res) => {
+  try {
+    const result = await Food.deleteOne({ _id: req.body._id });
+    if (result.n < 1) {
+      return res.sendStatus(NOT_FOUND);
+    } else {
+      return res.sendStatus(OK);
+    }
+  } catch (error) {
+    return res.sendStatus(BAD_REQUEST);
+  }
 });
 
 module.exports = router;
