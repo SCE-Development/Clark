@@ -35,7 +35,21 @@ const Home = () => {
           className="text-white"
           style={{ display: showMessage ? 'block' : 'none' }} // Conditional display based on state
         >
-          {message}
+          {message.split(/(https?:\/\/[^\s]+)/g).map((part, index) =>
+            /https?:\/\/[^\s]+/.test(part) ? (
+              <a
+                key={index}
+                href={part}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 underline"
+              >
+                {part}
+              </a>
+            ) : (
+              <span key={index}>{part}</span>
+            )
+          )}
         </motion.p>
       </div>
       <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
