@@ -35,6 +35,7 @@ describe('OfficeAccessCard', () => {
   const VALID_CARD_BYTES = 'wesleys card';
   const NEW_CARD_BYTES = 'dials card';
   const VERIFY_API_PATH = '/api/OfficeAccessCard/verify';
+  const INCREMENT_VERIFY_COUNT = 0;
   before(() => {
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/OfficeAccessCard.js',
@@ -44,6 +45,8 @@ describe('OfficeAccessCard', () => {
     tools.emptySchema(OfficeAccessCard);
     const testOfficeAccessCard = new OfficeAccessCard({
       cardBytes: VALID_CARD_BYTES,
+      verifiedCount:INCREMENT_VERIFY_COUNT,
+      lastVerifed:Date.now()
     });
     return new Promise((resolve, reject) => {
       testOfficeAccessCard.save()
@@ -117,5 +120,32 @@ describe('OfficeAccessCard', () => {
         API_KEY, path);
       expect(result).to.have.status(OK);
     });
+
+    it('Should increment verifyCount by 1 after a valid verify request', async () => {
+      const params = new URLSearchParams();
+      params.append('cardBytes', VALID_CARD_BYTES);
+      const path = VERIFY_API_PATH + '?' + params.toString();
+      await test.sendGetRequestWithApiKey(
+        API_KEY, path);
+      const updatedCard = await OfficeAccessCard.findOne({cardBytes:VALID_CARD_BYTES});
+      const expectVerifyCount = updatedCard.verifiedCount;
+      expect(updatedCard.verifiedCount).to.equal(expectVerifyCount);
+    });
+
+    it('Should return today as the last verified date', async () => {
+      const params = new URLSearchParams();
+      params.append('cardBytes', VALID_CARD_BYTES);
+      const path = VERIFY_API_PATH + '?' + params.toString();
+      await test.sendGetRequestWithApiKey(
+        API_KEY, path);
+      const recievedCard = await OfficeAccessCard({cardBytes:VALID_CARD_BYTES});
+      const todayDate = new Date().toISOString();
+      const expectedData = recievedCard.lastVerified.toISOString();
+      expect(expectedData).to.equal(todayDate);
+    });
+
+
   });
+
+
 });
