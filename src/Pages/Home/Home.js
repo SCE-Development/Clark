@@ -25,6 +25,24 @@ const Home = () => {
     getMessage();
   }, []);
 
+  function renderMessageWithLinks(message) {
+    return message.split(/(https?:\/\/[^\s]+)/g).map((part, index) =>
+      /https?:\/\/[^\s]+/.test(part) ? (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 underline"
+        >
+          {part}
+        </a>
+      ) : (
+        <span key={index}>{part}</span>
+      )
+    );
+  }
+
   return (
     <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
       <div className = "flex flex-col items-center justify-center my-4">
@@ -35,21 +53,7 @@ const Home = () => {
           className="text-white"
           style={{ display: showMessage ? 'block' : 'none' }} // Conditional display based on state
         >
-          {message.split(/(https?:\/\/[^\s]+)/g).map((part, index) =>
-            /https?:\/\/[^\s]+/.test(part) ? (
-              <a
-                key={index}
-                href={part}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 underline"
-              >
-                {part}
-              </a>
-            ) : (
-              <span key={index}>{part}</span>
-            )
-          )}
+          {renderMessageWithLinks(message)}
         </motion.p>
       </div>
       <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
