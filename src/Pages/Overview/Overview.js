@@ -323,7 +323,7 @@ export default function Overview(props) {
                   <td>
                     <div className='flex items-center justify-center'>
                       <button
-                         className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+                        className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
                         onClick={() => {
                           setToggleDelete(!toggleDelete);
                           setUserToDelete(user);
