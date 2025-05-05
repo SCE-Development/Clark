@@ -3,6 +3,14 @@ import ProjectCard from './Components/ProjectCard';
 
 const projects = [
   {
+    'link': 'https://github.com/SCE-Development/spartan-compass',
+    'image': '',
+    'name': 'Spartan Compass', 'subnote': 'Rate My Professor+',
+    'information': 'Full Stack',
+    'caption': 'Spartan Compass is a web application that allows students to review professors based off their courses. It is built with React, Next.js, and Drizzle ORM. It also uses python for the webscraping of Rate My Professor.'
+  },
+
+  {
     'link': 'https://github.com/SCE-Development/Clark',
     'image': 'https://user-images.githubusercontent.com/59713070/235862105-9606e862-e27e-40d4-8991-de1793c48dd0.png',
     'name': 'Clark', 'subnote': '(formerly Core-v4)',
