@@ -9,7 +9,6 @@ const Home = () => {
 
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
-
   async function getMessage() {
     try {
       const messageData = await getAd();
@@ -26,21 +25,23 @@ const Home = () => {
   }, []);
 
   function renderMessageWithLinks(message) {
-    return message.split(/(https?:\/\/[^\s]+)/g).map((part, index) =>
-      /https?:\/\/[^\s]+/.test(part) ? (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-400 underline"
-        >
-          {part}
-        </a>
-      ) : (
-        <span key={index}>{part}</span>
-      )
-    );
+    return message.split(/(https?:\/\/[^\s]+)/g).map((part, index) => {
+      if (/https?:\/\/[^\s]+/.test(part)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 underline"
+          >
+            {part}
+          </a>
+        );
+      }
+
+      return <span key={index}>{part}</span>;
+    });
   }
 
   return (
