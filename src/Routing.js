@@ -150,7 +150,7 @@ export default function Routing({ appProps }) {
     { Component: EmailPreferencesPage, path: '/emailPreferences' },
   ];
   return (
-    <Router>
+    <div>
       <Switch>
         {signedInRoutes.map(
           ({
@@ -202,6 +202,6 @@ export default function Routing({ appProps }) {
         })}
         <Route component={NotFoundPage} />
       </Switch>
-    </Router>
+    </div>
   );
 }

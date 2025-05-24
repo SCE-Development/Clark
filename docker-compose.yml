@@ -1,4 +1,5 @@
-version: '3.8'
+version: '3'
+
 services:
   redis:
     container_name: sce-redis
