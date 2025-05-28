@@ -147,7 +147,7 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
-    }
+    },
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
