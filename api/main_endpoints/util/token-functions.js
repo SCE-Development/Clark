@@ -14,7 +14,7 @@ require('./passport')(passport);
 function checkIfTokenSent(request) {
   try {
     return !!request.headers.authorization;
-  } catch(_) {
+  } catch (_) {
     return false;
   }
 }
@@ -22,7 +22,7 @@ function checkIfTokenSent(request) {
 /**
 * @param {object} request the HTTP request from the client
 */
-function decodeToken(request){
+function decodeToken(request) {
   try {
     let decodedResponse = {};
     if (!request.headers.authorization || !request.headers.authorization.length) {
@@ -30,7 +30,7 @@ function decodeToken(request){
     }
     const token = request.headers.authorization.split('Bearer ')[1];
     const userToken = token.replace(/^JWT\s/, '');
-    jwt.verify(userToken, secretKey, function(error, decoded) {
+    jwt.verify(userToken, secretKey, function (error, decoded) {
       if (!error && decoded) {
         decodedResponse = decoded;
       }
@@ -44,11 +44,11 @@ function decodeToken(request){
 /**
 * @param {object} request the HTTP request from the client
 */
-function decodeTokenFromBodyOrQuery(request){
+function decodeTokenFromBodyOrQuery(request) {
   const token = request.body.token || request.query.token;
   const userToken = token.replace(/^JWT\s/, '');
   let decodedResponse = {};
-  jwt.verify(userToken, secretKey, function(error, decoded) {
+  jwt.verify(userToken, secretKey, function (error, decoded) {
     if (!error && decoded) {
       decodedResponse = decoded;
     }

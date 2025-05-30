@@ -2,13 +2,36 @@ const express = require('express');
 const router = express.Router();
 const Dessert = require("../models/Dessert")
 const {
-    OK,
+    OK, // 200
     SERVER_ERROR,
-    UNAUTHORIZED
+    UNAUTHORIZED, // 401
+    FORBIDDEN, // 403
+    NOT_FOUND,// 404
 } = require('../../util/constants').STATUS_CODES;
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+
+const {
+    checkIfTokenSent,
+    checkIfTokenValid,
+    decodeToken,
+} = require('../../main_endpoints/util/token-functions');
+const { MEMBERSHIP_STATE } = require('../../util/constants');
+
+
+// get all desserts
+router.get("/getDesserts", (req, res) => {
+    Dessert.find().then(items => res.status(OK).send(items)).catch(error => res.sendStatus(BAD_REQUEST));
+})
+
+// admin only here
+function verifyToken(req, res, next) {
+    if (!checkIfTokenSent(req)) { return res.sendStatus(FORBIDDEN); }
+    if (!checkIfTokenValid(req)) { return res.sendStatus(UNAUTHORIZED); }
+    next()
+}
 
 // create a new dessert
-router.post("/createDessert", (req, res) => {
+router.post("/createDessert", verifyToken, (req, res) => {
 
     // extract the rating
     const { rating } = req.body;
@@ -18,7 +41,7 @@ router.post("/createDessert", (req, res) => {
     const newEvent = new Dessert({
         title: req.body.title,
         description: req.body.description,
-        lifespan: numberSent ? Number(rating) : undefined,
+        rating: numberSent ? Number(rating) : undefined,
     });
     Dessert.create(newEvent, (error, post) => {
         if (error) { return res.sendStatus(BAD_REQUEST); }
@@ -26,13 +49,8 @@ router.post("/createDessert", (req, res) => {
     })
 });
 
-// get all desserts
-router.get("/getDesserts", (req, res) => {
-    Dessert.find().then(items => res.status(OK).send(items)).catch(error => res.sendStatus(BAD_REQUEST));
-})
-
 // edit dessert
-router.post("/editDessert", (req, res) => {
+router.post("/editDessert", verifyToken, (req, res) => {
     const { title, description, rating, _id, } = req.body;
     Dessert.findOne({ _id }).then(Dessert => {
         Dessert.title = title || Dessert.title;
@@ -43,7 +61,7 @@ router.post("/editDessert", (req, res) => {
 })
 
 // delete dessert
-router.post("/deleteDessert", (req, res) => {
+router.post("/deleteDessert", verifyToken, (req, res) => {
     const { _id } = req.body
     Dessert.deleteOne({ _id }).then(
         (result) => {

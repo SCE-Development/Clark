@@ -31,6 +31,9 @@ import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
 import Messaging from './Pages/Messaging/Messaging.js';
 
+import DessertPage from './Pages/Dessert/Dessert.js';
+import AdminDessertPage from './Pages/Dessert/AdminDessert.js';
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
@@ -58,6 +61,13 @@ export default function Routing({ appProps }) {
     //   redirect: '/',
     //   inAdminNavbar: true
     // },
+    {
+      Component: AdminDessertPage,
+      path: "/dessert-admin",
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: "/",
+      inAdminNavbar: true,
+    },
     {
       Component: LedSign,
       path: '/led-sign',
@@ -144,9 +154,10 @@ export default function Routing({ appProps }) {
     { Component: Home, path: '/' },
     { Component: VerifyEmailPage, path: '/verify' },
     { Component: ResetPasswordPage, path: '/reset' },
-    { Component: AboutPage, path: '/about'},
-    { Component: ProjectsPage, path: '/projects'},
+    { Component: AboutPage, path: '/about' },
+    { Component: ProjectsPage, path: '/projects' },
     { Component: EmailPreferencesPage, path: '/emailPreferences' },
+    { Component: DessertPage, path: '/desserts' },
   ];
   return (
     <div>
@@ -179,7 +190,7 @@ export default function Routing({ appProps }) {
                   allowed: allowedIf,
                   user: appProps.user,
                   redirect,
-                  authenticated:userIsAuthenticated,
+                  authenticated: userIsAuthenticated,
                   ...appProps
                 }}
                 component={props => getCorrectComponent(props)}
