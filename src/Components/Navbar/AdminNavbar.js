@@ -86,8 +86,29 @@ export default function UserNavBar(props) {
       route: '/advertisement-admin',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-          <path fill="currentColor" d="M19 7c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h2v2h-4v2h4c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2h-2V9h4V7zM9 7v10h4c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm2 2h2v6h-2zM3 7c-1.1 0-2 .9-2 2v8h2v-4h2v4h2V9c0-1.1-.9-2-2-2zm0 2h2v2H3z"/>
+          <path fill="currentColor" d="M19 7c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h2v2h-4v2h4c1.1 0 2-.9 2-2v-2c0-1.1-.9-2-2-2h-2V9h4V7zM9 7v10h4c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm2 2h2v6h-2zM3 7c-1.1 0-2 .9-2 2v8h2v-4h2v4h2V9c0-1.1-.9-2-2-2zm0 2h2v2H3z" />
         </svg>
+      ),
+    },
+    {
+      title: 'Dessert Admin',
+      route: '/dessert-admin',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7 Q2 3, 8 3 Q12 1, 16 3 Q22 3, 21 7" fill="none" stroke="white" stroke-width="1.5" />
+
+          <rect x="3" y="7" width="18" height="4" rx="1" fill="none" stroke="white" stroke-width="1.5" />
+
+          <path d="M5 11 v6 a7 7 0 0 0 14 0 v-6" fill="none" stroke="white" stroke-width="1.5" />
+
+          <circle cx="9" cy="16" r="1" fill="white" />
+          <circle cx="15" cy="16" r="1" fill="white" />
+          <rect x="11" y="19" width="2" height="0.5" rx="0.25" fill="white" />
+          <path d="M10 5 Q12 4, 14 5" fill="none" stroke="white" stroke-width="1.5" />
+        </svg>
+
+
+
       ),
     },
   ];
