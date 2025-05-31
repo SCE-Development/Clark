@@ -41,7 +41,7 @@ const Home = () => {
               The Software and Computer Engineering Society
             </h1>
             <h3
-              className={`}slide-in-right text-base text-gray-400 text-center xl:text-left md:text-2xl${showAll ? ' show' : ''}`}>
+              className={`slide-in-right text-base text-gray-400 text-center xl:text-left md:text-2xl${showAll ? ' show' : ''}`}>
               SJSU's Largest Engineering Club
             </h3>
           </div>
