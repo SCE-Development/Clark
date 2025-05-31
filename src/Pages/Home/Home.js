@@ -24,9 +24,21 @@ const Home = () => {
     getMessage();
   }, []);
 
+  function isValidUrl(str) {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
   function renderMessageWithLinks(message) {
+    if (!message) {
+      return null;
+    }
     return message.split(/(https?:\/\/[^\s]+)/g).map((part, index) => {
-      if (/https?:\/\/[^\s]+/.test(part)) {
+      if (isValidUrl(part)) {
         return (
           <a
             key={index}
