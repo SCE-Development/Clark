@@ -54,3 +54,12 @@
  opacity: 1;
  transform: translateY(0);
 }
+
+/* Fade-in effect for images */
+.fade-in-img {
+ opacity: 0;
+ transition: opacity 1.5s 0.5s; /* duration 1.5s, delay 0.5s */
+}
+.fade-in-img.show {
+ opacity: 1;
+}  

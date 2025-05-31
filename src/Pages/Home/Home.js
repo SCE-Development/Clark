@@ -57,7 +57,7 @@ const Home = () => {
         </div>
 
 
-        <div className={`slide-in-bottom w-full h-full p-12 overflow-hidden xl:w-3/5${showAll ? ' show' : ''}`}>
+        <div className={`fade-in-img w-full h-full p-12 overflow-hidden xl:w-3/5${showAll ? ' show' : ''}`}>
           <img
             className="w-full mx-auto transform md:w-4/5 rounded-xl"
             src="https://github.com/SCE-Development/Clark/assets/116464215/1a763961-5f7e-4ddc-9298-139b25c54a08"
