@@ -88,4 +88,27 @@ router.get('/verify', async (req, res) =>{
   }
 });
 
+router.get('/listen', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+
+  // Send an initial message
+  res.write(`data: Connected to server\n\n`);
+
+  // Simulate sending updates from the server
+  let counter = 0;
+  const intervalId = setInterval(() => {
+      counter++;
+      // Write the event stream format
+      res.write(`data: Message ${counter}\n\n`);
+  }, 2000);
+
+  // When client closes connection, stop sending events
+  req.on('close', () => {
+      clearInterval(intervalId);
+      res.end();
+  });
+});
+
 module.exports = router;
