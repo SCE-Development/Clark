@@ -33,7 +33,6 @@
     "bluebird": "^3.7.2",
     "cors": "^2.8.5",
     "enzyme": "^3.11.0",
-    "framer-motion": "^11.3.31",
     "googleapis": "^126.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^5.11.18",
