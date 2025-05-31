@@ -14,7 +14,7 @@ const Home = () => {
     try {
       const messageData = await getAd();
       const adsList = messageData.responseData;
-      setMessage(adasList['message']);
+      setMessage(adsList['message']);
       setShowMessage(true);
     } catch {
       setMessage('');
