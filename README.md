@@ -1,4 +1,4 @@
-# Core-v4
+# Core-v4 hello
 Welcome to the respository for the Software and Computer Engineering Society's 
 offical website!
 ![image](https://user-images.githubusercontent.com/36345325/78325084-81350300-752b-11ea-8571-032ed04b3018.png)
