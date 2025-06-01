@@ -28,7 +28,7 @@ export default function URLShortenerPage(props) {
   const [currentSortColumn, setCurrentSortColumn] = useState(null);
   const [currentSortOrder, setCurrentSortOrder] = useState(null);
 
-  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white';
+  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
 
   /**
@@ -199,7 +199,7 @@ export default function URLShortenerPage(props) {
                 <p className='md:hidden'>
                   {startingElementNumber} - {endingElementNumber} / {total}
                 </p>
-                <p className="hidden md:inline-block">
+                <p className="hidden md:inline-block text-base leading-7 text-gray-300">
           Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total + 1}</span> results
                 </p>
               </>)}
@@ -230,7 +230,7 @@ export default function URLShortenerPage(props) {
     if (!showUrlInput) {
       return (
         <button
-          className="btn btn-outline"
+          className="btn btn-outline text-base leading-7 text-gray-300"
           onClick={() => setShowUrlInput(true)}
         >
           + Create a new link
@@ -258,15 +258,15 @@ export default function URLShortenerPage(props) {
                   placeholder="https://example.com"
                   value={url}
                   onChange={e => setUrl(e.target.value)}
-                  className={INPUT_CLASS}
+                  className="w-full text-sm input input-bordered sm:text-base"
                 />
               </div>
             </div>
 
             <div className="col-span-3">
               <div className="form-control">
-                <label className="label cursor-pointer">
-                  <span className="label-text">Use Generated Alias</span>
+                <label className={`label cursor-pointer ${LABEL_CLASS}`}>
+                  <span className={LABEL_CLASS}>Use Generated Alias</span>
                   <input type="checkbox" className="toggle" checked={useGeneratedAlias} onChange={(e) => setUseGeneratedAlias(e.target.checked)} />
                 </label>
               </div>
@@ -283,7 +283,7 @@ export default function URLShortenerPage(props) {
                     name="alias"
                     value={alias}
                     onChange={e => setAlias(e.target.value)}
-                    className={INPUT_CLASS}
+                    className="w-full text-sm input input-bordered sm:text-base"
                   />
                 </div>
               </div>
@@ -312,8 +312,8 @@ export default function URLShortenerPage(props) {
 
   function maybeRenderSearch() {
     return (
-      <><div className="label">
-        <span className="label-text text-md">Type a search, followed by the enter key</span>
+      <><div className={'label ${LABEL_CLASS}'}>
+        <span className={LABEL_CLASS}>Type a search, followed by the enter key</span>
       </div><input
         className="w-full text-sm input input-bordered sm:text-base"
         type="text"
@@ -419,7 +419,7 @@ export default function URLShortenerPage(props) {
               {maybeRenderSearch()}
             </div>
             <div className='overflow-x-auto transition'>
-              <table className='table px-3'>
+              <table className='table px-3 block text-sm leading-6 text-gray-300'>
                 <thead>
                   <tr>
                     {[
