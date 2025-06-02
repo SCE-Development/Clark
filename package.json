@@ -47,7 +47,7 @@
     "react-dom": "^18.2.0",
     "react-error-overlay": "^6.0.9",
     "react-google-recaptcha": "^2.1.0",
-    "react-iframe": "^1.8.0",
+    "react-iframe": "^1.8.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.2",
