@@ -1,0 +1,12 @@
+const AuditActions = {
+  LOG_IN: 'LOG_IN',
+  UPDATE_USER: 'UPDATE_USER',
+  PRINT_PAGE: 'PRINT_PAGE',
+  SIGN_UP: 'SIGN_UP',
+  VERIFY_EMAIL: 'VERIFY_EMAIL',
+  EMAIL_SENT: 'EMAIL_SENT',
+  CHANGE_PW: 'CHANGE_PW',
+  RESET_PW: 'RESET_PW',
+};
+
+module.exports = AuditActions;
