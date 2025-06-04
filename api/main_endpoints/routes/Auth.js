@@ -30,6 +30,9 @@ const PASSWORD_RESET_EXPIRATION = require('../../util/constants').PASSWORD_RESET
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
+const logAudit = require('../../util/logAudit.js')
+const AuditActions = require('../util/auditActions.js')
+
 // Register a member
 router.post('/register', async (req, res) => {
   const registrationStatus = await registerUser(req.body);
@@ -173,10 +176,21 @@ router.post('/login', function(req, res) {
             };
             user
               .save()
-              .then(() => {
+              .then(async () => {
                 const token = jwt.sign(
                   userToBeSigned, config.secretKey, jwtOptions
                 );
+
+                // audit log successful login
+                await logAudit({
+                  userId: user._id,
+                  action: AuditActions.LOG_IN,
+                  details: {
+                    ip: req.ip,
+                    userAgent:  req.headers['user-agent']
+                  }
+                })
+
                 res.json({ token: 'JWT ' + token });
               })
               .catch((error) => {
