@@ -447,4 +447,30 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
+
+  describe('/POST login', () => {
+    it('Should create an audit log entry on successful login', async() => {
+      const loginPayload = {
+        email: 'a@b.c',
+        password: 'Passw0rd'
+      }
+
+      const res = await test.sendPostRequest('/api/Auth/login', loginPayload)
+
+      expect(res).to.have.status(OK)
+      expect(res.body).to.have.property('token')
+
+      const AuditActions = require('../../api/main_endpoints/util/auditActions.js')
+      const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
+
+      const auditEntry = await AuditLog.findOne({
+        action: AuditActions.LOG_IN,
+        'details.email': loginPayload.email,
+      }).lean()
+
+      expect(auditEntry).to.exist
+      expect(auditEntry).to.have.property('userId')
+      expect(auditEntry.details).to.have.property('email', loginPayload.email)
+    })
+  })
 });
