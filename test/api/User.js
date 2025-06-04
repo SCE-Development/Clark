@@ -4,6 +4,9 @@ process.env.NODE_ENV = 'test';
 
 const User = require('../../api/main_endpoints/models/User.js');
 
+const AuditActions = require('../../api/main_endpoints/util/auditActions.js')
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
+
 // Require the dev-dependencies
 const chai = require('chai');
 const mongoose = require('mongoose');
@@ -459,9 +462,6 @@ describe('User', () => {
 
       expect(res).to.have.status(OK)
       expect(res.body).to.have.property('token')
-
-      const AuditActions = require('../../api/main_endpoints/util/auditActions.js')
-      const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
 
       const auditEntry = await AuditLog.findOne({
         action: AuditActions.LOG_IN,
