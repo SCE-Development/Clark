@@ -12,6 +12,10 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
+const {
+  decodeToken,
+  checkIfTokenSent,
+} = require('../util/token-functions.js');
 
 router.use(bodyParser.json());
 
@@ -88,7 +92,14 @@ router.get('/verify', async (req, res) =>{
   }
 });
 
-router.get('/listen', (req, res) => {
+router.get('/listen', async (req, res) => {
+
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
