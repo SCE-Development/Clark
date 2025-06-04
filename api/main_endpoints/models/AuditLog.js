@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const AuditLogActions = require('../util/auditLogActions');
+const AuditActions = require('../util/auditActions');
 
 const AuditLogSchema = new Schema(
   {
@@ -11,11 +11,12 @@ const AuditLogSchema = new Schema(
     },
     action: {
       type: String,
-      enum: Object.keys(AuditLogActions),
+      enum: Object.keys(AuditActions),
       required: true,
     },
     documentId: {
       type: Schema.Types.ObjectId,
+      ref: 'User',
       default: null,
     },
     details: {
