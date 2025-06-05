@@ -6,6 +6,7 @@ const User = require('../../api/main_endpoints/models/User.js');
 
 const AuditActions = require('../../api/main_endpoints/util/auditActions.js')
 const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
+const AuditUtil = require('../../api/util/logAudit.js')
 
 // Require the dev-dependencies
 const chai = require('chai');
@@ -452,12 +453,16 @@ describe('User', () => {
   });
 
   describe('/POST login', () => {
-    it('Should create an audit log entry on successful login', async() => {
-      const loginPayload = {
+    const loginPayload = {
         email: 'a@b.c',
         password: 'Passw0rd'
       }
 
+    before(async () => {
+      await AuditLog.deleteMany({})
+    })
+
+    it('Should create an audit log entry on successful login', async() => {
       const res = await test.sendPostRequest('/api/Auth/login', loginPayload)
 
       expect(res).to.have.status(OK)
@@ -471,6 +476,22 @@ describe('User', () => {
       expect(auditEntry).to.exist
       expect(auditEntry).to.have.property('userId')
       expect(auditEntry.details).to.have.property('email', loginPayload.email)
+    })
+    
+    it('Should return 200 even if audit logging fails', async() => {
+      const logAuditStub = sinon.stub(AuditUtil).throws(new Error('Audit logging failed'))
+      try {
+        const res = await test.sendPostRequest('/api/Auth/login', loginPayload)
+
+        expect(res).to.have.status(OK)
+        expect(res.body).to.have.property('token')
+
+        const auditEntry = await AuditLog.findOne().lean()
+        expect(auditEntry.to.not.exist)
+
+      } finally {
+        logAuditStub.restore() 
+      }
     })
   })
 });
