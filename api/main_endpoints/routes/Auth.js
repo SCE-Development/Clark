@@ -182,7 +182,7 @@ router.post('/login', function(req, res) {
                 );
 
                 // audit log successful login
-                await logAudit({
+                logAudit({
                   userId: user._id,
                   action: AuditActions.LOG_IN,
                   details: {

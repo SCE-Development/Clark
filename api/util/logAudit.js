@@ -1,8 +1,8 @@
 const AuditLog = require('../main_endpoints/models/AuditLog');
 
-async function logAudit({ userId, action, documentId = null, details = {} }) {
+function logAudit({ userId, action, documentId = null, details = {} }) {
   try {
-    await AuditLog.create({
+    AuditLog.create({ 
       userId,
       action,
       documentId,
