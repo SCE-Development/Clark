@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const AuditLogctions = require('../util/auditLogActions');
+const AuditLogctions = require('../util/auditLogctions');
 
 const AuditLogSchema = new Schema(
   {
