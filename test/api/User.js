@@ -4,9 +4,9 @@ process.env.NODE_ENV = 'test';
 
 const User = require('../../api/main_endpoints/models/User.js');
 
-const AuditActions = require('../../api/main_endpoints/util/auditActions.js')
+const AuditLogctions = require('../../api/main_endpoints/util/auditLogctions.js')
 const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
-const AuditUtil = require('../../api/util/logAudit.js')
+const AuditUtil = require('../../api/util/auditLog.js')
 
 // Require the dev-dependencies
 const chai = require('chai');
@@ -469,7 +469,7 @@ describe('User', () => {
       expect(res.body).to.have.property('token')
 
       const auditEntry = await AuditLog.findOne({
-        action: AuditActions.LOG_IN,
+        action: AuditLogctions.LOG_IN,
         'details.email': loginPayload.email,
       }).lean()
 
