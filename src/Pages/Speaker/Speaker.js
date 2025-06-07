@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { queued, addUrl, pause, resume, skip, forward, rewind, setVolume } from '../../APIFunctions/Speaker';
-import {debounce} from 'lodash';
+
 
 function SpeakersPage(props) {
 
@@ -76,10 +76,10 @@ function SpeakersPage(props) {
     setIsPlaying(!isPlaying);
   };
 
-  const debouncedHandleVolumeChange = useCallback(
-    debounce((value) => setVolume(value, props.user.token), 1000),
-    []
-  );
+  // const debouncedHandleVolumeChange = useCallback(
+  //   debounce((value) => setVolume(value, props.user.token), 1000),
+  //   []
+  // );
 
   const handleForward = async () => {
     await modifySpeakerWrapper(forward);
