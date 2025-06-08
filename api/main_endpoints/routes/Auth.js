@@ -184,11 +184,7 @@ router.post('/login', function(req, res) {
                 // audit log successful login
                 logAudit({
                   userId: user._id,
-                  action: AuditLogctions.LOG_IN,
-                  details: {
-                    ip: req.ip,
-                    userAgent:  req.headers['user-agent']
-                  }
+                  action: AuditLogctions.LOG_IN
                 })
 
                 res.json({ token: 'JWT ' + token });
