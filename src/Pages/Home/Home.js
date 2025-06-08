@@ -91,7 +91,7 @@ const Home = () => {
         <div className={`fade-in-img w-full h-full p-12 overflow-hidden xl:w-3/5${showAll ? ' show' : ''}`}>
           <img
             className="w-full mx-auto transform md:w-4/5 rounded-xl"
-            src="https://shorturl.at/nya9Q"
+            src="https://private-user-images.githubusercontent.com/89621837/452737639-8927df39-2e53-41b5-b557-417be5371078.jpg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDkzNzAxMjIsIm5iZiI6MTc0OTM2OTgyMiwicGF0aCI6Ii84OTYyMTgzNy80NTI3Mzc2MzktODkyN2RmMzktMmU1My00MWI1LWI1NTctNDE3YmU1MzcxMDc4LmpwZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTA2MDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwNjA4VDA4MDM0MlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPThmN2VmZjE1MDgyMmVlMzMwYjQxODY0MzRiNjIyNjUzNmFiYWNjZjU2MTc3NTUwZTgzMjg4YjllZDEzOGFhNTMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.NYi-tEKhZBIK6AOaDrArcGO5808qsajQwkULm7OKXJk"
           />
         </div>
       </div>
