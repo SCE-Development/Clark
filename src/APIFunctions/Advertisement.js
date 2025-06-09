@@ -7,11 +7,11 @@ export async function getAd() {
   try {
     const res = await fetch (BASE_API_URL + '/api/Advertisement/')
     if (res.ok) {
-      status.responseData = await res.json();
+      const result = await res.json();
+      status.responseData = result;
     } else {
       status.error = true;
     }
-
   } catch (err) {
     status.responseData = err;
     status.error = true;
@@ -56,7 +56,8 @@ export async function createAd(newAd, token) {
       }
     );
     if (res.ok) {
-      status.responseData = await res.json();
+      const result = await res.json();
+      status.responseData = result;
     } else {
       status.error = true;
     }
@@ -82,7 +83,8 @@ export async function deleteAd(newAd, token) {
       }
     );
     if (res.ok) {
-      status.responseData = await res.json();
+      const result = await res.json();
+      status.responseData = res;
     } else {
       status.error = true;
     }
