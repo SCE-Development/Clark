@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 
@@ -12,15 +11,24 @@ import { BASE_API_URL } from '../Enums';
 export async function healthCheck(officerName) {
   let status = new ApiResponse();
   const url = new URL('/api/LedSign/healthCheck', BASE_API_URL);
-  await axios
-    .get(url.href, { officerName })
-    .then(res => {
-      status.responseData = res.data;
-    })
-    .catch(err => {
-      status.responseData = err;
-      status.error = true;
+  try {
+    const res = await fetch(url.href, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Officer-Name': officerName
+      }
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.responseData = err;
+    status.error = true;
+  }
   return status;
 }
 
@@ -34,22 +42,24 @@ export async function healthCheck(officerName) {
 export async function updateSignText(signData, token) {
   let status = new ApiResponse();
   const url = new URL('/api/LedSign/updateSignText', BASE_API_URL);
-  await axios
-    .post(
-      url.href,
-      signData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
-    )
-    .then(res => {
-      status.responseData = res.data;
-    })
-    .catch(err => {
-      status.responseData = err;
-      status.error = true;
+      body: JSON.stringify(signData)
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.responseData = err;
+    status.error = true;
+  }
   return status;
 }
