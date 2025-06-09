@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 
@@ -12,25 +11,27 @@ import { BASE_API_URL } from '../Enums';
 export async function sendVerificationEmail(email, token) {
   let status = new ApiResponse();
   const url = new URL('/cloudapi/Auth/sendVerificationEmail', BASE_API_URL);
-  await axios
-    .post(
-      url.href,
-      {
-        email
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      },
-    )
-    .then((response) => {
-      status.responseData = response;
-    })
-    .catch((error) => {
-      status.error = true;
-      status.responseData = error;
+      body: JSON.stringify({
+        email,
+      }),
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(error) {
+    status.error = true;
+    status.responseData = error;
+  }
   return status;
 }
 
@@ -43,16 +44,25 @@ export async function sendVerificationEmail(email, token) {
 export async function sendPasswordReset(email, captchaToken) {
   let status = new ApiResponse();
   const url = new URL('/api/Auth/sendPasswordReset', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      email,
-      captchaToken,
-    })
-    .then((response) => {
-      status.responseData = response;
-    })
-    .catch((error) => {
-      status.error = error;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        captchaToken,
+      }),
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(error) {
+    status.error = error;
+  }
   return status;
 }
