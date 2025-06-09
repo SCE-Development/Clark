@@ -9,7 +9,7 @@ import { UserContext } from './Components/context/UserContext';
 import SearchModal from './Components/ShortcutKeyModal/SearchModal';
 import { AuthContext } from './Components/context/AuthContext';
 
-function App(props) {
+function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [user, setUser] = useState();
