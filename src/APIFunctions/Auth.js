@@ -51,7 +51,7 @@ export async function registerUser(userToRegister) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err.response;
   }
@@ -84,7 +84,7 @@ export async function loginUser(email, password) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err.response;
   }
@@ -124,7 +124,7 @@ export async function checkIfUserIsSignedIn() {
       status.responseData = result;
       status.token = token;
     }
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err;
   }
@@ -155,7 +155,7 @@ export async function validateVerificationEmail(email, hashedId) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err.response;
   }
@@ -186,7 +186,7 @@ export async function resetPassword(password, hashedId, resetToken) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err.response;
   }
@@ -208,7 +208,7 @@ export async function validatePasswordReset(resetToken) {
       const result = await res.json();
       status.responseData = result;
     }
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err.response;
   }

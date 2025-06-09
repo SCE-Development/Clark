@@ -54,7 +54,7 @@ export async function createUrl(url, alias = null, token) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err;
   }
@@ -73,7 +73,7 @@ export async function deleteUrl(aliasIn, token) {
         'Content-Type': 'application/json'
       },
     });
-  } catch (err) {
+  } catch(err) {
     status.error = true;
     status.responseData = err;
   }

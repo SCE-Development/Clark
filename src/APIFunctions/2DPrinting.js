@@ -28,7 +28,7 @@ export async function healthCheck() {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.responseData = err;
     status.error = true;
   }
@@ -92,7 +92,7 @@ export async function printPage(data, token) {
       const response = await res.json();
       status.responseData = response.message;
     }
-  } catch (err) {
+  } catch(err) {
     status.responseData = err;
     status.error = true;
   }
@@ -126,7 +126,7 @@ export async function getPagesPrinted(email, token) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.responseData = err;
     status.error = true;
   }

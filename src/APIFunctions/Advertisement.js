@@ -12,7 +12,7 @@ export async function getAd() {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.responseData = err;
     status.error = true;
   }
@@ -35,7 +35,7 @@ export async function getAds(token) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.responseData = err;
     status.error = true;
   }
@@ -62,7 +62,7 @@ export async function createAd(newAd, token) {
       status.error = true;
     }
 
-  } catch (err) {
+  } catch(err) {
     status.responseData = err;
     status.error = true;
   }
@@ -88,7 +88,7 @@ export async function deleteAd(newAd, token) {
     } else {
       status.error = true;
     }
-  } catch (err) {
+  } catch(err) {
     status.responseData = err;
     status.error = true;
   }
