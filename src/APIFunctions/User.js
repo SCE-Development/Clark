@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { UserApiResponse } from './ApiResponses';
 import { BASE_API_URL, membershipState, userFilterType } from '../Enums';
 
@@ -26,26 +25,27 @@ export async function getAllUsers({
   }
 
   let status = new UserApiResponse();
-  await axios
-    // get all users!
-    .post(
-      url.href,
-      {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
         query,
         page,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    )
-    .then(result => {
-      status.responseData = result.data;
-    })
-    .catch(() => {
-      status.error = true;
+      }),
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;  
+  }
   return status;
 }
 
@@ -102,36 +102,42 @@ export async function editUser(userToEdit, token) {
     emailOptIn,
   } = userToEdit;
   const url = new URL('/api/User/edit', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      _id,
-      firstName,
-      lastName,
-      email,
-      password,
-      major,
-      numberOfSemestersToSignUpFor,
-      doorCode,
-      discordUsername,
-      discordDiscrim,
-      discordID,
-      pagesPrinted,
-      accessLevel,
-      lastLogin,
-      emailVerified,
-      emailOptIn
-    }, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(result => {
-      status.responseData = result.data;
-    })
-    .catch(err => {
-      status.error = true;
-      status.responseData = err.response;
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token.headers.Authorization.split(' ')[1]}`,
+      },
+      body: JSON.stringify({
+        _id,
+        firstName,
+        lastName,
+        email,
+        password,
+        major,
+        numberOfSemestersToSignUpFor,
+        doorCode,
+        discordUsername,
+        discordDiscrim,
+        discordID,
+        pagesPrinted,
+        accessLevel,
+        lastLogin,
+        emailVerified,
+        emailOptIn
+      })
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+    status.responseData = err.response;
+  }
   return status;
 }
 
@@ -157,117 +163,163 @@ export async function updateLastLoginDate(email, token) {
 export async function deleteUserByID(_id, token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/delete', BASE_API_URL);
-  axios
-    .post(url.href, {
-      _id,
-    }, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .catch(() => {
-      status.error = true;
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ _id }),
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+  }
   return status;
 }
 
 export async function getUserById(userID, token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/getUserById', BASE_API_URL);
-  await axios.post(url.href,
-    {userID}, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = true;
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ userID }),
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+  }
   return status;
 }
 
 export async function setUserEmailPreference(email, emailOptIn) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/setUserEmailPreference', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      email,
-      emailOptIn,
-    })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = true;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        emailOptIn,
+      }),
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+  }
   return status;
 }
 
 export async function getUserData(email) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/getUserDataByEmail', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      email,
-    })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = true;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+  }
   return status;
 }
 
 export async function getAllUserSubscribedAndVerified(token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/usersSubscribedAndVerified', BASE_API_URL);
-  await axios
-    .post(url.href, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = true;
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+  }
   return status;
 }
 
 export async function getAllUsersValidVerifiedAndSubscribed(token) {
   let status = new UserApiResponse();
   const url = new URL('/api/User/usersValidVerifiedAndSubscribed', BASE_API_URL);
-  await axios
-    .post(url.href, { responseType: 'blob' }, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then((res) => {
-      status.responseData = res.data;
-    })
-    .catch((err) => {
-      status.error = err;
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+  }
   return status;
 }
 
 export async function getApiKey(token) {
   let status = new UserApiResponse();
+  const url = new URL('/api/User/apiKey', BASE_API_URL);
   try {
-    const url = new URL('/api/User/apiKey', BASE_API_URL);
-    const response = await axios.post(url.href, {}, {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
-    status.responseData = response.data;
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
   } catch (error) {
     status.error = true;
   }
