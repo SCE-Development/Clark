@@ -44,7 +44,7 @@ export async function getAllUsers({
       status.error = true;
     }
   } catch(err) {
-    status.error = true;  
+    status.error = true;
   }
   return status;
 }

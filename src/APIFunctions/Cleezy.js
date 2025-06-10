@@ -38,8 +38,8 @@ export async function getAllUrls({
 export async function createUrl(url, alias = null, token) {
   let status = new ApiResponse();
   const urlToAdd = { url, alias };
-  const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
   try {
+    const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const res = await fetch(url.href, {
       method: 'POST',
       headers: {

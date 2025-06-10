@@ -142,7 +142,7 @@ export async function validateVerificationEmail(email, hashedId) {
   let status = new ApiResponse();
   const url = new URL('/api/Auth/validateVerificationEmail', BASE_API_URL);
   try {
-    const res = await fetch(url.href, { 
+    const res = await fetch(url.href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -203,7 +203,7 @@ export async function validatePasswordReset(resetToken) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ resetToken })
-      });
+    });
     if (res.ok) {
       const result = await res.json();
       status.responseData = result;

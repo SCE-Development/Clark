@@ -22,7 +22,7 @@ export async function queued(token) {
   } catch(err) {
     status.error = true;
     status.responseData = error;
-  } 
+  }
   return status;
 }
 
