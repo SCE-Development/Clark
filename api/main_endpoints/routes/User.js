@@ -103,6 +103,7 @@ router.post('/search', function(req, res) {
       discordUsername: result.discordUsername,
       discordDiscrim: result.discordDiscrim,
       discordID: result.discordID,
+      backgroundColor: result.backgroundColor,
       active: result.active,
       accessLevel: result.accessLevel,
       major: result.major,

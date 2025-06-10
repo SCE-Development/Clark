@@ -46,6 +46,9 @@ const UserSchema = new Schema(
       type: String,
       default: ''
     },
+    backgroundColor: {
+      type: String,
+    },
     major: {
       type: String
     },
