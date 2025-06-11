@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import PageSelectDropdown from "./PageSelectDropdown";
+import React, { useState, useEffect, useRef } from 'react';
+import PageSelectDropdown from './PageSelectDropdown';
 import {
   parseRange,
   printPage,
   getPagesPrinted,
-} from "../../APIFunctions/2DPrinting";
-import { editUser } from "../../APIFunctions/User";
+} from '../../APIFunctions/2DPrinting';
+import { editUser } from '../../APIFunctions/User';
 
-import { PDFDocument } from "pdf-lib";
-import { healthCheck } from "../../APIFunctions/2DPrinting";
-import ConfirmationModal from "../../Components/DecisionModal/ConfirmationModal.js";
-import pako from "pako";
+import { PDFDocument } from 'pdf-lib';
+import { healthCheck } from '../../APIFunctions/2DPrinting';
+import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
+import pako from 'pako';
 
 export default function Printing(props) {
   const [dragActive, setDragActive] = useState(false);
@@ -19,14 +19,14 @@ export default function Printing(props) {
   const [pagesPrinted, setPagesPrinted] = useState(0);
   const [pagesToBeUsedInPrintRequest, setPagesToBeUsedInPrintRequest] =
     useState(0);
-  const [dataUrl, setDataUrl] = useState("");
-  const [sides, setSides] = useState("one-sided");
-  const [previewDisplay, setPreviewDisplay] = useState("");
-  const [pageRanges, setPageRanges] = useState("");
+  const [dataUrl, setDataUrl] = useState('');
+  const [sides, setSides] = useState('one-sided');
+  const [previewDisplay, setPreviewDisplay] = useState('');
+  const [pageRanges, setPageRanges] = useState('');
   const [copies, setCopies] = useState(1);
   const inputRef = useRef(null);
-  const [printStatus, setPrintStatus] = useState("");
-  const [printStatusColor, setPrintStatusColor] = useState("success");
+  const [printStatus, setPrintStatus] = useState('');
+  const [printStatusColor, setPrintStatusColor] = useState('success');
   const [files, setFiles] = useState(null);
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -53,11 +53,11 @@ export default function Printing(props) {
   }, []);
 
   const INPUT_CLASS_NAME =
-    "indent-2 block rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
+    'indent-2 block rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6';
 
   const sideOptions = [
-    { label: "Single Sided", value: "one-sided" },
-    { label: "Double Sided", value: "two-sided" },
+    { label: 'Single Sided', value: 'one-sided' },
+    { label: 'Double Sided', value: 'two-sided' },
   ];
 
   async function getUri() {
@@ -75,7 +75,7 @@ export default function Printing(props) {
       // convert pdf to blob url (allows display of larger pdfs)
       const pdfBytes = await display.save();
       const file = new File([pdfBytes], files.name, {
-        type: "application/pdf",
+        type: 'application/pdf',
       });
       const objectUrl = URL.createObjectURL(file);
       setNumberOfPagesInPdfPreview(display.getPages().length);
@@ -83,17 +83,17 @@ export default function Printing(props) {
       setPdfFile(file);
     } catch (e) {
       // the error looks like Input document to `PDFDocument.load` is encrypted
-      if (e.message.includes("is encrypted")) {
+      if (e.message.includes('is encrypted')) {
         setFiles(null);
-        setDataUrl("");
-        setPrintStatus("This PDF is encrypted and cannot be printed");
-        setPrintStatusColor("error");
+        setDataUrl('');
+        setPrintStatus('This PDF is encrypted and cannot be printed');
+        setPrintStatusColor('error');
         setTimeout(() => {
           setPrintStatus(null);
         }, 5000);
       } else {
-        setPrintStatus("Failed to load PDF");
-        setPrintStatusColor("error");
+        setPrintStatus('Failed to load PDF');
+        setPrintStatusColor('error');
       }
     }
   }
@@ -104,11 +104,11 @@ export default function Printing(props) {
     const display = await PDFDocument.create();
     // embed the image into the pdf
     let image = undefined;
-    const mediaType = dataUrl.split(";")[0].split(":")[1].split("/")[1];
-    if (mediaType === "jpg" || mediaType === "jpeg") {
+    const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
+    if (mediaType === 'jpg' || mediaType === 'jpeg') {
       // return the PDFImage object
       image = await display.embedJpg(dataUrl);
-    } else if (mediaType === "png") {
+    } else if (mediaType === 'png') {
       image = await display.embedPng(dataUrl);
     }
     // scale the image to 25% of its original size
@@ -125,7 +125,7 @@ export default function Printing(props) {
     // serialize the image into a byte array (Unit8Array)
     const pdfBytes = await display.save();
     // create a File object from the byte array
-    const file = new File([pdfBytes], files.name, { type: "application/pdf" });
+    const file = new File([pdfBytes], files.name, { type: 'application/pdf' });
     // generate a Blob URL for the preview
     const objectUrl = URL.createObjectURL(file);
     setNumberOfPagesInPdfPreview(display.getPages().length);
@@ -136,13 +136,13 @@ export default function Printing(props) {
   useEffect(() => {
     if (dataUrl) {
       // get the file type
-      const mediaType = dataUrl.split(";")[0].split(":")[1].split("/")[1];
+      const mediaType = dataUrl.split(';')[0].split(':')[1].split('/')[1];
       // if the file type is pdf
-      if (mediaType === "pdf") {
+      if (mediaType === 'pdf') {
         getUri();
       } else if (
         // if the file type is an image
-        ["jpg", "png", "jpeg"].includes(mediaType)
+        ['jpg', 'png', 'jpeg'].includes(mediaType)
       ) {
         getUriImage();
       }
@@ -152,7 +152,7 @@ export default function Printing(props) {
   useEffect(() => {
     if (previewDisplay) {
       let divisor = 1;
-      if (sides === "two-sided") {
+      if (sides === 'two-sided') {
         divisor = 2;
       }
       const pagesUsedPerCopy =
@@ -189,13 +189,13 @@ export default function Printing(props) {
       const fileBytes = await PdfFile.arrayBuffer();
       const compressed = pako.deflate(new Uint8Array(fileBytes));
       const compressedFile = new File([compressed], PdfFile.name, {
-        type: "application/pdf-compressed",
+        type: 'application/pdf-compressed',
       });
 
       const data = new FormData();
-      data.append("file", compressedFile);
-      data.append("sides", sides);
-      data.append("copies", copies);
+      data.append('file', compressedFile);
+      data.append('sides', sides);
+      data.append('copies', copies);
       let status = await printPage(data, props.user.token);
 
       if (!status.error) {
@@ -206,21 +206,21 @@ export default function Printing(props) {
           },
           props.user.token
         );
-        setPrintStatus("Printing succeeded!");
-        setPrintStatusColor("success");
+        setPrintStatus('Printing succeeded!');
+        setPrintStatusColor('success');
       } else {
         setPrintStatus(
-          "Printing failed. Please try again or reach out to SCE Dev team if the issue persists."
+          'Printing failed. Please try again or reach out to SCE Dev team if the issue persists.'
         );
-        setPrintStatusColor("error");
+        setPrintStatusColor('error');
       }
       getNumberOfPagesPrintedSoFar();
       setTimeout(() => {
         setPrintStatus(null);
       }, 5000);
     } catch (error) {
-      setPrintStatus("An error occurred while printing. Please try again.");
-      setPrintStatusColor("error");
+      setPrintStatus('An error occurred while printing. Please try again.');
+      setPrintStatusColor('error');
     }
   }
 
@@ -259,8 +259,8 @@ export default function Printing(props) {
 
   function clearPrint() {
     setCopies(1);
-    setDataUrl("");
-    setPageRanges("");
+    setDataUrl('');
+    setPageRanges('');
     setFiles(null);
     setPrintStatus(null);
   }
@@ -325,7 +325,7 @@ export default function Printing(props) {
                     htmlFor="major"
                     className="block text-sm font-medium leading-6"
                   >
-                    <span style={{ paddingRight: "10px" }}>Sides</span>
+                    <span style={{ paddingRight: '10px' }}>Sides</span>
                   </label>
                   <div className="mt-2">
                     <select
@@ -367,7 +367,7 @@ export default function Printing(props) {
                       />
                     </svg>
                     <p className="">
-                      Current print request would use{" "}
+                      Current print request would use{' '}
                       {pagesToBeUsedInPrintRequest} pages which exceeds allowed
                       limit of {getRemainingPageBalance()}
                     </p>
@@ -443,7 +443,7 @@ export default function Printing(props) {
           <label
             htmlFor="dropzone-file"
             className={`flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer dark:hover:bg-bray-800 ${
-              dragActive ? "bg-gray-600" : "bg-gray-700"
+              dragActive ? 'bg-gray-600' : 'bg-gray-700'
             } hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600`}
           >
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -490,17 +490,17 @@ export default function Printing(props) {
     <div className="w-full">
       <ConfirmationModal
         {...{
-          headerText: "Submit print request?",
+          headerText: 'Submit print request?',
           bodyText: `The request will use ${pagesToBeUsedInPrintRequest} page(s) out of the ${getRemainingPageBalance()} pages remaining.`,
-          confirmText: "Print",
-          cancelText: "Cancel",
-          confirmClassAddons: "bg-green-600 hover:bg-green-500",
+          confirmText: 'Print',
+          cancelText: 'Cancel',
+          confirmClassAddons: 'bg-green-600 hover:bg-green-500',
           handleConfirmation: () => {
             handlePrinting();
             setConfirmModal(false);
           },
           handleCancel: () => {
-            setDataUrl("");
+            setDataUrl('');
             setFiles(null);
             setConfirmModal(false);
           },
@@ -512,7 +512,7 @@ export default function Printing(props) {
         <div className="flex items-center justify-center w-full mt-10">
           <div
             role="alert"
-            className={"w-1/2 text-center alert alert-" + printStatusColor}
+            className={'w-1/2 text-center alert alert-' + printStatusColor}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
