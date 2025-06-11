@@ -17,6 +17,8 @@ const {
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
 
+const {decodeToken} = require('../../api/main_endpoints/util/token-functions.js')
+
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
@@ -171,6 +173,56 @@ describe('Auth', () => {
         '/api/Auth/login', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
+
+    it('Should allow login with correct credentials after registering a user', async () => {
+      const user = {
+        email: 'logintest@gmail.com',
+        password: 'ValidTestPass123!',
+        firstName: 'Test',
+        lastName: 'User'
+      }
+
+      // register the user first
+      const registerUser = await test.sendPostRequest('/api/Auth/register', user);
+      expect(registerUser).to.have.status(OK);
+
+      // verify the email
+      await User.updateOne({email: user.email}, {$set: {emailVerified: true}})
+
+      // then try logging in with the same credentials
+      const loginUser = await test.sendPostRequest('/api/Auth/login', {
+        email: user.email,
+        password: user.password
+      });
+
+      expect(loginUser).to.have.status(OK);
+      expect(loginUser.body).to.have.property('token');
+
+      const token = loginUser.body.token;
+      expect(token).to.be.a('string');
+      expect(token.startsWith('JWT ')).to.be.true;
+
+      const mockRequest = {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      };
+
+      const decodedPayload = decodeToken(mockRequest);
+      const expectedPayload = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        accessLevel: decodedPayload.accessLevel,
+        pagesPrinted: decodedPayload.pagesPrinted,
+        _id: decodedPayload._id,
+        iat: decodedPayload.iat,
+        exp: decodedPayload.exp
+      }
+
+      expect(decodedPayload).to.deep.equal(expectedPayload)
+
+    })
   });
 
   describe('/POST sendPasswordReset', () => {
