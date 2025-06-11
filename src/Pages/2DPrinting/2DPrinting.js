@@ -188,36 +188,31 @@ export default function Printing(props) {
   async function handlePrinting() {
     // send print request with files and configuratiosn in formData
     try {
-    const fileBytes = await PdfFile.arrayBuffer();
-    console.log('Original size:', fileBytes.byteLength);
+      const fileBytes = await PdfFile.arrayBuffer();
+      const compressed = pako.deflate(new Uint8Array(fileBytes));
+      const compressedFile = new File([compressed], PdfFile.name, { type: 'application/pdf-compressed' });
 
-    const compressed = pako.deflate(new Uint8Array(fileBytes));
-    console.log('Compressed size:', compressed.byteLength);
+      const data = new FormData();
+      data.append('file', compressedFile);
+      data.append('sides', sides);
+      data.append('copies', copies);
+      let status = await printPage(data, props.user.token);
 
-    const compressedFile = new File([compressed], PdfFile.name, { type: 'application/pdf-compressed' });
-    console.log('Final FormData file size:', compressedFile.size);
-
-    const data = new FormData();
-    data.append('file', compressedFile);
-    data.append('sides', sides);
-    data.append('copies', copies);
-    let status = await printPage(data, props.user.token);
-
-    if (!status.error) {
-      editUser(
-        { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        props.user.token,
-      );
-      setPrintStatus('Printing succeeded!');
-      setPrintStatusColor('success');
-    } else {
-      setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
-      setPrintStatusColor('error');
-    }
-    getNumberOfPagesPrintedSoFar();
-    setTimeout(() => {
-      setPrintStatus(null);
-    }, 5000);
+      if (!status.error) {
+        editUser(
+          { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
+          props.user.token,
+        );
+        setPrintStatus('Printing succeeded!');
+        setPrintStatusColor('success');
+      } else {
+        setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
+        setPrintStatusColor('error');
+      }
+      getNumberOfPagesPrintedSoFar();
+      setTimeout(() => {
+        setPrintStatus(null);
+      }, 5000);
   } catch (error) {
       console.error('Error during printing:', error);
       setPrintStatus('An error occurred while printing. Please try again.');
