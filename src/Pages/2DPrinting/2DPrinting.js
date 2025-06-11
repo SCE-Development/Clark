@@ -11,6 +11,7 @@ import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
+import pako from 'pako';
 
 export default function Printing(props) {
   const [dragActive, setDragActive] = useState(false);
@@ -186,8 +187,18 @@ export default function Printing(props) {
 
   async function handlePrinting() {
     // send print request with files and configuratiosn in formData
+    try {
+    const fileBytes = await PdfFile.arrayBuffer();
+    console.log('Original size:', fileBytes.byteLength);
+
+    const compressed = pako.deflate(new Uint8Array(fileBytes));
+    console.log('Compressed size:', compressed.byteLength);
+
+    const compressedFile = new File([compressed], PdfFile.name, { type: 'application/pdf-compressed' });
+    console.log('Final FormData file size:', compressedFile.size);
+
     const data = new FormData();
-    data.append('file', PdfFile);
+    data.append('file', compressedFile);
     data.append('sides', sides);
     data.append('copies', copies);
     let status = await printPage(data, props.user.token);
@@ -207,6 +218,11 @@ export default function Printing(props) {
     setTimeout(() => {
       setPrintStatus(null);
     }, 5000);
+  } catch (error) {
+      console.error('Error during printing:', error);
+      setPrintStatus('An error occurred while printing. Please try again.');
+      setPrintStatusColor('error');
+    }
   }
 
   function handleDrop(e) {
