@@ -174,7 +174,7 @@ export default function Printing(props) {
     if (e.target.files && e.target.files[0]) {
       let a = new FileReader();
       // https://stackoverflow.com/a/43894750
-      a.onload = function (event) {
+      a.onload = function(event) {
         setDataUrl(event.target.result);
         setPrintStatus(null);
       };
@@ -230,7 +230,7 @@ export default function Printing(props) {
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       let a = new FileReader();
-      a.onload = function (event) {
+      a.onload = function(event) {
         setDataUrl(event.target.result);
         setPrintStatus(null);
       };
