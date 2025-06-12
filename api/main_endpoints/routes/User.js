@@ -29,7 +29,6 @@ const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
-const { ok } = require('assert');
 
 const ROWS_PER_PAGE = 20;
 
