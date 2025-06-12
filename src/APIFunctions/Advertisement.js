@@ -5,7 +5,7 @@ import { BASE_API_URL } from '../Enums';
 export async function getAd() {
   let status = new ApiResponse();
   try {
-    const res = await fetch (BASE_API_URL + '/api/Advertisement/')
+    const res = await fetch (BASE_API_URL + '/api/Advertisement/');
     if (res.ok) {
       const result = await res.json();
       status.responseData = result;
