@@ -29,6 +29,7 @@ const logger = require('../../util/logger');
 
 const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
+const { ok } = require('assert');
 
 const ROWS_PER_PAGE = 20;
 
@@ -445,4 +446,70 @@ router.post('/apikey', async (req, res) => {
       return res.sendStatus(BAD_REQUEST);
     });
 });
+
+//Finds total number of new signups this semester
+//Finds number of those signups who've paid for semester plan
+//Finds number of those signups who've paid for annual plan
+//Assumes members who have paid have been assigned an expiration date
+router.get('/getNewPaidMembersThisSemester', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const today = new Date();
+
+  //First semester dates
+  //
+  //Jan 1st
+  let semesterStart = new Date(today.getFullYear(), 0, 1);
+  //June 1st
+  let semesterEnd = new Date(today.getFullYear(), 5, 1);
+  //Jan 1st of next year
+  let annualEnd = new Date(today.getFullYear() + 1, 0, 1);
+
+  if(today.getMonth() >= 5) {
+    //Update to second semester dates
+    //
+    //June 1st
+    semesterStart = new Date(today.getFullYear(), 5, 1);
+    //Jan 1st of next year
+    semesterEnd = new Date(today.getFullYear() + 1, 0, 1);
+    //June 1st of next year
+    annualEnd = new Date(today.getFullYear() + 1, 5, 1);
+  }
+
+  //Find better way to count later
+  //Only counting new members for now, not reccuring
+  const newMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": 1, "joinDate": {
+    $gte: semesterStart
+  }});
+
+  const newSingleSemesterMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": 1,
+    "membershipValidUntil":semesterEnd,
+    "joinDate": {
+    $gte: semesterStart
+    }, 
+  });
+  const newAnnualMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": 1,
+    "membershipValidUntil":annualEnd,
+    "joinDate": {
+    $gte: semesterStart
+    }, 
+  });
+
+  try {
+    const response = {
+      newMembers: newMembersCount,
+      newSingleSemesterMembers: newSingleSemesterMembersCount,
+      newAnnualMembers: newAnnualMembersCount
+    };
+    return res.status(OK).send(response);
+  } catch {
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
+
 module.exports = router;
