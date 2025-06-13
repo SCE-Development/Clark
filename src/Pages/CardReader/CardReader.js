@@ -7,7 +7,8 @@ export default function CardReader() {
   useEffect(() => {
     const eventSource = new EventSource("http://localhost:8080/api/OfficeAccessCard/listen");
     eventSource.onmessage = (event) => {
-      const newLog = new Date().toISOString() + " " + event.data;
+      const data = JSON.parse(event.data);
+      const newLog = new Date().toISOString() + " " + data.endpoint + " " + data.statusCode + " " + data.message;
       setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
     };
     

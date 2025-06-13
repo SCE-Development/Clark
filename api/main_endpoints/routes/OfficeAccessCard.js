@@ -48,6 +48,14 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
+const clients = [];
+
+const response = {
+  endpoint: "/verify",
+  statusCode: 200,
+  message: "Card authorized!"
+}
+
 router.get('/verify', async (req, res) =>{
   const { cardBytes, add = false } = req.query;
   const apiKey = req.headers['x-api-key'];
@@ -56,11 +64,18 @@ router.get('/verify', async (req, res) =>{
     { value: cardBytes, title: 'cardBytes query parameter', },
   ];
 
+  if (add) {
+    response.endpoint += "?add=1";
+  }
+
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
+    response.statusCode = BAD_REQUEST;
+    response.message = `${missingValue.title} missing from request`;
+    writeRequestResponse();
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
-  }
+  } 
 
   if (apiKey !== API_KEY) {
     return res.sendStatus(UNAUTHORIZED);
@@ -68,6 +83,7 @@ router.get('/verify', async (req, res) =>{
 
   const cardExists = await checkIfCardExists(cardBytes);
   if (cardExists) {
+    writeRequestResponse();
     return res.sendStatus(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -75,6 +91,9 @@ router.get('/verify', async (req, res) =>{
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
+    response.statusCode = NOT_FOUND;
+    response.message = "Card not found";
+    writeRequestResponse();
     return res.sendStatus(NOT_FOUND);
   }
 
@@ -84,41 +103,48 @@ router.get('/verify', async (req, res) =>{
       await new OfficeAccessCard({
         cardBytes
       }).save();
+      response.message = "Card added!";
+      writeRequestResponse();
       return res.sendStatus(OK);
     }
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
+    response.message ="Error creating OfficeAccessCard: " + error;
+    response.statusCode = SERVER_ERROR;
+    writeRequestResponse();
     return res.sendStatus(SERVER_ERROR);
   }
 });
 
+const writeRequestResponse = () => {
+  clients.forEach(client => {
+    client.res.write(`data: ${JSON.stringify(response)}\n\n`);
+  })
+};
+
 router.get('/listen', async (req, res) => {
 
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
+  // if (!checkIfTokenSent(req)) {
+  //   return res.sendStatus(FORBIDDEN);
+  // } else if (!await decodeToken(req)) {
+  //   return res.sendStatus(UNAUTHORIZED);
+  // }
   
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache',
+    'X-Accel-Buffering': 'no'
+  };
 
-  // Send an initial message
-  res.write(`data: Connected to server\n\n`);
+  res.writeHead(200, headers);
 
-  // Simulate sending updates from the server
-  let counter = 0;
-  const intervalId = setInterval(() => {
-      counter++;
-      // Write the event stream format
-      res.write(`data: Message ${counter}\n\n`);
-  }, 2000);
+  const newClient = { res };
+  clients.push(newClient);
 
-  // When client closes connection, stop sending events
   req.on('close', () => {
-      clearInterval(intervalId);
-      res.end();
+    clients = clients.filter(c => c !== newClient);
+    res.end();
   });
 });
 
