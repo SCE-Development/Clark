@@ -1,19 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export default function CardReader() {
 
   const [logs, setLogs] = useState([]);
-  
+
   useEffect(() => {
-    const eventSource = new EventSource("http://localhost:8080/api/OfficeAccessCard/listen");
+    const eventSource = new EventSource('http://localhost:8080/api/OfficeAccessCard/listen');
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      const newLog = new Date().toISOString() + " " + data.endpoint + " " + data.statusCode + " " + data.message;
+      const newLog = new Date().toISOString() + ' ' + data.endpoint + ' ' + data.statusCode + ' ' + data.message;
       setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
-    };
-    
-    eventSource.onerror = (event) => {
-      console.log("Error: ", event);
     };
 
     return () => {
@@ -26,7 +22,7 @@ export default function CardReader() {
     <div>
       <h1>Welcome to the card reader page!</h1>
       <pre>
-        {logs.join("\n")}
+        {logs.join('\n')}
       </pre>
     </div>
   );

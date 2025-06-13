@@ -51,10 +51,16 @@ function checkIfCardExists(cardBytes) {
 const clients = [];
 
 const response = {
-  endpoint: "/verify",
+  endpoint: '/verify',
   statusCode: 200,
-  message: "Card authorized!"
-}
+  message: 'Card authorized!'
+};
+
+const writeRequestResponse = () => {
+  clients.forEach(client => {
+    client.res.write(`data: ${JSON.stringify(response)}\n\n`);
+  });
+};
 
 router.get('/verify', async (req, res) =>{
   const { cardBytes, add = false } = req.query;
@@ -65,7 +71,7 @@ router.get('/verify', async (req, res) =>{
   ];
 
   if (add) {
-    response.endpoint += "?add=1";
+    response.endpoint += '?add=1';
   }
 
   const missingValue = required.find(({ value }) => !value);
@@ -75,7 +81,7 @@ router.get('/verify', async (req, res) =>{
     response.message = `${missingValue.title} missing from request`;
     writeRequestResponse();
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
-  } 
+  }
 
   if (apiKey !== API_KEY) {
     return res.sendStatus(UNAUTHORIZED);
@@ -92,7 +98,7 @@ router.get('/verify', async (req, res) =>{
   // therefore return a non OK status
   if (!add) {
     response.statusCode = NOT_FOUND;
-    response.message = "Card not found";
+    response.message = 'Card not found';
     writeRequestResponse();
     return res.sendStatus(NOT_FOUND);
   }
@@ -103,24 +109,18 @@ router.get('/verify', async (req, res) =>{
       await new OfficeAccessCard({
         cardBytes
       }).save();
-      response.message = "Card added!";
+      response.message = 'Card added!';
       writeRequestResponse();
       return res.sendStatus(OK);
     }
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
-    response.message ="Error creating OfficeAccessCard: " + error;
+    response.message = 'Error creating OfficeAccessCard: ' + error;
     response.statusCode = SERVER_ERROR;
     writeRequestResponse();
     return res.sendStatus(SERVER_ERROR);
   }
 });
-
-const writeRequestResponse = () => {
-  clients.forEach(client => {
-    client.res.write(`data: ${JSON.stringify(response)}\n\n`);
-  })
-};
 
 router.get('/listen', async (req, res) => {
 
@@ -129,7 +129,6 @@ router.get('/listen', async (req, res) => {
   // } else if (!await decodeToken(req)) {
   //   return res.sendStatus(UNAUTHORIZED);
   // }
-  
   const headers = {
     'Content-Type': 'text/event-stream',
     'Connection': 'keep-alive',
