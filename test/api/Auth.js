@@ -210,14 +210,14 @@ describe('Auth', () => {
 
       const decodedPayload = decodeToken(mockRequest);
       const expectedPayload = {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        accessLevel: decodedPayload.accessLevel,
-        pagesPrinted: decodedPayload.pagesPrinted,
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'logintest@gmail.com',
+        accessLevel: MEMBERSHIP_STATE.PENDING,
+        pagesPrinted: 0,
         _id: decodedPayload._id,
         iat: decodedPayload.iat,
-        exp: decodedPayload.exp
+        exp: decodedPayload.exp,
       }
 
       expect(decodedPayload).to.deep.equal(expectedPayload)
