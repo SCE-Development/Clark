@@ -12,6 +12,8 @@ export default function URLShortenerPage(props) {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [useGeneratedAlias, setUseGeneratedAlias] = useState(true);
   const [alias, setAlias] = useState('');
+  const [useExpirationDate, setUseExpirationDate] = useState(true);
+  const [expirationDate, setExpirationDate] = useState('');
   const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
@@ -61,6 +63,7 @@ export default function URLShortenerPage(props) {
     const response = await createUrl(
       url.trim(),
       alias.trim(),
+      expirationDate.trim(),
       props.user.token
     );
     if (!response.error) {
@@ -68,6 +71,7 @@ export default function URLShortenerPage(props) {
       setAliasTaken(false);
       setUrl('');
       setAlias('');
+      setExpirationDate('');
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
@@ -148,6 +152,12 @@ export default function URLShortenerPage(props) {
       setAlias('');
     }
   }, [useGeneratedAlias]);
+
+  useEffect(() => {
+    if(useExpirationDate) {
+      setExpirationDate('');
+    }
+  }, [useExpirationDate]);
 
   useEffect(() => {
     if (!showUrlInput) {
@@ -271,6 +281,16 @@ export default function URLShortenerPage(props) {
                 </label>
               </div>
             </div>
+
+            <div className="col-span-3">
+              <div className="form-control">
+                <label className="label cursor-pointer">
+                  <span className="label-text">Use Expiration Date</span>
+                  <input type="checkbox" className="toggle" checked={useExpirationDate} onChange={(e) => setUseExpirationDate(e.target.checked)} />
+                </label>
+              </div>
+            </div>
+
             {!useGeneratedAlias && (
 
               <div className="sm:col-span-4">
@@ -284,6 +304,25 @@ export default function URLShortenerPage(props) {
                     value={alias}
                     onChange={e => setAlias(e.target.value)}
                     className="w-full text-sm input input-bordered sm:text-base"
+                  />
+                </div>
+              </div>
+            )}
+
+            {!useExpirationDate && (
+
+              <div className="sm:col-span-4">
+                <label htmlFor="email" className={LABEL_CLASS}>
+                  Expiration Date
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="expirationDate"
+                    name="expirationDate"
+                    value={expirationDate}
+                    onChange={e => setExpirationDate(e.target.value + ':00')}
+                    type="datetime-local"
+                    className={INPUT_CLASS}
                   />
                 </div>
               </div>
@@ -425,6 +464,7 @@ export default function URLShortenerPage(props) {
                     {[
                       { title: 'URL', className: 'text-base text-white/70', columnName: 'alias' },
                       { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
+                      { title: 'Expires At', className: 'text-base text-white/70 text-center', columnName: 'expires_at' },
                       { title: 'Times Used', className: 'text-base text-white/70 text-center', columnName: 'used' },
                       { title: 'Delete', className: 'text-base text-white/70 text-center' }
                     ].map(({ title, className, columnName = null }) => (
@@ -458,7 +498,23 @@ export default function URLShortenerPage(props) {
                         </td>
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
-                            {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
+                            {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </div>
+                        </td>
+                        <td className='hidden md:table-cell'>
+                          <div className='flex items-center justify-center'>
+                            {(() => {
+                              if (url.expires_at === null) {
+                                return (
+                                  <div>No Expiration Date</div>
+                                );
+                              } else {
+                                return (
+                                  <div>{new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                                );
+                              }
+                            })()}
+                          </div>
                         </td>
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
