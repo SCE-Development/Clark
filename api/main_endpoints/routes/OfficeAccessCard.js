@@ -48,13 +48,11 @@ function checkIfCardExists(cardBytes) {
 let clients = [];
 
 const writeRequestResponse = (endpoint, statusCode, message) => {
-  console.log('reached inside writeRequestResponse');
   response = {
     endpoint: endpoint,
     statusCode: statusCode,
     message: message,
   };
-  console.log('now sending to clients');
   clients.forEach(client => {
     client.res.write(`data: ${JSON.stringify(response)}\n\n`);
   });
