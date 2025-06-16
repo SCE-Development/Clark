@@ -1,16 +1,32 @@
 import { useState, useEffect } from 'react';
+import { BASE_API_URL } from '../../Enums';
 
-export default function CardReader() {
-
+export default function CardReader(props) {
   const [logs, setLogs] = useState([]);
+  const [error, setError] = useState('');
+  const token = props.user.token;
+
+  const buildLog = (data) => {
+    let endpoint = data.endpoint;
+    if (!endpoint.includes('?add=1')) {
+      endpoint += '      ';
+    }
+    return [new Date().toISOString(), endpoint, data.statusCode, data.message].join('        ');
+  };
 
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:8080/api/OfficeAccessCard/listen');
+    const url = new URL('/api/OfficeAccessCard/listen', BASE_API_URL);
+    url.searchParams.append('token', token);
+    const eventSource = new EventSource(url.href);
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      const newLog = new Date().toISOString() + ' ' + data.endpoint + ' ' + data.statusCode + ' ' + data.message;
+      let data = JSON.parse(event.data);
+      let newLog = buildLog(data);
       setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
     };
+
+    eventSource.onerror = () => {
+      setError('Error connecting to SSE');
+    }
 
     return () => {
       eventSource.close();
@@ -19,11 +35,14 @@ export default function CardReader() {
   }, []);
 
   return (
-    <div>
-      <h1>Welcome to the card reader page!</h1>
+    <div className='m-4'>
+      <h1 className='text-4xl font-bold text-white mb-4'>SCE Card Reader Activity</h1>
       <pre>
         {logs.join('\n')}
       </pre>
+      {error && 
+        <h2>{error}</h2>
+      }
     </div>
   );
 }

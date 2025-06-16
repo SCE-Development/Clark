@@ -12,10 +12,7 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
-const {
-  decodeToken,
-  checkIfTokenSent,
-} = require('../util/token-functions.js');
+const { decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 
 router.use(bodyParser.json());
 
@@ -48,7 +45,7 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
-const clients = [];
+let clients = [];
 
 const response = {
   endpoint: '/verify',
@@ -70,10 +67,6 @@ router.get('/verify', async (req, res) =>{
     { value: cardBytes, title: 'cardBytes query parameter', },
   ];
 
-  if (add) {
-    response.endpoint += '?add=1';
-  }
-
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
@@ -89,6 +82,7 @@ router.get('/verify', async (req, res) =>{
 
   const cardExists = await checkIfCardExists(cardBytes);
   if (cardExists) {
+    response.endpoint = '/verify'; // if user tried to add a card that already existed, ignore the "add" parameter
     writeRequestResponse();
     return res.sendStatus(OK);
   }
@@ -103,6 +97,8 @@ router.get('/verify', async (req, res) =>{
     return res.sendStatus(NOT_FOUND);
   }
 
+  response.endpoint = '/verify?add=1';
+
   try {
     if (add) {
       logger.info('adding a new card');
@@ -110,6 +106,7 @@ router.get('/verify', async (req, res) =>{
         cardBytes
       }).save();
       response.message = 'Card added!';
+      response.statusCode = 200;
       writeRequestResponse();
       return res.sendStatus(OK);
     }
@@ -124,11 +121,10 @@ router.get('/verify', async (req, res) =>{
 
 router.get('/listen', async (req, res) => {
 
-  // if (!checkIfTokenSent(req)) {
-  //   return res.sendStatus(FORBIDDEN);
-  // } else if (!await decodeToken(req)) {
-  //   return res.sendStatus(UNAUTHORIZED);
-  // }
+  if (!await decodeTokenFromBodyOrQuery(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
   const headers = {
     'Content-Type': 'text/event-stream',
     'Connection': 'keep-alive',
