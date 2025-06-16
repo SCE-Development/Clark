@@ -26,7 +26,7 @@ export default function CardReader(props) {
 
     eventSource.onerror = () => {
       setError('Error connecting to SSE');
-    }
+    };
 
     return () => {
       eventSource.close();
@@ -40,7 +40,7 @@ export default function CardReader(props) {
       <pre>
         {logs.join('\n')}
       </pre>
-      {error && 
+      {error &&
         <h2>{error}</h2>
       }
     </div>
