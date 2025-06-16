@@ -47,13 +47,14 @@ function checkIfCardExists(cardBytes) {
 
 let clients = [];
 
-const response = {
-  endpoint: '/verify',
-  statusCode: 200,
-  message: 'Card authorized!'
-};
-
-const writeRequestResponse = () => {
+const writeRequestResponse = (endpoint, statusCode, message) => {
+  console.log('reached inside writeRequestResponse');
+  response = {
+    endpoint: endpoint,
+    statusCode: statusCode,
+    message: message,
+  };
+  console.log('now sending to clients');
   clients.forEach(client => {
     client.res.write(`data: ${JSON.stringify(response)}\n\n`);
   });
@@ -70,9 +71,7 @@ router.get('/verify', async (req, res) =>{
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
-    response.statusCode = BAD_REQUEST;
-    response.message = `${missingValue.title} missing from request`;
-    writeRequestResponse();
+    writeRequestResponse('/verify', BAD_REQUEST, `${missingValue.title} missing from request`);
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
   }
 
@@ -82,8 +81,7 @@ router.get('/verify', async (req, res) =>{
 
   const cardExists = await checkIfCardExists(cardBytes);
   if (cardExists) {
-    response.endpoint = '/verify'; // if user tried to add a card that already existed, ignore the "add" parameter
-    writeRequestResponse();
+    writeRequestResponse('/verify', OK, 'Card authorized!');
     return res.sendStatus(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -91,13 +89,9 @@ router.get('/verify', async (req, res) =>{
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    response.statusCode = NOT_FOUND;
-    response.message = 'Card not found';
-    writeRequestResponse();
+    writeRequestResponse('/verify', NOT_FOUND, 'Card not found');
     return res.sendStatus(NOT_FOUND);
   }
-
-  response.endpoint = '/verify?add=1';
 
   try {
     if (add) {
@@ -105,22 +99,17 @@ router.get('/verify', async (req, res) =>{
       await new OfficeAccessCard({
         cardBytes
       }).save();
-      response.message = 'Card added!';
-      response.statusCode = 200;
-      writeRequestResponse();
+      writeRequestResponse('/verify?add=1', OK, 'Card added!');
       return res.sendStatus(OK);
     }
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
-    response.message = 'Error creating OfficeAccessCard: ' + error;
-    response.statusCode = SERVER_ERROR;
-    writeRequestResponse();
+    writeRequestResponse('/verify?add=1', SERVER_ERROR, `Error creating Office AccessCard: ${error}`);
     return res.sendStatus(SERVER_ERROR);
   }
 });
 
 router.get('/listen', async (req, res) => {
-
   if (!await decodeTokenFromBodyOrQuery(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -132,7 +121,7 @@ router.get('/listen', async (req, res) => {
     'X-Accel-Buffering': 'no'
   };
 
-  res.writeHead(200, headers);
+  res.writeHead(OK, headers);
 
   const newClient = { res };
   clients.push(newClient);
