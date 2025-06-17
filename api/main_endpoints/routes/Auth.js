@@ -176,7 +176,7 @@ router.post('/login', function(req, res) {
             };
             user
               .save()
-              .then(async () => {
+              .then(() => {
                 const token = jwt.sign(
                   userToBeSigned, config.secretKey, jwtOptions
                 );
