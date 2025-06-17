@@ -17,6 +17,8 @@ const {
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
 
+const {decodeToken} = require('../../api/main_endpoints/util/token-functions.js');
+
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
@@ -142,6 +144,58 @@ describe('Auth', () => {
       const verificationArgs = sendVerificationEmailStub.getCall(-1).args;
       expect(verificationArgs).to.eql([user.firstName + ' ' + user.lastName, user.email]);
       expect(result).to.have.status(OK);
+    });
+    it('Should allow login with correct credentials after registering a user', async () => {
+      const user = {
+        email: 'logintest@gmail.com',
+        password: 'ValidTestPass123!',
+        firstName: 'Test',
+        lastName: 'User'
+      };
+
+      try {
+      // register the user first
+        const registerUser = await test.sendPostRequest('/api/Auth/register', user);
+        expect(registerUser).to.have.status(OK);
+
+        // verify the email
+        await User.updateOne({email: user.email}, {$set: {emailVerified: true}});
+
+        // then try logging in with the same credentials
+        const loginUser = await test.sendPostRequest('/api/Auth/login', {
+          email: user.email,
+          password: user.password
+        });
+
+        expect(loginUser).to.have.status(OK);
+        expect(loginUser.body).to.have.property('token');
+
+        const token = loginUser.body.token;
+        expect(token).to.be.a('string');
+        expect(token.startsWith('JWT ')).to.be.true;
+
+        const mockRequest = {
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        };
+
+        const decodedPayload = decodeToken(mockRequest);
+        const expectedPayload = {
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'logintest@gmail.com',
+          accessLevel: MEMBERSHIP_STATE.PENDING,
+          pagesPrinted: 0,
+          _id: decodedPayload._id,
+          iat: decodedPayload.iat,
+          exp: decodedPayload.exp,
+        };
+
+        expect(decodedPayload).to.deep.equal(expectedPayload);
+      } finally {
+        await User.deleteOne({email: user.email});
+      }
     });
   });
 
