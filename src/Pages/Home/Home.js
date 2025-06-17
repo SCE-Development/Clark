@@ -91,7 +91,7 @@ const Home = () => {
         <div className={`fade-in-img w-full h-full p-12 overflow-hidden xl:w-3/5${showAll ? ' show' : ''}`}>
           <img
             className="w-full mx-auto transform md:w-4/5 rounded-xl"
-            src="https://u.cubeupload.com/xccr09/compressed2.jpg"
+            src="https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg"
           />
         </div>
       </div>
