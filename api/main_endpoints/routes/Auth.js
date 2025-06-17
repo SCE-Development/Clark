@@ -176,12 +176,12 @@ router.post('/login', function(req, res) {
             };
             user
               .save()
-              .then(async () => {
+              .then(() => {
                 const token = jwt.sign(
                   userToBeSigned, config.secretKey, jwtOptions
                 );
                 try {
-                  await AuditUtil.logAudit({
+                  AuditUtil.logAudit({
                     userId: user._id,
                     action: AuditLogctions.LOG_IN,
                     details: { email: user.email }
