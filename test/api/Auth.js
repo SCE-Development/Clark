@@ -32,8 +32,12 @@ const {
 const { checkIfPageCountResets } = require('../../api/main_endpoints/util/userHelpers.js');
 const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
-chai.should();
 
+const AuditLogctions = require('../../api/main_endpoints/util/auditLogctions.js');
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+const AuditUtil = require('../../api/util/auditLog.js');
+
+chai.should();
 chai.use(chaiHttp);
 
 // Our parent block
@@ -170,6 +174,82 @@ describe('Auth', () => {
       const result = await test.sendPostRequest(
         '/api/Auth/login', user);
       expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    describe('with an existing user', () => {
+      let user;
+
+      before(async () => {
+        user = new User({
+          _id: new mongoose.Types.ObjectId(),
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          apiKey: null
+        });
+        await user.save();
+      });
+
+      after(async () => {
+        await User.deleteOne({ email: 'logintest@gmail.com' });
+      });
+
+      beforeEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+        sinon.restore();
+      });
+
+      it('Should create an audit log entry on successful login', async () => {
+        const loginPayload = {
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+        };
+
+        const res = await test.sendPostRequest('/api/Auth/login', loginPayload);
+        expect(res).to.have.status(OK);
+        expect(res.body).to.have.property('token');
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogctions.LOG_IN,
+          details: {email: loginPayload.email},
+        });
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry.details).to.have.property('email', loginPayload.email);
+      });
+
+      it('Should return 200 even if audit logging fails', async () => {
+        const auditStub = sinon.stub(AuditUtil, 'logAudit').rejects(new Error('Simulated audit log failure'));
+
+        const loginPayload = {
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+        };
+
+        try {
+
+          const res = await test.sendPostRequest('/api/Auth/login', loginPayload);
+          expect(res).to.have.status(OK);
+          expect(res.body).to.have.property('token');
+
+          const auditEntry = await AuditLog.findOne({
+            action: AuditLogctions.LOG_IN,
+            'details.email': loginPayload.email,
+          });
+
+          expect(auditEntry).to.not.exist;
+        } finally {
+          auditStub.restore();
+        }
+      });
     });
   });
 

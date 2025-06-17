@@ -30,8 +30,8 @@ const PASSWORD_RESET_EXPIRATION = require('../../util/constants').PASSWORD_RESET
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
-const logAudit = require('../../util/auditLog.js')
-const AuditLogctions = require('../util/auditLogctions.js')
+const AuditUtil = require('../../util/auditLog.js');
+const AuditLogctions = require('../util/auditLogctions.js');
 
 // Register a member
 router.post('/register', async (req, res) => {
@@ -180,12 +180,15 @@ router.post('/login', function(req, res) {
                 const token = jwt.sign(
                   userToBeSigned, config.secretKey, jwtOptions
                 );
-
-                // audit log successful login
-                logAudit({
-                  userId: user._id,
-                  action: AuditLogctions.LOG_IN
-                })
+                try {
+                  await AuditUtil.logAudit({
+                    userId: user._id,
+                    action: AuditLogctions.LOG_IN,
+                    details: { email: user.email }
+                  });
+                } catch (auditError) {
+                  logger.error('Audit logging failed:', auditError);
+                }
 
                 res.json({ token: 'JWT ' + token });
               })

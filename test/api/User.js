@@ -4,9 +4,9 @@ process.env.NODE_ENV = 'test';
 
 const User = require('../../api/main_endpoints/models/User.js');
 
-const AuditLogctions = require('../../api/main_endpoints/util/auditLogctions.js')
-const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
-const AuditUtil = require('../../api/util/auditLog.js')
+const AuditLogctions = require('../../api/main_endpoints/util/auditLogctions.js');
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+const AuditUtil = require('../../api/util/auditLog.js');
 
 // Require the dev-dependencies
 const chai = require('chai');
@@ -451,47 +451,4 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
-
-  describe('/POST login', () => {
-    const loginPayload = {
-        email: 'a@b.c',
-        password: 'Passw0rd'
-      }
-
-    before(async () => {
-      await AuditLog.deleteMany({})
-    })
-
-    it('Should create an audit log entry on successful login', async() => {
-      const res = await test.sendPostRequest('/api/Auth/login', loginPayload)
-
-      expect(res).to.have.status(OK)
-      expect(res.body).to.have.property('token')
-
-      const auditEntry = await AuditLog.findOne({
-        action: AuditLogctions.LOG_IN,
-        'details.email': loginPayload.email,
-      }).lean()
-
-      expect(auditEntry).to.exist
-      expect(auditEntry).to.have.property('userId')
-      expect(auditEntry.details).to.have.property('email', loginPayload.email)
-    })
-    
-    it('Should return 200 even if audit logging fails', async() => {
-      const logAuditStub = sinon.stub(AuditUtil).throws(new Error('Audit logging failed'))
-      try {
-        const res = await test.sendPostRequest('/api/Auth/login', loginPayload)
-
-        expect(res).to.have.status(OK)
-        expect(res.body).to.have.property('token')
-
-        const auditEntry = await AuditLog.findOne().lean()
-        expect(auditEntry.to.not.exist)
-
-      } finally {
-        logAuditStub.restore() 
-      }
-    })
-  })
 });
