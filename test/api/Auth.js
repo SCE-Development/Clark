@@ -506,5 +506,4 @@ describe('Auth', () => {
       expect(result).to.be.false;
     });
   });
-
 });
