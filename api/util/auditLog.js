@@ -1,16 +1,17 @@
 const AuditLog = require('../main_endpoints/models/AuditLog');
+const logger = require('../util/logger');
 
-function logAudit({ userId, action, documentId = null, details = {} }) {
+async function logAudit({ userId, action, documentId = null, details = {} }) {
   try {
-    AuditLog.create({ 
+    await AuditLog.create({
       userId,
       action,
       documentId,
       details,
     });
   } catch (error) {
-    console.error(error);
+    logger.error('Audit log failed to create:', error);
   }
 }
 
-module.exports = logAudit;
+module.exports = {logAudit};
