@@ -252,7 +252,7 @@ describe('Auth', () => {
   });
 
   describe('/POST resetPassword', () => {
-    let createdId = mongoose.Types.ObjectId('valid id 123');
+    let createdId = new mongoose.Types.ObjectId();
     let createdUser = null;
 
     before(async () => {

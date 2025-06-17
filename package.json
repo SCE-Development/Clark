@@ -48,7 +48,7 @@
     "react-google-recaptcha": "^2.1.0",
     "react-iframe": "^1.8.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^0.0.0",
+    "react-scripts": "^5.1.0-next.26",
     "react-transition-group": "^4.4.2",
     "universal-cookie": "^8.0.1"
   },
@@ -63,6 +63,7 @@
     "chai-http": "^4.3.0",
     "daisyui": "^4.4.24",
     "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.37.5",
     "ignore-styles": "^5.0.1",
     "inquirer": "^8.2.4",
     "jsdom": "^19.0.0",
