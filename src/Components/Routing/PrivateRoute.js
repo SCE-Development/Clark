@@ -11,7 +11,7 @@ function checkPermission(user, permission, authenticated) {
   if (permission === allowedIf.AUTHENTICATED)
     return authenticated;
   if (permission === allowedIf.UNAUTHENTICATED)
-    return true;
+    return !authenticated;
   return false;
 }
 
