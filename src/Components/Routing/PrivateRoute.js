@@ -11,7 +11,7 @@ function checkPermission(user, permission, authenticated) {
   if (permission === allowedIf.AUTHENTICATED)
     return authenticated;
   if (permission === allowedIf.UNAUTHENTICATED)
-    return !authenticated;
+    return true;
   return false;
 }
 
@@ -23,11 +23,13 @@ export default function PrivateRoute({
   // Check permission before granting access
   const isAllowed = checkPermission(appProps.user, appProps.allowed, appProps.authenticated);
 
+  // Check permission before granting access
+  const isAllowed = checkPermission(appProps.user, appProps.allowed, appProps.authenticated);
+
   return (
     <Route
       {...params}
       render={(props) => {
-        if (isAllowed) {
         if (isAllowed) {
           return <Component {...appProps} {...props} />;
         } else if (appProps.authenticated) {

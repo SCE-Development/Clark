@@ -7,7 +7,10 @@ import { getAllUsers } from '../../APIFunctions/User';
 export default function SearchModal(props) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
+<<<<<<< HEAD
   const prevKeyword = useRef('');
+=======
+>>>>>>> ff8fc57 (Debug: remove dessert pages)
   const [keyword, setKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectItem, setSelectItem] = useState(0);
@@ -35,7 +38,10 @@ export default function SearchModal(props) {
         sortOrder: 'asc'
       });
       setUsers(apiResponse.responseData.items);
+<<<<<<< HEAD
       // console.log('api fetch') // For debug
+=======
+>>>>>>> ff8fc57 (Debug: remove dessert pages)
     } catch (error) {
       alert(error.message);
     }
@@ -49,11 +55,15 @@ export default function SearchModal(props) {
     if (!open) return;
 
     const debounce = setTimeout(() => {
+<<<<<<< HEAD
       // Only fetch users when there is a change in keyword
       if (props.user.accessLevel >= membershipState.OFFICER && prevKeyword.current !== keyword) {
         getUserData();
         prevKeyword.current = keyword; // Update previous keyword after fetching for new data
       }
+=======
+      if (props.user.accessLevel >= membershipState.OFFICER) getUserData();
+>>>>>>> ff8fc57 (Debug: remove dessert pages)
       const matches = [
         ...routes.filter((r) =>
           r.pageName?.toLowerCase().includes(keyword.toLowerCase())
@@ -74,7 +84,11 @@ export default function SearchModal(props) {
       ];
 
       setSuggestions(matches);
+<<<<<<< HEAD
     }, 400);
+=======
+    }, 800);
+>>>>>>> ff8fc57 (Debug: remove dessert pages)
 
     return () => clearTimeout(debounce);
   }, [keyword, routes, open]);
@@ -130,7 +144,11 @@ export default function SearchModal(props) {
           onChange={handleChanges} />
 
         {suggestions.length > 0 && (
+<<<<<<< HEAD
           <ul className={`${style['suggestion-list']} ${style['scrollable-list']}`}>
+=======
+          <ul className={style['suggestion-list']}>
+>>>>>>> ff8fc57 (Debug: remove dessert pages)
             {suggestions.map((r, index) => (
               <li
                 key={index}
@@ -148,7 +166,11 @@ export default function SearchModal(props) {
                 {r.pageName}
                 <div className={style['hidden-tab']}>{selectItem === index && r.path}</div>
               </li>
+<<<<<<< HEAD
             ))}
+=======
+            )).slice(0, 5)}
+>>>>>>> ff8fc57 (Debug: remove dessert pages)
           </ul>
         )}
       </div>
