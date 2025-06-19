@@ -1,4 +1,4 @@
-const AuditLogctions = {
+const AuditLogActions = {
   LOG_IN: 'LOG_IN',
   UPDATE_USER: 'UPDATE_USER',
   PRINT_PAGE: 'PRINT_PAGE',
@@ -9,4 +9,4 @@ const AuditLogctions = {
   RESET_PW: 'RESET_PW',
 };
 
-module.exports = AuditLogctions;
+module.exports = AuditLogActions;

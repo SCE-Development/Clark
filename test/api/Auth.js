@@ -35,9 +35,8 @@ const { checkIfPageCountResets } = require('../../api/main_endpoints/util/userHe
 const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
-const AuditLogctions = require('../../api/main_endpoints/util/auditLogctions.js');
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
 const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
-const AuditUtil = require('../../api/util/auditLog.js');
 
 chai.should();
 chai.use(chaiHttp);
@@ -271,7 +270,7 @@ describe('Auth', () => {
         expect(res.body).to.have.property('token');
 
         const auditEntry = await AuditLog.findOne({
-          action: AuditLogctions.LOG_IN,
+          action: AuditLogActions.LOG_IN,
           details: {email: loginPayload.email},
         });
 
@@ -281,7 +280,7 @@ describe('Auth', () => {
       });
 
       it('Should return 200 even if audit logging fails', async () => {
-        const auditStub = sinon.stub(AuditUtil, 'logAudit').rejects(new Error('Simulated audit log failure'));
+        const auditStub = sinon.stub(AuditLog, 'create').rejects(new Error('Simulated audit log failure'));
 
         const loginPayload = {
           email: 'logintest@gmail.com',
@@ -295,7 +294,7 @@ describe('Auth', () => {
           expect(res.body).to.have.property('token');
 
           const auditEntry = await AuditLog.findOne({
-            action: AuditLogctions.LOG_IN,
+            action: AuditLogActions.LOG_IN,
             'details.email': loginPayload.email,
           });
 
@@ -506,5 +505,4 @@ describe('Auth', () => {
       expect(result).to.be.false;
     });
   });
-
 });
