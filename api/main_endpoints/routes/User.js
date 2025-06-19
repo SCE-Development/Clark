@@ -123,7 +123,7 @@ router.post('/users', async function(req, res) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
-  } 
+  }
   let maybeOr = {};
   if (req.body.query) {
     maybeOr = {
@@ -434,7 +434,6 @@ router.post('/apikey', async (req, res) => {
 //Finds number of those signups who've paid for annual plan
 //Assumes members who have paid have been assigned an expiration date
 router.get('/getNewPaidMembersThisSemester', async (req, res) => {
-  
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
@@ -475,14 +474,14 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
     $gte: semesterStart
     }, 
   });
-  const newMemebersThisYear = await User.countDocuments({"emailVerified": true, "acessLevel": 1, joinDate: {
+  const newMembersThisYear = await User.countDocuments({"emailVerified": true, "accessLevel": 1, "joinDate": {
     //Jan 1st Start of Year
     $gte: new Date(today.getFullYear(), 0, 1)
   }})
 
   try {
     const response = {
-      newMembersThisYear: newMemebersThisYear,
+      newMembersThisYear: newMembersThisYear,
       newSingleSemesterMembers: newSingleSemesterMembersCount,
       newAnnualMembers: newAnnualMembersCount
 
