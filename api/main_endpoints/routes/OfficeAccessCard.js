@@ -109,9 +109,9 @@ router.get('/verify', async (req, res) =>{
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
     writeRequestResponse({
-      statusCode: SERVER_ERROR, 
-      endpoint: '/verify?add=1', 
-      message: `Error creating Office AccessCard: ${error}` 
+      statusCode: SERVER_ERROR,
+      endpoint: '/verify?add=1',
+      message: `Error creating Office AccessCard: ${error}`
     });
     return res.sendStatus(SERVER_ERROR);
   }
