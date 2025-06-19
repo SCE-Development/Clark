@@ -23,7 +23,6 @@ export default function CardReader(props) {
         let newLog = buildLog(data);
         setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
       } catch (error) {
-        console.error('unable to format event data from /listen', error);
         setLogs(
           (currLogs) => [
             '[error] unable to format response, check browser logs',
