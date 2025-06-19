@@ -1,30 +1,33 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { membershipState } from '../../Enums';
-import { allowedIf } from '../../Routes';
-import { useUser } from '../../Components/context/UserContext';
+import { allowedIf } from '../../RouteConfig';
+
+function checkPermission(user, permission, authenticated) {
+  if (permission === allowedIf.MEMBER)
+    return user?.accessLevel >= membershipState.MEMBER;
+  if (permission === allowedIf.OFFICER_OR_ADMIN)
+    return user?.accessLevel >= membershipState.OFFICER;
+  if (permission === allowedIf.AUTHENTICATED)
+    return authenticated;
+  if (permission === allowedIf.UNAUTHENTICATED)
+    return !authenticated;
+  return false;
+}
 
 export default function PrivateRoute({
   component: Component,
   appProps,
   ...params
 }) {
-  const { user } = useUser();
-
-  // Check if the user's access level matches with route's access grant
-  const PERMISSION_LOOKUP_TABLE = {
-    [allowedIf.MEMBER]: user?.accessLevel >= membershipState.MEMBER,
-    [allowedIf.OFFICER_OR_ADMIN]: user?.accessLevel >= membershipState.OFFICER,
-    [allowedIf.AUTHENTICATED]: !!appProps.authenticated,
-    [allowedIf.UNAUTHENTICATED]: !appProps.authenticated,
-  };
-
-  const isAllowed = PERMISSION_LOOKUP_TABLE[appProps.allowed] ?? false;
+  // Check permission before granting access
+  const isAllowed = checkPermission(appProps.user, appProps.allowed, appProps.authenticated);
 
   return (
     <Route
       {...params}
       render={(props) => {
+        if (isAllowed) {
         if (isAllowed) {
           return <Component {...appProps} {...props} />;
         } else if (appProps.authenticated) {
