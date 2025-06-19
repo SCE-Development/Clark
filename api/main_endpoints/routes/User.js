@@ -459,34 +459,22 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
 
   const today = new Date();
 
-  //First semester dates
-  //
-  //Jan 1st
+  //First semester start date - Jan 1st
   let semesterStart = new Date(today.getFullYear(), 0, 1);
-  //June 1st
-  let semesterEnd = new Date(today.getFullYear(), 5, 1);
-  //Jan 1st of next year
-  let annualEnd = new Date(today.getFullYear() + 1, 0, 1);
 
   if(today.getMonth() >= 5) {
-    //Update to second semester dates
-    //
-    //June 1st
+    //Second semester start date - June 1st
     semesterStart = new Date(today.getFullYear(), 5, 1);
-    //Jan 1st of next year
-    semesterEnd = new Date(today.getFullYear() + 1, 0, 1);
-    //June 1st of next year
-    annualEnd = new Date(today.getFullYear() + 1, 5, 1);
   }
 
   const newSingleSemesterMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": 1,
-    "membershipValidUntil":semesterEnd,
+    "membershipValidUntil": getMemberExpirationDate(1),
     "joinDate": {
     $gte: semesterStart
     }, 
   });
   const newAnnualMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": 1,
-    "membershipValidUntil":annualEnd,
+    "membershipValidUntil": getMemberExpirationDate(2),
     "joinDate": {
     $gte: semesterStart
     }, 
@@ -495,10 +483,15 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
     //Jan 1st Start of Year
     $gte: new Date(today.getFullYear(), 0, 1)
   }})
+  const currentActiveMembers = await User.countDocuments({"emailVerified": true, "accessLevel": 1, "membershipValidUntil": {
+    //Today
+    $gt: new Date()
+  }});
 
   try {
     const response = {
       newMembersThisYear: newMembersThisYear,
+      currentActiveMembers: currentActiveMembers,
       newSingleSemesterMembers: newSingleSemesterMembersCount,
       newAnnualMembers: newAnnualMembersCount
 
