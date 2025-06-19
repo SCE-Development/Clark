@@ -7,11 +7,10 @@ export default function CardReader(props) {
   const token = props.user.token;
 
   const buildLog = (data) => {
-    let endpoint = data.endpoint;
-    if (!endpoint.includes('?add=1')) {
-      endpoint += '      ';
-    }
-    return [new Date().toISOString(), endpoint, data.statusCode, data.message].join('        ');
+    let date = new Date().toISOString().padEnd(30, ' ');
+    let endpoint = data.endpoint.padEnd(20, ' ');
+    let statusCode = String(data.statusCode).padEnd(8, ' ');
+    return [date, endpoint, statusCode, data.message].join('');
   };
 
   useEffect(() => {
@@ -19,9 +18,19 @@ export default function CardReader(props) {
     url.searchParams.append('token', token);
     const eventSource = new EventSource(url.href);
     eventSource.onmessage = (event) => {
-      let data = JSON.parse(event.data);
-      let newLog = buildLog(data);
-      setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
+      try {
+        let data = JSON.parse(event.data);
+        let newLog = buildLog(data);
+        setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
+      } catch (error) {
+        console.error('unable to format event data from /listen', error);
+        setLogs(
+          (currLogs) => [
+            '[error] unable to format response, check browser logs',
+            ...currLogs,
+          ]
+        );
+      }
     };
 
     eventSource.onerror = () => {
