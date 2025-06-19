@@ -45,6 +45,30 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
+function deleteCard(cardBytes) {
+  return new Promise((resolve) => {
+    try {
+      OfficeAccessCard.findOneAndDelete(
+        { cardBytes: cardBytes }
+        , (error, result) => {
+          if (error) {
+            logger.error('deleteCard got an error querying mongodb: ', error);
+            return resolve(false);
+          }
+          if(!result){
+            logger.info(`Card:${cardBytes} not found in the database`);
+            return resolve(false);
+          }
+          return resolve(!!result);
+        }
+      );
+    } catch (error) {
+      logger.error('deleteCard caught an error: ', error);
+      return resolve(false);
+    }
+  });
+}
+
 let clients = [];
 
 const defaultResponse = {
@@ -115,6 +139,42 @@ router.get('/verify', async (req, res) =>{
     });
     return res.sendStatus(SERVER_ERROR);
   }
+});
+
+router.get('/delete', async (req, res) => {
+  const { cardBytes } = req.query;
+  const apiKey = req.headers['x-api-key'];
+  const required = [
+    { value: apiKey, title: 'X-API-Key HTTP header', },
+    { value: cardBytes, title: 'cardBytes query parameter', },
+  ];
+
+  const missingValue = required.find(({ value }) => !value);
+
+  if (missingValue) {
+    writeRequestResponse('/delete', BAD_REQUEST, `${missingValue.title} missing from request`);
+    return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
+  }
+
+  if (apiKey !== API_KEY) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  if (!await checkIfCardExists(cardBytes)) { // if card we're trying to delete doesn't exist, error 404
+    logger.info('Card does not exist');
+    writeRequestResponse('/delete', NOT_FOUND, 'Card does not exist');
+    return res.sendStatus(NOT_FOUND);
+  }
+
+  const tryDeleteCard = await deleteCard(cardBytes);
+  if (!tryDeleteCard) {
+    logger.info('Error deleting card');
+    writeRequestResponse('/delete', SERVER_ERROR, 'Error deleting card');
+    return res.sendStatus(SERVER_ERROR);
+  }
+  logger.info('Successfully deleted card');
+  writeRequestResponse('Card deleted!');
+  return res.sendStatus(OK);
 });
 
 router.get('/listen', async (req, res) => {
