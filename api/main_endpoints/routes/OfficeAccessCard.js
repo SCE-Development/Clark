@@ -47,11 +47,17 @@ function checkIfCardExists(cardBytes) {
 
 let clients = [];
 
-const writeRequestResponse = (endpoint, statusCode, message) => {
-  response = {
-    endpoint: endpoint,
-    statusCode: statusCode,
-    message: message,
+const defaultResponse = {
+  cardWasAdded: false,
+  message: 'Card authorized!',
+  endpoint: '/verify',
+};
+
+const writeRequestResponse = ({ statusCode, ...rest }) => {
+  const response = {
+    statusCode,
+    ...defaultResponse,
+    ...rest,
   };
   clients.forEach(client => {
     client.res.write(`data: ${JSON.stringify(response)}\n\n`);
@@ -69,7 +75,7 @@ router.get('/verify', async (req, res) =>{
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
-    writeRequestResponse('/verify', BAD_REQUEST, `${missingValue.title} missing from request`);
+    writeRequestResponse({ statusCode: BAD_REQUEST, message: `${missingValue.title} missing from request` });
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
   }
 
@@ -79,7 +85,7 @@ router.get('/verify', async (req, res) =>{
 
   const cardExists = await checkIfCardExists(cardBytes);
   if (cardExists) {
-    writeRequestResponse('/verify', OK, 'Card authorized!');
+    writeRequestResponse({ statusCode: OK });
     return res.sendStatus(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -87,7 +93,7 @@ router.get('/verify', async (req, res) =>{
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    writeRequestResponse('/verify', NOT_FOUND, 'Card not found');
+    writeRequestResponse({ statusCode: NOT_FOUND, message: 'Card not found' });
     return res.sendStatus(NOT_FOUND);
   }
 
@@ -97,12 +103,16 @@ router.get('/verify', async (req, res) =>{
       await new OfficeAccessCard({
         cardBytes
       }).save();
-      writeRequestResponse('/verify?add=1', OK, 'Card added!');
+      writeRequestResponse({ statusCode: OK, message: 'Card added!', endpoint: '/verify?add=1' });
       return res.sendStatus(OK);
     }
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
-    writeRequestResponse('/verify?add=1', SERVER_ERROR, `Error creating Office AccessCard: ${error}`);
+    writeRequestResponse({
+      statusCode: SERVER_ERROR, 
+      endpoint: '/verify?add=1', 
+      message: `Error creating Office AccessCard: ${error}` 
+    });
     return res.sendStatus(SERVER_ERROR);
   }
 });
