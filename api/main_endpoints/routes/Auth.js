@@ -38,14 +38,14 @@ router.post('/register', async (req, res) => {
   const registrationStatus = await registerUser(req.body);
   if (registrationStatus.userSaved) {
     const name = req.body.firstName + ' ' + req.body.lastName;
-    const user = await User.findOne({email: req.body.email})
+    const user = await User.findOne({email: req.body.email});
 
     if (user) {
-      logAudit({
+      AuditLog.create({
         userId: user._id,
-        action: AuditLogctions.SIGN_UP,
+        action: AuditLogActions.SIGN_UP,
         details: {email: req.body.email}
-      })
+      });
     }
 
     sendVerificationEmail(name, req.body.email);

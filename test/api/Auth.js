@@ -196,6 +196,32 @@ describe('Auth', () => {
         await User.deleteOne({email: user.email});
       }
     });
+
+    it('Should create an audit log entry on successful signup', async () => {
+      const registerPayload = {
+        email: 'newuser@example.com',
+        password: 'Passw0rd123!',
+        firstName: 'Testfirst',
+        lastName: 'Testlast'
+      };
+
+      // ensure Audit log and User DB starts fresh before this test
+      await AuditLog.deleteMany({});
+      await User.deleteOne({email: registerPayload.email});
+
+      const res = await test.sendPostRequest('/api/Auth/register', registerPayload);
+      expect(res).to.have.status(OK);
+
+      const auditEntry = await AuditLog.findOne({
+        action: AuditLogActions.SIGN_UP,
+        'details.email': registerPayload.email
+      }).lean();
+
+      expect(auditEntry).to.exist;
+      expect(auditEntry).to.have.property('userId');
+      expect(auditEntry.details).to.have.property('email', registerPayload.email);
+
+    });
   });
 
   describe('/POST login', () => {
