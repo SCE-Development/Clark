@@ -19,6 +19,7 @@ const {
 } = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
+const {mockDayMonthAndYear, revertClock} = require('../util/mocks/Date.js')
 
 
 let app = null;
@@ -297,6 +298,8 @@ describe('User', () => {
     });
   });
 
+  
+
   describe('/POST delete', () => {
     let userAdmin;
 
@@ -479,4 +482,26 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
   });
+
+  describe('GET getNewPaidMembersThisSemester', () => {
+
+    it('Should return status code 200 and valid token sent', async () => {
+      setTokenStatus(true);
+      const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester')
+      expect(result).to.have.status(OK);
+    })
+
+
+    it('Should return statusCode 403 if no token is passed in', async () => {
+      const result = await test.sendGetRequest('/api/user/getNewPaidMembersThisSemester');
+      expect(result).to.have.status(FORBIDDEN);
+    })
+
+    it('Should return statusCode 401 if an invalid'+
+      'token was passed in', async () => {
+      const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+  })
+
 });
