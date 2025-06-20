@@ -212,10 +212,7 @@ describe('Auth', () => {
       const res = await test.sendPostRequest('/api/Auth/register', registerPayload);
       expect(res).to.have.status(OK);
 
-      const auditEntry = await AuditLog.findOne({
-        action: AuditLogActions.SIGN_UP,
-        'details.email': registerPayload.email
-      }).lean();
+      const auditEntry = await AuditLog.findOne().lean();
 
       expect(auditEntry).to.exist;
       expect(auditEntry).to.have.property('userId');

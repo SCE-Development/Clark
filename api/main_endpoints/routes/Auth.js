@@ -45,7 +45,7 @@ router.post('/register', async (req, res) => {
         userId: user._id,
         action: AuditLogActions.SIGN_UP,
         details: {email: req.body.email}
-      });
+      }).catch(logger.error);
     }
 
     sendVerificationEmail(name, req.body.email);
