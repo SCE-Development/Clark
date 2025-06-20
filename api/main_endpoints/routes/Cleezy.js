@@ -64,8 +64,9 @@ router.post('/createUrl', async (req, res) => {
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const { url, alias } = req.body;
+  const { url, alias, expires_at } = req.body;
   let jsonbody = { url, alias: alias || null };
+  if (expires_at) jsonbody.expires_at = expires_at;
   try {
     const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
     const data = response.data;

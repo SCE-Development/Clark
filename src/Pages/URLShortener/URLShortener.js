@@ -14,6 +14,7 @@ export default function URLShortenerPage() {
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [useGeneratedAlias, setUseGeneratedAlias] = useState(false);
   const [alias, setAlias] = useState('');
+  const [expDateTime, setExpDateTime] = useState('');
   const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
@@ -60,9 +61,11 @@ export default function URLShortenerPage() {
   }
 
   async function handleCreateUrl() {
+    const expiresAt = expDateTime ? new Date(expDateTime).toISOString().split('.')[0].replace('T', ' ') + '.000000' : null;
     const response = await createUrl(
       url.trim(),
       alias.trim(),
+      expiresAt,
       user.token
     );
     if (!response.error) {
@@ -70,6 +73,7 @@ export default function URLShortenerPage() {
       setAliasTaken(false);
       setUrl('');
       setAlias('');
+      setExpDateTime('');
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
@@ -275,7 +279,7 @@ export default function URLShortenerPage() {
 
             <div className="col-span-full sm:col-span-4">
               <label htmlFor="url" className={LABEL_CLASS}>
-                Original URL
+                  Original URL
               </label>
               <div className="mt-2">
                 <input
@@ -288,8 +292,17 @@ export default function URLShortenerPage() {
                   className="w-full text-sm input input-bordered sm:text-base"
                 />
               </div>
+              <label htmlFor="expDateTime" className={LABEL_CLASS}>
+                  Expiration Date & Time
+              </label>
+              <div className="mt-2">
+                <input
+                  type="datetime-local"
+                  value={expDateTime}
+                  onChange={(e) => setExpDateTime(e.target.value)}
+                  className="w-full text-sm input input-bordered sm:text-base"
+                />                </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -306,7 +319,7 @@ export default function URLShortenerPage() {
           disabled={!url || (!useGeneratedAlias && !alias)}
           onClick={() => maybeSubmitUrl()}
         >
-          Save
+            Save
         </button>
       </div>
     </div>);
@@ -328,7 +341,7 @@ export default function URLShortenerPage() {
             // the page we are on to zero if the current page
             // we are on isn't the first page (value of 0).
             // by doing this, the useEffect will call the backend
-            // for us with the correct page and query.
+            // // for us with the correct page and query.
             if (page) {
               setPage(0);
             } else {
@@ -427,6 +440,7 @@ export default function URLShortenerPage() {
                     {[
                       { title: 'URL', className: 'text-base text-slate-800 dark:text-white/70', columnName: 'alias' },
                       { title: 'Created At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
+                      { title: 'Expires At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'expires_at' },
                       { title: 'Times Used', className: 'text-base text-slate-800 dark:text-white/70 text-center', columnName: 'used' },
                       { title: 'Delete', className: 'text-base text-slate-800 dark:text-white/70 text-center' }
                     ].map(({ title, className, columnName = null }) => (
@@ -461,6 +475,11 @@ export default function URLShortenerPage() {
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
                             {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
+                        </td>
+                        <td className="hidden md:table-cell">
+                          <div className="flex items-center justify-center">
+                            {new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </div>
                         </td>
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
