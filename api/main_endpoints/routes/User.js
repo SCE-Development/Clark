@@ -467,23 +467,23 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
     semesterStart = new Date(today.getFullYear(), 5, 1);
   }
 
-  const newSingleSemesterMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": 1,
+  const newSingleSemesterMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": membershipState.MEMBER,
     "membershipValidUntil": getMemberExpirationDate(1),
     "joinDate": {
     $gte: semesterStart
     }, 
   });
-  const newAnnualMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": 1,
+  const newAnnualMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": membershipState.MEMBER,
     "membershipValidUntil": getMemberExpirationDate(2),
     "joinDate": {
     $gte: semesterStart
     }, 
   });
-  const newMembersThisYear = await User.countDocuments({"emailVerified": true, "accessLevel": 1, "joinDate": {
+  const newMembersThisYear = await User.countDocuments({"emailVerified": true, "accessLevel": membershipState.MEMBER, "joinDate": {
     //Jan 1st Start of Year
     $gte: new Date(today.getFullYear(), 0, 1)
   }})
-  const currentActiveMembers = await User.countDocuments({"emailVerified": true, "accessLevel": 1, "membershipValidUntil": {
+  const currentActiveMembers = await User.countDocuments({"emailVerified": true, "accessLevel": membershipState.MEMBER, "membershipValidUntil": {
     //Today
     $gt: new Date()
   }});
@@ -494,7 +494,6 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
       currentActiveMembers: currentActiveMembers,
       newSingleSemesterMembers: newSingleSemesterMembersCount,
       newAnnualMembers: newAnnualMembersCount
-
     };
     return res.status(OK).send(response);
   } catch {
