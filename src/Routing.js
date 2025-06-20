@@ -9,7 +9,6 @@ import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import ResetPasswordPage from './Pages/ForgotPassword/ResetPassword';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
-import SpeakerPage from './Pages/Speaker/Speaker';
 import EditUserInfo from './Pages/UserManager/EditUserInfo';
 
 import Home from './Pages/Home/Home.js';
@@ -61,13 +60,6 @@ export default function Routing({ appProps }) {
     {
       Component: LedSign,
       path: '/led-sign',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
-    {
-      Component: SpeakerPage,
-      path: '/speakers',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
