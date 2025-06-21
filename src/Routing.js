@@ -7,9 +7,10 @@ import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import { officerSignedInRoutes, memberSignedInRoutes, signedOutRoutes } from './RouteConfig.js';
 
+import CardReader from './Pages/CardReader/CardReader.js';
+
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
-  const routes = [...officerSignedInRoutes, ...memberSignedInRoutes];
 
   return (
     <div>
