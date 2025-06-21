@@ -4,7 +4,7 @@ import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import ResetPasswordPage from './Pages/ForgotPassword/ResetPassword';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
-import SpeakerPage from './Pages/Speaker/Speaker';
+// import SpeakerPage from './Pages/Speaker/Speaker';
 import EditUserInfo from './Pages/UserManager/EditUserInfo';
 import MembershipApplication from './Pages/MembershipApplication/MembershipApplication.js';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
@@ -19,6 +19,7 @@ import Messaging from './Pages/Messaging/Messaging.js';
 // import DessertPage from './Pages/Desserts/Desserts.js';
 // import DessertAdminPage from './Pages/Desserts/DessertsAdmin.js';
 import Home from './Pages/Home/Home.js';
+import CardReader from './Pages/CardReader/CardReader.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -54,14 +55,14 @@ export const officerSignedInRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
-  {
-    Component: SpeakerPage,
-    path: '/speakers',
-    pageName: 'Speaker',
-    allowedIf: allowedIf.OFFICER_OR_ADMIN,
-    redirect: '/',
-    inAdminNavbar: true
-  },
+  // {
+  //   Component: SpeakerPage,
+  //   path: '/speakers',
+  //   pageName: 'Speaker',
+  //   allowedIf: allowedIf.OFFICER_OR_ADMIN,
+  //   redirect: '/',
+  //   inAdminNavbar: true
+  // },
   {
     Component: EditUserInfo,
     path: '/user/edit/:id',
@@ -102,6 +103,14 @@ export const officerSignedInRoutes = [
   //   redirect: '/',
   //   inAdminNavbar: true
   // },
+  {
+    Component: CardReader,
+    path: '/card-reader',
+    pageName: 'Card Reader',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true
+  },
 ];
 
 export const memberSignedInRoutes = [
