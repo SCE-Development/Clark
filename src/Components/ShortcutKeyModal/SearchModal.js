@@ -130,7 +130,7 @@ export default function SearchModal(props) {
           onChange={handleChanges} />
 
         {suggestions.length > 0 && (
-          <ul className={style['suggestion-list']}>
+          <ul className={`${style['suggestion-list']} ${style['scrollable-list']}`}>
             {suggestions.map((r, index) => (
               <li
                 key={index}
@@ -148,7 +148,7 @@ export default function SearchModal(props) {
                 {r.pageName}
                 <div className={style['hidden-tab']}>{selectItem === index && r.path}</div>
               </li>
-            )).slice(0, 5)}
+            ))}
           </ul>
         )}
       </div>

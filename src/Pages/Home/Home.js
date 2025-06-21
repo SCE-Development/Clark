@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Footer from '../../Components/Footer/Footer.js';
 import './Home.css';
 
@@ -59,7 +59,7 @@ const Home = () => {
 
   return (
     <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
-      <div className = "flex flex-col items-center justify-center my-4">
+      <div className="flex flex-col items-center justify-center my-4">
         <p className={`fade-scale-in text-white${showMessage ? ' show' : ''}`}>
           {message}
         </p>
