@@ -130,11 +130,7 @@ export default function SearchModal(props) {
           onChange={handleChanges} />
 
         {suggestions.length > 0 && (
-<<<<<<< HEAD
           <ul className={`${style['suggestion-list']} ${style['scrollable-list']}`}>
-=======
-          <ul className={style['suggestion-list']}>
->>>>>>> devTA_shortcut_key
             {suggestions.map((r, index) => (
               <li
                 key={index}
@@ -152,11 +148,7 @@ export default function SearchModal(props) {
                 {r.pageName}
                 <div className={style['hidden-tab']}>{selectItem === index && r.path}</div>
               </li>
-<<<<<<< HEAD
             ))}
-=======
-            )).slice(0, 5)}
->>>>>>> devTA_shortcut_key
           </ul>
         )}
       </div>

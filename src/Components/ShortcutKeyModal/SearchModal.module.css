@@ -40,7 +40,6 @@
 
 .hidden-tab {
     font-size: small;
-<<<<<<< HEAD
     color: white;
 }
 
@@ -60,8 +59,4 @@
 .scrollable-list::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background: gray;
-=======
-    /* background: rgb(223, 223, 249); */
-    color: white;
->>>>>>> devTA_shortcut_key
 }
