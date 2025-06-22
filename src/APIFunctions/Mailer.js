@@ -23,8 +23,7 @@ export async function sendVerificationEmail(email, token) {
       }),
     });
     if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
+      status.responseData = true;
     } else {
       status.error = true;
     }
