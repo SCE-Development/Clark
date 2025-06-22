@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   PrintApiResponse,
   ApiResponse
@@ -22,14 +21,17 @@ export const range = (start, end) => {
 export async function healthCheck() {
   let status = new ApiResponse();
   const url = new URL('/api/Printer/healthCheck', BASE_API_URL);
-  await axios.get(url.href)
-    .then(res => {
-      status.responseData = res.data;
-    })
-    .catch(err => {
-      status.responseData = err;
+  try {
+    const res = await fetch(url.href);
+    if (res.ok) {
+      status.responseData = await res.json();
+    } else {
       status.error = true;
-    });
+    }
+  } catch (err) {
+    status.responseData = err;
+    status.error = true;
+  }
   return status;
 }
 
@@ -78,18 +80,22 @@ export function parseRange(pages, maxPages) {
 export async function printPage(data, token) {
   let status = new ApiResponse();
   const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
-  await axios.post(url.href, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${token}`
-    }
-  })
-    .then(response => {
-      status.responseData = response.data.message;
-    })
-    .catch(() => {
-      status.error = true;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: data
     });
+    if (res.ok) {
+      const response = await res.json();
+      status.responseData = response.message;
+    }
+  } catch (err) {
+    status.responseData = err;
+    status.error = true;
+  }
   return status;
 }
 
@@ -105,20 +111,24 @@ export async function printPage(data, token) {
 export async function getPagesPrinted(email, token) {
   let status = new PrintApiResponse();
   const url = new URL('/api/user/getPagesPrintedCount', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      email
-    }, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }
-    )
-    .then(res => {
-      status.pagesUsed = res.data;
-    })
-    .catch(() => {
-      status.error = true;
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
     });
+    if (res.ok) {
+      const response = await res.json();
+      status.pagesUsed = response.pagesUsed;
+    } else {
+      status.error = true;
+    }
+  } catch (err) {
+    status.responseData = err;
+    status.error = true;
+  }
   return status;
 }
