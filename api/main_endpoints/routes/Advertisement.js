@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 
   Advertisement.findOne().skip(random)
     .then(items => {
-      res.status(OK).send(items);
+      res.status(OK).send(items || {});
     })
     .catch(error => {
       res.sendStatus(BAD_REQUEST);
