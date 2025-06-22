@@ -89,8 +89,7 @@ export async function printPage(data, token) {
       body: data
     });
     if (res.ok) {
-      const response = await res.json();
-      status.responseData = response.message;
+      status.responseData = true;
     }
   } catch (err) {
     status.responseData = err;
@@ -122,7 +121,7 @@ export async function getPagesPrinted(email, token) {
     });
     if (res.ok) {
       const response = await res.json();
-      status.pagesUsed = response.pagesUsed;
+      status.pagesUsed = response;
     } else {
       status.error = true;
     }
