@@ -71,6 +71,7 @@ export default function URLShortenerPage(props) {
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
+      await getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
       setTimeout(() => {
         setSuccessMessage(null);
       }, 5000);
