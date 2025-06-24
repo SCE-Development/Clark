@@ -32,16 +32,19 @@ import Messaging from './Pages/Messaging/Messaging.js';
 
 import CardReader from './Pages/CardReader/CardReader.js';
 
+import { useUser } from './Components/context/UserContext';
+
 export default function Routing({ appProps }) {
+  const { user, setUser } = useUser();
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
     userIsAuthenticated &&
-    appProps.user &&
-    appProps.user.accessLevel === membershipState.MEMBER;
+    user &&
+    user.accessLevel === membershipState.MEMBER;
   const userIsOfficerOrAdmin =
     userIsAuthenticated &&
-    appProps.user &&
-    appProps.user.accessLevel >= membershipState.OFFICER;
+    user &&
+    user.accessLevel >= membershipState.OFFICER;
   const signedInRoutes = [
     // new for Overview
     {
@@ -178,7 +181,7 @@ export default function Routing({ appProps }) {
                 path={path}
                 appProps={{
                   allowed: allowedIf,
-                  user: appProps.user,
+                  user: user,
                   redirect,
                   authenticated:userIsAuthenticated,
                   ...appProps
@@ -195,7 +198,7 @@ export default function Routing({ appProps }) {
               exact
               path={path}
               render={props => (
-                <NavBarWrapper component={Component} {...props} {...appProps} />
+                <NavBarWrapper component={Component} {...props} {...appProps} user={user} />
               )}
             />
           );
