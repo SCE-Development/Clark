@@ -34,8 +34,11 @@ const {
 const { checkIfPageCountResets } = require('../../api/main_endpoints/util/userHelpers.js');
 const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
-chai.should();
 
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+
+chai.should();
 chai.use(chaiHttp);
 
 // Our parent block
@@ -141,39 +144,6 @@ describe('Auth', () => {
       expect(verificationArgs).to.eql([user.firstName + ' ' + user.lastName, user.email]);
       expect(result).to.have.status(OK);
     });
-  });
-
-  describe('/POST login', () => {
-    it('Should return statusCode 400 if an email and/or ' +
-      'password is not provided', async () => {
-      const user = {};
-      const result = await test.sendPostRequest(
-        '/api/Auth/login', user);
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
-    it('Should return statusCode 401 if an email/pass combo ' +
-      'does not match a record in the DB', async () => {
-      const user = {
-        email: 'nota@b.c',
-        password: 'Passwd'
-      };
-      const result = await test.sendPostRequest(
-        '/api/Auth/login', user);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
-    it('Should return statusCode 401 if the email exists ' +
-      'but password is incorrect', async () => {
-      const user = {
-        email: 'a@b.c',
-        password: 'password'
-      };
-      const result = await test.sendPostRequest(
-        '/api/Auth/login', user);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
     it('Should allow login with correct credentials after registering a user', async () => {
       const user = {
         email: 'logintest@gmail.com',
@@ -225,6 +195,114 @@ describe('Auth', () => {
       } finally {
         await User.deleteOne({email: user.email});
       }
+    });
+  });
+
+  describe('/POST login', () => {
+    it('Should return statusCode 400 if an email and/or ' +
+      'password is not provided', async () => {
+      const user = {};
+      const result = await test.sendPostRequest(
+        '/api/Auth/login', user);
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return statusCode 401 if an email/pass combo ' +
+      'does not match a record in the DB', async () => {
+      const user = {
+        email: 'nota@b.c',
+        password: 'Passwd'
+      };
+      const result = await test.sendPostRequest(
+        '/api/Auth/login', user);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return statusCode 401 if the email exists ' +
+      'but password is incorrect', async () => {
+      const user = {
+        email: 'a@b.c',
+        password: 'password'
+      };
+      const result = await test.sendPostRequest(
+        '/api/Auth/login', user);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    describe('with an existing user', () => {
+      let user;
+
+      before(async () => {
+        user = new User({
+          _id: new mongoose.Types.ObjectId(),
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          apiKey: null
+        });
+        await user.save();
+      });
+
+      after(async () => {
+        await User.deleteOne({ email: 'logintest@gmail.com' });
+      });
+
+      beforeEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+        sinon.restore();
+      });
+
+      it('Should create an audit log entry on successful login', async () => {
+        const loginPayload = {
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+        };
+
+        const res = await test.sendPostRequest('/api/Auth/login', loginPayload);
+        expect(res).to.have.status(OK);
+        expect(res.body).to.have.property('token');
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.LOG_IN,
+          details: {email: loginPayload.email},
+        });
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry.details).to.have.property('email', loginPayload.email);
+      });
+
+      it('Should return 200 even if audit logging fails', async () => {
+        const auditStub = sinon.stub(AuditLog, 'create').rejects(new Error('Simulated audit log failure'));
+
+        const loginPayload = {
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+        };
+
+        try {
+
+          const res = await test.sendPostRequest('/api/Auth/login', loginPayload);
+          expect(res).to.have.status(OK);
+          expect(res.body).to.have.property('token');
+
+          const auditEntry = await AuditLog.findOne({
+            action: AuditLogActions.LOG_IN,
+            'details.email': loginPayload.email,
+          });
+
+          expect(auditEntry).to.not.exist;
+        } finally {
+          auditStub.restore();
+        }
+      });
     });
   });
 
@@ -427,5 +505,4 @@ describe('Auth', () => {
       expect(result).to.be.false;
     });
   });
-
 });
