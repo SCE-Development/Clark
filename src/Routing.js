@@ -181,7 +181,6 @@ export default function Routing({ appProps }) {
                 path={path}
                 appProps={{
                   allowed: allowedIf,
-                  user: user,
                   redirect,
                   authenticated:userIsAuthenticated,
                   ...appProps
@@ -198,7 +197,7 @@ export default function Routing({ appProps }) {
               exact
               path={path}
               render={props => (
-                <NavBarWrapper component={Component} {...props} {...appProps} user={user} />
+                <NavBarWrapper component={Component} {...props} {...appProps} />
               )}
             />
           );

@@ -1,14 +1,21 @@
 import React from 'react';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
+import { useUser } from '../context/UserContext';
 
 function NavBarWrapper({
   enableAdminNavbar = false,
   component: Component,
   ...appProps
 }) {
+  const { user, setUser } = useUser();
+
+  // Test that UserContext is working
+  console.log('NavBarWrapper - UserContext data:', { user, setUser: typeof setUser });
+
   function handleLogout() {
     appProps.setAuthenticated(false);
+    setUser(null);
     window.localStorage.removeItem('jwtToken');
     window.location.reload();
   }
