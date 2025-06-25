@@ -12,6 +12,7 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
+const { decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 
 router.use(bodyParser.json());
 
@@ -44,6 +45,25 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
+let clients = [];
+
+const defaultResponse = {
+  cardWasAdded: false,
+  message: 'Card authorized!',
+  endpoint: '/verify',
+};
+
+const writeRequestResponse = ({ statusCode, ...rest }) => {
+  const response = {
+    statusCode,
+    ...defaultResponse,
+    ...rest,
+  };
+  clients.forEach(client => {
+    client.res.write(`data: ${JSON.stringify(response)}\n\n`);
+  });
+};
+
 router.get('/verify', async (req, res) =>{
   const { cardBytes, add = false } = req.query;
   const apiKey = req.headers['x-api-key'];
@@ -55,6 +75,7 @@ router.get('/verify', async (req, res) =>{
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
+    writeRequestResponse({ statusCode: BAD_REQUEST, message: `${missingValue.title} missing from request` });
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
   }
 
@@ -64,6 +85,7 @@ router.get('/verify', async (req, res) =>{
 
   const cardExists = await checkIfCardExists(cardBytes);
   if (cardExists) {
+    writeRequestResponse({ statusCode: OK });
     return res.sendStatus(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -71,6 +93,7 @@ router.get('/verify', async (req, res) =>{
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
+    writeRequestResponse({ statusCode: NOT_FOUND, message: 'Card not found' });
     return res.sendStatus(NOT_FOUND);
   }
 
@@ -80,12 +103,41 @@ router.get('/verify', async (req, res) =>{
       await new OfficeAccessCard({
         cardBytes
       }).save();
+      writeRequestResponse({ statusCode: OK, message: 'Card added!', endpoint: '/verify?add=1' });
       return res.sendStatus(OK);
     }
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
+    writeRequestResponse({
+      statusCode: SERVER_ERROR,
+      endpoint: '/verify?add=1',
+      message: `Error creating Office AccessCard: ${error}`
+    });
     return res.sendStatus(SERVER_ERROR);
   }
+});
+
+router.get('/listen', async (req, res) => {
+  if (!await decodeTokenFromBodyOrQuery(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache',
+    'X-Accel-Buffering': 'no'
+  };
+
+  res.writeHead(OK, headers);
+
+  const newClient = { res };
+  clients.push(newClient);
+
+  req.on('close', () => {
+    clients = clients.filter(c => c !== newClient);
+    res.end();
+  });
 });
 
 module.exports = router;
