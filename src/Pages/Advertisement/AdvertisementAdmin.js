@@ -1,7 +1,7 @@
 import React from 'react';
 import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js';
 import { useState, useEffect } from 'react';
-import { useUser } from '../context/UserContext';
+import { useUser } from '../../Components/context/UserContext';
 
 export default function AdvertisementAdmin() {
   const { user } = useUser();
