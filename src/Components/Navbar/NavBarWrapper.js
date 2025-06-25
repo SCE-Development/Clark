@@ -10,9 +10,6 @@ function NavBarWrapper({
 }) {
   const { user, setUser } = useUser();
 
-  // Test that UserContext is working
-  console.log('NavBarWrapper - UserContext data:', { user, setUser: typeof setUser });
-
   function handleLogout() {
     appProps.setAuthenticated(false);
     setUser(null);
