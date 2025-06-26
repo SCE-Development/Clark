@@ -5,8 +5,6 @@ import './index.css';
 
 import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
-import SearchModal from './Components/ShortcutKeyModal/SearchModal';
-
 
 function App(props) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -29,7 +27,6 @@ function App(props) {
   return (
     !isAuthenticating && (
       <BrowserRouter>
-        <SearchModal user={ user } />
         <Routing appProps={{ authenticated, setAuthenticated, user }} />
       </BrowserRouter>
     )
