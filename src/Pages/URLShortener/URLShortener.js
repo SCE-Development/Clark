@@ -473,12 +473,23 @@ export default function URLShortenerPage() {
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
                         <td className='hidden md:table-cell'>
-                          <div className='flex items-center justify-center'>
-                            {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
+                          <div className='flex flex-col items-center'>
+                            <span className='block'>
+                              {new Date(url.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
+                            </span>
+                            <span className='block text-sm text-blue-400'>
+                              {new Date(url.created_at.replace(' ', 'T') + 'Z').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit'})}
+                            </span>
+                          </div>
                         </td>
                         <td className="hidden md:table-cell">
-                          <div className="flex items-center justify-center">
-                            {new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          <div className="flex flex-col items-center">
+                            <span className='block'>
+                              {new Date(url.expires_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
+                            </span>
+                            <span className='block text-sm text-blue-400'>
+                              {new Date(url.expires_at.replace(' ', 'T') + 'Z').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
                           </div>
                         </td>
                         <td className='hidden md:table-cell'>
