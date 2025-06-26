@@ -10,10 +10,10 @@ export default function PrivateRoute({
 }) {
   // Check if the user's access level matches with route's access grant
   const PERMISSION_LOOKUP_TABLE = {
-    [allowedIf.MEMBER]: (user) => user?.accessLevel >= membershipState.MEMBER,
-    [allowedIf.OFFICER_OR_ADMIN]: (user) => user?.accessLevel >= membershipState.OFFICER,
-    [allowedIf.AUTHENTICATED]: (authenticated) => authenticated,
-    [allowedIf.UNAUTHENTICATED]: (authenticated) => !authenticated,
+    [allowedIf.MEMBER]: (user, authenticated) => user?.accessLevel >= membershipState.MEMBER,
+    [allowedIf.OFFICER_OR_ADMIN]: (user, authenticated) => user?.accessLevel >= membershipState.OFFICER,
+    [allowedIf.AUTHENTICATED]: (user, authenticated) => authenticated,
+    [allowedIf.UNAUTHENTICATED]: (user, authenticated) => !authenticated,
   };
 
   const isAllowed = PERMISSION_LOOKUP_TABLE[appProps.allowed]?.(appProps.user, appProps.authenticated) ?? false;
