@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  getUserById,
   editUser,
+  getUserById,
 } from '../../APIFunctions/User';
 
-import MajorDropdown from '../MembershipApplication/MajorDropdown';
-import RoleDropdown from './RoleDropdown';
-import ExpirationDropdown from './ExpirationDropdown';
-import { membershipState, membershipStateToString } from '../../Enums';
 import { sendVerificationEmail } from '../../APIFunctions/Mailer';
+import { membershipState, membershipStateToString } from '../../Enums';
+import MajorDropdown from '../MembershipApplication/MajorDropdown';
+import ExpirationDropdown from './ExpirationDropdown';
+import RoleDropdown from './RoleDropdown';
 
 
 export default function EditUserInfo(props) {
@@ -27,6 +27,7 @@ export default function EditUserInfo(props) {
     setNumberOfSemestersToSignUpFor
   ] = useState();
   const [discordId, setDiscordId] = useState();
+  const [backgroundColor, setBackgroundColor] = useState();
   const [membershipExpiration, setMembershipExpiration] = useState(new Date());
   const [joinDate, setJoinDate] = useState();
   const [submitButtonText, setSubmitButtonText] = useState('Submit');
@@ -61,6 +62,8 @@ export default function EditUserInfo(props) {
           new Date(result.responseData.membershipValidUntil)
         );
         setDiscordId(result.responseData.discordID);
+        setBackgroundColor(result.responseData.backgroundColor || '#15191e');
+        
         setEmail(result.responseData.email);
       }
       setLoading(false);
@@ -98,6 +101,7 @@ export default function EditUserInfo(props) {
       numberOfSemestersToSignUpFor,
       doorCode,
       discordID: discordId,
+      backgroundColor,
       pagesPrinted,
       accessLevel,
       emailVerified,
@@ -394,6 +398,23 @@ export default function EditUserInfo(props) {
                       onChange={(e) => {
                         setDataWasChanged(true);
                         setDiscordId(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-span-4">
+                  <label htmlFor="background-color" className="block text-sm font-medium leading-6">Profile Background Color</label>
+                  <div className="mt-2">
+                    <input
+                      type="color"
+                      name="background-color"
+                      id="background-color"
+                      className="w-full h-10 border rounded-md"
+                      value={backgroundColor || '#15191e'}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setBackgroundColor(e.target.value);
                       }}
                     />
                   </div>

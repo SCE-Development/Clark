@@ -169,6 +169,7 @@ router.post('/login', function(req, res) {
               email: user.email,
               accessLevel: user.accessLevel,
               pagesPrinted: user.pagesPrinted,
+              backgroundColor: user.backgroundColor,
               _id: user._id
             };
             user

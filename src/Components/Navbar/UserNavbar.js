@@ -6,6 +6,14 @@ export default function UserNavBar(props) {
   if (props.user.firstName && props.user.lastName) {
     initials = props.user.firstName[0] + props.user.lastName[0];
   }
+
+  let color = ''
+  if(props.user.backgroundColor) {
+    color = props.user.backgroundColor;
+  } else {
+    color = '#15191e';
+  }
+
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
@@ -85,7 +93,7 @@ export default function UserNavBar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content">
+                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: color}}>
                   <span>{initials}</span>
                 </div>
               </summary>
