@@ -62,7 +62,7 @@ export default function EditUserInfo(props) {
           new Date(result.responseData.membershipValidUntil)
         );
         setDiscordId(result.responseData.discordID);
-        setBackgroundColor(result.responseData.backgroundColor || '#15191e');
+        setBackgroundColor(result.responseData.backgroundColor);
         setEmail(result.responseData.email);
       }
       setLoading(false);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { isValidHexColor, selectCorrectColor } from '../../APIFunctions/Profile';
 import { membershipState } from '../../Enums';
 
 export default function UserNavBar(props) {
@@ -7,11 +8,11 @@ export default function UserNavBar(props) {
     initials = props.user.firstName[0] + props.user.lastName[0];
   }
 
-  let color = '';
-  if(props.user.backgroundColor) {
-    color = props.user.backgroundColor;
+  let iconColor = '';
+  if(isValidHexColor(props.user.backgroundColor)) {
+    iconColor = props.user.backgroundColor;
   } else {
-    color = '#15191e';
+    iconColor = '#15191e';
   }
 
   const unauthedRoutes = [
@@ -93,8 +94,8 @@ export default function UserNavBar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: color}}>
-                  <span>{initials}</span>
+                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: iconColor }}>
+                  <span style={{color: selectCorrectColor(iconColor)}}>{initials}</span>
                 </div>
               </summary>
               <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>
