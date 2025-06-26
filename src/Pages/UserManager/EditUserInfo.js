@@ -63,7 +63,6 @@ export default function EditUserInfo(props) {
         );
         setDiscordId(result.responseData.discordID);
         setBackgroundColor(result.responseData.backgroundColor || '#15191e');
-        
         setEmail(result.responseData.email);
       }
       setLoading(false);

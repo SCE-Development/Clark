@@ -7,7 +7,7 @@ export default function UserNavBar(props) {
     initials = props.user.firstName[0] + props.user.lastName[0];
   }
 
-  let color = ''
+  let color = '';
   if(props.user.backgroundColor) {
     color = props.user.backgroundColor;
   } else {
