@@ -29,7 +29,7 @@ function App(props) {
   return (
     !isAuthenticating && (
       <BrowserRouter>
-        <SearchModal user={ user } />
+        <SearchModal user={user} />
         <Routing appProps={{ authenticated, setAuthenticated, user }} />
       </BrowserRouter>
     )
