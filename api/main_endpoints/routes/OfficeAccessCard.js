@@ -45,6 +45,29 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
+function deleteCard(cardBytes) {
+  return new Promise((resolve) => {
+    try {
+      OfficeAccessCard.findOneAndDelete(
+        { cardBytes }
+        , (error, result) => {
+          if (error) {
+            logger.error('deleteCard got an error querying mongodb: ', error);
+            return resolve(false);
+          }
+          if (!result) {
+            logger.info(`Card:${cardBytes} not found in the database`);
+          }
+          return resolve(!!result);
+        }
+      );
+    } catch (error) {
+      logger.error('deleteCard caught an error: ', error);
+      return resolve(false);
+    }
+  });
+}
+
 let clients = [];
 
 const defaultResponse = {
@@ -115,6 +138,46 @@ router.get('/verify', async (req, res) =>{
     });
     return res.sendStatus(SERVER_ERROR);
   }
+});
+
+router.get('/delete', async (req, res) => {
+  if (!await decodeTokenFromBodyOrQuery(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const { cardBytes } = req.query;
+  if (!cardBytes) {
+    writeRequestResponse({
+      statusCode: BAD_REQUEST,
+      endpoint: '/delete',
+      message: 'cardBytes missing from request'
+    });
+    return res.sendStatus(BAD_REQUEST);
+  }
+
+  if (!await checkIfCardExists(cardBytes)) {
+    logger.info('Card does not exist');
+    writeRequestResponse({
+      statusCode: NOT_FOUND,
+      endpoint: '/delete',
+      message: 'Card does not exist',
+    });
+    return res.sendStatus(NOT_FOUND);
+  }
+
+  const tryDeleteCard = await deleteCard(cardBytes);
+  if (!tryDeleteCard) {
+    logger.info('Error deleting card');
+    writeRequestResponse({
+      statusCode: SERVER_ERROR,
+      endpoint: '/delete',
+      message: 'Error deleting card'
+    });
+    return res.sendStatus(SERVER_ERROR);
+  }
+  logger.info('Successfully deleted card');
+  writeRequestResponse({ statusCode: OK, endpoint: '/delete', message: 'Card deleted!' });
+  return res.sendStatus(OK);
 });
 
 router.get('/listen', async (req, res) => {
