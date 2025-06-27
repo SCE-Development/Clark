@@ -9,6 +9,7 @@ import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import ResetPasswordPage from './Pages/ForgotPassword/ResetPassword';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
+import SpeakerPage from './Pages/Speaker/Speaker';
 import EditUserInfo from './Pages/UserManager/EditUserInfo';
 
 import Home from './Pages/Home/Home.js';
@@ -30,21 +31,16 @@ import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
 import Messaging from './Pages/Messaging/Messaging.js';
 
-import CardReader from './Pages/CardReader/CardReader.js';
-
-import { useUser } from './Components/context/UserContext';
-
 export default function Routing({ appProps }) {
-  const { user, setUser } = useUser();
   const userIsAuthenticated = appProps.authenticated;
   const userIsMember =
     userIsAuthenticated &&
-    user &&
-    user.accessLevel === membershipState.MEMBER;
+    appProps.user &&
+    appProps.user.accessLevel === membershipState.MEMBER;
   const userIsOfficerOrAdmin =
     userIsAuthenticated &&
-    user &&
-    user.accessLevel >= membershipState.OFFICER;
+    appProps.user &&
+    appProps.user.accessLevel >= membershipState.OFFICER;
   const signedInRoutes = [
     // new for Overview
     {
@@ -65,6 +61,13 @@ export default function Routing({ appProps }) {
     {
       Component: LedSign,
       path: '/led-sign',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    },
+    {
+      Component: SpeakerPage,
+      path: '/speakers',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
@@ -135,14 +138,7 @@ export default function Routing({ appProps }) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true
-    },
-    {
-      Component: CardReader,
-      path: '/card-reader',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true
-    },
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
@@ -181,6 +177,7 @@ export default function Routing({ appProps }) {
                 path={path}
                 appProps={{
                   allowed: allowedIf,
+                  user: appProps.user,
                   redirect,
                   authenticated:userIsAuthenticated,
                   ...appProps
