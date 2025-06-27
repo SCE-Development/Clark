@@ -195,13 +195,16 @@ export default function Printing() {
     data.append('sides', sides);
     data.append('copies', copies);
     let status = await printPage(data, user.token);
+    console.log('printPage status:', status, 'status.error:', status.error);
 
     if (!status.error) {
-      const updatedUser = { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest };
-      editUser(updatedUser, user.token);
-      setUser(updatedUser); // Update the user context
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
+      setTimeout(() => {
+        const updatedUser = { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest };
+        editUser(updatedUser, user.token);
+        setUser(updatedUser);
+      }, 10000);
     } else {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
