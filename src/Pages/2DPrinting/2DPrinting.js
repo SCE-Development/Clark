@@ -195,7 +195,6 @@ export default function Printing() {
     data.append('sides', sides);
     data.append('copies', copies);
     let status = await printPage(data, user.token);
-    console.log('printPage status:', status, 'status.error:', status.error);
 
     if (!status.error) {
       setPrintStatus('Printing succeeded!');
