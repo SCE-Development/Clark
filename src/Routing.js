@@ -5,10 +5,12 @@ import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
+
 import { officerSignedInRoutes, memberSignedInRoutes, signedOutRoutes } from './RouteConfig.js';
 
 export default function Routing({ appProps }) {
   const userIsAuthenticated = appProps.authenticated;
+
   const routes = [...officerSignedInRoutes, ...memberSignedInRoutes];
 
   return (
@@ -42,7 +44,6 @@ export default function Routing({ appProps }) {
                 pageName={pageName}
                 appProps={{
                   allowed: allowedIf,
-                  user: appProps.user,
                   redirect,
                   authenticated: userIsAuthenticated,
                   ...appProps
