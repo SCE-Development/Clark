@@ -6,13 +6,15 @@ import {
   getPagesPrinted,
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
+import { useUser } from '../../Components/context/UserContext';
 
 import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
-export default function Printing(props) {
+export default function Printing() {
+  const { user, setUser } = useUser();
   const [dragActive, setDragActive] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [numberOfPagesInPdfPreview, setNumberOfPagesInPdfPreview] = useState(0);
@@ -40,8 +42,8 @@ export default function Printing(props) {
 
   async function getNumberOfPagesPrintedSoFar() {
     const result = await getPagesPrinted(
-      props.user.email,
-      props.user.token,
+      user.email,
+      user.token,
     );
     setPrinterHealthy(!result.error);
     if (!result.error) {
@@ -190,13 +192,12 @@ export default function Printing(props) {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    let status = await printPage(data, props.user.token);
+    let status = await printPage(data, user.token);
 
     if (!status.error) {
-      editUser(
-        { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        props.user.token,
-      );
+      const updatedUser = { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest };
+      editUser(updatedUser, user.token);
+      setUser(updatedUser); // Update the user context
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
     } else {
