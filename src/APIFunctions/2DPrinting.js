@@ -24,7 +24,13 @@ export async function healthCheck() {
   try {
     const res = await fetch(url.href);
     if (res.ok) {
-      status.responseData = await res.json();
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        status.responseData = await res.json();
+      } else {
+        const textResponse = await res.text();
+        status.responseData = { message: textResponse };
+      }
     } else {
       status.error = true;
     }
