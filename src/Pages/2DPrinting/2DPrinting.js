@@ -204,7 +204,7 @@ export default function Printing() {
         const updatedUser = { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest };
         editUser(updatedUser, user.token);
         setUser(updatedUser);
-      }, 10000);
+      }, 5000);
     } else {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
