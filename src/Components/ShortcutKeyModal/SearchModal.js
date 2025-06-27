@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import style from './SearchModal.module.css';
 import { officerSignedInRoutes, signedOutRoutes, memberSignedInRoutes } from '../../RouteConfig';
 import { membershipState } from '../../Enums';
@@ -11,14 +11,13 @@ export default function SearchModal(props) {
   const [keyword, setKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectItem, setSelectItem] = useState(0);
-  let routes = [];
   const [users, setUsers] = useState([]);
 
-  if (props.user.accessLevel === membershipState.MEMBER) {
-    routes = [...memberSignedInRoutes, ...signedOutRoutes];
-  } else if (props.user.accessLevel >= membershipState.OFFICER) {
-    routes = [...officerSignedInRoutes, ...memberSignedInRoutes, ...signedOutRoutes, ...users];
-  } else routes = [...signedOutRoutes];
+  const routes = useMemo(() => {
+    if (props.user.accessLevel === membershipState.MEMBER) return [...memberSignedInRoutes, ...signedOutRoutes];
+    if (props.user.accessLevel >= membershipState.OFFICER) return [...officerSignedInRoutes, ...memberSignedInRoutes, ...signedOutRoutes, ...users];
+    return [...signedOutRoutes];
+  }, [props.user.accessLevel, users]);
 
   function handleChanges(e) {
     setKeyword(e.target.value);
