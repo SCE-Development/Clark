@@ -199,11 +199,8 @@ export default function Printing() {
     if (!status.error) {
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
-      setTimeout(() => {
-        const updatedUser = { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest };
-        editUser(updatedUser, user.token);
-        setUser(updatedUser);
-      }, 5000);
+      const updatedUser = { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest };
+      editUser(updatedUser, user.token);
     } else {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
