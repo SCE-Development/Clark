@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { trashcanSymbol } from '../Overview/SVG';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
+import { all } from 'bluebird';
 
 export default function URLShortenerPage(props) {
   const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
@@ -64,14 +65,20 @@ export default function URLShortenerPage(props) {
       props.user.token
     );
     if (!response.error) {
-      setAllUrls([...allUrls, response.responseData]);
+      if (page != 0){
+        setPage(0);
+      }
+      if (allUrls.length >= rowsPerPage){
+        allUrls.pop();
+        allUrls.unshift(response.responseData);
+      }
+
       setAliasTaken(false);
       setUrl('');
       setAlias('');
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
-      await getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
       setTimeout(() => {
         setSuccessMessage(null);
       }, 5000);
