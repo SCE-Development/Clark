@@ -12,7 +12,7 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
-const { decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { decodeTokenFromBodyOrQuery, decodeToken } = require('../util/token-functions.js');
 
 router.use(bodyParser.json());
 
@@ -68,6 +68,29 @@ function deleteCard(cardBytes) {
   });
 }
 
+function getAllCards() {
+  return new Promise((resolve) => {
+    try {
+      OfficeAccessCard.find(
+        {}
+        , (error, result) => {
+          if (error) {
+            logger.error('getAllCards got an error querying mongodb');
+            return resolve(null);
+          }
+          if (!result) {
+            logger.info('Could not retrieve any cards from mongodb'); // double check that this is a correct message
+          }
+          return resolve(result);
+        }
+      );
+    } catch (error) {
+      logger.error('getAllCards caught an error: ', error);
+      return resolve(null);
+    }
+  });
+}
+
 let clients = [];
 
 const defaultResponse = {
@@ -76,7 +99,7 @@ const defaultResponse = {
   endpoint: '/verify',
 };
 
-const writeRequestResponse = ({ statusCode, ...rest }) => {
+const writeLogToClient = ({ statusCode, ...rest }) => {
   const response = {
     statusCode,
     ...defaultResponse,
@@ -98,7 +121,7 @@ router.get('/verify', async (req, res) =>{
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
-    writeRequestResponse({ statusCode: BAD_REQUEST, message: `${missingValue.title} missing from request` });
+    writeLogToClient({ statusCode: BAD_REQUEST, message: `${missingValue.title} missing from request` });
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
   }
 
@@ -108,7 +131,7 @@ router.get('/verify', async (req, res) =>{
 
   const cardExists = await checkIfCardExists(cardBytes);
   if (cardExists) {
-    writeRequestResponse({ statusCode: OK });
+    writeLogToClient({ statusCode: OK });
     return res.sendStatus(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -116,7 +139,7 @@ router.get('/verify', async (req, res) =>{
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    writeRequestResponse({ statusCode: NOT_FOUND, message: 'Card not found' });
+    writeLogToClient({ statusCode: NOT_FOUND, message: 'Card not found' });
     return res.sendStatus(NOT_FOUND);
   }
 
@@ -126,12 +149,12 @@ router.get('/verify', async (req, res) =>{
       await new OfficeAccessCard({
         cardBytes
       }).save();
-      writeRequestResponse({ statusCode: OK, message: 'Card added!', endpoint: '/verify?add=1' });
+      writeLogToClient({ statusCode: OK, message: 'Card added!', endpoint: '/verify?add=1' });
       return res.sendStatus(OK);
     }
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
-    writeRequestResponse({
+    writeLogToClient({
       statusCode: SERVER_ERROR,
       endpoint: '/verify?add=1',
       message: `Error creating Office AccessCard: ${error}`
@@ -141,13 +164,13 @@ router.get('/verify', async (req, res) =>{
 });
 
 router.get('/delete', async (req, res) => {
-  if (!await decodeTokenFromBodyOrQuery(req)) {
+  if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
   const { cardBytes } = req.query;
   if (!cardBytes) {
-    writeRequestResponse({
+    writeLogToClient({
       statusCode: BAD_REQUEST,
       endpoint: '/delete',
       message: 'cardBytes missing from request'
@@ -157,7 +180,7 @@ router.get('/delete', async (req, res) => {
 
   if (!await checkIfCardExists(cardBytes)) {
     logger.info('Card does not exist');
-    writeRequestResponse({
+    writeLogToClient({
       statusCode: NOT_FOUND,
       endpoint: '/delete',
       message: 'Card does not exist',
@@ -168,7 +191,7 @@ router.get('/delete', async (req, res) => {
   const tryDeleteCard = await deleteCard(cardBytes);
   if (!tryDeleteCard) {
     logger.info('Error deleting card');
-    writeRequestResponse({
+    writeLogToClient({
       statusCode: SERVER_ERROR,
       endpoint: '/delete',
       message: 'Error deleting card'
@@ -176,8 +199,23 @@ router.get('/delete', async (req, res) => {
     return res.sendStatus(SERVER_ERROR);
   }
   logger.info('Successfully deleted card');
-  writeRequestResponse({ statusCode: OK, endpoint: '/delete', message: 'Card deleted!' });
+  writeLogToClient({ statusCode: OK, endpoint: '/delete', message: 'Card deleted!' });
   return res.sendStatus(OK);
+});
+
+router.get('/getAllCards', async (req, res) => {
+  if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  let getCards = await getAllCards();
+  if (!getCards) {
+    logger.info('Error retrieving cards');
+    return res.sendStatus(SERVER_ERROR);
+  }
+
+  logger.info('Retrieved all cards successfully!');
+  res.json(getCards).status(OK);
 });
 
 router.get('/listen', async (req, res) => {
