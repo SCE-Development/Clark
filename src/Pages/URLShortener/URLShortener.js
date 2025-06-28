@@ -72,7 +72,6 @@ export default function URLShortenerPage(props) {
         allUrls.pop();
         allUrls.unshift(response.responseData);
       }
-
       setAliasTaken(false);
       setUrl('');
       setAlias('');
