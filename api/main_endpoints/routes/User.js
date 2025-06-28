@@ -240,8 +240,10 @@ router.post('/edit', async (req, res) => {
     }
 
     AuditLog.create({
-      userId: user._id,
-      action: AuditLogActions.UPDATE_USER
+      userId: decoded._id, // the user making the update
+      action: AuditLogActions.UPDATE_USER,
+      documentId: user._id, // the user affected by the update
+      details: {updatedInfo: user}
     }).catch(logger.error);
 
     return res.status(OK).send({

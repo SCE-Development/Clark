@@ -241,7 +241,7 @@ describe('User', () => {
         discordID: '421482148',
         numberOfSemestersToSignUpFor: undefined
       };
-      setTokenStatus(true);
+      setTokenStatus(true, user);
 
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/edit', user
@@ -249,6 +249,7 @@ describe('User', () => {
       expect(result).to.have.status(OK);
 
       const auditEntry = await AuditLog.findOne().lean();
+
       expect(auditEntry).to.exist;
       expect(auditEntry).to.have.property('userId');
       expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
