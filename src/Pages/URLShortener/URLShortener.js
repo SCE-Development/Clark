@@ -11,7 +11,7 @@ export default function URLShortenerPage(props) {
   const [url, setUrl] = useState('');
   const [invalidUrl, setInvalidUrl] = useState();
   const [showUrlInput, setShowUrlInput] = useState(false);
-  const [useGeneratedAlias, setUseGeneratedAlias] = useState(true);
+  const [useGeneratedAlias, setUseGeneratedAlias] = useState(false);
   const [alias, setAlias] = useState('');
   const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,8 +29,8 @@ export default function URLShortenerPage(props) {
   const [currentSortColumn, setCurrentSortColumn] = useState(null);
   const [currentSortOrder, setCurrentSortOrder] = useState(null);
 
-  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
-  const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
+  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-slate-800 dark:text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
+  const LABEL_CLASS = 'block text-sm font-medium leading-6 text-slate-800 dark:text-gray-300';
 
   /**
    * Cleezy page is disabled by default since you have to run the Cleezy server
@@ -238,7 +238,7 @@ export default function URLShortenerPage(props) {
     if (!showUrlInput) {
       return (
         <button
-          className="btn btn-outline text-base leading-7 text-gray-300"
+          className="btn btn-outline text-base leading-7 dark:text-gray-300"
           onClick={() => setShowUrlInput(true)}
         >
           + Create a new link
@@ -249,11 +249,37 @@ export default function URLShortenerPage(props) {
     return (<div>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-300">
+          <h2 className="text-base font-semibold leading-7 text-slate-800 dark:text-gray-300">
             Create a new link
           </h2>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 grid-cols-full sm:grid-cols-6">
+            {!useGeneratedAlias && (
+              <div className="sm:col-span-4">
+                <label htmlFor="email" className={LABEL_CLASS}>
+                  Alias
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="alias"
+                    name="alias"
+                    value={alias}
+                    onChange={e => setAlias(e.target.value)}
+                    className="w-full text-sm input input-bordered sm:text-base"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="col-span-3">
+              <div className="form-control">
+                <label className={`label cursor-pointer ${LABEL_CLASS}`}>
+                  <span className={LABEL_CLASS}>Use Generated Alias</span>
+                  <input type="checkbox" className="toggle" checked={useGeneratedAlias} onChange={(e) => setUseGeneratedAlias(e.target.checked)} />
+                </label>
+              </div>
+            </div>
+
             <div className="col-span-full sm:col-span-4">
               <label htmlFor="url" className={LABEL_CLASS}>
                 Original URL
@@ -271,38 +297,13 @@ export default function URLShortenerPage(props) {
               </div>
             </div>
 
-            <div className="col-span-3">
-              <div className="form-control">
-                <label className={`label cursor-pointer ${LABEL_CLASS}`}>
-                  <span className={LABEL_CLASS}>Use Generated Alias</span>
-                  <input type="checkbox" className="toggle" checked={useGeneratedAlias} onChange={(e) => setUseGeneratedAlias(e.target.checked)} />
-                </label>
-              </div>
-            </div>
-            {!useGeneratedAlias && (
-
-              <div className="sm:col-span-4">
-                <label htmlFor="email" className={LABEL_CLASS}>
-                  Alias
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="alias"
-                    name="alias"
-                    value={alias}
-                    onChange={e => setAlias(e.target.value)}
-                    className="w-full text-sm input input-bordered sm:text-base"
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
-          onClick={() => setShowUrlInput(false)} type="button" className="text-sm font-semibold leading-6 text-gray-300">
+          onClick={() => setShowUrlInput(false)} type="button" className="text-sm font-semibold leading-6 text-slate-800 dark:text-gray-300">
           Cancel
         </button>
         <button
@@ -391,7 +392,7 @@ export default function URLShortenerPage(props) {
   return (
   // the below input layout is taken from
   // https://tailwindui.com/components/application-ui/forms/form-layouts
-    <div className='overview-container bg-gradient-to-r from-gray-800 to-gray-600 min-h-[100dvh]'>
+    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
       <ConfirmationModal {... {
         headerText: `Delete ${urlToDelete.alias} for ${urlToDelete.url} ?`,
         bodyText: `Are you sure you want to delete 
@@ -414,8 +415,8 @@ export default function URLShortenerPage(props) {
           {successMessage &&
             <div>
               <div role="alert" className="alert alert-success mt-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="text-white fill-none stroke-current shrink-0 h-6 w-6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span className='text-white'>{successMessage}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="text-slate-800 dark:text-white fill-none stroke-current shrink-0 h-6 w-6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span className='text-slate-800 dark:text-white'>{successMessage}</span>
               </div>
             </div>
           }
@@ -427,14 +428,14 @@ export default function URLShortenerPage(props) {
               {maybeRenderSearch()}
             </div>
             <div className='overflow-x-auto transition'>
-              <table className='table px-3 block text-sm leading-6 text-gray-300'>
+              <table className='table px-3 block text-sm leading-6 text-slate-800 dark:text-gray-300'>
                 <thead>
                   <tr>
                     {[
-                      { title: 'URL', className: 'text-base text-white/70', columnName: 'alias' },
-                      { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
-                      { title: 'Times Used', className: 'text-base text-white/70 text-center', columnName: 'used' },
-                      { title: 'Delete', className: 'text-base text-white/70 text-center' }
+                      { title: 'URL', className: 'text-base text-slate-800 dark:text-white/70', columnName: 'alias' },
+                      { title: 'Created At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
+                      { title: 'Times Used', className: 'text-base text-slate-800 dark:text-white/70 text-center', columnName: 'used' },
+                      { title: 'Delete', className: 'text-base text-slate-800 dark:text-white/70 text-center' }
                     ].map(({ title, className, columnName = null }) => (
                       <th
                         className={`${className}`}
@@ -491,7 +492,7 @@ export default function URLShortenerPage(props) {
               </table>
               {allUrls.length === 0 && (
                 <div className='flex flex-row w-100 justify-center'>
-                  <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
+                  <p className='text-lg text-slate-800 dark:text-white/70 mt-5 mb-5'>No results found!</p>
                 </div>
               )}
               {maybeRenderPagination()}

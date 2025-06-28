@@ -3,6 +3,7 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
+import { UserContext } from '../../src/Components/context/UserContext';
 
 import Routing from '../../src/Routing';
 import Home from '../../src/Pages/Home/Home';
@@ -38,10 +39,17 @@ if (typeof SVGElement === 'undefined') {
   global.SVGElement = class SVGElement extends HTMLElement {};
 }
 function getComponentFromRoute(route, props = adminAppProps) {
+  const mockUserContext = {
+    user: props.user,
+    setUser: () => {}
+  };
+
   return mount(
-    <MemoryRouter initialEntries={[route]} appProps={props} >
-      <Routing appProps={props} />
-    </MemoryRouter>
+    <UserContext.Provider value={mockUserContext}>
+      <MemoryRouter initialEntries={[route]}>
+        <Routing appProps={props} />
+      </MemoryRouter>
+    </UserContext.Provider>
   );
 }
 
