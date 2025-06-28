@@ -102,10 +102,33 @@ export default function CardReader() {
     );
   }
 
+  const header = [
+    'TIMESTAMP'.padEnd(30),
+    'ENDPOINT'.padEnd(20),
+    'STATUS CODE'.padEnd(15),
+    'MESSAGE\n'
+  ].join('');
+
+  async function getAllCards() {
+    const cardsFromDb = await getCardsFromDb(props.user.token);
+    if (!cardsFromDb.error) {
+      setCards(cardsFromDb.responseData);
+    }
+  }
+
+  function handleTabChange(newTab) {
+    setTab(newTab);
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', newTab);
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+  }
+
   useEffect(() => {
     getAllCards();
     const url = new URL('/api/OfficeAccessCard/listen', BASE_API_URL);
-    url.searchParams.append('token', token);
+    url.searchParams.append('token', props.user.token);
     const eventSource = new EventSource(url.href);
     eventSource.onmessage = (event) => {
       try {

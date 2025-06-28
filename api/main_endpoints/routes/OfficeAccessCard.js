@@ -74,6 +74,29 @@ function deleteCard(cardBytes) {
   });
 }
 
+function getAllCards() {
+  return new Promise((resolve) => {
+    try {
+      OfficeAccessCard.find(
+        {}
+        , (error, result) => {
+          if (error) {
+            logger.error('getAllCards got an error querying mongodb');
+            return resolve(null);
+          }
+          if (!result) {
+            logger.info('Could not retrieve any cards from mongodb'); // double check that this is a correct message
+          }
+          return resolve(result);
+        }
+      );
+    } catch (error) {
+      logger.error('getAllCards caught an error: ', error);
+      return resolve(null);
+    }
+  });
+}
+
 let clients = [];
 
 const defaultGetResponse = {
@@ -220,6 +243,21 @@ router.post('/getAllCards', async (req, res) => {
     logger.error('Error fetching cards: ', error);
     return res.sendStatus(SERVER_ERROR);
   }
+});
+
+router.get('/getAllCards', async (req, res) => {
+  if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  let getCards = await getAllCards();
+  if (!getCards) {
+    logger.info('Error retrieving cards');
+    return res.sendStatus(SERVER_ERROR);
+  }
+
+  logger.info('Retrieved all cards successfully!');
+  res.json(getCards).status(OK);
 });
 
 router.get('/listen', async (req, res) => {
