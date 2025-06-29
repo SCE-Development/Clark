@@ -76,7 +76,7 @@ function getAllCards() {
         , (error, result) => {
           if (error) {
             logger.error('getAllCards got an error querying mongodb');
-            return resolve(null);
+            return resolve([]);
           }
           if (!result) {
             logger.info('Could not retrieve any cards from mongodb'); // double check that this is a correct message
@@ -163,12 +163,12 @@ router.get('/verify', async (req, res) =>{
   }
 });
 
-router.get('/delete', async (req, res) => {
+router.post('/delete', async (req, res) => {
   if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const { cardBytes } = req.query;
+  const { cardBytes } = req.body;
   if (!cardBytes) {
     writeLogToClient({
       statusCode: BAD_REQUEST,
@@ -208,14 +208,11 @@ router.get('/getAllCards', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  let getCards = await getAllCards();
-  if (!getCards) {
-    logger.info('Error retrieving cards');
-    return res.sendStatus(SERVER_ERROR);
+  const getCards = await getAllCards();
+  if (getCards) {
+    return res.json(getCards).status(OK);
   }
-
-  logger.info('Retrieved all cards successfully!');
-  res.json(getCards).status(OK);
+  return res.sendStatus(SERVER_ERROR);
 });
 
 router.get('/listen', async (req, res) => {

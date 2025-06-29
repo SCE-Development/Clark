@@ -27,11 +27,13 @@ export async function deleteCardFromDb(token, cardBytes) {
   let status = new ApiResponse();
   try {
     const url = new URL('/api/OfficeAccessCard/delete', BASE_API_URL);
-    url.searchParams.append('cardBytes', cardBytes);
     const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cardBytes, }),
     });
     if (res.ok) {
       const result = await res.json();

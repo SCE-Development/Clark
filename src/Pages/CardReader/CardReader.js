@@ -83,25 +83,9 @@ export default function CardReader(props) {
     };
   }, []);
 
-  return (
-    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
-      <h1 className='flex items-center justify-center text-white text-4xl font-bold pt-4'>SCE Card Reader Page</h1>
-      <div className='flex flex-row items-center justify-center text-white text-xl font-bold pt-4'>
-        <button
-          className={`p-2 hover:bg-gray-600 rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
-          onClick={() => handleTabChange('registry')}
-        >
-          Card Registry
-        </button>
-        <div>&nbsp;|&nbsp;</div>
-        <button
-          className={`p-2 hover:bg-gray-600 rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
-          onClick={() => handleTabChange('logs')}
-        >
-          Card Reader Logs
-        </button>
-      </div>
-      {tab === 'registry' ? (
+  function getComponentFromTabChoice(tab) {
+    if (tab === 'registry') {
+      return (
         <div>
           <ConfirmationModal {... {
             headerText: `Delete card: ${cardToDelete.cardBytes}?`,
@@ -178,17 +162,41 @@ export default function CardReader(props) {
             </table>
           </div>
         </div>
-      ) : (
-        <div>
-          <h3 className='flex items-center justify-center text-lg pt-4 text-white text-base'>
-            {connected ? 'Listening for card reader activity...' : 'Client disconnected. Please reload to reconnect.'}
-          </h3>
-          <pre className='m-4'>
-            {header}
-            {logs.join('\n')}
-          </pre>
-        </div>
-      )}
+      );
+    }
+    return (
+      <div>
+        <h3 className='flex items-center justify-center text-lg pt-4 text-white text-base'>
+          {connected ? 'Listening for card reader activity...' : 'Client disconnected. Please reload to reconnect.'}
+        </h3>
+        <pre className='m-4'>
+          {header}
+          {logs.join('\n')}
+        </pre>
+      </div>
+    );
+  }
+
+  return (
+    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
+      <h1 className='flex items-center justify-center text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
+      <pre className='flex items-center justify-center text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
+      <div className='flex flex-row items-center justify-center text-white text-xl font-bold pt-4'>
+        <button
+          className={`p-2 hover:bg-gray-600 rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
+          onClick={() => handleTabChange('registry')}
+        >
+          Card Registry
+        </button>
+        <div>&nbsp;|&nbsp;</div>
+        <button
+          className={`p-2 hover:bg-gray-600 rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
+          onClick={() => handleTabChange('logs')}
+        >
+          Card Reader Logs
+        </button>
+      </div>
+      {getComponentFromTabChoice(tab)}
     </div>
   );
 }
