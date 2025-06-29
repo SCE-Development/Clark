@@ -48,14 +48,13 @@ function MessagingForm(props) {
 
   const { token, id } = props;
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const status = await sendMessage(id, token, message);
 
     if (status.error) {
-      setErrorMessage(status.responseData.response.data || 'An error occurred while sending the message.');
+      setErrorMessage(status.responseData?.response?.data || 'An error occurred while sending the message.');
     } else {
       setErrorMessage('');
     }
