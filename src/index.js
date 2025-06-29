@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { withRouter, BrowserRouter } from 'react-router-dom';
 import './index.css';
 
 import Routing from './Routing';
+import Shortcut from './Shortcut';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
 import { UserContext } from './Components/context/UserContext';
 
@@ -27,13 +28,14 @@ function App(props) {
 
   return (
     !isAuthenticating && (
-      <UserContext.Provider value={{ user, setUser }}>
-        <BrowserRouter>
-          <Routing appProps={{ authenticated, setAuthenticated, user }} />
-        </BrowserRouter>
-      </UserContext.Provider>
+      <>
+        <Routing appProps={{ authenticated, setAuthenticated, user }} />
+        <Shortcut appProps={{ authenticated, user }} />
+      </>
     )
   );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+export default withRouter(App);
+
+ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById('root'));
