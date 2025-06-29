@@ -1,8 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { BASE_API_URL } from '../../Enums';
 import { getCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
 import { trashcanSymbol } from '../Overview/SVG';
+
+const header = [
+  'TIMESTAMP'.padEnd(30),
+  'ENDPOINT'.padEnd(20),
+  'STATUS CODE'.padEnd(15),
+  'MESSAGE\n'
+].join('');
 
 export default function CardReader(props) {
   const [logs, setLogs] = useState([]);
@@ -14,20 +21,14 @@ export default function CardReader(props) {
     return params.get('tab') || 'registry';
   });
   const [connected, setConnected] = useState(true);
+  const [connectionStatusText, setConnectionStatusText] = useState('');
 
-  const buildLog = (data) => {
+  function buildLog(data) {
     let date = new Date().toISOString().padEnd(30, ' ');
     let endpoint = data.endpoint.padEnd(20, ' ');
     let statusCode = String(data.statusCode).padEnd(15, ' ');
     return [date, endpoint, statusCode, data.message].join('');
-  };
-
-  const header = [
-    'TIMESTAMP'.padEnd(30),
-    'ENDPOINT'.padEnd(20),
-    'STATUS CODE'.padEnd(15),
-    'MESSAGE\n'
-  ].join('');
+  }
 
   async function getAllCards() {
     const cardsFromDb = await getCardsFromDb(props.user.token);
@@ -45,51 +46,12 @@ export default function CardReader(props) {
     window.history.pushState({}, '', newUrl);
   }
 
-  useEffect(() => {
-    getAllCards();
-    const url = new URL('/api/OfficeAccessCard/listen', BASE_API_URL);
-    url.searchParams.append('token', props.user.token);
-    const eventSource = new EventSource(url.href);
-    eventSource.onmessage = (event) => {
-      try {
-        let data = JSON.parse(event.data);
-        const url = new URL(data.endpoint, window.location.origin);
-        if (url.pathname === '/verify' && url.searchParams.get('add') === '1') { // re-query if card was added while client open
-          getAllCards();
-        }
-        let newLog = buildLog(data);
-        setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
-      } catch (err) {
-        setLogs(
-          (currLogs) => [
-            '[error] unable to format response, check browser logs',
-            ...currLogs,
-          ]
-        );
-      }
-    };
-
-    eventSource.onerror = () => {
-      setLogs(
-        (currLogs) => [
-          '...crickets...',
-          ...currLogs
-        ]
-      );
-      setConnected(false);
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
-
   function handleDeleteClick(card) {
     setToggleDelete(!toggleDelete);
     setCardToDelete(card);
   }
 
-  const generateCardEntry = (card) => {
+  function CardEntry({ card }) {
     return (
       <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
         <td className='hidden md:table-cell '>
@@ -122,7 +84,55 @@ export default function CardReader(props) {
         </td>
       </tr>
     );
-  };
+  }
+
+  useEffect(() => {
+    getAllCards();
+    const url = new URL('/api/OfficeAccessCard/listen', BASE_API_URL);
+    url.searchParams.append('token', props.user.token);
+    const eventSource = new EventSource(url.href);
+    eventSource.onmessage = (event) => {
+      try {
+        let data = JSON.parse(event.data);
+        const url = new URL(data.endpoint, window.location.origin);
+        // if a successful call to /verify -> should re-query DB to add new card / update verifiedCount of existing card
+        if (url.pathname === '/verify' && data.statusCode === 200) {
+          getAllCards();
+        }
+        let newLog = buildLog(data);
+        setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
+      } catch (err) {
+        setLogs(
+          (currLogs) => [
+            '[error] unable to format response, check browser logs',
+            ...currLogs,
+          ]
+        );
+      }
+    };
+
+    eventSource.onerror = () => {
+      setLogs(
+        (currLogs) => [
+          '...crickets...',
+          ...currLogs
+        ]
+      );
+      setConnected(false);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (connected) {
+      setConnectionStatusText('Listening for card reader activity...');
+    } else {
+      setConnectionStatusText('Client disconnected. Please reload to reconnect.');
+    }
+  }, [connected]);
 
   function getComponentFromTabChoice(tab) {
     if (tab === 'registry') {
@@ -132,7 +142,7 @@ export default function CardReader(props) {
             headerText: `Delete card: ${cardToDelete.cardBytes}?`,
             bodyText: `Are you sure you want to delete 
               card: ${cardToDelete.cardBytes}? It'll be gone forever if you do.`,
-            confirmText: `Yes, delete card: ${cardToDelete.cardBytes}`,
+            confirmText: `Yes, delete ${cardToDelete.cardBytes}`,
             cancelText: 'No, keep the card',
             confirmClassAddons: 'bg-red-600 hover:bg-red-500',
             handleConfirmation: async () => {
@@ -143,7 +153,7 @@ export default function CardReader(props) {
             open: toggleDelete
           }
           } />
-          <div className='m-4 flex flex-col'>
+          <div className='flex flex-col'>
             <table className='table px-3'>
               <thead>
                 <tr>
@@ -162,7 +172,7 @@ export default function CardReader(props) {
                 </tr>
               </thead>
               <tbody>
-                {cards.map(card => generateCardEntry(card))}
+                {cards.map(card => <CardEntry card={card}/>)}
               </tbody>
             </table>
           </div>
@@ -172,7 +182,7 @@ export default function CardReader(props) {
     return (
       <div>
         <h3 className='flex items-center justify-center text-lg pt-4 text-white text-base'>
-          {connected ? 'Listening for card reader activity...' : 'Client disconnected. Please reload to reconnect.'}
+          {connectionStatusText}
         </h3>
         <pre className='m-4'>
           {header}
