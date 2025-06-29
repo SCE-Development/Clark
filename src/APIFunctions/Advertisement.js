@@ -5,7 +5,7 @@ import { BASE_API_URL } from '../Enums';
 
 export async function getAd() {
   let status = new ApiResponse();
-  await axios.get(BASE_API_URL + '/api/Advertisement/')
+  await axios.get(BASE_API_URL + 'api/Advertisement/')
     .then(res => {
       status.responseData = res.data;
     }).catch(err => {
@@ -17,7 +17,7 @@ export async function getAd() {
 
 export async function getAds(token) {
   let status = new ApiResponse();
-  await axios.get(BASE_API_URL + '/api/Advertisement/getAllAdvertisements',
+  await axios.get(BASE_API_URL + 'api/Advertisement/getAllAdvertisements',
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -35,7 +35,7 @@ export async function getAds(token) {
 
 export async function createAd(newAd, token) {
   let status = new ApiResponse();
-  await axios.post(BASE_API_URL + '/api/Advertisement/createAdvertisement',
+  await axios.post(BASE_API_URL + 'api/Advertisement/createAdvertisement',
     newAd,
     {
       headers: {
@@ -53,7 +53,7 @@ export async function createAd(newAd, token) {
 
 export async function deleteAd(newAd, token) {
   let status = new ApiResponse();
-  await axios.post(BASE_API_URL + '/api/Advertisement/deleteAdvertisement',
+  await axios.post(BASE_API_URL + 'api/Advertisement/deleteAdvertisement',
     newAd,
     {
       headers: {
