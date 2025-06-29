@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { sendMessage, connectToRoom } from '../../APIFunctions/Messaging';
 import { useParams, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useUser } from '../../Components/context/UserContext';
 
-export default function Messaging(props) {
+export default function Messaging() {
   const { id } = useParams();
   const history = useHistory();
+  const { user } = useUser();
   const [roomIdInput, setRoomIdInput] = useState(id || '');
   const [roomIdSubmit, setRoomIdSubmit] = useState(id || 'general');
 
@@ -33,8 +35,8 @@ export default function Messaging(props) {
             Connect
         </button>
       </form>
-      <Feed token={props.user.token} id={roomIdSubmit || id} />
-      <MessagingForm token={props.user.token} id={roomIdSubmit || id} />
+      <Feed token={user?.token} id={roomIdSubmit || id} />
+      <MessagingForm token={user?.token} id={roomIdSubmit || id} />
     </div>
   );
 }
