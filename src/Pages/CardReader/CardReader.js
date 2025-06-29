@@ -53,7 +53,8 @@ export default function CardReader(props) {
     eventSource.onmessage = (event) => {
       try {
         let data = JSON.parse(event.data);
-        if (data.endpoint === '/verify?add=1') { // re-query if card was added while client open
+        const url = new URL(data.endpoint, window.location.origin);
+        if (url.pathname === '/verify' && url.searchParams.get('add') === '1') { // re-query if card was added while client open
           getAllCards();
         }
         let newLog = buildLog(data);
@@ -83,6 +84,46 @@ export default function CardReader(props) {
     };
   }, []);
 
+  function handleDeleteClick(card) {
+    setToggleDelete(!toggleDelete);
+    setCardToDelete(card);
+  }
+
+  const generateCardEntry = (card) => {
+    return (
+      <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
+        <td className='hidden md:table-cell '>
+          <div className='flex items-center justify-center text-base text-white'>
+            {card.cardBytes}
+          </div>
+        </td>
+        <td className='hidden md:table-cell'>
+          <div className='flex items-center justify-center text-base text-white'>
+            {card.createdAt}
+          </div>
+        </td>
+        <td className='hidden md:table-cell'>
+          <div className='flex items-center justify-center text-base text-white'>
+            {card.lastVerified}
+          </div>
+        </td>
+        <td className='hidden md:table-cell'>
+          <div className='flex items-center justify-center text-base text-white'>
+            {card.verifiedCount}
+          </div>
+        </td>
+        <td>
+          <button
+            className = 'p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+            onClick={() => handleDeleteClick(card)}
+          >
+            {trashcanSymbol()}
+          </button>
+        </td>
+      </tr>
+    );
+  };
+
   function getComponentFromTabChoice(tab) {
     if (tab === 'registry') {
       return (
@@ -104,8 +145,8 @@ export default function CardReader(props) {
           } />
           <div className='m-4 flex flex-col'>
             <table className='table px-3'>
-              <thead className=''>
-                <tr className=''>
+              <thead>
+                <tr>
                   {[
                     'Card Bytes',
                     'Registration Date',
@@ -120,44 +161,8 @@ export default function CardReader(props) {
                   ))}
                 </tr>
               </thead>
-              <tbody className=''>
-                {cards.map(card => {
-                  return (
-                    <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
-                      <td className='hidden md:table-cell '>
-                        <div className='flex items-center justify-center text-base text-white'>
-                          {card.cardBytes}
-                        </div>
-                      </td>
-                      <td className='hidden md:table-cell'>
-                        <div className='flex items-center justify-center text-base text-white'>
-                          {card.createdAt}
-                        </div>
-                      </td>
-                      <td className='hidden md:table-cell'>
-                        <div className='flex items-center justify-center text-base text-white'>
-                          {card.lastVerified}
-                        </div>
-                      </td>
-                      <td className='hidden md:table-cell'>
-                        <div className='flex items-center justify-center text-base text-white'>
-                          {card.verifiedCount}
-                        </div>
-                      </td>
-                      <td>
-                        <button
-                          className = 'p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
-                          onClick={async () => {
-                            setToggleDelete(!toggleDelete);
-                            setCardToDelete(card);
-                          }}
-                        >
-                          {trashcanSymbol()}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+              <tbody>
+                {cards.map(card => generateCardEntry(card))}
               </tbody>
             </table>
           </div>
@@ -188,6 +193,7 @@ export default function CardReader(props) {
         >
           Card Registry
         </button>
+        {/* spacer to differentiate between the two options */}
         <div>&nbsp;|&nbsp;</div>
         <button
           className={`p-2 hover:bg-gray-600 rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}

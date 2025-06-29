@@ -75,7 +75,7 @@ function getAllCards() {
         {}
         , (error, result) => {
           if (error) {
-            logger.error('getAllCards got an error querying mongodb');
+            logger.error('getAllCards got an error querying mongodb', error);
             return resolve([]);
           }
           if (!result) {
