@@ -17,13 +17,16 @@
     padding: 8px;
     background: white;
     border-radius: 8px;
+    /* height: auto; */
 }
 
 .modal input {
-    border: 1px solid darkgray;
+    border: 1.5px solid darkgray;
     width: 35rem;
-    border-radius: 4px;
-    padding: 1.5px;
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    height: 2.25rem;
+    font-size: 1rem;
 }
 
 /* .suggestion-item:hover, */
@@ -88,20 +91,20 @@
     color: white;
 }
 
-.scrollable-list {
+/* .scrollable-list {
     max-height: 9.5rem;
     scrollbar-width: auto;
     overflow-y: scroll;
-}
+} */
 
 /* Customize scrollbar */
-.scrollable-list::-webkit-scrollbar {
+/* .scrollable-list::-webkit-scrollbar {
     width: 8px;
     display: block;
     background: lightgray;
-}
+} */
 
-.scrollable-list::-webkit-scrollbar-thumb {
+/* .scrollable-list::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background: gray;
-}
+} */
