@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BASE_API_URL } from '../../Enums';
-import { useUser } from '../../Components/context/UserContext'
+import { useUser } from '../../Components/context/UserContext';
 
 export default function CardReader() {
   const [logs, setLogs] = useState([]);
