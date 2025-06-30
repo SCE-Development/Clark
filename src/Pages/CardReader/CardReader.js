@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { BASE_API_URL } from '../../Enums';
+import { useUser } from '../../Components/context/UserContext'
 
-export default function CardReader(props) {
+export default function CardReader() {
   const [logs, setLogs] = useState([]);
   const [error, setError] = useState('');
-  const token = props.user.token;
+  const { user } = useUser();
+  const token = user.token;
 
   const buildLog = (data) => {
     let date = new Date().toISOString().padEnd(30, ' ');
