@@ -61,7 +61,7 @@ export default function SearchModal(props) {
    * @dependencies keyword, routes
    */
   useEffect(() => {
-    if (!open || user.accessLevel < membershipState.OFFICER) return;
+    if (!open || !user.accessLevel || user?.accessLevel < membershipState.OFFICER) return;
 
     const debounce = setTimeout(() => {
       // Only fetch users when there is a change in keyword
@@ -72,7 +72,7 @@ export default function SearchModal(props) {
     }, 400);
 
     return () => clearTimeout(debounce);
-  }, [keyword, open]);
+  }, [keyword, open, user.accessLevel]);
 
   /**
    * Combines hardcoded route suggestions with user search results
@@ -116,7 +116,7 @@ export default function SearchModal(props) {
 
   useEffect(() => {
     const listener = (e) => {
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || (e.key === 'K'))) {
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'k')) {
         e.preventDefault();
         setOpen(prev => !prev);
       } else if (e.key === 'Escape') {
@@ -126,7 +126,7 @@ export default function SearchModal(props) {
         handleSearch();
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        if (suggestions.length > 0) setSelectItem(prev => Math.min(prev + 1, suggestions.length - 1));
+        if (suggestions.length > 0) setSelectItem(prev => Math.min(prev + 1, 4));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setSelectItem(prev => Math.max(prev - 1, 0));
