@@ -91,6 +91,17 @@ class SceApiTester{
       });
     return response;
   }
+
+  sendGetRequestWithApiKey(apiKey, endpoint) {
+    return new Promise((resolve, reject) => {
+      chai
+        .request(this.app)
+        .get(endpoint)
+        .set('X-API-Key', apiKey)
+        .then(resolve)
+        .catch(reject);
+    });
+  }
 }
 
 module.exports = SceApiTester;

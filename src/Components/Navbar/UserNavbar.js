@@ -42,10 +42,13 @@ export default function UserNavBar(props) {
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
+    { title: 'Spartan Compass', route: '/spartan-compass' }
   ];
 
 
-  const authedRoutes = [{ title: 'Printing', route: '/2DPrinting' }];
+  const authedRoutes = [{ title: 'Printing', route: '/2DPrinting' },
+    {title: 'Chat', route: '/messaging'},
+  ];
 
   const authentication = [
     { title: 'Sign Up', route: '/register' },

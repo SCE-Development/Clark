@@ -16,4 +16,8 @@ scrape_configs:
       - targets: ['clark-node-exporter:9100']
   - job_name: 'clark'
     static_configs:
-      - targets: ['main-endpoints:8080', 'main-endpoints:8082']
+      - targets: ['main-endpoints:8080']
+  # the below is for discord bot
+  - job_name: 'sarah'
+    static_configs:
+      - targets: ['sarah:9000']

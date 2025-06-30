@@ -30,22 +30,23 @@ const PASSWORD_RESET_EXPIRATION = require('../../util/constants').PASSWORD_RESET
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
 const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
 
+const AuditLogActions = require('../util/auditLogActions.js');
+const AuditLog = require('../models/AuditLog.js');
+
 // Register a member
 router.post('/register', async (req, res) => {
   const registrationStatus = await registerUser(req.body);
-  if (!registrationStatus.userSaved) {
-    if (registrationStatus.status === 'BAD_REQUEST') {
-      return res.status(BAD_REQUEST).send({
-        message: registrationStatus.message
-      });
-    } else {
-      res.status(CONFLICT).send({ message: registrationStatus.message });
-    }
-  } else {
+  if (registrationStatus.userSaved) {
     const name = req.body.firstName + ' ' + req.body.lastName;
     sendVerificationEmail(name, req.body.email);
-    res.sendStatus(OK);
+    return res.sendStatus(OK);
   }
+  if (registrationStatus.status === 'BAD_REQUEST') {
+    return res.status(BAD_REQUEST).send({
+      message: registrationStatus.message
+    });
+  }
+  return res.status(CONFLICT).send({ message: registrationStatus.message });
 });
 
 router.post('/resendVerificationEmail', async (req, res) => {
@@ -179,6 +180,13 @@ router.post('/login', function(req, res) {
                 const token = jwt.sign(
                   userToBeSigned, config.secretKey, jwtOptions
                 );
+                // Create audit log on successful sign-in
+                AuditLog.create({
+                  userId: user._id,
+                  action: AuditLogActions.LOG_IN,
+                  details: { email: user.email }
+                }).catch(logger.error);
+
                 res.json({ token: 'JWT ' + token });
               })
               .catch((error) => {

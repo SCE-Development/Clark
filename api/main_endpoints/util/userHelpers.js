@@ -92,46 +92,50 @@ async function registerUser(userToAdd) {
       return result;
     }
   }
-  if (userToAdd.email && userToAdd.password) {
-    const newUser = new User({
-      password: userToAdd.password,
-      firstName: userToAdd.firstName,
-      middleInitial: userToAdd.middleInitial || '',
-      lastName: userToAdd.lastName,
-      email: userToAdd.email.toLowerCase(),
-      major: userToAdd.major || ''
-    });
-
-    const membershipValidUntil = getMemberExpirationDate(
-      userToAdd.numberOfSemestersToSignUpFor
-    );
-    newUser.membershipValidUntil = membershipValidUntil;
-
-    const testPassword = testPasswordStrength(userToAdd.password);
-
-    if (!testPassword.success) {
-      result.userSaved = false;
-      result.message = testPassword.message;
-      result.status = 'BAD_REQUEST';
-      return result;
-    }
-
-    await newUser.save()
-      .catch(e => {
-        logger.error('Error saving user:', e);
-        result.userSaved = false;
-        result.message = 'Failed creating account.';
-        if (e.code === 11000) {
-          result.message = 'Username already exists.';
-        }
-        result.status = 'CONFLICT';
-      });
-  } else {
+  if (!userToAdd.email || !userToAdd.password) {
     result.userSaved = false;
     result.message = 'Missing email and password.';
     result.status = 'BAD_REQUEST';
+    return result;
   }
-  return result;
+
+  const newUser = new User({
+    password: userToAdd.password,
+    firstName: userToAdd.firstName,
+    middleInitial: userToAdd.middleInitial || '',
+    lastName: userToAdd.lastName,
+    email: userToAdd.email.toLowerCase(),
+    major: userToAdd.major || ''
+  });
+
+  const membershipValidUntil = getMemberExpirationDate(
+    userToAdd.numberOfSemestersToSignUpFor
+  );
+  newUser.membershipValidUntil = membershipValidUntil;
+
+  const testPassword = testPasswordStrength(userToAdd.password);
+
+  if (!testPassword.success) {
+    result.userSaved = false;
+    result.message = testPassword.message;
+    result.status = 'BAD_REQUEST';
+    return result;
+  }
+
+  try {
+    await newUser.save();
+  } catch (error) {
+    logger.error('Error saving user:', error);
+    result.status = 'BAD_REQUEST';
+    result.userSaved = false;
+    result.message = 'Failed creating account.';
+    if (error.code === 11000) {
+      result.message = 'Username already exists.';
+      result.status = 'CONFLICT';
+    }
+  } finally {
+    return result;
+  }
 }
 
 function userWithEmailExists(email) {

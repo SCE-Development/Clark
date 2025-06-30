@@ -88,10 +88,10 @@ export default function Overview(props) {
     const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
     setPaginationText(
       <>
-        <p className='md:hidden'>
+        <p className='md:hidden text-gray-700 dark:text-white'>
           {startingElementNumber} - {endingElementNumber} / {total}
         </p>
-        <p className="hidden md:inline-block">
+        <p className="hidden md:inline-block text-gray-700 dark:text-white">
           Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total}</span> results
         </p>
       </>
@@ -179,20 +179,20 @@ export default function Overview(props) {
       return (
         <nav className='flex justify-start py-6'>
           <div className='flex items-center navbar-start'>
-            <span>
+            <span className="text-gray-700 dark:text-white">
               {loading ? '...' : paginationText}
             </span>
           </div>
           <div className='flex justify-end space-x-3 navbar-end'>
             <button
-              className='btn'
+              className='btn btn-neutral text-gray-800 bg-gray-500 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
               onClick={() => setPage(page - 1)}
               disabled={page === 0 || loading}
             >
               previous
             </button>
             <button
-              className='btn'
+              className='btn btn-neutral text-gray-800 bg-gray-200 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
               onClick={() => setPage(page + 1)}
               disabled={endingElementNumber >= total || loading}
             >
@@ -206,7 +206,7 @@ export default function Overview(props) {
   }
 
   return (
-    <div className='overview-container bg-gradient-to-r from-gray-800 to-gray-600 min-h-[100dvh]'>
+    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
       <ConfirmationModal {... {
         headerText: `Delete ${userToDelete.firstName} ${userToDelete.lastName} ?`,
         bodyText: `Are you sure you want to delete 
@@ -239,14 +239,14 @@ export default function Overview(props) {
         }}>
             Download subscribed emails
         </button>
-        <div className='px-6 border rounded-lg border-white/10'>
+        <div className='px-6 border rounded-lg border-gray-300 dark:border-white/10'>
           <div className='py-6'>
             <label className="w-full form-control">
               <div className="label">
-                <span className="label-text text-md">Type a search, followed by the enter key</span>
+                <span className="label-text text-md text-gray-700 dark:text-white">Type a search, followed by the enter key</span>
               </div>
               <input
-                className="w-full text-sm input input-bordered sm:text-base"
+                className="w-full text-sm input input-bordered text-gray-900 dark:text-white sm:text-base"
                 type="text"
                 placeholder="search by first name, last name, or email"
                 onKeyDown={(event) => {
@@ -273,11 +273,11 @@ export default function Overview(props) {
             <thead>
               <tr>
                 {[
-                  { title: 'Name/Email', className: 'text-base text-white/70', columnName: 'email'},
-                  { title: 'Printing', className: 'text-base text-white/70 hidden text-center md:table-cell', columnName: 'pagesPrinted'},
-                  { title: 'Verified', className: 'text-base text-white/70 text-center hidden sm:table-cell', columnName: 'emailVerified'},
-                  { title: 'Membership', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'accessLevel'},
-                  { title: 'Delete', className: 'text-base text-white/70 text-center'},
+                  { title: 'Name/Email', className: 'text-base text-gray-700 dark:text-white/70', columnName: 'email'},
+                  { title: 'Printing', className: 'text-base text-gray-700 dark:text-white/70 hidden text-center md:table-cell', columnName: 'pagesPrinted'},
+                  { title: 'Verified', className: 'text-base text-gray-700 dark:text-white/70 text-center hidden sm:table-cell', columnName: 'emailVerified'},
+                  { title: 'Membership', className: 'text-base text-gray-700 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'accessLevel'},
+                  { title: 'Delete', className: 'text-base text-gray-700 dark:text-white/70 text-center'},
                 ].map(({ title, className, columnName = null}) => (
                   <th
                     className={`${className}`}
@@ -298,15 +298,15 @@ export default function Overview(props) {
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={user.email}>
+                <tr className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10' key={user.email}>
                   <td className=''>
-                    <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
+                    <a className='link link-hover text-blue-600 dark:text-blue-400' target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
                       {formatFirstAndLastName(user)}
                     </a>
-                    <p>{user.email}</p>
+                    <p className="text-gray-900 dark:text-gray-200">{user.email}</p>
                   </td>
                   <td className='hidden md:table-cell'>
-                    <div className='flex items-center justify-center'>
+                    <div className='flex items-center justify-center text-gray-900 dark:text-gray-200'>
                       {user.pagesPrinted}/30
                     </div>
                   </td>
@@ -316,14 +316,14 @@ export default function Overview(props) {
                     </div>
                   </td>
                   <td className='hidden sm:table-cell'>
-                    <div className='flex items-center justify-center'>
+                    <div className='flex items-center justify-center text-gray-900 dark:text-gray-200'>
                       {enums.membershipStateToString(user.accessLevel)}
                     </div>
                   </td>
                   <td>
                     <div className='flex items-center justify-center'>
                       <button
-                        className='p-2 hover:bg-white/30 rounded-xl'
+                        className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
                         onClick={() => {
                           setToggleDelete(!toggleDelete);
                           setUserToDelete(user);
@@ -340,7 +340,7 @@ export default function Overview(props) {
           </table>
           {users.length === 0 && (
             <div className='flex flex-row w-100 justify-center'>
-              <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
+              <p className='text-lg text-gray-700 dark:text-white/70 mt-5 mb-5'>No results found!</p>
             </div>
           )}
           {maybeRenderPagination()}

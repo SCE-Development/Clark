@@ -1,3 +1,4 @@
+import React from 'react';
 import { deleteUserByID } from '../../../APIFunctions/User';
 
 export default function DeleteAccountModal(props) {

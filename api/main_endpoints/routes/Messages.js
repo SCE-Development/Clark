@@ -64,33 +64,33 @@ router.post('/send', async (req, res) => {
     return;
   }
 
-  let filterQuery = {}; // filter to find user in the database
-  if (token) {
-    userObj = decodeToken(req);
-    if (!userObj) {
-      return res.sendStatus(UNAUTHORIZED);
+  let nameToUse = null;
+
+  if (apiKey) {
+    try {
+      const result = await User.findOne({ apiKey }).exec();
+      if (!result) {
+        return res.sendStatus(UNAUTHORIZED);
+      }
+      nameToUse = result.firstName;
+    } catch (error) {
+      logger.error('Error in /send User.findOne: ', error);
+      return res.sendStatus(SERVER_ERROR);
     }
-    filterQuery._id = userObj._id;
-  } else {
-    filterQuery.apiKey = apiKey;
   }
 
+  // Assume user passed a non null/undefined token
+  const userObj = decodeToken(req);
+  if (!userObj) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  nameToUse = userObj.firstName;
   try {
-    User.findOne(filterQuery, (error, result) => {
-      if (error) {
-        logger.error('/send received an invalid API key or token: ', error);
-        res.sendStatus(SERVER_ERROR);
-        return;
-      }
-      if (result) {
-        writeMessage(id, `${message}`, `${result.firstName}:`);
-        return res.json({status: 'Message sent'});
-      }
-      return res.sendStatus(UNAUTHORIZED);
-    });
+    writeMessage(id, `${message}`, `${nameToUse}:`);
+    return res.json({ status: 'Message sent' });
   } catch (error) {
-    logger.error('Error in /send: ', error);
-    res.sendStatus(SERVER_ERROR);
+    logger.error('Error in /send writeMessage: ', error);
+    return res.sendStatus(SERVER_ERROR);
   }
 });
 

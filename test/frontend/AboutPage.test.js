@@ -11,15 +11,25 @@ Enzyme.configure({ adapter: new Adapter() });
 describe('<AboutPage />', () => {
   const wrapper = mount(<AboutPage />);
   it('Should render the main heading', () => {
-    expect(wrapper.find('h1').text()).to.equal('The Next Frontier of Innovation at San José State.');
+    expect(wrapper.find('h1').text()).to.equal('What Happens at SCE');
   });
-  it('Should render the subheading text', () => {
-    const subheading = wrapper.find('h3').at(0);
-    expect(subheading.text()).to.include('The Software and Computer Engineering Society aims to provide');
+  it('Should render the Introduction text', () => {
+    const subheading = wrapper.find('h2').at(0);
+    expect(subheading.text()).to.include('Introduction');
   });
-  it('Should render the subheading text', () => {
-    const subheading = wrapper.find('h3').at(1);
-    expect(subheading.text()).to.include('Come visit us');
+  it('Should render the Location text', () => {
+    const subheading = wrapper.find('h2').at(1);
+    expect(subheading.text()).to.include('Location');
+  });
+  it('Should render club hours information', () => {
+    const preformatted = wrapper.find('pre').at(0);
+    expect(preformatted.text()).to.include('Monday - Thursday: 10:00 AM - 5:00 PM');
+    expect(preformatted.text()).to.include('Friday:            10:00 AM - 2:00 PM');
+  });
+  it('Should render membership fee information', () => {
+    const companies = wrapper.find('pre').at(1);
+    expect(companies.text()).to.include('Single semester: $20');
+    expect(companies.text()).to.include('Two semesters:   $30');
   });
   it('Should render the image with the correct alt text', () => {
     expect(wrapper.find('img').prop('alt')).to.equal('sce collage');
@@ -28,13 +38,5 @@ describe('<AboutPage />', () => {
     const discordLink = wrapper.find('a').at(0);
     expect(discordLink.prop('href')).to.equal('https://sce.sjsu.edu/s/discord');
     expect(discordLink.text()).to.equal('https://sce.sjsu.edu/s/discord');
-  });
-  it('Should render the section with the companies', () => {
-    const companies = wrapper.find('span').at(1);
-    expect(companies.text()).to.equal('COMPANIES WITH SCE ALUMNI INCLUDE');
-  });
-  it('Should render the section with the about joining the development team', () => {
-    const title = wrapper.find('h2').at(1);
-    expect(title.text()).to.include('Join Our Development Team!  Get exposed to');
   });
 });
