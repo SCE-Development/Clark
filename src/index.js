@@ -29,8 +29,10 @@ function App(props) {
   return (
     !isAuthenticating && (
       <>
-        <Routing appProps={{ authenticated, setAuthenticated, user }} />
-        <Shortcut appProps={{ authenticated, user }} />
+        <UserContext.Provider value={{ user, setUser }}>
+          <Routing appProps={{ authenticated, setAuthenticated, user }} />
+          <Shortcut appProps={{ authenticated, user }} />
+        </UserContext.Provider>
       </>
     )
   );

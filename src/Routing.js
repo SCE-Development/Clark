@@ -12,6 +12,7 @@ import CardReader from './Pages/CardReader/CardReader.js';
 import { useUser } from './Components/context/UserContext';
 
 export default function Routing({ appProps }) {
+  const { user, setUser } = useUser();
   const { notAuthenticatedRoutes, officerOrAdminRoutes } = getSignedInRoutes(appProps.authenticated, appProps.user);
   const signedInRoutes = [...notAuthenticatedRoutes, ...officerOrAdminRoutes];
   return (

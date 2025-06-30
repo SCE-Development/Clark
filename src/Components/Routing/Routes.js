@@ -4,7 +4,6 @@ import ForgotPassword from '../../Pages/ForgotPassword/ForgotPassword.js';
 import ResetPasswordPage from '../../Pages/ForgotPassword/ResetPassword.js';
 import Profile from '../../Pages/Profile/MemberView/Profile.js';
 import LedSign from '../../Pages/LedSign/LedSign.js';
-import SpeakerPage from '../../Pages/Speaker/Speaker.js';
 import EditUserInfo from '../../Pages/UserManager/EditUserInfo.js';
 
 import Home from '../../Pages/Home/Home.js';
@@ -117,14 +116,6 @@ export function getSignedInRoutes(authenticated, user) {
       redirect: '/',
       inAdminNavbar: true,
       pageName: "Led Sign",
-    },
-    {
-      Component: SpeakerPage,
-      path: '/speakers',
-      allowedIf: userIsOfficerOrAdmin,
-      redirect: '/',
-      inAdminNavbar: true,
-      pageName: "Speakers",
     },
     {
       Component: EditUserInfo,
