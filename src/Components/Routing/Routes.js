@@ -61,7 +61,7 @@ export function getSignedInRoutes(authenticated, user) {
       pageName: 'Membership Application',
     },
   ];
-  
+
   const authenticatedRoutes = [
     {
       Component: Profile,
@@ -70,7 +70,7 @@ export function getSignedInRoutes(authenticated, user) {
       redirect: '/login',
       pageName: 'Profile',
     },
-  ]
+  ];
 
   const memberRoutes = [
     {
