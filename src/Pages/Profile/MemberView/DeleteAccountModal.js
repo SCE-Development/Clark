@@ -1,13 +1,15 @@
 import React from 'react';
 import { deleteUserByID } from '../../../APIFunctions/User';
+import { useUser } from '../../../Components/context/UserContext';
 
 export default function DeleteAccountModal(props) {
   const { bannerCallback = () => {} } = props;
+  const { user } = useUser();
 
   async function deleteAccount() {
     const apiResponse = await deleteUserByID(
-      props.user._id,
-      props.user.token
+      user._id,
+      user.token
     );
 
     if (!apiResponse.error) {

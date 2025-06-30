@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { editUser } from '../../../APIFunctions/User';
+import { useUser } from '../../../Components/context/UserContext';
 
 export default function ChangePasswordModal(props) {
   const { bannerCallback = (message, color) => { }, confirmClassAddons } = props;
+  const { user } = useUser();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -12,10 +14,10 @@ export default function ChangePasswordModal(props) {
   async function changePassword() {
     const apiResponse = await editUser(
       {
-        ...props.user,
+        ...user,
         password
       },
-      props.user.token
+      user.token
     );
 
     if (!apiResponse.error) {

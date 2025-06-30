@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import { getApiKey } from '../../../APIFunctions/User';
+import { useUser } from '../../../Components/context/UserContext';
 
 const GetApiKeyModal = (props) => {
   const { bannerCallback = () => {} } = props;
+  const { user } = useUser();
   const [apiKey, setApiKey] = useState('');
 
   async function generateKey() {
-    const apiResponse = await getApiKey(props.user.token);
+    const apiResponse = await getApiKey(user.token);
 
     if (!apiResponse.error) {
       setApiKey(apiResponse.responseData.apiKey);
@@ -16,10 +18,10 @@ const GetApiKeyModal = (props) => {
   }
 
   useEffect(() => {
-    if (props.user.apiKey) {
-      setApiKey(props.user.apiKey);
+    if (user.apiKey) {
+      setApiKey(user.apiKey);
     }
-  }, [props]);
+  }, [user.apiKey]);
 
   return (
     <dialog id="get-apikey-modal" className="modal modal-bottom sm:modal-middle">
