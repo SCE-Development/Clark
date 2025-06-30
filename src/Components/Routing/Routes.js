@@ -44,23 +44,23 @@ export function getSignedInRoutes(authenticated, user) {
       queryParams: {
         redirect: 'redirect',
       },
-      pageName: "Login",
+      pageName: 'Login',
     },
     {
       Component: ForgotPassword,
       path: '/forgot',
       allowedIf: !userIsAuthenticated,
       redirect: '/',
-      pageName: "Forgot Password",
+      pageName: 'Forgot Password',
     },
     {
       Component: MembershipApplication,
       path: '/register',
       allowedIf: !userIsAuthenticated,
       redirect: '/',
-      pageName: "Membership Application",
+      pageName: 'Membership Application',
     },
-  ]
+  ];
   
   const authenticatedRoutes = [
     {
@@ -68,7 +68,7 @@ export function getSignedInRoutes(authenticated, user) {
       path: '/profile',
       allowedIf: userIsAuthenticated,
       redirect: '/login',
-      pageName: "Profile",
+      pageName: 'Profile',
     },
   ]
 
@@ -78,17 +78,17 @@ export function getSignedInRoutes(authenticated, user) {
       path: '/2DPrinting',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
       redirect: '/login',
-      pageName: "Printing",
+      pageName: 'Printing',
     },
     {
       Component: Messaging,
       path: '/messaging/:id?',
       allowedIf: userIsMember || userIsOfficerOrAdmin,
       redirect: '/login',
-      pageName: "Messaging",
+      pageName: 'Messaging',
     },
     ...authenticatedRoutes,
-  ]
+  ];
 
   const officerOrAdminRoutes = [
     // new for Overview
@@ -98,7 +98,7 @@ export function getSignedInRoutes(authenticated, user) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true,
-      pageName: "User Manager",
+      pageName: 'User Manager',
     },
     //
     // {
@@ -107,7 +107,7 @@ export function getSignedInRoutes(authenticated, user) {
     //   allowedIf: userIsOfficerOrAdmin,
     //   redirect: '/',
     //   inAdminNavbar: true,
-    //   pageName: "Email",
+    //   pageName: 'Email',
     // },
     {
       Component: LedSign,
@@ -115,7 +115,7 @@ export function getSignedInRoutes(authenticated, user) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true,
-      pageName: "Led Sign",
+      pageName: 'Led Sign',
     },
     {
       Component: EditUserInfo,
@@ -123,7 +123,7 @@ export function getSignedInRoutes(authenticated, user) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true,
-      pageName: "Edit User Info",
+      pageName: 'Edit User Info',
     },
     {
       Component: URLShortenerPage,
@@ -131,7 +131,7 @@ export function getSignedInRoutes(authenticated, user) {
       allowedIf: userIsOfficerOrAdmin,
       inAdminNavbar: true,
       redirect: '/',
-      pageName: "URL Shortner",
+      pageName: 'URL Shortner',
     },
     {
       Component: sendUnsubscribeEmail,
@@ -139,7 +139,7 @@ export function getSignedInRoutes(authenticated, user) {
       allowedIf: userIsOfficerOrAdmin,
       inAdminNavbar: true,
       redirect: '/',
-      pageName: "Send Unsubscribe Email",
+      pageName: 'Send Unsubscribe Email',
     },
     {
       Component: AdvertisementAdmin,
@@ -147,24 +147,24 @@ export function getSignedInRoutes(authenticated, user) {
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',
       inAdminNavbar: true,
-      pageName: "Advertisement Admin",
+      pageName: 'Advertisement Admin',
     },
     ...memberRoutes,
-  ]
+  ];
 
   return {
     notAuthenticatedRoutes,
     authenticatedRoutes,
     memberRoutes,
     officerOrAdminRoutes
-  }
+  };
 }
 
 export const signedOutRoutes = [
-  { Component: Home, path: '/', pageName: "Home" },
-  { Component: VerifyEmailPage, path: '/verify', pageName: "Verify Email" },
-  { Component: ResetPasswordPage, path: '/reset', pageName: "Reset Password" },
-  { Component: AboutPage, path: '/about', pageName: "About" },
-  { Component: ProjectsPage, path: '/projects', pageName: "Projects" },
-  { Component: EmailPreferencesPage, path: '/emailPreferences', pageName: "Email Preferences" },
+  { Component: Home, path: '/', pageName: 'Home' },
+  { Component: VerifyEmailPage, path: '/verify', pageName: 'Verify Email' },
+  { Component: ResetPasswordPage, path: '/reset', pageName: 'Reset Password' },
+  { Component: AboutPage, path: '/about', pageName: 'About' },
+  { Component: ProjectsPage, path: '/projects', pageName: 'Projects' },
+  { Component: EmailPreferencesPage, path: '/emailPreferences', pageName: 'Email Preferences' },
 ];
