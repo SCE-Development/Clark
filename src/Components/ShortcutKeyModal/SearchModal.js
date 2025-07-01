@@ -2,45 +2,26 @@ import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import style from './SearchModal.module.css';
 import { officerSignedInRoutes, signedOutRoutes, memberSignedInRoutes } from '../../RouteConfig';
 import { membershipState } from '../../Enums';
-import { getAllUsers } from '../../APIFunctions/User';
 import { useUser } from '../context/UserContext';
 
 export default function SearchModal(props) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
-  const prevKeyword = useRef('');
   const [keyword, setKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectItem, setSelectItem] = useState(0);
-  const [users, setUsers] = useState([]);
   const { user } = useUser();
   const [errorMsg, setErrorMsg] = useState('');
 
   const routes = useMemo(() => {
     if (user.accessLevel === membershipState.MEMBER) return [...memberSignedInRoutes, ...signedOutRoutes];
-    if (user.accessLevel >= membershipState.OFFICER) return [...officerSignedInRoutes, ...memberSignedInRoutes, ...signedOutRoutes, ...users];
+    if (user.accessLevel >= membershipState.OFFICER) return [...officerSignedInRoutes, ...memberSignedInRoutes, ...signedOutRoutes];
     return [...signedOutRoutes];
-  }, [user.accessLevel, users]);
+  }, [user.accessLevel]);
 
   function handleChanges(e) {
     setKeyword(e.target.value);
     setSelectItem(0);
-  }
-
-  async function getUserData() {
-    try {
-      const apiResponse = await getAllUsers({
-        token: user.token,
-        query: keyword,
-        page: 0,
-        sortColumn: 'firstName',
-        sortOrder: 'asc'
-      });
-      setUsers(apiResponse.responseData.items);
-      // console.log('api fetch') // For debug
-    } catch (error) {
-      setErrorMsg(error);
-    }
   }
 
   /**
@@ -64,54 +45,9 @@ export default function SearchModal(props) {
   }, [open, keyword, routes]);
 
   /**
-   * A debounce function that performs the search 400ms after the user stops typing.
-   * @dependencies keyword, open, user.accessLevel
+   * Executes a search when Enter is pressed
+   * @dependencies selectItem, suggestions
    */
-  useEffect(() => {
-    if (!open ||
-      !user.accessLevel ||
-      user?.accessLevel < membershipState.OFFICER ||
-      !keyword) return;
-
-    const debounce = setTimeout(() => {
-      // Only fetch users when there is a change in keyword
-      if (prevKeyword.current !== keyword) {
-        getUserData();
-        prevKeyword.current = keyword; // Update previous keyword after fetching for new data
-      }
-    }, 400);
-
-    return () => clearTimeout(debounce);
-  }, [keyword, open, user.accessLevel]);
-
-  /**
-   * Combines hardcoded route suggestions with user search results
-   * after the debounced fetch has updated the user list.
-   * Only runs when the user list is updated, and search is open.
-   * @dependencies open, users, keyword, routes, user.accessLevel
-   */
-  useEffect(() => {
-    if (!open ||
-      !user.accessLevel ||
-      user.accessLevel < membershipState.OFFICER ||
-      !keyword) return;
-
-    const userMatches = users.filter((u) => {
-      const searchKey = keyword.toLowerCase();
-      return (
-        u.firstName?.toLowerCase().includes(searchKey) ||
-        u.lastName?.toLowerCase().includes(searchKey) ||
-        u.email?.toLowerCase().includes(searchKey)
-      );
-    }).map((u) => ({
-      pageName: `${u.firstName} ${u.lastName} (${u.email})`,
-      path: `/user/edit/${u._id}`,
-      type: 'user'
-    }));
-
-    setSuggestions(prev => [...prev, ...userMatches]);
-  }, [open, users, keyword, routes, user.accessLevel]);
-
   const handleSearch = useCallback(() => {
     const target = suggestions[selectItem];
 
@@ -119,9 +55,12 @@ export default function SearchModal(props) {
       window.location.href = target.path;
       setOpen(false);
     }
-
   }, [suggestions, selectItem]);
 
+  /**
+   * Listens for keyboard input and executes shortcut actions.
+   * @dependencies open, suggestions, selectItem
+   */
   useEffect(() => {
     const listener = (e) => {
       if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'k')) {
