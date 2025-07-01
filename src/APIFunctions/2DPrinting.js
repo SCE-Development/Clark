@@ -31,6 +31,7 @@ export async function healthCheck() {
         const textResponse = await res.text();
         status.responseData = { message: textResponse };
       }
+      status.error = false;
     } else {
       status.error = true;
     }

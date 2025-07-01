@@ -129,36 +129,4 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
   return res.sendStatus(OK);
 });
 
-
-// Routing post /sendBlastEmail calls the sendEmail function
-// and sends the blast email with the blast email template
-router.post('/sendBlastEmail', async (req, res) => {
-  if (!ENABLED && process.env.NODE_ENV !== 'test') {
-    return res.sendStatus(OK);
-  }
-  const scopes = ['https://mail.google.com/'];
-  const pathToToken = __dirname + '/../../config/token.json';
-  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-
-  await blastEmail(
-    USER,
-    req.body.emailList,
-    req.body.subject,
-    req.body.content
-  )
-    .then((template) => {
-      apiHandler
-        .sendEmail(template)
-        .then((_) => {
-          res.sendStatus(OK);
-          MetricsHandler.emailSent.inc({ type: 'blast' });
-        }).catch((_) => {
-          res.sendStatus(BAD_REQUEST);
-        });
-    })
-    .catch((_) => {
-      res.sendStatus(BAD_REQUEST);
-    });
-});
-
 module.exports = router;

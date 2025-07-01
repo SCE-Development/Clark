@@ -8,8 +8,10 @@ import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
+import { useUser } from '../../Components/context/UserContext';
 
-export default function Overview(props) {
+export default function Overview() {
+  const { user } = useUser();
   const [toggleDelete, setToggleDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paginationText, setPaginationText] = useState('');
@@ -26,15 +28,15 @@ export default function Overview(props) {
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
 
-  async function deleteUser(user) {
+  async function deleteUser(userToDel) {
     const response = await deleteUserByID(
-      user._id,
-      props.user.token
+      userToDel._id,
+      user.token
     );
     if (response.error) {
       alert('unable to delete user, check logs');
     }
-    if (user._id === props.user._id) {
+    if (userToDel._id === user._id) {
       // logout
       window.localStorage.removeItem('jwtToken');
       window.location.reload();
@@ -42,13 +44,13 @@ export default function Overview(props) {
     }
     setUsers(
       users.filter(
-        child => !child._id.includes(user._id)
+        child => !child._id.includes(userToDel._id)
       )
     );
     setTotal(total - 1);
     setQueryResult(
       queryResult.filter(
-        child => !child._id.includes(user._id)
+        child => !child._id.includes(userToDel._id)
       )
     );
   }
@@ -62,7 +64,7 @@ export default function Overview(props) {
     const sortColumn = currentSortOrder === 'none' ? 'joinDate' : currentSortColumn;
     const sortOrder = currentSortOrder === 'none' ? 'desc' : currentSortOrder;
     const apiResponse = await getAllUsers({
-      token: props.user.token,
+      token: user.token,
       query: query,
       page: page,
       sortColumn: sortColumn,
@@ -223,7 +225,7 @@ export default function Overview(props) {
       } />
       <div className='px-4'>
         <button className="my-8 btn btn-primary lg:max-w-[20%]" onClick={async () => {
-          const result = await getAllUsersValidVerifiedAndSubscribed(props.user.token);
+          const result = await getAllUsersValidVerifiedAndSubscribed(user.token);
           if (result.error) {
             return alert(
               'unable to download email list: ' + result.error
