@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import { getApiKey } from '../../../APIFunctions/User';
+import { useUser } from '../../../Components/context/UserContext';
 
 const GetApiKeyModal = (props) => {
   const { bannerCallback = () => {} } = props;
+  const { user } = useUser();
   const [apiKey, setApiKey] = useState('');
 
   async function generateKey() {
-    const apiResponse = await getApiKey(props.user.token);
+    const apiResponse = await getApiKey(user.token);
 
     if (!apiResponse.error) {
       setApiKey(apiResponse.responseData.apiKey);
@@ -16,10 +18,10 @@ const GetApiKeyModal = (props) => {
   }
 
   useEffect(() => {
-    if (props.user.apiKey) {
-      setApiKey(props.user.apiKey);
+    if (user.apiKey) {
+      setApiKey(user.apiKey);
     }
-  }, [props]);
+  }, [user.apiKey]);
 
   return (
     <dialog id="get-apikey-modal" className="modal modal-bottom sm:modal-middle">
@@ -33,7 +35,7 @@ const GetApiKeyModal = (props) => {
             value={apiKey || ''}
             id="generate-apikey"
             name="generate-apikey"
-            className= "indent-2 block w-full rounded-md border-0 py-1.5   shadow-sm ring-1 ring-inset ring-gray-300 placeholder:  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-white"
+            className="indent-2 block w-full rounded-md border-0 py-1.5 bg-white text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             readOnly
           />
         </div>
