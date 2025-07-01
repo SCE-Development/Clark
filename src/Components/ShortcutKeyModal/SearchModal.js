@@ -14,6 +14,7 @@ export default function SearchModal(props) {
   const [selectItem, setSelectItem] = useState(0);
   const [users, setUsers] = useState([]);
   const { user } = useUser();
+  const [errorMsg, setErrorMsg] = useState('');
 
   const routes = useMemo(() => {
     if (user.accessLevel === membershipState.MEMBER) return [...memberSignedInRoutes, ...signedOutRoutes];
@@ -38,7 +39,7 @@ export default function SearchModal(props) {
       setUsers(apiResponse.responseData.items);
       // console.log('api fetch') // For debug
     } catch (error) {
-      alert(error.message);
+      setErrorMsg(error);
     }
   }
 
@@ -49,17 +50,17 @@ export default function SearchModal(props) {
   useEffect(() => {
     if (!open) return;
 
-    // Instantly display for the hardcoded page recommendations
+    // Return if keyword is blank
     if (!keyword) {
       setSuggestions([]);
       return;
     }
-    // do the filtering here etc
-      const routeMatches = routes.filter((r) =>
-        r.pageName?.toLowerCase().includes(keyword.toLowerCase())
-      );
-      setSuggestions(routeMatches);
-    } else setSuggestions([]);
+
+    // Instantly display for the hardcoded page recommendations
+    const routeMatches = routes.filter((r) =>
+      r.pageName?.toLowerCase().includes(keyword.toLowerCase())
+    );
+    setSuggestions(routeMatches);
   }, [open, keyword, routes]);
 
   /**
@@ -104,7 +105,7 @@ export default function SearchModal(props) {
       );
     }).map((u) => ({
       pageName: `${u.firstName} ${u.lastName} (${u.email})`,
-      path: `${window.location.origin}/user/edit/${u._id}`,
+      path: `/user/edit/${u._id}`,
       type: 'user'
     }));
 
@@ -180,11 +181,14 @@ export default function SearchModal(props) {
                   {r.type === 'user' ? '👤' : '📄'}
                 </span>
                 {r.pageName}
-                <div className={style['hidden-tab']}>{selectItem === index && r.path}</div>
+                <div className={style['hidden-tab']}>{selectItem === index && `${window.location.origin}${r.path}`}</div>
               </li>
             )).slice(0, 5)}
           </ul>
         )}
+      </div>
+      <div>
+        {errorMsg && <p>{errorMsg}</p>}
       </div>
     </div>
   );
