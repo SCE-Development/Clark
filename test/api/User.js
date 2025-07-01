@@ -228,34 +228,61 @@ describe('User', () => {
       result.body.should.have.property('message');
     });
 
-    it('Should create an audit log when a user is updated', async () => {
+    describe('audit logs', () => {
       // ensure Audit log DB starts fresh before this test
-      await AuditLog.deleteMany({});
+      beforeEach(async () => {
+        await AuditLog.deleteMany({});
+      });
 
-      // update email, firstname, and discordID
-      const user = {
-        _id: id,
-        email: 'newemail@gmail.com',
-        token: token,
-        firstName: 'Newname',
-        discordID: '421482148',
-        numberOfSemestersToSignUpFor: undefined
-      };
-      setTokenStatus(true, user);
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+      });
 
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/edit', user
-      );
-      expect(result).to.have.status(OK);
+      it('Should create an audit log when a user is updated', async () => {
+        // update email, firstname, and discordID
+        const user = {
+          _id: id,
+          email: 'newemail@gmail.com',
+          token: token,
+          firstName: 'Newname',
+          discordID: '421482148',
+          numberOfSemestersToSignUpFor: undefined
+        };
+        setTokenStatus(true, user);
 
-      const auditEntry = await AuditLog.findOne().lean();
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/edit', user
+        );
+        expect(result).to.have.status(OK);
 
-      expect(auditEntry).to.exist;
-      expect(auditEntry).to.have.property('userId');
-      expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
+        const auditEntry = await AuditLog.findOne().lean();
 
-      // clear Audit log DB after test
-      await AuditLog.deleteMany({});
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
+      });
+
+      it('Should remove the user password before logging to the audit log', async () => {
+      // update a user's password
+        const user = {
+          _id: id,
+          password: 'newPassword'
+        };
+        setTokenStatus(true, user);
+
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/edit', user
+        );
+
+        expect(result).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne().lean();
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
+        expect(auditEntry.details.updatedInfo).to.have.property('password', true);
+      });
     });
   });
 

@@ -239,11 +239,17 @@ router.post('/edit', async (req, res) => {
         .send({ message: `${query.email} not found.` });
     }
 
+    const sanitizedUser = {...user}; // shallow copy of the user; doesn't affect original
+
+    if ('password' in sanitizedUser) {
+      sanitizedUser.password = true;
+    }
+
     AuditLog.create({
       userId: decoded._id, // the user making the update
       action: AuditLogActions.UPDATE_USER,
       documentId: user._id, // the user affected by the update
-      details: {updatedInfo: user}
+      details: {updatedInfo: sanitizedUser}
     }).catch(logger.error);
 
     return res.status(OK).send({
