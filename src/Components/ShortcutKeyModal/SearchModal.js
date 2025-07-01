@@ -86,13 +86,11 @@ export default function SearchModal(props) {
    * @dependencies open, users, keyword, routes, user.accessLevel
    */
   useEffect(() => {
-    if (!open || user.accessLevel < membershipState.OFFICER || !keyword) return;
+    if (!open ||
+      !user.accessLevel ||
+      user.accessLevel < membershipState.OFFICER ||
+      !keyword) return;
 
-    const routeMatches = routes.filter((r) =>
-      r.pageName?.toLowerCase().includes(keyword.toLowerCase())
-    );
-
-    // Filter users by name or email
     const userMatches = users.filter((u) => {
       const searchKey = keyword.toLowerCase();
       return (
@@ -106,7 +104,7 @@ export default function SearchModal(props) {
       type: 'user'
     }));
 
-    setSuggestions([...routeMatches, ...userMatches]);
+    setSuggestions(prev => [...prev, ...userMatches]);
   }, [open, users, keyword, routes, user.accessLevel]);
 
   const handleSearch = useCallback(() => {
@@ -131,7 +129,10 @@ export default function SearchModal(props) {
         handleSearch();
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        if (suggestions.length > 0) setSelectItem(prev => Math.min(prev + 1, 4));
+        if (suggestions.length > 0) {
+          const minLength = Math.min(suggestions.length - 1, 4);
+          setSelectItem(prev => Math.min(prev + 1, minLength));
+        }
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setSelectItem(prev => Math.max(prev - 1, 0));
