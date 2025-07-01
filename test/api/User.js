@@ -19,7 +19,7 @@ const {
 } = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
-const {mockDayMonthAndYear, revertClock} = require('../util/mocks/Date.js')
+const {mockDayMonthAndYear, revertClock} = require('../util/mocks/Date.js');
 
 
 let app = null;
@@ -485,16 +485,16 @@ describe('User', () => {
   describe('GET getNewPaidMembersThisSemester', () => {
     it('Should return status code 200 and valid token sent', async () => {
       setTokenStatus(true);
-      const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester')
+      const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
       expect(result).to.have.status(OK);
-    })
+    });
 
     it('Should return statusCode 403 if no token is passed in', async () => {
       const result = await test.sendGetRequest('/api/user/getNewPaidMembersThisSemester');
       expect(result).to.have.status(FORBIDDEN);
-    })
+    });
 
-    it('Should return statusCode 401 if an invalid'+
+    it('Should return statusCode 401 if an invalid' +
       'token was passed in', async () => {
       setTokenStatus(false);
       const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
@@ -545,7 +545,7 @@ describe('User', () => {
             emailVerified: true,
             accessLevel: MEMBERSHIP_STATE.NON_MEMBER, // Not a Member
             joinDate: new Date('2015-03-15'), // This Semester
-            //Expiration Date Unchanged
+            //  Expiration Date Unchanged
           },
           {
             firstName: 'Test5',
@@ -611,7 +611,7 @@ describe('User', () => {
 
     describe('2nd Semester Mock Test', () => {
       before(async () => {
-        mockDayMonthAndYear(20, 6, 2021)
+        mockDayMonthAndYear(20, 6, 2021);
         await User.deleteMany({});
         const users = [
           {
@@ -652,7 +652,7 @@ describe('User', () => {
             emailVerified: true,
             accessLevel: MEMBERSHIP_STATE.NON_MEMBER, // Not a Member
             joinDate: new Date('2021-12-15'), // This Semester
-            //Expiration Date Unchanged
+            //  Expiration Date Unchanged
           },
           {
             firstName: 'Test5',

@@ -446,10 +446,10 @@ router.post('/apikey', async (req, res) => {
     });
 });
 
-//Finds total number of new signups this semester
-//Finds number of those signups who've paid for semester plan
-//Finds number of those signups who've paid for annual plan
-//Assumes members who have paid have been assigned an expiration date
+//  Finds total number of new signups this semester
+//  Finds number of those signups who've paid for semester plan
+//  Finds number of those signups who've paid for annual plan
+//  Assumes members who have paid have been assigned an expiration date
 router.get('/getNewPaidMembersThisSemester', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -459,32 +459,32 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
 
   const today = new Date();
 
-  //First semester start date - Jan 1st
+  //  First semester start date - Jan 1st
   let semesterStart = new Date(today.getFullYear(), 0, 1);
 
   if(today.getMonth() >= 5) {
-    //Second semester start date - June 1st
+    //  Second semester start date - June 1st
     semesterStart = new Date(today.getFullYear(), 5, 1);
   }
 
-  const newSingleSemesterMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": membershipState.MEMBER,
-    "membershipValidUntil": getMemberExpirationDate(1),
-    "joinDate": {
-    $gte: semesterStart
-    }, 
+  const newSingleSemesterMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(1),
+    'joinDate': {
+      $gte: semesterStart
+    },
   });
-  const newAnnualMembersCount = await User.countDocuments({"emailVerified":true, "accessLevel": membershipState.MEMBER,
-    "membershipValidUntil": getMemberExpirationDate(2),
-    "joinDate": {
-    $gte: semesterStart
-    }, 
+  const newAnnualMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(2),
+    'joinDate': {
+      $gte: semesterStart
+    },
   });
-  const newMembersThisYear = await User.countDocuments({"emailVerified": true, "accessLevel": membershipState.MEMBER, "joinDate": {
-    //Jan 1st Start of Year
+  const newMembersThisYear = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
+    //  Jan 1st Start of Year
     $gte: new Date(today.getFullYear(), 0, 1)
-  }})
-  const currentActiveMembers = await User.countDocuments({"emailVerified": true, "accessLevel": membershipState.MEMBER, "membershipValidUntil": {
-    //Today
+  }});
+  const currentActiveMembers = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
+    //  Today
     $gt: new Date()
   }});
 
