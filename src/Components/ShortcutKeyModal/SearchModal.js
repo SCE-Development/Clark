@@ -50,7 +50,11 @@ export default function SearchModal(props) {
     if (!open) return;
 
     // Instantly display for the hardcoded page recommendations
-    if (keyword) {
+    if (!keyword) {
+      setSuggestions([]);
+      return;
+    }
+    // do the filtering here etc
       const routeMatches = routes.filter((r) =>
         r.pageName?.toLowerCase().includes(keyword.toLowerCase())
       );
