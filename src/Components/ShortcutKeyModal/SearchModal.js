@@ -50,18 +50,23 @@ export default function SearchModal(props) {
     if (!open) return;
 
     // Instantly display for the hardcoded page recommendations
-    const routeMatches = routes.filter((r) =>
-      r.pageName?.toLowerCase().includes(keyword.toLowerCase())
-    );
-    setSuggestions(routeMatches);
+    if (keyword) {
+      const routeMatches = routes.filter((r) =>
+        r.pageName?.toLowerCase().includes(keyword.toLowerCase())
+      );
+      setSuggestions(routeMatches);
+    } else setSuggestions([]);
   }, [open, keyword, routes]);
 
   /**
    * A debounce function that performs the search 400ms after the user stops typing.
-   * @dependencies keyword, routes
+   * @dependencies keyword, open, user.accessLevel
    */
   useEffect(() => {
-    if (!open || !user.accessLevel || user?.accessLevel < membershipState.OFFICER) return;
+    if (!open ||
+      !user.accessLevel ||
+      user?.accessLevel < membershipState.OFFICER ||
+      !keyword) return;
 
     const debounce = setTimeout(() => {
       // Only fetch users when there is a change in keyword
@@ -78,7 +83,7 @@ export default function SearchModal(props) {
    * Combines hardcoded route suggestions with user search results
    * after the debounced fetch has updated the user list.
    * Only runs when the user list is updated, and search is open.
-   * @dependencies users
+   * @dependencies open, users, keyword, routes, user.accessLevel
    */
   useEffect(() => {
     if (!open || user.accessLevel < membershipState.OFFICER || !keyword) return;
@@ -102,7 +107,7 @@ export default function SearchModal(props) {
     }));
 
     setSuggestions([...routeMatches, ...userMatches]);
-  }, [users]);
+  }, [open, users, keyword, routes, user.accessLevel]);
 
   const handleSearch = useCallback(() => {
     const target = suggestions[selectItem];
