@@ -8,9 +8,7 @@ export default function AdvertisementAdmin() {
 
   const [ads, setAds] = useState([]);
   const [message, setMessage] = useState('');
-  const [year, setYear] = useState();
-  const [month, setMonth] = useState();
-  const [day, setDay] = useState();
+  const [expireDate, setExpireDate] = useState();
 
   async function getAdsFromDB() {
     const adsFromDB = await getAds(user.token);
@@ -20,20 +18,8 @@ export default function AdvertisementAdmin() {
   }
 
   async function createAdHandler() {
-    // make sure empty inputs are properly set as undefined if empty
-    if (year === '') {
-      setYear(undefined);
-    }
-    if (month === '') {
-      setMonth(undefined);
-    }
-    if (day === '') {
-      setDay(undefined);
-    }
-
-    let expireDate = new Date(year, month - 1, day);
-    if (isNaN(expireDate.getTime())) {
-      expireDate = undefined;
+    if(expireDate === null){
+      setExpireDate(undefined);
     }
 
     await createAd({
@@ -42,16 +28,27 @@ export default function AdvertisementAdmin() {
     }, user.token);
 
     await getAdsFromDB();
-    // createAd returns a value - what is it?
-    // how do we know if createAd() works or not?
-    // is there a field we can check?^
-    // 
-    // if createAd worked, how can we update the array without calling the backend again?
-    // 
+  }
+
+  async function deleteExpiredAds() {
+    const adsFromDB = await getAds(user.token);
+    if (!adsFromDB.error) {
+      const currentDate = new Date();
+      
+      const expiredAds = adsFromDB.responseData.filter(ad => {
+        if (ad.expireDate === undefined) return false;
+        return new Date(ad.expireDate) < currentDate;
+      });
+
+      for (const ad of expiredAds) {
+        await deleteAd(ad, user.token);
+      }
+    }
   }
 
   useEffect(() => {
     getAdsFromDB();
+
 
 
   }, []);
@@ -89,28 +86,12 @@ export default function AdvertisementAdmin() {
         </div>
         <div className="flex items-center space-x-4 mb-6">
           <input
-            className="flex-1 text-sm input input-bordered sm:text-base"
-            type="text"
-            placeholder="Year"
-            onChange={event => {
-              setYear(event.target.value);
+            className='flex-1 text-sm input input-bordered sm:text-base'
+            type='datetime-local'
+            onChange={ event => {
+              setExpireDate(event.target.value);
             }}
-          />
-          <input
-            className="flex-1 text-sm input input-bordered sm:text-base"
-            type="text"
-            placeholder="Month"
-            onChange={event => {
-              setMonth(event.target.value);
-            }}
-          />
-          <input
-            className="flex-1 text-sm input input-bordered sm:text-base"
-            type="text"
-            placeholder="Day"
-            onChange={event => {
-              setDay(event.target.value);
-            }}
+            // value={expireDate}
           />
           <button
             className="text-sm btn btn-primary sm:text-base"
