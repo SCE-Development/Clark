@@ -61,7 +61,8 @@ export default function URLShortenerPage() {
   }
 
   async function handleCreateUrl() {
-    const expiresAt = expDateTime ? new Date(expDateTime).toISOString().split('.')[0].replace('T', ' ') + '.000000' : null;
+    const expiresAt = expDateTime ? new Date(expDateTime).toISOString() : null;
+    // const expiresAt = expDateTime ? new Date(expDateTime).toISOString().split('.')[0].replace('T', ' ') + '.000000' : null;
     const response = await createUrl(
       url.trim(),
       alias.trim(),
@@ -301,7 +302,11 @@ export default function URLShortenerPage() {
                   value={expDateTime}
                   onChange={(e) => setExpDateTime(e.target.value)}
                   className="w-full text-sm input input-bordered sm:text-base"
-                />                </div>
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Time is in your local timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone}).
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -478,17 +483,17 @@ export default function URLShortenerPage() {
                               {new Date(url.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
                             </span>
                             <span className='block text-sm text-blue-400'>
-                              {new Date(url.created_at.replace(' ', 'T') + 'Z').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit'})}
+                              {new Date(url.created_at.replace(' ', 'T') + 'Z').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}
                             </span>
                           </div>
                         </td>
                         <td className="hidden md:table-cell">
                           <div className="flex flex-col items-center">
                             <span className='block'>
-                              {new Date(url.expires_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
+                              {new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
                             </span>
                             <span className='block text-sm text-blue-400'>
-                              {new Date(url.expires_at.replace(' ', 'T') + 'Z').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(url.expires_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}
                             </span>
                           </div>
                         </td>
