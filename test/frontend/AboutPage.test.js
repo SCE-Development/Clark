@@ -16,17 +16,17 @@ describe('<AboutPage />', () => {
   });
 
   it('Should render the Introduction section', () => {
-    const section = wrapper.find('section').filterWhere(n => n.prop('id') === 'introduction');
+    const section = wrapper.find('#introduction');
     expect(section.find('h2').text()).to.include('Introduction');
   });
 
   it('Should render the Location section', () => {
-    const section = wrapper.find('section').filterWhere(n => n.prop('id') === 'location');
+    const section = wrapper.find('#location');
     expect(section.find('h2').text()).to.include('Location & Hours');
   });
 
   it('Should render club hours information', () => {
-    const hoursSection = wrapper.find('section').filterWhere(n => n.prop('id') === 'location');
+    const hoursSection = wrapper.find('#location');
     expect(hoursSection.text()).to.include('Monday - Thursday:');
     expect(hoursSection.text()).to.include('10:00 AM - 5:00 PM');
     expect(hoursSection.text()).to.include('Friday:');
@@ -34,7 +34,7 @@ describe('<AboutPage />', () => {
   });
 
   it('Should render membership fee information', () => {
-    const membershipSection = wrapper.find('section').filterWhere(n => n.prop('id') === 'membership');
+    const membershipSection = wrapper.find('#membership');
     expect(membershipSection.text()).to.include('Single Semester:');
     expect(membershipSection.text()).to.include('$20');
     expect(membershipSection.text()).to.include('Two Semesters:');
@@ -46,24 +46,22 @@ describe('<AboutPage />', () => {
   });
 
   it('Should render the Discord link with the correct URL', () => {
-    const discordLink = wrapper.find('a').filterWhere(n => n.prop('href') === 'https://sce.sjsu.edu/s/discord');
+    const discordLink = wrapper.find('a[href="https://sce.sjsu.edu/s/discord"]');
     expect(discordLink.prop('href')).to.equal('https://sce.sjsu.edu/s/discord');
     expect(discordLink.text()).to.equal('Join SCE Discord');
   });
 
   it('Should render the table of contents (hidden on mobile)', () => {
     // Check that the table of contents container exists with proper mobile-hiding classes
-    const tocContainer = wrapper.find('div').filterWhere(n =>
-      n.hasClass('hidden') && n.hasClass('xl:block') && n.hasClass('xl:col-span-1')
-    );
-    expect(tocContainer).to.have.length(1);
+    const tocNav = wrapper.find('nav');
+    expect(tocNav).to.have.length(1);
 
     // Check that navigation buttons exist within the table of contents
-    const tocButtons = tocContainer.find('button');
+    const tocButtons = tocNav.find('button');
     expect(tocButtons.length).to.be.greaterThan(0);
-    expect(tocButtons.filterWhere(n => n.text() === 'Introduction')).to.have.length(1);
-    expect(tocButtons.filterWhere(n => n.text() === 'Location & Hours')).to.have.length(1);
-    expect(tocButtons.filterWhere(n => n.text() === 'Membership')).to.have.length(1);
+    expect(tocButtons.at(0).text()).to.equal('Introduction');
+    expect(tocButtons.at(1).text()).to.equal('Location & Hours');
+    expect(tocButtons.at(2).text()).to.equal('Membership');
   });
 
   it('Should have responsive text sizing', () => {
