@@ -4,7 +4,6 @@ import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import ResetPasswordPage from './Pages/ForgotPassword/ResetPassword';
 import Profile from './Pages/Profile/MemberView/Profile';
 import LedSign from './Pages/LedSign/LedSign';
-// import SpeakerPage from './Pages/Speaker/Speaker';
 import EditUserInfo from './Pages/UserManager/EditUserInfo';
 import MembershipApplication from './Pages/MembershipApplication/MembershipApplication.js';
 import VerifyEmailPage from './Pages/MembershipApplication/VerifyEmail.js';
@@ -16,8 +15,6 @@ import URLShortenerPage from './Pages/URLShortener/URLShortener';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
 import Messaging from './Pages/Messaging/Messaging.js';
-// import DessertPage from './Pages/Desserts/Desserts.js';
-// import DessertAdminPage from './Pages/Desserts/DessertsAdmin.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
 
@@ -55,14 +52,6 @@ export const officerSignedInRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
-  // {
-  //   Component: SpeakerPage,
-  //   path: '/speakers',
-  //   pageName: 'Speaker',
-  //   allowedIf: allowedIf.OFFICER_OR_ADMIN,
-  //   redirect: '/',
-  //   inAdminNavbar: true
-  // },
   {
     Component: EditUserInfo,
     path: '/user/edit/:id',
@@ -170,23 +159,35 @@ export const memberSignedInRoutes = [
 ];
 
 export const signedOutRoutes = [
-  { Component: Home,
+  {
+    Component: Home,
     path: '/',
-    pageName: 'Home Page' },
-  { Component: VerifyEmailPage,
+    pageName: 'Home Page'
+  },
+  {
+    Component: VerifyEmailPage,
     path: '/verify',
-    pageName: 'Verify Email' },
-  { Component: ResetPasswordPage,
+    pageName: 'Verify Email'
+  },
+  {
+    Component: ResetPasswordPage,
     path: '/reset',
-    pageName: 'Reset Password' },
-  { Component: AboutPage,
+    pageName: 'Reset Password'
+  },
+  {
+    Component: AboutPage,
     path: '/about',
-    pageName: 'About Us' },
-  { Component: ProjectsPage,
+    pageName: 'About Us'
+  },
+  {
+    Component: ProjectsPage,
     path: '/projects',
-    pageName: 'Projects' },
-  { Component: EmailPreferencesPage,
+    pageName: 'Projects'
+  },
+  {
+    Component: EmailPreferencesPage,
     path: '/emailPreferences',
-    pageName: 'Email Preferences' },
+    pageName: 'Email Preferences'
+  },
 ];
 
