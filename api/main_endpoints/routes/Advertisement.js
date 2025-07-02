@@ -20,6 +20,7 @@ router.get('/', async (req, res) => {
     });
 });
 
+
 router.get('/getAllAdvertisements', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -43,6 +44,7 @@ router.post('/createAdvertisement', async (req, res) => {
     message: req.body.message,
     expireDate: req.body.expireDate
   });
+      console.log("expire date " + expireDate);
 
   Advertisement.create(newAd)
     .then((post) => {
@@ -59,6 +61,8 @@ router.post('/deleteAdvertisement', async (req, res) => {
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
+  console.log("expire date in delete " + expireDate);
+
   Advertisement.deleteOne({ _id: req.body._id })
     .then(result => {
       if (result.n < 1) {
