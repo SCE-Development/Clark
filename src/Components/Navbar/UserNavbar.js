@@ -4,7 +4,6 @@ import { useUser } from '../context/UserContext';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
-  console.log(user);
   let initials = '';
   if (user && user.firstName && user.lastName) {
     initials = user.firstName[0] + user.lastName[0];
