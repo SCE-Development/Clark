@@ -97,8 +97,8 @@ export default function SearchModal({ appProps }) {
   if (!open) return null;
 
   return (
-    <div className={style['modal']}>
-      <div className={style['input-wrapper']}>
+    <div className='modal'>
+      <div className='input-wrapper'>
         <input
           ref={inputRef}
           placeholder="Search here"
