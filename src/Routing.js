@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
@@ -6,20 +6,22 @@ import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 
-import { officerSignedInRoutes, memberSignedInRoutes, signedOutRoutes } from './RouteConfig.js';
+import { useUser } from './Components/context/UserContext';
+
+import { officerOrAdminRoutes, notAuthenticatedRoutes, signedOutRoutes } from './Routes.js';
 
 export default function Routing({ appProps }) {
+  const { user, setUser } = useUser();
   const userIsAuthenticated = appProps.authenticated;
 
-  const routes = [...officerSignedInRoutes, ...memberSignedInRoutes];
+  const signedInRoutes = [...officerOrAdminRoutes, ...notAuthenticatedRoutes];
 
   return (
     <div>
       <Switch>
-        {routes.map(
+        {signedInRoutes.map(
           ({
             path,
-            pageName,
             Component,
             allowedIf,
             redirect,
@@ -41,11 +43,10 @@ export default function Routing({ appProps }) {
                 key={index}
                 exact
                 path={path}
-                pageName={pageName}
                 appProps={{
                   allowed: allowedIf,
                   redirect,
-                  authenticated: userIsAuthenticated,
+                  authenticated:userIsAuthenticated,
                   ...appProps
                 }}
                 component={props => getCorrectComponent(props)}
@@ -53,13 +54,12 @@ export default function Routing({ appProps }) {
             );
           }
         )}
-        {signedOutRoutes.map(({ path, pageName, Component }, index) => {
+        {signedOutRoutes.map(({ path, Component }, index) => {
           return (
             <Route
               key={index}
               exact
               path={path}
-              pageName={pageName}
               render={props => (
                 <NavBarWrapper component={Component} {...props} {...appProps} />
               )}

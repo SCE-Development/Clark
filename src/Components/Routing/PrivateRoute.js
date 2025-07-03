@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { membershipState } from '../../Enums';
-import { allowedIf } from '../../RouteConfig';
+import { allowedIf } from '../../Routes';
 import { useUser } from '../../Components/context/UserContext';
 
 export default function PrivateRoute({
