@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import style from './SearchModal.module.css';
-import { officerSignedInRoutes, signedOutRoutes, memberSignedInRoutes } from '../../RouteConfig';
+import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRoutes } from '../../Routes';
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 
-export default function SearchModal(props) {
+export default function SearchModal({ appProps }) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const [keyword, setKeyword] = useState('');
@@ -14,8 +14,9 @@ export default function SearchModal(props) {
   const [errorMsg, setErrorMsg] = useState('');
 
   const routes = useMemo(() => {
-    if (user.accessLevel === membershipState.MEMBER) return [...memberSignedInRoutes, ...signedOutRoutes];
-    if (user.accessLevel >= membershipState.OFFICER) return [...officerSignedInRoutes, ...memberSignedInRoutes, ...signedOutRoutes];
+    if (user.accessLevel === membershipState.MEMBER) return [...memberRoutes, ...signedOutRoutes];
+    if (user.accessLevel >= membershipState.OFFICER) return [...officerOrAdminRoutes, ...signedOutRoutes];
+    if (!appProps.authenticated) return [...notAuthenticatedRoutes, ...signedOutRoutes];
     return [...signedOutRoutes];
   }, [user.accessLevel]);
 

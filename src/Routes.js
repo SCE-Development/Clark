@@ -86,11 +86,7 @@ export const officerOrAdminRoutes = [
   {
     Component: Overview,
     path: '/user-manager',
-<<<<<<< HEAD
     pageName: 'User Manager',
-=======
-    pageName: 'user manager',
->>>>>>> f683177 (Changed RouteConfig.js to Routes.js and fixed linting errors)
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
