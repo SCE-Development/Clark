@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
-import { trashcanSymbol } from '../Overview/SVG';
+import { trashcanSymbol, copyIcon} from '../Overview/SVG';
+// import { copyIcon } from './SVG.js';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
 import { useSCE } from '../../Components/context/SceContext.js';
 
@@ -32,6 +33,9 @@ export default function URLShortenerPage() {
   const [currentSortOrder, setCurrentSortOrder] = useState(null);
   const query = new URLSearchParams(window.location.search);
   const rawData = query.get('data');
+
+  const [copyingId, setCopyingId] = useState(null);
+  const [timeColor, setTimeColor] = useState(false);
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-slate-800 dark:text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-slate-800 dark:text-gray-300';
@@ -195,6 +199,15 @@ export default function URLShortenerPage() {
       getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
     }
   }, [page, currentSortColumn, currentSortOrder]);
+
+  useEffect(() => {
+    if (copyingId !== null) {
+      const timeout = setTimeout(() => {
+        setTimeColor(false);
+      }, 850);
+      return () => clearTimeout(timeout);
+    }
+  }, [copyingId]);
 
   function maybeRenderErrorAlert() {
     if (invalidUrl || aliasTaken || invalidSearch) {
@@ -488,12 +501,22 @@ export default function URLShortenerPage() {
 
                 <tbody>
                   {allUrls.map((url, index) => {
+                    const isCopying = copyingId === url.id;
+
                     return (
                       <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
                         <td className=''>
-                          <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.link}`}>
-                            {url.alias}
-                          </a>
+                          <div className='pb-2 flex flex-row gap-2'>
+                            <button className='w-fit link link-hover link-info'
+                              onClick={() => {
+                                navigator.clipboard.writeText(url.link);
+                                setCopyingId(url.id);
+                                setTimeColor(true);
+                              }}>
+                              {url.alias}
+                            </button>
+                            { isCopying && copyIcon(`transition-colors duration-500 ${timeColor ? 'dark:fill-green-500 fill-[#05ab00]' : 'dark:fill-[#dcdcdc] fill-[#434343]'}`)}
+                          </div>
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
                         <td className='hidden md:table-cell'>
