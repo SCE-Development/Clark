@@ -6,18 +6,20 @@ import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 
+import { useUser } from './Components/context/UserContext';
+
 import { officerSignedInRoutes, memberSignedInRoutes, signedOutRoutes } from './RouteConfig.js';
 
 export default function Routing({ appProps }) {
   const { user, setUser } = useUser();
   const userIsAuthenticated = appProps.authenticated;
 
-  const signeInRoutes = [...officerSignedInRoutes, ...memberSignedInRoutes];
+  const signedInRoutes = [...officerSignedInRoutes, ...memberSignedInRoutes];
 
   return (
     <div>
       <Switch>
-        {routes.map(
+        {signedInRoutes.map(
           ({
             path,
             Component,
