@@ -86,7 +86,7 @@ export const officerOrAdminRoutes = [
   {
     Component: Overview,
     path: '/user-manager',
-    pageName: 'user manager',
+    pageName: 'User Manager',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
