@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
@@ -9,9 +9,10 @@ import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 import { officerSignedInRoutes, memberSignedInRoutes, signedOutRoutes } from './RouteConfig.js';
 
 export default function Routing({ appProps }) {
+  const { user, setUser } = useUser();
   const userIsAuthenticated = appProps.authenticated;
 
-  const routes = [...officerSignedInRoutes, ...memberSignedInRoutes];
+  const signeInRoutes = [...officerSignedInRoutes, ...memberSignedInRoutes];
 
   return (
     <div>
@@ -43,7 +44,7 @@ export default function Routing({ appProps }) {
                 appProps={{
                   allowed: allowedIf,
                   redirect,
-                  authenticated: userIsAuthenticated,
+                  authenticated:userIsAuthenticated,
                   ...appProps
                 }}
                 component={props => getCorrectComponent(props)}
