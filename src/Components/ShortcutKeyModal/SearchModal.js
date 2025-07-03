@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import style from './SearchModal.module.css';
+// import style from './SearchModal.module.css';
 import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRoutes } from '../../Routes';
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
@@ -23,6 +23,32 @@ export default function SearchModal({ appProps }) {
   function handleChanges(e) {
     setKeyword(e.target.value);
     setSelectItem(0);
+  }
+
+  function getSuggestions() {
+    if (suggestions.length === 0) return <></>;
+
+    return (
+          <ul className='suggestion-list'>
+            {suggestions.map((r, index) => (
+              <li
+                key={index}
+                className={`'suggestion-item' ${index === selectItem ? 'active' : ''}`}
+                onMouseEnter={() => setSelectItem(index)}
+                onClick={() => {
+                  window.location.href = r.path;
+                  setOpen(false);
+                }}
+              >
+                <span style={{ marginRight: '0.5rem' }}>
+                  {r.type === 'user' ? '👤' : '📄'}
+                </span>
+                {r.pageName}
+                <div className='hidden-tab'>{selectItem === index && `${window.location.origin}${r.path}`}</div>
+              </li>
+            )).slice(0, 5)}
+          </ul>
+    )
   }
 
   /**
@@ -97,7 +123,7 @@ export default function SearchModal({ appProps }) {
   if (!open) return null;
 
   return (
-    <div className='modal'>
+    <div className='search-modal'>
       <div className='input-wrapper'>
         <input
           ref={inputRef}
@@ -105,7 +131,9 @@ export default function SearchModal({ appProps }) {
           value={keyword}
           onChange={handleChanges} />
 
-        {suggestions.length > 0 && (
+        {getSuggestions()}
+
+        {/* {suggestions.length > 0 && (
           <ul className={`${style['suggestion-list']}`}>
             {suggestions.map((r, index) => (
               <li
@@ -125,7 +153,7 @@ export default function SearchModal({ appProps }) {
               </li>
             )).slice(0, 5)}
           </ul>
-        )}
+        )} */}
       </div>
       <div>
         {errorMsg && <p>{errorMsg}</p>}

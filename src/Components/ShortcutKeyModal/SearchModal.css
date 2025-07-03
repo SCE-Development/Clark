@@ -1,4 +1,4 @@
-.modal {
+.search-modal {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -13,14 +13,14 @@
     z-index: 9999;
 }
 
-.input-wrapper {
+.search-modal .input-wrapper {
     padding: 8px;
     background: white;
     border-radius: 8px;
     /* height: auto; */
 }
 
-.modal input {
+.search-modal input {
     border: 1.5px solid darkgray;
     width: 35rem;
     border-radius: 0.25rem;
@@ -30,18 +30,18 @@
 }
 
 /* .suggestion-item:hover, */
-.active {
+.search-modal .active {
     background: #3B82F6;
     color: white;
     border-radius: 0.25rem;
     padding: 0.25rem;
 }
 
-.suggestion-list {
+.search-modal .suggestion-list {
     background: lightcyan;
 }
 
-.hidden-tab {
+.search-modal .hidden-tab {
     font-size: small;
     /* background: rgb(223, 223, 249); */
     color: white;
@@ -90,21 +90,3 @@
     font-size: small;
     color: white;
 }
-
-/* .scrollable-list {
-    max-height: 9.5rem;
-    scrollbar-width: auto;
-    overflow-y: scroll;
-} */
-
-/* Customize scrollbar */
-/* .scrollable-list::-webkit-scrollbar {
-    width: 8px;
-    display: block;
-    background: lightgray;
-} */
-
-/* .scrollable-list::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    background: gray;
-} */
