@@ -42,30 +42,17 @@ export default function AdvertisementAdmin() {
     }, user.token);
 
     await getAdsFromDB();
-  }
-
-  async function deleteExpiredAds() {
-    const adsFromDB = await getAds(user.token);
-    if (!adsFromDB.error) {
-      const currentDate = new Date();
-      const expiredAds = adsFromDB.responseData.filter(ad => {
-        if (ad.expireDate === undefined) return false;
-        return new Date(ad.expireDate) < currentDate;
-      });
-
-      for (const ad of expiredAds) {
-        await deleteAd(ad, user.token);
-      }
-    }
+    // createAd returns a value - what is it?
+    // how do we know if createAd() works or not?
+    // is there a field we can check?^
+    // 
+    // if createAd worked, how can we update the array without calling the backend again?
+    // 
   }
 
   useEffect(() => {
     getAdsFromDB();
 
-    const intervalId = setInterval(async () => {
-      await deleteExpiredAds();
-      await getAdsFromDB();
-    }, 20);
 
   }, []);
 
