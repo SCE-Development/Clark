@@ -26,7 +26,62 @@ export const allowedIf = {
   OFFICER_OR_ADMIN: 'OFFICER_OR_ADMIN',
 };
 
-export const officerSignedInRoutes = [
+export const notAuthenticatedRoutes = [
+  {
+    Component: Login,
+    path: '/login*',
+    pageName: 'Login',
+    allowedIf: allowedIf.UNAUTHENTICATED,
+    redirect: '/',
+    queryParams: {
+      redirect: 'redirect',
+    },
+  },
+  {
+    Component: ForgotPassword,
+    path: '/forgot',
+    pageName: 'Forgot Password',
+    allowedIf: allowedIf.UNAUTHENTICATED,
+    redirect: '/'
+  },
+  {
+    Component: MembershipApplication,
+    path: '/register',
+    pageName: 'Sign Up',
+    allowedIf: allowedIf.UNAUTHENTICATED,
+    redirect: '/'
+  },
+]
+
+const authenticatedRoutes = [
+  {
+    Component: Profile,
+    path: '/profile',
+    pageName: 'Profile',
+    allowedIf: allowedIf.AUTHENTICATED,
+    redirect: '/login'
+  },
+]
+
+export const memberRoutes = [
+  {
+    Component: Printing,
+    path: '/2DPrinting',
+    pageName: '2D Printing',
+    allowedIf: allowedIf.MEMBER,
+    redirect: '/login'
+  },
+  {
+    Component: Messaging,
+    path: '/messaging/:id?',
+    pageName: 'Messaging',
+    allowedIf: allowedIf.MEMBER,
+    redirect: '/login'
+  },
+  ...authenticatedRoutes,
+];
+
+export const officerOrAdminRoutes = [
   // new for Overview
   {
     Component: Overview,
@@ -84,14 +139,6 @@ export const officerSignedInRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
-  // {
-  //   Component: DessertAdminPage,
-  //   path: '/dessert-admin',
-  //   pageName: 'Dessert Admin',
-  //   allowedIf: allowedIf.OFFICER_OR_ADMIN,
-  //   redirect: '/',
-  //   inAdminNavbar: true
-  // },
   {
     Component: CardReader,
     path: '/card-reader',
@@ -100,62 +147,7 @@ export const officerSignedInRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
-];
-
-export const memberSignedInRoutes = [
-  {
-    Component: Printing,
-    path: '/2DPrinting',
-    pageName: '2D Printing',
-    allowedIf: allowedIf.MEMBER,
-    redirect: '/login'
-  },
-  {
-    Component: Login,
-    path: '/login*',
-    pageName: 'Login',
-    allowedIf: allowedIf.UNAUTHENTICATED,
-    redirect: '/',
-    queryParams: {
-      redirect: 'redirect',
-    },
-  },
-  {
-    Component: ForgotPassword,
-    path: '/forgot',
-    pageName: 'Forgot Password',
-    allowedIf: allowedIf.UNAUTHENTICATED,
-    redirect: '/'
-  },
-  {
-    Component: MembershipApplication,
-    path: '/register',
-    pageName: 'Sign Up',
-    allowedIf: allowedIf.UNAUTHENTICATED,
-    redirect: '/'
-  },
-  {
-    Component: Profile,
-    path: '/profile',
-    pageName: 'Profile',
-    allowedIf: allowedIf.AUTHENTICATED,
-    redirect: '/login'
-  },
-  {
-    Component: Messaging,
-    path: '/messaging/:id?',
-    pageName: 'Messaging',
-    allowedIf: allowedIf.MEMBER,
-    redirect: '/login'
-  },
-  // {
-  //   Component: DessertPage,
-  //   path: '/desserts',
-  //   pageName: 'Desserts View Page',
-  //   allowedIf: allowedIf.AUTHENTICATED,
-  //   redirect: '/',
-  //   inAdminNavbar: false
-  // },
+  ...memberRoutes,
 ];
 
 export const signedOutRoutes = [
@@ -190,4 +182,3 @@ export const signedOutRoutes = [
     pageName: 'Email Preferences'
   },
 ];
-
