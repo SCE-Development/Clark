@@ -8,13 +8,13 @@ import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 
 import { useUser } from './Components/context/UserContext';
 
-import { officerSignedInRoutes, memberSignedInRoutes, signedOutRoutes } from './RouteConfig.js';
+import { officerOrAdminRoutes, notAuthenticatedRoutes, signedOutRoutes } from './Routes.js';
 
 export default function Routing({ appProps }) {
   const { user, setUser } = useUser();
   const userIsAuthenticated = appProps.authenticated;
 
-  const signedInRoutes = [...officerSignedInRoutes, ...memberSignedInRoutes];
+  const signedInRoutes = [...officerOrAdminRoutes, ...notAuthenticatedRoutes];
 
   return (
     <div>
