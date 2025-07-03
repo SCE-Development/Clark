@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-// import style from './SearchModal.module.css';
+import './SearchModal.css';
 import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRoutes } from '../../Routes';
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
@@ -29,26 +29,26 @@ export default function SearchModal({ appProps }) {
     if (suggestions.length === 0) return <></>;
 
     return (
-          <ul className='suggestion-list'>
-            {suggestions.map((r, index) => (
-              <li
-                key={index}
-                className={`'suggestion-item' ${index === selectItem ? 'active' : ''}`}
-                onMouseEnter={() => setSelectItem(index)}
-                onClick={() => {
-                  window.location.href = r.path;
-                  setOpen(false);
-                }}
-              >
-                <span style={{ marginRight: '0.5rem' }}>
-                  {r.type === 'user' ? '👤' : '📄'}
-                </span>
-                {r.pageName}
-                <div className='hidden-tab'>{selectItem === index && `${window.location.origin}${r.path}`}</div>
-              </li>
-            )).slice(0, 5)}
-          </ul>
-    )
+      <ul className='suggestion-list'>
+        {suggestions.map((r, index) => (
+          <li
+            key={index}
+            className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
+            onMouseEnter={() => setSelectItem(index)}
+            onClick={() => {
+              window.location.href = r.path;
+              setOpen(false);
+            }}
+          >
+            <span style={{ marginRight: '0.5rem' }}>
+              {r.type === 'user' ? '👤' : '📄'}
+            </span>
+            {r.pageName}
+            <div className='hidden-tab'>{selectItem === index && `${window.location.origin}${r.path}`}</div>
+          </li>
+        )).slice(0, 5)}
+      </ul>
+    );
   }
 
   /**
@@ -76,8 +76,9 @@ export default function SearchModal({ appProps }) {
    * @dependencies selectItem, suggestions
    */
   const handleSearch = useCallback(() => {
-    const target = suggestions[selectItem];
+    if (suggestions.length === 0) return; // Check if suggestions is empty
 
+    const target = suggestions[selectItem];
     if (target && target.path) {
       window.location.href = target.path;
       setOpen(false);
@@ -123,7 +124,7 @@ export default function SearchModal({ appProps }) {
   if (!open) return null;
 
   return (
-    <div className='search-modal'>
+    <div className="search-modal">
       <div className='input-wrapper'>
         <input
           ref={inputRef}
@@ -132,28 +133,6 @@ export default function SearchModal({ appProps }) {
           onChange={handleChanges} />
 
         {getSuggestions()}
-
-        {/* {suggestions.length > 0 && (
-          <ul className={`${style['suggestion-list']}`}>
-            {suggestions.map((r, index) => (
-              <li
-                key={index}
-                className={`${style['suggestion-item']} ${index === selectItem ? style['active'] : ''}`}
-                onMouseEnter={() => setSelectItem(index)}
-                onClick={() => {
-                  window.location.href = r.path;
-                  setOpen(false);
-                }}
-              >
-                <span style={{ marginRight: '0.5rem' }}>
-                  {r.type === 'user' ? '👤' : '📄'}
-                </span>
-                {r.pageName}
-                <div className={style['hidden-tab']}>{selectItem === index && `${window.location.origin}${r.path}`}</div>
-              </li>
-            )).slice(0, 5)}
-          </ul>
-        )} */}
       </div>
       <div>
         {errorMsg && <p>{errorMsg}</p>}
