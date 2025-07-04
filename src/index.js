@@ -29,7 +29,7 @@ function App(props) {
     !isAuthenticating && (
       <UserContext.Provider value={{ user, setUser }}>
         <BrowserRouter>
-          <Routing appProps={{ authenticated, setAuthenticated, user }} />
+          <Routing appProps={{ authenticated, setAuthenticated }} />
         </BrowserRouter>
       </UserContext.Provider>
     )
