@@ -9,7 +9,7 @@ export default function SearchModal({ appProps }) {
   const inputRef = useRef(null);
   const modalRef = useRef(null);
   const [keyword, setKeyword] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState([...signedOutRoutes]);
   const [selectItem, setSelectItem] = useState(0);
   const { user } = useUser();
   const [errorMsg, setErrorMsg] = useState('');
@@ -28,7 +28,7 @@ export default function SearchModal({ appProps }) {
 
   /** This function clears search box and all suggestions */
   function clearSearchModal() {
-    setSuggestions([]);
+    setSuggestions([...signedOutRoutes]);
     setKeyword('');
   }
 
@@ -38,6 +38,7 @@ export default function SearchModal({ appProps }) {
     const topFiveItems = suggestions.slice(0, 5);
     return (
       <ul className='suggestion-list'>
+        <p className='suggestion-item italic dark:text-gray-300'>Get Started</p>
         {topFiveItems.map((r, index) => ( // Still keep index to keep track of the selected item
           <li
             key={r.path} // Use r.path as key
@@ -51,8 +52,12 @@ export default function SearchModal({ appProps }) {
             <span style={{ marginRight: '0.5rem' }}>
               {r.type === 'user' ? '👤' : '📄'}
             </span>
-            {r.pageName}
-            <div className='hidden-tab'>{selectItem === index && `${window.location.origin}${r.path}`}</div>
+            <div className='text-wrapper'>
+              {r.pageName}
+              <div className='hidden-tab'>
+                {selectItem === index && `${window.location.origin}${r.path}`}
+              </div>
+            </div>
           </li>
         ))}
       </ul>
@@ -68,7 +73,7 @@ export default function SearchModal({ appProps }) {
 
     // Return if keyword is blank
     if (!keyword) {
-      setSuggestions([]);
+      setSuggestions([...signedOutRoutes]);
       return;
     }
 
@@ -163,7 +168,7 @@ export default function SearchModal({ appProps }) {
         <div className='input-wrapper'>
           <input
             ref={inputRef}
-            placeholder="Search here"
+            placeholder="Search here... (Ctrl + k)"
             value={keyword}
             onChange={handleChanges} />
 

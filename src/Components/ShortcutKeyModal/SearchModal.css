@@ -25,11 +25,10 @@
     width: 35rem;
     border-radius: 0.25rem;
     padding: 0.75rem;
-    height: 2.25rem;
-    font-size: 1rem;
+    height: 2.5rem;
+    font-size: 1.2rem;
 }
 
-/* .suggestion-item:hover, */
 .shortcut-search-modal .active {
     background: #3B82F6;
     color: white;
@@ -39,54 +38,28 @@
 
 .shortcut-search-modal .suggestion-list {
     background: lightcyan;
+    font-size: 1.2rem;
+}
+
+.shortcut-search-modal .suggestion-item {
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
 }
 
 .shortcut-search-modal .hidden-tab {
-    font-size: small;
-    /* background: rgb(223, 223, 249); */
+    font-size: medium;
     color: white;
 }
-.modal {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    /* semi-transparent dark overlay */
-    backdrop-filter: blur(4px);
-    /* blurred background */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 33vh;
-    z-index: 9999;
-}
 
-.input-wrapper {
-    padding: 8px;
-    background: white;
-    border-radius: 8px;
-}
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .shortcut-search-modal .active {
+        background: lightslategray;
+    }
 
-.modal input {
-    border: 1px solid darkgray;
-    width: 35rem;
-    border-radius: 4px;
-    padding: 1.5px;
-}
-
-/* .suggestion-item:hover, */
-.active {
-    background: #3B82F6;
-    color: white;
-    border-radius: 0.25rem;
-    padding: 0.25rem;
-}
-
-.suggestion-list {
-    background: lightcyan;
-}
-
-.hidden-tab {
-    font-size: small;
-    color: white;
+    .shortcut-search-modal .input-wrapper,
+    .shortcut-search-modal .suggestion-list {
+        background-color: #1e293b;
+    }
 }
