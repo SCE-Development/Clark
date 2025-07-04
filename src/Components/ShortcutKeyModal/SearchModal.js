@@ -30,9 +30,9 @@ export default function SearchModal({ appProps }) {
 
     return (
       <ul className='suggestion-list'>
-        {suggestions.map((r, index) => (
+        {suggestions.map((r) => (
           <li
-            key={index}
+            key={r.path}
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
             onMouseEnter={() => setSelectItem(index)}
             onClick={() => {
