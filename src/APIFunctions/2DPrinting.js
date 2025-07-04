@@ -23,18 +23,7 @@ export async function healthCheck() {
   const url = new URL('/api/Printer/healthCheck', BASE_API_URL);
   try {
     const res = await fetch(url.href);
-    if (res.ok) {
-      const contentType = res.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        status.responseData = await res.json();
-      } else {
-        const textResponse = await res.text();
-        status.responseData = { message: textResponse };
-      }
-      status.error = false;
-    } else {
-      status.error = true;
-    }
+    status.error = !res.ok;
   } catch (err) {
     status.responseData = err;
     status.error = true;
