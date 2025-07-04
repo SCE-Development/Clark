@@ -3,9 +3,15 @@ import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js'
 import { useState, useEffect } from 'react';
 import { useUser } from '../../Components/context/UserContext';
 
+   // createAd returns a value - what is it?
+    // how do we know if createAd() works or not?
+    // is there a field we can check?^
+    
+    // if createAd worked, how can we update the array without calling the backend again?
+    
 export default function AdvertisementAdmin() {
   const { user } = useUser();
-
+  const [errorMesssage, setErrorMessage] = useState('');
   const [ads, setAds] = useState([]);
   const [message, setMessage] = useState('');
   const [expireDate, setExpireDate] = useState();
@@ -21,36 +27,52 @@ export default function AdvertisementAdmin() {
     if(expireDate === null){
       setExpireDate(undefined);
     }
-
+    // expireDate is a string so we need to turn into date object
+  
+    if(isExpired(expireDate)){
+      setErrorMessage("Date is in the past or the present, unable to create ad!!!");
+      return;
+    }else{
+      setErrorMessage("");
+    }
     await createAd({
       message,
       expireDate,
     }, user.token);
 
     await getAdsFromDB();
+    
   }
 
-  async function deleteExpiredAds() {
-    const adsFromDB = await getAds(user.token);
-    if (!adsFromDB.error) {
-      const currentDate = new Date();
-      
-      const expiredAds = adsFromDB.responseData.filter(ad => {
-        if (ad.expireDate === undefined) return false;
-        return new Date(ad.expireDate) < currentDate;
-      });
+  function isExpired(expireDate){
+    const currDate = new Date();
+    console.log("current date" + currDate);
+    const expireDateObject = new Date(expireDate);
+    return expireDateObject < currDate;
+  }
 
-      for (const ad of expiredAds) {
-        await deleteAd(ad, user.token);
-      }
+  async function deleteExpiredAds(){ // called every 10 secs
+    console.log("calling expired");
+    const expiredAds = ads.filter(ad => {
+      console.log("made it here");
+      console.log("is " + ad.expireDate + " expired ?? " + (isExpired(ad.expireDate)));
+      return (isExpired(ad.expireDate));
+    })
+    for (const ad of expiredAds) { // delete the expired ads?help doesn't work
+      await deleteAd(ad, user.token); // chat told me use await
     }
+    await getAdsFromDB();  // bruh
   }
 
   useEffect(() => {
     getAdsFromDB();
+    deleteExpiredAds();
 
-
-
+    // help from web examples for interval https://devtrium.com/posts/set-interval-react
+    const interval = setInterval(() => {
+      deleteExpiredAds();
+    },10000); // check for expired ads every minute
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -58,6 +80,7 @@ export default function AdvertisementAdmin() {
       <h1 className="text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
         Welcome to the Advertisement Admin Page!!
       </h1>
+      <h2 style={{fontWeight: 'bold', color: 'red'}} >{errorMesssage}</h2>
       <div className="relative overflow-x-auto">
         <div className='py-6'>
           <label className="w-full form-control">
@@ -109,7 +132,7 @@ export default function AdvertisementAdmin() {
                 Advertisement Message
               </th>
               <th scope="col" className="px-6 py-3">
-                Expiriation Date
+                Expiration Date
               </th>
               <th scope="col" className="px-6 py-3">
                 Delete
