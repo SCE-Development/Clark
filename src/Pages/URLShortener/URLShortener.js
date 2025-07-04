@@ -69,10 +69,8 @@ export default function URLShortenerPage(props) {
       }
       if (allUrls.length >= rowsPerPage){
         allUrls.pop();
-        allUrls.unshift(response.responseData);
-      } else {
-        allUrls.unshift(response.responseData);
       }
+      allUrls.unshift(response.responseData);
       setAliasTaken(false);
       setUrl('');
       setAlias('');
