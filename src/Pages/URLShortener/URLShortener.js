@@ -64,9 +64,7 @@ export default function URLShortenerPage(props) {
       props.user.token
     );
     if (!response.error) {
-      if (page != 0){
-        setPage(0);
-      }
+      setPage(0);
       if (allUrls.length >= rowsPerPage){
         allUrls.pop();
       }
