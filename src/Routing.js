@@ -30,7 +30,7 @@ import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences';
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail';
 import Messaging from './Pages/Messaging/Messaging.js';
 
-import CardReader from './Pages/CardReader/CardReader.js';
+import CardReaderAdminPage from './Pages/CardReader/CardReaderAdmin.js';
 
 import { useUser } from './Components/context/UserContext';
 
@@ -137,7 +137,7 @@ export default function Routing({ appProps }) {
       inAdminNavbar: true
     },
     {
-      Component: CardReader,
+      Component: CardReaderAdminPage,
       path: '/card-reader',
       allowedIf: userIsOfficerOrAdmin,
       redirect: '/',

@@ -181,26 +181,24 @@ router.get('/delete', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  if (!await decodeTokenFromBodyOrQuery(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    
+    res.write(`data: Connected to server\n\n`);
 
-  const headers = {
-    'Content-Type': 'text/event-stream',
-    'Connection': 'keep-alive',
-    'Cache-Control': 'no-cache',
-    'X-Accel-Buffering': 'no'
-  };
+    let counter = 0;
+    const intervalId = setInterval(() => {
+        counter++;
 
-  res.writeHead(OK, headers);
+        res.write(`data: Message ${counter}\n\n`);
+    }, 2000);
 
-  const newClient = { res };
-  clients.push(newClient);
 
-  req.on('close', () => {
-    clients = clients.filter(c => c !== newClient);
-    res.end();
-  });
-});
+    req.on('close', () => {
+        clearInterval(intervalId);
+        res.end();
+    });
+})
 
 module.exports = router;
