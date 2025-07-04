@@ -1,4 +1,4 @@
-.search-modal {
+.shortcut-search-modal {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -13,14 +13,14 @@
     z-index: 9999;
 }
 
-.search-modal .input-wrapper {
+.shortcut-search-modal .input-wrapper {
     padding: 8px;
     background: white;
     border-radius: 8px;
     /* height: auto; */
 }
 
-.search-modal input {
+.shortcut-search-modal input {
     border: 1.5px solid darkgray;
     width: 35rem;
     border-radius: 0.25rem;
@@ -30,18 +30,18 @@
 }
 
 /* .suggestion-item:hover, */
-.search-modal .active {
+.shortcut-search-modal .active {
     background: #3B82F6;
     color: white;
     border-radius: 0.25rem;
     padding: 0.25rem;
 }
 
-.search-modal .suggestion-list {
+.shortcut-search-modal .suggestion-list {
     background: lightcyan;
 }
 
-.search-modal .hidden-tab {
+.shortcut-search-modal .hidden-tab {
     font-size: small;
     /* background: rgb(223, 223, 249); */
     color: white;

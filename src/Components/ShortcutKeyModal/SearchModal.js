@@ -124,7 +124,7 @@ export default function SearchModal({ appProps }) {
   if (!open) return null;
 
   return (
-    <div className="search-modal">
+    <div className='shortcut-search-modal'>
       <div className='input-wrapper'>
         <input
           ref={inputRef}
