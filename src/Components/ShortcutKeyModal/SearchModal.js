@@ -28,11 +28,12 @@ export default function SearchModal({ appProps }) {
   function getSuggestions() {
     if (suggestions.length === 0) return <></>;
 
+    const topFiveItems = suggestions.slice(0, 5);
     return (
       <ul className='suggestion-list'>
-        {suggestions.map((r) => (
+        {topFiveItems.map((r, index) => ( // Still keep index to keep track of the selected item
           <li
-            key={r.path}
+            key={r.path} // Use r.path as key
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
             onMouseEnter={() => setSelectItem(index)}
             onClick={() => {
@@ -46,7 +47,7 @@ export default function SearchModal({ appProps }) {
             {r.pageName}
             <div className='hidden-tab'>{selectItem === index && `${window.location.origin}${r.path}`}</div>
           </li>
-        )).slice(0, 5)}
+        ))}
       </ul>
     );
   }
