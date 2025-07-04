@@ -50,29 +50,9 @@ export default function AdvertisementAdmin() {
     const expireDateObject = new Date(expireDate);
     return expireDateObject < currDate;
   }
-
-  async function deleteExpiredAds(){ // called every 10 secs
-    console.log("calling expired");
-    const expiredAds = ads.filter(ad => {
-      console.log("made it here");
-      console.log("is " + ad.expireDate + " expired ?? " + (isExpired(ad.expireDate)));
-      return (isExpired(ad.expireDate));
-    })
-    for (const ad of expiredAds) { // delete the expired ads?help doesn't work
-      await deleteAd(ad, user.token); // chat told me use await
-    }
-    await getAdsFromDB();  // bruh
-  }
-
+  
   useEffect(() => {
     getAdsFromDB();
-    deleteExpiredAds();
-
-    // help from web examples for interval https://devtrium.com/posts/set-interval-react
-    const interval = setInterval(() => {
-      deleteExpiredAds();
-    },10000); // check for expired ads every minute
-    return () => clearInterval(interval);
   }, []);
 
   return (
