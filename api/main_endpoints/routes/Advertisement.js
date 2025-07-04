@@ -46,12 +46,18 @@ router.post('/createAdvertisement', async (req, res) => {
   if (!user) {
     return res.sendStatus(UNAUTHORIZED);
   }
+  const now = new Date();
+  const expireInOneMinute = new Date(now.getTime() + 60 * 1000);
 
   const newAd = new Advertisement({
     message: req.body.message,
-    expireDate: req.body.expireDate
+    expireDate: expireInOneMinute, // testing and it doesn't work
+    expireAt: expireInOneMinute
+    // message: req.body.message,
+    // expireDate: req.body.expireDate,
+    // expireAt: req.body.expireDate
+
   });
-      console.log("expire date " + expireDate);
 
   try {
     const createdAd = await Advertisement.create(newAd);
