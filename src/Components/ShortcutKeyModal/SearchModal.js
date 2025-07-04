@@ -7,6 +7,7 @@ import { useUser } from '../context/UserContext';
 export default function SearchModal({ appProps }) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
+  const modalRef = useRef(null);
   const [keyword, setKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectItem, setSelectItem] = useState(0);
@@ -23,6 +24,12 @@ export default function SearchModal({ appProps }) {
   function handleChanges(e) {
     setKeyword(e.target.value);
     setSelectItem(0);
+  }
+
+  /** This function clears search box and all suggestions */
+  function clearSearchModal() {
+    setSuggestions([]);
+    setKeyword('');
   }
 
   function getSuggestions() {
@@ -83,6 +90,7 @@ export default function SearchModal({ appProps }) {
     if (target && target.path) {
       window.location.href = target.path;
       setOpen(false);
+      clearSearchModal();
     }
   }, [suggestions, selectItem]);
 
@@ -95,8 +103,12 @@ export default function SearchModal({ appProps }) {
       if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'k')) {
         e.preventDefault();
         setOpen(prev => !prev);
+        if (!open) {
+          clearSearchModal();
+        }
       } else if (e.key === 'Escape') {
         setOpen(false);
+        clearSearchModal();
       } else if (e.key === 'Enter' && open) {
         e.preventDefault();
         handleSearch();
@@ -122,21 +134,44 @@ export default function SearchModal({ appProps }) {
     }
   }, [open]);
 
+  /**
+   * Listens for mouse input and closes the search modal when the user clicks outside the modal content.
+   * @dependencies open
+   */
+  useEffect(() => {
+    function clickOut(e) {
+      if (modalRef.current && !modalRef.current?.contains(e.target)) {
+        setOpen(false);
+        clearSearchModal();
+      }
+    }
+
+    if (open) {
+      window.addEventListener('mousedown', clickOut);
+    }
+
+    return () => {
+      window.removeEventListener('mousedown', clickOut);
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return (
     <div className='shortcut-search-modal'>
-      <div className='input-wrapper'>
-        <input
-          ref={inputRef}
-          placeholder="Search here"
-          value={keyword}
-          onChange={handleChanges} />
+      <div ref={modalRef}>
+        <div className='input-wrapper'>
+          <input
+            ref={inputRef}
+            placeholder="Search here"
+            value={keyword}
+            onChange={handleChanges} />
 
-        {getSuggestions()}
-      </div>
-      <div>
-        {errorMsg && <p>{errorMsg}</p>}
+          {getSuggestions()}
+        </div>
+        <div>
+          {errorMsg && <p>{errorMsg}</p>}
+        </div>
       </div>
     </div>
   );
