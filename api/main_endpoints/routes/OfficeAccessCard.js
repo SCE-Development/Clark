@@ -97,6 +97,7 @@ const defaultResponse = {
   cardWasAdded: false,
   message: 'Card authorized!',
   endpoint: '/verify',
+  requestType: 'HTTP GET',
 };
 
 const writeLogToClient = ({ statusCode, ...rest }) => {
@@ -147,7 +148,7 @@ router.get('/verify', async (req, res) =>{
     if (add) {
       logger.info('adding a new card');
       await new OfficeAccessCard({
-        cardBytes
+        cardBytes,
       }).save();
       writeLogToClient({ statusCode: OK, message: 'Card added!', endpoint: '/verify?add=1' });
       return res.sendStatus(OK);
@@ -173,7 +174,8 @@ router.post('/delete', async (req, res) => {
     writeLogToClient({
       statusCode: BAD_REQUEST,
       endpoint: '/delete',
-      message: 'cardBytes missing from request'
+      message: 'cardBytes missing from request',
+      requestType: 'HTTP POST',
     });
     return res.sendStatus(BAD_REQUEST);
   }
@@ -184,6 +186,7 @@ router.post('/delete', async (req, res) => {
       statusCode: NOT_FOUND,
       endpoint: '/delete',
       message: 'Card does not exist',
+      requestType: 'HTTP POST',
     });
     return res.sendStatus(NOT_FOUND);
   }
@@ -194,12 +197,18 @@ router.post('/delete', async (req, res) => {
     writeLogToClient({
       statusCode: SERVER_ERROR,
       endpoint: '/delete',
-      message: 'Error deleting card'
+      message: 'Error deleting card',
+      requestType: 'HTTP POST',
     });
     return res.sendStatus(SERVER_ERROR);
   }
   logger.info('Successfully deleted card');
-  writeLogToClient({ statusCode: OK, endpoint: '/delete', message: 'Card deleted!' });
+  writeLogToClient({
+    statusCode: OK,
+    endpoint: '/delete',
+    message: 'Card deleted!',
+    requestType: 'HTTP POST',
+  });
   return res.sendStatus(OK);
 });
 

@@ -6,6 +6,7 @@ import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
   'TIMESTAMP'.padEnd(30),
+  'TYPE'.padEnd(12),
   'ENDPOINT'.padEnd(20),
   'STATUS CODE'.padEnd(15),
   'MESSAGE\n'
@@ -24,10 +25,11 @@ export default function CardReader(props) {
   const [connectionStatusText, setConnectionStatusText] = useState('');
 
   function buildLog(data) {
-    let date = new Date().toISOString().padEnd(30, ' ');
-    let endpoint = data.endpoint.padEnd(20, ' ');
-    let statusCode = String(data.statusCode).padEnd(15, ' ');
-    return [date, endpoint, statusCode, data.message].join('');
+    let date = new Date().toISOString().padEnd(30);
+    let endpoint = data.endpoint.padEnd(20);
+    let statusCode = String(data.statusCode).padEnd(15);
+    let requestType = data.requestType.padEnd(12)
+    return [date, requestType, endpoint, statusCode, data.message].join('');
   }
 
   async function getAllCards() {
@@ -55,22 +57,22 @@ export default function CardReader(props) {
     return (
       <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
         <td className='hidden md:table-cell '>
-          <div className='flex items-center justify-center text-base text-white'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.cardBytes}
           </div>
         </td>
         <td className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-white'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.createdAt}
           </div>
         </td>
         <td className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-white'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.lastVerified}
           </div>
         </td>
         <td className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-white'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.verifiedCount}
           </div>
         </td>
@@ -111,7 +113,7 @@ export default function CardReader(props) {
       }
     };
 
-    eventSource.onerror = () => {
+    eventSource.onerror = (error) => {
       setLogs(
         (currLogs) => [
           '...crickets...',
@@ -181,10 +183,10 @@ export default function CardReader(props) {
     }
     return (
       <div>
-        <h3 className='flex items-center justify-center text-lg pt-4 text-white text-base'>
+        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
           {connectionStatusText}
         </h3>
-        <pre className='m-4'>
+        <pre className='m-4 text-gray-700 dark:text-white'>
           {header}
           {logs.join('\n')}
         </pre>
@@ -194,9 +196,9 @@ export default function CardReader(props) {
 
   return (
     <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
-      <h1 className='flex items-center justify-center text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
-      <pre className='flex items-center justify-center text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
-      <div className='flex flex-row items-center justify-center text-white text-xl font-bold pt-4'>
+      <h1 className='flex items-center justify-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
+      <pre className='flex items-center justify-center text-gray-700 dark:text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
+      <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
           className={`p-2 hover:bg-gray-600 rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
           onClick={() => handleTabChange('registry')}
