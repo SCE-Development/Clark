@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BASE_API_URL } from '../../Enums';
+import { useUser } from '../../Components/context/UserContext';
 import { getCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
 import { trashcanSymbol } from '../Overview/SVG';
@@ -12,7 +13,9 @@ const header = [
   'MESSAGE\n'
 ].join('');
 
-export default function CardReader(props) {
+export default function CardReader() {
+  const { user } = useUser();
+  const token = user.token;
   const [logs, setLogs] = useState([]);
   const [cards, setCards] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
@@ -28,12 +31,12 @@ export default function CardReader(props) {
     let date = new Date().toISOString().padEnd(30);
     let endpoint = data.endpoint.padEnd(20);
     let statusCode = String(data.statusCode).padEnd(15);
-    let requestType = data.requestType.padEnd(12)
+    let requestType = data.requestType.padEnd(12);
     return [date, requestType, endpoint, statusCode, data.message].join('');
   }
 
   async function getAllCards() {
-    const cardsFromDb = await getCardsFromDb(props.user.token);
+    const cardsFromDb = await getCardsFromDb(token);
     if (!cardsFromDb.error) {
       setCards(cardsFromDb.responseData);
     }
@@ -91,7 +94,7 @@ export default function CardReader(props) {
   useEffect(() => {
     getAllCards();
     const url = new URL('/api/OfficeAccessCard/listen', BASE_API_URL);
-    url.searchParams.append('token', props.user.token);
+    url.searchParams.append('token', token);
     const eventSource = new EventSource(url.href);
     eventSource.onmessage = (event) => {
       try {
@@ -148,7 +151,7 @@ export default function CardReader(props) {
             cancelText: 'No, keep the card',
             confirmClassAddons: 'bg-red-600 hover:bg-red-500',
             handleConfirmation: async () => {
-              await deleteCardFromDb(props.user.token, cardToDelete.cardBytes);
+              await deleteCardFromDb(token, cardToDelete.cardBytes);
               await getAllCards();
               setToggleDelete(!toggleDelete);
             },
