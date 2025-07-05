@@ -64,11 +64,12 @@ export default function URLShortenerPage(props) {
       props.user.token
     );
     if (!response.error) {
-      setPage(0);
-      if (allUrls.length >= rowsPerPage){
-        allUrls.pop();
+      if (page === 0){
+        if (allUrls.length >= rowsPerPage){
+          allUrls.pop();
+        }
+        allUrls.unshift(response.responseData);
       }
-      allUrls.unshift(response.responseData);
       setAliasTaken(false);
       setUrl('');
       setAlias('');
