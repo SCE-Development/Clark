@@ -151,7 +151,7 @@ export const officerOrAdminRoutes = [
   {
     Component: AuditLogsPage,
     path: '/audit-logs',
-    allowedIf: userIsOfficerOrAdmin,
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
   },
