@@ -6,7 +6,7 @@ const AuditLogSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'User', // references 'User' collections based on the userId
       required: true,
     },
     action: {

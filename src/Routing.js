@@ -32,6 +32,8 @@ import Messaging from './Pages/Messaging/Messaging.js';
 
 import CardReader from './Pages/CardReader/CardReader.js';
 
+import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
+
 import { useUser } from './Components/context/UserContext';
 
 export default function Routing({ appProps }) {
@@ -143,6 +145,13 @@ export default function Routing({ appProps }) {
       redirect: '/',
       inAdminNavbar: true
     },
+    {
+      Component: AuditLogsPage,
+      path: '/audit-logs',
+      allowedIf: userIsOfficerOrAdmin,
+      redirect: '/',
+      inAdminNavbar: true
+    }
   ];
   const signedOutRoutes = [
     { Component: Home, path: '/' },
