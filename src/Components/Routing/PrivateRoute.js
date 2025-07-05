@@ -21,9 +21,6 @@ export default function PrivateRoute({
 
   const isAllowed = PERMISSION_LOOKUP_TABLE[appProps.allowed] ?? false;
 
-  // Check permission before granting access
-  const isAllowed = checkPermission(appProps.user, appProps.allowed, appProps.authenticated);
-
   return (
     <Route
       {...params}
