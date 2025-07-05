@@ -1,6 +1,8 @@
 import React from 'react';
+import { useUser } from '../context/UserContext';
 
 export default function UserNavBar(props) {
+  const { user } = useUser();
   const getLinkClassName = (path) => {
     const weAreAtGivenPath = path === window.location.pathname;
     let className = 'flex items-center p-2 text-gray-900 rounded-lg dark:text-white';
@@ -30,7 +32,7 @@ export default function UserNavBar(props) {
     },
     {
       title: 'Edit Profile',
-      route: `/user/edit/${props.user._id}`,
+      route: `/user/edit/${user._id}`,
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
@@ -134,7 +136,7 @@ export default function UserNavBar(props) {
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
         <div className="menu p-4 w-60 min-h-full bg-base-200 text-base-content">
-          Signed in as {props.user.email}
+          Signed in as {user.email}
           <ul className="menu min-h-full bg-base-200 text-base-content">
             {renderRoutesForNavbar(topNavbarLinks)}
           </ul>
