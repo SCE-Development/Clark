@@ -32,6 +32,9 @@ const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
 
+const AuditLogActions = require('../util/auditLogActions.js');
+const AuditLog = require('../models/AuditLog.js');
+
 // Delete a member
 router.post('/delete', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -235,6 +238,20 @@ router.post('/edit', async (req, res) => {
         .status(NOT_FOUND)
         .send({ message: `${query.email} not found.` });
     }
+
+    const sanitizedUser = {...user}; // shallow copy of the user; doesn't affect original
+
+    if ('password' in sanitizedUser) {
+      sanitizedUser.password = true;
+    }
+
+    AuditLog.create({
+      userId: decoded._id, // the user making the update
+      action: AuditLogActions.UPDATE_USER,
+      documentId: user._id, // the user affected by the update
+      details: {updatedInfo: sanitizedUser}
+    }).catch(logger.error);
+
     return res.status(OK).send({
       message: `${query.email} was updated.`,
       membershipValidUntil: user.membershipValidUntil
