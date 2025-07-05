@@ -62,7 +62,6 @@ export default function URLShortenerPage() {
 
   async function handleCreateUrl() {
     const expiresAt = expDateTime ? new Date(expDateTime).toISOString() : null;
-    // const expiresAt = expDateTime ? new Date(expDateTime).toISOString().split('.')[0].replace('T', ' ') + '.000000' : null;
     const response = await createUrl(
       url.trim(),
       alias.trim(),
@@ -346,7 +345,7 @@ export default function URLShortenerPage() {
             // the page we are on to zero if the current page
             // we are on isn't the first page (value of 0).
             // by doing this, the useEffect will call the backend
-            // // for us with the correct page and query.
+            // for us with the correct page and query.
             if (page) {
               setPage(0);
             } else {
