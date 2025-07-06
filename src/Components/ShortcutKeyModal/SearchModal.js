@@ -16,7 +16,7 @@ export default function SearchModal({ appProps }) {
 
   /**
    * Returns the appropriate routes array based on the user's access level.
-   * @dependencies user.acccessLevel, users
+   * @dependencies user.accessLevel, appProps.authenticated
    */
   const routes = useMemo(() => {
     if (user.accessLevel === membershipState.MEMBER)
@@ -35,7 +35,7 @@ export default function SearchModal({ appProps }) {
         ...signedOutRoutes
       ];
     return [...signedOutRoutes];
-  }, [user.accessLevel]);
+  }, [user.accessLevel, appProps.authenticated]);
 
   /**
    * Helper function updates the keyword when the user types
