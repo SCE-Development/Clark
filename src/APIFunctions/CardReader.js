@@ -1,13 +1,31 @@
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 
-export async function getCardsFromDb(token) {
+export async function getAllCardsFromDb({
+  token,
+  query = null,
+  page = null,
+  sortColumn = null,
+  sortOrder = null,
+}) {
   let status = new ApiResponse();
   try {
     const url = new URL('/api/OfficeAccessCard/getAllCards', BASE_API_URL);
+    if (sortColumn) {
+      url.searchParams.set('sort', sortColumn);
+    }
+    if (sortOrder) {
+      url.searchParams.set('order', sortOrder);
+    }
     const res = await fetch(url.href, {
+      method: 'POST',
+      body: JSON.stringify({
+        query,
+        page,
+      }),
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
       }
     });
     if (res.ok) {
@@ -45,4 +63,5 @@ export async function deleteCardFromDb(token, cardBytes) {
     status.error = true;
     status.responseData = err;
   }
+  return status;
 }
