@@ -14,10 +14,26 @@ export default function SearchModal({ appProps }) {
   const { user } = useUser();
   const [errorMsg, setErrorMsg] = useState('');
 
+  /**
+   * Returns the appropriate routes array based on the user's access level.
+   * @dependencies user.acccessLevel, users
+   */
   const routes = useMemo(() => {
-    if (user.accessLevel === membershipState.MEMBER) return [...memberRoutes, ...signedOutRoutes];
-    if (user.accessLevel >= membershipState.OFFICER) return [...officerOrAdminRoutes, ...signedOutRoutes];
-    if (!appProps.authenticated) return [...notAuthenticatedRoutes, ...signedOutRoutes];
+    if (user.accessLevel === membershipState.MEMBER)
+      return [
+        ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
+        ...signedOutRoutes
+      ];
+    if (user.accessLevel >= membershipState.OFFICER)
+      return [
+        ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
+        ...signedOutRoutes
+      ];
+    if (!appProps.authenticated)
+      return [
+        ...notAuthenticatedRoutes,
+        ...signedOutRoutes
+      ];
     return [...signedOutRoutes];
   }, [user.accessLevel]);
 
@@ -42,7 +58,6 @@ export default function SearchModal({ appProps }) {
     const topFiveItems = suggestions.slice(0, 5);
     return (
       <ul className='suggestion-list'>
-        <p className='suggestion-item italic dark:text-gray-300'>Get Started</p>
         {topFiveItems.map((r, index) => ( // Still keep index to keep track of the selected item
           <li
             key={r.path} // Use r.path as key
