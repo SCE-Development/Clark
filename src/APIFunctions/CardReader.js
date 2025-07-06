@@ -8,6 +8,12 @@ export async function getAllCardsFromDb({
   let status = new ApiResponse();
   try {
     const url = new URL('/api/OfficeAccessCard/getAllCards', BASE_API_URL);
+    if (sortColumn) {
+      url.searchParams.set('sort', sortColumn);
+    }
+    if (sortOrder) {
+      url.searchParams.set('order', sortOrder);
+    }
     const res = await fetch(url.href, {
       method: 'POST',
       body: JSON.stringify({
