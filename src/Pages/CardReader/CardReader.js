@@ -67,6 +67,31 @@ export default function CardReader() {
     setCardToDelete(card);
   }
 
+  function handleSortCards(columnName) {
+    if (columnName === null) {
+      return;
+    }
+    if (currentSortColumn === columnName) {
+      if (currentSortOrder === 'asc') {
+        setCurrentSortOrder('desc');
+      } else if (currentSortOrder === 'desc') {
+        setCurrentSortOrder('none');
+      } else {
+        setCurrentSortOrder('asc');
+      }
+    } else {
+      setCurrentSortColumn(columnName);
+      setCurrentSortOrder('asc');
+    }
+  }
+
+  function handleArrowVisibility(sortOrder, columnName) {
+    if (currentSortOrder === sortOrder && currentSortColumn === columnName) {
+      return '';
+    }
+    return 'hidden';
+  }
+
   function CardEntry({ card }) {
     return (
       <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
@@ -237,7 +262,13 @@ export default function CardReader() {
                   ].map(({ title }) => (
                     <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
                       <div className='flex items-center justify-center'>
-                        {title}
+                        <button onClick={() => handleSortCards(columnName)}>{title}</button>
+                        <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('asc', columnName)}`}>
+                          <path strokeLinecap='round' strokeLinejoin='round' d='M12 19.5V4.5m0 0l-6 6m6-6l6 6' />
+                        </svg>
+                        <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('desc', columnName)}`}>
+                          <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m0 0l6-6m-6 6l-6-6' />
+                        </svg>
                       </div>
                     </th>
                   ))}
