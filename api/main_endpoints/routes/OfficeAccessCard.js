@@ -74,29 +74,6 @@ function deleteCard(cardBytes) {
   });
 }
 
-function getAllCards() {
-  return new Promise((resolve) => {
-    try {
-      OfficeAccessCard.find(
-        {}
-        , (error, result) => {
-          if (error) {
-            logger.error('getAllCards got an error querying mongodb', error);
-            return resolve([]);
-          }
-          if (!result) {
-            logger.info('Could not retrieve any cards from mongodb'); // double check that this is a correct message
-          }
-          return resolve(result);
-        }
-      );
-    } catch (error) {
-      logger.error('getAllCards caught an error: ', error);
-      return resolve(null);
-    }
-  });
-}
-
 let clients = [];
 
 const defaultGetResponse = {
@@ -245,16 +222,48 @@ router.post('/getAllCards', async (req, res) => {
   }
 });
 
-router.get('/getAllCards', async (req, res) => {
-  if (!await decodeToken(req)) {
+router.post('/getAllCards', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const getCards = await getAllCards();
-  if (getCards) {
-    return res.json(getCards).status(OK);
+  let maybeOr = {};
+  if (req.body.query) {
+    maybeOr = {
+      $or: ['cardBytes'].map(field => ({
+        [field]: {
+          $regex: RegExp(req.body.query, 'i'),
+        }
+      }))
+    };
   }
-  return res.sendStatus(SERVER_ERROR);
+
+  const sortColumn = req.query.sort || 'registrationDate';
+  const orderToInteger = {
+    desc: -1,
+    asc: 1,
+    default: -1,
+  };
+  const sortOrder = orderToInteger[req.query.order] || orderToInteger.default;
+
+  let skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
+
+  try {
+    const total = await OfficeAccessCard.count(maybeOr);
+    const items = await OfficeAccessCard.find(maybeOr, {}, { skip, limit: ROWS_PER_PAGE })
+      .sort({ [sortColumn] : sortOrder });
+
+    return res.status(OK).send({
+      items,
+      total,
+      rowsPerPage: ROWS_PER_PAGE,
+    });
+  } catch (error) {
+    logger.error('Error fetching cards: ', error);
+    return res.sendStatus(SERVER_ERROR);
+  }
 });
 
 router.get('/listen', async (req, res) => {
