@@ -2,14 +2,13 @@ import { getActionDescription } from '../utils/getActionDescription';
 import { formatDetails } from '../utils/formatDetails';
 import { formatTimestamp } from '../utils/formatTimestamp';
 
-const AuditLogCard = ({ log, index }) => {
+const AuditLogCard = ({ log }) => {
   const hasDetails = log => {
     return log.details && Object.keys(log.details).length > 0;
   };
 
   return (
     <div
-      key={log._id || index}
       className='p-6 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md bg-gray-800 border border-gray-700 hover:bg-gray-750'
     >
       <div className='flex items-start justify-between'>
