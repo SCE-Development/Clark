@@ -73,6 +73,9 @@ const UserSchema = new Schema(
     apiKey: {
       type: String,
       default: ''
+    },
+    backgroundColor: {
+      type: String,
     }
   },
   { collection: 'User' }

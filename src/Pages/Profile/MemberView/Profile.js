@@ -1,25 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { getUserById } from '../../../APIFunctions/User';
+import { getUserById, editUser } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
 import { useSCE } from '../../../Components/context/SceContext';
+import { useBackgroundColor } from '../../../Components/context/BackgroundColorContext';
 
 export default function Profile() {
+  const defaultColor = '#2a323c';
   const { user } = useSCE();
+  const { setBackgroundColorVersion } = useBackgroundColor() || {};
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState(defaultColor);
+  const [savedBackgroundColor, setSavedBackgroundColor] = useState(defaultColor);
+  const [saved, setSaved] = useState(false);
 
-  async function getUserFromApi() {
-    const response = await getUserById(user._id, user.token);
-    if (response.responseData) {
-      setResponse(response.responseData);
+  useEffect(() => {
+    async function getUserFromApi() {
+      const response = await getUserById(user._id, user.token);
+      const responseData = response.responseData;
+      if (responseData) {
+        setResponse(responseData);
+        const bgColor = responseData.backgroundColor;
+        if(bgColor) {
+          setBackgroundColor(bgColor);
+          setSavedBackgroundColor(bgColor);
+        }
+      }
+    }
+    getUserFromApi();
+  }, []);
+
+  async function updateBackgroundColor() {
+    if(saved) {
+      return;
+    }
+    if(backgroundColor == savedBackgroundColor) {
+      setSaved(true);
+      return;
+    }
+    const response = await editUser({_id: user._id, backgroundColor}, user.token);
+    if(!response.error) {
+      setSavedBackgroundColor(backgroundColor);
+      setSaved(true);
+      setBackgroundColorVersion(v => v + 1);
     }
   }
-
-  useEffect(getUserFromApi, []);
 
   function renderExpirationDate() {
     if (response.accessLevel >= membershipState.OFFICER) {
@@ -78,6 +107,24 @@ export default function Profile() {
               Get API Key
             </button>
           </div>
+        </div>
+        <div className="pb-6 px-4">
+          <div className="font-semibold text-gray-900">Profile Icon Color</div>
+          <div className="py-2 flex gap-2">
+            <input className="cursor-pointer h-8 w-[60px] rounded-lg" type='color' value={backgroundColor} style={{backgroundColor: backgroundColor}} onChange={(e) => {
+              setBackgroundColor(e.target.value);
+              if(e.target.value != savedBackgroundColor) {
+                setSaved(false);
+              }
+            }}/>
+            <button className="btn btn-sm btn-primary w-[60px]" onClick={updateBackgroundColor}>{saved ? 'Saved!' : 'Save'}</button>
+          </div>
+          <button className="btn btn-sm btn-error w-32" onClick={() => {
+            setBackgroundColor(defaultColor);
+            if(savedBackgroundColor != defaultColor) {
+              setSaved(false);
+            }
+          }}>Reset</button>
         </div>
         <div className="text-gray-700">
           <div className="grid text-sm">

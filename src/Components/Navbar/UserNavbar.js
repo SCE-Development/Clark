@@ -1,11 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { membershipState } from '../../Enums';
 import { useSCE } from '../context/SceContext';
+import { getUserById } from '../../APIFunctions/User';
+import { useBackgroundColor } from '../context/BackgroundColorContext';
+import { getIconTextColor } from '../../APIFunctions/Profile';
 
 export default function UserNavbar(props) {
   const { user, authenticated } = useSCE();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { backgroundColorVersion } = useBackgroundColor() || {};
+  const [backgroundColor, setBackgroundColor] = useState('#2a323c');
+  const [transition, setTransition] = useState(false);
+
+  useEffect(() => {
+    let timeoutId;
+    async function getBackgroundColor() {
+      const response = await getUserById(user._id, user.token);
+      if(response.responseData && response.responseData.backgroundColor) {
+        setBackgroundColor(response.responseData.backgroundColor);
+        if(transition == false) {
+          timeoutId = setTimeout(() => {
+            setTransition(true);
+          }, 600);
+        }
+      } else {
+        setTransition(true);
+      }
+    }
+    if(authenticated && user && user.token && user._id) {
+      getBackgroundColor();
+    }
+    return () => {
+      if(timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [authenticated, user, backgroundColorVersion]);
+
   let initials = '';
   if (user && user.firstName && user.lastName) {
     initials = user.firstName[0] + user.lastName[0];
@@ -98,7 +130,6 @@ export default function UserNavbar(props) {
                 {getRoutesForNavbar()}
               </ul>
             </div>
-
             <div className='relative inline-block dropdown-menu-wrapper' ref={dropdownRef}>
               <summary
                 tabIndex={0}
@@ -106,8 +137,8 @@ export default function UserNavbar(props) {
                 className="btn btn-ghost btn-circle avatar placeholder"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                <div className="w-12 rounded-full bg-neutral text-neutral-content">
-                  <span>{initials}</span>
+                <div className={`w-12 rounded-full bg-neutral text-neutral-content ${transition ? ' transition-colors ease-in duration-500' : ''}`} style={{backgroundColor: backgroundColor}}>
+                  <span className={`${transition ? ' transition-colors ease-in duration-500' : ''}`} style={{color: getIconTextColor(backgroundColor)}}>{initials}</span>
                 </div>
               </summary>
               {isDropdownOpen && (

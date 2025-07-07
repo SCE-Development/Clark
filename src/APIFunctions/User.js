@@ -78,6 +78,8 @@ export async function getAllUsers({
  * was verified
  * @param {(string|undefined)} userToEdit.emailOptIn - Opt into SCE's blast
  * week emails
+ * @param {(string|undefined)} userToEdit.backgroundColor - The user's background
+ * color for profile icon
  * @param {string} token - The jwt token for authentication
  * @returns {UserApiResponse} containing if the search was successful
  */
@@ -100,6 +102,7 @@ export async function editUser(userToEdit, token) {
     lastLogin,
     emailVerified,
     emailOptIn,
+    backgroundColor
   } = userToEdit;
   const url = new URL('/api/User/edit', BASE_API_URL);
   try {
@@ -125,7 +128,8 @@ export async function editUser(userToEdit, token) {
         accessLevel,
         lastLogin,
         emailVerified,
-        emailOptIn
+        emailOptIn,
+        backgroundColor
       })
     });
     if (res.ok) {
