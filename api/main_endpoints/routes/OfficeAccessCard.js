@@ -192,7 +192,6 @@ router.post('/delete', async (req, res) => {
     });
     return res.sendStatus(OK);
   }
-  logger.info('Error deleting card');
   writeLogToClient({
     statusCode: SERVER_ERROR,
     message: 'Error deleting card',
@@ -207,12 +206,11 @@ router.post('/getAllCards', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  let skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
+  const skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
 
   try {
     const total = await OfficeAccessCard.count({});
     const items = await OfficeAccessCard.find({}, {}, { skip, limit: ROWS_PER_PAGE });
-    logger.info({items, skip, total});
     return res.status(OK).send({
       items,
       total,
