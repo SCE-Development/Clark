@@ -127,11 +127,10 @@ export default function CardReader() {
       }
     };
 
-    eventSource.onerror = (error) => { // if the connection to the event source encounters error
-      console.log(error);
+    eventSource.onerror = () => { // if the connection to the event source encounters error
       setLogs(
         (currLogs) => [
-          '...crickets...',
+          'EventSource didn\'t work, check browser logs',
           ...currLogs
         ]
       );
