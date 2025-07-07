@@ -251,10 +251,9 @@ router.post('/getAllCards', async (req, res) => {
   let skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
 
   try {
-    const total = await OfficeAccessCard.count(maybeOr);
-    const items = await OfficeAccessCard.find(maybeOr, {}, { skip, limit: ROWS_PER_PAGE })
-      .sort({ [sortColumn] : sortOrder });
-
+    const total = await OfficeAccessCard.count({});
+    const items = await OfficeAccessCard.find({}, {}, { skip, limit: ROWS_PER_PAGE });
+    logger.info({items, skip, total});
     return res.status(OK).send({
       items,
       total,
