@@ -31,9 +31,6 @@ export default function CardReader() {
   const [paginationText, setPaginationText] = useState('');
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [currentSortColumn, setCurrentSortColumn] = useState('verifiedCount');
-  const [currentSortOrder, setCurrentSortOrder] = useState('desc');
-  const [query, setQuery] = useState('');
 
   function buildLog(data) {
     const date = new Date().toISOString().padEnd(30);
@@ -45,14 +42,9 @@ export default function CardReader() {
 
   async function getAllCards() {
     setLoading(true);
-    const sortColumn = currentSortOrder === 'none' ? 'registrationDate' : currentSortColumn;
-    const sortOrder = currentSortOrder === 'none' ? 'desc' : currentSortOrder;
     const apiResponse = await getAllCardsFromDb({
       token,
-      query,
       page,
-      sortColumn,
-      sortOrder,
     });
     if (!apiResponse.error) {
       setCards(apiResponse.responseData.items);
@@ -73,31 +65,6 @@ export default function CardReader() {
   function handleDeleteClick(card) {
     setToggleDelete(!toggleDelete);
     setCardToDelete(card);
-  }
-
-  function handleSortCards(columnName) {
-    if (columnName === null) {
-      return;
-    }
-    if (currentSortColumn === columnName) {
-      if (currentSortOrder === 'asc') {
-        setCurrentSortOrder('desc');
-      } else if (currentSortOrder === 'desc') {
-        setCurrentSortOrder('none');
-      } else {
-        setCurrentSortOrder('asc');
-      }
-    } else {
-      setCurrentSortColumn(columnName);
-      setCurrentSortOrder('asc');
-    }
-  }
-
-  function handleArrowVisibility(sortOrder, columnName) {
-    if (currentSortOrder === sortOrder && currentSortColumn === columnName) {
-      return '';
-    }
-    return 'hidden';
   }
 
   function CardEntry({ card }) {
@@ -203,7 +170,7 @@ export default function CardReader() {
 
   useEffect(() => {
     getAllCards();
-  }, [page, currentSortColumn, currentSortOrder, query]);
+  }, [page]);
 
   function maybeRenderPagination() {
     const amountofCardsOnCurrentPage = Math.min((page + 1) * rowsPerPage, cards.length);
@@ -259,30 +226,6 @@ export default function CardReader() {
           }
           } />
           <div className='flex flex-col m-6'>
-            <div className='py-2'>
-              <label className="w-full form-control">
-                <div className="label">
-                  <span className="label-text text-md text-gray-700 dark:text-white">Type a search, followed by the enter key</span>
-                </div>
-                <input
-                  className="w-full text-sm input input-bordered text-gray-900 dark:text-white sm:text-base"
-                  type="text"
-                  placeholder="search by card bytes"
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      if (page) {
-                        setPage(0);
-                      } else {
-                        getAllCards();
-                      }
-                    }
-                  }}
-                  onChange={event => {
-                    setQuery(event.target.value);
-                  }}
-                />
-              </label>
-            </div>
             <table className='table px-3'>
               <thead>
                 <tr>
@@ -291,16 +234,10 @@ export default function CardReader() {
                     { title: 'Registration Date', columnName: 'registrationDate' },
                     { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
                     { title: 'Verified Count', columnName: 'verifiedCount' }
-                  ].map(({ title, columnName = null }) => (
+                  ].map(({ title }) => (
                     <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
                       <div className='flex items-center justify-center'>
-                        <button onClick={() => handleSortCards(columnName)}>{title}</button>
-                        <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('asc', columnName)}`}>
-                          <path strokeLinecap='round' strokeLinejoin='round' d='M12 19.5V4.5m0 0l-6 6m6-6l6 6' />
-                        </svg>
-                        <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth='1.5' stroke='currentColor' className={`w-5 h-5 ${handleArrowVisibility('desc', columnName)}`}>
-                          <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m0 0l6-6m-6 6l-6-6' />
-                        </svg>
+                        {title}
                       </div>
                     </th>
                   ))}

@@ -3,24 +3,14 @@ import { BASE_API_URL } from '../Enums';
 
 export async function getAllCardsFromDb({
   token,
-  query = null,
   page = null,
-  sortColumn = null,
-  sortOrder = null,
 }) {
   let status = new ApiResponse();
   try {
     const url = new URL('/api/OfficeAccessCard/getAllCards', BASE_API_URL);
-    if (sortColumn) {
-      url.searchParams.set('sort', sortColumn);
-    }
-    if (sortOrder) {
-      url.searchParams.set('order', sortOrder);
-    }
     const res = await fetch(url.href, {
       method: 'POST',
       body: JSON.stringify({
-        query,
         page,
       }),
       headers: {
