@@ -42,6 +42,9 @@ const {
 } = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+
 chai.should();
 chai.use(chaiHttp);
 
@@ -223,6 +226,35 @@ describe('User', () => {
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
       result.body.should.have.property('message');
+    });
+
+    it('Should create an audit log when a user is updated', async () => {
+      // ensure Audit log DB starts fresh before this test
+      await AuditLog.deleteMany({});
+      // update email, firstname, password, and discordID
+      const user = {
+        _id: id,
+        email: 'newemail@gmail.com',
+        password: 'newPassword',
+        token: token,
+        firstName: 'Newname',
+        discordID: '421482148',
+        numberOfSemestersToSignUpFor: undefined
+      };
+      setTokenStatus(true, user);
+
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/edit', user
+      );
+      expect(result).to.have.status(OK);
+
+      const auditEntry = await AuditLog.findOne().lean();
+
+      expect(auditEntry).to.exist;
+      expect(auditEntry).to.have.property('userId');
+      expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
+      expect(auditEntry.details.updatedInfo).to.have.property('password', true);
+      await AuditLog.deleteMany({});
     });
   });
 
