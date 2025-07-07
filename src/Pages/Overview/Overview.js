@@ -252,7 +252,7 @@ export default function Overview() {
         </button>
         <div className='mb-8 text-base text-gray-900 dark:text-white'>
           <p className='mb-2'>Total New Members this Year: {clubRevenueData.newMembersThisYear}</p>
-          <p className=''>Current Active Members: {clubRevenueData.currentActiveMembers}</p>
+          <p className='mb-2'>Current Active Members: {clubRevenueData.currentActiveMembers}</p>
         </div>
         <div className='px-6 border rounded-lg border-gray-300 dark:border-white/10'>
           <div className='py-6'>
