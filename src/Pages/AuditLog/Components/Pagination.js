@@ -1,7 +1,7 @@
 const Pagination = ({ currentPage, totalPages, goToPage, itemsPerPage, totalLogs }) => {
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalLogs);
-  
+
   return (
     <div className='mt-8 flex items-center justify-between'>
       <div className='text-sm text-gray-400'>

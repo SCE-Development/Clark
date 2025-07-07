@@ -19,8 +19,8 @@ router.get('/getAuditLogs', async (req, res) => {
     logger.warn('/getAuditLogs was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  
-  const decodedPayload = await decodeToken(req)
+
+  const decodedPayload = await decodeToken(req);
 
   if (!decodedPayload) {
     logger.warn('/getAuditLogs was requested with an invalid token');
@@ -32,23 +32,23 @@ router.get('/getAuditLogs', async (req, res) => {
   }
 
   const itemsPerPage = 50;
-  const page = parseInt(req.query.page) || 1; 
+  const page = parseInt(req.query.page) || 1;
   const skip = (page - 1) * itemsPerPage;
 
-  const rawActions = req.query.action // from URL, structure is: "?action=LOG_IN,SIGN_UP,PRINT_PAGE"
-  const actions = rawActions ? rawActions.split(','): [] // converts to [LOG_IN, SIGN_UP, PRINT_PAGE]
-  
+  const rawActions = req.query.action; // from URL, structure is: "?action=LOG_IN,SIGN_UP,PRINT_PAGE"
+  const actions = rawActions ? rawActions.split(',') : []; // converts to [LOG_IN, SIGN_UP, PRINT_PAGE]
+
   const nameQuery = req.query.name?.trim().replace(/\s+/g, ' ');
-  
-  const query = {}
+
+  const query = {};
   if (actions.length > 0) {
-    query.action = {$in: actions}
+    query.action = {$in: actions};
   }
 
   try {
 
     if (actions.length > 0) {
-      query.action = {$in: actions}
+      query.action = {$in: actions};
     }
 
     if (nameQuery) {
@@ -62,7 +62,7 @@ router.get('/getAuditLogs', async (req, res) => {
         const firstName = log.userId.firstName || '';
         const lastName = log.userId.lastName || '';
         const fullName = `${firstName} ${lastName}`;
-        
+
         return fullName.toLowerCase().includes(nameQuery.toLowerCase());
       });
 
@@ -70,7 +70,7 @@ router.get('/getAuditLogs', async (req, res) => {
       const items = filteredLogs.slice(skip, skip + itemsPerPage);
 
       res.status(OK).send({items, totalLogs});
-      
+
     } else {
       const items = await AuditLog.find(query)
         .populate('userId', 'firstName lastName')

@@ -11,7 +11,7 @@ import { useUser } from '../../Components/context/UserContext';
 
 export default function AuditLogPage() {
   const [auditLogs, setAuditLogs] = useState([]);
-  const [totalLogs, setTotalLogs] = useState(0)
+  const [totalLogs, setTotalLogs] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,14 +20,14 @@ export default function AuditLogPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const user = useUser()
+  const user = useUser();
   const getAuditLogsFromDB = async () => {
     try {
       setLoading(true);
       const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, nameFilter, user.user.token);
       if (!auditLogsFromDB.error) {
         setAuditLogs(auditLogsFromDB.responseData.items);
-        setTotalLogs(auditLogsFromDB.responseData.totalLogs)
+        setTotalLogs(auditLogsFromDB.responseData.totalLogs);
       } else {
         setError('Failed to load audit logs');
       }
@@ -44,14 +44,14 @@ export default function AuditLogPage() {
 
   const applyFilters = () => {
     setCurrentPage(1); // reset to first page when applying filters
-    getAuditLogsFromDB(); 
+    getAuditLogsFromDB();
   };
 
   const clearFilters = () => {
     setNameFilter('');
     setActivityFilters([]);
     setCurrentPage(1);
-    getAuditLogsFromDB(); 
+    getAuditLogsFromDB();
   };
 
   const itemsPerPage = 50;
@@ -69,7 +69,7 @@ export default function AuditLogPage() {
   if (error) {
     return <Error />;
   }
-  console.log(auditLogs)
+
   return (
     <div className='m-10'>
       <div className='mb-8'>
