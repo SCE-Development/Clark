@@ -2,6 +2,7 @@ import React from 'react';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 
 function NavBarWrapper({
   enableAdminNavbar = false,
@@ -9,9 +10,10 @@ function NavBarWrapper({
   ...appProps
 }) {
   const { user, setUser } = useUser();
+  const { setAuthenticated } = useAuth();
 
   function handleLogout() {
-    appProps.setAuthenticated(false);
+    setAuthenticated(false);
     setUser(null);
     window.localStorage.removeItem('jwtToken');
     window.location.reload();
