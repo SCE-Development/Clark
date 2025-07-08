@@ -1,18 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const AuditLog = require('../models/AuditLog');
-const {
-  OK,
-  BAD_REQUEST,
-  UNAUTHORIZED
-} = require('../../util/constants').STATUS_CODES;
+const { OK, BAD_REQUEST, UNAUTHORIZED } = require('../../util/constants').STATUS_CODES;
 
-const {
-  decodeToken,
-  checkIfTokenSent
-} = require('../util/token-functions.js');
+const { decodeToken, checkIfTokenSent } = require('../util/token-functions.js');
 
 const logger = require('../../util/logger');
+const User = require('../models/User.js');
 
 router.get('/getAuditLogs', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -28,6 +22,7 @@ router.get('/getAuditLogs', async (req, res) => {
   }
 
   if (decodedPayload.accessLevel < 2) {
+    logger.warn('/getAuditLogs was requested with an inappropriate access level');
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -38,49 +33,39 @@ router.get('/getAuditLogs', async (req, res) => {
   const rawActions = req.query.action; // from URL, structure is: "?action=LOG_IN,SIGN_UP,PRINT_PAGE"
   const actions = rawActions ? rawActions.split(',') : []; // converts to [LOG_IN, SIGN_UP, PRINT_PAGE]
 
-  const nameQuery = req.query.name?.trim().replace(/\s+/g, ' ');
+  const firstNameQuery = req.query.firstName?.trim();
+  const lastNameQuery = req.query.lastName?.trim();
 
   const query = {};
   if (actions.length > 0) {
-    query.action = {$in: actions};
+    query.action = { $in: actions };
   }
 
   try {
+    if (firstNameQuery || lastNameQuery) {
+      const userFilter = {};
 
-    if (actions.length > 0) {
-      query.action = {$in: actions};
+      if (firstNameQuery) userFilter.firstName = new RegExp(firstNameQuery, 'i');
+      if (lastNameQuery) userFilter.lastName = new RegExp(lastNameQuery, 'i');
+
+      const users = await User.find(userFilter).select('_id');
+      const userIds = users.map(u => u._id);
+
+      if (userIds.length === 0) {
+        return res.status(OK).send({ items: [], totalLogs: 0 });
+      }
+
+      query.userId = { $in: userIds };
     }
 
-    if (nameQuery) {
-      const allLogs = await AuditLog.find(query)
-        .populate('userId', 'firstName lastName')
-        .sort({createdAt: -1});
+    const items = await AuditLog.find(query)
+      .populate('userId', 'firstName lastName')
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
 
-      // filter by first name, last name, or full name
-      const filteredLogs = allLogs.filter(log => {
-        if (!log.userId) return false;
-        const firstName = log.userId.firstName || '';
-        const lastName = log.userId.lastName || '';
-        const fullName = `${firstName} ${lastName}`;
-
-        return fullName.toLowerCase().includes(nameQuery.toLowerCase());
-      });
-
-      const totalLogs = filteredLogs.length;
-      const items = filteredLogs.slice(skip, skip + itemsPerPage);
-
-      res.status(OK).send({items, totalLogs});
-
-    } else {
-      const items = await AuditLog.find(query)
-        .populate('userId', 'firstName lastName')
-        .skip(skip)
-        .limit(itemsPerPage)
-        .sort({createdAt: -1});
-
-      const totalLogs = await AuditLog.countDocuments(query);
-      res.status(OK).send({items, totalLogs});
-    }
+    const totalLogs = await AuditLog.countDocuments(query);
+    res.status(OK).send({ items, totalLogs });
   } catch (error) {
     logger.error('Failed to fetch audit logs:', error);
     res.sendStatus(BAD_REQUEST);

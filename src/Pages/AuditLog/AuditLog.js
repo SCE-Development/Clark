@@ -4,10 +4,11 @@ import Loading from './Components/Loading';
 import Error from './Components/Error';
 import FilterActivityTypes from './Components/FilterActivityTypes';
 import RefreshButton from './Components/RefreshButton';
-import FilterName from './Components/FilterName';
+import FirstNameFilter from './Components/FirstNameFilter';
 import Pagination from './Components/Pagination';
 import AuditLogCard from './Components/AuditLogCard';
 import { useUser } from '../../Components/context/UserContext';
+import LastNameFilter from './Components/LastNameFilter';
 
 export default function AuditLogPage() {
   const [auditLogs, setAuditLogs] = useState([]);
@@ -15,7 +16,8 @@ export default function AuditLogPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const [nameFilter, setNameFilter] = useState('');
+  const [firstNameFilter, setFirstNameFilter] = useState('');
+  const [lastNameFilter, setLastNameFilter] = useState('');
   const [activityFilters, setActivityFilters] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +26,13 @@ export default function AuditLogPage() {
   const getAuditLogsFromDB = async () => {
     try {
       setLoading(true);
-      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, nameFilter, user.user.token);
+      const auditLogsFromDB = await getAllLogs(
+        currentPage,
+        activityFilters,
+        firstNameFilter,
+        lastNameFilter,
+        user.user.token
+      );
       if (!auditLogsFromDB.error) {
         setAuditLogs(auditLogsFromDB.responseData.items);
         setTotalLogs(auditLogsFromDB.responseData.totalLogs);
@@ -48,7 +56,8 @@ export default function AuditLogPage() {
   };
 
   const clearFilters = () => {
-    setNameFilter('');
+    setFirstNameFilter('');
+    setLastNameFilter('');
     setActivityFilters([]);
     setCurrentPage(1);
     getAuditLogsFromDB();
@@ -82,7 +91,8 @@ export default function AuditLogPage() {
 
         <div className='mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700'>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-end'>
-            <FilterName nameFilter={nameFilter} setNameFilter={setNameFilter} />
+            <FirstNameFilter firstNameFilter={firstNameFilter} setFirstNameFilter={setFirstNameFilter} />
+            <LastNameFilter lastNameFilter={lastNameFilter} setLastNameFilter={setLastNameFilter} />
             <FilterActivityTypes activityFilters={activityFilters} setActivityFilters={setActivityFilters} />
             <div className='flex gap-2'>
               <button
@@ -106,7 +116,7 @@ export default function AuditLogPage() {
         <div className='text-center py-16'>
           <h3 className='text-lg font-medium text-white mb-2'>No audit logs found</h3>
           <p className='text-gray-400'>
-            {(nameFilter.trim() || activityFilters.length > 0)
+            {firstNameFilter.trim() || lastNameFilter.trim() || activityFilters.length > 0
               ? 'No logs match your current filters. Try adjusting your search criteria.'
               : 'There are no audit logs to display at this time.'}
           </p>
@@ -115,7 +125,7 @@ export default function AuditLogPage() {
         <div>
           <div className='space-y-4'>
             {currentLogs.map((log, index) => (
-              <AuditLogCard key={log._id || index} log={log}/>
+              <AuditLogCard key={log._id || index} log={log} />
             ))}
           </div>
 
