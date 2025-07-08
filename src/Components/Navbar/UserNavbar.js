@@ -1,43 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { membershipState } from '../../Enums';
-import { getUserById } from '../../APIFunctions/User';
+import { useUser } from '../context/UserContext';
 
-export default function UserNavBar(props) {
-  const [response, setResponse] = useState({});
-
-  function getColor(colorName) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    if (!context) return null;
-  
-    context.fillStyle = colorName;
-
-    const hexColor = context.fillStyle;
-    const bigint = parseInt(hexColor.slice(1), 16);
-    const red = (bigint >> 16) & 255;
-    const green = (bigint >> 8) & 255;
-    const blue = bigint & 255;
-
-    console.log(red*.299 + green*.57 + blue*.114 > 150);
-
-    if (red*.299 + green*.57 + blue*.114 > 150) {
-      return 'black';
-    }
-    else {
-      return 'white';
-    }
-  }
-
-  async function getUserFromApi() {
-    const response = await getUserById(props.user._id, props.user.token);
-    setResponse(response.responseData);
-  }
-  
-  useEffect(getUserFromApi, []);
-
+export default function UserNavbar(props) {
+  const { user } = useUser();
   let initials = '';
-  if (props.user.firstName && props.user.lastName) {
-    initials = props.user.firstName[0] + props.user.lastName[0];
+  if (user && user.firstName && user.lastName) {
+    initials = user.firstName[0] + user.lastName[0];
   }
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
@@ -45,9 +14,9 @@ export default function UserNavBar(props) {
     { title: 'Spartan Compass', route: '/spartan-compass' }
   ];
 
-
-  const authedRoutes = [{ title: 'Printing', route: '/2DPrinting' },
-    {title: 'Chat', route: '/messaging'},
+  const authedRoutes = [
+    { title: 'Printing', route: '/2DPrinting' },
+    { title: 'Chat', route: '/messaging' },
   ];
 
   const authentication = [
@@ -57,7 +26,7 @@ export default function UserNavBar(props) {
 
   const getRoutesForNavbar = () => {
     let routesList = unauthedRoutes;
-    if (props.user.accessLevel >= membershipState.MEMBER) {
+    if (user && user.accessLevel >= membershipState.MEMBER) {
       routesList = authedRoutes;
     }
     return (
@@ -67,7 +36,7 @@ export default function UserNavBar(props) {
             <li key={link.route}><a href={link.route}>{link.title}</a></li>
           );
         })}
-        {props.user.accessLevel >= membershipState.OFFICER && (
+        {user && user.accessLevel >= membershipState.OFFICER && (
           <li>
             <a href='/user-manager'>
               Admin
@@ -107,7 +76,7 @@ export default function UserNavBar(props) {
       </div>
 
       <div className="navbar-end">
-        {props.authenticated && props.user ? (
+        {props.authenticated && user ? (
           <>
             <div className="dropdown dropdown-end sm:hidden">
               <div tabIndex={0} role="button" className="btn btn-ghost rounded-btn">Services</div>
@@ -115,7 +84,6 @@ export default function UserNavBar(props) {
                 {getRoutesForNavbar()}
               </ul>
             </div>
-
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
@@ -125,8 +93,8 @@ export default function UserNavBar(props) {
               </summary>
               <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>
                 <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                  <div>{props.user.firstName} {props.user.lastName}</div>
-                  <div className="font-medium truncate">{props.user.email}</div>
+                  <div>{user.firstName} {user.lastName}</div>
+                  <div className="font-medium truncate">{user.email}</div>
                 </div>
                 <ul className='p-2 shadow menu rounded-b-xl dropdown-content z-[1] bg-base-100  w-52'>
                   <li>

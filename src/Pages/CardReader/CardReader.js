@@ -1,28 +1,123 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { BASE_API_URL } from '../../Enums';
+import { useUser } from '../../Components/context/UserContext';
+import { getAllCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
+import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
+import { trashcanSymbol } from '../Overview/SVG';
 
-export default function CardReader(props) {
+const header = [
+  'TIMESTAMP'.padEnd(30),
+  'TYPE'.padEnd(12),
+  'ENDPOINT'.padEnd(20),
+  'STATUS CODE'.padEnd(15),
+  'MESSAGE\n'
+].join('');
+
+export default function CardReader() {
+  const { user } = useUser();
+  const token = user.token;
   const [logs, setLogs] = useState([]);
-  const [error, setError] = useState('');
-  const token = props.user.token;
+  const [cards, setCards] = useState([]);
+  const [toggleDelete, setToggleDelete] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState({});
+  const [tab, setTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'registry';
+  });
+  const [connected, setConnected] = useState(true);
+  const [connectionStatusText, setConnectionStatusText] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [paginationText, setPaginationText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
 
-  const buildLog = (data) => {
-    let date = new Date().toISOString().padEnd(30, ' ');
-    let endpoint = data.endpoint.padEnd(20, ' ');
-    let statusCode = String(data.statusCode).padEnd(8, ' ');
-    return [date, endpoint, statusCode, data.message].join('');
-  };
+  function buildLog(data) {
+    const date = new Date().toISOString().padEnd(30);
+    const requestType = data.requestType.padEnd(12);
+    const endpoint = data.endpoint.padEnd(20);
+    const statusCode = String(data.statusCode).padEnd(15);
+    return [date, requestType, endpoint, statusCode, data.message].join('');
+  }
+
+  async function getAllCards() {
+    setLoading(true);
+    const apiResponse = await getAllCardsFromDb({
+      token,
+      page,
+    });
+    if (!apiResponse.error) {
+      setCards(apiResponse.responseData.items);
+      setTotal(apiResponse.responseData.total);
+      setRowsPerPage(apiResponse.responseData.rowsPerPage);
+    }
+    setLoading(false);
+  }
+
+  function handleTabChange(newTab) {
+    setTab(newTab);
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', newTab);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, '', newUrl);
+  }
+
+  function handleDeleteClick(card) {
+    setToggleDelete(!toggleDelete);
+    setCardToDelete(card);
+  }
+
+  function CardEntry({ card }) {
+    return (
+      <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
+        <td className='hidden md:table-cell '>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+            {card.cardBytes}
+          </div>
+        </td>
+        <td className='hidden md:table-cell'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+            {card.createdAt}
+          </div>
+        </td>
+        <td className='hidden md:table-cell'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+            {card.lastVerified}
+          </div>
+        </td>
+        <td className='hidden md:table-cell'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+            {card.verifiedCount}
+          </div>
+        </td>
+        <td>
+          <button
+            className = 'p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+            onClick={() => handleDeleteClick(card)}
+          >
+            {trashcanSymbol()}
+          </button>
+        </td>
+      </tr>
+    );
+  }
 
   useEffect(() => {
+    getAllCards();
     const url = new URL('/api/OfficeAccessCard/listen', BASE_API_URL);
     url.searchParams.append('token', token);
     const eventSource = new EventSource(url.href);
     eventSource.onmessage = (event) => {
       try {
-        let data = JSON.parse(event.data);
-        let newLog = buildLog(data);
-        setLogs(currLogs => [newLog, ...currLogs]); // prepend the new log
-      } catch (error) {
+        const data = JSON.parse(event.data);
+        const url = new URL(data.endpoint, window.location.origin);
+        // if card is verified or added successfully, query the DB again to get latest card data
+        if (url.pathname === '/verify' && data.statusCode === 200) {
+          getAllCards();
+        }
+        const newLog = buildLog(data);
+        setLogs(currLogs => [newLog, ...currLogs]);
+      } catch (err) { // if the message sent from error cannot be parsed
         setLogs(
           (currLogs) => [
             '[error] unable to format response, check browser logs',
@@ -32,25 +127,164 @@ export default function CardReader(props) {
       }
     };
 
-    eventSource.onerror = () => {
-      setError('Error connecting to SSE');
+    eventSource.onerror = () => { // if the connection to the event source encounters error
+      setLogs(
+        (currLogs) => [
+          'EventSource didn\'t work, check browser logs',
+          ...currLogs
+        ]
+      );
+      setConnected(false);
     };
 
     return () => {
       eventSource.close();
     };
-
   }, []);
 
+  useEffect(() => {
+    if (connected) {
+      setConnectionStatusText('Listening for card reader activity...');
+      return;
+    }
+    setConnectionStatusText('Client disconnected. Please reload to reconnect.');
+  }, [connected]);
+
+  useEffect(() => {
+    const amountOfCardsOnCurrentPage = Math.min((page + 1) * rowsPerPage, cards.length);
+    const pageOffset = page * rowsPerPage;
+    const startingElementNumber = (page * rowsPerPage) + 1;
+    const endingElementNumber = amountOfCardsOnCurrentPage + pageOffset;
+    setPaginationText(
+      <>
+        <p className='md:hidden text-gray-700 dark:text-white'>
+          {startingElementNumber} - {endingElementNumber} / {total}
+        </p>
+        <p className="hidden md:inline-block text-gray-700 dark:text-white">
+          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total}</span> results
+        </p>
+      </>
+    );
+  }, [page, rowsPerPage, cards, total]);
+
+  useEffect(() => {
+    getAllCards();
+  }, [page]);
+
+  function maybeRenderPagination() {
+    const amountofCardsOnCurrentPage = Math.min((page + 1) * rowsPerPage, cards.length);
+    const pageOffset = page * rowsPerPage;
+    const endingElementNumber = amountofCardsOnCurrentPage + pageOffset;
+    if (cards.length) {
+      return (
+        <nav className='flex justify-start py-6 mx-4'>
+          <div className='flex items-center navbar-start'>
+            <span className="text-gray-700 dark:text-white">
+              {loading ? '...' : paginationText}
+            </span>
+          </div>
+          <div className='flex justify-end space-x-3 navbar-end'>
+            <button
+              className='btn btn-neutral text-gray-800 bg-gray-200 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
+              onClick={() => setPage(page - 1)}
+              disabled={page === 0 || loading}
+            >
+              previous
+            </button>
+            <button
+              className='btn btn-neutral text-gray-800 bg-gray-200 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
+              onClick={() => setPage(page + 1)}
+              disabled={endingElementNumber >= total || loading}
+            >
+              next
+            </button>
+          </div>
+        </nav>
+      );
+    }
+    return <></>;
+  }
+
+  function getComponentFromTabChoice(tab) {
+    if (tab === 'registry') {
+      return (
+        <div>
+          <ConfirmationModal {... {
+            headerText: `Delete card: ${cardToDelete.cardBytes}?`,
+            bodyText: `Are you sure you want to delete 
+              card: ${cardToDelete.cardBytes}? It'll be gone forever if you do.`,
+            confirmText: `Yes, delete ${cardToDelete.cardBytes}`,
+            cancelText: 'No, keep the card',
+            confirmClassAddons: 'bg-red-600 hover:bg-red-500',
+            handleConfirmation: async () => {
+              await deleteCardFromDb(token, cardToDelete.cardBytes);
+              await getAllCards();
+              setToggleDelete(!toggleDelete);
+            },
+            open: toggleDelete
+          }
+          } />
+          <div className='flex flex-col m-6'>
+            <table className='table px-3'>
+              <thead>
+                <tr>
+                  {[
+                    { title: 'Card Bytes', columnName: 'cardBytes' },
+                    { title: 'Registration Date', columnName: 'registrationDate' },
+                    { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
+                    { title: 'Verified Count', columnName: 'verifiedCount' }
+                  ].map(({ title }) => (
+                    <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
+                      <div className='flex items-center justify-center'>
+                        {title}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {cards.map(card => <CardEntry card={card}/>)}
+              </tbody>
+            </table>
+            {maybeRenderPagination()}
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div>
+        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+          {connectionStatusText}
+        </h3>
+        <pre className='m-4 text-gray-700 dark:text-white'>
+          {header}
+          {logs.join('\n')}
+        </pre>
+      </div>
+    );
+  }
+
   return (
-    <div className='m-4'>
-      <h1 className='text-4xl font-bold text-white mb-4'>SCE Card Reader Activity</h1>
-      <pre>
-        {logs.join('\n')}
-      </pre>
-      {error &&
-        <h2>{error}</h2>
-      }
+    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
+      <h1 className='flex items-center justify-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
+      <pre className='flex items-center justify-center text-gray-700 dark:text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
+      <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
+        <button
+          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
+          onClick={() => handleTabChange('registry')}
+        >
+          Card Registry
+        </button>
+        {/* spacer to differentiate between the two options */}
+        <div>&nbsp;|&nbsp;</div>
+        <button
+          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
+          onClick={() => handleTabChange('logs')}
+        >
+          Card Reader Logs
+        </button>
+      </div>
+      {getComponentFromTabChoice(tab)}
     </div>
   );
 }

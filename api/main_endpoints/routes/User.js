@@ -32,6 +32,9 @@ const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
 
+const AuditLogActions = require('../util/auditLogActions.js');
+const AuditLog = require('../models/AuditLog.js');
+
 // Delete a member
 router.post('/delete', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -236,6 +239,20 @@ router.post('/edit', async (req, res) => {
         .status(NOT_FOUND)
         .send({ message: `${query.email} not found.` });
     }
+
+    const sanitizedUser = {...user}; // shallow copy of the user; doesn't affect original
+
+    if ('password' in sanitizedUser) {
+      sanitizedUser.password = true;
+    }
+
+    AuditLog.create({
+      userId: decoded._id, // the user making the update
+      action: AuditLogActions.UPDATE_USER,
+      documentId: user._id, // the user affected by the update
+      details: {updatedInfo: sanitizedUser}
+    }).catch(logger.error);
+
     return res.status(OK).send({
       message: `${query.email} was updated.`,
       membershipValidUntil: user.membershipValidUntil
@@ -429,4 +446,61 @@ router.post('/apikey', async (req, res) => {
       return res.sendStatus(BAD_REQUEST);
     });
 });
+
+//  Finds total number of new signups this semester
+//  Finds number of those signups who've paid for semester plan
+//  Finds number of those signups who've paid for annual plan
+//  Assumes members who have paid have been assigned an expiration date
+router.get('/getNewPaidMembersThisSemester', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const today = new Date();
+
+  //  First semester start date - Jan 1st
+  let semesterStart = new Date(today.getFullYear(), 0, 1);
+
+  if(today.getMonth() >= 5) {
+    //  Second semester start date - June 1st
+    semesterStart = new Date(today.getFullYear(), 5, 1);
+  }
+
+  const newSingleSemesterMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(1),
+    'joinDate': {
+      $gte: semesterStart
+    },
+  });
+  const newAnnualMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(2),
+    'joinDate': {
+      $gte: semesterStart
+    },
+  });
+  const newMembersThisYear = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
+    //  Jan 1st Start of Year
+    $gte: new Date(today.getFullYear(), 0, 1)
+  }});
+  const currentActiveMembers = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
+    //  Today
+    $gt: new Date()
+  }});
+
+  try {
+    const response = {
+      newMembersThisYear: newMembersThisYear,
+      currentActiveMembers: currentActiveMembers,
+      newSingleSemesterMembers: newSingleSemesterMembersCount,
+      newAnnualMembers: newAnnualMembersCount
+    };
+    return res.status(OK).send(response);
+  } catch {
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
+
 module.exports = router;

@@ -4,14 +4,16 @@ import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
+import { useUser } from '../../../Components/context/UserContext';
 
-export default function Profile(props) {
+export default function Profile() {
+  const { user } = useUser();
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
 
   async function getUserFromApi() {
-    const response = await getUserById(props.user._id, props.user.token);
+    const response = await getUserById(user._id, user.token);
     if (response.responseData) {
       setResponse(response.responseData);
     }
@@ -105,7 +107,6 @@ export default function Profile(props) {
         </div>
       </div>
       <ChangePasswordModal
-        user={{ ...props.user, token: props.user.token }}
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);
           setBannerColor(color);
@@ -116,7 +117,6 @@ export default function Profile(props) {
         }}
       />
       <DeleteAccountModal
-        user={{ ...props.user, token: props.user.token }}
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);
           setBannerColor(color);
@@ -127,7 +127,7 @@ export default function Profile(props) {
         }}
       />
       <GetApiKeyModal
-        user={{ ...props.user, token: props.user.token, apiKey: response.apiKey }}
+        apiKey={response.apiKey}
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);
           setBannerColor(color);

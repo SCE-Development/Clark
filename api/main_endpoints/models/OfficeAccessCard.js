@@ -14,7 +14,7 @@ const OfficeAccessCardSchema = new Schema(
     },
     verifiedCount:{
       type:Number,
-      default:0
+      default:1
     },
     lastVerified:{
       type:Date,

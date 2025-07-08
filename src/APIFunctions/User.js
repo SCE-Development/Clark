@@ -275,3 +275,19 @@ export async function getApiKey(token) {
   }
   return status;
 }
+
+export async function getNewPaidMembersThisSemester(token) {
+  let status = new UserApiResponse();
+  try {
+    const url = new URL('/api/User/getNewPaidMembersThisSemester', BASE_API_URL);
+    const response = await axios.get(url.href, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    status.responseData = response.data;
+  } catch (error) {
+    status.error = true;
+  }
+  return status;
+}

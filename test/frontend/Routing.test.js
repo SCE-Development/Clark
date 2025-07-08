@@ -29,18 +29,20 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 const adminAppProps = {
-  user: { accessLevel: membershipState.ADMIN },
   authenticated: true
 };
+
+const mockUser = { accessLevel: membershipState.ADMIN };
 
 // without this we get an error saying SVGElement
 // is not defined during the test
 if (typeof SVGElement === 'undefined') {
   global.SVGElement = class SVGElement extends HTMLElement {};
 }
-function getComponentFromRoute(route, props = adminAppProps) {
+
+function getComponentFromRoute(route, props = adminAppProps, user = mockUser) {
   const mockUserContext = {
-    user: props.user,
+    user: user,
     setUser: () => {}
   };
 
