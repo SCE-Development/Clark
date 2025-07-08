@@ -515,7 +515,10 @@ export default function URLShortenerPage() {
                               }}>
                               {url.alias}
                             </button>
-                            { isCopying && copyIcon(`transition-colors duration-500 ${timeColor ? 'dark:fill-green-500 fill-[#05ab00]' : 'dark:fill-[#dcdcdc] fill-[#434343]'}`)}
+                            { isCopying ?
+                              copyIcon(`transition-colors duration-500 ${timeColor ? 'dark:fill-green-500 fill-[#05ab00]' : 'dark:fill-[#dcdcdc] fill-[#434343]'}`)
+                              :
+                              copyIcon('dark:fill-[#dcdcdc] fill-[#434343]')}
                           </div>
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
