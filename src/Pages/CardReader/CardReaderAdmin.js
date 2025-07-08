@@ -8,13 +8,8 @@ export default function CardReaderAdminPage () {
     const eventSource = new EventSource('http://localhost:8080/api/OfficeAccessCard/listen');
         
     eventSource.onmessage = function(event) {
-        //const newElement = document.createElement("li");
-        //newElement.textContent = event.data;
-        console.log(event.data);
-        const date = new Date().toISOString();
-        const entry = date + " " + event.data;
-        setEventData(prev => [...prev, entry])
-        //document.getElementById("events").appendChild(newElement);
+        console.log(JSON.parse(event.data));
+        setEventData(prev => [...prev, event.data])
     };
 
     eventSource.onerror = function(event) {
@@ -28,7 +23,7 @@ export default function CardReaderAdminPage () {
     <div>
         <h1>Welcome to the Card Reader Admin Page</h1>
         {eventData.map((event) => (
-            <pre>{event}</pre>
+            <pre>{JSON.parse(event).ISO_date} {JSON.parse(event).endpoint} {JSON.parse(event).response_code} {JSON.parse(event).response_string} {JSON.parse(event).cardBytes}</pre>
         ))}
     </div>
   )
