@@ -20,7 +20,6 @@ router.get('/', async (req, res) => {
     });
 });
 
-
 router.get('/getAllAdvertisements', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -40,16 +39,9 @@ router.post('/createAdvertisement', async (req, res) => {
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const now = new Date();
-  // const expireInOneMinute = new Date(now.getTime() + 60 * 1000);
-
   const newAd = new Advertisement({
-    // message: req.body.message,
-    // expireDate: expireInOneMinute, // testing and it doesn't work
-    // expireAt: expireInOneMinute 
     message: req.body.message,
-    expireDate: req.body.expireDate,
-    expireAt: req.body.expireDate
+    expireDate: req.body.expireDate
   });
 
   Advertisement.create(newAd)
@@ -67,11 +59,9 @@ router.post('/deleteAdvertisement', async (req, res) => {
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  console.log("expire date in delete " + expireDate);
-
   Advertisement.deleteOne({ _id: req.body._id })
     .then(result => {
-      if (result.deletedCount < 1) { // used to be result.n
+      if (result.n < 1) {
         res.sendStatus(NOT_FOUND);
       } else {
         res.sendStatus(OK);
