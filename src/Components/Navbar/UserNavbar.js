@@ -1,9 +1,12 @@
 import React from 'react';
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
+  const { authenticated } = useAuth();
+  console.log("authication status",authenticated);
   let initials = '';
   if (user && user.firstName && user.lastName) {
     initials = user.firstName[0] + user.lastName[0];
@@ -76,7 +79,7 @@ export default function UserNavbar(props) {
       </div>
 
       <div className="navbar-end">
-        {props.authenticated && user ? (
+        {authenticated && user ? (
           <>
             <div className="dropdown dropdown-end sm:hidden">
               <div tabIndex={0} role="button" className="btn btn-ghost rounded-btn">Services</div>
