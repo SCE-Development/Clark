@@ -25,7 +25,7 @@ export async function sendMessage(id, token, message) {
     }
   } catch(err) {
     status.error = true;
-    status.responseData = error;
+    status.responseData = err;
   }
   return status;
 }

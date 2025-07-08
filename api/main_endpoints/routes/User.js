@@ -100,6 +100,7 @@ router.post('/search', function(req, res) {
       firstName: result.firstName,
       middleInitial: result.middleInitial,
       lastName: result.lastName,
+      backgroundColor: result.backgroundColor,
       email: result.email,
       emailVerified: result.emailVerified,
       emailOptIn: result.emailOptIn,
@@ -445,4 +446,61 @@ router.post('/apikey', async (req, res) => {
       return res.sendStatus(BAD_REQUEST);
     });
 });
+
+//  Finds total number of new signups this semester
+//  Finds number of those signups who've paid for semester plan
+//  Finds number of those signups who've paid for annual plan
+//  Assumes members who have paid have been assigned an expiration date
+router.get('/getNewPaidMembersThisSemester', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const today = new Date();
+
+  //  First semester start date - Jan 1st
+  let semesterStart = new Date(today.getFullYear(), 0, 1);
+
+  if(today.getMonth() >= 5) {
+    //  Second semester start date - June 1st
+    semesterStart = new Date(today.getFullYear(), 5, 1);
+  }
+
+  const newSingleSemesterMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(1),
+    'joinDate': {
+      $gte: semesterStart
+    },
+  });
+  const newAnnualMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(2),
+    'joinDate': {
+      $gte: semesterStart
+    },
+  });
+  const newMembersThisYear = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
+    //  Jan 1st Start of Year
+    $gte: new Date(today.getFullYear(), 0, 1)
+  }});
+  const currentActiveMembers = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
+    //  Today
+    $gt: new Date()
+  }});
+
+  try {
+    const response = {
+      newMembersThisYear: newMembersThisYear,
+      currentActiveMembers: currentActiveMembers,
+      newSingleSemesterMembers: newSingleSemesterMembersCount,
+      newAnnualMembers: newAnnualMembersCount
+    };
+    return res.status(OK).send(response);
+  } catch {
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
+
 module.exports = router;

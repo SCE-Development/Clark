@@ -16,6 +16,7 @@ export default function EditUserInfo(props) {
   const { user } = useUser();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState('');
   const [password, setPassword] = useState(null);
   const [doorCode, setDoorCode] = useState('');
   const [major, setMajor] = useState('');
@@ -52,6 +53,7 @@ export default function EditUserInfo(props) {
       } else {
         setFirstName(result.responseData.firstName);
         setLastName(result.responseData.lastName);
+        setBackgroundColor(result.responseData.backgroundColor);
         setDoorCode(result.responseData.doorCode);
         setMajor(result.responseData.major);
         setPagesPrinted(result.responseData.pagesPrinted);
@@ -94,6 +96,7 @@ export default function EditUserInfo(props) {
       _id: props.match.params.id,
       firstName,
       lastName,
+      backgroundColor,
       email,
       password,
       major,
@@ -384,7 +387,7 @@ export default function EditUserInfo(props) {
                   </div>
                 </div>
 
-                <div className="col-span-4">
+                <div className="col-span-4 sm:col-span-3">
                   <label htmlFor="discord-id" className="block text-sm font-medium leading-6">Discord ID</label>
                   <div className="mt-2">
                     <input
@@ -396,6 +399,25 @@ export default function EditUserInfo(props) {
                       onChange={(e) => {
                         setDataWasChanged(true);
                         setDiscordId(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-span-4 sm:col-span-3">
+                  <label htmlFor="background-color" className="block text-sm font-medium leading-6">Background Color</label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      name="background-color"
+                      id="background-color"
+                      className={INPUT_CLASS_NAME}
+                      defaultValue={backgroundColor}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setBackgroundColor(e.target.value);
+                        console.log("New background color: " + e.target.value);
+                        console.log(props.user);
                       }}
                     />
                   </div>

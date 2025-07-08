@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { trashcanSymbol } from '../Overview/SVG';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
+import { useUser } from '../../Components/context/UserContext';
 
-export default function URLShortenerPage(props) {
+export default function URLShortenerPage() {
+  const { user } = useUser();
   const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
   const [url, setUrl] = useState('');
   const [invalidUrl, setInvalidUrl] = useState();
@@ -40,7 +42,7 @@ export default function URLShortenerPage(props) {
     const sortColumn = currentSortColumn ?? 'created_at';
     const sortOrder = currentSortOrder ?? 'DESC';
     const urlsFromDb = await getAllUrls({
-      token: props.user.token,
+      token: user.token,
       page: page,
       search: searchQuery,
       sortColumn: sortColumn,
@@ -61,7 +63,7 @@ export default function URLShortenerPage(props) {
     const response = await createUrl(
       url.trim(),
       alias.trim(),
-      props.user.token
+      user.token
     );
     if (!response.error) {
       setAllUrls([...allUrls, response.responseData]);
@@ -99,7 +101,7 @@ export default function URLShortenerPage(props) {
     const regex = /^[a-zA-Z0-9]+$/;
     if (searchQuery === '' || regex.test(searchQuery)) {
       setInvalidSearch(false);
-      getCleezyUrls(page, searchQuery);
+      getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
     } else {
       setInvalidSearch(true);
       setErrorAlertMessage('Search query cannot contain special characters');
@@ -111,8 +113,7 @@ export default function URLShortenerPage(props) {
   }
 
   async function handleDeleteUrl(alias) {
-
-    const response = await deleteUrl(alias, props.user.token);
+    const response = await deleteUrl(alias, user.token);
     if (!response.error) {
       setAllUrls(allUrls.filter(url => url.alias !== alias));
       setTotal(total - 1);

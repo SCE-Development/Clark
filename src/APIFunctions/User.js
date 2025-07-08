@@ -87,6 +87,7 @@ export async function editUser(userToEdit, token) {
     _id,
     firstName,
     lastName,
+    backgroundColor,
     email,
     password,
     major,
@@ -107,6 +108,7 @@ export async function editUser(userToEdit, token) {
       _id,
       firstName,
       lastName,
+      backgroundColor,
       email,
       password,
       major,
@@ -263,6 +265,22 @@ export async function getApiKey(token) {
   try {
     const url = new URL('/api/User/apiKey', BASE_API_URL);
     const response = await axios.post(url.href, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    status.responseData = response.data;
+  } catch (error) {
+    status.error = true;
+  }
+  return status;
+}
+
+export async function getNewPaidMembersThisSemester(token) {
+  let status = new UserApiResponse();
+  try {
+    const url = new URL('/api/User/getNewPaidMembersThisSemester', BASE_API_URL);
+    const response = await axios.get(url.href, {
       headers: {
         Authorization: `Bearer ${token}`
       }

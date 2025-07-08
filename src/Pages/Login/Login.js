@@ -25,7 +25,6 @@ export default function Login(props) {
     const loginStatus = await loginUser(email, password);
     if (!loginStatus.error) {
       props.setAuthenticated(true);
-      window.localStorage.setItem('jwtToken', loginStatus.token);
       if (queryParams.get('redirect')) {
         window.location.href = queryParams.get('redirect');
       } else {
@@ -46,7 +45,7 @@ export default function Login(props) {
     <div className = 'flex-none md:flex'>
       <div className='rounded-3xl backdrop-blur-sm shadow-2xl md:w-1/3  mt-20 pb-4 mb-auto ml-auto mr-auto px-5 text-center items-center justify-center'>
         <div className='flex justify-center'>
-          <img id='img' alt='sce logo' src='https://sce.sjsu.edu/images/SCE-glow.webp' width='2rem'  className='w-2/3 px-auto'/>
+          <img id='img' alt='sce logo' src={`${window.location.origin}/images/SCE-glow.webp`} width='2rem'  className='w-2/3 px-auto'/>
         </div>
         <form onSubmit={handleSubmit} className=''>
           <div className='flex flex-col items-center'>
