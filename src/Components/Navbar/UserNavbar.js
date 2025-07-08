@@ -6,7 +6,6 @@ import { useAuth } from '../context/AuthContext';
 export default function UserNavbar(props) {
   const { user } = useUser();
   const { authenticated } = useAuth();
-  console.log("authication status",authenticated);
   let initials = '';
   if (user && user.firstName && user.lastName) {
     initials = user.firstName[0] + user.lastName[0];
