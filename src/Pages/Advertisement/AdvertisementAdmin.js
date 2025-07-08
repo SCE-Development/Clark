@@ -50,7 +50,7 @@ export default function AdvertisementAdmin() {
     const expireDateObject = new Date(expireDate);
     return expireDateObject < currDate;
   }
-  
+
   useEffect(() => {
     getAdsFromDB();
   }, []);
@@ -94,7 +94,6 @@ export default function AdvertisementAdmin() {
             onChange={ event => {
               setExpireDate(event.target.value);
             }}
-            // value={expireDate}
           />
           <button
             className="text-sm btn btn-primary sm:text-base"

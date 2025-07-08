@@ -41,15 +41,16 @@ router.post('/createAdvertisement', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   const now = new Date();
-  const expireInOneMinute = new Date(now.getTime() + 60 * 1000);
+  // const expireInOneMinute = new Date(now.getTime() + 60 * 1000);
+  console.log("expire date in delete " + expireDate);
 
   const newAd = new Advertisement({
-    message: req.body.message,
-    expireDate: expireInOneMinute, // testing and it doesn't work
-    expireAt: expireInOneMinute
     // message: req.body.message,
-    // expireDate: req.body.expireDate,
-    // expireAt: req.body.expireDate
+    // expireDate: expireInOneMinute, // testing and it doesn't work
+    // expireAt: expireInOneMinute
+    message: req.body.message,
+    expireDate: req.body.expireDate,
+    expireAt: req.body.expireDate
 
   });
 
@@ -72,7 +73,7 @@ router.post('/deleteAdvertisement', async (req, res) => {
 
   Advertisement.deleteOne({ _id: req.body._id })
     .then(result => {
-      if (result.n < 1) {
+      if (result.deletedCount < 1) { // used to be result.n
         res.sendStatus(NOT_FOUND);
       } else {
         res.sendStatus(OK);
