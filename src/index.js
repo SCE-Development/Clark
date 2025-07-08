@@ -31,7 +31,7 @@ function App(props) {
       <UserContext.Provider value={{ user, setUser }}>
         <BrowserRouter>
           <SearchModal appProps={{ authenticated }} />
-          <Routing appProps={{ authenticated, setAuthenticated, user }} />
+          <Routing appProps={{ authenticated, setAuthenticated }} />
         </BrowserRouter>
       </UserContext.Provider>
     )
