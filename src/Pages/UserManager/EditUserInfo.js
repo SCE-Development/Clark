@@ -416,7 +416,7 @@ export default function EditUserInfo(props) {
                       onChange={(e) => {
                         setDataWasChanged(true);
                         setBackgroundColor(e.target.value);
-                        console.log("New background color: " + e.target.value);
+                        console.log('New background color: ' + e.target.value);
                         console.log(props.user);
                       }}
                     />

@@ -1,29 +1,33 @@
+const simpleActionDescriptions = {
+  SIGN_UP: 'signed up for an account',
+  LOG_IN: 'logged into the system',
+  PRINT_PAGE: 'printed a page',
+  ACCESS_DOOR: 'accessed a door',
+  CREATE_MESSAGE: 'created a message',
+  DELETE_MESSAGE: 'deleted a message',
+};
+
 export const getActionDescription = (log) => {
   const action = log.action;
-  switch (action) {
-  case 'SIGN_UP':
-    return 'signed up for an account';
-  case 'LOG_IN':
-    return 'logged into the system';
-  case 'UPDATE_USER':
+
+  // checks if a user updates or deletes ANOTHER user
+  if (action === 'UPDATE_USER') {
     if (log.documentId && log.documentId !== log.userId) {
       return 'updated another user\'s account information';
     }
     return 'updated their account information';
-  case 'DELETE_USER':
+  }
+
+  if (action === 'DELETE_USER') {
     if (log.documentId && log.documentId !== log.userId) {
       return 'deleted another user account';
     }
     return 'deleted their account';
-  case 'PRINT_PAGE':
-    return 'printed a page';
-  case 'ACCESS_DOOR':
-    return 'accessed a door';
-  case 'CREATE_MESSAGE':
-    return 'created a message';
-  case 'DELETE_MESSAGE':
-    return 'deleted a message';
-  default:
-    return `performed action: ${action.toLowerCase().replace(/_/g, ' ')}`;
   }
+
+  if (simpleActionDescriptions[action]) {
+    return simpleActionDescriptions[action];
+  }
+
+  return `performed action: ${action.toLowerCase().replace(/_/g, ' ')}`;
 };
