@@ -5,7 +5,7 @@ import { BASE_API_URL } from '../Enums';
 export async function getAd() {
   let status = new ApiResponse();
   try {
-    const res = await fetch (BASE_API_URL + 'api/Advertisement/');
+    const res = await fetch (BASE_API_URL + '/api/Advertisement/');
     if (res.ok) {
       const result = await res.json();
       status.responseData = result;
@@ -22,7 +22,7 @@ export async function getAd() {
 export async function getAds(token) {
   let status = new ApiResponse();
   try {
-    const res = await fetch(BASE_API_URL + 'api/Advertisement/getAllAdvertisements',
+    const res = await fetch(BASE_API_URL + '/api/Advertisement/getAllAdvertisements',
       {
         method: 'GET',
         headers: {
@@ -45,7 +45,7 @@ export async function getAds(token) {
 export async function createAd(newAd, token) {
   let status = new ApiResponse();
   try {
-    const res = await fetch(BASE_API_URL + 'api/Advertisement/createAdvertisement',
+    const res = await fetch(BASE_API_URL + '/api/Advertisement/createAdvertisement',
       {
         method: 'POST',
         headers: {
@@ -73,7 +73,7 @@ export async function createAd(newAd, token) {
 export async function deleteAd(newAd, token) {
   let status = new ApiResponse();
   try {
-    const res = await fetch(BASE_API_URL + 'api/Advertisement/deleteAdvertisement',
+    const res = await fetch(BASE_API_URL + '/api/Advertisement/deleteAdvertisement',
       {
         method: 'POST',
         headers: {
