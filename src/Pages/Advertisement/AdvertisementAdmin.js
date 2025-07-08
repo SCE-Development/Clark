@@ -3,18 +3,14 @@ import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js'
 import { useState, useEffect } from 'react';
 import { useUser } from '../../Components/context/UserContext';
 
-   // createAd returns a value - what is it?
-    // how do we know if createAd() works or not?
-    // is there a field we can check?^
-    
-    // if createAd worked, how can we update the array without calling the backend again?
-    
 export default function AdvertisementAdmin() {
   const { user } = useUser();
-  const [errorMesssage, setErrorMessage] = useState('');
+
   const [ads, setAds] = useState([]);
   const [message, setMessage] = useState('');
-  const [expireDate, setExpireDate] = useState();
+  const [year, setYear] = useState();
+  const [month, setMonth] = useState();
+  const [day, setDay] = useState();
 
   async function getAdsFromDB() {
     const adsFromDB = await getAds(user.token);
@@ -24,35 +20,53 @@ export default function AdvertisementAdmin() {
   }
 
   async function createAdHandler() {
-    if(expireDate === null){
-      setExpireDate(undefined);
+    // make sure empty inputs are properly set as undefined if empty
+    if (year === '') {
+      setYear(undefined);
     }
-    // expireDate is a string so we need to turn into date object
-  
-    if(isExpired(expireDate)){
-      setErrorMessage("Date is in the past or the present, unable to create ad!!!");
-      return;
-    }else{
-      setErrorMessage("");
+    if (month === '') {
+      setMonth(undefined);
     }
+    if (day === '') {
+      setDay(undefined);
+    }
+
+    let expireDate = new Date(year, month - 1, day);
+    if (isNaN(expireDate.getTime())) {
+      expireDate = undefined;
+    }
+
     await createAd({
       message,
       expireDate,
     }, user.token);
 
     await getAdsFromDB();
-    
   }
 
-  function isExpired(expireDate){
-    const currDate = new Date();
-    console.log("current date" + currDate);
-    const expireDateObject = new Date(expireDate);
-    return expireDateObject < currDate;
+  async function deleteExpiredAds() {
+    const adsFromDB = await getAds(user.token);
+    if (!adsFromDB.error) {
+      const currentDate = new Date();
+      const expiredAds = adsFromDB.responseData.filter(ad => {
+        if (ad.expireDate === undefined) return false;
+        return new Date(ad.expireDate) < currentDate;
+      });
+
+      for (const ad of expiredAds) {
+        await deleteAd(ad, user.token);
+      }
+    }
   }
 
   useEffect(() => {
     getAdsFromDB();
+
+    const intervalId = setInterval(async () => {
+      await deleteExpiredAds();
+      await getAdsFromDB();
+    }, 20);
+
   }, []);
 
   return (
@@ -60,7 +74,6 @@ export default function AdvertisementAdmin() {
       <h1 className="text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
         Welcome to the Advertisement Admin Page!!
       </h1>
-      <h2 style={{fontWeight: 'bold', color: 'red'}} >{errorMesssage}</h2>
       <div className="relative overflow-x-auto">
         <div className='py-6'>
           <label className="w-full form-control">
@@ -89,10 +102,27 @@ export default function AdvertisementAdmin() {
         </div>
         <div className="flex items-center space-x-4 mb-6">
           <input
-            className='flex-1 text-sm input input-bordered sm:text-base'
-            type='datetime-local'
-            onChange={ event => {
-              setExpireDate(event.target.value);
+            className="flex-1 text-sm input input-bordered sm:text-base"
+            type="text"
+            placeholder="Year"
+            onChange={event => {
+              setYear(event.target.value);
+            }}
+          />
+          <input
+            className="flex-1 text-sm input input-bordered sm:text-base"
+            type="text"
+            placeholder="Month"
+            onChange={event => {
+              setMonth(event.target.value);
+            }}
+          />
+          <input
+            className="flex-1 text-sm input input-bordered sm:text-base"
+            type="text"
+            placeholder="Day"
+            onChange={event => {
+              setDay(event.target.value);
             }}
           />
           <button
@@ -111,7 +141,7 @@ export default function AdvertisementAdmin() {
                 Advertisement Message
               </th>
               <th scope="col" className="px-6 py-3">
-                Expiration Date
+                Expiriation Date
               </th>
               <th scope="col" className="px-6 py-3">
                 Delete

@@ -66,7 +66,6 @@ export async function createAd(newAd, token) {
     status.responseData = err;
     status.error = true;
   }
-  console.log("STATUS " + JSON.stringify(status.responseData));
   return status;
 }
 
