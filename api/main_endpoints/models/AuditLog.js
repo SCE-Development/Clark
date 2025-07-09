@@ -16,7 +16,6 @@ const AuditLogSchema = new Schema(
     },
     documentId: {
       type: Schema.Types.ObjectId,
-      default: null,
     },
     details: {
       type: Schema.Types.Mixed,
