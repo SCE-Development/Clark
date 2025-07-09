@@ -465,23 +465,23 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
     semesterStart = new Date(today.getFullYear(), 5, 1);
   }
 
-  const getNewSingleSemesterMembersCount = async () => await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+  const getNewSingleSemesterMembersCount = User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
     'membershipValidUntil': getMemberExpirationDate(1),
     'joinDate': {
       $gte: semesterStart
     },
   });
-  const getNewAnnualMembersCount = async () => await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+  const getNewAnnualMembersCount = User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
     'membershipValidUntil': getMemberExpirationDate(2),
     'joinDate': {
       $gte: semesterStart
     },
   });
-  const getNewMembersThisYearCount = async () => await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
+  const getNewMembersThisYearCount = User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
     //  Jan 1st Start of Year
     $gte: new Date(today.getFullYear(), 0, 1)
   }});
-  const getCurrentActiveMembersCount = async () => await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
+  const getCurrentActiveMembersCount = User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
     //  Today
     $gt: new Date()
   }});
@@ -492,10 +492,10 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
     newMembersThisYear,
     currentActiveMembers,
   ] = await Promise.all([
-    getNewSingleSemesterMembersCount(),
-    getNewAnnualMembersCount(),
-    getNewMembersThisYearCount(),
-    getCurrentActiveMembersCount()
+    getNewSingleSemesterMembersCount,
+    getNewAnnualMembersCount,
+    getNewMembersThisYearCount,
+    getCurrentActiveMembersCount
   ]);
 
   try {
