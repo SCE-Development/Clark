@@ -253,48 +253,6 @@ router.post('/getAllCards', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
-
-  try {
-    const total = await OfficeAccessCard.count({});
-    const items = await OfficeAccessCard.find({}, {}, { skip, limit: ROWS_PER_PAGE });
-    return res.status(OK).send({
-      items,
-      total,
-      rowsPerPage: ROWS_PER_PAGE,
-    });
-  } catch (error) {
-    logger.error('Error fetching cards: ', error);
-    return res.sendStatus(SERVER_ERROR);
-  }
-});
-
-router.post('/getAllCards', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
-  let maybeOr = {};
-  if (req.body.query) {
-    maybeOr = {
-      $or: ['cardBytes'].map(field => ({
-        [field]: {
-          $regex: RegExp(req.body.query, 'i'),
-        }
-      }))
-    };
-  }
-
-  const sortColumn = req.query.sort || 'registrationDate';
-  const orderToInteger = {
-    desc: -1,
-    asc: 1,
-    default: -1,
-  };
-  const sortOrder = orderToInteger[req.query.order] || orderToInteger.default;
-
   let skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
 
   try {
