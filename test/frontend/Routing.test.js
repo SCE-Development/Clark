@@ -4,6 +4,7 @@ import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
 import { UserContext } from '../../src/Components/context/UserContext';
+import { AuthContext } from '../../src/Components/context/AuthContext';
 
 import Routing from '../../src/Routing';
 import Home from '../../src/Pages/Home/Home';
@@ -29,7 +30,6 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 const adminAppProps = {
-  authenticated: true
 };
 
 const mockUser = { accessLevel: membershipState.ADMIN };
@@ -46,11 +46,18 @@ function getComponentFromRoute(route, props = adminAppProps, user = mockUser) {
     setUser: () => {}
   };
 
+  const mockAuthContext = {
+    authenticated: true,
+    setAuthenticated: () => {}
+  };
+
   return mount(
     <UserContext.Provider value={mockUserContext}>
-      <MemoryRouter initialEntries={[route]}>
-        <Routing appProps={props} />
-      </MemoryRouter>
+      <AuthContext.Provider value={mockAuthContext}>
+        <MemoryRouter initialEntries={[route]}>
+          <Routing appProps={props} />
+        </MemoryRouter>
+      </AuthContext.Provider>
     </UserContext.Provider>
   );
 }

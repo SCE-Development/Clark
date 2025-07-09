@@ -1,8 +1,10 @@
 import React from 'react';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function UserNavBar(props) {
   const { user } = useUser();
+  const { setAuthenticated } = useAuth();
   const getLinkClassName = (path) => {
     const weAreAtGivenPath = path === window.location.pathname;
     let className = 'flex items-center p-2 text-gray-900 rounded-lg dark:text-white';
@@ -15,7 +17,7 @@ export default function UserNavBar(props) {
   };
 
   function handleLogout() {
-    props.setAuthenticated(false);
+    setAuthenticated(false);
     window.localStorage.removeItem('jwtToken');
     window.location.reload();
   }
