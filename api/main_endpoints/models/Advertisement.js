@@ -14,7 +14,7 @@ const AdvertisementSchema = new Schema(
     expireAt: {
       type: Date,
       default: undefined,
-      index: {expireAfterSeconds: 0}, // TTL only kicks in when expireAt is set 
+      index: {expireAfterSeconds: 0}, // TTL only kicks in when expireAt is set
     }
   },
   { collection: 'Advertisements' }

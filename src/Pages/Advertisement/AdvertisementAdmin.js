@@ -3,12 +3,12 @@ import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js'
 import { useState, useEffect } from 'react';
 import { useSCE } from '../../Components/context/SceContext.js';
 
-   // createAd returns a value - what is it?
-    // how do we know if createAd() works or not?
-    // is there a field we can check?^
-    
-    // if createAd worked, how can we update the array without calling the backend again?
-    
+// createAd returns a value - what is it?
+// how do we know if createAd() works or not?
+// is there a field we can check?^
+
+// if createAd worked, how can we update the array without calling the backend again?
+
 export default function AdvertisementAdmin() {
   const { user } = useSCE();
 
@@ -24,17 +24,23 @@ export default function AdvertisementAdmin() {
     }
   }
 
+  function isExpired(expireDate){
+    const currDate = new Date();
+    const expireDateObject = new Date(expireDate);
+    return expireDateObject < currDate;
+  }
+
   async function createAdHandler() {
     if(expireDate === null){
       setExpireDate(undefined);
     }
     // expireDate is a string so we need to turn into date object
-  
+
     if(isExpired(expireDate)){
-      setErrorMessage("Date is in the past or the present, unable to create ad!!!");
+      setErrorMessage('Date is in the past or the present, unable to create ad!!!');
       return;
     }else{
-      setErrorMessage("");
+      setErrorMessage('');
     }
     await createAd({
       message,
@@ -42,14 +48,7 @@ export default function AdvertisementAdmin() {
     }, user.token);
 
     await getAdsFromDB();
-    
-  }
 
-  function isExpired(expireDate){
-    const currDate = new Date();
-    console.log("current date" + currDate);
-    const expireDateObject = new Date(expireDate);
-    return expireDateObject < currDate;
   }
 
   useEffect(() => {
