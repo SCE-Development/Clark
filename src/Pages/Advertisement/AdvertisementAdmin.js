@@ -89,7 +89,7 @@ export default function AdvertisementAdmin() {
           </label>
         </div>
         <div className="flex items-center space-x-4 mb-6">
-          <input 
+          <input
             className="flex-1 text-sm input input-bordered sm:text-base"
             type="date"
             onChange={event => {
