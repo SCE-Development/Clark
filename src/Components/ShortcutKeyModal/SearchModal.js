@@ -3,6 +3,7 @@ import './SearchModal.css';
 import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRoutes } from '../../Routes';
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function SearchModal({ appProps }) {
   const [open, setOpen] = useState(false);
@@ -13,10 +14,11 @@ export default function SearchModal({ appProps }) {
   const [selectItem, setSelectItem] = useState(0);
   const { user } = useUser();
   const [errorMsg, setErrorMsg] = useState('');
+  const { authenticated } = useAuth();
 
   /**
    * Returns the appropriate routes array based on the user's access level.
-   * @dependencies user.accessLevel, appProps.authenticated
+   * @dependencies user.accessLevel, authenticated
    */
   const routes = useMemo(() => {
     if (user.accessLevel === membershipState.MEMBER)
@@ -29,13 +31,13 @@ export default function SearchModal({ appProps }) {
         ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
         ...signedOutRoutes
       ];
-    if (!appProps.authenticated)
+    if (!authenticated)
       return [
         ...notAuthenticatedRoutes,
         ...signedOutRoutes
       ];
     return [...signedOutRoutes];
-  }, [user.accessLevel, appProps.authenticated]);
+  }, [user.accessLevel, authenticated]);
 
   /**
    * Helper function updates the keyword when the user types
