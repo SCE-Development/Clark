@@ -3,9 +3,8 @@ import Footer from '../../Components/Footer/Footer.js';
 import './Home.css';
 
 import { getAd } from '../../APIFunctions/Advertisement.js';
-import { membershipState } from '../../Enums.js';
 
-const Home = (props) => {
+const Home = () => {
 
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 
@@ -87,7 +87,7 @@ export default function UserNavbar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{ backgroundColor: response.backgroundColor, color: getColor(response.backgroundColor) }}>
+                <div className="w-12 rounded-full bg-neutral text-neutral-content">
                   <span>{initials}</span>
                 </div>
               </summary>
