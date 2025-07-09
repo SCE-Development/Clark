@@ -37,8 +37,7 @@ export default function AdvertisementAdmin() {
     // expireDate is a string so we need to turn into date object
 
     if(isExpired(expireDate)){
-      setErrorMessage('Date is in the past or the present, unable to create ad!!!');
-      return;
+      setErrorMessage('Setting an expiration date in the past will not properly save an ad to database!!');
     }else{
       setErrorMessage('');
     }
