@@ -94,13 +94,13 @@ router.get('/verify', async (req, res) =>{
   }
 
   if (apiKey !== API_KEY) {
-    writeMessage(endpoint, UNAUTHORIZED, '', cardBytes, add);
+    writeMessage(endpoint, UNAUTHORIZED, 'UNAUTHORIZED', cardBytes, add);
     return res.sendStatus(UNAUTHORIZED);
   }
 
   const cardExists = await checkIfCardExists(cardBytes);
   if (cardExists) {
-    writeMessage(endpoint, OK, '', cardBytes, add);
+    writeMessage(endpoint, OK, 'OK', cardBytes, add);
     return res.status(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -108,7 +108,7 @@ router.get('/verify', async (req, res) =>{
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    writeMessage(endpoint, NOT_FOUND, '', cardBytes, add);
+    writeMessage(endpoint, NOT_FOUND, 'NOT_FOUND', cardBytes, add);
     return res.sendStatus(NOT_FOUND);
   }
 
@@ -118,11 +118,11 @@ router.get('/verify', async (req, res) =>{
       await new OfficeAccessCard({
         cardBytes
       }).save();
-      writeMessage(endpoint, OK, '', cardBytes, add);
+      writeMessage(endpoint, OK, 'OK', cardBytes, add);
       return res.sendStatus(OK)
     }
   } catch (error) {
-    writeMessage(endpoint, SERVER_ERROR, '', cardBytes, add);
+    writeMessage(endpoint, SERVER_ERROR, 'SERVER_ERROR', cardBytes, add);
     logger.error('Error creating OfficeAccessCard: ', error);
     return res.sendStatus(SERVER_ERROR);
   }
@@ -138,12 +138,8 @@ router.get('/listen', async (req, res) => {
     res.setHeader('Connection', 'keep-alive');
     
     clients.push(res);
-    // OfficeAccessCard.find()
-    // .then(response => response.json())
-    // .then(data => res.write(`data: ${JSON.stringify(data)}\n\n`))
 
     req.on('close', () => {
-        clearInterval(intervalId);
         res.end();
     });
 })

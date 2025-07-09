@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { act } from 'react'
 import { useEffect, useState } from 'react'
 import { getAllCards } from '../../APIFunctions/CardReader';
   
 export default function CardReaderAdminPage () {
   const [eventData, setEventData] = useState([])
   const [cards, setCards] = useState([]);
-
+  const [activeTab, setActiveTab] = useState('stored');
+  
   async function getCardsFromDB() {
     const cardsFromDB = await getAllCards();
     if (!cardsFromDB.error) {
@@ -39,6 +40,25 @@ export default function CardReaderAdminPage () {
           Card Reader Admin Page
         </h1>
 
+        <div className="my-5 text-xl flex space-x-8">
+          <button
+            onClick={() => setActiveTab('stored')}
+            className={`pb-2 transition ${
+              activeTab === 'stored' ? 'border-b-2 border-blue-600 text-blue-600 font-semibold' : 'text-gray-600 hover:text-blue-600'
+            }`}
+          >
+            Stored Cards
+          </button>
+          <button
+            onClick={() => setActiveTab('activity')}
+            className={`pb-2 transition ${
+              activeTab === 'activity' ? 'border-b-2 border-blue-600 text-blue-600 font-semibold' : 'text-gray-600 hover:text-blue-600'
+            }`}
+          >
+            Activity
+          </button>
+        </div>
+        {activeTab === 'stored' ? 
          <div className="relative overflow-x-auto mt-10">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -88,9 +108,56 @@ export default function CardReaderAdminPage () {
           </table>
         </div>
 
-        {eventData.map((event) => (
-          <pre>{JSON.parse(event).ISO_date} {JSON.parse(event).endpoint} {JSON.parse(event).response_code} {JSON.parse(event).response_string} {JSON.parse(event).cardBytes}</pre>
-        ))}
+         : 
+
+        <div className="relative overflow-x-auto mt-10">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  ISO_Date
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Endpoint
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Response Code
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Response String
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Card Bytes
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {eventData.map((event) => {
+                return (
+                  <tr key={event._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {JSON.parse(event).ISO_date}
+                    </th>
+                    <td className="px-6 py-4">
+                      {JSON.parse(event).endpoint}
+                    </td>
+                    <td className="px-6 py-4">
+                      {JSON.parse(event).response_code}
+                    </td>
+                    <td className="px-6 py-4">
+                      {JSON.parse(event).response_string}
+                    </td>
+                    <td className="px-6 py-4">
+                      {JSON.parse(event).cardBytes}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>}
+    
+  
     </div>
   )
 }
