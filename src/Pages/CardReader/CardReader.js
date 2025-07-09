@@ -212,6 +212,40 @@ export default function CardReader() {
     return <></>;
   }
 
+  function maybeRenderTable() {
+    if (cards.length === 0) {
+      return (
+        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+          Looks like there are no registered cards...
+        </h3>
+      );
+    }
+    return (
+      <table className='table px-3'>
+        <thead>
+          <tr>
+            {[
+              { title: 'Card Bytes', columnName: 'cardBytes' },
+              { title: 'Alias', columnName: 'alias' },
+              { title: 'Registration Date', columnName: 'registrationDate' },
+              { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
+              { title: 'Verified Count', columnName: 'verifiedCount' },
+            ].map(({ title }) => (
+              <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
+                <div className='flex items-center justify-center'>
+                  {title}
+                </div>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {cards.map(card => <CardEntry card={card}/>)}
+        </tbody>
+      </table>
+    );
+  }
+
   function getComponentFromTabChoice(tab) {
     if (tab === 'registry') {
       return (
@@ -232,34 +266,7 @@ export default function CardReader() {
           }
           } />
           <div className='flex flex-col m-6'>
-            { cards.length !== 0 ? (
-              <table className='table px-3'>
-                <thead>
-                  <tr>
-                    {[
-                      { title: 'Card Bytes', columnName: 'cardBytes' },
-                      { title: 'Alias', columnName: 'alias' },
-                      { title: 'Registration Date', columnName: 'registrationDate' },
-                      { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
-                      { title: 'Verified Count', columnName: 'verifiedCount' },
-                    ].map(({ title }) => (
-                      <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
-                        <div className='flex items-center justify-center'>
-                          {title}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {cards.map(card => <CardEntry card={card}/>)}
-                </tbody>
-              </table>
-            ) : (
-              <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
-                Looks like there are no registered cards...
-              </h3>
-            )}
+            {maybeRenderTable()}
             {maybeRenderPagination()}
           </div>
         </div>
