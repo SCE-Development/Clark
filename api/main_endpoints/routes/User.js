@@ -471,7 +471,7 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
       $gte: semesterStart
     },
   });
-  const getNewAnnualMembersCount = async() => await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+  const getNewAnnualMembersCount = async () => await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
     'membershipValidUntil': getMemberExpirationDate(2),
     'joinDate': {
       $gte: semesterStart
