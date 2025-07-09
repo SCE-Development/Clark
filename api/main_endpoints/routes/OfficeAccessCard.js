@@ -175,7 +175,7 @@ router.get('/verify', async (req, res) => {
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    writeLogToClient(req.method, { alias: 'none', statusCode: NOT_FOUND, message: 'Card not found' });
+    writeLogToClient(req.method, { statusCode: NOT_FOUND, message: 'Card not found' });
     return res.sendStatus(NOT_FOUND);
   }
   // if we reached here, the card does not exist and is trying to be added
