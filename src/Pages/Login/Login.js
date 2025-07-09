@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { loginUser } from '../../APIFunctions/Auth';
 import Background from '../../Components/Background/background';
+import { useAuth } from '../../Components/context/AuthContext';
 
-export default function Login(props) {
+export default function Login() {
+  const { setAuthenticated } = useAuth();
   const queryParams = new URLSearchParams(window.location.search);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,7 +26,7 @@ export default function Login(props) {
     e.preventDefault();
     const loginStatus = await loginUser(email, password);
     if (!loginStatus.error) {
-      props.setAuthenticated(true);
+      setAuthenticated(true);
       window.localStorage.setItem('jwtToken', loginStatus.token);
       if (queryParams.get('redirect')) {
         window.location.href = queryParams.get('redirect');
