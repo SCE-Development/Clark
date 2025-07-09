@@ -6,10 +6,11 @@ import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal'
 import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
-  'TIMESTAMP'.padEnd(30),
+  'TIMESTAMP'.padEnd(28),
+  'ALIAS'.padEnd(19),
   'TYPE'.padEnd(12),
-  'ENDPOINT'.padEnd(20),
-  'STATUS CODE'.padEnd(15),
+  'ENDPOINT'.padEnd(17),
+  'CODE'.padEnd(7),
   'MESSAGE\n'
 ].join('');
 
@@ -33,11 +34,12 @@ export default function CardReader() {
   const [total, setTotal] = useState(0);
 
   function buildLog(data) {
-    const date = new Date().toISOString().padEnd(30);
-    const requestType = data.requestType.padEnd(12);
-    const endpoint = data.endpoint.padEnd(20);
-    const statusCode = String(data.statusCode).padEnd(15);
-    return [date, requestType, endpoint, statusCode, data.message].join('');
+    const date = new Date().toISOString().padEnd(28);
+    const alias = data.alias.padEnd(19);
+    const requestType = ('HTTP ' + data.requestType).padEnd(12);
+    const endpoint = data.endpoint.padEnd(17);
+    const statusCode = String(data.statusCode).padEnd(7);
+    return [date, alias, requestType, endpoint, statusCode, data.message].join('');
   }
 
   async function getAllCards() {
@@ -70,29 +72,34 @@ export default function CardReader() {
   function CardEntry({ card }) {
     return (
       <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
-        <td className='hidden md:table-cell '>
+        <td key='cardBytes'className='hidden md:table-cell'>
           <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.cardBytes}
           </div>
         </td>
-        <td className='hidden md:table-cell'>
+        <td key='alias' className='hidden md:table-cell'>
+          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+            {card.alias}
+          </div>
+        </td>
+        <td key='createdAt' className='hidden md:table-cell'>
           <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.createdAt}
           </div>
         </td>
-        <td className='hidden md:table-cell'>
+        <td key='lastVerified' className='hidden md:table-cell'>
           <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.lastVerified}
           </div>
         </td>
-        <td className='hidden md:table-cell'>
+        <td key='verifiedCount' className='hidden md:table-cell'>
           <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.verifiedCount}
           </div>
         </td>
         <td>
           <button
-            className = 'p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+            className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
             onClick={() => handleDeleteClick(card)}
           >
             {trashcanSymbol()}
@@ -225,27 +232,34 @@ export default function CardReader() {
           }
           } />
           <div className='flex flex-col m-6'>
-            <table className='table px-3'>
-              <thead>
-                <tr>
-                  {[
-                    { title: 'Card Bytes', columnName: 'cardBytes' },
-                    { title: 'Registration Date', columnName: 'registrationDate' },
-                    { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
-                    { title: 'Verified Count', columnName: 'verifiedCount' }
-                  ].map(({ title }) => (
-                    <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
-                      <div className='flex items-center justify-center'>
-                        {title}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {cards.map(card => <CardEntry card={card}/>)}
-              </tbody>
-            </table>
+            { cards.length !== 0 ? (
+              <table className='table px-3'>
+                <thead>
+                  <tr>
+                    {[
+                      { title: 'Card Bytes', columnName: 'cardBytes' },
+                      { title: 'Alias', columnName: 'alias' },
+                      { title: 'Registration Date', columnName: 'registrationDate' },
+                      { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
+                      { title: 'Verified Count', columnName: 'verifiedCount' },
+                    ].map(({ title }) => (
+                      <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
+                        <div className='flex items-center justify-center'>
+                          {title}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {cards.map(card => <CardEntry card={card}/>)}
+                </tbody>
+              </table>
+            ) : (
+              <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+                Looks like there are no registered cards...
+              </h3>
+            )}
             {maybeRenderPagination()}
           </div>
         </div>
@@ -258,7 +272,9 @@ export default function CardReader() {
         </h3>
         <pre className='m-4 text-gray-700 dark:text-white'>
           {header}
-          {logs.join('\n')}
+          {logs.map((log, index) => (
+            <div key={index} className='border-b border-gray-300 py-1'>{log}</div>
+          ))}
         </pre>
       </div>
     );
