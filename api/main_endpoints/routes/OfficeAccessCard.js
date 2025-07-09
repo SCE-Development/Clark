@@ -61,6 +61,14 @@ function checkIfCardExists(cardBytes) {
   });
 }
 
+router.get('/getCardData', (req, res) => {
+  OfficeAccessCard.find()
+    .then(items => res.status(OK).send(items))
+    .catch(error => {
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
 router.get('/verify', async (req, res) =>{
   const { cardBytes, add = false } = req.query;
   const apiKey = req.headers['x-api-key'];
@@ -104,8 +112,6 @@ router.get('/verify', async (req, res) =>{
     return res.sendStatus(NOT_FOUND);
   }
 
-
-
   try {
     if (add) {
       logger.info('adding a new card');
@@ -131,20 +137,10 @@ router.get('/listen', async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     
-    let counter = 0;
-    
     clients.push(res);
-
-
-    const intervalId = setInterval(() => {
-        counter++;
-        
-        //res.write(`data: ${clients['data']}\n\n`);
-        
-        //res.write(`data: Message ${clients}\n\n`);
-
-
-    }, 2000);
+    // OfficeAccessCard.find()
+    // .then(response => response.json())
+    // .then(data => res.write(`data: ${JSON.stringify(data)}\n\n`))
 
     req.on('close', () => {
         clearInterval(intervalId);
