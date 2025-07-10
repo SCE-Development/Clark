@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { getAllCards } from '../../APIFunctions/CardReader';
   
 export default function CardReaderAdminPage () {
-  const [eventData, setEventData] = useState([])
+  const [eventData, setEventData] = useState([]);
   const [cards, setCards] = useState([]);
   const [activeTab, setActiveTab] = useState('stored');
   
@@ -16,13 +16,12 @@ export default function CardReaderAdminPage () {
 
   useEffect(() => {
     getCardsFromDB();
-    console.log(cards);
+    
   }, []);
 
   useEffect(() => {
     const eventSource = new EventSource('http://localhost:8080/api/OfficeAccessCard/listen');
     eventSource.onmessage = function(event) {
-        
         console.log(JSON.parse(event.data));
         setEventData(prev => [...prev, event.data])
     };
@@ -38,6 +37,7 @@ export default function CardReaderAdminPage () {
     <div className='m-10'>
         <h1 className="text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
           Card Reader Admin Page
+          
         </h1>
 
         <div className="my-5 text-xl flex space-x-8">
@@ -76,14 +76,16 @@ export default function CardReaderAdminPage () {
                   Last Verified
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  
+                  Alias
                 </th>
+                <th scope="col" className="px-6 py-3"/> 
               </tr>
             </thead>
             <tbody>
               {cards.map((card) => {
                 return (
                   <tr key={card._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  {console.log(cards)}
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {card.createdAt}
                     </th>
@@ -97,7 +99,28 @@ export default function CardReaderAdminPage () {
                       {card.lastVerified}
                     </td>
                     <td className="px-6 py-4">
-                      <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200">
+                      {card.alias}
+                    </td>
+                    <td className="px-6 py-4">
+                      <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200"
+                        onClick={() => (
+                          fetch("http://localhost:8080/api/OfficeAccessCard/delete", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ _id: card._id })
+                          })
+                          .then(res => {
+                            if (!res.ok) throw new Error("Failed to delete");
+                            console.log("Deleted successfully");
+                          })
+                          .catch(err => {
+                            console.error("Error deleting card:", err);
+                          })
+                          
+                        )}
+                      >
                         Delete
                       </button>
                     </td>
@@ -129,6 +152,9 @@ export default function CardReaderAdminPage () {
                 <th scope="col" className="px-6 py-3">
                   Card Bytes
                 </th>
+                <th scope="col" className="px-6 py-3">
+                  Alias
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -149,6 +175,9 @@ export default function CardReaderAdminPage () {
                     </td>
                     <td className="px-6 py-4">
                       {JSON.parse(event).cardBytes}
+                    </td>
+                    <td className="px-6 py-4">
+                      {JSON.parse(event).alias}
                     </td>
                   </tr>
                 );

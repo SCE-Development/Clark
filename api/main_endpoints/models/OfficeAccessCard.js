@@ -19,6 +19,10 @@ const OfficeAccessCardSchema = new Schema(
     lastVerified:{
       type:Date,
       default: Date.now
+    },
+    alias: {
+      type: String,
+
     }
   },
   { collection: 'OfficeAccessCards' }
