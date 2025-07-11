@@ -3,12 +3,6 @@ import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js'
 import { useState, useEffect } from 'react';
 import { useSCE } from '../../Components/context/SceContext.js';
 
-// createAd returns a value - what is it?
-// how do we know if createAd() works or not?
-// is there a field we can check?^
-
-// if createAd worked, how can we update the array without calling the backend again?
-
 export default function AdvertisementAdmin() {
   const { user } = useSCE();
 
@@ -16,6 +10,7 @@ export default function AdvertisementAdmin() {
   const [ads, setAds] = useState([]);
   const [message, setMessage] = useState('');
   const [expireDate, setExpireDate] = useState();
+  const [expireButtonClicked, setExpiredButtonClicked] = useState(false);
 
   async function getAdsFromDB() {
     const adsFromDB = await getAds(user.token);
@@ -35,7 +30,6 @@ export default function AdvertisementAdmin() {
       setExpireDate(undefined);
     }
     // expireDate is a string so we need to turn into date object
-
     if(isExpired(expireDate)){
       setErrorMessage('Setting an expiration date in the past will not properly save an ad to database!!');
     }else{
@@ -87,13 +81,35 @@ export default function AdvertisementAdmin() {
           </label>
         </div>
         <div className="flex items-center space-x-4 mb-6">
-          <input
-            className='flex-1 text-sm input input-bordered sm:text-base'
-            type='datetime-local'
-            onChange={ event => {
-              setExpireDate(event.target.value);
-            }}
-          />
+          {expireButtonClicked ? (
+            <> 
+            {/* ^^ fragment wrapping */}
+             <input
+             className='flex-1 text-sm input input-bordered sm:text-base'
+             type='datetime-local'
+             onChange={ event => {
+               setExpireDate(event.target.value);
+             }}
+           />
+            <button
+              className="text-sm btn btn-error sm:text-base"
+              onClick={() => {
+                setExpiredButtonClicked(false);
+                setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
+              }}
+            >
+              Cancel
+            </button>
+            </>
+          ) : (
+            <button
+              className="text-sm btn btn-primary sm:text-base"
+              onClick={() => setExpiredButtonClicked(true)}
+            >
+              Set Expiration Date For Ad
+            </button>
+          )}
+         
           <button
             className="text-sm btn btn-primary sm:text-base"
             onClick = {() => {
