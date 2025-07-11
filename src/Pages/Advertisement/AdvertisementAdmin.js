@@ -82,24 +82,24 @@ export default function AdvertisementAdmin() {
         </div>
         <div className="flex items-center space-x-4 mb-6">
           {expireButtonClicked ? (
-            <> 
-            {/* ^^ fragment wrapping */}
-             <input
-             className='flex-1 text-sm input input-bordered sm:text-base'
-             type='datetime-local'
-             onChange={ event => {
-               setExpireDate(event.target.value);
-             }}
-           />
-            <button
-              className="text-sm btn btn-error sm:text-base"
-              onClick={() => {
-                setExpiredButtonClicked(false);
-                setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
-              }}
-            >
+            <>
+              {/* ^^ fragment wrapping */}
+              <input
+                className='flex-1 text-sm input input-bordered sm:text-base'
+                type='datetime-local'
+                onChange={ event => {
+                  setExpireDate(event.target.value);
+                }}
+              />
+              <button
+                className="text-sm btn btn-error sm:text-base"
+                onClick={() => {
+                  setExpiredButtonClicked(false);
+                  setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
+                }}
+              >
               Cancel
-            </button>
+              </button>
             </>
           ) : (
             <button
@@ -109,7 +109,7 @@ export default function AdvertisementAdmin() {
               Set Expiration Date For Ad
             </button>
           )}
-         
+
           <button
             className="text-sm btn btn-primary sm:text-base"
             onClick = {() => {
