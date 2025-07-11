@@ -259,6 +259,7 @@ export default function URLShortenerPage() {
                 <div className="mt-2">
                   <input
                     id="alias"
+                    placeholder='myurl'
                     name="alias"
                     value={alias}
                     onChange={e => setAlias(e.target.value)}
@@ -289,7 +290,7 @@ export default function URLShortenerPage() {
                   placeholder="https://example.com"
                   value={url}
                   onChange={e => setUrl(e.target.value)}
-                  className="w-full text-sm input input-bordered sm:text-base"
+                  className="w-full text-sm input input-bordered sm:text-base mb-2"
                 />
               </div>
               <label htmlFor="expDateTime" className={LABEL_CLASS}>
@@ -300,7 +301,7 @@ export default function URLShortenerPage() {
                   type="datetime-local"
                   value={expDateTime}
                   onChange={(e) => setExpDateTime(e.target.value)}
-                  className="w-full text-sm input input-bordered sm:text-base"
+                  className="w-full text-sm input input-bordered sm:text-base mb-2"
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Time is in your local timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone}).
