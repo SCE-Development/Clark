@@ -12,7 +12,10 @@ import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
-export default function Printing(props) {
+import { useUser } from '../../Components/context/UserContext';
+
+export default function Printing() {
+  const { user, setUser } = useUser();
   const [dragActive, setDragActive] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [numberOfPagesInPdfPreview, setNumberOfPagesInPdfPreview] = useState(0);
@@ -40,8 +43,8 @@ export default function Printing(props) {
 
   async function getNumberOfPagesPrintedSoFar() {
     const result = await getPagesPrinted(
-      props.user.email,
-      props.user.token,
+      user.email,
+      user.token,
     );
     setPrinterHealthy(!result.error);
     if (!result.error) {
@@ -197,12 +200,12 @@ export default function Printing(props) {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    let status = await printPage(data, props.user.token);
+    let status = await printPage(data, user.token);
 
     if (!status.error) {
       editUser(
-        { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        props.user.token,
+        { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
+        user.token,
       );
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
