@@ -133,8 +133,8 @@ export default function UserNavbar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: backgroundColor}}>
-                  <span style={{color: getIconTextColor(backgroundColor)}}>{initials}</span>
+                <div className="w-12 rounded-full bg-neutral text-neutral-content transition-colors ease-in-out duration-300" style={{backgroundColor: backgroundColor}}>
+                  <span className="transition-colors ease-in-out duration-300" style={{color: getIconTextColor(backgroundColor)}}>{initials}</span>
                 </div>
               </summary>
               <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>

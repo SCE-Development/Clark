@@ -14,42 +14,35 @@ export default function Profile() {
   const [bannerColor, setBannerColor] = useState('');
   const [backgroundColor, setBackgroundColor] = useState(defaultColor);
   const [savedBackgroundColor, setSavedBackgroundColor] = useState(defaultColor);
+  const [saved, setSaved] = useState(false);
 
-  async function getUserFromApi() {
-    const response = await getUserById(user._id, user.token);
-    const responseData = response.responseData;
-    if (responseData) {
-      setResponse(responseData);
-      const bgColor = responseData.backgroundColor;
-      if(bgColor) {
-        setBackgroundColor(bgColor);
-        setSavedBackgroundColor(bgColor);
+  useEffect(() => {
+    async function getUserFromApi() {
+      const response = await getUserById(user._id, user.token);
+      const responseData = response.responseData;
+      if (responseData) {
+        setResponse(responseData);
+        const bgColor = responseData.backgroundColor;
+        if(bgColor) {
+          setBackgroundColor(bgColor);
+          setSavedBackgroundColor(bgColor);
+        }
       }
     }
-  }
+    getUserFromApi();
+  }, []);
 
   async function updateBackgroundColor() {
     if(backgroundColor == savedBackgroundColor) {
+      setSaved(true);
       return;
     }
     const response = await editUser({_id: user._id, backgroundColor}, user.token);
     if(!response.error) {
       setSavedBackgroundColor(backgroundColor);
+      setSaved(true);
     }
   }
-
-  async function resetBackgroundColor() {
-    if(backgroundColor == defaultColor) {
-      return;
-    }
-    const response = await editUser({_id: user._id, backgroundColor: defaultColor}, user.token);
-    if(!response.error) {
-      setBackgroundColor(defaultColor);
-      setSavedBackgroundColor(defaultColor);
-    }
-  }
-
-  useEffect(getUserFromApi, []);
 
   function renderExpirationDate() {
     if (response.accessLevel >= membershipState.OFFICER) {
@@ -112,10 +105,20 @@ export default function Profile() {
         <div className="pb-6 px-4">
           <div className="font-semibold text-gray-900">Profile Icon Color</div>
           <div className="py-2 flex gap-2">
-            <input className="h-8 w-18" type='color' value={backgroundColor} style={{backgroundColor: backgroundColor}} onChange={(e) => setBackgroundColor(e.target.value)}/>
-            <button className="btn btn-sm btn-primary" onClick={updateBackgroundColor}>Save</button>
+            <input className="h-8 w-18 border-none appearance-none" type='color' value={backgroundColor} style={{backgroundColor: backgroundColor}} onChange={(e) => {
+              setBackgroundColor(e.target.value);
+              if(e.target.value != savedBackgroundColor) {
+                setSaved(false);
+              }
+            }}/>
+            <button className="btn btn-sm btn-primary" onClick={updateBackgroundColor}>{saved ? "Saved!": "Save"}</button>
           </div>
-          <button className="btn btn-sm px-12 btn-error" onClick={resetBackgroundColor}>Reset</button>
+          <button className="btn btn-sm px-12 btn-error" onClick={() => {
+            setBackgroundColor(defaultColor);
+            if(savedBackgroundColor != defaultColor) {
+              setSaved(false);
+            }
+          }}>Reset</button>
         </div>
         <div className="text-gray-700">
           <div className="grid text-sm">
