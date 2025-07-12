@@ -11,6 +11,7 @@ export default function Profile() {
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState('#2a323c');
 
   async function getUserFromApi() {
     const response = await getUserById(user._id, user.token);
@@ -77,6 +78,13 @@ export default function Profile() {
             >
               Get API Key
             </button>
+          </div>
+        </div>
+        <div className="pb-6">
+          <div className="px-4 pb-2 font-semibold text-gray-900">Profile Icon Color</div>
+          <div className="px-4 flex gap-2">
+            <input type='color' value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)}/>
+            <button className="btn btn-sm btn-primary">Save</button>
           </div>
         </div>
         <div className="text-gray-700">
