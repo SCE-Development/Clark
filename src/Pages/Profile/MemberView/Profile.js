@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getUserById } from '../../../APIFunctions/User';
+import { getUserById, editUser } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
@@ -7,16 +7,45 @@ import { membershipState, membershipStateToString } from '../../../Enums';
 import { useUser } from '../../../Components/context/UserContext';
 
 export default function Profile() {
+  const defaultColor = '#2a323c';
   const { user } = useUser();
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
-  const [backgroundColor, setBackgroundColor] = useState('#2a323c');
+  const [backgroundColor, setBackgroundColor] = useState(defaultColor);
+  const [savedBackgroundColor, setSavedBackgroundColor] = useState(defaultColor);
 
   async function getUserFromApi() {
     const response = await getUserById(user._id, user.token);
-    if (response.responseData) {
-      setResponse(response.responseData);
+    const responseData = response.responseData;
+    if (responseData) {
+      setResponse(responseData);
+      const bgColor = responseData.backgroundColor;
+      if(bgColor) {
+        setBackgroundColor(bgColor);
+        setSavedBackgroundColor(bgColor);
+      }
+    }
+  }
+
+  async function updateBackgroundColor() {
+    if(backgroundColor == savedBackgroundColor) {
+      return;
+    }
+    const response = await editUser({_id: user._id, backgroundColor}, user.token);
+    if(!response.error) {
+      setSavedBackgroundColor(backgroundColor);
+    }
+  }
+
+  async function resetBackgroundColor() {
+    if(backgroundColor == defaultColor) {
+      return;
+    }
+    const response = await editUser({_id: user._id, backgroundColor: defaultColor}, user.token);
+    if(!response.error) {
+      setBackgroundColor(defaultColor);
+      setSavedBackgroundColor(defaultColor);
     }
   }
 
@@ -80,12 +109,13 @@ export default function Profile() {
             </button>
           </div>
         </div>
-        <div className="pb-6">
-          <div className="px-4 pb-2 font-semibold text-gray-900">Profile Icon Color</div>
-          <div className="px-4 flex gap-2">
-            <input type='color' value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)}/>
-            <button className="btn btn-sm btn-primary">Save</button>
+        <div className="pb-6 px-4">
+          <div className="font-semibold text-gray-900">Profile Icon Color</div>
+          <div className="py-2 flex gap-2">
+            <input className="h-8 w-18" type='color' value={backgroundColor} style={{backgroundColor: backgroundColor}} onChange={(e) => setBackgroundColor(e.target.value)}/>
+            <button className="btn btn-sm btn-primary" onClick={updateBackgroundColor}>Save</button>
           </div>
+          <button className="btn btn-sm px-12 btn-error" onClick={resetBackgroundColor}>Reset</button>
         </div>
         <div className="text-gray-700">
           <div className="grid text-sm">

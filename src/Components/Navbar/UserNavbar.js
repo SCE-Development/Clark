@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
+import { getUserById } from '../../APIFunctions/User';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
   const { authenticated } = useAuth();
+  const [backgroundColor, setBackgroundColor] = useState('');
+
+  useEffect(() => {
+    async function getBackgroundColor() {
+      const response = await getUserById(user._id, user.token);
+      if(response.responseData && response.responseData.backgroundColor) {
+        setBackgroundColor(response.responseData.backgroundColor);
+      }
+    }
+    if(props.authenticated && user && user.token && user._id) {
+      getBackgroundColor();
+    }
+  }, [props.authenticated, user]);
+
   let initials = '';
   if (user && user.firstName && user.lastName) {
     initials = user.firstName[0] + user.lastName[0];
@@ -89,7 +104,7 @@ export default function UserNavbar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content">
+                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: backgroundColor}}>
                   <span>{initials}</span>
                 </div>
               </summary>
