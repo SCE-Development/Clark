@@ -33,6 +33,9 @@ export default function Profile() {
   }, []);
 
   async function updateBackgroundColor() {
+    if(saved) {
+      return;
+    }
     if(backgroundColor == savedBackgroundColor) {
       setSaved(true);
       return;
@@ -105,13 +108,13 @@ export default function Profile() {
         <div className="pb-6 px-4">
           <div className="font-semibold text-gray-900">Profile Icon Color</div>
           <div className="py-2 flex gap-2">
-            <input className="h-8 w-18 border-none appearance-none" type='color' value={backgroundColor} style={{backgroundColor: backgroundColor}} onChange={(e) => {
+            <input type='color' value={backgroundColor} style={{backgroundColor: backgroundColor}} onChange={(e) => {
               setBackgroundColor(e.target.value);
               if(e.target.value != savedBackgroundColor) {
                 setSaved(false);
               }
             }}/>
-            <button className="btn btn-sm btn-primary" onClick={updateBackgroundColor}>{saved ? "Saved!": "Save"}</button>
+            <button className="btn btn-sm btn-primary" onClick={updateBackgroundColor}>{saved ? 'Saved!' : 'Save'}</button>
           </div>
           <button className="btn btn-sm px-12 btn-error" onClick={() => {
             setBackgroundColor(defaultColor);
