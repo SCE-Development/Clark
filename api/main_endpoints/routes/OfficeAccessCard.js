@@ -85,9 +85,6 @@ function checkIfAliasExists(alias) {
             logger.error('checkIfAliasExists got an error querying mongodb: ', error);
             return resolve(false);
           }
-          if(!result){
-            logger.info(`Card with alias \"${alias}\" not found in the database`);
-          }
           return resolve(!!result);
         }
       );
@@ -101,13 +98,14 @@ function checkIfAliasExists(alias) {
 async function generateAlias() {
   let aliasExists = true;
   let alias = '';
-  while (aliasExists) { // keep generating until unique alias generated
+  for (let i = 0; i < 5; i++) { // loop max five times
     let noun = NOUNS[Math.floor(Math.random() * 100)]; // change this number later if/when list size grows
     let adjective = ADJECTIVES[Math.floor(Math.random() * 100)];
     alias = `${adjective} ${noun}`;
     aliasExists = await checkIfAliasExists(alias);
+    if (!aliasExists) return alias;
   }
-  return alias;
+  return new Date().toGMTString();
 }
 
 let clients = [];
@@ -157,10 +155,18 @@ router.get('/verify', async (req, res) => {
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
+    writeLogToClient(req.method, {
+      statusCode: BAD_REQUEST,
+      message: `${missingValue.title} missing from request`
+    });
     return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
 
   if (apiKey !== API_KEY) {
+    writeLogToClient(req.method, {
+      statusCode: UNAUTHORIZED,
+      message: `Invalid API key: ${apiKey}`,
+    });
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -236,7 +242,7 @@ router.post('/delete', async (req, res) => {
     });
     return res.sendStatus(OK);
   }
-  logger.info('Error deleting card');
+
   writeLogToClient({
     alias: cardExists.alias,
     statusCode: SERVER_ERROR,
@@ -252,7 +258,7 @@ router.post('/getAllCards', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  let skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
+  const skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
 
   try {
     const total = await OfficeAccessCard.count({});
