@@ -54,10 +54,7 @@ export async function sendPasswordReset(email, captchaToken) {
         captchaToken,
       }),
     });
-    if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
-    } else {
+    if (!res.ok) {
       status.error = true;
     }
   } catch(error) {
