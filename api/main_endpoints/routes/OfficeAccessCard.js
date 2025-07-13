@@ -96,14 +96,13 @@ function checkIfAliasExists(alias) {
 }
 
 async function generateAlias() {
-  let aliasExists = true;
-  let alias = '';
-  for (let i = 0; i < 5; i++) { // loop max five times
-    let noun = NOUNS[Math.floor(Math.random() * 100)]; // change this number later if/when list size grows
-    let adjective = ADJECTIVES[Math.floor(Math.random() * 100)];
-    alias = `${adjective} ${noun}`;
-    aliasExists = await checkIfAliasExists(alias);
-    if (!aliasExists) return alias;
+  for (let i = 0; i < 5; ++i) {
+    const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+    const adjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+    const alias = `${adjective} ${noun}`;
+    const aliasExists = await checkIfAliasExists(alias);
+    if (aliasExists) continue;
+    return alias;
   }
   return new Date().toGMTString();
 }
