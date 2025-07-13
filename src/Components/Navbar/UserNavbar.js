@@ -9,15 +9,19 @@ export default function UserNavbar(props) {
   const { authenticated } = useAuth();
   const [backgroundColor, setBackgroundColor] = useState('');
 
-  useEffect(() => {
-    async function getBackgroundColor() {
-      const response = await getUserById(user._id, user.token);
-      if(response.responseData && response.responseData.backgroundColor) {
-        setBackgroundColor(response.responseData.backgroundColor);
-      }
+  async function getBackgroundColor() {
+    const response = await getUserById(user._id, user.token);
+    if(response.responseData && response.responseData.backgroundColor) {
+      setBackgroundColor(response.responseData.backgroundColor);
     }
+  }
+
+  useEffect(() => {
+    const run = async () => {
+      await getBackgroundColor();
+    } ;
     if(authenticated && user && user.token && user._id) {
-      getBackgroundColor();
+      run();
     }
   }, [authenticated, user]);
 
@@ -133,8 +137,8 @@ export default function UserNavbar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className={'w-12 rounded-full bg-neutral text-neutral-content'} style={{backgroundColor: backgroundColor}}>
-                  <span className={''} style={{color: getIconTextColor(backgroundColor)}}>{initials}</span>
+                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: backgroundColor}}>
+                  <span style={{color: getIconTextColor(backgroundColor)}}>{initials}</span>
                 </div>
               </summary>
               <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>
