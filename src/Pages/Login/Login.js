@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../Components/context/AuthContext';
 import { loginUser } from '../../APIFunctions/Auth';
+import { useAuth } from '../../Components/context/AuthContext';
 
 export default function Login() {
   const { setAuthenticated } = useAuth();
