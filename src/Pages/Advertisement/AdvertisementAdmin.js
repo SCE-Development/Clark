@@ -43,6 +43,38 @@ export default function AdvertisementAdmin() {
     await getAdsFromDB();
 
   }
+  function maybeRenderExpirationInput(){
+    if(!expireButtonClicked){
+      return( <button
+      className="text-sm btn btn-primary sm:text-base"
+      onClick={() => setExpiredButtonClicked(true)}
+    >
+      Set Expiration Date For Ad
+    </button>
+      );
+    }else{
+      return(
+        <>
+      <input
+        className='flex-1 text-sm input input-bordered sm:text-base'
+        type='datetime-local'
+        onChange={ event => {
+          setExpireDate(event.target.value);
+        }}
+        />
+      <button
+        className="text-sm btn btn-error sm:text-base"
+        onClick={() => {
+          setExpiredButtonClicked(false);
+          setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
+        }}
+      >
+      Cancel
+      </button>
+      </>
+      );
+  }
+}
 
   useEffect(() => {
     getAdsFromDB();
@@ -80,36 +112,8 @@ export default function AdvertisementAdmin() {
             </div>
           </label>
         </div>
-        <div className="flex items-center space-x-4 mb-6">
-          {expireButtonClicked ? (
-            <>
-              {/* ^^ fragment wrapping */}
-              <input
-                className='flex-1 text-sm input input-bordered sm:text-base'
-                type='datetime-local'
-                onChange={ event => {
-                  setExpireDate(event.target.value);
-                }}
-              />
-              <button
-                className="text-sm btn btn-error sm:text-base"
-                onClick={() => {
-                  setExpiredButtonClicked(false);
-                  setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
-                }}
-              >
-              Cancel
-              </button>
-            </>
-          ) : (
-            <button
-              className="text-sm btn btn-primary sm:text-base"
-              onClick={() => setExpiredButtonClicked(true)}
-            >
-              Set Expiration Date For Ad
-            </button>
-          )}
-
+        <div className="flex flex-wrap items-center gap-4 mb-6">
+          {maybeRenderExpirationInput()}
           <button
             className="text-sm btn btn-primary sm:text-base"
             onClick = {() => {
