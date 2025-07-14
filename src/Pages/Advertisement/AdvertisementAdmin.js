@@ -46,35 +46,35 @@ export default function AdvertisementAdmin() {
   function maybeRenderExpirationInput(){
     if(!expireButtonClicked){
       return( <button
-      className="text-sm btn btn-primary sm:text-base"
-      onClick={() => setExpiredButtonClicked(true)}
-    >
+        className="text-sm btn btn-primary sm:text-base"
+        onClick={() => setExpiredButtonClicked(true)}
+      >
       Set Expiration Date For Ad
-    </button>
+      </button>
       );
     }else{
       return(
         <>
-      <input
-        className='flex-1 text-sm input input-bordered sm:text-base'
-        type='datetime-local'
-        onChange={ event => {
-          setExpireDate(event.target.value);
-        }}
-        />
-      <button
-        className="text-sm btn btn-error sm:text-base"
-        onClick={() => {
-          setExpiredButtonClicked(false);
-          setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
-        }}
-      >
+          <input
+            className='flex-1 text-sm input input-bordered sm:text-base'
+            type='datetime-local'
+            onChange={ event => {
+              setExpireDate(event.target.value);
+            }}
+          />
+          <button
+            className="text-sm btn btn-error sm:text-base"
+            onClick={() => {
+              setExpiredButtonClicked(false);
+              setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
+            }}
+          >
       Cancel
-      </button>
-      </>
+          </button>
+        </>
       );
+    }
   }
-}
 
   useEffect(() => {
     getAdsFromDB();
