@@ -325,9 +325,7 @@ export async function getNewPaidMembersThisSemester(token) {
   const url = new URL('/api/User/getNewPaidMembersThisSemester', BASE_API_URL);
   try {
     const res = await fetch(url.href, {
-      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
