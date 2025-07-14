@@ -5,10 +5,12 @@ import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
 import { useUser } from '../../../Components/context/UserContext';
+import { useBackgroundColor } from '../../../Components/context/BackgroundContext';
 
 export default function Profile() {
   const defaultColor = '#2a323c';
   const { user } = useUser();
+  const { setBackgroundColorVersion } = useBackgroundColor();
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
@@ -44,6 +46,7 @@ export default function Profile() {
     if(!response.error) {
       setSavedBackgroundColor(backgroundColor);
       setSaved(true);
+      setBackgroundColorVersion(v => v + 1);
     }
   }
 

@@ -3,9 +3,11 @@ import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { getUserById } from '../../APIFunctions/User';
+import { useBackgroundColor } from '../context/BackgroundContext';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
+  const { backgroundColorVersion } = useBackgroundColor();
   const { authenticated } = useAuth();
   const [backgroundColor, setBackgroundColor] = useState('');
 
@@ -23,7 +25,7 @@ export default function UserNavbar(props) {
     if(authenticated && user && user.token && user._id) {
       run();
     }
-  }, [authenticated, user]);
+  }, [authenticated, user, backgroundColorVersion]);
 
   // using w3c guidelines
   function getIconTextColor(color) {
