@@ -7,7 +7,7 @@ import { useBackgroundColor } from '../context/BackgroundContext';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
-  const { backgroundColorVersion } = useBackgroundColor();
+  const { backgroundColorVersion } = useBackgroundColor() || {};
   const { authenticated } = useAuth();
   const [backgroundColor, setBackgroundColor] = useState('');
 

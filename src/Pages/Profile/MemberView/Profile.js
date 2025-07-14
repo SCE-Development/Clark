@@ -10,7 +10,7 @@ import { useBackgroundColor } from '../../../Components/context/BackgroundContex
 export default function Profile() {
   const defaultColor = '#2a323c';
   const { user } = useUser();
-  const { setBackgroundColorVersion } = useBackgroundColor();
+  const { setBackgroundColorVersion } = useBackgroundColor() || {};
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
