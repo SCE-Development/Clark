@@ -322,14 +322,21 @@ export async function getApiKey(token) {
 
 export async function getNewPaidMembersThisSemester(token) {
   let status = new UserApiResponse();
+  const url = new URL('/api/User/getNewPaidMembersThisSemester', BASE_API_URL);
   try {
-    const url = new URL('/api/User/getNewPaidMembersThisSemester', BASE_API_URL);
-    const response = await axios.get(url.href, {
+    const res = await fetch(url.href, {
+      method: 'GET',
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     });
-    status.responseData = response.data;
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
   } catch (error) {
     status.error = true;
   }
