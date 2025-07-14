@@ -458,42 +458,52 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
   }
 
   const today = new Date();
-
   //  First semester start date - Jan 1st
   let semesterStart = new Date(today.getFullYear(), 0, 1);
-
   if(today.getMonth() >= 5) {
     //  Second semester start date - June 1st
     semesterStart = new Date(today.getFullYear(), 5, 1);
   }
 
-  const newSingleSemesterMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+  const getNewSingleSemesterMembersCount = User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
     'membershipValidUntil': getMemberExpirationDate(1),
     'joinDate': {
       $gte: semesterStart
     },
   });
-  const newAnnualMembersCount = await User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+  const getNewAnnualMembersCount = User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
     'membershipValidUntil': getMemberExpirationDate(2),
     'joinDate': {
       $gte: semesterStart
     },
   });
-  const newMembersThisYear = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
+  const getNewMembersThisYearCount = User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
     //  Jan 1st Start of Year
     $gte: new Date(today.getFullYear(), 0, 1)
   }});
-  const currentActiveMembers = await User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
+  const getCurrentActiveMembersCount = User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
     //  Today
     $gt: new Date()
   }});
 
+  const [
+    newSingleSemesterMembers,
+    newAnnualMembers,
+    newMembersThisYear,
+    currentActiveMembers,
+  ] = await Promise.all([
+    getNewSingleSemesterMembersCount,
+    getNewAnnualMembersCount,
+    getNewMembersThisYearCount,
+    getCurrentActiveMembersCount
+  ]);
+
   try {
     const response = {
-      newMembersThisYear: newMembersThisYear,
-      currentActiveMembers: currentActiveMembers,
-      newSingleSemesterMembers: newSingleSemesterMembersCount,
-      newAnnualMembers: newAnnualMembersCount
+      newSingleSemesterMembers,
+      newAnnualMembers,
+      newMembersThisYear,
+      currentActiveMembers,
     };
     return res.status(OK).send(response);
   } catch {
