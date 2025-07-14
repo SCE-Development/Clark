@@ -8,7 +8,7 @@ import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
 import { UserContext } from './Components/context/UserContext';
 import SearchModal from './Components/ShortcutKeyModal/SearchModal';
 import { AuthContext } from './Components/context/AuthContext';
-import { BackgroundColorContext } from './Components/context/BackgroundContext';
+import BackgroundColorContextProvider from './Components/context/BackgroundColorContext';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -35,12 +35,12 @@ function App() {
     !isAuthenticating && (
       <UserContext.Provider value={{ user, setUser }}>
         <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
-          <BackgroundColorContext.Provider value={{backgroundColorVersion, setBackgroundColorVersion}}>
+          <BackgroundColorContextProvider>
             <BrowserRouter>
               <SearchModal/>
               <Routing/>
             </BrowserRouter>
-          </BackgroundColorContext.Provider>
+          </BackgroundColorContextProvider>
         </AuthContext.Provider>
       </UserContext.Provider>
     )

@@ -5,7 +5,7 @@ import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
 import { useUser } from '../../../Components/context/UserContext';
-import { useBackgroundColor } from '../../../Components/context/BackgroundContext';
+import { useBackgroundColor } from '../../../Components/context/BackgroundColorContext';
 
 export default function Profile() {
   const defaultColor = '#2a323c';

@@ -3,7 +3,7 @@ import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { getUserById } from '../../APIFunctions/User';
-import { useBackgroundColor } from '../context/BackgroundContext';
+import { useBackgroundColor } from '../context/BackgroundColorContext';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
