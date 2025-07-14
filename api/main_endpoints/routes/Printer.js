@@ -42,13 +42,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const FIVE_MINUTES_MS = 300000;
+const TEN_SECONDS_MS = 10000;
 
 if (PRINTING.ENABLED) {
   setInterval(() => {
     const dir = path.join(__dirname, 'printing');
     cleanUpExpiredChunks(dir, FIVE_MINUTES_MS);
     recordPrintingFolderSize(dir);
-  }, FIVE_MINUTES_MS);
+  }, TEN_SECONDS_MS);
 }
 
 router.get('/healthCheck', async (req, res) => {
