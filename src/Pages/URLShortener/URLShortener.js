@@ -488,14 +488,19 @@ export default function URLShortenerPage() {
                           </div>
                         </td>
                         <td className="hidden md:table-cell">
-                          <div className="flex flex-col items-center">
-                            <span className='block'>
-                              {new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
-                            </span>
-                            <span className='block text-sm text-blue-400'>
-                              {new Date(url.expires_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}
-                            </span>
-                          </div>
+                          {url.expires_at ? (
+                            <div className="flex flex-col items-center">
+                              <span className='block'>
+                                {new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
+                              </span>
+                              <span className='block text-sm text-blue-400'>
+                                {new Date(url.expires_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}
+                              </span>
+                            </div>
+                          ) : (
+                              <div className="flex flex-col items-center text-white-500">-</div>
+                          )}
+
                         </td>
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
