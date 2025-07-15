@@ -70,6 +70,11 @@ const UserSchema = new Schema(
       type: Number,
       default: 0
     },
+    pageCount: {
+      type: Number,
+      required: true,
+      default: 3
+    },
     apiKey: {
       type: String,
       default: ''

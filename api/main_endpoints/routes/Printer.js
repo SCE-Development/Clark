@@ -7,6 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 const { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize } = require('../util/Printer.js');
+const pdfParse = require('pdf-parse');
+const {subtractUserPages} = require('../util/userHelpers')
 
 const {
   decodeToken,
@@ -78,7 +80,8 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req)) {
+  const user = await decodeToken(req);
+  if(!user){
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -113,8 +116,22 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   }
-
+  try{
+    const dataBuffer = fs.readFileSync(assembledPdfFromChunks)
+    const pdfData = await pdfParse(dataBuffer)
+    const pagesInFile = pdfData.numpages;
+    const copiesInt = parseInt(copies || 1);
+    const totalPages = pagesInFile * copiesInt;
+    await subtractUserPages(user.id, totalPages);
+  }
+  catch(err){
+    logger.error('/sendPrintRequest failed', err);
+    await cleanUpChunks(dir,id)
+    return res.status(400).json({error:err.message});
+  }
   const stream = await fs.createReadStream(assembledPdfFromChunks);
+
+
   const data = new FormData();
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);

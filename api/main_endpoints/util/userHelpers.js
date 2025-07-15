@@ -203,6 +203,20 @@ function checkIfPageCountResets(lastLogin) {
   return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
 
+async function subtractUserPages(userId, pagesToDeduct){
+  const user = await User.findById(userId);
+  if(!user){
+    throw new Error('user not found');
+  }
+  if(user.pageCount < pagesToDeduct){
+    throw new Error('no more pages remaining');
+  }
+
+  user.pageCount -= pagesToDeduct;
+  await user.save();
+  return user.pageCount;
+}
+
 module.exports = {
   registerUser,
   getMemberExpirationDate,
@@ -211,4 +225,5 @@ module.exports = {
   userWithEmailExists,
   checkIfPageCountResets,
   findPasswordReset,
+  subtractUserPages,
 };
