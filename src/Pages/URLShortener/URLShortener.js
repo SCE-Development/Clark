@@ -484,10 +484,10 @@ export default function URLShortenerPage() {
                   <tr>
                     {[
                       { title: 'URL', className: 'text-base text-slate-800 dark:text-white/70', columnName: 'alias' },
-                      { title: 'Created At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
-                      { title: 'Expires At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'expires_at' },
-                      { title: 'Times Used', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'used' },
-                      { title: 'Delete', className: 'text-base text-slate-800 dark:text-white/70 text-center' }
+                      { title: 'Created At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center md:table-cell', columnName: 'created_at' },
+                      { title: 'Expires At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center md:table-cell', columnName: 'expires_at' },
+                      { title: 'Times Used', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center md:table-cell', columnName: 'used' },
+                      { title: 'Delete', className: 'text-base text-slate-800 dark:text-white/70 text-center' },
                     ].map(({ title, className, columnName = null }) => (
                       <th
                         className={`${className}`}
