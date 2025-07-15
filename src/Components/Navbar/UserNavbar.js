@@ -23,6 +23,8 @@ export default function UserNavbar(props) {
             setTransition(true);
           }, 600);
         }
+      } else {
+        setTransition(true);
       }
     }
     if(authenticated && user && user.token && user._id) {
