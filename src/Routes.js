@@ -17,6 +17,7 @@ import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail.js'
 import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
+import AuditLogsPage from './Pages/AuditLog/AuditLog.js'
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -143,6 +144,14 @@ export const officerOrAdminRoutes = [
     Component: CardReader,
     path: '/card-reader',
     pageName: 'Card Reader',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true
+  },
+  {
+    Component: AuditLogsPage,
+    path: '/audit-logs',
+    pageName: 'Audit Log',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
