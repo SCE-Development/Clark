@@ -3,9 +3,19 @@ import { getAllLogs } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
 import { useUser } from '../../Components/context/UserContext';
 import AuditLogCard from './Components/AuditLogCard';
+import FilterActivityTypes from './Components/FilterActivityTypes';
+import RefreshButton from './Components/RefreshButton';
+import FirstNameFilter from './Components/FirstNameFilter';
+import LastNameFilter from './Components/LastNameFilter';
 
 export default function AuditLogPage() {
   const [auditLogsData, setAuditLogsData] = useState({ items: [], totalLogs: 0 });
+
+  // states for filters
+  const [firstNameFilter, setFirstNameFilter] = useState('');
+  const [lastNameFilter, setLastNameFilter] = useState('');
+  const [activityFilters, setActivityFilters] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
@@ -15,7 +25,13 @@ export default function AuditLogPage() {
   const getAuditLogsFromDB = async () => {
     try {
       setLoading(true);
-      const auditLogsFromDB = await getAllLogs(currentPage, user.user.token);
+      const auditLogsFromDB = await getAllLogs(
+        currentPage,
+        activityFilters,
+        firstNameFilter,
+        lastNameFilter,
+        user.user.token
+      );
       if (!auditLogsFromDB.error) {
         setAuditLogsData(auditLogsFromDB.responseData);
       } else {
@@ -32,8 +48,22 @@ export default function AuditLogPage() {
     getAuditLogsFromDB();
   }, [currentPage]);
 
+  const applyFilters = () => {
+    setCurrentPage(1); // reset to first page when applying filters
+    getAuditLogsFromDB();
+  };
+
+  const clearFilters = () => {
+    setFirstNameFilter('');
+    setLastNameFilter('');
+    setActivityFilters([]);
+    setCurrentPage(1);
+    getAuditLogsFromDB(); // rerun api call for updated results
+  };
+
   const itemsPerPage = 50;
   const totalPages = Math.ceil(auditLogsData.totalLogs / itemsPerPage);
+  const currentLogs = auditLogsData.items;
 
   const goToPage = page => {
     setCurrentPage(Math.max(0, Math.min(page, totalPages)));
