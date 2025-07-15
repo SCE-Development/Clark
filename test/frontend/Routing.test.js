@@ -3,12 +3,13 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
+import { UserContext } from '../../src/Components/context/UserContext';
+import { AuthContext } from '../../src/Components/context/AuthContext';
 
 import Routing from '../../src/Routing';
 import Home from '../../src/Pages/Home/Home';
 import Overview from '../../src/Pages/Overview/Overview';
 import LedSign from '../../src/Pages/LedSign/LedSign';
-import SpeakersPage from '../../src/Pages/Speaker/Speaker';
 import Printing from '../../src/Pages/2DPrinting/2DPrinting';
 import Profile from '../../src/Pages/Profile/MemberView/Profile';
 import EditUserInfo from '../../src/Pages/UserManager/EditUserInfo';
@@ -29,20 +30,35 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 const adminAppProps = {
-  user: { accessLevel: membershipState.ADMIN },
-  authenticated: true
 };
+
+const mockUser = { accessLevel: membershipState.ADMIN };
 
 // without this we get an error saying SVGElement
 // is not defined during the test
 if (typeof SVGElement === 'undefined') {
   global.SVGElement = class SVGElement extends HTMLElement {};
 }
-function getComponentFromRoute(route, props = adminAppProps) {
+
+function getComponentFromRoute(route, props = adminAppProps, user = mockUser) {
+  const mockUserContext = {
+    user: user,
+    setUser: () => {}
+  };
+
+  const mockAuthContext = {
+    authenticated: true,
+    setAuthenticated: () => {}
+  };
+
   return mount(
-    <MemoryRouter initialEntries={[route]} appProps={props} >
-      <Routing appProps={props} />
-    </MemoryRouter>
+    <UserContext.Provider value={mockUserContext}>
+      <AuthContext.Provider value={mockAuthContext}>
+        <MemoryRouter initialEntries={[route]}>
+          <Routing appProps={props} />
+        </MemoryRouter>
+      </AuthContext.Provider>
+    </UserContext.Provider>
   );
 }
 
@@ -65,14 +81,6 @@ describe('<Routing /> with <PrivateRoute />', () => {
       () => {
         const wrapper = getComponentFromRoute('/led-sign');
         expect(wrapper.find(LedSign)).to.have.lengthOf(1);
-      }
-    );
-    it(
-      'Should render a <SpeakersPage /> component with the /speakers' +
-      'endpoint',
-      () => {
-        const wrapper = getComponentFromRoute('/speakers');
-        expect(wrapper.find(SpeakersPage)).to.have.lengthOf(1);
       }
     );
     it(

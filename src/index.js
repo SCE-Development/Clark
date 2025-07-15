@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { withRouter, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 
 import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
+import { UserContext } from './Components/context/UserContext';
+import SearchModal from './Components/ShortcutKeyModal/SearchModal';
+import { AuthContext } from './Components/context/AuthContext';
 
-
-function App(props) {
+function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [user, setUser] = useState();
@@ -27,13 +29,16 @@ function App(props) {
 
   return (
     !isAuthenticating && (
-      <BrowserRouter>
-        <Routing appProps={{ authenticated, setAuthenticated, user }} />
-      </BrowserRouter>
+      <UserContext.Provider value={{ user, setUser }}>
+        <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
+          <BrowserRouter>
+            <SearchModal/>
+            <Routing/>
+          </BrowserRouter>
+        </AuthContext.Provider>
+      </UserContext.Provider>
     )
   );
 }
-
-export default withRouter(App);
 
 ReactDOM.render(<App />, document.getElementById('root'));
