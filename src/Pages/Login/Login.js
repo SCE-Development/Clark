@@ -27,7 +27,7 @@ export default function Login() {
       if (backendMsg) {
         setErrorMsg(backendMsg);
       } else {
-        setErrorMsg('Login failed. Please check your credentials or try again later.');
+        setErrorMsg('Username or password did not match.');
       }
     }
   }
