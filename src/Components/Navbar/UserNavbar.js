@@ -1,8 +1,8 @@
 import React from 'react';
 import { isValidHexColor, selectCorrectColor } from '../../APIFunctions/Profile';
 import { membershipState } from '../../Enums';
-import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
+import { useUser } from '../context/UserContext';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
@@ -13,8 +13,8 @@ export default function UserNavbar(props) {
   }
 
   let iconColor = '';
-  if(isValidHexColor(props.user.backgroundColor)) {
-    iconColor = props.user.backgroundColor;
+  if(isValidHexColor(user.backgroundColor)) {
+    iconColor = user.backgroundColor;
   } else {
     iconColor = '#15191e';
   }
