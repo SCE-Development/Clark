@@ -23,12 +23,11 @@ export default function Login() {
         window.location.reload();
       }
     } else {
-      if(loginStatus.responseData === undefined || loginStatus.responseData.data.message === undefined){
-        setErrorMsg('Backend May Be down, check with dev team!');
-      }else{
-        setErrorMsg(
-          loginStatus.responseData && loginStatus.responseData.data.message
-        );
+      const backendMsg = loginStatus?.responseData?.data?.message;
+      if (backendMsg) {
+        setErrorMsg(backendMsg);
+      } else {
+        setErrorMsg('Login failed. Please check your credentials or try again later.');
       }
     }
   }
