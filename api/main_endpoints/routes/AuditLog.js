@@ -24,7 +24,7 @@ router.get('/getAuditLogs', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 50;
   const page = parseInt(req.query.page) || 1;
   const skip = (page - 1) * itemsPerPage;
 

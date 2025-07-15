@@ -33,7 +33,7 @@ export default function AuditLogPage() {
     getAuditLogsFromDB();
   }, [currentPage]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 50;
   const totalPages = Math.ceil(auditLogsData.totalLogs / itemsPerPage);
 
   const goToPage = page => {
