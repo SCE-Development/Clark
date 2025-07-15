@@ -17,8 +17,10 @@ function App() {
   async function getAuthStatus() {
     setIsAuthenticating(true);
     const authStatus = await checkIfUserIsSignedIn();
-    setAuthenticated(!authStatus.error);
-    setUser({ token: authStatus.token, ...authStatus.responseData});
+    setAuthenticated(!authStatus.error && !!authStatus.token);
+    if (!!authStatus.token){
+      setUser({ token: authStatus.token, ...authStatus.responseData});
+    }
     setIsAuthenticating(false);
   }
 
