@@ -1,3 +1,7 @@
+import { getActionDescription } from '../utils/getActionDescription';
+import { formatDetails } from '../utils/formatDetails';
+import { formatTimestamp } from '../utils/formatTimestamp';
+
 const AuditLogCard = ({ log, index }) => {
   const hasDetails = log => {
     return log.details && Object.keys(log.details).length > 0;
@@ -31,10 +35,10 @@ const AuditLogCard = ({ log, index }) => {
           </div>
 
           <div className='ml-5 text-sm text-gray-400'>
-            <time dateTime={log.createdAt}>{log.createdAt}</time>
+            <time dateTime={log.createdAt}>{formatTimestamp(log.createdAt)}</time>
           </div>
 
-          {hasDetails(log) && <div className='ml-5 mt-4'>{log.details}</div>}
+          {hasDetails(log) && <div className='ml-5 mt-4'>{formatDetails(log.details)}</div>}
         </div>
 
         <div className='flex-shrink-0 ml-4'>
