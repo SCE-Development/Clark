@@ -9,22 +9,30 @@ export default function UserNavbar(props) {
   const { user } = useUser();
   const { backgroundColorVersion } = useBackgroundColor() || {};
   const { authenticated } = useAuth();
-  const [backgroundColor, setBackgroundColor] = useState('');
-
-  async function getBackgroundColor() {
-    const response = await getUserById(user._id, user.token);
-    if(response.responseData && response.responseData.backgroundColor) {
-      setBackgroundColor(response.responseData.backgroundColor);
-    }
-  }
+  const [backgroundColor, setBackgroundColor] = useState('#2a323c');
+  const [transition, setTransition] = useState(false);
 
   useEffect(() => {
-    const run = async () => {
-      await getBackgroundColor();
-    } ;
-    if(authenticated && user && user.token && user._id) {
-      run();
+    let timeoutId;
+    async function getBackgroundColor() {
+      const response = await getUserById(user._id, user.token);
+      if(response.responseData && response.responseData.backgroundColor) {
+        setBackgroundColor(response.responseData.backgroundColor);
+        if(transition == false) {
+          timeoutId = setTimeout(() => {
+            setTransition(true);
+          }, 600);
+        }
+      }
     }
+    if(authenticated && user && user.token && user._id) {
+      getBackgroundColor();
+    }
+    return () => {
+      if(timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [authenticated, user, backgroundColorVersion]);
 
   // using w3c guidelines
@@ -139,8 +147,8 @@ export default function UserNavbar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: backgroundColor}}>
-                  <span style={{color: getIconTextColor(backgroundColor)}}>{initials}</span>
+                <div className={`w-12 rounded-full bg-neutral text-neutral-content ${transition ? ' transition-colors ease-in duration-500' : ''}`} style={{backgroundColor: backgroundColor}}>
+                  <span className={`${transition ? ' transition-colors ease-in duration-500' : ''}`} style={{color: getIconTextColor(backgroundColor)}}>{initials}</span>
                 </div>
               </summary>
               <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>
