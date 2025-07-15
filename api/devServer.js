@@ -5,4 +5,8 @@ if (typeof module !== 'undefined' && !module.parent) {
   // Starting servers
   require('./main_endpoints/server');
   require('./cloud_api/server');
+  require('./dessert_api/server'); // add this line!
+  console.log('[Dessert API] 🍰 Starting dessert server...');
+
+  
 }

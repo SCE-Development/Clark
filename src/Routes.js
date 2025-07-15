@@ -14,6 +14,8 @@ import ProjectsPage from './Pages/Projects/Projects.js';
 import URLShortenerPage from './Pages/URLShortener/URLShortener.js';
 import EmailPreferencesPage from './Pages/EmailPreferences/EmailPreferences.js';
 import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail.js';
+import AdminDessert from './Pages/Desserts/AdminDessert.js';
+import DessertPage from './Pages/Desserts/desserts.js';
 import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
@@ -60,7 +62,7 @@ const authenticatedRoutes = [
     pageName: 'Profile',
     allowedIf: allowedIf.AUTHENTICATED,
     redirect: '/login'
-  },
+  }
 ];
 
 export const memberRoutes = [
@@ -91,6 +93,13 @@ export const officerOrAdminRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
+  {
+  Component: AdminDessert,
+  path: '/dessert-admin',
+  allowedIf: allowedIf.OFFICER_OR_ADMIN,
+  redirect: '/',
+  inAdminNavbar: true
+},
   //
   // {
   //   Component: EmailPage,
@@ -180,5 +189,9 @@ export const signedOutRoutes = [
     Component: EmailPreferencesPage,
     path: '/emailPreferences',
     pageName: 'Email Preferences'
+  },
+  {
+    Component: DessertPage,
+    path: '/Desserts'
   },
 ];
