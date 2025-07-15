@@ -21,12 +21,12 @@ export default function SearchModal({ appProps }) {
    * @dependencies user.accessLevel, authenticated
    */
   const routes = useMemo(() => {
-    if (user.accessLevel === membershipState.MEMBER)
+    if (user && user.accessLevel === membershipState.MEMBER)
       return [
         ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
         ...signedOutRoutes
       ];
-    if (user.accessLevel >= membershipState.OFFICER)
+    if (user && user.accessLevel >= membershipState.OFFICER)
       return [
         ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
         ...signedOutRoutes
@@ -37,7 +37,7 @@ export default function SearchModal({ appProps }) {
         ...signedOutRoutes
       ];
     return [...signedOutRoutes];
-  }, [user.accessLevel, authenticated]);
+  }, [user, authenticated]);
 
   /**
    * Helper function updates the keyword when the user types
