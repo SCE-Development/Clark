@@ -92,11 +92,13 @@ export async function printPage(data, token) {
     let chunkData = new FormData();
     let chunkStart = i * CHUNK_SIZE;
     let chunk = pdf.slice(chunkStart, chunkStart + CHUNK_SIZE);
+    let isLastChunk = i === totalChunks - 1;
+
     chunkData.append('chunk', chunk, id + '_' + i + '.CHUNK');
     chunkData.append('totalChunks', totalChunks);
     chunkData.append('chunkIdx', i);
 
-    if (i === totalChunks - 1) {
+    if (isLastChunk) {
       chunkData.append('id', id);
       chunkData.append('sides', sides);
       chunkData.append('copies', copies);
@@ -111,7 +113,9 @@ export async function printPage(data, token) {
         body: chunkData
       });
 
-      status.responseData = !!res.ok;
+      if (isLastChunk) {
+        status.responseData = await res.json();
+      }
     } catch (err) {
       status.responseData = err;
       status.error = true;
