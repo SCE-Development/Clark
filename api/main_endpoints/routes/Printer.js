@@ -116,6 +116,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   }
+
   try{
     const dataBuffer = fs.readFileSync(assembledPdfFromChunks)
     const pdfData = await pdfParse(dataBuffer)
@@ -130,8 +131,6 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     return res.status(400).json({error:err.message});
   }
   const stream = await fs.createReadStream(assembledPdfFromChunks);
-
-
   const data = new FormData();
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);
