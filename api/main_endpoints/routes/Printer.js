@@ -129,6 +129,9 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       maxContentLength: 1024 * 1024 * 150, // 150 mb
       maxBodyLength: Infinity
     });
+
+    // { print_id: null | string }
+    // if print_id is a string, it can be: 'PRINTING', 'PENDING', 'COMPLETED', 'FAILED'
     const printId = printRes.data;
 
     await cleanUpChunks(dir, id);
