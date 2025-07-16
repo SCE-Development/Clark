@@ -5,7 +5,7 @@ import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 
-export default function SearchModal({ appProps }) {
+export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
