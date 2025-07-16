@@ -22,13 +22,11 @@ export default function Login() {
       } else {
         window.location.reload();
       }
+    } else if (!loginStatus.responseData) {
+      setErrorMsg('Backend may be down, check with the dev team!');
     } else {
       const backendMsg = loginStatus?.responseData?.data?.message;
-      if (backendMsg) {
-        setErrorMsg(backendMsg);
-      } else {
-        setErrorMsg('Username or password did not match.');
-      }
+      setErrorMsg(backendMsg || 'Username or password did not match.');
     }
   }
 

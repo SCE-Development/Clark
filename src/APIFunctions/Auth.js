@@ -80,6 +80,11 @@ export async function loginUser(email, password) {
       window.location.reload();
     } else {
       status.error = true;
+      try {
+        status.responseData = await res.json();
+      } catch (e) {
+        status.responseData = null;
+      }
     }
   } catch(err) {
     status.error = true;
