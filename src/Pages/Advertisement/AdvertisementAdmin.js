@@ -69,7 +69,7 @@ export default function AdvertisementAdmin() {
               setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
             }}
           >
-      Cancel
+      Remove Expiration
           </button>
         </>
       );
