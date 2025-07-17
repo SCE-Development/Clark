@@ -1,7 +1,8 @@
 import React from 'react';
+import { isValidHexColor, selectCorrectColor } from '../../APIFunctions/Profile';
 import { membershipState } from '../../Enums';
-import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
+import { useUser } from '../context/UserContext';
 
 export default function UserNavbar(props) {
   const { user } = useUser();
@@ -10,6 +11,14 @@ export default function UserNavbar(props) {
   if (user && user.firstName && user.lastName) {
     initials = user.firstName[0] + user.lastName[0];
   }
+
+  let iconColor = '';
+  if(isValidHexColor(user.backgroundColor)) {
+    iconColor = user.backgroundColor;
+  } else {
+    iconColor = '#15191e';
+  }
+
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
@@ -89,8 +98,8 @@ export default function UserNavbar(props) {
 
             <div className="dropdown dropdown-bottom dropdown-end">
               <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="w-12 rounded-full bg-neutral text-neutral-content">
-                  <span>{initials}</span>
+                <div className="w-12 rounded-full bg-neutral text-neutral-content" style={{backgroundColor: iconColor }}>
+                  <span style={{color: selectCorrectColor(iconColor)}}>{initials}</span>
                 </div>
               </summary>
               <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>

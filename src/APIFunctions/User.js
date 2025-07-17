@@ -1,5 +1,5 @@
+import { BASE_API_URL } from '../Enums';
 import { UserApiResponse } from './ApiResponses';
-import { BASE_API_URL, membershipState, userFilterType } from '../Enums';
 
 /**
  * Queries the database for all users.
@@ -65,6 +65,8 @@ export async function getAllUsers({
  * @param {(string|undefined)} userToEdit.discordUsername
  * @param {(string|undefined)} userToEdit.discordDiscrim
  * @param {(string|undefined)} userToEdit.discordID
+ * @param {(string|undefined)} userToEdit.backgroundColor - The updated background color of
+ * the user
  * @param {(string|undefined)} userToEdit.numberOfSemestersToSignUpFor
  * @param {(string|undefined)} userToEdit.doorCode - The updated password of
  * the user
@@ -95,6 +97,7 @@ export async function editUser(userToEdit, token) {
     discordUsername,
     discordDiscrim,
     discordID,
+    backgroundColor,
     pagesPrinted,
     accessLevel,
     lastLogin,
@@ -121,6 +124,7 @@ export async function editUser(userToEdit, token) {
         discordUsername,
         discordDiscrim,
         discordID,
+        backgroundColor,
         pagesPrinted,
         accessLevel,
         lastLogin,
