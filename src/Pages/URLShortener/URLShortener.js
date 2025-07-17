@@ -35,7 +35,6 @@ export default function URLShortenerPage() {
   const rawData = query.get('data');
 
   const [copyingId, setCopyingId] = useState(null);
-  const [timeColor, setTimeColor] = useState(false);
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-slate-800 dark:text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-slate-800 dark:text-gray-300';
@@ -158,13 +157,13 @@ export default function URLShortenerPage() {
     return 'hidden';
   }
 
-  function getCopyIcon(urlCopyStatus) {
-    let classNameUsed = 'dark:fill-[#dcdcdc] fill-[#434343]';
-    if (urlCopyStatus) {
-      classNameUsed = `transition-colors duration-500 ${timeColor ? 'dark:fill-green-500 fill-[#05ab00]' : 'dark:fill-[#dcdcdc] fill-[#434343]'}`;
+  function getCopyIconClassName(copyingId, urlId) {
+    const isCopying = copyingId === urlId;
+    if (isCopying) {
+      return 'transition-colors duration-500 dark:fill-green-500 fill-[#05ab00]';
+    } else {
+      return 'transition-colors duration-500 dark:fill-[#dcdcdc] fill-[#434343]';
     }
-
-    return(copyIcon(classNameUsed));
   }
 
   useEffect(() => {
@@ -211,7 +210,7 @@ export default function URLShortenerPage() {
   useEffect(() => {
     if (copyingId !== null) {
       const timeout = setTimeout(() => {
-        setTimeColor(false);
+        setCopyingId(null);
       }, 850);
       return () => clearTimeout(timeout);
     }
@@ -509,8 +508,6 @@ export default function URLShortenerPage() {
 
                 <tbody>
                   {allUrls.map((url, index) => {
-                    const isCopying = copyingId === url.id;
-
                     return (
                       <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
                         <td className=''>
@@ -519,11 +516,10 @@ export default function URLShortenerPage() {
                               onClick={() => {
                                 navigator.clipboard.writeText(url.link);
                                 setCopyingId(url.id);
-                                setTimeColor(true);
                               }}>
                               {url.alias}
                             </button>
-                            { getCopyIcon(isCopying) }
+                            { copyIcon(getCopyIconClassName(copyingId, url.id)) }
                           </div>
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
