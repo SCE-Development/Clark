@@ -3,11 +3,11 @@ const logger = require('../../util/logger');
 const { ADJECTIVES, NOUNS } = require('../../util/CardReaderConstants.js');
 
 function checkIfCardExists({ cardBytes = null, alias = null } = {}) {
-  const body = cardBytes !== null ? cardBytes : alias;
+  const body = cardBytes !== null ? { cardBytes } : { alias };
   return new Promise((resolve) => {
     try {
       OfficeAccessCard.findOneAndUpdate(
-        { body },
+        body,
         {
           $inc: { verifiedCount: 1 },
           $set: { lastVerified: Date.now() }
@@ -20,7 +20,8 @@ function checkIfCardExists({ cardBytes = null, alias = null } = {}) {
             return resolve(false);
           }
           if (!result) {
-            logger.info(`Card:${body} not found in the database`);
+            const { description } = body;
+            logger.info(`Card:${description} not found in the database`);
           }
           return resolve(result); // return the document
         });
