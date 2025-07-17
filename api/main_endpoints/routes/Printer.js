@@ -83,8 +83,8 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!PRINTING.ENABLED) {
-    logger.warn('Printing is disabled, returning 200 to mock the printing server');
-    return res.sendStatus(OK);
+    logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
+    return res.status(OK).send({ printId: null });
   }
 
   const dir = path.join(__dirname, 'printing');
@@ -122,7 +122,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 
   try {
     // full pdf can be sent to quasar no problem
-    await axios.post(PRINTER_URL + '/print', data, {
+    const printRes = await axios.post(PRINTER_URL + '/print', data, {
       headers: {
         ...data.getHeaders(),
       },
@@ -130,8 +130,11 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       maxBodyLength: Infinity
     });
 
+    // { print_id: null | string }
+    const printId = printRes.data;
+
     await cleanUpChunks(dir, id);
-    res.sendStatus(OK);
+    res.status(OK).send(printId);
   } catch (err) {
     logger.error('/sendPrintRequest had an error: ', err);
 
