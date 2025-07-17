@@ -161,9 +161,8 @@ export default function URLShortenerPage() {
     const isCopying = copyingId === urlId;
     if (isCopying) {
       return 'transition-colors duration-500 dark:fill-green-500 fill-[#05ab00]';
-    } else {
-      return 'transition-colors duration-500 dark:fill-[#dcdcdc] fill-[#434343]';
     }
+    return 'transition-colors duration-500 dark:fill-[#dcdcdc] fill-[#434343]';
   }
 
   useEffect(() => {
@@ -508,6 +507,8 @@ export default function URLShortenerPage() {
 
                 <tbody>
                   {allUrls.map((url, index) => {
+                    const copyIconClassName = getCopyIconClassName(copyingId, url.id);
+
                     return (
                       <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
                         <td className=''>
@@ -519,7 +520,7 @@ export default function URLShortenerPage() {
                               }}>
                               {url.alias}
                             </button>
-                            { copyIcon(getCopyIconClassName(copyingId, url.id)) }
+                            { copyIcon(copyIconClassName) }
                           </div>
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
