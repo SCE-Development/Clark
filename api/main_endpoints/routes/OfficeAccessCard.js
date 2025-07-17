@@ -90,7 +90,7 @@ router.get('/verify', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const cardExists = await checkIfCardExists(cardBytes);
+  const cardExists = await checkIfCardExists({ cardBytes });
   if (cardExists) {
     writeLogToClient(req.method, { alias: cardExists.alias, statusCode: OK });
     return res.sendStatus(OK);
@@ -131,21 +131,20 @@ router.get('/verify', async (req, res) => {
 });
 
 router.post('/delete', async (req, res) => {
-  if (!await decodeToken(req)) {
+  if (!decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const { cardBytes } = req.body;
-  if (!cardBytes) {
+  const { alias } = req.body;
+  if (!alias) {
     writeLogToClient(req.method, {
       statusCode: BAD_REQUEST,
-      message: 'cardBytes missing from request',
+      message: 'alias missing from request',
     });
     return res.sendStatus(BAD_REQUEST);
   }
 
-  const cardExists = await checkIfCardExists(cardBytes);
-  if (!cardExists) {
+  if (!await checkIfCardExists({ alias })) {
     logger.info('Card does not exist');
     writeLogToClient(req.method, {
       statusCode: NOT_FOUND,
@@ -154,17 +153,17 @@ router.post('/delete', async (req, res) => {
     return res.sendStatus(NOT_FOUND);
   }
 
-  if (await deleteCard(cardBytes)) { // successful
+  if (await deleteCard(alias)) { // successful
     logger.info('Successfully deleted card');
     writeLogToClient(req.method, {
-      alias: cardExists.alias,
+      alias,
       statusCode: OK,
     });
     return res.sendStatus(OK);
   }
 
   writeLogToClient(req.method, {
-    alias: cardExists.alias,
+    alias,
     statusCode: SERVER_ERROR,
     message: 'Error deleting card',
   });
@@ -182,7 +181,7 @@ router.post('/getAllCards', async (req, res) => {
 
   try {
     const total = await OfficeAccessCard.count({});
-    const items = await OfficeAccessCard.find({}, {}, { skip, limit: ROWS_PER_PAGE });
+    const items = await OfficeAccessCard.find({}, { cardBytes: 0 }, { skip, limit: ROWS_PER_PAGE });
     return res.status(OK).send({
       items,
       total,
