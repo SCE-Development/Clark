@@ -721,6 +721,8 @@ describe('User', () => {
     const queryUser = { query: 'coOl' };
     const fiveMatchUsers = { query: 'Lot' };
     const url = '/api/user/shortcutsearchusers';
+    const requiredLevel = MEMBERSHIP_STATE.OFFICER;
+    let accessLevel = '';
 
     it('Should return status code 403 if no token is passed through', async () => {
       setTokenStatus(false);
@@ -729,7 +731,8 @@ describe('User', () => {
     });
 
     it('Should return status code 401 if access level is invalid', async () => {
-      setTokenStatus(false, { accessLevel: MEMBERSHIP_STATE.MEMBER });
+      accessLevel = MEMBERSHIP_STATE.MEMBER;
+      setTokenStatus(accessLevel >= requiredLevel, {accessLevel});
       const result = await test.sendPostRequestWithToken(token, url, queryUser);
       expect(result).to.have.status(UNAUTHORIZED);
     });
@@ -831,7 +834,8 @@ describe('User', () => {
 
     describe('When valid token and access level - status code 200', () => {
       beforeEach(() => {
-        setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.OFFICER });
+        accessLevel = MEMBERSHIP_STATE.OFFICER;
+        setTokenStatus(accessLevel >= requiredLevel, { accessLevel });
       });
 
       it('Should return an empty array when the query is missing', async () => {
@@ -854,7 +858,8 @@ describe('User', () => {
       });
 
       beforeEach(() => {
-        setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.ADMIN });
+        accessLevel = MEMBERSHIP_STATE.ADMIN;
+        setTokenStatus(accessLevel >= requiredLevel, { accessLevel });
       });
 
       it('Should return THREE records when query = \'coOl\'', async () => {
@@ -880,7 +885,8 @@ describe('User', () => {
 
     describe('When valid token and access level with injection-like input - status code 200', () => {
       beforeEach(() => {
-        setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.ADMIN });
+        accessLevel = MEMBERSHIP_STATE.ADMIN;
+        setTokenStatus(accessLevel >= requiredLevel, { accessLevel });
       });
       it('Should return AT MOST five records', async () => {
         const injectionPayloads = [
