@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { getAllLogs } from '../../APIFunctions/AuditLog';
-import Loading from './Components/Loading';
-import Error from './Components/Error';
 import Pagination from './Components/Pagination';
 import { useUser } from '../../Components/context/UserContext';
 
@@ -41,11 +39,31 @@ export default function AuditLogPage() {
   };
 
   if (loading) {
-    return <Loading />;
+    return (
+      <div className='m-10'>
+        <h1 className='text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white mb-8'>
+          Audit Logs
+        </h1>
+        <div className='flex items-center justify-center h-64'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
+          <span className='ml-3 text-lg text-gray-600'>Loading audit logs...</span>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <Error />;
+    return (
+      <div className='m-10'>
+        <h1 className='text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white mb-8'>
+          Audit Logs
+        </h1>
+        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded'>
+          <strong className='font-bold'>Error: </strong>
+          <span className='block sm:inline'>{error}</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -59,7 +77,7 @@ export default function AuditLogPage() {
         </div>
       </div>
 
-      {auditLogsData.items.length === 0 ? (
+      {!auditLogsData.items.length ? (
         <div className='text-center py-16'>
           <div className='text-gray-400 text-xl mb-4'>📋</div>
           <h3 className='text-lg font-medium text-white mb-2'>No audit logs found</h3>
