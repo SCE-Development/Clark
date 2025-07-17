@@ -6,7 +6,13 @@ const logger = require('../../util/logger');
 const fs = require('fs');
 const path = require('path');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-const { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize } = require('../util/Printer.js');
+const {
+  cleanUpChunks,
+  cleanUpExpiredChunks,
+  recordPrintingFolderSize,
+  modifyPagesPrinted,
+  getPageCount
+} = require('../util/Printer.js');
 
 const {
   decodeToken,
@@ -84,6 +90,9 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
+
+  const userId = decoded._id;
+
   if (!PRINTING.ENABLED) {
     logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
     return res.status(OK).send({ printId: null });
@@ -99,6 +108,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 
   const { copies, sides, id } = req.body;
 
+  // read and reassemble the pdf
   const chunks = await fs.promises.readdir(dir);
   const assembledPdfFromChunks = path.join(dir, id + '.pdf');
 
@@ -121,6 +131,12 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);
   data.append('sides', sides);
+
+  // update user's printed pages count
+  const pagesPrinted = getPageCount(assembledPdfFromChunks);
+  if (!modifyPagesPrinted(userId, pagesPrinted)) {
+    return res.sendStatus(SERVER_ERROR);
+  }
 
   try {
     // full pdf can be sent to quasar no problem

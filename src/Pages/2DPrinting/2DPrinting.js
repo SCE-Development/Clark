@@ -203,10 +203,6 @@ export default function Printing() {
     let status = await printPage(data, user.token);
 
     if (!status.error) {
-      editUser(
-        { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        user.token,
-      );
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
     } else {
