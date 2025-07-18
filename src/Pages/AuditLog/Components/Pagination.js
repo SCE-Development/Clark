@@ -19,16 +19,42 @@ const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex })
         </button>
 
         <div className='flex items-center space-x-1'>
+          {/*
+            Create a new array with length equal to the smaller of 5 or totalPages.
+            We want to display a maximum of 5 pagination buttons,
+            but if there are fewer than 5 total pages (such as 3), show only that many buttons.
+          */}
           {[...Array(Math.min(5, totalPages))].map((_, i) => {
-            let pageNum;
+            /*
+              By default, show 5 pages centered around the current page.
+              Example: if currentPage = 21 -> [19, 20, 21, 22, 23]
+              Note: pageNum represents each page number displayed in the pagination buttons
+            */
+            let pageNum = currentPage - 2 + i;
+
+            /*
+              If total pages are 5 or fewer, just display all the pages.
+              No need to center or shift.
+              Example: totalPages = 2 -> [1, 2]
+            */
             if (totalPages <= 5) {
               pageNum = i + 1;
+
+            /*
+              If the current page is near the beginning (1 to 3),
+              always show the first 5 pages.
+              Example: currentPage = 2 -> [1, 2, 3, 4, 5]
+            */
             } else if (currentPage <= 3) {
               pageNum = i + 1;
+
+            /*
+              If the current page is near the end (last 3 pages),
+              show the final 5 pages.
+              Example: totalPages = 10, currentPage = 9 -> [6, 7, 8, 9, 10]
+            */
             } else if (currentPage >= totalPages - 2) {
               pageNum = totalPages - 4 + i;
-            } else {
-              pageNum = currentPage - 2 + i;
             }
 
             return (

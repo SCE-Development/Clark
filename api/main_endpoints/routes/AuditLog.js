@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const AuditLog = require('../models/AuditLog');
-const { OK, BAD_REQUEST, UNAUTHORIZED } = require('../../util/constants').STATUS_CODES;
+const { OK, UNAUTHORIZED, SERVER_ERROR } = require('../../util/constants').STATUS_CODES;
 
-const { decodeToken, checkIfTokenSent } = require('../util/token-functions.js');
+const { checkIfTokenSent, checkIfTokenValid } = require('../util/token-functions.js');
 
 const logger = require('../../util/logger');
 
@@ -13,14 +13,10 @@ router.get('/getAuditLogs', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const decodedPayload = await decodeToken(req);
+  const isValid = checkIfTokenValid(req, 2);
 
-  if (!decodedPayload) {
-    logger.warn('/getAuditLogs was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
-  if (decodedPayload.accessLevel < 2) {
+  if (!isValid) {
+    logger.warn('/getAuditLogs was requested with an invalid or unauthorized token');
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -39,7 +35,7 @@ router.get('/getAuditLogs', async (req, res) => {
     res.status(OK).send({ items, totalLogs });
   } catch (error) {
     logger.error('Failed to fetch audit logs:', error);
-    res.sendStatus(BAD_REQUEST);
+    res.sendStatus(SERVER_ERROR);
   }
 });
 
