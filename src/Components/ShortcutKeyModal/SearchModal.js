@@ -5,6 +5,8 @@ import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { searchAllUsers } from '../../APIFunctions/UserSearch';
+import { getAllUrls } from '../../APIFunctions/Cleezy';
+import { cleanStr } from './InputSanitizer';
 
 export default function SearchModal() {
   const [open, setOpen] = useState(false);
@@ -18,6 +20,8 @@ export default function SearchModal() {
   const { authenticated } = useAuth();
   // Maximum number of suggestions to display in the search dropdown
   const SHORTCUT_MAX_RESULT = 5;
+  const DEBOUNCE_TIME = 400;
+  const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
 
   /**
    * Returns the appropriate routes array based on the user's access level.
@@ -57,6 +61,18 @@ export default function SearchModal() {
     setKeyword('');
   };
 
+  /**
+   * Displays a confirmation prompt if the selected item is an external link.
+   * @param {*} r - A route object from the suggestions list.
+   * @returns Returns false if the user cancels; otherwise true.
+   */
+  const externalSiteWarning = (r) => {
+    if (r.type === 'external_url') {
+      return window.confirm('You\'re about to open an external site. Continue?');
+    }
+    return true;
+  };
+
   const SuggestionsList = () => {
     if (suggestions.length === 0) return <></>;
 
@@ -69,6 +85,7 @@ export default function SearchModal() {
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
             onMouseEnter={() => setSelectItem(index)}
             onClick={() => {
+              if (!externalSiteWarning(r)) return;
               window.location.href = r.path;
               setOpen(false);
             }}
@@ -79,7 +96,7 @@ export default function SearchModal() {
             <div className='text-wrapper'>
               {r.pageName}
               <div className='hidden-tab'>
-                {selectItem === index && `${window.location.origin}${r.path}`}
+                {selectItem === index && (r.type === 'external_url' ? r.path : `${window.location.origin}${r.path}`)}
               </div>
             </div>
           </li>
@@ -115,6 +132,53 @@ export default function SearchModal() {
   };
 
   /**
+   * Async function fetches urls aliases from the API
+   * @param {string} token - User's authentication token.
+   * @param {string} searchQuery - The search term.
+   * @param {number} page - The page number of search results.
+   * @param {string} currentSortColumn - The column name to sort results by.
+   * @param {string} currentSortOrder - Sort direction, e.g., 'ASC' or 'DESC'.
+   */
+  const getCleezyUrlsData = async ({
+    token,
+    searchQuery,
+    page,
+    currentSortColumn,
+    currentSortOrder
+  }) => {
+    try {
+      const sortColumn = currentSortColumn ?? 'created_at';
+      const sortOrder = currentSortOrder ?? 'DESC';
+      const sanitizedInput = cleanStr(searchQuery);
+      const urlAPIRes = await getAllUrls({
+        token,
+        search: sanitizedInput,
+        page,
+        sortColumn: sortColumn,
+        sortOrder: sortOrder
+      });
+      setIsCleezyDisabled(!!urlAPIRes.responseData.disabled);
+
+      if (
+        urlAPIRes.error ||
+        !urlAPIRes.responseData.data ||
+        urlAPIRes.responseData.data.length === 0
+      ) return;
+
+      const urlMatches = urlAPIRes.responseData.data
+        .slice(0, 5)
+        .map((u) => ({
+          pageName: u.alias,
+          path: u.url,
+          type: 'external_url'
+        }));
+      setSuggestions(prev => [...prev, ...urlMatches]);
+    } catch (error) {
+      setErrorMsg(error.message);
+    }
+  };
+
+  /**
    * An effect that instantly shows all hardcoded routes.
    * @dependencies keyword, routes, open
    */
@@ -136,6 +200,38 @@ export default function SearchModal() {
 
   /**
    * A debounce function that performs the search 400ms after the user stops typing.
+   * @dependencies keyword, open, user.accessLevel, user.token, isCleezyDisabled
+   */
+  useEffect(() => {
+    if (
+      !open ||
+      !user.accessLevel ||
+      user?.accessLevel < membershipState.OFFICER ||
+      isCleezyDisabled ||
+      !keyword
+    ) return;
+
+    const debounce = setTimeout(() => {
+      getCleezyUrlsData({
+        token: user.token,
+        searchQuery: keyword,
+        page: 0,
+        currentSortColumn: 'alias',
+        currentSortOrder: 'ASC'
+      });
+    }, DEBOUNCE_TIME);
+
+    return () => clearTimeout(debounce);
+  }, [
+    keyword,
+    open,
+    user.accessLevel,
+    isCleezyDisabled,
+    user.token
+  ]);
+
+  /**
+   * A debounce function that performs the search 400ms after the user stops typing.
    * @dependencies keyword, open, user.accessLevel
    */
   useEffect(() => {
@@ -147,10 +243,9 @@ export default function SearchModal() {
     const debounce = setTimeout(() => {
       getUserData({
         token: user.token,
-        query: keyword,
-        limit: SHORTCUT_MAX_RESULT
+        query: keyword
       });
-    }, 400);
+    }, DEBOUNCE_TIME);
 
     return () => clearTimeout(debounce);
   }, [keyword, open, user.accessLevel]);
@@ -164,6 +259,7 @@ export default function SearchModal() {
 
     const target = suggestions[selectItem];
     if (target && target.path) {
+      if (!externalSiteWarning(target)) return;
       window.location.href = target.path;
       setOpen(false);
       clearSearchModal();
