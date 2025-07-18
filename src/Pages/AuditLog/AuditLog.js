@@ -100,6 +100,7 @@ export default function AuditLogPage() {
               goToPage={goToPage}
               startIndex={(currentPage - 1) * itemsPerPage}
               endIndex={Math.min(currentPage * itemsPerPage, auditLogsData.totalLogs)}
+              totalResults={auditLogsData.totalLogs}
             />
           )}
         </div>

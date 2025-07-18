@@ -1,19 +1,36 @@
-const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex }) => {
+const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex, totalResults }) => {
+  function getPreviousButtonClassName(currentPage) {
+    if (currentPage === 1) {
+      return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed';
+    }
+    return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+  }
+
+  function getPageButtonClassName(pageNum, currentPage) {
+    if (currentPage === pageNum) {
+      return 'px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white';
+    }
+    return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+  }
+
+  function getNextButtonClassName(currentPage, totalPages) {
+    if (currentPage === totalPages) {
+      return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed';
+    }
+    return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+  }
+
   return (
     <div className='mt-8 flex items-center justify-between'>
       <div className='text-sm text-gray-400'>
-        Showing {startIndex + 1} to {endIndex} of {endIndex} results
+        Showing {startIndex + 1} to {endIndex} of {totalResults} results
       </div>
 
       <div className='flex items-center space-x-2'>
         <button
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`px-3 py-2 rounded-md text-sm font-medium ${
-            currentPage === 1
-              ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
-          }`}
+          className={getPreviousButtonClassName(currentPage)}
         >
           Previous
         </button>
@@ -61,11 +78,7 @@ const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex })
               <button
                 key={pageNum}
                 onClick={() => goToPage(pageNum)}
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  currentPage === pageNum
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
-                }`}
+                className={getPageButtonClassName(pageNum, currentPage)}
               >
                 {pageNum}
               </button>
@@ -76,11 +89,7 @@ const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex })
         <button
           onClick={() => goToPage(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`px-3 py-2 rounded-md text-sm font-medium ${
-            currentPage === totalPages
-              ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600'
-          }`}
+          className={getNextButtonClassName(currentPage, totalPages)}
         >
           Next
         </button>
