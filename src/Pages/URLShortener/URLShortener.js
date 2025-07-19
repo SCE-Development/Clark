@@ -69,7 +69,12 @@ export default function URLShortenerPage() {
       user.token
     );
     if (!response.error) {
-      setAllUrls([...allUrls, response.responseData]);
+      if (page === 0){
+        if (allUrls.length >= rowsPerPage){
+          allUrls.pop();
+        }
+        allUrls.unshift(response.responseData);
+      }
       setAliasTaken(false);
       setUrl('');
       setAlias('');
