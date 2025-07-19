@@ -498,7 +498,7 @@ export default function URLShortenerPage() {
                               </span>
                             </div>
                           ) : (
-                              <div className="flex flex-col items-center text-white-500">-</div>
+                            <div className="flex flex-col items-center text-white-500">-</div>
                           )}
 
                         </td>
