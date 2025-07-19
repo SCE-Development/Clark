@@ -1,23 +1,20 @@
 const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex, totalResults }) => {
   function getPreviousButtonClassName(currentPage) {
-    if (currentPage === 0) {
-      return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed';
-    }
-    return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+    return currentPage === 0
+      ? 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed'
+      : 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
   }
 
   function getPageButtonClassName(pageNum, currentPage) {
-    if (currentPage === pageNum) {
-      return 'px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white';
-    }
-    return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+    return currentPage === pageNum
+      ? 'px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white'
+      : 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
   }
 
   function getNextButtonClassName(currentPage, totalPages) {
-    if (currentPage === totalPages - 1) {
-      return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed';
-    }
-    return 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+    return currentPage === totalPages - 1
+      ? 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed'
+      : 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
   }
 
   return (
@@ -57,7 +54,7 @@ const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex, t
             if (totalPages <= 5) {
               pageNum = i;
 
-            /*
+              /*
               If the current page is near the beginning (1 to 3),
               always show the first 5 pages.
               Example: currentPage = 2 -> [1, 2, 3, 4, 5]
@@ -65,7 +62,7 @@ const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex, t
             } else if (currentPage <= 2) {
               pageNum = i;
 
-            /*
+              /*
               If the current page is near the end (last 3 pages),
               show the final 5 pages.
               Example: totalPages = 10, currentPage = 9 -> [6, 7, 8, 9, 10]
