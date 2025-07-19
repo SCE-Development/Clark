@@ -66,6 +66,7 @@ router.post('/createUrl', async (req, res) => {
   }
   const { url, alias, expiresAt } = req.body;
   let jsonbody = { url, alias: alias || null };
+  // eslint-disable-next-line camelcase
   if (expiresAt) jsonbody.expires_at = expiresAt;
   try {
     const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
