@@ -14,7 +14,7 @@ function NavBarWrapper({
 
   function handleLogout() {
     setAuthenticated(false);
-    setUser(null);
+    setUser({});
     window.localStorage.removeItem('jwtToken');
     window.location.reload();
   }

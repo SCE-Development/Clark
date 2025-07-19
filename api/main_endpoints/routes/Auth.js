@@ -137,6 +137,7 @@ router.post('/login', function(req, res) {
     },
     function(error, user) {
       if (error) {
+        logger.error('/login User.findOne had an error', error);
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
 
@@ -153,14 +154,18 @@ router.post('/login', function(req, res) {
             if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: 'User is banned.' });
+                .send({
+                  message: 'The account with email ' +
+                    req.body.email +
+                    ' is banned',
+                });
             }
 
             // Check if the user's email has been verified
             if (!user.emailVerified) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: 'Email has not been verified' });
+                .send({ message: `The email ${req.body.email} has not been verified` });
             }
 
             // If the username and password matches the database, assign and
