@@ -12,7 +12,7 @@ import { AuthContext } from './Components/context/AuthContext';
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
 
   async function getAuthStatus() {
     setIsAuthenticating(true);

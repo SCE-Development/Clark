@@ -13,21 +13,21 @@ export default function Login() {
     const password = e.target.password.value;
     setErrorMsg('');
     const loginStatus = await loginUser(email, password);
-
     if (!loginStatus.error) {
       setAuthenticated(true);
       window.localStorage.setItem('jwtToken', loginStatus.token);
       if (queryParams.get('redirect')) {
         window.location.href = queryParams.get('redirect');
-      } else {
-        window.location.reload();
+        return;
       }
-    } else if (!loginStatus.responseData) {
-      setErrorMsg('Backend may be down, check with the dev team!');
-    } else {
-      const backendMsg = loginStatus?.responseData?.data?.message;
-      setErrorMsg(backendMsg || 'Username or password did not match.');
+      return window.location.reload();
     }
+    if (!loginStatus.responseData) {
+      setErrorMsg('Backend may be down, check with the dev team!');
+      return;
+    }
+    const backendMsg = loginStatus?.responseData;
+    setErrorMsg(backendMsg || 'Username or password did not match.');
   }
 
   return (
