@@ -7,7 +7,7 @@ export default function AuditLogPage() {
   const [auditLogsData, setAuditLogsData] = useState({ items: [], totalLogs: 0 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const user = useUser();
 
@@ -35,7 +35,7 @@ export default function AuditLogPage() {
   const totalPages = Math.ceil(auditLogsData.totalLogs / itemsPerPage);
 
   const goToPage = page => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    setCurrentPage(Math.max(0, Math.min(page, totalPages)));
   };
 
   if (loading) {
@@ -73,7 +73,7 @@ export default function AuditLogPage() {
           Audit Logs
         </h1>
         <div className='mt-2 text-sm text-gray-500'>
-          Total logs: {auditLogsData.totalLogs} | Page {currentPage} of {totalPages}
+          Total logs: {auditLogsData.totalLogs} | Page {currentPage + 1} of {totalPages}
         </div>
       </div>
 
@@ -98,8 +98,8 @@ export default function AuditLogPage() {
               currentPage={currentPage}
               totalPages={totalPages}
               goToPage={goToPage}
-              startIndex={(currentPage - 1) * itemsPerPage}
-              endIndex={Math.min(currentPage * itemsPerPage, auditLogsData.totalLogs)}
+              startIndex={currentPage * itemsPerPage}
+              endIndex={Math.min((currentPage + 1) * itemsPerPage, auditLogsData.totalLogs)}
               totalResults={auditLogsData.totalLogs}
             />
           )}

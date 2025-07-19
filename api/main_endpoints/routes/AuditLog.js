@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const AuditLog = require('../models/AuditLog');
+
 const { OK, UNAUTHORIZED, SERVER_ERROR } = require('../../util/constants').STATUS_CODES;
+const { OFFICER } = require('../../util/constants.js').MEMBERSHIP_STATE;
 
 const { checkIfTokenSent, checkIfTokenValid } = require('../util/token-functions.js');
 
@@ -13,7 +15,7 @@ router.get('/getAuditLogs', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const isValid = checkIfTokenValid(req, 2);
+  const isValid = checkIfTokenValid(req, OFFICER);
 
   if (!isValid) {
     logger.warn('/getAuditLogs was requested with an invalid or unauthorized token');
@@ -21,8 +23,8 @@ router.get('/getAuditLogs', async (req, res) => {
   }
 
   const itemsPerPage = 50;
-  const page = parseInt(req.query.page) || 1;
-  const skip = (page - 1) * itemsPerPage;
+  const page = parseInt(req.query.page) || 0; // page is 0-based
+  const skip = page * itemsPerPage;
 
   try {
     const items = await AuditLog.find({})
