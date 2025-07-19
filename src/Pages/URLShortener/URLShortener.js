@@ -294,7 +294,7 @@ export default function URLShortenerPage() {
                 />
               </div>
               <label htmlFor="expDateTime" className={LABEL_CLASS}>
-                  Expiration Date & Time
+                  Optional Expiration Date & Time
               </label>
               <div className="mt-2">
                 <input
