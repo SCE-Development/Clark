@@ -34,9 +34,9 @@ export async function getAllUrls({
   return status;
 }
 
-export async function createUrl(url, alias = null, token) {
+export async function createUrl(url, alias = null, expiresAt = null, token) {
   let status = new ApiResponse();
-  const urlToAdd = { url, alias };
+  const urlToAdd = { url, alias, expiresAt };
   try {
     const url = new URL('/api/Cleezy/createUrl', BASE_API_URL);
     const res = await fetch(url.href, {
