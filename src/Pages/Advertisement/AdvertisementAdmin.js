@@ -45,9 +45,9 @@ export default function AdvertisementAdmin() {
     // createAd returns a value - what is it?
     // how do we know if createAd() works or not?
     // is there a field we can check?^
-    // 
+    //
     // if createAd worked, how can we update the array without calling the backend again?
-    // 
+    //
   }
 
   useEffect(() => {
