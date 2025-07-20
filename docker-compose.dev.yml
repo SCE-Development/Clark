@@ -45,7 +45,7 @@ services:
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/cloud_api:/app/cloud_api
-      - ./.eslintrc.json:/app/.eslintrc.json
+      - ./api/.eslintrc.json:/app/.eslintrc.json
       - ./.eslintignore:/app/.eslintignore
   main-endpoints:
     container_name: sce-main-endpoints-dev
@@ -79,7 +79,7 @@ services:
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/main_endpoints:/app/main_endpoints
-      - ./.eslintrc.json:/app/.eslintrc.json
+      - ./api/.eslintrc.json:/app/.eslintrc.json
       - ./.eslintignore:/app/.eslintignore
 
   frontend:
