@@ -24,12 +24,12 @@ export default function SearchModal() {
    * @dependencies user, authenticated
    */
   const routes = useMemo(() => {
-    if (user && user.accessLevel === membershipState.MEMBER)
+    if (user?.accessLevel === membershipState.MEMBER)
       return [
         ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
         ...signedOutRoutes
       ];
-    if (user && user.accessLevel >= membershipState.OFFICER)
+    if (user?.accessLevel >= membershipState.OFFICER)
       return [
         ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
         ...signedOutRoutes
