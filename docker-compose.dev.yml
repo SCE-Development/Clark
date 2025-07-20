@@ -45,6 +45,8 @@ services:
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/cloud_api:/app/cloud_api
+      - ./.eslintrc.json:/app/.eslintrc.json
+      - ./.eslintignore:/app/.eslintignore
   main-endpoints:
     container_name: sce-main-endpoints-dev
     build:
@@ -77,6 +79,8 @@ services:
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/main_endpoints:/app/main_endpoints
+      - ./.eslintrc.json:/app/.eslintrc.json
+      - ./.eslintignore:/app/.eslintignore
 
   frontend:
     container_name: sce-frontend-dev
@@ -89,6 +93,7 @@ services:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
+      - ESLINT_NO_DEV_ERRORS=true
 
     ports:
       - '3000:3000'
@@ -102,6 +107,9 @@ services:
       - ./package.json:/frontend/package.json
       - ./src:/frontend/src/
       - ./public:/frontend/public/
+      - ./.babelrc:/frontend/.babelrc
+      - ./.eslintrc.json:/frontend/.eslintrc.json
+      - ./.eslintignore:/frontend/.eslintignore
   
   nginx:
     container_name: sce-nginx-dev
