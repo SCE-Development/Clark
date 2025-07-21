@@ -12,8 +12,10 @@ export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
+  const filter = ['Reset Password', 'Verify Email', 'Email Preferences'];
+  const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !filter.includes(r.pageName));
   const [keyword, setKeyword] = useState('');
-  const [suggestions, setSuggestions] = useState([...signedOutRoutes]);
+  const [suggestions, setSuggestions] = useState([...filteredSignedOutRoutes]);
   const [selectItem, setSelectItem] = useState(0);
   const { user } = useUser();
   const [errorMsg, setErrorMsg] = useState('');
@@ -31,19 +33,19 @@ export default function SearchModal() {
     if (user?.accessLevel === membershipState.MEMBER)
       return [
         ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...filteredSignedOutRoutes
       ];
     if (user?.accessLevel >= membershipState.OFFICER)
       return [
         ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...filteredSignedOutRoutes
       ];
     if (!authenticated)
       return [
         ...notAuthenticatedRoutes,
-        ...signedOutRoutes
+        ...filteredSignedOutRoutes
       ];
-    return [...signedOutRoutes];
+    return [...filteredSignedOutRoutes];
   }, [user, authenticated]);
 
   /**
@@ -57,7 +59,7 @@ export default function SearchModal() {
 
   /** This helper function clears search box and all suggestions */
   const clearSearchModal = () => {
-    setSuggestions([...signedOutRoutes]);
+    setSuggestions([...filteredSignedOutRoutes]);
     setKeyword('');
   };
 
@@ -190,7 +192,7 @@ export default function SearchModal() {
 
     // Return if keyword is blank
     if (!keyword) {
-      setSuggestions([...signedOutRoutes]);
+      setSuggestions([...filteredSignedOutRoutes]);
       return;
     }
 
