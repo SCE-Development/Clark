@@ -1,6 +1,6 @@
-import { getActionDescription } from '../utils/getActionDescription';
-import { formatDetails } from '../utils/formatDetails';
-import { formatTimestamp } from '../utils/formatTimestamp';
+import { getActionDescription } from './getActionDescription';
+import { formatDetails } from './formatDetails';
+import { formatTimestamp } from './formatTimestamp';
 
 const AuditLogCard = ({ log, index }) => {
   const hasDetails = log => {
