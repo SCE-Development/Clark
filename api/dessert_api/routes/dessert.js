@@ -8,6 +8,7 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 
 router.post('/createDessert', (req, res) => {
+  console.log('not working', req.body);
   const { rating } = req.body;
   const numberSent = !Number.isNaN(Number(rating));
 
@@ -22,7 +23,10 @@ router.post('/createDessert', (req, res) => {
       return res.json(post);
     })
     .catch(
-      (error) => res.sendStatus(BAD_REQUEST)
+      (error) => {
+        console.log('CREATE DIDNT WORK', error)
+        res.sendStatus(BAD_REQUEST)
+      }
     );
 });
 
@@ -41,13 +45,16 @@ router.post('/editDessert', (req, res) => {
     rating,
     _id,
   } = req.body;
+
   Dessert.findOne({ _id })
     .then(dessert => {
-      Dessert.title = title || Dessert.title;
-      Dessert.description = description || Dessert.description;
-      Dessert.rating = rating || Dessert.rating;
-      Dessert
-        .save()
+      if (!dessert) return res.sendStatus(NOT_FOUND);
+
+      dessert.title = title || dessert.title;
+      dessert.description = description || dessert.description;
+      dessert.rating = rating !== undefined ? Number(rating) : dessert.rating;
+
+      dessert.save()
         .then(() => {
           res.sendStatus(OK);
         })
