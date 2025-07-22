@@ -58,6 +58,20 @@ export default function SearchModal() {
     setKeyword('');
   };
 
+  /**
+   * Displays a confirmation prompt if the selected item is an external link.
+   * @param {*} r - A route object from the suggestions list.
+   * @returns Returns false if the route is an external site and navigate user to URL shortened page.
+   */
+  const externalSiteRoute = (r) => {
+    if (r.type === 'external_url') {
+      const encodedRoute = encodeURIComponent(JSON.stringify(r));
+      window.location.href = `/short?data=${encodedRoute}`;
+      return true;
+    }
+    return false;
+  };
+
   const SuggestionsList = () => {
     if (suggestions.length === 0) return <></>;
 
@@ -70,6 +84,7 @@ export default function SearchModal() {
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
             onMouseMove={() => setSelectItem(index)}
             onClick={() => {
+              if (externalSiteRoute(r)) return;
               window.location.href = r.path;
               setOpen(false);
             }}
@@ -110,6 +125,54 @@ export default function SearchModal() {
           type: 'user'
         }));
       setSuggestions(prev => [...prev, ...userMatches]);
+    } catch (error) {
+      setErrorMsg(error.message);
+    }
+  };
+
+  /**
+   * Async function fetches urls aliases from the API
+   * @param {string} token - User's authentication token.
+   * @param {string} searchQuery - The search term.
+   * @param {number} page - The page number of search results.
+   * @param {string} currentSortColumn - The column name to sort results by.
+   * @param {string} currentSortOrder - Sort direction, e.g., 'ASC' or 'DESC'.
+   */
+  const getCleezyUrlsData = async ({
+    token,
+    searchQuery,
+    page,
+    currentSortColumn,
+    currentSortOrder
+  }) => {
+    try {
+      const sortColumn = currentSortColumn ?? 'created_at';
+      const sortOrder = currentSortOrder ?? 'DESC';
+      const sanitizedInput = cleanStr(searchQuery);
+      const urlAPIRes = await getAllUrls({
+        token,
+        search: sanitizedInput,
+        page,
+        sortColumn: sortColumn,
+        sortOrder: sortOrder
+      });
+      setIsCleezyDisabled(!!urlAPIRes.responseData.disabled);
+
+      if (
+        urlAPIRes.error ||
+        !urlAPIRes.responseData.data ||
+        urlAPIRes.responseData.data.length === 0
+      ) return;
+
+      const urlMatches = urlAPIRes.responseData.data
+        .slice(0, 5)
+        .map((u) => ({
+          ...u,
+          pageName: u.alias,
+          path: u.url,
+          type: 'external_url'
+        }));
+      setSuggestions(prev => [...prev, ...urlMatches]);
     } catch (error) {
       setErrorMsg(error.message);
     }
@@ -164,6 +227,7 @@ export default function SearchModal() {
 
     const target = suggestions[selectItem];
     if (target && target.path) {
+      if (externalSiteRoute(target)) return;
       window.location.href = target.path;
       setOpen(false);
       clearSearchModal();
