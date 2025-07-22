@@ -52,7 +52,7 @@ export default function Login() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder="Enter your email..."
                       required
                       className="input input-bordered w-full"
                     />
