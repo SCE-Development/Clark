@@ -64,13 +64,15 @@ export default function SearchModal() {
   /**
    * Displays a confirmation prompt if the selected item is an external link.
    * @param {*} r - A route object from the suggestions list.
-   * @returns Returns false if the user cancels; otherwise true.
+   * @returns Returns false if the route is an external site and navigate user to URL shortened page.
    */
-  const externalSiteWarning = (r) => {
+  const externalSiteRoute = (r) => {
     if (r.type === 'external_url') {
-      return window.confirm('You\'re about to open an external site. Continue?');
+      const encodedRoute = encodeURIComponent(JSON.stringify(r));
+      window.location.href = `/short?data=${encodedRoute}`;
+      return true;
     }
-    return true;
+    return false;
   };
 
   const SuggestionsList = () => {
@@ -85,7 +87,7 @@ export default function SearchModal() {
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
             onMouseEnter={() => setSelectItem(index)}
             onClick={() => {
-              if (!externalSiteWarning(r)) return;
+              if (externalSiteRoute(r)) return;
               window.location.href = r.path;
               setOpen(false);
             }}
@@ -168,6 +170,7 @@ export default function SearchModal() {
       const urlMatches = urlAPIRes.responseData.data
         .slice(0, 5)
         .map((u) => ({
+          ...u,
           pageName: u.alias,
           path: u.url,
           type: 'external_url'
@@ -259,7 +262,7 @@ export default function SearchModal() {
 
     const target = suggestions[selectItem];
     if (target && target.path) {
-      if (!externalSiteWarning(target)) return;
+      if (externalSiteRoute(target)) return;
       window.location.href = target.path;
       setOpen(false);
       clearSearchModal();
