@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import { useLocation } from 'react-router-dom';
+
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { trashcanSymbol } from '../Overview/SVG';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
 import { useUser } from '../../Components/context/UserContext';
-// import { useLocation } from 'react-router-dom/cjs/react-router-dom.min.js';
 
 export default function URLShortenerPage() {
   const { user } = useUser();
@@ -33,8 +32,6 @@ export default function URLShortenerPage() {
   const [currentSortOrder, setCurrentSortOrder] = useState(null);
   const query = new URLSearchParams(window.location.search);
   const rawData = query.get('data');
-  // const query = useQuery();
-  // const dataParams = query.get('data');
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-slate-800 dark:text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-slate-800 dark:text-gray-300';
