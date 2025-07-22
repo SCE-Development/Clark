@@ -12,7 +12,6 @@ export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
-  // const filter = ['Reset Password', 'Verify Email', 'Email Preferences'];
   const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !r.hideFromShortcutSuggestions);
   const [keyword, setKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([...filteredSignedOutRoutes]);
