@@ -52,7 +52,7 @@ export default function Login() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder="rys@sce.sjsu.edu"
                       required
                       className="input input-bordered w-full"
                     />
