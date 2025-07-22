@@ -267,7 +267,7 @@ export default function CardReader() {
       );
     }
     return (
-      <div>
+      <div className='flex flex-col items-center justify-center'>
         <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
           {connectionStatusText}
         </h3>
