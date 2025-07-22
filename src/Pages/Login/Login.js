@@ -54,7 +54,7 @@ export default function Login(props) {
               <div className="label">
                 <span className="label-text">Email</span>
               </div>
-              <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
+              <input type="email" placeholder="rys@sce.sjsu.edu" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
             </label>
             <label className="form-control w-full max-w-xs">
               <div className="label">
