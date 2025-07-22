@@ -25,33 +25,48 @@ class MetricsHandler {
 	  labelNames: ['type'],
 	});
 
-	  totalMessagesSent = new client.Counter({
-	    name: 'total_messages_sent',
-	    help: 'Total number of messages sent'
-	  });
+  totalMessagesSent = new client.Counter({
+    name: 'total_messages_sent',
+    help: 'Total number of messages sent'
+  });
 
-	  currentConnectionsOpen = new client.Gauge({
-	    name: 'current_connections_open',
-	    help: 'Total number of connections open',
-	    labelNames: ['id']
-	  });
+  currentConnectionsOpen = new client.Gauge({
+    name: 'current_connections_open',
+    help: 'Total number of connections open',
+    labelNames: ['id']
+  });
 
-	  totalChatMessagesPerChatRoom = new client.Counter({
-	    name: 'total_chat_messages_per_chatroom',
-	    help: 'Total number of messages sent per chatroom',
-	    labelNames: ['id']
-	  });
+  totalChatMessagesPerChatRoom = new client.Counter({
+    name: 'total_chat_messages_per_chatroom',
+    help: 'Total number of messages sent per chatroom',
+    labelNames: ['id']
+  });
 
-	  constructor() {
-	  register.setDefaultLabels({
-	    app: 'sce-core',
-	  });
-	  client.collectDefaultMetrics({ register });
+  currentSizeOfPrintingFolderBytes = new client.Gauge({
+    name: 'current_size_of_printing_folder_bytes',
+    help: 'Current size of printing folder in bytes'
+  });
 
-	  Object.keys(this).forEach(metric => {
-	    register.registerMetric(this[metric]);
-	  });
-	  }
+  totalExpiredChunksDeleted = new client.Counter({
+    name: 'total_expired_chunks_deleted',
+    help: 'Total number of expired chunks that have been deleted'
+  });
+
+  totalExpiredBytesDeleted = new client.Counter({
+    name: 'total_expired_bytes_deleted',
+    help: 'Total number of bytes from expired chunks that have been deleted'
+  });
+
+  constructor() {
+    register.setDefaultLabels({
+      app: 'sce-core',
+    });
+    client.collectDefaultMetrics({ register });
+
+    Object.keys(this).forEach(metric => {
+      register.registerMetric(this[metric]);
+    });
+  }
 }
 
 module.exports = {

@@ -7,12 +7,13 @@ import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 
 import { useUser } from './Components/context/UserContext';
+import { useAuth } from './Components/context/AuthContext';
 
 import { officerOrAdminRoutes, notAuthenticatedRoutes, signedOutRoutes } from './Routes.js';
 
 export default function Routing({ appProps }) {
   const { user, setUser } = useUser();
-  const userIsAuthenticated = appProps.authenticated;
+  const { authenticated } = useAuth();
 
   const signedInRoutes = [...officerOrAdminRoutes, ...notAuthenticatedRoutes];
 
@@ -46,7 +47,6 @@ export default function Routing({ appProps }) {
                 appProps={{
                   allowed: allowedIf,
                   redirect,
-                  authenticated:userIsAuthenticated,
                   ...appProps
                 }}
                 component={props => getCorrectComponent(props)}

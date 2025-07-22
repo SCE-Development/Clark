@@ -23,7 +23,11 @@ export async function healthCheck() {
   const url = new URL('/api/Printer/healthCheck', BASE_API_URL);
   try {
     const res = await fetch(url.href);
-    status.error = !res.ok;
+    if (res.ok) {
+      status.responseData = await res.json();
+    } else {
+      status.error = true;
+    }
   } catch (err) {
     status.responseData = err;
     status.error = true;
@@ -76,21 +80,49 @@ export function parseRange(pages, maxPages) {
 export async function printPage(data, token) {
   let status = new ApiResponse();
   const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
-  try {
-    const res = await fetch(url.href, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: data
-    });
-    if (res.ok) {
-      status.responseData = true;
+
+  const pdf = data.get('file');
+  const sides = data.get('sides');
+  const copies = data.get('copies');
+  const id = crypto.randomUUID();
+  const CHUNK_SIZE = 1024 * 1024 * 0.5; // 0.5 MB ------- SENT DATA **CANNOT** EXCEED 1 MB
+  const totalChunks = Math.ceil(pdf.size / CHUNK_SIZE);
+
+  for (let i = 0; i < totalChunks; i++) {
+    let chunkData = new FormData();
+    let chunkStart = i * CHUNK_SIZE;
+    let chunk = pdf.slice(chunkStart, chunkStart + CHUNK_SIZE);
+    let isLastChunk = i === totalChunks - 1;
+
+    chunkData.append('chunk', chunk, id + '_' + i + '.CHUNK');
+    chunkData.append('totalChunks', totalChunks);
+    chunkData.append('chunkIdx', i);
+
+    if (isLastChunk) {
+      chunkData.append('id', id);
+      chunkData.append('sides', sides);
+      chunkData.append('copies', copies);
     }
-  } catch (err) {
-    status.responseData = err;
-    status.error = true;
+
+    try {
+      const res = await fetch(url.href, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: chunkData
+      });
+
+      if (isLastChunk) {
+        status.responseData = await res.json();
+      }
+    } catch (err) {
+      status.responseData = err;
+      status.error = true;
+      return status;
+    }
   }
+
   return status;
 }
 

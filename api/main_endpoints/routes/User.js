@@ -445,4 +445,162 @@ router.post('/apikey', async (req, res) => {
       return res.sendStatus(BAD_REQUEST);
     });
 });
+
+//  Finds total number of new signups this semester
+//  Finds number of those signups who've paid for semester plan
+//  Finds number of those signups who've paid for annual plan
+//  Assumes members who have paid have been assigned an expiration date
+router.get('/getNewPaidMembersThisSemester', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const today = new Date();
+  //  First semester start date - Jan 1st
+  let semesterStart = new Date(today.getFullYear(), 0, 1);
+  if(today.getMonth() >= 5) {
+    //  Second semester start date - June 1st
+    semesterStart = new Date(today.getFullYear(), 5, 1);
+  }
+
+  const getNewSingleSemesterMembersCount = User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(1),
+    'joinDate': {
+      $gte: semesterStart
+    },
+  });
+  const getNewAnnualMembersCount = User.countDocuments({'emailVerified':true, 'accessLevel': membershipState.MEMBER,
+    'membershipValidUntil': getMemberExpirationDate(2),
+    'joinDate': {
+      $gte: semesterStart
+    },
+  });
+  const getNewMembersThisYearCount = User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'joinDate': {
+    //  Jan 1st Start of Year
+    $gte: new Date(today.getFullYear(), 0, 1)
+  }});
+  const getCurrentActiveMembersCount = User.countDocuments({'emailVerified': true, 'accessLevel': membershipState.MEMBER, 'membershipValidUntil': {
+    //  Today
+    $gt: new Date()
+  }});
+
+  const [
+    newSingleSemesterMembers,
+    newAnnualMembers,
+    newMembersThisYear,
+    currentActiveMembers,
+  ] = await Promise.all([
+    getNewSingleSemesterMembersCount,
+    getNewAnnualMembersCount,
+    getNewMembersThisYearCount,
+    getCurrentActiveMembersCount
+  ]);
+
+  try {
+    const response = {
+      newSingleSemesterMembers,
+      newAnnualMembers,
+      newMembersThisYear,
+      currentActiveMembers,
+    };
+    return res.status(OK).send(response);
+  } catch {
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
+// Search for all members using either first name, last name or email
+router.post('/shortcutsearchusers', async function(req, res) {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  if (!req.body.query) {
+    return res.status(OK).send({ items: [] });
+  }
+
+  const query = req.body.query.replace(/[*\s]/g, '');
+
+  // Create a fuzzy regex pattern to match characters in order, e.g., "pone" -> /p.*o.*n.*e/i
+  const fuzzyPattern = query.split('').join('.*');
+  const pattern = new RegExp(fuzzyPattern, 'i');
+
+  const maybeOr = {
+    $or: [
+      {
+        $expr: {
+          $regexMatch: {
+            input: { $concat: ['$firstName', '$lastName'] },
+            regex: pattern,
+          }
+        }
+      },
+      { email: { $regex: new RegExp(query, 'i')} }
+    ]
+  };
+
+  /**
+   * Function to calculate scores based on token matches for sorting
+   * @param {string} str - The string to score against
+   * @param {Array} tokens - The tokens to match against the string
+   * @return {number} - The score based on matches
+   */
+  const tokenScores = (str, tokens) => {
+    return tokens.reduce((score, token) => {
+      if (str.startsWith(token)) return score + 0; // highest score for exact match
+      if (str.includes(token)) return score + 1; // lower score for partial match
+      return score + 2; // lowest score for no match
+    }, 0);
+  };
+
+  /**
+   * Sorts the user items based on the query match
+   * @param {string} query input string to match against
+   * @returns {function} - A comparison function for sorting
+   */
+  const sortByMatch = (query) => {
+    const input = query.toLowerCase().split(/[\s@._-]+/).filter(Boolean);
+
+    return (a, b) => {
+      const aName = (a.firstName + ' ' + a.lastName).toLowerCase();
+      const bName = (b.firstName + ' ' + b.lastName).toLowerCase();
+      const aEmail = a.email.toLowerCase();
+      const bEmail = b.email.toLowerCase();
+
+      // First Priority: sort by name match
+      const nameScoreA = tokenScores(aName, input);
+      const nameScoreB = tokenScores(bName, input);
+      if (nameScoreA !== nameScoreB) {
+        return nameScoreA - nameScoreB;
+      }
+
+      // Second Priority: sort by email match
+      const emailScoreA = tokenScores(aEmail, input);
+      const emailScoreB = tokenScores(bEmail, input);
+      if (emailScoreA !== emailScoreB) {
+        return emailScoreA - emailScoreB;
+      }
+
+      // Tie-breaker: alphabetical email sort
+      return a.email.localeCompare(b.email);
+    };
+  };
+
+  // Find user and sort results based on best match of full name or email
+  User.find(maybeOr, { password: 0 })
+    .limit(5)
+    .then(items => {
+      items.sort(sortByMatch(req.body.query));
+      res.status(OK).send({ items });
+    })
+    .catch((error) => {
+      logger.error('/shortcutsearchusers encountered an error:', error);
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
 module.exports = router;
