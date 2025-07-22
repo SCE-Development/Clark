@@ -12,8 +12,8 @@ export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
-  const filter = ['Reset Password', 'Verify Email', 'Email Preferences'];
-  const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !filter.includes(r.pageName));
+  // const filter = ['Reset Password', 'Verify Email', 'Email Preferences'];
+  const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !r.hideFromShortcutSuggestions);
   const [keyword, setKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([...filteredSignedOutRoutes]);
   const [selectItem, setSelectItem] = useState(0);
@@ -32,17 +32,17 @@ export default function SearchModal() {
   const routes = useMemo(() => {
     if (user?.accessLevel === membershipState.MEMBER)
       return [
-        ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
+        ...memberRoutes.filter(r => !r.hideFromShortcutSuggestions),
         ...filteredSignedOutRoutes
       ];
     if (user?.accessLevel >= membershipState.OFFICER)
       return [
-        ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
+        ...officerOrAdminRoutes.filter(r => !r.hideFromShortcutSuggestions),
         ...filteredSignedOutRoutes
       ];
     if (!authenticated)
       return [
-        ...notAuthenticatedRoutes,
+        ...notAuthenticatedRoutes.filter(r => !r.hideFromShortcutSuggestions),
         ...filteredSignedOutRoutes
       ];
     return [...filteredSignedOutRoutes];

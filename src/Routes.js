@@ -37,20 +37,23 @@ export const notAuthenticatedRoutes = [
     queryParams: {
       redirect: 'redirect',
     },
+    hideFromShortcutSuggestions: false
   },
   {
     Component: ForgotPassword,
     path: '/forgot',
     pageName: 'Forgot Password',
     allowedIf: allowedIf.UNAUTHENTICATED,
-    redirect: '/'
+    redirect: '/',
+    hideFromShortcutSuggestions: false
   },
   {
     Component: MembershipApplication,
     path: '/register',
     pageName: 'Sign Up',
     allowedIf: allowedIf.UNAUTHENTICATED,
-    redirect: '/'
+    redirect: '/',
+    hideFromShortcutSuggestions: false
   },
 ];
 
@@ -60,7 +63,8 @@ const authenticatedRoutes = [
     path: '/profile',
     pageName: 'Profile',
     allowedIf: allowedIf.AUTHENTICATED,
-    redirect: '/login'
+    redirect: '/login',
+    hideFromShortcutSuggestions: false
   },
 ];
 
@@ -70,14 +74,16 @@ export const memberRoutes = [
     path: '/2DPrinting',
     pageName: '2D Printing',
     allowedIf: allowedIf.MEMBER,
-    redirect: '/login'
+    redirect: '/login',
+    hideFromShortcutSuggestions: false
   },
   {
     Component: Messaging,
     path: '/messaging/:id?',
     pageName: 'Messaging',
     allowedIf: allowedIf.MEMBER,
-    redirect: '/login'
+    redirect: '/login',
+    hideFromShortcutSuggestions: true
   },
   ...authenticatedRoutes,
 ];
@@ -90,7 +96,8 @@ export const officerOrAdminRoutes = [
     pageName: 'User Manager',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: false
   },
   //
   // {
@@ -106,7 +113,8 @@ export const officerOrAdminRoutes = [
     pageName: 'LED Sign',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: false
   },
   {
     Component: EditUserInfo,
@@ -114,7 +122,8 @@ export const officerOrAdminRoutes = [
     pageName: 'Edit User Info',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: true
   },
   {
     Component: URLShortenerPage,
@@ -123,6 +132,7 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     inAdminNavbar: true,
     redirect: '/',
+    hideFromShortcutSuggestions: false
   },
   {
     Component: sendUnsubscribeEmail,
@@ -131,6 +141,7 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     inAdminNavbar: true,
     redirect: '/',
+    hideFromShortcutSuggestions: false
   },
   {
     Component: AdvertisementAdmin,
@@ -138,7 +149,8 @@ export const officerOrAdminRoutes = [
     pageName: 'Advertisement Admin',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: false
   },
   {
     Component: CardReader,
@@ -146,7 +158,8 @@ export const officerOrAdminRoutes = [
     pageName: 'Card Reader',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: false
   },
   {
     Component: AuditLogsPage,
@@ -154,7 +167,8 @@ export const officerOrAdminRoutes = [
     pageName: 'Audit Log',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: false
   },
   ...memberRoutes,
 ];
@@ -163,31 +177,37 @@ export const signedOutRoutes = [
   {
     Component: Home,
     path: '/',
-    pageName: 'Home Page'
+    pageName: 'Home Page',
+    hideFromShortcutSuggestions: false
   },
   {
     Component: VerifyEmailPage,
     path: '/verify',
-    pageName: 'Verify Email'
+    pageName: 'Verify Email',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: ResetPasswordPage,
     path: '/reset',
-    pageName: 'Reset Password'
+    pageName: 'Reset Password',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: AboutPage,
     path: '/about',
-    pageName: 'About Us'
+    pageName: 'About Us',
+    hideFromShortcutSuggestions: false
   },
   {
     Component: ProjectsPage,
     path: '/projects',
-    pageName: 'Projects'
+    pageName: 'Projects',
+    hideFromShortcutSuggestions: false
   },
   {
     Component: EmailPreferencesPage,
     path: '/emailPreferences',
-    pageName: 'Email Preferences'
+    pageName: 'Email Preferences',
+    hideFromShortcutSuggestions: true
   },
 ];
