@@ -88,7 +88,7 @@ export default function URLShortenerPage() {
       return true;
     } else {
       setAliasTaken(true);
-      setErrorAlertMessage('That alias is taken!');
+      setErrorAlertMessage(response.responseData || 'Unknown error during URL creation!');
       return false;
     }
   }

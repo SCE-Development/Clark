@@ -55,7 +55,7 @@ export async function createUrl(url, alias = null, expiresAt = null, token) {
     }
   } catch(err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = err.response?.data?.error || err.message || 'Unknown error';
   }
   return status;
 }
