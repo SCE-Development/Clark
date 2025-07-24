@@ -7,7 +7,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const config = require('../../config/config.json');
 const User = require('../models/User.js');
-const redisClient = require('../util/redis-client.js');
+const PasswordReset = require('../models/PasswordReset.js');
 const logger = require('../../util/logger');
 const { registerUser, testPasswordStrength } = require('../util/userHelpers');
 const { verifyCaptcha } = require('../util/captcha');
@@ -116,7 +116,11 @@ router.post('/sendPasswordReset', async (req, res) => {
 
     const resetToken = id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     try {
-      await redisClient.set(resetToken, String(result._id), {EX: PASSWORD_RESET_EXPIRATION});
+      const passwordReset = new PasswordReset({
+        resetToken,
+        userId: String(result._id),
+      });
+      await passwordReset.save();
       await sendPasswordReset(resetToken, req.body.email);
     } catch (error) {
       logger.error('unable to save password reset token:', error);
@@ -331,7 +335,7 @@ router.post('/resetPassword', async (req, res) => {
     }
     user.password = req.body.password;
     await user.save();
-    await redisClient.delete(req.body.resetToken);
+    await PasswordReset.deleteOne({ resetToken: req.body.resetToken });
   } catch (error) {
     logger.error('Unable to reset password:', error);
     return res.sendStatus(BAD_REQUEST);
