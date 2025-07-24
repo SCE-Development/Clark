@@ -209,6 +209,7 @@ export default function SearchModal() {
   useEffect(() => {
     if (
       !open ||
+      !user.accessLevel ||
       user?.accessLevel < membershipState.OFFICER ||
       !keyword
     ) return;
