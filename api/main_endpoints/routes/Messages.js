@@ -23,7 +23,7 @@ const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeMessage = ((roomId, message, username) => {
+const writeMessage = async (roomId, message, username) => { //make this async for mongodb chatMessage creation
 
   const messageObj = {
     timestamp: Date.now(),
@@ -38,7 +38,7 @@ const writeMessage = ((roomId, message, username) => {
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
   try{
-    ChatMessage.create({
+      await ChatMessage.create({
       chatroomId: roomId, 
       text: message, 
       userId: username
@@ -53,7 +53,7 @@ const writeMessage = ((roomId, message, username) => {
 
   // increase the total amount of messages sent per chatroom counter
   MetricsHandler.totalChatMessagesPerChatRoom.labels(roomId).inc();
-});
+};
 
 router.post('/send', async (req, res) => {
 
