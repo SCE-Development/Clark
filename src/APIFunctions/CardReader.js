@@ -23,7 +23,7 @@ export async function getAllCardsFromDb({
       status.responseData = result;
     } else {
       status.error = true;
-    } 
+    }
   } catch (err) {
     status.error = true;
     status.responseData = err;

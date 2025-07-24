@@ -49,6 +49,10 @@ describe('OfficeAccessCard', () => {
   const VALID_CARD_BYTES = 'wesleys card';
   const NEW_CARD_BYTES = 'dials card';
   const INVALID_CARD_BYTES = 'evans card';
+
+  const VALID_ALIAS = 'gauravs card';
+  const INVALID_ALIAS = 'bobs card';
+
   const VERIFY_API_PATH = '/api/OfficeAccessCard/verify';
   const DELETE_API_PATH = '/api/OfficeAccessCard/delete';
   const GET_ALL_CARDS_API_PATH = '/api/OfficeAccessCard/getAllCards';
@@ -66,6 +70,7 @@ describe('OfficeAccessCard', () => {
     tools.emptySchema(OfficeAccessCard);
     const testOfficeAccessCard = new OfficeAccessCard({
       cardBytes: VALID_CARD_BYTES,
+      alias: VALID_ALIAS,
       verifiedCount: INCREMENT_VERIFY_COUNT,
       lastVerifed: Date.now()
     });
@@ -193,16 +198,16 @@ describe('OfficeAccessCard', () => {
       setTokenStatus(true);
       deleteCardStub.resolves(false);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH, { cardBytes: INVALID_CARD_BYTES },
+        DELETE_API_PATH, { alias: INVALID_ALIAS },
       );
       expect(result).to.have.status(NOT_FOUND);
     });
 
-    it('Should return 200 with a valid cardBytes parameter and deleting a card', async () => {
+    it('Should return 200 with a valid alias parameter and deleting a card', async () => {
       setTokenStatus(true);
       deleteCardStub.resolves(true);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH, { cardBytes: VALID_CARD_BYTES },
+        DELETE_API_PATH, { alias: VALID_ALIAS },
       );
       expect(result).to.have.status(OK);
     });
@@ -211,7 +216,7 @@ describe('OfficeAccessCard', () => {
       setTokenStatus(true);
       deleteCardStub.resolves(false);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH, { cardBytes: VALID_CARD_BYTES },
+        DELETE_API_PATH, { alias: VALID_ALIAS },
       );
       expect(result).to.have.status(SERVER_ERROR);
     });
