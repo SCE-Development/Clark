@@ -120,6 +120,8 @@ services:
     restart: 'on-failure'
     depends_on:
       - frontend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   default:
