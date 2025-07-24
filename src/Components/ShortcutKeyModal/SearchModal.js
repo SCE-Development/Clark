@@ -82,7 +82,7 @@ export default function SearchModal() {
     const topFiveItems = suggestions.slice(0, SHORTCUT_MAX_RESULT);
     return (
       <ul className='suggestion-list'>
-        {topFiveItems.map((r, index) => ( // Still keep index to keep track of the selected item
+        {topFiveItems.map((r, index) => (
           <li
             key={r.path} // Use r.path as key
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
@@ -209,9 +209,7 @@ export default function SearchModal() {
   useEffect(() => {
     if (
       !open ||
-      !user.accessLevel ||
       user?.accessLevel < membershipState.OFFICER ||
-      // isCleezyDisabled ||
       !keyword
     ) return;
 
@@ -239,26 +237,6 @@ export default function SearchModal() {
     isCleezyDisabled,
     user.token
   ]);
-
-  /**
-   * A debounce function that performs the search 400ms after the user stops typing.
-   * @dependencies keyword, open, user.accessLevel
-   */
-  // useEffect(() => {
-  //   if (!open ||
-  //     !user.accessLevel ||
-  //     user?.accessLevel < membershipState.OFFICER ||
-  //     !keyword) return;
-
-  //   const debounce = setTimeout(() => {
-  //     getUserData({
-  //       token: user.token,
-  //       query: keyword
-  //     });
-  //   }, DEBOUNCE_TIME);
-
-  //   return () => clearTimeout(debounce);
-  // }, [keyword, open, user.accessLevel]);
 
   /**
    * Executes a search when Enter is pressed
