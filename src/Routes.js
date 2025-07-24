@@ -37,23 +37,20 @@ export const notAuthenticatedRoutes = [
     queryParams: {
       redirect: 'redirect',
     },
-    hideFromShortcutSuggestions: false
   },
   {
     Component: ForgotPassword,
     path: '/forgot',
     pageName: 'Forgot Password',
     allowedIf: allowedIf.UNAUTHENTICATED,
-    redirect: '/',
-    hideFromShortcutSuggestions: false
+    redirect: '/'
   },
   {
     Component: MembershipApplication,
     path: '/register',
     pageName: 'Sign Up',
     allowedIf: allowedIf.UNAUTHENTICATED,
-    redirect: '/',
-    hideFromShortcutSuggestions: false
+    redirect: '/'
   },
 ];
 
@@ -63,8 +60,7 @@ const authenticatedRoutes = [
     path: '/profile',
     pageName: 'Profile',
     allowedIf: allowedIf.AUTHENTICATED,
-    redirect: '/login',
-    hideFromShortcutSuggestions: false
+    redirect: '/login'
   },
 ];
 
@@ -74,8 +70,7 @@ export const memberRoutes = [
     path: '/2DPrinting',
     pageName: '2D Printing',
     allowedIf: allowedIf.MEMBER,
-    redirect: '/login',
-    hideFromShortcutSuggestions: false
+    redirect: '/login'
   },
   {
     Component: Messaging,
@@ -97,7 +92,6 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true,
-    hideFromShortcutSuggestions: false
   },
   //
   // {
@@ -114,7 +108,6 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true,
-    hideFromShortcutSuggestions: false
   },
   {
     Component: EditUserInfo,
@@ -132,7 +125,6 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     inAdminNavbar: true,
     redirect: '/',
-    hideFromShortcutSuggestions: false
   },
   {
     Component: sendUnsubscribeEmail,
@@ -141,7 +133,6 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     inAdminNavbar: true,
     redirect: '/',
-    hideFromShortcutSuggestions: false
   },
   {
     Component: AdvertisementAdmin,
@@ -149,8 +140,7 @@ export const officerOrAdminRoutes = [
     pageName: 'Advertisement Admin',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true,
-    hideFromShortcutSuggestions: false
+    inAdminNavbar: true
   },
   {
     Component: CardReader,
@@ -158,8 +148,7 @@ export const officerOrAdminRoutes = [
     pageName: 'Card Reader',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true,
-    hideFromShortcutSuggestions: false
+    inAdminNavbar: true
   },
   {
     Component: AuditLogsPage,
@@ -167,8 +156,7 @@ export const officerOrAdminRoutes = [
     pageName: 'Audit Log',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true,
-    hideFromShortcutSuggestions: false
+    inAdminNavbar: true
   },
   ...memberRoutes,
 ];
@@ -177,8 +165,7 @@ export const signedOutRoutes = [
   {
     Component: Home,
     path: '/',
-    pageName: 'Home Page',
-    hideFromShortcutSuggestions: false
+    pageName: 'Home Page'
   },
   {
     Component: VerifyEmailPage,
@@ -195,14 +182,12 @@ export const signedOutRoutes = [
   {
     Component: AboutPage,
     path: '/about',
-    pageName: 'About Us',
-    hideFromShortcutSuggestions: false
+    pageName: 'About Us'
   },
   {
     Component: ProjectsPage,
     path: '/projects',
-    pageName: 'Projects',
-    hideFromShortcutSuggestions: false
+    pageName: 'Projects'
   },
   {
     Component: EmailPreferencesPage,
