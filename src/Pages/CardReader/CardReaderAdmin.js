@@ -1,4 +1,3 @@
-import React, { act } from 'react'
 import { useEffect, useState } from 'react'
 import { getAllCards } from '../../APIFunctions/CardReader';
   
@@ -27,7 +26,6 @@ export default function CardReaderAdminPage () {
     };
 
     eventSource.onerror = function(event) {
-        console.log('Error occurred:', event);
     };
 
     return () => eventSource.close();
@@ -109,7 +107,7 @@ export default function CardReaderAdminPage () {
                             headers: {
                               "Content-Type": "application/json"
                             },
-                            body: JSON.stringify({ _id: card._id })
+                            body: JSON.stringify({ cardBytes: card.cardBytes })
                           })
                           .then(res => {
                             if (!res.ok) throw new Error("Failed to delete");

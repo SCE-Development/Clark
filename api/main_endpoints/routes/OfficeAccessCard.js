@@ -13,6 +13,8 @@ const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
 
+const { decodeToken } = require('../util/token-functions.js');
+
 router.use(bodyParser.json());
 
 const clients = [];
@@ -88,6 +90,7 @@ router.get('/verify', async (req, res) =>{
   const apiKey = req.headers['x-api-key'];
   let alias = await getAliasByCardBytes(cardBytes);
   
+  // Code for writing the alias for a card
   if(!alias){
     const path = require('path');
     const fs = require('fs').promises; 
@@ -104,6 +107,7 @@ router.get('/verify', async (req, res) =>{
     const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
     const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
     alias = `${randomAdjective} ${randomNoun}`;
+
 
   }
   
@@ -123,7 +127,7 @@ router.get('/verify', async (req, res) =>{
   const missingValue = required.find(({ value }) => !value);
   
 
-  
+
   if (missingValue) {
     writeMessage(endpoint, BAD_REQUEST, ` ${missingValue.title} missing from request`, cardBytes, add, "n/a");
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
@@ -175,21 +179,42 @@ router.get('/verify', async (req, res) =>{
 
 
 router.post('/delete', async (req, res) => {
-    OfficeAccessCard.deleteOne({ _id: req.body._id })
+    const endpoint = req.path;
+    const {cardBytes} = req.query;
+    console.log(req.body);
+    
+    // Checking for valid token
+    if(!decodeToken(req)){
+      return res.sendStatus(UNAUTHORIZED);
+
+    }
+
+
+    await OfficeAccessCard.deleteOne({ cardBytes: cardBytes })
     .then(result => {
       if (result.n < 1) {
+        writeMessage("/delete", NOT_FOUND, 'Card not found', cardBytes, false, "n/a");
         res.sendStatus(NOT_FOUND);
       } else {
+        writeMessage("/delete", OK, 'Card deleted', cardBytes, false, "n/a");
         res.sendStatus(OK);
       }
     })
     .catch(() => {
+      writeMessage("/delete", BAD_REQUEST, 'bad request', cardBytes, false, "n/a");
       res.sendStatus(BAD_REQUEST);
     });
+
+
 })
 
 
 router.get('/listen', async (req, res) => {
+    if(!decodeToken(req)){
+      return res.sendStatus(UNAUTHORIZED);
+
+    }
+
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
