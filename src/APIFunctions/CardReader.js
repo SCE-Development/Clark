@@ -23,7 +23,7 @@ export async function getAllCardsFromDb({
       status.responseData = result;
     } else {
       status.error = true;
-    }
+    } 
   } catch (err) {
     status.error = true;
     status.responseData = err;
@@ -31,7 +31,7 @@ export async function getAllCardsFromDb({
   return status;
 }
 
-export async function deleteCardFromDb(token, cardBytes) {
+export async function deleteCardFromDb(token, alias) {
   let status = new ApiResponse();
   try {
     const url = new URL('/api/OfficeAccessCard/delete', BASE_API_URL);
@@ -41,7 +41,7 @@ export async function deleteCardFromDb(token, cardBytes) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ cardBytes, }),
+      body: JSON.stringify({ alias, }),
     });
     if (res.ok) {
       const result = await res.json();

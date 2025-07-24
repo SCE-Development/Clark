@@ -62,18 +62,18 @@ async function generateAlias() {
   return new Date().toGMTString();
 }
 
-function deleteCard(cardBytes) {
+function deleteCard(alias) {
   return new Promise((resolve) => {
     try {
       OfficeAccessCard.findOneAndDelete(
-        { cardBytes }
+        { alias }
         , (error, result) => {
           if (error) {
             logger.error('deleteCard got an error querying mongodb: ', error);
             return resolve(false);
           }
           if (!result) {
-            logger.info(`Card ${cardBytes} not found in the database`);
+            logger.info(`Card ${alias} not found in the database`);
           }
           return resolve(!!result);
         }
