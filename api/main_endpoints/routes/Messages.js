@@ -121,26 +121,20 @@ router.get('/getLatestMessage', async (req, res) => {
   }
 
   try {
-    User.findOne({ apiKey }, (error, result) => {
-      if (error) {
-        logger.error('/listen received an invalid API key: ', error);
-        res.sendStatus(SERVER_ERROR);
-        return;
-      }
+      const user = User.findOne({apiKey});
 
-      if (!result) { // return unauthorized if no api key found
+      if(!user){
         return res.sendStatus(UNAUTHORIZED);
       }
 
-      if (!lastMessageSent[id]) {
-        return res.status(OK).send('Room closed');
-      }
+      
+      const messages = ChatMessage.find({chatroomId: id}).sort({createdAt: -1}).limit(20).populate('userid')
 
-      return res.status(OK).send(lastMessageSent[id]);
+      return res.status(OK).json(messages)
 
-    });
-  } catch (error) {
-    logger.error('Error in /get: ', error);
+    }
+   catch (error) {
+    logger.error('Error in /getLatestMessage: ', error);
     res.sendStatus(SERVER_ERROR);
   }
 });
