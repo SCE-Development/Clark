@@ -50,7 +50,7 @@ export async function createUrl(url, alias = null, token) {
     status.responseData = data;
   } catch (err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = err.response?.data?.error || err.message || 'Unknown error';
   }
   return status;
 }

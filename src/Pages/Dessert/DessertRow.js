@@ -1,0 +1,100 @@
+import React, { useState } from 'react';
+import { updateDessert, deleteDessert } from '../../APIFunctions/Dessert';
+
+export default function DessertRow({ dessert, user, refreshDesserts }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(dessert.title);
+  const [description, setDescription] = useState(dessert.description);
+  
+  const [rating, setRating] = useState(dessert.rating); 
+
+
+  async function handleSave() {
+    console.log("handleSave test", { title, description });
+    const updatedDessert = {
+      _id: dessert._id,
+      title,
+      description,
+    };
+
+    const result = await updateDessert(updatedDessert, user.token);
+    if (!result.error) {
+      setIsEditing(false);
+      refreshDesserts();
+    } else {
+      console.error(result.responseData);
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm(`Delete "${dessert.title}"?`)) return;
+    const result = await deleteDessert(dessert._id, user.token);
+    if (!result.error) {
+      refreshDesserts();
+    } else {
+      console.error(result.responseData);
+    }
+  }
+
+  return (
+    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        {isEditing ? (
+          <input
+            className="text-black px-2 py-1 rounded"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        ) : (
+          dessert.title
+        )}
+      </td>
+      <td className="px-6 py-4">
+        {isEditing ? (
+          <input
+            className="text-black px-2 py-1 rounded"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        ) : (
+          dessert.description
+        )}
+      </td>
+
+      <td className="px-6 py-4">
+        {isEditing ? (
+          <input
+            className="text-black px-2 py-1 rounded"
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+          />
+        ) : (
+          dessert.rating
+        )}
+      </td>
+
+
+      <td className="px-6 py-4">
+        {isEditing ? (
+          <>
+            <button onClick={handleSave} className="text-green-500 mr-2">
+              Save
+            </button>
+            <button onClick={() => setIsEditing(false)} className="text-yellow-500 mr-2">
+              Cancel
+            </button>
+          </>
+        ) : (
+          <>
+            <button onClick={() => setIsEditing(true)} className="text-blue-500 mr-2">
+              Edit
+            </button>
+            <button onClick={handleDelete} className="text-red-500">
+              Delete
+            </button>
+          </>
+        )}
+      </td>
+    </tr>
+  );
+}

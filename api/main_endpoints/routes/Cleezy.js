@@ -73,9 +73,12 @@ router.post('/createUrl', async (req, res) => {
     res.json({ ...data, link: u });
   } catch (err) {
     logger.error('/createUrl had an error', err);
-    res.status(err.response.status).json({ error: err.response.status });
+    res.status(err.response.status).json({
+      error: err.response.data?.detail || err.response.data || 'Unknown error from Cleezy'
+    })
   }
 });
+
 
 router.post('/deleteUrl', async (req, res) => {
   if (!checkIfTokenSent(req)) {
