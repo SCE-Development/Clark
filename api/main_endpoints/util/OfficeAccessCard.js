@@ -2,11 +2,12 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { ADJECTIVES, NOUNS } = require('../../util/CardReaderConstants.js');
 
-function checkIfCardExists(cardBytes) {
+function checkIfCardExists({ cardBytes = null, alias = null } = {}) {
+  const body = (cardBytes !== null) ? { cardBytes } : { alias };
   return new Promise((resolve) => {
     try {
       OfficeAccessCard.findOneAndUpdate(
-        { cardBytes },
+        body,
         {
           $inc: { verifiedCount: 1 },
           $set: { lastVerified: Date.now() }
@@ -19,7 +20,8 @@ function checkIfCardExists(cardBytes) {
             return resolve(false);
           }
           if (!result) {
-            logger.info(`Card:${cardBytes} not found in the database`);
+            const { description } = body;
+            logger.info(`Card:${description} not found in the database`);
           }
           return resolve(result); // return the document
         });
@@ -73,7 +75,7 @@ function deleteCard(alias) {
             return resolve(false);
           }
           if (!result) {
-            logger.info(`Card ${alias} not found in the database`);
+            logger.info(`Card ${ alias } not found in the database`);
           }
           return resolve(!!result);
         }

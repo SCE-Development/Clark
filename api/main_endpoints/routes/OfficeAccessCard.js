@@ -90,7 +90,7 @@ router.get('/verify', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const cardExists = await checkIfCardExists(cardBytes);
+  const cardExists = await checkIfCardExists({ cardBytes });
   if (cardExists) {
     writeLogToClient(req.method, { alias: cardExists.alias, statusCode: OK });
     return res.sendStatus(OK);
@@ -144,17 +144,17 @@ router.post('/delete', async (req, res) => {
     return res.sendStatus(BAD_REQUEST);
   }
 
-  // const cardExists = await checkIfCardExists(cardBytes);
-  // if (!cardExists) {
-  //   logger.info('Card does not exist');
-  //   writeLogToClient(req.method, {
-  //     statusCode: NOT_FOUND,
-  //     message: 'Card does not exist',
-  //   });
-  //   return res.sendStatus(NOT_FOUND);
-  // }
+  const cardExists = await checkIfCardExists({ alias });
+  if (!await cardExists) {
+    logger.info('Card does not exist');
+    writeLogToClient(req.method, {
+      statusCode: NOT_FOUND,
+      message: 'Card does not exist',
+    });
+    return res.sendStatus(NOT_FOUND);
+  }
 
-  if (await deleteCard(alias)) { // successful
+  if (await deleteCard({ alias })) { // successful
     logger.info('Successfully deleted card');
     writeLogToClient(req.method, {
       alias,
