@@ -13,7 +13,7 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-
+const {ChatMessage} = require('../models/ChatMessage.js')
 
 router.use(bodyParser.json());
 
@@ -36,6 +36,17 @@ const writeMessage = ((roomId, message, username) => {
   }
 
   lastMessageSent[roomId] = JSON.stringify(messageObj);
+
+  try{
+    ChatMessage.create({
+      chatroomId: roomId, 
+      text: message, 
+      userId: username
+    });
+  }
+  catch(err){
+    console.error('error saving message', err);
+  }
 
   // increase the total messages sent counter
   MetricsHandler.totalMessagesSent.inc();
