@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const mongooseFuzzySearching = require('mongoose-fuzzy-searching');
 const bcrypt = require('bcryptjs');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
@@ -77,6 +78,10 @@ const UserSchema = new Schema(
   },
   { collection: 'User' }
 );
+
+UserSchema.plugin(mongooseFuzzySearching, {
+  fields: ['firstName', 'lastName', 'email'],
+});
 
 UserSchema.pre('save', function(next) {
   const member = this;
