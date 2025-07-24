@@ -32,6 +32,7 @@ export default function CardReader() {
   const [paginationText, setPaginationText] = useState('');
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [selected, setSelected] = useState('Card Registery');
 
   function buildLog(data) {
     const date = new Date().toISOString().padEnd(28);
@@ -71,24 +72,24 @@ export default function CardReader() {
 
   function CardEntry({ card }) {
     return (
-      <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
-        <td key='alias' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+      <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+        <td key='alias' className='hidden md:table-cell '>
+          <div className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
             {card.alias}
           </div>
         </td>
         <td key='createdAt' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+          <div className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
             {card.createdAt}
           </div>
         </td>
         <td key='lastVerified' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+          <div className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
             {card.lastVerified}
           </div>
         </td>
         <td key='verifiedCount' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+          <div className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
             {card.verifiedCount}
           </div>
         </td>
@@ -216,24 +217,25 @@ export default function CardReader() {
       );
     }
     return (
-      <table className='table px-3'>
-        <thead>
-          <tr>
+      <table className='text-gray-500 dark:text-gray-400'>
+        <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+          <tr className=''>
             {[
               { title: 'Alias', columnName: 'alias' },
               { title: 'Registration Date', columnName: 'registrationDate' },
               { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
               { title: 'Verified Count', columnName: 'verifiedCount' },
+              { title:'', columnName: '' }
             ].map(({ title }) => (
-              <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
-                <div className='flex items-center justify-center'>
+              <th key={title} className='px-6 py-3'>
+                <div className='flex items-left justify-left'>
                   {title}
                 </div>
               </th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className='text-left text-sm'>
           {cards.map(card => <CardEntry card={card}/>)}
         </tbody>
       </table>
@@ -268,7 +270,7 @@ export default function CardReader() {
     }
     return (
       <div>
-        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+        <h3 className='flex items-center justify-center text-lg py-2 pt-4 text-gray-700 dark:text-white text-base'>
           {connectionStatusText}
         </h3>
         <pre className='m-4 text-gray-700 dark:text-white'>
@@ -282,21 +284,24 @@ export default function CardReader() {
   }
 
   return (
-    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
-      <h1 className='flex items-center justify-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
-      <pre className='flex items-center justify-center text-gray-700 dark:text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
+    <div className='overview-container mx-5 dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
+      <h1 className='flex items-center justify-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white py-8'>SCE Card Reader Page</h1>
+      <pre className='flex items-center justify-center text-gray-700 dark:text-white font-normal py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
-          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
-          onClick={() => handleTabChange('registry')}
+          className={`p-2 hover:bg-gray-400 ${selected === 'Card Registery' ? 'text-blue-500' : 'text-white'} rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
+          onClick={() => {handleTabChange('registry'); setSelected('Card Registery');}}
         >
           Card Registry
         </button>
         {/* spacer to differentiate between the two options */}
         <div>&nbsp;|&nbsp;</div>
         <button
-          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
-          onClick={() => handleTabChange('logs')}
+          className={`p-2 hover:bg-gray-400 ${selected === 'Card Reader Logs' ? 'text-blue-500' : 'text-white'} rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
+          onClick={() => {
+            handleTabChange('logs'); 
+            setSelected('Card Reader Logs');
+          }}
         >
           Card Reader Logs
         </button>
