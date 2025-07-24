@@ -148,10 +148,10 @@ router.get('/getLatestMessage', async (req, res) => {
 
 router.get('/listen', async (req, res) => {
 
-  const {token, id} = req.query;
+  const {token, apiKey, id} = req.query;
 
   const required = [
-    //{value: token || apiKey, title: 'Token or API Key', },
+    {value: token || apiKey, title: 'Token or API Key', },
     {value: id, title: 'Room ID', }
   ];
 
@@ -163,15 +163,15 @@ router.get('/listen', async (req, res) => {
   }
 
   let filterQuery = {}; // filter to find user in the database
-  //if (token) {
+  if (token) {
     let userObj = decodeTokenFromBodyOrQuery(req);
     if (!userObj) {
       return res.sendStatus(UNAUTHORIZED);
     }
     filterQuery._id = userObj._id;
-  //} else {
-    //filterQuery.apiKey = apiKey;
-  //}
+  }else {
+    filterQuery.apiKey = apiKey;
+  }
 
   try {
     User.findOne(filterQuery, (error, result) => {
