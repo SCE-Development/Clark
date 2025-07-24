@@ -72,11 +72,6 @@ export default function CardReader() {
   function CardEntry({ card }) {
     return (
       <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
-        <td key='cardBytes' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
-            {card.cardBytes}
-          </div>
-        </td>
         <td key='alias' className='hidden md:table-cell'>
           <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
             {card.alias}
@@ -225,7 +220,6 @@ export default function CardReader() {
         <thead>
           <tr>
             {[
-              { title: 'Card Bytes', columnName: 'cardBytes' },
               { title: 'Alias', columnName: 'alias' },
               { title: 'Registration Date', columnName: 'registrationDate' },
               { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
@@ -251,14 +245,14 @@ export default function CardReader() {
       return (
         <div>
           <ConfirmationModal {... {
-            headerText: `Delete card: ${cardToDelete.cardBytes}?`,
+            headerText: `Delete card: ${cardToDelete.alias}?`,
             bodyText: `Are you sure you want to delete 
-              card: ${cardToDelete.cardBytes}? It'll be gone forever if you do.`,
-            confirmText: `Yes, delete ${cardToDelete.cardBytes}`,
+              card: ${cardToDelete.alias}? It'll be gone forever if you do.`,
+            confirmText: `Yes, delete ${cardToDelete.alias}`,
             cancelText: 'No, keep the card',
             confirmClassAddons: 'bg-red-600 hover:bg-red-500',
             handleConfirmation: async () => {
-              await deleteCardFromDb(token, cardToDelete.cardBytes);
+              await deleteCardFromDb(token, cardToDelete.alias);
               await getAllCards();
               setToggleDelete(!toggleDelete);
             },
