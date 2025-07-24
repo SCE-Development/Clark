@@ -210,11 +210,17 @@ export default function SearchModal() {
       !open ||
       !user.accessLevel ||
       user?.accessLevel < membershipState.OFFICER ||
-      isCleezyDisabled ||
+      // isCleezyDisabled ||
       !keyword
     ) return;
 
     const debounce = setTimeout(() => {
+      getUserData({
+        token: user.token,
+        query: keyword
+      });
+
+      if (isCleezyDisabled) return;
       getCleezyUrlsData({
         token: user.token,
         searchQuery: keyword,
@@ -237,21 +243,21 @@ export default function SearchModal() {
    * A debounce function that performs the search 400ms after the user stops typing.
    * @dependencies keyword, open, user.accessLevel
    */
-  useEffect(() => {
-    if (!open ||
-      !user.accessLevel ||
-      user?.accessLevel < membershipState.OFFICER ||
-      !keyword) return;
+  // useEffect(() => {
+  //   if (!open ||
+  //     !user.accessLevel ||
+  //     user?.accessLevel < membershipState.OFFICER ||
+  //     !keyword) return;
 
-    const debounce = setTimeout(() => {
-      getUserData({
-        token: user.token,
-        query: keyword
-      });
-    }, DEBOUNCE_TIME);
+  //   const debounce = setTimeout(() => {
+  //     getUserData({
+  //       token: user.token,
+  //       query: keyword
+  //     });
+  //   }, DEBOUNCE_TIME);
 
-    return () => clearTimeout(debounce);
-  }, [keyword, open, user.accessLevel]);
+  //   return () => clearTimeout(debounce);
+  // }, [keyword, open, user.accessLevel]);
 
   /**
    * Executes a search when Enter is pressed
