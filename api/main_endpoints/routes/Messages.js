@@ -13,7 +13,7 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-const {ChatMessage} = require('../models/ChatMessage.js')
+const ChatMessage = require('../models/ChatMessage.js')
 
 router.use(bodyParser.json());
 
@@ -38,10 +38,19 @@ const writeMessage = async (roomId, message, username) => { //make this async fo
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
   try{
+      // Query User table to get userId from username (remove the trailing colon)
+      const cleanUsername = username.replace(':', '');
+      const user = await User.findOne({ firstName: cleanUsername });
+      
+      if (!user) {
+        console.error('User not found for username:', cleanUsername);
+        return;
+      }
+
       await ChatMessage.create({
       chatroomId: roomId, 
       text: message, 
-      userId: username
+      userId: user._id
     });
   }
   catch(err){
@@ -56,11 +65,9 @@ const writeMessage = async (roomId, message, username) => { //make this async fo
 };
 
 router.post('/send', async (req, res) => {
-
   const {message, id} = req.body;
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
-
 
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
@@ -88,14 +95,15 @@ router.post('/send', async (req, res) => {
       logger.error('Error in /send User.findOne: ', error);
       return res.sendStatus(SERVER_ERROR);
     }
+  } else {
+    // Assume user passed a non null/undefined token
+    const userObj = decodeToken(req);
+    if (!userObj) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    nameToUse = userObj.firstName;
   }
 
-  // Assume user passed a non null/undefined token
-  const userObj = decodeToken(req);
-  if (!userObj) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  nameToUse = userObj.firstName;
   try {
     writeMessage(id, `${message}`, `${nameToUse}:`);
     return res.json({ status: 'Message sent' });
@@ -121,19 +129,18 @@ router.get('/getLatestMessage', async (req, res) => {
   }
 
   try {
-      const user = User.findOne({apiKey});
-
+      const user = await User.findOne({apiKey});
+      
       if(!user){
         return res.sendStatus(UNAUTHORIZED);
       }
-
-      
-      const messages = ChatMessage.find({chatroomId: id}).sort({createdAt: -1}).limit(20).populate('userid')
+             
+      const messages = await ChatMessage.find({chatroomId: id}).sort({createdAt: -1}).limit(20).populate('userId')
 
       return res.status(OK).json(messages)
-
-    }
-   catch (error) {
+     
+  }
+  catch (error) {
     logger.error('Error in /getLatestMessage: ', error);
     res.sendStatus(SERVER_ERROR);
   }
@@ -141,10 +148,10 @@ router.get('/getLatestMessage', async (req, res) => {
 
 router.get('/listen', async (req, res) => {
 
-  const {token, apiKey, id} = req.query;
+  const {token, id} = req.query;
 
   const required = [
-    {value: token || apiKey, title: 'Token or API Key', },
+    //{value: token || apiKey, title: 'Token or API Key', },
     {value: id, title: 'Room ID', }
   ];
 
@@ -156,15 +163,15 @@ router.get('/listen', async (req, res) => {
   }
 
   let filterQuery = {}; // filter to find user in the database
-  if (token) {
+  //if (token) {
     let userObj = decodeTokenFromBodyOrQuery(req);
     if (!userObj) {
       return res.sendStatus(UNAUTHORIZED);
     }
     filterQuery._id = userObj._id;
-  } else {
-    filterQuery.apiKey = apiKey;
-  }
+  //} else {
+    //filterQuery.apiKey = apiKey;
+  //}
 
   try {
     User.findOne(filterQuery, (error, result) => {

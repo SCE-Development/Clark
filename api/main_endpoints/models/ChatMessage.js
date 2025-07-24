@@ -10,7 +10,7 @@ const ChatMessageSchema = new Schema(
         }, 
         expiresAt: {
             type: Date, 
-            default: ()=> Date.now() + 24 * 3600 * 10, //expires in 24 hours
+            default: ()=> Date.now() + 24 * 3600 * 1000, //expires in 24 hours
         },
         chatroomId: {
             type: String, 
@@ -31,6 +31,6 @@ const ChatMessageSchema = new Schema(
 ChatMessageSchema.index({chatroomId: 1, createdAt: -1}) //sort by whatever is created most currently
 
 
-module.exports = mongoosedb.model('ChatMessage', ChatMessageSchema);
+module.exports = mongoose.model('ChatMessage', ChatMessageSchema);
 
 
