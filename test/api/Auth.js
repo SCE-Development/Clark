@@ -1,9 +1,9 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
 const mongoose = require('mongoose');
-const redisClient = require('../../api/main_endpoints/util/redis-client.js');
 const bcrypt = require('bcryptjs');
 const User = require('../../api/main_endpoints/models/User');
+const PasswordReset = require('../../api/main_endpoints/models/PasswordReset');
 const EmailHelpers = require('../../api/main_endpoints/util/emailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
@@ -55,6 +55,7 @@ describe('Auth', () => {
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
+    tools.emptySchema(PasswordReset);
     done();
   });
 
@@ -387,7 +388,10 @@ describe('Auth', () => {
 
   describe('/POST validatePasswordReset', () => {
     before(async () => {
-      await redisClient.set('valid token', 'valid id 321', { EX: 60 * 60 });
+      await new PasswordReset({
+        resetToken: 'valid token',
+        userId: 'valid id 321',
+      }).save();
     });
 
     it('Should return statusCode 404 if the token is invalid', async () => {
@@ -412,7 +416,10 @@ describe('Auth', () => {
     let createdUser = null;
 
     before(async () => {
-      await redisClient.set('valid token', String(createdId), { EX: 60 * 60 });
+      await new PasswordReset({
+        resetToken: 'valid token',
+        userId: String(createdId),
+      }).save();
 
       const newUser = new User({
         _id: createdId,
@@ -426,6 +433,7 @@ describe('Auth', () => {
 
     after(async () => {
       if (createdUser) await User.deleteOne({ _id: createdUser._id});
+      await PasswordReset.deleteMany({});
     });
 
     it('Should return statusCode 401 if the password is too weak', async () => {
