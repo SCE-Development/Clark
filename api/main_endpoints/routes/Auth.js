@@ -325,7 +325,13 @@ router.post('/resetPassword', async (req, res) => {
     if (!userId) {
       return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
     }
+    if (!req.body.hashedId) {
+      logger.error('Missing hashedId in resetPassword request');
+      return res.status(BAD_REQUEST).send({ message: 'Missing hashedId.' });
+    }
+    logger.info(`[resetPassword] userId: ${userId}, hashedId: ${req.body.hashedId}`);
     const validId = await bcrypt.compare(String(userId), req.body.hashedId);
+    logger.info(`[resetPassword] bcrypt.compare result: ${validId}`);
     if (!validId) {
       return res.status(BAD_REQUEST).send({ message: 'Invalid user ID.' });
     }
@@ -338,6 +344,10 @@ router.post('/resetPassword', async (req, res) => {
     await PasswordReset.deleteOne({ resetToken: req.body.resetToken });
   } catch (error) {
     logger.error('Unable to reset password:', error);
+    // Only return 404 if the error is about the reset token, otherwise 400
+    if (error && error.message && error.message.includes('reset token')) {
+      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
+    }
     return res.sendStatus(BAD_REQUEST);
   }
 

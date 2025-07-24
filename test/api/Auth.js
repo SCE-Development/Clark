@@ -412,15 +412,17 @@ describe('Auth', () => {
   });
 
   describe('/POST resetPassword', () => {
-    let createdId = mongoose.Types.ObjectId('valid id 123');
+    let createdId = new mongoose.Types.ObjectId();
     let createdUser = null;
 
-    before(async () => {
+    beforeEach(async () => {
+      await PasswordReset.deleteMany({});
+      await User.deleteMany({});
+      createdId = new mongoose.Types.ObjectId();
       await new PasswordReset({
         resetToken: 'valid token',
         userId: String(createdId),
       }).save();
-
       const newUser = new User({
         _id: createdId,
         email: 'abcdef123@gmail.com',
