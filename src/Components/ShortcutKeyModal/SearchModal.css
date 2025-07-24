@@ -18,6 +18,9 @@
     background: white;
     border-radius: 8px;
     width: 35rem;
+    width: 35rem;
+     /* max-width: 40rem; /* prevent overflow */
+  /* width: 100%; */
 }
 
 .shortcut-search-modal input {
@@ -49,6 +52,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
 }
 
 .shortcut-search-modal .hidden-tab {
