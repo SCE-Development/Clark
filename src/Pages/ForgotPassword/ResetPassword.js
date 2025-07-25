@@ -91,7 +91,7 @@ const ForgotPassword = () => {
 
       setTimeout(() => {
         window.location.href = '/login';
-      }, 3000)
+      }, 3000);
     }
   }
 
