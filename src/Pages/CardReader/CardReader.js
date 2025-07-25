@@ -237,8 +237,7 @@ export default function CardReader() {
                   ${columnName === 'verifiedCount' ? 'hidden lg:table-cell' : ''}
 
                   `}
-                  
-                  >
+                >
                   <div className='flex items-center justify-center'>
                     {title}
                   </div>
