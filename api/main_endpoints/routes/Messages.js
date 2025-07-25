@@ -15,13 +15,16 @@ const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-funct
 const { MetricsHandler, register } = require('../../util/metrics.js');
 const ChatMessage = require('../models/ChatMessage.js');
 
+
 router.use(bodyParser.json());
+
+
 
 const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeMessage = async (roomId, message, username) => { // make this async for mongodb chatMessage creation
+const writeMessage = async (roomId, message, username) => {
 
   const messageObj = {
     timestamp: Date.now(),
@@ -62,9 +65,11 @@ const writeMessage = async (roomId, message, username) => { // make this async f
 };
 
 router.post('/send', async (req, res) => {
+
   const {message, id} = req.body;
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
+
 
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
@@ -100,7 +105,6 @@ router.post('/send', async (req, res) => {
     }
     nameToUse = userObj.firstName;
   }
-
   try {
     writeMessage(id, `${message}`, `${nameToUse}:`);
     return res.json({ status: 'Message sent' });
@@ -222,6 +226,7 @@ router.get('/listen', async (req, res) => {
     res.sendStatus(SERVER_ERROR);
   }
 });
+
 
 // to get prometheus metrics
 router.get('/metrics', async (req, res) => {
