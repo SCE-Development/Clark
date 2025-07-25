@@ -6,20 +6,19 @@ const AuditLogCard = ({ log, index }) => {
   const formatDetails = details => {
     if (!details || Object.keys(details).length === 0) {
       return null;
-    } else {
-      return (
-        <div className='mt-3 p-4 bg-gray-700 rounded-lg border border-gray-600'>
-          <h4 className='font-semibold text-gray-300 mb-2'>Details:</h4>
-          <div className='space-y-1'>
-            {Object.entries(details).map(([key, value]) => (
-              <div key={key} className='text-sm text-gray-300'>
-                <span className='font-medium text-gray-200'>{key}:</span> {String(value)}
-              </div>
-            ))}
-          </div>
-        </div>
-      );
     }
+    return (
+      <div className='mt-3 p-4 bg-gray-700 rounded-lg border border-gray-600'>
+        <h4 className='font-semibold text-gray-300 mb-2'>Details:</h4>
+        <div className='space-y-1'>
+          {Object.entries(details).map(([key, value]) => (
+            <div key={key} className='text-sm text-gray-300'>
+              <span className='font-medium text-gray-200'>{key}:</span> {String(value)}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   const formatTimestamp = timestamp => {
@@ -49,7 +48,7 @@ const AuditLogCard = ({ log, index }) => {
     // checks if a user updates or deletes ANOTHER user
     if (action === 'UPDATE_USER') {
       if (log.documentId && log.documentId !== log.userId) {
-        return 'updated another user\'s account information';
+        return "updated another user's account information";
       }
       return 'updated their account information';
     }
