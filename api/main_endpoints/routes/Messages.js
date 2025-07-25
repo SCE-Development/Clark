@@ -13,17 +13,15 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-const ChatMessage = require('../models/ChatMessage.js')
+const ChatMessage = require('../models/ChatMessage.js');
 
 router.use(bodyParser.json());
-
-
 
 const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeMessage = async (roomId, message, username) => { //make this async for mongodb chatMessage creation
+const writeMessage = async (roomId, message, username) => { // make this async for mongodb chatMessage creation
 
   const messageObj = {
     timestamp: Date.now(),
@@ -38,23 +36,22 @@ const writeMessage = async (roomId, message, username) => { //make this async fo
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
   try{
-      // Query User table to get userId from username (remove the trailing colon)
-      const cleanUsername = username.replace(':', '');
-      const user = await User.findOne({ firstName: cleanUsername });
-      
-      if (!user) {
-        console.error('User not found for username:', cleanUsername);
-        return;
-      }
+    // Query User table to get userId from username (remove the trailing colon)
+    const cleanUsername = username.replace(':', '');
+    const user = await User.findOne({ firstName: cleanUsername });
 
-      await ChatMessage.create({
-      chatroomId: roomId, 
-      text: message, 
+    if (!user) {
+      logger.error('User not found for username:', cleanUsername);
+      return;
+    }
+
+    await ChatMessage.create({
+      chatroomId: roomId,
+      text: message,
       userId: user._id
     });
-  }
-  catch(err){
-    console.error('error saving message', err);
+  } catch(err){
+    logger.error('error saving message', err);
   }
 
   // increase the total messages sent counter
@@ -129,18 +126,17 @@ router.get('/getLatestMessage', async (req, res) => {
   }
 
   try {
-      const user = await User.findOne({apiKey});
-      
-      if(!user){
-        return res.sendStatus(UNAUTHORIZED);
-      }
-             
-      const messages = await ChatMessage.find({chatroomId: id}).sort({createdAt: -1}).limit(20).populate('userId')
+    const user = await User.findOne({apiKey});
 
-      return res.status(OK).json(messages)
-     
-  }
-  catch (error) {
+    if(!user){
+      return res.sendStatus(UNAUTHORIZED);
+    }
+
+    const messages = await ChatMessage.find({chatroomId: id}).sort({createdAt: -1}).limit(20).populate('userId');
+
+    return res.status(OK).json(messages);
+
+  } catch (error) {
     logger.error('Error in /getLatestMessage: ', error);
     res.sendStatus(SERVER_ERROR);
   }
@@ -169,7 +165,7 @@ router.get('/listen', async (req, res) => {
       return res.sendStatus(UNAUTHORIZED);
     }
     filterQuery._id = userObj._id;
-  }else {
+  } else {
     filterQuery.apiKey = apiKey;
   }
 
@@ -226,7 +222,6 @@ router.get('/listen', async (req, res) => {
     res.sendStatus(SERVER_ERROR);
   }
 });
-
 
 // to get prometheus metrics
 router.get('/metrics', async (req, res) => {
