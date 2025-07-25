@@ -12,6 +12,7 @@ const ForgotPassword = () => {
     message: ''
   });
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const searchParams = new URLSearchParams(useLocation().search);
 
   const checkValidPassword = () => {
@@ -85,8 +86,12 @@ const ForgotPassword = () => {
         color: 'text-green-500',
         message: 'Your password has been reset.'
       });
+      setPassword('');
+      setConfirm('');
+      setSuccess(true);
+      setSubmitted(false);
+      setLoading(false);
     }
-    // setLoading(false);
   }
 
   useEffect(() => {
@@ -131,9 +136,11 @@ const ForgotPassword = () => {
 
           {status.message && <p className={`${status.color}` + ' mt-5'}>{status.message}</p>}
 
-          <button type='submit' disabled={loading || status.message.includes('expired reset token')} className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
-            {loading ? 'Loading...' : 'Reset Password'}
-          </button>
+          {!success && (
+            <button type='submit' disabled={loading || status.message.includes('expired reset token')} className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
+              {loading ? 'Loading...' : 'Reset Password'}
+            </button>
+          )}
         </form>
       </div>
       <Background />
