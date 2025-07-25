@@ -91,7 +91,7 @@ const ForgotPassword = () => {
 
       setTimeout(() => {
         window.location.href = '/login';
-      }, 3000);
+      }, 5000);
     }
   }
 
@@ -136,6 +136,16 @@ const ForgotPassword = () => {
           {submitted && confirm !== password && <p className='text-red-500'>Passwords do not match</p>}
 
           {status.message && <p className={`${status.color}` + ' mt-5'}>{status.message}</p>}
+
+          {success && (
+            <div className='label-text'>
+              Redirecting to login in 5 seconds…
+              <br />
+              <a href='/login' className='underline'>
+                Click here to go now
+              </a>
+            </div>
+          )}
 
           {!success && (
             <button type='submit' disabled={loading || status.message.includes('expired reset token')} className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
