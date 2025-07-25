@@ -4,15 +4,12 @@ import Pagination from './Components/Pagination';
 import { useUser } from '../../Components/context/UserContext';
 import AuditLogCard from './Components/AuditLogCard';
 import FilterActivityTypes from './Components/FilterActivityTypes';
-import FirstNameFilter from './Components/FirstNameFilter';
-import LastNameFilter from './Components/LastNameFilter';
 
 export default function AuditLogPage() {
   const [auditLogsData, setAuditLogsData] = useState({ items: [], totalLogs: 0 });
 
   // states for filters
-  const [firstNameFilter, setFirstNameFilter] = useState('');
-  const [lastNameFilter, setLastNameFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [activityFilters, setActivityFilters] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -25,13 +22,7 @@ export default function AuditLogPage() {
   const getAuditLogsFromDB = async () => {
     try {
       setLoading(true);
-      const auditLogsFromDB = await getAllLogs(
-        currentPage,
-        activityFilters,
-        firstNameFilter,
-        lastNameFilter,
-        user.user.token
-      );
+      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, searchQuery, user.user.token);
       if (!auditLogsFromDB.error) {
         setAuditLogsData(auditLogsFromDB.responseData);
       } else {
@@ -62,8 +53,7 @@ export default function AuditLogPage() {
   };
 
   const clearFilters = () => {
-    setFirstNameFilter('');
-    setLastNameFilter('');
+    setSearchQuery('');
     setActivityFilters([]);
     setApplyingFilters(true);
     setCurrentPage(0);
@@ -128,9 +118,26 @@ export default function AuditLogPage() {
       </h1>
       <div className='space-y-4'>
         <div className='mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700'>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-end'>
-            <FirstNameFilter firstNameFilter={firstNameFilter} setFirstNameFilter={setFirstNameFilter} />
-            <LastNameFilter lastNameFilter={lastNameFilter} setLastNameFilter={setLastNameFilter} />
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-end'>
+            <div>
+              <label className='block text-sm font-medium text-gray-300 mb-2'>Search Users</label>
+              <input
+                className='w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                type='text'
+                placeholder='Search by first name, last name, or email'
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onKeyDown={event => {
+                  if (event.key === 'Enter') {
+                    if (currentPage !== 0) {
+                      setCurrentPage(0);
+                    } else {
+                      applyFilters();
+                    }
+                  }
+                }}
+              />
+            </div>
             <FilterActivityTypes activityFilters={activityFilters} setActivityFilters={setActivityFilters} />
             <div className='flex gap-2'>
               <button

@@ -24,14 +24,13 @@ router.get('/getAuditLogs', async (req, res) => {
   }
 
   const itemsPerPage = 50;
-  const page = parseInt(req.query.page) || 0; // page is 0-based
+  const page = parseInt(req.query.page) || 0;
   const skip = page * itemsPerPage;
 
-  const rawActions = req.query.action; // from URL, structure is: "?action=LOG_IN,SIGN_UP,PRINT_PAGE"
-  const actions = rawActions ? rawActions.split(',') : []; // converts to [LOG_IN, SIGN_UP, PRINT_PAGE]
+  const rawActions = req.query.action;
+  const actions = rawActions ? rawActions.split(',') : [];
 
-  const firstNameQuery = req.query.firstName?.trim();
-  const lastNameQuery = req.query.lastName?.trim();
+  const searchQuery = req.query.search?.trim();
 
   const query = {};
   if (actions.length > 0) {
@@ -39,11 +38,14 @@ router.get('/getAuditLogs', async (req, res) => {
   }
 
   try {
-    if (firstNameQuery || lastNameQuery) {
-      const userFilter = {};
-
-      if (firstNameQuery) userFilter.firstName = new RegExp(firstNameQuery, 'i');
-      if (lastNameQuery) userFilter.lastName = new RegExp(lastNameQuery, 'i');
+    if (searchQuery) {
+      const userFilter = {
+        $or: [
+          { firstName: new RegExp(searchQuery, 'i') },
+          { lastName: new RegExp(searchQuery, 'i') },
+          { email: new RegExp(searchQuery, 'i') },
+        ],
+      };
 
       const users = await User.find(userFilter).select('_id');
       const userIds = users.map(u => u._id);
@@ -56,7 +58,7 @@ router.get('/getAuditLogs', async (req, res) => {
     }
 
     const items = await AuditLog.find(query)
-      .populate('userId', 'firstName lastName')
+      .populate('userId', 'firstName lastName email')
       .skip(skip)
       .limit(itemsPerPage)
       .sort({ createdAt: -1 });

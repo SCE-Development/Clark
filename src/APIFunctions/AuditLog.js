@@ -1,7 +1,7 @@
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 
-export async function getAllLogs(page, actionFilter, firstNameFilter, lastNameFilter, token) {
+export async function getAllLogs(page, actionFilter, searchQuery, token) {
   const status = new ApiResponse();
   const url = new URL('/api/AuditLog/getAuditLogs', BASE_API_URL);
 
@@ -13,12 +13,8 @@ export async function getAllLogs(page, actionFilter, firstNameFilter, lastNameFi
     url.searchParams.append('action', actionFilter.join(','));
   }
 
-  if (firstNameFilter) {
-    url.searchParams.append('firstName', firstNameFilter);
-  }
-
-  if (lastNameFilter) {
-    url.searchParams.append('lastName', lastNameFilter);
+  if (searchQuery) {
+    url.searchParams.append('search', searchQuery);
   }
 
   try {
