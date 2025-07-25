@@ -78,17 +78,17 @@ export default function CardReader() {
             {card.alias}
           </div>
         </td>
-        <td key='createdAt' className=''>
+        <td key='createdAt' className='hidden md:table-cell'>
           <div className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
             {card.createdAt}
           </div>
         </td>
-        <td key='lastVerified' className=''>
+        <td key='lastVerified' className='hidden md:table-cell'>
           <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.lastVerified}
           </div>
         </td>
-        <td key='verifiedCount' className=''>
+        <td key='verifiedCount' className='hidden lg:table-cell'>
           <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.verifiedCount}
           </div>
@@ -217,8 +217,8 @@ export default function CardReader() {
       );
     }
     return (
-      <div className='flex items-center overflow-x-auto overflow-y-auto w-full'>
-        <table className='min-w-full text-gray-700 dark:text-gray-400'>
+      <div className='overflow-x-auto overflow-y-auto w-full'>
+        <table className='m-full min-w-full text-gray-700 dark:text-gray-400'>
           <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
             <tr className=''>
               {[
@@ -231,16 +231,22 @@ export default function CardReader() {
                 <th key={title}
                   className={`px-6 py-3 whitespace-nowrap ${
                     // Choose which columns you want to hide
-                    columnName === 'verifiedCount' ? '' : ''
-                  }`}>
-                  <div className='flex items-left justify-left'>
+                    columnName === 'lastVerifiedAt' | columnName === 'registrationDate'  ? 'hidden md:table-cell' : ''
+                  } 
+                  
+                  ${columnName === 'verifiedCount' ? 'hidden lg:table-cell' : ''}
+
+                  `}
+                  
+                  >
+                  <div className='flex items-center justify-center'>
                     {title}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className='text-left text-sm'>
+          <tbody className='text-center text-sm'>
             {cards.map(card => <CardEntry card={card}/>)}
           </tbody>
         </table>
