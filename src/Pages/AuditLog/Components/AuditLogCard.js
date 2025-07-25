@@ -48,7 +48,7 @@ const AuditLogCard = ({ log, index }) => {
     // checks if a user updates or deletes ANOTHER user
     if (action === 'UPDATE_USER') {
       if (log.documentId && log.documentId !== log.userId) {
-        return "updated another user's account information";
+        return 'updated another user\'s account information';
       }
       return 'updated their account information';
     }
