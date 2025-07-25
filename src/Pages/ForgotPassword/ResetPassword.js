@@ -86,11 +86,12 @@ const ForgotPassword = () => {
         color: 'text-green-500',
         message: 'Your password has been reset.'
       });
-      setPassword('');
-      setConfirm('');
       setSuccess(true);
-      setSubmitted(false);
       setLoading(false);
+
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 3000)
     }
   }
 
