@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getAllLogs } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
 import { useUser } from '../../Components/context/UserContext';
+import AuditLogCard from './Components/AuditLogCard';
 
 export default function AuditLogPage() {
   const [auditLogsData, setAuditLogsData] = useState({ items: [], totalLogs: 0 });
@@ -71,9 +72,7 @@ export default function AuditLogPage() {
       <div>
         <div className='space-y-4'>
           {auditLogsData.items.map((log, index) => (
-            <div key={log._id || index} className='p-4 rounded-lg bg-gray-800 border border-gray-700'>
-              <pre className='text-sm text-gray-300 whitespace-pre-wrap'>{JSON.stringify(log, null, 2)}</pre>
-            </div>
+            <AuditLogCard log={log} index={index} />
           ))}
         </div>
 
