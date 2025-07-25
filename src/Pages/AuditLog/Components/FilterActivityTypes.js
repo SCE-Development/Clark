@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { activityTypes } from '../utils/activityTypes';
 
 const FilterActivityTypes = ({ activityFilters, setActivityFilters }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -7,6 +6,17 @@ const FilterActivityTypes = ({ activityFilters, setActivityFilters }) => {
   const toggleActivityFilter = activity => {
     setActivityFilters(prev => (prev.includes(activity) ? prev.filter(a => a !== activity) : [...prev, activity]));
   };
+
+  const activityTypes = [
+    'SIGN_UP',
+    'LOG_IN',
+    'UPDATE_USER',
+    'PRINT_PAGE',
+    'VERIFY_EMAIL',
+    'EMAIL_SENT',
+    'CHANGE_PW',
+    'RESET_PW',
+  ];
 
   return (
     <div className='relative'>

@@ -4,7 +4,6 @@ import Pagination from './Components/Pagination';
 import { useUser } from '../../Components/context/UserContext';
 import AuditLogCard from './Components/AuditLogCard';
 import FilterActivityTypes from './Components/FilterActivityTypes';
-import RefreshButton from './Components/RefreshButton';
 import FirstNameFilter from './Components/FirstNameFilter';
 import LastNameFilter from './Components/LastNameFilter';
 
@@ -19,6 +18,7 @@ export default function AuditLogPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
+  const [applyingFilters, setApplyingFilters] = useState(false);
 
   const user = useUser();
 
@@ -45,28 +45,35 @@ export default function AuditLogPage() {
   };
 
   useEffect(() => {
-    getAuditLogsFromDB();
-  }, [currentPage]);
+    const fetchData = async () => {
+      await getAuditLogsFromDB();
 
-  const applyFilters = () => {
-    setCurrentPage(1); // reset to first page when applying filters
-    getAuditLogsFromDB();
+      if (applyingFilters) {
+        setApplyingFilters(false);
+      }
+    };
+
+    fetchData();
+  }, [currentPage, applyingFilters]);
+
+  const applyFilters = async () => {
+    setApplyingFilters(true);
+    setCurrentPage(0);
   };
 
   const clearFilters = () => {
     setFirstNameFilter('');
     setLastNameFilter('');
     setActivityFilters([]);
-    setCurrentPage(1);
-    getAuditLogsFromDB(); // rerun api call for updated results
+    setApplyingFilters(true);
+    setCurrentPage(0);
   };
 
   const itemsPerPage = 50;
   const totalPages = Math.ceil(auditLogsData.totalLogs / itemsPerPage);
-  const currentLogs = auditLogsData.items;
 
   const goToPage = page => {
-    setCurrentPage(Math.max(0, Math.min(page, totalPages)));
+    setCurrentPage(Math.max(0, Math.min(page, totalPages - 1)));
   };
 
   function maybeRenderAuditLogs() {
@@ -100,12 +107,6 @@ export default function AuditLogPage() {
 
     return (
       <div>
-        <div className='space-y-4'>
-          {auditLogsData.items.map((log, index) => (
-            <AuditLogCard log={log} index={index} />
-          ))}
-        </div>
-
         {totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
@@ -125,6 +126,32 @@ export default function AuditLogPage() {
       <h1 className='text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white mb-8'>
         Audit Logs
       </h1>
+      <div className='space-y-4'>
+        <div className='mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-end'>
+            <FirstNameFilter firstNameFilter={firstNameFilter} setFirstNameFilter={setFirstNameFilter} />
+            <LastNameFilter lastNameFilter={lastNameFilter} setLastNameFilter={setLastNameFilter} />
+            <FilterActivityTypes activityFilters={activityFilters} setActivityFilters={setActivityFilters} />
+            <div className='flex gap-2'>
+              <button
+                onClick={applyFilters}
+                className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              >
+                Apply Filters
+              </button>
+              <button
+                onClick={clearFilters}
+                className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500'
+              >
+                Clear Filters
+              </button>
+            </div>
+          </div>
+        </div>
+        {auditLogsData.items.map((log, index) => (
+          <AuditLogCard log={log} index={index} />
+        ))}
+      </div>
       {maybeRenderAuditLogs()}
     </div>
   );
