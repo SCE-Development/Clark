@@ -326,6 +326,7 @@ router.post('/resetPassword', async (req, res) => {
       return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
     }
     if (!req.body.hashedId) {
+      logger.error('Missing hashedId in resetPassword request');
       return res.status(BAD_REQUEST).send({ message: 'Missing hashedId.' });
     }
     const validId = await bcrypt.compare(String(userId), req.body.hashedId);
