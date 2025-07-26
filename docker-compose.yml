@@ -121,4 +121,3 @@ networks:
     external:
       name: sce
 
-volumes:
