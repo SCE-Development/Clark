@@ -13,21 +13,11 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
-const {
-  decodeTokenFromBodyOrQuery,
-  decodeToken,
-  checkIfTokenSent,
-  checkIfTokenValid
-} = require('../util/token-functions.js');
 const ROWS_PER_PAGE = 25;
-const {
-  checkIfCardExists,
-  generateAlias,
-  deleteCard,
-} = require('../util/OfficeAccessCard.js');
 
 
 const { decodeToken, checkIfTokenValid, checkIfTokenSent, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { checkIfCardExists } = require('../util/OfficeAccessCard.js');
 
 router.use(bodyParser.json());
 
@@ -42,22 +32,22 @@ function writeLog(logResponse='endpoint verified', requestType='UNKNOWN', respon
         logResponse: logResponse
     };
 
-    clients.forEach((client) => {
+    logger.info(response);
+    logger.info(clients);
+
+    clients.forEach(client => {
         client.res.write(`data: ${JSON.stringify(response)}\n\n`);
+        logger.info(`Wrote response to client ${client}`)
     });
 };
 
 router.get('/verify', async (req, res) => {
-
   const { cardBytes, add = false } = req.query;
   const apiKey = req.headers['x-api-key'];
   const required = [
     { value: apiKey, title: 'X-API-Key HTTP header', },
     { value: cardBytes, title: 'cardBytes body parameter', },
   ];
-
-
-
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) { 
@@ -85,7 +75,6 @@ router.get('/verify', async (req, res) => {
     return res.sendStatus(NOT_FOUND);
   }
   // if we reached here, the card does not exist and is trying to be added
-  const alias = await generateAlias();
   try {
     if (add) {
       await new OfficeAccessCard({
@@ -117,13 +106,13 @@ router.get('/listen', async (req, res) => {
     res.writeHead(200, headers);
     req.setTimeout(0);
 
+    const newClient = { res };
+    clients.push(newClient);
+
     req.on('close', () => {
         clients = clients.filter(c => c !== newClient);
         res.end();
     });
-
-    const newClient = { res };
-    clients.push(newClient);
 });
 
 router.get('/getAllCards', async (req, res) => {

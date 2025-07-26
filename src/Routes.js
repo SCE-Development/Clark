@@ -18,6 +18,8 @@ import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
+import CardAdmin from './Pages/OfficeAccessCard/CardAdmin.js';
+
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -141,9 +143,9 @@ export const officerOrAdminRoutes = [
     inAdminNavbar: true
   },
   {
-    Component: CardReader,
-    path: '/card-reader',
-    pageName: 'Card Reader',
+    Component: CardAdmin,
+    path: '/card-admin',
+    pageName: 'Card Admin',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
