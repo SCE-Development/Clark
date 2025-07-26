@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import './SearchModal.css';
 import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRoutes } from '../../Routes';
 import { membershipState } from '../../Enums';
+import { getTopUserMatches } from '../../APIFunctions/TopUserMatches';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { searchAllUsers } from '../../APIFunctions/UserSearch';
@@ -41,6 +42,23 @@ export default function SearchModal() {
       ];
     return [...signedOutRoutes];
   }, [user, authenticated]);
+
+  // Gets the top 5 (or less) matching users and adds them to the suggestions array
+  const getUsers = async ({token, query}) => {
+    const users = await getTopUserMatches({
+      token,
+      query
+    });
+
+    if (users.responseData.items.length == 0) return;
+
+    const matches = users.responseData.items.map((match) => ({
+      pageName: `${match.firstName} ${match.lastName}: ${match.email}`,
+      path: `/user/edit/${match._id}`,
+      type: 'user'
+    }));
+    setSuggestions(prev => [...prev, ...matches]);
+  };
 
   /**
    * Helper function updates the keyword when the user types
@@ -133,6 +151,20 @@ export default function SearchModal() {
     );
     setSuggestions(routeMatches);
   }, [open, keyword, routes]);
+
+  // Gets the top 5 (or less) matching users after 500 milliseconds when needed
+  useEffect(() => {
+    if (!open || !keyword || !user.accessLevel || user.accessLevel < membershipState.OFFICER) return;
+
+    const debounce = setTimeout(() => {
+      getUsers({
+        token: user.token,
+        query: keyword
+      });
+    }, 500);
+
+    return () => clearTimeout(debounce);
+  }, [open, keyword, user.accessLevel]);
 
   /**
    * A debounce function that performs the search 400ms after the user stops typing.
