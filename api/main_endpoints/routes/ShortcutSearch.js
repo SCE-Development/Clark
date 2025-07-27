@@ -55,7 +55,7 @@ router.post('/', async function(req, res) {
    */
   const tokenScores = (str, tokens) => {
     return tokens.reduce((score, token) => {
-      if (str.startsWith(token)) return score + 0; // highest score for exact match
+      if (str.startsWith(token)) return score; // highest score for exact match
       if (str.includes(token)) return score + 1; // lower score for partial match
       return score + 2; // lowest score for no match
     }, 0);
