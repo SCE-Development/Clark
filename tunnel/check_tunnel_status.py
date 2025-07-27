@@ -1,8 +1,7 @@
+import argparse
 import logging
 from time import sleep, gmtime
 import requests
-import sys
-import argparse
 
 
 logging.Formatter.converter = gmtime
@@ -30,14 +29,17 @@ parser.add_argument(
 args = parser.parse_args()
 
 logging.info(f"Starting tunnel routine with hosts: {args.hosts}")
-def ping(host):
-    try:
-        req = requests.get(host)
-    except Exception as e:
-        logging.error(f"Could not reach {host}: {e}")
 
-
+bad_hosts = set()
 while True:
-    [ping(host) for host in args.hosts]
+    for host in args.hosts:
+        try:
+            requests.get(host)
+            if host in bad_hosts:
+                logging.info(f'Host {host} is back on')
+                bad_hosts.discard(host)
+        except Exception:
+            bad_hosts.add(host)
+            logging.exception(f"Could not reach {host}")
     sleep(args.request_interval_seconds)
 
