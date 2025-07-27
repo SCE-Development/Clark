@@ -1,6 +1,9 @@
 process.env.NODE_ENV = 'test';
 
 const User = require('../../api/main_endpoints/models/User.js');
+const axios = require('axios');
+const { Cleezy } = require('../../api/config/config.json');
+const { ENABLED } = Cleezy;
 
 // Require the dev-dependencies
 const chai = require('chai');
@@ -12,6 +15,7 @@ const {
   FORBIDDEN
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
+const sinon = require('sinon');
 
 let app = null;
 let test = null;
@@ -196,19 +200,20 @@ describe('ShortcutSearch', () => {
       it('Should return an empty array when the query is missing', async () => {
         const result = await test.sendPostRequestWithToken(token, url, {});
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').that.is.empty;
+        expect(result.body.items.users).that.is.an('array').that.is.empty;
+        expect(result.body.items.cleezyData).that.is.an('array').that.is.empty;
       });
 
       it('Should return FIVE records when query = \'Lot\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, fiveMatchUsers);
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').to.have.lengthOf(5);
+        expect(result.body.items.users).that.is.an('array').to.have.lengthOf(5);
       });
 
       it('Should return no records when query = \'Pika\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, { query: 'Pika' });
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').that.is.empty;
+        expect(result.body.items.users).that.is.an('array').that.is.empty;
       });
 
       beforeEach(() => {
@@ -218,13 +223,13 @@ describe('ShortcutSearch', () => {
       it('Should return THREE records when query = \'coOl\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, queryUser);
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').to.have.lengthOf(3);
+        expect(result.body.items.users).that.is.an('array').to.have.lengthOf(3);
       });
 
       it('Should show results sorted by best match of name and email', async () => {
         const result = await test.sendPostRequestWithToken(token, url, fiveMatchUsers);
         expect(result).to.have.status(OK);
-        expect(result.body.items.map(u => u.email)).to.eql([
+        expect(result.body.items.users.map(u => u.email)).to.eql([
           'test1@test.com',
           'test0@test.com',
           'test00@test.com',
@@ -256,8 +261,62 @@ describe('ShortcutSearch', () => {
         for (const payload of injectionPayloads) {
           const result = await test.sendPostRequestWithToken(token, url, { query: String(payload)});
           expect(result).to.have.status(OK);
-          expect(result.body.items.length).at.most(5);
+          expect(result.body.items.users.length).at.most(5);
+          expect(result.body.items.cleezyData.length).at.most(5);
         }
+      });
+    });
+
+    let axiosGetStub;
+
+    beforeEach(() => {
+      axiosGetStub = sinon.stub(axios, 'get').resolves({
+        data: {
+          data: [
+            {
+              alias: 'only-link',
+              url: 'https://example.com/something',
+            },
+            {
+              alias: 'cool-link',
+              url: 'https://example.com/another',
+            },
+            {
+              alias: 'test-link',
+              url: 'https://example.com/test',
+            },
+            {
+              alias: 'new-link',
+              url: 'https://example.com/justlink',
+            },
+            {
+              alias: 'test-link',
+              url: 'https://example.com/test',
+            },
+            {
+              alias: 'sixth-link',
+              url: 'https://example.com/six',
+            }
+          ]
+        }
+      });
+    });
+
+    afterEach(() => {
+      axiosGetStub.restore();
+    });
+
+    describe('When Cleezy is ENABLED with a valid token and access level - status code 200', () => {
+      if (!ENABLED) return;
+
+      beforeEach(() => {
+        setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.OFFICER });
+      });
+
+      it('Should return FIVE records when query = \'link\'', async () => {
+        const result = await test.sendPostRequestWithToken(token, url, {query : 'link'});
+        expect(result).to.have.status(OK);
+        expect(result.body.items.cleezyData).that.is.an('array').to.have.lengthOf(5);
       });
     });
 
