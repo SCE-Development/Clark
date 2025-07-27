@@ -118,19 +118,17 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   }
 
   try{
-    const dataBuffer = fs.readFileSync(assembledPdfFromChunks)
-    const pdfData = await pdfParse(dataBuffer)
-    const pagesInFile = pdfData.numpages;
-    const copiesInt = parseInt(copies || 1);
-    const totalPages = pagesInFile * copiesInt;
-    await subtractUserPages(user.id, totalPages);
+    const stream = await fs.promises.readFile(assembledPdfFromChunks) //reads pdf into buffer
+    const {numpages} = await pdfParse(stream);  //gathers metadata
+    const copiesInt = parseInt(copies || 1, 10);
+    const totalPages = numpages * copiesInt;
+    await subtractUserPages(user.id, totalPages); //updates users printcount
   }
   catch(err){
-    logger.error('/sendPrintRequest failed', err);
+    logger.error('/sendPrintRequest failed', err); //helper increments totalapges, thrown if exceeded
     await cleanUpChunks(dir,id)
     return res.status(400).json({error:err.message});
   }
-  const stream = await fs.createReadStream(assembledPdfFromChunks);
   const data = new FormData();
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);

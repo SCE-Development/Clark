@@ -202,19 +202,19 @@ function checkIfPageCountResets(lastLogin) {
 
   return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
-
-async function subtractUserPages(userId, pagesToDeduct){
+//updates users available pages
+async function subtractUserPages(userId, pagesToPrint){
   const user = await User.findById(userId);
   if(!user){
-    throw new Error('user not found');
+    throw new Error('user not found'); //checks user
   }
-  if(user.pageCount < pagesToDeduct){
-    throw new Error('no more pages remaining');
+  if(!Number.isInteger(pagesToPrint) || pagesToPrint <= 0){
+    throw new Error('invalid number');
   }
 
-  user.pageCount -= pagesToDeduct;
+  user.pagesPrinted += pagesToPrint;
   await user.save();
-  return user.pageCount;
+  return user.pagesPrinted;
 }
 
 module.exports = {
