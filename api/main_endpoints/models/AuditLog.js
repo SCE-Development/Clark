@@ -7,7 +7,6 @@ const AuditLogSchema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
     },
     action: {
       type: String,
@@ -25,5 +24,7 @@ const AuditLogSchema = new Schema(
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
+
+AuditLogSchema.index({ _id: 1, action: 1 });
 
 module.exports = mongoose.model('AuditLog', AuditLogSchema);
