@@ -118,7 +118,7 @@ router.get('/verify', async (req, res) => {
     if (newCard) {
       AuditLog.create({
         action: AuditLogActions.ADD_CARD,
-        details: { detail: `New card "${alias}" verified` }
+        details: { alias }
       });
     }
     writeLogToClient(req.method, {
@@ -174,7 +174,7 @@ router.post('/delete', async (req, res) => {
     AuditLog.create({
       userId: decoded._id,
       action: AuditLogActions.DELETE_CARD,
-      details: { detail: `User ${decoded._id} deleted card "${alias}"` }
+      details: { alias }
     });
     return res.sendStatus(OK);
   }
