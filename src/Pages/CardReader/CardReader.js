@@ -32,7 +32,20 @@ export default function CardReader() {
   const [paginationText, setPaginationText] = useState('');
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [selected, setSelected] = useState('Card Registery');
+  const [selected, setSelected] = useState('Card Registry');
+  const getSelectedClassName = (selected, tab, label, tabKey) => {
+    let className = 'p-2 hover:bg-gray-400 rounded-xl ';
+    if (selected === label) {
+      className += 'text-blue-500 ';
+    } else {
+      className += 'dark:text-white text-gray-700 ';
+    }
+    if (tab === tabKey) {
+      className += 'underline underline-offset-4 ';
+    }
+
+    return className.trim();
+  };
 
   function buildLog(data) {
     const date = new Date().toISOString().padEnd(28);
@@ -246,7 +259,9 @@ export default function CardReader() {
             </tr>
           </thead>
           <tbody className='text-center text-sm'>
-            {cards.map(card => <CardEntry card={card}/>)}
+            {cards.map((card) => {
+              return <CardEntry key={card._id} card={card} />;
+            })}
           </tbody>
         </table>
       </div>
@@ -300,10 +315,10 @@ export default function CardReader() {
       <pre className='whitespace-normal text-center max-w-[90%] mx-auto text-gray-700 dark:text-white font-normal py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
-          className={`p-2 hover:bg-gray-400 ${selected === 'Card Registery' ? 'text-blue-500' : 'text-gray-700 dark:text-white'} rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
+          className={getSelectedClassName(selected, tab, 'Card Registry', 'registry')}
           onClick={() => {
             handleTabChange('registry');
-            setSelected('Card Registery');
+            setSelected('Card Registry');
           }}
         >
           Card Registry
@@ -311,7 +326,7 @@ export default function CardReader() {
         {/* spacer to differentiate between the two options */}
         <div>&nbsp;|&nbsp;</div>
         <button
-          className={`p-2 hover:bg-gray-400 ${selected === 'Card Reader Logs' ? 'text-blue-500' : 'dark:text-white text-gray-700'} rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
+          className={getSelectedClassName(selected, tab, 'Card Reader Logs', 'logs')}
           onClick={() => {
             handleTabChange('logs');
             setSelected('Card Reader Logs');
