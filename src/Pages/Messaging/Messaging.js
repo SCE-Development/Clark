@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { sendMessage, connectToRoom } from '../../APIFunctions/Messaging';
-import { useParams, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useUser } from '../../Components/context/UserContext';
 
 export default function Messaging() {
   const { id } = useParams();
-  const history = useHistory();
+  const history = useNavigate();
   const { user } = useUser();
   const [roomIdInput, setRoomIdInput] = useState(id || '');
   const [roomIdSubmit, setRoomIdSubmit] = useState(id || 'general');

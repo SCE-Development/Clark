@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import PrivateRoute from './Components/Routing/PrivateRoute';
 import NavBarWrapper from './Components/Navbar/NavBarWrapper';
@@ -19,7 +19,7 @@ export default function Routing({ appProps }) {
 
   return (
     <div>
-      <Switch>
+      <Routes>
         {signedInRoutes.map(
           ({
             path,
@@ -40,34 +40,33 @@ export default function Routing({ appProps }) {
               />);
             }
             return (
-              <PrivateRoute
+              <Route
                 key={index}
-                exact
                 path={path}
-                appProps={{
-                  allowed: allowedIf,
-                  redirect,
-                  ...appProps
-                }}
-                component={props => getCorrectComponent(props)}
+                element={
+                  <PrivateRoute
+                    appProps={{
+                      allowed: allowedIf,
+                      redirect,
+                      ...appProps
+                    }}
+                  >
+                    {getCorrectComponent({})}
+                  </PrivateRoute>
+                }
               />
             );
           }
         )}
-        {signedOutRoutes.map(({ path, Component }, index) => {
-          return (
-            <Route
-              key={index}
-              exact
-              path={path}
-              render={props => (
-                <NavBarWrapper component={Component} {...props} {...appProps} />
-              )}
-            />
-          );
-        })}
-        <Route component={NotFoundPage} />
-      </Switch>
+        {signedOutRoutes.map(({ path, Component }, index) => (
+          <Route
+            key={index}
+            path={path}
+            element={<NavBarWrapper component={Component} {...appProps} />}
+          />
+        ))}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </div>
   );
 }
