@@ -512,7 +512,7 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
 });
 
 // Search for top 5 users matching the query
-router.post('/topUserMatches', async function(req, res) {
+router.post('/shortcutsearchusers', async function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!checkIfTokenValid(req)) {
