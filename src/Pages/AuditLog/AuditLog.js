@@ -32,6 +32,9 @@ export default function AuditLogPage() {
     'EMAIL_SENT',
     'CHANGE_PW',
     'RESET_PW',
+    'VERIFY_CARD',
+    'VERIFY_NEW_CARD',
+    'DELETE_CARD',
   ];
 
   const getAuditLogsFromDB = async () => {

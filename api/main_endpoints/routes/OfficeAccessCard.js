@@ -97,7 +97,7 @@ router.get('/verify', async (req, res) => {
     const alias = cardExists.alias;
     AuditLog.create({
       action: AuditLogActions.VERIFY_CARD,
-      details: `Card "${alias}" verified`
+      details: { detail: `Card "${alias}" verified` }
     });
     writeLogToClient(req.method, { alias: cardExists.alias, statusCode: OK });
     return res.sendStatus(OK);
@@ -118,7 +118,7 @@ router.get('/verify', async (req, res) => {
     if (newCard) {
       AuditLog.create({
         action: AuditLogActions.ADD_CARD,
-        details: `New card "${alias}" verified`
+        details: { detail: `New card "${alias}" verified` }
       });
     }
     writeLogToClient(req.method, {
@@ -174,7 +174,7 @@ router.post('/delete', async (req, res) => {
     AuditLog.create({
       userId: decoded._id,
       action: AuditLogActions.DELETE_CARD,
-      details: `User ${decoded._id} deleted card "${alias}"`
+      details: { detail: `User ${decoded._id} deleted card "${alias}"` }
     });
     return res.sendStatus(OK);
   }
