@@ -3,6 +3,7 @@ import { getAllLogs } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
 import { useSCE } from '../../Components/context/SceContext';
 import AuditLogCard from './Components/AuditLogCard';
+import { BASE_API_URL } from '../../Enums';
 
 export default function AuditLogPage() {
   const [auditLogsData, setAuditLogsData] = useState({ items: [], totalLogs: 0 });
@@ -63,6 +64,22 @@ export default function AuditLogPage() {
     };
 
     fetchData();
+
+    const url = new URL('/api/AuditLog/listen', BASE_API_URL);
+    const eventSource = new EventSource(url.href);
+
+    eventSource.onmessage = () => {
+      getAuditLogsFromDB();
+    }
+
+    eventSource.onerror = () => {
+      setError('Failed to load audit logs');
+    }
+
+    return () => {
+      eventSource.close();
+    };
+
   }, [currentPage, applyingFilters]);
 
   const applyFilters = async () => {
