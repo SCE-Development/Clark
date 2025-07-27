@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const AuditLogActions = require('../util/auditLogActions');
+const { writeLogToClient } = require('../util/AuditLog');
 
 const AuditLogSchema = new Schema(
   {
@@ -26,5 +27,9 @@ const AuditLogSchema = new Schema(
 );
 
 AuditLogSchema.index({ _id: 1, action: 1 });
+
+AuditLogSchema.post('save', function(doc) {
+  writeLogToClient({message: 'Audit logs updated.'});
+});
 
 module.exports = mongoose.model('AuditLog', AuditLogSchema);
