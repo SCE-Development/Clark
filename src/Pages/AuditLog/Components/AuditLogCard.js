@@ -40,6 +40,9 @@ const AuditLogCard = ({ log, index }) => {
     ACCESS_DOOR: 'accessed a door',
     CREATE_MESSAGE: 'created a message',
     DELETE_MESSAGE: 'deleted a message',
+    VERIFY_CARD: 'verified an Office Access Card',
+    ADD_CARD: 'verified a new Office Access Card',
+    DELETE_CARD: 'deleted an Office Access Card',
   };
 
   const getActionDescription = log => {

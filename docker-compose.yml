@@ -13,6 +13,11 @@ services:
     build:
       context: ./tunnel
       dockerfile: ./Dockerfile
+    command:
+      - --hosts
+      - http://host.docker.internal:11000/api/health-check
+      - http://host.docker.internal:14000/healthcheck/printer
+      - http://host.docker.internal:17000/hello
     extra_hosts:
       - "host.docker.internal:host-gateway"
   sce-cloud-api:
@@ -40,7 +45,6 @@ services:
       - CLEEZY_URL=http://cleezy-app.sce:8000
       - PRINTER_URL=http://host.docker.internal:14000
       - LED_SIGN_URL=http://host.docker.internal:11000
-      - SPEAKER_URL=http://host.docker.internal:18000
       - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb
