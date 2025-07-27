@@ -12,7 +12,7 @@ export async function searchAllUsers({
   token,
   query = null
 }) {
-  const url = new URL('/api/User/shortcutsearchusers', BASE_API_URL);
+  const url = new URL('/api/ShortcutSearch/', BASE_API_URL);
 
   let status = new UserApiResponse();
   try {
