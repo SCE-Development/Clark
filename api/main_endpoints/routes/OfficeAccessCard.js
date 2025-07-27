@@ -97,7 +97,7 @@ router.get('/verify', async (req, res) => {
     const alias = cardExists.alias;
     AuditLog.create({
       action: AuditLogActions.VERIFY_CARD,
-      details: { detail: `Card "${alias}" verified` }
+      details: { alias }
     });
     writeLogToClient(req.method, { alias: cardExists.alias, statusCode: OK });
     return res.sendStatus(OK);
