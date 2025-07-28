@@ -49,7 +49,6 @@ while True:
     for host in args.hosts:
         try:
             requests.get(host)
-            logging.info("Host found!")
             tunnel_status.labels(host).set(1)
             if host in bad_hosts:
                 logging.info(f'Host {host} is back on')
@@ -59,5 +58,4 @@ while True:
             logging.exception(f"Could not reach {host}")
             tunnel_status.labels(host).set(0)
     sleep(args.request_interval_seconds)
-
 
