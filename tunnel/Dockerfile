@@ -2,7 +2,9 @@ FROM python:3.9.6-slim-buster
 
 WORKDIR /app
 
-RUN pip install requests
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
 
 COPY check_tunnel_status.py .
 
