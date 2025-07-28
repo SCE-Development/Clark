@@ -116,6 +116,10 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   }
+    const data = new FormData();
+    data.append('file', stream, {filename: id, type: 'application/pdf'});
+    data.append('copies', copies);
+    data.append('sides', sides);
   try {
     const stream = await fs.promises.readFile(assembledPdfFromChunks); // Buffer
     const pdfDoc = await PDFDocument.load(stream); // load PDF
@@ -123,14 +127,10 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     const copiesInt = parseInt(copies || 1, 10);
     const totalPages = numpages * copiesInt; // updates users printcount
     const pagesRemaining = await subtractUserPages(user.id, totalPages);
-    if (pagesRemaining === null) {
+   if (pagesRemaining === null) { 
       await cleanUpChunks(dir, id);
       return res.status(400).json({ error: 'Page limit exceeded or user not found' });
-    }
-    const data = new FormData();
-    data.append('file', stream, {filename: id, type: 'application/pdf'});
-    data.append('copies', copies);
-    data.append('sides', sides);
+      }
     // full pdf can be sent to quasar no problem
     await axios.post(PRINTER_URL + '/print', data, {
       headers: {
