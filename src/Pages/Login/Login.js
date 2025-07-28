@@ -54,6 +54,7 @@ export default function Login() {
                       type="email"
                       placeholder="rys@sce.sjsu.edu"
                       required
+                      autofocus="autofocus"
                       className="input input-bordered w-full"
                     />
                   </div>

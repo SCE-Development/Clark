@@ -32,6 +32,17 @@ export default function CardReader() {
   const [paginationText, setPaginationText] = useState('');
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [selected, setSelected] = useState('Card Registry');
+  const getSelectedClassName = (selected, tab, label, tabKey) => {
+    let className = 'p-2 hover:bg-gray-400 rounded-xl ';
+    if (selected === label) {
+      className += 'text-blue-500 ';
+    } else {
+      className += 'dark:text-white text-gray-700 ';
+    }
+    if (tab === tabKey) {
+      className += 'underline underline-offset-4 ';
+    }
 
 function buildLog(data) {
     const time = new Date().toISOString().padEnd(29);
@@ -42,6 +53,17 @@ function buildLog(data) {
     const alias = data.alias.padEnd(15);
     return [time, endpoint, method, code, event, alias].join('');
 }
+    return className.trim();
+  };
+  const getColumnClassName = (columnName) => {
+    let className = 'px-6 py-3 whitespace-nowrap ';
+    if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
+      className += 'hidden md:table-cell ';
+    } else if (columnName === 'verifiedCount'){
+      className += 'hidden lg:table-cell';
+    }
+    return className;
+  };
 
   async function getAllCards() {
     setLoading(true);
@@ -72,24 +94,24 @@ function buildLog(data) {
 
   function CardEntry({ card }) {
     return (
-      <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
-        <td key='alias' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+      <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+        <td key='alias' className=''>
+          <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.alias}
           </div>
         </td>
         <td key='createdAt' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+          <div className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
             {card.createdAt}
           </div>
         </td>
         <td key='lastVerified' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+          <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.lastVerified}
           </div>
         </td>
-        <td key='verifiedCount' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+        <td key='verifiedCount' className='hidden lg:table-cell'>
+          <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.verifiedCount}
           </div>
         </td>
@@ -211,33 +233,40 @@ function buildLog(data) {
   function maybeRenderTable() {
     if (cards.length === 0) {
       return (
-        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+        <h3 className='text-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
           Looks like there are no registered cards...
         </h3>
       );
     }
     return (
-      <table className='table px-3'>
-        <thead>
-          <tr>
-            {[
-              { title: 'Alias', columnName: 'alias' },
-              { title: 'Registration Date', columnName: 'registrationDate' },
-              { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
-              { title: 'Verified Count', columnName: 'verifiedCount' },
-            ].map(({ title }) => (
-              <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
-                <div className='flex items-center justify-center'>
-                  {title}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {cards.map(card => <CardEntry card={card}/>)}
-        </tbody>
-      </table>
+      <div className='overflow-x-auto overflow-y-auto w-full'>
+        <table className='m-full min-w-full text-gray-700 dark:text-gray-400'>
+          <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+            <tr className=''>
+              {[
+                { title: 'Alias', columnName: 'alias' },
+                { title: 'Registration Date', columnName: 'registrationDate' },
+                { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
+                { title: 'Verified Count', columnName: 'verifiedCount' },
+                { title:'', columnName: '' }
+              ].map(({ title, columnName }) => (
+                <th key={title}
+                  className={getColumnClassName(columnName)}
+                >
+                  <div className='flex items-center justify-center'>
+                    {title}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className='text-center text-sm'>
+            {cards.map((card) => {
+              return <CardEntry key={card._id} card={card} />;
+            })}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -269,10 +298,10 @@ function buildLog(data) {
     }
     return (
       <div>
-        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+        <h3 className='text-center text-lg py-2 pt-4 text-gray-700 dark:text-white text-base'>
           {connectionStatusText}
         </h3>
-        <pre className='m-4 text-gray-700 dark:text-white'>
+        <pre className='overflow-x-auto m-4 text-gray-700 dark:text-white'>
           {header}
           {logs.map((log, index) => (
             <div key={index} className='border-b border-gray-300 py-1'>{log}</div>
@@ -284,20 +313,26 @@ function buildLog(data) {
 
   return (
     <div className='overview-container bg-gray min-h-[100dvh]'>
-      <h1 className='flex items-center justify-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
-      <pre className='flex items-center justify-center text-gray-700 dark:text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
+      <h1 className='text-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
+      <pre className='whitespace-normal text-center max-w-[90%] mx-auto text-gray-700 dark:text-white font-normal py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
-          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
-          onClick={() => handleTabChange('registry')}
+          className={getSelectedClassName(selected, tab, 'Card Registry', 'registry')}
+          onClick={() => {
+            handleTabChange('registry');
+            setSelected('Card Registry');
+          }}
         >
           Card Registry
         </button>
         {/* spacer to differentiate between the two options */}
         <div>&nbsp;|&nbsp;</div>
         <button
-          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
-          onClick={() => handleTabChange('logs')}
+          className={getSelectedClassName(selected, tab, 'Card Reader Logs', 'logs')}
+          onClick={() => {
+            handleTabChange('logs');
+            setSelected('Card Reader Logs');
+          }}
         >
           Card Reader Logs
         </button>
