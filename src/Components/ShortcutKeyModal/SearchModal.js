@@ -4,14 +4,15 @@ import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRo
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
-import { searchAllUsers } from '../../APIFunctions/UserSearch';
+import { searchAllUsers } from '../../APIFunctions/ShortcutSearch';
 
 export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
+  const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !r.hideFromShortcutSuggestions);
   const [keyword, setKeyword] = useState('');
-  const [suggestions, setSuggestions] = useState([...signedOutRoutes]);
+  const [suggestions, setSuggestions] = useState([...filteredSignedOutRoutes]);
   const [selectItem, setSelectItem] = useState(0);
   const { user } = useUser();
   const [errorMsg, setErrorMsg] = useState('');
@@ -26,20 +27,20 @@ export default function SearchModal() {
   const routes = useMemo(() => {
     if (user?.accessLevel === membershipState.MEMBER)
       return [
-        ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...memberRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
     if (user?.accessLevel >= membershipState.OFFICER)
       return [
-        ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...officerOrAdminRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
     if (!authenticated)
       return [
-        ...notAuthenticatedRoutes,
-        ...signedOutRoutes
+        ...notAuthenticatedRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
-    return [...signedOutRoutes];
+    return [...filteredSignedOutRoutes];
   }, [user, authenticated]);
 
   /**
@@ -53,7 +54,7 @@ export default function SearchModal() {
 
   /** This helper function clears search box and all suggestions */
   const clearSearchModal = () => {
-    setSuggestions([...signedOutRoutes]);
+    setSuggestions([...filteredSignedOutRoutes]);
     setKeyword('');
   };
 
@@ -67,7 +68,7 @@ export default function SearchModal() {
           <li
             key={r.path} // Use r.path as key
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
-            onMouseEnter={() => setSelectItem(index)}
+            onMouseMove={() => setSelectItem(index)}
             onClick={() => {
               window.location.href = r.path;
               setOpen(false);
@@ -123,7 +124,7 @@ export default function SearchModal() {
 
     // Return if keyword is blank
     if (!keyword) {
-      setSuggestions([...signedOutRoutes]);
+      setSuggestions([...filteredSignedOutRoutes]);
       return;
     }
 
@@ -147,8 +148,7 @@ export default function SearchModal() {
     const debounce = setTimeout(() => {
       getUserData({
         token: user.token,
-        query: keyword,
-        limit: SHORTCUT_MAX_RESULT
+        query: keyword
       });
     }, 400);
 
