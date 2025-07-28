@@ -117,9 +117,24 @@ router.post('/', async function(req, res) {
       });
     }
 
-    const cleezyData = await cleezy.searchCleezyUrls(req.body.query);
+    const cleezyRes = await cleezy.searchCleezyUrls(req);
+    if (cleezyRes.status !== OK) {
+      logger.warn('Cleezy search failed', {
+        status: cleezyRes.status
+      });
 
-    res.status(OK).send({ items: {users, cleezyData} });
+      return res.status(OK).send({
+        cleezyStatus: cleezyRes.status,
+        items: { users }
+      });
+    }
+
+    return res.status(OK).send({
+      items: {
+        users,
+        cleezyData: cleezyRes.data,
+      }
+    });
   } catch (error) {
     logger.error('/shortcutsearch encountered an error:', { error, query: req.body.query });
     if (error.response && error.response.data) {
