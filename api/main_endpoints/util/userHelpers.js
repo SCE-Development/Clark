@@ -202,11 +202,11 @@ function checkIfPageCountResets(lastLogin) {
 
   return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
-//updates users available pages
+// updates users available pages
 async function subtractUserPages(userId, pagesToPrint){
   const user = await User.findById(userId);
   if(!user){
-    throw new Error('user not found'); //checks user
+    throw new Error('user not found'); // checks user
   }
   if(!Number.isInteger(pagesToPrint) || pagesToPrint <= 0){
     throw new Error('invalid number');

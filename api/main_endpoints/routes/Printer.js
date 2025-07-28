@@ -8,7 +8,7 @@ const path = require('path');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 const { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize } = require('../util/Printer.js');
 const pdfParse = require('pdf-parse');
-const {subtractUserPages} = require('../util/userHelpers')
+const {subtractUserPages} = require('../util/userHelpers');
 
 const {
   decodeToken,
@@ -118,15 +118,14 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   }
 
   try{
-    const stream = await fs.promises.readFile(assembledPdfFromChunks) //reads pdf into buffer
-    const {numpages} = await pdfParse(stream);  //gathers metadata
+    const stream = await fs.promises.readFile(assembledPdfFromChunks); // reads pdf into buffer
+    const {numpages} = await pdfParse(stream);  // gathers metadata
     const copiesInt = parseInt(copies || 1, 10);
     const totalPages = numpages * copiesInt;
-    await subtractUserPages(user.id, totalPages); //updates users printcount
-  }
-  catch(err){
-    logger.error('/sendPrintRequest failed', err); //helper increments totalapges, thrown if exceeded
-    await cleanUpChunks(dir,id)
+    await subtractUserPages(user.id, totalPages); // updates users printcount
+  }catch(err){
+    logger.error('/sendPrintRequest failed', err); // helper increments totalapges, thrown if exceeded
+    await cleanUpChunks(dir, id);
     return res.status(400).json({error:err.message});
   }
   const data = new FormData();
