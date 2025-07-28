@@ -115,7 +115,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   }
-  
+
   const data = new FormData();
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);
