@@ -66,7 +66,7 @@ export default function CardReader() {
     return className;
   };
 
-function buildLog(data) {
+  function buildLog(data) {
     const time = new Date().toISOString().padEnd(29);
     const endpoint = data.endpoint.padEnd(25);
     const method = data.requestType.padEnd(8);
@@ -74,7 +74,7 @@ function buildLog(data) {
     const event = data.message.padEnd(21);
     const alias = data.alias.padEnd(15);
     return [time, endpoint, method, code, event, alias].join('');
-}
+  }
 
   async function getAllCards() {
     setLoading(true);
