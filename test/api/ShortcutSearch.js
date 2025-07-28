@@ -39,7 +39,7 @@ chai.use(chaiHttp);
 
 // Our parent block
 describe('ShortcutSearch', () => {
-  before(async () => {
+  before(done => {
     initializeTokenMock();
     initializeDiscordAPIMock();
     app = tools.initializeServer([
@@ -47,7 +47,7 @@ describe('ShortcutSearch', () => {
     ]);
     test = new SceApiTester(app);
     // Before each test we empty the database
-    await tools.emptySchema(User);
+    tools.emptySchema(User);
     const testUser = new User({
       email: 'a@b.c',
       password: 'Passw0rd',
@@ -56,6 +56,7 @@ describe('ShortcutSearch', () => {
       major: 'Software Engineering',
     });
     testUser.save();
+    done();
   });
 
   after(done => {
