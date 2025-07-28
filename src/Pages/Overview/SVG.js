@@ -39,7 +39,7 @@ export function editSymbol() {
   );
 }
 
-export function trashcanSymbol(color='black') {
+export function trashcanSymbol(color = 'black') {
   return (
     <svg width='24' height='24' viewBox='0 0 24 24' fill={color}>
       <path
