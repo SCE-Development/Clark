@@ -7,7 +7,7 @@ import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
   'Time'.padEnd(29),
-  'Endpoint'.padEnd(38),
+  'Endpoint'.padEnd(25),
   'Method'.padEnd(8),
   'Code'.padEnd(7),
   'Event'.padEnd(21),
@@ -65,6 +65,16 @@ export default function CardReader() {
     }
     return className;
   };
+
+function buildLog(data) {
+    const time = new Date().toISOString().padEnd(29);
+    const endpoint = data.endpoint.padEnd(25);
+    const method = data.requestType.padEnd(8);
+    const code = String(data.statusCode).padEnd(7);
+    const event = data.message.padEnd(21);
+    const alias = data.alias.padEnd(15);
+    return [time, endpoint, method, code, event, alias].join('');
+}
 
   async function getAllCards() {
     setLoading(true);
