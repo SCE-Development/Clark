@@ -52,7 +52,7 @@ chai.use(chaiHttp);
 
 // Our parent block
 describe('User', () => {
-  before(done => {
+  before(async () => {
     initializeTokenMock();
     initializeDiscordAPIMock();
     app = tools.initializeServer([
@@ -61,7 +61,7 @@ describe('User', () => {
     ]);
     test = new SceApiTester(app);
     // Before each test we empty the database
-    tools.emptySchema(User);
+    await tools.emptySchema(User);
     const testUser = new User({
       email: 'a@b.c',
       password: 'Passw0rd',
@@ -69,8 +69,7 @@ describe('User', () => {
       lastName: 'last-name',
       major: 'Computer Science',
     });
-    testUser.save();
-    done();
+    await testUser.save();
   });
 
   after(done => {
