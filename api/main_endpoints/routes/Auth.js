@@ -33,6 +33,8 @@ const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = requi
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
 
+
+
 // Register a member
 router.post('/register', async (req, res) => {
   const registrationStatus = await registerUser(req.body);
@@ -142,22 +144,24 @@ router.post('/login', function(req, res) {
       }
 
       if (!user) {
-        res
+        return res
           .status(UNAUTHORIZED)
           .send({
             message: 'Username or password does not match our records.'
           });
-      } else {
+      }
         // Check if password matches database
         user.comparePassword(req.body.password, function(error, isMatch) {
-          if (isMatch && !error) {
+          if (error || !isMatch) {
+            return res.status(UNAUTHORIZED).send({
+              message: 'Username or password does not match our records.'
+            });
+          }
             if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
                 .send({
-                  message: 'The account with email ' +
-                    req.body.email +
-                    ' is banned',
+                  message: 'The account with email ' +req.body.email + ' is banned',
                 });
             }
 
@@ -178,6 +182,8 @@ router.post('/login', function(req, res) {
             if (checkIfPageCountResets(user.lastLogin)) {
               user.pagesPrinted = 0;
             }
+
+            user.lastLogin  = new Date ();
 
             // Include fields from the User model that should
             // be passed to the JSON Web Token (JWT)
@@ -208,16 +214,9 @@ router.post('/login', function(req, res) {
                 logger.error('unable to login user', error);
                 res.sendStatus(SERVER_ERROR);
               });
-          } else {
-            res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
             });
-          }
         });
-      }
-    }
-  );
-});
+    });
 
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
