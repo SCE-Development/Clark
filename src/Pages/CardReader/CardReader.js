@@ -138,6 +138,7 @@ export default function CardReader() {
     );
   }
 
+  
   useEffect(() => {
     getAllCards();
     const url = new URL('/api/OfficeAccessCard/listen', BASE_API_URL);
