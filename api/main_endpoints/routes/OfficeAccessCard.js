@@ -17,27 +17,24 @@ const ROWS_PER_PAGE = 25;
 
 
 const { decodeToken, checkIfTokenValid, checkIfTokenSent, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
-const { checkIfCardExists } = require('../util/OfficeAccessCard.js');
+const { checkIfCardExists, getAllCards, createCardAlias, deleteCard } = require('../util/OfficeAccessCard.js');
 
 router.use(bodyParser.json());
 
 // writes a log with something
 let clients = []
-function writeLog(logResponse='endpoint verified', requestType='UNKNOWN', responseCode=200, endpoint='none') {
+function writeLog(logResponse='endpoint verified', requestType='UNKNOWN', responseCode=200, endpoint='none', cardAlias='') {
     const response = {
         requestTime: new Date().toISOString(),
         endpoint: endpoint,
         requestType: requestType,
         responseCode: responseCode,
-        logResponse: logResponse
+        logResponse: logResponse,
+        cardAlias: cardAlias
     };
-
-    logger.info(response);
-    logger.info(clients);
 
     clients.forEach(client => {
         client.res.write(`data: ${JSON.stringify(response)}\n\n`);
-        logger.info(`Wrote response to client ${client}`)
     });
 };
 
@@ -51,7 +48,7 @@ router.get('/verify', async (req, res) => {
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) { 
-    writeLog(`missing value: ${missingValue.title}`, req.method, BAD_REQUEST);
+    writeLog(`missing value: ${missingValue.title}`, req.method, BAD_REQUEST, req.originalUrl);
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
   }
 
@@ -60,27 +57,25 @@ router.get('/verify', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const cardExists = await checkIfCardExists(cardBytes);
+  const cardExists = await checkIfCardExists({ cardBytes });
   if (cardExists) {
-    writeLog(`card ${cardBytes} already exists`, req.method, OK, req.originalUrl);
+    writeLog(`card exists`, req.method, OK, req.originalUrl, cardExists.alias);
     return res.sendStatus(OK);
-
   }
   // if a card doesnt exist and we arent trying
   // to add a new one, that means we were trying
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    writeLog(`card ${cardBytes} not found`, req.method, NOT_FOUND, req.originalUrl);
+    writeLog(`card not found`, req.method, NOT_FOUND, req.originalUrl, `cardBytes: ${cardBytes}`);
     return res.sendStatus(NOT_FOUND);
   }
   // if we reached here, the card does not exist and is trying to be added
   try {
     if (add) {
-      await new OfficeAccessCard({
-        cardBytes
-      }).save();
-      writeLog(`card ${cardBytes} found`, req.method, OK, req.originalUrl);
+      const alias = await createCardAlias();
+      await new OfficeAccessCard({ alias, cardBytes }).save();
+      writeLog(`card added`, req.method, OK, req.originalUrl, alias);
       return res.sendStatus(OK);
     }
   } catch (error) {
@@ -96,11 +91,11 @@ router.get('/listen', async (req, res) => {
         return res.sendStatus(UNAUTHORIZED);
     }
 
-
     const headers = {
         'Content-Type': 'text/event-stream',
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache',
+        'X-Accel-Buffering': 'no',
     };
 
     res.writeHead(200, headers);
@@ -120,21 +115,21 @@ router.get('/getAllCards', async (req, res) => {
   if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
+
+    try {
+        const cards = await getAllCards();
+        if (cards === false) {
+            writeLog('all cards queried', req.method, OK, req.originalUrl);
+            return res.sendStatus(SERVER_ERROR);
+        }
+        writeLog('all cards queried', req.method, OK, req.originalUrl);
+        return res.json(cards);
+    } catch (error) {
+        logger.error('getAllCards error: ', error);
+        writeLog('Error with getAllCards', req.method, SERVER_ERROR, req.originalUrl);
+        return res.sendStatus(SERVER_ERROR);
+    }
   
-  const missingValue = required.find(({ value }) => !value);
-
-  if (missingValue) {
-    writeLog(`missing value: ${missingValue.title}`, req.method, BAD_REQUEST);
-    return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
-  }
-
-
-  OfficeAccessCard.find()
-    .then(items => res.send(items))
-    .catch(error => {
-        res.sendStatus(BAD_REQUEST);
-        res.writeLog('Bad Request', req.method, BAD_REQUEST, req.originalUrl);
-    });
 });
 
 router.post('/delete', async (req, res) => {
@@ -154,21 +149,14 @@ router.post('/delete', async (req, res) => {
     return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
   }
 
-    OfficeAccessCard.deleteOne({ cardBytes })
-        .then(result => {
-            if (result.n < 1) {
-                res.sendStatus(NOT_FOUND);
-                writeLog(`card ${cardBytes} not found`, req.method, NOT_FOUND, req.originalUrl);
-            } else {
-                res.sendStatus(OK);
-                writeLog(`card ${cardBytes} deleted`, req.method, OK, req.originalUrl);
-            }
-        })
-        .catch(() => {
-            res.sendStatus(BAD_REQUEST);
-        });
-
-
+  const deletedCard = await deleteCard(cardBytes);
+  if (deletedCard) {
+    writeLog('card deleted', req.method, OK, req.originalUrl, deletedCard.alias);
+    res.sendStatus(OK);
+  } else {
+    writeLog('card not deleted', req.method, SERVER_ERROR, req.originalUrl);
+    res.sendStatus(SERVER_ERROR);
+  }
 });
 
 module.exports = router;
