@@ -19,33 +19,13 @@ const logger = require('../../util/logger');
 router.post('/', async function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
+  } else if (!checkIfTokenValid(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
   if (!req.body.query) {
     return res.status(OK).send({ items: [] });
   }
-
-  const query = req.body.query.replace(/[*\s]/g, '');
-
-  // Create a fuzzy regex pattern to match characters in order, e.g., "pone" -> /p.*o.*n.*e/i
-  const fuzzyPattern = query.split('').join('.*');
-  const pattern = new RegExp(fuzzyPattern, 'i');
-
-  const maybeOr = {
-    $or: [
-      {
-        $expr: {
-          $regexMatch: {
-            input: { $concat: ['$firstName', '$lastName'] },
-            regex: pattern,
-          }
-        }
-      },
-      { email: { $regex: new RegExp(query, 'i')} }
-    ]
-  };
 
   /**
    * Function to calculate scores based on token matches for sorting
@@ -94,17 +74,21 @@ router.post('/', async function(req, res) {
     };
   };
 
-  // Find user and sort results based on best match of full name or email
-  User.find(maybeOr, { password: 0 })
-    .limit(5)
-    .then(items => {
-      items.sort(sortByMatch(req.body.query));
-      res.status(OK).send({ items });
-    })
-    .catch((error) => {
-      logger.error('/shortcutsearchusers encountered an error:', error);
-      res.sendStatus(BAD_REQUEST);
-    });
+  try {
+    const users = await User.find({});
+    for (const user of users) {
+      await user.save();
+    }
+    const topUsers = await User.fuzzySearch(req.body.query)
+      .limit(5)
+      .select('-password, -apiKey');
+
+    const sortUsers = topUsers.sort(sortByMatch(req.body.query));
+
+    return res.status(OK).send({ items: sortUsers });
+  } catch (e) {
+    return res.sendStatus(SERVER_ERROR);
+  }
 });
 
 module.exports = router;

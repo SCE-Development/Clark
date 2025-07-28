@@ -78,7 +78,7 @@ describe('ShortcutSearch', () => {
 
   describe('POST /', () => {
     const queryUser = { query: 'coOl' };
-    const fiveMatchUsers = { query: 'Lot' };
+    const fourMatchUsers = { query: 'Lot' };
     const url = '/api/ShortcutSearch/';
 
     it('Should return status code 403 if no token is passed through', async () => {
@@ -199,10 +199,10 @@ describe('ShortcutSearch', () => {
         expect(result.body.items).that.is.an('array').that.is.empty;
       });
 
-      it('Should return FIVE records when query = \'Lot\'', async () => {
-        const result = await test.sendPostRequestWithToken(token, url, fiveMatchUsers);
+      it('Should return FOUR records when query = \'Lot\'', async () => {
+        const result = await test.sendPostRequestWithToken(token, url, fourMatchUsers);
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').to.have.lengthOf(5);
+        expect(result.body.items).that.is.an('array').to.have.lengthOf(4);
       });
 
       it('Should return no records when query = \'Pika\'', async () => {
@@ -215,21 +215,20 @@ describe('ShortcutSearch', () => {
         setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.ADMIN });
       });
 
-      it('Should return THREE records when query = \'coOl\'', async () => {
+      it('Should return FIVE records when query = \'coOl\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, queryUser);
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').to.have.lengthOf(3);
+        expect(result.body.items).that.is.an('array').to.have.lengthOf(5);
       });
 
       it('Should show results sorted by best match of name and email', async () => {
-        const result = await test.sendPostRequestWithToken(token, url, fiveMatchUsers);
+        const result = await test.sendPostRequestWithToken(token, url, fourMatchUsers);
         expect(result).to.have.status(OK);
         expect(result.body.items.map(u => u.email)).to.eql([
           'test1@test.com',
-          'test0@test.com',
-          'test00@test.com',
-          'test2@test.com',
-          'test3@test.com'
+          'test3@test.com',
+          'test5@test.com',
+          'test6@test.com',
         ]);
       });
     });
