@@ -86,8 +86,8 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!PRINTING.ENABLED) {
-    logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
-    return res.status(OK).send({ printId: null });
+    logger.warn('Printing is disabled, returning 200 to mock the printing server');
+    return res.sendStatus(OK);
   }
 
   const dir = path.join(__dirname, 'printing');
@@ -116,27 +116,23 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   }
-
-  try{
-    const stream = await fs.promises.readFile(assembledPdfFromChunks); // buffer
+  try {
+    const stream = await fs.promises.readFile(assembledPdfFromChunks); // Buffer
     const pdfDoc = await PDFDocument.load(stream); // load PDF
     const numpages = pdfDoc.getPages().length; // get number of pages
     const copiesInt = parseInt(copies || 1, 10);
-    const totalPages = numpages * copiesInt;
-    await subtractUserPages(user.id, totalPages); // updates users printcount
-  }catch(err){
-    logger.error('/sendPrintRequest failed', err); // helper increments totalapges, thrown if exceeded
-    await cleanUpChunks(dir, id);
-    return res.status(400).json({error:err.message});
-  }
-  const data = new FormData();
-  data.append('file', stream, {filename: id, type: 'application/pdf'});
-  data.append('copies', copies);
-  data.append('sides', sides);
-
-  try {
+    const totalPages = numpages * copiesInt; // updates users printcount
+    const pagesRemaining = await subtractUserPages(user.id, totalPages);
+    if (pagesRemaining === null) {
+      await cleanUpChunks(dir, id);
+      return res.status(400).json({ error: 'Page limit exceeded or user not found' });
+    }
+    const data = new FormData();
+    data.append('file', stream, {filename: id, type: 'application/pdf'});
+    data.append('copies', copies);
+    data.append('sides', sides);
     // full pdf can be sent to quasar no problem
-    const printRes = await axios.post(PRINTER_URL + '/print', data, {
+    await axios.post(PRINTER_URL + '/print', data, {
       headers: {
         ...data.getHeaders(),
       },
@@ -144,11 +140,8 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       maxBodyLength: Infinity
     });
 
-    // { print_id: null | string }
-    const printId = printRes.data;
-
     await cleanUpChunks(dir, id);
-    res.status(OK).send(printId);
+    res.sendStatus(OK);
   } catch (err) {
     logger.error('/sendPrintRequest had an error: ', err);
 

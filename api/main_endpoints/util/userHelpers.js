@@ -206,13 +206,16 @@ function checkIfPageCountResets(lastLogin) {
 async function subtractUserPages(userId, pagesToPrint){
   const user = await User.findById(userId);
   if(!user){
-    logger.error('user not found'); // checks user
+    logger.error('user not found');
+    return null; // checks user
   }
   if(!Number.isInteger(pagesToPrint) || pagesToPrint <= 0){
-    logger.error('invalid number')
+    logger.error('invalid number');
+    return null;
   }
   if (user.pagesPrinted < pagesToPrint) {
-    logger.error('no more pages')
+    logger.error('no more pages');
+    return null;
   }
 
   user.pagesPrinted -= pagesToPrint;
