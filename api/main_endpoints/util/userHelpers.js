@@ -211,8 +211,11 @@ async function subtractUserPages(userId, pagesToPrint){
   if(!Number.isInteger(pagesToPrint) || pagesToPrint <= 0){
     throw new Error('invalid number');
   }
+  if (user.pagesPrinted < pagesToPrint) {
+    throw new Error('no pages remaining');
+  }
 
-  user.pagesPrinted += pagesToPrint;
+  user.pagesPrinted -= pagesToPrint;
   await user.save();
   return user.pagesPrinted;
 }
