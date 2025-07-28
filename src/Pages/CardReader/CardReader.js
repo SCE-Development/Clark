@@ -6,12 +6,12 @@ import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal'
 import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
-  'TIMESTAMP'.padEnd(28),
-  'ALIAS'.padEnd(19),
-  'TYPE'.padEnd(12),
-  'ENDPOINT'.padEnd(17),
-  'CODE'.padEnd(7),
-  'MESSAGE\n'
+  'Time'.padEnd(29),
+  'Endpoint'.padEnd(38),
+  'Method'.padEnd(8),
+  'Code'.padEnd(7),
+  'Event'.padEnd(21),
+  'Alias'.padEnd(15)
 ].join('');
 
 export default function CardReader() {
@@ -33,14 +33,15 @@ export default function CardReader() {
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
 
-  function buildLog(data) {
-    const date = new Date().toISOString().padEnd(28);
-    const alias = data.alias.padEnd(19);
-    const requestType = ('HTTP ' + data.requestType).padEnd(12);
-    const endpoint = data.endpoint.padEnd(17);
-    const statusCode = String(data.statusCode).padEnd(7);
-    return [date, alias, requestType, endpoint, statusCode, data.message].join('');
-  }
+function buildLog(data) {
+    const time = new Date().toISOString().padEnd(29);
+    const endpoint = data.endpoint.padEnd(38);
+    const method = data.requestType.padEnd(8);
+    const code = String(data.statusCode).padEnd(7);
+    const event = data.message.padEnd(21);
+    const alias = data.alias.padEnd(15);
+    return [time, endpoint, method, code, event, alias].join('');
+}
 
   async function getAllCards() {
     setLoading(true);
