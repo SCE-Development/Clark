@@ -46,7 +46,15 @@ export default function CardReader() {
 
     return className.trim();
   };
-
+  const getColumnClassName = (columnName) => {
+    let className = 'px-6 py-3 whitespace-nowrap ';
+    if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
+      className += 'hidden md:table-cell ';
+    } else if (columnName === 'verifiedCount'){
+      className += 'hidden lg:table-cell';
+    }
+    return className;
+  };
   function buildLog(data) {
     const date = new Date().toISOString().padEnd(28);
     const alias = data.alias.padEnd(19);
@@ -242,14 +250,7 @@ export default function CardReader() {
                 { title:'', columnName: '' }
               ].map(({ title, columnName }) => (
                 <th key={title}
-                  className={`px-6 py-3 whitespace-nowrap ${
-                    // Choose which columns you want to hide
-                    columnName === 'lastVerifiedAt' | columnName === 'registrationDate'  ? 'hidden md:table-cell' : ''
-                  } 
-                  
-                  ${columnName === 'verifiedCount' ? 'hidden lg:table-cell' : ''}
-
-                  `}
+                  className={getColumnClassName(columnName)}
                 >
                   <div className='flex items-center justify-center'>
                     {title}
@@ -311,8 +312,8 @@ export default function CardReader() {
 
   return (
     <div className='overview-container bg-gray min-h-[100dvh]'>
-      <h1 className='flex items-center justify-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
-      <pre className='flex items-center justify-center text-gray-700 dark:text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
+      <h1 className='text-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
+      <pre className='whitespace-normal text-center max-w-[90%] mx-auto text-gray-700 dark:text-white font-normal py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
           className={getSelectedClassName(selected, tab, 'Card Registry', 'registry')}
