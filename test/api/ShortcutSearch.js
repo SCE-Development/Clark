@@ -53,7 +53,7 @@ describe('ShortcutSearch', () => {
     // Before each test we empty the database
     await tools.emptySchema(User);
     const testUser = new User({
-      email: 'a@b.c',
+      email: 'shortcutsearch@b.c',
       password: 'Passw0rd',
       firstName: 'firstName',
       lastName: 'lastName',

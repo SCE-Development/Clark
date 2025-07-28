@@ -97,4 +97,30 @@ router.post('/deleteUrl', async (req, res) => {
     });
 });
 
-module.exports = router;
+
+const searchCleezyUrls = async (query) => {
+  if(!ENABLED || !query) {
+    return;
+  }
+
+  try {
+    const cleezyQuery = query.replace(/[^a-zA-Z0-9]/g, '');
+    const cleezyRes = await axios.get(CLEEZY_URL + '/list', {
+      params: {
+        search: cleezyQuery
+      }
+    });
+    const cleezyData = cleezyRes.data?.data
+      .slice(0, 5)
+      .map(e => {
+        const u = new URL(e.alias, URL_SHORTENER_BASE_URL);
+        return { ...e, link: u.href };
+      });
+
+    return cleezyData;
+  } catch (err) {
+    logger.error('cleezy search urls had an error', err);
+  }
+};
+
+module.exports = {router, searchCleezyUrls};
