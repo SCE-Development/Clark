@@ -7,7 +7,7 @@ function main() {
   ];
   const mainEndpointServer = new SceHttpServer(API_ENDPOINTS, 8080);
   mainEndpointServer.init().then(() => {
-  mainEndpointServer.openConnection();
+    mainEndpointServer.openConnection();
   });
 }
 

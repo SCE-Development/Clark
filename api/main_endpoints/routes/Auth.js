@@ -1,5 +1,5 @@
 'use strict';
-const bcrypt = require('bcryptjs');
+const bcrypt = require('cryptjs');
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
@@ -14,39 +14,40 @@ const { verifyCaptcha } = require('../util/captcha');
 const {
   checkIfTokenSent,
   checkIfTokenValid,
-  decodeToken
+  decodeToken,
 } = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
-const {
-  OK,
-  BAD_REQUEST,
-  FORBIDDEN,
-  UNAUTHORIZED,
-  NOT_FOUND,
-  CONFLICT
-} = require('../../util/constants').STATUS_CODES;
+const { OK, BAD_REQUEST, FORBIDDEN, UNAUTHORIZED, NOT_FOUND, CONFLICT } =
+  require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const PASSWORD_RESET_EXPIRATION = require('../../util/constants').PASSWORD_RESET_EXPIRATION;
-const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
-const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
+const PASSWORD_RESET_EXPIRATION =
+  require('../../util/constants').PASSWORD_RESET_EXPIRATION;
+const {
+  sendVerificationEmail,
+  sendPasswordReset,
+} = require('../util/emailHelpers');
+const {
+  userWithEmailExists,
+  checkIfPageCountResets,
+  findPasswordReset,
+} = require('../util/userHelpers');
+
 
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
-
-
 
 // Register a member
 router.post('/register', async (req, res) => {
   const registrationStatus = await registerUser(req.body);
   if (registrationStatus.userSaved) {
     const name = req.body.firstName + ' ' + req.body.lastName;
-    const user = await User.findOne({email: req.body.email});
+    const user = await User.findOne({ email: req.body.email });
 
     if (user) {
       AuditLog.create({
         userId: user._id,
         action: AuditLogActions.SIGN_UP,
-        details: {email: req.body.email}
+        details: { email: req.body.email },
       }).catch(logger.error);
     }
 
@@ -55,7 +56,7 @@ router.post('/register', async (req, res) => {
   }
   if (registrationStatus.status === 'BAD_REQUEST') {
     return res.status(BAD_REQUEST).send({
-      message: registrationStatus.message
+      message: registrationStatus.message,
     });
   }
   return res.status(CONFLICT).send({ message: registrationStatus.message });
@@ -71,7 +72,7 @@ router.post('/resendVerificationEmail', async (req, res) => {
   if (!maybeUser) {
     return res.sendStatus(NOT_FOUND);
   }
-  let name = maybeUser.firstName + ' ' + maybeUser.lastName;
+  let name = maybeUser.firstName +  ' ' + maybeUser.lastName;
   sendVerificationEmail(name, req.body.email);
   res.sendStatus(OK);
 });
@@ -82,7 +83,7 @@ router.post('/sendPasswordReset', async (req, res) => {
 
   if (invalidEmail) {
     return res.status(BAD_REQUEST).send({
-      message: 'Invalid email.'
+      message: 'Invalid email.',
     });
   }
 
@@ -90,7 +91,7 @@ router.post('/sendPasswordReset', async (req, res) => {
     const captchaValid = await verifyCaptcha(req.body.captchaToken);
     if (!captchaValid.success) {
       return res.status(BAD_REQUEST).send({
-        message: 'Captcha verification failed.'
+        message: 'Captcha verification failed.',
       });
     }
   }
@@ -103,22 +104,26 @@ router.post('/sendPasswordReset', async (req, res) => {
       return res.sendStatus(OK);
     }
     if (
-      [
-        membershipState.PENDING,
-        membershipState.BANNED,
-      ].includes(result.accessLevel)
+      [membershipState.PENDING, membershipState.BANNED].includes(
+        result.accessLevel
+      )
     ) {
       return res.status(UNAUTHORIZED).send({
-        message: 'Cannot reset password, account is in a bad state!'
+        message: 'Cannot reset password, account is in a bad state!',
       });
     }
 
     const buffer = crypto.randomBytes(12);
     let id = buffer.toString('base64');
 
-    const resetToken = id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const resetToken = id
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
     try {
-      await redisClient.set(resetToken, String(result._id), {EX: PASSWORD_RESET_EXPIRATION});
+      await redisClient.set(resetToken, String(result._id), {
+        EX: PASSWORD_RESET_EXPIRATION,
+      });
       await sendPasswordReset(resetToken, req.body.email);
     } catch (error) {
       logger.error('unable to save password reset token:', error);
@@ -126,6 +131,7 @@ router.post('/sendPasswordReset', async (req, res) => {
     res.sendStatus(OK);
   });
 });
+
 
 // User Login
 router.post('/login', function(req, res) {
@@ -135,7 +141,7 @@ router.post('/login', function(req, res) {
 
   User.findOne(
     {
-      email: req.body.email.toLowerCase()
+      email: req.body.email.toLowerCase(),
     },
     function(error, user) {
       if (error) {
@@ -144,79 +150,74 @@ router.post('/login', function(req, res) {
       }
 
       if (!user) {
-        return res
-          .status(UNAUTHORIZED)
-          .send({
-            message: 'Username or password does not match our records.'
-          });
-      }
-        // Check if password matches database
-        user.comparePassword(req.body.password, function(error, isMatch) {
-          if (error || !isMatch) {
-            return res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
-            });
-          }
-            if (user.accessLevel === membershipState.BANNED) {
-              return res
-                .status(UNAUTHORIZED)
-                .send({
-                  message: 'The account with email ' +req.body.email + ' is banned',
-                });
-            }
-
-            // Check if the user's email has been verified
-            if (!user.emailVerified) {
-              return res
-                .status(UNAUTHORIZED)
-                .send({ message: `The email ${req.body.email} has not been verified` });
-            }
-
-            // If the username and password matches the database, assign and
-            // return a jwt token
-            const jwtOptions = {
-              expiresIn: '2h'
-            };
-
-            // check here to see if we should reset the pagecount. If so, do it
-            if (checkIfPageCountResets(user.lastLogin)) {
-              user.pagesPrinted = 0;
-            }
-
-            user.lastLogin  = new Date ();
-
-            // Include fields from the User model that should
-            // be passed to the JSON Web Token (JWT)
-            const userToBeSigned = {
-              firstName: user.firstName,
-              lastName: user.lastName,
-              email: user.email,
-              accessLevel: user.accessLevel,
-              pagesPrinted: user.pagesPrinted,
-              _id: user._id
-            };
-            user
-              .save()
-              .then(() => {
-                const token = jwt.sign(
-                  userToBeSigned, config.secretKey, jwtOptions
-                );
-                // Create audit log on successful sign-in
-                AuditLog.create({
-                  userId: user._id,
-                  action: AuditLogActions.LOG_IN,
-                  details: { email: user.email }
-                }).catch(logger.error);
-
-                res.json({ token: 'JWT ' + token });
-              })
-              .catch((error) => {
-                logger.error('unable to login user', error);
-                res.sendStatus(SERVER_ERROR);
-              });
-            });
+        return res.status(UNAUTHORIZED).send({
+          message: 'Username or password does not match our records.',
         });
-    });
+      }
+
+      user.comparePassword(req.body.password, function(error, isMatch) {
+        if (error || !isMatch) {
+          return res.status(UNAUTHORIZED).send({
+            message: 'Username or password does not match our records.',
+          });
+        }
+        if (user.accessLevel === membershipState.BANNED) {
+          return res.status(UNAUTHORIZED).send({
+            message: 'The account with email ' + req.body.email + ' is banned',
+          });
+        }
+
+        if (!user.emailVerified) {
+          return res.status(UNAUTHORIZED).send({
+            message: `The email ${req.body.email} has not been verified`,
+          });
+        }
+
+        const jwtOptions = {
+          expiresIn: '2h',
+        };
+
+        if (checkIfPageCountResets(user.lastLogin)) {
+          user.pagesPrinted = 0;
+        }
+
+        user.lastLogin = new Date();
+
+        const userToBeSigned = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          accessLevel: user.accessLevel,
+          pagesPrinted: user.pagesPrinted,
+          _id: user._id,
+        };
+
+        user
+          .save()
+          .then(() => {
+            const token = jwt.sign(
+              userToBeSigned,
+              config.secretKey,
+              jwtOptions
+            );
+            AuditLog.create({
+              userId: user._id,
+              action: AuditLogActions.LOG_IN,
+              details: { email: user.email },
+            }).catch(logger.error);
+
+            res.json({ token: 'JWT' + token });
+          })
+          .catch((error) => {
+            logger.error('unable to login user', error);
+            res.sendStatus(SERVER_ERROR);
+          });
+      });
+    }
+  );
+});
+
+
 
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
@@ -246,7 +247,6 @@ router.post('/generateHashedId', async (req, res) => {
     // bcrypts library
     bcrypt.genSalt(10, function(error, salt) {
       if (error) {
-        // reject('Bcrypt failed')
         res.sendStatus(BAD_REQUEST);
       }
 
@@ -270,27 +270,29 @@ router.post('/validateVerificationEmail', async (req, res) => {
       res.sendStatus(NOT_FOUND);
     }
 
-    bcrypt.compare(String(result._id), req.body.hashedId, async function(
-      error,
-      isMatch) {
-      if (error) {
-        res.sendStatus(BAD_REQUEST);
+    bcrypt.compare(
+      String(result._id),
+      req.body.hashedId,
+      async function(error, isMatch) {
+        if (error) {
+          res.sendStatus(BAD_REQUEST);
+        }
+        if (isMatch) {
+          result.emailVerified = true;
+          result.accessLevel = membershipState.NON_MEMBER;
+          await result
+            .save()
+            .then((_) => {
+              res.sendStatus(OK);
+            })
+            .catch((err) => {
+              res.sendStatus(BAD_REQUEST);
+            });
+        } else {
+          res.sendStatus(BAD_REQUEST);
+        }
       }
-      if (isMatch) {
-        result.emailVerified = true;
-        result.accessLevel = membershipState.NON_MEMBER;
-        await result
-          .save()
-          .then(_ => {
-            res.sendStatus(OK);
-          })
-          .catch(err => {
-            res.sendStatus(BAD_REQUEST);
-          });
-      } else {
-        res.sendStatus(BAD_REQUEST);
-      }
-    });
+    );
   });
 });
 
@@ -298,7 +300,9 @@ router.post('/validatePasswordReset', async (req, res) => {
   try {
     const passwordReset = await findPasswordReset(req.body.resetToken);
     if (!passwordReset) {
-      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
+      return res
+        .status(NOT_FOUND)
+        .send({ message: 'Invalid or expired reset token.' });
     }
     res.sendStatus(OK);
   } catch (error) {
@@ -311,14 +315,16 @@ router.post('/resetPassword', async (req, res) => {
   const testPassword = testPasswordStrength(req.body.password);
   if (!testPassword.success) {
     return res.status(BAD_REQUEST).send({
-      message: 'Password does not meet requirements.'
+      message: 'Password does not meet requirements.',
     });
   }
 
   try {
     const userId = await findPasswordReset(req.body.resetToken);
     if (!userId) {
-      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
+      return res
+        .status(NOT_FOUND)
+        .send({ message: 'Invalid or expired reset token.' });
     }
     const validId = await bcrypt.compare(String(userId), req.body.hashedId);
     if (!validId) {
