@@ -7,18 +7,8 @@ import prometheus_client
 from prometheus_client import start_http_server, Summary
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-# import uvicorn
-# import asyncio
 from threading import Thread
 
-
-# app = FastAPI(lifespan=lifespan)
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 
 logging.Formatter.converter = gmtime
 logging.basicConfig(
@@ -81,32 +71,4 @@ if __name__ == '__main__':
   start_http_server(8000)
   while True:
     process_host()
-
-
-# @app.get("/metrics")
-# async def get_metrics():
-#     return Response(
-#         content=prometheus_client.generate_latest(),
-#         media_type="text/plain",
-#     )
-
-
-#uvicorn.run(app, host="0.0.0.0", port=9090, reload=False)
-
-
-# bad_hosts = set()
-# while True:
-#     for host in args.hosts:
-#         try:
-#             requests.get(host)
-#             logging.info("Host found!")
-#             tunnel_status.set(1)
-#             if host in bad_hosts:
-#                 logging.info(f'Host {host} is back on')
-#                 bad_hosts.discard(host)
-#         except Exception:
-#             bad_hosts.add(host)
-#             logging.exception(f"Could not reach {host}")
-#             tunnel_status.set(0)
-#     sleep(args.request_interval_seconds)
 
