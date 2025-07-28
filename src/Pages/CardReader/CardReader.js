@@ -97,7 +97,7 @@ export default function CardReader() {
             className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
             onClick={() => handleDeleteClick(card)}
           >
-            {trashcanSymbol()}
+            {trashcanSymbol('#e64539')}
           </button>
         </td>
       </tr>
@@ -282,7 +282,7 @@ export default function CardReader() {
   }
 
   return (
-    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
+    <div className='overview-container bg-gray min-h-[100dvh]'>
       <h1 className='flex items-center justify-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
       <pre className='flex items-center justify-center text-gray-700 dark:text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
