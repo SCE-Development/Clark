@@ -1,12 +1,10 @@
 import argparse
 import logging
 from time import sleep, gmtime
-import random
 import requests
 import prometheus_client
 from prometheus_client import start_http_server, Summary
-from fastapi import FastAPI, HTTPException, Response
-from fastapi.middleware.cors import CORSMiddleware
+
 from threading import Thread
 
 
@@ -44,26 +42,22 @@ tunnel_status = prometheus_client.Gauge(
 
 logging.info(f"Starting tunnel routine with hosts: {args.hosts}")
 
-def process_host():
-  bad_hosts = set()
-  while True:
-      for host in args.hosts:
-          try:
-              requests.get(host)
-              logging.info("Host found!")
-              tunnel_status.labels(host).set(1)
-              if host in bad_hosts:
-                  logging.info(f'Host {host} is back on')
-                  bad_hosts.discard(host)
-          except Exception:
-              bad_hosts.add(host)
-              logging.exception(f"Could not reach {host}")
-              tunnel_status.labels(host).set(0)
-      sleep(args.request_interval_seconds)
+start_http_server(8000)
 
+bad_hosts = set()
+while True:
+    for host in args.hosts:
+        try:
+            requests.get(host)
+            logging.info("Host found!")
+            tunnel_status.labels(host).set(1)
+            if host in bad_hosts:
+                logging.info(f'Host {host} is back on')
+                bad_hosts.discard(host)
+        except Exception:
+            bad_hosts.add(host)
+            logging.exception(f"Could not reach {host}")
+            tunnel_status.labels(host).set(0)
+    sleep(args.request_interval_seconds)
 
-if __name__ == '__main__':
-  start_http_server(8000)
-  while True:
-    process_host()
 
