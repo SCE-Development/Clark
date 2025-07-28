@@ -70,11 +70,11 @@ export default function AuditLogPage() {
 
     eventSource.onmessage = () => {
       getAuditLogsFromDB();
-    }
+    };
 
     eventSource.onerror = () => {
       setError('Failed to load audit logs');
-    }
+    };
 
     return () => {
       eventSource.close();
