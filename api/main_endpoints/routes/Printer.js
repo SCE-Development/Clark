@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 const { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize } = require('../util/Printer.js');
-const pdfParse = require('pdf-parse');
+const { PDFDocument, StandardFonts } = require('pdf-lib');
 const {subtractUserPages} = require('../util/userHelpers');
 
 const {
@@ -118,8 +118,9 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   }
 
   try{
-    const stream = await fs.promises.readFile(assembledPdfFromChunks); // reads pdf into buffer
-    const {numpages} = await pdfParse(stream);  // gathers metadata
+    const stream = await fs.promises.readFile(assembledPdfFromChunks); // buffer
+    const pdfDoc = await PDFDocument.load(stream); // load PDF
+    const numpages = pdfDoc.getPages().length; // get number of pages
     const copiesInt = parseInt(copies || 1, 10);
     const totalPages = numpages * copiesInt;
     await subtractUserPages(user.id, totalPages); // updates users printcount
