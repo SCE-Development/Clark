@@ -60,8 +60,8 @@ router.get('/healthCheck', async (req, res) => {
    * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
    */
   if (!PRINTING.ENABLED) {
-    logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
-    return res.status(OK).send({ printId: null });
+    logger.warn('Printing is disabled, returning 200 to mock the printing server');
+    return res.sendStatus(OK);
   }
   await axios
     .get(PRINTER_URL + '/healthcheck/printer')
@@ -80,14 +80,13 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  const user = await decodeToken(req);
-  if(!user){
+  if (!await decodeToken(req)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!PRINTING.ENABLED) {
-    logger.warn('Printing is disabled, returning 200 to mock the printing server');
-    return res.sendStatus(OK);
+    logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
+    return res.status(OK).send({ printId: null });
   }
 
   const dir = path.join(__dirname, 'printing');
