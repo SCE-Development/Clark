@@ -39,15 +39,11 @@ args = parser.parse_args()
 tunnel_status = prometheus_client.Gauge(
     "connection_status", # 0 for disconnected, 1 for connected
     f'{args.hosts}',
+    labelnames=['url']
 )
-
-
-    
-
 
 logging.info(f"Starting tunnel routine with hosts: {args.hosts}")
 
-@tunnel_status.time()
 def process_host():
   bad_hosts = set()
   while True:
@@ -55,15 +51,14 @@ def process_host():
           try:
               requests.get(host)
               logging.info("Host found!")
-              tunnel_status.set(1)
+              tunnel_status.labels(host).set(1)
               if host in bad_hosts:
                   logging.info(f'Host {host} is back on')
-                  tunnel_status.set(0)
                   bad_hosts.discard(host)
           except Exception:
               bad_hosts.add(host)
               logging.exception(f"Could not reach {host}")
-              tunnel_status.set(0)
+              tunnel_status.labels(host).set(0)
       sleep(args.request_interval_seconds)
 
 
