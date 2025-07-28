@@ -5,7 +5,6 @@ import requests
 import prometheus_client
 from prometheus_client import start_http_server, Summary
 
-from threading import Thread
 
 
 logging.Formatter.converter = gmtime
