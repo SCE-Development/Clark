@@ -165,7 +165,7 @@ router.post('/delete', async (req, res) => {
     return res.sendStatus(NOT_FOUND);
   }
 
-  if (await deleteCard(alias)) { // successful
+  if (await deleteCard(alias)) {
     logger.info('Successfully deleted card');
     writeLogToClient(req.method, {
       alias,
