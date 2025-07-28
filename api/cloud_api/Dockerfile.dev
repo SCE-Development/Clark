@@ -4,15 +4,9 @@ WORKDIR /app
 
 COPY package.json ./
 
-RUN npm install --production
+RUN npm install
 
 RUN npm install -g nodemon
-
-COPY ./cloud_api /app/cloud_api
-
-COPY ./util /app/util
-
-COPY ./config/config.json /app/config/config.json
 
 EXPOSE 8082
 

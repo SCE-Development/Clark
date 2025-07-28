@@ -17,12 +17,12 @@
     padding: 8px;
     background: white;
     border-radius: 8px;
-    /* height: auto; */
+    width: 35rem;
 }
 
 .shortcut-search-modal input {
     border: 1.5px solid darkgray;
-    width: 35rem;
+    width: 100%;
     border-radius: 0.25rem;
     padding: 0.75rem;
     height: 2.5rem;
@@ -39,17 +39,21 @@
 .shortcut-search-modal .suggestion-list {
     background: #f1f5f9;
     font-size: 1.2rem;
+    overflow-x: hidden;
 }
 
 .shortcut-search-modal .suggestion-item {
     height: 3.5rem;
     display: flex;
     align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .shortcut-search-modal .hidden-tab {
     font-size: medium;
-    color: white;
+    color: lightgray;
 }
 
 /* Dark mode */

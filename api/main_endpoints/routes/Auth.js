@@ -7,7 +7,7 @@ const passport = require('passport');
 require('../util/passport')(passport);
 const config = require('../../config/config.json');
 const User = require('../models/User.js');
-const redisClient = require('../util/redis-client.js');
+const PasswordReset = require('../models/PasswordReset.js');
 const logger = require('../../util/logger');
 const { registerUser, testPasswordStrength } = require('../util/userHelpers');
 const { verifyCaptcha } = require('../util/captcha');
@@ -116,7 +116,11 @@ router.post('/sendPasswordReset', async (req, res) => {
 
     const resetToken = id.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     try {
-      await redisClient.set(resetToken, String(result._id), {EX: PASSWORD_RESET_EXPIRATION});
+      const passwordReset = new PasswordReset({
+        resetToken,
+        userId: String(result._id),
+      });
+      await passwordReset.save();
       await sendPasswordReset(resetToken, req.body.email);
     } catch (error) {
       logger.error('unable to save password reset token:', error);
@@ -137,6 +141,7 @@ router.post('/login', function(req, res) {
     },
     function(error, user) {
       if (error) {
+        logger.error('/login User.findOne had an error', error);
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
 
@@ -153,14 +158,18 @@ router.post('/login', function(req, res) {
             if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: 'User is banned.' });
+                .send({
+                  message: 'The account with email ' +
+                    req.body.email +
+                    ' is banned',
+                });
             }
 
             // Check if the user's email has been verified
             if (!user.emailVerified) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: 'Email has not been verified' });
+                .send({ message: `The email ${req.body.email} has not been verified` });
             }
 
             // If the username and password matches the database, assign and
@@ -316,6 +325,10 @@ router.post('/resetPassword', async (req, res) => {
     if (!userId) {
       return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
     }
+    if (!req.body.hashedId) {
+      logger.error('Missing hashedId in resetPassword request');
+      return res.status(BAD_REQUEST).send({ message: 'Missing hashedId.' });
+    }
     const validId = await bcrypt.compare(String(userId), req.body.hashedId);
     if (!validId) {
       return res.status(BAD_REQUEST).send({ message: 'Invalid user ID.' });
@@ -326,9 +339,13 @@ router.post('/resetPassword', async (req, res) => {
     }
     user.password = req.body.password;
     await user.save();
-    await redisClient.delete(req.body.resetToken);
+    await PasswordReset.deleteOne({ resetToken: req.body.resetToken });
   } catch (error) {
     logger.error('Unable to reset password:', error);
+    // Only return 404 if the error is about the reset token, otherwise 400
+    if (error && error.message && error.message.includes('reset token')) {
+      return res.status(NOT_FOUND).send({ message: 'Invalid or expired reset token.' });
+    }
     return res.sendStatus(BAD_REQUEST);
   }
 

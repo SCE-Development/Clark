@@ -17,6 +17,7 @@ import sendUnsubscribeEmail from './Pages/Profile/admin/SendUnsubscribeEmail.js'
 import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
+import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -76,7 +77,8 @@ export const memberRoutes = [
     path: '/messaging/:id?',
     pageName: 'Messaging',
     allowedIf: allowedIf.MEMBER,
-    redirect: '/login'
+    redirect: '/login',
+    hideFromShortcutSuggestions: true
   },
   ...authenticatedRoutes,
 ];
@@ -102,7 +104,7 @@ export const officerOrAdminRoutes = [
   {
     Component: LedSign,
     path: '/led-sign',
-    pageName: 'Led Sign',
+    pageName: 'LED Sign',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
@@ -113,7 +115,8 @@ export const officerOrAdminRoutes = [
     pageName: 'Edit User Info',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: true
   },
   {
     Component: URLShortenerPage,
@@ -147,6 +150,14 @@ export const officerOrAdminRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
+  {
+    Component: AuditLogsPage,
+    path: '/audit-logs',
+    pageName: 'Audit Log',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true
+  },
   ...memberRoutes,
 ];
 
@@ -159,12 +170,14 @@ export const signedOutRoutes = [
   {
     Component: VerifyEmailPage,
     path: '/verify',
-    pageName: 'Verify Email'
+    pageName: 'Verify Email',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: ResetPasswordPage,
     path: '/reset',
-    pageName: 'Reset Password'
+    pageName: 'Reset Password',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: AboutPage,
@@ -179,6 +192,7 @@ export const signedOutRoutes = [
   {
     Component: EmailPreferencesPage,
     path: '/emailPreferences',
-    pageName: 'Email Preferences'
+    pageName: 'Email Preferences',
+    hideFromShortcutSuggestions: true
   },
 ];

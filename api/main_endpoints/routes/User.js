@@ -511,5 +511,4 @@ router.get('/getNewPaidMembersThisSemester', async (req, res) => {
   }
 });
 
-
 module.exports = router;

@@ -4,40 +4,44 @@ import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRo
 import { membershipState } from '../../Enums';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
+import { searchAllUsers } from '../../APIFunctions/ShortcutSearch';
 
-export default function SearchModal({ appProps }) {
+export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
+  const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !r.hideFromShortcutSuggestions);
   const [keyword, setKeyword] = useState('');
-  const [suggestions, setSuggestions] = useState([...signedOutRoutes]);
+  const [suggestions, setSuggestions] = useState([...filteredSignedOutRoutes]);
   const [selectItem, setSelectItem] = useState(0);
   const { user } = useUser();
   const [errorMsg, setErrorMsg] = useState('');
   const { authenticated } = useAuth();
+  // Maximum number of suggestions to display in the search dropdown
+  const SHORTCUT_MAX_RESULT = 5;
 
   /**
    * Returns the appropriate routes array based on the user's access level.
-   * @dependencies user.accessLevel, authenticated
+   * @dependencies user, authenticated
    */
   const routes = useMemo(() => {
-    if (user.accessLevel === membershipState.MEMBER)
+    if (user?.accessLevel === membershipState.MEMBER)
       return [
-        ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...memberRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
-    if (user.accessLevel >= membershipState.OFFICER)
+    if (user?.accessLevel >= membershipState.OFFICER)
       return [
-        ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...officerOrAdminRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
     if (!authenticated)
       return [
-        ...notAuthenticatedRoutes,
-        ...signedOutRoutes
+        ...notAuthenticatedRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
-    return [...signedOutRoutes];
-  }, [user.accessLevel, authenticated]);
+    return [...filteredSignedOutRoutes];
+  }, [user, authenticated]);
 
   /**
    * Helper function updates the keyword when the user types
@@ -50,21 +54,21 @@ export default function SearchModal({ appProps }) {
 
   /** This helper function clears search box and all suggestions */
   const clearSearchModal = () => {
-    setSuggestions([...signedOutRoutes]);
+    setSuggestions([...filteredSignedOutRoutes]);
     setKeyword('');
   };
 
   const SuggestionsList = () => {
     if (suggestions.length === 0) return <></>;
 
-    const topFiveItems = suggestions.slice(0, 5);
+    const topFiveItems = suggestions.slice(0, SHORTCUT_MAX_RESULT);
     return (
       <ul className='suggestion-list'>
         {topFiveItems.map((r, index) => ( // Still keep index to keep track of the selected item
           <li
             key={r.path} // Use r.path as key
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
-            onMouseEnter={() => setSelectItem(index)}
+            onMouseMove={() => setSelectItem(index)}
             onClick={() => {
               window.location.href = r.path;
               setOpen(false);
@@ -86,6 +90,32 @@ export default function SearchModal({ appProps }) {
   };
 
   /**
+   * Async function fetches all user data from the API
+   * @param {string} token - User's authentication token.
+   * @param {string} query - The search term.
+   */
+  const getUserData = async ({ token, query }) => {
+    try {
+      const apiResponse = await searchAllUsers({
+        token,
+        query
+      });
+
+      if (apiResponse.error || apiResponse.responseData.items.length === 0) return; // Exit early if there's an API error or an empty array
+
+      const userMatches = apiResponse.responseData.items
+        .map((u) => ({
+          pageName: `${u.firstName} ${u.lastName} (${u.email})`,
+          path: `/user/edit/${u._id}`,
+          type: 'user'
+        }));
+      setSuggestions(prev => [...prev, ...userMatches]);
+    } catch (error) {
+      setErrorMsg(error.message);
+    }
+  };
+
+  /**
    * An effect that instantly shows all hardcoded routes.
    * @dependencies keyword, routes, open
    */
@@ -94,7 +124,7 @@ export default function SearchModal({ appProps }) {
 
     // Return if keyword is blank
     if (!keyword) {
-      setSuggestions([...signedOutRoutes]);
+      setSuggestions([...filteredSignedOutRoutes]);
       return;
     }
 
@@ -104,6 +134,26 @@ export default function SearchModal({ appProps }) {
     );
     setSuggestions(routeMatches);
   }, [open, keyword, routes]);
+
+  /**
+   * A debounce function that performs the search 400ms after the user stops typing.
+   * @dependencies keyword, open, user.accessLevel
+   */
+  useEffect(() => {
+    if (!open ||
+      !user.accessLevel ||
+      user?.accessLevel < membershipState.OFFICER ||
+      !keyword) return;
+
+    const debounce = setTimeout(() => {
+      getUserData({
+        token: user.token,
+        query: keyword
+      });
+    }, 400);
+
+    return () => clearTimeout(debounce);
+  }, [keyword, open, user.accessLevel]);
 
   /**
    * Executes a search when Enter is pressed

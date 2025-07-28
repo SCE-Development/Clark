@@ -64,8 +64,10 @@ router.post('/createUrl', async (req, res) => {
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  const { url, alias } = req.body;
+  const { url, alias, expiresAt } = req.body;
   let jsonbody = { url, alias: alias || null };
+  // eslint-disable-next-line camelcase
+  if (expiresAt) jsonbody.expires_at = expiresAt;
   try {
     const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
     const data = response.data;
@@ -73,7 +75,7 @@ router.post('/createUrl', async (req, res) => {
     res.json({ ...data, link: u });
   } catch (err) {
     logger.error('/createUrl had an error', err);
-    res.status(err.response.status).json({ error: err.response.status });
+    res.status(err.response.status).json({ error: err.response.data?.detail || err.response.data || 'Unknown error from Cleezy' });
   }
 });
 

@@ -13,24 +13,21 @@ export default function Login() {
     const password = e.target.password.value;
     setErrorMsg('');
     const loginStatus = await loginUser(email, password);
-
     if (!loginStatus.error) {
       setAuthenticated(true);
       window.localStorage.setItem('jwtToken', loginStatus.token);
       if (queryParams.get('redirect')) {
         window.location.href = queryParams.get('redirect');
-      } else {
-        window.location.reload();
+        return;
       }
-    } else {
-      if(loginStatus.responseData === undefined || loginStatus.responseData.data.message === undefined){
-        setErrorMsg('Backend May Be down, check with dev team!');
-      }else{
-        setErrorMsg(
-          loginStatus.responseData && loginStatus.responseData.data.message
-        );
-      }
+      return window.location.reload();
     }
+    if (!loginStatus.responseData) {
+      setErrorMsg('Backend may be down, check with the dev team!');
+      return;
+    }
+    const backendMsg = loginStatus?.responseData;
+    setErrorMsg(backendMsg || 'Username or password did not match.');
   }
 
   return (
@@ -55,7 +52,7 @@ export default function Login() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder="rys@sce.sjsu.edu"
                       required
                       className="input input-bordered w-full"
                     />
