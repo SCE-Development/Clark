@@ -7,7 +7,7 @@ import './ledsign.css';
 function LedSign() {
   const { user } = useSCE();
   const [signHealthy, setSignHealthy] = useState(false);
-  const [showExpire, setExpire] = useState(false);
+  const [showInput, setInput] = useState(false);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [brightness, setBrightness] = useState(50);
@@ -70,8 +70,19 @@ function LedSign() {
     }
   ];
 
+  async function currentDate(){
+    const localDate = new Date().toLocaleString();
+      var localISO = new Date(localDate);
+      localISO = new Date(
+        localISO.getTime() - localISO.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .slice(0, 16);
+    return localISO;
+  }
+
   async function handleExpiration() {
-    setExpire(!showExpire);
+    setInput(!showInput);
   }
 
   async function handleSend() {
@@ -85,6 +96,7 @@ function LedSign() {
         backgroundColor,
         textColor,
         borderColor,
+        expiration,
         email: user.email,
         firstName: user.firstName,
       },
@@ -232,8 +244,8 @@ function LedSign() {
             <button className='btn w-2/3 lg:w-1/2 bg-sky-400 hover:bg-sky-300 text-black mt-2' onClick={handleExpiration}>
               Set Expiration
             </button>
-            {showExpire && <div className='w-2/3 lg:w-1/2 place-content-center'>
-              <input className='mt-1 mb-1 ml-4 rounded-md text-center' type="datetime-local" id="endTime" name="endTime"/>
+            {showInput && <div className='w-2/3 lg:w-1/2 place-content-center'>
+              <input className='mt-1 mb-1 ml-4 rounded-md text-center' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
               <button className='btn w-1/4 lg:w-1/4 bg-red-400 hover:bg-sky-300 text-black ml-8 mt-3 mb-3' onClick={handleExpiration}>
                 Cancel
               </button>
