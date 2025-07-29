@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { membershipState } from '../../Enums';
-import { useUser } from '../context/UserContext';
-import { useAuth } from '../context/AuthContext';
+import { useSCE } from '../context/SceContext';
 
 export default function UserNavbar(props) {
-  const { user } = useUser();
-  const { authenticated } = useAuth();
+  const { user, authenticated } = useSCE();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   let initials = '';
