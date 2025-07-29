@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-import { useSCE } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext';
 
 import './ledsign.css';
 
