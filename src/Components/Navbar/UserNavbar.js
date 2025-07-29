@@ -13,12 +13,14 @@ export default function UserNavbar(props) {
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
-    { title: 'Spartan Compass', route: '/spartan-compass' }
+    { title: 'Spartan Compass', route: '/spartan-compass' },
+    { title: 'Desserts', route: '/desserts' },
   ];
 
   const authedRoutes = [
     { title: 'Printing', route: '/2DPrinting' },
     { title: 'Chat', route: '/messaging' },
+    { title: 'Desserts', route: '/desserts' },
   ];
 
   const authentication = [
