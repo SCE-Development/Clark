@@ -27,13 +27,13 @@ const lastMessageSent = {};
 const writeToMongo = async (roomId, message, userId) => {
   try{
     await ChatMessage.create({
-    chatroomId: roomId,
-    text: message,
-    userId: userId
-  });
-} catch(err){
-  logger.error('error saving message', err);
-}
+      chatroomId: roomId,
+      text: message,
+      userId: userId
+    });
+  } catch(err){
+    logger.error('error saving message', err);
+  }
 };
 
 const writeMessage = (roomId, message, username) => {
