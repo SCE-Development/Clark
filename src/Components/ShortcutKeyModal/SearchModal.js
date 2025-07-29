@@ -6,7 +6,10 @@ import { useSCE } from '../context/SceContext';
 import { searchUsersAndCleezyUrls } from '../../APIFunctions/ShortcutSearch';
 
 export default function SearchModal() {
-  const [open, setOpen] = useState(false);
+  const {modalOpen, setModalOpen} = useSCE();
+  //kept original open and setOpen state variables
+  const open = modalOpen;
+  const setOpen = setModalOpen;
   const inputRef = useRef(null);
   const modalRef = useRef(null);
   const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !r.hideFromShortcutSuggestions);

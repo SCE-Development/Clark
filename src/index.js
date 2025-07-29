@@ -12,6 +12,7 @@ function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [user, setUser] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
 
   async function getAuthStatus() {
     setIsAuthenticating(true);
@@ -30,10 +31,10 @@ function App() {
 
   return (
     !isAuthenticating && (
-      <SceContext.Provider value={{user, setUser, authenticated, setAuthenticated}}>
+      <SceContext.Provider value={{user, setUser, authenticated, setAuthenticated, modalOpen, setModalOpen}}>
         <BrowserRouter>
-          <SearchModal/>
-          <Routing/>
+          <SearchModal />
+          <Routing />
         </BrowserRouter>
       </SceContext.Provider>
     )
