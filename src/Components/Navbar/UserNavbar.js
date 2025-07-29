@@ -65,6 +65,7 @@ export default function UserNavbar(props) {
   };
 
   // useEffect hook to close dropdown if user clicks elsewhere on screen
+  // this is so clicking your profile shows the dropdown on mobile safari
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
