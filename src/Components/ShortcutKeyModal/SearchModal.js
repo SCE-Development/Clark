@@ -4,7 +4,7 @@ import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRo
 import { membershipState } from '../../Enums';
 
 import { useSCE } from '../context/SceContext';
-import { searchAllUsers } from '../../APIFunctions/UserSearch';
+import { searchAllUsers } from '../../APIFunctions/ShortcutSearch';
 
 export default function SearchModal() {
   const [open, setOpen] = useState(false);
