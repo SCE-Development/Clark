@@ -7,11 +7,11 @@ import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
   'Time'.padEnd(29),
-  'Endpoint'.padEnd(25),
+  'Endpoint'.padEnd(20),
   'Method'.padEnd(8),
   'Code'.padEnd(7),
-  'Event'.padEnd(21),
-  'Alias'.padEnd(15)
+  'Alias'.padEnd(18),
+  'Event'.padEnd(21)
 ].join('');
 
 export default function CardReader() {
@@ -32,29 +32,15 @@ export default function CardReader() {
   const [paginationText, setPaginationText] = useState('');
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [selected, setSelected] = useState('Card Registry');
-  const getSelectedClassName = (selected, tab, label, tabKey) => {
+  const getSelectedClassName = (currTab) => {
     let className = 'p-2 hover:bg-gray-400 rounded-xl ';
-    if (selected === label) {
-      className += 'text-blue-500 ';
+    if (currTab === tab) {
+      className += 'text-blue-500 underline underline-offset-4';
     } else {
-      className += 'dark:text-white text-gray-700 ';
+      className += 'dark:text-white text-gray-700';
     }
-    if (tab === tabKey) {
-      className += 'underline underline-offset-4 ';
-    }
-    return className.trim();
+    return className;
   };
-
-  function buildLog(data) {
-    const time = new Date().toISOString().padEnd(29);
-    const endpoint = data.endpoint.padEnd(38);
-    const method = data.requestType.padEnd(8);
-    const code = String(data.statusCode).padEnd(7);
-    const event = data.message.padEnd(21);
-    const alias = data.alias.padEnd(15);
-    return [time, endpoint, method, code, event, alias].join('');
-  }
 
   const getColumnClassName = (columnName) => {
     let className = 'px-6 py-3 whitespace-nowrap ';
@@ -68,12 +54,12 @@ export default function CardReader() {
 
   function buildLog(data) {
     const time = new Date().toISOString().padEnd(29);
-    const endpoint = data.endpoint.padEnd(25);
+    const endpoint = data.endpoint.padEnd(20);
     const method = data.requestType.padEnd(8);
     const code = String(data.statusCode).padEnd(7);
     const event = data.message.padEnd(21);
-    const alias = data.alias.padEnd(15);
-    return [time, endpoint, method, code, event, alias].join('');
+    const alias = data.alias.padEnd(18);
+    return [time, endpoint, method, code, alias, event].join('');
   }
 
   async function getAllCards() {
@@ -329,22 +315,16 @@ export default function CardReader() {
       <pre className='whitespace-normal text-center max-w-[90%] mx-auto text-gray-700 dark:text-white font-normal py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
-          className={getSelectedClassName(selected, tab, 'Card Registry', 'registry')}
-          onClick={() => {
-            handleTabChange('registry');
-            setSelected('Card Registry');
-          }}
+          className={getSelectedClassName('registry')}
+          onClick={() => handleTabChange('registry')}
         >
           Card Registry
         </button>
         {/* spacer to differentiate between the two options */}
         <div>&nbsp;|&nbsp;</div>
         <button
-          className={getSelectedClassName(selected, tab, 'Card Reader Logs', 'logs')}
-          onClick={() => {
-            handleTabChange('logs');
-            setSelected('Card Reader Logs');
-          }}
+          className={getSelectedClassName('logs')}
+          onClick={() => handleTabChange('logs')}
         >
           Card Reader Logs
         </button>
