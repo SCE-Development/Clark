@@ -6,12 +6,12 @@ import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal'
 import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
-  'TIMESTAMP'.padEnd(28),
-  'ALIAS'.padEnd(19),
-  'TYPE'.padEnd(12),
-  'ENDPOINT'.padEnd(17),
-  'CODE'.padEnd(7),
-  'MESSAGE\n'
+  'Time'.padEnd(29),
+  'Endpoint'.padEnd(20),
+  'Method'.padEnd(8),
+  'Code'.padEnd(7),
+  'Alias'.padEnd(18),
+  'Event'.padEnd(21)
 ].join('');
 
 export default function CardReader() {
@@ -32,20 +32,16 @@ export default function CardReader() {
   const [paginationText, setPaginationText] = useState('');
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [selected, setSelected] = useState('Card Registry');
-  const getSelectedClassName = (selected, tab, label, tabKey) => {
+  const getSelectedClassName = (currTab) => {
     let className = 'p-2 hover:bg-gray-400 rounded-xl ';
-    if (selected === label) {
-      className += 'text-blue-500 ';
+    if (currTab === tab) {
+      className += 'text-blue-500 underline underline-offset-4';
     } else {
-      className += 'dark:text-white text-gray-700 ';
+      className += 'dark:text-white text-gray-700';
     }
-    if (tab === tabKey) {
-      className += 'underline underline-offset-4 ';
-    }
-
-    return className.trim();
+    return className;
   };
+
   const getColumnClassName = (columnName) => {
     let className = 'px-6 py-3 whitespace-nowrap ';
     if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
@@ -55,13 +51,15 @@ export default function CardReader() {
     }
     return className;
   };
+
   function buildLog(data) {
-    const date = new Date().toISOString().padEnd(28);
-    const alias = data.alias.padEnd(19);
-    const requestType = ('HTTP ' + data.requestType).padEnd(12);
-    const endpoint = data.endpoint.padEnd(17);
-    const statusCode = String(data.statusCode).padEnd(7);
-    return [date, alias, requestType, endpoint, statusCode, data.message].join('');
+    const time = new Date().toISOString().padEnd(29);
+    const endpoint = data.endpoint.padEnd(20);
+    const method = data.requestType.padEnd(8);
+    const code = String(data.statusCode).padEnd(7);
+    const event = data.message.padEnd(21);
+    const alias = data.alias.padEnd(18);
+    return [time, endpoint, method, code, alias, event].join('');
   }
 
   async function getAllCards() {
@@ -125,6 +123,7 @@ export default function CardReader() {
       </tr>
     );
   }
+
 
   useEffect(() => {
     getAllCards();
@@ -316,22 +315,16 @@ export default function CardReader() {
       <pre className='whitespace-normal text-center max-w-[90%] mx-auto text-gray-700 dark:text-white font-normal py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
-          className={getSelectedClassName(selected, tab, 'Card Registry', 'registry')}
-          onClick={() => {
-            handleTabChange('registry');
-            setSelected('Card Registry');
-          }}
+          className={getSelectedClassName('registry')}
+          onClick={() => handleTabChange('registry')}
         >
           Card Registry
         </button>
         {/* spacer to differentiate between the two options */}
         <div>&nbsp;|&nbsp;</div>
         <button
-          className={getSelectedClassName(selected, tab, 'Card Reader Logs', 'logs')}
-          onClick={() => {
-            handleTabChange('logs');
-            setSelected('Card Reader Logs');
-          }}
+          className={getSelectedClassName('logs')}
+          onClick={() => handleTabChange('logs')}
         >
           Card Reader Logs
         </button>
