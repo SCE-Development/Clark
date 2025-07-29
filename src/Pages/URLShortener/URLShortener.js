@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { trashcanSymbol } from '../Overview/SVG';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext.js';
 
 export default function URLShortenerPage() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
   const [url, setUrl] = useState('');
   const [invalidUrl, setInvalidUrl] = useState();

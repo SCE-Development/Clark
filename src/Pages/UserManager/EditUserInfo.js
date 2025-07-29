@@ -3,7 +3,7 @@ import {
   getUserById,
   editUser,
 } from '../../APIFunctions/User';
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext';
 
 import MajorDropdown from '../MembershipApplication/MajorDropdown';
 import RoleDropdown from './RoleDropdown';
@@ -13,7 +13,7 @@ import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 
 
 export default function EditUserInfo(props) {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState(null);

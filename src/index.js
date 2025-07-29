@@ -5,16 +5,14 @@ import './index.css';
 
 import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
-import { UserContext } from './Components/context/UserContext';
 import SearchModal from './Components/ShortcutKeyModal/SearchModal';
-import { AuthContext } from './Components/context/AuthContext';
 import BackgroundColorContextProvider from './Components/context/BackgroundColorContext';
+import { SceContext } from './Components/context/SceContext';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [user, setUser] = useState({});
-  const [backgroundColorVersion, setBackgroundColorVersion] = useState(0);
 
   async function getAuthStatus() {
     setIsAuthenticating(true);
@@ -33,16 +31,14 @@ function App() {
 
   return (
     !isAuthenticating && (
-      <UserContext.Provider value={{ user, setUser }}>
-        <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
-          <BackgroundColorContextProvider>
-            <BrowserRouter>
-              <SearchModal/>
-              <Routing/>
-            </BrowserRouter>
-          </BackgroundColorContextProvider>
-        </AuthContext.Provider>
-      </UserContext.Provider>
+      <SceContext.Provider value={{user, setUser, authenticated, setAuthenticated}}>
+        <BackgroundColorContextProvider>
+          <BrowserRouter>
+            <SearchModal/>
+            <Routing/>
+          </BrowserRouter>
+        </BackgroundColorContextProvider>
+      </SceContext.Provider>
     )
   );
 }

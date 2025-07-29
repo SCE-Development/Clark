@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { getAllUserSubscribedAndVerified } from '../../../APIFunctions/User';
-import { useUser } from '../../../Components/context/UserContext';
+import { useSCE } from '../../../Components/context/SceContext';
 
 function AdminDashboard() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [buttonText, setButtonText] = useState('Send Unsubscribe Email to All');
   const [buttonColor, setButtonColor] = useState('');
 

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { membershipState } from '../../Enums';
-import { useUser } from '../context/UserContext';
-import { useAuth } from '../context/AuthContext';
+import { useSCE } from '../context/SceContext';
 import { getUserById } from '../../APIFunctions/User';
 import { useBackgroundColor } from '../context/BackgroundColorContext';
 import { getIconTextColor } from '../../APIFunctions/Profile';
 
 export default function UserNavbar(props) {
-  const { user } = useUser();
+  const { user, authenticated } = useSCE();
   const { backgroundColorVersion } = useBackgroundColor() || {};
-  const { authenticated } = useAuth();
   const [backgroundColor, setBackgroundColor] = useState('#2a323c');
   const [transition, setTransition] = useState(false);
 

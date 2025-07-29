@@ -2,9 +2,9 @@ import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import './SearchModal.css';
 import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRoutes } from '../../Routes';
 import { membershipState } from '../../Enums';
-import { useUser } from '../context/UserContext';
-import { useAuth } from '../context/AuthContext';
-import { searchAllUsers } from '../../APIFunctions/ShortcutSearch';
+
+import { useSCE } from '../context/SceContext';
+import { searchAllUsers } from '../../APIFunctions/UserSearch';
 
 export default function SearchModal() {
   const [open, setOpen] = useState(false);
@@ -14,9 +14,8 @@ export default function SearchModal() {
   const [keyword, setKeyword] = useState('');
   const [suggestions, setSuggestions] = useState([...filteredSignedOutRoutes]);
   const [selectItem, setSelectItem] = useState(0);
-  const { user } = useUser();
+  const { user, authenticated } = useSCE();
   const [errorMsg, setErrorMsg] = useState('');
-  const { authenticated } = useAuth();
   // Maximum number of suggestions to display in the search dropdown
   const SHORTCUT_MAX_RESULT = 5;
 
