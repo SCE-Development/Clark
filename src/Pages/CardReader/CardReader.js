@@ -43,8 +43,10 @@ export default function CardReader() {
     if (tab === tabKey) {
       className += 'underline underline-offset-4 ';
     }
+    return className.trim();
+  };
 
-function buildLog(data) {
+  function buildLog(data) {
     const time = new Date().toISOString().padEnd(29);
     const endpoint = data.endpoint.padEnd(38);
     const method = data.requestType.padEnd(8);
@@ -52,9 +54,8 @@ function buildLog(data) {
     const event = data.message.padEnd(21);
     const alias = data.alias.padEnd(15);
     return [time, endpoint, method, code, event, alias].join('');
-}
-    return className.trim();
-  };
+  }
+
   const getColumnClassName = (columnName) => {
     let className = 'px-6 py-3 whitespace-nowrap ';
     if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
