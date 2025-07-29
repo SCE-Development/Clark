@@ -36,7 +36,7 @@ const writeToMongo = async (roomId, message, userId) => {
 }
 };
 
-const writeMessage = async (roomId, message, username) => {
+const writeMessage = (roomId, message, username) => {
 
   const messageObj = {
     timestamp: Date.now(),
@@ -50,19 +50,6 @@ const writeMessage = async (roomId, message, username) => {
 
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
-  try{
-    // Query User table to get userId from username (remove the trailing colon)
-    const cleanUsername = username.replace(':', '');
-    const user = await User.findOne({ firstName: cleanUsername });
-
-    if (!user) {
-      logger.error('User not found for username:', cleanUsername);
-      return;
-    }
-
-  } catch(err){
-    logger.error('error saving message', err);
-  }
 
   // increase the total messages sent counter
   MetricsHandler.totalMessagesSent.inc();
