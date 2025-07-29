@@ -33,7 +33,7 @@ export default function AuditLogPage() {
     'CHANGE_PW',
     'RESET_PW',
     'VERIFY_CARD',
-    'VERIFY_NEW_CARD',
+    'ADD_CARD',
     'DELETE_CARD',
   ];
 
