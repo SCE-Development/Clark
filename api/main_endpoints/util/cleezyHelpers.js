@@ -5,16 +5,16 @@ const {
   decodeToken,
   checkIfTokenSent,
   checkIfTokenValid,
-} = require('../util/token-functions.js');
+} = require('./token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
   FORBIDDEN,
   SERVER_ERROR,
-} = require('../../util/constants').STATUS_CODES;
-const logger = require('../../util/logger');
+} = require('../../util/constants.js').STATUS_CODES;
+const logger = require('../../util/logger.js');
 const { Cleezy } = require('../../config/config.json');
-const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const membershipState = require('../../util/constants.js').MEMBERSHIP_STATE;
 const { ENABLED } = Cleezy;
 
 let CLEEZY_URL = process.env.CLEEZY_URL

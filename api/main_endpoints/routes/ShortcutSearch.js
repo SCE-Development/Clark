@@ -17,7 +17,7 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const logger = require('../../util/logger');
 const { Cleezy } = require('../../config/config.json');
 const { ENABLED } = Cleezy;
-const cleezy = require('../routes/Cleezy.js');
+const cleezy = require('../util/cleezyHelpers.js');
 
 // Search for all members using either first name, last name or email
 // Search for all cleezy urls using either alias or url
