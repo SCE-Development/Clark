@@ -24,6 +24,18 @@ const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
+const writeToMongo = async (roomId, message, userId) => {
+  try{
+    await ChatMessage.create({
+    chatroomId: roomId,
+    text: message,
+    userId: userId
+  });
+} catch(err){
+  logger.error('error saving message', err);
+}
+};
+
 const writeMessage = async (roomId, message, username) => {
 
   const messageObj = {
@@ -48,11 +60,6 @@ const writeMessage = async (roomId, message, username) => {
       return;
     }
 
-    await ChatMessage.create({
-      chatroomId: roomId,
-      text: message,
-      userId: user._id
-    });
   } catch(err){
     logger.error('error saving message', err);
   }
@@ -85,6 +92,7 @@ router.post('/send', async (req, res) => {
   }
 
   let nameToUse = null;
+  let userId = null;
 
   if (apiKey) {
     try {
@@ -93,6 +101,8 @@ router.post('/send', async (req, res) => {
         return res.sendStatus(UNAUTHORIZED);
       }
       nameToUse = result.firstName;
+      userId = result._id;
+      await writeToMongo(id, message, userId);
     } catch (error) {
       logger.error('Error in /send User.findOne: ', error);
       return res.sendStatus(SERVER_ERROR);
@@ -104,6 +114,8 @@ router.post('/send', async (req, res) => {
       return res.sendStatus(UNAUTHORIZED);
     }
     nameToUse = userObj.firstName;
+    userId = userObj._id;
+    await writeToMongo(id, message, userId);
   }
   try {
     writeMessage(id, `${message}`, `${nameToUse}:`);
