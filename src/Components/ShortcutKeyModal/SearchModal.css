@@ -8,8 +8,7 @@
     /* blurred background */
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 33vh;
+    align-items: center;
     z-index: 9999;
 }
 
@@ -17,10 +16,9 @@
     padding: 8px;
     background: white;
     border-radius: 8px;
-    width: 35rem;
-    width: 35rem;
-     /* max-width: 40rem; /* prevent overflow */
-  /* width: 100%; */
+    width: 100%;
+    /* This makes it so that the default */ 
+    max-width: 500px;
 }
 
 .shortcut-search-modal input {
@@ -52,12 +50,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
 }
 
 .shortcut-search-modal .hidden-tab {
     font-size: medium;
     color: lightgray;
+}
+
+/* Desktop mode */
+@media (min-width: 768px) {
+    .shortcut-search-modal .input-wrapper {
+        width: 35rem;
+        max-width: none;
+    }
 }
 
 /* Dark mode */
