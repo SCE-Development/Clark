@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BASE_API_URL } from '../../Enums';
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext';
 import { getAllCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
 import { trashcanSymbol } from '../Overview/SVG';
@@ -15,7 +15,7 @@ const header = [
 ].join('');
 
 export default function CardReader() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const token = user.token;
   const [logs, setLogs] = useState([]);
   const [cards, setCards] = useState([]);

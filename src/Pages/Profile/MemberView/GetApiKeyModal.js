@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import { getApiKey } from '../../../APIFunctions/User';
-import { useUser } from '../../../Components/context/UserContext';
+import { useSCE } from '../../../Components/context/SceContext';
 
 const GetApiKeyModal = (props) => {
   const { bannerCallback = () => {} } = props;
-  const { user } = useUser();
+  const { user } = useSCE();
   const [apiKey, setApiKey] = useState('');
 
   async function generateKey() {

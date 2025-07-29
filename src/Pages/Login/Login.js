@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { loginUser } from '../../APIFunctions/Auth';
-import { useAuth } from '../../Components/context/AuthContext';
+import { useSCE } from '../../Components/context/SceContext';
 
 export default function Login() {
-  const { setAuthenticated } = useAuth();
+  const { setAuthenticated } = useSCE();
   const queryParams = new URLSearchParams(window.location.search);
   const [errorMsg, setErrorMsg] = useState('');
 
