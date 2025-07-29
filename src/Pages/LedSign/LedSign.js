@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-import { useSCE } from '../../Components/context/SceContext';
+import { useSCE } from '../../Components/context/UserContext';
+
 import './ledsign.css';
 
 function LedSign() {
   const { user } = useSCE();
   const [signHealthy, setSignHealthy] = useState(false);
+  const [showExpire, setExpire] = useState(false);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [brightness, setBrightness] = useState(50);
@@ -13,6 +15,7 @@ function LedSign() {
   const [backgroundColor, setBackgroundColor] = useState('#0000ff');
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
+  const [expiration, setExpiration] = useState('');
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [awaitingStopSignResponse, setAwaitingStopSignResponse]
     = useState(false);
@@ -66,6 +69,10 @@ function LedSign() {
       onChange: e => setScrollSpeed(Number(e.target.value) || 0)
     }
   ];
+
+  async function handleExpiration() {
+    setExpire(!showExpire);
+  }
 
   async function handleSend() {
     setAwaitingSignResponse(true);
@@ -222,8 +229,16 @@ function LedSign() {
                 </div>
               ))
             }
-
-            <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
+            <button className='btn w-2/3 lg:w-1/2 bg-sky-400 hover:bg-sky-300 text-black mt-2' onClick={handleExpiration}>
+              Set Expiration
+            </button>
+            {showExpire && <div className='w-2/3 lg:w-1/2 place-content-center'>
+              <input className='mt-1 mb-1 ml-4 rounded-md text-center' type="datetime-local" id="endTime" name="endTime"/>
+              <button className='btn w-1/4 lg:w-1/4 bg-red-400 hover:bg-sky-300 text-black ml-8 mt-3 mb-3' onClick={handleExpiration}>
+                Cancel
+              </button>
+            </div>}
+            <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-2' onClick={handleStop}>
               Stop
             </button>
             <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
