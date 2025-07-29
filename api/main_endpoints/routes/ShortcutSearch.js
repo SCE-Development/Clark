@@ -11,11 +11,16 @@ const {
   OK,
   UNAUTHORIZED,
   FORBIDDEN,
+  SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const logger = require('../../util/logger');
+const { Cleezy } = require('../../config/config.json');
+const { ENABLED } = Cleezy;
+const cleezy = require('../routes/Cleezy.js');
 
 // Search for all members using either first name, last name or email
+// Search for all cleezy urls using either alias or url
 router.post('/', async function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -24,7 +29,12 @@ router.post('/', async function(req, res) {
   }
 
   if (!req.body.query) {
-    return res.status(OK).send({ items: [] });
+    return res.status(OK).send({
+      items: {
+        users: [],
+        cleezyData: [],
+      }
+    });
   }
 
   const query = req.body.query.replace(/[*\s]/g, '');
@@ -95,16 +105,44 @@ router.post('/', async function(req, res) {
   };
 
   // Find user and sort results based on best match of full name or email
-  User.find(maybeOr, { password: 0 })
-    .limit(5)
-    .then(items => {
-      items.sort(sortByMatch(req.body.query));
-      res.status(OK).send({ items });
-    })
-    .catch((error) => {
-      logger.error('/shortcutsearchusers encountered an error:', error);
-      res.sendStatus(BAD_REQUEST);
+  try{
+    const users = await User.find(maybeOr, { password: 0 }).limit(5);
+    users.sort(sortByMatch(req.body.query));
+
+    // Short circuit if cleezy is disabled
+    if(!ENABLED) {
+      return res.status(OK).json({
+        items: {users, cleezyData: []},
+        disabled: true
+      });
+    }
+
+    const cleezyRes = await cleezy.searchCleezyUrls(req);
+    if (cleezyRes.status !== OK) {
+      logger.warn('Cleezy search failed', {
+        status: cleezyRes.status
+      });
+
+      return res.status(OK).send({
+        cleezyStatus: cleezyRes.status,
+        items: { users }
+      });
+    }
+
+    return res.status(OK).send({
+      items: {
+        users,
+        cleezyData: cleezyRes.data,
+      }
     });
+  } catch (error) {
+    logger.error('/shortcutsearch encountered an error:', { error, query: req.body.query });
+    if (error.response && error.response.data) {
+      res.status(error.response.status).json({ error: error.response.data });
+    } else {
+      res.status(SERVER_ERROR).json({ error: 'Failed to search for Users or URLs' });
+    }
+  }
 });
 
 module.exports = router;

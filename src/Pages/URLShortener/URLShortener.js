@@ -30,6 +30,8 @@ export default function URLShortenerPage() {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [currentSortColumn, setCurrentSortColumn] = useState(null);
   const [currentSortOrder, setCurrentSortOrder] = useState(null);
+  const query = new URLSearchParams(window.location.search);
+  const rawData = query.get('data');
 
   const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-slate-800 dark:text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-slate-800 dark:text-gray-300';
@@ -179,7 +181,19 @@ export default function URLShortenerPage() {
   }, [alias]);
 
   useEffect(() => {
-    getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
+    if (rawData) {
+      const parsedObject = JSON.parse(decodeURIComponent(rawData));
+
+      if (!parsedObject) return;
+      setAllUrls([parsedObject]);
+
+      // remove ?data=... from URL
+      const url = new URL(window.location);
+      url.searchParams.delete('data');
+      window.history.replaceState({}, '', url);
+    } else {
+      getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
+    }
   }, [page, currentSortColumn, currentSortOrder]);
 
   function maybeRenderErrorAlert() {
