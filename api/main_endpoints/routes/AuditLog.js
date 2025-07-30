@@ -8,6 +8,7 @@ const { OFFICER } = require('../../util/constants.js').MEMBERSHIP_STATE;
 const { checkIfTokenSent, checkIfTokenValid } = require('../util/token-functions.js');
 
 const logger = require('../../util/logger');
+const User = require('../models/User.js');
 
 router.get('/getAuditLogs', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -23,17 +24,46 @@ router.get('/getAuditLogs', async (req, res) => {
   }
 
   const itemsPerPage = 50;
-  const page = parseInt(req.query.page) || 0; // page is 0-based
+  const page = parseInt(req.query.page) || 0;
   const skip = page * itemsPerPage;
 
+  const rawActions = req.query.action;
+  const actions = rawActions ? rawActions.split(',') : [];
+
+  const searchQuery = req.query.search?.trim();
+
+  const query = {};
+  if (actions.length > 0) {
+    query.action = { $in: actions };
+  }
+
   try {
-    const items = await AuditLog.find({})
-      .populate('userId', 'firstName lastName')
+    if (searchQuery) {
+      const userFilter = {
+        $or: [
+          { firstName: new RegExp(searchQuery, 'i') },
+          { lastName: new RegExp(searchQuery, 'i') },
+          { email: new RegExp(searchQuery, 'i') },
+        ],
+      };
+
+      const users = await User.find(userFilter).select('_id');
+      const userIds = users.map(u => u._id);
+
+      if (userIds.length === 0) {
+        return res.status(OK).send({ items: [], totalLogs: 0 });
+      }
+
+      query.userId = { $in: userIds };
+    }
+
+    const items = await AuditLog.find(query)
+      .populate('userId', 'firstName lastName email')
       .skip(skip)
       .limit(itemsPerPage)
       .sort({ createdAt: -1 });
 
-    const totalLogs = await AuditLog.countDocuments({});
+    const totalLogs = await AuditLog.countDocuments(query);
     res.status(OK).send({ items, totalLogs });
   } catch (error) {
     logger.error('Failed to fetch audit logs:', error);

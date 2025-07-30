@@ -1,10 +1,10 @@
 import React from 'react';
 import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js';
 import { useState, useEffect } from 'react';
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext.js';
 
 export default function AdvertisementAdmin() {
-  const { user } = useUser();
+  const { user } = useSCE();
 
   const [ads, setAds] = useState([]);
   const [message, setMessage] = useState('');

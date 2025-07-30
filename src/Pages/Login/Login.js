@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { loginUser } from '../../APIFunctions/Auth';
-import { useAuth } from '../../Components/context/AuthContext';
+import { useSCE } from '../../Components/context/SceContext';
 
 export default function Login() {
-  const { setAuthenticated } = useAuth();
+  const { setAuthenticated } = useSCE();
   const queryParams = new URLSearchParams(window.location.search);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -54,6 +54,7 @@ export default function Login() {
                       type="email"
                       placeholder="rys@sce.sjsu.edu"
                       required
+                      autofocus="autofocus"
                       className="input input-bordered w-full"
                     />
                   </div>
