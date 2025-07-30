@@ -1,10 +1,10 @@
 import React from 'react';
 import { deleteUserByID } from '../../../APIFunctions/User';
-import { useUser } from '../../../Components/context/UserContext';
+import { useSCE } from '../../../Components/context/SceContext';
 
 export default function DeleteAccountModal(props) {
   const { bannerCallback = () => {} } = props;
-  const { user } = useUser();
+  const { user } = useSCE();
 
   async function deleteAccount() {
     const apiResponse = await deleteUserByID(

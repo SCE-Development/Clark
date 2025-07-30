@@ -4,10 +4,10 @@ import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
-import { useUser } from '../../../Components/context/UserContext';
+import { useSCE } from '../../../Components/context/SceContext';
 
 export default function Profile() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');

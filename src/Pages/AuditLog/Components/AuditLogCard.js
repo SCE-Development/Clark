@@ -40,6 +40,9 @@ const AuditLogCard = ({ log, index }) => {
     ACCESS_DOOR: 'accessed a door',
     CREATE_MESSAGE: 'created a message',
     DELETE_MESSAGE: 'deleted a message',
+    VERIFY_CARD: 'verified an Office Access Card',
+    ADD_CARD: 'verified a new Office Access Card',
+    DELETE_CARD: 'deleted an Office Access Card',
   };
 
   const getActionDescription = log => {
@@ -68,10 +71,7 @@ const AuditLogCard = ({ log, index }) => {
   };
 
   return (
-    <div
-      key={log._id || index}
-      className='p-6 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md bg-gray-800 border border-gray-700 hover:bg-gray-750'
-    >
+    <div className='p-6 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md bg-gray-800 border border-gray-700 hover:bg-gray-750'>
       <div className='flex items-start justify-between'>
         <div className='flex-1'>
           <div className='flex items-center space-x-3 mb-2'>

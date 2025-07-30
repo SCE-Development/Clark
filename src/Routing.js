@@ -6,14 +6,9 @@ import NavBarWrapper from './Components/Navbar/NavBarWrapper';
 
 import NotFoundPage from './Pages/NotFoundPage/NotFoundPage';
 
-import { useUser } from './Components/context/UserContext';
-import { useAuth } from './Components/context/AuthContext';
-
 import { officerOrAdminRoutes, notAuthenticatedRoutes, signedOutRoutes } from './Routes.js';
 
 export default function Routing({ appProps }) {
-  const { user, setUser } = useUser();
-  const { authenticated } = useAuth();
 
   const signedInRoutes = [...officerOrAdminRoutes, ...notAuthenticatedRoutes];
 

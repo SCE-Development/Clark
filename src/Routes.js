@@ -77,7 +77,8 @@ export const memberRoutes = [
     path: '/messaging/:id?',
     pageName: 'Messaging',
     allowedIf: allowedIf.MEMBER,
-    redirect: '/login'
+    redirect: '/login',
+    hideFromShortcutSuggestions: true
   },
   ...authenticatedRoutes,
 ];
@@ -103,7 +104,7 @@ export const officerOrAdminRoutes = [
   {
     Component: LedSign,
     path: '/led-sign',
-    pageName: 'Led Sign',
+    pageName: 'LED Sign',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
@@ -114,7 +115,8 @@ export const officerOrAdminRoutes = [
     pageName: 'Edit User Info',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: true
   },
   {
     Component: URLShortenerPage,
@@ -168,12 +170,14 @@ export const signedOutRoutes = [
   {
     Component: VerifyEmailPage,
     path: '/verify',
-    pageName: 'Verify Email'
+    pageName: 'Verify Email',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: ResetPasswordPage,
     path: '/reset',
-    pageName: 'Reset Password'
+    pageName: 'Reset Password',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: AboutPage,
@@ -188,6 +192,7 @@ export const signedOutRoutes = [
   {
     Component: EmailPreferencesPage,
     path: '/emailPreferences',
-    pageName: 'Email Preferences'
+    pageName: 'Email Preferences',
+    hideFromShortcutSuggestions: true
   },
 ];
