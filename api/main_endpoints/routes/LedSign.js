@@ -11,6 +11,8 @@ const {
 } = require('../util/token-functions.js');
 const logger = require('../../util/logger');
 const { updateSign, healthCheck, turnOffSign } = require('../util/LedSign.js');
+const AuditLogActions = require('../util/auditLogActions.js');
+const AuditLog = require('../models/AuditLog.js');
 
 const runningInDevelopment = process.env.NODE_ENV !== 'production'
   && process.env.NODE_ENV !== 'test';
@@ -36,7 +38,8 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req)) {
+  const user = await decodeToken(req); // Store the user here
+  if (!user) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -56,6 +59,16 @@ router.post('/updateSignText', async (req, res) => {
   if(!result) {
     status = SERVER_ERROR;
   }
+
+  AuditLog.create({
+    userId: user._id,
+    action: AuditLogActions.UPDATE_SIGN,
+    details: {
+      new_sign_text: req.body.text,
+      editedBy: user.email
+    }
+  }).catch(logger.error);
+
   return res.sendStatus(status);
 });
 

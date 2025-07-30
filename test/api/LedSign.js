@@ -17,7 +17,9 @@ const {
   restoreTokenMock,
 } = require('../util/mocks/TokenValidFunctions');
 const SshTunnelFunctions = require('../../api/main_endpoints/util/LedSign');
-
+const AuditLog = require('../../api/main_endpoints/models/AuditLog');
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions');
+const mongoose = require('mongoose');
 
 let app = null;
 let test = null;
@@ -91,6 +93,81 @@ describe('LED Sign', () => {
         '/api/LedSign/updateSignText');
       expect(result).to.have.status(OK);
     });
+
+    describe('tests for audit log on sign text update', () => {
+      
+      const userId = new mongoose.Types.ObjectId()
+
+      beforeEach(async () => {
+        await AuditLog.deleteMany({})
+
+        //test user
+        setTokenStatus(true, {
+          _id: userId,
+          email: 'admin@test.com',
+          accessLevel: 'ADMIN'
+        });
+      })
+      
+      afterEach(async () => {
+        await AuditLog.deleteMany({})
+      })
+
+      it('Should create audit log when LED sign is successfully updated', async () => {
+        updateSignStub.resolves(true);
+        
+        const signData = {
+          text: 'Welcome to SCE!',
+          duration: 5000
+        };
+  
+        const result = await test.sendPostRequestWithToken(token,
+          '/api/LedSign/updateSignText', signData);
+        
+        expect(result).to.have.status(OK);
+  
+        const auditEntry = await AuditLog.findOne({
+          userId: userId,
+          action: AuditLogActions.UPDATE_SIGN
+        }).lean();
+  
+        expect(auditEntry).to.exist;
+        expect(auditEntry.action).to.equal(AuditLogActions.UPDATE_SIGN);
+        expect(auditEntry.details).to.have.property('new_sign_text', 'Welcome to SCE!');
+      });
+  
+      it('Should create audit log with user information who updated the sign', async () => {
+        updateSignStub.resolves(true);
+        
+        setTokenStatus(true, {
+          _id: userId,
+          email: 'admin@sce.edu',
+          firstName: 'Ad',
+          lastName: 'Min',
+          accessLevel: 'ADMIN'
+        });
+  
+        const signData = {
+          text: 'Updated by admin',
+          duration: 4000
+        };
+  
+        const result = await test.sendPostRequestWithToken(token,
+          '/api/LedSign/updateSignText', signData);
+        
+        expect(result).to.have.status(OK);
+  
+        const auditEntry = await AuditLog.findOne({
+          userId: userId,
+          action: AuditLogActions.UPDATE_SIGN
+        }).lean();
+  
+        expect(auditEntry).to.exist;
+        expect(auditEntry.userId.toString()).to.equal(userId.toString());
+        expect(auditEntry.details).to.have.property('editedBy', 'admin@sce.edu');
+      });
+      
+    })
   });
 
   describe('/GET healthCheck', () => {
