@@ -115,14 +115,13 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   }
-
+  const stream = await fs.promises.readFile(assembledPdfFromChunks); // Buffer
   const data = new FormData();
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);
   data.append('sides', sides);
 
   try {
-    const stream = await fs.promises.readFile(assembledPdfFromChunks); // Buffer
     const pdfDoc = await PDFDocument.load(stream); // load PDF
     const numpages = pdfDoc.getPages().length; // get number of pages
     const copiesInt = parseInt(copies || 1, 10);
