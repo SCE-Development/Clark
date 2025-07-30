@@ -118,9 +118,22 @@ router.post('/sendPasswordReset', async (req, res) => {
     try {
       await redisClient.set(resetToken, String(result._id), {EX: PASSWORD_RESET_EXPIRATION});
       await sendPasswordReset(resetToken, req.body.email);
+
+      // create audit log for sending reset password email
+      AuditLog.create({
+        userId: result._id,
+        action: AuditLogActions.RESET_PW,
+        details: { 
+          email: result.email, 
+          action: "Password reset email sent to user."
+        }
+      }).catch(logger.error);
+      console.log("sent reset email")
     } catch (error) {
       logger.error('unable to save password reset token:', error);
     }
+
+
     res.sendStatus(OK);
   });
 });
@@ -137,7 +150,6 @@ router.post('/login', function(req, res) {
     },
     function(error, user) {
       if (error) {
-        logger.error('/login User.findOne had an error', error);
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
 
@@ -154,18 +166,14 @@ router.post('/login', function(req, res) {
             if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
-                .send({
-                  message: 'The account with email ' +
-                    req.body.email +
-                    ' is banned',
-                });
+                .send({ message: 'User is banned.' });
             }
 
             // Check if the user's email has been verified
             if (!user.emailVerified) {
               return res
                 .status(UNAUTHORIZED)
-                .send({ message: `The email ${req.body.email} has not been verified` });
+                .send({ message: 'Email has not been verified' });
             }
 
             // If the username and password matches the database, assign and
@@ -332,6 +340,16 @@ router.post('/resetPassword', async (req, res) => {
     user.password = req.body.password;
     await user.save();
     await redisClient.delete(req.body.resetToken);
+
+    //create audit log for user succesfully resetting password
+    AuditLog.create({
+      userId: user._id,
+      action: AuditLogActions.RESET_PW,
+      details: {
+        email: user.email,
+        action: "User succesfully reset password."
+      }
+    }).catch(logger.error);
   } catch (error) {
     logger.error('Unable to reset password:', error);
     return res.sendStatus(BAD_REQUEST);
