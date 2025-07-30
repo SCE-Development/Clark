@@ -17,8 +17,7 @@ function LedSign() {
   const [borderColor, setBorderColor] = useState('#ff0000');
   const [expiration, setExpiration] = useState('');
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
-  const [awaitingStopSignResponse, setAwaitingStopSignResponse]
-    = useState(false);
+  const [awaitingStopSignResponse, setAwaitingStopSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
 
@@ -72,12 +71,12 @@ function LedSign() {
 
   async function currentDate(){
     const localDate = new Date().toLocaleString();
-      var localISO = new Date(localDate);
-      localISO = new Date(
-        localISO.getTime() - localISO.getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .slice(0, 16);
+    let localISO = new Date(localDate);
+    localISO = new Date(
+      localISO.getTime() - localISO.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .slice(0, 16);
     return localISO;
   }
 
