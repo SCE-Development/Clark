@@ -7,9 +7,8 @@ export default function Login() {
   const [message, setMessage] = useState('');
   const [captchaValue, setCaptchaValue] = useState(null);
   const [captchaRef, setCaptchaRef] = useState(null);
-  
 
- async function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (process.env.NODE_ENV === 'production' && !captchaValue) {
       setMessage('Please complete the reCAPTCHA.');
@@ -42,23 +41,23 @@ export default function Login() {
                 </p>
               </div>
               <form onSubmit={handleSubmit} className='flex flex-col items-center'>
-          <label className="form-control w-full max-w-xs mb-4">
-            <div className="label">
-              <span className="label-text">Email</span>
-            </div>
-            <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
-          </label>
-          <div id='recaptcha'>
-            <GoogleRecaptcha setCaptchaValue={setCaptchaValue} setCaptchaRef={setCaptchaRef}/>
-          </div>
-          {message && <p
-            className={`${message.includes('email has been sent') ? 'text-green-500' : 'text-red-500'}` +
+                <label className="form-control w-full max-w-xs mb-4">
+                  <div className="label">
+                    <span className="label-text">Email</span>
+                  </div>
+                  <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
+                </label>
+                <div id='recaptcha'>
+                  <GoogleRecaptcha setCaptchaValue={setCaptchaValue} setCaptchaRef={setCaptchaRef}/>
+                </div>
+                {message && <p
+                  className={`${message.includes('email has been sent') ? 'text-green-500' : 'text-red-500'}` +
             ' text-sm md:text-md pt-2 w-full max-w-xs'}
-          >{message}</p>}
-          <button type='submit' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
+                >{message}</p>}
+                <button type='submit' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
             Reset Password
-          </button>
-        </form>
+                </button>
+              </form>
             </div>
           </div>
         </div>
