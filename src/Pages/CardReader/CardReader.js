@@ -1,21 +1,21 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BASE_API_URL } from '../../Enums';
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext';
 import { getAllCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
 import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
-  'TIMESTAMP'.padEnd(28),
-  'ALIAS'.padEnd(19),
-  'TYPE'.padEnd(12),
-  'ENDPOINT'.padEnd(17),
-  'CODE'.padEnd(7),
-  'MESSAGE\n'
+  'Time'.padEnd(29),
+  'Endpoint'.padEnd(20),
+  'Method'.padEnd(8),
+  'Code'.padEnd(7),
+  'Alias'.padEnd(18),
+  'Event'.padEnd(21)
 ].join('');
 
 export default function CardReader() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const token = user.token;
   const [logs, setLogs] = useState([]);
   const [cards, setCards] = useState([]);
@@ -32,14 +32,34 @@ export default function CardReader() {
   const [paginationText, setPaginationText] = useState('');
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const getSelectedClassName = (currTab) => {
+    let className = 'p-2 hover:bg-gray-400 rounded-xl ';
+    if (currTab === tab) {
+      className += 'text-blue-500 underline underline-offset-4';
+    } else {
+      className += 'dark:text-white text-gray-700';
+    }
+    return className;
+  };
+
+  const getColumnClassName = (columnName) => {
+    let className = 'px-6 py-3 whitespace-nowrap ';
+    if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
+      className += 'hidden md:table-cell ';
+    } else if (columnName === 'verifiedCount'){
+      className += 'hidden lg:table-cell';
+    }
+    return className;
+  };
 
   function buildLog(data) {
-    const date = new Date().toISOString().padEnd(28);
-    const alias = data.alias.padEnd(19);
-    const requestType = ('HTTP ' + data.requestType).padEnd(12);
-    const endpoint = data.endpoint.padEnd(17);
-    const statusCode = String(data.statusCode).padEnd(7);
-    return [date, alias, requestType, endpoint, statusCode, data.message].join('');
+    const time = new Date().toISOString().padEnd(29);
+    const endpoint = data.endpoint.padEnd(20);
+    const method = data.requestType.padEnd(8);
+    const code = String(data.statusCode).padEnd(7);
+    const event = data.message.padEnd(21);
+    const alias = data.alias.padEnd(18);
+    return [time, endpoint, method, code, alias, event].join('');
   }
 
   async function getAllCards() {
@@ -71,24 +91,24 @@ export default function CardReader() {
 
   function CardEntry({ card }) {
     return (
-      <tr key={card._id} className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10'>
-        <td key='alias' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+      <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+        <td key='alias' className=''>
+          <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.alias}
           </div>
         </td>
         <td key='createdAt' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+          <div className='px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white'>
             {card.createdAt}
           </div>
         </td>
         <td key='lastVerified' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+          <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.lastVerified}
           </div>
         </td>
-        <td key='verifiedCount' className='hidden md:table-cell'>
-          <div className='flex items-center justify-center text-base text-gray-700 dark:text-white'>
+        <td key='verifiedCount' className='hidden lg:table-cell'>
+          <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
             {card.verifiedCount}
           </div>
         </td>
@@ -97,12 +117,13 @@ export default function CardReader() {
             className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
             onClick={() => handleDeleteClick(card)}
           >
-            {trashcanSymbol()}
+            {trashcanSymbol('#e64539')}
           </button>
         </td>
       </tr>
     );
   }
+
 
   useEffect(() => {
     getAllCards();
@@ -210,33 +231,40 @@ export default function CardReader() {
   function maybeRenderTable() {
     if (cards.length === 0) {
       return (
-        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+        <h3 className='text-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
           Looks like there are no registered cards...
         </h3>
       );
     }
     return (
-      <table className='table px-3'>
-        <thead>
-          <tr>
-            {[
-              { title: 'Alias', columnName: 'alias' },
-              { title: 'Registration Date', columnName: 'registrationDate' },
-              { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
-              { title: 'Verified Count', columnName: 'verifiedCount' },
-            ].map(({ title }) => (
-              <th key={title} className='text-base text-gray-700 dark:text-white/70 text-center'>
-                <div className='flex items-center justify-center'>
-                  {title}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {cards.map(card => <CardEntry card={card}/>)}
-        </tbody>
-      </table>
+      <div className='overflow-x-auto overflow-y-auto w-full'>
+        <table className='m-full min-w-full text-gray-700 dark:text-gray-400'>
+          <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+            <tr className=''>
+              {[
+                { title: 'Alias', columnName: 'alias' },
+                { title: 'Registration Date', columnName: 'registrationDate' },
+                { title: 'Last Verified At', columnName: 'lastVerifiedAt' },
+                { title: 'Verified Count', columnName: 'verifiedCount' },
+                { title:'', columnName: '' }
+              ].map(({ title, columnName }) => (
+                <th key={title}
+                  className={getColumnClassName(columnName)}
+                >
+                  <div className='flex items-center justify-center'>
+                    {title}
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className='text-center text-sm'>
+            {cards.map((card) => {
+              return <CardEntry key={card._id} card={card} />;
+            })}
+          </tbody>
+        </table>
+      </div>
     );
   }
 
@@ -268,10 +296,10 @@ export default function CardReader() {
     }
     return (
       <div>
-        <h3 className='flex items-center justify-center text-lg pt-4 text-gray-700 dark:text-white text-base'>
+        <h3 className='text-center text-lg py-2 pt-4 text-gray-700 dark:text-white text-base'>
           {connectionStatusText}
         </h3>
-        <pre className='m-4 text-gray-700 dark:text-white'>
+        <pre className='overflow-x-auto m-4 text-gray-700 dark:text-white'>
           {header}
           {logs.map((log, index) => (
             <div key={index} className='border-b border-gray-300 py-1'>{log}</div>
@@ -282,12 +310,12 @@ export default function CardReader() {
   }
 
   return (
-    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
-      <h1 className='flex items-center justify-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
-      <pre className='flex items-center justify-center text-gray-700 dark:text-white text-md py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
+    <div className='overview-container bg-gray min-h-[100dvh]'>
+      <h1 className='text-center text-gray-700 dark:text-white text-4xl font-bold py-4'>SCE Card Reader Page</h1>
+      <pre className='whitespace-normal text-center max-w-[90%] mx-auto text-gray-700 dark:text-white font-normal py-2'>This webpage manages RFID cards used to unlock the office door in the SCE room</pre>
       <div className='flex flex-row items-center justify-center text-gray-700 dark:text-white text-xl font-bold pt-4'>
         <button
-          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'registry' ? 'underline underline-offset-4' : ''}`}
+          className={getSelectedClassName('registry')}
           onClick={() => handleTabChange('registry')}
         >
           Card Registry
@@ -295,7 +323,7 @@ export default function CardReader() {
         {/* spacer to differentiate between the two options */}
         <div>&nbsp;|&nbsp;</div>
         <button
-          className={`p-2 hover:bg-gray-400 rounded-xl ${tab === 'logs' ? 'underline underline-offset-4' : ''}`}
+          className={getSelectedClassName('logs')}
           onClick={() => handleTabChange('logs')}
         >
           Card Reader Logs

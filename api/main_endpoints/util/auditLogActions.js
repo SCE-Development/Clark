@@ -8,7 +8,10 @@ const AuditLogActions = {
   CHANGE_PW: 'CHANGE_PW',
   RESET_PW: 'RESET_PW',
   CREATE_AD: 'CREATE_AD',
-  DELETE_AD: 'DELETE_AD'
+  DELETE_AD: 'DELETE_AD',
+  VERIFY_CARD: 'VERIFY_CARD',
+  ADD_CARD: 'ADD_CARD',
+  DELETE_CARD: 'DELETE_CARD',
 };
 
 module.exports = AuditLogActions;
