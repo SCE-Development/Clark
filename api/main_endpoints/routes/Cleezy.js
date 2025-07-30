@@ -14,6 +14,7 @@ const {
 const logger = require('../../util/logger');
 const { Cleezy } = require('../../config/config.json');
 const { ENABLED } = Cleezy;
+const cleezyHelpers = require('../util/cleezyHelpers.js');
 
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
@@ -26,28 +27,14 @@ router.get('/list', async (req, res) => {
       disabled: true
     });
   }
-  const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
-    const response = await axios.get(CLEEZY_URL + '/list', {
-      params: {
-        page,
-        ...(search !== undefined && { search }),
-        // eslint-disable-next-line camelcase
-        sort_by: sortColumn,
-        order: sortOrder
-      },
-    });
-    const { data = [], total, rows_per_page: rowsPerPage } = response.data;
-    const returnData = data.map(element => {
-      const u = new URL(element.alias, URL_SHORTENER_BASE_URL);
-      return { ...element, link: u.href };
-    });
-    res.json({ data: returnData, total, rowsPerPage });
+    const returnData = await cleezyHelpers.searchCleezyUrls(req);
+    res.json(returnData);
   } catch (err) {
     logger.error('/listAll had an error', err);
     if (err.response && err.response.data) {
