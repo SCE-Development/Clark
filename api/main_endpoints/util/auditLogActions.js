@@ -7,6 +7,8 @@ const AuditLogActions = {
   EMAIL_SENT: 'EMAIL_SENT',
   CHANGE_PW: 'CHANGE_PW',
   RESET_PW: 'RESET_PW',
+  CREATE_AD: 'CREATE_AD',
+  DELETE_AD: 'DELETE_AD'
 };
 
 module.exports = AuditLogActions;

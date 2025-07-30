@@ -1,96 +1,121 @@
-import { ApiResponse } from './ApiResponses';
-import { BASE_API_URL } from '../Enums';
+const express = require('express');
+const router = express.Router();
+const { OK, BAD_REQUEST, FORBIDDEN, UNAUTHORIZED, NOT_FOUND } = require('../../util/constants').STATUS_CODES;
+const {
+  decodeToken,
+  checkIfTokenSent,
+} = require('../util/token-functions.js');
+const logger = require('../../util/logger');
+const Advertisement = require('../models/Advertisement');
+const AuditLog = require('../models/AuditLog.js');
+const AuditLogActions = require('../util/auditLogActions.js');
 
+router.get('/', async (req, res) => {
+  const count = await Advertisement.countDocuments();
+  const random = Math.floor(Math.random() * count);
 
-export async function getAd() {
-  let status = new ApiResponse();
-  try {
-    const res = await fetch (BASE_API_URL + '/api/Advertisement/');
-    if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
-    } else {
-      status.error = true;
-    }
-  } catch (err) {
-    status.responseData = err;
-    status.error = true;
+  Advertisement.findOne().skip(random)
+    .then(items => {
+      res.status(OK).send(items || {});
+    })
+    .catch(error => {
+      res.sendStatus(BAD_REQUEST);
+    });
+});
+
+router.get('/getAllAdvertisements', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
   }
-  return status;
-}
+  Advertisement.find()
+    .then(items => res.status(OK).send(items))
+    .catch(error => {
+      res.sendStatus(BAD_REQUEST);
+    });
+});
 
-export async function getAds(token) {
-  let status = new ApiResponse();
+router.post('/createAdvertisement', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const user = await decodeToken(req)
+  if (!user) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
+
+  const newAd = new Advertisement({
+    message: req.body.message,
+    expireDate: req.body.expireDate
+  });
+
   try {
-    const res = await fetch(BASE_API_URL + '/api/Advertisement/getAllAdvertisements',
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
+    const createdAd = await Advertisement.create(newAd);
+    await AuditLog.create({
+      userId: user._id,
+      action: AuditLogActions.CREATE_AD,
+      details: {
+        createdBy: user.email,
+        message: createdAd.message,
+        expireDate: createdAd.expireDate,
+        advertisementId: createdAd._id
+      }
+    }).catch(logger.error)
+
+    res.status(OK).send(createdAd)
+  } catch (error) {
+    logger.error('Error creating ad:', error);
+    res.sendStatus(BAD_REQUEST)
+  }
+});
+
+router.post('/deleteAdvertisement', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    return res.sendStatus(FORBIDDEN);
+  } else if (!await decodeToken(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const user = await decodeToken(req)
+  if (!user) {
+    return res.sendStatus(UNAUTHORIZED)
+  }
+
+  try {
+    const adToDelete = await Advertisement.findById(req.body._id)
+
+    if (!adToDelete) {
+      return res.sendStatus(NOT_FOUND)
+    }
+
+    const deleteResult = await Advertisement.deleteOne({_id: req.body._id})
+
+    if(deleteResult.deletedCount < 1) {
+      return res.sendStatus(NOT_FOUND)
+    }
+
+    AuditLog.create({
+      userId: user._id,
+      action: AuditLogActions.DELETE_AD,
+      details: {
+        deletedBy: user.email,
+        deleted_ad: {
+          id: adToDelete._id,
+          message: adToDelete.message,
+          deletedAt: new Date()
         }
       }
-    );
-    if (res.ok) {
-      status.responseData = await res.json();
-    } else {
-      status.error = true;
-    }
-  } catch (err) {
-    status.responseData = err;
-    status.error = true;
-  }
-  return status;
-}
+    }).catch(logger.error)
 
-export async function createAd(newAd, token) {
-  let status = new ApiResponse();
-  try {
-    const res = await fetch(BASE_API_URL + '/api/Advertisement/createAdvertisement',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(newAd)
-      }
-    );
-    if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
-    } else {
-      status.error = true;
-    }
-
-  } catch (err) {
-    status.responseData = err;
-    status.error = true;
+    res.sendStatus(OK)
+  } catch (error) {
+    logger.error('Error deleting ad:', error)
+    res.sendStatus(BAD_REQUEST)
   }
-  return status;
-}
+});
 
-export async function deleteAd(newAd, token) {
-  let status = new ApiResponse();
-  try {
-    const res = await fetch(BASE_API_URL + '/api/Advertisement/deleteAdvertisement',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(newAd)
-      }
-    );
-    if (res.ok) {
-      const result = await res.json();
-      status.responseData = res;
-    } else {
-      status.error = true;
-    }
-  } catch (err) {
-    status.responseData = err;
-    status.error = true;
-  }
-  return status;
-}
+module.exports = router;
