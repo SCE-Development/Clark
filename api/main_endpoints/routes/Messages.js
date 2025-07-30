@@ -84,14 +84,12 @@ router.post('/send', async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   } else {
-    // Assume user passed a non null/undefined token
     const userObj = decodeToken(req);
     if (!userObj) {
       return res.sendStatus(UNAUTHORIZED);
     }
     nameToUse = userObj.firstName;
     userId = userObj._id;
-
   }
   try {
     writeMessage(id, `${message}`, `${nameToUse}:`);
@@ -103,7 +101,6 @@ router.post('/send', async (req, res) => {
     }).catch(err => {
       logger.error('Error in /send ChatMessage.create: ', err);
     });
-    
     return res.json({ status: 'Message sent' });
   } catch (error) {
     logger.error('Error in /send writeMessage: ', error);
@@ -120,7 +117,6 @@ router.get('/getLatestMessage', async (req, res) => {
   ];
 
   const missingValue = required.find(({value}) => !value);
-
   if (missingValue){
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
@@ -128,7 +124,6 @@ router.get('/getLatestMessage', async (req, res) => {
 
   try {
     const user = await User.findOne({apiKey});
-
     if(!user){
       return res.sendStatus(UNAUTHORIZED);
     }
@@ -153,7 +148,6 @@ router.get('/listen', async (req, res) => {
   ];
 
   const missingValue = required.find(({value}) => !value);
-
   if (missingValue){
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
@@ -183,7 +177,6 @@ router.get('/listen', async (req, res) => {
       }
 
       const { _id } = result;
-
       numberOfConnections[_id] = numberOfConnections[_id] ? numberOfConnections[_id] + 1 : 1;
 
       const headers = {
