@@ -68,8 +68,9 @@ export default function AuditLogPage() {
     const url = new URL('/api/AuditLog/listen', BASE_API_URL);
     const eventSource = new EventSource(url.href);
 
-    eventSource.onmessage = () => {
-      getAuditLogsFromDB();
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setAuditLogsData(prev => ({items: [data.message, ...prev.items], totalLogs: prev.totalLogs + 1}));
     };
 
     eventSource.onerror = () => {
