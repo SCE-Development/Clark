@@ -28,8 +28,9 @@ const AuditLogSchema = new Schema(
 
 AuditLogSchema.index({ _id: 1, action: 1 });
 
-AuditLogSchema.post('save', function(doc) {
-  writeLogToClient({message: 'Audit logs updated.'});
+AuditLogSchema.post('save', async function(doc) {
+  const newDoc = await doc.constructor.findById(doc._id).populate('userId', 'firstName lastName email');
+  writeLogToClient({message: newDoc});
 });
 
 module.exports = mongoose.model('AuditLog', AuditLogSchema);
