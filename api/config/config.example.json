@@ -29,5 +29,8 @@
   "officeAccessCard": {
     "API_KEY": "NOTHING_REALLY"
   },
+  "LED_SIGN": {
+    "ENABLED": false
+  },
   "secretKey": "super duper secret key"
 }
