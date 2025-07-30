@@ -21,6 +21,8 @@ const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
 const {mockDayMonthAndYear, revertClock} = require('../util/mocks/Date.js');
 
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js')
 
 let app = null;
 let test = null;
@@ -43,9 +45,6 @@ const {
 } = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const { getMemberExpirationDate } = require('../../api/main_endpoints/util/userHelpers.js');
-
-const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
-const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
 
 chai.should();
 chai.use(chaiHttp);
@@ -212,52 +211,159 @@ describe('User', () => {
       expect(result).to.have.status(NOT_FOUND);
     });
 
-    it('Should return statusCode 200 and a message ' +
-      'if a user was edited', async () => {
-      const user = {
-        _id: id,
-        email: 'd@e.f',
-        token: token,
-        firstName: 'pinkUnicorn',
-        discordID: '0987654321',
-        numberOfSemestersToSignUpFor: undefined
-      };
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/edit', user);
-      expect(result).to.have.status(OK);
-      result.body.should.be.a('object');
-      result.body.should.have.property('message');
-    });
+    describe('create audit log on user change', async () => {
 
-    it('Should create an audit log when a user is updated', async () => {
-      // ensure Audit log DB starts fresh before this test
-      await AuditLog.deleteMany({});
-      // update email, firstname, password, and discordID
-      const user = {
-        _id: id,
-        email: 'newemail@gmail.com',
-        password: 'newPassword',
-        token: token,
-        firstName: 'Newname',
-        discordID: '421482148',
-        numberOfSemestersToSignUpFor: undefined
-      };
-      setTokenStatus(true, user);
+      // create clean testUser before each test
+      let testUser;
 
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/edit', user
-      );
-      expect(result).to.have.status(OK);
+      beforeEach(async () => {
+        await User.deleteMany({});
+        testUser = await new User({
+          email: 'a@b.c',
+          password: 'Passw0rd',
+          firstName: 'first-name',
+          lastName: 'last-name',
+          major: 'Computer Science'
+        }).save();
+        
+        setTokenStatus(true, testUser); 
+      })
 
-      const auditEntry = await AuditLog.findOne().lean();
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+      });
 
-      expect(auditEntry).to.exist;
-      expect(auditEntry).to.have.property('userId');
-      expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
-      expect(auditEntry.details.updatedInfo).to.have.property('password', true);
-      await AuditLog.deleteMany({});
-    });
+      it('Should create an audit log when a user is updated (no password change)' + 'not create an audit log for password change', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'Newname',
+          email: 'a@b.c',
+          token
+        });
+        
+        expect(res).to.have.status(OK);
+        res.body.should.be.a('object');
+        res.body.should.have.property('message');
+    
+        const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean();
+        expect(auditEntry).to.exist;
+        expect(auditEntry.details.fieldChanges.firstName).to.have.deep.equal({
+          from: 'first-name',
+          to: 'Newname'
+        });
+
+        // make sure pw change log doesn't exist
+        const changePWlog = await AuditLog.findOne({
+          userId: id,
+          action: AuditLogActions.CHANGE_PW
+        }).lean()
+        expect(changePWlog).to.not.exist
+      });
+
+      it('Should create an audit log when a user changes their password (no profile update)', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'first-name',
+          email: 'a@b.c',
+          password: 'Newpassw0rd',
+          token
+        })
+
+        expect(res).to.have.status(OK)
+
+        const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean()
+        expect(auditEntry).to.exist
+        expect(auditEntry.action).to.equal(AuditLogActions.CHANGE_PW)
+        expect(auditEntry).to.not.have.property('password')
+      })
+
+      it('Should create both audit logs when password and profile info are updated', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'Newname',
+          email: 'a@b.c',
+          password: 'Newpassword1',
+          discordID: 'anotherID',
+          token
+        })
+       
+        expect(res).to.have.status(OK);
+
+        const changePwLog = await AuditLog.findOne({ action: AuditLogActions.CHANGE_PW }).lean();
+        const updateUserLog = await AuditLog.findOne({ action: AuditLogActions.UPDATE_USER }).lean();
+
+        expect(changePwLog).to.exist;
+        expect(updateUserLog).to.exist;
+      });
+
+      it('Should track profile changes in audit log with correct from/to values', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'Newname',
+          lastName: 'Newlastname',
+          email: 'a@b.c',
+          password: 'Newpassword1',
+          discordID: 'anotherID',
+          major: 'Software Engineering',
+          token
+        });
+
+        expect(res).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.UPDATE_USER,
+          documentId: testUser._id
+        }).lean()
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry.details).to.have.property('fieldChanges');
+
+        // track firstName change
+        expect(auditEntry.details.fieldChanges).to.have.property('firstName');
+        expect(auditEntry.details.fieldChanges.firstName).to.have.deep.equal({
+          from: 'first-name',
+          to: 'Newname'
+        });
+
+        // track lastName change
+        expect(auditEntry.details.fieldChanges).to.have.property('lastName')
+        expect(auditEntry.details.fieldChanges.lastName).to.have.deep.equal({
+          from: 'last-name',
+          to: 'Newlastname'
+        });
+
+        // track major change
+        expect(auditEntry.details.fieldChanges).to.have.property('major');
+        expect(auditEntry.details.fieldChanges.major).to.have.deep.equal({
+          from: 'Computer Science',
+          to: 'Software Engineering'
+        });
+    
+        // Should NOT track unchanged fields + password field
+        expect(auditEntry.details.fieldChanges).to.not.have.property('password')
+        expect(auditEntry.details.fieldChanges).to.not.have.property('email');
+      });
+
+      it('Should not create audit log when no fields actually change', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          email: 'a@b.c',
+          password: 'Passw0rd',
+          firstName: 'first-name',
+          lastName: 'last-name',
+          major: 'Computer Science'
+        })
+        
+        expect(res).to.have.status(OK);
+    
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.UPDATE_USER || AuditLogActions.CHANGE_PW,
+          documentId: testUser._id
+        }).lean()
+    
+        expect(auditEntry).to.not.exist;
+      });
+    })
   });
 
   describe('/POST getUserById', () => {

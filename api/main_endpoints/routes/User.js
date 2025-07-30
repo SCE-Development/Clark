@@ -24,6 +24,8 @@ const {
   SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const AuditLog = require('../models/AuditLog.js');
+const AuditLogActions = require('../util/auditLogActions.js');
 
 const logger = require('../../util/logger');
 
@@ -31,9 +33,6 @@ const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
-
-const AuditLogActions = require('../util/auditLogActions.js');
-const AuditLog = require('../models/AuditLog.js');
 
 // Delete a member
 router.post('/delete', async (req, res) => {
@@ -198,6 +197,25 @@ router.post('/edit', async (req, res) => {
   const query = { _id: req.body._id };
   let user = req.body;
 
+  // keep track of user in db
+  const existingUser = await User.findById(req.body._id);
+  if (!existingUser) {
+    return res.status(NOT_FOUND).send({ message: 'User not found.' });
+  }
+
+  // Track field changes
+  const fieldChanges = {};
+  const fieldsToTrack = ['firstName', 'lastName', 'email', 'accessLevel', 'major', 'discordID', 'emailOptIn', 'membershipValidUntil'];
+
+  fieldsToTrack.forEach(field => {
+    if (user[field] !== undefined && user[field] !== existingUser[field]) {
+      fieldChanges[field] = {
+        from: existingUser[field],
+        to: user[field]
+      };
+    }
+  });
+
   if (typeof req.body.numberOfSemestersToSignUpFor !== 'undefined') {
     user.membershipValidUntil = getMemberExpirationDate(
       parseInt(req.body.numberOfSemestersToSignUpFor)
@@ -213,6 +231,14 @@ router.post('/edit', async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
     user.password = result;
+
+    // create audit log for password change 
+    AuditLog.create({
+      userId: decoded._id,
+      action: AuditLogActions.CHANGE_PW,
+      details: { email: existingUser.email, userId: user._id }, 
+    }).catch(logger.error);
+
   } else {
     // omit password from the object if it is falsy
     // i.e. an empty string, undefined or null
@@ -236,24 +262,28 @@ router.post('/edit', async (req, res) => {
     if (result.nModified < 1) {
       return res
         .status(NOT_FOUND)
-        .send({ message: `${query.email} not found.` });
+        .send({ message: `${existingUser.email} not found.` });
     }
 
-    const sanitizedUser = {...user}; // shallow copy of the user; doesn't affect original
+    if (Object.keys(fieldChanges).length > 0) {
+      const sanitizedUser = {...user};
+      if ('password' in sanitizedUser) {
+        sanitizedUser.password = true;
+      }
 
-    if ('password' in sanitizedUser) {
-      sanitizedUser.password = true;
+      AuditLog.create({
+        userId: decoded._id, // person who did modification
+        action: AuditLogActions.UPDATE_USER,
+        documentId: user._id,
+        details: {
+          updatedInfo: sanitizedUser,
+          fieldChanges: fieldChanges
+        }
+      }).catch(logger.error);
     }
-
-    AuditLog.create({
-      userId: decoded._id, // the user making the update
-      action: AuditLogActions.UPDATE_USER,
-      documentId: user._id, // the user affected by the update
-      details: {updatedInfo: sanitizedUser}
-    }).catch(logger.error);
-
+    
     return res.status(OK).send({
-      message: `${query.email} was updated.`,
+      message: `${existingUser.email} was updated.`,
       membershipValidUntil: user.membershipValidUntil
     });
   });
@@ -272,8 +302,9 @@ router.post('/getPagesPrintedCount', (req, res) => {
         apiEndpoint: 'user/PagesPrintedCount',
         errorDescription: error
       };
+      logger.error(info);
 
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
     }
 
     if (!result) {
