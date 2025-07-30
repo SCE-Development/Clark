@@ -246,7 +246,7 @@ function LedSign() {
             {showInput && <div className='w-2/3 lg:w-1/2 place-content-center'>
               <input className='mt-1 mb-1 ml-4 rounded-md text-center' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
               <button className='btn w-1/4 lg:w-1/4 bg-red-400 hover:bg-sky-300 text-black ml-8 mt-3 mb-3' onClick={handleExpiration}>
-                Cancel
+                Hide
               </button>
             </div>}
             <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-2' onClick={handleStop}>
