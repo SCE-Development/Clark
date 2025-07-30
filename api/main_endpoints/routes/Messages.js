@@ -24,17 +24,6 @@ const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeToMongo = async (roomId, message, userId) => {
-  try{
-    await ChatMessage.create({
-      chatroomId: roomId,
-      text: message,
-      userId: userId
-    });
-  } catch(err){
-    logger.error('error saving message', err);
-  }
-};
 
 const writeMessage = (roomId, message, username) => {
 
@@ -102,10 +91,19 @@ router.post('/send', async (req, res) => {
     }
     nameToUse = userObj.firstName;
     userId = userObj._id;
-    await writeToMongo(id, message, userId);
+
   }
   try {
     writeMessage(id, `${message}`, `${nameToUse}:`);
+
+    ChatMessage.create({
+      chatroomId: id,
+      text: message,
+      userId: userId
+    }).catch(err => {
+      logger.error('Error in /send ChatMessage.create: ', err);
+    });
+    
     return res.json({ status: 'Message sent' });
   } catch (error) {
     logger.error('Error in /send writeMessage: ', error);
