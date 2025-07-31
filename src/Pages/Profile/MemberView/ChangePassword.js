@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { editUser } from '../../../APIFunctions/User';
-import { useUser } from '../../../Components/context/UserContext';
+import { useSCE } from '../../../Components/context/SceContext';
 
 export default function ChangePasswordModal(props) {
   const { bannerCallback = (message, color) => { }, confirmClassAddons } = props;
-  const { user } = useUser();
+  const { user } = useSCE();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

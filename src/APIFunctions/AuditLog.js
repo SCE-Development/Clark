@@ -1,12 +1,20 @@
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 
-export async function getAllLogs(page, token) {
+export async function getAllLogs(page, actionFilter, searchQuery, token) {
   const status = new ApiResponse();
   const url = new URL('/api/AuditLog/getAuditLogs', BASE_API_URL);
 
   if (page) {
     url.searchParams.append('page', page);
+  }
+
+  if (Array.isArray(actionFilter) && actionFilter.length > 0) {
+    url.searchParams.append('action', actionFilter.join(','));
+  }
+
+  if (searchQuery) {
+    url.searchParams.append('search', searchQuery);
   }
 
   try {

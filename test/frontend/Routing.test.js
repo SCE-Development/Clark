@@ -3,8 +3,7 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
-import { UserContext } from '../../src/Components/context/UserContext';
-import { AuthContext } from '../../src/Components/context/AuthContext';
+import { SceContext } from '../../src/Components/context/SceContext';
 
 import Routing from '../../src/Routing';
 import Home from '../../src/Pages/Home/Home';
@@ -41,24 +40,20 @@ if (typeof SVGElement === 'undefined') {
 }
 
 function getComponentFromRoute(route, props = adminAppProps, user = mockUser) {
-  const mockUserContext = {
+  const mockSceContext = {
     user: user,
-    setUser: () => {}
+    setUser: () => {},
+    authenticated: true,
+    setAuthenticated: () => {},
   };
 
-  const mockAuthContext = {
-    authenticated: true,
-    setAuthenticated: () => {}
-  };
 
   return mount(
-    <UserContext.Provider value={mockUserContext}>
-      <AuthContext.Provider value={mockAuthContext}>
-        <MemoryRouter initialEntries={[route]}>
-          <Routing appProps={props} />
-        </MemoryRouter>
-      </AuthContext.Provider>
-    </UserContext.Provider>
+    <SceContext.Provider value={mockSceContext}>
+      <MemoryRouter initialEntries={[route]}>
+        <Routing appProps={props} />
+      </MemoryRouter>
+    </SceContext.Provider>
   );
 }
 

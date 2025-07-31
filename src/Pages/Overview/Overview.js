@@ -8,10 +8,10 @@ import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext.js';
 
 export default function Overview() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [toggleDelete, setToggleDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paginationText, setPaginationText] = useState('');
