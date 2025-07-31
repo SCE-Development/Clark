@@ -29,7 +29,7 @@ export default function LeetCodeLeaderboard({ user }) {
       {hasError && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white">
           <div className="text-red-500 mb-4">Failed to load LeetCode page</div>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
@@ -37,7 +37,7 @@ export default function LeetCodeLeaderboard({ user }) {
           </button>
         </div>
       )}
-      <iframe 
+      <iframe
         src={iframeSrc}
         className="w-full h-full border-0"
         style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: 0 }}
@@ -47,4 +47,4 @@ export default function LeetCodeLeaderboard({ user }) {
       />
     </div>
   );
-} 
+}
