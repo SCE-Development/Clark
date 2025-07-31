@@ -209,7 +209,7 @@ describe('ShortcutSearch', () => {
       it('Should return FIVE records when query = \'Pika\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, { query: 'Pika' });
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').to.have.lengthOf(5);
+        expect(result.body.items.users).that.is.an('array').to.have.lengthOf(5);
       });
 
       beforeEach(() => {
@@ -219,7 +219,7 @@ describe('ShortcutSearch', () => {
       it('Should return FIVE records when query = \'coOl\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, queryUser);
         expect(result).to.have.status(OK);
-        expect(result.body.items).that.is.an('array').to.have.lengthOf(5);
+        expect(result.body.items.users).that.is.an('array').to.have.lengthOf(5);
       });
 
       it('Should show results sorted by best match of name and email', async () => {
