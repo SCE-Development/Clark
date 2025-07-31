@@ -1,0 +1,15 @@
+const AuditLogActions = {
+  LOG_IN: 'LOG_IN',
+  UPDATE_USER: 'UPDATE_USER',
+  PRINT_PAGE: 'PRINT_PAGE',
+  SIGN_UP: 'SIGN_UP',
+  VERIFY_EMAIL: 'VERIFY_EMAIL',
+  EMAIL_SENT: 'EMAIL_SENT',
+  CHANGE_PW: 'CHANGE_PW',
+  RESET_PW: 'RESET_PW',
+  VERIFY_CARD: 'VERIFY_CARD',
+  ADD_CARD: 'ADD_CARD',
+  DELETE_CARD: 'DELETE_CARD',
+};
+
+module.exports = AuditLogActions;

@@ -12,13 +12,16 @@ const OfficeAccessCardSchema = new Schema(
       type: Date,
       default: Date.now
     },
-    verifiedCount:{
-      type:Number,
-      default:0
+    verifiedCount: {
+      type: Number,
+      default: 1
     },
-    lastVerified:{
-      type:Date,
+    lastVerified: {
+      type: Date,
       default: Date.now
+    },
+    alias: {
+      type: String,
     }
   },
   { collection: 'OfficeAccessCards' }

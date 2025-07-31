@@ -3,7 +3,7 @@ import {
   getUserById,
   editUser,
 } from '../../APIFunctions/User';
-
+import { useSCE } from '../../Components/context/SceContext';
 import MajorDropdown from '../MembershipApplication/MajorDropdown';
 import RoleDropdown from './RoleDropdown';
 import ExpirationDropdown from './ExpirationDropdown';
@@ -12,6 +12,7 @@ import { sendVerificationEmail } from '../../APIFunctions/Mailer';
 
 
 export default function EditUserInfo(props) {
+  const { user } = useSCE();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState(null);
@@ -44,7 +45,7 @@ export default function EditUserInfo(props) {
 
   useEffect(() => {
     async function getUser() {
-      const result = await getUserById(props.match.params.id, props.user.token);
+      const result = await getUserById(props.match.params.id, user.token);
       if (result.error) {
         setUserNotFound(true);
       } else {
@@ -102,7 +103,7 @@ export default function EditUserInfo(props) {
       accessLevel,
       emailVerified,
       emailOptIn,
-    }, props.user.token);
+    }, user.token);
     if (result.error) {
       alert(
         'saving user failed. please contact dev team if retrying fails.'
@@ -293,7 +294,7 @@ export default function EditUserInfo(props) {
                         className="btn btn-success w-auto"
                         checked={emailOptIn}
                         onClick={async () => {
-                          const result = await sendVerificationEmail(email, props.user.token);
+                          const result = await sendVerificationEmail(email, user.token);
                           if (result.error) {
                             return alert(
                               'unable to send verification email.' +

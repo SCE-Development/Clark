@@ -4,14 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { getAllUrls, createUrl, deleteUrl } from '../../APIFunctions/Cleezy';
 import { trashcanSymbol } from '../Overview/SVG';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
+import { useSCE } from '../../Components/context/SceContext.js';
 
-export default function URLShortenerPage(props) {
+export default function URLShortenerPage() {
+  const { user } = useSCE();
   const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
   const [url, setUrl] = useState('');
   const [invalidUrl, setInvalidUrl] = useState();
   const [showUrlInput, setShowUrlInput] = useState(false);
-  const [useGeneratedAlias, setUseGeneratedAlias] = useState(true);
+  const [useGeneratedAlias, setUseGeneratedAlias] = useState(false);
   const [alias, setAlias] = useState('');
+  const [expDateTime, setExpDateTime] = useState('');
   const [allUrls, setAllUrls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
@@ -27,9 +30,11 @@ export default function URLShortenerPage(props) {
   const [toggleDelete, setToggleDelete] = useState(false);
   const [currentSortColumn, setCurrentSortColumn] = useState(null);
   const [currentSortOrder, setCurrentSortOrder] = useState(null);
+  const query = new URLSearchParams(window.location.search);
+  const rawData = query.get('data');
 
-  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
-  const LABEL_CLASS = 'block text-sm font-medium leading-6 text-gray-300';
+  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-slate-800 dark:text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
+  const LABEL_CLASS = 'block text-sm font-medium leading-6 text-slate-800 dark:text-gray-300';
 
   /**
    * Cleezy page is disabled by default since you have to run the Cleezy server
@@ -40,7 +45,7 @@ export default function URLShortenerPage(props) {
     const sortColumn = currentSortColumn ?? 'created_at';
     const sortOrder = currentSortOrder ?? 'DESC';
     const urlsFromDb = await getAllUrls({
-      token: props.user.token,
+      token: user.token,
       page: page,
       search: searchQuery,
       sortColumn: sortColumn,
@@ -58,16 +63,24 @@ export default function URLShortenerPage(props) {
   }
 
   async function handleCreateUrl() {
+    const expiresAt = expDateTime ? new Date(expDateTime).toISOString() : null;
     const response = await createUrl(
       url.trim(),
       alias.trim(),
-      props.user.token
+      expiresAt,
+      user.token
     );
     if (!response.error) {
-      setAllUrls([...allUrls, response.responseData]);
+      if (page === 0){
+        if (allUrls.length >= rowsPerPage){
+          allUrls.pop();
+        }
+        allUrls.unshift(response.responseData);
+      }
       setAliasTaken(false);
       setUrl('');
       setAlias('');
+      setExpDateTime('');
       setShowUrlInput(false);
       setTotal(total + 1);
       setSuccessMessage(`Sucessfully created shortened link ${response.responseData.link}`);
@@ -77,7 +90,7 @@ export default function URLShortenerPage(props) {
       return true;
     } else {
       setAliasTaken(true);
-      setErrorAlertMessage('That alias is taken!');
+      setErrorAlertMessage(response.responseData || 'Unknown error during URL creation!');
       return false;
     }
   }
@@ -99,7 +112,7 @@ export default function URLShortenerPage(props) {
     const regex = /^[a-zA-Z0-9]+$/;
     if (searchQuery === '' || regex.test(searchQuery)) {
       setInvalidSearch(false);
-      getCleezyUrls(page, searchQuery);
+      getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
     } else {
       setInvalidSearch(true);
       setErrorAlertMessage('Search query cannot contain special characters');
@@ -111,8 +124,7 @@ export default function URLShortenerPage(props) {
   }
 
   async function handleDeleteUrl(alias) {
-
-    const response = await deleteUrl(alias, props.user.token);
+    const response = await deleteUrl(alias, user.token);
     if (!response.error) {
       setAllUrls(allUrls.filter(url => url.alias !== alias));
       setTotal(total - 1);
@@ -169,7 +181,19 @@ export default function URLShortenerPage(props) {
   }, [alias]);
 
   useEffect(() => {
-    getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
+    if (rawData) {
+      const parsedObject = JSON.parse(decodeURIComponent(rawData));
+
+      if (!parsedObject) return;
+      setAllUrls([parsedObject]);
+
+      // remove ?data=... from URL
+      const url = new URL(window.location);
+      url.searchParams.delete('data');
+      window.history.replaceState({}, '', url);
+    } else {
+      getCleezyUrls(page, searchQuery, currentSortColumn, currentSortOrder);
+    }
   }, [page, currentSortColumn, currentSortOrder]);
 
   function maybeRenderErrorAlert() {
@@ -230,7 +254,7 @@ export default function URLShortenerPage(props) {
     if (!showUrlInput) {
       return (
         <button
-          className="btn btn-outline text-base leading-7 text-gray-300"
+          className="btn btn-outline text-base leading-7 dark:text-gray-300"
           onClick={() => setShowUrlInput(true)}
         >
           + Create a new link
@@ -241,27 +265,28 @@ export default function URLShortenerPage(props) {
     return (<div>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-300">
+          <h2 className="text-base font-semibold leading-7 text-slate-800 dark:text-gray-300">
             Create a new link
           </h2>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 grid-cols-full sm:grid-cols-6">
-            <div className="col-span-full sm:col-span-4">
-              <label htmlFor="url" className={LABEL_CLASS}>
-                Original URL
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="url"
-                  id="url"
-                  placeholder="https://example.com"
-                  value={url}
-                  onChange={e => setUrl(e.target.value)}
-                  className="w-full text-sm input input-bordered sm:text-base"
-                />
+            {!useGeneratedAlias && (
+              <div className="sm:col-span-4">
+                <label htmlFor="email" className={LABEL_CLASS}>
+                  Alias
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="alias"
+                    placeholder='myurl'
+                    name="alias"
+                    value={alias}
+                    onChange={e => setAlias(e.target.value)}
+                    className="w-full text-sm input input-bordered sm:text-base"
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="col-span-3">
               <div className="form-control">
@@ -271,30 +296,44 @@ export default function URLShortenerPage(props) {
                 </label>
               </div>
             </div>
-            {!useGeneratedAlias && (
 
-              <div className="sm:col-span-4">
-                <label htmlFor="email" className={LABEL_CLASS}>
-                  Alias
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="alias"
-                    name="alias"
-                    value={alias}
-                    onChange={e => setAlias(e.target.value)}
-                    className="w-full text-sm input input-bordered sm:text-base"
-                  />
-                </div>
+            <div className="col-span-full sm:col-span-4">
+              <label htmlFor="url" className={LABEL_CLASS}>
+                  Original URL
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="url"
+                  id="url"
+                  placeholder="https://example.com"
+                  value={url}
+                  onChange={e => setUrl(e.target.value)}
+                  className="w-full text-sm input input-bordered sm:text-base mb-2"
+                />
               </div>
-            )}
+              <label htmlFor="expDateTime" className={LABEL_CLASS}>
+                  Optional Expiration Date & Time
+              </label>
+              <div className="mt-2">
+                <input
+                  type="datetime-local"
+                  value={expDateTime}
+                  onChange={(e) => setExpDateTime(e.target.value)}
+                  className="w-full text-sm input input-bordered sm:text-base mb-2"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Time is in your local timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone}).
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
-          onClick={() => setShowUrlInput(false)} type="button" className="text-sm font-semibold leading-6 text-gray-300">
+          onClick={() => setShowUrlInput(false)} type="button" className="text-sm font-semibold leading-6 text-slate-800 dark:text-gray-300">
           Cancel
         </button>
         <button
@@ -304,7 +343,7 @@ export default function URLShortenerPage(props) {
           disabled={!url || (!useGeneratedAlias && !alias)}
           onClick={() => maybeSubmitUrl()}
         >
-          Save
+            Save
         </button>
       </div>
     </div>);
@@ -383,7 +422,7 @@ export default function URLShortenerPage(props) {
   return (
   // the below input layout is taken from
   // https://tailwindui.com/components/application-ui/forms/form-layouts
-    <div className='overview-container bg-gradient-to-r from-gray-800 to-gray-600 min-h-[100dvh]'>
+    <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
       <ConfirmationModal {... {
         headerText: `Delete ${urlToDelete.alias} for ${urlToDelete.url} ?`,
         bodyText: `Are you sure you want to delete 
@@ -406,8 +445,8 @@ export default function URLShortenerPage(props) {
           {successMessage &&
             <div>
               <div role="alert" className="alert alert-success mt-6">
-                <svg xmlns="http://www.w3.org/2000/svg" className="text-white fill-none stroke-current shrink-0 h-6 w-6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span className='text-white'>{successMessage}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="text-slate-800 dark:text-white fill-none stroke-current shrink-0 h-6 w-6" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span className='text-slate-800 dark:text-white'>{successMessage}</span>
               </div>
             </div>
           }
@@ -419,14 +458,15 @@ export default function URLShortenerPage(props) {
               {maybeRenderSearch()}
             </div>
             <div className='overflow-x-auto transition'>
-              <table className='table px-3 block text-sm leading-6 text-gray-300'>
+              <table className='table px-3 block text-sm leading-6 text-slate-800 dark:text-gray-300'>
                 <thead>
                   <tr>
                     {[
-                      { title: 'URL', className: 'text-base text-white/70', columnName: 'alias' },
-                      { title: 'Created At', className: 'text-base text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
-                      { title: 'Times Used', className: 'text-base text-white/70 text-center', columnName: 'used' },
-                      { title: 'Delete', className: 'text-base text-white/70 text-center' }
+                      { title: 'URL', className: 'text-base text-slate-800 dark:text-white/70', columnName: 'alias' },
+                      { title: 'Created At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'created_at' },
+                      { title: 'Expires At', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'expires_at' },
+                      { title: 'Times Used', className: 'text-base text-slate-800 dark:text-white/70 hidden text-center sm:table-cell', columnName: 'used' },
+                      { title: 'Delete', className: 'text-base text-slate-800 dark:text-white/70 text-center' }
                     ].map(({ title, className, columnName = null }) => (
                       <th
                         className={`${className}`}
@@ -457,8 +497,29 @@ export default function URLShortenerPage(props) {
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
                         <td className='hidden md:table-cell'>
-                          <div className='flex items-center justify-center'>
-                            {new Date(url.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}                            </div>
+                          <div className='flex flex-col items-center'>
+                            <span className='block'>
+                              {new Date(url.created_at.replace(' ', 'T') + 'Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
+                            </span>
+                            <span className='block text-sm text-blue-400'>
+                              {new Date(url.created_at.replace(' ', 'T') + 'Z').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="hidden md:table-cell">
+                          {url.expires_at ? (
+                            <div className="flex flex-col items-center">
+                              <span className='block'>
+                                {new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric'})}
+                              </span>
+                              <span className='block text-sm text-blue-400'>
+                                {new Date(url.expires_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center text-white-500">-</div>
+                          )}
+
                         </td>
                         <td className='hidden md:table-cell'>
                           <div className='flex items-center justify-center'>
@@ -483,7 +544,7 @@ export default function URLShortenerPage(props) {
               </table>
               {allUrls.length === 0 && (
                 <div className='flex flex-row w-100 justify-center'>
-                  <p className='text-lg text-white/70 mt-5 mb-5'>No results found!</p>
+                  <p className='text-lg text-slate-800 dark:text-white/70 mt-5 mb-5'>No results found!</p>
                 </div>
               )}
               {maybeRenderPagination()}

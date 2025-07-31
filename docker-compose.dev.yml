@@ -1,12 +1,4 @@
 services:
-  redis:
-    container_name: sce-redis-dev
-    image: redis:latest
-    ports:
-      - '6379:6379'
-    restart: always
-    volumes:
-      - sce_redis_data_dev:/data/redis
   mongodb:
     container_name: sce-mongodb-dev
     restart: always
@@ -45,6 +37,8 @@ services:
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/cloud_api:/app/cloud_api
+      - ./api/.eslintrc.json:/app/.eslintrc.json
+      - ./.eslintignore:/app/.eslintignore
   main-endpoints:
     container_name: sce-main-endpoints-dev
     build:
@@ -58,7 +52,6 @@ services:
       - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api-dev:8082/cloudapi
       - DATABASE_HOST=sce-mongodb-dev
-      - REDIS_HOST_URL=redis://sce-redis-dev:6379
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
@@ -68,15 +61,15 @@ services:
     stdin_open: true
     links:
       - mongodb
-      - redis
     depends_on:
       - mongodb
-      - redis
     volumes:
       - ./api/config:/app/config
       - ./api/package.json:/app/package.json
       - ./api/util:/app/util/
       - ./api/main_endpoints:/app/main_endpoints
+      - ./api/.eslintrc.json:/app/.eslintrc.json
+      - ./.eslintignore:/app/.eslintignore
 
   frontend:
     container_name: sce-frontend-dev
@@ -89,6 +82,7 @@ services:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
+      - ESLINT_NO_DEV_ERRORS=true
 
     ports:
       - '3000:3000'
@@ -102,6 +96,9 @@ services:
       - ./package.json:/frontend/package.json
       - ./src:/frontend/src/
       - ./public:/frontend/public/
+      - ./.babelrc:/frontend/.babelrc
+      - ./.eslintrc.json:/frontend/.eslintrc.json
+      - ./.eslintignore:/frontend/.eslintignore
   
   nginx:
     container_name: sce-nginx-dev
@@ -120,4 +117,3 @@ services:
 
 volumes:
   sce_mongodb_data_dev:
-  sce_redis_data_dev:

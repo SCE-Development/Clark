@@ -12,7 +12,10 @@ import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
-export default function Printing(props) {
+import { useSCE } from '../../Components/context/SceContext.js';
+
+export default function Printing() {
+  const { user, setUser } = useSCE();
   const [dragActive, setDragActive] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [numberOfPagesInPdfPreview, setNumberOfPagesInPdfPreview] = useState(0);
@@ -40,8 +43,8 @@ export default function Printing(props) {
 
   async function getNumberOfPagesPrintedSoFar() {
     const result = await getPagesPrinted(
-      props.user.email,
-      props.user.token,
+      user.email,
+      user.token,
     );
     setPrinterHealthy(!result.error);
     if (!result.error) {
@@ -185,17 +188,24 @@ export default function Printing(props) {
   }
 
   async function handlePrinting() {
+    if (PdfFile.size > 1024 * 1024 * 150) {
+      setPrintStatus('File exceeds 150 MB size limit');
+      setPrintStatusColor('error');
+      return;
+    }
+
     // send print request with files and configuratiosn in formData
     const data = new FormData();
+
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    let status = await printPage(data, props.user.token);
+    let status = await printPage(data, user.token);
 
     if (!status.error) {
       editUser(
-        { ...props.user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        props.user.token,
+        { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
+        user.token,
       );
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
@@ -389,7 +399,7 @@ export default function Printing(props) {
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
               </svg>
               <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">PDF only, max 10MB</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">PDF only, max 150MB</p>
             </div>
           </label>
           <input id="dropzone-file" type="file"
@@ -440,5 +450,4 @@ export default function Printing(props) {
     </div>
   );
 }
-
 

@@ -19,6 +19,7 @@ const {
 } = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
+const {mockDayMonthAndYear, revertClock} = require('../util/mocks/Date.js');
 
 
 let app = null;
@@ -41,6 +42,10 @@ const {
   initializeDiscordAPIMock
 } = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
+const { getMemberExpirationDate } = require('../../api/main_endpoints/util/userHelpers.js');
+
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
 
 chai.should();
 chai.use(chaiHttp);
@@ -223,6 +228,35 @@ describe('User', () => {
       expect(result).to.have.status(OK);
       result.body.should.be.a('object');
       result.body.should.have.property('message');
+    });
+
+    it('Should create an audit log when a user is updated', async () => {
+      // ensure Audit log DB starts fresh before this test
+      await AuditLog.deleteMany({});
+      // update email, firstname, password, and discordID
+      const user = {
+        _id: id,
+        email: 'newemail@gmail.com',
+        password: 'newPassword',
+        token: token,
+        firstName: 'Newname',
+        discordID: '421482148',
+        numberOfSemestersToSignUpFor: undefined
+      };
+      setTokenStatus(true, user);
+
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/edit', user
+      );
+      expect(result).to.have.status(OK);
+
+      const auditEntry = await AuditLog.findOne().lean();
+
+      expect(auditEntry).to.exist;
+      expect(auditEntry).to.have.property('userId');
+      expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
+      expect(auditEntry.details.updatedInfo).to.have.property('password', true);
+      await AuditLog.deleteMany({});
     });
   });
 
@@ -445,6 +479,241 @@ describe('User', () => {
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/apikey', user);
       expect(result).to.have.status(UNAUTHORIZED);
+    });
+  });
+
+  describe('GET getNewPaidMembersThisSemester', () => {
+    it('Should return status code 200 and valid token sent', async () => {
+      setTokenStatus(true);
+      const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 403 if no token is passed in', async () => {
+      const result = await test.sendGetRequest('/api/user/getNewPaidMembersThisSemester');
+      expect(result).to.have.status(FORBIDDEN);
+    });
+
+    it('Should return statusCode 401 if an invalid' +
+      'token was passed in', async () => {
+      setTokenStatus(false);
+      const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    describe('1st Semester Mock Test', () => {
+      before(async () => {
+        setTokenStatus(true);
+        mockDayMonthAndYear(20, 3, 2015);
+        await User.deleteMany({});
+        const users = [
+          {
+            firstName: 'Test1',
+            lastName: 'MemberNew',
+            email: 'test1@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2015-03-01'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(1), // Semester Plan
+          },
+          {
+            firstName: 'Test2',
+            lastName: 'MemberOld',
+            email: 'test2@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2014-09-10'), // Previous Semester
+            membershipValidUntil: getMemberExpirationDate(2), // Annual Plan
+          },
+          {
+            firstName: 'Test3',
+            lastName: 'ExpiredNow',
+            email: 'test3@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2015-03-10'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(2) // Annual Plan
+          },
+          {
+            firstName: 'Test4',
+            lastName: 'NotMemberButValid',
+            email: 'test4@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.NON_MEMBER, // Not a Member
+            joinDate: new Date('2015-03-15'), // This Semester
+            //  Expiration Date Unchanged
+          },
+          {
+            firstName: 'Test5',
+            lastName: 'NotMemberExpired',
+            email: 'test5@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.NON_MEMBER, // Not a Member
+            joinDate: new Date('2014-06-10'), // Previous Semester
+            membershipValidUntil: getMemberExpirationDate(0), // Expired
+
+          },
+          {
+            firstName: 'Test6',
+            lastName: 'LongTerm',
+            email: 'test6@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2015-03-05'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(2), // Annual Plan
+          },
+          {
+            firstName: 'Test7',
+            lastName: 'ExpiredOld',
+            email: 'test7@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2015-02-15'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(1), // Semester Plan
+          },
+        ];
+        await User.insertMany(users);
+      });
+
+      beforeEach(() => {
+        setTokenStatus(true);
+      });
+
+      it('Should return response with newMembersThisYear count of 4', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.newMembersThisYear).to.equal(4);
+      });
+      it('Should return response with currentActiveMembers count of 5', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.currentActiveMembers).to.equal(5);
+      });
+      it('Should return response with newSingleSemesterMembers count of 2', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.newSingleSemesterMembers).to.equal(2);
+      });
+      it('Should return response with newAnnualMembers count of 2', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.newAnnualMembers).to.equal(2);
+      });
+
+      after(() => {
+        revertClock();
+        User.deleteMany({});
+      });
+    });
+
+    describe('2nd Semester Mock Test', () => {
+      before(async () => {
+        mockDayMonthAndYear(20, 6, 2021);
+        await User.deleteMany({});
+        const users = [
+          {
+            firstName: 'Test1',
+            lastName: 'MemberNew',
+            email: 'test1@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2021-10-05'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(1), // Semester Plan
+          },
+          {
+            firstName: 'Test2',
+            lastName: 'MemberOld',
+            email: 'test2@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2021-02-10'), // Previous Semester
+            membershipValidUntil: getMemberExpirationDate(2), // Annual Plan
+          },
+          {
+            firstName: 'Test3',
+            lastName: 'ExpiredNow',
+            email: 'test3@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2021-09-10'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(2) // Annual Plan
+          },
+          {
+            firstName: 'Test4',
+            lastName: 'NotMemberButValid',
+            email: 'test4@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.NON_MEMBER, // Not a Member
+            joinDate: new Date('2021-12-15'), // This Semester
+            //  Expiration Date Unchanged
+          },
+          {
+            firstName: 'Test5',
+            lastName: 'NotMemberExpired',
+            email: 'test5@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.NON_MEMBER, // Not a Member
+            joinDate: new Date('2021-04-10'), // Previous Semester
+            membershipValidUntil: getMemberExpirationDate(0), // Expired
+
+          },
+          {
+            firstName: 'Test6',
+            lastName: 'LongTerm',
+            email: 'test6@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2021-07-05'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(2), // Annual Plan
+          },
+          {
+            firstName: 'Test7',
+            lastName: 'ExpiredOld',
+            email: 'test7@test.com',
+            password: 'Passw0rd',
+            emailVerified: true,
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+            joinDate: new Date('2021-08-15'), // This Semester
+            membershipValidUntil: getMemberExpirationDate(1), // Semester Plan
+          },
+        ];
+        await User.insertMany(users);
+      });
+
+      beforeEach(() => {
+        setTokenStatus(true);
+      });
+
+      it('Should return response with newMembersThisYear count of 5', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.newMembersThisYear).to.equal(5);
+      });
+      it('Should return response with currentActiveMembers count of 5', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.currentActiveMembers).to.equal(5);
+      });
+      it('Should return response with newSingleSemesterMembers count of 2', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.newSingleSemesterMembers).to.equal(2);
+      });
+      it('Should return response with newAnnualMembers count of 2', async () => {
+        const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
+        expect(result.body.newAnnualMembers).to.equal(2);
+      });
+
+      after(() => {
+        revertClock();
+        User.deleteMany({});
+      });
     });
   });
 });

@@ -1,8 +1,10 @@
 import React from 'react';
 import { createAd, getAds, deleteAd } from '../../APIFunctions/Advertisement.js';
 import { useState, useEffect } from 'react';
+import { useSCE } from '../../Components/context/SceContext.js';
 
-export default function AdvertisementAdmin(props) {
+export default function AdvertisementAdmin() {
+  const { user } = useSCE();
 
   const [ads, setAds] = useState([]);
   const [message, setMessage] = useState('');
@@ -11,7 +13,7 @@ export default function AdvertisementAdmin(props) {
   const [day, setDay] = useState();
 
   async function getAdsFromDB() {
-    const adsFromDB = await getAds(props.user.token);
+    const adsFromDB = await getAds(user.token);
     if (!adsFromDB.error) {
       setAds(adsFromDB.responseData);
     }
@@ -37,13 +39,13 @@ export default function AdvertisementAdmin(props) {
     await createAd({
       message,
       expireDate,
-    }, props.user.token);
+    }, user.token);
 
     await getAdsFromDB();
   }
 
   async function deleteExpiredAds() {
-    const adsFromDB = await getAds(props.user.token);
+    const adsFromDB = await getAds(user.token);
     if (!adsFromDB.error) {
       const currentDate = new Date();
       const expiredAds = adsFromDB.responseData.filter(ad => {
@@ -52,7 +54,7 @@ export default function AdvertisementAdmin(props) {
       });
 
       for (const ad of expiredAds) {
-        await deleteAd(ad, props.user.token);
+        await deleteAd(ad, user.token);
       }
     }
   }
@@ -160,7 +162,7 @@ export default function AdvertisementAdmin(props) {
                     <button
                       className="text-sm btn btn-primary sm:text-base"
                       onClick = {async () => {
-                        await deleteAd(ad, props.user.token);
+                        await deleteAd(ad, user.token);
                         await getAdsFromDB();
                       }}
                     >

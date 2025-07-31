@@ -1,12 +1,6 @@
 version: '3'
 
 services:
-  redis:
-    container_name: sce-redis
-    image: redis:latest
-    restart: always
-    volumes:
-      - sce_redis_data:/data/redis
   mongodb:
     container_name: sce-mongodb
     restart: always
@@ -19,6 +13,11 @@ services:
     build:
       context: ./tunnel
       dockerfile: ./Dockerfile
+    command:
+      - --hosts
+      - http://host.docker.internal:11000/api/health-check
+      - http://host.docker.internal:14000/healthcheck/printer
+      - http://host.docker.internal:17000/hello
     extra_hosts:
       - "host.docker.internal:host-gateway"
   sce-cloud-api:
@@ -46,11 +45,9 @@ services:
       - CLEEZY_URL=http://cleezy-app.sce:8000
       - PRINTER_URL=http://host.docker.internal:14000
       - LED_SIGN_URL=http://host.docker.internal:11000
-      - SPEAKER_URL=http://host.docker.internal:18000
       - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb
-      - REDIS_HOST_URL=redis://sce-redis:6379
       - NODE_ENV=production
     volumes:
       - ./api/main_endpoints/routes/printing:/app/main_endpoints/routes/printing:rw
@@ -120,11 +117,11 @@ services:
     restart: 'on-failure'
     depends_on:
       - frontend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   default:
     external:
       name: sce
 
-volumes:
-  sce_redis_data:

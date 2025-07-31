@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-
+import { useSCE } from '../../Components/context/SceContext';
 import './ledsign.css';
 
-
-function LedSign(props) {
+function LedSign() {
+  const { user } = useSCE();
   const [signHealthy, setSignHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
@@ -69,10 +69,6 @@ function LedSign(props) {
 
   async function handleSend() {
     setAwaitingSignResponse(true);
-    // on the led sign server, a lower value for scroll speed means that
-    // the message scrolls faster. In the frontend, the speed input can be
-    // from 0 to 10. If the speed is 0, the sign doesn't stop, but instead
-    // just scrolls really fast.
     let correctedScrollSpeed = 10 - scrollSpeed;
     const signResponse = await updateSignText(
       {
@@ -82,10 +78,10 @@ function LedSign(props) {
         backgroundColor,
         textColor,
         borderColor,
-        email: props.user.email,
-        firstName: props.user.firstName,
+        email: user.email,
+        firstName: user.firstName,
       },
-      props.user.token
+      user.token
     );
     setRequestSuccessful(!signResponse.error);
     setAwaitingSignResponse(false);
@@ -96,10 +92,10 @@ function LedSign(props) {
     const signResponse = await updateSignText(
       {
         ledIsOff: true,
-        email: props.user.email,
-        firstName: props.user.firstName,
+        email: user.email,
+        firstName: user.firstName,
       },
-      props.user.token
+      user.token
     );
     setStopRequestSuccesful(!signResponse.error);
     setAwaitingStopSignResponse(false);
@@ -122,7 +118,7 @@ function LedSign(props) {
   useEffect(() => {
     async function checkSignHealth() {
       setLoading(true);
-      const status = await healthCheck(props.user.firstName);
+      const status = await healthCheck(user.firstName);
       if (status && !status.error) {
         setSignHealthy(true);
         const { responseData } = status;
@@ -139,7 +135,7 @@ function LedSign(props) {
       }
       setLoading(false);
     }
-    checkSignHealth(props.user.firstName);
+    checkSignHealth();
     // eslint-disable-next-line
   }, [])
 
@@ -219,7 +215,7 @@ function LedSign(props) {
                       value={value}
                       id={id}
                       onChange={onChange}
-                      className="indent-2 text-white block w-full rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="indent-2 text-black dark:text-white block w-full rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       {...rest}
                     />
                   </div>

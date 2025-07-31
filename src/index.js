@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { withRouter, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 
 import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
+import { SceContext } from './Components/context/SceContext';
+import SearchModal from './Components/ShortcutKeyModal/SearchModal';
 
-
-function App(props) {
+function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
 
   async function getAuthStatus() {
     setIsAuthenticating(true);
     const authStatus = await checkIfUserIsSignedIn();
-    setAuthenticated(!authStatus.error);
-    setUser({ token: authStatus.token, ...authStatus.responseData});
+    setAuthenticated(!authStatus.error && !!authStatus.token);
+    if (authStatus.token){
+      setUser({ token: authStatus.token, ...authStatus.responseData});
+    }
     setIsAuthenticating(false);
   }
 
@@ -27,13 +30,14 @@ function App(props) {
 
   return (
     !isAuthenticating && (
-      <BrowserRouter>
-        <Routing appProps={{ authenticated, setAuthenticated, user }} />
-      </BrowserRouter>
+      <SceContext.Provider value={{user, setUser, authenticated, setAuthenticated}}>
+        <BrowserRouter>
+          <SearchModal/>
+          <Routing/>
+        </BrowserRouter>
+      </SceContext.Provider>
     )
   );
 }
-
-export default withRouter(App);
 
 ReactDOM.render(<App />, document.getElementById('root'));

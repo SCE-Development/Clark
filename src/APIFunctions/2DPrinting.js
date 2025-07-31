@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   PrintApiResponse,
   ApiResponse
@@ -22,14 +21,13 @@ export const range = (start, end) => {
 export async function healthCheck() {
   let status = new ApiResponse();
   const url = new URL('/api/Printer/healthCheck', BASE_API_URL);
-  await axios.get(url.href)
-    .then(res => {
-      status.responseData = res.data;
-    })
-    .catch(err => {
-      status.responseData = err;
-      status.error = true;
-    });
+  try {
+    const res = await fetch(url.href);
+    status.error = !res.ok;
+  } catch (err) {
+    status.responseData = err;
+    status.error = true;
+  }
   return status;
 }
 
@@ -78,18 +76,49 @@ export function parseRange(pages, maxPages) {
 export async function printPage(data, token) {
   let status = new ApiResponse();
   const url = new URL('/api/Printer/sendPrintRequest', BASE_API_URL);
-  await axios.post(url.href, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${token}`
+
+  const pdf = data.get('file');
+  const sides = data.get('sides');
+  const copies = data.get('copies');
+  const id = crypto.randomUUID();
+  const CHUNK_SIZE = 1024 * 1024 * 0.5; // 0.5 MB ------- SENT DATA **CANNOT** EXCEED 1 MB
+  const totalChunks = Math.ceil(pdf.size / CHUNK_SIZE);
+
+  for (let i = 0; i < totalChunks; i++) {
+    let chunkData = new FormData();
+    let chunkStart = i * CHUNK_SIZE;
+    let chunk = pdf.slice(chunkStart, chunkStart + CHUNK_SIZE);
+    let isLastChunk = i === totalChunks - 1;
+
+    chunkData.append('chunk', chunk, id + '_' + i + '.CHUNK');
+    chunkData.append('totalChunks', totalChunks);
+    chunkData.append('chunkIdx', i);
+
+    if (isLastChunk) {
+      chunkData.append('id', id);
+      chunkData.append('sides', sides);
+      chunkData.append('copies', copies);
     }
-  })
-    .then(response => {
-      status.responseData = response.data.message;
-    })
-    .catch(() => {
+
+    try {
+      const res = await fetch(url.href, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: chunkData
+      });
+
+      if (isLastChunk) {
+        status.responseData = await res.json();
+      }
+    } catch (err) {
+      status.responseData = err;
       status.error = true;
-    });
+      return status;
+    }
+  }
+
   return status;
 }
 
@@ -105,20 +134,24 @@ export async function printPage(data, token) {
 export async function getPagesPrinted(email, token) {
   let status = new PrintApiResponse();
   const url = new URL('/api/user/getPagesPrintedCount', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      email
-    }, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }
-    )
-    .then(res => {
-      status.pagesUsed = res.data;
-    })
-    .catch(() => {
-      status.error = true;
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
     });
+    if (res.ok) {
+      const response = await res.json();
+      status.pagesUsed = response;
+    } else {
+      status.error = true;
+    }
+  } catch (err) {
+    status.responseData = err;
+    status.error = true;
+  }
   return status;
 }

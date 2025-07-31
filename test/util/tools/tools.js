@@ -1,4 +1,6 @@
 const { SceHttpServer } = require('../../../api/util/SceHttpServer');
+const fs = require('fs');
+const path = require('path');
 
 let serverInstance = null;
 
@@ -29,10 +31,18 @@ function terminateServer(done) {
   serverInstance.closeConnection(done);
 }
 
+function createFakeChunk(dir, name, mtime) {
+  const filePath = path.join(dir, name);
+  fs.writeFileSync(filePath, '');
+  fs.utimesSync(filePath, 0, mtime, () => {});
+  return filePath;
+}
+
 // Exporting functions
 module.exports = {
   emptySchema,
   insertItem,
   initializeServer,
-  terminateServer
+  terminateServer,
+  createFakeChunk
 };

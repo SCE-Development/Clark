@@ -1,9 +1,9 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
 const mongoose = require('mongoose');
-const redisClient = require('../../api/main_endpoints/util/redis-client.js');
 const bcrypt = require('bcryptjs');
 const User = require('../../api/main_endpoints/models/User');
+const PasswordReset = require('../../api/main_endpoints/models/PasswordReset');
 const EmailHelpers = require('../../api/main_endpoints/util/emailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
@@ -16,6 +16,8 @@ const {
   CONFLICT
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
+
+const {decodeToken} = require('../../api/main_endpoints/util/token-functions.js');
 
 let app = null;
 let test = null;
@@ -32,8 +34,11 @@ const {
 const { checkIfPageCountResets } = require('../../api/main_endpoints/util/userHelpers.js');
 const { mockDayMonthAndYear, revertClock } = require('../util/mocks/Date.js');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
-chai.should();
 
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+
+chai.should();
 chai.use(chaiHttp);
 
 // Our parent block
@@ -50,6 +55,7 @@ describe('Auth', () => {
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
+    tools.emptySchema(PasswordReset);
     done();
   });
 
@@ -139,6 +145,81 @@ describe('Auth', () => {
       expect(verificationArgs).to.eql([user.firstName + ' ' + user.lastName, user.email]);
       expect(result).to.have.status(OK);
     });
+    it('Should allow login with correct credentials after registering a user', async () => {
+      const user = {
+        email: 'logintest@gmail.com',
+        password: 'ValidTestPass123!',
+        firstName: 'Test',
+        lastName: 'User'
+      };
+
+      try {
+      // register the user first
+        const registerUser = await test.sendPostRequest('/api/Auth/register', user);
+        expect(registerUser).to.have.status(OK);
+
+        // verify the email
+        await User.updateOne({email: user.email}, {$set: {emailVerified: true}});
+
+        // then try logging in with the same credentials
+        const loginUser = await test.sendPostRequest('/api/Auth/login', {
+          email: user.email,
+          password: user.password
+        });
+
+        expect(loginUser).to.have.status(OK);
+        expect(loginUser.body).to.have.property('token');
+
+        const token = loginUser.body.token;
+        expect(token).to.be.a('string');
+        expect(token.startsWith('JWT ')).to.be.true;
+
+        const mockRequest = {
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        };
+
+        const decodedPayload = decodeToken(mockRequest);
+        const expectedPayload = {
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'logintest@gmail.com',
+          accessLevel: MEMBERSHIP_STATE.PENDING,
+          pagesPrinted: 0,
+          _id: decodedPayload._id,
+          iat: decodedPayload.iat,
+          exp: decodedPayload.exp,
+        };
+
+        expect(decodedPayload).to.deep.equal(expectedPayload);
+      } finally {
+        await User.deleteOne({email: user.email});
+      }
+    });
+
+    it('Should create an audit log entry on successful signup', async () => {
+      const registerPayload = {
+        email: 'newuser@example.com',
+        password: 'Passw0rd123!',
+        firstName: 'Testfirst',
+        lastName: 'Testlast'
+      };
+
+      // ensure Audit log and User DB starts fresh before this test
+      await AuditLog.deleteMany({});
+      await User.deleteOne({email: registerPayload.email});
+
+      const res = await test.sendPostRequest('/api/Auth/register', registerPayload);
+      expect(res).to.have.status(OK);
+
+      const auditEntry = await AuditLog.findOne().lean();
+
+      expect(auditEntry).to.exist;
+      expect(auditEntry).to.have.property('userId');
+      expect(auditEntry.details).to.have.property('email', registerPayload.email);
+
+    });
   });
 
   describe('/POST login', () => {
@@ -170,6 +251,82 @@ describe('Auth', () => {
       const result = await test.sendPostRequest(
         '/api/Auth/login', user);
       expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    describe('with an existing user', () => {
+      let user;
+
+      before(async () => {
+        user = new User({
+          _id: new mongoose.Types.ObjectId(),
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+          apiKey: null
+        });
+        await user.save();
+      });
+
+      after(async () => {
+        await User.deleteOne({ email: 'logintest@gmail.com' });
+      });
+
+      beforeEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+        sinon.restore();
+      });
+
+      it('Should create an audit log entry on successful login', async () => {
+        const loginPayload = {
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+        };
+
+        const res = await test.sendPostRequest('/api/Auth/login', loginPayload);
+        expect(res).to.have.status(OK);
+        expect(res.body).to.have.property('token');
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.LOG_IN,
+          details: {email: loginPayload.email},
+        });
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry.details).to.have.property('email', loginPayload.email);
+      });
+
+      it('Should return 200 even if audit logging fails', async () => {
+        const auditStub = sinon.stub(AuditLog, 'create').rejects(new Error('Simulated audit log failure'));
+
+        const loginPayload = {
+          email: 'logintest@gmail.com',
+          password: 'Passw0rd',
+        };
+
+        try {
+
+          const res = await test.sendPostRequest('/api/Auth/login', loginPayload);
+          expect(res).to.have.status(OK);
+          expect(res.body).to.have.property('token');
+
+          const auditEntry = await AuditLog.findOne({
+            action: AuditLogActions.LOG_IN,
+            'details.email': loginPayload.email,
+          });
+
+          expect(auditEntry).to.not.exist;
+        } finally {
+          auditStub.restore();
+        }
+      });
     });
   });
 
@@ -231,7 +388,10 @@ describe('Auth', () => {
 
   describe('/POST validatePasswordReset', () => {
     before(async () => {
-      await redisClient.set('valid token', 'valid id 321', { EX: 60 * 60 });
+      await new PasswordReset({
+        resetToken: 'valid token',
+        userId: 'valid id 321',
+      }).save();
     });
 
     it('Should return statusCode 404 if the token is invalid', async () => {
@@ -252,12 +412,17 @@ describe('Auth', () => {
   });
 
   describe('/POST resetPassword', () => {
-    let createdId = mongoose.Types.ObjectId('valid id 123');
+    let createdId = new mongoose.Types.ObjectId();
     let createdUser = null;
 
-    before(async () => {
-      await redisClient.set('valid token', String(createdId), { EX: 60 * 60 });
-
+    beforeEach(async () => {
+      await PasswordReset.deleteMany({});
+      await User.deleteMany({});
+      createdId = new mongoose.Types.ObjectId();
+      await new PasswordReset({
+        resetToken: 'valid token',
+        userId: String(createdId),
+      }).save();
       const newUser = new User({
         _id: createdId,
         email: 'abcdef123@gmail.com',
@@ -270,6 +435,7 @@ describe('Auth', () => {
 
     after(async () => {
       if (createdUser) await User.deleteOne({ _id: createdUser._id});
+      await PasswordReset.deleteMany({});
     });
 
     it('Should return statusCode 401 if the password is too weak', async () => {
@@ -372,5 +538,4 @@ describe('Auth', () => {
       expect(result).to.be.false;
     });
   });
-
 });

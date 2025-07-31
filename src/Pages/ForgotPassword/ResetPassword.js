@@ -11,6 +11,8 @@ const ForgotPassword = () => {
     color: null,
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const searchParams = new URLSearchParams(useLocation().search);
 
   const checkValidPassword = () => {
@@ -71,17 +73,25 @@ const ForgotPassword = () => {
       return;
     }
 
+    setLoading(true);
     const resetStatus = await resetPassword(password, searchParams.get('id'), searchParams.get('resetToken'));
     if (resetStatus.error) {
       setStatus({
         color: 'text-red-500',
         message: resetStatus.responseData.data.message || 'An error occurred. Please try again later.'
       });
+      setLoading(false);
     } else {
       setStatus({
         color: 'text-green-500',
         message: 'Your password has been reset.'
       });
+      setSuccess(true);
+      setLoading(false);
+
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 5000);
     }
   }
 
@@ -105,7 +115,7 @@ const ForgotPassword = () => {
     <div className = 'flex-none md:flex'>
       <div className='rounded-3xl backdrop-blur-sm shadow-2xl md:w-1/3 mt-12 md:mt-20 pb-8 mb-auto mx-auto px-5 text-center items-center justify-center'>
         <div className='flex justify-center'>
-          <img id='img' alt='sce logo' src='https://sce.sjsu.edu/images/SCE-glow.png' width='2rem' className='w-2/3 px-auto'/>
+          <img id='img' alt='sce logo' src={`${window.location.origin}/images/SCE-glow.webp`} width='2rem' className='w-2/3 px-auto'/>
         </div>
         <form onSubmit={handleSubmit} className='flex flex-col items-center'>
 
@@ -127,9 +137,21 @@ const ForgotPassword = () => {
 
           {status.message && <p className={`${status.color}` + ' mt-5'}>{status.message}</p>}
 
-          <button type='submit' disabled={status.message.includes('expired reset token')} className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
-            Reset Password
-          </button>
+          {success && (
+            <div className='label-text'>
+              Redirecting to login in 5 seconds…
+              <br />
+              <a href='/login' className='underline'>
+                Click here to go now
+              </a>
+            </div>
+          )}
+
+          {!success && (
+            <button type='submit' disabled={loading || status.message.includes('expired reset token')} className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
+              {loading ? 'Loading...' : 'Reset Password'}
+            </button>
+          )}
         </form>
       </div>
       <Background />

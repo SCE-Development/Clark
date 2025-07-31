@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
 const svg = require('./SVG');
-import { getAllUsers, deleteUserByID } from '../../APIFunctions/User';
+import { getAllUsers, deleteUserByID, getNewPaidMembersThisSemester } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 // import { membershipState } from '../../Enums';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
+import { useSCE } from '../../Components/context/SceContext.js';
 
-export default function Overview(props) {
+export default function Overview() {
+  const { user } = useSCE();
   const [toggleDelete, setToggleDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paginationText, setPaginationText] = useState('');
@@ -22,19 +24,20 @@ export default function Overview(props) {
   const [query, setQuery] = useState('');
   const [currentSortColumn, setCurrentSortColumn] = useState('joinDate');
   const [currentSortOrder, setCurrentSortOrder] = useState('desc');
+  const [clubRevenueData, setClubRevenueData] = useState({newMembersThisYear:0, newSingleSemesterMembers:0, newAnnualMembers:0, currentActiveMembers:0});
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
 
-  async function deleteUser(user) {
+  async function deleteUser(userToDel) {
     const response = await deleteUserByID(
-      user._id,
-      props.user.token
+      userToDel._id,
+      user.token
     );
     if (response.error) {
       alert('unable to delete user, check logs');
     }
-    if (user._id === props.user._id) {
+    if (userToDel._id === user._id) {
       // logout
       window.localStorage.removeItem('jwtToken');
       window.location.reload();
@@ -42,13 +45,13 @@ export default function Overview(props) {
     }
     setUsers(
       users.filter(
-        child => !child._id.includes(user._id)
+        child => !child._id.includes(userToDel._id)
       )
     );
     setTotal(total - 1);
     setQueryResult(
       queryResult.filter(
-        child => !child._id.includes(user._id)
+        child => !child._id.includes(userToDel._id)
       )
     );
   }
@@ -62,7 +65,7 @@ export default function Overview(props) {
     const sortColumn = currentSortOrder === 'none' ? 'joinDate' : currentSortColumn;
     const sortOrder = currentSortOrder === 'none' ? 'desc' : currentSortOrder;
     const apiResponse = await getAllUsers({
-      token: props.user.token,
+      token: user.token,
       query: query,
       page: page,
       sortColumn: sortColumn,
@@ -76,8 +79,16 @@ export default function Overview(props) {
     setLoading(false);
   }
 
+  async function getClubRevenueData() {
+    const response = await getNewPaidMembersThisSemester(user.token);
+    if(!response.error) {
+      setClubRevenueData(response.responseData);
+    }
+  }
+
   useEffect(() => {
     callDatabase();
+    getClubRevenueData();
   }, [page, currentSortColumn, currentSortOrder]);
 
   useEffect(() => {
@@ -223,7 +234,7 @@ export default function Overview(props) {
       } />
       <div className='px-4'>
         <button className="my-8 btn btn-primary lg:max-w-[20%]" onClick={async () => {
-          const result = await getAllUsersValidVerifiedAndSubscribed(props.user.token);
+          const result = await getAllUsersValidVerifiedAndSubscribed(user.token);
           if (result.error) {
             return alert(
               'unable to download email list: ' + result.error
@@ -239,6 +250,10 @@ export default function Overview(props) {
         }}>
             Download subscribed emails
         </button>
+        <div className='mb-8 text-base text-gray-900 dark:text-white'>
+          <p className='mb-2'>Total New Members this Year: {clubRevenueData.newMembersThisYear}</p>
+          <p className='mb-2'>Current Active Members: {clubRevenueData.currentActiveMembers}</p>
+        </div>
         <div className='px-6 border rounded-lg border-gray-300 dark:border-white/10'>
           <div className='py-6'>
             <label className="w-full form-control">

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-
 import { getAllUserSubscribedAndVerified } from '../../../APIFunctions/User';
+import { useSCE } from '../../../Components/context/SceContext';
 
-function AdminDashboard(props) {
+function AdminDashboard() {
+  const { user } = useSCE();
   const [buttonText, setButtonText] = useState('Send Unsubscribe Email to All');
   const [buttonColor, setButtonColor] = useState('');
 
   const handleButtonClick = async () => {
-    let status = await getAllUserSubscribedAndVerified(props.user.token);
+    let status = await getAllUserSubscribedAndVerified(user.token);
     if (status.responseData === 'OK') {
       setButtonText('Successfully sent unsubscribe emails!');
       setButtonColor('green');
