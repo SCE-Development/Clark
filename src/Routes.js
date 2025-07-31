@@ -83,7 +83,7 @@ export const memberRoutes = [
   },
   {
     Component: LeetCodeLeaderboard,
-    path: '/leetcode',
+    path: '/leetcode-leaderboard',
     pageName: 'LeetCode Leaderboard',
     allowedIf: allowedIf.MEMBER,
     redirect: '/login',
