@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getAllLogs } from '../../APIFunctions/AuditLog';
+import { getAllLogs, createAuditLogEventSource } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
 import { useSCE } from '../../Components/context/SceContext';
 import AuditLogCard from './Components/AuditLogCard';
-import { BASE_API_URL } from '../../Enums';
 
 export default function AuditLogPage() {
   const [auditLogsData, setAuditLogsData] = useState({ items: [], totalLogs: 0 });
@@ -66,18 +65,11 @@ export default function AuditLogPage() {
 
     fetchData();
 
-    const url = new URL('/api/AuditLog/listen', BASE_API_URL);
-    url.searchParams.append('token', token);
-    const eventSource = new EventSource(url.href);
-
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setAuditLogsData(prev => ({items: [data.message, ...prev.items], totalLogs: prev.totalLogs + 1}));
-    };
-
-    eventSource.onerror = () => {
-      setError('Failed to load audit logs');
-    };
+    const eventSource = createAuditLogEventSource(
+      token,
+      data => setAuditLogsData(prev => ({ items: [data.message, ...prev.items], totalLogs: prev.totalLogs + 1 })),
+      () => setError('Failed to load audit logs')
+    );
 
     return () => {
       eventSource.close();
