@@ -19,8 +19,7 @@ const { Cleezy } = require('../../config/config.json');
 const { ENABLED } = Cleezy;
 const cleezy = require('../routes/Cleezy.js');
 
-// Search for all members using either first name, last name or email
-// Search for all cleezy urls using either alias or url
+// Search for all members using either first name, last name or email and for all cleezy urls using either alias or url
 router.post('/', async function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
@@ -63,8 +62,8 @@ router.post('/', async function(req, res) {
   }
 
   // Find top 5 matching users and sort results based on best match of name or email
-  User.find({}, { password: 0 })
-    .then(users => {
+    User.find({}, { password: 0 })
+    .then(async users => {
       const matchingUsers = users.map(user => {
         const firstNameScore = levenshteinDistance(req.body.query, user.firstName);
         const lastNameScore = levenshteinDistance(req.body.query, user.lastName);
@@ -75,59 +74,47 @@ router.post('/', async function(req, res) {
         };
       });
 
-      const items = matchingUsers
+      const users = matchingUsers
         .sort((a, b) => a.score - b.score)
         .slice(0, 5)
         .map(item => item.user);
-      res.status(OK).send({ items });
-    })
-    .catch((error) => {
-      logger.error('/shortcutsearchusers encountered an error:', error);
-      res.sendStatus(BAD_REQUEST);
-      // Tie-breaker: alphabetical email sort
-      return a.email.localeCompare(b.email);
-    };
-  };
 
-  // Find user and sort results based on best match of full name or email
-  try{
-    const users = await User.find(maybeOr, { password: 0 }).limit(5);
-    users.sort(sortByMatch(req.body.query));
+      const cleezyRes = await cleezy.searchCleezyUrls(req);
 
-    // Short circuit if cleezy is disabled
-    if(!ENABLED) {
-      return res.status(OK).json({
-        items: {users, cleezyData: []},
-        disabled: true
-      });
-    }
+      // Short circuit if cleezy is disabled
+      if(!ENABLED) {
+        return res.status(OK).json({
+          items: {users, cleezyData: []},
+          disabled: true
+        });
+      }
 
-    const cleezyRes = await cleezy.searchCleezyUrls(req);
-    if (cleezyRes.status !== OK) {
-      logger.warn('Cleezy search failed', {
-        status: cleezyRes.status
-      });
+      if (cleezyRes.status !== OK) {
+        logger.warn('Cleezy search failed', {
+          status: cleezyRes.status
+        });
+
+        return res.status(OK).send({
+          cleezyStatus: cleezyRes.status,
+          items: { users }
+        });
+      }
 
       return res.status(OK).send({
-        cleezyStatus: cleezyRes.status,
-        items: { users }
-      });
-    }
-
-    return res.status(OK).send({
       items: {
         users,
         cleezyData: cleezyRes.data,
       }
+      .catch((error) => {
+        logger.error('/shortcutsearch encountered an error:', { error, query: req.body.query });
+        if (error.response && error.response.data) {
+          res.status(error.response.status).json({ error: error.response.data });
+        } else {
+          res.status(SERVER_ERROR).json({ error: 'Failed to search for Users or URLs' });
+        }
+      }),
     });
-  } catch (error) {
-    logger.error('/shortcutsearch encountered an error:', { error, query: req.body.query });
-    if (error.response && error.response.data) {
-      res.status(error.response.status).json({ error: error.response.data });
-    } else {
-      res.status(SERVER_ERROR).json({ error: 'Failed to search for Users or URLs' });
-    }
-  }
+  });
 });
 
 module.exports = router;
