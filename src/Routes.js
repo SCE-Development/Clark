@@ -18,6 +18,7 @@ import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
+import LeetCodeLeaderboard from './Pages/LeetCodeLeaderboard/LeetCodeLeaderboard.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -79,6 +80,13 @@ export const memberRoutes = [
     allowedIf: allowedIf.MEMBER,
     redirect: '/login',
     hideFromShortcutSuggestions: true
+  },
+  {
+    Component: LeetCodeLeaderboard,
+    path: '/leetcode',
+    pageName: 'LeetCode Leaderboard',
+    allowedIf: allowedIf.MEMBER,
+    redirect: '/login',
   },
   ...authenticatedRoutes,
 ];

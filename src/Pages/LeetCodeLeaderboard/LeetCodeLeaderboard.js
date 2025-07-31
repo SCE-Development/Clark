@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { membershipState } from '../../Enums';
 
-export default function LeetCode({ user }) {
+export default function LeetCodeLeaderboard({ user }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -44,7 +44,6 @@ export default function LeetCode({ user }) {
         title="LeetCode Leaderboard"
         onLoad={handleLoad}
         onError={handleError}
-        frameBorder="0"
       />
     </div>
   );
