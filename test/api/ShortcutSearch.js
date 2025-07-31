@@ -206,20 +206,20 @@ describe('ShortcutSearch', () => {
         expect(result.body.items.users).that.is.an('array').to.have.lengthOf(5);
       });
 
-      it('Should return no records when query = \'Pika\'', async () => {
+      it('Should return FIVE records when query = \'Pika\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, { query: 'Pika' });
         expect(result).to.have.status(OK);
-        expect(result.body.items.users).that.is.an('array').that.is.empty;
+        expect(result.body.items).that.is.an('array').to.have.lengthOf(5);
       });
 
       beforeEach(() => {
         setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.ADMIN });
       });
 
-      it('Should return THREE records when query = \'coOl\'', async () => {
+      it('Should return FIVE records when query = \'coOl\'', async () => {
         const result = await test.sendPostRequestWithToken(token, url, queryUser);
         expect(result).to.have.status(OK);
-        expect(result.body.items.users).that.is.an('array').to.have.lengthOf(3);
+        expect(result.body.items).that.is.an('array').to.have.lengthOf(5);
       });
 
       it('Should show results sorted by best match of name and email', async () => {
@@ -227,10 +227,10 @@ describe('ShortcutSearch', () => {
         expect(result).to.have.status(OK);
         expect(result.body.items.users.map(u => u.email)).to.eql([
           'test1@test.com',
-          'test0@test.com',
-          'test00@test.com',
-          'test2@test.com',
-          'test3@test.com'
+          'test3@test.com',
+          'test5@test.com',
+          'test7@test.com',
+          'test0@test.com'
         ]);
       });
     });

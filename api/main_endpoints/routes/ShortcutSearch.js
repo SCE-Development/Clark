@@ -37,68 +37,53 @@ router.post('/', async function(req, res) {
     });
   }
 
-  const query = req.body.query.replace(/[*\s]/g, '');
+  // function for calculating how similar strings are to each other via levenshtein distance
+  function levenshteinDistance(a, b) {
+    const m = a.length;
+    const n = b.length;
 
-  // Create a fuzzy regex pattern to match characters in order, e.g., "pone" -> /p.*o.*n.*e/i
-  const fuzzyPattern = query.split('').join('.*');
-  const pattern = new RegExp(fuzzyPattern, 'i');
+    if (m === 0) return n;
+    if (n === 0) return m;
 
-  const maybeOr = {
-    $or: [
-      {
-        $expr: {
-          $regexMatch: {
-            input: { $concat: ['$firstName', '$lastName'] },
-            regex: pattern,
-          }
-        }
-      },
-      { email: { $regex: new RegExp(query, 'i')} }
-    ]
-  };
+    const dp = Array.from({ length: m + 1 }, () => Array(n + 1));
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
 
-  /**
-   * Function to calculate scores based on token matches for sorting
-   * @param {string} str - The string to score against
-   * @param {Array} tokens - The tokens to match against the string
-   * @return {number} - The score based on matches
-   */
-  const tokenScores = (str, tokens) => {
-    return tokens.reduce((score, token) => {
-      if (str.startsWith(token)) return score; // highest score for exact match
-      if (str.includes(token)) return score + 1; // lower score for partial match
-      return score + 2; // lowest score for no match
-    }, 0);
-  };
-
-  /**
-   * Sorts the user items based on the query match
-   * @param {string} query input string to match against
-   * @returns {function} - A comparison function for sorting
-   */
-  const sortByMatch = (query) => {
-    const input = query.toLowerCase().split(/[\s@._-]+/).filter(Boolean);
-
-    return (a, b) => {
-      const aName = (a.firstName + ' ' + a.lastName).toLowerCase();
-      const bName = (b.firstName + ' ' + b.lastName).toLowerCase();
-      const aEmail = a.email.toLowerCase();
-      const bEmail = b.email.toLowerCase();
-
-      // First Priority: sort by name match
-      const nameScoreA = tokenScores(aName, input);
-      const nameScoreB = tokenScores(bName, input);
-      if (nameScoreA !== nameScoreB) {
-        return nameScoreA - nameScoreB;
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        dp[i][j] = Math.min(
+          dp[i - 1][j] + 1,
+          dp[i][j - 1] + 1,
+          dp[i - 1][j - 1] + cost
+        );
       }
+    }
+    return dp[m][n];
+  }
 
-      // Second Priority: sort by email match
-      const emailScoreA = tokenScores(aEmail, input);
-      const emailScoreB = tokenScores(bEmail, input);
-      if (emailScoreA !== emailScoreB) {
-        return emailScoreA - emailScoreB;
-      }
+  // Find top 5 matching users and sort results based on best match of name or email
+  User.find({}, { password: 0 })
+    .then(users => {
+      const matchingUsers = users.map(user => {
+        const firstNameScore = levenshteinDistance(req.body.query, user.firstName);
+        const lastNameScore = levenshteinDistance(req.body.query, user.lastName);
+        const emailScore = levenshteinDistance(req.body.query, user.email);
+        return {
+          user,
+          score: Math.min(firstNameScore, lastNameScore, emailScore)
+        };
+      });
 
+      const items = matchingUsers
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 5)
+        .map(item => item.user);
+      res.status(OK).send({ items });
+    })
+    .catch((error) => {
+      logger.error('/shortcutsearchusers encountered an error:', error);
+      res.sendStatus(BAD_REQUEST);
       // Tie-breaker: alphabetical email sort
       return a.email.localeCompare(b.email);
     };
