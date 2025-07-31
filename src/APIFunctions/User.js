@@ -147,17 +147,7 @@ export async function editUser(userToEdit, token) {
  * @param {string} token The JWT token to allow the user to be edited
  */
 
-/*
-remove updateLastLoginDate function!!
 
-export async function updateLastLoginDate(email, token) {
-  await editUser({ email, lastLogin: Date.now() }, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-}
-  */
 
 /**
  * Deletes a user by an ID
