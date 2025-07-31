@@ -68,7 +68,7 @@ const AuditLogCard = ({ log, index }) => {
   };
 
   return (
-    <div className='p-6 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 dark:hover:bg-gray-750'>
+    <div className='p-6 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 dark:hover:bg-gray-700'>
       <div className='flex items-start justify-between'>
         <div className='flex-1'>
           <div className='flex items-center space-x-3 mb-2'>
