@@ -64,13 +64,12 @@ router.post('/updateSignText', async (req, res) => {
     userId: user._id,
     action: AuditLogActions.UPDATE_SIGN,
     details: {
-      new_sign_text: req.body.text,
+      newSignText: req.body.text,
       editedBy: user.email
     }
   }).catch(logger.error);
 
   return res.sendStatus(status);
 });
-
 
 module.exports = router;
