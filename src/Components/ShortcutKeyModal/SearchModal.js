@@ -80,11 +80,11 @@ export default function SearchModal() {
 
     const topFiveItems = suggestions.slice(0, SHORTCUT_MAX_RESULT);
     return (
-      <ul className='suggestion-list'>
+      <ul className='suggestion-list bg-slate-100 dark:bg-slate-800 text-[1.2rem] overflow-x-hidden mt-2'>
         {topFiveItems.map((r, index) => (
           <li
             key={r.path} // Use r.path as key
-            className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
+            className={`h-14 flex items-center p-2 truncate cursor-pointer ${index === selectItem ? ' bg-gray-500 text-white dark:bg-slate600 rounded p-1' : ''}`}
             onMouseMove={() => setSelectItem(index)}
             onClick={() => {
               if (externalSiteRoute(r)) return;
@@ -92,14 +92,20 @@ export default function SearchModal() {
               setOpen(false);
             }}
           >
-            <span style={{ marginRight: '0.5rem' }}>
-              {r.type === 'user' ? '👤' : '📄'}
-            </span>
-            <div className='text-wrapper'>
-              {r.pageName}
-              <div className='hidden-tab'>
-                {selectItem === index && (r.type === 'external_url' ? r.path : `${window.location.origin}${r.path}`)}
+            <div className='flex items-center justify-between w-full'>
+              <div className='flex items-center truncate'>
+                <span className='mr-3'>
+                  {r.type === 'user' ? '👤' : '📄'}
+                </span>
+                <span className='text-wrapper truncate'>
+                  {r.pageName}
+                </span>
               </div>
+              {selectItem === index && (
+                <div className='hidden-tab text-sm text-gray-100 dark:text-slate-100 pl-2'>
+                  {r.type === 'external_url' ? r.path : window.location.origin + r.path}
+                </div>
+              )}
             </div>
           </li>
         ))}
@@ -277,14 +283,16 @@ export default function SearchModal() {
   if (!open) return null;
 
   return (
-    <div className='shortcut-search-modal'>
+    <div className='fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-[9999]'>
       <div ref={modalRef}>
-        <div className='input-wrapper'>
+        <div className='p-2 bg-white dark:bg-slate-800 rounded-lg w-full max-w-[500px] md:w-[35rem] md:max-w-none'>
           <input
             ref={inputRef}
             placeholder="Search here... (Ctrl + k)"
             value={keyword}
-            onChange={handleChanges} />
+            onChange={handleChanges} 
+            className='border-[1.5px] border-gray-600 w-full rounded p-3 h-10 text-[1.2rem] bg-transparent focus:outline-sky-600'
+            />
           <SuggestionsList />
         </div>
         <div>
