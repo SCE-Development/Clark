@@ -2,22 +2,23 @@ import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import './SearchModal.css';
 import { officerOrAdminRoutes, signedOutRoutes, memberRoutes, notAuthenticatedRoutes } from '../../Routes';
 import { membershipState } from '../../Enums';
-import { useUser } from '../context/UserContext';
-import { useAuth } from '../context/AuthContext';
-import { searchAllUsers } from '../../APIFunctions/UserSearch';
+import { useSCE } from '../context/SceContext';
+import { searchUsersAndCleezyUrls } from '../../APIFunctions/ShortcutSearch';
 
 export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
   const modalRef = useRef(null);
+  const filteredSignedOutRoutes = [...signedOutRoutes].filter(r => !r.hideFromShortcutSuggestions);
   const [keyword, setKeyword] = useState('');
-  const [suggestions, setSuggestions] = useState([...signedOutRoutes]);
+  const [suggestions, setSuggestions] = useState([...filteredSignedOutRoutes]);
   const [selectItem, setSelectItem] = useState(0);
-  const { user } = useUser();
+  const { user, authenticated } = useSCE();
   const [errorMsg, setErrorMsg] = useState('');
-  const { authenticated } = useAuth();
   // Maximum number of suggestions to display in the search dropdown
   const SHORTCUT_MAX_RESULT = 5;
+  const DEBOUNCE_TIME = 400;
+  const [isCleezyDisabled, setIsCleezyDisabled] = useState(false);
 
   /**
    * Returns the appropriate routes array based on the user's access level.
@@ -26,20 +27,20 @@ export default function SearchModal() {
   const routes = useMemo(() => {
     if (user?.accessLevel === membershipState.MEMBER)
       return [
-        ...memberRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...memberRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
     if (user?.accessLevel >= membershipState.OFFICER)
       return [
-        ...officerOrAdminRoutes.filter(r => r.pageName !== 'Edit User Info'),
-        ...signedOutRoutes
+        ...officerOrAdminRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
     if (!authenticated)
       return [
-        ...notAuthenticatedRoutes,
-        ...signedOutRoutes
+        ...notAuthenticatedRoutes.filter(r => !r.hideFromShortcutSuggestions),
+        ...filteredSignedOutRoutes
       ];
-    return [...signedOutRoutes];
+    return [...filteredSignedOutRoutes];
   }, [user, authenticated]);
 
   /**
@@ -53,8 +54,22 @@ export default function SearchModal() {
 
   /** This helper function clears search box and all suggestions */
   const clearSearchModal = () => {
-    setSuggestions([...signedOutRoutes]);
+    setSuggestions([...filteredSignedOutRoutes]);
     setKeyword('');
+  };
+
+  /**
+   * Displays a confirmation prompt if the selected item is an external link.
+   * @param {*} r - A route object from the suggestions list.
+   * @returns Returns false if the route is an external site and navigate user to URL shortened page.
+   */
+  const externalSiteRoute = (r) => {
+    if (r.type === 'external_url') {
+      const encodedRoute = encodeURIComponent(JSON.stringify(r));
+      window.location.href = `/short?data=${encodedRoute}`;
+      return true;
+    }
+    return false;
   };
 
   const SuggestionsList = () => {
@@ -63,12 +78,13 @@ export default function SearchModal() {
     const topFiveItems = suggestions.slice(0, SHORTCUT_MAX_RESULT);
     return (
       <ul className='suggestion-list'>
-        {topFiveItems.map((r, index) => ( // Still keep index to keep track of the selected item
+        {topFiveItems.map((r, index) => (
           <li
             key={r.path} // Use r.path as key
             className={`suggestion-item ${index === selectItem ? 'active' : ''}`}
-            onMouseEnter={() => setSelectItem(index)}
+            onMouseMove={() => setSelectItem(index)}
             onClick={() => {
+              if (externalSiteRoute(r)) return;
               window.location.href = r.path;
               setOpen(false);
             }}
@@ -79,7 +95,7 @@ export default function SearchModal() {
             <div className='text-wrapper'>
               {r.pageName}
               <div className='hidden-tab'>
-                {selectItem === index && `${window.location.origin}${r.path}`}
+                {selectItem === index && (r.type === 'external_url' ? r.path : `${window.location.origin}${r.path}`)}
               </div>
             </div>
           </li>
@@ -89,26 +105,43 @@ export default function SearchModal() {
   };
 
   /**
-   * Async function fetches all user data from the API
+   * Async function that calls an API to fetch matching users and URL data
    * @param {string} token - User's authentication token.
    * @param {string} query - The search term.
    */
-  const getUserData = async ({ token, query }) => {
+  const getUserAndCleezyData = async ({ token, query }) => {
     try {
-      const apiResponse = await searchAllUsers({
+      const apiResponse = await searchUsersAndCleezyUrls({
         token,
         query
       });
+      const {disabled, items} = apiResponse.responseData || {};
+      let userMatches = [];
+      let urlMatches = [];
+      setIsCleezyDisabled(!!disabled);
 
-      if (apiResponse.error || apiResponse.responseData.items.length === 0) return; // Exit early if there's an API error or an empty array
+      if (apiResponse.error || !items) return; // Exit early if there's an API error
 
-      const userMatches = apiResponse.responseData.items
-        .map((u) => ({
-          pageName: `${u.firstName} ${u.lastName} (${u.email})`,
-          path: `/user/edit/${u._id}`,
-          type: 'user'
-        }));
-      setSuggestions(prev => [...prev, ...userMatches]);
+      if (items.users?.length > 0) {
+        userMatches = items.users
+          .map((u) => ({
+            pageName: `${u.firstName} ${u.lastName} (${u.email})`,
+            path: `/user/edit/${u._id}`,
+            type: 'user'
+          }));
+      }
+
+      if (!isCleezyDisabled && items.cleezyData?.length > 0) {
+        urlMatches = items.cleezyData
+          .map((u) => ({
+            ...u,
+            pageName: u.alias,
+            path: u.url,
+            type: 'external_url'
+          }));
+      }
+
+      setSuggestions(prev => [...prev, ...userMatches, ...urlMatches]);
     } catch (error) {
       setErrorMsg(error.message);
     }
@@ -123,7 +156,7 @@ export default function SearchModal() {
 
     // Return if keyword is blank
     if (!keyword) {
-      setSuggestions([...signedOutRoutes]);
+      setSuggestions([...filteredSignedOutRoutes]);
       return;
     }
 
@@ -136,24 +169,30 @@ export default function SearchModal() {
 
   /**
    * A debounce function that performs the search 400ms after the user stops typing.
-   * @dependencies keyword, open, user.accessLevel
+   * @dependencies keyword, open, user.accessLevel, user.token
    */
   useEffect(() => {
-    if (!open ||
+    if (
+      !open ||
       !user.accessLevel ||
       user?.accessLevel < membershipState.OFFICER ||
-      !keyword) return;
+      !keyword
+    ) return;
 
     const debounce = setTimeout(() => {
-      getUserData({
+      getUserAndCleezyData({
         token: user.token,
-        query: keyword,
-        limit: SHORTCUT_MAX_RESULT
+        query: keyword
       });
-    }, 400);
+    }, DEBOUNCE_TIME);
 
     return () => clearTimeout(debounce);
-  }, [keyword, open, user.accessLevel]);
+  }, [
+    keyword,
+    open,
+    user.accessLevel,
+    user.token
+  ]);
 
   /**
    * Executes a search when Enter is pressed
@@ -164,6 +203,7 @@ export default function SearchModal() {
 
     const target = suggestions[selectItem];
     if (target && target.path) {
+      if (externalSiteRoute(target)) return;
       window.location.href = target.path;
       setOpen(false);
       clearSearchModal();

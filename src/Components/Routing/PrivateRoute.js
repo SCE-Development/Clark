@@ -2,16 +2,14 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { membershipState } from '../../Enums';
 import { allowedIf } from '../../Routes';
-import { useUser } from '../../Components/context/UserContext';
-import { useAuth } from '../../Components/context/AuthContext';
+import { useSCE } from '../context/SceContext';
 
 export default function PrivateRoute({
   component: Component,
   appProps,
   ...params
 }) {
-  const { user } = useUser();
-  const { authenticated } = useAuth();
+  const { user, authenticated } = useSCE();
 
   // Check if the user's access level matches with route's access grant
   const PERMISSION_LOOKUP_TABLE = {

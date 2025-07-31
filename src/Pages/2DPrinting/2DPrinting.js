@@ -12,10 +12,10 @@ import { healthCheck } from '../../APIFunctions/2DPrinting';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext.js';
 
 export default function Printing() {
-  const { user, setUser } = useUser();
+  const { user, setUser } = useSCE();
   const [dragActive, setDragActive] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [numberOfPagesInPdfPreview, setNumberOfPagesInPdfPreview] = useState(0);

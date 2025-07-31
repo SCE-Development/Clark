@@ -5,9 +5,8 @@ import './index.css';
 
 import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
-import { UserContext } from './Components/context/UserContext';
+import { SceContext } from './Components/context/SceContext';
 import SearchModal from './Components/ShortcutKeyModal/SearchModal';
-import { AuthContext } from './Components/context/AuthContext';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -31,14 +30,12 @@ function App() {
 
   return (
     !isAuthenticating && (
-      <UserContext.Provider value={{ user, setUser }}>
-        <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
-          <BrowserRouter>
-            <SearchModal/>
-            <Routing/>
-          </BrowserRouter>
-        </AuthContext.Provider>
-      </UserContext.Provider>
+      <SceContext.Provider value={{user, setUser, authenticated, setAuthenticated}}>
+        <BrowserRouter>
+          <SearchModal/>
+          <Routing/>
+        </BrowserRouter>
+      </SceContext.Provider>
     )
   );
 }

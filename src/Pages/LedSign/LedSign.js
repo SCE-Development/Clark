@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-import { useUser } from '../../Components/context/UserContext';
-
+import { useSCE } from '../../Components/context/SceContext';
 import './ledsign.css';
 
 function LedSign() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [signHealthy, setSignHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');

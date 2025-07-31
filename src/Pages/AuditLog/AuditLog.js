@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllLogs } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext';
 import AuditLogCard from './Components/AuditLogCard';
 
 export default function AuditLogPage() {
@@ -17,7 +17,7 @@ export default function AuditLogPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [applyingFilters, setApplyingFilters] = useState(false);
 
-  const user = useUser();
+  const user = useSCE();
 
   const toggleActivityFilter = activity => {
     setActivityFilters(prev => (prev.includes(activity) ? prev.filter(a => a !== activity) : [...prev, activity]));
@@ -32,6 +32,9 @@ export default function AuditLogPage() {
     'EMAIL_SENT',
     'CHANGE_PW',
     'RESET_PW',
+    'VERIFY_CARD',
+    'ADD_CARD',
+    'DELETE_CARD',
   ];
 
   const getAuditLogsFromDB = async () => {

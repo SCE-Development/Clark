@@ -1,10 +1,8 @@
 import React from 'react';
-import { useUser } from '../context/UserContext';
-import { useAuth } from '../context/AuthContext';
+import { useSCE } from '../context/SceContext';
 
 export default function UserNavBar(props) {
-  const { user } = useUser();
-  const { setAuthenticated } = useAuth();
+  const { user, setAuthenticated } = useSCE();
   const getLinkClassName = (path) => {
     const weAreAtGivenPath = path === window.location.pathname;
     let className = 'flex items-center p-2 text-gray-900 rounded-lg dark:text-white';
