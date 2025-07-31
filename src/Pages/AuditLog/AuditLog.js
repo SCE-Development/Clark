@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAllLogs, createAuditLogEventSource } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
 import { useSCE } from '../../Components/context/SceContext';
