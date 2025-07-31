@@ -7,6 +7,8 @@ export default function Login() {
   const [message, setMessage] = useState('');
   const [captchaValue, setCaptchaValue] = useState(null);
   const [captchaRef, setCaptchaRef] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -18,14 +20,16 @@ export default function Login() {
       setMessage('Please enter a valid email address.');
       return;
     }
-
+    setLoading(true);
     captchaRef.reset();
     const resetStatus = await sendPasswordReset(email, captchaValue);
     if (resetStatus.error) {
       setMessage(resetStatus.error?.response?.data?.message || 'An error occurred. Please try again later.');
     } else {
+      setSubmitted(true);
       setMessage('A password reset email has been sent to you if your email exists in our system.');
     }
+    setLoading(false);
   }
 
   return (
@@ -54,7 +58,7 @@ export default function Login() {
                   className={`${message.includes('email has been sent') ? 'text-green-500' : 'text-red-500'}` +
             ' text-sm md:text-md pt-2 w-full max-w-xs'}
                 >{message}</p>}
-                <button type='submit' className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
+                <button type='submit' disabled={loading || submitted} className='btn w-full max-w-xs mt-5' onClick={(e) => handleSubmit(e)}>
             Reset Password
                 </button>
               </form>
