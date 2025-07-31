@@ -5,7 +5,7 @@ const AuditLog = require('../models/AuditLog');
 const { OK, UNAUTHORIZED, SERVER_ERROR } = require('../../util/constants').STATUS_CODES;
 const { OFFICER } = require('../../util/constants.js').MEMBERSHIP_STATE;
 
-const { checkIfTokenSent, checkIfTokenValid } = require('../util/token-functions.js');
+const { checkIfTokenSent, checkIfTokenValid, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 
 const logger = require('../../util/logger');
 const User = require('../models/User.js');
@@ -73,6 +73,9 @@ router.get('/getAuditLogs', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
+  if (!await decodeTokenFromBodyOrQuery(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
 
   const headers = {
     'Content-Type': 'text/event-stream',
