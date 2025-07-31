@@ -121,7 +121,6 @@ router.post('/', async function(req, res) {
     const cleezyReq = {
       query: {
         search: req.body.query,
-        page: 0,
         limit: MAX_RESULT,
       }
     };
