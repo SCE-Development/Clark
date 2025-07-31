@@ -15,7 +15,7 @@ function LedSign() {
   const [backgroundColor, setBackgroundColor] = useState('#0000ff');
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
-  const [expiration, setExpiration] = useState('');
+  const [expiration, setExpiration] = useState(null);
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [awaitingStopSignResponse, setAwaitingStopSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
@@ -69,9 +69,9 @@ function LedSign() {
     }
   ];
 
+  // call this convert
   async function currentDate(){
-    const localDate = new Date().toLocaleString();
-    let localISO = new Date(localDate);
+    let localISO = new Date();
     localISO = new Date(
       localISO.getTime() - localISO.getTimezoneOffset() * 60000
     )
@@ -81,6 +81,7 @@ function LedSign() {
   }
 
   async function handleExpiration() {
+    setExpiration(null);
     setInput(!showInput);
   }
 
@@ -133,6 +134,22 @@ function LedSign() {
       );
     }
   }
+
+  function getExpirationButtonOrInput() {
+    if (showInput) {
+      return <div className='w-2/3 lg:w-1/2 place-content-center'>
+        <input className='mt-1 mb-1 ml-4 rounded-md text-center' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
+        <button className='btn w-1/4 lg:w-1/4 bg-red-400 hover:bg-sky-300 text-black ml-8 mt-3 mb-3' onClick={e => setInput(!showInput)}>
+          Cancel
+        </button>
+      </div>;
+    }
+
+    return <button className='btn w-2/3 lg:w-1/2 bg-sky-400 hover:bg-sky-300 text-black mt-2' onClick={handleExpiration}>
+      Set Expiration
+    </button>;
+  }
+
   useEffect(() => {
     async function checkSignHealth() {
       setLoading(true);
@@ -240,21 +257,14 @@ function LedSign() {
                 </div>
               ))
             }
-            <button className='btn w-2/3 lg:w-1/2 bg-sky-400 hover:bg-sky-300 text-black mt-2' onClick={handleExpiration}>
-              Set Expiration
-            </button>
-            {showInput && <div className='w-2/3 lg:w-1/2 place-content-center'>
-              <input className='mt-1 mb-1 ml-4 rounded-md text-center' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
-              <button className='btn w-1/4 lg:w-1/4 bg-red-400 hover:bg-sky-300 text-black ml-8 mt-3 mb-3' onClick={handleExpiration}>
-                Hide
-              </button>
-            </div>}
+            {getExpirationButtonOrInput()}
             <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-2' onClick={handleStop}>
               Stop
             </button>
             <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
               Send
             </button>
+            {/* wow look at that an actual example of a function call to render ui in react */}
             {renderRequestStatus()}
           </div>
         </div>
