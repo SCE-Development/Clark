@@ -19,6 +19,7 @@ export default function AuditLogPage() {
   const [applyingFilters, setApplyingFilters] = useState(false);
 
   const user = useSCE();
+  const token = user.token;
 
   const toggleActivityFilter = activity => {
     setActivityFilters(prev => (prev.includes(activity) ? prev.filter(a => a !== activity) : [...prev, activity]));
@@ -66,6 +67,7 @@ export default function AuditLogPage() {
     fetchData();
 
     const url = new URL('/api/AuditLog/listen', BASE_API_URL);
+    url.searchParams.append('token', token);
     const eventSource = new EventSource(url.href);
 
     eventSource.onmessage = (event) => {

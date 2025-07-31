@@ -7,4 +7,4 @@ function writeLogToClient(response) {
 
 }
 
-module.exports = { writeLogToClient, clients};
+module.exports = { writeLogToClient, clients };
