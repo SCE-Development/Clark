@@ -9,8 +9,7 @@ let CLEEZY_URL = process.env.CLEEZY_URL
 let URL_SHORTENER_BASE_URL =
   process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
 
-const searchCleezyUrls = async (req) => {
-  const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC', limit } = req.query;
+const searchCleezyUrls = async ({ page, search, sortColumn, sortOrder, limit }) => {
   try {
     const cleezyQuery = search?.replace(/[^a-zA-Z0-9]/g, '');
     const cleezyRes = await axios.get(CLEEZY_URL + '/list', {

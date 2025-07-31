@@ -118,14 +118,10 @@ router.post('/', async function(req, res) {
       });
     }
 
-    const cleezyReq = {
-      query: {
-        search: req.body.query,
-        limit: MAX_RESULT,
-      }
-    };
-    const cleezyRes = await cleezy.searchCleezyUrls(cleezyReq);
-
+    const cleezyRes = await cleezy.searchCleezyUrls({
+      search: req.body.query,
+      limit: MAX_RESULT
+    });
     return res.status(OK).send({
       items: {
         users,

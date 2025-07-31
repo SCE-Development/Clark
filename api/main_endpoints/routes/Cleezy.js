@@ -27,13 +27,14 @@ router.get('/list', async (req, res) => {
       disabled: true
     });
   }
+  const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
   } else if (!await decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
-    const returnData = await cleezyHelpers.searchCleezyUrls(req);
+    const returnData = await cleezyHelpers.searchCleezyUrls({ page, search, sortColumn, sortOrder });
     res.json(returnData);
   } catch (err) {
     logger.error('/listAll had an error', err);
