@@ -80,11 +80,11 @@ export default function SearchModal() {
 
     const topFiveItems = suggestions.slice(0, SHORTCUT_MAX_RESULT);
     return (
-      <ul className='suggestion-list bg-slate-100 dark:bg-slate-800 text-[1.2rem] overflow-x-hidden mt-2'>
+      <ul className='suggestion-list bg-slate-800 text-[1.2rem] overflow-x-hidden mt-2'>
         {topFiveItems.map((r, index) => (
           <li
             key={r.path} // Use r.path as key
-            className={`h-14 flex items-center p-2 truncate cursor-pointer ${index === selectItem ? ' bg-gray-500 text-white dark:bg-slate600 rounded p-1' : ''}`}
+            className={`h-16 flex items-center p-2 truncate cursor-pointer ${index === selectItem ? ' bg-slate-500 text-white rounded p-1' : ''}`}
             onMouseMove={() => setSelectItem(index)}
             onClick={() => {
               if (externalSiteRoute(r)) return;
@@ -92,20 +92,20 @@ export default function SearchModal() {
               setOpen(false);
             }}
           >
-            <div className='flex items-center justify-between w-full'>
+            <div className='flex flex-col overflow-hidden'>
               <div className='flex items-center truncate'>
                 <span className='mr-3'>
                   {r.type === 'user' ? '👤' : '📄'}
                 </span>
-                <span className='text-wrapper truncate'>
+                <span className='font-bold truncate text-white'>
                   {r.pageName}
                 </span>
               </div>
-              {selectItem === index && (
-                <div className='hidden-tab text-sm text-gray-100 dark:text-slate-100 pl-2'>
-                  {r.type === 'external_url' ? r.path : window.location.origin + r.path}
-                </div>
-              )}
+
+              <span className="text-sm truncate text-gray-300">
+                {r.type === 'external_url' ? r.path : window.location.origin + r.path}
+              </span>
+              
             </div>
           </li>
         ))}
@@ -285,7 +285,7 @@ export default function SearchModal() {
   return (
     <div className='fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-[9999]'>
       <div ref={modalRef}>
-        <div className='p-2 bg-white dark:bg-slate-800 rounded-lg w-full max-w-[500px] md:w-[35rem] md:max-w-none'>
+        <div className='p-2 bg-slate-800 rounded-lg w-full max-w-[500px] md:w-[35rem] md:max-w-none'>
           <input
             ref={inputRef}
             placeholder="Search here... (Ctrl + k)"
