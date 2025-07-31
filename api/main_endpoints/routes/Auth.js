@@ -142,15 +142,21 @@ router.post('/login', function(req, res) {
       }
 
       if (!user) {
-        res
+        return res
           .status(UNAUTHORIZED)
           .send({
             message: 'Username or password does not match our records.'
           });
-      } else {
+      } 
+
         // Check if password matches database
         user.comparePassword(req.body.password, function(error, isMatch) {
-          if (isMatch && !error) {
+          if (!isMatch && !error) {
+            return res.status(UNAUTHORIZED).send({
+              message: 'Username or password does not match our records.'
+            });
+          }
+
             if (user.accessLevel === membershipState.BANNED) {
               return res
                 .status(UNAUTHORIZED)
@@ -178,6 +184,10 @@ router.post('/login', function(req, res) {
             if (checkIfPageCountResets(user.lastLogin)) {
               user.pagesPrinted = 0;
             }
+
+            //set last login date here!!!!
+            user.lastLogin = new Date();
+
 
             // Include fields from the User model that should
             // be passed to the JSON Web Token (JWT)
@@ -208,15 +218,8 @@ router.post('/login', function(req, res) {
                 logger.error('unable to login user', error);
                 res.sendStatus(SERVER_ERROR);
               });
-          } else {
-            res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
-            });
-          }
         });
-      }
-    }
-  );
+    });
 });
 
 // Verifies the users session if they have an active jwtToken.
