@@ -59,7 +59,6 @@ router.post('/createAdvertisement', async (req, res) => {
       userId: user._id,
       action: AuditLogActions.CREATE_AD,
       details: {
-        createdBy: user.email,
         message: createdAd.message,
         expireDate: createdAd.expireDate,
         advertisementId: createdAd._id
