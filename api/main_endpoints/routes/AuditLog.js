@@ -5,10 +5,11 @@ const AuditLog = require('../models/AuditLog');
 const { OK, UNAUTHORIZED, SERVER_ERROR } = require('../../util/constants').STATUS_CODES;
 const { OFFICER } = require('../../util/constants.js').MEMBERSHIP_STATE;
 
-const { checkIfTokenSent, checkIfTokenValid } = require('../util/token-functions.js');
+const { checkIfTokenSent, checkIfTokenValid, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 
 const logger = require('../../util/logger');
 const User = require('../models/User.js');
+let { clients } = require('../util/AuditLog.js');
 
 router.get('/getAuditLogs', async (req, res) => {
   if (!checkIfTokenSent(req)) {
@@ -69,6 +70,30 @@ router.get('/getAuditLogs', async (req, res) => {
     logger.error('Failed to fetch audit logs:', error);
     res.sendStatus(SERVER_ERROR);
   }
+});
+
+router.get('/listen', async (req, res) => {
+  if (!await decodeTokenFromBodyOrQuery(req)) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache',
+    'X-Accel-Buffering': 'no'
+  };
+
+  res.writeHead(OK, headers);
+  res.flushHeaders();
+
+  const newClient = { res };
+  clients.push(newClient);
+
+  req.on('close', () => {
+    clients = clients.filter(c => c !== newClient);
+    res.end();
+  });
 });
 
 module.exports = router;
