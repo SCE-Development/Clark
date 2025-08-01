@@ -13,7 +13,6 @@ const logger = require('../../util/logger');
 const client = require('prom-client');
 const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
-const ChatMessage = require('../models/ChatMessage.js');
 
 
 router.use(bodyParser.json());
@@ -24,8 +23,7 @@ const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-
-const writeMessage = (roomId, message, username) => {
+const writeMessage = ((roomId, message, username) => {
 
   const messageObj = {
     timestamp: Date.now(),
@@ -39,13 +37,12 @@ const writeMessage = (roomId, message, username) => {
 
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
-
   // increase the total messages sent counter
   MetricsHandler.totalMessagesSent.inc();
 
   // increase the total amount of messages sent per chatroom counter
   MetricsHandler.totalChatMessagesPerChatRoom.labels(roomId).inc();
-};
+});
 
 router.post('/send', async (req, res) => {
 
@@ -68,7 +65,6 @@ router.post('/send', async (req, res) => {
   }
 
   let nameToUse = null;
-  let userId = null;
 
   if (apiKey) {
     try {
@@ -77,30 +73,20 @@ router.post('/send', async (req, res) => {
         return res.sendStatus(UNAUTHORIZED);
       }
       nameToUse = result.firstName;
-      userId = result._id;
-      await writeToMongo(id, message, userId);
     } catch (error) {
       logger.error('Error in /send User.findOne: ', error);
       return res.sendStatus(SERVER_ERROR);
     }
-  } else {
-    const userObj = decodeToken(req);
-    if (!userObj) {
-      return res.sendStatus(UNAUTHORIZED);
-    }
-    nameToUse = userObj.firstName;
-    userId = userObj._id;
   }
+
+  // Assume user passed a non null/undefined token
+  const userObj = decodeToken(req);
+  if (!userObj) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  nameToUse = userObj.firstName;
   try {
     writeMessage(id, `${message}`, `${nameToUse}:`);
-
-    ChatMessage.create({
-      chatroomId: id,
-      text: message,
-      userId: userId
-    }).catch(err => {
-      logger.error('Error in /send ChatMessage.create: ', err);
-    });
     return res.json({ status: 'Message sent' });
   } catch (error) {
     logger.error('Error in /send writeMessage: ', error);
@@ -117,23 +103,33 @@ router.get('/getLatestMessage', async (req, res) => {
   ];
 
   const missingValue = required.find(({value}) => !value);
+
   if (missingValue){
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
 
   try {
-    const user = await User.findOne({apiKey});
-    if(!user){
-      return res.sendStatus(UNAUTHORIZED);
-    }
+    User.findOne({ apiKey }, (error, result) => {
+      if (error) {
+        logger.error('/listen received an invalid API key: ', error);
+        res.sendStatus(SERVER_ERROR);
+        return;
+      }
 
-    const messages = await ChatMessage.find({chatroomId: id}).sort({createdAt: -1}).limit(20).populate('userId');
+      if (!result) { // return unauthorized if no api key found
+        return res.sendStatus(UNAUTHORIZED);
+      }
 
-    return res.status(OK).json(messages);
+      if (!lastMessageSent[id]) {
+        return res.status(OK).send('Room closed');
+      }
 
+      return res.status(OK).send(lastMessageSent[id]);
+
+    });
   } catch (error) {
-    logger.error('Error in /getLatestMessage: ', error);
+    logger.error('Error in /get: ', error);
     res.sendStatus(SERVER_ERROR);
   }
 });
@@ -148,6 +144,7 @@ router.get('/listen', async (req, res) => {
   ];
 
   const missingValue = required.find(({value}) => !value);
+
   if (missingValue){
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
@@ -177,6 +174,7 @@ router.get('/listen', async (req, res) => {
       }
 
       const { _id } = result;
+
       numberOfConnections[_id] = numberOfConnections[_id] ? numberOfConnections[_id] + 1 : 1;
 
       const headers = {
