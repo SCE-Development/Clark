@@ -7,7 +7,7 @@ import { searchUsersAndCleezyUrls } from '../../APIFunctions/ShortcutSearch';
 
 export default function SearchModal() {
   const {modalOpen, setModalOpen} = useSCE();
-  //kept original open and setOpen state variables
+  // kept original open and setOpen state variables
   const open = modalOpen;
   const setOpen = setModalOpen;
   const inputRef = useRef(null);
@@ -105,7 +105,6 @@ export default function SearchModal() {
               <span className="text-sm truncate text-gray-300">
                 {r.type === 'external_url' ? r.path : window.location.origin + r.path}
               </span>
-              
             </div>
           </li>
         ))}
@@ -290,9 +289,9 @@ export default function SearchModal() {
             ref={inputRef}
             placeholder="Search here... (Ctrl + k)"
             value={keyword}
-            onChange={handleChanges} 
-            className='border-[1.5px] border-gray-600 w-full rounded p-3 h-10 text-[1.2rem] bg-transparent focus:outline-sky-600'
-            />
+            onChange={handleChanges}
+            className='border-[1.5px] text-white border-gray-600 w-full rounded p-3 h-10 text-[1.2rem] bg-transparent focus:outline-sky-600'
+          />
           <SuggestionsList />
         </div>
         <div>
