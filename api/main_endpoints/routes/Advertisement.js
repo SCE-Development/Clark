@@ -53,7 +53,7 @@ router.post('/createAdvertisement', async (req, res) => {
 
   try {
     const createdAd = await Advertisement.create(newAd);
-    await AuditLog.create({
+    AuditLog.create({
       userId: user._id,
       action: AuditLogActions.CREATE_AD,
       details: {
