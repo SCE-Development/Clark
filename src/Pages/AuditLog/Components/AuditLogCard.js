@@ -8,12 +8,12 @@ const AuditLogCard = ({ log, index }) => {
       return null;
     }
     return (
-      <div className='mt-3 p-4 bg-gray-700 rounded-lg border border-gray-600'>
-        <h4 className='font-semibold text-gray-300 mb-2'>Details:</h4>
+      <div className='mt-3 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600'>
+        <h4 className='font-semibold text-gray-700 dark:text-gray-300 mb-2'>Details:</h4>
         <div className='space-y-1'>
           {Object.entries(details).map(([key, value]) => (
-            <div key={key} className='text-sm text-gray-300'>
-              <span className='font-medium text-gray-200'>{key}:</span> {String(value)}
+            <div key={key} className='text-sm text-gray-600 dark:text-gray-300'>
+              <span className='font-medium text-gray-800 dark:text-gray-200'>{key}:</span> {String(value)}
             </div>
           ))}
         </div>
@@ -77,7 +77,7 @@ const AuditLogCard = ({ log, index }) => {
   };
 
   return (
-    <div className='p-6 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md bg-gray-800 border border-gray-700 hover:bg-gray-750'>
+    <div className='p-6 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 dark:hover:bg-gray-700'>
       <div className='flex items-start justify-between'>
         <div className='flex-1'>
           <div className='flex items-center space-x-3 mb-2'>
@@ -85,22 +85,25 @@ const AuditLogCard = ({ log, index }) => {
               <div className='w-2 h-2 bg-gray-400 rounded-full'></div>
             </div>
             <div className='flex-1'>
-              <p className='text-lg font-medium text-white'>
-                <span className='font-semibold text-blue-400'>
+              <p className='text-lg font-medium text-gray-900 dark:text-white'>
+                <a
+                  href={`/user/edit/${log.userId?._id || log.userId}`}
+                  className='font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline cursor-pointer'
+                >
                   {log.userId ? `${log.userId.firstName} ${log.userId.lastName}` : 'Unknown User'}
-                </span>{' '}
-                <span className='text-gray-300'>{getActionDescription(log)}</span>
+                </a>{' '}
+                <span className='text-gray-700 dark:text-gray-300'>{getActionDescription(log)}</span>
               </p>
 
               {log.documentId && log.documentId !== log.userId && (
-                <p className='text-sm text-gray-400 mt-1'>
-                  Target: <span className='font-medium text-gray-300'>User {log.documentId}</span>
+                <p className='text-sm text-gray-500 dark:text-gray-400 mt-1'>
+                  Target: <span className='font-medium text-gray-700 dark:text-gray-300'>User {log.documentId}</span>
                 </p>
               )}
             </div>
           </div>
 
-          <div className='ml-5 text-sm text-gray-400'>
+          <div className='ml-5 text-sm text-gray-500 dark:text-gray-400'>
             <time dateTime={log.createdAt}>{formatTimestamp(log.createdAt)}</time>
           </div>
 
@@ -108,7 +111,7 @@ const AuditLogCard = ({ log, index }) => {
         </div>
 
         <div className='flex-shrink-0 ml-4'>
-          <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-700 text-gray-300 border border-gray-600'>
+          <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600'>
             {log.action.replace(/_/g, ' ')}
           </span>
         </div>

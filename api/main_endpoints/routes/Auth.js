@@ -155,77 +155,84 @@ router.post('/login', function(req, res) {
       }
 
       if (!user) {
-        res
+        return res
           .status(UNAUTHORIZED)
           .send({
             message: 'Username or password does not match our records.'
           });
-      } else {
-        // Check if password matches database
-        user.comparePassword(req.body.password, function(error, isMatch) {
-          if (isMatch && !error) {
-            if (user.accessLevel === membershipState.BANNED) {
-              return res
-                .status(UNAUTHORIZED)
-                .send({ message: 'User is banned.' });
-            }
-
-            // Check if the user's email has been verified
-            if (!user.emailVerified) {
-              return res
-                .status(UNAUTHORIZED)
-                .send({ message: 'Email has not been verified' });
-            }
-
-            // If the username and password matches the database, assign and
-            // return a jwt token
-            const jwtOptions = {
-              expiresIn: '2h'
-            };
-
-            // check here to see if we should reset the pagecount. If so, do it
-            if (checkIfPageCountResets(user.lastLogin)) {
-              user.pagesPrinted = 0;
-            }
-
-            // Include fields from the User model that should
-            // be passed to the JSON Web Token (JWT)
-            const userToBeSigned = {
-              firstName: user.firstName,
-              lastName: user.lastName,
-              email: user.email,
-              accessLevel: user.accessLevel,
-              pagesPrinted: user.pagesPrinted,
-              _id: user._id
-            };
-            user
-              .save()
-              .then(() => {
-                const token = jwt.sign(
-                  userToBeSigned, config.secretKey, jwtOptions
-                );
-                // Create audit log on successful sign-in
-                AuditLog.create({
-                  userId: user._id,
-                  action: AuditLogActions.LOG_IN,
-                  details: { email: user.email }
-                }).catch(logger.error);
-
-                res.json({ token: 'JWT ' + token });
-              })
-              .catch((error) => {
-                logger.error('unable to login user', error);
-                res.sendStatus(SERVER_ERROR);
-              });
-          } else {
-            res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
-            });
-          }
-        });
       }
-    }
-  );
+
+      // Check if password matches database
+      user.comparePassword(req.body.password, function(error, isMatch) {
+        if (!isMatch && !error) {
+          return res.status(UNAUTHORIZED).send({
+            message: 'Username or password does not match our records.'
+          });
+        }
+
+        if (user.accessLevel === membershipState.BANNED) {
+          return res
+            .status(UNAUTHORIZED)
+            .send({
+              message: 'The account with email ' +
+                    req.body.email +
+                    ' is banned',
+            });
+        }
+
+        // Check if the user's email has been verified
+        if (!user.emailVerified) {
+          return res
+            .status(UNAUTHORIZED)
+            .send({ message: `The email ${req.body.email} has not been verified` });
+        }
+
+        // If the username and password matches the database, assign and
+        // return a jwt token
+        const jwtOptions = {
+          expiresIn: '2h'
+        };
+
+        // check here to see if we should reset the pagecount. If so, do it
+        if (checkIfPageCountResets(user.lastLogin)) {
+          user.pagesPrinted = 0;
+        }
+
+        // set last login date here!!!!
+        user.lastLogin = new Date();
+
+
+        // Include fields from the User model that should
+        // be passed to the JSON Web Token (JWT)
+        const userToBeSigned = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          accessLevel: user.accessLevel,
+          pagesPrinted: user.pagesPrinted,
+          _id: user._id
+        };
+        user
+          .save()
+          .then(() => {
+            const token = jwt.sign(
+              userToBeSigned, config.secretKey, jwtOptions
+            );
+            // Create audit log on successful sign-in
+            AuditLog.create({
+              userId: user._id,
+              action: AuditLogActions.LOG_IN,
+              details: { email: user.email }
+            }).catch(logger.error);
+
+            res.json({ token: 'JWT ' + token });
+          })
+          .catch((error) => {
+            logger.error('unable to login user', error);
+            res.sendStatus(SERVER_ERROR);
+          });
+      });
+    });
 });
 
 // Verifies the users session if they have an active jwtToken.
