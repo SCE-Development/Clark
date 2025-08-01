@@ -122,9 +122,19 @@ router.post('/sendPasswordReset', async (req, res) => {
       });
       await passwordReset.save();
       await sendPasswordReset(resetToken, req.body.email);
+
+      // create audit log for sending reset password email
+      AuditLog.create({
+        userId: result._id,
+        action: AuditLogActions.SEND_RESET_PW_EMAIL,
+        details: {
+          email: result.email,
+        }
+      }).catch(logger.error);
     } catch (error) {
       logger.error('unable to save password reset token:', error);
     }
+
     res.sendStatus(OK);
   });
 });
@@ -342,6 +352,12 @@ router.post('/resetPassword', async (req, res) => {
     }
     user.password = req.body.password;
     await user.save();
+
+    // create audit log for user succesfully resetting password
+    AuditLog.create({
+      userId: user._id,
+      action: AuditLogActions.RESET_PW
+    }).catch(logger.error);
     await PasswordReset.deleteOne({ resetToken: req.body.resetToken });
   } catch (error) {
     logger.error('Unable to reset password:', error);
