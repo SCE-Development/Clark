@@ -151,6 +151,7 @@ router.post('/login', function(req, res) {
     },
     function(error, user) {
       if (error) {
+        logger.error('/login User.findOne had an error', error);
         return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
       }
 
