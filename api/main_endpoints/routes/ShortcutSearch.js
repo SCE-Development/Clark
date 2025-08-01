@@ -17,7 +17,8 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const logger = require('../../util/logger');
 const { Cleezy } = require('../../config/config.json');
 const { ENABLED } = Cleezy;
-const cleezy = require('../routes/Cleezy.js');
+const cleezy = require('../util/cleezyHelpers.js');
+const MAX_RESULT = 5;
 
 // Search for all members using either first name, last name or email
 // Search for all cleezy urls using either alias or url
@@ -106,7 +107,7 @@ router.post('/', async function(req, res) {
 
   // Find user and sort results based on best match of full name or email
   try{
-    const users = await User.find(maybeOr, { password: 0 }).limit(5);
+    const users = await User.find(maybeOr, { password: 0 }).limit(MAX_RESULT);
     users.sort(sortByMatch(req.body.query));
 
     // Short circuit if cleezy is disabled
@@ -117,18 +118,10 @@ router.post('/', async function(req, res) {
       });
     }
 
-    const cleezyRes = await cleezy.searchCleezyUrls(req);
-    if (cleezyRes.status !== OK) {
-      logger.warn('Cleezy search failed', {
-        status: cleezyRes.status
-      });
-
-      return res.status(OK).send({
-        cleezyStatus: cleezyRes.status,
-        items: { users }
-      });
-    }
-
+    const cleezyRes = await cleezy.searchCleezyUrls({
+      search: req.body.query,
+      limit: MAX_RESULT
+    });
     return res.status(OK).send({
       items: {
         users,
