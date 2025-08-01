@@ -137,9 +137,15 @@ function LedSign() {
 
   function getExpirationButtonOrInput() {
     if (showInput) {
+<<<<<<< HEAD
       return <div className='w-2/3 lg:w-1/2 flex items-center justify-center'>
         <input className='mt-1 mb-1 ml-4 rounded-md text-center w-1/3' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
         <button className='btn w-1/3 lg:w-1/4 bg-gray-600 hover:bg-gray-500 text-white ml-5 mt-2 mb-3' onClick={e => setInput(!showInput)}>
+=======
+      return <div className='w-2/3 lg:w-1/2 flex items-center justify-items-center flex-col sm:flex-row'>
+        <input className='m-1 mt-6 rounded-md text-center w-full sm:pt-1 pl-4' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
+        <button className='btn w-full bg-gray-600 hover:bg-gray-500 text-white mr-4 sm:w-1/3 ml-5 mt-5 mb-3' onClick={e => setInput(!showInput)}>
+>>>>>>> a9b8515 (made the expiration button ui look good on pc and mobile :D - char & tiffany)
           Cancel Expiration
         </button>
       </div>;
