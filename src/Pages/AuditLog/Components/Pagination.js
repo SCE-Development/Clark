@@ -1,25 +1,25 @@
 const Pagination = ({ currentPage, totalPages, goToPage, startIndex, endIndex, totalResults }) => {
   function getPreviousButtonClassName(currentPage) {
     return currentPage === 0
-      ? 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed'
-      : 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+      ? 'px-3 py-2 rounded-md text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+      : 'px-3 py-2 rounded-md text-sm font-medium bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600';
   }
 
   function getPageButtonClassName(pageNum, currentPage) {
     return currentPage === pageNum
       ? 'px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white'
-      : 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+      : 'px-3 py-2 rounded-md text-sm font-medium bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600';
   }
 
   function getNextButtonClassName(currentPage, totalPages) {
     return currentPage === totalPages - 1
-      ? 'px-3 py-2 rounded-md text-sm font-medium bg-gray-700 text-gray-500 cursor-not-allowed'
-      : 'px-3 py-2 rounded-md text-sm font-medium bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-600';
+      ? 'px-3 py-2 rounded-md text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+      : 'px-3 py-2 rounded-md text-sm font-medium bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600';
   }
 
   return (
     <div className='mt-8 flex items-center justify-between'>
-      <div className='text-sm text-gray-400'>
+      <div className='text-sm text-gray-600 dark:text-gray-400'>
         Showing {startIndex + 1} to {endIndex} of {totalResults} results
       </div>
 
