@@ -19,6 +19,7 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  BAD_REQUEST
 } = require('../../util/constants').STATUS_CODES;
 const {
   PRINTING = {}
@@ -80,7 +81,8 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req)) {
+  const user = await decodeToken(req);
+  if (!user) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -126,10 +128,10 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     const numpages = pdfDoc.getPages().length; // get number of pages
     const copiesInt = parseInt(copies || 1, 10);
     const totalPages = numpages * copiesInt; // updates users printcount
-    const pagesRemaining = await subtractUserPages(user.id, totalPages);
-    if (pagesRemaining === null) {
+    const success = await subtractUserPages(user.id, totalPages);
+    if (!success) {
       await cleanUpChunks(dir, id);
-      return res.status(400).json({ error: 'Page limit exceeded or user not found' });
+      return res.status(BAD_REQUEST).json({ error: 'Page limit exceeded or user not found' });
     }
     // full pdf can be sent to quasar no problem
     const printRes = await axios.post(PRINTER_URL + '/print', data, {

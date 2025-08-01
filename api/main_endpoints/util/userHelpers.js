@@ -203,25 +203,25 @@ function checkIfPageCountResets(lastLogin) {
   return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
 // updates users available pages
-async function subtractUserPages(userId, pagesToPrint){
-  const user = await User.findById(userId);
-  if(!user){
-    logger.error(`User not found ID: ${userId}`);
-    return null; // checks user
-  }
-  if(!Number.isInteger(pagesToPrint) || pagesToPrint <= 0){
-    logger.error(`Invalid pagesToPrint value: ${pagesToPrint}.`);
-    return null;
-  }
-  if (user.pagesPrinted < pagesToPrint) {
-    logger.error(`User has insufficient pages remaining. Requested: ${pagesToPrint}. Available:${user.pagesPrinted}`);
-    return null;
-  }
+  async function subtractUserPages(userId, pagesToPrint){
+    const user = await User.findById(userId);
+    if(!user){
+      logger.error(`User not found ID: ${userId}`);
+      return false; // checks user
+    }
+    if(!Number.isInteger(pagesToPrint) || pagesToPrint <= 0){
+      logger.error(`Invalid pagesToPrint value: ${pagesToPrint}.`);
+      return false;
+    }
+    if (user.pagesPrinted < pagesToPrint) {
+      logger.error(`User has insufficient pages remaining. Requested: ${pagesToPrint}. Available:${user.pagesPrinted}`);
+      return false;
+    }
 
-  user.pagesPrinted -= pagesToPrint;
-  await user.save();
-  return user.pagesPrinted;
-}
+    user.pagesPrinted -= pagesToPrint;
+    await user.save();
+    return true;
+  }
 
 module.exports = {
   registerUser,
