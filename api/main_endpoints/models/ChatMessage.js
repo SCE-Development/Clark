@@ -9,7 +9,7 @@ const ChatMessageSchema = new Schema(
     },
     expiresAt: {
       type: Date,
-      default: ()=> Date.now() + 24 * 3600 * 1000, // expires in 24 hours
+      default: ()=> new Date(Date.now() + 24 * 3600 * 1000), // expires in 24 hours
     },
     chatroomId: {
       type: String,
