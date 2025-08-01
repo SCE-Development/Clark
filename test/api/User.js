@@ -21,8 +21,8 @@ const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
 const {mockDayMonthAndYear, revertClock} = require('../util/mocks/Date.js');
 
-const AuditLog = require('../../api/main_endpoints/models/AuditLog.js')
-const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js')
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
 
 let app = null;
 let test = null;
@@ -225,9 +225,9 @@ describe('User', () => {
           lastName: 'last-name',
           major: 'Computer Science'
         }).save();
-        
-        setTokenStatus(true, testUser); 
-      })
+
+        setTokenStatus(true, testUser);
+      });
 
       afterEach(async () => {
         await AuditLog.deleteMany({});
@@ -240,11 +240,11 @@ describe('User', () => {
           email: 'a@b.c',
           token
         });
-        
+
         expect(res).to.have.status(OK);
         res.body.should.be.a('object');
         res.body.should.have.property('message');
-    
+
         const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean();
         expect(auditEntry).to.exist;
         expect(auditEntry.details.fieldChanges.firstName).to.have.deep.equal({
@@ -256,8 +256,8 @@ describe('User', () => {
         const changePWlog = await AuditLog.findOne({
           userId: id,
           action: AuditLogActions.CHANGE_PW
-        }).lean()
-        expect(changePWlog).to.not.exist
+        }).lean();
+        expect(changePWlog).to.not.exist;
       });
 
       it('Should create an audit log when a user changes their password (no profile update)', async () => {
@@ -267,15 +267,15 @@ describe('User', () => {
           email: 'a@b.c',
           password: 'Newpassw0rd',
           token
-        })
+        });
 
-        expect(res).to.have.status(OK)
+        expect(res).to.have.status(OK);
 
-        const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean()
-        expect(auditEntry).to.exist
-        expect(auditEntry.action).to.equal(AuditLogActions.CHANGE_PW)
-        expect(auditEntry).to.not.have.property('password')
-      })
+        const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean();
+        expect(auditEntry).to.exist;
+        expect(auditEntry.action).to.equal(AuditLogActions.CHANGE_PW);
+        expect(auditEntry).to.not.have.property('password');
+      });
 
       it('Should create both audit logs when password and profile info are updated', async () => {
         const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
@@ -285,8 +285,8 @@ describe('User', () => {
           password: 'Newpassword1',
           discordID: 'anotherID',
           token
-        })
-       
+        });
+
         expect(res).to.have.status(OK);
 
         const changePwLog = await AuditLog.findOne({ action: AuditLogActions.CHANGE_PW }).lean();
@@ -313,7 +313,7 @@ describe('User', () => {
         const auditEntry = await AuditLog.findOne({
           action: AuditLogActions.UPDATE_USER,
           documentId: testUser._id
-        }).lean()
+        }).lean();
 
         expect(auditEntry).to.exist;
         expect(auditEntry.details).to.have.property('fieldChanges');
@@ -326,7 +326,7 @@ describe('User', () => {
         });
 
         // track lastName change
-        expect(auditEntry.details.fieldChanges).to.have.property('lastName')
+        expect(auditEntry.details.fieldChanges).to.have.property('lastName');
         expect(auditEntry.details.fieldChanges.lastName).to.have.deep.equal({
           from: 'last-name',
           to: 'Newlastname'
@@ -338,9 +338,9 @@ describe('User', () => {
           from: 'Computer Science',
           to: 'Software Engineering'
         });
-    
+
         // Should NOT track unchanged fields + password field
-        expect(auditEntry.details.fieldChanges).to.not.have.property('password')
+        expect(auditEntry.details.fieldChanges).to.not.have.property('password');
         expect(auditEntry.details.fieldChanges).to.not.have.property('email');
       });
 
@@ -352,18 +352,18 @@ describe('User', () => {
           firstName: 'first-name',
           lastName: 'last-name',
           major: 'Computer Science'
-        })
-        
+        });
+
         expect(res).to.have.status(OK);
-    
+
         const auditEntry = await AuditLog.findOne({
           action: AuditLogActions.UPDATE_USER || AuditLogActions.CHANGE_PW,
           documentId: testUser._id
-        }).lean()
-    
+        }).lean();
+
         expect(auditEntry).to.not.exist;
       });
-    })
+    });
   });
 
   describe('/POST getUserById', () => {
@@ -394,14 +394,27 @@ describe('User', () => {
       expect(result).to.have.status(NOT_FOUND);
     });
     it('Should return status code 200 if user is found', async () => {
-      const user = {
-        userID: id,
-        token: token
-      };
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token, '/api/User/getUserById', user);
-      expect(result).to.have.status(OK);
-      result.body.should.not.have.property('password');
+
+      const testUser = await new User({
+        email: 'getuser@test.com',
+        password: 'Passw0rd',
+        firstName: 'Get',
+        lastName: 'User',
+        accessLevel: MEMBERSHIP_STATE.ADMIN,
+        emailVerified: true
+      }).save();
+
+      // Set token mock for this user
+      setTokenStatus(true, { _id: testUser._id, accessLevel: MEMBERSHIP_STATE.ADMIN });
+
+      const res = await test.sendPostRequestWithToken('', '/api/User/getUserById', {
+        userID: testUser._id,
+        token: ''
+      });
+
+      expect(res).to.have.status(OK);
+      res.body.should.have.property('email').eql('getuser@test.com');
+      res.body.should.not.have.property('password');
     });
   });
 
@@ -457,13 +470,17 @@ describe('User', () => {
 
     it('Should return statusCode 200 and a message ' +
       'if a user was deleted', async () => {
-      const user = {
+      const user = await new User({
         _id : id,
+        email: 'delete@test.com',
+        password: 'Passw0rd',
+        firstName: 'Delete',
+        lastName: 'Me',
         token: token
-      };
-      setTokenStatus(true);
+      }).save();
+      setTokenStatus(true, { _id: user._id, accesslevel: MEMBERSHIP_STATE.ADMIN });
       const result = await test.sendPostRequestWithToken(
-        token, '/api/User/delete', user);
+        token, '/api/User/delete', { _id: user._id, token: token } );
       expect(result).to.have.status(OK);
     });
 

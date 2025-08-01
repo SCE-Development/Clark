@@ -232,11 +232,11 @@ router.post('/edit', async (req, res) => {
     }
     user.password = result;
 
-    // create audit log for password change 
+    // create audit log for password change
     AuditLog.create({
       userId: decoded._id,
       action: AuditLogActions.CHANGE_PW,
-      details: { email: existingUser.email, userId: decoded._id }, 
+      details: { email: existingUser.email, userId: decoded._id },
     }).catch(logger.error);
 
   } else {
@@ -281,7 +281,7 @@ router.post('/edit', async (req, res) => {
         }
       }).catch(logger.error);
     }
-    
+
     return res.status(OK).send({
       message: `${existingUser.email} was updated.`,
       membershipValidUntil: user.membershipValidUntil
