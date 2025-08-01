@@ -65,7 +65,6 @@ router.post('/updateSignText', async (req, res) => {
     action: AuditLogActions.UPDATE_SIGN,
     details: {
       newSignText: req.body.text,
-      editedBy: user.email
     }
   }).catch(logger.error);
 
