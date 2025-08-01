@@ -142,14 +142,6 @@ export async function editUser(userToEdit, token) {
 }
 
 /**
- * Updates the user's last login date when they log in.
- * @param {string} email The email of the user
- * @param {string} token The JWT token to allow the user to be edited
- */
-
-
-
-/**
  * Deletes a user by an ID
  * @param {string} _id The ID of the user to delete
  * @param {string} token jwt token to authorize deletion
