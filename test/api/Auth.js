@@ -362,64 +362,64 @@ describe('Auth', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-      describe('Password reset email audit log tests', () => {
-        beforeEach(async () => {
-          await AuditLog.deleteMany({})
-        })
+    describe('Password reset email audit log tests', () => {
+      beforeEach(async () => {
+        await AuditLog.deleteMany({});
+      });
 
-        afterEach(async () => {
-          await AuditLog.deleteMany({})
-        })
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+      });
 
-        it('Should create audit log when password reset email is sent', async () => {
-          const user = new User({
-            _id: new mongoose.Types.ObjectId(),
-            firstName: 'Test',
-            lastName: 'User',
-            email: 'reset-audit@test.com',
-            password:'Passw0rd',
-            emailVerified: true,
-            accessLevel: MEMBERSHIP_STATE.MEMBER
-          })
-          await user.save()
-
-          const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', user)
-          expect(result).to.have.status(OK)
-
-          const auditEntry = await AuditLog.findOne({
-            userId: user._id,
-            action: AuditLogActions.RESET_PW
-          })
-
-          expect(auditEntry).to.exist
-          expect(auditEntry).to.have.property('userId')
-          expect(auditEntry.userId.toString()).to.equal(user._id.toString())
-          expect(auditEntry).to.have.property('action', AuditLogActions.RESET_PW)
-          expect(auditEntry).to.have.property('details')
-          expect(auditEntry.details).to.have.property('email', user.email)
-          expect(auditEntry.details).to.have.property('action', 'Password reset email sent to user.')
-
-          await User.deleteOne({ _id: user._id})
-        })
-
-        it('Should not create audit log when password reset email fails for non-existent user', async () => {
-          const data = {
-            email: 'nonexistent@test.com',
-          };
-
-          const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
-          expect(result).to.have.status(OK); // Still returns 200 for security
-
-          await new Promise(resolve => setTimeout(resolve, 200));
-
-          const auditEntry = await AuditLog.findOne({
-            action: AuditLogActions.RESET_PW,
-            'details.email': 'nonexistent@test.com'
-          });
-
-          expect(auditEntry).to.not.exist;
+      it('Should create audit log when password reset email is sent', async () => {
+        const user = new User({
+          _id: new mongoose.Types.ObjectId(),
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'reset-audit@test.com',
+          password:'Passw0rd',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER
         });
-      })
+        await user.save();
+
+        const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', user);
+        expect(result).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({
+          userId: user._id,
+          action: AuditLogActions.RESET_PW
+        });
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry.userId.toString()).to.equal(user._id.toString());
+        expect(auditEntry).to.have.property('action', AuditLogActions.RESET_PW);
+        expect(auditEntry).to.have.property('details');
+        expect(auditEntry.details).to.have.property('email', user.email);
+        expect(auditEntry.details).to.have.property('action', 'Password reset email sent to user.');
+
+        await User.deleteOne({ _id: user._id});
+      });
+
+      it('Should not create audit log when password reset email fails for non-existent user', async () => {
+        const data = {
+          email: 'nonexistent@test.com',
+        };
+
+        const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+        expect(result).to.have.status(OK); // Still returns 200 for security
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.RESET_PW,
+          'details.email': 'nonexistent@test.com'
+        });
+
+        expect(auditEntry).to.not.exist;
+      });
+    });
   });
 
   describe('/POST validatePasswordReset', () => {
@@ -513,33 +513,33 @@ describe('Auth', () => {
 
     describe('Reset password audit log tests', async () => {
       beforeEach(async () => {
-        await AuditLog.deleteMany({}); 
+        await AuditLog.deleteMany({});
       });
-    
+
       afterEach(async () => {
         await AuditLog.deleteMany({});
       });
-    
+
       it('Should create audit log on successful password reset', async () => {
         const data = {
           password: 'Passw0rd',
           resetToken: 'valid token',
           hashedId: await bcrypt.hash(String(createdId), await bcrypt.genSalt(10)),
-        }
-        const result = await test.sendPostRequest('/api/Auth/resetPassword', data)
-        expect(result).to.have.status(OK)
+        };
+        const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+        expect(result).to.have.status(OK);
 
-        const auditEntry = await AuditLog.findOne({ userId: createdUser._id, action: AuditLogActions.RESET_PW})
+        const auditEntry = await AuditLog.findOne({ userId: createdUser._id, action: AuditLogActions.RESET_PW});
 
-        expect(auditEntry).to.exist
-        expect(auditEntry).to.have.property('userId')
-        expect(auditEntry.userId.toString()).to.equal(createdUser._id.toString())
-        expect(auditEntry).to.have.property('action', AuditLogActions.RESET_PW)
-        expect(auditEntry).to.have.property('details')
-        expect(auditEntry.details).to.have.property('email', createdUser.email)
-        expect(auditEntry.details).to.have.property('action', 'User succesfully reset password.')
-      })
-    })
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry.userId.toString()).to.equal(createdUser._id.toString());
+        expect(auditEntry).to.have.property('action', AuditLogActions.RESET_PW);
+        expect(auditEntry).to.have.property('details');
+        expect(auditEntry.details).to.have.property('email', createdUser.email);
+        expect(auditEntry.details).to.have.property('action', 'User succesfully reset password.');
+      });
+    });
   });
 
   describe('/POST verify', () => {
