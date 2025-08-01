@@ -236,7 +236,7 @@ router.post('/edit', async (req, res) => {
     AuditLog.create({
       userId: decoded._id,
       action: AuditLogActions.CHANGE_PW,
-      details: { email: existingUser.email, userId: user._id }, 
+      details: { email: existingUser.email, userId: decoded._id }, 
     }).catch(logger.error);
 
   } else {
