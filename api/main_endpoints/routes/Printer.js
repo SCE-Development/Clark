@@ -81,8 +81,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  const user = await decodeToken(req);
-  if (!user) {
+  if (!await decodeToken(req)) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
