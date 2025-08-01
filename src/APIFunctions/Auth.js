@@ -1,5 +1,4 @@
 import { UserApiResponse, ApiResponse } from './ApiResponses';
-import { updateLastLoginDate } from './User';
 import { BASE_API_URL } from '../Enums';
 
 
@@ -76,7 +75,6 @@ export async function loginUser(email, password) {
     const result = await res.json();
     if (res.ok) {
       status.token = result.token;
-      await updateLastLoginDate(email, result.token);
       window.location.reload();
       return status;
     }
