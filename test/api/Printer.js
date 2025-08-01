@@ -1,8 +1,9 @@
 process.env.NODE_ENV = 'test';
-
+const mongoose = require('mongoose');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const fs = require('fs');
+const User = require('../../api/main_endpoints/models/User.js');
 
 const {
   OK,
@@ -25,6 +26,12 @@ const tools = require('../util/tools/tools.js');
 const crypto = require('crypto');
 const token = '';
 const printerUtil = require('../../api/main_endpoints/util/Printer.js');
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
+
+
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+
 
 let app = null;
 let test = null;
@@ -58,6 +65,7 @@ describe('Printer', () => {
     resetTokenMock();
   });
 
+  const url = '/api/Printer/sendPrintRequest';
   describe('cleanUpExpiredChunks', () => {
     const CHUNK_DIRECTORY = __dirname + '/../../api/main_endpoints/routes/printing';
     const MY_BIRTH_DATE = new Date('December 4, 2005 07:53:00');
@@ -126,6 +134,7 @@ describe('Printer', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
+
     it(`Should successfully process all ${TOTAL_CHUNKS} chunks sent (with valid token)`, async () => {
       let chunksProcessed = 0;
       setTokenStatus(true);
@@ -153,6 +162,46 @@ describe('Printer', () => {
       }
 
       expect(chunksProcessed).to.equal(TOTAL_CHUNKS);
+    });
+
+    describe('Successfully send a print request and create an audit log', () => {
+      before( async () => {
+        await User.deleteMany({});
+        await AuditLog.deleteMany({});
+      });
+
+      it('Should return 200 when invalid token is sent', async () => {
+        const userId = new mongoose.Types.ObjectId();
+        const user = new User({
+          _id: userId,
+          firstName: 'first_name',
+          lastName: 'last_name',
+          email: 'print_user@b.c',
+          password: 'Passw0rd123',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+        });
+        await user.save();
+
+        setTokenStatus(true, {
+          _id: user._id,
+          email: user.email,
+          accessLevel: user.accessLevel,
+        });
+
+        const result = await test.sendPostRequestWithToken(token, url, { DUMMY_CHUNK });
+        expect(result).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.PRINT_PAGE,
+        }).lean();
+        expect(auditEntry).to.exist;
+      });
+
+      after(() => {
+        User.deleteMany({});
+        AuditLog.deleteMany({});
+      });
     });
   });
 });
