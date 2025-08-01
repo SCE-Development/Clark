@@ -39,11 +39,11 @@ router.get('/getAllAdvertisements', async (req, res) => {
 router.post('/createAdvertisement', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } 
-  
-  const user = await decodeToken(req)
+  }
+
+  const user = await decodeToken(req);
   if (!user) {
-    return res.sendStatus(UNAUTHORIZED)
+    return res.sendStatus(UNAUTHORIZED);
   }
 
   const newAd = new Advertisement({
@@ -61,12 +61,12 @@ router.post('/createAdvertisement', async (req, res) => {
         expireDate: createdAd.expireDate,
         advertisementId: createdAd._id
       }
-    }).catch(logger.error)
+    }).catch(logger.error);
 
-    res.status(OK).send(createdAd)
+    res.status(OK).send(createdAd);
   } catch (error) {
     logger.error('Error creating ad:', error);
-    res.sendStatus(BAD_REQUEST)
+    res.sendStatus(BAD_REQUEST);
   }
 });
 
@@ -77,39 +77,39 @@ router.post('/deleteAdvertisement', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const user = await decodeToken(req)
+  const user = await decodeToken(req);
   if (!user) {
-    return res.sendStatus(UNAUTHORIZED)
+    return res.sendStatus(UNAUTHORIZED);
   }
 
   try {
-    const adToDelete = await Advertisement.findById(req.body._id)
+    const adToDelete = await Advertisement.findById(req.body._id);
 
     if (!adToDelete) {
-      return res.sendStatus(NOT_FOUND)
+      return res.sendStatus(NOT_FOUND);
     }
 
-    const deleteResult = await Advertisement.deleteOne({_id: req.body._id})
+    const deleteResult = await Advertisement.deleteOne({_id: req.body._id});
 
     if(deleteResult.deletedCount < 1) {
-      return res.sendStatus(NOT_FOUND)
+      return res.sendStatus(NOT_FOUND);
     }
 
     AuditLog.create({
       userId: user._id,
       action: AuditLogActions.DELETE_AD,
       details: {
-        deleted_ad: {
+        deletedAd: {
           id: adToDelete._id,
           message: adToDelete.message,
         }
       }
-    }).catch(logger.error)
+    }).catch(logger.error);
 
-    res.sendStatus(OK)
+    res.sendStatus(OK);
   } catch (error) {
-    logger.error('Error deleting ad:', error)
-    res.sendStatus(BAD_REQUEST)
+    logger.error('Error deleting ad:', error);
+    res.sendStatus(BAD_REQUEST);
   }
 });
 
