@@ -39,10 +39,8 @@ router.get('/getAllAdvertisements', async (req, res) => {
 router.post('/createAdvertisement', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
+  } 
+  
   const user = await decodeToken(req)
   if (!user) {
     return res.sendStatus(UNAUTHORIZED)
@@ -101,11 +99,9 @@ router.post('/deleteAdvertisement', async (req, res) => {
       userId: user._id,
       action: AuditLogActions.DELETE_AD,
       details: {
-        deletedBy: user.email,
         deleted_ad: {
           id: adToDelete._id,
           message: adToDelete.message,
-          deletedAt: new Date()
         }
       }
     }).catch(logger.error)
