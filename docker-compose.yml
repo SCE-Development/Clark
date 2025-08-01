@@ -110,6 +110,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./sce_sjsu_edu_cert.cer:/etc/nginx/sce_sjsu_edu_cert.cer
       - ./sce.key:/etc/nginx/sce.key
+      - nginx_cache:/var/cache/nginx
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
@@ -124,4 +125,7 @@ networks:
   default:
     external:
       name: sce
+
+volumes:
+  nginx_cache:
 
