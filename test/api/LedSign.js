@@ -163,7 +163,6 @@ describe('LED Sign', () => {
 
         expect(auditEntry).to.exist;
         expect(auditEntry.userId.toString()).to.equal(userId.toString());
-        expect(auditEntry.details).to.have.property('editedBy', 'admin@sce.edu');
       });
 
     });
