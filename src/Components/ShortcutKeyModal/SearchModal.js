@@ -290,7 +290,7 @@ export default function SearchModal() {
             placeholder="Search here... (Ctrl + k)"
             value={keyword}
             onChange={handleChanges}
-            className='border-[1.5px] border-gray-600 w-full rounded p-3 h-10 text-[1.2rem] bg-transparent focus:outline-sky-600'
+            className='border-[1.5px] text-white border-gray-600 w-full rounded p-3 h-10 text-[1.2rem] bg-transparent focus:outline-sky-600'
           />
           <SuggestionsList />
         </div>
