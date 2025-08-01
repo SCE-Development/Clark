@@ -31,5 +31,3 @@ ChatMessageSchema.index({chatroomId: 1, createdAt: -1}); // sort by whatever is 
 ChatMessageSchema.index({expiresAt: 1}, {expireAfterSeconds: 0}); // TTL index for automatic expiration
 
 module.exports = mongoose.model('ChatMessage', ChatMessageSchema);
-
-

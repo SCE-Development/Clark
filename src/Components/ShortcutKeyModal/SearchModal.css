@@ -8,8 +8,7 @@
     /* blurred background */
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 33vh;
+    align-items: center;
     z-index: 9999;
 }
 
@@ -17,7 +16,9 @@
     padding: 8px;
     background: white;
     border-radius: 8px;
-    width: 35rem;
+    width: 100%;
+    /* the default is the mobile size */ 
+    max-width: 500px;
 }
 
 .shortcut-search-modal input {
@@ -65,5 +66,13 @@
     .shortcut-search-modal .input-wrapper,
     .shortcut-search-modal .suggestion-list {
         background-color: #1e293b;
+    }
+}
+
+/* Desktop mode */
+@media (min-width: 768px) {
+    .shortcut-search-modal .input-wrapper {
+        width: 35rem;
+        max-width: none;
     }
 }
