@@ -126,16 +126,14 @@ router.post('/sendPasswordReset', async (req, res) => {
       // create audit log for sending reset password email
       AuditLog.create({
         userId: result._id,
-        action: AuditLogActions.RESET_PW,
+        action: AuditLogActions.SEND_RESET_PW_EMAIL,
         details: {
           email: result.email,
-          action: 'Password reset email sent to user.'
         }
       }).catch(logger.error);
     } catch (error) {
       logger.error('unable to save password reset token:', error);
     }
-
 
     res.sendStatus(OK);
   });
@@ -346,16 +344,11 @@ router.post('/resetPassword', async (req, res) => {
     }
     user.password = req.body.password;
     await user.save();
-    await redisClient.delete(req.body.resetToken);
 
     // create audit log for user succesfully resetting password
     AuditLog.create({
       userId: user._id,
-      action: AuditLogActions.RESET_PW,
-      details: {
-        email: user.email,
-        action: 'User succesfully reset password.'
-      }
+      action: AuditLogActions.RESET_PW
     }).catch(logger.error);
     await PasswordReset.deleteOne({ resetToken: req.body.resetToken });
   } catch (error) {

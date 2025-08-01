@@ -388,16 +388,15 @@ describe('Auth', () => {
 
         const auditEntry = await AuditLog.findOne({
           userId: user._id,
-          action: AuditLogActions.RESET_PW
+          action: AuditLogActions.SEND_RESET_PW_EMAIL
         });
 
         expect(auditEntry).to.exist;
         expect(auditEntry).to.have.property('userId');
         expect(auditEntry.userId.toString()).to.equal(user._id.toString());
-        expect(auditEntry).to.have.property('action', AuditLogActions.RESET_PW);
+        expect(auditEntry).to.have.property('action', AuditLogActions.SEND_RESET_PW_EMAIL);
         expect(auditEntry).to.have.property('details');
         expect(auditEntry.details).to.have.property('email', user.email);
-        expect(auditEntry.details).to.have.property('action', 'Password reset email sent to user.');
 
         await User.deleteOne({ _id: user._id});
       });
@@ -410,10 +409,8 @@ describe('Auth', () => {
         const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
         expect(result).to.have.status(OK); // Still returns 200 for security
 
-        await new Promise(resolve => setTimeout(resolve, 200));
-
         const auditEntry = await AuditLog.findOne({
-          action: AuditLogActions.RESET_PW,
+          action: AuditLogActions.SEND_RESET_PW_EMAIL,
           'details.email': 'nonexistent@test.com'
         });
 
@@ -535,9 +532,6 @@ describe('Auth', () => {
         expect(auditEntry).to.have.property('userId');
         expect(auditEntry.userId.toString()).to.equal(createdUser._id.toString());
         expect(auditEntry).to.have.property('action', AuditLogActions.RESET_PW);
-        expect(auditEntry).to.have.property('details');
-        expect(auditEntry.details).to.have.property('email', createdUser.email);
-        expect(auditEntry.details).to.have.property('action', 'User succesfully reset password.');
       });
     });
   });
