@@ -28,7 +28,6 @@ const token = '';
 const printerUtil = require('../../api/main_endpoints/util/Printer.js');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
-
 const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
 const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
 
@@ -187,15 +186,21 @@ describe('Printer', () => {
       });
 
       const result = await test.sendPostRequestWithToken(token, url, { DUMMY_CHUNK });
-      expect(result).to.have.status(OK);
-
       const auditEntry = await AuditLog.findOne({
         action: AuditLogActions.PRINT_PAGE,
       }).lean();
+
+      expect(result).to.have.status(OK);
       expect(auditEntry).to.exist;
     });
 
-    User.deleteMany({});
-    AuditLog.deleteMany({});
+    it('Should exist only one audit log', async () => {
+      expect(await AuditLog.count()).to.equal(1);
+    });
+
+    after(async () => {
+      await User.deleteMany({});
+      await AuditLog.deleteMany({});
+    });
   });
 });
