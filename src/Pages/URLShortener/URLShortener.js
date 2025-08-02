@@ -36,7 +36,7 @@ export default function URLShortenerPage() {
 
   const [copyingId, setCopyingId] = useState(null);
 
-  const INPUT_CLASS = 'indent-2 block w-full rounded-md border-0 py-1.5 text-slate-800 dark:text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-slate-700 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-gray';
+  const COPY_ICON_CLASS = 'transition-colors duration-500 dark:fill-[#dcdcdc] fill-[#434343]';
   const LABEL_CLASS = 'block text-sm font-medium leading-6 text-slate-800 dark:text-gray-300';
 
   /**
@@ -157,14 +157,6 @@ export default function URLShortenerPage() {
     return 'hidden';
   }
 
-  function getCopyIconClassName(copyingId, urlId) {
-    const isCopying = copyingId === urlId;
-    if (isCopying) {
-      return 'transition-colors duration-500 dark:fill-green-500 fill-[#05ab00]';
-    }
-    return 'transition-colors duration-500 dark:fill-[#dcdcdc] fill-[#434343]';
-  }
-
   useEffect(() => {
     if (useGeneratedAlias) {
       setAlias('');
@@ -210,7 +202,7 @@ export default function URLShortenerPage() {
     if (copyingId !== null) {
       const timeout = setTimeout(() => {
         setCopyingId(null);
-      }, 850);
+      }, 450);
       return () => clearTimeout(timeout);
     }
   }, [copyingId]);
@@ -398,6 +390,16 @@ export default function URLShortenerPage() {
     );
   }
 
+  function renderCopyIconOrCheckbox(urlId, urlHref) {
+    if (copyingId === urlId) {
+      return (<span className="text-green-500 transition-opacity duration-200">✅</span>);
+    }
+    return copyIcon(COPY_ICON_CLASS, () => {
+      navigator.clipboard.writeText(urlHref);
+      setCopyingId(urlId);
+    });
+  }
+
   if (isCleezyDisabled) {
     return (
       <div className='container mx-auto px-10 pt-10'>
@@ -506,21 +508,15 @@ export default function URLShortenerPage() {
                 </thead>
 
                 <tbody>
-                  {allUrls.map((url, index) => {
-                    const copyIconClassName = getCopyIconClassName(copyingId, url.id);
-
+                  {allUrls.map((url) => {
                     return (
-                      <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
+                      <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={url.id}>
                         <td className=''>
                           <div className='pb-2 flex flex-row gap-2'>
                             <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.link}`}>
                               {url.alias}
                             </a>
-                            {copyIcon(copyIconClassName, () => {
-                              console.log("writing", url.link)
-                              navigator.clipboard.writeText(url.link);
-                              setCopyingId(url.id);
-                            })}
+                            {renderCopyIconOrCheckbox(url.id, url.link)}
                           </div>
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
