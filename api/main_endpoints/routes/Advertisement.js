@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
       res.status(OK).send(items || {});
     })
     .catch(error => {
+      logger.error('/api/Advertisement/ had an error', error);
       res.sendStatus(BAD_REQUEST);
     });
 });
@@ -31,8 +32,10 @@ router.get('/getAllAdvertisements', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   Advertisement.find()
+    .sort({ createdAt: -1 })
     .then(items => res.status(OK).send(items))
     .catch(error => {
+      logger.error('/api/Advertisement/getAllAdvertisements/ had an error', error);
       res.sendStatus(BAD_REQUEST);
     });
 });
@@ -49,7 +52,6 @@ router.post('/createAdvertisement', async (req, res) => {
 
   const newAd = new Advertisement({
     message: req.body.message,
-    expireDate: req.body.expireDate,
     expireAt: req.body.expireDate
   });
 
@@ -60,7 +62,7 @@ router.post('/createAdvertisement', async (req, res) => {
       action: AuditLogActions.CREATE_AD,
       details: {
         message: createdAd.message,
-        expireDate: createdAd.expireDate,
+        expireAt: createdAd.expireAt,
         advertisementId: createdAd._id
       }
     }).catch(logger.error);
@@ -85,9 +87,9 @@ router.post('/deleteAdvertisement', async (req, res) => {
   }
 
   try {
-    const deleteResult = await Advertisement.deleteOne({_id: req.body._id});
+    const deleteResult = await Advertisement.findOneAndDelete({ _id: req.body._id });
 
-    if(deleteResult.deletedCount < 1) {
+    if(!deleteResult) {
       return res.sendStatus(NOT_FOUND);
     }
 
@@ -96,8 +98,8 @@ router.post('/deleteAdvertisement', async (req, res) => {
       action: AuditLogActions.DELETE_AD,
       details: {
         deletedAd: {
-          id: adToDelete._id,
-          message: adToDelete.message,
+          id: deleteResult._id,
+          message: deleteResult.message,
         }
       }
     }).catch(logger.error);
