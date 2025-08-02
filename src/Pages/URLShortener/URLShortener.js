@@ -24,7 +24,7 @@ export default function URLShortenerPage() {
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchQuery, setSearchQuery] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [invalidSearch, setInvalidSearch] = useState(false);
   const [errorAlertMessage, setErrorAlertMessage] = useState('');
   const [urlToDelete, setUrlToDelete] = useState({});
@@ -513,14 +513,14 @@ export default function URLShortenerPage() {
                       <tr className='break-all !rounded md:break-keep hover:bg-white/10' key={index}>
                         <td className=''>
                           <div className='pb-2 flex flex-row gap-2'>
-                            <button className='w-fit link link-hover link-info'
-                              onClick={() => {
-                                navigator.clipboard.writeText(url.link);
-                                setCopyingId(url.id);
-                              }}>
+                            <a className='link link-hover link-info' target="_blank" rel="noopener noreferrer" href={`${url.link}`}>
                               {url.alias}
-                            </button>
-                            { copyIcon(copyIconClassName) }
+                            </a>
+                            {copyIcon(copyIconClassName, () => {
+                              console.log("writing", url.link)
+                              navigator.clipboard.writeText(url.link);
+                              setCopyingId(url.id);
+                            })}
                           </div>
                           <p>{url.url.length > 60 ? url.url.slice(0, 50) + '...' : url.url}</p>
                         </td>
