@@ -98,10 +98,12 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     fileSize: totalFileSize,
     userEmail: user.email,
     printedAt: new Date(),
-    printJobId: id
+    printJobId: id,
+    status: 'success' || 'fail'
   };
 
   if (!PRINTING.ENABLED) {
+    details.status = 'mocked';
     // create audit log on print
     await createAuditLog({
       user,
@@ -143,7 +145,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       }
     })
     .then( async () => {
-
+      details.status = 'success';
       // create audit log on print
       await createAuditLog({
         user,
@@ -158,8 +160,10 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
         }
       });
       res.sendStatus(OK);
-    }).catch((err) => {
+    }).catch(async (err) => {
       logger.error('/sendPrintRequest had an error: ', err);
+      details.status = 'fail';
+      await createAuditLog({ user, action, details });
       res.sendStatus(SERVER_ERROR);
     });
 });

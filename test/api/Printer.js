@@ -164,44 +164,38 @@ describe('Printer', () => {
       expect(chunksProcessed).to.equal(TOTAL_CHUNKS);
     });
 
-    describe('Successfully send a print request and create an audit log', () => {
-      before( async () => {
-        await User.deleteMany({});
-        await AuditLog.deleteMany({});
+    it('Should create an audit log when the response status is 200', async () => {
+      await User.deleteMany({});
+      await AuditLog.deleteMany({});
+
+      const userId = new mongoose.Types.ObjectId();
+      const user = new User({
+        _id: userId,
+        firstName: 'first_name',
+        lastName: 'last_name',
+        email: 'print_user@b.c',
+        password: 'Passw0rd123',
+        emailVerified: true,
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+      });
+      await user.save();
+
+      setTokenStatus(true, {
+        _id: user._id,
+        email: user.email,
+        accessLevel: user.accessLevel,
       });
 
-      it('Should return 200 when invalid token is sent', async () => {
-        const userId = new mongoose.Types.ObjectId();
-        const user = new User({
-          _id: userId,
-          firstName: 'first_name',
-          lastName: 'last_name',
-          email: 'print_user@b.c',
-          password: 'Passw0rd123',
-          emailVerified: true,
-          accessLevel: MEMBERSHIP_STATE.MEMBER,
-        });
-        await user.save();
+      const result = await test.sendPostRequestWithToken(token, url, { DUMMY_CHUNK });
+      expect(result).to.have.status(OK);
 
-        setTokenStatus(true, {
-          _id: user._id,
-          email: user.email,
-          accessLevel: user.accessLevel,
-        });
-
-        const result = await test.sendPostRequestWithToken(token, url, { DUMMY_CHUNK });
-        expect(result).to.have.status(OK);
-
-        const auditEntry = await AuditLog.findOne({
-          action: AuditLogActions.PRINT_PAGE,
-        }).lean();
-        expect(auditEntry).to.exist;
-      });
-
-      after(() => {
-        User.deleteMany({});
-        AuditLog.deleteMany({});
-      });
+      const auditEntry = await AuditLog.findOne({
+        action: AuditLogActions.PRINT_PAGE,
+      }).lean();
+      expect(auditEntry).to.exist;
     });
+
+    User.deleteMany({});
+    AuditLog.deleteMany({});
   });
 });
