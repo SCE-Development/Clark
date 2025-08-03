@@ -137,15 +137,15 @@ function LedSign() {
 
   function getExpirationButtonOrInput() {
     if (showInput) {
-      return <div className='w-2/3 lg:w-1/2 place-content-center'>
-        <input className='mt-1 mb-1 ml-4 rounded-md text-center' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
-        <button className='btn w-1/4 lg:w-1/4 bg-red-400 hover:bg-sky-300 text-black ml-8 mt-3 mb-3' onClick={e => setInput(!showInput)}>
-          Cancel
+      return <div className='w-2/3 lg:w-1/2 flex items-center justify-center'>
+        <input className='mt-1 mb-1 ml-4 rounded-md text-center w-1/3' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
+        <button className='btn w-1/3 lg:w-1/4 bg-gray-600 hover:bg-gray-500 text-white ml-5 mt-2 mb-3' onClick={e => setInput(!showInput)}>
+          Cancel Expiration
         </button>
       </div>;
     }
 
-    return <button className='btn w-2/3 lg:w-1/2 bg-sky-400 hover:bg-sky-300 text-black mt-2' onClick={handleExpiration}>
+    return <button className='btn w-2/3 lg:w-1/2 bg-gray-500 hover:bg-gray-400 text-white mt-2' onClick={handleExpiration}>
       Set Expiration
     </button>;
   }
@@ -233,6 +233,7 @@ function LedSign() {
                 ></div>
               </div>
             </div>
+            {getExpirationButtonOrInput()}
             {
               inputArray.map(({
                 id,
@@ -257,7 +258,6 @@ function LedSign() {
                 </div>
               ))
             }
-            {getExpirationButtonOrInput()}
             <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-2' onClick={handleStop}>
               Stop
             </button>
