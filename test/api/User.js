@@ -318,7 +318,7 @@ describe('User', () => {
 
         expect(auditEntry).to.exist;
         expect(auditEntry.details).to.have.property('fieldChanges');
-        
+
         const fieldChanges = JSON.parse(auditEntry.details.fieldChanges);
         // track firstName change
         expect(fieldChanges).to.have.property('firstName');
