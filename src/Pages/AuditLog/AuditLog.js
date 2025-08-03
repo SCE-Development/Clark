@@ -17,7 +17,7 @@ export default function AuditLogPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [applyingFilters, setApplyingFilters] = useState(false);
 
-  const user = useSCE();
+  const { user } = useSCE();
   const token = user.token;
 
   const toggleActivityFilter = activity => {
@@ -41,14 +41,14 @@ export default function AuditLogPage() {
   const getAuditLogsFromDB = async () => {
     try {
       setLoading(true);
-      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, searchQuery, user.user.token);
+      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, searchQuery, user.token);
       if (!auditLogsFromDB.error) {
         setAuditLogsData(auditLogsFromDB.responseData);
       } else {
-        setError('Failed to load audit logs');
+        setError('Failed to load audit logs: ' + auditLogsFromDB.error);
       }
     } catch (err) {
-      setError('Failed to load audit logs');
+      setError('Failed to load audit logs: ' + err);
     } finally {
       setLoading(false);
     }

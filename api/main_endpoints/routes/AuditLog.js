@@ -73,7 +73,8 @@ router.get('/getAuditLogs', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  if (!await decodeTokenFromBodyOrQuery(req)) {
+  const decoded = await decodeTokenFromBodyOrQuery(req);
+  if (!Object.keys(decoded) || decoded.accessLevel < OFFICER) {
     return res.sendStatus(UNAUTHORIZED);
   }
 

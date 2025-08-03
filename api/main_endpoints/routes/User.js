@@ -276,8 +276,8 @@ router.post('/edit', async (req, res) => {
         action: AuditLogActions.UPDATE_USER,
         documentId: user._id,
         details: {
-          updatedInfo: sanitizedUser,
-          fieldChanges: fieldChanges
+          updatedInfo: JSON.stringify(sanitizedUser),
+          fieldChanges: JSON.stringify(fieldChanges)
         }
       }).catch(logger.error);
     }
