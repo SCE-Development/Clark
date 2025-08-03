@@ -263,8 +263,8 @@ describe('ShortcutSearch', () => {
       });
     });
 
-    after(() => {
-      User.deleteMany({});
+    after(async () => {
+      await User.deleteMany({});
     });
   });
 });

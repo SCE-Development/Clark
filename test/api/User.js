@@ -835,9 +835,10 @@ describe('User', () => {
         expect(result.body.newAnnualMembers).to.equal(2);
       });
 
-      after(() => {
+      after(async () => {
         revertClock();
-        User.deleteMany({});
+        await User.deleteMany({});
+        await AuditLog.deleteMany({});
       });
     });
   });

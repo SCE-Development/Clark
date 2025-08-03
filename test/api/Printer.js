@@ -31,7 +31,6 @@ const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
 const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
 
-
 let app = null;
 let test = null;
 let sandbox = sinon.createSandbox();
@@ -47,6 +46,7 @@ describe('Printer', () => {
       __dirname + '/../../api/main_endpoints/routes/Printer.js',
     ]);
     test = new SceApiTester(app);
+
     done();
   });
 
@@ -56,11 +56,15 @@ describe('Printer', () => {
     tools.terminateServer(done);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    await AuditLog.deleteMany({});
     setTokenStatus(false);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await User.deleteMany({});
+    await AuditLog.deleteMany({});
     resetTokenMock();
   });
 
@@ -163,10 +167,7 @@ describe('Printer', () => {
       expect(chunksProcessed).to.equal(TOTAL_CHUNKS);
     });
 
-    it('Should create an audit log when the response status is 200', async () => {
-      await User.deleteMany({});
-      await AuditLog.deleteMany({});
-
+    it('Should create only one audit log in the database when the response status is 200', async () => {
       const userId = new mongoose.Types.ObjectId();
       const user = new User({
         _id: userId,
@@ -192,15 +193,7 @@ describe('Printer', () => {
 
       expect(result).to.have.status(OK);
       expect(auditEntry).to.exist;
-    });
-
-    it('Should exist only one audit log', async () => {
-      expect(await AuditLog.count()).to.equal(1);
-    });
-
-    after(async () => {
-      await User.deleteMany({});
-      await AuditLog.deleteMany({});
+      expect(await AuditLog.countDocuments()).to.equal(1);
     });
   });
 });
