@@ -247,7 +247,8 @@ describe('User', () => {
 
         const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean();
         expect(auditEntry).to.exist;
-        expect(auditEntry.details.fieldChanges.firstName).to.have.deep.equal({
+        const fieldChanges = JSON.parse(auditEntry.details.fieldChanges);
+        expect(fieldChanges.firstName).to.have.deep.equal({
           from: 'first-name',
           to: 'Newname'
         });
@@ -317,31 +318,32 @@ describe('User', () => {
 
         expect(auditEntry).to.exist;
         expect(auditEntry.details).to.have.property('fieldChanges');
-
+        
+        const fieldChanges = JSON.parse(auditEntry.details.fieldChanges);
         // track firstName change
-        expect(auditEntry.details.fieldChanges).to.have.property('firstName');
-        expect(auditEntry.details.fieldChanges.firstName).to.have.deep.equal({
+        expect(fieldChanges).to.have.property('firstName');
+        expect(fieldChanges.firstName).to.have.deep.equal({
           from: 'first-name',
           to: 'Newname'
         });
 
         // track lastName change
-        expect(auditEntry.details.fieldChanges).to.have.property('lastName');
-        expect(auditEntry.details.fieldChanges.lastName).to.have.deep.equal({
+        expect(fieldChanges).to.have.property('lastName');
+        expect(fieldChanges.lastName).to.have.deep.equal({
           from: 'last-name',
           to: 'Newlastname'
         });
 
         // track major change
-        expect(auditEntry.details.fieldChanges).to.have.property('major');
-        expect(auditEntry.details.fieldChanges.major).to.have.deep.equal({
+        expect(fieldChanges).to.have.property('major');
+        expect(fieldChanges.major).to.have.deep.equal({
           from: 'Computer Science',
           to: 'Software Engineering'
         });
 
         // Should NOT track unchanged fields + password field
-        expect(auditEntry.details.fieldChanges).to.not.have.property('password');
-        expect(auditEntry.details.fieldChanges).to.not.have.property('email');
+        expect(fieldChanges).to.not.have.property('password');
+        expect(fieldChanges).to.not.have.property('email');
       });
 
       it('Should not create audit log when no fields actually change', async () => {
