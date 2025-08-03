@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllLogs } from '../../APIFunctions/AuditLog';
+import { getAllLogs, createAuditLogEventSource } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
 import { useSCE } from '../../Components/context/SceContext';
 import AuditLogCard from './Components/AuditLogCard';
@@ -17,7 +17,8 @@ export default function AuditLogPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [applyingFilters, setApplyingFilters] = useState(false);
 
-  const user = useSCE();
+  const { user } = useSCE();
+  const token = user.token;
 
   const toggleActivityFilter = activity => {
     setActivityFilters(prev => (prev.includes(activity) ? prev.filter(a => a !== activity) : [...prev, activity]));
@@ -40,14 +41,14 @@ export default function AuditLogPage() {
   const getAuditLogsFromDB = async () => {
     try {
       setLoading(true);
-      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, searchQuery, user.user.token);
+      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, searchQuery, user.token);
       if (!auditLogsFromDB.error) {
         setAuditLogsData(auditLogsFromDB.responseData);
       } else {
-        setError('Failed to load audit logs');
+        setError('Failed to load audit logs: ' + auditLogsFromDB.error);
       }
     } catch (err) {
-      setError('Failed to load audit logs');
+      setError('Failed to load audit logs: ' + err);
     } finally {
       setLoading(false);
     }
@@ -63,6 +64,17 @@ export default function AuditLogPage() {
     };
 
     fetchData();
+
+    const eventSource = createAuditLogEventSource(
+      token,
+      data => setAuditLogsData(prev => ({ items: [data.message, ...prev.items], totalLogs: prev.totalLogs + 1 })),
+      () => setError('Failed to load audit logs')
+    );
+
+    return () => {
+      eventSource.close();
+    };
+
   }, [currentPage, applyingFilters]);
 
   const applyFilters = async () => {

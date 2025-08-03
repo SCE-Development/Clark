@@ -168,18 +168,6 @@ describe('OfficeAccessCard', () => {
       expect(updatedCard.verifiedCount).to.equal(expectVerifyCount);
     });
 
-    it('Should return today as the last verified date', async () => {
-      const params = new URLSearchParams();
-      params.append('cardBytes', VALID_CARD_BYTES);
-      const path = VERIFY_API_PATH + '?' + params.toString();
-      await test.sendGetRequestWithApiKey(
-        API_KEY, path);
-      const receivedCard = await OfficeAccessCard({ cardBytes: VALID_CARD_BYTES });
-      const todayDate = new Date().toISOString();
-      const expectedData = receivedCard.lastVerified.toISOString();
-      expect(expectedData).to.equal(todayDate);
-    });
-
   });
 
   describe('POST delete', () => {

@@ -6,6 +6,7 @@ const {
   OK,
   FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
+const { OFFICER } = require('../../util/constants').MEMBERSHIP_STATE;
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -215,7 +216,8 @@ router.post('/getAllCards', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  if (!await decodeTokenFromBodyOrQuery(req)) {
+  const decoded = await decodeTokenFromBodyOrQuery(req);
+  if (!Object.keys(decoded) || decoded.accessLevel < OFFICER) {
     return res.sendStatus(UNAUTHORIZED);
   }
 

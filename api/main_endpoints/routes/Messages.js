@@ -153,7 +153,7 @@ router.get('/listen', async (req, res) => {
   let filterQuery = {}; // filter to find user in the database
   if (token) {
     let userObj = decodeTokenFromBodyOrQuery(req);
-    if (!userObj) {
+    if (!Object.keys(userObj)) {
       return res.sendStatus(UNAUTHORIZED);
     }
     filterQuery._id = userObj._id;
