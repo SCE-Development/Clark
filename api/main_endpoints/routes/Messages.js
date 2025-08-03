@@ -7,6 +7,7 @@ const {
 const { MAX_AMOUNT_OF_CONNECTIONS } = require('../../util/constants').MESSAGES_API;
 const express = require('express');
 const router = express.Router();
+const ChatMessage = require('../../main_endpoints/models/ChatMessage');
 const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
@@ -23,7 +24,7 @@ const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
 
-const writeMessage = ((roomId, message, username) => {
+const writeMessage = async(roomId, message, username, userId) => {
 
   const messageObj = {
     timestamp: Date.now(),
@@ -35,6 +36,17 @@ const writeMessage = ((roomId, message, username) => {
     clients[roomId].forEach(res => res.write(`data: ${JSON.stringify(messageObj)}\n\n`));
   }
 
+   try {
+    const newMessage = new ChatMessage({
+      chatroomId: roomId,
+      userId: userId,
+      text: message,
+    });
+    await newMessage.save();
+  } catch (err) {
+    logger.error('Error saving chat message to MongoDB:', err);
+  }
+
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
   // increase the total messages sent counter
@@ -42,11 +54,16 @@ const writeMessage = ((roomId, message, username) => {
 
   // increase the total amount of messages sent per chatroom counter
   MetricsHandler.totalChatMessagesPerChatRoom.labels(roomId).inc();
-});
+};
 
 router.post('/send', async (req, res) => {
 
-  const {message, id} = req.body;
+  const {message, id: roomId} = req.body;
+  if (!message || !roomId) {
+    return res.status(BAD_REQUEST).send('Message and Room ID are required');
+  }
+  
+  /*
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
 
@@ -54,7 +71,7 @@ router.post('/send', async (req, res) => {
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
     {value: message, title: 'Message', },
-    {value: id, title: 'Room ID', },
+    {value: roomId, title: 'Room ID', },
   ];
 
   const missingValue = required.find(({value}) => !value);
@@ -63,9 +80,11 @@ router.post('/send', async (req, res) => {
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
+    */
 
-  let nameToUse = null;
-
+  let nameToUse = 'PostmanTest';
+  let userId = '000000000000000000000000';
+/*
   if (apiKey) {
     try {
       const result = await User.findOne({ apiKey }).exec();
@@ -73,20 +92,23 @@ router.post('/send', async (req, res) => {
         return res.sendStatus(UNAUTHORIZED);
       }
       nameToUse = result.firstName;
+      userId = result._id
     } catch (error) {
       logger.error('Error in /send User.findOne: ', error);
       return res.sendStatus(SERVER_ERROR);
     }
-  }
-
+  }else{
   // Assume user passed a non null/undefined token
   const userObj = decodeToken(req);
   if (!userObj) {
     return res.sendStatus(UNAUTHORIZED);
   }
   nameToUse = userObj.firstName;
+  userId = userObj._id;
+}
+  */
   try {
-    writeMessage(id, `${message}`, `${nameToUse}:`);
+    await writeMessage(roomId, message, `${nameToUse}:`, userId);
     return res.json({ status: 'Message sent' });
   } catch (error) {
     logger.error('Error in /send writeMessage: ', error);
@@ -95,8 +117,9 @@ router.post('/send', async (req, res) => {
 });
 
 router.get('/getLatestMessage', async (req, res) => {
-  const {apiKey, id} = req.query;
+  const {id: roomId} = req.query;
 
+  /*
   const required = [
     {value: apiKey, title: 'API Key'},
     {value: id, title: 'Room ID'},
@@ -108,8 +131,13 @@ router.get('/getLatestMessage', async (req, res) => {
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
+    */
+   if(!roomId){
+    return res.status(BAD_REQUEST).send('specify a roomId')
+  }
 
   try {
+    /*
     User.findOne({ apiKey }, (error, result) => {
       if (error) {
         logger.error('/listen received an invalid API key: ', error);
@@ -128,8 +156,15 @@ router.get('/getLatestMessage', async (req, res) => {
       return res.status(OK).send(lastMessageSent[id]);
 
     });
+    */
+   const messages = await ChatMessage.find({ chatroomId: roomId })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    return res.status(OK).json(messages);
   } catch (error) {
-    logger.error('Error in /get: ', error);
+    logger.error('Error in /getLatestMessage: ', error);
     res.sendStatus(SERVER_ERROR);
   }
 });
