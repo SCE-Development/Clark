@@ -1,3 +1,18 @@
+/**
+ * docker-compose -f docker-compose.dev.yml up --force-recreate --build -d nginx
+ * 
+ * 
+ * git checkout dev
+ * git pull origin dev
+ * git checkout expiration-button
+ * ----
+ * git rebase dev
+ * (fix the conflicts if any)
+ * git add -u
+ * git rebase --continue
+ * git push origin expiration-button --force
+ */
+
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { useSCE } from '../../Components/context/SceContext';
@@ -80,6 +95,32 @@ function LedSign() {
     return localISO;
   }
 
+  function isExpired() {
+    if (!expiration) {
+      return false;
+    }
+    const currDate = new Date();
+    const expireDateObject = new Date(expiration);
+    return expireDateObject < currDate;
+  }
+
+  function getFormattedTime(maybeISOString = null) {
+    let date = new Date();
+    if (maybeISOString) {
+      date = new Date(maybeISOString);
+    }
+
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short',
+    });
+  }
+
   async function handleExpiration() {
     setExpiration(null);
     setInput(!showInput);
@@ -137,18 +178,30 @@ function LedSign() {
 
   function getExpirationButtonOrInput() {
     if (showInput) {
-<<<<<<< HEAD
-      return <div className='w-2/3 lg:w-1/2 flex items-center justify-center'>
-        <input className='mt-1 mb-1 ml-4 rounded-md text-center w-1/3' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
-        <button className='btn w-1/3 lg:w-1/4 bg-gray-600 hover:bg-gray-500 text-white ml-5 mt-2 mb-3' onClick={e => setInput(!showInput)}>
-=======
-      return <div className='w-2/3 lg:w-1/2 flex items-center justify-items-center flex-col sm:flex-row'>
-        <input className='m-1 mt-6 rounded-md text-center w-full sm:pt-1 pl-4' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} min={currentDate}/>
-        <button className='btn w-full bg-gray-600 hover:bg-gray-500 text-white mr-4 sm:w-1/3 ml-5 mt-5 mb-3' onClick={e => setInput(!showInput)}>
->>>>>>> a9b8515 (made the expiration button ui look good on pc and mobile :D - char & tiffany)
-          Cancel Expiration
-        </button>
-      </div>;
+      return <>
+          <div className='w-2/3 lg:w-1/2 flex items-center justify-items-center flex-col items-center sm:flex-row'>
+            <input className='m-1 mt-6 w-full rounded-md text-center flex-1 sm:pt-1 pl-4' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)}/>
+            <button className='btn w-full bg-gray-600 hover:bg-gray-500 text-white mr-4 sm:w-1/3 ml-5 mt-5 mb-3' onClick={e => setInput(!showInput)}>
+              Cancel Expiration
+            </button>
+          </div>
+            {
+              isExpired() && <div className='text-red-600 dark:text-red-400 font-semibold w-2/3 flex justify-items-center flex-wrap'>
+                  <div className='justify-items-start'>
+                    <div>
+                      <span>
+                          Your selected expiration is considered behind the current time of {getFormattedTime()}. 
+                        </span>
+                    </div>
+                    <div>
+                      <span>
+                        Submitting this expiration will not set make the sign expire.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+            }
+        </>;
     }
 
     return <button className='btn w-2/3 lg:w-1/2 bg-gray-500 hover:bg-gray-400 text-white mt-2' onClick={handleExpiration}>
