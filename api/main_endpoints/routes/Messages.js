@@ -46,7 +46,7 @@ const writeMessage = async (roomId, message, username, userId) => {
   } catch (err) {
     logger.error('Error saving chat message to MongoDB:', err);
   }
- 
+
   lastMessageSent[roomId] = JSON.stringify(messageObj);
 
   // increase the total messages sent counter
@@ -62,7 +62,7 @@ router.post('/send', async (req, res) => {
   if (!message || !roomId) {
     return res.status(BAD_REQUEST).send('Message and Room ID are required');
   }
-  /*
+
   const token = req.headers['authorization'];
   const apiKey = req.headers['x-api-key'];
 
@@ -70,7 +70,8 @@ router.post('/send', async (req, res) => {
   const required = [
     {value: token || apiKey, title: 'Token or API Key', },
     {value: message, title: 'Message', },
-    {value: id, title: 'Room ID', },
+    {value: roomId, title: 'Room ID' },
+
   ];
 
   const missingValue = required.find(({value}) => !value);
@@ -79,11 +80,10 @@ router.post('/send', async (req, res) => {
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
-  */
 
-  let nameToUse = 'PostmanTest';
-  let userId = '000000000000000000000000';
-  /*
+
+  let nameToUse, userId;
+
   if (apiKey) {
     try {
       const result = await User.findOne({ apiKey }).exec();
@@ -96,16 +96,15 @@ router.post('/send', async (req, res) => {
       logger.error('Error in /send User.findOne: ', error);
       return res.sendStatus(SERVER_ERROR);
     }
-  }
-
+  } else {
   // Assume user passed a non null/undefined token
-  const userObj = decodeToken(req);
-  if (!userObj) {
-    return res.sendStatus(UNAUTHORIZED);
+    const userObj = decodeToken(req);
+    if (!userObj) {
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    nameToUse = userObj.firstName;
+    userId = userObj._id;
   }
-  nameToUse = userObj.firstName;
-  userId = userObj._id;
-  */
   try {
     await writeMessage(roomId, message, `${nameToUse}:`, userId);
     return res.json({ status: 'Message sent' });
@@ -117,7 +116,7 @@ router.post('/send', async (req, res) => {
 
 router.get('/getLatestMessage', async (req, res) => {
   const {apiKey, id: roomId} = req.query;
-/*  
+
   const required = [
     {value: apiKey, title: 'API Key'},
     {value: id, title: 'Room ID'},
@@ -129,14 +128,10 @@ router.get('/getLatestMessage', async (req, res) => {
     res.status(BAD_REQUEST).send(`You must specify a ${missingValue.title}`);
     return;
   }
-*/
-if(!roomId){
-    return res.status(BAD_REQUEST).send('specify a roomId')
-  }
 
 
   try {
-    /*
+
     User.findOne({ apiKey }, (error, result) => {
       if (error) {
         logger.error('/listen received an invalid API key: ', error);
@@ -147,16 +142,17 @@ if(!roomId){
       if (!result) { // return unauthorized if no api key found
         return res.sendStatus(UNAUTHORIZED);
       }
-
-      if (!lastMessageSent[id]) {
+      /*
+      if (!lastMessageSent[roomId]) {
         return res.status(OK).send('Room closed');
       }
 
-      return res.status(OK).send(lastMessageSent[id]);
-
+      return res.status(OK).send(lastMessageSent[roomId]);
+      */
     });
-    */
-   const messages = await ChatMessage.find({ chatroomId: roomId })
+
+    const roomObjectId = roomId;
+    const messages = await ChatMessage.find({ chatroomId: roomObjectId })
       .sort({ createdAt: -1 })
       .limit(20)
       .lean();

@@ -11,7 +11,7 @@ const ChatMessageSchema = new mongoose.Schema({
     default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
   },
   chatroomId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
     index: true,
     ref: 'Chatroom',
