@@ -94,7 +94,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 
   const details = {
     copies: parseInt(copies),
-    sides: sides,
+    sides,
     fileSize: totalFileSize,
     userEmail: user.email,
     printedAt: new Date(),
