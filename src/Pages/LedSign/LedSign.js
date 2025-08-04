@@ -1,18 +1,3 @@
-/**
- * docker-compose -f docker-compose.dev.yml up --force-recreate --build -d nginx
- * 
- * 
- * git checkout dev
- * git pull origin dev
- * git checkout expiration-button
- * ----
- * git rebase dev
- * (fix the conflicts if any)
- * git add -u
- * git rebase --continue
- * git push origin expiration-button --force
- */
-
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { useSCE } from '../../Components/context/SceContext';
@@ -95,6 +80,7 @@ function LedSign() {
     return localISO;
   }
 
+
   function isExpired() {
     if (!expiration) {
       return false;
@@ -127,6 +113,11 @@ function LedSign() {
   }
 
   async function handleSend() {
+    let expirationToUse = null;
+    if (expiration){
+      expirationToUse = new Date(expiration).toISOString();
+    }
+
     setAwaitingSignResponse(true);
     let correctedScrollSpeed = 10 - scrollSpeed;
     const signResponse = await updateSignText(
@@ -137,7 +128,7 @@ function LedSign() {
         backgroundColor,
         textColor,
         borderColor,
-        expiration,
+        expiration: expirationToUse,
         email: user.email,
         firstName: user.firstName,
       },
@@ -175,6 +166,7 @@ function LedSign() {
       );
     }
   }
+
 
   function getExpirationButtonOrInput() {
     if (showInput) {
