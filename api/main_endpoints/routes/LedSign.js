@@ -78,10 +78,20 @@ router.get('/turnOff', async(req,res) =>{
   }
   let result = false;
   result = await turnOffSign();
-    logger.info('turning sign off!');
+  logger.info('turning sign off!');
+  let status = OK
   if(!result) {
     status = SERVER_ERROR;
   }
+
+  AuditLog.create({
+    userId: user._id,
+    action: AuditLogActions.UPDATE_SIGN,
+    details: {
+      newSignText: req.body.text,
+    }
+    }).catch(logger.error);
+    return res.sendStatus(status);
 });
 
 module.exports = router;
