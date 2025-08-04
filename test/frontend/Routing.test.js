@@ -60,6 +60,17 @@ function getComponentFromRoute(route, props = adminAppProps, user = mockUser) {
 
 describe('<Routing /> with <PrivateRoute />', () => {
   describe('Renders correct components for Admin user', () => {
+    // Prevent ReferenceError: EventSource is not defined
+    if (typeof global.EventSource === 'undefined') {
+      global.EventSource = class {
+        constructor() {}
+        close() {}
+        addEventListener() {}
+        removeEventListener() {}
+        onmessage() {}
+        onerror() {}
+      };
+    }
     it('Should render a <Home /> component with the / endpoint', () => {
       const wrapper = getComponentFromRoute('/');
       expect(wrapper.find(Home)).to.have.lengthOf(1);
