@@ -48,13 +48,8 @@ router.post('/updateSignText', async (req, res) => {
   }
   // need to make this its own api endpoint
   let result = false;
-  if (req.body.ledIsOff) {
-    result = await turnOffSign();
-    logger.info('turning sign off!');
-  } else {
     logger.info('updating sign with:', req.body);
     result = await updateSign(req.body);
-  }
   let status = OK;
   if(!result) {
     status = SERVER_ERROR;
@@ -69,6 +64,24 @@ router.post('/updateSignText', async (req, res) => {
   }).catch(logger.error);
 
   return res.sendStatus(status);
+});
+
+router.get('/turnOff', async(req,res) =>{
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/turnOff was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  const user = await decodeToken(req); // Store the user here
+  if (!user) {
+    logger.warn('/turnOff was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  let result = false;
+  result = await turnOffSign();
+    logger.info('turning sign off!');
+  if(!result) {
+    status = SERVER_ERROR;
+  }
 });
 
 module.exports = router;

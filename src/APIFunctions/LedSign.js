@@ -56,3 +56,24 @@ export async function updateSignText(signData, token) {
   }
   return status;
 }
+
+export async function turnOff(token) {
+  let status = new ApiResponse();
+  const url = new URL('/api/LedSign/turnOff', BASE_API_URL);
+  try {
+    const response = await fetch(url.href, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+    if (!response.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.responseData = err;
+    status.error = true;
+  }
+  return status;
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
+import { healthCheck, updateSignText, turnOff } from '../../APIFunctions/LedSign';
 import { useSCE } from '../../Components/context/SceContext';
 
 import './ledsign.css';
@@ -140,12 +140,7 @@ function LedSign() {
 
   async function handleStop() {
     setAwaitingStopSignResponse(true);
-    const signResponse = await updateSignText(
-      {
-        ledIsOff: true,
-        email: user.email,
-        firstName: user.firstName,
-      },
+    const signResponse = await turnOff(
       user.token
     );
     setStopRequestSuccesful(!signResponse.error);
