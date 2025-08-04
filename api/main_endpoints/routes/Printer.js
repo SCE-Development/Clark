@@ -22,7 +22,7 @@ const {
   PRINTING = {}
 } = require('../../config/config.json');
 const AuditLogActions = require('../util/auditLogActions.js');
-const { createAuditLog } = require('../util/auditLogHelpers.js');
+const AuditLog = require('../models/AuditLog.js');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL || 'http://localhost:14000';
@@ -62,7 +62,6 @@ router.get('/healthCheck', async (req, res) => {
     logger.warn(
       'Printing is disabled, returning 200 to mock the printing server'
     );
-
     return res.sendStatus(OK);
   }
   await axios
@@ -79,8 +78,6 @@ router.get('/healthCheck', async (req, res) => {
 
 router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   let totalFileSize = 0;
-  const { copies, sides, id } = req.body;
-  const action = AuditLogActions.PRINT_PAGE;
 
   if (!checkIfTokenSent(req)) {
     logger.warn('/sendPrintRequest was requested without a token');
@@ -91,28 +88,12 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-
-  const details = {
-    copies: parseInt(copies),
-    sides,
-    fileSize: totalFileSize,
-    userEmail: user.email,
-    printedAt: new Date(),
-    printJobId: id,
-    status: 'success' || 'fail'
-  };
-
   if (!PRINTING.ENABLED) {
-    details.status = 'mocked';
-    // create audit log on print
-    await createAuditLog({
-      user,
-      action,
-      details
-    });
     logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
+
+  const { copies, sides, id } = req.body;
 
   const chunks = await fs.promises.readdir(dir);
   const assembledPdfFromChunks = path.join(dir, id + '.pdf');
@@ -145,13 +126,20 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       }
     })
     .then( async () => {
-      details.status = 'success';
+
       // create audit log on print
-      await createAuditLog({
-        user,
-        action,
-        details
-      });
+      await AuditLog.create({
+        userId: user._id,
+        action: AuditLogActions.PRINT_PAGE,
+        details: {
+          copies: parseInt(copies),
+          sides,
+          fileSize: totalFileSize,
+          userEmail: user.email,
+          printedAt: new Date(),
+          printJobId: id
+        }
+      }).catch(logger.error);
 
       // delete file from temp folder after printing
       fs.unlink(file.path, (err) => {
@@ -160,10 +148,8 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
         }
       });
       res.sendStatus(OK);
-    }).catch(async (err) => {
+    }).catch((err) => {
       logger.error('/sendPrintRequest had an error: ', err);
-      details.status = 'fail';
-      await createAuditLog({ user, action, details });
       res.sendStatus(SERVER_ERROR);
     });
 });

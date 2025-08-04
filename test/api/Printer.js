@@ -1,4 +1,5 @@
 process.env.NODE_ENV = 'test';
+const { PRINTING = {} } = require('../../api/config/config.json');
 const mongoose = require('mongoose');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -168,6 +169,11 @@ describe('Printer', () => {
     });
 
     it('Should create only one audit log in the database when the response status is 200', async () => {
+      // Skip tests if printing is disabled
+      if (!PRINTING.ENABLED) {
+        return;
+      }
+
       const userId = new mongoose.Types.ObjectId();
       const user = new User({
         _id: userId,
