@@ -29,7 +29,7 @@ router.post('/sendVerificationEmail', async (req, res) => {
     if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
       logger.warn('refreshing token');
       apiHandler.refreshToken();
-      MetricsHandler.gcpRefreshTokenEpochTime.set(Math.floor(Date.now() / 1000)) // Updates prometheus metric
+      MetricsHandler.gcpRefreshTokenEpochTime.set(Math.floor(Date.now() / 1000)); // Updates prometheus metric
     }
   } else {
     logger.warn('getting new token! ', { tokenJson });
