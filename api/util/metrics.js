@@ -63,6 +63,11 @@ class MetricsHandler {
     labelNames: ['endpointName']
   })
 
+  gcpRefreshTokenEpochTime = new client.Gauge({
+    name: 'google_cloud_refresh_token_epoch',
+    help: 'When the GCP refresh token needs to be refreshed, time written in eopch format'
+  })
+
   constructor() {
     register.setDefaultLabels({
       app: 'sce-core',
