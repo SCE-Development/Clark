@@ -2,6 +2,8 @@ import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 import Cookies from 'universal-cookie';
 
+const cookies = new Cookies(); // cookie handler
+
 
 /**
  * Add a new user to the database.
@@ -95,9 +97,8 @@ export async function loginUser(email, password) {
  */
 export async function checkIfUserIsSignedIn() {
   let status = new UserApiResponse();
-  const cookies = new Cookies();
 
-  const token = cookies.get('jwtToken') ?? '';
+  const token = cookies.get('jwt') ?? '';
 
   // If there is not token in cookies,
   // we cant do anything and return
@@ -202,4 +203,12 @@ export async function validatePasswordReset(resetToken) {
     status.responseData = err.response;
   }
   return status;
+}
+
+export function setJwtCookie(token) {
+  cookies.set('jwt', token, { maxAge: 60 * 60 * 2, secure: true, sameSite: 'strict' }); // expire cookies after 2 hours
+}
+
+export function deleteJwtCookie() {
+  cookies.remove('jwt');
 }

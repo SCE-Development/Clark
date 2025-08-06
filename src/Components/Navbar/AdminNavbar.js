@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSCE } from '../context/SceContext';
-import Cookies from 'universal-cookie';
+import { deleteJwtCookie } from '../../APIFunctions/Auth';
 
 export default function UserNavBar(props) {
   const { user, setAuthenticated } = useSCE();
@@ -14,12 +14,10 @@ export default function UserNavBar(props) {
     }
     return className;
   };
-  const cookies = new Cookies();
 
   function handleLogout() {
     setAuthenticated(false);
-    cookies.remove('jwtToken');
-    window.localStorage.removeItem('jwtToken');
+    deleteJwtCookie();
     window.location.reload();
   }
 

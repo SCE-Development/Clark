@@ -236,7 +236,7 @@ router.post('/login', function(req, res) {
     });
 });
 
-// Verifies the users session if they have an active jwtToken.
+// Verifies the users session if they have an active jwt.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
 router.post('/verify', function(req, res) {

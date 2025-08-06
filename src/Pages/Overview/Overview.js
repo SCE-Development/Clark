@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const svg = require('./SVG');
 import { getAllUsers, deleteUserByID, getNewPaidMembersThisSemester } from '../../APIFunctions/User';
+import { deleteJwtCookie } from '../../APIFunctions/Auth.js';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 // import { membershipState } from '../../Enums';
@@ -9,7 +10,6 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
 import { useSCE } from '../../Components/context/SceContext.js';
-import Cookies from 'universal-cookie';
 
 export default function Overview() {
   const { user } = useSCE();
@@ -29,7 +29,6 @@ export default function Overview() {
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
-  const cookies = new Cookies();
 
   async function deleteUser(userToDel) {
     const response = await deleteUserByID(
@@ -41,8 +40,7 @@ export default function Overview() {
     }
     if (userToDel._id === user._id) {
       // logout
-      cookies.remove('jwtToken');
-      window.localStorage.removeItem('jwtToken');
+      deleteJwtCookie();
       window.location.reload();
       return window.alert('Self-deprecation is an art');
     }
