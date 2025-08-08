@@ -215,7 +215,7 @@ router.post('/getAllCards', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  const decoded = await decodeTokenFromBodyOrQuery(req);
+  const decoded = decodeToken(req);
   if (!Object.keys(decoded) || decoded.accessLevel < OFFICER) {
     return res.sendStatus(UNAUTHORIZED);
   }
