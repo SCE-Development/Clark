@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
 const client = require('prom-client');
-const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 
 
@@ -152,7 +152,7 @@ router.get('/listen', async (req, res) => {
 
   let filterQuery = {}; // filter to find user in the database
   if (token) {
-    let userObj = decodeTokenFromBodyOrQuery(req);
+    let userObj = decodeToken(req);
     if (!Object.keys(userObj)) {
       return res.sendStatus(UNAUTHORIZED);
     }

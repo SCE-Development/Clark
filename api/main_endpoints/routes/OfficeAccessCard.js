@@ -15,7 +15,6 @@ const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
 const {
-  decodeTokenFromBodyOrQuery,
   decodeToken,
   checkIfTokenSent,
   checkIfTokenValid

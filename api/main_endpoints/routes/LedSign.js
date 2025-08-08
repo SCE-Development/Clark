@@ -38,7 +38,7 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  const user = await decodeToken(req); // Store the user here
+  const user = decodeToken(req); // Store the user here
   if (!user) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);

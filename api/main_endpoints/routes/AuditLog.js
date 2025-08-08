@@ -5,7 +5,7 @@ const AuditLog = require('../models/AuditLog');
 const { OK, UNAUTHORIZED, SERVER_ERROR } = require('../../util/constants').STATUS_CODES;
 const { OFFICER } = require('../../util/constants.js').MEMBERSHIP_STATE;
 
-const { checkIfTokenSent, checkIfTokenValid, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { checkIfTokenSent, checkIfTokenValid, decodeToken } = require('../util/token-functions.js');
 
 const logger = require('../../util/logger');
 const User = require('../models/User.js');
@@ -73,7 +73,7 @@ router.get('/getAuditLogs', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  const decoded = await decodeTokenFromBodyOrQuery(req);
+  const decoded = decodeToken(req);
   if (!Object.keys(decoded) || decoded.accessLevel < OFFICER) {
     return res.sendStatus(UNAUTHORIZED);
   }

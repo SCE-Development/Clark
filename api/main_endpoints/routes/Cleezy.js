@@ -30,7 +30,7 @@ router.get('/list', async (req, res) => {
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
+  } else if (!decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   try {
@@ -49,7 +49,7 @@ router.get('/list', async (req, res) => {
 router.post('/createUrl', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
+  } else if (!decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { url, alias, expiresAt } = req.body;
@@ -70,7 +70,7 @@ router.post('/createUrl', async (req, res) => {
 router.post('/deleteUrl', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
+  } else if (!decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   const { alias } = req.body;

@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 router.get('/getAllAdvertisements', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
+  } else if (!decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   Advertisement.find()
@@ -45,7 +45,7 @@ router.post('/createAdvertisement', async (req, res) => {
     return res.sendStatus(FORBIDDEN);
   }
 
-  const user = await decodeToken(req);
+  const user = decodeToken(req);
   if (!user) {
     return res.sendStatus(UNAUTHORIZED);
   }
@@ -77,11 +77,11 @@ router.post('/createAdvertisement', async (req, res) => {
 router.post('/deleteAdvertisement', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
+  } else if (!decodeToken(req)) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const user = await decodeToken(req);
+  const user = decodeToken(req);
   if (!user) {
     return res.sendStatus(UNAUTHORIZED);
   }
