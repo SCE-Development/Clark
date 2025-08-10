@@ -18,14 +18,8 @@ function LedSign() {
   const [expiration, setExpiration] = useState(null);
   const [existingExpirationFromSign, setExistingExpirationFromSign] = useState(null);
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
-  const [awaitingStopSignResponse, setAwaitingStopSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
-  console.log({
-    backgroundColor,
-    textColor,
-    borderColor,
-  })
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -132,7 +126,6 @@ function LedSign() {
   }
 
   async function handleStop() {
-    setAwaitingStopSignResponse(true);
     const signResponse = await updateSignText(
       {
         ledIsOff: true,
@@ -142,7 +135,6 @@ function LedSign() {
       user.token
     );
     setStopRequestSuccesful(!signResponse.error);
-    setAwaitingStopSignResponse(false);
   }
 
   function renderRequestStatus() {
@@ -164,9 +156,9 @@ function LedSign() {
     if (!existingExpirationFromSign) {
       return <></>;
     }
-    return <p>Sign message will expire {new Date(existingExpirationFromSign).toLocaleString("en-US", {
-      timeZoneName: "short" // e.g., "Pacific Standard Time"
-    })}</p>
+    return <p>Sign message will expire {new Date(existingExpirationFromSign).toLocaleString('en-US', {
+      timeZoneName: 'short' // e.g., "Pacific Standard Time"
+    })}</p>;
   }
 
   function getExpirationButtonOrInput() {

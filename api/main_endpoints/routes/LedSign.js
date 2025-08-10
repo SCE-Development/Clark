@@ -27,7 +27,7 @@ router.get('/healthCheck', async (req, res) => {
   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
   */
   if (!LED_SIGN.ENABLED) {
-    logger.warn("led sign is disabled, returning 200 by default");
+    logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);
   }
   const dataFromSign = await healthCheck();
@@ -48,7 +48,7 @@ router.post('/updateSignText', async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!LED_SIGN.ENABLED) {
-    logger.warn("led sign is disabled, returning 200 by default");
+    logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);
   }
   // need to make this its own api endpoint
