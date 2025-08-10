@@ -16,11 +16,16 @@ function LedSign() {
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
   const [expiration, setExpiration] = useState(null);
+  const [existingExpirationFromSign, setExistingExpirationFromSign] = useState(null);
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [awaitingStopSignResponse, setAwaitingStopSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
-
+  console.log({
+    backgroundColor,
+    textColor,
+    borderColor,
+  })
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -69,18 +74,6 @@ function LedSign() {
     }
   ];
 
-  // call this convert
-  async function currentDate(){
-    let localISO = new Date();
-    localISO = new Date(
-      localISO.getTime() - localISO.getTimezoneOffset() * 60000
-    )
-      .toISOString()
-      .slice(0, 16);
-    return localISO;
-  }
-
-
   function isExpired() {
     if (!expiration) {
       return false;
@@ -114,7 +107,7 @@ function LedSign() {
 
   async function handleSend() {
     let expirationToUse = null;
-    if (expiration){
+    if (expiration) {
       expirationToUse = new Date(expiration).toISOString();
     }
 
@@ -167,6 +160,14 @@ function LedSign() {
     }
   }
 
+  function maybeShowExpirationDate() {
+    if (!existingExpirationFromSign) {
+      return <></>;
+    }
+    return <p>Sign message will expire {new Date(existingExpirationFromSign).toLocaleString("en-US", {
+      timeZoneName: "short" // e.g., "Pacific Standard Time"
+    })}</p>
+  }
 
   function getExpirationButtonOrInput() {
     if (showInput) {
@@ -202,13 +203,14 @@ function LedSign() {
       if (status && !status.error) {
         setSignHealthy(true);
         const { responseData } = status;
-        if (responseData && responseData.text) {
+        if (Object.keys(responseData).length > 0) {
           setText(responseData.text);
           setBrightness(responseData.brightness);
           setScrollSpeed(responseData.scrollSpeed);
           setBackgroundColor(responseData.backgroundColor);
           setTextColor(responseData.textColor);
           setBorderColor(responseData.borderColor);
+          setExistingExpirationFromSign(responseData.expiration);
         }
       } else {
         setSignHealthy(false);
@@ -278,6 +280,7 @@ function LedSign() {
                 ></div>
               </div>
             </div>
+            {maybeShowExpirationDate()}
             {getExpirationButtonOrInput()}
             {
               inputArray.map(({
