@@ -298,13 +298,13 @@ function LedSign() {
                 </div>
               ))
             }
-            <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-2' onClick={handleStop}>
+
+            <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
               Stop
             </button>
             <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
               Send
             </button>
-            {/* wow look at that an actual example of a function call to render ui in react */}
             {renderRequestStatus()}
           </div>
         </div>
