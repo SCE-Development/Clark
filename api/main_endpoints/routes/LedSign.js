@@ -17,8 +17,7 @@ const {
   LED_SIGN = {}
 } = require('../../config/config.json');
 
-const runningInDevelopment = process.env.NODE_ENV !== 'production'
-  && process.env.NODE_ENV !== 'test';
+const runningInTest = process.env.NODE_ENV === 'test';
 
 
 router.get('/healthCheck', async (req, res) => {
@@ -26,7 +25,7 @@ router.get('/healthCheck', async (req, res) => {
   * How these work with Quasar:
   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
   */
-  if (!LED_SIGN.ENABLED) {
+  if (!LED_SIGN.ENABLED && !runningInTest) {
     logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);
   }
@@ -47,7 +46,7 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!LED_SIGN.ENABLED) {
+  if (!LED_SIGN.ENABLED && !runningInTest) {
     logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);
   }
