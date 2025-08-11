@@ -65,7 +65,7 @@ router.post('/updateSignText', async (req, res) => {
     status = SERVER_ERROR;
   }
 
-  AuditLog.create({
+  await AuditLog.create({
     userId: user._id,
     action: AuditLogActions.UPDATE_SIGN,
     details: {
