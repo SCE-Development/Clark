@@ -8,7 +8,8 @@ const ChatMessageSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+    default: () => new Date(Date.now() + 5 * 1000), // 24 hours from now
+    index: {expires: 0}
   },
   chatroomId: {
     type: String,

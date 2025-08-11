@@ -23,9 +23,9 @@ router.use(bodyParser.json());
 const clients = {};
 const numberOfConnections = {};
 const lastMessageSent = {};
-
+// function to save and brodcast messages
 const writeMessage = async (roomId, message, username, userId) => {
-
+  // msg obj to send over sse
   const messageObj = {
     timestamp: Date.now(),
     message,
@@ -37,12 +37,12 @@ const writeMessage = async (roomId, message, username, userId) => {
   }
 
   try {
-    const newMessage = new ChatMessage({
+    const newMessage = new ChatMessage({ // saves msg to mongo
       chatroomId: roomId,
       userId: userId,
       text: message,
     });
-    await newMessage.save();
+    await newMessage.save(); // keeps msg
   } catch (err) {
     logger.error('Error saving chat message to MongoDB:', err);
   }
@@ -119,7 +119,7 @@ router.get('/getLatestMessage', async (req, res) => {
 
   const required = [
     {value: apiKey, title: 'API Key'},
-    {value: id, title: 'Room ID'},
+    {value: roomId, title: 'Room ID'},
   ];
 
   const missingValue = required.find(({value}) => !value);
@@ -130,37 +130,36 @@ router.get('/getLatestMessage', async (req, res) => {
   }
 
 
-  try {
 
-    User.findOne({ apiKey }, (error, result) => {
-      if (error) {
-        logger.error('/listen received an invalid API key: ', error);
-        res.sendStatus(SERVER_ERROR);
-        return;
-      }
+  User.findOne({ apiKey }, (error, result) => {
+    if (error) {
+      logger.error('/listen received an invalid API key: ', error);
+      res.sendStatus(SERVER_ERROR);
+      return;
+    }
 
-      if (!result) { // return unauthorized if no api key found
-        return res.sendStatus(UNAUTHORIZED);
-      }
-      /*
+    if (!result) { // return unauthorized if no api key found
+      return res.sendStatus(UNAUTHORIZED);
+    }
+    /*
       if (!lastMessageSent[roomId]) {
         return res.status(OK).send('Room closed');
       }
 
       return res.status(OK).send(lastMessageSent[roomId]);
       */
-    });
-
-    const roomObjectId = roomId;
-    const messages = await ChatMessage.find({ chatroomId: roomObjectId })
+    ChatMessage.find({chatroomId: roomId})
       .sort({ createdAt: -1 })
       .limit(20)
-      .lean();
-    return res.status(OK).json(messages);
-  } catch (error) {
-    logger.error('Error in /get: ', error);
-    res.sendStatus(SERVER_ERROR);
-  }
+      .lean()
+      .exec((err, messages) => {
+        if(err){
+          logger.error('Error querying messages', err);
+          return res.sendStatus(SERVER_ERROR);
+        }
+        return res.status(OK).json(messages);
+      });
+  });
 });
 
 router.get('/listen', async (req, res) => {
@@ -224,6 +223,24 @@ router.get('/listen', async (req, res) => {
       MetricsHandler.currentConnectionsOpen.labels(id).inc();
 
       clients[id].push(res);
+      // sends chat history
+      (async () => {
+        try {
+          const history = await ChatMessage.find({chatroomId: id})
+            .sort({createdAt:1}) // loads oldest msg first
+            .limit(50)
+            .lean();
+          history.forEach(m => {
+            res.write(`data: ${JSON.stringify({
+              timestamp: new Date(m.createdAt || Date.now()).getTime(),
+              message: m.text,
+              username: ''
+            })}\n\n`);
+          });
+        }catch (e) {
+          logger.error('history hydration error', e);
+        }
+      })();
 
       req.on('close', () => {
         if(clients[id]){
