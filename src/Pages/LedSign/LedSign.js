@@ -156,9 +156,11 @@ function LedSign() {
     if (!existingExpirationFromSign) {
       return <></>;
     }
-    return <p>Sign message will expire {new Date(existingExpirationFromSign).toLocaleString('en-US', {
-      timeZoneName: 'short' // e.g., "Pacific Standard Time"
-    })}</p>;
+    const humanizedExpiration = new Date(existingExpirationFromSign)
+      .toLocaleString('en-US', {
+        timeZoneName: 'short' // e.g., "Pacific Standard Time"
+      });
+    return <p>The current sign message will expire on {humanizedExpiration}</p>;
   }
 
   function getExpirationButtonOrInput() {
