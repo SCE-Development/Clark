@@ -226,17 +226,19 @@ router.get('/listen', async (req, res) => {
       // sends chat history
       (async () => {
         try {
-          const history = await ChatMessage.find({chatroomId: id})
-            .sort({createdAt:1}) // loads oldest msg first
-            .limit(50)
+          const history = await ChatMessage.findOne({chatroomId: id})
+            .sort({createdAt:-1}) // loads newest msg first
             .lean();
-          history.forEach(m => {
-            res.write(`data: ${JSON.stringify({
-              timestamp: new Date(m.createdAt || Date.now()).getTime(),
-              message: m.text,
-              username: ''
-            })}\n\n`);
-          });
+          if(!history){
+            return;
+          }
+          const user = await User.findById(history.userId, { firstName: 1 }).lean();
+          const username = `${(user && user.firstName) || 'Unknown'}:`;
+          res.write(`data: ${JSON.stringify({
+            timestamp: new Date(history.createdAt || Date.now()).getTime(),
+            message: history.text,
+            username
+          })}\n\n`);
         }catch (e) {
           logger.error('history hydration error', e);
         }
