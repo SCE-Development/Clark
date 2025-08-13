@@ -24,18 +24,17 @@ function checkIfTokenSent(request) {
 */
 function decodeToken(request){
   try {
-    let decodedResponse = {};
     const token = request.headers.authorization?.split('Bearer ')[1] || request.body.token || request.query.token;
     if (!token) {
-      return decodedResponse;
+      return null;
     }
     const userToken = token.replace(/^JWT\s/, '');
     jwt.verify(userToken, secretKey, function(error, decoded) {
       if (!error && decoded) {
-        decodedResponse = decoded;
+        return decoded;
       }
     });
-    return decodedResponse;
+    return null;
   } catch (_) {
     return null;
   }
