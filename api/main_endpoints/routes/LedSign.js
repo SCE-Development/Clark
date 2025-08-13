@@ -13,9 +13,11 @@ const logger = require('../../util/logger');
 const { updateSign, healthCheck, turnOffSign } = require('../util/LedSign.js');
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
+const {
+  LED_SIGN = {}
+} = require('../../config/config.json');
 
-const runningInDevelopment = process.env.NODE_ENV !== 'production'
-  && process.env.NODE_ENV !== 'test';
+const runningInTest = process.env.NODE_ENV === 'test';
 
 
 router.get('/healthCheck', async (req, res) => {
@@ -23,7 +25,8 @@ router.get('/healthCheck', async (req, res) => {
   * How these work with Quasar:
   * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
   */
-  if (runningInDevelopment) {
+  if (!LED_SIGN.ENABLED && !runningInTest) {
+    logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);
   }
   const dataFromSign = await healthCheck();
@@ -38,12 +41,13 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  const user = decodeToken(req); // Store the user here
-  if (!user) {
+  const user = await decodeToken(req); // Store the user here
+  if (!user || Object.keys(user) === 0) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (runningInDevelopment) {
+  if (!LED_SIGN.ENABLED && !runningInTest) {
+    logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);
   }
   // need to make this its own api endpoint
@@ -60,7 +64,7 @@ router.post('/updateSignText', async (req, res) => {
     status = SERVER_ERROR;
   }
 
-  AuditLog.create({
+  await AuditLog.create({
     userId: user._id,
     action: AuditLogActions.UPDATE_SIGN,
     details: {

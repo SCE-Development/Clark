@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import { useSCE } from '../../Components/context/SceContext';
+
 import './ledsign.css';
 
 function LedSign() {
   const { user } = useSCE();
   const [signHealthy, setSignHealthy] = useState(false);
+  const [showInput, setInput] = useState(false);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
   const [brightness, setBrightness] = useState(50);
@@ -13,12 +15,11 @@ function LedSign() {
   const [backgroundColor, setBackgroundColor] = useState('#0000ff');
   const [textColor, setTextColor] = useState('#00ff00');
   const [borderColor, setBorderColor] = useState('#ff0000');
+  const [expiration, setExpiration] = useState(null);
+  const [existingExpirationFromSign, setExistingExpirationFromSign] = useState(null);
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
-  const [awaitingStopSignResponse, setAwaitingStopSignResponse]
-    = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
-
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -67,7 +68,43 @@ function LedSign() {
     }
   ];
 
+  function isExpired() {
+    if (!expiration) {
+      return false;
+    }
+    const currDate = new Date();
+    const expireDateObject = new Date(expiration);
+    return expireDateObject < currDate;
+  }
+
+  function getFormattedTime(maybeISOString = null) {
+    let date = new Date();
+    if (maybeISOString) {
+      date = new Date(maybeISOString);
+    }
+
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short',
+    });
+  }
+
+  async function handleExpiration() {
+    setExpiration(null);
+    setInput(!showInput);
+  }
+
   async function handleSend() {
+    let expirationToUse = null;
+    if (expiration) {
+      expirationToUse = new Date(expiration).toISOString();
+    }
+
     setAwaitingSignResponse(true);
     let correctedScrollSpeed = 10 - scrollSpeed;
     const signResponse = await updateSignText(
@@ -78,6 +115,7 @@ function LedSign() {
         backgroundColor,
         textColor,
         borderColor,
+        expiration: expirationToUse,
         email: user.email,
         firstName: user.firstName,
       },
@@ -88,7 +126,6 @@ function LedSign() {
   }
 
   async function handleStop() {
-    setAwaitingStopSignResponse(true);
     const signResponse = await updateSignText(
       {
         ledIsOff: true,
@@ -98,7 +135,6 @@ function LedSign() {
       user.token
     );
     setStopRequestSuccesful(!signResponse.error);
-    setAwaitingStopSignResponse(false);
   }
 
   function renderRequestStatus() {
@@ -115,6 +151,45 @@ function LedSign() {
       );
     }
   }
+
+  function maybeShowExpirationDate() {
+    if (!existingExpirationFromSign) {
+      return <></>;
+    }
+    const humanizedExpiration = new Date(existingExpirationFromSign)
+      .toLocaleString('en-US', {
+        timeZoneName: 'short' // e.g., "Pacific Standard Time"
+      });
+    return <p>The current sign message will expire on {humanizedExpiration}</p>;
+  }
+
+  function getExpirationButtonOrInput() {
+    if (showInput) {
+      return <>
+        <div className='w-2/3 lg:w-1/2 flex items-center justify-items-center flex-col items-center sm:flex-row'>
+          <input className='m-1 mt-6 w-full rounded-md text-center flex-1 sm:pt-1 pl-4' type="datetime-local" id="endTime" name="endTime" onChange={e => setExpiration(e.target.value)} />
+          <button className='btn w-full bg-gray-600 hover:bg-gray-500 text-white mr-4 sm:w-1/3 ml-5 mt-5 mb-3' onClick={e => setInput(!showInput)}>
+            Cancel Expiration
+          </button>
+        </div>
+        {
+          isExpired() && <div className="w-2/3 lg:w-1/2 text-left break-words">
+            <p className='text-red-600 dark:text-red-400'>
+              Your selected expiration is considered behind the current time of {getFormattedTime()}.
+            </p>
+            <p className='text-red-600 dark:text-red-400'>
+              Submitting a message with this expiration will not update the sign.
+            </p>
+          </div>
+        }
+      </>;
+    }
+
+    return <button className='btn w-2/3 lg:w-1/2 bg-gray-500 hover:bg-gray-400 text-white mt-2' onClick={handleExpiration}>
+      Set Expiration
+    </button>;
+  }
+
   useEffect(() => {
     async function checkSignHealth() {
       setLoading(true);
@@ -122,13 +197,14 @@ function LedSign() {
       if (status && !status.error) {
         setSignHealthy(true);
         const { responseData } = status;
-        if (responseData && responseData.text) {
+        if (Object.keys(responseData).length > 0) {
           setText(responseData.text);
           setBrightness(responseData.brightness);
           setScrollSpeed(responseData.scrollSpeed);
           setBackgroundColor(responseData.backgroundColor);
           setTextColor(responseData.textColor);
           setBorderColor(responseData.borderColor);
+          setExistingExpirationFromSign(responseData.expiration);
         }
       } else {
         setSignHealthy(false);
@@ -198,6 +274,8 @@ function LedSign() {
                 ></div>
               </div>
             </div>
+            {maybeShowExpirationDate()}
+            {getExpirationButtonOrInput()}
             {
               inputArray.map(({
                 id,

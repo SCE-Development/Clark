@@ -48,7 +48,7 @@ services:
       - MAIN_ENDPOINT_URL=sce-main-endpoints-dev:8080
       - CLEEZY_URL=http://host.docker.internal:8000
       - PRINTER_URL=http://host.docker.internal:14000
-      - LED_SIGN_URL=http://host.docker.internal:11000
+      - LED_SIGN_URL=http://host.docker.internal:10000
       - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api-dev:8082/cloudapi
       - DATABASE_HOST=sce-mongodb-dev
