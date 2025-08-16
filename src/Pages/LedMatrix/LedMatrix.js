@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import AnnouncementDashboard from './Components/AnnouncementDashboard';
 import LeetCodeLeaderboard from './Components/LeetCodeLeaderboard';
 import ClockAndWeatherPage from './Components/ClockAndWeather';
+import { useSCE } from '../../Components/context/SceContext';
 
 export default function LedMatrix() {
+  const { user } = useSCE();
+  const token = user.token;
   const [tab, setTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'leaderboard'; // tab options: 'leaderboard', 'announcement', 'clock'
@@ -22,12 +25,12 @@ export default function LedMatrix() {
   function renderPageContent() {
     if (tab === 'leaderboard') {
       return (
-        <LeetCodeLeaderboard/>
+        <LeetCodeLeaderboard token={token}/>
       );
     }
     if (tab === 'announcement') {
       return (
-        <AnnouncementDashboard/>
+        <AnnouncementDashboard token={token}/>
       );
     }
     return (
@@ -40,7 +43,7 @@ export default function LedMatrix() {
       <h1 className='text-gray-700 dark:text-white text-4xl font-bold py-4'>
         SCE LED Matrix
       </h1>
-      <h3>This page manages the functions of the LED Matrix</h3>
+      <pre className='text-gray-700 dark:text-white text-lg'>This page manages the functions of the LED Matrix</pre>
       <div className='flex flex-row items-center justify-center py-6 w-full'>
         <button
           className={`${BUTTON_CLASSNAME} ${tab === 'leaderboard' ? 'bg-blue-400' : 'bg-blue-700'}`}
