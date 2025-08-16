@@ -71,6 +71,13 @@ export default function LeetCodeLeaderboard({ token }) {
     setUserToEdit(null);
   }
 
+  function resetInputFields() {
+    setFirstName('');
+    setLastName('');
+    setLeetcodeUsername('');
+    setConfirmLeetcodeUsername('');
+  }
+
   async function handleRegisterUser(e) {
     e.preventDefault();
     const userData = {
@@ -78,11 +85,16 @@ export default function LeetCodeLeaderboard({ token }) {
       firstName,
       lastName,
     };
+    // add a check for this user already existing -> setMessage for this too
+    setRegisteredUsers([...registeredUsers, userData]);
+    resetInputFields();
+    /*
     if (!await addUser(userData, token)) {
       setMessage('Error registering user');
     } else {
       getAllRegisteredUsers();
     }
+    */
   }
 
   useEffect(() => {
@@ -186,7 +198,7 @@ export default function LeetCodeLeaderboard({ token }) {
             </form>
           </div>
           <div className='overflow-x-auto overflow-y-auto mb-12'>
-            <table className='m-full min-w-full text-gray-700 dark:text-gray-400'>
+            <table className='w-full min-w-full text-gray-700 dark:text-gray-400 table-auto border-collapse'>
               <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                 <tr>
                   {[
@@ -209,16 +221,16 @@ export default function LeetCodeLeaderboard({ token }) {
               <tbody className='text-center text-sm'>
                 {registeredUsers.map((user, index) => (
                   <tr key={index} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                    <td className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
+                    <td className='px-2 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
                       {user === userToEdit ? (
                         <input
                           type='text'
                           defaultValue={user.firstName}
                           placeholder={user.firstName}
-                          className='dark:bg-gray-200 dark:text-black border border-solid border-[#555] rounded-[4px] w-full'
+                          className='dark:bg-gray-200 dark:text-black border border-[#555] rounded-md h-[2rem] leading-[2rem] px-2'
                         />
                       ) : (
-                        <div>
+                        <div className='h-[2rem] leading-[2rem] px-2 border border-transparent rounded-md'>
                           {user.firstName}
                         </div>
                       )}
@@ -229,24 +241,24 @@ export default function LeetCodeLeaderboard({ token }) {
                           type='text'
                           defaultValue={user.lastName}
                           placeholder={user.lastName}
-                          className='dark:bg-gray-200 dark:text-black border border-solid border-[#555] rounded-[4px] w-full'
+                          className='dark:bg-gray-200 dark:text-black border border-[#555] rounded-md h-[2rem] leading-[2rem] px-2'
                         />
                       ) : (
-                        <div>
+                        <div className='h-[2rem] leading-[2rem] px-2 border border-transparent rounded-md'>
                           {user.lastName}
                         </div>
                       )}
                     </td>
-                    <td className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white w-[150px]'>
+                    <td className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
                       {user === userToEdit ? (
                         <input
                           type='text'
                           defaultValue={user.username}
                           placeholder={user.username}
-                          className='dark:bg-gray-200 dark:text-black border border-solid border-[#555] rounded-[4px] w-full'
+                          className='dark:bg-gray-200 dark:text-black border border-[#555] rounded-md h-[2rem] leading-[2rem] px-2'
                         />
                       ) : (
-                        <div>
+                        <div className='h-[2rem] leading-[2rem] px-2 border border-transparent rounded-md'>
                           {user.username}
                         </div>
                       )}
@@ -254,14 +266,14 @@ export default function LeetCodeLeaderboard({ token }) {
                     <td>
                       {user === userToEdit ? (
                         <button
-                          className='py-2 px-6 bg-blue-400 hover:text-white hover:bg-blue-600 rounded-xl text-black cursor-pointer transition-all duration-300 ease-in-out'
+                          className='h-[2rem] px-3 bg-blue-400 hover:text-white hover:bg-blue-600 rounded-xl text-black cursor-pointer transition-all duration-300 ease-in-out'
                           onClick={() => handleUpdateUser(user)}
                         >
                           Update
                         </button>
                       ) : (
                         <button
-                          className='py-2 px-6 bg-blue-400 hover:text-white hover:bg-blue-600 rounded-xl text-black cursor-pointer transition-all duration-300 ease-in-out'
+                          className='h-[2rem] px-3 bg-blue-400 hover:text-white hover:bg-blue-600 rounded-xl text-black cursor-pointer transition-all duration-300 ease-in-out'
                           onClick={() => handleEditClick(user)}
                         >
                           Edit
@@ -269,12 +281,21 @@ export default function LeetCodeLeaderboard({ token }) {
                       )}
                     </td>
                     <td>
-                      <button
-                        className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
-                        onClick={() => handleDeleteClick(user)}
-                      >
-                        {trashcanSymbol('#e64539')}
-                      </button>
+                      {user === userToEdit ? (
+                        <button
+                          className='h-[2rem] px-3 bg-red-500 hover:text-white hover:bg-red-600 rounded-xl text-black cursor-pointer'
+                          onClick={() => setUserToEdit(null)}
+                        >
+                          Cancel
+                        </button>
+                      ) : (
+                        <button
+                          className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl cursor-pointer'
+                          onClick={() => handleDeleteClick(user)}
+                        >
+                          {trashcanSymbol('#e64539')}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
