@@ -73,8 +73,8 @@ router.post('addUser', async (req, res) => {
 
   if (!addUserToLeaderboard({
     username,
-    first_name: firstName,
-    last_name: lastName
+    firstName,
+    lastName
   })) {
     return res.sendStatus(SERVER_ERROR);
   }
