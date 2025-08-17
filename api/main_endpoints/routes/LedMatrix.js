@@ -30,7 +30,7 @@ router.get('/healthCheck', async (_, res) => {
   if (runningInDevelopment) {
     return res.sendStatus(OK);
   }
-  const dataFromSign = await healthCheck();
+  const dataFromSign = healthCheck();
   if(!dataFromSign) {
     return res.sendStatus(SERVER_ERROR);
   }
