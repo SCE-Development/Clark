@@ -19,6 +19,22 @@ async function healthCheck() {
   }
 }
 
+async function getAllUsers() {
+  try {
+    const url = new URL('/getAllUsers', LED_MATRIX_URL);
+    const res = await fetch(url.href);
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+    logger.error('Bad response from LED Matrix: error code ', res.status); // fix later
+    return null;
+  } catch (err) {
+    logger.error('getAllUsers encountered an error: ', err);
+    return null;
+  }
+}
+
 async function addUserToLeaderboard(userData) {
   try {
     const url = new URL('/register', LED_MATRIX_URL);
@@ -95,6 +111,7 @@ function deleteAnnouncement(announcement) {
 
 module.exports = {
   healthCheck,
+  getAllUsers,
   addUserToLeaderboard,
   deleteUserFromLeaderboard,
   updateLeaderboardUser,

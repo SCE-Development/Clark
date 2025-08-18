@@ -14,6 +14,7 @@ const {
 const logger = require('../../util/logger');
 const {
   healthCheck,
+  getAllUsers,
   addUserToLeaderboard,
   deleteUserFromLeaderboard,
   updateLeaderboardUser,
@@ -45,8 +46,13 @@ router.get('/getAllUsers', async (req, res) => {
     return res.status(UNAUTHORIZED).send('Invalid API token');
   }
 
-  // query the pi to get all users
-  // no need for audit log
+  const users = await getAllUsers();
+  if (!users) {
+    return res.status(SERVER_ERROR);
+  }
+  return res.status(OK).send({
+    users,
+  });
 });
 
 router.post('addUser', async (req, res) => {

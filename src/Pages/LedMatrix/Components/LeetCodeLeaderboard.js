@@ -61,7 +61,11 @@ export default function LeetCodeLeaderboard({ token }) {
     const newUsername = document.querySelector(
       `input[placeholder="${user.username}]`
     ).value;
-    const newUser = { newFirstName, newLastName, newUsername };
+    const newUser = {
+      firstName: newFirstName,
+      lastName: newLastName,
+      username: newUsername
+    };
     if (!await updateUser(user, newUser, token)) {
       setMessage('Error updating user');
     } else {
