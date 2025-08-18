@@ -5,23 +5,7 @@ import ConfirmationModal from '../../../Components/DecisionModal/ConfirmationMod
 
 export default function LeetCodeLeaderboard({ token }) {
 
-  const [registeredUsers, setRegisteredUsers] = useState([
-    {
-      firstName: 'Nathan',
-      lastName: 'Tran',
-      username: 'vnate',
-    },
-    {
-      firstName: 'Oliver',
-      lastName: 'Majano',
-      username: 'ioliver678',
-    },
-    {
-      firstName: 'Martin',
-      lastName: 'Ceballos',
-      username: 'mceballos123',
-    }
-  ]);
+  const [registeredUsers, setRegisteredUsers] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
   const [userToDelete, setUserToDelete] = useState({});
   const [userToEdit, setUserToEdit] = useState({});
