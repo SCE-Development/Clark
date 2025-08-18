@@ -101,11 +101,11 @@ async function updateLeaderboardUser(oldUserData, newUserData) {
   }
 }
 
-function addAnnouncement(announcement) {
+async function addAnnouncement(announcement) {
 
 }
 
-function deleteAnnouncement(announcement) {
+async function deleteAnnouncement(announcement) {
 
 }
 

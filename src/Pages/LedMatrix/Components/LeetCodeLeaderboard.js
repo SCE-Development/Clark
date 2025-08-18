@@ -51,7 +51,7 @@ export default function LeetCodeLeaderboard({ token }) {
       username: newUsername
     };
     if (!await updateUser(user, newUser, token)) {
-      setMessage('Error updating user');
+      setMessage('Error updating user, please try again later');
     } else {
       getAllRegisteredUsers();
     }
@@ -68,6 +68,8 @@ export default function LeetCodeLeaderboard({ token }) {
 
   async function handleRegisterUser(e) {
     e.preventDefault();
+    // check if username already exists
+
     const userData = {
       username: leetcodeUsername,
       firstName,
@@ -78,7 +80,7 @@ export default function LeetCodeLeaderboard({ token }) {
     resetInputFields();
     /*
     if (!await addUser(userData, token)) {
-      setMessage('Error registering user');
+      setMessage('Error registering user, please try again later');
     } else {
       getAllRegisteredUsers();
     }
@@ -190,15 +192,13 @@ export default function LeetCodeLeaderboard({ token }) {
               <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                 <tr>
                   {[
-                    { title: 'First Name' },
-                    { title: 'Last Name' },
-                    { title: 'LeetCode Username' },
-                    { title: '', },
-                    { title: '', }
-                  ].map(({ title, index }) => (
-                    <th key={index}
-                      className='px-6 py-3 whitespace-nowrap'
-                    >
+                    { title: 'First Name', id: 'fn' },
+                    { title: 'Last Name', id: 'ln' },
+                    { title: 'LeetCode Username', id: 'lcu' },
+                    { title: '', id: 'eu' },
+                    { title: '', id: 'del' }
+                  ].map(({ title, id }) => (
+                    <th key={id} className='px-6 py-3 whitespace-nowrap'>
                       <div className='flex items-center justify-center'>
                         {title}
                       </div>

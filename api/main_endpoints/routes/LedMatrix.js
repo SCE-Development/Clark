@@ -77,7 +77,7 @@ router.post('addUser', async (req, res) => {
     return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
 
-  if (!addUserToLeaderboard({
+  if (!await addUserToLeaderboard({
     username,
     firstName,
     lastName
@@ -107,7 +107,7 @@ router.post('deleteUser', async (req, res) => {
     return res.status(BAD_REQUEST).send('Username field missing');
   }
 
-  if (!deleteUserFromLeaderboard(username)) {
+  if (!await deleteUserFromLeaderboard(username)) {
     return res.sendStatus(SERVER_ERROR);
   }
 
@@ -131,7 +131,7 @@ router.post('updateUser', async (req, res) => {
   const { oldUser, newUser } = req.body;
   // add check for missing stuff
 
-  if (!updateLeaderboardUser(oldUser, newUser)) {
+  if (!await updateLeaderboardUser(oldUser, newUser)) {
     return res.sendStatus(SERVER_ERROR);
   }
 
@@ -158,7 +158,7 @@ router.post('addAnnouncement', async (req, res) => {
     return res.status(BAD_REQUEST).send('Announcement field missing');
   }
 
-  if (!addAnnouncement(announcement)) {
+  if (!await addAnnouncement(announcement)) {
     return res.sendStatus(SERVER_ERROR);
   }
 
@@ -184,7 +184,7 @@ router.post('deleteAnnouncement', async (req, res) => {
     return res.status(BAD_REQUEST).send('Announcement field missing');
   }
 
-  if (!deleteAnnouncement(announcement)) {
+  if (!await deleteAnnouncement(announcement)) {
     return res.sendStatus(SERVER_ERROR);
   }
 
