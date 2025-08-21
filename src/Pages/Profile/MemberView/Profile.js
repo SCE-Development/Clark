@@ -107,7 +107,6 @@ export default function Profile() {
               <div className="px-4 py-2 font-semibold">Door Code</div>
               <div className="px-4 py-2">{response.doorCode}</div>
             </div>
-            </div>
           </div>
         </div>
       </div>
