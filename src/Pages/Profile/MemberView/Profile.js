@@ -103,6 +103,11 @@ export default function Profile() {
               <div className="px-4 py-2 font-semibold">Membership Expiration</div>
               <div className="px-4 py-2">{renderExpirationDate()}</div>
             </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Door Code</div>
+              <div className="px-4 py-2">{response.doorCode}</div>
+            </div>
+            </div>
           </div>
         </div>
       </div>
