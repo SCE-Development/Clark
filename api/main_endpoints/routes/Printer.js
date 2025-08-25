@@ -21,10 +21,11 @@ const {
 const {
   PRINTING = {}
 } = require('../../config/config.json');
+const AuditLogActions = require('../util/auditLogActions.js');
+const AuditLog = require('../models/AuditLog.js');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
-let PRINTER_URL = process.env.PRINTER_URL
-  || 'http://localhost:14000';
+let PRINTER_URL = process.env.PRINTER_URL || 'http://localhost:14000';
 
 const router = express.Router();
 
@@ -36,7 +37,7 @@ const storage = multer.diskStorage({
   filename: function(req, file, cb) {
     const uniqueSuffix = Date.now();
     cb(null, uniqueSuffix + '_' + file.originalname);
-  }
+  },
 });
 
 const upload = multer({ storage });
@@ -58,7 +59,9 @@ router.get('/healthCheck', async (req, res) => {
    * https://github.com/SCE-Development/Quasar/wiki/How-do-Health-Checks-Work%3F
    */
   if (!PRINTING.ENABLED) {
-    logger.warn('Printing is disabled, returning 200 to mock the printing server');
+    logger.warn(
+      'Printing is disabled, returning 200 to mock the printing server'
+    );
     return res.sendStatus(OK);
   }
   await axios
@@ -74,24 +77,19 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
+  let totalFileSize = 0;
+
   if (!checkIfTokenSent(req)) {
     logger.warn('/sendPrintRequest was requested without a token');
     return res.sendStatus(UNAUTHORIZED);
   }
-  if (!await decodeToken(req)) {
+  const user = decodeToken(req);
+  if (!user) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
   if (!PRINTING.ENABLED) {
-    logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
-    return res.status(OK).send({ printId: null });
-  }
-
-  const dir = path.join(__dirname, 'printing');
-  const { totalChunks, chunkIdx } = req.body;
-
-  // reassemble pdf on last chunk received
-  if (Number(chunkIdx) < totalChunks - 1) {
+    logger.warn('Printing is disabled, returning 200 to mock the printing server');
     return res.sendStatus(OK);
   }
 
@@ -106,6 +104,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 
     try {
       const chunkData = await fs.promises.readFile(path.join(dir, chunk));
+      totalFileSize += chunkData.length;
       fs.appendFileSync(assembledPdfFromChunks, chunkData);
     } catch (err) {
       logger.error('/sendPrintRequest encountered an error while assembling pdf: ' + err);
@@ -116,31 +115,43 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 
   const stream = await fs.createReadStream(assembledPdfFromChunks);
   const data = new FormData();
-  data.append('file', stream, {filename: id, type: 'application/pdf'});
+  data.append('file', fs.createReadStream(file.path), { filename: file.originalname });
   data.append('copies', copies);
   data.append('sides', sides);
-
-  try {
-    // full pdf can be sent to quasar no problem
-    const printRes = await axios.post(PRINTER_URL + '/print', data, {
+  axios.post(PRINTER_URL + '/print',
+    data,
+    {
       headers: {
         ...data.getHeaders(),
-      },
-      maxContentLength: 1024 * 1024 * 150, // 150 mb
-      maxBodyLength: Infinity
+      }
+    })
+    .then( async () => {
+
+      // create audit log on print
+      await AuditLog.create({
+        userId: user._id,
+        action: AuditLogActions.PRINT_PAGE,
+        details: {
+          copies: parseInt(copies),
+          sides,
+          fileSize: totalFileSize,
+          userEmail: user.email,
+          printedAt: new Date(),
+          printJobId: id
+        }
+      }).catch(logger.error);
+
+      // delete file from temp folder after printing
+      fs.unlink(file.path, (err) => {
+        if (err) {
+          logger.error(`Unable to delete file at path ${file.path}:`, err);
+        }
+      });
+      res.sendStatus(OK);
+    }).catch((err) => {
+      logger.error('/sendPrintRequest had an error: ', err);
+      res.sendStatus(SERVER_ERROR);
     });
-
-    // { print_id: null | string }
-    const printId = printRes.data;
-
-    await cleanUpChunks(dir, id);
-    res.status(OK).send(printId);
-  } catch (err) {
-    logger.error('/sendPrintRequest had an error: ', err);
-
-    await cleanUpChunks(dir, id);
-    res.sendStatus(SERVER_ERROR);
-  }
 });
 
 module.exports = router;
