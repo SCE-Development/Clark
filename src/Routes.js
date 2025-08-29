@@ -18,7 +18,7 @@ import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
-import LedMatrix from './Pages/LedMatrix/LedMatrix.js';
+import LeetCodeLeaderboard from './Pages/LeetCodeLeaderboard/LeetCodeLeaderboard.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -160,9 +160,9 @@ export const officerOrAdminRoutes = [
     inAdminNavbar: true
   },
   {
-    Component: LedMatrix,
-    path: '/led-matrix',
-    pageName: 'LED Matrix',
+    Component: LeetCodeLeaderboard,
+    path: '/leetcode-leaderboard',
+    pageName: 'LeetCode Leaderboard',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/login',
     inAdminNavbar: true

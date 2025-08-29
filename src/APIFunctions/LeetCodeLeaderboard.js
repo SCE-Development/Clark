@@ -4,7 +4,7 @@ import { BASE_API_URL } from '../Enums';
 export async function getAllUsers(token) {
   let status = new ApiResponse();
   try {
-    const url = new URL('/api/LedMatrix/getAllUsers', BASE_API_URL);
+    const url = new URL('/api/LeetCodeLeaderboard/getAllUsers', BASE_API_URL);
     const res = await fetch(url.href, {
       headers: {
         'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export async function getAllUsers(token) {
 export async function addUser(userData, token) {
   let status = new ApiResponse();
   try {
-    const url = new URL('/api/LedMatrix/addUser', BASE_API_URL);
+    const url = new URL('/api/LeetCodeLeaderboard/addUser', BASE_API_URL);
     const res = await fetch(url.href, {
       method: 'POST',
       headers: {
@@ -52,7 +52,7 @@ export async function addUser(userData, token) {
 export async function deleteUser(username, token) {
   let status = new ApiResponse();
   try {
-    const url = new URL('/api/LedMatrix/deleteUser', BASE_API_URL);
+    const url = new URL('/api/LeetCodeLeaderboard/deleteUser', BASE_API_URL);
     const res = await fetch(url.href, {
       method: 'POST',
       headers: {
@@ -74,20 +74,17 @@ export async function deleteUser(username, token) {
   return status;
 }
 
-export async function updateUser(oldUser, newUser, token) { // both user objects are in the format { firstName, lastName, username }
+export async function checkIfUserExists(username, token) {
   let status = new ApiResponse();
   try {
-    const url = new URL('/api/LedMatrix/updateUser', BASE_API_URL);
+    const url = new URL('/api/LeetCodeLeaderboard/checkIfUserExists', BASE_API_URL);
     const res = await fetch(url.href, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        oldUser,
-        newUser,
-      })
+      body: JSON.stringify({ username }),
     });
     if (res.ok) {
       const result = await res.json();

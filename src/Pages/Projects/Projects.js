@@ -45,11 +45,11 @@ const projects = [
     'caption': 'A url shortening service created by SCE'
   },
   {
-    'link': 'https://github.com/SCE-Development/LedMatrix',
+    'link': 'https://github.com/SCE-Development/sign2',
     'image': 'https://github.com/user-attachments/assets/03c1646d-5d64-448f-9c65-cffc9883b58e',
     'name': 'LeetCode Leaderboard',
     'information': 'Full Stack',
-    'caption': 'A leaderboard for LeetCode problems. View live leaderboard [here](http://192.168.69.123:5173)'
+    'caption': 'A raspberry-pi powered LED matrix displaying a leaderboard for LeetCode problems, built as a winter internship project.'
   }
 ];
 

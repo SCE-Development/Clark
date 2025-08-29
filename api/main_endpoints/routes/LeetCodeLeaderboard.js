@@ -6,21 +6,19 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
   BAD_REQUEST
-} = require('../../util/constants').STATUS_CODES;
+} = require('../../util/constants.js').STATUS_CODES;
 const {
   decodeToken,
   checkIfTokenSent
 } = require('../util/token-functions.js');
-const logger = require('../../util/logger');
+const logger = require('../../util/logger.js');
 const {
   healthCheck,
   getAllUsers,
   addUserToLeaderboard,
   deleteUserFromLeaderboard,
-  updateLeaderboardUser,
-  addAnnouncement,
-  deleteAnnouncement
-} = require('../util/LedMatrix.js');
+  checkIfUserExists,
+} = require('../util/LeetCodeLeaderboard.js');
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
 
@@ -55,7 +53,7 @@ router.get('/getAllUsers', async (req, res) => {
   });
 });
 
-router.post('addUser', async (req, res) => {
+router.post('/addUser', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.status(FORBIDDEN).send('Missing API token');
   }
@@ -93,7 +91,7 @@ router.post('addUser', async (req, res) => {
   return res.sendStatus(OK);
 });
 
-router.post('deleteUser', async (req, res) => {
+router.post('/deleteUser', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.status(FORBIDDEN).send('Missing API token');
   }
@@ -119,7 +117,7 @@ router.post('deleteUser', async (req, res) => {
   return res.sendStatus(OK);
 });
 
-router.post('updateUser', async (req, res) => {
+router.post('/checkIfUserExists', async (req, res) => {
   if (!checkIfTokenSent(req)) {
     return res.status(FORBIDDEN).send('Missing API token');
   }
@@ -128,72 +126,15 @@ router.post('updateUser', async (req, res) => {
     return res.status(UNAUTHORIZED).send('Invalid API token');
   }
 
-  const { oldUser, newUser } = req.body;
-  // add check for missing stuff
-
-  if (!await updateLeaderboardUser(oldUser, newUser)) {
-    return res.sendStatus(SERVER_ERROR);
+  const { username } = req.body;
+  if (!username) {
+    return res.status(BAD_REQUEST).send('Username field missing');
   }
-
-  AuditLog.create({
-    userId: decoded._id,
-    action: AuditLogActions.UPDATE_SIGN, // UPDATE_LEETCODE_USER
-    details: { username },
-  });
-  return res.sendStatus(OK);
-
-});
-
-router.post('addAnnouncement', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.status(FORBIDDEN).send('Missing API token');
+  const check = await checkIfUserExists(username);
+  if (check.error) {
+    return res.status(check.status).send(check.message);
   }
-  const decoded = decodeToken(req);
-  if (!decoded) {
-    return res.status(UNAUTHORIZED).send('Invalid API token');
-  }
-
-  const { announcement } = req.body;
-  if (!announcement) {
-    return res.status(BAD_REQUEST).send('Announcement field missing');
-  }
-
-  if (!await addAnnouncement(announcement)) {
-    return res.sendStatus(SERVER_ERROR);
-  }
-
-  AuditLog.create({
-    userId: decoded._id,
-    action: AuditLogActions.UPDATE_SIGN, // ADD_ANNOUNCEMENT
-    details: { announcement },
-  });
-  return res.sendStatus(OK);
-});
-
-router.post('deleteAnnouncement', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.status(FORBIDDEN).send('Missing API token');
-  }
-  const decoded = decodeToken(req);
-  if (!decoded) {
-    return res.status(UNAUTHORIZED).send('Invalid API token');
-  }
-
-  const { announcement } = req.body;
-  if (!announcement) {
-    return res.status(BAD_REQUEST).send('Announcement field missing');
-  }
-
-  if (!await deleteAnnouncement(announcement)) {
-    return res.sendStatus(SERVER_ERROR);
-  }
-
-  AuditLog.create({
-    userId: decoded._id,
-    action: AuditLogActions.UPDATE_SIGN, // DELETE_ANNOUNCEMENT
-    details: { announcement },
-  });
-  return res.sendStatus(OK);
+  return res.status(OK).send(check.exists);
 });
 
 module.exports = router;
