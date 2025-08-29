@@ -138,15 +138,15 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   }
 });
 
-router.post('/status', express.json, async (req, res) => {
-  logger.info(req);
-
+router.post('/status', express.json(), async (req, res) => {
   try {
-    const status = await fetch(PRINTER_URL + '/status', {
+    const response = await fetch(PRINTER_URL + '/status', {
       method: 'POST',
-      body: req.body
+      body: req.body.printId
     });
 
+    // { status: string }
+    const status = await response.json();
     res.status(OK).send(status);
   } catch (err) {
     res.sendStatus(SERVER_ERROR);

@@ -60,6 +60,23 @@ export function parseRange(pages, maxPages) {
   return result;
 }
 
+export async function getPrintStatus(printId) {
+  const url = new URL('/api/Printer/status', BASE_API_URL);
+
+  const response = await fetch(url.href, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'POST',
+    body: JSON.stringify({ printId: printId })
+  });
+
+  const json = await response.json();
+  const status = json.status;
+
+  return status;
+}
+
 /**
  * Print the page
  * @param {Object} data - PDF File and its configurations

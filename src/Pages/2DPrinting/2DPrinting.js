@@ -4,6 +4,7 @@ import {
   parseRange,
   printPage,
   getPagesPrinted,
+  getPrintStatus,
 } from '../../APIFunctions/2DPrinting';
 import { editUser } from '../../APIFunctions/User';
 
@@ -13,7 +14,6 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
 import { useSCE } from '../../Components/context/SceContext.js';
-import { BASE_API_URL } from '../../Enums.js';
 
 export default function Printing() {
   const { user, setUser } = useSCE();
@@ -40,12 +40,6 @@ export default function Printing() {
     const status = await healthCheck();
     setPrinterHealthy(status && !status.error);
     setLoading(false);
-  }
-
-  async function pollJobStatus() {
-    setInterval(() => {
-      console.log("aga");
-    }, 1000);
   }
 
   async function getNumberOfPagesPrintedSoFar() {
@@ -201,10 +195,10 @@ export default function Printing() {
       return;
     }
 
-    if (window.localStorage.getItem("printId") !== null) {
+    if (window.localStorage.getItem('printId') !== null) {
       setPrintStatus('You are already printing something - please wait');
       setPrintStatusColor('error');
-      return;      
+      return;
     }
 
     // send print request with files and configuratiosn in formData
@@ -213,35 +207,28 @@ export default function Printing() {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    let status = await printPage(data, user.token);
+    let printReq = await printPage(data, user.token);
 
     try {
-      window.localStorage.setItem('printId', JSON.stringify(status?.responseData));
+      window.localStorage.setItem('printId', JSON.stringify(printReq?.responseData));
     } catch (err) {
-      // TODO: display err to client
-      console.log('encountered an error while trying to save print id to local storage ' + err);
+      setPrintStatus(':(');
+      setPrintStatusColor('error');
     }
 
-    if (!status.error) {
+    if (!printReq.error) {
       setPrintStatus('Printing in progress');
-
-      const url = new URL('/api/Printer/status', BASE_API_URL);
-
-      console.log("h");
-
-      const s = await fetch(url.href, {
-        method: 'POST',
-        body: status.responseData
-      });
-      console.log("h2");
-      console.log(s);
+      setPrintStatusColor('success');
 
       const promise = new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve();
-        }, 5000);
+        const interval = setInterval(async () => {
+          const status = await getPrintStatus(printReq.responseData['print_id']);
+          if (status === 'PRINTED') {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 1000);
       });
-
       await promise;
 
       editUser(
