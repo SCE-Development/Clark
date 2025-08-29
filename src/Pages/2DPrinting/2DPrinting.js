@@ -13,6 +13,7 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
 import { useSCE } from '../../Components/context/SceContext.js';
+import { BASE_API_URL } from '../../Enums.js';
 
 export default function Printing() {
   const { user, setUser } = useSCE();
@@ -39,6 +40,12 @@ export default function Printing() {
     const status = await healthCheck();
     setPrinterHealthy(status && !status.error);
     setLoading(false);
+  }
+
+  async function pollJobStatus() {
+    setInterval(() => {
+      console.log("aga");
+    }, 1000);
   }
 
   async function getNumberOfPagesPrintedSoFar() {
@@ -194,6 +201,12 @@ export default function Printing() {
       return;
     }
 
+    if (window.localStorage.getItem("printId") !== null) {
+      setPrintStatus('You are already printing something - please wait');
+      setPrintStatusColor('error');
+      return;      
+    }
+
     // send print request with files and configuratiosn in formData
     const data = new FormData();
 
@@ -202,7 +215,35 @@ export default function Printing() {
     data.append('copies', copies);
     let status = await printPage(data, user.token);
 
+    try {
+      window.localStorage.setItem('printId', JSON.stringify(status?.responseData));
+    } catch (err) {
+      // TODO: display err to client
+      console.log('encountered an error while trying to save print id to local storage ' + err);
+    }
+
     if (!status.error) {
+      setPrintStatus('Printing in progress');
+
+      const url = new URL('/api/Printer/status', BASE_API_URL);
+
+      console.log("h");
+
+      const s = await fetch(url.href, {
+        method: 'POST',
+        body: status.responseData
+      });
+      console.log("h2");
+      console.log(s);
+
+      const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve();
+        }, 5000);
+      });
+
+      await promise;
+
       editUser(
         { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
         user.token,
