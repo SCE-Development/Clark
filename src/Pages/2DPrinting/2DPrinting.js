@@ -231,6 +231,7 @@ export default function Printing() {
       });
       await promise;
 
+      window.localStorage.removeItem('printId');
       editUser(
         { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
         user.token,
