@@ -48,7 +48,7 @@ async function addUserToLeaderboard(userData) {
       body: JSON.stringify(userData),
     });
     if (res.ok) {
-      return true; 
+      return true;
     }
     logger.error('Bad response from LeetCode Leaderboard: error code ', res.status); // fix later
     return false;
@@ -94,7 +94,7 @@ async function checkIfUserExists(username) {
       return {
         error: false,
         exists: data.exists,
-      }
+      };
     }
     logger.error('Bad response from LeetCode Leaderboard: ', res.message); // fix later
     return {
@@ -107,7 +107,7 @@ async function checkIfUserExists(username) {
     return {
       error: true,
       message: err,
-    }
+    };
   }
 }
 
