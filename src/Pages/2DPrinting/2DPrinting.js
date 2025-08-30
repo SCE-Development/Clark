@@ -81,7 +81,7 @@ export default function Printing() {
   }
 
   useEffect(() => {
-    tryResolvePrint(window.localStorage.getItem('printId'));
+    tryResolvePrint(window.localStorage?.getItem('printId'));
     checkPrinterHealth();
     getNumberOfPagesPrintedSoFar();
   }, []);
