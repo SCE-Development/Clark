@@ -35,6 +35,24 @@ export default function Printing() {
   const [loading, setLoading] = useState(true);
   const [PdfFile, setPdfFile] = useState(null);
 
+  async function checkPrinterHealth() {
+    setLoading(true);
+    const status = await healthCheck();
+    setPrinterHealthy(status && !status.error);
+    setLoading(false);
+  }
+
+  async function getNumberOfPagesPrintedSoFar() {
+    const result = await getPagesPrinted(
+      user.email,
+      user.token,
+    );
+    setPrinterHealthy(!result.error);
+    if (!result.error) {
+      setPagesPrinted(result.pagesUsed);
+    }
+  }
+
   async function tryResolvePrint(printId) {
     if (printId === null) return;
 
@@ -52,6 +70,7 @@ export default function Printing() {
 
         setPrintStatus('Printing succeeded!');
         setPrintStatusColor('success');
+        getNumberOfPagesPrintedSoFar();
 
         setTimeout(() => {
           setPrintStatus(null);
@@ -60,24 +79,6 @@ export default function Printing() {
         clearInterval(interval);
       }
     }, 1000);
-  }
-
-  async function checkPrinterHealth() {
-    setLoading(true);
-    const status = await healthCheck();
-    setPrinterHealthy(status && !status.error);
-    setLoading(false);
-  }
-
-  async function getNumberOfPagesPrintedSoFar() {
-    const result = await getPagesPrinted(
-      user.email,
-      user.token,
-    );
-    setPrinterHealthy(!result.error);
-    if (!result.error) {
-      setPagesPrinted(result.pagesUsed);
-    }
   }
 
   useEffect(() => {
@@ -246,7 +247,7 @@ export default function Printing() {
     let printReq = await printPage(data, user.token);
 
     try {
-      window.localStorage.setItem('printId', JSON.stringify(printReq?.responseData));
+      window.localStorage.setItem('printId', JSON.stringify(printReq?.responseData['print_id']));
     } catch (err) {
       setPrintStatus(':(');
       setPrintStatusColor('error');
@@ -257,11 +258,10 @@ export default function Printing() {
     } else {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
+      setTimeout(() => {
+        setPrintStatus(null);
+      }, 5000);
     }
-    getNumberOfPagesPrintedSoFar();
-    setTimeout(() => {
-      setPrintStatus(null);
-    }, 5000);
   }
 
   function handleDrop(e) {
