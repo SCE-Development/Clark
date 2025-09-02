@@ -59,26 +59,29 @@ export default function Printing() {
     setPrintStatus('Printing in progress');
     setPrintStatusColor('success');
 
-    const interval = setInterval(async () => {
-      const status = await getPrintStatus(printId);
-      if (status === 'PRINTED') {
-        window.localStorage.removeItem('printId');
-        editUser(
-          { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-          user.token,
-        );
+    return new Promise((resolve, reject) => {
+      const interval = setInterval(async () => {
+        const status = await getPrintStatus(printId);
+        if (status === 'PRINTED') {
+          window.localStorage.removeItem('printId');
+          editUser(
+            { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
+            user.token,
+          );
 
-        setPrintStatus('Printing succeeded!');
-        setPrintStatusColor('success');
-        getNumberOfPagesPrintedSoFar();
+          setPrintStatus('Printing succeeded!');
+          setPrintStatusColor('success');
+          getNumberOfPagesPrintedSoFar();
 
-        setTimeout(() => {
-          setPrintStatus(null);
-        }, 5000);
+          setTimeout(() => {
+            setPrintStatus(null);
+          }, 5000);
 
-        clearInterval(interval);
-      }
-    }, 1000);
+          resolve();
+          clearInterval(interval);
+        }
+      }, 1000);
+    });
   }
 
   useEffect(() => {
@@ -221,20 +224,12 @@ export default function Printing() {
     if (PdfFile.size > 1024 * 1024 * 150) {
       setPrintStatus('File exceeds 150 MB size limit');
       setPrintStatusColor('error');
-      setTimeout(() => {
-        setPrintStatus(null);
-      }, 5000);
-
       return;
     }
 
     if (window.localStorage.getItem('printId') !== null) {
       setPrintStatus('You are already printing something - please wait');
       setPrintStatusColor('error');
-      setTimeout(() => {
-        setPrintStatus(null);
-      }, 5000);
-
       return;
     }
 
@@ -254,14 +249,15 @@ export default function Printing() {
     }
 
     if (!printReq.error) {
-      tryResolvePrint(printReq.responseData['print_id']);
+      await tryResolvePrint(printReq.responseData['print_id']);
     } else {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
-      setTimeout(() => {
-        setPrintStatus(null);
-      }, 5000);
     }
+
+    setTimeout(() => {
+      setPrintStatus(null);
+    }, 5000);
   }
 
   function handleDrop(e) {
