@@ -91,7 +91,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     return res.sendStatus(UNAUTHORIZED);
   }
 
-  const userId = decoded._id;
+  const userId = decodedToken._id;
 
   if (!PRINTING.ENABLED) {
     logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
