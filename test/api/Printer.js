@@ -161,9 +161,9 @@ describe('Printer', () => {
   describe('modifyPagesPrinted', () => {
     it('Should return true if pages were modified correctly', async () => {
       const user = await new User({
-        firstName: 'Evan',
-        lastName: 'Ugarte',
-        email: 'goat@sce.com',
+        firstName: 'nothing',
+        lastName: 'really',
+        email: 'alerts@one.sce',
         password: 'vibecoding',
         pagesPrinted: 1,
       }).save();
