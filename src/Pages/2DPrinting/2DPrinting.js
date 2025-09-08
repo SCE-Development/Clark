@@ -101,14 +101,14 @@ export default function Printing() {
   }
 
   useEffect(() => {
-  if (window.localStorage !== undefined) {
-    const jobsFromLocal = JSON.parse(window.localStorage?.getItem('printJobs'));
-    setPrintJobs(jobsFromLocal);
-  }
-}, []);
+    if (window.localStorage !== undefined) {
+      const jobsFromLocal = JSON.parse(window.localStorage?.getItem('printJobs'));
+      setPrintJobs(jobsFromLocal);
+    }
+  }, []);
 
   useEffect(() => {
-    //tryResolvePrint(window.localStorage?.getItem('printId'));
+    // tryResolvePrint(window.localStorage?.getItem('printId'));
     checkPrinterHealth();
     getNumberOfPagesPrintedSoFar();
   }, []);
