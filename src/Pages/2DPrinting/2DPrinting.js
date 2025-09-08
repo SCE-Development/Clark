@@ -34,6 +34,7 @@ export default function Printing() {
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [PdfFile, setPdfFile] = useState(null);
+  const [printJobs, setPrintJobs] = useState({});
 
   async function checkPrinterHealth() {
     setLoading(true);
@@ -53,7 +54,7 @@ export default function Printing() {
     }
   }
 
-  async function tryResolvePrint(printId) {
+  async function tryResolvePrint(printId, jobs) {
     if (printId === null) return;
 
     setPrintStatus('Printing in progress');
@@ -66,7 +67,17 @@ export default function Printing() {
 
           if (status !== 'PRINTED') return;
 
-          window.localStorage.removeItem('printId');
+          // PROBLEM: the printJobs state will end up becoming
+          // stale in this interval, so if we make a req and
+          // then another req, upon the first job completing
+          // the printJobs state will be set to an empty object
+          // since when the interval was started, printJobs
+          // only contained the first job
+          const newPrintJobs = {...jobs};
+          delete newPrintJobs[printId];
+          window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+          setPrintJobs(newPrintJobs);
+
           editUser(
             { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
             user.token,
@@ -90,7 +101,14 @@ export default function Printing() {
   }
 
   useEffect(() => {
-    tryResolvePrint(window.localStorage?.getItem('printId'));
+  if (window.localStorage !== undefined) {
+    const jobsFromLocal = JSON.parse(window.localStorage?.getItem('printJobs'));
+    setPrintJobs(jobsFromLocal);
+  }
+}, []);
+
+  useEffect(() => {
+    //tryResolvePrint(window.localStorage?.getItem('printId'));
     checkPrinterHealth();
     getNumberOfPagesPrintedSoFar();
   }, []);
@@ -244,23 +262,15 @@ export default function Printing() {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    let printReq = await printPage(data, user.token);
+    const printReq = await printPage(data, user.token);
 
     try {
-      window.localStorage.setItem('printId', JSON.stringify(printReq?.responseData['print_id']));
+      const printId = printReq?.responseData['print_id'];
+      const newPrintJobs = {...printJobs, [printId]: {state: 'PENDING'} };
+      setPrintJobs(newPrintJobs);
+      window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+      await tryResolvePrint(printReq.responseData['print_id'], newPrintJobs);
     } catch (err) {
-      setPrintStatus(':(');
-      setPrintStatusColor('error');
-    }
-
-    if (!printReq.error) {
-      try {
-        await tryResolvePrint(printReq.responseData['print_id']);
-      } catch (err) {
-        setPrintStatus(':(');
-        setPrintStatusColor('error');
-      }
-    } else {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
     }
