@@ -138,16 +138,30 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   }
 });
 
-router.post('/status', express.json(), async (req, res) => {
+router.get('/status/', async (req, res) => {
+  if (!checkIfTokenSent(req)) {
+    logger.warn('/status was requested without a token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const decodedToken = await decodeToken(req);
+  if (!decodedToken || Object.keys(decodedToken) === 0) {
+    logger.warn('/status was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!PRINTING.ENABLED) {
+    logger.warn('Printing is disabled, returning 200 and PRINTED status to mock the printing server');
+    return res.status(OK).send({ status: 'PRINTED' });
+  }
+
   try {
-    const response = await fetch(PRINTER_URL + '/status', {
-      method: 'POST',
-      body: req.body.printId
+    const response = await fetch(PRINTER_URL + `/status/?id=${req.query.id}`, {
+      method: 'GET',
     });
 
     // { status: string }
-    const status = await response.json();
-    res.status(OK).send(status);
+    const json = await response.json();
+    res.status(OK).send(json);
   } catch (err) {
     res.sendStatus(SERVER_ERROR);
   }

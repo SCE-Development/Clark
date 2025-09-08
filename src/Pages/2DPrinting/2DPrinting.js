@@ -61,8 +61,11 @@ export default function Printing() {
 
     return new Promise((resolve, reject) => {
       const interval = setInterval(async () => {
-        const status = await getPrintStatus(printId);
-        if (status === 'PRINTED') {
+        try {
+          const status = await getPrintStatus(printId, user.token);
+
+          if (status !== 'PRINTED') return;
+
           window.localStorage.removeItem('printId');
           editUser(
             { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
@@ -79,6 +82,8 @@ export default function Printing() {
 
           resolve();
           clearInterval(interval);
+        } catch (err) {
+          reject(err);
         }
       }, 1000);
     });
@@ -249,7 +254,12 @@ export default function Printing() {
     }
 
     if (!printReq.error) {
-      await tryResolvePrint(printReq.responseData['print_id']);
+      try {
+        await tryResolvePrint(printReq.responseData['print_id']);
+      } catch (err) {
+        setPrintStatus(':(');
+        setPrintStatusColor('error');
+      }
     } else {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');

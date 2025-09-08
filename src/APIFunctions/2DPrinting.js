@@ -60,15 +60,14 @@ export function parseRange(pages, maxPages) {
   return result;
 }
 
-export async function getPrintStatus(printId) {
-  const url = new URL('/api/Printer/status', BASE_API_URL);
+export async function getPrintStatus(printId, token) {
+  const url = new URL('/api/Printer/status/', BASE_API_URL);
 
-  const response = await fetch(url.href, {
+  const response = await fetch(url.href + `?id=${printId}`, {
     headers: {
-      'Content-Type': 'application/json'
+      'Authorization': `Bearer ${token}`
     },
-    method: 'POST',
-    body: JSON.stringify({ printId: printId })
+    method: 'GET',
   });
 
   const json = await response.json();
