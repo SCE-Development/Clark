@@ -87,4 +87,18 @@ function deleteCard(alias) {
   });
 }
 
-module.exports = { checkIfCardExists, generateAlias, deleteCard };
+function editAlias(currentAlias, newAlias) {
+  return new Promise((resolve) => {
+    try {
+      collection.findOneAndUpdate(
+        { alias: currentAlias },
+        { $set: { alias: newAlias } }
+      );
+    } catch (error) {
+      logger.error('editAlias caught an error: ', error);
+      return resolve(false);
+    }
+  });
+}
+
+module.exports = { checkIfCardExists, generateAlias, deleteCard, editAlias};

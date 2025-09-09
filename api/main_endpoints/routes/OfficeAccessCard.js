@@ -215,6 +215,23 @@ router.post('/getAllCards', async (req, res) => {
   }
 });
 
+router.post('/edit', async (req, res) => {
+  const decoded = decodeToken(req);
+  if (!decoded) return res.sendStatus(UNAUTHORIZED);
+
+  const { currentAlias, newAlias } = req.body ?? {};
+
+  try {
+    const updated = await editAlias(currentAlias.trim(), newAlias.trim());
+    if (!updated) {
+      return res.status(NOT_FOUND).json({ error: 'Alias not found or update failed' });
+    }
+    return res.status(OK).json({ message: 'Alias updated', item: updated });
+  } catch (e) {
+    return res.sendStatus(SERVER_ERROR);
+  }
+});
+
 router.get('/listen', async (req, res) => {
   const decoded = await decodeTokenFromBodyOrQuery(req);
   if (!Object.keys(decoded) || decoded.accessLevel < OFFICER) {
