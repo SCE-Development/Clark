@@ -70,60 +70,21 @@ export default function Printing() {
         if (status !== 'PRINTED') return;
 
         const newPrintJobs = {...printJobs};
-        delete newPrintJobs[id];
+        newPrintJobs[id].state = 'PRINTED';
         setPrintJobs(newPrintJobs);
-        window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+
+        setTimeout(() => {
+          const newPrintJobs = {...printJobs};
+          delete newPrintJobs[id];
+          setPrintJobs(newPrintJobs);
+          window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+        }, 2000);
+
       });
     }, 1000);
 
     return () => clearInterval(interval);
   }, [printJobs]);
-
-  // async function tryResolvePrint(printId, jobs) {
-  //   if (printId === null) return;
-
-  //   setPrintStatus('Printing in progress');
-  //   setPrintStatusColor('success');
-
-  //   return new Promise((resolve, reject) => {
-  //     const interval = setInterval(async () => {
-  //       try {
-  //         const status = await getPrintStatus(printId, user.token);
-
-  //         if (status !== 'PRINTED') return;
-
-  //         // PROBLEM: the printJobs state will end up becoming
-  //         // stale in this interval, so if we make a req and
-  //         // then another req, upon the first job completing
-  //         // the printJobs state will be set to an empty object
-  //         // since when the interval was started, printJobs
-  //         // only contained the first job
-  //         const newPrintJobs = {...jobs};
-  //         delete newPrintJobs[printId];
-  //         window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
-  //         setPrintJobs(newPrintJobs);
-
-  //         editUser(
-  //           { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-  //           user.token,
-  //         );
-
-  //         setPrintStatus('Printing succeeded!');
-  //         setPrintStatusColor('success');
-  //         getNumberOfPagesPrintedSoFar();
-
-  //         setTimeout(() => {
-  //           setPrintStatus(null);
-  //         }, 5000);
-
-  //         resolve();
-  //         clearInterval(interval);
-  //       } catch (err) {
-  //         reject(err);
-  //       }
-  //     }, 1000);
-  //   });
-  // }
 
   useEffect(() => {
     if (window.localStorage !== undefined) {
@@ -503,6 +464,15 @@ export default function Printing() {
 
   return (
     <div className='w-full'>
+      <div>
+        <h1>Active Prints</h1>
+        {
+          Object.keys(printJobs).map(id => (
+            <p key={id}>{id}: {printJobs[id].state}</p>
+          ))
+        }
+      </div>
+
       <ConfirmationModal {... {
         headerText: 'Submit print request?',
         bodyText: `The request will use ${pagesToBeUsedInPrintRequest} page(s) out of the ${getRemainingPageBalance()} pages remaining.`,
