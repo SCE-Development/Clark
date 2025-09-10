@@ -67,19 +67,19 @@ export default function Printing() {
       ids.map(async (id) => {
         const status = await getPrintStatus(id, user.token);
 
-        if (status !== 'PRINTED') return;
-
         const newPrintJobs = {...printJobs};
-        newPrintJobs[id].state = 'PRINTED';
+        newPrintJobs[id].state = status;
         setPrintJobs(newPrintJobs);
+        window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
 
-        setTimeout(() => {
-          const newPrintJobs = {...printJobs};
-          delete newPrintJobs[id];
-          setPrintJobs(newPrintJobs);
-          window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
-        }, 2000);
-
+        if (status === 'PRINTED') {
+          setTimeout(() => {
+            const newPrintJobs = {...printJobs};
+            delete newPrintJobs[id];
+            setPrintJobs(newPrintJobs);
+            window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+          }, 2000);
+        }
       });
     }, 1000);
 
@@ -88,13 +88,10 @@ export default function Printing() {
 
   useEffect(() => {
     if (window.localStorage !== undefined) {
-      const jobsFromLocal = JSON.parse(window.localStorage?.getItem('printJobs'));
+      const jobsFromLocal = JSON.parse(window.localStorage.getItem('printJobs'));
       setPrintJobs(jobsFromLocal);
     }
-  }, []);
 
-  useEffect(() => {
-    // tryResolvePrint(window.localStorage?.getItem('printId'));
     checkPrinterHealth();
     getNumberOfPagesPrintedSoFar();
   }, []);
@@ -465,7 +462,7 @@ export default function Printing() {
   return (
     <div className='w-full'>
       <div>
-        <h1>Active Prints</h1>
+        <h1>Your Active Prints</h1>
         {
           Object.keys(printJobs).map(id => (
             <p key={id}>{id}: {printJobs[id].state}</p>
