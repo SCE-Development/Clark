@@ -232,7 +232,7 @@ export default function Printing() {
       setPrintStatusColor('error');
       return;
     }
-    
+
     // send print request with files and configuratiosn in formData
     const data = new FormData();
 
