@@ -68,7 +68,7 @@ export default function Printing() {
         const status = await getPrintStatus(id, user.token);
 
         const newPrintJobs = {...printJobs};
-        newPrintJobs[id].state = status;
+        newPrintJobs[id].status = status;
         setPrintJobs(newPrintJobs);
         window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
 
@@ -232,13 +232,7 @@ export default function Printing() {
       setPrintStatusColor('error');
       return;
     }
-
-    if (window.localStorage.getItem('printId') !== null) {
-      setPrintStatus('You are already printing something - please wait');
-      setPrintStatusColor('error');
-      return;
-    }
-
+    
     // send print request with files and configuratiosn in formData
     const data = new FormData();
 
@@ -249,10 +243,9 @@ export default function Printing() {
 
     try {
       const printId = printReq?.responseData['print_id'];
-      const newPrintJobs = {...printJobs, [printId]: {state: 'PENDING'} };
+      const newPrintJobs = {...printJobs, [printId]: {status: 'PENDING'} };
       setPrintJobs(newPrintJobs);
       window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
-      // await tryResolvePrint(printReq.responseData['print_id'], newPrintJobs);
     } catch (err) {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
@@ -465,7 +458,7 @@ export default function Printing() {
         <h1>Your Active Prints</h1>
         {
           Object.keys(printJobs).map(id => (
-            <p key={id}>{id}: {printJobs[id].state}</p>
+            <p key={id}>{id}: {printJobs[id].status}</p>
           ))
         }
       </div>
