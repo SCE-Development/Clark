@@ -89,7 +89,9 @@ export default function Printing() {
   useEffect(() => {
     if (window.localStorage !== undefined) {
       const jobsFromLocal = JSON.parse(window.localStorage.getItem('printJobs'));
-      setPrintJobs(jobsFromLocal);
+      if (jobsFromLocal !== null) {
+        setPrintJobs(jobsFromLocal);
+      }
     }
 
     checkPrinterHealth();
