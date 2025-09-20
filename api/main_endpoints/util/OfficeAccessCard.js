@@ -87,4 +87,30 @@ function deleteCard(alias) {
   });
 }
 
-module.exports = { checkIfCardExists, generateAlias, deleteCard };
+function editAlias(_id, newAlias) {
+  return new Promise((resolve) => {
+    try {
+      OfficeAccessCard.findByIdAndUpdate(
+        _id,
+        { $set: { alias: newAlias } },
+        { new: true, useFindAndModify: false },
+        (error, result) => {
+          if (error) {
+            logger.error('editAlias got an error querying mongodb: ', error);
+            return resolve(false);
+          }
+          if (!result) {
+            logger.info(`Card with id ${_id} not found in the database`);
+            return resolve(false);
+          }
+          return resolve(result);
+        }
+      );
+    } catch (error) {
+      logger.error('editAlias caught an error: ', error);
+      return resolve(false);
+    }
+  });
+}
+
+module.exports = { checkIfCardExists, generateAlias, deleteCard, editAlias };
