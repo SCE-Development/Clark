@@ -25,6 +25,7 @@ const {
   checkIfCardExists,
   generateAlias,
   deleteCard,
+  editAlias,
 } = require('../util/OfficeAccessCard.js');
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
@@ -212,6 +213,58 @@ router.post('/getAllCards', async (req, res) => {
   } catch (error) {
     logger.error('Error fetching cards: ', error);
     return res.sendStatus(SERVER_ERROR);
+  }
+});
+
+router.post('/edit', async (req, res) => {
+  const decoded = decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  const { _id, alias } = req.body;
+  
+  if (!_id || !alias) {
+    return res.status(BAD_REQUEST).send('_id and alias are required in request body');
+  }
+
+  // Validate alias is not empty or whitespace only
+  if (!alias.trim()) {
+    return res.status(BAD_REQUEST).send('alias cannot be empty or whitespace only');
+  }
+
+  // Validate _id is a valid ObjectId format
+  if (!/^[0-9a-fA-F]{24}$/.test(_id)) {
+    return res.status(BAD_REQUEST).send('_id must be a valid ObjectId');
+  }
+
+  try {
+    const updatedCard = await editAlias(_id, alias);
+    
+    if (!updatedCard) {
+      return res.status(NOT_FOUND).send('Card not found');
+    }
+
+    // Log the edit action
+    AuditLog.create({
+      userId: decoded._id,
+      action: AuditLogActions.EDIT_CARD,
+      details: { 
+        cardId: _id,
+        newAlias: alias,
+        oldAlias: updatedCard.alias !== alias ? 'unknown' : alias
+      }
+    });
+
+    logger.info(`Card alias updated successfully for card ID: ${_id}`);
+    return res.status(OK).json({
+      message: 'Card alias updated successfully',
+      card: updatedCard
+    });
+    
+  } catch (error) {
+    logger.error('Error updating card alias: ', error);
+    return res.status(SERVER_ERROR).send('Error updating card alias');
   }
 });
 
