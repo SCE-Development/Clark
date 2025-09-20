@@ -105,30 +105,32 @@ export default function CardReader() {
     if (!editedAlias.trim()) {
       return; // Don't save empty alias
     }
-    
+
     try {
       const response = await editCardAlias(token, cardId, editedAlias.trim());
       if (!response.error) {
-        setCards(prevCards => 
-          prevCards.map(card => 
-            card._id === cardId 
+        setCards(prevCards =>
+          prevCards.map(card =>
+            card._id === cardId
               ? { ...card, alias: editedAlias.trim() }
               : card
           )
         );
         setEditingCardId(null);
         setEditedAlias('');
-      } else {
-        console.error('Failed to update card alias');
       }
     } catch (error) {
-      console.error('Error updating card alias:', error);
+      setLogs(
+        (currLogs) => [
+          '[error] unable to update card alias, check browser logs: \n' + error,
+          ...currLogs,
+        ]
+      );
     }
   }
 
   function CardEntry({ card }) {
     const isEditing = editingCardId === card._id;
-    
     return (
       <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
         <td key='alias' className=''>

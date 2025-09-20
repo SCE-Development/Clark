@@ -312,7 +312,7 @@ describe('OfficeAccessCard', () => {
       setTokenStatus(true);
       await test.sendPostRequestWithToken(token,
         EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
-      
+
       const updatedCard = await OfficeAccessCard.findById(testCardId);
       expect(updatedCard.alias).to.equal(NEW_ALIAS);
     });
@@ -336,10 +336,10 @@ describe('OfficeAccessCard', () => {
       const originalCard = await OfficeAccessCard.findById(testCardId);
       const originalCardBytes = originalCard.cardBytes;
       const originalVerifiedCount = originalCard.verifiedCount;
-      
+
       await test.sendPostRequestWithToken(token,
         EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
-      
+
       const updatedCard = await OfficeAccessCard.findById(testCardId);
       expect(updatedCard.cardBytes).to.equal(originalCardBytes);
       expect(updatedCard.verifiedCount).to.equal(originalVerifiedCount);
