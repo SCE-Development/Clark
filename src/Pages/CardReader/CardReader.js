@@ -3,7 +3,7 @@ import { BASE_API_URL } from '../../Enums';
 import { useSCE } from '../../Components/context/SceContext';
 import { getAllCardsFromDb, deleteCardFromDb, editCardAlias } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
-import { trashcanSymbol, pencilSymbol } from '../Overview/SVG';
+import { trashcanSymbol } from '../Overview/SVG';
 
 const header = [
   'Time'.padEnd(29),
@@ -17,6 +17,16 @@ const header = [
 export default function CardReader() {
   const { user } = useSCE();
   const token = user.token;
+
+  // Local pencil icon for edit functionality
+  const pencilSymbol = (color = '#6b7280') => {
+    return (
+      <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+        <path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/>
+        <path d='m18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/>
+      </svg>
+    );
+  };
   const [logs, setLogs] = useState([]);
   const [cards, setCards] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
@@ -109,13 +119,8 @@ export default function CardReader() {
     try {
       const response = await editCardAlias(token, cardId, editedAlias.trim());
       if (!response.error) {
-        setCards(prevCards =>
-          prevCards.map(card =>
-            card._id === cardId
-              ? { ...card, alias: editedAlias.trim() }
-              : card
-          )
-        );
+        // Refetch all cards from database to ensure UI matches server reality
+        await getAllCards();
         setEditingCardId(null);
         setEditedAlias('');
       }
