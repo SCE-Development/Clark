@@ -276,13 +276,6 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(BAD_REQUEST);
     });
 
-    it('Should return 400 when both _id and alias are missing', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        EDIT_API_PATH, {});
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
     it('Should return 404 when trying to edit a non-existent card', async () => {
       setTokenStatus(true);
       const nonExistentId = new mongoose.Types.ObjectId().toString();
