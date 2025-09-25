@@ -25,6 +25,8 @@ const tools = require('../util/tools/tools.js');
 const crypto = require('crypto');
 const token = '';
 const printerUtil = require('../../api/main_endpoints/util/Printer.js');
+const User = require('../../api/main_endpoints/models/User.js');
+const { findByIdAndDelete } = require('../../api/main_endpoints/models/OfficeAccessCard.js');
 
 let app = null;
 let test = null;
@@ -153,6 +155,28 @@ describe('Printer', () => {
       }
 
       expect(chunksProcessed).to.equal(TOTAL_CHUNKS);
+    });
+  });
+
+  describe('modifyPagesPrinted', () => {
+    it('Should return true if pages were modified correctly', async () => {
+      const user = await new User({
+        firstName: 'nothing',
+        lastName: 'really',
+        email: 'alerts@one.sce',
+        password: 'vibecoding',
+        pagesPrinted: 1,
+      }).save();
+
+      const userId = user._id;
+
+      const tryModifyPagesPrinted = await printerUtil.modifyPagesPrinted(userId, 3);
+      expect(tryModifyPagesPrinted).to.equal(true);
+
+      const updatedUser = await User.findById(userId);
+      expect(updatedUser.pagesPrinted).to.equal(4);
+
+      await User.findByIdAndDelete(userId);
     });
   });
 });

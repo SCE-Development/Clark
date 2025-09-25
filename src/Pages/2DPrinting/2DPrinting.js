@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PageSelectDropdown from './PageSelectDropdown';
 import {
   parseRange,
   printPage,
   getPagesPrinted,
 } from '../../APIFunctions/2DPrinting';
-import { editUser } from '../../APIFunctions/User';
 
 import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
@@ -203,10 +202,6 @@ export default function Printing() {
     let status = await printPage(data, user.token);
 
     if (!status.error) {
-      editUser(
-        { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        user.token,
-      );
       setPrintStatus('Printing succeeded!');
       setPrintStatusColor('success');
     } else {

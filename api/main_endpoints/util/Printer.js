@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const logger = require('../../util/logger');
 const { MetricsHandler } = require('../../util/metrics.js');
+const User = require('../models/User.js');
+const { PDFDocument } = require('pdf-lib');
 
 /**
  * Deletes all chunks with the specified id from a directory
@@ -74,4 +76,45 @@ async function recordPrintingFolderSize(dir) {
   MetricsHandler.currentSizeOfPrintingFolderBytes.set(sizeOfDir);
 }
 
-module.exports = { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize };
+
+/**
+ * Modify the user's pagesPrinted field based on the length of their print request
+ * @param {string} userId           id of the current user
+ * @param {Number} numPages         the number of pages of the current print request
+ * @returns {boolean}               Returns if the database operation was successful
+ */
+
+function modifyPagesPrinted(userId, numPages) {
+  return new Promise((resolve) => {
+    try {
+      User.findByIdAndUpdate(
+        userId,
+        {
+          $inc: { pagesPrinted: numPages },
+        }, {
+          new: true,
+        }
+        , (error, result) => {
+          if (error) {
+            logger.error('modifyPagesPrinted got an error querying mongodb: ', error);
+            return resolve(false);
+          }
+          if (!result) {
+            logger.info(`User ${userId} not found in the database`);
+          }
+          return resolve(!!result);
+        });
+    } catch (err) {
+      logger.error('modifyPagesPrinted encountered an error querying mongodb: ', err);
+      return resolve(false);
+    }
+  });
+}
+
+async function getPageCount(file) {
+  const buffer = await fs.promises.readFile(file);
+  const pdf = await PDFDocument.load(buffer);
+  return pdf.getPageCount();
+}
+
+module.exports = { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize, modifyPagesPrinted, getPageCount };
