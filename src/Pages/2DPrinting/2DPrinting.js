@@ -67,18 +67,18 @@ export default function Printing() {
       ids.map(async (id) => {
         const status = await getPrintStatus(id, user.token);
 
-        const newPrintJobs = {...printJobs};
-        newPrintJobs[id].status = status;
-        setPrintJobs(newPrintJobs);
-        window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
-
-        if (status === 'PRINTED') {
+        if (status === 'completed') {
           setTimeout(() => {
             const newPrintJobs = {...printJobs};
             delete newPrintJobs[id];
             setPrintJobs(newPrintJobs);
             window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
           }, 2000);
+        } else {
+          const newPrintJobs = {...printJobs};
+          newPrintJobs[id].status = status;
+          setPrintJobs(newPrintJobs);
+          window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
         }
       });
     }, 1000);
@@ -245,7 +245,7 @@ export default function Printing() {
 
     try {
       const printId = printReq?.responseData['print_id'];
-      const newPrintJobs = {...printJobs, [printId]: {status: 'PENDING'} };
+      const newPrintJobs = {...printJobs, [printId]: {status: 'created', fileName: PdfFile.name} };
       setPrintJobs(newPrintJobs);
       window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
     } catch (err) {
@@ -457,10 +457,14 @@ export default function Printing() {
   return (
     <div className='w-full'>
       <div>
-        <h1>Your Active Prints</h1>
         {
           Object.keys(printJobs).map(id => (
-            <p key={id}>{id}: {printJobs[id].status}</p>
+            <div key={id} className='flex items-center justify-center w-full mt-10'>
+              <div role="alert" className={'w-1/2 text-center alert alert-success'}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                <p className=''>{printJobs[id].fileName} ({id}): {printJobs[id].status}</p>
+              </div>
+            </div>
           ))
         }
       </div>
