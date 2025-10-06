@@ -87,7 +87,9 @@ class SceHttpServer {
     requireList.map((route) => {
       try {
         this.app.use(this.prefix + route.endpointName, require(route.filePath));
+        MetricsHandler.errorLoadingExpressRoute.labels(route.endpointName).set(0);
       } catch (e) {
+        MetricsHandler.errorLoadingExpressRoute.labels(route.endpointName).set(1);
         logger.error(
           `error importing ${route.filePath} to handle: ${route.endpointName}:`,
           e
