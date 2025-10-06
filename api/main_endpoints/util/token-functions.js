@@ -5,6 +5,9 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 require('./passport')(passport);
 
+const { SceStatusOrToken } = require('../../util/token-verification.js');
+const { UNAUTHORIZED, OK, FORBIDDEN } = require('../../util/constants').STATUS_CODES;
+
 
 /**
  * Check if the request body contains a token
@@ -22,22 +25,31 @@ function checkIfTokenSent(request) {
 /**
 * @param {object} request the HTTP request from the client
 */
-function decodeToken(request){
-  try {
-    const token = request.headers.authorization?.split('Bearer ')[1] || request.body.token || request.query.token;
-    if (!token) {
-      return null;
-    }
-    const userToken = token.replace(/^JWT\s/, '');
-    jwt.verify(userToken, secretKey, function(error, decoded) {
-      if (!error && decoded) {
-        return decoded;
+function decodeToken(request) {
+  return new Promise((resolve, reject) => {
+    try {
+      let decodedResponse = new SceStatusOrToken();
+      if (!request.headers.authorization || !request.headers.authorization.length) {
+        decodedResponse.status = UNAUTHORIZED;
+        return resolve(decodedResponse);
       }
-    });
-    return null;
-  } catch (_) {
-    return null;
-  }
+      const token = request.headers.authorization.split('Bearer ')[1];
+      const userToken = token.replace(/^JWT\s/, '');
+      jwt.verify(userToken, secretKey, function(error, decoded) {
+        if (!error && decoded) {
+          decodedResponse.status = OK;
+          decodedResponse.token = decoded;
+          return resolve(decodedResponse);
+        }
+        decodedResponse.status = FORBIDDEN;
+        return resolve(decodedResponse);
+      });
+    } catch (err) {
+      logger.error('unable to decode token', err);
+      decodedResponse.status = UNAUTHORIZED;
+      return resolve(decodedResponse);
+    }
+  });
 }
 
 /**
@@ -51,8 +63,10 @@ function decodeToken(request){
  */
 function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
   let decoded = decodeToken(request);
-  let response = decoded && decoded.accessLevel >= accessLevel;
-  return response;
+  if (decoded === null) {
+    return false;
+  }
+  return decoded && decoded.accessLevel >= accessLevel;
 }
 
 module.exports = {

@@ -8,4 +8,12 @@ const { DISCORD_COREV4_KEY } = require('../config/config.json');
 function checkDiscordKey(apiKey) {
   return apiKey === DISCORD_COREV4_KEY;
 }
-module.exports = { checkDiscordKey };
+
+class SceStatusOrToken {
+  constructor() {
+    this.token = null;
+    this.status = null;
+  }
+}
+
+module.exports = { checkDiscordKey, SceStatusOrToken };
