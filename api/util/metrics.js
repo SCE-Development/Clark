@@ -57,6 +57,12 @@ class MetricsHandler {
     help: 'Total number of bytes from expired chunks that have been deleted'
   });
 
+  errorLoadingExpressRoute = new client.Gauge({
+    name: 'error_loading_express_route',
+    help: 'Shows if all routes are fully loaded (0 = loaded, 1 = not loaded)',
+    labelNames: ['endpointName']
+  })
+
   constructor() {
     register.setDefaultLabels({
       app: 'sce-core',

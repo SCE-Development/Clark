@@ -73,6 +73,7 @@ router.get('/healthCheck', async (req, res) => {
 router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   const decoded = await decodeToken(req);
   if (decoded.status !== OK) {
+    logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(decoded.status);
   }
   if (!PRINTING.ENABLED) {
