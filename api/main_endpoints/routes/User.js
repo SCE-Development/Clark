@@ -9,11 +9,7 @@ const {
   getMemberExpirationDate,
   hashPassword,
 } = require('../util/userHelpers');
-const {
-  checkIfTokenSent,
-  checkIfTokenValid,
-  decodeToken,
-} = require('../util/token-functions');
+const { decodeToken } = require('../util/token-functions');
 const {
   OK,
   BAD_REQUEST,
@@ -36,13 +32,11 @@ const ROWS_PER_PAGE = 20;
 
 // Delete a member
 router.post('/delete', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
 
-  const decoded = decodeToken(req);
   const targetUser = await User.findById(req.body._id);
   if (!targetUser) {
     return res.sendStatus(NOT_FOUND);
@@ -78,12 +72,12 @@ router.post('/delete', async (req, res) => {
 });
 
 // Search for a member
-router.post('/search', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ALUMNI)) {
-    return res.sendStatus(UNAUTHORIZED);
+router.post('/search', async function(req, res) {
+  const decoded = await decodeToken(req, membershipState.ALUMNI);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
+
   User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
       res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
@@ -121,11 +115,11 @@ router.post('/search', function(req, res) {
 
 // Search for all members
 router.post('/users', async function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
+
   let maybeOr = {};
   if (req.body.query) {
     maybeOr = {
@@ -164,17 +158,15 @@ router.post('/users', async function(req, res) {
 
 // Edit/Update a member record
 router.post('/edit', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
 
   if (!req.body._id) {
     return res.sendStatus(BAD_REQUEST);
   }
 
-  let decoded = decodeToken(req);
   if (decoded.accessLevel < membershipState.OFFICER) {
     if (req.body.email && req.body.email != decoded.email) {
       return res
@@ -234,9 +226,9 @@ router.post('/edit', async (req, res) => {
 
     // create audit log for password change
     AuditLog.create({
-      userId: decoded._id,
+      userId: decoded.token._id,
       action: AuditLogActions.CHANGE_PW,
-      details: { email: existingUser.email, userId: decoded._id },
+      details: { email: existingUser.email, userId: decoded.token._id },
     }).catch(logger.error);
 
   } else {
@@ -272,7 +264,7 @@ router.post('/edit', async (req, res) => {
       }
 
       AuditLog.create({
-        userId: decoded._id, // person who did modification
+        userId: decoded.token._id, // person who did modification
         action: AuditLogActions.UPDATE_USER,
         documentId: user._id,
         details: {
@@ -289,11 +281,10 @@ router.post('/edit', async (req, res) => {
   });
 });
 
-router.post('/getPagesPrintedCount', (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+router.post('/getPagesPrintedCount', async (req, res) => {
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
   User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
@@ -317,15 +308,13 @@ router.post('/getPagesPrintedCount', (req, res) => {
 });
 
 router.post('/getUserById', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
   // If not officer, only allow reading of own account
-  let decoded = decodeToken(req);
   if (decoded.accessLevel < membershipState.OFFICER) {
-    if (req.body.userID && req.body.userID !== decoded._id) {
+    if (req.body.userID && req.body.userID !== decoded.token._id) {
       return res
         .status(FORBIDDEN)
         .json({ message: 'you must be an officer or admin to read other users\' data' });
@@ -392,11 +381,10 @@ router.post('/getUserDataByEmail', (req, res) => {
 });
 
 // Search for all members with verified emails and subscribed
-router.post('/usersSubscribedAndVerified', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+router.post('/usersSubscribedAndVerified', async function(req, res) {
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
   User.find({ emailVerified: true, emailOptIn: true })
     .then((users) => {
@@ -418,11 +406,10 @@ router.post('/usersSubscribedAndVerified', function(req, res) {
 });
 
 // Search for all members with verified emails, subscribed, and not banned or pending
-router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+router.post('/usersValidVerifiedAndSubscribed', async function(req, res) {
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
   User.find({
     emailVerified: true,
@@ -446,13 +433,11 @@ router.post('/usersValidVerifiedAndSubscribed', function(req, res) {
 
 // Generate an API key for the Messages API if the user does not have an API key; otherwise, return the existing API key
 router.post('/apikey', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
-  if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  let { _id } = decodeToken(req);
+  let { _id } = decoded.token;
 
   User.findOne({_id})
     .then((user) => {
@@ -482,10 +467,9 @@ router.post('/apikey', async (req, res) => {
 //  Finds number of those signups who've paid for annual plan
 //  Assumes members who have paid have been assigned an expiration date
 router.get('/getNewPaidMembersThisSemester', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (!decoded) {
+    return res.sendStatus(decoded.status);
   }
 
   const today = new Date();

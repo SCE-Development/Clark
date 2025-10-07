@@ -3,25 +3,18 @@ const router = express.Router();
 const AuditLog = require('../models/AuditLog');
 
 const { OK, UNAUTHORIZED, SERVER_ERROR } = require('../../util/constants').STATUS_CODES;
-const { OFFICER } = require('../../util/constants.js').MEMBERSHIP_STATE;
+const membershipState = require('../../util/constants.js').MEMBERSHIP_STATE;
 
-const { checkIfTokenSent, checkIfTokenValid, decodeToken } = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 
 const logger = require('../../util/logger');
 const User = require('../models/User.js');
 let { clients } = require('../util/AuditLog.js');
 
 router.get('/getAuditLogs', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/getAuditLogs was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
-  const isValid = checkIfTokenValid(req, OFFICER);
-
-  if (!isValid) {
-    logger.warn('/getAuditLogs was requested with an invalid or unauthorized token');
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const itemsPerPage = 50;
@@ -73,8 +66,9 @@ router.get('/getAuditLogs', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  if (!checkIfTokenValid(req, OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const headers = {

@@ -6,7 +6,7 @@ const {
   OK,
   FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
-const { OFFICER } = require('../../util/constants').MEMBERSHIP_STATE;
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -14,11 +14,7 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
-const {
-  decodeToken,
-  checkIfTokenSent,
-  checkIfTokenValid
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const ROWS_PER_PAGE = 25;
 const {
   checkIfCardExists,
@@ -141,9 +137,9 @@ router.get('/verify', async (req, res) => {
 });
 
 router.post('/delete', async (req, res) => {
-  const decoded = decodeToken(req);
-  if (!decoded) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const { alias } = req.body;
@@ -172,7 +168,7 @@ router.post('/delete', async (req, res) => {
       statusCode: OK,
     });
     AuditLog.create({
-      userId: decoded._id,
+      userId: decoded.token._id,
       action: AuditLogActions.DELETE_CARD,
       details: { alias }
     });
@@ -188,10 +184,9 @@ router.post('/delete', async (req, res) => {
 });
 
 router.post('/getAllCards', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
@@ -215,8 +210,9 @@ router.post('/getAllCards', async (req, res) => {
 });
 
 router.get('/listen', async (req, res) => {
-  if (!checkIfTokenValid(req, OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const headers = {

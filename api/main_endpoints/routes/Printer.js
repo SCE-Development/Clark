@@ -8,10 +8,7 @@ const path = require('path');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 const { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize } = require('../util/Printer.js');
 
-const {
-  decodeToken,
-  checkIfTokenSent,
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
@@ -74,13 +71,9 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/sendPrintRequest was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!decodeToken(req)) {
-    logger.warn('/sendPrintRequest was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   if (!PRINTING.ENABLED) {
     logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');

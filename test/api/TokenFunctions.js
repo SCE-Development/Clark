@@ -4,6 +4,8 @@ const sinon = require('sinon');
 const chai = require('chai');
 const expect = chai.expect;
 const proxyquire = require('proxyquire');
+const { OK, FORBIDDEN, UNAUTHORIZED } = require('../../api/util/constants').STATUS_CODES;
+const membershipState = require('../../api/util/constants').MEMBERSHIP_STATE;
 
 const requestWithToken = {
   headers: {
@@ -31,32 +33,41 @@ describe('TokenFunctions', () => {
       });
     done();
   });
-  describe('checkIfTokenSent', () => {
-    it('Should return true if a token field exists in the request', done => {
-      expect(tokenFunctions.checkIfTokenSent(requestWithToken)).to.equal(true);
-      done();
+  describe('decodeToken', () => {
+    it('Should resolve with UNAUTHORIZED if no token is sent', done => {
+      tokenFunctions.decodeToken(requestWithoutToken)
+        .then(decodedResponse => {
+          expect(decodedResponse.status).to.equal(UNAUTHORIZED);
+          done();
+        });
     });
-    it('Should return false if a token field does ' +
-      'not exist in the request', done => {
-      expect(tokenFunctions.checkIfTokenSent(requestWithoutToken))
-        .to.equal(false);
-      done();
+    it('Should resolve with FORBIDDEN if token is invalid', done => {
+      jwtStub.yields(new Error('invalid token'), null);
+      tokenFunctions.decodeToken(requestWithToken)
+        .then(decodedResponse => {
+          expect(decodedResponse.status).to.equal(FORBIDDEN);
+          done();
+        });
     });
-  });
-
-  describe('checkIfTokenValid', () => {
-    it('Should return the decoded response ', done => {
-      jwtStub.yields(false, requestWithToken.body);
-      expect(tokenFunctions.checkIfTokenValid(requestWithToken))
-        .to.equal(true);
-      done();
-    });
-    it('Should return false if a token field ' +
-      'does not exist in the request', done => {
-      jwtStub.yields(true, false);
-      expect(tokenFunctions.checkIfTokenValid(requestWithToken))
-        .to.equal(false);
-      done();
-    });
+    it('Should resolve with FORBIDDEN if access level is insufficient',
+      done => {
+        jwtStub.yields(null, { accessLevel: membershipState.MEMBER });
+        tokenFunctions.decodeToken(requestWithToken, membershipState.OFFICER)
+          .then(decodedResponse => {
+            expect(decodedResponse.status).to.equal(FORBIDDEN);
+            done();
+          });
+      });
+    it('Should resolve with OK and the decoded token if token is valid and access level is sufficient',
+      done => {
+        const decodedToken = { accessLevel: membershipState.OFFICER, firstName: 'Test' };
+        jwtStub.yields(null, decodedToken);
+        tokenFunctions.decodeToken(requestWithToken, membershipState.OFFICER)
+          .then(decodedResponse => {
+            expect(decodedResponse.status).to.equal(OK);
+            expect(decodedResponse.token).to.equal(decodedToken);
+            done();
+          });
+      });
   });
 });

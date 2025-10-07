@@ -1,10 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const {
-  decodeToken,
-  checkIfTokenSent,
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
@@ -28,10 +25,9 @@ router.get('/list', async (req, res) => {
     });
   }
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   try {
     const returnData = await cleezyHelpers.searchCleezyUrls({ page, search, sortColumn, sortOrder });
@@ -47,10 +43,9 @@ router.get('/list', async (req, res) => {
 });
 
 router.post('/createUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   const { url, alias, expiresAt } = req.body;
   let jsonbody = { url, alias: alias || null };
@@ -68,10 +63,9 @@ router.post('/createUrl', async (req, res) => {
 });
 
 router.post('/deleteUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   const { alias } = req.body;
   axios

@@ -180,7 +180,7 @@ describe('Auth', () => {
           }
         };
 
-        const decodedPayload = decodeToken(mockRequest);
+        const decodedPayload = await decodeToken(mockRequest);
         const expectedPayload = {
           firstName: 'Test',
           lastName: 'User',
