@@ -61,7 +61,6 @@ export default function Printing() {
 
   const sideOptions = [
     { label: 'Single Sided', value: 'one-sided' },
-    { label: 'Double Sided', value: 'two-sided' },
   ];
 
   async function getUri() {
@@ -158,9 +157,6 @@ export default function Printing() {
   useEffect(() => {
     if (previewDisplay) {
       let divisor = 1;
-      if (sides === 'two-sided') {
-        divisor = 2;
-      }
       const pagesUsedPerCopy = Math.floor(numberOfPagesInPdfPreview / divisor) + (numberOfPagesInPdfPreview % divisor);
       const totalPagesUsed = pagesUsedPerCopy * Math.floor(copies);
       setPagesToBeUsedInPrintRequest(totalPagesUsed);
