@@ -212,7 +212,8 @@ describe('User', () => {
           password: 'Passw0rd',
           firstName: 'first-name',
           lastName: 'last-name',
-          major: 'Computer Science'
+          major: 'Computer Science',
+          accessLevel: MEMBERSHIP_STATE.OFFICER,
         }).save();
 
         setTokenStatus(true, testUser);
@@ -500,9 +501,9 @@ describe('User', () => {
       expect(result).to.have.status(OK);
     });
 
-    it('Should return statusCode 403 if user deletes another member', async () => {
+    it('Should return statusCode 403 if a member deletes another member', async () => {
       setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.MEMBER });
-      // 1. Define credentials for the Member (the deleting user)
+      // Define credentials for the Member (the deleting user)
       const memberCredentials = {
         email: 'member@test.com',
         password: 'Passw0rd',
@@ -510,7 +511,7 @@ describe('User', () => {
         lastName: 'User',
       };
 
-      // 2. Define credentials for the Target User (the user being deleted)
+      // Define credentials for the Target User (the user being deleted)
       const targetCredentials = {
         email: 'target@test.com',
         password: 'TargetPassw0rd',
@@ -518,13 +519,11 @@ describe('User', () => {
         lastName: 'User',
       };
 
-      // --- SETUP: Register Users and Log In Member ---
-
       // Register the Target User (the one to be deleted)
       await test.sendPostRequest('/api/Auth/register', targetCredentials);
 
       // Register the Member and get their JWT and decoded token data
-      const memberRegResponse = await test.sendPostRequest('/api/Auth/register', memberCredentials);
+      await test.sendPostRequest('/api/Auth/register', memberCredentials);
 
       // Find the Target User to get their _id
       // Use the *real* member token to perform the search
@@ -543,11 +542,6 @@ describe('User', () => {
       const targetUserId = targetSearchResponse.body._id;
       const memberUserId = memberSearchResponse.body._id;
 
-      // --- MOCK SETUP (Crucial Step) ---
-      // Mock the decodeToken call that happens *inside* the delete route.
-      // The mock MUST include the _id of the user making the request.
-
-      // --- ACTION & VERIFICATION ---
 
       // Member attempts to delete the Target User using the Target User's ID
       const deletePayload = {
