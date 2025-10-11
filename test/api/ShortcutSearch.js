@@ -256,9 +256,7 @@ describe('ShortcutSearch', () => {
         ];
         for (const payload of injectionPayloads) {
           const result = await test.sendPostRequestWithToken(token, url, { query: String(payload)});
-          console.log({
-            'result.body.items': result.body
-          })
+
           expect(result).to.have.status(OK);
           expect(result.body.items.users.length).at.most(5);
           expect(result.body.items.cleezyData.length).at.most(5);

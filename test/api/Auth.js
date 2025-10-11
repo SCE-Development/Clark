@@ -188,7 +188,7 @@ describe('Auth', () => {
           'lastName': 'User',
           'pagesPrinted': 0,
         };
-        console.log('aaaaaaa', {decodedPayload})
+
         expect(decodedPayload.token).to.deep.include(expectedPayload);
       } finally {
         await User.deleteOne({email: user.email});
@@ -566,7 +566,6 @@ describe('Auth', () => {
       async () => {
         const result = await test.sendPostRequestWithToken(
           token, '/api/Auth/verify', {});
-        console.log('hello', {result})
         expect(result).to.have.status(UNAUTHORIZED);
       });
 
@@ -575,7 +574,6 @@ describe('Auth', () => {
       setTokenStatus(true, { _id: 'some id' });
       const result = await test.sendPostRequestWithToken(
         token, '/api/Auth/verify');
-      console.log('hello', {result})
       expect(result).to.have.status(OK);
     });
   });

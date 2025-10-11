@@ -144,22 +144,14 @@ describe('User', () => {
     });
 
     it('Should return statusCode 404 if no user was found', async () => {
-      try {
-        console.log('[remove] 1')
-        const user = {
-          email: 'invalid@b.c',
-          token: token
-        };
-        console.log('[remove] 2')
-        setTokenStatus(true);
-        console.log('[remove] 3')
-        const result = await test.sendPostRequestWithToken(
-          token, '/api/User/search', user);
-          console.log('[remove] 4')
-          expect(result).to.have.status(NOT_FOUND);
-        } catch(e) {
-  console.log("HELP", e)
-        }
+      const user = {
+        email: 'invalid@b.c',
+        token: token
+      };
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/search', user);
+      expect(result).to.have.status(NOT_FOUND);
     });
 
     it('Should return statusCode 200 and a user if ' +
@@ -543,7 +535,6 @@ describe('User', () => {
 
       // Register the Member and get their JWT and decoded token data
       const memberRegResponse = await test.sendPostRequest('/api/Auth/register', memberCredentials);
-      console.log({ 'memberRegResponse.body': memberRegResponse.body })
 
       // Find the Target User to get their _id
       // Use the *real* member token to perform the search
@@ -557,10 +548,7 @@ describe('User', () => {
         '/api/User/search',
         { email: memberCredentials.email }
       );
-      console.log({
-        'targetSearchResponse.body': targetSearchResponse.body,
-        'memberSearchResponse.body': memberSearchResponse.body,
-      })
+
       // The target user ID is what we want to delete
       const targetUserId = targetSearchResponse.body._id;
       const memberUserId = memberSearchResponse.body._id;

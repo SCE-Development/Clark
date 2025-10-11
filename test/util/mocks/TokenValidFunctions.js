@@ -40,14 +40,14 @@ function setTokenMockResult(status, tokenData = null) {
  * @param {Object} data: The decoded token data.
  */
 function setTokenValid(data = { accessLevel: 1 }) {
-    setTokenMockResult(OK, data);
+  setTokenMockResult(OK, data);
 }
 
 /**
  * Sets the mock to return a failed (FORBIDDEN) response.
  */
 function setTokenInvalid() {
-    setTokenMockResult(FORBIDDEN, null);
+  setTokenMockResult(FORBIDDEN, null);
 }
 
 /**

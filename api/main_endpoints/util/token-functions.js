@@ -48,13 +48,13 @@ async function decodeToken(request, requiredAccessLevel = membershipState.NON_ME
 
     decodedResponse.status = hasRequiredAccess ? OK : FORBIDDEN;
     decodedResponse.token = decoded;
-    
+
     return decodedResponse;
 
   } catch (err) {
     logger.error('Token validation failed:', err);
     decodedResponse.status = FORBIDDEN;
-    
+
     return decodedResponse;
   }
 }

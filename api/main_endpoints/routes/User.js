@@ -36,19 +36,12 @@ router.post('/delete', async (req, res) => {
   if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
-  
+
   const targetUser = await User.findById(req.body._id);
   if (!targetUser) {
     return res.sendStatus(NOT_FOUND);
   }
-  console.log('[delete] 1', { decoded, targetUser, 'req.body': req.body })
-  
-  console.log({
-    "decoded.token.accessLevel < membershipState.OFFICER": decoded.token.accessLevel < membershipState.OFFICER,
-    "req.body._id && req.body._id !== decoded._id": req.body._id && req.body._id !== decoded._id,
-    "targetUser.accessLevel !== 'undefined'": targetUser.accessLevel !== 'undefined',
-    "decoded.token.accessLevel < targetUser.accessLevel": decoded.token.accessLevel < targetUser.accessLevel,
-  })
+
   // If not officer, only allow deletion of own account
   if (decoded.token.accessLevel < membershipState.OFFICER) {
     if (req.body._id && req.body._id !== decoded.token._id) {
@@ -83,7 +76,7 @@ router.post('/delete', async (req, res) => {
 // Search for a member
 router.post('/search', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-  console.log('search', {decoded, 'req.body': req.body})
+
   if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
