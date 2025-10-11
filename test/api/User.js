@@ -36,12 +36,6 @@ const {
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
 
-// const {
-// setDiscordAPIStatus,
-// resetDiscordAPIMock,
-// restoreDiscordAPIMock,
-// initializeDiscordAPIMock
-// } = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const { getMemberExpirationDate } = require('../../api/main_endpoints/util/userHelpers.js');
 
@@ -52,7 +46,6 @@ chai.use(chaiHttp);
 describe('User', () => {
   before(done => {
     initializeTokenMock();
-    // initializeDiscordAPIMock();
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/User.js',
       __dirname + '/../../api/main_endpoints/routes/Auth.js'
@@ -73,18 +66,15 @@ describe('User', () => {
 
   after(done => {
     restoreTokenMock();
-    // restoreDiscordAPIMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
-    // setDiscordAPIStatus(false);
   });
 
   afterEach(() => {
     resetTokenMock();
-    // resetDiscordAPIMock();
   });
 
   const token = '';

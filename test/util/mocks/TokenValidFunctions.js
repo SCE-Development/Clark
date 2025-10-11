@@ -26,34 +26,10 @@ function resetTokenMock() {
   decodeTokenValidMock.reset();
 }
 
-function setTokenMockResult(status, tokenData = null) {
-  decodeTokenValidMock.returns(
-    Promise.resolve({
-      status: status,
-      token: tokenData,
-    })
-  );
-}
-
-/**
- * Sets the mock to return a successful (OK) response.
- * @param {Object} data: The decoded token data.
- */
-function setTokenValid(data = { accessLevel: 1 }) {
-  setTokenMockResult(OK, data);
-}
-
-/**
- * Sets the mock to return a failed (FORBIDDEN) response.
- */
-function setTokenInvalid() {
-  setTokenMockResult(FORBIDDEN, null);
-}
-
 /**
  *
- * @param {boolean} isSuccessful: true for a successful token status (OK),
- * false for a failed status (UNAUTHORIZED).
+ * @param {any} returnValue: value to be return back
+ *                           by the function 'checkIfTokenValid'
  * @param {Object} data: optional value that will be the result
  *                       of the decoded token value
  * @returns return parameter (above)

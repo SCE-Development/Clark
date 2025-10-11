@@ -9,7 +9,6 @@ const chaiHttp = require('chai-http');
 const {
   OK,
   UNAUTHORIZED,
-  FORBIDDEN
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
 
@@ -25,12 +24,6 @@ const {
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
 
-// const {
-//   setDiscordAPIStatus,
-//   resetDiscordAPIMock,
-//   restoreDiscordAPIMock,
-//   initializeDiscordAPIMock
-// } = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const { getMemberExpirationDate } = require('../../api/main_endpoints/util/userHelpers.js');
 
@@ -41,7 +34,6 @@ chai.use(chaiHttp);
 describe('ShortcutSearch', () => {
   before(async () => {
     initializeTokenMock();
-    // initializeDiscordAPIMock();
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/ShortcutSearch.js',
     ]);
@@ -60,18 +52,15 @@ describe('ShortcutSearch', () => {
 
   after(done => {
     restoreTokenMock();
-    // restoreDiscordAPIMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
-    // setDiscordAPIStatus(false);
   });
 
   afterEach(() => {
     resetTokenMock();
-    // resetDiscordAPIMock();
   });
 
   const token = '';
