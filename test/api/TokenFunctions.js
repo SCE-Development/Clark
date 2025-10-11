@@ -16,6 +16,7 @@ const requestWithToken = {
   }
 };
 const requestWithoutToken = {
+  headers: {},
   body: {}
 };
 let tokenFunctions;

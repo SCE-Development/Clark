@@ -146,7 +146,10 @@ describe('Printer', () => {
           .field('copies', 1)
           .field('id', id)
           .attach('chunk', Buffer.from(arrayBuffer), id + '_' + i + '.CHUNK');
-
+        console.log('[print]', {
+          'result.status': result.status,
+          'result.body': result.body,
+        })
         if (result.status === OK) {
           chunksProcessed++;
         }

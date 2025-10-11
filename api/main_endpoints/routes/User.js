@@ -33,28 +33,37 @@ const ROWS_PER_PAGE = 20;
 // Delete a member
 router.post('/delete', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
-
+  
   const targetUser = await User.findById(req.body._id);
   if (!targetUser) {
     return res.sendStatus(NOT_FOUND);
   }
-  // Check if req has lower privilege than the account they wish to delete
-  if (targetUser.accessLevel !== 'undefined') {
-    if (decoded.accessLevel < targetUser.accessLevel) {
-      return res
-        .status(FORBIDDEN)
-        .json( { message: 'you must have higher privileges to delete users with lower privileges'});
-    }
-  }
+  console.log('[delete] 1', { decoded, targetUser, 'req.body': req.body })
+  
+  console.log({
+    "decoded.token.accessLevel < membershipState.OFFICER": decoded.token.accessLevel < membershipState.OFFICER,
+    "req.body._id && req.body._id !== decoded._id": req.body._id && req.body._id !== decoded._id,
+    "targetUser.accessLevel !== 'undefined'": targetUser.accessLevel !== 'undefined',
+    "decoded.token.accessLevel < targetUser.accessLevel": decoded.token.accessLevel < targetUser.accessLevel,
+  })
   // If not officer, only allow deletion of own account
-  if (decoded.accessLevel < membershipState.OFFICER) {
-    if (req.body._id && req.body._id !== decoded._id) {
+  if (decoded.token.accessLevel < membershipState.OFFICER) {
+    if (req.body._id && req.body._id !== decoded.token._id) {
       return res
         .status(FORBIDDEN)
         .json({ message: 'you must be an officer or admin to delete other users' });
+    }
+  }
+
+  // Check if req has lower privilege than the account they wish to delete
+  if (targetUser.accessLevel !== 'undefined') {
+    if (decoded.token.accessLevel < targetUser.accessLevel) {
+      return res
+        .status(FORBIDDEN)
+        .json( { message: 'you must have higher privileges to delete users with lower privileges'});
     }
   }
 
@@ -73,20 +82,20 @@ router.post('/delete', async (req, res) => {
 
 // Search for a member
 router.post('/search', async function(req, res) {
-  const decoded = await decodeToken(req, membershipState.ALUMNI);
-  if (!decoded) {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  console.log('search', {decoded, 'req.body': req.body})
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
 
   User.findOne({ email: req.body.email }, function(error, result) {
     if (error) {
-      res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
+      return res.sendStatus(BAD_REQUEST);
     }
 
     if (!result) {
       return res
-        .status(NOT_FOUND)
-        .send({ message: `${req.body.email} not found.` });
+        .sendStatus(NOT_FOUND);
     }
 
     const user = {
@@ -116,7 +125,7 @@ router.post('/search', async function(req, res) {
 // Search for all members
 router.post('/users', async function(req, res) {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
 
@@ -159,7 +168,7 @@ router.post('/users', async function(req, res) {
 // Edit/Update a member record
 router.post('/edit', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
 
@@ -167,20 +176,20 @@ router.post('/edit', async (req, res) => {
     return res.sendStatus(BAD_REQUEST);
   }
 
-  if (decoded.accessLevel < membershipState.OFFICER) {
-    if (req.body.email && req.body.email != decoded.email) {
+  if (decoded.token.accessLevel < membershipState.OFFICER) {
+    if (req.body.email && req.body.email != decoded.token.email) {
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to edit another user');
     }
-    if (req.body.accessLevel && req.body.accessLevel !== decoded.accessLevel) {
+    if (req.body.accessLevel && req.body.accessLevel !== decoded.token.accessLevel) {
       return res
         .status(UNAUTHORIZED)
         .send('Unauthorized to change access level');
     }
   }
 
-  if (decoded.accessLevel === membershipState.OFFICER) {
+  if (decoded.token.accessLevel === membershipState.OFFICER) {
     if (req.body.accessLevel && req.body.accessLevel == membershipState.ADMIN) {
       return res.sendStatus(UNAUTHORIZED);
     }
@@ -283,7 +292,7 @@ router.post('/edit', async (req, res) => {
 
 router.post('/getPagesPrintedCount', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
   User.findOne({ email: req.body.email }, function(error, result) {
@@ -309,11 +318,11 @@ router.post('/getPagesPrintedCount', async (req, res) => {
 
 router.post('/getUserById', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
   // If not officer, only allow reading of own account
-  if (decoded.accessLevel < membershipState.OFFICER) {
+  if (decoded.token.accessLevel < membershipState.OFFICER) {
     if (req.body.userID && req.body.userID !== decoded.token._id) {
       return res
         .status(FORBIDDEN)
@@ -383,7 +392,7 @@ router.post('/getUserDataByEmail', (req, res) => {
 // Search for all members with verified emails and subscribed
 router.post('/usersSubscribedAndVerified', async function(req, res) {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
   User.find({ emailVerified: true, emailOptIn: true })
@@ -408,7 +417,7 @@ router.post('/usersSubscribedAndVerified', async function(req, res) {
 // Search for all members with verified emails, subscribed, and not banned or pending
 router.post('/usersValidVerifiedAndSubscribed', async function(req, res) {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
   User.find({
@@ -434,7 +443,7 @@ router.post('/usersValidVerifiedAndSubscribed', async function(req, res) {
 // Generate an API key for the Messages API if the user does not have an API key; otherwise, return the existing API key
 router.post('/apikey', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
   let { _id } = decoded.token;
@@ -468,7 +477,7 @@ router.post('/apikey', async (req, res) => {
 //  Assumes members who have paid have been assigned an expiration date
 router.get('/getNewPaidMembersThisSemester', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
 

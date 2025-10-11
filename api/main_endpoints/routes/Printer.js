@@ -72,10 +72,11 @@ router.get('/healthCheck', async (req, res) => {
 
 router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   const decoded = await decodeToken(req);
-  if (decoded.status !== OK) {
+  if (!decoded.token) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(decoded.status);
   }
+  // this makes printing pass in unit tests, at some point need to test axios call
   if (!PRINTING.ENABLED) {
     logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
     return res.status(OK).send({ printId: null });

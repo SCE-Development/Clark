@@ -81,7 +81,7 @@ router.post('/send', async (req, res) => {
 
   // Assume user passed a non null/undefined token
   const userObj = await decodeToken(req);
-  if (!userObj) {
+  if (!userObj.token) {
     return res.sendStatus(UNAUTHORIZED);
   }
   nameToUse = userObj.token.firstName;

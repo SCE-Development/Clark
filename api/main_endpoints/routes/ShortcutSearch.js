@@ -21,7 +21,7 @@ const MAX_RESULT = 5;
 // Search for all cleezy urls using either alias or url
 router.post('/', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (!decoded) {
+  if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
 
@@ -118,10 +118,14 @@ router.post('/', async function(req, res) {
       search: req.body.query,
       limit: MAX_RESULT
     });
+    let cleezyData = [];
+    if (cleezyRes.data) {
+      cleezyData = cleezyRes.data;
+    }
     return res.status(OK).send({
       items: {
         users,
-        cleezyData: cleezyRes.data,
+        cleezyData,
       }
     });
   } catch (error) {
