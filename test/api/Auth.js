@@ -180,19 +180,16 @@ describe('Auth', () => {
           }
         };
 
-        const decodedPayload = decodeToken(mockRequest);
+        const decodedPayload = await decodeToken(mockRequest, MEMBERSHIP_STATE.PENDING);
         const expectedPayload = {
-          firstName: 'Test',
-          lastName: 'User',
-          email: 'logintest@gmail.com',
-          accessLevel: MEMBERSHIP_STATE.PENDING,
-          pagesPrinted: 0,
-          _id: decodedPayload._id,
-          iat: decodedPayload.iat,
-          exp: decodedPayload.exp,
+          'accessLevel': -1,
+          'email': 'logintest@gmail.com',
+          'firstName': 'Test',
+          'lastName': 'User',
+          'pagesPrinted': 0,
         };
 
-        expect(decodedPayload).to.deep.equal(expectedPayload);
+        expect(decodedPayload.token).to.deep.include(expectedPayload);
       } finally {
         await User.deleteOne({email: user.email});
       }

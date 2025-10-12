@@ -61,9 +61,9 @@ describe('Advertisement', () => {
 
   describe('/POST createAdvertisement', () => {
 
-    it('Should return 403 when token is not sent', async () => {
+    it('Should return 401 when token is not sent', async () => {
       const res = await test.sendPostRequest('/api/Advertisement/createAdvertisement', VALID_ADVERTISEMENT);
-      expect(res).to.have.status(FORBIDDEN);
+      expect(res).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return 401 when invalid token is sent', async () => {
@@ -125,9 +125,9 @@ describe('Advertisement', () => {
   });
 
   describe('/POST deleteAdvertisement', () => {
-    it('Should return 403 if no token is sent', async () => {
+    it('Should return 401 if no token is sent', async () => {
       const res = await test.sendPostRequest('/api/Advertisement/deleteAdvertisement', { _id: VALID_ADVERTISEMENT._id });
-      expect(res).to.have.status(FORBIDDEN);
+      expect(res).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return 401 if invalid token is sent', async () => {

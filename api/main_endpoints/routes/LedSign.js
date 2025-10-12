@@ -5,10 +5,7 @@ const {
   SERVER_ERROR,
   UNAUTHORIZED
 } = require('../../util/constants').STATUS_CODES;
-const {
-  decodeToken,
-  checkIfTokenSent
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const logger = require('../../util/logger');
 const { updateSign, healthCheck, turnOffSign } = require('../util/LedSign.js');
 const AuditLogActions = require('../util/auditLogActions.js');
@@ -16,6 +13,7 @@ const AuditLog = require('../models/AuditLog.js');
 const {
   LED_SIGN = {}
 } = require('../../config/config.json');
+const { membershipState } = require('../../../src/Enums.js');
 
 const runningInTest = process.env.NODE_ENV === 'test';
 
@@ -37,14 +35,10 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/updateSignText', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/updateSignText was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  const user = await decodeToken(req); // Store the user here
-  if (!user || Object.keys(user) === 0) {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
     logger.warn('/updateSignText was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
+    return res.sendStatus(decoded.status);
   }
   if (!LED_SIGN.ENABLED && !runningInTest) {
     logger.warn('led sign is disabled, returning 200 by default');
@@ -65,7 +59,7 @@ router.post('/updateSignText', async (req, res) => {
   }
 
   await AuditLog.create({
-    userId: user._id,
+    userId: decoded.token._id,
     action: AuditLogActions.UPDATE_SIGN,
     details: {
       newSignText: req.body.text,

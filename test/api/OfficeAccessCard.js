@@ -211,9 +211,9 @@ describe('OfficeAccessCard', () => {
   });
 
   describe('POST getAllCards', () => {
-    it('Should return 403 when token is not sent', async () => {
+    it('Should return 401 when token is not sent', async () => {
       const result = await test.sendPostRequest(GET_ALL_CARDS_API_PATH);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return 401 when invalid token is sent', async () => {

@@ -3,10 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User.js');
-const {
-  checkIfTokenSent,
-  checkIfTokenValid,
-} = require('../util/token-functions');
+const { decodeToken } = require('../util/token-functions');
 const {
   OK,
   UNAUTHORIZED,
@@ -23,10 +20,9 @@ const MAX_RESULT = 5;
 // Search for all members using either first name, last name or email
 // Search for all cleezy urls using either alias or url
 router.post('/', async function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (!decoded.token) {
+    return res.sendStatus(decoded.status);
   }
 
   if (!req.body.query) {
@@ -122,10 +118,14 @@ router.post('/', async function(req, res) {
       search: req.body.query,
       limit: MAX_RESULT
     });
+    let cleezyData = [];
+    if (cleezyRes.data) {
+      cleezyData = cleezyRes.data;
+    }
     return res.status(OK).send({
       items: {
         users,
-        cleezyData: cleezyRes.data,
+        cleezyData,
       }
     });
   } catch (error) {
