@@ -13,6 +13,7 @@ const AuditLog = require('../models/AuditLog.js');
 const {
   LED_SIGN = {}
 } = require('../../config/config.json');
+const { membershipState } = require('../../../src/Enums.js');
 
 const runningInTest = process.env.NODE_ENV === 'test';
 
