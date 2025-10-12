@@ -29,7 +29,11 @@ router.post('/sendVerificationEmail', async (req, res) => {
     if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
       logger.warn('refreshing token');
       apiHandler.refreshToken();
-      MetricsHandler.gcpRefreshTokenEpochTime.set(Math.floor(Date.now() / 1000)); // Updates prometheus metric
+      // the time() function in prometheus returns the epoch time in seconds
+      // i.e. 1760310047.552
+      // Date.now() returns the time in milliseconds, so we divide by 1000
+      // to be consistent with prometheus.
+      MetricsHandler.gcpRefreshTokenLastUpdated.set(Math.floor(Date.now() / 1000));
     }
   } else {
     logger.warn('getting new token! ', { tokenJson });

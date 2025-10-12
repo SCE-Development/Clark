@@ -63,8 +63,8 @@ class MetricsHandler {
     labelNames: ['endpointName']
   })
 
-  gcpRefreshTokenEpochTime = new client.Gauge({
-    name: 'google_cloud_refresh_token_epoch',
+  gcpRefreshTokenLastUpdated = new client.Gauge({
+    name: 'google_cloud_refresh_token_last_updated',
     help: 'When the GCP refresh token needs to be refreshed, time written in eopch format'
   })
 
