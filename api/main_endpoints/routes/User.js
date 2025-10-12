@@ -117,7 +117,7 @@ router.post('/search', async function(req, res) {
 
 // Search for all members
 router.post('/users', async function(req, res) {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
@@ -401,7 +401,7 @@ router.post('/getUserDataByEmail', (req, res) => {
 
 // Search for all members with verified emails and subscribed
 router.post('/usersSubscribedAndVerified', async function(req, res) {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
@@ -426,7 +426,7 @@ router.post('/usersSubscribedAndVerified', async function(req, res) {
 
 // Search for all members with verified emails, subscribed, and not banned or pending
 router.post('/usersValidVerifiedAndSubscribed', async function(req, res) {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }
@@ -486,7 +486,7 @@ router.post('/apikey', async (req, res) => {
 //  Finds number of those signups who've paid for annual plan
 //  Assumes members who have paid have been assigned an expiration date
 router.get('/getNewPaidMembersThisSemester', async (req, res) => {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (!decoded.token) {
     return res.sendStatus(decoded.status);
   }

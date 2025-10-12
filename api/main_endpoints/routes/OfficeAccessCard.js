@@ -137,7 +137,7 @@ router.get('/verify', async (req, res) => {
 });
 
 router.post('/delete', async (req, res) => {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
@@ -184,7 +184,7 @@ router.post('/delete', async (req, res) => {
 });
 
 router.post('/getAllCards', async (req, res) => {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }

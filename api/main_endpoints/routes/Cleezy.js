@@ -12,6 +12,7 @@ const logger = require('../../util/logger');
 const { Cleezy } = require('../../config/config.json');
 const { ENABLED } = Cleezy;
 const cleezyHelpers = require('../util/cleezyHelpers.js');
+const { membershipState } = require('../../../src/Enums.js');
 
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
@@ -25,7 +26,7 @@ router.get('/list', async (req, res) => {
     });
   }
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
@@ -43,7 +44,7 @@ router.get('/list', async (req, res) => {
 });
 
 router.post('/createUrl', async (req, res) => {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
@@ -63,7 +64,7 @@ router.post('/createUrl', async (req, res) => {
 });
 
 router.post('/deleteUrl', async (req, res) => {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }

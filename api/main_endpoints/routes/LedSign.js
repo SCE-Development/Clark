@@ -34,7 +34,7 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/updateSignText', async (req, res) => {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(decoded.status);
