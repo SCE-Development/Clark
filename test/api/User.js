@@ -12,7 +12,6 @@ let id = new mongoose.Types.ObjectId();
 const chaiHttp = require('chai-http');
 const {
   OK,
-  BAD_REQUEST,
   UNAUTHORIZED,
   NOT_FOUND,
   FORBIDDEN
@@ -37,12 +36,6 @@ const {
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
 
-const {
-  setDiscordAPIStatus,
-  resetDiscordAPIMock,
-  restoreDiscordAPIMock,
-  initializeDiscordAPIMock
-} = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const { getMemberExpirationDate } = require('../../api/main_endpoints/util/userHelpers.js');
 
@@ -53,7 +46,6 @@ chai.use(chaiHttp);
 describe('User', () => {
   before(done => {
     initializeTokenMock();
-    initializeDiscordAPIMock();
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/User.js',
       __dirname + '/../../api/main_endpoints/routes/Auth.js'
@@ -74,30 +66,27 @@ describe('User', () => {
 
   after(done => {
     restoreTokenMock();
-    restoreDiscordAPIMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
-    setDiscordAPIStatus(false);
   });
 
   afterEach(() => {
     resetTokenMock();
-    resetDiscordAPIMock();
   });
 
   const token = '';
 
   describe('/POST search', () => {
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
         '/api/User/users', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid ' +
@@ -124,13 +113,13 @@ describe('User', () => {
   });
 
   describe('/POST searchFor', () => {
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
         '/api/User/search', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid ' +
@@ -180,13 +169,13 @@ describe('User', () => {
   });
 
   describe('/POST edit', () => {
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         _id: id,
       };
       const result = await test.sendPostRequest(
         '/api/User/edit', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid ' +
@@ -223,7 +212,8 @@ describe('User', () => {
           password: 'Passw0rd',
           firstName: 'first-name',
           lastName: 'last-name',
-          major: 'Computer Science'
+          major: 'Computer Science',
+          accessLevel: MEMBERSHIP_STATE.OFFICER,
         }).save();
 
         setTokenStatus(true, testUser);
@@ -369,14 +359,14 @@ describe('User', () => {
   });
 
   describe('/POST getUserById', () => {
-    it('Should return status code 403 if no token was passed in', async () => {
+    it('Should return status code 401 if no token was passed in', async () => {
       const user = {
         userID: id,
       };
       const result = await test.sendPostRequest('/api/user/getUserById', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
-    it('Should return status code 403 if' +
+    it('Should return status code 401 if' +
       ' an invalid token was passed in', async () => {
       const user = {
         userID: id,
@@ -439,13 +429,13 @@ describe('User', () => {
       await userAdmin.save();
     });
 
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         _id : id
       };
       const result = await test.sendPostRequest(
         '/api/User/delete', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 403 if an invalid ' +
@@ -487,30 +477,6 @@ describe('User', () => {
     });
 
     it('Should return statusCode 200 if user deletes themself', async () => {
-      setTokenStatus(true);
-      const deleteUser = {
-        email: 'h@i.j',
-        password: 'Passw0rd',
-        firstName: 'first-name',
-        lastName: 'last-name',
-      };
-      const searchUser = {
-        email: 'h@i.j',
-        token: token
-      };
-      await test.sendPostRequest('/api/Auth/register', deleteUser);
-      const getUser = await test.sendPostRequestWithToken(
-        token, '/api/User/search', searchUser);
-      const user = {
-        _id: getUser.body._id,
-        token: token
-      };
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/delete', user);
-      expect(result).to.have.status(OK);
-    });
-
-    it('Should return statusCode 200 if user deletes themself as a member', async () => {
       setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER});
       const deleteUser = {
         email: 'h@i.j',
@@ -529,9 +495,66 @@ describe('User', () => {
         _id: getUser.body._id,
         token: token
       };
+      setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER, _id: getUser.body._id});
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/delete', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 403 if a member deletes another member', async () => {
+      setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.MEMBER });
+      // Define credentials for the Member (the deleting user)
+      const memberCredentials = {
+        email: 'member@test.com',
+        password: 'Passw0rd',
+        firstName: 'Member',
+        lastName: 'User',
+      };
+
+      // Define credentials for the Target User (the user being deleted)
+      const targetCredentials = {
+        email: 'target@test.com',
+        password: 'TargetPassw0rd',
+        firstName: 'Target',
+        lastName: 'User',
+      };
+
+      // Register the Target User (the one to be deleted)
+      await test.sendPostRequest('/api/Auth/register', targetCredentials);
+
+      // Register the Member and get their JWT and decoded token data
+      await test.sendPostRequest('/api/Auth/register', memberCredentials);
+
+      // Find the Target User to get their _id
+      // Use the *real* member token to perform the search
+      const targetSearchResponse = await test.sendPostRequestWithToken(
+        token,
+        '/api/User/search',
+        { email: targetCredentials.email }
+      );
+      const memberSearchResponse = await test.sendPostRequestWithToken(
+        token,
+        '/api/User/search',
+        { email: memberCredentials.email }
+      );
+
+      // The target user ID is what we want to delete
+      const targetUserId = targetSearchResponse.body._id;
+      const memberUserId = memberSearchResponse.body._id;
+
+
+      // Member attempts to delete the Target User using the Target User's ID
+      const deletePayload = {
+        _id: targetUserId, // ID of the user to delete (NOT the member's ID)
+      };
+
+      setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.MEMBER, _id: memberUserId });
+
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/delete', deletePayload);
+
+      // Verification
+      expect(result).to.have.status(FORBIDDEN); // Expect 403
       result.body.should.have.property('message');
       result.body.message.should.equal(
         'you must be an officer or admin to delete other users',
@@ -589,9 +612,9 @@ describe('User', () => {
     });
 
     // no token
-    it('Should return status code 403 if no token is passed through', async () => {
+    it('Should return status code 401 if no token is passed through', async () => {
       const result = await test.sendPostRequest('/api/user/apikey', {});
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     // invalid token
@@ -614,9 +637,9 @@ describe('User', () => {
       expect(result).to.have.status(OK);
     });
 
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const result = await test.sendGetRequest('/api/user/getNewPaidMembersThisSemester');
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid' +

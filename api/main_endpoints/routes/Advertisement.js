@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { OK, BAD_REQUEST, FORBIDDEN, UNAUTHORIZED, NOT_FOUND } = require('../../util/constants').STATUS_CODES;
-const {
-  decodeToken,
-  checkIfTokenSent,
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const logger = require('../../util/logger');
 const Advertisement = require('../models/Advertisement');
 const AuditLog = require('../models/AuditLog.js');
 const AuditLogActions = require('../util/auditLogActions.js');
+const membershipState = require('../../util/constants.js').MEMBERSHIP_STATE;
 
 router.get('/', async (req, res) => {
   const count = await Advertisement.countDocuments();
@@ -26,10 +24,9 @@ router.get('/', async (req, res) => {
 
 
 router.get('/getAllAdvertisements', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   Advertisement.find()
     .sort({ createdAt: -1 })
@@ -41,13 +38,9 @@ router.get('/getAllAdvertisements', async (req, res) => {
 });
 
 router.post('/createAdvertisement', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  }
-
-  const user = await decodeToken(req);
-  if (!user) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const newAd = new Advertisement({
@@ -58,7 +51,7 @@ router.post('/createAdvertisement', async (req, res) => {
   try {
     const createdAd = await Advertisement.create(newAd);
     AuditLog.create({
-      userId: user._id,
+      userId: decoded.token._id,
       action: AuditLogActions.CREATE_AD,
       details: {
         message: createdAd.message,
@@ -75,15 +68,9 @@ router.post('/createAdvertisement', async (req, res) => {
 });
 
 router.post('/deleteAdvertisement', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
-  const user = await decodeToken(req);
-  if (!user) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   try {
@@ -94,7 +81,7 @@ router.post('/deleteAdvertisement', async (req, res) => {
     }
 
     AuditLog.create({
-      userId: user._id,
+      userId: decoded.token._id,
       action: AuditLogActions.DELETE_AD,
       details: {
         deletedAd: {

@@ -5,75 +5,62 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 require('./passport')(passport);
 
+const { UNAUTHORIZED, OK, FORBIDDEN } = require('../../util/constants').STATUS_CODES;
+const logger = require('../../util/logger');
 
-/**
- * Check if the request body contains a token
- * @param {object} request the HTTP request from the client
- * @returns {boolean} if the token exists in the request body
- */
-function checkIfTokenSent(request) {
-  try {
-    return !!request.headers.authorization;
-  } catch(_) {
-    return false;
+class SceStatusOrToken {
+  constructor() {
+    this.token = null;
+    this.status = null;
   }
 }
 
 /**
 * @param {object} request the HTTP request from the client
 */
-function decodeToken(request){
+async function decodeToken(request, requiredAccessLevel = membershipState.NON_MEMBER) {
+  const decodedResponse = new SceStatusOrToken();
+  let token = null;
+
   try {
-    let decodedResponse = {};
-    if (!request.headers.authorization || !request.headers.authorization.length) {
+    if (request.headers.authorization && request.headers.authorization.startsWith('Bearer ')) {
+      token = request.headers.authorization.split('Bearer ')[1];
+    } else if (request.query && request.query.token) {
+      token = request.query.token;
+    }
+
+    if (!token) {
+      decodedResponse.status = UNAUTHORIZED;
       return decodedResponse;
     }
-    const token = request.headers.authorization.split('Bearer ')[1];
+
     const userToken = token.replace(/^JWT\s/, '');
-    jwt.verify(userToken, secretKey, function(error, decoded) {
-      if (!error && decoded) {
-        decodedResponse = decoded;
-      }
+    const decoded = await new Promise((resolve, reject) => {
+      jwt.verify(userToken, secretKey, (error, payload) => {
+        if (error || !payload) {
+          return reject(error || new Error('Token verification failed.'));
+        }
+        resolve(payload);
+      });
     });
+
+    const hasRequiredAccess = decoded.accessLevel >= requiredAccessLevel;
+
+    decodedResponse.status = hasRequiredAccess ? OK : FORBIDDEN;
+    decodedResponse.token = decoded;
+
     return decodedResponse;
-  } catch (_) {
-    return null;
+
+  } catch (err) {
+    logger.error('Token validation failed:', err);
+    decodedResponse.status = FORBIDDEN;
+
+    return decodedResponse;
   }
 }
 
-/**
-* @param {object} request the HTTP request from the client
-*/
-function decodeTokenFromBodyOrQuery(request){
-  const token = request.body.token || request.query.token;
-  const userToken = token.replace(/^JWT\s/, '');
-  let decodedResponse = {};
-  jwt.verify(userToken, secretKey, function(error, decoded) {
-    if (!error && decoded) {
-      decodedResponse = decoded;
-    }
-  });
-  return decodedResponse;
-}
 
-/**
- * Checks if the request token is valid and returns either a valid response
- * or undefined
- * @param {object} request the HTTP request from the client
- * @param {number} accessLevel the minimum access level to consider the token valid
- * @param {boolean} returnDecoded optional parameter to return the decoded
- * response to the user
- * @returns {boolean} whether the user token is valid or not
- */
-function checkIfTokenValid(request, accessLevel = membershipState.NON_MEMBER) {
-  let decoded = decodeToken(request);
-  let response = decoded && decoded.accessLevel >= accessLevel;
-  return response;
-}
 
 module.exports = {
-  checkIfTokenSent,
-  checkIfTokenValid,
   decodeToken,
-  decodeTokenFromBodyOrQuery
 };

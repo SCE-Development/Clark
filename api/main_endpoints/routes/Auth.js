@@ -11,11 +11,7 @@ const PasswordReset = require('../models/PasswordReset.js');
 const logger = require('../../util/logger');
 const { registerUser, testPasswordStrength } = require('../util/userHelpers');
 const { verifyCaptcha } = require('../util/captcha');
-const {
-  checkIfTokenSent,
-  checkIfTokenValid,
-  decodeToken
-} = require('../util/token-functions');
+const { decodeToken } = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
 const {
   OK,
@@ -60,10 +56,9 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/resendVerificationEmail', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   const maybeUser = await userWithEmailExists(req.body.email);
   if (!maybeUser) {
@@ -239,16 +234,12 @@ router.post('/login', function(req, res) {
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
-router.post('/verify', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.status(UNAUTHORIZED).json({});
+router.post('/verify', async function(req, res) {
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
-  const token = decodeToken(req);
-  if (token === null || Object.keys(token).length === 0) {
-    res.status(UNAUTHORIZED).json({});
-  } else {
-    res.status(OK).json(token);
-  }
+  res.status(OK).json(decoded.token);
 });
 
 router.post('/generateHashedId', async (req, res) => {

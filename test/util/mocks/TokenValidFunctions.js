@@ -1,15 +1,14 @@
 const TokenFunctions = require(
   '../../../api/main_endpoints/util/token-functions');
 const sinon = require('sinon');
+const { OK, FORBIDDEN, UNAUTHORIZED } = require('../../../api/util/constants').STATUS_CODES;
 
-let checkifTokenValidMock = null;
 let decodeTokenValidMock = null;
 
 /**
  * Initialize the stub to be used in other functions.
  */
 function initializeTokenMock() {
-  checkifTokenValidMock = sinon.stub(TokenFunctions, 'checkIfTokenValid');
   decodeTokenValidMock = sinon.stub(TokenFunctions, 'decodeToken');
 }
 
@@ -17,7 +16,6 @@ function initializeTokenMock() {
  * Restore sinon's stub, function returned to its original state
  */
 function restoreTokenMock() {
-  checkifTokenValidMock.restore();
   decodeTokenValidMock.restore();
 }
 
@@ -25,7 +23,6 @@ function restoreTokenMock() {
  * Reset sinon-stub's call, reset onCall-function back to the beginning
  */
 function resetTokenMock() {
-  checkifTokenValidMock.reset();
   decodeTokenValidMock.reset();
 }
 
@@ -38,15 +35,18 @@ function resetTokenMock() {
  * @returns return parameter (above)
  */
 function setTokenStatus(
-  returnValue,
+  isSuccessful,
   data = {},
 ) {
-  checkifTokenValidMock.returns(returnValue);
-  if (returnValue) {
-    decodeTokenValidMock.returns(data);
-  } else {
-    decodeTokenValidMock.returns(null);
-  }
+  const status = isSuccessful ? OK : UNAUTHORIZED;
+  const tokenPayload = isSuccessful ? data : null;
+
+  decodeTokenValidMock.returns(
+    Promise.resolve({
+      status: status,
+      token: tokenPayload,
+    })
+  );
 }
 
 module.exports = {
