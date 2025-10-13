@@ -13,7 +13,7 @@ const AuditLog = require('../models/AuditLog.js');
 const {
   LED_SIGN = {}
 } = require('../../config/config.json');
-const { membershipState } = require('../../../src/Enums.js');
+const { MEMBERSHIP_STATE } = require('../../util/constants.js');
 
 const runningInTest = process.env.NODE_ENV === 'test';
 
@@ -35,7 +35,7 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/updateSignText', async (req, res) => {
-  const decoded = await decodeToken(req, membershipState.OFFICER);
+  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status !== OK) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(decoded.status);
