@@ -194,7 +194,7 @@ function LedSign() {
     async function checkSignHealth() {
       setLoading(true);
       const status = await healthCheck(user.firstName);
-      if (status && !status.error) {
+      if (status.responseData && !status.error) {
         setSignHealthy(true);
         const { responseData } = status;
         if (Object.keys(responseData).length > 0) {
