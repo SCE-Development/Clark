@@ -81,12 +81,20 @@ router.get('/verify', async (req, res) => {
     return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
 
-  if (apiKey !== API_KEY) {
+  if (!apiKey) {
     writeLogToClient(req.method, {
       statusCode: UNAUTHORIZED,
-      message: `Invalid API key: ${apiKey}`,
+      message: 'API key missing from request',
     });
     return res.sendStatus(UNAUTHORIZED);
+  }
+
+  if (apiKey !== API_KEY) {
+    writeLogToClient(req.method, {
+      statusCode: FORBIDDEN,
+      message: `Invalid API key: ${apiKey}`,
+    });
+    return res.sendStatus(FORBIDDEN);
   }
 
   const cardExists = await checkIfCardExists({ cardBytes });
@@ -211,9 +219,9 @@ router.post('/getAllCards', async (req, res) => {
 });
 
 router.post('/edit', async (req, res) => {
-  const decoded = decodeToken(req);
-  if (!decoded) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const { _id, alias } = req.body;
@@ -241,10 +249,9 @@ router.post('/edit', async (req, res) => {
 
     // Log the edit action
     AuditLog.create({
-      userId: decoded._id,
+      userId: decoded.token._id,
       action: AuditLogActions.EDIT_CARD,
       details: {
-        cardId: _id,
         newAlias: alias,
         oldAlias: updatedCard.alias !== alias ? 'unknown' : alias
       }
