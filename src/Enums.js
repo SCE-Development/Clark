@@ -39,8 +39,6 @@ const membershipStatusArray = [
 ];
 
 function membershipStateToString(accessLevel) {
-  if (accessLevel > 0)
-    return membershipStatusArray[accessLevel + 3];
   return membershipStatusArray[accessLevel + 2];
 }
 
