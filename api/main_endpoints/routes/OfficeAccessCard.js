@@ -226,25 +226,25 @@ router.post('/edit', async (req, res) => {
 
   const { _id, alias } = req.body;
 
-  if (!_id || !alias) {
-    return res.status(BAD_REQUEST).send('_id and alias are required in request body');
-  }
+  const required = [
+    { value: _id && /^[0-9a-fA-F]{24}$/.test(_id) ? _id : null, title: 'Card ID', },
+    { value: alias?.trim(), title: 'New card alias', },
+  ];
 
-  // Validate alias is not empty or whitespace only
-  if (!alias.trim()) {
-    return res.status(BAD_REQUEST).send('alias cannot be empty or whitespace only');
-  }
-
-  // Validate _id is a valid ObjectId format
-  if (!/^[0-9a-fA-F]{24}$/.test(_id)) {
-    return res.status(BAD_REQUEST).send('_id must be a valid ObjectId');
+  const missingValue = required.find(({ value }) => !value);
+  if (missingValue) {
+    writeLogToClient(req.method, {
+      statusCode: BAD_REQUEST,
+      message: `${missingValue.title} missing from request`,
+    });
+    return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
 
   try {
     const updatedCard = await editAlias(_id, alias);
 
     if (!updatedCard) {
-      return res.status(NOT_FOUND).send('Card not found');
+      return res.sendStatus(NOT_FOUND);
     }
 
     // Log the edit action
@@ -253,7 +253,7 @@ router.post('/edit', async (req, res) => {
       action: AuditLogActions.EDIT_CARD,
       details: {
         newAlias: alias,
-        oldAlias: updatedCard.alias !== alias ? 'unknown' : alias
+        _id,
       }
     });
 
