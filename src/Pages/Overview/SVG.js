@@ -51,7 +51,6 @@ export function trashcanSymbol(color = 'black') {
   );
 }
 
-
 export function copyIcon(className, onClick) {
   return (
     <svg width="24" height="24" viewBox="0 0 512 512" onClick={onClick}>
