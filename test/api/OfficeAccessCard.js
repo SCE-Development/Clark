@@ -125,14 +125,14 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(BAD_REQUEST);
     });
 
-    it('Should return 401 with invalid api key', async () => {
+    it('Should return 403 with invalid api key', async () => {
       const params = new URLSearchParams();
       params.append('cardBytes', VALID_CARD_BYTES);
       const path = VERIFY_API_PATH + '?' + params.toString();
       const invalidApiKey = API_KEY + '-invalid-suffix';
       const result = await test.sendGetRequestWithApiKey(
         invalidApiKey + '', path);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 404 with valid api key and unknown card', async () => {
