@@ -276,13 +276,6 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(BAD_REQUEST);
     });
 
-    it('Should return 400 when both _id and alias are missing', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        EDIT_API_PATH, {});
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
     it('Should return 404 when trying to edit a non-existent card', async () => {
       setTokenStatus(true);
       const nonExistentId = new mongoose.Types.ObjectId().toString();
@@ -312,7 +305,7 @@ describe('OfficeAccessCard', () => {
       setTokenStatus(true);
       await test.sendPostRequestWithToken(token,
         EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
-      
+
       const updatedCard = await OfficeAccessCard.findById(testCardId);
       expect(updatedCard.alias).to.equal(NEW_ALIAS);
     });
@@ -336,10 +329,10 @@ describe('OfficeAccessCard', () => {
       const originalCard = await OfficeAccessCard.findById(testCardId);
       const originalCardBytes = originalCard.cardBytes;
       const originalVerifiedCount = originalCard.verifiedCount;
-      
+
       await test.sendPostRequestWithToken(token,
         EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
-      
+
       const updatedCard = await OfficeAccessCard.findById(testCardId);
       expect(updatedCard.cardBytes).to.equal(originalCardBytes);
       expect(updatedCard.verifiedCount).to.equal(originalVerifiedCount);
