@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { BASE_API_URL } from '../../Enums';
 import { useSCE } from '../../Components/context/SceContext';
-import { getAllCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
+import { getAllCardsFromDb, deleteCardFromDb, editCardAlias } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
 import { trashcanSymbol } from '../Overview/SVG';
 
@@ -17,10 +17,22 @@ const header = [
 export default function CardReader() {
   const { user } = useSCE();
   const token = user.token;
+
+  // Local pencil icon for edit functionality
+  const pencilSymbol = (color = '#6b7280') => {
+    return (
+      <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+        <path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/>
+        <path d='m18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/>
+      </svg>
+    );
+  };
   const [logs, setLogs] = useState([]);
   const [cards, setCards] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
   const [cardToDelete, setCardToDelete] = useState({});
+  const [editingCardId, setEditingCardId] = useState(null);
+  const [editedAlias, setEditedAlias] = useState('');
   const [tab, setTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'registry';
@@ -44,7 +56,7 @@ export default function CardReader() {
 
   const getColumnClassName = (columnName) => {
     let className = 'px-6 py-3 whitespace-nowrap ';
-    if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
+    if(columnName === 'lastVerifiedAt' || columnName === 'registrationDate'){
       className += 'hidden md:table-cell ';
     } else if (columnName === 'verifiedCount'){
       className += 'hidden lg:table-cell';
@@ -89,12 +101,68 @@ export default function CardReader() {
     setCardToDelete(card);
   }
 
+  function handleEditClick(card) {
+    setEditingCardId(card._id);
+    setEditedAlias(card.alias);
+  }
+
+  function handleCancelEdit() {
+    setEditingCardId(null);
+    setEditedAlias('');
+  }
+
+  async function handleSaveEdit(cardId) {
+    if (!editedAlias.trim()) {
+      return; // Don't save empty alias
+    }
+
+    try {
+      const response = await editCardAlias(token, cardId, editedAlias.trim());
+      if (!response.error) {
+        // Refetch all cards from database to ensure UI matches server reality
+        await getAllCards();
+        setEditingCardId(null);
+        setEditedAlias('');
+      }
+    } catch (error) {
+      setLogs(
+        (currLogs) => [
+          '[error] unable to update card alias, check browser logs: \n' + error,
+          ...currLogs,
+        ]
+      );
+    }
+  }
+
   function CardEntry({ card }) {
+    const isEditing = editingCardId === card._id;
     return (
       <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
         <td key='alias' className=''>
           <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
-            {card.alias}
+            {isEditing ? (
+              <input
+                type='text'
+                value={editedAlias}
+                onChange={(e) => setEditedAlias(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSaveEdit(card._id);
+                  } else if (e.key === 'Escape') {
+                    handleCancelEdit();
+                  }
+                }}
+                className='bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-white font-medium m-0 px-1 py-0 focus:outline-none focus:ring-1 focus:ring-blue-500'
+                style={{ width: '16ch' }}
+                autoFocus
+              />
+            ) : (
+              <div style={{ width: '16ch', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
+                <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  {card.alias}
+                </span>
+              </div>
+            )}
           </div>
         </td>
         <td key='createdAt' className='hidden md:table-cell'>
@@ -113,12 +181,44 @@ export default function CardReader() {
           </div>
         </td>
         <td>
-          <button
-            className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
-            onClick={() => handleDeleteClick(card)}
-          >
-            {trashcanSymbol('#e64539')}
-          </button>
+          <div className='flex space-x-2 w-32'>
+            <button
+              className={`p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl ${!isEditing ? 'invisible' : ''}`}
+              onClick={() => handleSaveEdit(card._id)}
+              title='Save changes'
+            >
+              <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#22c55e' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                <polyline points='20,6 9,17 4,12'></polyline>
+              </svg>
+            </button>
+            <button
+              className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+              onClick={() => {
+                if (isEditing) {
+                  handleCancelEdit();
+                } else {
+                  handleEditClick(card);
+                }
+              }}
+              title={isEditing ? 'Cancel edit' : 'Edit alias'}
+            >
+              {isEditing ? (
+                <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#ef4444' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                  <line x1='18' y1='6' x2='6' y2='18'></line>
+                  <line x1='6' y1='6' x2='18' y2='18'></line>
+                </svg>
+              ) : (
+                pencilSymbol('#6b7280')
+              )}
+            </button>
+            <button
+              className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+              onClick={() => handleDeleteClick(card)}
+              title='Delete card'
+            >
+              {trashcanSymbol('#e64539')}
+            </button>
+          </div>
         </td>
       </tr>
     );
