@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { BASE_API_URL } from '../../Enums';
 import { useSCE } from '../../Components/context/SceContext';
-import { getAllCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
+import { getAllCardsFromDb, deleteCardFromDb, editCardAlias } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
-import { trashcanSymbol } from '../Overview/SVG';
+import { trashcanSymbol, pencilSymbol } from '../Overview/SVG';
 
 const header = [
   'Time'.padEnd(29),
@@ -21,6 +21,8 @@ export default function CardReader() {
   const [cards, setCards] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
   const [cardToDelete, setCardToDelete] = useState({});
+  const [editingCardId, setEditingCardId] = useState(null);
+  const [editedAlias, setEditedAlias] = useState('');
   const [tab, setTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'registry';
@@ -44,7 +46,7 @@ export default function CardReader() {
 
   const getColumnClassName = (columnName) => {
     let className = 'px-6 py-3 whitespace-nowrap ';
-    if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
+    if(columnName === 'lastVerifiedAt' || columnName === 'registrationDate'){
       className += 'hidden md:table-cell ';
     } else if (columnName === 'verifiedCount'){
       className += 'hidden lg:table-cell';
@@ -89,12 +91,66 @@ export default function CardReader() {
     setCardToDelete(card);
   }
 
+  function handleEditClick(card) {
+    setEditingCardId(card._id);
+    setEditedAlias(card.alias);
+  }
+
+  function handleCancelEdit() {
+    setEditingCardId(null);
+    setEditedAlias('');
+  }
+
+  async function handleSaveEdit(cardId) {
+    if (!editedAlias.trim()) {
+      return; // Don't save empty alias
+    }
+    
+    try {
+      const response = await editCardAlias(token, cardId, editedAlias.trim());
+      if (!response.error) {
+        setCards(prevCards => 
+          prevCards.map(card => 
+            card._id === cardId 
+              ? { ...card, alias: editedAlias.trim() }
+              : card
+          )
+        );
+        setEditingCardId(null);
+        setEditedAlias('');
+      } else {
+        console.error('Failed to update card alias');
+      }
+    } catch (error) {
+      console.error('Error updating card alias:', error);
+    }
+  }
+
   function CardEntry({ card }) {
+    const isEditing = editingCardId === card._id;
+    
     return (
       <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
         <td key='alias' className=''>
           <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
-            {card.alias}
+            {isEditing ? (
+              <input
+                type='text'
+                value={editedAlias}
+                onChange={(e) => setEditedAlias(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSaveEdit(card._id);
+                  } else if (e.key === 'Escape') {
+                    handleCancelEdit();
+                  }
+                }}
+                className='bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500'
+                autoFocus
+              />
+            ) : (
+              card.alias
+            )}
           </div>
         </td>
         <td key='createdAt' className='hidden md:table-cell'>
@@ -113,12 +169,46 @@ export default function CardReader() {
           </div>
         </td>
         <td>
-          <button
-            className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
-            onClick={() => handleDeleteClick(card)}
-          >
-            {trashcanSymbol('#e64539')}
-          </button>
+          <div className='flex space-x-2'>
+            <button
+              className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+              onClick={() => {
+                if (isEditing) {
+                  handleSaveEdit(card._id);
+                } else {
+                  handleEditClick(card);
+                }
+              }}
+              title={isEditing ? 'Save changes' : 'Edit alias'}
+            >
+              {isEditing ? (
+                <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#22c55e' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                  <polyline points='20,6 9,17 4,12'></polyline>
+                </svg>
+              ) : (
+                pencilSymbol('#6b7280')
+              )}
+            </button>
+            {isEditing && (
+              <button
+                className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+                onClick={handleCancelEdit}
+                title='Cancel edit'
+              >
+                <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#ef4444' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+                  <line x1='18' y1='6' x2='6' y2='18'></line>
+                  <line x1='6' y1='6' x2='18' y2='18'></line>
+                </svg>
+              </button>
+            )}
+            <button
+              className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+              onClick={() => handleDeleteClick(card)}
+              title='Delete card'
+            >
+              {trashcanSymbol('#e64539')}
+            </button>
+          </div>
         </td>
       </tr>
     );

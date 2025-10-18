@@ -242,7 +242,6 @@ router.post('/edit', async (req, res) => {
 
   try {
     const updatedCard = await editAlias(_id, alias);
-
     if (!updatedCard) {
       return res.status(NOT_FOUND).send('Card not found');
     }
