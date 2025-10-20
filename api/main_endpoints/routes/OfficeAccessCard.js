@@ -81,14 +81,6 @@ router.get('/verify', async (req, res) => {
     return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
 
-  if (!apiKey) {
-    writeLogToClient(req.method, {
-      statusCode: UNAUTHORIZED,
-      message: 'API key missing from request',
-    });
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
   if (apiKey !== API_KEY) {
     writeLogToClient(req.method, {
       statusCode: FORBIDDEN,
@@ -219,7 +211,7 @@ router.post('/getAllCards', async (req, res) => {
 });
 
 router.post('/edit', async (req, res) => {
-  const decoded = await decodeToken(req);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
@@ -227,7 +219,7 @@ router.post('/edit', async (req, res) => {
   const { _id, alias } = req.body;
 
   const required = [
-    { value: _id && /^[0-9a-fA-F]{24}$/.test(_id) ? _id : null, title: 'Card ID', },
+    { value: _id && /^[0-9a-fA-F]{24}$/.test(_id) ? _id : null, title: 'Valid, alphanumeric Card ID', },
     { value: alias?.trim(), title: 'New card alias', },
   ];
 

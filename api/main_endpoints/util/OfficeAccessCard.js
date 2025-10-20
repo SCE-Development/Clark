@@ -20,7 +20,8 @@ function checkIfCardExists({ cardBytes = null, alias = null } = {}) {
             return resolve(false);
           }
           if (!result) {
-            logger.info('Card not found in the database');
+            const description = cardBytes !== null ? cardBytes : alias;
+            logger.info(`Card: ${description} not found in the database`);
           }
           return resolve(result); // return the document
         });
