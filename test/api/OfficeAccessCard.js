@@ -264,7 +264,7 @@ describe('OfficeAccessCard', () => {
     });
 
     it('Should return 403 when a user with access level below officer tries to edit a card', async () => {
-      setTokenStatus(true, { _id: id, accessLevel: membershipState.NON_MEMBER });
+      setTokenStatus(true, { _id: id, accessLevel: 'NON_MEMBER' });
       const result = await test.sendPostRequestWithToken(token,
         EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
       expect(result).to.have.status(FORBIDDEN);
