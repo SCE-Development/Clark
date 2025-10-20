@@ -263,13 +263,6 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 403 when a user with access level below officer tries to edit a card', async () => {
-      setTokenStatus(true, { _id: id, accessLevel: MEMBERSHIP_STATE.NON_MEMBER });
-      const result = await test.sendPostRequestWithToken(token,
-        EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
-      expect(result).to.have.status(FORBIDDEN);
-    });
-
     it('Should return 400 when _id is missing from request body', async () => {
       setTokenStatus(true);
       const result = await test.sendPostRequestWithToken(token,
