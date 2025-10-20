@@ -20,7 +20,7 @@ const {
   SERVER_ERROR,
   FORBIDDEN,
 } = require('../../api/util/constants').STATUS_CODES;
-const membershipState = require('../../api/util/constants').MEMBERSHIP_STATE;
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const {
   initializeTokenMock,
   setTokenStatus,
@@ -264,7 +264,7 @@ describe('OfficeAccessCard', () => {
     });
 
     it('Should return 403 when a user with access level below officer tries to edit a card', async () => {
-      setTokenStatus(true, { _id: id, accessLevel: 'NON_MEMBER' });
+      setTokenStatus(true, { _id: id, accessLevel: MEMBERSHIP_STATE.NON_MEMBER });
       const result = await test.sendPostRequestWithToken(token,
         EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
       expect(result).to.have.status(FORBIDDEN);
