@@ -3,7 +3,7 @@ import { BASE_API_URL } from '../../Enums';
 import { useSCE } from '../../Components/context/SceContext';
 import { getAllCardsFromDb, deleteCardFromDb, editCardAlias } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
-import { trashcanSymbol, pencilSymbol } from '../Overview/SVG';
+import { trashcanSymbol, pencilSymbol, checkSymbol, cancelSymbol } from '../Overview/SVG';
 
 const header = [
   'Time'.padEnd(29),
@@ -18,15 +18,6 @@ export default function CardReader() {
   const { user } = useSCE();
   const token = user.token;
 
-  // Local pencil icon for edit functionality
-  const pencilSymbol = (color = '#6b7280') => {
-    return (
-      <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke={color} strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-        <path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/>
-        <path d='m18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/>
-      </svg>
-    );
-  };
   const [logs, setLogs] = useState([]);
   const [cards, setCards] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
@@ -102,13 +93,13 @@ export default function CardReader() {
   }
 
   function handleEditClick(card) {
-    setEditingCardId(card._id);
-    setEditedAlias(card.alias);
-  }
-
-  function handleCancelEdit() {
-    setEditingCardId(null);
-    setEditedAlias('');
+    if (editingCardId === card._id) {
+      setEditingCardId(null);
+      setEditedAlias('');
+    } else {
+      setEditingCardId(card._id);
+      setEditedAlias(card.alias);
+    }
   }
 
   async function handleSaveEdit(cardId) {
@@ -134,6 +125,15 @@ export default function CardReader() {
     }
   }
 
+  function handleEditKeyDown(key) {
+    if (key === 'Enter') {
+      handleSaveEdit(editingCardId);
+    } else if (key === 'Escape') {
+      setEditingCardId(null);
+      setEditedAlias('');
+    }
+  }
+
   function CardEntry({ card }) {
     const isEditing = editingCardId === card._id;
     return (
@@ -145,13 +145,7 @@ export default function CardReader() {
                 type='text'
                 value={editedAlias}
                 onChange={(e) => setEditedAlias(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSaveEdit(card._id);
-                  } else if (e.key === 'Escape') {
-                    handleCancelEdit();
-                  }
-                }}
+                onKeyDown={(e) => handleEditKeyDown(e.key)}
                 className='bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-white font-medium m-0 px-1 py-0 focus:outline-none focus:ring-1 focus:ring-blue-500'
                 style={{ width: '16ch' }}
                 autoFocus
@@ -187,26 +181,15 @@ export default function CardReader() {
               onClick={() => handleSaveEdit(card._id)}
               title='Save changes'
             >
-              <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#22c55e' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-                <polyline points='20,6 9,17 4,12'></polyline>
-              </svg>
+              {checkSymbol('#22c55e')}
             </button>
             <button
               className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
-              onClick={() => {
-                if (isEditing) {
-                  handleCancelEdit();
-                } else {
-                  handleEditClick(card);
-                }
-              }}
+              onClick={() => handleEditClick(card)}
               title={isEditing ? 'Cancel edit' : 'Edit alias'}
             >
               {isEditing ? (
-                <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='#ef4444' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-                  <line x1='18' y1='6' x2='6' y2='18'></line>
-                  <line x1='6' y1='6' x2='18' y2='18'></line>
-                </svg>
+                cancelSymbol('#ef4444')
               ) : (
                 pencilSymbol('#6b7280')
               )}
