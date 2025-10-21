@@ -47,9 +47,9 @@ export default function CardReader() {
 
   const getColumnClassName = (columnName) => {
     let className = 'px-6 py-3 whitespace-nowrap ';
-    if(columnName === 'lastVerifiedAt' || columnName === 'registrationDate'){
+    if (['lastVerifiedAt', 'registrationDate'].includes(columnName)) {
       className += 'hidden md:table-cell ';
-    } else if (columnName === 'verifiedCount'){
+    } else if (columnName === 'verifiedCount') {
       className += 'hidden lg:table-cell';
     }
     return className;
@@ -134,29 +134,36 @@ export default function CardReader() {
     }
   }
 
+  function renderInputOrAlias(card) {
+    if (editingCardId === card._id) {
+      return (
+        <input
+          type='text'
+          value={editedAlias}
+          onChange={(e) => setEditedAlias(e.target.value)}
+          onKeyDown={(e) => handleEditKeyDown(e.key)}
+          className='bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-white font-medium m-0 px-1 py-0 focus:outline-none focus:ring-1 focus:ring-blue-500'
+          style={{ width: '16ch' }}
+          autoFocus
+        />
+      );
+    }
+    return (
+      <div style={{ width: '16ch', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
+        <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+          {card.alias}
+        </span>
+      </div>
+    );
+  }
+
   function CardEntry({ card }) {
     const isEditing = editingCardId === card._id;
     return (
       <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
         <td key='alias' className=''>
           <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
-            {isEditing ? (
-              <input
-                type='text'
-                value={editedAlias}
-                onChange={(e) => setEditedAlias(e.target.value)}
-                onKeyDown={(e) => handleEditKeyDown(e.key)}
-                className='bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-white font-medium m-0 px-1 py-0 focus:outline-none focus:ring-1 focus:ring-blue-500'
-                style={{ width: '16ch' }}
-                autoFocus
-              />
-            ) : (
-              <div style={{ width: '16ch', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
-                <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                  {card.alias}
-                </span>
-              </div>
-            )}
+            {renderInputOrAlias(card)}
           </div>
         </td>
         <td key='createdAt' className='hidden md:table-cell'>
