@@ -20,6 +20,7 @@ const {
   checkIfCardExists,
   generateAlias,
   deleteCard,
+  editAlias,
 } = require('../util/OfficeAccessCard.js');
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
@@ -82,10 +83,10 @@ router.get('/verify', async (req, res) => {
 
   if (apiKey !== API_KEY) {
     writeLogToClient(req.method, {
-      statusCode: UNAUTHORIZED,
+      statusCode: FORBIDDEN,
       message: `Invalid API key: ${apiKey}`,
     });
-    return res.sendStatus(UNAUTHORIZED);
+    return res.sendStatus(FORBIDDEN);
   }
 
   const cardExists = await checkIfCardExists({ cardBytes });
@@ -206,6 +207,56 @@ router.post('/getAllCards', async (req, res) => {
   } catch (error) {
     logger.error('Error fetching cards: ', error);
     return res.sendStatus(SERVER_ERROR);
+  }
+});
+
+router.post('/edit', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const { _id, alias } = req.body;
+
+  const required = [
+    { value: _id && /^[0-9a-fA-F]{24}$/.test(_id) ? _id : null, title: 'Valid, alphanumeric Card ID', },
+    { value: alias?.trim(), title: 'New card alias', },
+  ];
+
+  const missingValue = required.find(({ value }) => !value);
+  if (missingValue) {
+    writeLogToClient(req.method, {
+      statusCode: BAD_REQUEST,
+      message: `${missingValue.title} missing from request`,
+    });
+    return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
+  }
+
+  try {
+    const updatedCard = await editAlias(_id, alias);
+
+    if (!updatedCard) {
+      return res.sendStatus(NOT_FOUND);
+    }
+
+    // Log the edit action
+    AuditLog.create({
+      userId: decoded.token._id,
+      action: AuditLogActions.EDIT_CARD,
+      details: {
+        newAlias: alias,
+        _id,
+      }
+    });
+
+    logger.info(`Card alias updated successfully for card ID: ${_id}`);
+    return res.status(OK).json({
+      message: 'Card alias updated successfully',
+      card: updatedCard
+    });
+  } catch (error) {
+    logger.error('Error updating card alias: ', error);
+    return res.status(SERVER_ERROR).send('Error updating card alias');
   }
 });
 
