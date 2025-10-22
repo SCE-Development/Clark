@@ -1,5 +1,6 @@
 import { UserApiResponse, ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
+import Cookies from 'universal-cookie';
 
 
 /**
@@ -88,18 +89,17 @@ export async function loginUser(email, password) {
 }
 
 /**
- * Checks if the user is signed in by evaluating a jwt token in local storage.
+ * Checks if the user is signed in by evaluating a jwt token in cookies.
  * @returns {UserApiResponse} Containing information for
  * whether the user is signed or not
  */
 export async function checkIfUserIsSignedIn() {
   let status = new UserApiResponse();
+  const cookies = new Cookies();
 
-  const token = window.localStorage
-    ? window.localStorage.getItem('jwtToken')
-    : '';
+  const token = cookies.get('jwtToken') ?? '';
 
-  // If there is not token in local storage,
+  // If there is not token in cookies,
   // we cant do anything and return
   if (!token) {
     status.error = true;

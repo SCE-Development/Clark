@@ -2,6 +2,7 @@ import React from 'react';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
 import { useSCE } from '../context/SceContext';
+import Cookies from 'universal-cookie';
 
 function NavBarWrapper({
   enableAdminNavbar = false,
@@ -9,10 +10,12 @@ function NavBarWrapper({
   ...appProps
 }) {
   const { user, setUser, setAuthenticated } = useSCE();
+  const cookies = new Cookies();
 
   function handleLogout() {
     setAuthenticated(false);
     setUser({});
+    cookies.remove('jwtToken');
     window.localStorage.removeItem('jwtToken');
     window.location.reload();
   }
