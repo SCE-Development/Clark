@@ -1,12 +1,11 @@
 import React from 'react';
 import { deleteUserByID } from '../../../APIFunctions/User';
 import { useSCE } from '../../../Components/context/SceContext';
-import Cookies from 'universal-cookie';
+import { deleteJwtCookie } from '../../../APIFunctions/Auth';
 
 export default function DeleteAccountModal(props) {
   const { bannerCallback = () => {} } = props;
   const { user } = useSCE();
-  const cookies = new Cookies();
 
   async function deleteAccount() {
     const apiResponse = await deleteUserByID(
@@ -17,8 +16,7 @@ export default function DeleteAccountModal(props) {
     if (!apiResponse.error) {
       bannerCallback('Account Deleted', 'success');
       setTimeout(() => {
-        cookies.remove('jwtToken');
-        window.localStorage.removeItem('jwtToken');
+        deleteJwtCookie();
         window.location.reload();
       }, 2000);
     } else {

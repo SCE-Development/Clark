@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
-import { loginUser } from '../../APIFunctions/Auth';
+import { loginUser, setJwtCookie } from '../../APIFunctions/Auth';
 import { useSCE } from '../../Components/context/SceContext';
-import Cookies from 'universal-cookie';
 
 export default function Login() {
   const { setAuthenticated } = useSCE();
   const queryParams = new URLSearchParams(window.location.search);
   const [errorMsg, setErrorMsg] = useState('');
-  const cookies = new Cookies();
 
   async function handleSubmit(e) {
     e.preventDefault();
-    window.localStorage.removeItem('jwtToken'); // clean up local storage
     const email = e.target.email.value;
     const password = e.target.password.value;
     setErrorMsg('');
     const loginStatus = await loginUser(email, password);
     if (!loginStatus.error) {
       setAuthenticated(true);
-      cookies.set('jwtToken', loginStatus.token); // expire cookie after 1 week
+      setJwtCookie(loginStatus.token);
       if (queryParams.get('redirect')) {
         window.location.href = queryParams.get('redirect');
         return;
