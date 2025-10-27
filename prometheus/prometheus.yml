@@ -17,6 +17,9 @@ scrape_configs:
   - job_name: 'clark'
     static_configs:
       - targets: ['main-endpoints:8080']
+  - job_name: 'clark-email'
+    static_configs:
+      - targets: ['sce-cloud-api:8082']
   # the below is for discord bot
   - job_name: 'sarah'
     static_configs:
