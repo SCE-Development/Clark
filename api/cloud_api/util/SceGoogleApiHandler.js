@@ -89,7 +89,7 @@ class SceGoogleApiHandler {
       Interactive setup has been skipped.
       `);
       return;
-    };
+    }
 
     const authUrl = this.oAuth2Client.generateAuthUrl({
       /* eslint-disable-next-line */
@@ -118,7 +118,6 @@ class SceGoogleApiHandler {
 
           const configPath = __dirname + '/../../config/config.json';
           let config = JSON.parse(fs.readFileSync(configPath));
-          console.log({token})
           config.googleApiKeys.REFRESH_TOKEN = token.refresh_token;
 
           fs.writeFile(configPath, JSON.stringify(config), (error) => {
