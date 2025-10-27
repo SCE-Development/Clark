@@ -36,6 +36,7 @@ export default function AuditLogPage() {
     'VERIFY_CARD',
     'ADD_CARD',
     'DELETE_CARD',
+    'EDIT_CARD'
   ];
 
   const getAuditLogsFromDB = async () => {
