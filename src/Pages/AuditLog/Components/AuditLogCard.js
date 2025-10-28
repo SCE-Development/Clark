@@ -43,6 +43,7 @@ const AuditLogCard = ({ log, index }) => {
     VERIFY_CARD: 'verified an Office Access Card',
     ADD_CARD: 'verified a new Office Access Card',
     DELETE_CARD: 'deleted an Office Access Card',
+    EDIT_CARD: 'edited an Office Access Card',
     UPDATE_USER: 'updated user information',
     EMAIL_SENT: 'verification email sent',
     VERIFY_EMAIL: 'verified email',
