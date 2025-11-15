@@ -60,10 +60,10 @@ export function parseRange(pages, maxPages) {
   return result;
 }
 
-export async function getPrintStatus(printId, token) {
-  const url = new URL('/api/Printer/status/', BASE_API_URL);
+export async function getPrintStatus(printId, totalPages, token) {
+  const url = new URL('/api/Printer/status', BASE_API_URL);
 
-  const response = await fetch(url.href + `?id=${printId}`, {
+  const response = await fetch(url.href + `?id=${printId}&pages=${totalPages}`, {
     headers: {
       'Authorization': `Bearer ${token}`
     },
@@ -96,6 +96,7 @@ export async function printPage(data, token) {
   const pdf = data.get('file');
   const sides = data.get('sides');
   const copies = data.get('copies');
+  const totalPages = data.get('totalPages');
   const id = crypto.randomUUID();
   const CHUNK_SIZE = 1024 * 1024 * 0.5; // 0.5 MB ------- SENT DATA **CANNOT** EXCEED 1 MB
   const totalChunks = Math.ceil(pdf.size / CHUNK_SIZE);
@@ -114,6 +115,7 @@ export async function printPage(data, token) {
       chunkData.append('id', id);
       chunkData.append('sides', sides);
       chunkData.append('copies', copies);
+      chunkData.append('totalPages', totalPages);
     }
 
     try {

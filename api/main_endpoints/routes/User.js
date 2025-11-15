@@ -108,6 +108,7 @@ router.post('/search', async function(req, res) {
       lastLogin: result.lastLogin,
       membershipValidUntil: result.membershipValidUntil,
       pagesPrinted: result.pagesPrinted,
+      escrowPagesPrinted: result.escrowPagesPrinted,
       doorCode: result.doorCode,
       _id: result._id
     };
@@ -310,7 +311,7 @@ router.post('/getPagesPrintedCount', async (req, res) => {
         .status(NOT_FOUND)
         .send({ message: `${req.body.email} not found.` });
     }
-    return res.status(OK).json(result.pagesPrinted);
+    return res.status(OK).json(result.pagesPrinted + result.escrowPagesPrinted);
   });
 });
 

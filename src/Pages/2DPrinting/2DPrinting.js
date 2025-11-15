@@ -65,21 +65,17 @@ export default function Printing() {
       }
 
       ids.map(async (id) => {
-        const status = await getPrintStatus(id, user.token);
+        const status = await getPrintStatus(id, printJobs[id].pages, user.token);
+        const newPrintJobs = {...printJobs};
 
         if (status === 'completed') {
-          setTimeout(() => {
-            const newPrintJobs = {...printJobs};
-            delete newPrintJobs[id];
-            setPrintJobs(newPrintJobs);
-            window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
-          }, 2000);
+          delete newPrintJobs[id];
         } else {
-          const newPrintJobs = {...printJobs};
           newPrintJobs[id].status = status;
-          setPrintJobs(newPrintJobs);
-          window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
         }
+
+        setPrintJobs(newPrintJobs);
+        window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
       });
     }, 1000);
 
@@ -87,9 +83,9 @@ export default function Printing() {
   }, [printJobs]);
 
   useEffect(() => {
-    if (window.localStorage !== undefined) {
+    if (!!window.localStorage) {
       const jobsFromLocal = JSON.parse(window.localStorage.getItem('printJobs'));
-      if (jobsFromLocal !== null) {
+      if (!!jobsFromLocal) {
         setPrintJobs(jobsFromLocal);
       }
     }
@@ -241,11 +237,12 @@ export default function Printing() {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
+    data.append('totalPages', pagesToBeUsedInPrintRequest);
     const printReq = await printPage(data, user.token);
 
     try {
       const printId = printReq?.responseData['print_id'];
-      const newPrintJobs = {...printJobs, [printId]: {status: 'created', fileName: PdfFile.name} };
+      const newPrintJobs = {...printJobs, [printId]: {status: 'created', fileName: PdfFile.name, pages: pagesToBeUsedInPrintRequest} };
       setPrintJobs(newPrintJobs);
       window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
     } catch (err) {
@@ -460,7 +457,7 @@ export default function Printing() {
         {
           Object.keys(printJobs).map(id => (
             <div key={id} className='flex items-center justify-center w-full mt-10'>
-              <div role="alert" className={'w-1/2 text-center alert alert-success'}>
+              <div role="alert" className={'w-1/2 text-center alert alert-' + (printJobs[id] === 'failed' ? 'error' : 'success')}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                 <p className=''>{printJobs[id].fileName} ({id}): {printJobs[id].status}</p>
               </div>
