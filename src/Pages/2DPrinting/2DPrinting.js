@@ -6,7 +6,6 @@ import {
   getPagesPrinted,
   getPrintStatus,
 } from '../../APIFunctions/2DPrinting';
-import { editUser } from '../../APIFunctions/User';
 
 import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';

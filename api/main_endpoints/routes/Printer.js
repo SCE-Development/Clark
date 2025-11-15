@@ -174,15 +174,17 @@ router.get('/status', async (req, res) => {
 
     // { status: string }
     const json = await response.json();
+    const pages = Number(req.query.pages);
 
     if (json.status === 'completed') {
-      user.pagesPrinted += Number(req.query.pages);
-      user.escrowPagesPrinted -= Number(req.query.pages);
+      user.pagesPrinted += pages;
+      user.escrowPagesPrinted -= pages;
       await user.save();
     }
 
     if (json.status === 'failed') {
-      user.escrowPagesPrinted -= Number(req.query.pages);
+      user.escrowPagesPrinted -= pages;
+      await user.save();
     }
 
     res.status(OK).send(json);
