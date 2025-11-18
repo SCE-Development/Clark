@@ -13,6 +13,7 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
 import { useSCE } from '../../Components/context/SceContext.js';
+import JobStatus from '../../Components/Printing/JobStatus.js';
 
 export default function Printing() {
   const { user, setUser } = useSCE();
@@ -64,15 +65,23 @@ export default function Printing() {
       }
 
       ids.map(async (id) => {
+        if (['completed', 'failed'].includes(printJobs[id].status)) return;
+
         const status = await getPrintStatus(id, printJobs[id].pages, user.token);
         const newPrintJobs = {...printJobs};
 
-        if (status === 'completed') {
-          delete newPrintJobs[id];
-        } else {
-          newPrintJobs[id].status = status;
+        if (['completed', 'failed'].includes(status)) {
+          setTimeout(() => {
+            setPrintJobs((prev) => {
+              const newPrintJobs = {...prev};
+              delete newPrintJobs[id];
+              window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+              return {...newPrintJobs};
+            });
+          }, 5000);
         }
 
+        newPrintJobs[id].status = status;
         setPrintJobs(newPrintJobs);
         window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
       });
@@ -244,6 +253,7 @@ export default function Printing() {
       const newPrintJobs = {...printJobs, [printId]: {status: 'created', fileName: PdfFile.name, pages: pagesToBeUsedInPrintRequest} };
       setPrintJobs(newPrintJobs);
       window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+      getNumberOfPagesPrintedSoFar();
     } catch (err) {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
@@ -455,12 +465,7 @@ export default function Printing() {
       <div>
         {
           Object.keys(printJobs).map(id => (
-            <div key={id} className='flex items-center justify-center w-full mt-10'>
-              <div role="alert" className={'w-1/2 text-center alert alert-' + (printJobs[id] === 'failed' ? 'error' : 'success')}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                <p className=''>{printJobs[id].fileName} ({id}): {printJobs[id].status}</p>
-              </div>
-            </div>
+            <JobStatus id={id} status={printJobs[id].status} fileName={printJobs[id].fileName} />
           ))
         }
       </div>
