@@ -54,7 +54,7 @@ export default function Printing() {
     }
   }
 
-  async function tryDestroyJobStatusNotification(status, id) {
+  async function tryRemoveJob(status, id) {
     const completedOrFailed = ['completed', 'failed'].includes(status);
     if (!completedOrFailed) return;
 
@@ -93,7 +93,7 @@ export default function Printing() {
         setPrintJobs(newPrintJobs);
         window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
 
-        tryDestroyJobStatusNotification(status, id);
+        tryRemoveJob(status, id);
       });
     }, 1000);
 
@@ -107,7 +107,7 @@ export default function Printing() {
         setPrintJobs(() => {
           const ids = Object.keys(jobsFromLocal);
           ids.map(async (id) => {
-            tryDestroyJobStatusNotification(jobsFromLocal[id].status, id);
+            tryRemoveJob(jobsFromLocal[id].status, id);
           });
 
           return jobsFromLocal;
