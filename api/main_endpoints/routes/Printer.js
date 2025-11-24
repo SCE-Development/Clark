@@ -166,7 +166,9 @@ router.get('/status', async (req, res) => {
   }
 
   try {
-    const response = await fetch(PRINTER_URL + `/status/?id=${req.query.id}`, {
+    const url = new URL('/status/', PRINTER_URL);
+    url.searchParams.append('id', req.query.id);
+    const response = await fetch(url, {
       method: 'GET',
     });
 
@@ -174,7 +176,7 @@ router.get('/status', async (req, res) => {
 
     // { status: string }
     const json = await response.json();
-    const pages = Number(req.query.pages);
+    const pages = Math.abs(Number(req.query.pages));
 
     if (json.status === 'completed') {
       user.pagesPrinted += pages;

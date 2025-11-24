@@ -62,8 +62,10 @@ export function parseRange(pages, maxPages) {
 
 export async function getPrintStatus(printId, totalPages, token) {
   const url = new URL('/api/Printer/status', BASE_API_URL);
+  url.searchParams.append('id', printId);
+  url.searchParams.append('pages', totalPages);
 
-  const response = await fetch(url.href + `?id=${printId}&pages=${totalPages}`, {
+  const response = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`
     },

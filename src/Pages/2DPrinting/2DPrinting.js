@@ -54,6 +54,25 @@ export default function Printing() {
     }
   }
 
+  async function tryDestroyJobStatusNotification(status, id) {
+    const completedOrFailed = ['completed', 'failed'].includes(status);
+    if (!completedOrFailed) return;
+
+    setTimeout(() => {
+      setPrintJobs((prev) => {
+        const newPrintJobs = {...prev};
+
+        if (!(id in newPrintJobs)) {
+          return prev;
+        }
+
+        delete newPrintJobs[id];
+        window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+        return {...newPrintJobs};
+      });
+    }, 5000);
+  }
+
   useEffect(() => {
     if (printJobs === null || Object.keys(printJobs).length === 0) return;
     const ids = Object.keys(printJobs);
@@ -65,25 +84,16 @@ export default function Printing() {
       }
 
       ids.map(async (id) => {
-        if (['completed', 'failed'].includes(printJobs[id].status)) return;
+        const completedOrFailed = ['completed', 'failed'].includes(printJobs[id].status);
+        if (completedOrFailed) return;
 
         const status = await getPrintStatus(id, printJobs[id].pages, user.token);
         const newPrintJobs = {...printJobs};
-
-        if (['completed', 'failed'].includes(status)) {
-          setTimeout(() => {
-            setPrintJobs((prev) => {
-              const newPrintJobs = {...prev};
-              delete newPrintJobs[id];
-              window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
-              return {...newPrintJobs};
-            });
-          }, 5000);
-        }
-
         newPrintJobs[id].status = status;
         setPrintJobs(newPrintJobs);
         window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+
+        tryDestroyJobStatusNotification(status, id);
       });
     }, 1000);
 
@@ -94,7 +104,14 @@ export default function Printing() {
     if (!!window.localStorage) {
       const jobsFromLocal = JSON.parse(window.localStorage.getItem('printJobs'));
       if (!!jobsFromLocal) {
-        setPrintJobs(jobsFromLocal);
+        setPrintJobs(() => {
+          const ids = Object.keys(jobsFromLocal);
+          ids.map(async (id) => {
+            tryDestroyJobStatusNotification(jobsFromLocal[id].status, id);
+          });
+
+          return jobsFromLocal;
+        });
       }
     }
 
@@ -250,7 +267,13 @@ export default function Printing() {
 
     try {
       const printId = printReq?.responseData['print_id'];
-      const newPrintJobs = {...printJobs, [printId]: {status: 'created', fileName: PdfFile.name, pages: pagesToBeUsedInPrintRequest} };
+      const newPrintJobs = {...printJobs,
+        [printId]: {
+          status: 'created',
+          fileName: PdfFile.name,
+          pages: pagesToBeUsedInPrintRequest
+        }
+      };
       setPrintJobs(newPrintJobs);
       window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
       getNumberOfPagesPrintedSoFar();
@@ -465,7 +488,7 @@ export default function Printing() {
       <div>
         {
           Object.keys(printJobs).map(id => (
-            <JobStatus id={id} status={printJobs[id].status} fileName={printJobs[id].fileName} />
+            <JobStatus key={id} id={id} status={printJobs[id].status} fileName={printJobs[id].fileName} />
           ))
         }
       </div>
