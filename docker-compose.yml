@@ -114,6 +114,7 @@ services:
       - ./sce_sjsu_edu_cert.cer:/etc/nginx/sce_sjsu_edu_cert.cer
       - ./sce.key:/etc/nginx/sce.key
       - nginx_cache:/var/cache/nginx
+      - ./interview/costco_gas.json:/var/www/html/data/costco_gas.json:ro
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
