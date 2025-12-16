@@ -143,12 +143,24 @@ router.post('/users', async function(req, res) {
   };
   const sortOrder = orderToInteger[req.query.order] || orderToInteger.default;
 
-  // make sure that the page we want to see is 0 by default
-  // and avoid negative page numbers
-  let skip = Math.max(Number(req.body.page) || 0, 0);
-  skip *= ROWS_PER_PAGE;
+  // Handle pagination: defaults to page 0 if not specified
+  // Special case: page -1 fetches all users without pagination
+  // All other negative page numbers are clamped to 0
+  let skip, limit;
+  const pageNum = Number(req.body.page);
+
+  if (pageNum === -1) {
+    // Fetch all users (no pagination)
+    skip = 0;
+    limit = 0; // MongoDB uses 0 to mean "no limit"
+  } else {
+    // Regular pagination: clamp negative pages to 0
+    skip = Math.max(pageNum || 0, 0) * ROWS_PER_PAGE;
+    limit = ROWS_PER_PAGE;
+  }
+
   const total = await User.count(maybeOr);
-  User.find(maybeOr, { password: 0, }, { skip, limit: ROWS_PER_PAGE, })
+  User.find(maybeOr, { password: 0, }, { skip, limit })
     .sort({ [sortColumn] : sortOrder })
     .then(items => {
       res.status(OK).send({ items, total, rowsPerPage: ROWS_PER_PAGE, });
