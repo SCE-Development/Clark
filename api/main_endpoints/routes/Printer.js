@@ -7,6 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 const { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize } = require('../util/Printer.js');
+const { PDFDocument, StandardFonts } = require('pdf-lib');
+const {subtractUserPages} = require('../util/userHelpers');
 
 const { decodeToken } = require('../util/token-functions.js');
 const {
@@ -14,6 +16,7 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  BAD_REQUEST
 } = require('../../util/constants').STATUS_CODES;
 const {
   PRINTING = {}
@@ -108,16 +111,25 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
       return res.sendStatus(SERVER_ERROR);
     }
   }
-
-  const stream = await fs.createReadStream(assembledPdfFromChunks);
+  const stream = await fs.promises.readFile(assembledPdfFromChunks); // Buffer
   const data = new FormData();
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);
   data.append('sides', sides);
 
   try {
+    const pdfDoc = await PDFDocument.load(stream); // load PDF
+    const numpages = pdfDoc.getPages().length; // get number of pages
+    const copiesInt = parseInt(copies || 1, 10);
+    const totalPages = numpages * copiesInt; // updates users printcount
+    const success = await subtractUserPages(user.id, totalPages);
+    if (!success) {
+      await cleanUpChunks(dir, id);
+      return res.status(BAD_REQUEST).json({ error: 'Page limit exceeded or user not found' });
+    }
     // full pdf can be sent to quasar no problem
     const printRes = await axios.post(PRINTER_URL + '/print', data, {
+
       headers: {
         ...data.getHeaders(),
       },
