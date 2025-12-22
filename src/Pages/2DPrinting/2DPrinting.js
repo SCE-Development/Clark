@@ -77,7 +77,7 @@ export default function Printing() {
     if (printJobs === null || Object.keys(printJobs).length === 0) return;
     const ids = Object.keys(printJobs);
 
-    
+
     const interval = setInterval(async () => {
       if (ids.length === 0) {
         clearInterval(interval);
