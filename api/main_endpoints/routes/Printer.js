@@ -167,7 +167,7 @@ router.get('/status', async (req, res) => {
       }
     });
 
-    const user = await User.findById(decodedToken._id);
+    const user = await User.findById(decodedToken.token._id);
 
     // { status: string }
     const json = response.data;
