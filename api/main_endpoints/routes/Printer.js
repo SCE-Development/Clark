@@ -150,11 +150,6 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 });
 
 router.get('/status', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/status was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-
   const decodedToken = await decodeToken(req);
   if (!decodedToken || Object.keys(decodedToken) === 0) {
     logger.warn('/status was requested with an invalid token');
