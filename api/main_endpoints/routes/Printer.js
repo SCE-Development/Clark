@@ -186,6 +186,7 @@ router.get('/status', async (req, res) => {
 
     res.status(OK).send(json);
   } catch (err) {
+    logger.error('/status had an error: ', err);
     res.sendStatus(SERVER_ERROR);
   }
 });
