@@ -163,14 +163,12 @@ router.get('/status', async (req, res) => {
   try {
     const url = new URL('/status/', PRINTER_URL);
     url.searchParams.append('id', req.query.id);
-    const response = await fetch(url, {
-      method: 'GET',
-    });
+    const response = await axios.get(url);
 
     const user = await User.findById(decodedToken._id);
 
     // { status: string }
-    const json = await response.json();
+    const json = response.data;
     const pages = Math.abs(Number(req.query.pages));
 
     if (json.status === 'completed') {
