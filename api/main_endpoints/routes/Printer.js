@@ -161,9 +161,11 @@ router.get('/status', async (req, res) => {
   }
 
   try {
-    const url = new URL('/status/', PRINTER_URL);
-    url.searchParams.append('id', req.query.id);
-    const response = await axios.get(url);
+    const response = await axios.get(`${PRINTER_URL}/status/`, {
+      params: {
+          id: req.query.id,
+      }
+    });
 
     const user = await User.findById(decodedToken._id);
 
