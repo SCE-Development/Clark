@@ -84,7 +84,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     return res.status(OK).send({ printId: null });
   }
 
-  const user = await User.findById(decodedToken._id);
+  const user = await User.findById(decoded._id);
   const dir = path.join(__dirname, 'printing');
   const { totalChunks, chunkIdx } = req.body;
 
