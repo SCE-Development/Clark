@@ -163,7 +163,7 @@ router.get('/status', async (req, res) => {
   try {
     const response = await axios.get(`${PRINTER_URL}/status/`, {
       params: {
-          id: req.query.id,
+        id: req.query.id,
       }
     });
 

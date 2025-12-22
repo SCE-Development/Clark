@@ -76,8 +76,8 @@ export default function Printing() {
   useEffect(() => {
     if (printJobs === null || Object.keys(printJobs).length === 0) return;
     const ids = Object.keys(printJobs);
-    console.log('useEffect', {ids, printJobs})
 
+    
     const interval = setInterval(async () => {
       if (ids.length === 0) {
         clearInterval(interval);
@@ -87,7 +87,7 @@ export default function Printing() {
       ids.map(async (id) => {
         const completedOrFailed = ['completed', 'failed'].includes(printJobs[id].status);
         if (completedOrFailed) return;
-        console.log('ids.map', {id, 'printJobs[id]': printJobs[id]})
+
         const status = await getPrintStatus(id, printJobs[id].pages, user.token);
         const newPrintJobs = {...printJobs};
         newPrintJobs[id].status = status;
