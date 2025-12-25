@@ -4,10 +4,10 @@ import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
-import { useUser } from '../../../Components/context/UserContext';
+import { useSCE } from '../../../Components/context/SceContext';
 
 export default function Profile() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [response, setResponse] = useState({});
   const [bannerMessage, setBannerMessage] = useState('');
   const [bannerColor, setBannerColor] = useState('');
@@ -102,6 +102,10 @@ export default function Profile() {
             <div className="grid grid-cols-2">
               <div className="px-4 py-2 font-semibold">Membership Expiration</div>
               <div className="px-4 py-2">{renderExpirationDate()}</div>
+            </div>
+            <div className="grid grid-cols-2">
+              <div className="px-4 py-2 font-semibold">Door Code</div>
+              <div className="px-4 py-2">{response.doorCode}</div>
             </div>
           </div>
         </div>

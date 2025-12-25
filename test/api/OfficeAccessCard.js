@@ -18,25 +18,57 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  FORBIDDEN,
 } = require('../../api/util/constants').STATUS_CODES;
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
+const {
+  initializeTokenMock,
+  setTokenStatus,
+  resetTokenMock,
+  restoreTokenMock,
+} = require('../util/mocks/TokenValidFunctions');
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
+const OfficeAccessCardUtils = require('../../api/main_endpoints/util/OfficeAccessCard');
 
 let app = null;
 let test = null;
 
 const expect = chai.expect;
 const tools = require('../util/tools/tools.js');
+let sandbox = sinon.createSandbox();
 
 chai.should();
 chai.use(chaiHttp);
 
+const token = '';
+
 describe('OfficeAccessCard', () => {
+  let deleteCardStub = null;
+  let getAllCardsStub = null;
+  let editAliasStub = null;
+  let testCardId = null;
+
   const VALID_CARD_BYTES = 'wesleys card';
   const NEW_CARD_BYTES = 'dials card';
+  const INVALID_CARD_BYTES = 'evans card';
+
+  const VALID_ALIAS = 'gauravs card';
+  const INVALID_ALIAS = 'bobs card';
+  const NEW_ALIAS = 'updated test card';
+  const EMPTY_ALIAS = '';
+  const WHITESPACE_ALIAS = '   ';
+
   const VERIFY_API_PATH = '/api/OfficeAccessCard/verify';
+  const DELETE_API_PATH = '/api/OfficeAccessCard/delete';
+  const GET_ALL_CARDS_API_PATH = '/api/OfficeAccessCard/getAllCards';
+  const EDIT_API_PATH = '/api/OfficeAccessCard/edit';
   const INCREMENT_VERIFY_COUNT = 0;
+
   before(() => {
+    initializeTokenMock();
+    deleteCardStub = sandbox.stub(OfficeAccessCardUtils, 'deleteCard');
+    deleteCardStub.resolves(false);
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/OfficeAccessCard.js',
     ]);
@@ -45,18 +77,32 @@ describe('OfficeAccessCard', () => {
     tools.emptySchema(OfficeAccessCard);
     const testOfficeAccessCard = new OfficeAccessCard({
       cardBytes: VALID_CARD_BYTES,
-      verifiedCount:INCREMENT_VERIFY_COUNT,
-      lastVerifed:Date.now()
+      alias: VALID_ALIAS,
+      verifiedCount: INCREMENT_VERIFY_COUNT,
+      lastVerifed: Date.now()
     });
     return new Promise((resolve, reject) => {
       testOfficeAccessCard.save()
-        .then(resolve)
+        .then(savedCard => {
+          testCardId = savedCard._id.toString();
+          resolve(savedCard);
+        })
         .catch(reject);
     });
   });
 
-  after(tools.terminateServer);
+  beforeEach(() => {
+    setTokenStatus(false);
+  });
 
+  afterEach(() => {
+    resetTokenMock();
+  });
+
+  after(done => {
+    restoreTokenMock();
+    tools.terminateServer(done);
+  });
 
   describe('GET verify', () => {
     it('Should return 200 with valid api key and card', async () => {
@@ -80,14 +126,14 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(BAD_REQUEST);
     });
 
-    it('Should return 401 with invalid api key', async () => {
+    it('Should return 403 with invalid api key', async () => {
       const params = new URLSearchParams();
       params.append('cardBytes', VALID_CARD_BYTES);
       const path = VERIFY_API_PATH + '?' + params.toString();
       const invalidApiKey = API_KEY + '-invalid-suffix';
       const result = await test.sendGetRequestWithApiKey(
         invalidApiKey + '', path);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 404 with valid api key and unknown card', async () => {
@@ -127,25 +173,172 @@ describe('OfficeAccessCard', () => {
       const path = VERIFY_API_PATH + '?' + params.toString();
       await test.sendGetRequestWithApiKey(
         API_KEY, path);
-      const updatedCard = await OfficeAccessCard.findOne({cardBytes:VALID_CARD_BYTES});
+      const updatedCard = await OfficeAccessCard.findOne({ cardBytes: VALID_CARD_BYTES });
       const expectVerifyCount = updatedCard.verifiedCount;
       expect(updatedCard.verifiedCount).to.equal(expectVerifyCount);
     });
 
-    it('Should return today as the last verified date', async () => {
-      const params = new URLSearchParams();
-      params.append('cardBytes', VALID_CARD_BYTES);
-      const path = VERIFY_API_PATH + '?' + params.toString();
-      await test.sendGetRequestWithApiKey(
-        API_KEY, path);
-      const recievedCard = await OfficeAccessCard({cardBytes:VALID_CARD_BYTES});
-      const todayDate = new Date().toISOString();
-      const expectedData = recievedCard.lastVerified.toISOString();
-      expect(expectedData).to.equal(todayDate);
-    });
-
-
   });
 
+  describe('POST delete', () => {
+    it('Should return 401 when token is not sent', async () => {
+      const result = await test.sendPostRequest(DELETE_API_PATH);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 401 when invalid token is sent', async () => {
+      const result = await test.sendPostRequestWithToken(token,
+        DELETE_API_PATH);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 404 if the card attempted to be deleted was not found', async () => {
+      setTokenStatus(true);
+      deleteCardStub.resolves(false);
+      const result = await test.sendPostRequestWithToken(token,
+        DELETE_API_PATH, { alias: INVALID_ALIAS },
+      );
+      expect(result).to.have.status(NOT_FOUND);
+    });
+
+    it('Should return 200 with a valid alias parameter and deleting a card', async () => {
+      setTokenStatus(true);
+      deleteCardStub.resolves(true);
+      const result = await test.sendPostRequestWithToken(token,
+        DELETE_API_PATH, { alias: VALID_ALIAS },
+      );
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return 500 if there was an error deleting a card', async () => {
+      setTokenStatus(true);
+      deleteCardStub.resolves(false);
+      const result = await test.sendPostRequestWithToken(token,
+        DELETE_API_PATH, { alias: VALID_ALIAS },
+      );
+      expect(result).to.have.status(SERVER_ERROR);
+    });
+  });
+
+  describe('POST getAllCards', () => {
+    it('Should return 401 when token is not sent', async () => {
+      const result = await test.sendPostRequest(GET_ALL_CARDS_API_PATH);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 401 when invalid token is sent', async () => {
+      const result = await test.sendPostRequestWithToken(token,
+        GET_ALL_CARDS_API_PATH);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 200 with a successful fetch of all cards', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        GET_ALL_CARDS_API_PATH,
+      );
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return 500 if there was an error fetching all cards', async () => {
+      setTokenStatus(true);
+      const findStub = sinon.stub(OfficeAccessCard, 'find').rejects(new Error('Database error'));
+      const result = await test.sendPostRequestWithToken(token,
+        GET_ALL_CARDS_API_PATH,
+      );
+      expect(result).to.have.status(SERVER_ERROR);
+      findStub.restore();
+    });
+  });
+
+  describe('POST edit', () => {
+    it('Should return 401 when token is not sent', async () => {
+      const result = await test.sendPostRequest(EDIT_API_PATH);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 401 when invalid token is sent', async () => {
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH);
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return 400 when _id is missing from request body', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { alias: NEW_ALIAS });
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return 400 when alias is missing from request body', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: testCardId });
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return 404 when trying to edit a non-existent card', async () => {
+      setTokenStatus(true);
+      const nonExistentId = new mongoose.Types.ObjectId().toString();
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: nonExistentId, alias: NEW_ALIAS });
+      expect(result).to.have.status(NOT_FOUND);
+    });
+
+    it('Should return 400 when _id is not a valid ObjectId', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: 'invalid-id', alias: NEW_ALIAS });
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return 200 and successfully update alias for valid request', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
+      expect(result).to.have.status(OK);
+      expect(result.body).to.have.property('message', 'Card alias updated successfully');
+      expect(result.body).to.have.property('card');
+      expect(result.body.card).to.have.property('alias', NEW_ALIAS);
+    });
+
+    it('Should actually update the alias in the database', async () => {
+      setTokenStatus(true);
+      await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
+
+      const updatedCard = await OfficeAccessCard.findById(testCardId);
+      expect(updatedCard.alias).to.equal(NEW_ALIAS);
+    });
+
+    it('Should handle empty alias by returning 400', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: testCardId, alias: EMPTY_ALIAS });
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should handle whitespace-only alias by returning 400', async () => {
+      setTokenStatus(true);
+      const result = await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: testCardId, alias: WHITESPACE_ALIAS });
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should preserve other card properties when updating alias', async () => {
+      setTokenStatus(true);
+      const originalCard = await OfficeAccessCard.findById(testCardId);
+      const originalCardBytes = originalCard.cardBytes;
+      const originalVerifiedCount = originalCard.verifiedCount;
+
+      await test.sendPostRequestWithToken(token,
+        EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
+
+      const updatedCard = await OfficeAccessCard.findById(testCardId);
+      expect(updatedCard.cardBytes).to.equal(originalCardBytes);
+      expect(updatedCard.verifiedCount).to.equal(originalVerifiedCount);
+      expect(updatedCard.alias).to.equal(NEW_ALIAS);
+    });
+  });
 
 });

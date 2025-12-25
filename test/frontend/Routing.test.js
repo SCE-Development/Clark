@@ -3,7 +3,7 @@ import React from 'react';
 import Enzyme, { mount } from 'enzyme';
 import { expect } from 'chai';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
-import { UserContext } from '../../src/Components/context/UserContext';
+import { SceContext } from '../../src/Components/context/SceContext';
 
 import Routing from '../../src/Routing';
 import Home from '../../src/Pages/Home/Home';
@@ -29,27 +29,31 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 const adminAppProps = {
-  user: { accessLevel: membershipState.ADMIN },
-  authenticated: true
 };
+
+const mockUser = { accessLevel: membershipState.ADMIN };
 
 // without this we get an error saying SVGElement
 // is not defined during the test
 if (typeof SVGElement === 'undefined') {
   global.SVGElement = class SVGElement extends HTMLElement {};
 }
-function getComponentFromRoute(route, props = adminAppProps) {
-  const mockUserContext = {
-    user: props.user,
-    setUser: () => {}
+
+function getComponentFromRoute(route, props = adminAppProps, user = mockUser) {
+  const mockSceContext = {
+    user: user,
+    setUser: () => {},
+    authenticated: true,
+    setAuthenticated: () => {},
   };
 
+
   return mount(
-    <UserContext.Provider value={mockUserContext}>
+    <SceContext.Provider value={mockSceContext}>
       <MemoryRouter initialEntries={[route]}>
         <Routing appProps={props} />
       </MemoryRouter>
-    </UserContext.Provider>
+    </SceContext.Provider>
   );
 }
 

@@ -8,11 +8,13 @@ const AdvertisementSchema = new Schema(
       required: true,
       maxlength: [255, 'message must be at most 255 characters long']
     },
-    expireDate: {
+    expireAt: {
       type: Date,
+      default: undefined,
+      index: {expireAfterSeconds: 0}, // TTL only kicks in when expireAt is set
     }
   },
-  { collection: 'Advertisements' }
+  { collection: 'Advertisements', timestamps: { createdAt: true } }
 );
 
 module.exports = mongoose.model('Advertisement', AdvertisementSchema);

@@ -65,7 +65,7 @@ inquirer
         {
           name: 'Banned',
           value: membershipState.BANNED
-        }
+        },
       ],
       filter: function(val) {
         console.debug(val);

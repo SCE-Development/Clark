@@ -1,6 +1,4 @@
-import axios from 'axios';
 import { UserApiResponse, ApiResponse } from './ApiResponses';
-import { updateLastLoginDate } from './User';
 import { BASE_API_URL } from '../Enums';
 
 
@@ -30,23 +28,29 @@ export async function registerUser(userToRegister) {
     captchaToken
   } = userToRegister;
   const url = new URL('/api/Auth/register', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      firstName,
-      lastName,
-      email,
-      password,
-      major,
-      numberOfSemestersToSignUpFor,
-      captchaToken
-    })
-    .then(res => {
-      status.responseData = res.data;
-    })
-    .catch(err => {
-      status.error = true;
-      status.responseData = err.response;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+        major,
+        numberOfSemestersToSignUpFor,
+        captchaToken
+      })
     });
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+    status.responseData = err.response;
+  }
   return status;
 }
 
@@ -60,17 +64,26 @@ export async function registerUser(userToRegister) {
 export async function loginUser(email, password) {
   let status = new UserApiResponse();
   const url = new URL('/api/Auth/login', BASE_API_URL);
-  await axios
-    .post(url.href, { email, password })
-    .then(async result => {
-      status.token = result.data.token;
-      await updateLastLoginDate(email, result.data.token);
-      window.location.reload();
-    })
-    .catch(error => {
-      status.error = true;
-      status.responseData = error.response;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
     });
+    const result = await res.json();
+    if (res.ok) {
+      status.token = result.token;
+      window.location.reload();
+      return status;
+    }
+    status.error = true;
+    status.responseData = result.message;
+  } catch(err) {
+    status.responseData = 'Backend may be down, check with the dev team! Error was: ' + err.message;
+    status.error = true;
+  }
   return status;
 }
 
@@ -94,20 +107,23 @@ export async function checkIfUserIsSignedIn() {
   }
 
   const url = new URL('/api/Auth/verify', BASE_API_URL);
-  await axios
-    .post(url.href, {}, {
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       }
-    })
-    .then(res => {
-      status.responseData = res.data;
-      status.token = token;
-    })
-    .catch(err => {
-      status.error = true;
-      status.responseData = err;
     });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+      status.token = token;
+    }
+  } catch(err) {
+    status.error = true;
+    status.responseData = err;
+  }
   return status;
 }
 
@@ -121,15 +137,21 @@ export async function checkIfUserIsSignedIn() {
 export async function validateVerificationEmail(email, hashedId) {
   let status = new ApiResponse();
   const url = new URL('/api/Auth/validateVerificationEmail', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      email,
-      hashedId
-    })
-    .catch(err => {
-      status.responseData = err;
-      status.error = true;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, hashedId })
     });
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+    status.responseData = err.response;
+  }
   return status;
 }
 
@@ -143,27 +165,41 @@ export async function validateVerificationEmail(email, hashedId) {
 export async function resetPassword(password, hashedId, resetToken) {
   let status = new ApiResponse();
   const url = new URL('/api/Auth/resetPassword', BASE_API_URL);
-  await axios
-    .post(url.href, {
-      password,
-      hashedId,
-      resetToken
-    })
-    .catch(err => {
-      status.error = err;
-      status.responseData = err.response;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ password, hashedId, resetToken })
     });
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+    status.responseData = err.response;
+  }
   return status;
 }
 
 export async function validatePasswordReset(resetToken) {
   let status = new ApiResponse();
   const url = new URL('/api/Auth/validatePasswordReset', BASE_API_URL);
-  await axios
-    .post(url.href, { resetToken })
-    .catch(err => {
-      status.error = true;
-      status.responseData = err.response;
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ resetToken })
     });
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+    status.responseData = err.response;
+  }
   return status;
 }

@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
 const svg = require('./SVG');
-import { getAllUsers, deleteUserByID } from '../../APIFunctions/User';
+import { getAllUsers, deleteUserByID, getNewPaidMembersThisSemester } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 // import { membershipState } from '../../Enums';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
-import { useUser } from '../../Components/context/UserContext';
+import { useSCE } from '../../Components/context/SceContext.js';
 
 export default function Overview() {
-  const { user } = useUser();
+  const { user } = useSCE();
   const [toggleDelete, setToggleDelete] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paginationText, setPaginationText] = useState('');
@@ -24,9 +24,10 @@ export default function Overview() {
   const [query, setQuery] = useState('');
   const [currentSortColumn, setCurrentSortColumn] = useState('joinDate');
   const [currentSortOrder, setCurrentSortOrder] = useState('desc');
+  const [clubRevenueData, setClubRevenueData] = useState({newMembersThisYear:0, newSingleSemesterMembers:0, newAnnualMembers:0, currentActiveMembers:0});
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
-  // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
+  // const queryTypes = ['All', 'Pending', 'Officer', 'Admin'];
 
   async function deleteUser(userToDel) {
     const response = await deleteUserByID(
@@ -78,8 +79,16 @@ export default function Overview() {
     setLoading(false);
   }
 
+  async function getClubRevenueData() {
+    const response = await getNewPaidMembersThisSemester(user.token);
+    if(!response.error) {
+      setClubRevenueData(response.responseData);
+    }
+  }
+
   useEffect(() => {
     callDatabase();
+    getClubRevenueData();
   }, [page, currentSortColumn, currentSortOrder]);
 
   useEffect(() => {
@@ -137,10 +146,6 @@ export default function Overview() {
   //     case 'Pending':
   //       return users.filter(
   //         data => data.accessLevel === membershipState.PENDING
-  //       );
-  //     case 'Alumni':
-  //       return users.filter(
-  //         data => data.accessLevel === membershipState.ALUMNI
   //       );
   //     default:
   //       return users;
@@ -241,6 +246,10 @@ export default function Overview() {
         }}>
             Download subscribed emails
         </button>
+        <div className='mb-8 text-base text-gray-900 dark:text-white'>
+          <p className='mb-2'>Total New Members this Year: {clubRevenueData.newMembersThisYear}</p>
+          <p className='mb-2'>Current Active Members: {clubRevenueData.currentActiveMembers}</p>
+        </div>
         <div className='px-6 border rounded-lg border-gray-300 dark:border-white/10'>
           <div className='py-6'>
             <label className="w-full form-control">

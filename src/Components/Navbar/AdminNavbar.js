@@ -1,8 +1,8 @@
 import React from 'react';
-import { useUser } from '../context/UserContext';
+import { useSCE } from '../context/SceContext';
 
 export default function UserNavBar(props) {
-  const { user } = useUser();
+  const { user, setAuthenticated } = useSCE();
   const getLinkClassName = (path) => {
     const weAreAtGivenPath = path === window.location.pathname;
     let className = 'flex items-center p-2 text-gray-900 rounded-lg dark:text-white';
@@ -15,7 +15,7 @@ export default function UserNavBar(props) {
   };
 
   function handleLogout() {
-    props.setAuthenticated(false);
+    setAuthenticated(false);
     window.localStorage.removeItem('jwtToken');
     window.location.reload();
   }
@@ -88,6 +88,15 @@ export default function UserNavBar(props) {
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path fill="currentColor" d="M14 13h5v-2h-5zm0-3h5V8h-5zm-9 6h8v-.55q0-1.125-1.1-1.787T9 13t-2.9.663T5 15.45zm4-4q.825 0 1.413-.587T11 10t-.587-1.412T9 8t-1.412.588T7 10t.588 1.413T9 12m-5 8q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.587 1.413T20 20z"/>
+        </svg>
+      )
+    },
+    {
+      title: 'Audit Logs',
+      route: '/audit-logs',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M5.616 20q-.667 0-1.141-.475T4 18.386V5.615q0-.666.475-1.14T5.615 4h4.7q-.136-.766.367-1.383Q11.184 2 12.01 2t1.328.617T13.685 4h4.7q.666 0 1.14.475T20 5.615v12.77q0 .666-.475 1.14t-1.14.475zM8 16.27h5q.213 0 .356-.145t.144-.356t-.144-.356t-.356-.144H8q-.213 0-.356.144q-.144.144-.144.357t.144.356t.356.143M8 12.5h8q.213 0 .356-.144t.144-.357t-.144-.356T16 11.5H8q-.213 0-.356.144t-.144.357t.144.356T8 12.5m0-3.77h8q.213 0 .356-.143q.144-.144.144-.357t-.144-.356T16 7.731H8q-.213 0-.356.144t-.144.357t.144.356T8 8.73m4-4.289q.325 0 .538-.212t.212-.538t-.213-.537T12 2.942t-.537.213t-.213.537t.213.538t.537.212"/>
         </svg>
       )
     },

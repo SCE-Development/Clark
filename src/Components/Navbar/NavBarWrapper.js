@@ -1,18 +1,18 @@
 import React from 'react';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
-import { useUser } from '../context/UserContext';
+import { useSCE } from '../context/SceContext';
 
 function NavBarWrapper({
   enableAdminNavbar = false,
   component: Component,
   ...appProps
 }) {
-  const { user, setUser } = useUser();
+  const { user, setUser, setAuthenticated } = useSCE();
 
   function handleLogout() {
-    appProps.setAuthenticated(false);
-    setUser(null);
+    setAuthenticated(false);
+    setUser({});
     window.localStorage.removeItem('jwtToken');
     window.location.reload();
   }

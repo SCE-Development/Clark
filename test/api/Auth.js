@@ -1,9 +1,9 @@
 /* global describe it before after beforeEach afterEach */
 process.env.NODE_ENV = 'test';
 const mongoose = require('mongoose');
-const redisClient = require('../../api/main_endpoints/util/redis-client.js');
 const bcrypt = require('bcryptjs');
 const User = require('../../api/main_endpoints/models/User');
+const PasswordReset = require('../../api/main_endpoints/models/PasswordReset');
 const EmailHelpers = require('../../api/main_endpoints/util/emailHelpers');
 // Require the dev-dependencies
 const chai = require('chai');
@@ -55,6 +55,7 @@ describe('Auth', () => {
     test = new SceApiTester(app);
     // Before each test we empty the database
     tools.emptySchema(User);
+    tools.emptySchema(PasswordReset);
     done();
   });
 
@@ -179,19 +180,16 @@ describe('Auth', () => {
           }
         };
 
-        const decodedPayload = decodeToken(mockRequest);
+        const decodedPayload = await decodeToken(mockRequest, MEMBERSHIP_STATE.PENDING);
         const expectedPayload = {
-          firstName: 'Test',
-          lastName: 'User',
-          email: 'logintest@gmail.com',
-          accessLevel: MEMBERSHIP_STATE.PENDING,
-          pagesPrinted: 0,
-          _id: decodedPayload._id,
-          iat: decodedPayload.iat,
-          exp: decodedPayload.exp,
+          'accessLevel': -1,
+          'email': 'logintest@gmail.com',
+          'firstName': 'Test',
+          'lastName': 'User',
+          'pagesPrinted': 0,
         };
 
-        expect(decodedPayload).to.deep.equal(expectedPayload);
+        expect(decodedPayload.token).to.deep.include(expectedPayload);
       } finally {
         await User.deleteOne({email: user.email});
       }
@@ -217,7 +215,6 @@ describe('Auth', () => {
       expect(auditEntry).to.exist;
       expect(auditEntry).to.have.property('userId');
       expect(auditEntry.details).to.have.property('email', registerPayload.email);
-
     });
   });
 
@@ -383,11 +380,70 @@ describe('Auth', () => {
       const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
       expect(result).to.have.status(UNAUTHORIZED);
     });
+
+    describe('Password reset email audit log tests', () => {
+      beforeEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      it('Should create audit log when password reset email is sent', async () => {
+        const user = new User({
+          _id: new mongoose.Types.ObjectId(),
+          firstName: 'Test',
+          lastName: 'User',
+          email: 'reset-audit@test.com',
+          password:'Passw0rd',
+          emailVerified: true,
+          accessLevel: MEMBERSHIP_STATE.MEMBER
+        });
+        await user.save();
+
+        const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', user);
+        expect(result).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({
+          userId: user._id,
+          action: AuditLogActions.SEND_RESET_PW_EMAIL
+        });
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry.userId.toString()).to.equal(user._id.toString());
+        expect(auditEntry).to.have.property('action', AuditLogActions.SEND_RESET_PW_EMAIL);
+        expect(auditEntry).to.have.property('details');
+        expect(auditEntry.details).to.have.property('email', user.email);
+
+        await User.deleteOne({ _id: user._id});
+      });
+
+      it('Should not create audit log when password reset email fails for non-existent user', async () => {
+        const data = {
+          email: 'nonexistent@test.com',
+        };
+
+        const result = await test.sendPostRequest('/api/Auth/sendPasswordReset', data);
+        expect(result).to.have.status(OK); // Still returns 200 for security
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.SEND_RESET_PW_EMAIL,
+          'details.email': 'nonexistent@test.com'
+        });
+
+        expect(auditEntry).to.not.exist;
+      });
+    });
   });
 
   describe('/POST validatePasswordReset', () => {
     before(async () => {
-      await redisClient.set('valid token', 'valid id 321', { EX: 60 * 60 });
+      await new PasswordReset({
+        resetToken: 'valid token',
+        userId: 'valid id 321',
+      }).save();
     });
 
     it('Should return statusCode 404 if the token is invalid', async () => {
@@ -408,12 +464,17 @@ describe('Auth', () => {
   });
 
   describe('/POST resetPassword', () => {
-    let createdId = mongoose.Types.ObjectId('valid id 123');
+    let createdId = new mongoose.Types.ObjectId();
     let createdUser = null;
 
-    before(async () => {
-      await redisClient.set('valid token', String(createdId), { EX: 60 * 60 });
-
+    beforeEach(async () => {
+      await PasswordReset.deleteMany({});
+      await User.deleteMany({});
+      createdId = new mongoose.Types.ObjectId();
+      await new PasswordReset({
+        resetToken: 'valid token',
+        userId: String(createdId),
+      }).save();
       const newUser = new User({
         _id: createdId,
         email: 'abcdef123@gmail.com',
@@ -426,6 +487,7 @@ describe('Auth', () => {
 
     after(async () => {
       if (createdUser) await User.deleteOne({ _id: createdUser._id});
+      await PasswordReset.deleteMany({});
     });
 
     it('Should return statusCode 401 if the password is too weak', async () => {
@@ -463,6 +525,33 @@ describe('Auth', () => {
       };
       const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
       expect(result).to.have.status(OK);
+    });
+
+    describe('Reset password audit log tests', async () => {
+      beforeEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      it('Should create audit log on successful password reset', async () => {
+        const data = {
+          password: 'Passw0rd',
+          resetToken: 'valid token',
+          hashedId: await bcrypt.hash(String(createdId), await bcrypt.genSalt(10)),
+        };
+        const result = await test.sendPostRequest('/api/Auth/resetPassword', data);
+        expect(result).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({ userId: createdUser._id, action: AuditLogActions.RESET_PW});
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry).to.have.property('userId');
+        expect(auditEntry.userId.toString()).to.equal(createdUser._id.toString());
+        expect(auditEntry).to.have.property('action', AuditLogActions.RESET_PW);
+      });
     });
   });
 

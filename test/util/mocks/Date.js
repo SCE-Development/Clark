@@ -4,7 +4,8 @@ const sinon = require('sinon');
 let clock = null;
 
 /**
- * Mock current time to desired day, month and year
+ * Mock current time to desired day, month and year. Function parameters are
+ * passed directly to `new Date()`
  * @param {Number} day - day to mock
  * @param {Number} month - month to mock
  * @param {Number} year - month to mock
@@ -20,7 +21,8 @@ function mockDayMonthAndYear(day, month, year) {
 }
 
 /**
- * Mock current time to desired month and year
+ * Mock current time to desired month and year. Function parameters are
+ * passed directly to `new Date()`
  * @param {Number} month - month to mock
  * @param {Number} year - month to mock
  */

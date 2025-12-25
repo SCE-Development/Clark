@@ -4,7 +4,9 @@ const {
   SERVER_ERROR,
   NOT_FOUND,
   OK,
+  FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -12,82 +14,56 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
-const { decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
+const ROWS_PER_PAGE = 25;
+const {
+  checkIfCardExists,
+  generateAlias,
+  deleteCard,
+  editAlias,
+} = require('../util/OfficeAccessCard.js');
+const AuditLogActions = require('../util/auditLogActions.js');
+const AuditLog = require('../models/AuditLog.js');
 
 router.use(bodyParser.json());
 
-function checkIfCardExists(cardBytes) {
-  return new Promise((resolve) => {
-    try {
-      OfficeAccessCard.findOneAndUpdate(
-        { cardBytes:cardBytes},
-        {
-          $inc: { verifiedCount: 1 },
-          $set: { lastVerified: Date.now() }
-        }, {
-          useFindAndModify: false, new:true, upsert:false
-        }
-        , (error, result) => {
-          if (error) {
-            logger.error('checkIfCardExists got an error querying mongodb: ', error);
-            return resolve(false);
-          }
-          if(!result){
-            logger.info(`Card:${cardBytes} not found in the database`);
-            return resolve(false);
-          }
-          return resolve(!!result);
-        });
-    } catch (error) {
-      logger.error('checkIfCardExists caught an error: ', error);
-      return resolve(false);
-    }
-  });
-}
-
-function deleteCard(cardBytes) {
-  return new Promise((resolve) => {
-    try {
-      OfficeAccessCard.findOneAndDelete(
-        { cardBytes }
-        , (error, result) => {
-          if (error) {
-            logger.error('deleteCard got an error querying mongodb: ', error);
-            return resolve(false);
-          }
-          if (!result) {
-            logger.info(`Card:${cardBytes} not found in the database`);
-          }
-          return resolve(!!result);
-        }
-      );
-    } catch (error) {
-      logger.error('deleteCard caught an error: ', error);
-      return resolve(false);
-    }
-  });
-}
-
 let clients = [];
 
-const defaultResponse = {
-  cardWasAdded: false,
+const defaultGetResponse = {
   message: 'Card authorized!',
   endpoint: '/verify',
+  requestType: 'GET',
+  alias: 'N/A',
 };
 
-const writeRequestResponse = ({ statusCode, ...rest }) => {
-  const response = {
-    statusCode,
-    ...defaultResponse,
-    ...rest,
-  };
+const defaultPostResponse = {
+  message: 'Card deleted!',
+  endpoint: '/delete',
+  requestType: 'POST',
+  alias: 'N/A',
+};
+
+const writeLogToClient = (requestType, { statusCode, ...rest }) => {
+  let response = {};
+  if (requestType === 'GET') {
+    response = {
+      statusCode,
+      ...defaultGetResponse,
+      ...rest,
+    };
+  } else {
+    response = {
+      statusCode,
+      ...defaultPostResponse,
+      ...rest,
+    };
+  }
   clients.forEach(client => {
     client.res.write(`data: ${JSON.stringify(response)}\n\n`);
   });
 };
 
-router.get('/verify', async (req, res) =>{
+router.get('/verify', async (req, res) => {
   const { cardBytes, add = false } = req.query;
   const apiKey = req.headers['x-api-key'];
   const required = [
@@ -98,17 +74,29 @@ router.get('/verify', async (req, res) =>{
   const missingValue = required.find(({ value }) => !value);
 
   if (missingValue) {
-    writeRequestResponse({ statusCode: BAD_REQUEST, message: `${missingValue.title} missing from request` });
-    return res.status(BAD_REQUEST).send(` ${missingValue.title} missing from request`);
+    writeLogToClient(req.method, {
+      statusCode: BAD_REQUEST,
+      message: `${missingValue.title} missing from request`
+    });
+    return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
 
   if (apiKey !== API_KEY) {
-    return res.sendStatus(UNAUTHORIZED);
+    writeLogToClient(req.method, {
+      statusCode: FORBIDDEN,
+      message: `Invalid API key: ${apiKey}`,
+    });
+    return res.sendStatus(FORBIDDEN);
   }
 
-  const cardExists = await checkIfCardExists(cardBytes);
+  const cardExists = await checkIfCardExists({ cardBytes });
   if (cardExists) {
-    writeRequestResponse({ statusCode: OK });
+    const alias = cardExists.alias;
+    AuditLog.create({
+      action: AuditLogActions.VERIFY_CARD,
+      details: { alias }
+    });
+    writeLogToClient(req.method, { alias: cardExists.alias, statusCode: OK });
     return res.sendStatus(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -116,22 +104,31 @@ router.get('/verify', async (req, res) =>{
   // to verify a card, and that card isnt found.
   // therefore return a non OK status
   if (!add) {
-    writeRequestResponse({ statusCode: NOT_FOUND, message: 'Card not found' });
+    writeLogToClient(req.method, { statusCode: NOT_FOUND, message: 'Card not found' });
     return res.sendStatus(NOT_FOUND);
   }
-
+  // if we reached here, the card does not exist and is trying to be added
+  const alias = await generateAlias();
   try {
-    if (add) {
-      logger.info('adding a new card');
-      await new OfficeAccessCard({
-        cardBytes
-      }).save();
-      writeRequestResponse({ statusCode: OK, message: 'Card added!', endpoint: '/verify?add=1' });
-      return res.sendStatus(OK);
+    logger.info('adding a new card');
+    const newCard = await new OfficeAccessCard({ cardBytes, alias, }).save();
+    if (newCard) {
+      AuditLog.create({
+        action: AuditLogActions.ADD_CARD,
+        details: { alias }
+      });
     }
+    writeLogToClient(req.method, {
+      alias,
+      statusCode: OK,
+      message: 'Card added!',
+      endpoint: '/verify?add=1'
+    });
+    return res.sendStatus(OK);
   } catch (error) {
     logger.error('Error creating OfficeAccessCard: ', error);
-    writeRequestResponse({
+    writeLogToClient(req.method, {
+      alias,
       statusCode: SERVER_ERROR,
       endpoint: '/verify?add=1',
       message: `Error creating Office AccessCard: ${error}`
@@ -140,49 +137,133 @@ router.get('/verify', async (req, res) =>{
   }
 });
 
-router.get('/delete', async (req, res) => {
-  if (!await decodeTokenFromBodyOrQuery(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+router.post('/delete', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
-  const { cardBytes } = req.query;
-  if (!cardBytes) {
-    writeRequestResponse({
+  const { alias } = req.body;
+  if (!alias) {
+    writeLogToClient(req.method, {
       statusCode: BAD_REQUEST,
-      endpoint: '/delete',
-      message: 'cardBytes missing from request'
+      message: 'cardBytes missing from request',
     });
     return res.sendStatus(BAD_REQUEST);
   }
 
-  if (!await checkIfCardExists(cardBytes)) {
+  const cardExists = await checkIfCardExists({ alias });
+  if (!await cardExists) {
     logger.info('Card does not exist');
-    writeRequestResponse({
+    writeLogToClient(req.method, {
       statusCode: NOT_FOUND,
-      endpoint: '/delete',
       message: 'Card does not exist',
     });
     return res.sendStatus(NOT_FOUND);
   }
 
-  const tryDeleteCard = await deleteCard(cardBytes);
-  if (!tryDeleteCard) {
-    logger.info('Error deleting card');
-    writeRequestResponse({
-      statusCode: SERVER_ERROR,
-      endpoint: '/delete',
-      message: 'Error deleting card'
+  if (await deleteCard(alias)) {
+    logger.info('Successfully deleted card');
+    writeLogToClient(req.method, {
+      alias,
+      statusCode: OK,
     });
+    AuditLog.create({
+      userId: decoded.token._id,
+      action: AuditLogActions.DELETE_CARD,
+      details: { alias }
+    });
+    return res.sendStatus(OK);
+  }
+
+  writeLogToClient(req.method, {
+    alias: cardExists.alias,
+    statusCode: SERVER_ERROR,
+    message: 'Error deleting card',
+  });
+  return res.sendStatus(SERVER_ERROR);
+});
+
+router.post('/getAllCards', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
+
+  try {
+    const total = await OfficeAccessCard.count({});
+    const items = await OfficeAccessCard.find(
+      {},
+      { cardBytes: 0 },
+      { skip, limit: ROWS_PER_PAGE }
+    );
+    return res.status(OK).send({
+      items,
+      total,
+      rowsPerPage: ROWS_PER_PAGE,
+    });
+  } catch (error) {
+    logger.error('Error fetching cards: ', error);
     return res.sendStatus(SERVER_ERROR);
   }
-  logger.info('Successfully deleted card');
-  writeRequestResponse({ statusCode: OK, endpoint: '/delete', message: 'Card deleted!' });
-  return res.sendStatus(OK);
+});
+
+router.post('/edit', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const { _id, alias } = req.body;
+
+  const required = [
+    { value: _id && /^[0-9a-fA-F]{24}$/.test(_id) ? _id : null, title: 'Valid, alphanumeric Card ID', },
+    { value: alias?.trim(), title: 'New card alias', },
+  ];
+
+  const missingValue = required.find(({ value }) => !value);
+  if (missingValue) {
+    writeLogToClient(req.method, {
+      statusCode: BAD_REQUEST,
+      message: `${missingValue.title} missing from request`,
+    });
+    return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
+  }
+
+  try {
+    const updatedCard = await editAlias(_id, alias);
+
+    if (!updatedCard) {
+      return res.sendStatus(NOT_FOUND);
+    }
+
+    // Log the edit action
+    AuditLog.create({
+      userId: decoded.token._id,
+      action: AuditLogActions.EDIT_CARD,
+      details: {
+        newAlias: alias,
+        _id,
+      }
+    });
+
+    logger.info(`Card alias updated successfully for card ID: ${_id}`);
+    return res.status(OK).json({
+      message: 'Card alias updated successfully',
+      card: updatedCard
+    });
+  } catch (error) {
+    logger.error('Error updating card alias: ', error);
+    return res.status(SERVER_ERROR).send('Error updating card alias');
+  }
 });
 
 router.get('/listen', async (req, res) => {
-  if (!await decodeTokenFromBodyOrQuery(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const headers = {

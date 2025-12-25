@@ -29,7 +29,7 @@ let LED_SIGN_URL = process.env.LED_SIGN_URL
 async function updateSign(data) {
   return new Promise((resolve) => {
     axios
-      .post(LED_SIGN_URL + '/api/update-sign', data)
+      .post(LED_SIGN_URL + '/update-sign', data)
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -46,7 +46,7 @@ async function updateSign(data) {
 async function turnOffSign() {
   return new Promise((resolve) => {
     axios
-      .get(LED_SIGN_URL + '/api/turn-off')
+      .get(LED_SIGN_URL + '/turn-off')
       .then(() => {
         resolve(true);
       }).catch((err) => {
@@ -77,7 +77,7 @@ async function turnOffSign() {
 async function healthCheck() {
   return new Promise((resolve) => {
     axios
-      .get(LED_SIGN_URL + '/api/health-check')
+      .get(LED_SIGN_URL + '/health-check')
       .then(({ data }) => {
         resolve(data);
       }).catch((err) => {

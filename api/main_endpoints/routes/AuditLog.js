@@ -1,0 +1,93 @@
+const express = require('express');
+const router = express.Router();
+const AuditLog = require('../models/AuditLog');
+
+const { OK, UNAUTHORIZED, SERVER_ERROR } = require('../../util/constants').STATUS_CODES;
+const membershipState = require('../../util/constants.js').MEMBERSHIP_STATE;
+
+const { decodeToken } = require('../util/token-functions.js');
+
+const logger = require('../../util/logger');
+const User = require('../models/User.js');
+let { clients } = require('../util/AuditLog.js');
+
+router.get('/getAuditLogs', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const itemsPerPage = 50;
+  const page = parseInt(req.query.page) || 0;
+  const skip = page * itemsPerPage;
+
+  const rawActions = req.query.action;
+  const actions = rawActions ? rawActions.split(',') : [];
+
+  const searchQuery = req.query.search?.trim();
+
+  const query = {};
+  if (actions.length > 0) {
+    query.action = { $in: actions };
+  }
+
+  try {
+    if (searchQuery) {
+      const userFilter = {
+        $or: [
+          { firstName: new RegExp(searchQuery, 'i') },
+          { lastName: new RegExp(searchQuery, 'i') },
+          { email: new RegExp(searchQuery, 'i') },
+        ],
+      };
+
+      const users = await User.find(userFilter).select('_id');
+      const userIds = users.map(u => u._id);
+
+      if (userIds.length === 0) {
+        return res.status(OK).send({ items: [], totalLogs: 0 });
+      }
+
+      query.userId = { $in: userIds };
+    }
+
+    const items = await AuditLog.find(query)
+      .populate('userId', 'firstName lastName email')
+      .skip(skip)
+      .limit(itemsPerPage)
+      .sort({ createdAt: -1 });
+
+    const totalLogs = await AuditLog.countDocuments(query);
+    res.status(OK).send({ items, totalLogs });
+  } catch (error) {
+    logger.error('Failed to fetch audit logs:', error);
+    res.sendStatus(SERVER_ERROR);
+  }
+});
+
+router.get('/listen', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache',
+    'X-Accel-Buffering': 'no'
+  };
+
+  res.writeHead(OK, headers);
+  res.flushHeaders();
+
+  const newClient = { res };
+  clients.push(newClient);
+
+  req.on('close', () => {
+    clients = clients.filter(c => c !== newClient);
+    res.end();
+  });
+});
+
+module.exports = router;

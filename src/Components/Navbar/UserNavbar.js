@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { membershipState } from '../../Enums';
-import { useUser } from '../context/UserContext';
+import { useSCE } from '../context/SceContext';
 
 export default function UserNavbar(props) {
-  const { user } = useUser();
+  const { user, authenticated } = useSCE();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   let initials = '';
   if (user && user.firstName && user.lastName) {
     initials = user.firstName[0] + user.lastName[0];
@@ -11,7 +13,7 @@ export default function UserNavbar(props) {
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
-    { title: 'Spartan Compass', route: '/spartan-compass' }
+    { title: 'Summer Internship', route: '/s/internship' },
   ];
 
   const authedRoutes = [
@@ -60,6 +62,18 @@ export default function UserNavbar(props) {
     );
   };
 
+  // useEffect hook to close dropdown if user clicks elsewhere on screen
+  // this is so clicking your profile shows the dropdown on mobile safari
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
@@ -76,7 +90,7 @@ export default function UserNavbar(props) {
       </div>
 
       <div className="navbar-end">
-        {props.authenticated && user ? (
+        {authenticated && user ? (
           <>
             <div className="dropdown dropdown-end sm:hidden">
               <div tabIndex={0} role="button" className="btn btn-ghost rounded-btn">Services</div>
@@ -85,30 +99,37 @@ export default function UserNavbar(props) {
               </ul>
             </div>
 
-            <div className="dropdown dropdown-bottom dropdown-end">
-              <summary tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
+            <div className='relative inline-block dropdown-menu-wrapper' ref={dropdownRef}>
+              <summary
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle avatar placeholder"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
                 <div className="w-12 rounded-full bg-neutral text-neutral-content">
                   <span>{initials}</span>
                 </div>
               </summary>
-              <div className='p-2 shadow menu dropdown-content z-[1] bg-base-100 w-52'>
-                <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                  <div>{user.firstName} {user.lastName}</div>
-                  <div className="font-medium truncate">{user.email}</div>
+              {isDropdownOpen && (
+                <div className='absolute right-0 mt-2 p-2 shadow menu bg-base-100 w-52 z-[1] rounded-xl'>
+                  <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                    <div>{user.firstName} {user.lastName}</div>
+                    <div className="font-medium truncate">{user.email}</div>
+                  </div>
+                  <ul className='mt-2 right-0 p-2 menu rounded-b-xl z-[1] bg-base-100'>
+                    <li>
+                      <a href='/profile'>
+                        Profile
+                      </a>
+                    </li>
+                    <li>
+                      <button onClick={() => props.handleLogout()}>
+                        Log out
+                      </button>
+                    </li>
+                  </ul>
                 </div>
-                <ul className='p-2 shadow menu rounded-b-xl dropdown-content z-[1] bg-base-100  w-52'>
-                  <li>
-                    <a href='/profile'>
-                      Profile
-                    </a>
-                  </li>
-                  <li>
-                    <button onClick={() => props.handleLogout()}>
-                      Log out
-                    </button>
-                  </li>
-                </ul>
-              </div>
+              )}
             </div>
           </>
         ) : (

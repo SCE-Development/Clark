@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const User = require('../models/User.js');
 const logger = require('../../util/logger');
 const client = require('prom-client');
-const { decodeToken, decodeTokenFromBodyOrQuery } = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 
 
@@ -80,11 +80,11 @@ router.post('/send', async (req, res) => {
   }
 
   // Assume user passed a non null/undefined token
-  const userObj = decodeToken(req);
-  if (!userObj) {
+  const userObj = await decodeToken(req);
+  if (!userObj.token) {
     return res.sendStatus(UNAUTHORIZED);
   }
-  nameToUse = userObj.firstName;
+  nameToUse = userObj.token.firstName;
   try {
     writeMessage(id, `${message}`, `${nameToUse}:`);
     return res.json({ status: 'Message sent' });
@@ -152,11 +152,11 @@ router.get('/listen', async (req, res) => {
 
   let filterQuery = {}; // filter to find user in the database
   if (token) {
-    let userObj = decodeTokenFromBodyOrQuery(req);
-    if (!userObj) {
+    const userObj = await decodeToken(req);
+    if (!userObj.token) {
       return res.sendStatus(UNAUTHORIZED);
     }
-    filterQuery._id = userObj._id;
+    filterQuery._id = userObj.token._id;
   } else {
     filterQuery.apiKey = apiKey;
   }

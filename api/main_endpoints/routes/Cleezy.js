@@ -1,10 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const {
-  decodeToken,
-  checkIfTokenSent,
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
@@ -14,6 +11,8 @@ const {
 const logger = require('../../util/logger');
 const { Cleezy } = require('../../config/config.json');
 const { ENABLED } = Cleezy;
+const cleezyHelpers = require('../util/cleezyHelpers.js');
+const { MEMBERSHIP_STATE } = require('../../util/constants.js');
 
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
@@ -27,27 +26,13 @@ router.get('/list', async (req, res) => {
     });
   }
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   try {
-    const response = await axios.get(CLEEZY_URL + '/list', {
-      params: {
-        page,
-        ...(search !== undefined && { search }),
-        // eslint-disable-next-line camelcase
-        sort_by: sortColumn,
-        order: sortOrder
-      },
-    });
-    const { data = [], total, rows_per_page: rowsPerPage } = response.data;
-    const returnData = data.map(element => {
-      const u = new URL(element.alias, URL_SHORTENER_BASE_URL);
-      return { ...element, link: u.href };
-    });
-    res.json({ data: returnData, total, rowsPerPage });
+    const returnData = await cleezyHelpers.searchCleezyUrls({ page, search, sortColumn, sortOrder });
+    res.json(returnData);
   } catch (err) {
     logger.error('/listAll had an error', err);
     if (err.response && err.response.data) {
@@ -59,13 +44,14 @@ router.get('/list', async (req, res) => {
 });
 
 router.post('/createUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
-  const { url, alias } = req.body;
+  const { url, alias, expiresAt } = req.body;
   let jsonbody = { url, alias: alias || null };
+  // eslint-disable-next-line camelcase
+  if (expiresAt) jsonbody.expires_at = expiresAt;
   try {
     const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
     const data = response.data;
@@ -73,15 +59,14 @@ router.post('/createUrl', async (req, res) => {
     res.json({ ...data, link: u });
   } catch (err) {
     logger.error('/createUrl had an error', err);
-    res.status(err.response.status).json({ error: err.response.status });
+    res.status(err.response.status).json({ error: err.response.data?.detail || err.response.data || 'Unknown error from Cleezy' });
   }
 });
 
 router.post('/deleteUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   const { alias } = req.body;
   axios

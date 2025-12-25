@@ -5,18 +5,21 @@ import './index.css';
 
 import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
-import { UserContext } from './Components/context/UserContext';
+import { SceContext } from './Components/context/SceContext';
+import SearchModal from './Components/ShortcutKeyModal/SearchModal';
 
-function App(props) {
+function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
 
   async function getAuthStatus() {
     setIsAuthenticating(true);
     const authStatus = await checkIfUserIsSignedIn();
-    setAuthenticated(!authStatus.error);
-    setUser({ token: authStatus.token, ...authStatus.responseData});
+    setAuthenticated(!authStatus.error && !!authStatus.token);
+    if (authStatus.token){
+      setUser({ token: authStatus.token, ...authStatus.responseData});
+    }
     setIsAuthenticating(false);
   }
 
@@ -27,11 +30,12 @@ function App(props) {
 
   return (
     !isAuthenticating && (
-      <UserContext.Provider value={{ user, setUser }}>
+      <SceContext.Provider value={{user, setUser, authenticated, setAuthenticated}}>
         <BrowserRouter>
-          <Routing appProps={{ authenticated, setAuthenticated, user }} />
+          <SearchModal/>
+          <Routing/>
         </BrowserRouter>
-      </UserContext.Provider>
+      </SceContext.Provider>
     )
   );
 }
