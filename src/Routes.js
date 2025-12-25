@@ -80,6 +80,13 @@ export const memberRoutes = [
     redirect: '/login',
     hideFromShortcutSuggestions: true
   },
+  {
+    Component: LedSign,
+    path: '/led-sign',
+    pageName: 'LED Sign',
+    allowedIf: allowedIf.MEMBER,
+    redirect: '/login'
+  },
   ...authenticatedRoutes,
 ];
 
@@ -101,14 +108,6 @@ export const officerOrAdminRoutes = [
   //   redirect: '/',
   //   inAdminNavbar: true
   // },
-  {
-    Component: LedSign,
-    path: '/led-sign',
-    pageName: 'LED Sign',
-    allowedIf: allowedIf.OFFICER_OR_ADMIN,
-    redirect: '/',
-    inAdminNavbar: true
-  },
   {
     Component: EditUserInfo,
     path: '/user/edit/:id',
