@@ -79,7 +79,7 @@ router.post('/delete', async (req, res) => {
 router.post('/search', function(req, res) {
   if (!checkIfTokenSent(req)) {
     return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.ALUMNI)) {
+  } else if (!checkIfTokenValid(req, membershipState.NON_MEMBER)) {
     return res.sendStatus(UNAUTHORIZED);
   }
   User.findOne({ email: req.body.email }, function(error, result) {

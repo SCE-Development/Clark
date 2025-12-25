@@ -12,7 +12,6 @@ const MEMBERSHIP_STATE = {
   BANNED: -2,
   PENDING: -1,
   NON_MEMBER: 0,
-  ALUMNI: 0.5,
   MEMBER: 1,
   OFFICER: 2,
   ADMIN: 3,
