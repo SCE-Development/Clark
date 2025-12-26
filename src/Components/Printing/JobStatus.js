@@ -3,24 +3,24 @@ import React from 'react';
 export default function JobStatus({ id, status, fileName }) {
   const getStatusConfig = () => {
     switch (status) {
-      case 'failed':
-        return { 
-          color: 'alert-error', 
-          icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />,
-          loading: false 
-        };
-      case 'completed':
-        return { 
-          color: 'alert-success', 
-          icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />,
-          loading: false 
-        };
-      default: // 'created', 'processing', etc.
-        return { 
-          color: 'alert-info', 
-          icon: null, // We'll use a spinner instead
-          loading: true 
-        };
+    case 'failed':
+      return {
+        color: 'alert-error',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />,
+        loading: false
+      };
+    case 'completed':
+      return {
+        color: 'alert-success',
+        icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />,
+        loading: false
+      };
+    default: // 'created', 'processing', etc.
+      return {
+        color: 'alert-info',
+        icon: null, // We'll use a spinner instead
+        loading: true
+      };
     }
   };
 
@@ -36,7 +36,7 @@ export default function JobStatus({ id, status, fileName }) {
             {config.icon}
           </svg>
         )}
-        
+
         <div className="flex flex-col items-start flex-1 ml-2">
           <span className="font-bold truncate max-w-[250px] sm:max-w-md">
             {fileName}
