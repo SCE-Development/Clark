@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function JobStatus({ id, status, fileName }) {
   const getStatusConfig = () => {
     switch (status) {
