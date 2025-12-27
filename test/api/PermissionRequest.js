@@ -41,9 +41,8 @@ describe('PermissionRequest', () => {
     setTokenStatus(false);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     resetTokenMock();
-    await PermissionRequest.deleteMany({});
   });
 
   describe('/POST create', () => {
