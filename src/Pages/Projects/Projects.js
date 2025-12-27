@@ -205,12 +205,11 @@ export default function ProjectsPage() {
             />
             <br />
             <br />
-              
-           <a
+            <a
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline"
+              className={'underline'}
             >
               <span className="hidden sm:inline">
                 {link}
@@ -219,10 +218,7 @@ export default function ProjectsPage() {
               <span className="inline sm:hidden">
                 GitHub Repository
               </span>
-
             </a>
-
-
           </p>
         </div>
         <hr className={`my-2 border-dashed opacity-50 ${themeClasses.hrBorder}`} />
