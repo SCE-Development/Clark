@@ -225,6 +225,7 @@ export default function Overview() {
           deleteUser(userToDelete);
           setToggleDelete(!toggleDelete);
         },
+        handleCancel: () => setToggleDelete(!toggleDelete),
         open: toggleDelete
       }
       } />
