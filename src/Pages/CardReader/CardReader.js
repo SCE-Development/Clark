@@ -374,6 +374,7 @@ export default function CardReader() {
               await getAllCards();
               setToggleDelete(!toggleDelete);
             },
+            handleCancel: () => setToggleDelete(!toggleDelete),
             open: toggleDelete
           }
           } />
