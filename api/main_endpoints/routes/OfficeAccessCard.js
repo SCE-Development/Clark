@@ -17,7 +17,7 @@ const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
 const { decodeToken } = require('../util/token-functions.js');
 const ROWS_PER_PAGE = 25;
 const {
-  checkIfCardExists,
+  verifyCard,
   generateAlias,
   deleteCard,
   editAlias,
@@ -89,14 +89,14 @@ router.get('/verify', async (req, res) => {
     return res.sendStatus(FORBIDDEN);
   }
 
-  const cardExists = await checkIfCardExists({ cardBytes });
-  if (cardExists) {
-    const alias = cardExists.alias;
+  const cardVerification = await verifyCard(cardBytes);
+  if (cardVerification) {
+    const alias = cardVerification.alias;
     AuditLog.create({
       action: AuditLogActions.VERIFY_CARD,
       details: { alias }
     });
-    writeLogToClient(req.method, { alias: cardExists.alias, statusCode: OK });
+    writeLogToClient(req.method, { alias: cardVerification.alias, statusCode: OK });
     return res.sendStatus(OK);
   }
   // if a card doesnt exist and we arent trying
@@ -143,30 +143,36 @@ router.post('/delete', async (req, res) => {
     return res.sendStatus(decoded.status);
   }
 
-  const { alias } = req.body;
-  if (!alias) {
+  const { _id } = req.body;
+  if (!_id) {
     writeLogToClient(req.method, {
       statusCode: BAD_REQUEST,
       message: 'cardBytes missing from request',
     });
     return res.sendStatus(BAD_REQUEST);
   }
+  const cardDeletion = await deleteCard(_id);
 
-  const cardExists = await checkIfCardExists({ alias });
-  if (!await cardExists) {
+  if (cardDeletion === null) {
     logger.info('Card does not exist');
     writeLogToClient(req.method, {
       statusCode: NOT_FOUND,
       message: 'Card does not exist',
     });
     return res.sendStatus(NOT_FOUND);
-  }
-
-  if (await deleteCard(alias)) {
+  } else if(cardDeletion === false){
+    writeLogToClient(req.method, {
+      statusCode: SERVER_ERROR,
+      message: 'Error deleting card',
+    });
+    return res.sendStatus(SERVER_ERROR);
+  } else {
+    const alias = cardDeletion.alias;
     logger.info('Successfully deleted card');
     writeLogToClient(req.method, {
-      alias,
+      alias: cardDeletion.alias,
       statusCode: OK,
+      _id
     });
     AuditLog.create({
       userId: decoded.token._id,
@@ -175,13 +181,6 @@ router.post('/delete', async (req, res) => {
     });
     return res.sendStatus(OK);
   }
-
-  writeLogToClient(req.method, {
-    alias: cardExists.alias,
-    statusCode: SERVER_ERROR,
-    message: 'Error deleting card',
-  });
-  return res.sendStatus(SERVER_ERROR);
 });
 
 router.post('/getAllCards', async (req, res) => {
