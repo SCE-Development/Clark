@@ -85,7 +85,7 @@ function deleteCard(_id) {
           if (error) {
             logger.error('deleteCard got an error querying mongodb: ', error);
             return resolve(false);
-          } 
+          }
           if(!result) {
             logger.info(`Card with id: ${ _id } not found in the database`);
             return resolve(null);
