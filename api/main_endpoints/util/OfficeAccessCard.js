@@ -126,4 +126,4 @@ function editAlias(_id, newAlias) {
   });
 }
 
-module.exports = { checkIfCardExists, generateAlias, deleteCard, editAlias };
+module.exports = { verifyCard, generateAlias, deleteCard, editAlias };
