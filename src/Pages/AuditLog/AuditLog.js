@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllLogs } from '../../APIFunctions/AuditLog';
+import { getAllLogs, createAuditLogEventSource } from '../../APIFunctions/AuditLog';
 import Pagination from './Components/Pagination';
 import { useSCE } from '../../Components/context/SceContext';
 import AuditLogCard from './Components/AuditLogCard';
@@ -17,7 +17,8 @@ export default function AuditLogPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [applyingFilters, setApplyingFilters] = useState(false);
 
-  const user = useSCE();
+  const { user } = useSCE();
+  const token = user.token;
 
   const toggleActivityFilter = activity => {
     setActivityFilters(prev => (prev.includes(activity) ? prev.filter(a => a !== activity) : [...prev, activity]));
@@ -35,19 +36,20 @@ export default function AuditLogPage() {
     'VERIFY_CARD',
     'ADD_CARD',
     'DELETE_CARD',
+    'EDIT_CARD'
   ];
 
   const getAuditLogsFromDB = async () => {
     try {
       setLoading(true);
-      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, searchQuery, user.user.token);
+      const auditLogsFromDB = await getAllLogs(currentPage, activityFilters, searchQuery, user.token);
       if (!auditLogsFromDB.error) {
         setAuditLogsData(auditLogsFromDB.responseData);
       } else {
-        setError('Failed to load audit logs');
+        setError('Failed to load audit logs: ' + auditLogsFromDB.error);
       }
     } catch (err) {
-      setError('Failed to load audit logs');
+      setError('Failed to load audit logs: ' + err);
     } finally {
       setLoading(false);
     }
@@ -63,6 +65,17 @@ export default function AuditLogPage() {
     };
 
     fetchData();
+
+    const eventSource = createAuditLogEventSource(
+      token,
+      data => setAuditLogsData(prev => ({ items: [data.message, ...prev.items], totalLogs: prev.totalLogs + 1 })),
+      () => setError('Failed to load audit logs')
+    );
+
+    return () => {
+      eventSource.close();
+    };
+
   }, [currentPage, applyingFilters]);
 
   const applyFilters = async () => {
@@ -89,14 +102,14 @@ export default function AuditLogPage() {
       return (
         <div className='flex items-center justify-center h-64'>
           <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
-          <span className='ml-3 text-lg text-gray-600'>Loading audit logs...</span>
+          <span className='ml-3 text-lg text-gray-600 dark:text-gray-600'>Loading audit logs...</span>
         </div>
       );
     }
 
     if (error) {
       return (
-        <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded'>
+        <div className='bg-red-50 dark:bg-red-100 border border-red-300 dark:border-red-400 text-red-800 dark:text-red-700 px-4 py-3 rounded'>
           <strong className='font-bold'>Error: </strong>
           <span className='block sm:inline'>{error}</span>
         </div>
@@ -107,8 +120,8 @@ export default function AuditLogPage() {
       return (
         <div className='text-center py-16'>
           <div className='text-gray-400 text-xl mb-4'>📋</div>
-          <h3 className='text-lg font-medium text-white mb-2'>No audit logs found</h3>
-          <p className='text-gray-400'>There are no audit logs to display at this time.</p>
+          <h3 className='text-lg font-medium text-gray-900 dark:text-white mb-2'>No audit logs found</h3>
+          <p className='text-gray-600 dark:text-gray-400'>There are no audit logs to display at this time.</p>
         </div>
       );
     }
@@ -135,12 +148,12 @@ export default function AuditLogPage() {
         Audit Logs
       </h1>
       <div className='space-y-4'>
-        <div className='mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700'>
+        <div className='mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 items-end'>
             <div>
-              <label className='block text-sm font-medium text-gray-300 mb-2'>Search Users</label>
+              <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>Search Users</label>
               <input
-                className='w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                className='w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                 type='text'
                 placeholder='Search by first name, last name, or email'
                 value={searchQuery}
@@ -157,10 +170,12 @@ export default function AuditLogPage() {
               />
             </div>
             <div className='relative'>
-              <label className='block text-sm font-medium text-gray-300 mb-2'>Filter by Activity Type</label>
+              <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                Filter by Activity Type
+              </label>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className='w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex justify-between items-center'
+                className='w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex justify-between items-center'
               >
                 <span>
                   {activityFilters.length === 0 ? 'Select activities...' : `${activityFilters.length} selected`}
@@ -176,20 +191,20 @@ export default function AuditLogPage() {
               </button>
 
               {isDropdownOpen && (
-                <div className='absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto'>
+                <div className='absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto'>
                   <div className='p-2'>
                     {activityTypes.map(activity => (
                       <label
                         key={activity}
-                        className='flex items-center space-x-2 p-2 hover:bg-gray-600 rounded cursor-pointer'
+                        className='flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer'
                       >
                         <input
                           type='checkbox'
                           checked={activityFilters.includes(activity)}
                           onChange={() => toggleActivityFilter(activity)}
-                          className='form-checkbox h-4 w-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500'
+                          className='form-checkbox h-4 w-4 text-blue-600 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500'
                         />
-                        <span className='text-white text-sm'>{activity.replace(/_/g, ' ')}</span>
+                        <span className='text-gray-900 dark:text-white text-sm'>{activity.replace(/_/g, ' ')}</span>
                       </label>
                     ))}
                   </div>

@@ -15,8 +15,11 @@ services:
       dockerfile: ./Dockerfile
     command:
       - --hosts
-      - http://host.docker.internal:11000/api/health-check
+      # led sign
+      - http://host.docker.internal:10000/health-check
+      # printer
       - http://host.docker.internal:14000/healthcheck/printer
+      # status page
       - http://host.docker.internal:17000/hello
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -44,7 +47,7 @@ services:
     environment:
       - CLEEZY_URL=http://cleezy-app.sce:8000
       - PRINTER_URL=http://host.docker.internal:14000
-      - LED_SIGN_URL=http://host.docker.internal:11000
+      - LED_SIGN_URL=http://host.docker.internal:10000
       - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb
@@ -110,6 +113,8 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./sce_sjsu_edu_cert.cer:/etc/nginx/sce_sjsu_edu_cert.cer
       - ./sce.key:/etc/nginx/sce.key
+      - nginx_cache:/var/cache/nginx
+      - ./interview/costco_gas.json:/var/www/html/data/costco_gas.json:ro
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
@@ -124,4 +129,7 @@ networks:
   default:
     external:
       name: sce
+
+volumes:
+  nginx_cache:
 

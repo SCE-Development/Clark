@@ -12,7 +12,6 @@ let id = new mongoose.Types.ObjectId();
 const chaiHttp = require('chai-http');
 const {
   OK,
-  BAD_REQUEST,
   UNAUTHORIZED,
   NOT_FOUND,
   FORBIDDEN
@@ -21,6 +20,8 @@ const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
 const {mockDayMonthAndYear, revertClock} = require('../util/mocks/Date.js');
 
+const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
+const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
 
 let app = null;
 let test = null;
@@ -35,17 +36,8 @@ const {
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
 
-const {
-  setDiscordAPIStatus,
-  resetDiscordAPIMock,
-  restoreDiscordAPIMock,
-  initializeDiscordAPIMock
-} = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const { getMemberExpirationDate } = require('../../api/main_endpoints/util/userHelpers.js');
-
-const AuditLogActions = require('../../api/main_endpoints/util/auditLogActions.js');
-const AuditLog = require('../../api/main_endpoints/models/AuditLog.js');
 
 chai.should();
 chai.use(chaiHttp);
@@ -54,7 +46,6 @@ chai.use(chaiHttp);
 describe('User', () => {
   before(done => {
     initializeTokenMock();
-    initializeDiscordAPIMock();
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/User.js',
       __dirname + '/../../api/main_endpoints/routes/Auth.js'
@@ -75,30 +66,27 @@ describe('User', () => {
 
   after(done => {
     restoreTokenMock();
-    restoreDiscordAPIMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
-    setDiscordAPIStatus(false);
   });
 
   afterEach(() => {
     resetTokenMock();
-    resetDiscordAPIMock();
   });
 
   const token = '';
 
   describe('/POST search', () => {
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
         '/api/User/users', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid ' +
@@ -125,13 +113,13 @@ describe('User', () => {
   });
 
   describe('/POST searchFor', () => {
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         email: 'a@b.c'
       };
       const result = await test.sendPostRequest(
         '/api/User/search', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid ' +
@@ -181,13 +169,13 @@ describe('User', () => {
   });
 
   describe('/POST edit', () => {
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         _id: id,
       };
       const result = await test.sendPostRequest(
         '/api/User/edit', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid ' +
@@ -212,63 +200,173 @@ describe('User', () => {
       expect(result).to.have.status(NOT_FOUND);
     });
 
-    it('Should return statusCode 200 and a message ' +
-      'if a user was edited', async () => {
-      const user = {
-        _id: id,
-        email: 'd@e.f',
-        token: token,
-        firstName: 'pinkUnicorn',
-        discordID: '0987654321',
-        numberOfSemestersToSignUpFor: undefined
-      };
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/edit', user);
-      expect(result).to.have.status(OK);
-      result.body.should.be.a('object');
-      result.body.should.have.property('message');
-    });
+    describe('create audit log on user change', async () => {
 
-    it('Should create an audit log when a user is updated', async () => {
-      // ensure Audit log DB starts fresh before this test
-      await AuditLog.deleteMany({});
-      // update email, firstname, password, and discordID
-      const user = {
-        _id: id,
-        email: 'newemail@gmail.com',
-        password: 'newPassword',
-        token: token,
-        firstName: 'Newname',
-        discordID: '421482148',
-        numberOfSemestersToSignUpFor: undefined
-      };
-      setTokenStatus(true, user);
+      // create clean testUser before each test
+      let testUser;
 
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/edit', user
-      );
-      expect(result).to.have.status(OK);
+      beforeEach(async () => {
+        await User.deleteMany({});
+        testUser = await new User({
+          email: 'a@b.c',
+          password: 'Passw0rd',
+          firstName: 'first-name',
+          lastName: 'last-name',
+          major: 'Computer Science',
+          accessLevel: MEMBERSHIP_STATE.OFFICER,
+        }).save();
 
-      const auditEntry = await AuditLog.findOne().lean();
+        setTokenStatus(true, testUser);
+      });
 
-      expect(auditEntry).to.exist;
-      expect(auditEntry).to.have.property('userId');
-      expect(auditEntry).to.have.property('action', AuditLogActions.UPDATE_USER);
-      expect(auditEntry.details.updatedInfo).to.have.property('password', true);
-      await AuditLog.deleteMany({});
+      afterEach(async () => {
+        await AuditLog.deleteMany({});
+      });
+
+      it('Should create an audit log when a user is updated (no password change)' + 'not create an audit log for password change', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'Newname',
+          email: 'a@b.c',
+          token
+        });
+
+        expect(res).to.have.status(OK);
+        res.body.should.be.a('object');
+        res.body.should.have.property('message');
+
+        const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean();
+        expect(auditEntry).to.exist;
+        const fieldChanges = JSON.parse(auditEntry.details.fieldChanges);
+        expect(fieldChanges.firstName).to.have.deep.equal({
+          from: 'first-name',
+          to: 'Newname'
+        });
+
+        // make sure pw change log doesn't exist
+        const changePWlog = await AuditLog.findOne({
+          userId: id,
+          action: AuditLogActions.CHANGE_PW
+        }).lean();
+        expect(changePWlog).to.not.exist;
+      });
+
+      it('Should create an audit log when a user changes their password (no profile update)', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'first-name',
+          email: 'a@b.c',
+          password: 'Newpassw0rd',
+          token
+        });
+
+        expect(res).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({ userId: testUser._id }).lean();
+        expect(auditEntry).to.exist;
+        expect(auditEntry.action).to.equal(AuditLogActions.CHANGE_PW);
+        expect(auditEntry).to.not.have.property('password');
+      });
+
+      it('Should create both audit logs when password and profile info are updated', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'Newname',
+          email: 'a@b.c',
+          password: 'Newpassword1',
+          discordID: 'anotherID',
+          token
+        });
+
+        expect(res).to.have.status(OK);
+
+        const changePwLog = await AuditLog.findOne({ action: AuditLogActions.CHANGE_PW }).lean();
+        const updateUserLog = await AuditLog.findOne({ action: AuditLogActions.UPDATE_USER }).lean();
+
+        expect(changePwLog).to.exist;
+        expect(updateUserLog).to.exist;
+      });
+
+      it('Should track profile changes in audit log with correct from/to values', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          firstName: 'Newname',
+          lastName: 'Newlastname',
+          email: 'a@b.c',
+          password: 'Newpassword1',
+          discordID: 'anotherID',
+          major: 'Software Engineering',
+          token
+        });
+
+        expect(res).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.UPDATE_USER,
+          documentId: testUser._id
+        }).lean();
+
+        expect(auditEntry).to.exist;
+        expect(auditEntry.details).to.have.property('fieldChanges');
+
+        const fieldChanges = JSON.parse(auditEntry.details.fieldChanges);
+        // track firstName change
+        expect(fieldChanges).to.have.property('firstName');
+        expect(fieldChanges.firstName).to.have.deep.equal({
+          from: 'first-name',
+          to: 'Newname'
+        });
+
+        // track lastName change
+        expect(fieldChanges).to.have.property('lastName');
+        expect(fieldChanges.lastName).to.have.deep.equal({
+          from: 'last-name',
+          to: 'Newlastname'
+        });
+
+        // track major change
+        expect(fieldChanges).to.have.property('major');
+        expect(fieldChanges.major).to.have.deep.equal({
+          from: 'Computer Science',
+          to: 'Software Engineering'
+        });
+
+        // Should NOT track unchanged fields + password field
+        expect(fieldChanges).to.not.have.property('password');
+        expect(fieldChanges).to.not.have.property('email');
+      });
+
+      it('Should not create audit log when no fields actually change', async () => {
+        const res = await test.sendPostRequestWithToken(token, '/api/User/edit', {
+          _id: testUser._id.toString(),
+          email: 'a@b.c',
+          password: 'Passw0rd',
+          firstName: 'first-name',
+          lastName: 'last-name',
+          major: 'Computer Science'
+        });
+
+        expect(res).to.have.status(OK);
+
+        const auditEntry = await AuditLog.findOne({
+          action: AuditLogActions.UPDATE_USER || AuditLogActions.CHANGE_PW,
+          documentId: testUser._id
+        }).lean();
+
+        expect(auditEntry).to.not.exist;
+      });
     });
   });
 
   describe('/POST getUserById', () => {
-    it('Should return status code 403 if no token was passed in', async () => {
+    it('Should return status code 401 if no token was passed in', async () => {
       const user = {
         userID: id,
       };
       const result = await test.sendPostRequest('/api/user/getUserById', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
-    it('Should return status code 403 if' +
+    it('Should return status code 401 if' +
       ' an invalid token was passed in', async () => {
       const user = {
         userID: id,
@@ -288,14 +386,27 @@ describe('User', () => {
       expect(result).to.have.status(NOT_FOUND);
     });
     it('Should return status code 200 if user is found', async () => {
-      const user = {
-        userID: id,
-        token: token
-      };
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token, '/api/User/getUserById', user);
-      expect(result).to.have.status(OK);
-      result.body.should.not.have.property('password');
+
+      const testUser = await new User({
+        email: 'getuser@test.com',
+        password: 'Passw0rd',
+        firstName: 'Get',
+        lastName: 'User',
+        accessLevel: MEMBERSHIP_STATE.ADMIN,
+        emailVerified: true
+      }).save();
+
+      // Set token mock for this user
+      setTokenStatus(true, { _id: testUser._id, accessLevel: MEMBERSHIP_STATE.ADMIN });
+
+      const res = await test.sendPostRequestWithToken('', '/api/User/getUserById', {
+        userID: testUser._id,
+        token: ''
+      });
+
+      expect(res).to.have.status(OK);
+      res.body.should.have.property('email').eql('getuser@test.com');
+      res.body.should.not.have.property('password');
     });
   });
 
@@ -318,13 +429,13 @@ describe('User', () => {
       await userAdmin.save();
     });
 
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const user = {
         _id : id
       };
       const result = await test.sendPostRequest(
         '/api/User/delete', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 403 if an invalid ' +
@@ -351,41 +462,21 @@ describe('User', () => {
 
     it('Should return statusCode 200 and a message ' +
       'if a user was deleted', async () => {
-      const user = {
+      const user = await new User({
         _id : id,
+        email: 'delete@test.com',
+        password: 'Passw0rd',
+        firstName: 'Delete',
+        lastName: 'Me',
         token: token
-      };
-      setTokenStatus(true);
+      }).save();
+      setTokenStatus(true, { _id: user._id, accesslevel: MEMBERSHIP_STATE.ADMIN });
       const result = await test.sendPostRequestWithToken(
-        token, '/api/User/delete', user);
+        token, '/api/User/delete', { _id: user._id, token: token } );
       expect(result).to.have.status(OK);
     });
 
     it('Should return statusCode 200 if user deletes themself', async () => {
-      setTokenStatus(true);
-      const deleteUser = {
-        email: 'h@i.j',
-        password: 'Passw0rd',
-        firstName: 'first-name',
-        lastName: 'last-name',
-      };
-      const searchUser = {
-        email: 'h@i.j',
-        token: token
-      };
-      await test.sendPostRequest('/api/Auth/register', deleteUser);
-      const getUser = await test.sendPostRequestWithToken(
-        token, '/api/User/search', searchUser);
-      const user = {
-        _id: getUser.body._id,
-        token: token
-      };
-      const result = await test.sendPostRequestWithToken(
-        token, '/api/User/delete', user);
-      expect(result).to.have.status(OK);
-    });
-
-    it('Should return statusCode 200 if user deletes themself as a member', async () => {
       setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER});
       const deleteUser = {
         email: 'h@i.j',
@@ -404,9 +495,66 @@ describe('User', () => {
         _id: getUser.body._id,
         token: token
       };
+      setTokenStatus(true, {accessLevel: MEMBERSHIP_STATE.MEMBER, _id: getUser.body._id});
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/delete', user);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(OK);
+    });
+
+    it('Should return statusCode 403 if a member deletes another member', async () => {
+      setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.MEMBER });
+      // Define credentials for the Member (the deleting user)
+      const memberCredentials = {
+        email: 'member@test.com',
+        password: 'Passw0rd',
+        firstName: 'Member',
+        lastName: 'User',
+      };
+
+      // Define credentials for the Target User (the user being deleted)
+      const targetCredentials = {
+        email: 'target@test.com',
+        password: 'TargetPassw0rd',
+        firstName: 'Target',
+        lastName: 'User',
+      };
+
+      // Register the Target User (the one to be deleted)
+      await test.sendPostRequest('/api/Auth/register', targetCredentials);
+
+      // Register the Member and get their JWT and decoded token data
+      await test.sendPostRequest('/api/Auth/register', memberCredentials);
+
+      // Find the Target User to get their _id
+      // Use the *real* member token to perform the search
+      const targetSearchResponse = await test.sendPostRequestWithToken(
+        token,
+        '/api/User/search',
+        { email: targetCredentials.email }
+      );
+      const memberSearchResponse = await test.sendPostRequestWithToken(
+        token,
+        '/api/User/search',
+        { email: memberCredentials.email }
+      );
+
+      // The target user ID is what we want to delete
+      const targetUserId = targetSearchResponse.body._id;
+      const memberUserId = memberSearchResponse.body._id;
+
+
+      // Member attempts to delete the Target User using the Target User's ID
+      const deletePayload = {
+        _id: targetUserId, // ID of the user to delete (NOT the member's ID)
+      };
+
+      setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.MEMBER, _id: memberUserId });
+
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/delete', deletePayload);
+
+      // Verification
+      expect(result).to.have.status(FORBIDDEN); // Expect 403
       result.body.should.have.property('message');
       result.body.message.should.equal(
         'you must be an officer or admin to delete other users',
@@ -464,9 +612,9 @@ describe('User', () => {
     });
 
     // no token
-    it('Should return status code 403 if no token is passed through', async () => {
+    it('Should return status code 401 if no token is passed through', async () => {
       const result = await test.sendPostRequest('/api/user/apikey', {});
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     // invalid token
@@ -489,9 +637,9 @@ describe('User', () => {
       expect(result).to.have.status(OK);
     });
 
-    it('Should return statusCode 403 if no token is passed in', async () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
       const result = await test.sendGetRequest('/api/user/getNewPaidMembersThisSemester');
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return statusCode 401 if an invalid' +

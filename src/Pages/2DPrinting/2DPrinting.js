@@ -4,8 +4,8 @@ import {
   parseRange,
   printPage,
   getPagesPrinted,
+  getPrintStatus,
 } from '../../APIFunctions/2DPrinting';
-import { editUser } from '../../APIFunctions/User';
 
 import { PDFDocument } from 'pdf-lib';
 import { healthCheck } from '../../APIFunctions/2DPrinting';
@@ -13,6 +13,7 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 
 import { useSCE } from '../../Components/context/SceContext.js';
+import JobStatus from '../../Components/Printing/JobStatus.js';
 
 export default function Printing() {
   const { user, setUser } = useSCE();
@@ -33,6 +34,7 @@ export default function Printing() {
   const [printerHealthy, setPrinterHealthy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [PdfFile, setPdfFile] = useState(null);
+  const [printJobs, setPrintJobs] = useState({});
 
   async function checkPrinterHealth() {
     setLoading(true);
@@ -52,7 +54,68 @@ export default function Printing() {
     }
   }
 
+  async function tryRemoveJob(status, id) {
+    const completedOrFailed = ['completed', 'failed'].includes(status);
+    if (!completedOrFailed) return;
+
+    setTimeout(() => {
+      setPrintJobs((prev) => {
+        const newPrintJobs = {...prev};
+
+        if (!(id in newPrintJobs)) {
+          return prev;
+        }
+
+        delete newPrintJobs[id];
+        window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+        return {...newPrintJobs};
+      });
+    }, 5000);
+  }
+
   useEffect(() => {
+    if (printJobs === null || Object.keys(printJobs).length === 0) return;
+    const ids = Object.keys(printJobs);
+
+
+    const interval = setInterval(async () => {
+      if (ids.length === 0) {
+        clearInterval(interval);
+        return;
+      }
+
+      ids.map(async (id) => {
+        const completedOrFailed = ['completed', 'failed'].includes(printJobs[id].status);
+        if (completedOrFailed) return;
+
+        const status = await getPrintStatus(id, printJobs[id].pages, user.token);
+        const newPrintJobs = {...printJobs};
+        newPrintJobs[id].status = status;
+        setPrintJobs(newPrintJobs);
+        window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+
+        tryRemoveJob(status, id);
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [printJobs]);
+
+  useEffect(() => {
+    if (!!window.localStorage) {
+      const jobsFromLocal = JSON.parse(window.localStorage.getItem('printJobs'));
+      if (!!jobsFromLocal) {
+        setPrintJobs(() => {
+          const ids = Object.keys(jobsFromLocal);
+          ids.map(async (id) => {
+            tryRemoveJob(jobsFromLocal[id].status, id);
+          });
+
+          return jobsFromLocal;
+        });
+      }
+    }
+
     checkPrinterHealth();
     getNumberOfPagesPrintedSoFar();
   }, []);
@@ -200,20 +263,26 @@ export default function Printing() {
     data.append('file', PdfFile);
     data.append('sides', sides);
     data.append('copies', copies);
-    let status = await printPage(data, user.token);
+    data.append('totalPages', pagesToBeUsedInPrintRequest);
+    const printReq = await printPage(data, user.token);
 
-    if (!status.error) {
-      editUser(
-        { ...user, pagesPrinted: pagesPrinted + pagesToBeUsedInPrintRequest },
-        user.token,
-      );
-      setPrintStatus('Printing succeeded!');
-      setPrintStatusColor('success');
-    } else {
+    try {
+      const printId = printReq?.responseData['print_id'];
+      const newPrintJobs = {...printJobs,
+        [printId]: {
+          status: 'created',
+          fileName: PdfFile.name,
+          pages: pagesToBeUsedInPrintRequest
+        }
+      };
+      setPrintJobs(newPrintJobs);
+      window.localStorage.setItem('printJobs', JSON.stringify(newPrintJobs));
+      getNumberOfPagesPrintedSoFar();
+    } catch (err) {
       setPrintStatus('Printing failed. Please try again or reach out to SCE Dev team if the issue persists.');
       setPrintStatusColor('error');
     }
-    getNumberOfPagesPrintedSoFar();
+
     setTimeout(() => {
       setPrintStatus(null);
     }, 5000);
@@ -417,6 +486,14 @@ export default function Printing() {
 
   return (
     <div className='w-full'>
+      <div>
+        {
+          Object.keys(printJobs).map(id => (
+            <JobStatus key={id} id={id} status={printJobs[id].status} fileName={printJobs[id].fileName} />
+          ))
+        }
+      </div>
+
       <ConfirmationModal {... {
         headerText: 'Submit print request?',
         bodyText: `The request will use ${pagesToBeUsedInPrintRequest} page(s) out of the ${getRemainingPageBalance()} pages remaining.`,
@@ -450,4 +527,3 @@ export default function Printing() {
     </div>
   );
 }
-

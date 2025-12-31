@@ -96,6 +96,7 @@ export async function editUser(userToEdit, token) {
     discordDiscrim,
     discordID,
     pagesPrinted,
+    escrowPagesPrinted,
     accessLevel,
     lastLogin,
     emailVerified,
@@ -122,6 +123,7 @@ export async function editUser(userToEdit, token) {
         discordDiscrim,
         discordID,
         pagesPrinted,
+        escrowPagesPrinted,
         accessLevel,
         lastLogin,
         emailVerified,
@@ -139,19 +141,6 @@ export async function editUser(userToEdit, token) {
     status.responseData = err.message || err;
   }
   return status;
-}
-
-/**
- * Updates the user's last login date when they log in.
- * @param {string} email The email of the user
- * @param {string} token The JWT token to allow the user to be edited
- */
-export async function updateLastLoginDate(email, token) {
-  await editUser({ email, lastLogin: Date.now() }, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
 }
 
 /**

@@ -55,3 +55,28 @@ export async function deleteCardFromDb(token, _id) {
   }
   return status;
 }
+
+export async function editCardAlias(token, _id, alias) {
+  let status = new ApiResponse();
+  try {
+    const url = new URL('/api/OfficeAccessCard/edit', BASE_API_URL);
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ _id, alias }),
+    });
+    if (res.ok) {
+      const result = await res.json();
+      status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = err;
+  }
+  return status;
+}

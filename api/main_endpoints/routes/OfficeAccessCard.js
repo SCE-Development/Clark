@@ -6,6 +6,7 @@ const {
   OK,
   FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -13,17 +14,13 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { officeAccessCard = {} } = require('../../config/config.json');
 const { API_KEY = 'NOTHING_REALLY' } = officeAccessCard;
-const {
-  decodeTokenFromBodyOrQuery,
-  decodeToken,
-  checkIfTokenSent,
-  checkIfTokenValid
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const ROWS_PER_PAGE = 25;
 const {
   verifyCard,
   generateAlias,
   deleteCard,
+  editAlias,
 } = require('../util/OfficeAccessCard.js');
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
@@ -86,10 +83,10 @@ router.get('/verify', async (req, res) => {
 
   if (apiKey !== API_KEY) {
     writeLogToClient(req.method, {
-      statusCode: UNAUTHORIZED,
+      statusCode: FORBIDDEN,
       message: `Invalid API key: ${apiKey}`,
     });
-    return res.sendStatus(UNAUTHORIZED);
+    return res.sendStatus(FORBIDDEN);
   }
 
   const cardExists = await verifyCard({ cardBytes });
@@ -141,9 +138,9 @@ router.get('/verify', async (req, res) => {
 });
 
 router.post('/delete', async (req, res) => {
-  const decoded = decodeToken(req);
-  if (!decoded) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const { _id } = req.body;
@@ -187,7 +184,7 @@ router.post('/delete', async (req, res) => {
       statusCode: OK,
     });
     AuditLog.create({
-      userId: decoded._id,
+      userId: decoded.token._id,
       action: AuditLogActions.DELETE_CARD,
       details: { alias }
     });
@@ -196,10 +193,9 @@ router.post('/delete', async (req, res) => {
 });
 
 router.post('/getAllCards', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const skip = Math.max(Number(req.body.page) || 0, 0) * ROWS_PER_PAGE;
@@ -222,9 +218,60 @@ router.post('/getAllCards', async (req, res) => {
   }
 });
 
+router.post('/edit', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const { _id, alias } = req.body;
+
+  const required = [
+    { value: _id && /^[0-9a-fA-F]{24}$/.test(_id) ? _id : null, title: 'Valid, alphanumeric Card ID', },
+    { value: alias?.trim(), title: 'New card alias', },
+  ];
+
+  const missingValue = required.find(({ value }) => !value);
+  if (missingValue) {
+    writeLogToClient(req.method, {
+      statusCode: BAD_REQUEST,
+      message: `${missingValue.title} missing from request`,
+    });
+    return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
+  }
+
+  try {
+    const updatedCard = await editAlias(_id, alias);
+
+    if (!updatedCard) {
+      return res.sendStatus(NOT_FOUND);
+    }
+
+    // Log the edit action
+    AuditLog.create({
+      userId: decoded.token._id,
+      action: AuditLogActions.EDIT_CARD,
+      details: {
+        newAlias: alias,
+        _id,
+      }
+    });
+
+    logger.info(`Card alias updated successfully for card ID: ${_id}`);
+    return res.status(OK).json({
+      message: 'Card alias updated successfully',
+      card: updatedCard
+    });
+  } catch (error) {
+    logger.error('Error updating card alias: ', error);
+    return res.status(SERVER_ERROR).send('Error updating card alias');
+  }
+});
+
 router.get('/listen', async (req, res) => {
-  if (!await decodeTokenFromBodyOrQuery(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
 
   const headers = {

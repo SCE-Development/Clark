@@ -27,7 +27,7 @@ export default function Overview() {
   const [clubRevenueData, setClubRevenueData] = useState({newMembersThisYear:0, newSingleSemesterMembers:0, newAnnualMembers:0, currentActiveMembers:0});
   // const [toggle, setToggle] = useState(false);
   // const [currentQueryType, setCurrentQueryType] = useState('All');
-  // const queryTypes = ['All', 'Pending', 'Officer', 'Admin', 'Alumni'];
+  // const queryTypes = ['All', 'Pending', 'Officer', 'Admin'];
 
   async function deleteUser(userToDel) {
     const response = await deleteUserByID(
@@ -147,10 +147,6 @@ export default function Overview() {
   //       return users.filter(
   //         data => data.accessLevel === membershipState.PENDING
   //       );
-  //     case 'Alumni':
-  //       return users.filter(
-  //         data => data.accessLevel === membershipState.ALUMNI
-  //       );
   //     default:
   //       return users;
   //   }
@@ -229,6 +225,7 @@ export default function Overview() {
           deleteUser(userToDelete);
           setToggleDelete(!toggleDelete);
         },
+        handleCancel: () => setToggleDelete(!toggleDelete),
         open: toggleDelete
       }
       } />

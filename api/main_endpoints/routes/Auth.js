@@ -11,11 +11,7 @@ const PasswordReset = require('../models/PasswordReset.js');
 const logger = require('../../util/logger');
 const { registerUser, testPasswordStrength } = require('../util/userHelpers');
 const { verifyCaptcha } = require('../util/captcha');
-const {
-  checkIfTokenSent,
-  checkIfTokenValid,
-  decodeToken
-} = require('../util/token-functions');
+const { decodeToken } = require('../util/token-functions');
 const jwt = require('jsonwebtoken');
 const {
   OK,
@@ -60,10 +56,9 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/resendVerificationEmail', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   const maybeUser = await userWithEmailExists(req.body.email);
   if (!maybeUser) {
@@ -122,9 +117,19 @@ router.post('/sendPasswordReset', async (req, res) => {
       });
       await passwordReset.save();
       await sendPasswordReset(resetToken, req.body.email);
+
+      // create audit log for sending reset password email
+      AuditLog.create({
+        userId: result._id,
+        action: AuditLogActions.SEND_RESET_PW_EMAIL,
+        details: {
+          email: result.email,
+        }
+      }).catch(logger.error);
     } catch (error) {
       logger.error('unable to save password reset token:', error);
     }
+
     res.sendStatus(OK);
   });
 });
@@ -146,96 +151,95 @@ router.post('/login', function(req, res) {
       }
 
       if (!user) {
-        res
+        return res
           .status(UNAUTHORIZED)
           .send({
             message: 'Username or password does not match our records.'
           });
-      } else {
-        // Check if password matches database
-        user.comparePassword(req.body.password, function(error, isMatch) {
-          if (isMatch && !error) {
-            if (user.accessLevel === membershipState.BANNED) {
-              return res
-                .status(UNAUTHORIZED)
-                .send({
-                  message: 'The account with email ' +
+      }
+
+      // Check if password matches database
+      user.comparePassword(req.body.password, function(error, isMatch) {
+        if (!isMatch && !error) {
+          return res.status(UNAUTHORIZED).send({
+            message: 'Username or password does not match our records.'
+          });
+        }
+
+        if (user.accessLevel === membershipState.BANNED) {
+          return res
+            .status(UNAUTHORIZED)
+            .send({
+              message: 'The account with email ' +
                     req.body.email +
                     ' is banned',
-                });
-            }
-
-            // Check if the user's email has been verified
-            if (!user.emailVerified) {
-              return res
-                .status(UNAUTHORIZED)
-                .send({ message: `The email ${req.body.email} has not been verified` });
-            }
-
-            // If the username and password matches the database, assign and
-            // return a jwt token
-            const jwtOptions = {
-              expiresIn: '2h'
-            };
-
-            // check here to see if we should reset the pagecount. If so, do it
-            if (checkIfPageCountResets(user.lastLogin)) {
-              user.pagesPrinted = 0;
-            }
-
-            // Include fields from the User model that should
-            // be passed to the JSON Web Token (JWT)
-            const userToBeSigned = {
-              firstName: user.firstName,
-              lastName: user.lastName,
-              email: user.email,
-              accessLevel: user.accessLevel,
-              pagesPrinted: user.pagesPrinted,
-              _id: user._id
-            };
-            user
-              .save()
-              .then(() => {
-                const token = jwt.sign(
-                  userToBeSigned, config.secretKey, jwtOptions
-                );
-                // Create audit log on successful sign-in
-                AuditLog.create({
-                  userId: user._id,
-                  action: AuditLogActions.LOG_IN,
-                  details: { email: user.email }
-                }).catch(logger.error);
-
-                res.json({ token: 'JWT ' + token });
-              })
-              .catch((error) => {
-                logger.error('unable to login user', error);
-                res.sendStatus(SERVER_ERROR);
-              });
-          } else {
-            res.status(UNAUTHORIZED).send({
-              message: 'Username or password does not match our records.'
             });
-          }
-        });
-      }
-    }
-  );
+        }
+
+        // Check if the user's email has been verified
+        if (!user.emailVerified) {
+          return res
+            .status(UNAUTHORIZED)
+            .send({ message: `The email ${req.body.email} has not been verified` });
+        }
+
+        // If the username and password matches the database, assign and
+        // return a jwt token
+        const jwtOptions = {
+          expiresIn: '2h'
+        };
+
+        // check here to see if we should reset the pagecount. If so, do it
+        if (checkIfPageCountResets(user.lastLogin)) {
+          user.pagesPrinted = 0;
+        }
+
+        // set last login date here!!!!
+        user.lastLogin = new Date();
+
+
+        // Include fields from the User model that should
+        // be passed to the JSON Web Token (JWT)
+        const userToBeSigned = {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          accessLevel: user.accessLevel,
+          pagesPrinted: user.pagesPrinted,
+          _id: user._id
+        };
+        user
+          .save()
+          .then(() => {
+            const token = jwt.sign(
+              userToBeSigned, config.secretKey, jwtOptions
+            );
+            // Create audit log on successful sign-in
+            AuditLog.create({
+              userId: user._id,
+              action: AuditLogActions.LOG_IN,
+              details: { email: user.email }
+            }).catch(logger.error);
+
+            res.json({ token: 'JWT ' + token });
+          })
+          .catch((error) => {
+            logger.error('unable to login user', error);
+            res.sendStatus(SERVER_ERROR);
+          });
+      });
+    });
 });
 
 // Verifies the users session if they have an active jwtToken.
 // Used on the inital load of root '/'
 // Returns the name and accesslevel of the user w/ the given access token
-router.post('/verify', function(req, res) {
-  if (!checkIfTokenSent(req)) {
-    return res.status(UNAUTHORIZED).json({});
+router.post('/verify', async function(req, res) {
+  const decoded = await decodeToken(req);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
-  const token = decodeToken(req);
-  if (token === null || Object.keys(token).length === 0) {
-    res.status(UNAUTHORIZED).json({});
-  } else {
-    res.status(OK).json(token);
-  }
+  res.status(OK).json(decoded.token);
 });
 
 router.post('/generateHashedId', async (req, res) => {
@@ -339,6 +343,12 @@ router.post('/resetPassword', async (req, res) => {
     }
     user.password = req.body.password;
     await user.save();
+
+    // create audit log for user succesfully resetting password
+    AuditLog.create({
+      userId: user._id,
+      action: AuditLogActions.RESET_PW
+    }).catch(logger.error);
     await PasswordReset.deleteOne({ resetToken: req.body.resetToken });
   } catch (error) {
     logger.error('Unable to reset password:', error);

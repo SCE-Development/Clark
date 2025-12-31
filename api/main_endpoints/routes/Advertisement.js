@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { OK, BAD_REQUEST, FORBIDDEN, UNAUTHORIZED, NOT_FOUND } = require('../../util/constants').STATUS_CODES;
-const {
-  decodeToken,
-  checkIfTokenSent,
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
+const logger = require('../../util/logger');
 const Advertisement = require('../models/Advertisement');
+const AuditLog = require('../models/AuditLog.js');
+const AuditLogActions = require('../util/auditLogActions.js');
+const membershipState = require('../../util/constants.js').MEMBERSHIP_STATE;
 
 router.get('/', async (req, res) => {
   const count = await Advertisement.countDocuments();
@@ -16,60 +17,85 @@ router.get('/', async (req, res) => {
       res.status(OK).send(items || {});
     })
     .catch(error => {
+      logger.error('/api/Advertisement/ had an error', error);
       res.sendStatus(BAD_REQUEST);
     });
 });
 
+
 router.get('/getAllAdvertisements', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   Advertisement.find()
+    .sort({ createdAt: -1 })
     .then(items => res.status(OK).send(items))
     .catch(error => {
+      logger.error('/api/Advertisement/getAllAdvertisements/ had an error', error);
       res.sendStatus(BAD_REQUEST);
     });
 });
 
 router.post('/createAdvertisement', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
+
   const newAd = new Advertisement({
     message: req.body.message,
-    expireDate: req.body.expireDate
+    expireAt: req.body.expireDate
   });
 
-  Advertisement.create(newAd)
-    .then((post) => {
-      return res.json(post);
-    })
-    .catch(
-      (error) => res.sendStatus(BAD_REQUEST)
-    );
+  try {
+    const createdAd = await Advertisement.create(newAd);
+    AuditLog.create({
+      userId: decoded.token._id,
+      action: AuditLogActions.CREATE_AD,
+      details: {
+        message: createdAd.message,
+        expireAt: createdAd.expireAt,
+        advertisementId: createdAd._id
+      }
+    }).catch(logger.error);
+
+    res.status(OK).send(createdAd);
+  } catch (error) {
+    logger.error('Error creating ad:', error);
+    res.sendStatus(BAD_REQUEST);
+  }
 });
 
 router.post('/deleteAdvertisement', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
-  Advertisement.deleteOne({ _id: req.body._id })
-    .then(result => {
-      if (result.n < 1) {
-        res.sendStatus(NOT_FOUND);
-      } else {
-        res.sendStatus(OK);
+
+  try {
+    const deleteResult = await Advertisement.findOneAndDelete({ _id: req.body._id });
+
+    if(!deleteResult) {
+      return res.sendStatus(NOT_FOUND);
+    }
+
+    AuditLog.create({
+      userId: decoded.token._id,
+      action: AuditLogActions.DELETE_AD,
+      details: {
+        deletedAd: {
+          id: deleteResult._id,
+          message: deleteResult.message,
+        }
       }
-    })
-    .catch(() => {
-      res.sendStatus(BAD_REQUEST);
-    });
+    }).catch(logger.error);
+
+    res.sendStatus(OK);
+  } catch (error) {
+    logger.error('Error deleting ad:', error);
+    res.sendStatus(BAD_REQUEST);
+  }
 });
 
 module.exports = router;

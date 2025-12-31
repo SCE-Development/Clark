@@ -70,6 +70,10 @@ const UserSchema = new Schema(
       type: Number,
       default: 0
     },
+    escrowPagesPrinted: {
+      type: Number,
+      default: 0
+    },
     apiKey: {
       type: String,
       default: ''

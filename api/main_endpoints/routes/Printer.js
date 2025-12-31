@@ -8,19 +8,18 @@ const path = require('path');
 const { MetricsHandler, register } = require('../../util/metrics.js');
 const { cleanUpChunks, cleanUpExpiredChunks, recordPrintingFolderSize } = require('../util/Printer.js');
 
-const {
-  decodeToken,
-  checkIfTokenSent,
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  BAD_REQUEST
 } = require('../../util/constants').STATUS_CODES;
 const {
   PRINTING = {}
 } = require('../../config/config.json');
+const User = require('../models/User.js');
 
 // see https://github.com/SCE-Development/Quasar/tree/dev/docker-compose.dev.yml#L11
 let PRINTER_URL = process.env.PRINTER_URL
@@ -74,18 +73,17 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    logger.warn('/sendPrintRequest was requested without a token');
-    return res.sendStatus(UNAUTHORIZED);
-  }
-  if (!await decodeToken(req)) {
+  const decoded = await decodeToken(req);
+  if (!decoded.token) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
-    return res.sendStatus(UNAUTHORIZED);
+    return res.sendStatus(decoded.status);
   }
+  // this makes printing pass in unit tests, at some point need to test axios call
   if (!PRINTING.ENABLED) {
     logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
     return res.status(OK).send({ printId: null });
   }
+  const user = await User.findById(decoded.token._id);
 
   const dir = path.join(__dirname, 'printing');
   const { totalChunks, chunkIdx } = req.body;
@@ -95,7 +93,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     return res.sendStatus(OK);
   }
 
-  const { copies, sides, id } = req.body;
+  const { copies, sides, id, totalPages } = req.body;
 
   const chunks = await fs.promises.readdir(dir);
   const assembledPdfFromChunks = path.join(dir, id + '.pdf');
@@ -114,11 +112,16 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     }
   }
 
-  const stream = await fs.createReadStream(assembledPdfFromChunks);
+  const stream = await fs.promises.readFile(assembledPdfFromChunks);
   const data = new FormData();
   data.append('file', stream, {filename: id, type: 'application/pdf'});
   data.append('copies', copies);
   data.append('sides', sides);
+
+  if (Number(totalPages) > 30 - user.pagesPrinted - user.escrowPagesPrinted) {
+    await cleanUpChunks(dir, id);
+    return res.sendStatus(BAD_REQUEST);
+  }
 
   try {
     // full pdf can be sent to quasar no problem
@@ -135,10 +138,55 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 
     await cleanUpChunks(dir, id);
     res.status(OK).send(printId);
+
+    user.escrowPagesPrinted += Number(totalPages);
+    await user.save();
   } catch (err) {
     logger.error('/sendPrintRequest had an error: ', err);
 
     await cleanUpChunks(dir, id);
+    res.sendStatus(SERVER_ERROR);
+  }
+});
+
+router.get('/status', async (req, res) => {
+  const decodedToken = await decodeToken(req);
+  if (!decodedToken || Object.keys(decodedToken) === 0) {
+    logger.warn('/status was requested with an invalid token');
+    return res.sendStatus(UNAUTHORIZED);
+  }
+  if (!PRINTING.ENABLED) {
+    logger.warn('Printing is disabled, returning 200 and completed status to mock the printing server');
+    return res.status(OK).send({ status: 'completed' });
+  }
+
+  try {
+    const response = await axios.get(`${PRINTER_URL}/status/`, {
+      params: {
+        id: req.query.id,
+      }
+    });
+
+    const user = await User.findById(decodedToken.token._id);
+
+    // { status: string }
+    const json = response.data;
+    const pages = Math.abs(Number(req.query.pages));
+
+    if (json.status === 'completed') {
+      user.pagesPrinted += pages;
+      user.escrowPagesPrinted -= pages;
+      await user.save();
+    }
+
+    if (json.status === 'failed') {
+      user.escrowPagesPrinted -= pages;
+      await user.save();
+    }
+
+    res.status(OK).send(json);
+  } catch (err) {
+    logger.error('/status had an error: ', err);
     res.sendStatus(SERVER_ERROR);
   }
 });

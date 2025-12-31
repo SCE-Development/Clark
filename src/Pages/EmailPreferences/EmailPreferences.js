@@ -108,29 +108,29 @@ export default function EmailPreferencesPage(props) {
             What would you like to hear about?
           </p>
           <div className='flex flex-col items-center justify-center mt-10'>
-            <div class="flex mb-4">
+            <div className="flex mb-4">
               <input
                 id="default-radio-1"
                 type="radio"
                 checked={isOptedIntoEmails}
                 name="default-radio"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 onChange={() => setIsOptedIntoEmails(true)}
               />
-              <label for="default-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <label for="default-radio-1" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 {' '}I would like to continue to recieve club update emails from SCE
               </label>
             </div>
-            <div class="flex items-center">
+            <div className="flex items-center">
               <input
                 id="default-radio-2"
                 type="radio"
                 checked={!isOptedIntoEmails}
                 name="default-radio"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 onChange={() => setIsOptedIntoEmails(false)}
               />
-              <label for="default-radio-2" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <label for="default-radio-2" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 {' '}No thanks, I would like to unsubscribe from all emails (best choice)
               </label>
             </div>

@@ -1,11 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const {
-  decodeToken,
-  checkIfTokenSent,
-  checkIfTokenValid,
-} = require('../util/token-functions.js');
+const { decodeToken } = require('../util/token-functions.js');
 const {
   OK,
   UNAUTHORIZED,
@@ -14,8 +10,9 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
 const { Cleezy } = require('../../config/config.json');
-const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const { ENABLED } = Cleezy;
+const cleezyHelpers = require('../util/cleezyHelpers.js');
+const { MEMBERSHIP_STATE } = require('../../util/constants.js');
 
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
@@ -29,27 +26,13 @@ router.get('/list', async (req, res) => {
     });
   }
   const { page = 0, search, sortColumn = 'created_at', sortOrder = 'DESC'} = req.query;
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   try {
-    const response = await axios.get(CLEEZY_URL + '/list', {
-      params: {
-        page,
-        ...(search !== undefined && { search }),
-        // eslint-disable-next-line camelcase
-        sort_by: sortColumn,
-        order: sortOrder
-      },
-    });
-    const { data = [], total, rows_per_page: rowsPerPage } = response.data;
-    const returnData = data.map(element => {
-      const u = new URL(element.alias, URL_SHORTENER_BASE_URL);
-      return { ...element, link: u.href };
-    });
-    res.json({ data: returnData, total, rowsPerPage });
+    const returnData = await cleezyHelpers.searchCleezyUrls({ page, search, sortColumn, sortOrder });
+    res.json(returnData);
   } catch (err) {
     logger.error('/listAll had an error', err);
     if (err.response && err.response.data) {
@@ -61,10 +44,9 @@ router.get('/list', async (req, res) => {
 });
 
 router.post('/createUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   const { url, alias, expiresAt } = req.body;
   let jsonbody = { url, alias: alias || null };
@@ -82,10 +64,9 @@ router.post('/createUrl', async (req, res) => {
 });
 
 router.post('/deleteUrl', async (req, res) => {
-  if (!checkIfTokenSent(req)) {
-    return res.sendStatus(FORBIDDEN);
-  } else if (!await decodeToken(req)) {
-    return res.sendStatus(UNAUTHORIZED);
+  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
   }
   const { alias } = req.body;
   axios
@@ -99,36 +80,4 @@ router.post('/deleteUrl', async (req, res) => {
     });
 });
 
-const searchCleezyUrls = async (req) => {
-  if(!ENABLED || !req.body.query) {
-    return { status: OK, data: [] };
-  }
-
-  if (!checkIfTokenSent(req)) {
-    return { status: FORBIDDEN, data: [] };
-  } else if (!checkIfTokenValid(req, membershipState.OFFICER)) {
-    return { status: UNAUTHORIZED, data: [] };
-  }
-
-  try {
-    const cleezyQuery = req.body.query.replace(/[^a-zA-Z0-9]/g, '');
-    const cleezyRes = await axios.get(CLEEZY_URL + '/list', {
-      params: {
-        search: cleezyQuery
-      }
-    });
-    const cleezyData = cleezyRes.data?.data
-      .slice(0, 5)
-      .map(e => {
-        const u = new URL(e.alias, URL_SHORTENER_BASE_URL);
-        return { ...e, link: u.href };
-      });
-
-    return { status: OK, data: cleezyData };
-  } catch (err) {
-    logger.error('cleezy search urls had an error', err);
-    return { status: SERVER_ERROR, data: [] };
-  }
-};
-
-module.exports = {router, searchCleezyUrls};
+module.exports = router;

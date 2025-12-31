@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { BASE_API_URL } from '../../Enums';
 import { useSCE } from '../../Components/context/SceContext';
-import { getAllCardsFromDb, deleteCardFromDb } from '../../APIFunctions/CardReader';
+import { getAllCardsFromDb, deleteCardFromDb, editCardAlias } from '../../APIFunctions/CardReader';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal';
-import { trashcanSymbol } from '../Overview/SVG';
+import { trashcanSymbol, pencilSymbol, checkSymbol, cancelSymbol } from '../Overview/SVG';
 
 const header = [
   'Time'.padEnd(29),
@@ -17,10 +17,13 @@ const header = [
 export default function CardReader() {
   const { user } = useSCE();
   const token = user.token;
+
   const [logs, setLogs] = useState([]);
   const [cards, setCards] = useState([]);
   const [toggleDelete, setToggleDelete] = useState(false);
   const [cardToDelete, setCardToDelete] = useState({});
+  const [editingCardId, setEditingCardId] = useState(null);
+  const [editedAlias, setEditedAlias] = useState('');
   const [tab, setTab] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('tab') || 'registry';
@@ -44,9 +47,9 @@ export default function CardReader() {
 
   const getColumnClassName = (columnName) => {
     let className = 'px-6 py-3 whitespace-nowrap ';
-    if(columnName === 'lastVerifiedAt' | columnName === 'registrationDate'){
+    if (['lastVerifiedAt', 'registrationDate'].includes(columnName)) {
       className += 'hidden md:table-cell ';
-    } else if (columnName === 'verifiedCount'){
+    } else if (columnName === 'verifiedCount') {
       className += 'hidden lg:table-cell';
     }
     return className;
@@ -89,12 +92,78 @@ export default function CardReader() {
     setCardToDelete(card);
   }
 
+  function handleEditClick(card) {
+    if (editingCardId === card._id) {
+      setEditingCardId(null);
+      setEditedAlias('');
+    } else {
+      setEditingCardId(card._id);
+      setEditedAlias(card.alias);
+    }
+  }
+
+  async function handleSaveEdit(cardId) {
+    if (!editedAlias.trim()) {
+      return; // Don't save empty alias
+    }
+
+    try {
+      const response = await editCardAlias(token, cardId, editedAlias.trim());
+      if (!response.error) {
+        // Refetch all cards from database to ensure UI matches server reality
+        await getAllCards();
+        setEditingCardId(null);
+        setEditedAlias('');
+      }
+    } catch (error) {
+      setLogs(
+        (currLogs) => [
+          '[error] unable to update card alias, check browser logs: \n' + error,
+          ...currLogs,
+        ]
+      );
+    }
+  }
+
+  function handleEditKeyDown(key) {
+    if (key === 'Enter') {
+      handleSaveEdit(editingCardId);
+    } else if (key === 'Escape') {
+      setEditingCardId(null);
+      setEditedAlias('');
+    }
+  }
+
+  function renderInputOrAlias(card) {
+    if (editingCardId === card._id) {
+      return (
+        <input
+          type='text'
+          value={editedAlias}
+          onChange={(e) => setEditedAlias(e.target.value)}
+          onKeyDown={(e) => handleEditKeyDown(e.key)}
+          className='bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-white font-medium m-0 px-1 py-0 focus:outline-none focus:ring-1 focus:ring-blue-500'
+          style={{ width: '16ch' }}
+          autoFocus
+        />
+      );
+    }
+    return (
+      <div style={{ width: '16ch', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
+        <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+          {card.alias}
+        </span>
+      </div>
+    );
+  }
+
   function CardEntry({ card }) {
+    const isEditing = editingCardId === card._id;
     return (
       <tr key={card._id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
         <td key='alias' className=''>
           <div className='px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-white'>
-            {card.alias}
+            {renderInputOrAlias(card)}
           </div>
         </td>
         <td key='createdAt' className='hidden md:table-cell'>
@@ -113,12 +182,33 @@ export default function CardReader() {
           </div>
         </td>
         <td>
-          <button
-            className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
-            onClick={() => handleDeleteClick(card)}
-          >
-            {trashcanSymbol('#e64539')}
-          </button>
+          <div className='flex space-x-2 w-32'>
+            <button
+              className={`p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl ${!isEditing ? 'invisible' : ''}`}
+              onClick={() => handleSaveEdit(card._id)}
+              title='Save changes'
+            >
+              {checkSymbol('#22c55e')}
+            </button>
+            <button
+              className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+              onClick={() => handleEditClick(card)}
+              title={isEditing ? 'Cancel edit' : 'Edit alias'}
+            >
+              {isEditing ? (
+                cancelSymbol('#ef4444')
+              ) : (
+                pencilSymbol('#6b7280')
+              )}
+            </button>
+            <button
+              className='p-2 hover:bg-gray-200 dark:hover:bg-white/30 rounded-xl'
+              onClick={() => handleDeleteClick(card)}
+              title='Delete card'
+            >
+              {trashcanSymbol('#e64539')}
+            </button>
+          </div>
         </td>
       </tr>
     );
@@ -284,6 +374,7 @@ export default function CardReader() {
               await getAllCards();
               setToggleDelete(!toggleDelete);
             },
+            handleCancel: () => setToggleDelete(!toggleDelete),
             open: toggleDelete
           }
           } />

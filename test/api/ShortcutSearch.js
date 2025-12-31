@@ -9,7 +9,6 @@ const chaiHttp = require('chai-http');
 const {
   OK,
   UNAUTHORIZED,
-  FORBIDDEN
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
 
@@ -25,12 +24,6 @@ const {
   initializeTokenMock
 } = require('../util/mocks/TokenValidFunctions');
 
-const {
-  setDiscordAPIStatus,
-  resetDiscordAPIMock,
-  restoreDiscordAPIMock,
-  initializeDiscordAPIMock
-} = require('../util/mocks/DiscordApiFunction');
 const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const { getMemberExpirationDate } = require('../../api/main_endpoints/util/userHelpers.js');
 
@@ -41,7 +34,6 @@ chai.use(chaiHttp);
 describe('ShortcutSearch', () => {
   before(async () => {
     initializeTokenMock();
-    initializeDiscordAPIMock();
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/ShortcutSearch.js',
     ]);
@@ -60,18 +52,15 @@ describe('ShortcutSearch', () => {
 
   after(done => {
     restoreTokenMock();
-    restoreDiscordAPIMock();
     tools.terminateServer(done);
   });
 
   beforeEach(() => {
     setTokenStatus(false);
-    setDiscordAPIStatus(false);
   });
 
   afterEach(() => {
     resetTokenMock();
-    resetDiscordAPIMock();
   });
 
   const token = '';
@@ -81,10 +70,10 @@ describe('ShortcutSearch', () => {
     const fiveMatchUsers = { query: 'Lot' };
     const url = '/api/ShortcutSearch/';
 
-    it('Should return status code 403 if no token is passed through', async () => {
+    it('Should return status code 401 if no token is passed through', async () => {
       setTokenStatus(false);
       const result = await test.sendPostRequest(url, queryUser);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return status code 401 if access level is invalid', async () => {
@@ -256,6 +245,7 @@ describe('ShortcutSearch', () => {
         ];
         for (const payload of injectionPayloads) {
           const result = await test.sendPostRequestWithToken(token, url, { query: String(payload)});
+
           expect(result).to.have.status(OK);
           expect(result.body.items.users.length).at.most(5);
           expect(result.body.items.cleezyData.length).at.most(5);

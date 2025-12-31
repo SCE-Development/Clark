@@ -80,7 +80,16 @@ class SceGoogleApiHandler {
    * DevOps purposes, false for API endpoints.
    */
   getNewToken(isDevScript) {
-    if (!isDevScript) return;
+    if (!isDevScript) {
+      logger.warn(`
+      The 'getNewToken' function was called outside of a development environment.
+      Token generation requires manual steps and interactive console input.
+      If you actually want to set this up, visit:
+      https://sce.sjsu.edu/s/gmailtoken
+      Interactive setup has been skipped.
+      `);
+      return;
+    }
 
     const authUrl = this.oAuth2Client.generateAuthUrl({
       /* eslint-disable-next-line */

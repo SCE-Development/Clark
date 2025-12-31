@@ -8,9 +8,8 @@ export default function AdvertisementAdmin() {
 
   const [ads, setAds] = useState([]);
   const [message, setMessage] = useState('');
-  const [year, setYear] = useState();
-  const [month, setMonth] = useState();
-  const [day, setDay] = useState();
+  const [expireDate, setExpireDate] = useState();
+  const [expireButtonClicked, setExpiredButtonClicked] = useState(false);
 
   async function getAdsFromDB() {
     const adsFromDB = await getAds(user.token);
@@ -19,54 +18,129 @@ export default function AdvertisementAdmin() {
     }
   }
 
+  function isExpired() {
+    if (!expireDate) {
+      return false;
+    }
+    const currDate = new Date();
+    const expireDateObject = new Date(expireDate);
+    return expireDateObject < currDate;
+  }
+
   async function createAdHandler() {
-    // make sure empty inputs are properly set as undefined if empty
-    if (year === '') {
-      setYear(undefined);
+    const newAd = { message };
+    if (expireDate) {
+      const asDateObject = new Date(expireDate);
+      newAd.expireDate = asDateObject.toISOString();
     }
-    if (month === '') {
-      setMonth(undefined);
-    }
-    if (day === '') {
-      setDay(undefined);
-    }
-
-    let expireDate = new Date(year, month - 1, day);
-    if (isNaN(expireDate.getTime())) {
-      expireDate = undefined;
-    }
-
-    await createAd({
-      message,
-      expireDate,
-    }, user.token);
+    // expireDate is a string so we need to turn into date object
+    await createAd(newAd, user.token);
 
     await getAdsFromDB();
   }
 
-  async function deleteExpiredAds() {
-    const adsFromDB = await getAds(user.token);
-    if (!adsFromDB.error) {
-      const currentDate = new Date();
-      const expiredAds = adsFromDB.responseData.filter(ad => {
-        if (ad.expireDate === undefined) return false;
-        return new Date(ad.expireDate) < currentDate;
-      });
-
-      for (const ad of expiredAds) {
-        await deleteAd(ad, user.token);
-      }
+  function maybeRenderExpirationInput() {
+    if (!message) {
+      return null;
     }
+    if (!expireButtonClicked) {
+      return (
+        <>
+          <button
+            className="text-sm btn light:btn-gray dark:btn-neutral sm:text-base"
+            onClick={() => setExpiredButtonClicked(true)}
+          >
+            Set Expiration Date For Ad
+          </button>
+        </>
+      );
+    }
+    return (
+      <>
+        <input
+          className='text-sm input input-bordered sm:text-base'
+          type='datetime-local'
+          onChange={event => {
+            setExpireDate(event.target.value);
+          }}
+        />
+        <button
+          className="text-sm btn btn-error sm:text-base"
+          onClick={() => {
+            setExpiredButtonClicked(false);
+            setExpireDate(undefined); // so that if the user decides to cancel after inputting a date, it will be N/A not prev input
+          }}
+        >
+          Remove Expiration
+        </button>
+      </>
+    );
+  }
+
+  function getFormattedTime(maybeISOString = null) {
+    let date = new Date();
+    if (maybeISOString) {
+      date = new Date(maybeISOString);
+    }
+
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short',
+    });
+  }
+
+  function maybeRenderCreateAdInputs() {
+    if (!message) {
+      return;
+    }
+    return (
+      <>
+        {message && <div>
+          <label className="w-full form-control">
+            <div className="label">
+              <span className="label-text text-md">
+                Optional: Type an expiration date for your ad. Time is in your local timezone ({Intl.DateTimeFormat().resolvedOptions().timeZone}).
+              </span>
+            </div>
+          </label>
+        </div>}
+        <div className="flex gap-2 mb-3">
+          {maybeRenderExpirationInput()}
+          <button
+            className="text-sm btn btn-primary sm:text-base"
+            onClick={() => {
+              createAdHandler();
+            }}
+          >
+            Create Ad
+          </button>
+        </div>
+        {
+          isExpired() && <div>
+
+            <label className="w-full form-control mb-3">
+              <div className="label flex flex-col items-start space-y-1">
+                <span className="text-red-600 dark:text-red-400 font-semibold">
+                  Your selected expiration is considered behind the current time of {getFormattedTime()}.
+                </span>
+                <span className="text-red-600 dark:text-red-400 font-semibold">
+                  Submitting an ad with this expiration will not save the ad in the database.
+                </span>
+              </div>
+            </label>
+          </div>
+        }
+      </>
+    );
   }
 
   useEffect(() => {
     getAdsFromDB();
-
-    const intervalId = setInterval(async () => {
-      await deleteExpiredAds();
-      await getAdsFromDB();
-    }, 20);
-
   }, []);
 
   return (
@@ -83,7 +157,7 @@ export default function AdvertisementAdmin() {
             <input
               className="w-full text-sm input input-bordered sm:text-base"
               type="text"
-              placeholder="Type at most 255 characters"
+              placeholder="Create a new ad here! (255 char max)"
               maxlength="255"
               onChange={event => {
                 setMessage(event.target.value);
@@ -91,49 +165,7 @@ export default function AdvertisementAdmin() {
             />
           </label>
         </div>
-        <div>
-          <label className="w-full form-control">
-            <div className="label">
-              <span className="label-text text-md">
-                Optional: Type an expiration date for your ad. All inputs should be typed in numbers. ex. 2024-9-13
-              </span>
-            </div>
-          </label>
-        </div>
-        <div className="flex items-center space-x-4 mb-6">
-          <input
-            className="flex-1 text-sm input input-bordered sm:text-base"
-            type="text"
-            placeholder="Year"
-            onChange={event => {
-              setYear(event.target.value);
-            }}
-          />
-          <input
-            className="flex-1 text-sm input input-bordered sm:text-base"
-            type="text"
-            placeholder="Month"
-            onChange={event => {
-              setMonth(event.target.value);
-            }}
-          />
-          <input
-            className="flex-1 text-sm input input-bordered sm:text-base"
-            type="text"
-            placeholder="Day"
-            onChange={event => {
-              setDay(event.target.value);
-            }}
-          />
-          <button
-            className="text-sm btn btn-primary sm:text-base"
-            onClick = {() => {
-              createAdHandler();
-            }}
-          >
-            Create Ad
-          </button>
-        </div>
+        {maybeRenderCreateAdInputs()}
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -141,7 +173,7 @@ export default function AdvertisementAdmin() {
                 Advertisement Message
               </th>
               <th scope="col" className="px-6 py-3">
-                Expiriation Date
+                Expiration Date
               </th>
               <th scope="col" className="px-6 py-3">
                 Delete
@@ -156,12 +188,12 @@ export default function AdvertisementAdmin() {
                     {ad.message}
                   </th>
                   <td className="px-6 py-4">
-                    {ad.expireDate === undefined ? 'N/A' : ad.expireDate}
+                    {ad.expireAt ? getFormattedTime(ad.expireAt) : '-'}
                   </td>
                   <td className="px-6 py-4">
                     <button
                       className="text-sm btn btn-primary sm:text-base"
-                      onClick = {async () => {
+                      onClick={async () => {
                         await deleteAd(ad, user.token);
                         await getAdsFromDB();
                       }}

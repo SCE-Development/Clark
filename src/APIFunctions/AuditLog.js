@@ -37,3 +37,14 @@ export async function getAllLogs(page, actionFilter, searchQuery, token) {
 
   return status;
 }
+
+export function createAuditLogEventSource(token, onMessage, onError) {
+  const url = new URL('/api/AuditLog/listen', BASE_API_URL);
+  url.searchParams.append('token', token);
+
+  const eventSource = new EventSource(url.href);
+  eventSource.onmessage = event => onMessage(JSON.parse(event.data));
+  eventSource.onerror = onError;
+
+  return eventSource;
+}
