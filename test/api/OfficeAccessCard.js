@@ -53,8 +53,8 @@ describe('OfficeAccessCard', () => {
   const NEW_CARD_BYTES = 'dials card';
   const INVALID_CARD_BYTES = 'evans card';
 
-  const VALID_ID = 'tiffanys id';
-  const INVALID_ID = 'evans id';
+  const VALID_ID = id.toString();
+  const INVALID_ID = 'tiffanys id';
   const VALID_ALIAS = 'gauravs card';
   const INVALID_ALIAS = 'bobs card';
   const NEW_ALIAS = 'updated test card';
