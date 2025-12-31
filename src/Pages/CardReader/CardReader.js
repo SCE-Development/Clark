@@ -58,7 +58,7 @@ export default function CardReader() {
     const method = data.requestType.padEnd(8);
     const code = String(data.statusCode).padEnd(7);
     const event = data.message.padEnd(21);
-    const alias = data.alias.padEnd(18);
+    const alias = (data.alias || 'no alias')?.padEnd(18);
     return [time, endpoint, method, code, alias, event].join('');
   }
 
@@ -143,7 +143,7 @@ export default function CardReader() {
       } catch (err) { // if the message sent from error cannot be parsed
         setLogs(
           (currLogs) => [
-            '[error] unable to format response, check browser logs',
+            '[error] unable to format response, check browser logs: \n' + err,
             ...currLogs,
           ]
         );
@@ -280,7 +280,7 @@ export default function CardReader() {
             cancelText: 'No, keep the card',
             confirmClassAddons: 'bg-red-600 hover:bg-red-500',
             handleConfirmation: async () => {
-              await deleteCardFromDb(token, cardToDelete.alias);
+              await deleteCardFromDb(token, cardToDelete._id);
               await getAllCards();
               setToggleDelete(!toggleDelete);
             },

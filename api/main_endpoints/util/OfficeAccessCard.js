@@ -2,12 +2,10 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { ADJECTIVES, NOUNS } = require('../../util/CardReaderConstants.js');
 
-function checkIfCardExists({ cardBytes = null, alias = null } = {}) {
-  const body = (cardBytes !== null) ? { cardBytes } : { alias };
+function verifyCard({ cardBytes = null} = {}) {
   return new Promise((resolve) => {
     try {
       OfficeAccessCard.findOneAndUpdate(
-        body,
         {
           $inc: { verifiedCount: 1 },
           $set: { lastVerified: Date.now() }
@@ -16,17 +14,16 @@ function checkIfCardExists({ cardBytes = null, alias = null } = {}) {
         }
         , (error, result) => {
           if (error) {
-            logger.error('checkIfCardExists got an error querying mongodb: ', error);
+            logger.error('verifyCard got an error querying mongodb: ', error);
             return resolve(false);
           }
           if (!result) {
-            const { description } = body;
-            logger.info(`Card:${description} not found in the database`);
+            logger.info(`Card:${cardBytes} not found in the database`);
           }
           return resolve(result); // return the document
         });
     } catch (error) {
-      logger.error('checkIfCardExists caught an error: ', error);
+      logger.error('verifyCard caught an error: ', error);
       return resolve(false);
     }
   });
@@ -64,20 +61,35 @@ async function generateAlias() {
   return new Date().toGMTString();
 }
 
-function deleteCard(alias) {
+function deleteCard(_id) {
   return new Promise((resolve) => {
     try {
-      OfficeAccessCard.findOneAndDelete(
-        { alias }
-        , (error, result) => {
+      // OfficeAccessCard.findOneAndDelete(
+      //   { _id }
+      //   , (error, result) => {
+      //     if (error) {
+      //       logger.error('deleteCard got an error querying mongodb: ', error);
+      //       return resolve(false);
+      //     }
+      //     if (!result) {
+      //       logger.info(`Card ${ alias } not found in the database`);
+      //     }
+      //     return resolve(!!result);
+      //   }
+      // );
+
+      OfficeAccessCard.findByIdAndDelete(
+        _id,
+        (error, result) => {
           if (error) {
             logger.error('deleteCard got an error querying mongodb: ', error);
             return resolve(false);
+          } 
+          if(!result) {
+            logger.info(`Card with id: ${ _id } not found in the database`);
+            return resolve(null);
           }
-          if (!result) {
-            logger.info(`Card ${ alias } not found in the database`);
-          }
-          return resolve(!!result);
+          return resolve(result._id);
         }
       );
     } catch (error) {
