@@ -3,7 +3,7 @@ import Footer from '../../Components/Footer/Footer.js';
 import './Home.css';
 
 import { getAd } from '../../APIFunctions/Advertisement.js';
-import { getHomeImageUrl } from '../../APIFunctions/Homepage.js';
+import { getHomeImage } from '../../APIFunctions/Image.js';
 
 const Home = () => {
 
@@ -11,6 +11,7 @@ const Home = () => {
   const [showMessage, setShowMessage] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [homeImageUrl, setHomeImageUrl] = useState('');
+  const [homeImageAlt, setHomeImageAlt] = useState('');
 
   async function getMessage() {
     try {
@@ -24,13 +25,16 @@ const Home = () => {
   }
 
   async function loadHomeImage() {
-    const response = await getHomeImageUrl();
-    const url = response.responseData;
-    if (!response.error && url) {
-      setHomeImageUrl(url.trim());
-    } else { //old image if error
-      setHomeImageUrl('https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg');
+    const DEFAULT_IMAGE = 'https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg';
+    const response = await getHomeImage();
+    let url = DEFAULT_IMAGE;
+    let alt = 'sce club image';
+    if (!response.error) {
+      url = response.responseData.url;
+      alt = response.responseData.alt;
     }
+    setHomeImageUrl(url);
+    setHomeImageAlt(alt);
   }
 
   useEffect(() => {
@@ -107,6 +111,7 @@ const Home = () => {
             <img
             className="w-full mx-auto transform md:w-4/5 rounded-xl"
             src={homeImageUrl}
+            alt={homeImageAlt}
           />
             <div className={`absolute -top-2 -right-2 md:right-10 md:top-0 z-10 fade-scale-in${showMessage ? ' show' : ''}`}>
               <div className="minecraft-styling text-yellow-400 drop-shadow-lg transform rotate-[-20deg] text-sm md:text-xl whitespace-nowrap">
