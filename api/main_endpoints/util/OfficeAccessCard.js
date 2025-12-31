@@ -74,7 +74,7 @@ function deleteCard(_id) {
             return resolve(false);
           }
           if (!result) {
-            logger.info(`Card with id: ${ _id } not found in the database`);
+            logger.info(`Card with id: ${_id} not found in the database`);
             return resolve(null);
           }
           return resolve(result);

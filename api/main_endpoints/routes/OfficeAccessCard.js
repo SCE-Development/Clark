@@ -153,7 +153,7 @@ router.post('/delete', async (req, res) => {
   }
   const cardDeletion = await deleteCard(_id);
 
-  if(cardDeletion === null) {
+  if (cardDeletion === null) {
     logger.info('Card does not exist');
     writeLogToClient(req.method, {
       statusCode: NOT_FOUND,

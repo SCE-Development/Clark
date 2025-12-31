@@ -197,7 +197,7 @@ describe('OfficeAccessCard', () => {
 
     it('Should return 404 if the card attempted to be deleted was not found', async () => {
       setTokenStatus(true);
-      deleteCardStub.resolves(false);
+      deleteCardStub.resolves(null);
       const result = await test.sendPostRequestWithToken(token,
         DELETE_API_PATH, { _id: INVALID_ID },
       );
