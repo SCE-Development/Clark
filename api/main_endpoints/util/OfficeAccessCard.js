@@ -2,10 +2,11 @@ const OfficeAccessCard = require('../models/OfficeAccessCard.js');
 const logger = require('../../util/logger');
 const { ADJECTIVES, NOUNS } = require('../../util/CardReaderConstants.js');
 
-function verifyCard({ cardBytes = null} = {}) {
+function verifyCard(cardBytes) {
   return new Promise((resolve) => {
     try {
       OfficeAccessCard.findOneAndUpdate(
+        { cardBytes },
         {
           $inc: { verifiedCount: 1 },
           $set: { lastVerified: Date.now() }
@@ -65,20 +66,6 @@ async function generateAlias() {
 function deleteCard(_id) {
   return new Promise((resolve) => {
     try {
-      // OfficeAccessCard.findOneAndDelete(
-      //   { _id }
-      //   , (error, result) => {
-      //     if (error) {
-      //       logger.error('deleteCard got an error querying mongodb: ', error);
-      //       return resolve(false);
-      //     }
-      //     if (!result) {
-      //       logger.info(`Card ${ alias } not found in the database`);
-      //     }
-      //     return resolve(!!result);
-      //   }
-      // );
-
       OfficeAccessCard.findByIdAndDelete(
         _id,
         (error, result) => {
@@ -86,11 +73,11 @@ function deleteCard(_id) {
             logger.error('deleteCard got an error querying mongodb: ', error);
             return resolve(false);
           }
-          if(!result) {
+          if (!result) {
             logger.info(`Card with id: ${ _id } not found in the database`);
             return resolve(null);
           }
-          return resolve(result._id);
+          return resolve(result);
         }
       );
     } catch (error) {
