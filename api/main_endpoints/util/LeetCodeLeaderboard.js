@@ -84,7 +84,7 @@ async function checkIfUserExists(username) {
       error: false,
       exists: data.exists,
     };
-    
+
   } catch (err) {
     logger.error('checkIfUserExists encountered an error: ', err);
     return {
