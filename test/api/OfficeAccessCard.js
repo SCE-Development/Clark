@@ -20,7 +20,6 @@ const {
   SERVER_ERROR,
   FORBIDDEN,
 } = require('../../api/util/constants').STATUS_CODES;
-const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const {
   initializeTokenMock,
   setTokenStatus,
@@ -45,8 +44,6 @@ const token = '';
 
 describe('OfficeAccessCard', () => {
   let deleteCardStub = null;
-  let getAllCardsStub = null;
-  let editAliasStub = null;
   let testCardId = null;
 
   const VALID_CARD_BYTES = 'wesleys card';
@@ -56,7 +53,6 @@ describe('OfficeAccessCard', () => {
   const VALID_ID = id.toString();
   const INVALID_ID = 'tiffanys id';
   const VALID_ALIAS = 'gauravs card';
-  const INVALID_ALIAS = 'bobs card';
   const NEW_ALIAS = 'updated test card';
   const EMPTY_ALIAS = '';
   const WHITESPACE_ALIAS = '   ';

@@ -172,6 +172,7 @@ router.post('/delete', async (req, res) => {
     writeLogToClient(req.method, {
       alias: cardDeletion.alias,
       statusCode: OK,
+      _id
     });
     AuditLog.create({
       userId: decoded.token._id,

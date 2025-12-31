@@ -41,7 +41,7 @@ export async function deleteCardFromDb(token, _id) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(),
+      body: JSON.stringify({ _id }),
     });
     if (res.ok) {
       const result = await res.json();
