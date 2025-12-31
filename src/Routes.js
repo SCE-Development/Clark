@@ -24,6 +24,7 @@ import CreateEventPage from './Pages/Events/CreateEventPage.js';
 import EventRegistration from './Pages/Events/EventsRegistration.js';
 import EditEventPage from './Pages/Events/EditEventPage.js';
 import EventAttendeesDashboard from './Pages/Events/EventAttendeesDashboard.js';
+import LeetCodeLeaderboard from './Pages/LeetCodeLeaderboard/LeetCodeLeaderboard.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -212,6 +213,11 @@ export const officerOrAdminRoutes = [
     pageName: 'Events',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
+    Component: LeetCodeLeaderboard,
+    path: '/leetcode-leaderboard',
+    pageName: 'LeetCode Leaderboard',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/login',
     inAdminNavbar: true
   },
   ...memberRoutes,
