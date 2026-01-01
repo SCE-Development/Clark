@@ -89,14 +89,15 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return statusCode 401 if an invalid ' +
+    it('Should return statusCode 403 if an invalid ' +
       'token was passed in', async () => {
       const user = {
         token: 'Invalid token'
       };
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/users', user);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return statusCode 200 and return an array ' +
@@ -122,15 +123,16 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return statusCode 401 if an invalid ' +
+    it('Should return statusCode 403 if an invalid ' +
       'token was passed in', async () => {
       const user = {
         email: 'a@b.c',
         token: 'Invalid token'
       };
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/search', user);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return statusCode 404 if no user was found', async () => {
@@ -178,15 +180,16 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return statusCode 401 if an invalid ' +
+    it('Should return statusCode 403 if an invalid ' +
       'token was passed in', async () => {
       const user = {
         email: 'a@b.c',
         token: 'Invalid token'
       };
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/edit', user);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return statusCode 404 if no user was found', async () => {
@@ -366,14 +369,15 @@ describe('User', () => {
       const result = await test.sendPostRequest('/api/user/getUserById', user);
       expect(result).to.have.status(UNAUTHORIZED);
     });
-    it('Should return status code 401 if' +
+    it('Should return status code 403 if' +
       ' an invalid token was passed in', async () => {
       const user = {
         userID: id,
         token: 'Invalid Token'
       };
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token, '/api/user/getUserById', user);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
     it('Should return status code 404 if user is not found', async () => {
       const user = {
@@ -444,9 +448,10 @@ describe('User', () => {
         _id: id,
         token: 'Invalid token'
       };
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/delete', user);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return statusCode 404 if no user was found', async () => {
@@ -618,15 +623,16 @@ describe('User', () => {
     });
 
     // invalid token
-    it('Should return statusCode 401 if an invalid ' +
+    it('Should return statusCode 403 if an invalid ' +
       'token was passed in', async () => {
       const user = {
         _id: id,
         token: 'Invalid token'
       };
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(
         token, '/api/User/apikey', user);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
   });
 
@@ -642,11 +648,11 @@ describe('User', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return statusCode 401 if an invalid' +
+    it('Should return statusCode 403 if an invalid' +
       'token was passed in', async () => {
-      setTokenStatus(false);
+      setTokenStatus(null);
       const result = await test.sendGetRequestWithToken(token, '/api/user/getNewPaidMembersThisSemester');
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     describe('1st Semester Mock Test', () => {
