@@ -13,7 +13,8 @@ const {
   OK,
   BAD_REQUEST,
   UNAUTHORIZED,
-  CONFLICT
+  CONFLICT,
+  FORBIDDEN
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
 
