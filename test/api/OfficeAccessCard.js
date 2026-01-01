@@ -222,20 +222,20 @@ describe('OfficeAccessCard', () => {
 
   describe('POST getAllCards', () => {
     it('Should return 401 when token is not sent', async () => {
-      const result = await test.sendGetRequest(GET_ALL_CARDS_API_PATH);
+      const result = await test.sendPostRequest(GET_ALL_CARDS_API_PATH);
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return 403 when invalid token is sent', async () => {
       setTokenStatus(null);
-      const result = await test.sendGetRequestWithToken(token,
+      const result = await test.sendPostRequestWithToken(token,
         GET_ALL_CARDS_API_PATH);
       expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 200 with a successful fetch of all cards', async () => {
       setTokenStatus(true);
-      const result = await test.sendGetRequestWithToken(token,
+      const result = await test.sendPostRequestWithToken(token,
         GET_ALL_CARDS_API_PATH,
       );
       expect(result).to.have.status(OK);
@@ -244,7 +244,7 @@ describe('OfficeAccessCard', () => {
     it('Should return 500 if there was an error fetching all cards', async () => {
       setTokenStatus(true);
       const findStub = sinon.stub(OfficeAccessCard, 'find').rejects(new Error('Database error'));
-      const result = await test.sendGetRequestWithToken(token,
+      const result = await test.sendPostRequestWithToken(token,
         GET_ALL_CARDS_API_PATH,
       );
       expect(result).to.have.status(SERVER_ERROR);
