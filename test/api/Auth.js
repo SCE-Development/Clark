@@ -562,11 +562,12 @@ describe('Auth', () => {
         expect(result).to.have.status(UNAUTHORIZED);
       });
 
-    it('Should return statusCode 401 when a token is invalid',
+    it('Should return statusCode 403 when a token is invalid',
       async () => {
+        setTokenStatus(null);
         const result = await test.sendPostRequestWithToken(
           token, '/api/Auth/verify', {});
-        expect(result).to.have.status(UNAUTHORIZED);
+        expect(result).to.have.status(FORBIDDEN);
       });
 
     it('Should return statusCode 200 when a ' +
