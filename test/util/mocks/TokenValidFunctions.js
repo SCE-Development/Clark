@@ -32,7 +32,7 @@ function resetTokenMock() {
  *    if true, token is valid (status OK),
  *    if false, token is invalid (status UNAUTHORIZED),
  *    if null, token is FORBIDDEN
- *         
+ *
  * @param {Object} data: optional value that will be the result
  *                       of the decoded token value
  * @returns configured mock response
@@ -43,7 +43,7 @@ function setTokenStatus(
 ) {
   let status;
   let tokenPayload;
-  
+
   if (isSuccessful === true) {
     status = OK;
     tokenPayload = data;
