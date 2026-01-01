@@ -246,7 +246,7 @@ describe('LeetCodeLeaderboard', () => {
         { username: 'nonexistentuser' },
       );
       expect(result).to.have.status(OK);
-      expect(result.body).to.deep.equal({ exists: false})
+      expect(result.body).to.equal(false);
       checkIfUserExistsStub.restore();
     });
 
