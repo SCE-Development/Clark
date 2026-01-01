@@ -22,14 +22,13 @@ const {
 } = require('../util/mocks/TokenValidFunctions');
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
-const LeetCodeLeaderboardUtils = require('../../api/main_endpoints/util/LeetCodeLeaderboard.js');
+const LeetCodeLeaderboardUtils = require('../../api/main_endpoints/util/LeetCodeLeaderboard');
 
 let app = null;
 let test = null;
 
 const expect = chai.expect;
 const tools = require('../util/tools/tools.js');
-const { exists } = require('../../api/main_endpoints/models/AuditLog.js');
 let sandbox = sinon.createSandbox();
 
 chai.should();
@@ -46,7 +45,7 @@ describe('LeetCodeLeaderboard', () => {
   const ADD_API_PATH = '/api/LeetCodeLeaderboard/addUser';
   const DELETE_API_PATH = '/api/LeetCodeLeaderboard/deleteUser';
   const GET_ALL_USERS_API_PATH = '/api/LeetCodeLeaderboard/getAllUsers';
-  const CHECK_USER_EXISTS_API_PATH = '/api/LeetCodeLeaderboard/checkUserExists';
+  const CHECK_USER_EXISTS_API_PATH = '/api/LeetCodeLeaderboard/checkIfUserExists';
 
   before(() => {
     initializeTokenMock();
@@ -105,7 +104,7 @@ describe('LeetCodeLeaderboard', () => {
 
     it('Should return 500 if there was an error fetching all users', async () => {
       setTokenStatus(true);
-      const getAllUsersStub = sandbox.stub(LeetCodeLeaderboardUtils, 'getAllUsers').rejects(new Error('Database error'));
+      getAllUsersStub.resolves(null);
       const result = await test.sendGetRequestWithToken(token,
         GET_ALL_USERS_API_PATH,
       );
