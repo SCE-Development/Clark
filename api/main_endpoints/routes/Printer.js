@@ -74,7 +74,7 @@ router.get('/healthCheck', async (req, res) => {
 
 router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     logger.warn('/sendPrintRequest was requested with an invalid token');
     return res.sendStatus(decoded.status);
   }
@@ -150,8 +150,8 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
 });
 
 router.get('/status', async (req, res) => {
-  const decodedToken = await decodeToken(req);
-  if (!decodedToken || Object.keys(decodedToken) === 0) {
+  const decodeToken = await decodeToken(req);
+  if (decodeToken.status !== OK) {
     logger.warn('/status was requested with an invalid token');
     return res.sendStatus(UNAUTHORIZED);
   }
