@@ -6,8 +6,6 @@ const User = require('../models/User.js');
 const { decodeToken } = require('../util/token-functions');
 const {
   OK,
-  UNAUTHORIZED,
-  FORBIDDEN,
   SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
@@ -21,7 +19,7 @@ const MAX_RESULT = 5;
 // Search for all cleezy urls using either alias or url
 router.post('/', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
 
