@@ -256,10 +256,11 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
-        EDIT_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
+        EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 400 when _id is missing from request body', async () => {
