@@ -238,14 +238,15 @@ describe('LeetCodeLeaderboard', () => {
       expect(result).to.have.status(OK);
     });
 
-    it('Should return 404 when user does not exist', async () => {
+    it('Should return 200 and false when user does not exist', async () => {
       setTokenStatus(true);
       checkIfUserExistsStub.resolves({ exists: false });
       const result = await test.sendPostRequestWithToken(token,
         CHECK_USER_EXISTS_API_PATH,
         { username: 'nonexistentuser' },
       );
-      expect(result).to.have.status(NOT_FOUND);
+      expect(result).to.have.status(OK);
+      expect(result.body).to.have.property('exists', false);
       checkIfUserExistsStub.restore();
     });
 
