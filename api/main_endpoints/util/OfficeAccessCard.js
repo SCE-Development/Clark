@@ -19,8 +19,7 @@ function verifyCard(cardBytes) {
             return resolve(false);
           }
           if (!result) {
-            const description = cardBytes !== null ? cardBytes : alias;
-            logger.info(`Card: ${description} not found in the database`);
+            logger.info(`Card: ${cardBytes} not found in the database`);
           }
           return resolve(result); // return the document
         });
