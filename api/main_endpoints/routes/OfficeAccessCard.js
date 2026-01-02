@@ -4,7 +4,6 @@ const {
   SERVER_ERROR,
   NOT_FOUND,
   OK,
-  FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const express = require('express');
@@ -83,10 +82,10 @@ router.get('/verify', async (req, res) => {
 
   if (apiKey !== API_KEY) {
     writeLogToClient(req.method, {
-      statusCode: FORBIDDEN,
+      statusCode: UNAUTHORIZED,
       message: `Invalid API key: ${apiKey}`,
     });
-    return res.sendStatus(FORBIDDEN);
+    return res.sendStatus(UNAUTHORIZED);
   }
 
   const cardVerification = await verifyCard(cardBytes);
