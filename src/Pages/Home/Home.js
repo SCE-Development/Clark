@@ -4,7 +4,7 @@ import './Home.css';
 
 import { getAd } from '../../APIFunctions/Advertisement.js';
 import { getHomeImage } from '../../APIFunctions/Image.js';
-import { incrementVisitCount, getVisitCount } from '../../APIFunctions/HomepageVisit.js';
+
 const Home = () => {
 
   const [message, setMessage] = useState('');
@@ -12,7 +12,6 @@ const Home = () => {
   const [showAll, setShowAll] = useState(false);
   const [homeImageUrl, setHomeImageUrl] = useState('');
   const [homeImageAlt, setHomeImageAlt] = useState('');
-  const [visitCount, setVisitCount] = useState(0);
 
   async function getMessage() {
     try {
@@ -38,16 +37,9 @@ const Home = () => {
     setHomeImageAlt(alt);
   }
 
-  async function loadVisitCounter() {
-    await incrementVisitCount();
-    const response = await getVisitCount();
-    if(!response.error) setVisitCount(response.responseData.visitCount);
-  }
-
   useEffect(() => {
     getMessage();
     loadHomeImage();
-    loadVisitCounter();
     setTimeout(() => setShowAll(true), 100);
   }, []);
 
@@ -129,9 +121,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-        <div className={`slide-in-right pr-6 pb-6 text-base text-gray-400 text-right ${showAll ? ' show' : ''}`}>
-          Visit Count: {visitCount}
-        </div>
+  
       <Footer />
     </div>
   );
