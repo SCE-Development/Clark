@@ -63,20 +63,22 @@ describe('PermissionRequest', () => {
   });
 
   describe('/GET get', () => {
-    it('Should return 404 when request does not exist', async () => {
+    it('Should return empty array when request does not exist', async () => {
       const userId = new mongoose.Types.ObjectId();
       setTokenStatus(true, { _id: userId, email: 'test@test.com', accessLevel: 'MEMBER' });
-      const res = await test.sendGetRequest('/api/PermissionRequest/get?type=' + PermissionRequestTypes.LED_SIGN);
-      expect(res).to.have.status(NOT_FOUND);
+      const res = await test.sendGetRequest('/api/PermissionRequest/get?userId=' + userId + '&type=' + PermissionRequestTypes.LED_SIGN);
+      expect(res).to.have.status(OK);
+      expect(res.body).to.be.an('array').that.is.empty;
     });
 
     it('Should return permission request when it exists', async () => {
       const userId = new mongoose.Types.ObjectId();
       setTokenStatus(true, { _id: userId, email: 'test@test.com', accessLevel: 'MEMBER' });
       await new PermissionRequest({ userId, type: PermissionRequestTypes.LED_SIGN }).save();
-      const res = await test.sendGetRequest('/api/PermissionRequest/get?type=' + PermissionRequestTypes.LED_SIGN);
+      const res = await test.sendGetRequest('/api/PermissionRequest/get?userId=' + userId + '&type=' + PermissionRequestTypes.LED_SIGN);
       expect(res).to.have.status(OK);
-      expect(res.body.type).to.equal(PermissionRequestTypes.LED_SIGN);
+      expect(res.body).to.be.an('array').with.length(1);
+      expect(res.body[0].type).to.equal(PermissionRequestTypes.LED_SIGN);
     });
   });
 

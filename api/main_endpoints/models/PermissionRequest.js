@@ -23,8 +23,7 @@ const PermissionRequestSchema = new Schema(
 );
 
 // Compound unique index prevents duplicate active requests per user+type
-PermissionRequestSchema.index({ userId: 1, type: 1 }, { unique: true, 
-  partialFilterExpression: { deletedAt: null }  });
+PermissionRequestSchema.index({ userId: 1, type: 1 }, { unique: true, partialFilterExpression: { deletedAt: null }});
 
 module.exports = mongoose.model('PermissionRequest', PermissionRequestSchema);
 

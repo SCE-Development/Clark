@@ -39,20 +39,20 @@ router.get('/get', async (req, res) => {
   try {
     const query = { deletedAt: null };
 
-    // If no userId provided, return all (officer+ only)
+    // If theres no userId, return all for officers and admins
     if (!queryUserId) {
       if (!isOfficer) {
         return res.sendStatus(UNAUTHORIZED);
       }
     } else {
-      // If userId provided, check permissions
+      // If there is a userId, check their perms
       if (!isOfficer && queryUserId !== decoded.token._id.toString()) {
         return res.sendStatus(FORBIDDEN);
       }
       query.userId = queryUserId;
     }
 
-    // Optional type filter
+    // If there is a type, filter by it
     if (type && Object.keys(PermissionRequestTypes).includes(type)) {
       query.type = type;
     }
@@ -79,7 +79,6 @@ router.post('/delete', async (req, res) => {
 
   try {
     let request;
-    
     // Officers or admins can delete any request by id
     if (decoded.token.accessLevel >= membershipState.OFFICER && _id) {
       request = await PermissionRequest.findOne({
