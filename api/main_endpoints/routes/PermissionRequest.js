@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const PermissionRequest = require('../models/PermissionRequest');
-const { OK, UNAUTHORIZED, SERVER_ERROR, NOT_FOUND, BAD_REQUEST } = require('../../util/constants').STATUS_CODES;
+const { OK, UNAUTHORIZED, FORBIDDEN, SERVER_ERROR, NOT_FOUND, BAD_REQUEST, CONFLICT } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants.js').MEMBERSHIP_STATE;
 const { decodeToken } = require('../util/token-functions.js');
 const logger = require('../../util/logger');
@@ -17,31 +17,14 @@ router.post('/create', async (req, res) => {
   }
 
   try {
-    const permissionRequest = await PermissionRequest.create({
+    await PermissionRequest.create({
       userId: decoded.token._id,
       type,
     });
-    const populated = await PermissionRequest.findById(permissionRequest._id)
-      .populate('userId', 'firstName lastName email');
-    res.status(OK).send(populated);
+    res.sendStatus(OK);
   } catch (error) {
-    if (error.code === 11000) return res.status(BAD_REQUEST).send({ error: 'Request already exists' });
+    if (error.code === 11000) return res.sendStatus(CONFLICT);
     logger.error('Failed to create permission request:', error);
-    res.sendStatus(SERVER_ERROR);
-  }
-});
-
-router.get('/getAll', async (req, res) => {
-  const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (decoded.status !== OK) return res.sendStatus(decoded.status);
-
-  try {
-    const requests = await PermissionRequest.find({ deletedAt: null })
-      .populate('userId', 'firstName lastName email')
-      .sort({ createdAt: -1 });
-    res.status(OK).send(requests);
-  } catch (error) {
-    logger.error('Failed to get permission requests:', error);
     res.sendStatus(SERVER_ERROR);
   }
 });
@@ -50,17 +33,37 @@ router.get('/get', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.MEMBER);
   if (decoded.status !== OK) return res.sendStatus(decoded.status);
 
-  try {
-    const request = await PermissionRequest.findOne({
-      userId: decoded.token._id,
-      type: req.query.type,
-      deletedAt: null,
-    }).populate('userId', 'firstName lastName email');
+  const { userId: queryUserId, type } = req.query;
+  const isOfficer = decoded.token.accessLevel >= membershipState.OFFICER;
 
-    if (!request) return res.sendStatus(NOT_FOUND);
-    res.status(OK).send(request);
+  try {
+    const query = { deletedAt: null };
+
+    // If no userId provided, return all (officer+ only)
+    if (!queryUserId) {
+      if (!isOfficer) {
+        return res.sendStatus(UNAUTHORIZED);
+      }
+    } else {
+      // If userId provided, check permissions
+      if (!isOfficer && queryUserId !== decoded.token._id.toString()) {
+        return res.sendStatus(FORBIDDEN);
+      }
+      query.userId = queryUserId;
+    }
+
+    // Optional type filter
+    if (type && Object.keys(PermissionRequestTypes).includes(type)) {
+      query.type = type;
+    }
+
+    const requests = await PermissionRequest.find(query)
+      .populate('userId', 'firstName lastName email')
+      .sort({ createdAt: -1 });
+
+    res.status(OK).send(requests);
   } catch (error) {
-    logger.error('Failed to get permission request:', error);
+    logger.error('Failed to get permission requests:', error);
     res.sendStatus(SERVER_ERROR);
   }
 });
@@ -69,17 +72,30 @@ router.post('/delete', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.MEMBER);
   if (decoded.status !== OK) return res.sendStatus(decoded.status);
 
-  const { type } = req.body;
+  const { type, _id } = req.body;
   if (!type || !Object.keys(PermissionRequestTypes).includes(type)) {
     return res.status(BAD_REQUEST).send({ error: 'Invalid type' });
   }
 
   try {
-    const request = await PermissionRequest.findOne({
-      userId: decoded.token._id,
-      type,
-      deletedAt: null,
-    });
+    let request;
+    
+    // Officers or admins can delete any request by id
+    if (decoded.token.accessLevel >= membershipState.OFFICER && _id) {
+      request = await PermissionRequest.findOne({
+        _id,
+        type,
+        deletedAt: null,
+      });
+    } else {
+      // Members can delete their own requests and officers can delete their own requests without id
+      request = await PermissionRequest.findOne({
+        userId: decoded.token._id,
+        type,
+        deletedAt: null,
+      });
+    }
+
     if (!request) return res.sendStatus(NOT_FOUND);
     request.deletedAt = new Date();
     await request.save();
