@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
-import { getPermissionRequest, createPermissionRequest } from '../../APIFunctions/PermissionRequest';
 import { useSCE } from '../../Components/context/SceContext';
-import { membershipState } from '../../Enums';
 
 import './ledsign.css';
 
@@ -22,9 +20,6 @@ function LedSign() {
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
-  const [permissionRequest, setPermissionRequest] = useState(null);
-  const [checkingPermission, setCheckingPermission] = useState(false);
-  const [requestingPermission, setRequestingPermission] = useState(false);
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -216,24 +211,11 @@ function LedSign() {
       }
       setLoading(false);
     }
-
-    async function checkPermission() {
-      if (user.accessLevel < membershipState.OFFICER) {
-        setCheckingPermission(true);
-        const result = await getPermissionRequest('LED_SIGN', user.token);
-        if (!result.error && result.responseData) {
-          setPermissionRequest(result.responseData);
-        }
-        setCheckingPermission(false);
-      }
-    }
-
     checkSignHealth();
-    checkPermission();
     // eslint-disable-next-line
   }, [])
 
-  if (loading || checkingPermission) {
+  if (loading) {
     return (
       <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
       </svg>
@@ -249,60 +231,6 @@ function LedSign() {
     );
   }
 
-  async function handleRequestAccess() {
-    setRequestingPermission(true);
-    const result = await createPermissionRequest('LED_SIGN', user.token);
-    if (!result.error) {
-      setPermissionRequest(result.responseData);
-    }
-    setRequestingPermission(false);
-  }
-
-  function renderPermissionRequestUI() {
-    if (user.accessLevel >= membershipState.OFFICER) {
-      return null;
-    }
-
-    if (checkingPermission) {
-      return (
-        <div className="w-2/3 lg:w-1/2 text-center py-4">
-          <p>Checking access...</p>
-        </div>
-      );
-    }
-
-    if (permissionRequest) {
-      return (
-        <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2">
-          <p className="text-gray-700 dark:text-gray-300">
-            You requested access to the sign on {getFormattedTime(permissionRequest.createdAt)}.
-          </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-            Drop a message in Discord to speed up the process!
-          </p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2">
-        <p className="text-gray-700 dark:text-gray-300">
-          You need permission to access the LED sign.
-        </p>
-        <button
-          className="btn bg-blue-500 hover:bg-blue-400 text-white"
-          onClick={handleRequestAccess}
-          disabled={requestingPermission}
-        >
-          {requestingPermission ? 'Requesting...' : 'Request Access'}
-        </button>
-        <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-          Drop a message in Discord to speed up the process
-        </p>
-      </div>
-    );
-  }
-
   function getAnimationDuration() {
     // the scrollSpeed input can be can be anywhere from 0 to 10. the
     // lower the duration is, the faster the text scrolls. we divide by
@@ -311,87 +239,80 @@ function LedSign() {
     return (11 - scrollSpeed);
   }
 
-  const hasAccess = user.accessLevel >= membershipState.OFFICER;
-
   return (
     <div>
-      {!hasAccess && (
-        <div className="flex justify-center items-center mt-10 w-full">
-          {renderPermissionRequestUI()}
-        </div>
-      )}
-      {hasAccess && (
-        <div className="space-y-12 mt-10  gap-x-6 gap-y-8 w-full sm:grid-cols-6">
-          <div className="flex border-b border-gray-900/10 pb-12 md:w-full">
-            <div className="flex flex-col justify-center items-center sm:col-span-3 w-full">
-              <div className='w-2/3 lg:w-1/2'>
-                <label>Preview</label>
-                <div>
-                  <div
-                    className="led-sign-preview-border-top"
-                    style={{ backgroundColor: borderColor }}
-                  ></div>
-                  <div
-                    className="led-sign-preview-background"
-                    style={{ backgroundColor: backgroundColor }}
-                  >
-                    <div className="led-sign-marquee-container">
-                      <div className="led-sign-marquee" style={{ animationDuration: `${getAnimationDuration()}s` }}>
-                        <h1 className="led-sign-preview-text text-3xl" style={{ color: textColor }} placeholder="Sign Text">
-                          {/*
+      <div className="space-y-12 mt-10  gap-x-6 gap-y-8 w-full sm:grid-cols-6">
+        <div className="flex border-b border-gray-900/10 pb-12 md:w-full">
+          <div className="flex flex-col justify-center items-center sm:col-span-3 w-full">
+            <div className='w-2/3 lg:w-1/2'>
+              <label>Preview</label>
+              <div>
+                <div
+                  className="led-sign-preview-border-top"
+                  style={{ backgroundColor: borderColor }}
+                ></div>
+                <div
+                  className="led-sign-preview-background"
+                  style={{ backgroundColor: backgroundColor }}
+                >
+                  <div className="led-sign-marquee-container">
+                    <div className="led-sign-marquee" style={{ animationDuration: `${getAnimationDuration()}s` }}>
+                      <h1 className="led-sign-preview-text text-3xl" style={{ color: textColor }} placeholder="Sign Text">
+                        {/*
                           we add a padding of 28 characters of whitespace so the entire message
                           scrolls to the end of the preview before repeating. the preview has a
                           width of about 28 characters.
                         */}
-                          {text.padEnd(28, ' ')}
-                        </h1>
-                      </div>
+                        {text.padEnd(28, ' ')}
+                      </h1>
                     </div>
                   </div>
-                  <div
-                    className="led-sign-preview-border-bottom"
-                    style={{ backgroundColor: borderColor }}
-                  ></div>
                 </div>
+                <div
+                  className="led-sign-preview-border-bottom"
+                  style={{ backgroundColor: borderColor }}
+                ></div>
               </div>
-              {maybeShowExpirationDate()}
-              {getExpirationButtonOrInput()}
-              {
-                inputArray.map(({
-                  id,
-                  title,
-                  type,
-                  value,
-                  onChange,
-                  ...rest
-                }) => (
-                  <div key={title} className="sm:col-span-2 sm:col-start-1 w-2/3 lg:w-1/2">
-                    <div className="mt-2 ">
-                      <label htmlFor="copies" className="block text-sm font-medium leading-6">{title}</label>
-                      <input
-                        type={type}
-                        value={value}
-                        id={id}
-                        onChange={onChange}
-                        className="indent-2 text-black dark:text-white block w-full rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        {...rest}
-                      />
-                    </div>
-                  </div>
-                ))
-              }
-
-              <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
-              Stop
-              </button>
-              <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
-              Send
-              </button>
-              {renderRequestStatus()}
             </div>
+            {maybeShowExpirationDate()}
+            {getExpirationButtonOrInput()}
+            {
+              inputArray.map(({
+                id,
+                title,
+                type,
+                value,
+                onChange,
+                ...rest
+              }) => (
+                <div key={title} className="sm:col-span-2 sm:col-start-1 w-2/3 lg:w-1/2">
+                  <div className="mt-2 ">
+                    <label htmlFor="copies" className="block text-sm font-medium leading-6">{title}</label>
+                    <input
+                      type={type}
+                      value={value}
+                      id={id}
+                      onChange={onChange}
+                      className="indent-2 text-black dark:text-white block w-full rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...rest}
+                    />
+                  </div>
+                </div>
+              ))
+            }
+
+            <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
+              Stop
+            </button>
+            <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
+              Send
+            </button>
+            {renderRequestStatus()}
           </div>
         </div>
-      )}
+
+      </div>
+
     </div>
   );
 }
