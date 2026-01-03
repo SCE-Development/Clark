@@ -105,7 +105,7 @@ export const officerOrAdminRoutes = [
     Component: LedSign,
     path: '/led-sign',
     pageName: 'LED Sign',
-    allowedIf: allowedIf.MEMBER,
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
   },
