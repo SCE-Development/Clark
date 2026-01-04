@@ -104,7 +104,7 @@ describe('LeetCodeLeaderboard', () => {
 
     it('Should return 500 if there was an error fetching all users', async () => {
       setTokenStatus(true);
-      getAllUsersStub.resolves(null);
+      getAllUsersStub.resolves(false);
       const result = await test.sendGetRequestWithToken(token,
         GET_ALL_USERS_API_PATH,
       );
