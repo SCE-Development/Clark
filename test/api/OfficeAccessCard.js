@@ -18,6 +18,7 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
+  FORBIDDEN
 } = require('../../api/util/constants').STATUS_CODES;
 const {
   initializeTokenMock,
