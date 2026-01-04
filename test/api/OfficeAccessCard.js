@@ -184,10 +184,11 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
+        DELETE_API_PATH, { _id: VALID_ID });
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 404 if the card attempted to be deleted was not found', async () => {
@@ -224,10 +225,11 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
         GET_ALL_CARDS_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 200 with a successful fetch of all cards', async () => {
@@ -255,10 +257,11 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
-        EDIT_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
+        EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 400 when _id is missing from request body', async () => {

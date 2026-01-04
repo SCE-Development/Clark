@@ -7,6 +7,7 @@ const fs = require('fs');
 const {
   OK,
   UNAUTHORIZED,
+  FORBIDDEN,
 } = require('../../api/util/constants').STATUS_CODES;
 
 const {
@@ -116,14 +117,15 @@ describe('Printer', () => {
 
     const DUMMY_CHUNK = new FormData();
 
-    it('Should return 400 when token is not sent', async () => {
+    it('Should return 401 when token is not sent', async () => {
       const result = await test.sendPostRequest('/api/Printer/sendPrintRequest', { DUMMY_CHUNK });
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 400 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token, '/api/Printer/sendPrintRequest', { DUMMY_CHUNK });
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it(`Should successfully process all ${TOTAL_CHUNKS} chunks sent (with valid token)`, async () => {

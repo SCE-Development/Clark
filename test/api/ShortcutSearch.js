@@ -9,6 +9,7 @@ const chaiHttp = require('chai-http');
 const {
   OK,
   UNAUTHORIZED,
+  FORBIDDEN,
 } = require('../../api/util/constants').STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
 
@@ -76,10 +77,10 @@ describe('ShortcutSearch', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return status code 401 if access level is invalid', async () => {
-      setTokenStatus(false, { accessLevel: MEMBERSHIP_STATE.MEMBER });
+    it('Should return status code 403 if access level is invalid', async () => {
+      setTokenStatus(null, { accessLevel: MEMBERSHIP_STATE.MEMBER });
       const result = await test.sendPostRequestWithToken(token, url, queryUser);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     before(async () => {
