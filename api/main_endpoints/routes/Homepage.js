@@ -5,12 +5,12 @@ const { BAD_REQUEST, OK } = require('../../util/constants').STATUS_CODES;
 
 router.post('/visit', async (req, res) => {
   try {
-      await visitCounter.findOneAndUpdate(
-        {},
-        {$inc: {visitCount: 1}},
-        { new: true, upsert: true }
-      );
-      res.sendStatus(OK);
+    await visitCounter.findOneAndUpdate(
+      {},
+      {$inc: {visitCount: 1}},
+      { new: true, upsert: true }
+    );
+    res.sendStatus(OK);
   } catch (error) {
     res.sendStatus(BAD_REQUEST);
   }
@@ -24,6 +24,6 @@ router.get('/count', async (req, res) => {
   } catch (error) {
     return res.sendStatus(BAD_REQUEST);
   }
-})
+});
 
 module.exports = router;
