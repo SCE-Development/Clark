@@ -25,7 +25,7 @@ router.get('/getAllUsers', async (req, res) => {
 
   const users = await getAllUsers();
   if (!users) {
-    return res.status(SERVER_ERROR);
+    return res.sendStatus(SERVER_ERROR);
   }
   return res.status(OK).send({ users });
 });
