@@ -17,7 +17,7 @@ const { writeLogToClient } = require('../../util/logging');
 router.post('/verifyMembership', async (req, res) => {
     const decoded = await decodeToken(req, membershipState.PENDING);
     if (decoded.status !== OK) {
-    return res.sendStatus(decoded.status);
+        return res.sendStatus(decoded.status);
     }
 
     const { confirmationCode } = req.body 
@@ -42,7 +42,7 @@ router.post('/verifyMembership', async (req, res) => {
             return res.sendStatus(NOT_FOUND);
         }
         const paymentId = paymentDocument._id
-        const amount = paymentDocument.amount;
+        const amount = paymentDocument.amount
         let accessLevel
         let membershipValidUntil
         
