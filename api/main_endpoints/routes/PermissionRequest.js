@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const PermissionRequest = require('../models/PermissionRequest');
-const { OK, UNAUTHORIZED, FORBIDDEN, SERVER_ERROR, NOT_FOUND, BAD_REQUEST, CONFLICT } = require('../../util/constants').STATUS_CODES;
+const { OK, UNAUTHORIZED, SERVER_ERROR, NOT_FOUND, BAD_REQUEST, CONFLICT } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants.js').MEMBERSHIP_STATE;
 const { decodeToken } = require('../util/token-functions.js');
 const logger = require('../../util/logger');
@@ -45,11 +45,11 @@ router.get('/get', async (req, res) => {
         return res.sendStatus(UNAUTHORIZED);
       }
     } else {
-      // If there is a userId, check their perms
-      if (!isOfficer && queryUserId !== decoded.token._id.toString()) {
-        return res.sendStatus(FORBIDDEN);
+      if (isOfficer) {
+        query.userId = queryUserId;
+      } else {
+        query.userId = decoded.token._id.toString();
       }
-      query.userId = queryUserId;
     }
 
     // If there is a type, filter by it
