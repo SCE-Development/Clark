@@ -1,9 +1,14 @@
 const express = require ('express');
 const router = express.Router();
 const visitCounter = require('../models/HomepageVisit');
-const { BAD_REQUEST, OK } = require('../../util/constants').STATUS_CODES;
+const { FORBIDDEN, BAD_REQUEST, OK } = require('../../util/constants').STATUS_CODES;
+const allowedOrigin = 'https://sce.sjsu.edu';
 
 router.post('/visit', async (req, res) => {
+  const origin = req.get('origin');
+  const referer = req.get('referer');
+  const allowed = origin === allowedOrigin || (referer && referer.startsWith(allowedOrigin));
+  if(!allowed) return res.sendStatus(FORBIDDEN);
   try {
     await visitCounter.findOneAndUpdate(
       {},
