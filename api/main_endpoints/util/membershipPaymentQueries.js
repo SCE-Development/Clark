@@ -22,7 +22,7 @@ function findVerifyPayment(confirmationCode, userId) {
           runValidators: true,
         }
       ).then(payment => resolve(payment))
-       .catch(() => resolve(null));
+        .catch(() => resolve(null));
     } catch (err) {
       resolve(null);
     }
@@ -36,7 +36,7 @@ function rejectPayment(paymentId) {
         { _id: paymentId },
         { $set: { status: status.REJECTED } }
       ).then(result => resolve(result))
-       .catch(() => resolve(null));
+        .catch(() => resolve(null));
     } catch (err) {
       resolve(null);
     }

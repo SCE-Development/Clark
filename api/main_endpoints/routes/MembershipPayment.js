@@ -28,7 +28,7 @@ router.post('/verifyMembership', async (req, res) => {
 
   try {
     const paymentDocument = await findVerifyPayment(confirmationCode, userId);
-    
+
     if (!paymentDocument) {
       return res.sendStatus(NOT_FOUND);
     }
@@ -47,7 +47,7 @@ router.post('/verifyMembership', async (req, res) => {
       await rejectPayment(paymentId);
       return res.sendStatus(BAD_REQUEST);
     }
-    
+
     await User.updateOne(
       { _id: userId },
       {
@@ -58,7 +58,7 @@ router.post('/verifyMembership', async (req, res) => {
       }
     );
     return res.sendStatus(OK);
-    
+
   } catch (error){
     return res.sendStatus(SERVER_ERROR);
   }
