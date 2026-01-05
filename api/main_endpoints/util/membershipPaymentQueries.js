@@ -5,27 +5,42 @@ const status = {
   REJECTED: 'rejected',
 };
 
-export async function findPayment(confirmationCode) {
-  return MembershipPayment.findOne({
-    confirmationCode,
-    status: status.PENDING,
+function findVerifyPayment(confirmationCode, userId) {
+  return new Promise((resolve) => {
+    try {
+      MembershipPayment.findOneAndUpdate(
+        {
+          confirmationCode,
+          status: status.PENDING,
+          amount: { $gte: 20 },
+        },
+        {
+          $set: { userId, status: status.COMPLETED },
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      ).then(payment => resolve(payment))
+       .catch(() => resolve(null));
+    } catch (err) {
+      resolve(null);
+    }
   });
 }
 
-export async function verifyPayment(paymentId, userId) {
-  await MembershipPayment.updateOne(
-    { _id: paymentId },
-    { $set: {
-      userId,
-      status: status.COMPLETED
-    }}
-  );
+function rejectPayment(paymentId) {
+  return new Promise((resolve) => {
+    try {
+      MembershipPayment.updateOne(
+        { _id: paymentId },
+        { $set: { status: status.REJECTED } }
+      ).then(result => resolve(result))
+       .catch(() => resolve(null));
+    } catch (err) {
+      resolve(null);
+    }
+  });
 }
 
-export async function rejectPayment(paymentId) {
-  await MembershipPayment.updateOne(
-    { _id: paymentId },
-    { $set: { status: status.REJECTED } }
-  );
-}
-
+module.exports = { findVerifyPayment, rejectPayment };

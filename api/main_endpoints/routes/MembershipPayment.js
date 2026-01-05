@@ -7,12 +7,11 @@ const {
   NOT_FOUND,
   OK,
 } = require('../../util/constants').STATUS_CODES;
-
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const User = require('../models/User');
 const { getMemberExpirationDate } = require('../util/userHelpers');
-const { findPayment, verifyPayment, rejectPayment } = require('../util/membershipPaymentQueries');
+const { findVerifyPayment, rejectPayment } = require('../util/membershipPaymentQueries');
 const { decodeToken } = require('../../util/auth');
-const { writeLogToClient } = require('../../util/logging');
 
 router.post('/verifyMembership', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.PENDING);
@@ -24,25 +23,17 @@ router.post('/verifyMembership', async (req, res) => {
   const userId = decoded.token._id;
 
   if (!confirmationCode) {
-    writeLogToClient(req.method, {
-      statusCode: BAD_REQUEST,
-      message: 'please type in your confirmation code',
-    });
     return res.sendStatus(BAD_REQUEST);
   }
 
   try {
-    const paymentDocument = await findPayment(confirmationCode);
-
+    const paymentDocument = await findVerifyPayment(confirmationCode, userId);
+    
     if (!paymentDocument) {
-      writeLogToClient(req.method, {
-        statusCode: NOT_FOUND,
-        message: 'payment not found',
-      });
       return res.sendStatus(NOT_FOUND);
     }
     const paymentId = paymentDocument._id;
-    const amount = paymentDocument.amount;
+    const { amount } = paymentDocument;
     let accessLevel;
     let membershipValidUntil;
 
@@ -54,14 +45,9 @@ router.post('/verifyMembership', async (req, res) => {
       membershipValidUntil = getMemberExpirationDate(1);
     } else {
       await rejectPayment(paymentId);
-      writeLogToClient(req.method, {
-        statusCode: BAD_REQUEST,
-        message: 'not enough money sent to become a member',
-      });
       return res.sendStatus(BAD_REQUEST);
     }
-
-    await verifyPayment(paymentId, userId);
+    
     await User.updateOne(
       { _id: userId },
       {
@@ -71,18 +57,9 @@ router.post('/verifyMembership', async (req, res) => {
         }
       }
     );
-
-    writeLogToClient(req.method, {
-      statusCode: OK,
-      message: 'successfully verified user',
-    });
     return res.sendStatus(OK);
-
+    
   } catch (error){
-    writeLogToClient(req.method, {
-      statusCode: SERVER_ERROR,
-      message: 'internal server error',
-    });
     return res.sendStatus(SERVER_ERROR);
   }
 });
