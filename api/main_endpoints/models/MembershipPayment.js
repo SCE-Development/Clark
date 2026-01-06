@@ -38,4 +38,4 @@ const MembershipPaymentSchema = new Schema(
 );
 
 
-module.exports = mongoose.model('MembershipPayment.js', MembershipPaymentSchema);
+module.exports = mongoose.model('MembershipPayment', MembershipPaymentSchema);
