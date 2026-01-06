@@ -24,13 +24,13 @@ const MembershipPaymentSchema = new Schema(
       required: true,
     },
     amount: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     venmoDetails:{
-        transactionId: { type: String, default: '' },
-        payerName: { type: String, default: '' },
-        note: { type: String, default: '' },
+      transactionId: { type: String, default: '' },
+      payerName: { type: String, default: '' },
+      note: { type: String, default: '' },
     }
   },
   { collection: 'MembershipPayments' }
