@@ -15,7 +15,7 @@ const MembershipPaymentSchema = new Schema(
     },
     status: {
       type: String,
-      enum: Object.keys({PENDING: 'PENDING', COMPLETED: 'COMPLETED', FAILED: 'FAILED'  }),
+      enum: ['pending', 'completed', 'rejected']),
       default: 'PENDING',
       required: true,
     },
