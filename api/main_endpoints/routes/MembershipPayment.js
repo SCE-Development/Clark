@@ -39,7 +39,6 @@ router.post('/verifyMembership', async (req, res) => {
     const paymentId = paymentDocument._id;
     const { amount } = paymentDocument;
     let membershipValidUntil;
-    const accessLevel = membershipState.MEMBER;
 
     if (amount < 20){
       const rejected = await rejectPayment(paymentId);
@@ -59,6 +58,7 @@ router.post('/verifyMembership', async (req, res) => {
       membershipValidUntil = getMemberExpirationDate(1);
     }
 
+    const accessLevel = membershipState.MEMBER;
     await User.updateOne(
       { _id: userId },
       {
