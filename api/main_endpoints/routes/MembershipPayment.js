@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bodyParser = require('body-parser')
 router.use(bodyParser.json());
 
 const {
@@ -27,49 +28,45 @@ router.post('/verifyMembership', async (req, res) => {
     return res.sendStatus(BAD_REQUEST);
   }
 
-  try {
-    const paymentDocument = await findVerifyPayment(confirmationCode, userId);
-    if (paymentDocument === null){
-      return res.sendStatus(SERVER_ERROR);
-    }
-    if (paymentDocument === false){
-      return res.sendStatus(NOT_FOUND);
-    }
-
-    const paymentId = paymentDocument._id;
-    const { amount } = paymentDocument;
-    let membershipValidUntil;
-
-    if (amount < 20){
-      const rejected = await rejectPayment(paymentId);
-      if (rejected === null){
-        return res.sendStatus(NOT_FOUND);
-      }
-      if (rejected === false){
-        return res.sendStatus(NOT_FOUND);
-      }
-      return res.sendStatus(BAD_REQUEST);
-
-    }
-
-    if (amount >= 30) {
-      membershipValidUntil = getMemberExpirationDate(2);
-    } else {
-      membershipValidUntil = getMemberExpirationDate(1);
-    }
-
-    const accessLevel = membershipState.MEMBER;
-    await User.updateOne(
-      { _id: userId },
-      {
-        $set: {
-          accessLevel,
-          membershipValidUntil
-        }
-      }
-    );
-    return res.sendStatus(OK);
-  } catch (error){
+  const paymentDocument = await findVerifyPayment(confirmationCode, userId);
+  if (paymentDocument === null){
     return res.sendStatus(SERVER_ERROR);
   }
+  if (paymentDocument === false){
+    return res.sendStatus(NOT_FOUND);
+  }
+
+  const paymentId = paymentDocument._id;
+  const { amount } = paymentDocument;
+  let membershipValidUntil;
+
+  if (amount < 20){
+    const rejected = await rejectPayment(paymentId);
+    if (rejected === null){
+      return res.sendStatus(SERVER_ERROR);
+    }
+    if (rejected === false){
+      return res.sendStatus(NOT_FOUND);
+    }
+    return res.sendStatus(BAD_REQUEST);
+
+  }
+
+  if (amount >= 30) {
+    membershipValidUntil = getMemberExpirationDate(2);
+  } else {
+    membershipValidUntil = getMemberExpirationDate(1);
+  }
+
+  const accessLevel = membershipState.MEMBER;
+  await User.updateOne(
+    { _id: userId },
+    {
+      $set: {
+        accessLevel,
+        membershipValidUntil
+      }
+    }
+  );
+  return res.sendStatus(OK);
 });
