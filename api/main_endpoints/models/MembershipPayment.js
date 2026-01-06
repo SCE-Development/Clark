@@ -29,9 +29,9 @@ const MembershipPaymentSchema = new Schema(
       required: true,
     },
     venmoDetails:{
-      transactionId: { type: String, default: '' },
-      payerName: { type: String, default: '' },
-      note: { type: String, default: '' },
+      transactionId: { type: String },
+      payerName: { type: String },
+      note: { type: String },
     }
   },
   { collection: 'MembershipPayments' }
