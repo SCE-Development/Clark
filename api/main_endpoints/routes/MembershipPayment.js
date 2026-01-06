@@ -30,7 +30,7 @@ router.post('/verifyMembership', async (req, res) => {
   try {
     const paymentDocument = await findVerifyPayment(confirmationCode, userId);
     if (paymentDocument === null){
-      return res.sendStatus(SERVER_ERROR); 
+      return res.sendStatus(SERVER_ERROR);
     }
     if (paymentDocument === false){
       return res.sendStatus(NOT_FOUND);
