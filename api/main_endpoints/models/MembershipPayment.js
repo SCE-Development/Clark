@@ -15,12 +15,13 @@ const MembershipPaymentSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'completed', 'rejected']),
-      default: 'PENDING',
+      enum: ['pending', 'completed', 'rejected'],
+      default: 'pending',
       required: true,
     },
     confirmationCode: {
       type: String,
+      unique: true,
       required: true,
     },
     amount: {
