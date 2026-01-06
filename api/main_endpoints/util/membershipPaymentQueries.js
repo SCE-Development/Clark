@@ -7,39 +7,46 @@ const status = {
 
 function findVerifyPayment(confirmationCode, userId) {
   return new Promise((resolve) => {
-    try {
-      MembershipPayment.findOneAndUpdate(
-        {
-          confirmationCode,
-          status: status.PENDING,
-          amount: { $gte: 20 },
-        },
-        {
-          $set: { userId, status: status.COMPLETED },
-        },
-        {
-          new: true,
-          runValidators: true,
+    MembershipPayment.findOneAndUpdate(
+      {
+        confirmationCode,
+        status: status.PENDING,
+      },
+      {
+        $set: { userId, status: status.COMPLETED },
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+      (error, result) => {
+        if (error) {
+          return resolve(null);
         }
-      ).then(payment => resolve(payment))
-        .catch(() => resolve(null));
-    } catch (err) {
-      resolve(null);
-    }
+        if (!result) {
+          return resolve(false);
+        }
+        return resolve(result);
+      }
+    );
   });
 }
 
 function rejectPayment(paymentId) {
   return new Promise((resolve) => {
-    try {
-      MembershipPayment.updateOne(
-        { _id: paymentId },
-        { $set: { status: status.REJECTED } }
-      ).then(result => resolve(result))
-        .catch(() => resolve(null));
-    } catch (err) {
-      resolve(null);
-    }
+    MembershipPayment.findByIdAndUpdate(
+      paymentId,
+      { $set: { status: status.REJECTED } },
+      (error, result) => {
+        if (error) {
+          return resolve(null);
+        }
+        if (!result) {
+          return resolve(false);
+        }
+        return resolve(true);
+      }
+    );
   });
 }
 

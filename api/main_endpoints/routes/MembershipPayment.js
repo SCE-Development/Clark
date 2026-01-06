@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+router.use(bodyParser.json());
 
 const {
   BAD_REQUEST,
@@ -11,7 +12,7 @@ const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const User = require('../models/User');
 const { getMemberExpirationDate } = require('../util/userHelpers');
 const { findVerifyPayment, rejectPayment } = require('../util/membershipPaymentQueries');
-const { decodeToken } = require('../../util/auth');
+const { decodeToken } = require('../util/token-functions.js');
 
 router.post('/verifyMembership', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.PENDING);
@@ -28,24 +29,34 @@ router.post('/verifyMembership', async (req, res) => {
 
   try {
     const paymentDocument = await findVerifyPayment(confirmationCode, userId);
-
-    if (!paymentDocument) {
+    if (paymentDocument === null){
+      throw new Error('Server error');
+    }
+    if (paymentDocument === false){
       return res.sendStatus(NOT_FOUND);
     }
+
     const paymentId = paymentDocument._id;
     const { amount } = paymentDocument;
-    let accessLevel;
     let membershipValidUntil;
+    const accessLevel = membershipState.MEMBER;
+
+    if (amount < 20){
+      const rejected = await rejectPayment(paymentId);
+      if (rejected === null){
+        throw new Error('Server error');
+      }
+      if (rejected === false){
+        return res.sendStatus(NOT_FOUND);
+      }
+      return res.sendStatus(BAD_REQUEST);
+
+    }
 
     if (amount >= 30) {
-      accessLevel = membershipState.MEMBER;
       membershipValidUntil = getMemberExpirationDate(2);
-    } else if (amount >= 20) {
-      accessLevel = membershipState.MEMBER;
-      membershipValidUntil = getMemberExpirationDate(1);
     } else {
-      await rejectPayment(paymentId);
-      return res.sendStatus(BAD_REQUEST);
+      membershipValidUntil = getMemberExpirationDate(1);
     }
 
     await User.updateOne(
@@ -58,7 +69,6 @@ router.post('/verifyMembership', async (req, res) => {
       }
     );
     return res.sendStatus(OK);
-
   } catch (error){
     return res.sendStatus(SERVER_ERROR);
   }
