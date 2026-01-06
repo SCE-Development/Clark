@@ -30,7 +30,7 @@ router.post('/verifyMembership', async (req, res) => {
   try {
     const paymentDocument = await findVerifyPayment(confirmationCode, userId);
     if (paymentDocument === null){
-      throw new Error('Server error');
+      return res.sendStatus(SERVER_ERROR); 
     }
     if (paymentDocument === false){
       return res.sendStatus(NOT_FOUND);
@@ -43,7 +43,7 @@ router.post('/verifyMembership', async (req, res) => {
     if (amount < 20){
       const rejected = await rejectPayment(paymentId);
       if (rejected === null){
-        throw new Error('Server error');
+        return res.sendStatus(NOT_FOUND);
       }
       if (rejected === false){
         return res.sendStatus(NOT_FOUND);
