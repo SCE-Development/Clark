@@ -203,6 +203,30 @@ function checkIfPageCountResets(lastLogin) {
   return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
 
+/**
+ * Update a user's membershipValidUntil date
+ * @param {String} userId - The user's ID
+ * @param {Number} numberOfSemestersToSignUpFor - Number of semesters to extend
+ * @returns {Object} result - Contains success status and message
+ */
+async function updateMembershipExpiration(userId, numberOfSemestersToSignUpFor) {
+  try {
+    const newExpiration = getMemberExpirationDate(numberOfSemestersToSignUpFor);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { membershipValidUntil: newExpiration },
+      { new: true },
+    );
+    if (!user) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    logger.error('Error updating membership:', error);
+    return null;
+  }
+}
+
 module.exports = {
   registerUser,
   getMemberExpirationDate,
@@ -211,4 +235,5 @@ module.exports = {
   userWithEmailExists,
   checkIfPageCountResets,
   findPasswordReset,
+  updateMembershipExpiration
 };
