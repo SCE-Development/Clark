@@ -49,14 +49,13 @@ router.post('/verifyMembership', async (req, res) => {
     return res.sendStatus(BAD_REQUEST);
   }
 
-  let semestersToAdd = 0
+  let semestersToAdd = 0;
   if (amount >= 30) {
-    semestersToAdd = 2
-  } 
-  else {
-    semestersToAdd = 1
+    semestersToAdd = 2;
+  } else {
+    semestersToAdd = 1;
   }
-  
+
   const membershipUpdateResult = await updateMembershipExpiration(
     decoded.token._id,
     semestersToAdd
