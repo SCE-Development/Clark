@@ -1,6 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
+function useScrollSpy() {
+  const [activeId, setActiveId] = useState(null);
+
+  useEffect(() => {
+    const sections = document.querySelectorAll("[data-spy]");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: "-100px 0px -80% 0px", // adjust to activate earlier/later
+        threshold: 0,
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  return activeId;
+}
 
 export default function AboutPage() {
+  const activeId = useScrollSpy();
+
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -19,7 +48,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <section id="introduction" className="space-y-6">
+          <section id="introduction" data-spy className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-gray-100">Introduction</h2>
             <div className="text-gray-700 prose prose-lg dark:text-gray-300">
               <p>
@@ -37,7 +66,7 @@ export default function AboutPage() {
             </div>
           </section>
 
-          <section id="location" className="space-y-6">
+          <section id="location" data-spy className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-gray-100">Location & Hours</h2>
             <div className="text-gray-700 prose prose-lg dark:text-gray-300">
               <p>
@@ -66,7 +95,7 @@ export default function AboutPage() {
             </div>
           </section>
 
-          <section id="membership" className="space-y-6">
+          <section id="membership" data-spy className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-gray-100">Becoming an SCE Member</h2>
             <div className="text-gray-700 prose prose-lg dark:text-gray-300">
               <p>
@@ -102,7 +131,7 @@ export default function AboutPage() {
             </div>
           </section>
 
-          <section id="development" className="space-y-6">
+          <section id="development" data-spy className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-gray-100">Development Team</h2>
             <div className="text-gray-700 prose prose-lg dark:text-gray-300">
               <p>
@@ -127,7 +156,7 @@ export default function AboutPage() {
             </div>
           </section>
 
-          <section id="internship" className="space-y-6">
+          <section id="internship" data-spy className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-gray-100">Summer Internship Program</h2>
             <div className="text-gray-700 prose prose-lg dark:text-gray-300">
               <p>
@@ -153,7 +182,7 @@ export default function AboutPage() {
             </div>
           </section>
 
-          <section id="discord" className="space-y-6">
+          <section id="discord" data-spy className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-gray-100">Join Our Community</h2>
             <div className="text-gray-700 prose prose-lg dark:text-gray-300">
               <p>
@@ -195,37 +224,55 @@ export default function AboutPage() {
               <nav className="space-y-3">
                 <button
                   onClick={() => scrollToSection('introduction')}
-                  className="block w-full text-sm text-left text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  className={[
+                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                    , activeId === "introduction" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                  ].join(' ')}
                 >
                   Introduction
                 </button>
                 <button
                   onClick={() => scrollToSection('location')}
-                  className="block w-full text-sm text-left text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  className={[
+                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                    , activeId === "location" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                  ].join(' ')}
                 >
                   Location & Hours
                 </button>
                 <button
                   onClick={() => scrollToSection('membership')}
-                  className="block w-full text-sm text-left text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  className={[
+                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                    , activeId === "membership" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                  ].join(' ')}
                 >
                   Membership
                 </button>
                 <button
                   onClick={() => scrollToSection('development')}
-                  className="block w-full text-sm text-left text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  className={[
+                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                    , activeId === "development" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                  ].join(' ')}
                 >
                   Development Team
                 </button>
                 <button
                   onClick={() => scrollToSection('internship')}
-                  className="block w-full text-sm text-left text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  className={[
+                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                    , activeId === "internship" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                  ].join(' ')}
                 >
                   Summer Internship
                 </button>
                 <button
                   onClick={() => scrollToSection('discord')}
-                  className="block w-full text-sm text-left text-gray-600 transition-colors dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                  className={[
+                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+                    , activeId === "discord" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                  ].join(' ')}
                 >
                   Join Community
                 </button>
