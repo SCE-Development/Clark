@@ -6,6 +6,7 @@ import { getHomeImage } from '../../APIFunctions/Image.js';
 import { incrementVisitCount, getVisitCount } from '../../APIFunctions/HomepageVisit.js';
 import './Home.css';
 
+<<<<<<< HEAD
 const DEFAULT_IMAGE = 'https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg';
 
 const Home = () => {
@@ -16,6 +17,35 @@ const Home = () => {
     imageAlt: 'SCE Club Image',
     visitCount: 0,
   });
+=======
+import { getAd } from '../../APIFunctions/Advertisement.js';
+import { incrementVisitCount, getVisitCount } from '../../APIFunctions/Visit.js';
+
+const Home = () => {
+
+  const [message, setMessage] = useState('');
+  const [showMessage, setShowMessage] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const [visitCount, setVisitCount] = useState(0);
+
+  async function getMessage() {
+    try {
+      const messageData = await getAd();
+      const adsList = messageData.responseData;
+      setMessage(adsList['message']);
+      setShowMessage(true);
+    } catch {
+      setMessage('');
+    }
+  }
+
+  async function loadVisitCounter() {
+    const type = 'HOME_PAGE';
+    await incrementVisitCount(type);
+    const response = await getVisitCount(type);
+    if(!response.error) setVisitCount(response.responseData.visitCount);
+  }
+>>>>>>> f8152759 (visit count api includes page type; tracks dev mode visits)
 
   useEffect(() => {
     const fetchData = async () => {
