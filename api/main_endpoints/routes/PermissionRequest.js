@@ -39,16 +39,11 @@ router.get('/get', async (req, res) => {
   try {
     const query = { deletedAt: null };
 
-    // If theres no userId, return all for officers and admins
-    if (!queryUserId) {
-      if (!isOfficer) {
-        return res.sendStatus(UNAUTHORIZED);
-      }
+    if (!isOfficer) {
+      query.userId = decoded.token._id.toString();
     } else {
-      if (isOfficer) {
+      if (queryUserId) {
         query.userId = queryUserId;
-      } else {
-        query.userId = decoded.token._id.toString();
       }
     }
 
