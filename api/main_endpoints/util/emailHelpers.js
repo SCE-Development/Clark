@@ -40,4 +40,16 @@ async function sendPasswordReset(resetToken, email) {
   });
 }
 
-module.exports = { sendUnsubscribeEmail, sendVerificationEmail, sendPasswordReset };
+async function membershipConfirmationCode(confirmCode, email) {
+  return new Promise((resolve) => {
+    axios
+      .post(`${MAILER_API_URL}/Mailer/sendMembershipConfirmationCode`, {
+        recipientEmail: email,
+        confirmationCode: confirmCode
+      })
+      .then(() => resolve(true))
+      .catch(() => resolve(false));
+  });
+}
+
+module.exports = { sendUnsubscribeEmail, sendVerificationEmail, sendPasswordReset, membershipConfirmationCode };
