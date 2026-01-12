@@ -8,7 +8,8 @@ const { unsubscribeEmail } = require('../email_templates/unsubscribeEmail');
 const { membershipConfirmationCode } = require('../email_templates/membershipConfirmationCode');
 const {
   OK,
-  BAD_REQUEST
+  BAD_REQUEST,
+  SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
 const { googleApiKeys } = require('../../config/config.json');
@@ -163,7 +164,7 @@ router.post('/sendMembershipConfirmationCode', async (req, res) => {
     });
   }
 
-  await membershipConfirmationCode(USER, req.body.recipientEmail, req.body.confirmationCode)
+  await membershipConfirmationCode(USER, recipientEmail, confirmationCode)
     .then((template) => {
       apiHandler
         .sendEmail(template)
@@ -173,12 +174,12 @@ router.post('/sendMembershipConfirmationCode', async (req, res) => {
         })
         .catch((err) => {
           logger.error('unable to send confirmation code: ', err);
-          res.sendStatus(BAD_REQUEST);
+          res.sendStatus(SERVER_ERROR);
         });
     })
     .catch((err) => {
-      logger.error('unable to send member confirmation email: ', err);
-      res.sendStatus(BAD_REQUEST);
+      logger.error('unable to generate member confirmation email template: ', err);
+      res.sendStatus(SERVER_ERROR);
     });
 });
 
