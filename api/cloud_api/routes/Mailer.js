@@ -148,6 +148,7 @@ router.post('/sendMembershipConfirmationCode', async (req, res) => {
   if (tokenJson) {
     if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
       logger.warn('refreshing token');
+      MetricsHandler.gcpRefreshTokenLastUpdated.set(Math.floor(Date.now() / 1000));
       apiHandler.refreshToken();
     }
   } else {

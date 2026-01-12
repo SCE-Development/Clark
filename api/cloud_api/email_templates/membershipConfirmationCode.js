@@ -6,8 +6,8 @@ function membershipConfirmationCode(user, recipient, confirmCode) {
       subject: 'SCE Membership Confirmation',
       generateTextFromHTML: true,
       html: `
-            <p>>Hi,</p><br/>
             <p>
+              Hi, <br />
               Thank you for signing up for membership! <br />
               Please use the below confirmation code when you
               visit your profile page on the
