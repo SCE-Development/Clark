@@ -5,9 +5,11 @@ const { verification } = require('../email_templates/verification');
 const { passwordReset } = require('../email_templates/passwordReset');
 const { blastEmail } = require('../email_templates/blastEmail');
 const { unsubscribeEmail } = require('../email_templates/unsubscribeEmail');
+const { membershipConfirmationCode } = require('../email_templates/membershipConfirmationCode');
 const {
   OK,
-  BAD_REQUEST
+  BAD_REQUEST,
+  SERVER_ERROR
 } = require('../../util/constants').STATUS_CODES;
 const logger = require('../../util/logger');
 const { googleApiKeys } = require('../../config/config.json');
@@ -132,6 +134,54 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
     })(i);
   }
   return res.sendStatus(OK);
+});
+
+router.post('/sendMembershipConfirmationCode', async (req, res) => {
+  if (!ENABLED && process.env.NODE_ENV !== 'test') {
+    return res.sendStatus(OK);
+  }
+  const scopes = ['https://mail.google.com/'];
+  const pathToToken = __dirname + '/../../config/token.json';
+  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
+  const tokenJson = await apiHandler.checkIfTokenFileExists();
+
+  if (tokenJson) {
+    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
+      logger.warn('refreshing token');
+      MetricsHandler.gcpRefreshTokenLastUpdated.set(Math.floor(Date.now() / 1000));
+      apiHandler.refreshToken();
+    }
+  } else {
+    logger.warn('getting new token! ', { tokenJson });
+    apiHandler.getNewToken();
+  }
+
+  const { recipientEmail, confirmationCode } = req.body;
+
+  if (!recipientEmail || !confirmationCode) {
+    logger.warn('Missing recipientEmail or confirmationCode', { body: req.body });
+    return res.status(BAD_REQUEST).json({
+      error: 'recipientEmail and confirmationCode are required',
+    });
+  }
+
+  await membershipConfirmationCode(USER, recipientEmail, confirmationCode)
+    .then((template) => {
+      apiHandler
+        .sendEmail(template)
+        .then((_) => {
+          res.sendStatus(OK);
+          MetricsHandler.emailSent.inc({ type: 'membershipConfirmationCode' });
+        })
+        .catch((err) => {
+          logger.error('unable to send confirmation code: ', err);
+          res.sendStatus(SERVER_ERROR);
+        });
+    })
+    .catch((err) => {
+      logger.error('unable to generate member confirmation email template: ', err);
+      res.sendStatus(SERVER_ERROR);
+    });
 });
 
 module.exports = router;
