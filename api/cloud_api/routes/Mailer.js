@@ -5,6 +5,7 @@ const { verification } = require('../email_templates/verification');
 const { passwordReset } = require('../email_templates/passwordReset');
 const { blastEmail } = require('../email_templates/blastEmail');
 const { unsubscribeEmail } = require('../email_templates/unsubscribeEmail');
+const { membershipConfirmationCode } = require('../email_templates/membershipConfirmationCode');
 const {
   OK,
   BAD_REQUEST
@@ -127,6 +128,53 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
     })(i);
   }
   return res.sendStatus(OK);
+});
+
+router.post('/sendMembershipConfirmationCode', async (req, res) => {
+  if (!ENABLED && process.env.NODE_ENV !== 'test') {
+    return res.sendStatus(OK);
+  }
+  const scopes = ['https://mail.google.com/'];
+  const pathToToken = __dirname + '/../../config/token.json';
+  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
+  const tokenJson = await apiHandler.checkIfTokenFileExists();
+
+  if (tokenJson) {
+    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
+      logger.warn('refreshing token');
+      apiHandler.refreshToken();
+    }
+  } else {
+    logger.warn('getting new token! ', { tokenJson });
+    apiHandler.getNewToken();
+  }
+
+  const { recipientEmail, confirmationCode } = req.body;
+
+  if (!recipientEmail || !confirmationCode) {
+    logger.warn('Missing recipientEmail or confirmationCode', { body: req.body });
+    return res.status(BAD_REQUEST).json({
+      error: 'recipientEmail and confirmationCode are required',
+    });
+  }
+
+  await membershipConfirmationCode(USER, req.body.recipientEmail, req.body.confirmationCode)
+    .then((template) => {
+      apiHandler
+        .sendEmail(template)
+        .then((_) => {
+          res.sendStatus(OK);
+          MetricsHandler.emailSent.inc({ type: 'membershipConfirmationCode' });
+        })
+        .catch((err) => {
+          logger.error('unable to send confirmation code: ', err);
+          res.sendStatus(BAD_REQUEST);
+        });
+    })
+    .catch((err) => {
+      logger.error('unable to send member confirmation email: ', err);
+      res.sendStatus(BAD_REQUEST);
+    });
 });
 
 module.exports = router;
