@@ -22,6 +22,10 @@ export default () => {
               </path>
             </svg>
           </a>
+          <div className="flex flex-col text-right xl:flex-col xl:ml-auto">
+            <p>sce.sjsu@gmail.com</p>
+            <p>1 (866) 975 0444</p>
+          </div>
         </div>
       </div>
     </footer>
