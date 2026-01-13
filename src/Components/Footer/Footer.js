@@ -23,8 +23,12 @@ export default () => {
             </svg>
           </a>
           <div className="flex flex-col text-right xl:flex-col xl:ml-auto">
-            <p>sce.sjsu@gmail.com</p>
-            <p>1 (866) 975 0444</p>
+            <a href="mailto:sce.sjsu@gmail.com" className="hover:underline">
+              sce.sjsu@gmail.com
+            </a>
+            <a href="tel:+18669750444" className="hover:underline">
+              1 (866) 975 0444
+            </a>
           </div>
         </div>
       </div>
