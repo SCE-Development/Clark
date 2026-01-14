@@ -67,22 +67,26 @@ const Home = () => {
       <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
         <div className="flex flex-col items-center justify-center w-full p-4 overflow-y-hidden xl:w-2/5">
           <div className="flex flex-col mb-8 xl:ml-10">
-            <h1
-              className={`slide-in-top my-4 text-3xl font-bold text-center text-white opacity-75 md:text-5xl xl:text-left${showAll ? ' show' : ''}`}>
-              The Software and Computer Engineering Society
-            </h1>
-            <h3
-              className={`slide-in-right text-base text-gray-400 text-center xl:text-left md:text-2xl${showAll ? ' show' : ''}`}>
-              SJSU's Largest Engineering Club
-            </h3>
+            <div className={`slide-in-top ${showAll ? ' show' : ''}`}>
+              <h1
+                className={`my-4 text-3xl font-bold text-center text-white opacity-75 md:text-5xl xl:text-left duration-300 hover:scale-105`}>
+                The Software and Computer Engineering Society
+              </h1>
+            </div>
+            <div className={`slide-in-right ${showAll ? ' show' : ''}`}>
+              <h3
+                className={`p-4 text-base text-gray-400 text-center xl:text-left md:text-2xl duration-300 hover:scale-105`}>
+                SJSU's Largest Engineering Club
+              </h3>
+            </div>
           </div>
           <div
             className={`slide-in-bottom flex justify-center space-x-3 slide-in-bottom${showAll ? ' show' : ''}`}>
             <a href="/about" rel="nofollow noreferrer" target="_blank">
-              <button className="btn btn-outline text-lg text-blue-400 hover:bg-blue-700 hover:!text-white">Learn More</button>
+              <button className="btn btn-outline text-lg text-blue-400 hover:bg-blue-700 hover:text-white hover:scale-110">Learn More</button>
             </a>
             <a href="/register">
-              <button className="btn btn-outline text-lg btn-accent hover:!text-white">Join Us!</button>
+              <button className="btn btn-outline text-lg btn-accent hover:!text-white hover:scale-110">Join Us!</button>
             </a>
           </div>
         </div>
