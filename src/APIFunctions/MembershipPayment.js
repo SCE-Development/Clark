@@ -1,5 +1,5 @@
-import { ApiResponse } from "./ApiResponses";
-import { BASE_API_URL } from "../Enums";
+import { ApiResponse } from './ApiResponses';
+import { BASE_API_URL } from '../Enums';
 
 export async function verifyMembershipFromDb(token, confirmationCode) {
   let status = new ApiResponse();
