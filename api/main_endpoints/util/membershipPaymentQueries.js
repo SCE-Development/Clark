@@ -1,4 +1,4 @@
-import MembershipPayment from '../main_endpoints/models/MembershipPayment.js';
+const MembershipPayment = require('../../models/MembershipPayment');
 
 const status = {
   PENDING: 'pending',
@@ -59,4 +59,29 @@ function rejectPayment(paymentId) {
   });
 }
 
-module.exports = { findVerifyPayment, rejectPayment };
+function storePayment({ userId, confirmationCode, amount, venmoPaymentDetails }) {
+  return new Promise((resolve) => {
+    try {
+      const newPayment = new MembershipPayment({
+        createdAt: new Date(),
+        userId,
+        confirmationCode,
+        amount,
+        venmoPaymentDetails,
+      });
+
+      newPayment.save((error) => {
+        if (error) {
+          logger.error('storePayment got an error saving to mongodb: ', error);
+          return resolve(false);
+        }
+        return resolve(true);
+      });
+    } catch (error) {
+      logger.error('storePayment caught an error: ', error);
+      return resolve(false);
+    }
+  });
+}
+
+module.exports = { findVerifyPayment, rejectPayment, storePayment };
