@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "minecraft-font";
+  src: url('./MojanglesFont/mojangles.otf.woff2') format('woff2');
+}
+
 /* Hide scrollbar for WebKit (Chrome, Safari) */
 *::-webkit-scrollbar {
  display: none;
@@ -63,3 +68,19 @@
 .fade-in-img.show {
  opacity: 1;
 }  
+
+.minecraft-styling {
+  font-family: "minecraft-font", monospace;
+  color: #ffff00;
+  animation: scale-rotate-translateY 1s ease-in-out infinite;
+  filter: drop-shadow(2px 2px 2px black);
+}
+
+@keyframes scale-rotate-translateY {
+  0%, 100% {
+    transform: scale(1) rotate(6deg) translateY(1.5rem);
+  }
+  50% {
+    transform: scale(1.05) rotate(6deg) translateY(1.5rem);
+  }
+}

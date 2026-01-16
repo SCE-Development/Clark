@@ -59,10 +59,12 @@ const Home = () => {
 
   return (
     <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
-      <div className = "flex flex-col items-center justify-center my-4">
-        <p className={`fade-scale-in text-white${showMessage ? ' show' : ''}`}>
-          {message}
-        </p>
+      <div className = "flex flex-col items-end justify-center my-4 px-16">
+        <div className={`fade-scale-in text-white${showMessage ? ' show' : ''}`}>
+          <div className="minecraft-styling">
+            {message}
+          </div>
+        </div>
       </div>
       <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
         <div className="flex flex-col items-center justify-center w-full p-4 overflow-y-hidden xl:w-2/5">
