@@ -9,7 +9,6 @@ const Home = () => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [showAll, setShowAll] = useState(false);
-
   async function getMessage() {
     try {
       const messageData = await getAd();
@@ -36,7 +35,9 @@ const Home = () => {
   }
 
   function renderMessageWithLinks(message) {
-    if (!message) return null;
+    if (!message) {
+      return null;
+    }
 
     return message.split(/(https?:\/\/[^\s]+)/g).map((part, index) => {
       if (isValidUrl(part)) {
