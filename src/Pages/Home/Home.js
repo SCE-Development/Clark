@@ -38,7 +38,6 @@ const Home = () => {
     if (!message) {
       return null;
     }
-
     return message.split(/(https?:\/\/[^\s]+)/g).map((part, index) => {
       if (isValidUrl(part)) {
         return (
