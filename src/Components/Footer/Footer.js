@@ -6,17 +6,13 @@ const Footer = () => {
       <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col items-center text-center md:flex-row md:justify-between md:text-left">
 
-          {/* Branding Section */}
           <div className="mb-6 md:mb-0">
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Hello from the big {currentYear}!
             </p>
           </div>
 
-          {/* Right Side: Socials & Contact */}
           <div className="flex flex-col items-center md:items-end space-y-4">
-
-            {/* Social Icons */}
             <div className="flex items-center space-x-5">
               <a href="https://sce.sjsu.edu/s/discord" rel="nofollow noreferrer" target="_blank" className="text-gray-400 hover:text-indigo-500 transition-colors">
                 <span className="sr-only">Discord</span>
