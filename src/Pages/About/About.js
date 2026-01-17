@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 function useScrollSpy() {
-  const [activeId, setActiveId] = useState(null);
+  const [activeId, setActiveId] = useState('introduction');
 
   useEffect(() => {
-    const sections = document.querySelectorAll("[data-spy]");
+    const sections = document.querySelectorAll('[data-spy]');
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -15,7 +15,7 @@ function useScrollSpy() {
         });
       },
       {
-        rootMargin: "-100px 0px -80% 0px", // adjust to activate earlier/later
+        rootMargin: '-100px 0px -80% 0px', // adjust to activate earlier/later
         threshold: 0,
       }
     );
@@ -225,8 +225,8 @@ export default function AboutPage() {
                 <button
                   onClick={() => scrollToSection('introduction')}
                   className={[
-                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                    , activeId === "introduction" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                    'block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400'
+                    , activeId === 'introduction' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
                   ].join(' ')}
                 >
                   Introduction
@@ -234,8 +234,8 @@ export default function AboutPage() {
                 <button
                   onClick={() => scrollToSection('location')}
                   className={[
-                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                    , activeId === "location" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                    'block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400'
+                    , activeId === 'location' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
                   ].join(' ')}
                 >
                   Location & Hours
@@ -243,8 +243,8 @@ export default function AboutPage() {
                 <button
                   onClick={() => scrollToSection('membership')}
                   className={[
-                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                    , activeId === "membership" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                    'block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400'
+                    , activeId === 'membership' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
                   ].join(' ')}
                 >
                   Membership
@@ -252,8 +252,8 @@ export default function AboutPage() {
                 <button
                   onClick={() => scrollToSection('development')}
                   className={[
-                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                    , activeId === "development" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                    'block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400'
+                    , activeId === 'development' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
                   ].join(' ')}
                 >
                   Development Team
@@ -261,8 +261,8 @@ export default function AboutPage() {
                 <button
                   onClick={() => scrollToSection('internship')}
                   className={[
-                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                    , activeId === "internship" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                    'block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400'
+                    , activeId === 'internship' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
                   ].join(' ')}
                 >
                   Summer Internship
@@ -270,8 +270,8 @@ export default function AboutPage() {
                 <button
                   onClick={() => scrollToSection('discord')}
                   className={[
-                    "block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-                    , activeId === "discord" ? "font-bold text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                    'block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400'
+                    , activeId === 'discord' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
                   ].join(' ')}
                 >
                   Join Community
