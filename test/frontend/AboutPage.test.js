@@ -9,6 +9,11 @@ import AboutPage from '../../src/Pages/About/About';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('<AboutPage />', () => {
+  global.IntersectionObserver = class IntersectionObserver {
+  constructor(callback) {
+    this.callback = callback;
+  }
+};
   const wrapper = mount(<AboutPage />);
 
   it('Should render the main heading', () => {
