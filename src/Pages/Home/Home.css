@@ -79,3 +79,11 @@
     transform: scale(1.05) rotate(6deg) translateY(1.5rem);
   }
 }
+
+.hover-grow {
+  transition: transform 0.15s ease;
+}
+
+.hover-grow:hover {
+  transform: scale(1.05);
+}
