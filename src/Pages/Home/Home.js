@@ -59,12 +59,7 @@ const Home = () => {
 
   return (
     <div className='flex flex-col min-h-[calc(100vh-86px)] z-[-200] bg-gradient-to-r from-gray-800 to-gray-600'>
-      <div className = "flex flex-col items-center justify-center my-4">
-        <p className={`fade-scale-in text-white${showMessage ? ' show' : ''}`}>
-          {message}
-        </p>
-      </div>
-      <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full my-4 md:flex-row xl:my-0">
+      <div className="flex flex-col flex-wrap items-center justify-center flex-1 h-full py-4 md:flex-row xl:my-0">
         <div className="flex flex-col items-center justify-center w-full p-4 overflow-y-hidden xl:w-2/5">
           <div className="flex flex-col mb-8 xl:ml-10">
             <h1
@@ -88,11 +83,18 @@ const Home = () => {
         </div>
 
 
-        <div className={`fade-in-img w-full h-full p-12 overflow-hidden xl:w-3/5${showAll ? ' show' : ''}`}>
-          <img
-            className="w-full mx-auto transform md:w-4/5 rounded-xl"
-            src="https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg"
-          />
+        <div className={`fade-in-img w-full h-full p-6 md:p-12 overflow-visible xl:w-3/5${showAll ? ' show' : ''}`}>
+          <div className="relative max-w-max mx-auto">
+            <img
+              className="w-full mx-auto transform md:w-4/5 rounded-xl shadow-2xl"
+              src="https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg"
+            />
+            <div className={`absolute -top-2 -right-2 md:right-10 md:top-0 z-10 fade-scale-in${showMessage ? ' show' : ''}`}>
+              <div className="minecraft-styling text-yellow-400 drop-shadow-lg transform rotate-[-20deg] text-sm md:text-xl whitespace-nowrap">
+                {renderMessageWithLinks(message)}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
