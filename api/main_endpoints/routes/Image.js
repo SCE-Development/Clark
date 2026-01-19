@@ -2,14 +2,14 @@ const express = require ('express');
 const router = express.Router();
 const { OK, NOT_FOUND } = require('../../util/constants').STATUS_CODES;
 
-// sample images (all from openverse.org) for now!!
 const imageUrls = [
-  {url: 'https://live.staticflickr.com/14/19329415_09b1eae0e8_b.jpg', alt: '2025 internship'},
   {url: 'https://live.staticflickr.com/2182/2377582173_89e0ca2f83_b.jpg', alt: 'empty room'},
-  {url: 'https://live.staticflickr.com/4045/4339898436_8283d8be54_b.jpg', alt: 'full room'},
-  {url: 'https://live.staticflickr.com/102/298812490_b57db6f58b_b.jpg', alt: 'decorating room'},
-  {url: 'https://live.staticflickr.com/204/468095839_bba3fc0e30_b.jpg', alt: 'office'},
-  {url: 'https://live.staticflickr.com/7208/14133744683_ae04e8f1e4_b.jpg', alt: 'dev team collaboration'},
+  {url: 'https://github.com/user-attachments/assets/92eecd21-1217-4d6d-b18a-bafc95083b51', alt: '  sce room with a dragon'},
+  {url: 'https://github.com/user-attachments/assets/a87670c1-16fd-4940-993f-a57c86cc1527', alt: 'internship celebration'},
+  {url: 'https://github.com/user-attachments/assets/51e51f22-2301-4e08-8c47-446188cc720c', alt: 'internship game night'},
+  {url: 'https://github.com/user-attachments/assets/729fcbaf-5c1a-4bc2-8ceb-e5b3e7920428', alt: 'hackathon'},
+  {url: 'https://github.com/user-attachments/assets/575715b1-ecce-4f03-a8d8-a11c66db0633', alt: 'sce sells coffee in the room'},
+  {url: 'https://github.com/user-attachments/assets/6619e37d-babe-4416-8750-c04f6c8e01c6', alt: 'company tour'},
 ];
 
 const getRandomImage = () => {
