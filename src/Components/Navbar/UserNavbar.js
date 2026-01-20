@@ -35,11 +35,12 @@ export default function UserNavbar(props) {
       <>
         {routesList.map((link) => {
           if (link.newTab) {
-            return (<li key={link.route}>
-              <a href={link.route} target="_blank" rel="noopener noreferrer">
-                {link.title}
-              </a>
-            </li>
+            return (
+              <li key={link.route}>
+                <a href={link.route} target="_blank" rel="noopener noreferrer">
+                  {link.title}
+                </a>
+              </li>
             );
           }
           return (
