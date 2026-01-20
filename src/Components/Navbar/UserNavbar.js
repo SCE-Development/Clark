@@ -13,7 +13,7 @@ export default function UserNavbar(props) {
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
-    { title: 'Summer Internship', route: '/s/internship' },
+    { title: 'Summer Internship', route: '/s/internship', newTab: true },
   ];
 
   const authedRoutes = [
@@ -34,6 +34,15 @@ export default function UserNavbar(props) {
     return (
       <>
         {routesList.map((link) => {
+          if (link.newTab) {
+            return (
+              <li key={link.route}>
+                <a href={link.route} target="_blank" rel="noopener noreferrer">
+                  {link.title}
+                </a>
+              </li>
+            );
+          }
           return (
             <li key={link.route}><a href={link.route}>{link.title}</a></li>
           );
