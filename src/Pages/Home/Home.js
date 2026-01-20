@@ -107,7 +107,6 @@ const Home = () => {
 
 
         <div className={`fade-in-img w-full h-full p-6 md:p-12 overflow-visible xl:w-3/5${showAll ? ' show' : ''}`}>
-          {/* Added max-w-4xl to keep the container from becoming massive on ultra-wide screens */}
           <div className="relative max-w-4xl mx-auto">
             <img
               className="w-full aspect-video object-cover mx-auto rounded-xl shadow-2xl hover-grow"
@@ -115,7 +114,6 @@ const Home = () => {
               alt={homeImageAlt}
             />
 
-            {/* Splash text stays pinned to the corner of the cropped rectangle */}
             <div className={`absolute -top-4 -right-4 md:right-0 md:-top-2 z-10 fade-scale-in${showMessage ? ' show' : ''}`}>
               <div className="minecraft-styling text-yellow-400 drop-shadow-lg transform rotate-[-20deg] text-sm md:text-2xl whitespace-nowrap">
                 {renderMessageWithLinks(message)}
