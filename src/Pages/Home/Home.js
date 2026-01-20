@@ -23,10 +23,10 @@ const Home = () => {
         const [adRes, imgRes, _] = await Promise.all([
           getAd(),
           getHomeImage(),
-          incrementVisitCount(),
+          incrementVisitCount('HOME_PAGE'),
         ]);
 
-        const visitRes = await getVisitCount();
+        const visitRes = await getVisitCount('HOME_PAGE');
 
         setData({
           message: adRes.responseData?.message || '',
@@ -65,8 +65,6 @@ const Home = () => {
   return (
     <div className="flex flex-col min-h-[calc(100vh-86px)] bg-gradient-to-r from-gray-800 to-gray-600 overflow-x-hidden">
       <main className="flex flex-col md:flex-row items-center justify-center flex-1 py-8 container mx-auto">
-
-        {/* Left: Branding & CTA */}
         <section className="flex flex-col items-center xl:items-start w-full p-6 xl:w-2/5">
           <div className={getClassName(
             'transition-all duration-1000 transform',
@@ -93,7 +91,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Right: Image & Splash */}
         <section className={getClassName(
           'relative w-full p-6 xl:w-3/5 transition-opacity duration-1000 delay-300',
           isLoaded ? 'opacity-100' : 'opacity-0'
@@ -106,7 +103,7 @@ const Home = () => {
             />
 
             {data.message && (
-              <div className={getClassName("absolute -top-4 -right-4 md:right-0 md:-top-2 z-10 fade-scale-in", isLoaded && "show")}>
+              <div className={getClassName('absolute -top-4 -right-4 md:right-0 md:-top-2 z-10 fade-scale-in', isLoaded && 'show')}>
                 <div className="minecraft-styling text-yellow-400 drop-shadow-lg transform rotate-[-20deg] text-sm md:text-2xl whitespace-nowrap">
                   {renderedMessage}
                 </div>
@@ -116,7 +113,6 @@ const Home = () => {
         </section>
       </main>
 
-      {/* Bottom: Visit Counter */}
       <div className={getClassName(
         'pr-6 pb-6 text-base text-gray-400 text-right transition-all duration-700',
         isLoaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
