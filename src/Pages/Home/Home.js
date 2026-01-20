@@ -3,12 +3,16 @@ import Footer from '../../Components/Footer/Footer.js';
 import './Home.css';
 
 import { getAd } from '../../APIFunctions/Advertisement.js';
+import { getHomeImage } from '../../APIFunctions/Image.js';
 
 const Home = () => {
 
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [homeImageUrl, setHomeImageUrl] = useState('');
+  const [homeImageAlt, setHomeImageAlt] = useState('');
+
   async function getMessage() {
     try {
       const messageData = await getAd();
@@ -20,8 +24,22 @@ const Home = () => {
     }
   }
 
+  async function loadHomeImage() {
+    const DEFAULT_IMAGE = 'https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg';
+    const response = await getHomeImage();
+    let url = DEFAULT_IMAGE;
+    let alt = 'sce club image';
+    if (!response.error) {
+      url = response.responseData.url;
+      alt = response.responseData.alt;
+    }
+    setHomeImageUrl(url);
+    setHomeImageAlt(alt);
+  }
+
   useEffect(() => {
     getMessage();
+    loadHomeImage();
     setTimeout(() => setShowAll(true), 100);
   }, []);
 
@@ -89,13 +107,15 @@ const Home = () => {
 
 
         <div className={`fade-in-img w-full h-full p-6 md:p-12 overflow-visible xl:w-3/5${showAll ? ' show' : ''}`}>
-          <div className="relative max-w-max mx-auto">
+          <div className="relative max-w-4xl mx-auto">
             <img
-              className="w-full mx-auto transform md:w-4/5 rounded-xl shadow-2xl hover-grow"
-              src="https://raw.githubusercontent.com/thebeninator/Clark/refs/heads/add_comp_homepage/public/images/compressed2.jpg"
+              className="w-full aspect-video object-cover mx-auto rounded-xl shadow-2xl hover-grow"
+              src={homeImageUrl}
+              alt={homeImageAlt}
             />
-            <div className={`absolute -top-2 -right-2 md:right-10 md:top-0 z-10 fade-scale-in${showMessage ? ' show' : ''}`}>
-              <div className="minecraft-styling text-yellow-400 drop-shadow-lg transform rotate-[-20deg] text-sm md:text-xl whitespace-nowrap">
+
+            <div className={`absolute -top-4 -right-4 md:right-0 md:-top-2 z-10 fade-scale-in${showMessage ? ' show' : ''}`}>
+              <div className="minecraft-styling text-yellow-400 drop-shadow-lg transform rotate-[-20deg] text-sm md:text-2xl whitespace-nowrap">
                 {renderMessageWithLinks(message)}
               </div>
             </div>
