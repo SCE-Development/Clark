@@ -121,6 +121,7 @@ router.post('/storePayment', async (req, res) => {
   const sendEmail = await membershipConfirmationCode(confirmationCode, payerEmail);
   if (!sendEmail) {
     logger.error('Failed to send membership confirmation email to:', payerEmail);
+    return res.status(SERVER_ERROR).send('Error sending confirmation email.');
   }
   return res.status(OK).send('Payment stored successfully.');
 });
