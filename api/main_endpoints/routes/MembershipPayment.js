@@ -80,6 +80,7 @@ router.post('/verifyMembership', async (req, res) => {
     logger.error('User not found for membership expiration update. User ID:', decoded.token._id);
     return res.status(NOT_FOUND).send('User not found.');
   }
+  logger.info('Membership verified and updated for user:', decoded.token._id);
   return res.sendStatus(OK);
 });
 

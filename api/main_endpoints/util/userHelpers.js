@@ -5,6 +5,7 @@ const PasswordReset = require('../models/PasswordReset');
 const config = require('../../config/config.json');
 const logger = require('../../util/logger');
 const { verifyCaptcha } = require('./captcha');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong';
@@ -214,7 +215,10 @@ async function updateMembershipExpiration(userId, numberOfSemestersToSignUpFor) 
     const newExpiration = getMemberExpirationDate(numberOfSemestersToSignUpFor);
     const user = await User.findByIdAndUpdate(
       userId,
-      { membershipValidUntil: newExpiration },
+      {
+        membershipValidUntil: newExpiration,
+        accessLevel: membershipState.MEMBER,
+      },
       { new: true },
     );
     if (!user) {
