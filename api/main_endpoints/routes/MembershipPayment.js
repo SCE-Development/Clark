@@ -92,7 +92,7 @@ router.post('/storePayment', async (req, res) => {
   if (apiKey !== API_KEY) {
     return res.status(UNAUTHORIZED).send('Invalid API key.');
   }
-  const { memberEmail: payerEmail, amount, payerName, note, transactionId } = req.body;
+  const { payerEmail, amount, payerName, note, transactionId } = req.body;
   const required = [
     { value: payerEmail, title: 'Payer email', },
     { value: amount, title: 'Valid payment amount', },
