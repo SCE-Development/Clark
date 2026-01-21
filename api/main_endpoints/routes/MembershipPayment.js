@@ -29,14 +29,17 @@ router.post('/verifyMembership', async (req, res) => {
   const userId = decoded.token._id;
 
   if (!confirmationCode) {
+    logger.error('Confirmation code missing from verifyMembership request');
     return res.sendStatus(BAD_REQUEST);
   }
 
   const paymentDocument = await findVerifyPayment(confirmationCode, userId);
   if (paymentDocument === null){
+    logger.error('Error verifying payment for user:', userId);
     return res.sendStatus(SERVER_ERROR);
   }
   if (paymentDocument === false){
+    logger.error('No pending payment found for confirmation code:', confirmationCode);
     return res.sendStatus(NOT_FOUND);
   }
 
@@ -46,11 +49,14 @@ router.post('/verifyMembership', async (req, res) => {
   if (amount < 20){
     const rejected = await rejectPayment(paymentId);
     if (rejected === null){
+      logger.error('Error rejecting payment with ID:', paymentId);
       return res.sendStatus(SERVER_ERROR);
     }
     if (rejected === false){
+      logger.error('No payment found to reject with ID:', paymentId);
       return res.sendStatus(NOT_FOUND);
     }
+    logger.info('Payment rejected due to insufficient amount. Payment ID:', paymentId);
     return res.sendStatus(BAD_REQUEST);
   }
 
@@ -67,9 +73,11 @@ router.post('/verifyMembership', async (req, res) => {
   );
 
   if (membershipUpdateResult === null) {
+    logger.error('Error updating membership expiration for user:', decoded.token._id);
     return res.sendStatus(SERVER_ERROR);
   }
   if (membershipUpdateResult === false) {
+    logger.error('User not found for membership expiration update. User ID:', decoded.token._id);
     return res.status(NOT_FOUND).send('User not found.');
   }
   return res.sendStatus(OK);
