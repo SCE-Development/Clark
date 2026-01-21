@@ -1,4 +1,4 @@
-const MembershipPayment = require('../../models/MembershipPayment');
+const MembershipPayment = require('../models/MembershipPayment');
 
 const status = {
   PENDING: 'pending',
