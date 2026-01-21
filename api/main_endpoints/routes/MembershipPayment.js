@@ -83,9 +83,9 @@ router.post('/storePayment', async (req, res) => {
   if (apiKey !== API_KEY) {
     return res.status(UNAUTHORIZED).send('Invalid API key.');
   }
-  const { memberEmail, amount, venmoPaymentDetails } = req.body;
+  const { memberEmail: payerEmail, amount, venmoPaymentDetails } = req.body;
   const required = [
-    { value: memberEmail, title: 'Member email', },
+    { value: payerEmail, title: 'Payer email', },
     { value: amount, title: 'Valid payment amount', },
     { value: venmoPaymentDetails, title: 'Venmo payment details', },
   ];
@@ -105,9 +105,9 @@ router.post('/storePayment', async (req, res) => {
   if (!storeResult) {
     return res.sendStatus(SERVER_ERROR);
   }
-  const sendEmail = await membershipConfirmationCode(confirmationCode, memberEmail);
+  const sendEmail = await membershipConfirmationCode(confirmationCode, payerEmail);
   if (!sendEmail) {
-    logger.error('Failed to send membership confirmation email to:', memberEmail);
+    logger.error('Failed to send membership confirmation email to:', payerEmail);
   }
   return res.sendStatus(OK);
 });
