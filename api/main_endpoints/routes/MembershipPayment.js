@@ -91,11 +91,13 @@ router.post('/storePayment', async (req, res) => {
   if (apiKey !== API_KEY) {
     return res.status(UNAUTHORIZED).send('Invalid API key.');
   }
-  const { memberEmail: payerEmail, amount, venmoPaymentDetails } = req.body;
+  const { memberEmail: payerEmail, amount, payerName, note, transactionId } = req.body;
   const required = [
     { value: payerEmail, title: 'Payer email', },
     { value: amount, title: 'Valid payment amount', },
-    { value: venmoPaymentDetails, title: 'Venmo payment details', },
+    { value: payerName, title: 'Payer name', },
+    { value: note, title: 'Payment note', },
+    { value: transactionId, title: 'Venmo transaction ID', },
   ];
   const missingValue = required.find(({ value }) => !value);
   if (missingValue) {
@@ -107,7 +109,9 @@ router.post('/storePayment', async (req, res) => {
     userId: null,
     confirmationCode,
     amount,
-    venmoPaymentDetails,
+    payerName,
+    note,
+    transactionId,
   };
   const storeResult = await storePayment(newPayment);
   if (!storeResult) {

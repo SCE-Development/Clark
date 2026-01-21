@@ -59,7 +59,7 @@ function rejectPayment(paymentId) {
   });
 }
 
-function storePayment({ userId, confirmationCode, amount, venmoPaymentDetails }) {
+function storePayment({ userId, confirmationCode, amount, payerName, note, transactionId }) {
   return new Promise((resolve) => {
     try {
       const newPayment = new MembershipPayment({
@@ -67,7 +67,11 @@ function storePayment({ userId, confirmationCode, amount, venmoPaymentDetails })
         userId,
         confirmationCode,
         amount,
-        venmoPaymentDetails,
+        venmoPaymentDetails: {
+          transactionId,
+          payerName,
+          note,
+        },
       });
 
       newPayment.save((error) => {
