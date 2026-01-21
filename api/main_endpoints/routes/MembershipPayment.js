@@ -30,17 +30,17 @@ router.post('/verifyMembership', async (req, res) => {
 
   if (!confirmationCode) {
     logger.error('Confirmation code missing from verifyMembership request');
-    return res.sendStatus(BAD_REQUEST);
+    return res.status(BAD_REQUEST).send('Confirmation code missing from request.');
   }
 
   const paymentDocument = await findVerifyPayment(confirmationCode, userId);
   if (paymentDocument === null){
     logger.error('Error verifying payment for user:', userId);
-    return res.sendStatus(SERVER_ERROR);
+    return res.status(SERVER_ERROR).send('Error verifying payment.');
   }
   if (paymentDocument === false){
     logger.error('No pending payment found for confirmation code:', confirmationCode);
-    return res.sendStatus(NOT_FOUND);
+    return res.status(NOT_FOUND).send('No pending payment found.');
   }
 
   const paymentId = paymentDocument._id;
@@ -50,14 +50,14 @@ router.post('/verifyMembership', async (req, res) => {
     const rejected = await rejectPayment(paymentId);
     if (rejected === null){
       logger.error('Error rejecting payment with ID:', paymentId);
-      return res.sendStatus(SERVER_ERROR);
+      return res.status(SERVER_ERROR).send('Error rejecting payment.');
     }
     if (rejected === false){
       logger.error('No payment found to reject with ID:', paymentId);
-      return res.sendStatus(NOT_FOUND);
+      return res.status(NOT_FOUND).send('No payment found to reject.');
     }
     logger.info('Payment rejected due to insufficient amount. Payment ID:', paymentId);
-    return res.sendStatus(BAD_REQUEST);
+    return res.status(BAD_REQUEST).send('Payment amount insufficient.');
   }
 
   let semestersToAdd = 0;
@@ -74,14 +74,14 @@ router.post('/verifyMembership', async (req, res) => {
 
   if (membershipUpdateResult === null) {
     logger.error('Error updating membership expiration for user:', decoded.token._id);
-    return res.sendStatus(SERVER_ERROR);
+    return res.status(SERVER_ERROR).send('Error updating membership expiration.');
   }
   if (membershipUpdateResult === false) {
     logger.error('User not found for membership expiration update. User ID:', decoded.token._id);
     return res.status(NOT_FOUND).send('User not found.');
   }
   logger.info('Membership verified and updated for user:', decoded.token._id);
-  return res.sendStatus(OK);
+  return res.status(OK).send('Membership verified successfully.');
 });
 
 router.post('/storePayment', async (req, res) => {
@@ -116,13 +116,13 @@ router.post('/storePayment', async (req, res) => {
   };
   const storeResult = await storePayment(newPayment);
   if (!storeResult) {
-    return res.sendStatus(SERVER_ERROR);
+    return res.status(SERVER_ERROR).send('Error storing payment.');
   }
   const sendEmail = await membershipConfirmationCode(confirmationCode, payerEmail);
   if (!sendEmail) {
     logger.error('Failed to send membership confirmation email to:', payerEmail);
   }
-  return res.sendStatus(OK);
+  return res.status(OK).send('Payment stored successfully.');
 });
 
 module.exports = router;
