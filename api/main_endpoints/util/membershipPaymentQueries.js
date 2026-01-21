@@ -20,7 +20,6 @@ function findVerifyPayment(confirmationCode, userId) {
         {
           useFindAndModify: false,
           new: true,
-          runValidators: true,
         },
         (error, result) => {
           if (error) {
