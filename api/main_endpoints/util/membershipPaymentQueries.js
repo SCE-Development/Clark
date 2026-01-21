@@ -18,6 +18,7 @@ function findVerifyPayment(confirmationCode, userId) {
           $set: { userId, status: status.COMPLETED },
         },
         {
+          useFindAndModify: false,
           new: true,
           runValidators: true,
         },
