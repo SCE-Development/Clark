@@ -29,7 +29,7 @@ router.post('/create', async (req, res) => {
   }
 });
 
-router.get('/get', async (req, res) => {
+router.get('/', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.MEMBER);
   if (decoded.status !== OK) return res.sendStatus(decoded.status);
 
@@ -39,12 +39,11 @@ router.get('/get', async (req, res) => {
   try {
     const query = { deletedAt: null };
 
+    if (queryUserId) {
+      query.userId = queryUserId;
+    }
     if (!isOfficer) {
       query.userId = decoded.token._id.toString();
-    } else {
-      if (queryUserId) {
-        query.userId = queryUserId;
-      }
     }
 
     // If there is a type, filter by it
