@@ -11,7 +11,7 @@ const {
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const { updateMembershipExpiration } = require('../util/userHelpers');
-const { findVerifyPayment, rejectPayment, storePayment } = require('../util/membershipPaymentQueries.js');
+const { findVerifyPayment, storePayment } = require('../util/membershipPaymentQueries.js');
 const { decodeToken } = require('../util/token-functions.js');
 const { membershipPayment = {} } = require('../../config/config.json');
 const { API_KEY = 'TUFFANYCHAR' } = membershipPayment;
@@ -34,38 +34,13 @@ router.post('/verifyMembership', async (req, res) => {
   }
 
   const paymentDocument = await findVerifyPayment(confirmationCode, userId);
-  if (paymentDocument === null){
+  if (!paymentDocument) {
     logger.error('Error verifying payment for user:', userId);
-    return res.status(SERVER_ERROR).send('Error verifying payment.');
-  }
-  if (paymentDocument === false){
-    logger.error('No pending payment found for confirmation code:', confirmationCode);
-    return res.status(NOT_FOUND).send('No pending payment found.');
+    return res.status(NOT_FOUND).send('Error verifying payment.');
   }
 
-  const paymentId = paymentDocument._id;
   const { amount } = paymentDocument;
-
-  if (amount < 20){
-    const rejected = await rejectPayment(paymentId);
-    if (rejected === null){
-      logger.error('Error rejecting payment with ID:', paymentId);
-      return res.status(SERVER_ERROR).send('Error rejecting payment.');
-    }
-    if (rejected === false){
-      logger.error('No payment found to reject with ID:', paymentId);
-      return res.status(NOT_FOUND).send('No payment found to reject.');
-    }
-    logger.info('Payment rejected due to insufficient amount. Payment ID:', paymentId);
-    return res.status(BAD_REQUEST).send('Payment amount insufficient.');
-  }
-
-  let semestersToAdd = 0;
-  if (amount >= 30) {
-    semestersToAdd = 2;
-  } else {
-    semestersToAdd = 1;
-  }
+  const semestersToAdd = amount >= 30 ? 2 : 1;
 
   const membershipUpdateResult = await updateMembershipExpiration(
     decoded.token._id,
@@ -104,22 +79,22 @@ router.post('/storePayment', async (req, res) => {
   if (missingValue) {
     return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
+  if (amount < 20) {
+    return res.status(BAD_REQUEST).send('Payment amount must be at least $20.');
+  }
 
   const confirmationCode = crypto.randomBytes(4).toString('hex').toUpperCase();
   const newPayment = {
-    userId: null,
     confirmationCode,
     amount,
     payerName,
     note,
     transactionId,
   };
-  const storeResult = await storePayment(newPayment);
-  if (!storeResult) {
+  if (!await storePayment(newPayment)) {
     return res.status(SERVER_ERROR).send('Error storing payment.');
   }
-  const sendEmail = await membershipConfirmationCode(confirmationCode, payerEmail);
-  if (!sendEmail) {
+  if (!await membershipConfirmationCode(confirmationCode, payerEmail)) {
     logger.error('Failed to send membership confirmation email to:', payerEmail);
     return res.status(SERVER_ERROR).send('Error sending confirmation email.');
   }

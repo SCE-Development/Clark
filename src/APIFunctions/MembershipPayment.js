@@ -13,6 +13,7 @@ export async function verifyMembershipFromDb(token, confirmationCode) {
       },
       body: JSON.stringify({ confirmationCode })
     });
+    status.responseData = res.status;
     status.error = !res.ok;
   } catch (err) {
     status.error = true;

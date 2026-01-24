@@ -1,4 +1,5 @@
 const MembershipPayment = require('../models/MembershipPayment');
+const logger = require('../../util/logger');
 
 const status = {
   PENDING: 'pending',
@@ -23,48 +24,28 @@ function findVerifyPayment(confirmationCode, userId) {
         },
         (error, result) => {
           if (error) {
+            logger.error('findVerifyPayment got an error querying mongodb: ', error);
             return resolve(null);
           }
           if (!result) {
-            return resolve(false);
+            logger.info('findVerifyPayment found no matching payment for confirmation code: ', confirmationCode);
+            return resolve(null);
           }
           return resolve(result);
         }
       );
     } catch (error) {
+      logger.error('findVerifyPayment caught an error: ', error);
       return resolve(null);
     }
   });
 }
 
-function rejectPayment(paymentId) {
-  return new Promise((resolve) => {
-    try {
-      MembershipPayment.findByIdAndUpdate(
-        paymentId,
-        { $set: { status: status.REJECTED } },
-        (error, result) => {
-          if (error) {
-            return resolve(null);
-          }
-          if (!result) {
-            return resolve(false);
-          }
-          return resolve(true);
-        }
-      );
-    } catch (error) {
-      return resolve(null);
-    }
-  });
-}
-
-function storePayment({ userId, confirmationCode, amount, payerName, note, transactionId }) {
+function storePayment({ confirmationCode, amount, payerName, note, transactionId }) {
   return new Promise((resolve) => {
     try {
       const newPayment = new MembershipPayment({
         createdAt: new Date(),
-        userId,
         confirmationCode,
         amount,
         venmoPaymentDetails: {
@@ -88,4 +69,4 @@ function storePayment({ userId, confirmationCode, amount, payerName, note, trans
   });
 }
 
-module.exports = { findVerifyPayment, rejectPayment, storePayment };
+module.exports = { findVerifyPayment, storePayment };

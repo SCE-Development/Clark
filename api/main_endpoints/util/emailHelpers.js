@@ -40,12 +40,12 @@ async function sendPasswordReset(resetToken, email) {
   });
 }
 
-async function membershipConfirmationCode(confirmCode, email) {
+async function membershipConfirmationCode(confirmationCode, recipientEmail) {
   return new Promise((resolve) => {
     axios
       .post(`${MAILER_API_URL}/Mailer/sendMembershipConfirmationCode`, {
-        recipientEmail: email,
-        confirmationCode: confirmCode
+        recipientEmail,
+        confirmationCode,
       })
       .then(() => resolve(true))
       .catch(() => resolve(false));

@@ -3,7 +3,7 @@ function membershipConfirmationCode(user, recipient, confirmCode) {
     return resolve({
       from: user,
       to: recipient,
-      subject: 'SCE Membership Confirmation',
+      subject: 'SCE Membership Confirmation: Your SCE Membership Code Is...',
       generateTextFromHTML: true,
       html: `
             <p>
