@@ -69,26 +69,28 @@ router.post('/delete', async (req, res) => {
 
   const { type, _id } = req.body;
   if (!type || !Object.keys(PermissionRequestTypes).includes(type)) {
-    return res.status(BAD_REQUEST).send({ error: 'Invalid type' });
+    return res.status(BAD_REQUEST).send({ error: `${type} is an invalid type, try 
+      ${Object.keys(PermissionRequestTypes)}` });
   }
 
   try {
-    let request;
-    // Officers or admins can delete any request by id
-    if (decoded.token.accessLevel >= membershipState.OFFICER && _id) {
-      request = await PermissionRequest.findOne({
-        _id,
-        type,
-        deletedAt: null,
-      });
-    } else {
-      // Members can delete their own requests and officers can delete their own requests without id
-      request = await PermissionRequest.findOne({
-        userId: decoded.token._id,
-        type,
-        deletedAt: null,
-      });
+    let idToUse = _id;
+
+    if (!idToUse) {
+      idToUse = decoded.token._id;
     }
+
+    if (decoded.token.accessLevel < membershipState.OFFICER) {
+      idToUse = decoded.token._id;
+    }
+
+    const query = {
+      _id: idToUse,
+      type,
+      deletedAt: null,
+    };
+
+    const request = await PermissionRequest.findOne(query);
 
     if (!request) return res.sendStatus(NOT_FOUND);
     request.deletedAt = new Date();
