@@ -4,10 +4,6 @@ const Schema = mongoose.Schema;
 
 const MembershipPaymentSchema = new Schema(
   {
-    createdAt: {
-      type: Date,
-      default: Date.now
-    },
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -33,8 +29,10 @@ const MembershipPaymentSchema = new Schema(
       payerName: { type: String },
       note: { type: String },
     }
-  },
-  { collection: 'MembershipPayments' }
+  }, {
+    timestamps: true,
+    collection: 'MembershipPayments'
+  }
 );
 
 

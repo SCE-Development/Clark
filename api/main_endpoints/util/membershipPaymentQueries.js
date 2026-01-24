@@ -45,10 +45,9 @@ function storePayment({ confirmationCode, amount, payerName, note, transactionId
   return new Promise((resolve) => {
     try {
       const newPayment = new MembershipPayment({
-        createdAt: new Date(),
         confirmationCode,
         amount,
-        venmoPaymentDetails: {
+        venmoDetails: {
           transactionId,
           payerName,
           note,
