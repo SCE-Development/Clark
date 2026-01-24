@@ -1,3 +1,4 @@
+/* global describe it before after */
 process.env.NODE_ENV = 'test';
 
 const PermissionRequest = require('../../api/main_endpoints/models/PermissionRequest');
@@ -23,24 +24,25 @@ chai.should();
 chai.use(chaiHttp);
 const token = '';
 
-// Helper functions
-const createUserToken = (accessLevel = constants.MEMBERSHIP_STATE.MEMBER) => {
-  const userId = new mongoose.Types.ObjectId();
-  setTokenStatus(true, { _id: userId, email: 'test@test.com', accessLevel });
-  return userId;
-};
-
-const createRequest = async (userId, type = PermissionRequestTypes.LED_SIGN) => {
-  await PermissionRequest.deleteMany({ userId, type });
-  return await new PermissionRequest({ userId, type }).save();
-};
-
-const extractUserId = (item) => {
-  if (!item.userId) return null;
-  return item.userId._id ? item.userId._id.toString() : item.userId.toString();
-};
-
 describe('PermissionRequest', () => {
+  // Helper functions
+  function createUserToken(accessLevel) {
+    const level = accessLevel || constants.MEMBERSHIP_STATE.MEMBER;
+    const userId = new mongoose.Types.ObjectId();
+    setTokenStatus(true, { _id: userId, email: 'test@test.com', accessLevel: level });
+    return userId;
+  }
+
+  async function createRequest(userId, type) {
+    const requestType = type || PermissionRequestTypes.LED_SIGN;
+    await PermissionRequest.deleteMany({ userId, type: requestType });
+    return await new PermissionRequest({ userId, type: requestType }).save();
+  }
+
+  function extractUserId(item) {
+    if (!item.userId) return null;
+    return item.userId._id ? item.userId._id.toString() : item.userId.toString();
+  }
   before(done => {
     initializeTokenMock();
     app = tools.initializeServer(__dirname + '/../../api/main_endpoints/routes/PermissionRequest.js');
@@ -176,7 +178,7 @@ describe('PermissionRequest', () => {
     it('Should populate userId fields when User exists', async () => {
       const User = require('../../api/main_endpoints/models/User');
       const userId = new mongoose.Types.ObjectId();
-      const user = await new User({
+      await new User({
         _id: userId, firstName: 'John', lastName: 'Doe', email: 'john@test.com',
         password: 'Passw0rd', accessLevel: constants.MEMBERSHIP_STATE.MEMBER
       }).save();
