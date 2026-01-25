@@ -54,14 +54,16 @@ export default function Profile() {
             <span className="tracking-wide text-lg">{response.firstName} {response.lastName}</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              className="btn btn-success"
-              onClick={() =>
-                document.getElementById('verify-membership-modal').showModal()
-              }
-            >
-              Verify Membership
-            </button>
+            {response.accessLevel <= membershipState.NON_MEMBER && (
+              <button
+                className="btn btn-success"
+                onClick={() =>
+                  document.getElementById('verify-membership-modal').showModal()
+                }
+              >
+                Verify Membership
+              </button>
+            )}
             <button
               className="btn btn-primary"
               onClick={() =>
@@ -119,18 +121,19 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <VerifyMembershipModal
-        bannerCallback={(message, color, delay = 3000) => {
-          setBannerMessage(message);
-          setBannerColor(color);
-          setTimeout(() => {
-            setBannerMessage('');
-            setBannerColor('');
-          }, delay);
-        }}
-        accessLevel={response.accessLevel}
-        onVerificationSuccess={getUserFromApi}
-      />
+      {response.accessLevel <= membershipState.NON_MEMBER && (
+        <VerifyMembershipModal
+          bannerCallback={(message, color, delay = 3000) => {
+            setBannerMessage(message);
+            setBannerColor(color);
+            setTimeout(() => {
+              setBannerMessage('');
+              setBannerColor('');
+            }, delay);
+          }}
+          onVerificationSuccess={getUserFromApi}
+        />
+      )}
       <ChangePasswordModal
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);
