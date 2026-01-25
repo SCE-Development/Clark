@@ -227,7 +227,7 @@ async function updateMembershipExpiration(userId, numberOfSemestersToSignUpFor) 
     return true;
   } catch (error) {
     logger.error('Error updating membership:', error);
-    return null;
+    return false;
   }
 }
 

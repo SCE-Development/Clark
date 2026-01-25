@@ -14,7 +14,7 @@ const { updateMembershipExpiration } = require('../util/userHelpers');
 const { findVerifyPayment, storePayment } = require('../util/membershipPaymentQueries.js');
 const { decodeToken } = require('../util/token-functions.js');
 const { membershipPayment = {} } = require('../../config/config.json');
-const { API_KEY = 'TUFFANYCHAR' } = membershipPayment;
+const { API_KEY = 'GO_AWAY_LOL' } = membershipPayment;
 const crypto = require('crypto');
 const { membershipConfirmationCode } = require('../util/emailHelpers');
 const logger = require('../../util/logger');
@@ -47,13 +47,9 @@ router.post('/verifyMembership', async (req, res) => {
     semestersToAdd
   );
 
-  if (membershipUpdateResult === null) {
+  if (!membershipUpdateResult) {
     logger.error('Error updating membership expiration for user:', decoded.token._id);
     return res.status(SERVER_ERROR).send('Error updating membership expiration.');
-  }
-  if (membershipUpdateResult === false) {
-    logger.error('User not found for membership expiration update. User ID:', decoded.token._id);
-    return res.status(NOT_FOUND).send('User not found.');
   }
   logger.info('Membership verified and updated for user:', decoded.token._id);
   return res.status(OK).send('Membership verified successfully.');
@@ -78,9 +74,6 @@ router.post('/storePayment', async (req, res) => {
   const missingValue = required.find(({ value }) => !value);
   if (missingValue) {
     return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
-  }
-  if (amount < 20) {
-    return res.status(BAD_REQUEST).send('Payment amount must be at least $20.');
   }
 
   const confirmationCode = crypto.randomBytes(4).toString('hex').toUpperCase();
