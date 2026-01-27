@@ -294,6 +294,7 @@ export default function MembershipForm(props) {
               Click to pay fee
             </a>
             <p className='text-sm no-underline '> You do not need to pay to make an account</p>
+            <p className='text-sm text-red-500 no-underline '> Please enter "SCE Membership: [your email]" in the Venmo note</p>
           </div>
         </div>
         <div className='rounded-3xl backdrop-blur-sm shadow-2xl mt-20 ml-auto mr-auto px-10 text-center items-center justify-center xl:max-w-[35%]'>
