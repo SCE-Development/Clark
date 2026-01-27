@@ -5,6 +5,7 @@ const PasswordReset = require('../models/PasswordReset');
 const config = require('../../config/config.json');
 const logger = require('../../util/logger');
 const { verifyCaptcha } = require('./captcha');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong';
@@ -203,6 +204,33 @@ function checkIfPageCountResets(lastLogin) {
   return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
 }
 
+/**
+ * Update a user's membershipValidUntil date
+ * @param {String} userId - The user's ID
+ * @param {Number} numberOfSemestersToSignUpFor - Number of semesters to extend
+ * @returns {Object} result - Contains success status and message
+ */
+async function updateMembershipExpiration(userId, numberOfSemestersToSignUpFor) {
+  try {
+    const newExpiration = getMemberExpirationDate(numberOfSemestersToSignUpFor);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        membershipValidUntil: newExpiration,
+        accessLevel: membershipState.MEMBER,
+      },
+      { new: true },
+    );
+    if (!user) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    logger.error('Error updating membership:', error);
+    return false;
+  }
+}
+
 module.exports = {
   registerUser,
   getMemberExpirationDate,
@@ -211,4 +239,5 @@ module.exports = {
   userWithEmailExists,
   checkIfPageCountResets,
   findPasswordReset,
+  updateMembershipExpiration
 };

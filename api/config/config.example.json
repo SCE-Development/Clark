@@ -32,5 +32,8 @@
   "LED_SIGN": {
     "ENABLED": false
   },
+  "membershipPayment": {
+    "API_KEY": "GO_AWAY_LOL"
+  },
   "secretKey": "super duper secret key"
 }

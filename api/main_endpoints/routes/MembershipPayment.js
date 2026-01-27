@@ -1,0 +1,97 @@
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
+router.use(bodyParser.json());
+const {
+  BAD_REQUEST,
+  SERVER_ERROR,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED
+} = require('../../util/constants').STATUS_CODES;
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const { updateMembershipExpiration } = require('../util/userHelpers');
+const { findVerifyPayment, storePayment } = require('../util/membershipPaymentQueries.js');
+const { decodeToken } = require('../util/token-functions.js');
+const { membershipPayment = {} } = require('../../config/config.json');
+const { API_KEY = 'GO_AWAY_LOL' } = membershipPayment;
+const crypto = require('crypto');
+const { membershipConfirmationCode } = require('../util/emailHelpers');
+const logger = require('../../util/logger');
+
+router.post('/verifyMembership', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.PENDING);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const { confirmationCode } = req.body;
+  const userId = decoded.token._id;
+
+  if (!confirmationCode) {
+    logger.error('Confirmation code missing from verifyMembership request');
+    return res.status(BAD_REQUEST).send('Confirmation code missing from request.');
+  }
+
+  const paymentDocument = await findVerifyPayment(confirmationCode, userId);
+  if (!paymentDocument) {
+    logger.error('Error verifying payment for user:', userId);
+    return res.status(NOT_FOUND).send('Error verifying payment.');
+  }
+
+  const { amount } = paymentDocument;
+  const semestersToAdd = amount >= 30 ? 2 : 1;
+
+  const membershipUpdateResult = await updateMembershipExpiration(
+    decoded.token._id,
+    semestersToAdd
+  );
+
+  if (!membershipUpdateResult) {
+    logger.error('Error updating membership expiration for user:', decoded.token._id);
+    return res.status(SERVER_ERROR).send('Error updating membership expiration.');
+  }
+  logger.info('Membership verified and updated for user:', decoded.token._id);
+  return res.status(OK).send('Membership verified successfully.');
+});
+
+router.post('/storePayment', async (req, res) => {
+  const apiKey = req.headers['x-api-key'];
+  if (!apiKey) {
+    return res.status(BAD_REQUEST).send('API key missing from request.');
+  }
+  if (apiKey !== API_KEY) {
+    return res.status(UNAUTHORIZED).send('Invalid API key.');
+  }
+  const { payerEmail, amount, payerName, note, transactionId } = req.body;
+  const required = [
+    { value: payerEmail, title: 'Payer email', },
+    { value: amount, title: 'Valid payment amount', },
+    { value: payerName, title: 'Payer name', },
+    { value: note, title: 'Payment note', },
+    { value: transactionId, title: 'Venmo transaction ID', },
+  ];
+  const missingValue = required.find(({ value }) => !value);
+  if (missingValue) {
+    return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
+  }
+
+  const confirmationCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+  const newPayment = {
+    confirmationCode,
+    amount,
+    payerName,
+    note,
+    transactionId,
+  };
+  if (!await storePayment(newPayment)) {
+    return res.status(SERVER_ERROR).send('Error storing payment.');
+  }
+  if (!await membershipConfirmationCode(confirmationCode, payerEmail)) {
+    logger.error('Failed to send membership confirmation email to:', payerEmail);
+    return res.status(SERVER_ERROR).send('Error sending confirmation email.');
+  }
+  return res.status(OK).send('Payment stored successfully.');
+});
+
+module.exports = router;
