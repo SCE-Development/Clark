@@ -19,6 +19,7 @@ export default function EditUserInfo(props) {
   const [doorCode, setDoorCode] = useState('');
   const [major, setMajor] = useState('');
   const [pagesPrinted, setPagesPrinted] = useState();
+  const [escrowPagesPrinted, setEscrowPagesPrinted] = useState();
   const [emailVerified, setEmailVerified] = useState();
   const [accessLevel, setAccessLevel] = useState();
   const [email, setEmail] = useState();
@@ -54,6 +55,7 @@ export default function EditUserInfo(props) {
         setDoorCode(result.responseData.doorCode);
         setMajor(result.responseData.major);
         setPagesPrinted(result.responseData.pagesPrinted);
+        setEscrowPagesPrinted(result.responseData.escrowPagesPrinted);
         setEmailVerified(result.responseData.emailVerified);
         setAccessLevel(result.responseData.accessLevel);
         setEmailOptIn(result.responseData.emailOptIn);
@@ -100,6 +102,7 @@ export default function EditUserInfo(props) {
       doorCode,
       discordID: discordId,
       pagesPrinted,
+      escrowPagesPrinted,
       accessLevel,
       emailVerified,
       emailOptIn,
@@ -240,6 +243,25 @@ export default function EditUserInfo(props) {
                       onChange={(e) => {
                         setDataWasChanged(true);
                         setPagesPrinted(e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="escrow-pages-printed" className="block text-sm font-medium leading-6">Escrow Pages Printed</label>
+                  <div className="mt-2">
+                    <input
+                      type="number"
+                      name="escrow-pages-printed"
+                      id="escrow-pages-printed"
+                      defaultValue={escrowPagesPrinted}
+                      autoComplete="address-level1"
+                      className={INPUT_CLASS_NAME}
+                      onChange={(e) => {
+                        setDataWasChanged(true);
+                        setEscrowPagesPrinted(e.target.value);
                       }}
                     />
                   </div>
