@@ -198,7 +198,8 @@ router.post('/edit', async (req, res) => {
   // Prepare Data for Update (Sanitization)
   const allowedFields = [
     'firstName', 'lastName', 'email', 'accessLevel', 'major',
-    'discordID', 'emailOptIn', 'membershipValidUntil'
+    'discordID', 'emailOptIn', 'membershipValidUntil', 'pagesPrinted',
+    'doorCode'
   ];
 
   const dataToUpdate = {};
