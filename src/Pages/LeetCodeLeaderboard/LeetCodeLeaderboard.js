@@ -47,6 +47,7 @@ export default function LeetCodeLeaderboard() {
     e.preventDefault();
     const doesUserExist = await checkIfUserExists(leetcodeUsername, token);
     if (doesUserExist.responseData) {
+      setIsError(true);
       setMessage('This username is already registered, please try again');
       return;
     }
@@ -165,7 +166,7 @@ export default function LeetCodeLeaderboard() {
                   </button>
                 </div>
                 <div className='pb-4'>
-                  <p className={`text-sm min-h-[1.25rem] ${isError ? '' : 'text-red-500'}`}>{message}</p>
+                  <p className={`text-sm min-h-[1.25rem] ${isError ? 'text-red-500' : ''}`}>{message}</p>
                 </div>
               </form>
             </div>
