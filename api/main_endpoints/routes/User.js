@@ -185,8 +185,9 @@ router.post('/edit', async (req, res) => {
       .send('Unauthorized to edit another user');
   }
 
-  // Members cannot change email or accessLevel
-  if (!isOfficer && (userData.email || userData.accessLevel)) {
+  // Members cannot change email, accessLevel, pagesPrinted, or doorCode
+  const modifyingSensitiveFields = userData.email || userData.accessLevel || userData.pagesPrinted || userData.doorCode;
+  if (!isOfficer && modifyingSensitiveFields) {
     return res.status(UNAUTHORIZED).send('Unauthorized to change sensitive fields');
   }
 
