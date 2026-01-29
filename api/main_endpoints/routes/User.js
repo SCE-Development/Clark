@@ -30,6 +30,19 @@ const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
 
+const SENSITIVE_FIELDS = [
+  'email',
+  'accessLevel',
+  'pagesPrinted',
+  'doorCode'
+];
+
+const ALLOWED_FIELDS = [
+  'firstName', 'lastName', 'email', 'accessLevel', 'major',
+  'discordID', 'emailOptIn', 'membershipValidUntil', 'pagesPrinted',
+  'doorCode'
+];
+
 // Delete a member
 router.post('/delete', async (req, res) => {
   const decoded = await decodeToken(req);
@@ -186,9 +199,12 @@ router.post('/edit', async (req, res) => {
   }
 
   // Members cannot change email, accessLevel, pagesPrinted, or doorCode
-  const modifyingSensitiveFields = userData.email || userData.accessLevel || userData.pagesPrinted || userData.doorCode;
-  if (!isOfficer && modifyingSensitiveFields) {
-    return res.status(UNAUTHORIZED).send('Unauthorized to change sensitive fields');
+  const forbiddenField = SENSITIVE_FIELDS.find(field => field in userData);
+
+  if (!isOfficer && forbiddenField) {
+    return res
+      .status(UNAUTHORIZED)
+      .send(`Unauthorized to change sensitive field: ${forbiddenField}`);
   }
 
   // Officers cannot change accessLevel to ADMIN
@@ -197,17 +213,11 @@ router.post('/edit', async (req, res) => {
   }
 
   // Prepare Data for Update (Sanitization)
-  const allowedFields = [
-    'firstName', 'lastName', 'email', 'accessLevel', 'major',
-    'discordID', 'emailOptIn', 'membershipValidUntil', 'pagesPrinted',
-    'doorCode'
-  ];
-
   const dataToUpdate = {};
   const fieldChanges = {};
 
   // Iterate through allowed fields and build the update object and audit log
-  allowedFields.forEach(field => {
+  ALLOWED_FIELDS.forEach(field => {
     // Only include the field if it was provided in the request body
     if (userData[field] !== undefined) {
       // Check if value actually changed for audit
