@@ -38,5 +38,6 @@
   "secretKey": "super duper secret key",
   "SCEvents": {
     "ENABLED": false
-  }
+  },
+  "LEETCODE_URL": "NOT_SET"
 }

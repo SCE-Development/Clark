@@ -1,5 +1,5 @@
 const logger = require('../../util/logger');
-const LEETCODE_URL = 'http://192.168.69.180:8080';
+const { LEETCODE_URL } = require('../../config/config.json');
 
 async function getAllUsers() {
   try {
