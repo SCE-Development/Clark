@@ -3,7 +3,6 @@ import {
   getAllUsers,
   deleteUser,
   addUser,
-  checkIfUserExists
 } from '../../APIFunctions/LeetCodeLeaderboard.js';
 import { trashcanSymbol } from '../Overview/SVG.js';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
@@ -45,18 +44,18 @@ export default function LeetCodeLeaderboard() {
 
   async function handleRegisterUser(e) {
     e.preventDefault();
-    const doesUserExist = await checkIfUserExists(leetcodeUsername, token);
-    if (doesUserExist.responseData) {
-      setIsError(true);
-      setMessage('This username is already registered, please try again');
-      return;
-    }
     const newUser = {
       username: leetcodeUsername,
       firstName,
       lastName
     };
-    if (!await addUser(newUser, token)) {
+    const tryAddUser = await addUser(newUser, token);
+    if (tryAddUser.responseData.error) {
+      setIsError(true);
+      if (tryAddUser.responseData.statusCode && tryAddUser.responseData.statusCode === 409) {
+        setMessage('This username is already registered, please try again');
+        return;
+      }
       setMessage('Error registering user, please try again later');
     } else {
       getAllRegisteredUsers();

@@ -4,7 +4,7 @@ import { BASE_API_URL } from '../Enums';
 export async function getAllUsers(token) {
   let status = new ApiResponse();
   try {
-    const url = new URL('/api/LeetCodeLeaderboard/getAllUsers', BASE_API_URL);
+    const url = new URL('/api/LeetCodeLeaderboard/', BASE_API_URL);
     const res = await fetch(url.href, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -40,6 +40,7 @@ export async function addUser(userData, token) {
       status.responseData = result;
     } else {
       status.error = true;
+      status.statusCode = res.status;
     }
   } catch (err) {
     status.error = true;
@@ -72,29 +73,3 @@ export async function deleteUser(username, token) {
   }
   return status;
 }
-
-export async function checkIfUserExists(username, token) {
-  let status = new ApiResponse();
-  try {
-    const url = new URL('/api/LeetCodeLeaderboard/checkIfUserExists', BASE_API_URL);
-    const res = await fetch(url.href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ username }),
-    });
-    if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
-    } else {
-      status.error = true;
-    }
-  } catch (err) {
-    status.error = true;
-    status.responseData = err;
-  }
-  return status;
-}
-

@@ -11,16 +11,21 @@ const {
   getAllUsers,
   addUserToLeaderboard,
   deleteUserFromLeaderboard,
-  checkIfUserExists,
 } = require('../util/LeetCodeLeaderboard.js');
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
+const { SIGN2 = {} } = require('../../config/config.json');
 
-router.get('/getAllUsers', async (req, res) => {
+router.get('/', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
+  }
+
+  if (!SIGN2.ENABLED) {
+    logger.warn('LeetCode Leaderboard is disabled, returning 200 to mock the service');
+    return res.sendStatus(OK);
   }
 
   const users = await getAllUsers();
@@ -34,6 +39,11 @@ router.post('/addUser', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
+  }
+
+  if (!SIGN2.ENABLED) {
+    logger.warn('LeetCode Leaderboard is disabled, returning 200 to mock the service');
+    return res.sendStatus(OK);
   }
 
   const { username, firstName, lastName } = req.body;
@@ -71,6 +81,11 @@ router.post('/deleteUser', async (req, res) => {
     return res.sendStatus(decoded.status);
   }
 
+  if (!SIGN2.ENABLED) {
+    logger.warn('LeetCode Leaderboard is disabled, returning 200 to mock the service');
+    return res.sendStatus(OK);
+  }
+
   const { username } = req.body;
   if (!username) {
     return res.status(BAD_REQUEST).send('Username field missing');
@@ -86,23 +101,6 @@ router.post('/deleteUser', async (req, res) => {
     details: { username },
   });
   return res.sendStatus(OK);
-});
-
-router.post('/checkIfUserExists', async (req, res) => {
-  const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (decoded.status !== OK) {
-    return res.sendStatus(decoded.status);
-  }
-
-  const { username } = req.body;
-  if (!username) {
-    return res.status(BAD_REQUEST).send('Username field missing');
-  }
-  const response = await checkIfUserExists(username);
-  if (response.error) {
-    return res.status(response.status).send(response.message);
-  }
-  return res.status(OK).send(response.exists);
 });
 
 module.exports = router;

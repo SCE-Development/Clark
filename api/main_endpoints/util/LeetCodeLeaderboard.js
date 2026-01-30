@@ -1,9 +1,9 @@
 const logger = require('../../util/logger');
-const { LEETCODE_URL } = require('../../config/config.json');
+const SIGN2_URL = 'http://192.168.69.180:8080';
 
 async function getAllUsers() {
   try {
-    const url = new URL('/getAllUsers', LEETCODE_URL);
+    const url = new URL('/getAllUsers', SIGN2_URL);
     const res = await fetch(url.href);
     const data = await res.json();
     if ('error' in data) {
@@ -19,7 +19,7 @@ async function getAllUsers() {
 
 async function addUserToLeaderboard(userData) {
   try {
-    const url = new URL('/user/add', LEETCODE_URL);
+    const url = new URL('/user/add', SIGN2_URL);
     const res = await fetch(url.href, {
       method: 'POST',
       headers: {
@@ -41,7 +41,7 @@ async function addUserToLeaderboard(userData) {
 
 async function deleteUserFromLeaderboard(username) {
   try {
-    const url = new URL('/user/remove', LEETCODE_URL);
+    const url = new URL('/user/remove', SIGN2_URL);
     const res = await fetch(url.href, {
       method: 'POST',
       headers: {
@@ -61,43 +61,8 @@ async function deleteUserFromLeaderboard(username) {
   }
 }
 
-async function checkIfUserExists(username) {
-  try {
-    const url = new URL('/checkIfUserExists', LEETCODE_URL);
-    const res = await fetch(url.href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username }),
-    });
-    const data = await res.json();
-    if ('error' in data) {
-      logger.error('Error from LeetCode Leaderboard: ', data.error);
-      return {
-        error: true,
-        message: data.error,
-        status: data.status_code,
-      };
-    }
-    return {
-      error: false,
-      exists: data.exists,
-    };
-
-  } catch (err) {
-    logger.error('checkIfUserExists encountered an error: ', err);
-    return {
-      error: true,
-      message: err,
-    };
-  }
-}
-
 module.exports = {
   getAllUsers,
   addUserToLeaderboard,
   deleteUserFromLeaderboard,
-  checkIfUserExists,
 };
-

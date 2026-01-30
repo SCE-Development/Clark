@@ -32,6 +32,9 @@
   "LED_SIGN": {
     "ENABLED": false
   },
+  "SIGN2": {
+    "ENABLED": false
+  },
   "membershipPayment": {
     "API_KEY": "GO_AWAY_LOL"
   },
