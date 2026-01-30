@@ -8,6 +8,8 @@ import { trashcanSymbol } from '../Overview/SVG.js';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
 import { useSCE } from '../../Components/context/SceContext.js';
 
+const SIGN2_URL = process.env.REACT_APP_SIGN2_URL || 'http://192.168.69.180:8888';
+
 export default function LeetCodeLeaderboard() {
   const { user } = useSCE();
   const token = user.token;
@@ -115,7 +117,7 @@ export default function LeetCodeLeaderboard() {
           <div className='max-w-[1150px] max-h-[1150px] overflow-hidden inline-block scale-50 origin-top border-[6px] border-red-500 dark:border-white' style={{ marginBottom: '-500px' }}>
             <iframe
               id='led-frame'
-              src='http://192.168.69.180:8888'
+              src={SIGN2_URL}
               title='LED Emulator'
               className='w-[1150px] h-[1150px]'
               scrolling='no'
