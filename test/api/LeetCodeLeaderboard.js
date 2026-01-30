@@ -40,12 +40,10 @@ describe('LeetCodeLeaderboard', () => {
   let getAllUsersStub = null;
   let addUserStub = null;
   let deleteUserStub = null;
-  let checkIfUserExistsStub = null;
 
   const ADD_API_PATH = '/api/LeetCodeLeaderboard/addUser';
   const DELETE_API_PATH = '/api/LeetCodeLeaderboard/deleteUser';
-  const GET_ALL_USERS_API_PATH = '/api/LeetCodeLeaderboard/getAllUsers';
-  const CHECK_USER_EXISTS_API_PATH = '/api/LeetCodeLeaderboard/checkIfUserExists';
+  const GET_ALL_USERS_API_PATH = '/api/LeetCodeLeaderboard/';
 
   before(() => {
     initializeTokenMock();
@@ -58,9 +56,6 @@ describe('LeetCodeLeaderboard', () => {
 
     deleteUserStub = sandbox.stub(LeetCodeLeaderboardUtils, 'deleteUserFromLeaderboard');
     deleteUserStub.resolves(true);
-
-    checkIfUserExistsStub = sandbox.stub(LeetCodeLeaderboardUtils, 'checkIfUserExists');
-    checkIfUserExistsStub.resolves({ exists: true });
 
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/LeetCodeLeaderboard.js',
@@ -81,7 +76,7 @@ describe('LeetCodeLeaderboard', () => {
     tools.terminateServer(done);
   });
 
-  describe('GET /getAllUsers', () => {
+  describe('GET /', () => {
     it('Should return 401 when token is not sent', async () => {
       const result = await test.sendGetRequest(GET_ALL_USERS_API_PATH);
       expect(result).to.have.status(UNAUTHORIZED);
@@ -146,6 +141,8 @@ describe('LeetCodeLeaderboard', () => {
       );
       expect(result).to.have.status(OK);
     });
+    
+    // add a test to check for 409 error
 
     it('Should return 500 if there was an error adding the user', async () => {
       setTokenStatus(true);
@@ -203,61 +200,6 @@ describe('LeetCodeLeaderboard', () => {
       );
       expect(result).to.have.status(SERVER_ERROR);
       deleteUserStub.restore();
-    });
-  });
-
-  describe('POST /checkIfUserExists', () => {
-    it('Should return 401 when token is not sent', async () => {
-      const result = await test.sendPostRequest(CHECK_USER_EXISTS_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
-    });
-
-    it('Should return 403 when invalid token is sent', async () => {
-      setTokenStatus(null);
-      const result = await test.sendPostRequestWithToken(token,
-        CHECK_USER_EXISTS_API_PATH);
-      expect(result).to.have.status(FORBIDDEN);
-    });
-
-    it('Should return 400 when username field is missing', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        CHECK_USER_EXISTS_API_PATH,
-        {},
-      );
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
-    it('Should return 200 when user existence is checked successfully', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        CHECK_USER_EXISTS_API_PATH,
-        { username: 'testuser' },
-      );
-      expect(result).to.have.status(OK);
-    });
-
-    it('Should return 200 and false when user does not exist', async () => {
-      setTokenStatus(true);
-      checkIfUserExistsStub.resolves({ exists: false });
-      const result = await test.sendPostRequestWithToken(token,
-        CHECK_USER_EXISTS_API_PATH,
-        { username: 'nonexistentuser' },
-      );
-      expect(result).to.have.status(OK);
-      expect(result.body).to.equal(false);
-      checkIfUserExistsStub.restore();
-    });
-
-    it('Should return 500 if there was an error checking user existence', async () => {
-      setTokenStatus(true);
-      checkIfUserExistsStub.resolves({ error: true, message: 'Internal server error', status: SERVER_ERROR });
-      const result = await test.sendPostRequestWithToken(token,
-        CHECK_USER_EXISTS_API_PATH,
-        { username: 'testuser' },
-      );
-      expect(result).to.have.status(SERVER_ERROR);
-      checkIfUserExistsStub.restore();
     });
   });
 });
