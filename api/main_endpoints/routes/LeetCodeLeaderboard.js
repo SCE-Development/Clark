@@ -59,12 +59,14 @@ router.post('/addUser', async (req, res) => {
     return res.status(BAD_REQUEST).send(`${missingValue.title} missing from request`);
   }
 
-  if (!await addUserToLeaderboard({
+  const tryAddUser = await addUserToLeaderboard({
     username,
     firstName,
     lastName
-  })) {
-    return res.sendStatus(SERVER_ERROR);
+  });
+
+  if (tryAddUser !== OK) {
+    return res.status(tryAddUser).send('Error adding user to LeetCode Leaderboard');
   }
 
   AuditLog.create({

@@ -36,8 +36,7 @@ export async function addUser(userData, token) {
       body: JSON.stringify(userData),
     });
     if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
+      status.error = false;
     } else {
       status.error = true;
       status.statusCode = res.status;
@@ -61,12 +60,7 @@ export async function deleteUser(username, token) {
       },
       body: JSON.stringify({ username }),
     });
-    if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
-    } else {
-      status.error = true;
-    }
+    status.error = !res.ok;
   } catch (err) {
     status.error = true;
     status.responseData = err;

@@ -1,4 +1,8 @@
 const logger = require('../../util/logger');
+const {
+  OK,
+  SERVER_ERROR,
+} = require('../../util/constants').STATUS_CODES;
 const SIGN2_URL = 'http://192.168.69.180:8080';
 
 async function getAllUsers() {
@@ -30,12 +34,12 @@ async function addUserToLeaderboard(userData) {
     const data = await res.json();
     if ('error' in data) {
       logger.error('Error from LeetCode Leaderboard: ', data.error);
-      return false;
+      return data.status_code;
     }
-    return true;
+    return OK;
   } catch (err) {
     logger.error('addUserToLeaderboard encountered an error: ', err);
-    return false;
+    return SERVER_ERROR;
   }
 }
 
