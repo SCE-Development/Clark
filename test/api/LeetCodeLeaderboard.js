@@ -141,7 +141,7 @@ describe('LeetCodeLeaderboard', () => {
       );
       expect(result).to.have.status(OK);
     });
-    
+
     // add a test to check for 409 error
 
     it('Should return 500 if there was an error adding the user', async () => {
