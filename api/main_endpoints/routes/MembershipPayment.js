@@ -18,6 +18,8 @@ const { API_KEY = 'GO_AWAY_LOL' } = membershipPayment;
 const crypto = require('crypto');
 const { membershipConfirmationCode } = require('../util/emailHelpers');
 const logger = require('../../util/logger');
+const attemptCount = new Map();
+const MAX_ATTEMPTS = 5;
 
 router.post('/verifyMembership', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.PENDING);
@@ -27,6 +29,12 @@ router.post('/verifyMembership', async (req, res) => {
 
   const { confirmationCode } = req.body;
   const userId = decoded.token._id;
+  const attempts = attemptCount.get(userId) ?? 0;
+
+  if (attempts >= MAX_ATTEMPTS){
+    logger.error('User has made too many verification attempts.');
+    return res.status(429).send('Too many verification attempts.');
+  }
 
   if (!confirmationCode) {
     logger.error('Confirmation code missing from verifyMembership request');
@@ -35,6 +43,7 @@ router.post('/verifyMembership', async (req, res) => {
 
   const paymentDocument = await findVerifyPayment(confirmationCode, userId);
   if (!paymentDocument) {
+    attemptCount.set(userId, attempts + 1);
     logger.error('Error verifying payment for user:', userId);
     return res.status(NOT_FOUND).send('Error verifying payment.');
   }
@@ -51,6 +60,8 @@ router.post('/verifyMembership', async (req, res) => {
     logger.error('Error updating membership expiration for user:', decoded.token._id);
     return res.status(SERVER_ERROR).send('Error updating membership expiration.');
   }
+
+  attemptCount.delete(userId);
   logger.info('Membership verified and updated for user:', decoded.token._id);
   return res.status(OK).send('Membership verified successfully.');
 });
