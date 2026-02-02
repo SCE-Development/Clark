@@ -57,7 +57,7 @@ router.post('/verifyMembership', async (req, res) => {
   AuditLog.create({
     userId: decoded.token._id,
     action: AuditLogActions.VERIFY_MEMBERSHIP,
-    details: semestersToAdd
+    details: { semestersToAdd },
   });
   return res.status(OK).send('Membership verified successfully.');
 });
