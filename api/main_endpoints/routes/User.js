@@ -203,7 +203,7 @@ router.post('/edit', async (req, res) => {
 
   if (!isOfficer && forbiddenField) {
     return res
-      .status(UNAUTHORIZED)
+      .status(FORBIDDEN)
       .send(`Unauthorized to change sensitive field: ${forbiddenField}`);
   }
 
