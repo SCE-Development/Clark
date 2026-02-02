@@ -7,7 +7,8 @@ const {
   SERVER_ERROR,
   NOT_FOUND,
   OK,
-  UNAUTHORIZED
+  UNAUTHORIZED,
+  TOO_MANY_REQUESTS
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const { updateMembershipExpiration } = require('../util/userHelpers');
@@ -33,7 +34,10 @@ router.post('/verifyMembership', async (req, res) => {
 
   if (attempts >= MAX_ATTEMPTS){
     logger.error('User has made too many verification attempts.');
-    return res.status(429).send('Too many verification attempts.');
+    return res.status(TOO_MANY_REQUESTS).json({
+      error: 'Too many verification attempts.',
+      remainingAttempts: 0
+    });
   }
 
   if (!confirmationCode) {
@@ -45,7 +49,10 @@ router.post('/verifyMembership', async (req, res) => {
   if (!paymentDocument) {
     attemptCount.set(userId, attempts + 1);
     logger.error('Error verifying payment for user:', userId);
-    return res.status(NOT_FOUND).send('Error verifying payment.');
+    return res.status(NOT_FOUND).json({
+      error: 'Error verifying payment.',
+      remainingAttempts: MAX_ATTEMPTS - (attempts + 1)
+    });
   }
 
   const { amount } = paymentDocument;
