@@ -33,9 +33,7 @@ router.post('/verifyMembership', async (req, res) => {
   const attempts = attemptCount.get(userId) ?? 0;
 
   if (attempts >= MAX_ATTEMPTS){
-    logger.error('User has made too many verification attempts.');
-    return res.status(TOO_MANY_REQUESTS).json({
-      error: 'Too many verification attempts.',
+      logger.error(`User ${userId} has made too many verification attempts.`);    return res.status(TOO_MANY_REQUESTS).json({
       remainingAttempts: 0
     });
   }
@@ -50,7 +48,6 @@ router.post('/verifyMembership', async (req, res) => {
     attemptCount.set(userId, attempts + 1);
     logger.error('Error verifying payment for user:', userId);
     return res.status(NOT_FOUND).json({
-      error: 'Error verifying payment.',
       remainingAttempts: MAX_ATTEMPTS - (attempts + 1)
     });
   }

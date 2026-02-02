@@ -13,11 +13,13 @@ export async function verifyMembershipFromDb(token, confirmationCode) {
       },
       body: JSON.stringify({ confirmationCode })
     });
-    const data = await res.json();
-    status.responseData = res.status;
-    status.error = !res.ok;
-    status.remainingAttempts = data.remainingAttempts;
-    status.message = data.error;
+    if (res.status == TOO_MANY_ATTEMPTS) {
+      const data = await res.json();
+      status.responseData = data;
+      status.error = false;
+    } else {
+      status.error = !res.ok;
+    }
   } catch (err) {
     status.error = true;
     status.responseData = err;

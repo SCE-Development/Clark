@@ -16,7 +16,7 @@ export default function VerifyMembershipModal(props) {
       confirmationCode,
     );
     if (apiResponse.remainingAttempts != undefined){
-      bannerCallback(`Wrong Code - You have ${apiResponse.remainingAttempts} left. Status Code: ${apiResponse.responseData || 500}`, 'red');
+      bannerCallback(`Wrong Code - You have ${apiResponse.remainingAttempts} left.`);
       return;
     }
     if (apiResponse.error) {
