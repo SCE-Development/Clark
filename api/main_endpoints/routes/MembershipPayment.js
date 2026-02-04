@@ -19,8 +19,12 @@ const { API_KEY = 'GO_AWAY_LOL' } = membershipPayment;
 const crypto = require('crypto');
 const { membershipConfirmationCode } = require('../util/emailHelpers');
 const logger = require('../../util/logger');
+const AuditLogActions = require('../util/auditLogActions');
+const AuditLog = require('../models/AuditLog');
+
 const attemptCount = new Map();
 const MAX_ATTEMPTS = 5;
+
 
 router.post('/verifyMembership', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.PENDING);
@@ -67,6 +71,11 @@ router.post('/verifyMembership', async (req, res) => {
 
   attemptCount.delete(userId);
   logger.info('Membership verified and updated for user:', decoded.token._id);
+  AuditLog.create({
+    userId: decoded.token._id,
+    action: AuditLogActions.VERIFY_MEMBERSHIP,
+    details: { semestersToAdd },
+  });
   return res.status(OK).send('Membership verified successfully.');
 });
 
