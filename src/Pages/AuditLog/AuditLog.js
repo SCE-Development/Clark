@@ -30,6 +30,7 @@ export default function AuditLogPage() {
     'UPDATE_USER',
     'PRINT_PAGE',
     'VERIFY_EMAIL',
+    'VERIFY_MEMBERSHIP',
     'EMAIL_SENT',
     'CHANGE_PW',
     'RESET_PW',
