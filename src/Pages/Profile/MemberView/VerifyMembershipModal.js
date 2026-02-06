@@ -15,7 +15,7 @@ export default function VerifyMembershipModal(props) {
       user.token,
       confirmationCode,
     );
-    if (apiResponse.remainingAttempts != undefined){
+    if (apiResponse.remainingAttempts !== undefined){
       bannerCallback(`Wrong Code - You have ${apiResponse.remainingAttempts} left.`);
       return;
     }
