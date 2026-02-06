@@ -1,5 +1,6 @@
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
+const TOO_MANY_ATTEMPTS = 429;
 
 export async function verifyMembershipFromDb(token, confirmationCode) {
   let status = new ApiResponse();
@@ -13,8 +14,13 @@ export async function verifyMembershipFromDb(token, confirmationCode) {
       },
       body: JSON.stringify({ confirmationCode })
     });
-    status.responseData = res.status;
-    status.error = !res.ok;
+    if (res.status == TOO_MANY_ATTEMPTS) {
+      const data = await res.json();
+      status.responseData = data;
+      status.error = false;
+    } else {
+      status.error = !res.ok;
+    }
   } catch (err) {
     status.error = true;
     status.responseData = err;

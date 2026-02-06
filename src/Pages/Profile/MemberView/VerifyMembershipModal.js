@@ -15,6 +15,10 @@ export default function VerifyMembershipModal(props) {
       user.token,
       confirmationCode,
     );
+    if (apiResponse.remainingAttempts !== undefined){
+      bannerCallback(`Wrong Code - You have ${apiResponse.remainingAttempts} left.`);
+      return;
+    }
     if (apiResponse.error) {
       bannerCallback(`Unable to verify membership. Please try again later. Status Code: ${apiResponse.responseData || 500}`, 'red');
       return;

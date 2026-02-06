@@ -7,7 +7,8 @@ const {
   SERVER_ERROR,
   NOT_FOUND,
   OK,
-  UNAUTHORIZED
+  UNAUTHORIZED,
+  TOO_MANY_REQUESTS
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const { updateMembershipExpiration } = require('../util/userHelpers');
@@ -21,6 +22,10 @@ const logger = require('../../util/logger');
 const AuditLogActions = require('../util/auditLogActions');
 const AuditLog = require('../models/AuditLog');
 
+const attemptCount = new Map();
+const MAX_ATTEMPTS = 5;
+
+
 router.post('/verifyMembership', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.PENDING);
   if (decoded.status !== OK) {
@@ -29,6 +34,14 @@ router.post('/verifyMembership', async (req, res) => {
 
   const { confirmationCode } = req.body;
   const userId = decoded.token._id;
+  const attempts = attemptCount.get(userId) ?? 0;
+
+  if (attempts >= MAX_ATTEMPTS){
+    logger.error(`User ${userId} has made too many verification attempts.`);
+    return res.status(TOO_MANY_REQUESTS).json({
+      remainingAttempts: 0
+    });
+  }
 
   if (!confirmationCode) {
     logger.error('Confirmation code missing from verifyMembership request');
@@ -37,8 +50,11 @@ router.post('/verifyMembership', async (req, res) => {
 
   const paymentDocument = await findVerifyPayment(confirmationCode, userId);
   if (!paymentDocument) {
+    attemptCount.set(userId, attempts + 1);
     logger.error('Error verifying payment for user:', userId);
-    return res.status(NOT_FOUND).send('Error verifying payment.');
+    return res.status(NOT_FOUND).json({
+      remainingAttempts: MAX_ATTEMPTS - (attempts + 1)
+    });
   }
 
   const { amount } = paymentDocument;
@@ -53,6 +69,8 @@ router.post('/verifyMembership', async (req, res) => {
     logger.error('Error updating membership expiration for user:', decoded.token._id);
     return res.status(SERVER_ERROR).send('Error updating membership expiration.');
   }
+
+  attemptCount.delete(userId);
   logger.info('Membership verified and updated for user:', decoded.token._id);
   AuditLog.create({
     userId: decoded.token._id,
