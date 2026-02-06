@@ -37,7 +37,8 @@ router.post('/verifyMembership', async (req, res) => {
   const attempts = attemptCount.get(userId) ?? 0;
 
   if (attempts >= MAX_ATTEMPTS){
-      logger.error(`User ${userId} has made too many verification attempts.`);    return res.status(TOO_MANY_REQUESTS).json({
+    logger.error(`User ${userId} has made too many verification attempts.`);
+    return res.status(TOO_MANY_REQUESTS).json({
       remainingAttempts: 0
     });
   }

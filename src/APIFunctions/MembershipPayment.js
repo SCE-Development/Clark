@@ -1,5 +1,6 @@
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
+const TOO_MANY_ATTEMPTS = 429;
 
 export async function verifyMembershipFromDb(token, confirmationCode) {
   let status = new ApiResponse();
