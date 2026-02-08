@@ -120,7 +120,7 @@ export default function UserNavbar(props) {
                 </div>
               </summary>
               {isDropdownOpen && (
-                <div className='absolute right-0 mt-2 p-2 shadow menu bg-base-100 w-52 z-[1] rounded-xl'>
+                <div className='absolute right-0 mt-2 p-2 shadow menu bg-base-100 w-52 z-[40] rounded-xl'>
                   <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                     <div>{user.firstName} {user.lastName}</div>
                     <div className="font-medium truncate">{user.email}</div>
