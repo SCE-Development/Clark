@@ -194,20 +194,19 @@ function LedSign() {
     async function checkSignHealth() {
       setLoading(true);
       const status = await healthCheck(user.firstName);
-      if (status.responseData && !status.error) {
-        setSignHealthy(true);
-        const { responseData } = status;
-        if (Object.keys(responseData).length > 0) {
-          setText(responseData.text);
-          setBrightness(responseData.brightness);
-          setScrollSpeed(responseData.scrollSpeed);
-          setBackgroundColor(responseData.backgroundColor);
-          setTextColor(responseData.textColor);
-          setBorderColor(responseData.borderColor);
-          setExistingExpirationFromSign(responseData.expiration);
-        }
-      } else {
+      if (status.error) {
         setSignHealthy(false);
+      }
+      setSignHealthy(true);
+      const { responseData } = status;
+      if (responseData !== null && Object.keys(responseData).length) {
+        setText(responseData.text);
+        setBrightness(responseData.brightness);
+        setScrollSpeed(responseData.scrollSpeed);
+        setBackgroundColor(responseData.backgroundColor);
+        setTextColor(responseData.textColor);
+        setBorderColor(responseData.borderColor);
+        setExistingExpirationFromSign(responseData.expiration);
       }
       setLoading(false);
     }

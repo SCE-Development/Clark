@@ -180,19 +180,19 @@ router.post('/edit', async (req, res) => {
 
   const { accessLevel, _id: tokenId, email: tokenEmail } = decoded.token;
   const { _id: targetId, password, numberOfSemestersToSignUpFor, ...userData } = req.body;
-  const isOfficer = accessLevel >= membershipState.OFFICER;
+  const isAtLeastAnOfficer = accessLevel >= membershipState.OFFICER;
   const isTargetAdmin = accessLevel === membershipState.ADMIN;
 
   if (!targetId) {
     return res.sendStatus(BAD_REQUEST);
   }
 
-  const existingUser = await User.findById(targetId);
+  const existingUser = await User.findById(targetId).lean();
   if (!existingUser) {
     return res.status(NOT_FOUND).send({ message: 'User not found.' });
   }
 
-  if (!isOfficer && targetId.toString() !== tokenId.toString()) {
+  if (!isAtLeastAnOfficer && targetId.toString() !== tokenId.toString()) {
     return res
       .status(FORBIDDEN)
       .send('Unauthorized to edit another user');
@@ -201,14 +201,14 @@ router.post('/edit', async (req, res) => {
   // Members cannot change email, accessLevel, pagesPrinted, or doorCode
   const forbiddenField = SENSITIVE_FIELDS.find(field => field in userData);
 
-  if (!isOfficer && forbiddenField) {
+  if (!isAtLeastAnOfficer && forbiddenField) {
     return res
       .status(FORBIDDEN)
       .send(`Unauthorized to change sensitive field: ${forbiddenField}`);
   }
 
   // Officers cannot change accessLevel to ADMIN
-  if (isOfficer && userData.accessLevel === membershipState.ADMIN && !isTargetAdmin) {
+  if (isAtLeastAnOfficer && userData.accessLevel === membershipState.ADMIN && !isTargetAdmin) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
@@ -216,8 +216,12 @@ router.post('/edit', async (req, res) => {
   const dataToUpdate = {};
   const fieldChanges = {};
 
-  // Iterate through allowed fields and build the update object and audit log
-  ALLOWED_FIELDS.forEach(field => {
+  let fieldsToIterateOver = ALLOWED_FIELDS;
+  if (isAtLeastAnOfficer) {
+    fieldsToIterateOver = Object.keys(existingUser);
+  }
+
+  fieldsToIterateOver.forEach(field => {
     // Only include the field if it was provided in the request body
     if (userData[field] !== undefined) {
       // Check if value actually changed for audit
@@ -229,7 +233,7 @@ router.post('/edit', async (req, res) => {
   });
 
   // Handle special membership duration field
-  if (typeof numberOfSemestersToSignUpFor !== 'undefined' && isOfficer) {
+  if (typeof numberOfSemestersToSignUpFor !== 'undefined' && isAtLeastAnOfficer) {
     dataToUpdate.membershipValidUntil = getMemberExpirationDate(
       parseInt(numberOfSemestersToSignUpFor)
     );
