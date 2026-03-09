@@ -47,7 +47,7 @@ export async function createPermissionRequest(type, token) {
       status.error = false;
       return status;
     }
-    status.error = true; 
+    status.error = true;
     if (res.status === 409) {
       // user already has a pending/approved request.
       status.responseData = data;

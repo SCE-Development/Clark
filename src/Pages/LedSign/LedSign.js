@@ -280,7 +280,7 @@ function LedSign() {
     if (user.accessLevel >= membershipState.OFFICER) return null;
 
     // Mobile-friendly container: using max-w-md for better card feel on mobile
-    const containerClasses = "w-11/12 sm:w-2/3 lg:w-1/2 text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md space-y-4 fade-in border border-gray-200 dark:border-gray-700";
+    const containerClasses = 'w-11/12 sm:w-2/3 lg:w-1/2 text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md space-y-4 fade-in border border-gray-200 dark:border-gray-700';
 
     if (checkingPermission || requestingPermission) {
       return (
@@ -322,10 +322,10 @@ function LedSign() {
           <p className="text-sm text-gray-500 dark:text-gray-400 italic">
             Check back soon! You can also message us on Discord to speed this up.
           </p>
-          
+
           {/* Mobile-friendly Button Stack */}
           <div className="flex flex-col gap-2 pt-4">
-             <button
+            <button
               className="btn w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200"
               onClick={handleCancelRequest}
             >
