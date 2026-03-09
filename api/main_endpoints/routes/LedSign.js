@@ -40,8 +40,12 @@ router.post('/updateSignText', async (req, res) => {
   let decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status === FORBIDDEN) {
     const memberDecoded = await decodeToken(req, MEMBERSHIP_STATE.MEMBER);
+    if (memberDecoded.status !== OK) {
+      // return whatever decoded status we originally had
+      return res.sendStatus(decoded.status);
+    }
 
-    if (memberDecoded.status === OK) {
+    try {
       const hasPermission = await PermissionRequest.findOne({
         userId: memberDecoded.token._id,
         type: 'LED_SIGN',
@@ -53,11 +57,17 @@ router.post('/updateSignText', async (req, res) => {
       }
       // "elevate" the status to OK for the rest of the function
       decoded = memberDecoded;
+    } catch(e) {
+      logger.info('looking for a possible led sign permission didnt work', e);
     }
   } else if (decoded.status !== OK) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(decoded.status);
   }
+  console.log({
+    '!LED_SIGN.ENABLED,': !LED_SIGN.ENABLED,
+    '!runningInTest': !runningInTest,
+  })
   if (!LED_SIGN.ENABLED && !runningInTest) {
     logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);

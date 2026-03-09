@@ -71,7 +71,10 @@ router.post('/delete', async (req, res) => {
   const isOfficer = decoded.token.accessLevel >= membershipState.OFFICER;
 
   try {
-    const query = { _id };
+    const query = {
+      _id,
+      deletedAt: null,
+    };
 
     if (!isOfficer) {
       query.userId = decoded.token._id;
