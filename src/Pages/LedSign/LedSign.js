@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import {
-  getPermissionRequest,
+  getPermissionRequests,
   createPermissionRequest,
 }from '../../APIFunctions/PermissionRequest';
 import { useSCE } from '../../Components/context/SceContext';
@@ -203,7 +203,7 @@ function LedSign() {
       setLoading(true);
       if (user.accessLevel < membershipState.OFFICER) {
         setCheckingPermission(true);
-        const result = await getPermissionRequest('LED_SIGN', user.token);
+        const result = await getPermissionRequests('LED_SIGN', user.token);
         if (!result.error && result.responseData?.length) {
           setPermissionRequest(result.responseData[0]);
         }
