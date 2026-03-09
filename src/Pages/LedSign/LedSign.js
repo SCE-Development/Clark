@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import {
   getPermissionRequests,
   createPermissionRequest,
+  deletePermissionRequest,
 }from '../../APIFunctions/PermissionRequest';
 import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
@@ -259,37 +260,51 @@ function LedSign() {
     const result = await createPermissionRequest('LED_SIGN', user.token);
     if (!result.error) {
       setPermissionRequest({
+        _id: result.responseData._id,
         status: 'PENDING',
       });
     }
     setRequestingPermission(false);
   }
 
-  function renderPermissionRequestUI() {
-    if (user.accessLevel >= membershipState.OFFICER) {
-      return null;
+  async function handleCancelRequest() {
+    setRequestingPermission(true);
+    const result = await deletePermissionRequest(permissionRequest._id, user.token);
+    if (!result.error) {
+      setPermissionRequest(null);
     }
+    setRequestingPermission(false);
+  }
+
+  function renderPermissionRequestUI() {
+    if (user.accessLevel >= membershipState.OFFICER) return null;
+
+    // Mobile-friendly container: using max-w-md for better card feel on mobile
+    const containerClasses = "w-11/12 sm:w-2/3 lg:w-1/2 text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md space-y-4 fade-in border border-gray-200 dark:border-gray-700";
 
     if (checkingPermission || requestingPermission) {
       return (
-        <div className="w-2/3 lg:w-1/2 text-center py-4">
-          <p>Loading...</p>
+        <div className={containerClasses}>
+          <div className="flex justify-center items-center space-x-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+            <p className="text-gray-500">Processing...</p>
+          </div>
         </div>
       );
     }
 
     if (!permissionRequest) {
       return (
-        <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2 fade-in">
-          <p className="text-gray-700 dark:text-gray-300">
-            You need permission to access the LED sign.
+        <div className={containerClasses}>
+          <h2 className="text-xl font-semibold">Access Required</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            You currently do not have permission to update the LED sign. Would you like to request access?
           </p>
           <button
-            className="btn bg-blue-500 hover:bg-blue-400 text-white"
+            className="btn w-full bg-blue-500 hover:bg-blue-400 text-white font-bold py-3 rounded-lg transition-colors"
             onClick={handleRequestAccess}
-            disabled={requestingPermission}
           >
-            {requestingPermission ? 'Requesting...' : 'Request Access'}
+            Request Access
           </button>
         </div>
       );
@@ -297,18 +312,31 @@ function LedSign() {
 
     if (permissionRequest.status === 'PENDING') {
       return (
-        <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2 fade-in">
+        <div className={containerClasses}>
+          <div className="inline-flex items-center justify-center p-2 bg-yellow-100 dark:bg-yellow-900 rounded-full mb-2">
+            <span className="text-yellow-800 dark:text-yellow-200 text-sm font-bold px-2">Pending Approval</span>
+          </div>
           <p className="text-gray-700 dark:text-gray-300">
-            You requested access to the sign on {getFormattedTime(permissionRequest.createdAt)}.
+            Requested on {getFormattedTime(permissionRequest.createdAt)}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 italic">
-            Drop a message in Discord to speed up the process!
+          <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+            Check back soon! You can also message us on Discord to speed this up.
           </p>
+          
+          {/* Mobile-friendly Button Stack */}
+          <div className="flex flex-col gap-2 pt-4">
+             <button
+              className="btn w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200"
+              onClick={handleCancelRequest}
+            >
+              Nevermind, Cancel Request
+            </button>
+          </div>
         </div>
       );
     }
 
-    return <h1>{JSON.stringify(permissionRequest)}</h1>;
+    return null;
   }
 
   function renderSignControls() {
