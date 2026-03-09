@@ -18,6 +18,7 @@ import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
+import PermissionRequestPage from './Pages/PermissionRequest/PermissionRequest.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -120,6 +121,14 @@ export const officerOrAdminRoutes = [
   {
     Component: URLShortenerPage,
     path: '/short',
+    pageName: 'URL Shortener Page',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    inAdminNavbar: true,
+    redirect: '/',
+  },
+  {
+    Component: PermissionRequestPage,
+    path: '/permissions',
     pageName: 'URL Shortener Page',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     inAdminNavbar: true,

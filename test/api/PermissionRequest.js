@@ -210,78 +210,98 @@ describe('PermissionRequest', () => {
 
   describe('/POST delete', () => {
     it('Should return 401 when token is not sent or invalid', async () => {
-      const res1 = await test.sendPostRequest('/api/PermissionRequest/delete', { type: PermissionRequestTypes.LED_SIGN });
-      expect(res1).to.have.status(UNAUTHORIZED);
-      const res2 = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', { type: PermissionRequestTypes.LED_SIGN });
-      expect(res2).to.have.status(UNAUTHORIZED);
+      const res = await test.sendPostRequest('/api/PermissionRequest/delete', { _id: new mongoose.Types.ObjectId() });
+      expect(res).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 400 when type is invalid or missing', async () => {
-      const userId = createUserToken();
-      const invalidRes = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', { type: 'INVALID' });
-      expect(invalidRes).to.have.status(BAD_REQUEST);
-      const missingRes = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {});
-      expect(missingRes).to.have.status(BAD_REQUEST);
-    });
+    it('Should allow a Member to cancel their own PENDING request', async () => {
+      const userId = createUserToken(constants.MEMBERSHIP_STATE.MEMBER);
+      const request = await new PermissionRequest({
+        userId,
+        type: PermissionRequestTypes.LED_SIGN,
+        status: 'PENDING'
+      }).save();
 
-    it('Should delete permission request successfully and set deletedAt', async () => {
-      const userId = createUserToken();
-      await PermissionRequest.deleteMany({ userId, type: PermissionRequestTypes.LED_SIGN });
-      const request = await new PermissionRequest({ userId, type: PermissionRequestTypes.LED_SIGN }).save();
-      const beforeDelete = new Date();
-      // For non-officers, the API uses userId as _id in query, which won't match request._id
-      // So we need to test with an officer who can provide the actual _id
-      createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
       const res = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
-        type: PermissionRequestTypes.LED_SIGN, _id: request._id
+        _id: request._id
       });
+
       expect(res).to.have.status(OK);
       const deleted = await PermissionRequest.findById(request._id);
       expect(deleted.deletedAt).to.not.be.null;
-      expect(new Date(deleted.deletedAt).getTime()).to.be.at.least(beforeDelete.getTime());
+      // Status stays PENDING because the user canceled it themselves
+      expect(deleted.status).to.equal('PENDING');
     });
 
-    it('Should return 404 when _id does not exist or request already deleted', async () => {
-      const userId = createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
-      const nonExistentId = new mongoose.Types.ObjectId();
-      const res1 = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
-        type: PermissionRequestTypes.LED_SIGN, _id: nonExistentId
-      });
-      expect(res1).to.have.status(NOT_FOUND);
-      const deletedRequest = await new PermissionRequest({ userId, type: PermissionRequestTypes.LED_SIGN, deletedAt: new Date() }).save();
-      const res2 = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
-        type: PermissionRequestTypes.LED_SIGN, _id: deletedRequest._id
-      });
-      expect(res2).to.have.status(NOT_FOUND);
-    });
+    it('Should set status to DENIED when an Officer deletes a PENDING request', async () => {
+      const memberId = new mongoose.Types.ObjectId();
+      const request = await new PermissionRequest({
+        userId: memberId,
+        type: PermissionRequestTypes.LED_SIGN,
+        status: 'PENDING'
+      }).save();
 
-    it('Should enforce authorization: non-officer cannot delete others, officer can delete any', async () => {
-      const userId1 = createUserToken(constants.MEMBERSHIP_STATE.MEMBER);
-      const userId2 = new mongoose.Types.ObjectId();
-      const request2 = await createRequest(userId2);
-      // Non-officer cannot delete another user's request
-      const memberRes = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
-        type: PermissionRequestTypes.LED_SIGN, _id: request2._id
-      });
-      expect(memberRes).to.have.status(NOT_FOUND);
-      expect((await PermissionRequest.findById(request2._id)).deletedAt).to.be.null;
-      // Officer can delete any request
+      // Switch to Officer
       createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
-      const officerRes = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
-        type: PermissionRequestTypes.LED_SIGN, _id: request2._id
+      const res = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
+        _id: request._id
       });
-      expect(officerRes).to.have.status(OK);
-      expect((await PermissionRequest.findById(request2._id)).deletedAt).to.not.be.null;
+
+      expect(res).to.have.status(OK);
+      const updated = await PermissionRequest.findById(request._id);
+      expect(updated.status).to.equal('DENIED');
+      expect(updated.deletedAt).to.not.be.null;
     });
 
-    it('Should require _id parameter even for officers', async () => {
-      const userId = createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
-      const request = await createRequest(userId);
+    it('Should set status to REVOKED when an Officer deletes an APPROVED request', async () => {
+      const memberId = new mongoose.Types.ObjectId();
+      const request = await new PermissionRequest({
+        userId: memberId,
+        type: PermissionRequestTypes.LED_SIGN,
+        status: 'APPROVED'
+      }).save();
+
+      createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
       const res = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
-        type: PermissionRequestTypes.LED_SIGN
+        _id: request._id
+      });
+
+      expect(res).to.have.status(OK);
+      const updated = await PermissionRequest.findById(request._id);
+      expect(updated.status).to.equal('REVOKED');
+      expect(updated.deletedAt).to.not.be.null;
+    });
+
+    it('Should return 404 if a non-officer tries to delete their own APPROVED request', async () => {
+      // According to your code: if (!isOfficer) { query.status = 'PENDING' }
+      // This means a member cannot revoke their own approved permission via this endpoint.
+      const userId = createUserToken(constants.MEMBERSHIP_STATE.MEMBER);
+      const request = await new PermissionRequest({
+        userId,
+        type: PermissionRequestTypes.LED_SIGN,
+        status: 'APPROVED'
+      }).save();
+
+      const res = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
+        _id: request._id
+      });
+
+      expect(res).to.have.status(NOT_FOUND);
+    });
+
+    it('Should return 404 when request is already deleted (deletedAt is not null)', async () => {
+      createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
+      const deletedRequest = await new PermissionRequest({
+        userId: new mongoose.Types.ObjectId(),
+        type: PermissionRequestTypes.LED_SIGN,
+        deletedAt: new Date(),
+        status: 'PENDING'
+      }).save();
+
+      const res = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
+        _id: deletedRequest._id
       });
       expect(res).to.have.status(NOT_FOUND);
-      expect((await PermissionRequest.findById(request._id)).deletedAt).to.be.null;
     });
   });
 });

@@ -9,6 +9,11 @@ const PermissionRequestSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    status: {
+      type: String,
+      enum: ['PENDING', 'APPROVED', 'DENIED', 'REVOKED'],
+      default: 'PENDING'
+    },
     type: {
       type: String,
       enum: Object.values(PermissionRequestTypes),
