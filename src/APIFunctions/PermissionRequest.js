@@ -40,11 +40,17 @@ export async function createPermissionRequest(type, token) {
       body: JSON.stringify({ type }),
     });
 
-    status.error = !res.ok;
-    if (res.ok || res.status === 409) {
-      // Backend sends 200 with no body on success, so fetch the created request
-      const existingRequest = await getPermissionRequests(type, token);
-      status.responseData = existingRequest.responseData;
+    const data = await res.json();
+
+    if (res.ok) {
+      status.responseData = data;
+      status.error = false;
+      return status;
+    }
+    status.error = true;
+    if (res.status === 409) {
+      // user already has a pending/approved request.
+      status.responseData = data;
     }
   } catch (err) {
     status.responseData = err;

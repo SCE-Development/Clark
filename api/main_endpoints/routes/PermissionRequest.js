@@ -17,12 +17,12 @@ router.post('/create', async (req, res) => {
   }
 
   try {
-    await PermissionRequest.create({
+    const created = await PermissionRequest.create({
       userId: decoded.token._id,
       type,
       status: 'PENDING',
     });
-    res.sendStatus(OK);
+    res.status(OK).send(created.toJSON());
   } catch (error) {
     if (error.code === 11000) return res.sendStatus(CONFLICT);
     logger.error('Failed to create permission request:', error);
@@ -121,4 +121,3 @@ router.post('/approve', async (req, res) => {
 });
 
 module.exports = router;
-
