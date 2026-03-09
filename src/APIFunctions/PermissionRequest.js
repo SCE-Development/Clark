@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 import { ApiResponse } from './ApiResponses';
 import { BASE_API_URL } from '../Enums';
 
 export async function getPermissionRequests(type, token) {
+=======
+
+import { ApiResponse } from './ApiResponses';
+import { BASE_API_URL } from '../Enums';
+
+export async function getPermissionRequest(type, token) {
+>>>>>>> 48db042c (are we winning)
   const status = new ApiResponse();
   const url = new URL('/api/PermissionRequest/', BASE_API_URL);
   url.searchParams.append('type', type);
@@ -43,7 +51,11 @@ export async function createPermissionRequest(type, token) {
     status.error = !!res.ok;
     if (res.ok || res.status === 409) {
       // Backend sends 200 with no body on success, so fetch the created request
+<<<<<<< HEAD
       const existingRequest = await getPermissionRequests(type, token);
+=======
+      const existingRequest = await getPermissionRequest(type, token);
+>>>>>>> 48db042c (are we winning)
       status.responseData = existingRequest.responseData;
     }
   } catch (err) {

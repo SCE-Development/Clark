@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
 import {
+<<<<<<< HEAD
   getPermissionRequests,
+=======
+  getPermissionRequest,
+>>>>>>> 48db042c (are we winning)
   createPermissionRequest,
 }from '../../APIFunctions/PermissionRequest';
 import { useSCE } from '../../Components/context/SceContext';
