@@ -64,10 +64,6 @@ router.post('/updateSignText', async (req, res) => {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(decoded.status);
   }
-  console.log({
-    '!LED_SIGN.ENABLED,': !LED_SIGN.ENABLED,
-    '!runningInTest': !runningInTest,
-  })
   if (!LED_SIGN.ENABLED && !runningInTest) {
     logger.warn('led sign is disabled, returning 200 by default');
     return res.sendStatus(OK);
