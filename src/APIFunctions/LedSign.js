@@ -18,13 +18,10 @@ export async function healthCheck(officerName) {
 
     const data = await response.json().catch(() => null);
     status.responseData = data;
-    console.log({data, response});
     if (!response.ok) {
       status.error = true;
     }
-    console.log({status});
   } catch (err) {
-    console.log({err});
     status.responseData = err;
     status.error = true;
   }

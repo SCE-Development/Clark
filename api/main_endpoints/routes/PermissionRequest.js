@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
       query.type = type;
     }
 
-    const requests = await PermissionRequest.find(query)
+    const requests = await PermissionRequest.findOne(query)
       .populate('userId', 'firstName lastName email')
       .sort({ createdAt: -1 });
 

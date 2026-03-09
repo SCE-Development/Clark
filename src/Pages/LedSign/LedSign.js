@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { healthCheck, updateSignText } from '../../APIFunctions/LedSign';
+import {
+  getPermissionRequest,
+  createPermissionRequest,
+}from '../../APIFunctions/PermissionRequest';
 import { useSCE } from '../../Components/context/SceContext';
+import { membershipState } from '../../Enums';
 
 import './ledsign.css';
 
@@ -20,6 +25,9 @@ function LedSign() {
   const [awaitingSignResponse, setAwaitingSignResponse] = useState(false);
   const [requestSuccessful, setRequestSuccessful] = useState();
   const [stopRequestSuccesful, setStopRequestSuccesful] = useState();
+  const [permissionRequest, setPermissionRequest] = useState(null);
+  const [checkingPermission, setCheckingPermission] = useState(false);
+  const [requestingPermission, setRequestingPermission] = useState(false);
   const inputArray = [
     {
       title: 'Sign Text:',
@@ -193,6 +201,14 @@ function LedSign() {
   useEffect(() => {
     async function checkSignHealth() {
       setLoading(true);
+      if (user.accessLevel < membershipState.OFFICER) {
+        setCheckingPermission(true);
+        const result = await getPermissionRequest('LED_SIGN', user.token);
+        if (!result.error && result.responseData) {
+          setPermissionRequest(result.responseData);
+        }
+        setCheckingPermission(false);
+      }
       const status = await healthCheck(user.firstName);
       if (status.error) {
         setSignHealthy(false);
@@ -238,80 +254,124 @@ function LedSign() {
     return (11 - scrollSpeed);
   }
 
-  return (
-    <div>
-      <div className="space-y-12 mt-10  gap-x-6 gap-y-8 w-full sm:grid-cols-6">
-        <div className="flex border-b border-gray-900/10 pb-12 md:w-full">
-          <div className="flex flex-col justify-center items-center sm:col-span-3 w-full">
-            <div className='w-2/3 lg:w-1/2'>
-              <label>Preview</label>
-              <div>
-                <div
-                  className="led-sign-preview-border-top"
-                  style={{ backgroundColor: borderColor }}
-                ></div>
-                <div
-                  className="led-sign-preview-background"
-                  style={{ backgroundColor: backgroundColor }}
-                >
-                  <div className="led-sign-marquee-container">
-                    <div className="led-sign-marquee" style={{ animationDuration: `${getAnimationDuration()}s` }}>
-                      <h1 className="led-sign-preview-text text-3xl" style={{ color: textColor }} placeholder="Sign Text">
-                        {/*
-                          we add a padding of 28 characters of whitespace so the entire message
-                          scrolls to the end of the preview before repeating. the preview has a
-                          width of about 28 characters.
-                        */}
-                        {text.padEnd(28, ' ')}
-                      </h1>
-                    </div>
-                  </div>
+  async function handleRequestAccess() {
+    setRequestingPermission(true);
+    const result = await createPermissionRequest('LED_SIGN', user.token);
+    if (!result.error) {
+      setPermissionRequest(result.responseData);
+    }
+    setRequestingPermission(false);
+  }
+
+  function renderPermissionRequestUI() {
+    if (user.accessLevel >= membershipState.OFFICER) {
+      return null;
+    }
+
+    if (checkingPermission || requestingPermission) {
+      return (
+        <div className="w-2/3 lg:w-1/2 text-center py-4">
+          <p>Loading...</p>
+        </div>
+      );
+    }
+
+    if (permissionRequest) {
+      return (
+        <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2 fade-in">
+          <p className="text-gray-700 dark:text-gray-300">
+            You requested access to the sign on {getFormattedTime(permissionRequest.createdAt)}.
+          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+            Drop a message in Discord to speed up the process!
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2 fade-in">
+        <p className="text-gray-700 dark:text-gray-300">
+          You need permission to access the LED sign.
+        </p>
+        <button
+          className="btn bg-blue-500 hover:bg-blue-400 text-white"
+          onClick={handleRequestAccess}
+          disabled={requestingPermission}
+        >
+          {requestingPermission ? 'Requesting...' : 'Request Access'}
+        </button>
+      </div>
+    );
+  }
+
+  function renderSignControls() {
+    return (
+      <>
+        <div className='w-2/3 lg:w-1/2'>
+          <label className="block text-sm font-medium leading-6">Preview</label>
+          <div className="mt-2">
+            <div
+              className="led-sign-preview-border-top"
+              style={{ backgroundColor: borderColor }}
+            ></div>
+            <div
+              className="led-sign-preview-background"
+              style={{ backgroundColor: backgroundColor }}
+            >
+              <div className="led-sign-marquee-container">
+                <div className="led-sign-marquee" style={{ animationDuration: `${getAnimationDuration()}s` }}>
+                  <h1 className="led-sign-preview-text text-3xl" style={{ color: textColor }}>
+                    {text.padEnd(28, ' ')}
+                  </h1>
                 </div>
-                <div
-                  className="led-sign-preview-border-bottom"
-                  style={{ backgroundColor: borderColor }}
-                ></div>
               </div>
             </div>
-            {maybeShowExpirationDate()}
-            {getExpirationButtonOrInput()}
-            {
-              inputArray.map(({
-                id,
-                title,
-                type,
-                value,
-                onChange,
-                ...rest
-              }) => (
-                <div key={title} className="sm:col-span-2 sm:col-start-1 w-2/3 lg:w-1/2">
-                  <div className="mt-2 ">
-                    <label htmlFor="copies" className="block text-sm font-medium leading-6">{title}</label>
-                    <input
-                      type={type}
-                      value={value}
-                      id={id}
-                      onChange={onChange}
-                      className="indent-2 text-black dark:text-white block w-full rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...rest}
-                    />
-                  </div>
-                </div>
-              ))
-            }
-
-            <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
-              Stop
-            </button>
-            <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
-              Send
-            </button>
-            {renderRequestStatus()}
+            <div
+              className="led-sign-preview-border-bottom"
+              style={{ backgroundColor: borderColor }}
+            ></div>
           </div>
         </div>
 
-      </div>
+        {maybeShowExpirationDate()}
+        {getExpirationButtonOrInput()}
 
+        {inputArray.map(({ id, title, type, value, onChange, ...rest }) => (
+          <div key={title} className="sm:col-span-2 sm:col-start-1 w-2/3 lg:w-1/2">
+            <div className="mt-2">
+              <label htmlFor={id} className="block text-sm font-medium leading-6">{title}</label>
+              <input
+                type={type}
+                value={value}
+                id={id}
+                onChange={onChange}
+                className="indent-2 text-black dark:text-white block w-full rounded-md border-0 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                {...rest}
+              />
+            </div>
+          </div>
+        ))}
+
+        <button className='btn w-2/3 lg:w-1/2 bg-red-500 hover:bg-red-400 text-black mt-4' onClick={handleStop}>
+          Stop
+        </button>
+        <button className='btn w-2/3 lg:w-1/2 bg-green-500 hover:bg-green-400 text-black mt-2' onClick={handleSend}>
+          Send
+        </button>
+        {renderRequestStatus()}
+      </>
+    );
+  }
+
+  return (
+    <div className="flex justify-center items-center mt-10 w-full">
+      <div className="space-y-12 gap-x-6 gap-y-8 w-full flex flex-col items-center">
+        {user.accessLevel >= membershipState.OFFICER
+          ? renderSignControls()
+          : renderPermissionRequestUI()
+        }
+      </div>
     </div>
   );
 }
