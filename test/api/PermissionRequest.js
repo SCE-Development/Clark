@@ -216,10 +216,10 @@ describe('PermissionRequest', () => {
 
     it('Should allow a Member to cancel their own PENDING request', async () => {
       const userId = createUserToken(constants.MEMBERSHIP_STATE.MEMBER);
-      const request = await new PermissionRequest({ 
-        userId, 
+      const request = await new PermissionRequest({
+        userId,
         type: PermissionRequestTypes.LED_SIGN,
-        status: 'PENDING' 
+        status: 'PENDING'
       }).save();
 
       const res = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
@@ -235,10 +235,10 @@ describe('PermissionRequest', () => {
 
     it('Should set status to DENIED when an Officer deletes a PENDING request', async () => {
       const memberId = new mongoose.Types.ObjectId();
-      const request = await new PermissionRequest({ 
-        userId: memberId, 
+      const request = await new PermissionRequest({
+        userId: memberId,
         type: PermissionRequestTypes.LED_SIGN,
-        status: 'PENDING' 
+        status: 'PENDING'
       }).save();
 
       // Switch to Officer
@@ -255,10 +255,10 @@ describe('PermissionRequest', () => {
 
     it('Should set status to REVOKED when an Officer deletes an APPROVED request', async () => {
       const memberId = new mongoose.Types.ObjectId();
-      const request = await new PermissionRequest({ 
-        userId: memberId, 
+      const request = await new PermissionRequest({
+        userId: memberId,
         type: PermissionRequestTypes.LED_SIGN,
-        status: 'APPROVED' 
+        status: 'APPROVED'
       }).save();
 
       createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
@@ -276,10 +276,10 @@ describe('PermissionRequest', () => {
       // According to your code: if (!isOfficer) { query.status = 'PENDING' }
       // This means a member cannot revoke their own approved permission via this endpoint.
       const userId = createUserToken(constants.MEMBERSHIP_STATE.MEMBER);
-      const request = await new PermissionRequest({ 
-        userId, 
+      const request = await new PermissionRequest({
+        userId,
         type: PermissionRequestTypes.LED_SIGN,
-        status: 'APPROVED' 
+        status: 'APPROVED'
       }).save();
 
       const res = await test.sendPostRequestWithToken(token, '/api/PermissionRequest/delete', {
@@ -291,9 +291,9 @@ describe('PermissionRequest', () => {
 
     it('Should return 404 when request is already deleted (deletedAt is not null)', async () => {
       createUserToken(constants.MEMBERSHIP_STATE.OFFICER);
-      const deletedRequest = await new PermissionRequest({ 
-        userId: new mongoose.Types.ObjectId(), 
-        type: PermissionRequestTypes.LED_SIGN, 
+      const deletedRequest = await new PermissionRequest({
+        userId: new mongoose.Types.ObjectId(),
+        type: PermissionRequestTypes.LED_SIGN,
         deletedAt: new Date(),
         status: 'PENDING'
       }).save();
