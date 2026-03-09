@@ -19,6 +19,7 @@ export default function UserNavbar(props) {
   const authedRoutes = [
     { title: 'Printing', route: '/2DPrinting' },
     { title: 'Chat', route: '/messaging' },
+    { title: 'LED Sign', route: '/led-sign' },
   ];
 
   const authentication = [
