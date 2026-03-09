@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   OK,
   SERVER_ERROR,
-  UNAUTHORIZED
+  FORBIDDEN,
 } = require('../../util/constants').STATUS_CODES;
 const { decodeToken } = require('../util/token-functions.js');
 const logger = require('../../util/logger');
@@ -14,6 +14,8 @@ const {
   LED_SIGN = {}
 } = require('../../config/config.json');
 const { MEMBERSHIP_STATE } = require('../../util/constants.js');
+const PermissionRequest = require('../models/PermissionRequest');
+
 
 const runningInTest = process.env.NODE_ENV === 'test';
 
@@ -35,8 +37,24 @@ router.get('/healthCheck', async (req, res) => {
 });
 
 router.post('/updateSignText', async (req, res) => {
-  const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
-  if (decoded.status !== OK) {
+  let decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
+  if (decoded.status === FORBIDDEN) {
+    const memberDecoded = await decodeToken(req, MEMBERSHIP_STATE.MEMBER);
+
+    if (memberDecoded.status === OK) {
+      const hasPermission = await PermissionRequest.findOne({
+        userId: memberDecoded.token._id,
+        type: 'LED_SIGN',
+        status: 'APPROVED',
+        deletedAt: null
+      });
+      if (!hasPermission) {
+        return res.sendStatus(decoded.status);
+      }
+      // "elevate" the status to OK for the rest of the function
+      decoded = memberDecoded;
+    }
+  } else if (decoded.status !== OK) {
     logger.warn('/updateSignText was requested with an invalid token');
     return res.sendStatus(decoded.status);
   }

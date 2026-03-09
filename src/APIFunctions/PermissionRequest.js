@@ -40,7 +40,7 @@ export async function createPermissionRequest(type, token) {
       body: JSON.stringify({ type }),
     });
 
-    status.error = !!res.ok;
+    status.error = !res.ok;
     if (res.ok || res.status === 409) {
       // Backend sends 200 with no body on success, so fetch the created request
       const existingRequest = await getPermissionRequests(type, token);
@@ -51,5 +51,43 @@ export async function createPermissionRequest(type, token) {
     status.error = true;
   }
 
+  return status;
+}
+
+export async function approvePermissionRequest(type, id, token) {
+  const status = new ApiResponse();
+  const url = new URL('/api/PermissionRequest/approve', BASE_API_URL);
+  try {
+    const res = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ type, _id: id }),
+    });
+    status.error = !res.ok;
+  } catch (err) {
+    status.error = true;
+  }
+  return status;
+}
+
+export async function deletePermissionRequest(id, token) {
+  const status = new ApiResponse();
+  const url = new URL('/api/PermissionRequest/delete', BASE_API_URL);
+  try {
+    const res = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ _id: id }),
+    });
+    status.error = !res.ok;
+  } catch (err) {
+    status.error = true;
+  }
   return status;
 }

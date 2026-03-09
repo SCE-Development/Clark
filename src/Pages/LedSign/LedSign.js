@@ -258,7 +258,9 @@ function LedSign() {
     setRequestingPermission(true);
     const result = await createPermissionRequest('LED_SIGN', user.token);
     if (!result.error) {
-      setPermissionRequest(result.responseData);
+      setPermissionRequest({
+        status: 'PENDING',
+      });
     }
     setRequestingPermission(false);
   }
@@ -276,7 +278,24 @@ function LedSign() {
       );
     }
 
-    if (permissionRequest) {
+    if (!permissionRequest) {
+      return (
+        <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2 fade-in">
+          <p className="text-gray-700 dark:text-gray-300">
+            You need permission to access the LED sign.
+          </p>
+          <button
+            className="btn bg-blue-500 hover:bg-blue-400 text-white"
+            onClick={handleRequestAccess}
+            disabled={requestingPermission}
+          >
+            {requestingPermission ? 'Requesting...' : 'Request Access'}
+          </button>
+        </div>
+      );
+    }
+
+    if (permissionRequest.status === 'PENDING') {
       return (
         <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2 fade-in">
           <p className="text-gray-700 dark:text-gray-300">
@@ -289,20 +308,7 @@ function LedSign() {
       );
     }
 
-    return (
-      <div className="w-2/3 lg:w-1/2 text-center py-4 space-y-2 fade-in">
-        <p className="text-gray-700 dark:text-gray-300">
-          You need permission to access the LED sign.
-        </p>
-        <button
-          className="btn bg-blue-500 hover:bg-blue-400 text-white"
-          onClick={handleRequestAccess}
-          disabled={requestingPermission}
-        >
-          {requestingPermission ? 'Requesting...' : 'Request Access'}
-        </button>
-      </div>
-    );
+    return <h1>{JSON.stringify(permissionRequest)}</h1>;
   }
 
   function renderSignControls() {
@@ -367,7 +373,7 @@ function LedSign() {
   return (
     <div className="flex justify-center items-center mt-10 w-full">
       <div className="space-y-12 gap-x-6 gap-y-8 w-full flex flex-col items-center">
-        {user.accessLevel >= membershipState.OFFICER
+        {user.accessLevel >= membershipState.OFFICER || permissionRequest?.status === 'APPROVED'
           ? renderSignControls()
           : renderPermissionRequestUI()
         }
