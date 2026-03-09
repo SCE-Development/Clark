@@ -204,8 +204,8 @@ function LedSign() {
       if (user.accessLevel < membershipState.OFFICER) {
         setCheckingPermission(true);
         const result = await getPermissionRequest('LED_SIGN', user.token);
-        if (!result.error && result.responseData) {
-          setPermissionRequest(result.responseData);
+        if (!result.error && result.responseData?.length) {
+          setPermissionRequest(result.responseData[0]);
         }
         setCheckingPermission(false);
       }
