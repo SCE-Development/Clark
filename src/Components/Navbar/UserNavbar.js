@@ -15,7 +15,7 @@ export default function UserNavbar(props) {
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
     { title: 'Summer Internship', route: '/s/internship', newTab: true },
-    ...(config.SCEvents?.ENABLED ? [{ title: 'SCEvents', route: '/events', newTab: true }] : []),
+    ...(config.SCEvents?.ENABLED ? [{ title: 'SCEvents', route: '/events' }] : []),
   ];
 
   const authedRoutes = [
