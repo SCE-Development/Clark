@@ -19,6 +19,7 @@ import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
 import PermissionRequestPage from './Pages/PermissionRequest/PermissionRequest.js';
+import EventsPage from './Pages/Events/Events.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -196,6 +197,11 @@ export const signedOutRoutes = [
     Component: ProjectsPage,
     path: '/projects',
     pageName: 'Projects'
+  },
+  {
+    Component: EventsPage,
+    path: '/events',
+    pageName: 'Events'
   },
   {
     Component: EmailPreferencesPage,
