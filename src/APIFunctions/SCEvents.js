@@ -1,10 +1,5 @@
 import { ApiResponse } from './ApiResponses';
 
-/*
-  #2067:
-  Clark should communicate with a locally running SCEvents instance.
-  From SCEvents/cmd/server/main.go, local GET /events/ is exposed by Gin.
-*/
 const SCEVENTS_API_URL = 'http://localhost:8080';
 
 export async function getAllSCEvents() {
