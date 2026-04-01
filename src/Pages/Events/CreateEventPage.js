@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext.js';
 import { createSCEvent, getSCEventsBaseUrl } from '../../APIFunctions/SCEvents.js';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock.js';
-const enums = require('../../Enums.js');
+import { membershipState } from '../../Enums';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
@@ -70,7 +70,6 @@ function toApiRegistrationForm(questions) {
 export default function CreateEventPage() {
   const { user } = useSCE();
   const history = useHistory();
-  const { membershipState } = enums;
 
   const [eventId] = useState(() => crypto.randomUUID());
   const [eventName, setEventName] = useState('');
