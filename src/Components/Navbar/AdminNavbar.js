@@ -1,5 +1,7 @@
 import React from 'react';
 import { useSCE } from '../context/SceContext';
+import config from '../../config/config.json';
+const enums = require('../../Enums.js');
 
 export default function UserNavBar(props) {
   const { user, setAuthenticated } = useSCE();
@@ -40,6 +42,30 @@ export default function UserNavBar(props) {
       ),
     },
   ];
+
+  const sceventsAdminNavLinks = [];
+  if (config.SCEvents?.ENABLED) {
+    sceventsAdminNavLinks.push({
+      title: 'SCEvents',
+      route: '/events',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5" />
+        </svg>
+      ),
+    });
+    if (user?.accessLevel >= enums.membershipState.OFFICER) {
+      sceventsAdminNavLinks.push({
+        title: 'Create event',
+        route: '/events/create',
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        ),
+      });
+    }
+  }
 
   const adminLinks = [
     {
@@ -82,6 +108,7 @@ export default function UserNavBar(props) {
         </svg>
       ),
     },
+    ...sceventsAdminNavLinks,
     {
       title: 'Card Reader',
       route: '/card-reader',

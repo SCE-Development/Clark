@@ -20,6 +20,7 @@ import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
 import PermissionRequestPage from './Pages/PermissionRequest/PermissionRequest.js';
 import EventsPage from './Pages/Events/Events.js';
+import CreateEventPage from './Pages/Events/CreateEventPage.js';
 import EventRegistration from './Pages/Events/EventsRegistation.js';
 
 // Declare an enum for permission check
@@ -164,6 +165,14 @@ export const officerOrAdminRoutes = [
     Component: AuditLogsPage,
     path: '/audit-logs',
     pageName: 'Audit Log',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true
+  },
+  {
+    Component: CreateEventPage,
+    path: '/events/create',
+    pageName: 'Create Event',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
