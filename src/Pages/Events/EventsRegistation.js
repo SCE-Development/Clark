@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, Redirect } from 'react-router-dom';
+import config from '../../config/config.json';
 import { getEventByID } from '../../APIFunctions/SCEvents';
 
 function ArrowLeftIcon() {
@@ -20,12 +21,17 @@ function ArrowLeftIcon() {
 export default function EventRegistration() {
   const { id } = useParams();
   const history = useHistory();
+  const isSCEventsEnabled = Boolean(config.SCEvents?.ENABLED);
   const [event, setEvent] = useState(null);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
+    if (!isSCEventsEnabled) {
+      return;
+    }
+
     async function fetchEvent() {
       setIsLoading(true);
       const response = await getEventByID(id);
@@ -42,7 +48,11 @@ export default function EventRegistration() {
       setIsLoading(false);
     }
     fetchEvent();
-  }, [id]);
+  }, [id, isSCEventsEnabled]);
+
+  if (!isSCEventsEnabled) {
+    return <Redirect to="/notfound" />;
+  }
 
   const handleInputChange = (fieldId, value, type) => {
     if (type === 'checkbox') {
