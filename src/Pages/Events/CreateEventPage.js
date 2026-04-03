@@ -210,7 +210,7 @@ export default function CreateEventPage() {
       if (result.networkError) {
         msg =
           (msg || 'Network error') +
-          `. SCEvents URL: ${base}. Is the API running (e.g. docker compose in SCEvents on port 8083)?`;
+          `. SCEvents URL: ${base}. Is the API running (e.g. SCEvents docker compose on port 8002)?`;
       } else if (!msg) {
         msg = `SCEvents returned an error. URL: ${base}`;
       }
