@@ -238,15 +238,15 @@ export default function CreateEventPage() {
   }
 
   return (
-    <div className="m-10 max-w-4xl">
-      <div className="mb-8">
-        <Link to="/events" className="mb-2 text-sm link link-primary">
+    <div className="m-10 max-w-4xl px-4 sm:px-6">
+      <div className="mb-8 pt-8 pb-2">
+        <Link to="/events" className="block pb-3 text-sm link link-primary">
           ← Events
         </Link>
-        <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-5xl dark:text-white">
+        <h1 className="pb-3 text-4xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-5xl dark:text-white">
           Create event
         </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Event id: {eventId}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Event id: {eventId}</p>
       </div>
 
       <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Event details</h2>

@@ -1,10 +1,6 @@
 /* eslint-disable camelcase -- SCEvents registration question shape uses snake_case */
 import React from 'react';
 
-function newId() {
-  return crypto.randomUUID();
-}
-
 export default function CreateEventFormQuestionBlock({
   question,
   index,
