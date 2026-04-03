@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSCE } from '../context/SceContext';
 import config from '../../config/config.json';
-const enums = require('../../Enums.js');
+import { membershipState } from '../../Enums';
 
 export default function UserNavBar(props) {
   const { user, setAuthenticated } = useSCE();
@@ -54,7 +54,7 @@ export default function UserNavBar(props) {
         </svg>
       ),
     });
-    if (user?.accessLevel >= enums.membershipState.OFFICER) {
+    if (user?.accessLevel >= membershipState.OFFICER) {
       sceventsAdminNavLinks.push({
         title: 'Create event',
         route: '/events/create',
