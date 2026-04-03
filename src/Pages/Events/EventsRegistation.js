@@ -60,14 +60,13 @@ export default function EventRegistration() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Create a more "useful" alert with a summary
     const summary = (event.registration_form || []).map(field => { // eslint-disable-line camelcase
       const answer = formData[field.id];
       const displayAnswer = Array.isArray(answer) ? answer.join(', ') : answer;
       return `- ${field.question}: ${displayAnswer || 'N/A'}`;
     }).join('\n');
 
-    const message = `Registration Successful for: ${event.name}!\n\nSummary of your responses:\n${summary}\n\nNote: Backend storage will be added in a future update.`;
+    const message = `Registration Successful for: ${event.name}!\n\nSummary of your responses:\n${summary}`;
 
     alert(message);
     history.push('/events');
@@ -116,10 +115,9 @@ export default function EventRegistration() {
           <span className="font-medium">Back to Events</span>
         </button>
 
-        <h1 className="mb-3 text-4xl font-bold text-white md:text-5xl">
-          Register for {event.name}
+        <h1 className="mb-8 text-3xl font-semibold text-white md:text-4xl">
+          {event.name}
         </h1>
-        <div className="mb-8 h-[2px] w-28 rounded-full bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400" />
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
           <form onSubmit={handleSubmit} className="space-y-8">

@@ -77,7 +77,7 @@ function EventCard({ event }) {
           to={`/events/${event.id}/register`}
           className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900"
         >
-          Register for Event
+          Register
         </Link>
       </div>
     </div>
