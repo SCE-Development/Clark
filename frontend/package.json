@@ -1,0 +1,36 @@
+{
+  "name": "sce-frontend",
+  "private": true,
+  "version": "4.0.0",
+  "description": "SCE Website Frontend",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "pdf-lib": "^1.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-google-recaptcha": "^2.1.0",
+    "react-router-dom": "^6.28.0",
+    "react-transition-group": "^4.4.2",
+    "universal-cookie": "^4.0.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/eslint-parser": "^7.28.6",
+    "@babel/preset-env": "^7.29.2",
+    "@babel/preset-react": "^7.28.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.4.24",
+    "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.0",
+    "vite": "^6.0.0"
+  }
+}
