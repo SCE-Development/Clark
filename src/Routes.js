@@ -20,6 +20,7 @@ import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
 import PermissionRequestPage from './Pages/PermissionRequest/PermissionRequest.js';
 import EventsPage from './Pages/Events/Events.js';
+import EventRegistration from './Pages/Events/EventsRegistation.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -202,6 +203,12 @@ export const signedOutRoutes = [
     Component: EventsPage,
     path: '/events',
     pageName: 'Events'
+  },
+  {
+    Component: EventRegistration,
+    path: '/events/:id/register',
+    pageName: 'Event Registration',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: EmailPreferencesPage,

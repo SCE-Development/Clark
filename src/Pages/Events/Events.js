@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import config from '../../config/config.json';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { getAllSCEvents } from '../../APIFunctions/SCEvents';
 
 function CalendarIcon() {
@@ -41,7 +41,7 @@ function PinIcon() {
 
 function EventCard({ event }) {
   return (
-    <div className="group rounded-2xl border border-white/10 bg-white/5 p-6 shadow-md backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07]">
+    <div className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 shadow-md backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07]">
       <h2 className="mb-4 text-2xl font-bold text-white">
         {event.name || 'Untitled Event'}
       </h2>
@@ -71,6 +71,15 @@ function EventCard({ event }) {
           {event.description}
         </p>
       )}
+
+      <div className="mt-auto pt-6">
+        <Link
+          to={`/events/${event.id}/register`}
+          className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        >
+          Register
+        </Link>
+      </div>
     </div>
   );
 }
