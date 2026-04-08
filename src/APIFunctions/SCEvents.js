@@ -1,35 +1,21 @@
 import { ApiResponse } from './ApiResponses';
 
-export function getSCEventsBaseUrl() {
-  return (
-    (typeof process !== 'undefined' && process.env.REACT_APP_SCEVENTS_URL) ||
-    'http://localhost:8002'
-  );
-}
+const SCEVENTS_BASE =
+  (typeof process !== 'undefined' && process.env.REACT_APP_SCEVENTS_URL) ||
+  'http://localhost:8002';
 
 function eventsUrl(path) {
-  const base = getSCEventsBaseUrl().replace(/\/$/, '');
+  const base = SCEVENTS_BASE.replace(/\/$/, '');
   const p = path.startsWith('/') ? path : `/${path}`;
   return `${base}${p}`;
-}
-
-async function readBodyAsJsonOrText(res) {
-  const text = await res.text();
-  if (!text) {
-    return null;
-  }
-  try {
-    return JSON.parse(text);
-  } catch {
-    return text;
-  }
 }
 
 export async function getAllSCEvents() {
   const status = new ApiResponse();
   try {
     const res = await fetch(eventsUrl('/events/'));
-    status.responseData = await readBodyAsJsonOrText(res);
+    const result = await res.json();
+    status.responseData = result;
     if (!res.ok) {
       status.error = true;
     }
@@ -44,7 +30,8 @@ export async function getEventByID(id) {
   const status = new ApiResponse();
   try {
     const res = await fetch(eventsUrl(`/events/${id}`));
-    status.responseData = await readBodyAsJsonOrText(res);
+    const result = await res.json();
+    status.responseData = result;
     if (!res.ok) {
       status.error = true;
     }
@@ -59,8 +46,7 @@ export async function createSCEvent(eventBody) {
   const status = new ApiResponse();
   status.statusCode = null;
   try {
-    const url = eventsUrl('/events/');
-    const res = await fetch(url, {
+    const res = await fetch(eventsUrl('/events/'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +54,7 @@ export async function createSCEvent(eventBody) {
       body: JSON.stringify(eventBody),
     });
     status.statusCode = res.status;
-    const body = await readBodyAsJsonOrText(res);
+    const body = await res.json();
     if (res.ok) {
       status.responseData = body;
     } else {

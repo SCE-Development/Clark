@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext.js';
-import { createSCEvent, getSCEventsBaseUrl } from '../../APIFunctions/SCEvents.js';
+import { createSCEvent } from '../../APIFunctions/SCEvents.js';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock.js';
 import { membershipState } from '../../Enums';
 
@@ -195,7 +195,6 @@ export default function CreateEventPage() {
     setSubmitting(false);
 
     if (result.error) {
-      const base = getSCEventsBaseUrl();
       let msg = '';
       const data = result.responseData;
       if (data && typeof data === 'object' && data.error) {
@@ -209,9 +208,9 @@ export default function CreateEventPage() {
       if (result.networkError) {
         msg =
           (msg || 'Network error') +
-          `. SCEvents URL: ${base}. Is the API running (e.g. SCEvents docker compose on port 8002)?`;
+          '. Is the SCEvents API running (e.g. Docker on port 8002)?';
       } else if (!msg) {
-        msg = `SCEvents returned an error. URL: ${base}`;
+        msg = 'SCEvents returned an error.';
       }
       setSubmitError(msg);
       return;
