@@ -93,12 +93,13 @@ services:
     depends_on:
       - mongodb
     volumes:
-      - ./package.json:/frontend/package.json
-      - ./src:/frontend/src/
-      - ./public:/frontend/public/
-      - ./.babelrc:/frontend/.babelrc
-      - ./.eslintrc.json:/frontend/.eslintrc.json
-      - ./.eslintignore:/frontend/.eslintignore
+      - ./frontend/package.json:/frontend/package.json
+      - ./frontend/package-lock.json:/frontend/package-lock.json
+      - ./frontend/src:/frontend/src/
+      - ./frontend/public:/frontend/public/
+      - ./frontend/.babelrc:/frontend/.babelrc
+      - ./frontend/.eslintrc.json:/frontend/.eslintrc.json
+      - ./frontend/.eslintignore:/frontend/.eslintignore
   
   nginx:
     container_name: sce-nginx-dev
