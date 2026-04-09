@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import config from '../../config/config.json';
 import { Link, Redirect } from 'react-router-dom';
 import { getAllSCEvents } from '../../APIFunctions/SCEvents';
+import { useSCE } from '../../Components/context/SceContext';
+import { membershipState } from '../../Enums';
 
 function CalendarIcon() {
   return (
@@ -35,6 +37,21 @@ function PinIcon() {
         d="M12 21s6-5.686 6-11a6 6 0 1 0-12 0c0 5.314 6 11 6 11Z"
       />
       <circle cx="12" cy="10" r="2.5" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg
+      className="h-5 w-5 flex-shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
     </svg>
   );
 }
@@ -85,10 +102,12 @@ function EventCard({ event }) {
 }
 
 export default function EventsPage() {
+  const { user } = useSCE();
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const isSCEventsEnabled = config.SCEvents?.ENABLED;
+  const canCreateEvent = user?.accessLevel >= membershipState.OFFICER;
 
   useEffect(() => {
     if (!isSCEventsEnabled) {
@@ -125,9 +144,20 @@ export default function EventsPage() {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-6 py-12">
-        <h1 className="mb-3 text-4xl font-bold text-white md:text-5xl">
-          SCEvents
-        </h1>
+        <div className="mb-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h1 className="text-4xl font-bold text-white md:text-5xl">
+            SCEvents
+          </h1>
+          {canCreateEvent && (
+            <Link
+              to="/events/create"
+              aria-label="Create event"
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white shadow-sm backdrop-blur transition hover:border-white/30 hover:bg-white/[0.15]"
+            >
+              <PlusIcon />
+            </Link>
+          )}
+        </div>
 
         <div className="mb-6 h-[2px] w-28 rounded-full bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400" />
 
