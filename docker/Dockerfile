@@ -11,7 +11,7 @@ COPY ./package-lock.json /frontend/package-lock.json
 # We don't pass the environment variables as an argument
 # and instead define them inline here. We do this as multi-stage
 # builds and environment variables from docker-compose.yml weren't working.
-ENV REACT_APP_BASE_API_URL https://sce.sjsu.edu
+ENV VITE_BASE_API_URL https://sce.sjsu.edu
 
 RUN npm install
 

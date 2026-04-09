@@ -1,2 +1,5 @@
+api/node_modules/
+api/config/
+src/config/
 node_modules/
-dist/
+build/
