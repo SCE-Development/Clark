@@ -42,7 +42,7 @@ function membershipStateToString(accessLevel) {
   return membershipStatusArray[accessLevel + 2];
 }
 
-const BASE_API_URL = process.env.REACT_APP_BASE_API_URL || 'http://localhost:8080/';
+const BASE_API_URL = process.env.VITE_BASE_API_URL || 'http://localhost:8080/';
 
 module.exports = {
   memberApplicationState,

@@ -5,21 +5,21 @@ WORKDIR /frontend
 
 ARG NODE_ENV
 
-COPY ./package.json /frontend/package.json
-COPY ./package-lock.json /frontend/package-lock.json
+COPY ./frontend/package.json /frontend/package.json
+COPY ./frontend/package-lock.json /frontend/package-lock.json
 
 # We don't pass the environment variables as an argument
 # and instead define them inline here. We do this as multi-stage
 # builds and environment variables from docker-compose.yml weren't working.
-ENV REACT_APP_BASE_API_URL https://sce.sjsu.edu
+ENV VITE_BASE_API_URL https://sce.sjsu.edu
 
 RUN npm install
 
-COPY public ./public
+COPY ./frontend/public ./public
 
-COPY src ./src
+COPY ./frontend/src ./src
 
-COPY tailwind.config.js ./tailwind.config.js
+COPY ./frontend/tailwind.config.js ./tailwind.config.js
 
 RUN npx tailwindcss build -i src/input.css -o public/output.css --minify
 
