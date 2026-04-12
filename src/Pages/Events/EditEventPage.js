@@ -1,8 +1,8 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
-import React, { useMemo, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useMemo, useState, useEffect } from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext.js';
-import { createSCEvent } from '../../APIFunctions/SCEvents.js';
+import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents.js';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock.js';
 import { membershipState } from '../../Enums';
 
@@ -17,32 +17,6 @@ function newQuestionTemplate() {
     required: false,
     answer_details: { max_chars: 200 },
   };
-}
-
-function defaultQuestions() {
-  return [
-    {
-      id: crypto.randomUUID(),
-      type: 'textbox',
-      question: 'Full Name',
-      required: true,
-      answer_details: { max_chars: 100 },
-    },
-    {
-      id: crypto.randomUUID(),
-      type: 'textbox',
-      question: 'Email Address',
-      required: true,
-      answer_details: { max_chars: 100 },
-    },
-    {
-      id: crypto.randomUUID(),
-      type: 'multiple_choice',
-      question: 'Major',
-      required: false,
-      answer_options: ['Computer Engineering', 'Software Engineering', 'Computer Science', 'Other'],
-    },
-  ];
 }
 
 function toApiRegistrationForm(questions) {
@@ -67,51 +41,71 @@ function toApiRegistrationForm(questions) {
   });
 }
 
-export default function CreateEventPage() {
+export default function EditEventPage() {
+  const { id } = useParams();
   const { user } = useSCE();
   const history = useHistory();
 
-  const [eventId] = useState(() => crypto.randomUUID());
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
+
   const [eventName, setEventName] = useState('');
-  const [date, setDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-  });
-  const [time, setTime] = useState(() => {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  });
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [maxAttendees, setMaxAttendees] = useState(UNLIMITED_ATTENDEES);
-  const [questions, setQuestions] = useState(defaultQuestions);
+  const [questions, setQuestions] = useState([]);
+  const [eventAdmins, setEventAdmins] = useState([]);
+
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const isOfficerOrAdmin = user?.accessLevel >= membershipState.OFFICER;
+  const userId = useMemo(() => (user?._id != null ? String(user._id) : ''), [user]);
 
-  const adminId = useMemo(() => (user?._id != null ? String(user._id) : ''), [user]);
+  useEffect(() => {
+    async function loadEvent() {
+      setIsLoading(true);
+      const result = await getEventByID(id);
+      setIsLoading(false);
+
+      if (result.error) {
+        setFetchError('Failed to load event details.');
+        return;
+      }
+
+      const evt = result.responseData;
+      setEventName(evt.name || '');
+      setDate(evt.date || '');
+      setTime(evt.time || '');
+      setLocation(evt.location || '');
+      setDescription(evt.description || '');
+      setMaxAttendees(evt.max_attendees || UNLIMITED_ATTENDEES);
+      setQuestions(evt.registration_form || []);
+      setEventAdmins(evt.admins || []);
+    }
+    loadEvent();
+  }, [id]);
 
   function addQuestion() {
     setQuestions((prev) => [...prev, newQuestionTemplate()]);
   }
 
-  function removeQuestion(id) {
-    setQuestions((prev) => prev.filter((q) => q.id !== id));
+  function removeQuestion(qId) {
+    setQuestions((prev) => prev.filter((q) => q.id !== qId));
   }
 
-  function updateQuestion(id, field, value) {
+  function updateQuestion(qId, field, value) {
     setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, [field]: value } : q)),
+      prev.map((q) => (q.id === qId ? { ...q, [field]: value } : q)),
     );
   }
 
-  function updateQuestionType(id, newType) {
+  function updateQuestionType(qId, newType) {
     setQuestions((prev) =>
       prev.map((q) => {
-        if (q.id !== id) return q;
+        if (q.id !== qId) return q;
         const base = {
           id: q.id,
           type: newType,
@@ -164,34 +158,26 @@ export default function CreateEventPage() {
     );
   }
 
-  async function handleCreateEvent() {
+  async function handleUpdateEvent() {
     setSubmitError('');
     if (!eventName.trim()) {
       setSubmitError('Please enter an event name.');
       return;
     }
-    if (!adminId) {
-      setSubmitError('Could not resolve your user id.');
-      return;
-    }
 
     const payload = {
-      id: eventId,
       name: eventName.trim(),
       date,
       time,
       location: location.trim(),
       description: description.trim(),
-      admins: [adminId],
       registration_form: toApiRegistrationForm(questions),
       max_attendees:
         maxAttendees === UNLIMITED_ATTENDEES ? UNLIMITED_ATTENDEES : Number(maxAttendees),
-      created_at: new Date().toISOString(),
-      status: 'draft',
     };
 
     setSubmitting(true);
-    const result = await createSCEvent(payload);
+    const result = await updateSCEvent(id, userId, payload);
     setSubmitting(false);
 
     if (result.error) {
@@ -223,10 +209,43 @@ export default function CreateEventPage() {
     return (
       <div className="m-10">
         <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white">
-          Create event
+          Edit event
         </h1>
         <p className="text-gray-600 dark:text-gray-300">
-          Only officers and administrators can create events.
+          Only officers and administrators can edit events.
+        </p>
+        <Link to="/events" className="mt-4 btn btn-primary">
+          Back to events
+        </Link>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <div className="p-10 text-center text-lg">Loading event details...</div>;
+  }
+
+  if (fetchError) {
+    return (
+      <div className="p-10 text-center text-lg text-red-500">
+        {fetchError}
+        <br />
+        <Link to="/events" className="mt-4 btn btn-primary">
+          Back to events
+        </Link>
+      </div>
+    );
+  }
+
+  const isEventAdmin = eventAdmins.includes(userId);
+  if (!isEventAdmin) {
+    return (
+      <div className="m-10">
+        <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white">
+          Edit event
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300">
+          You are not an admin of this event.
         </p>
         <Link to="/events" className="mt-4 btn btn-primary">
           Back to events
@@ -236,15 +255,15 @@ export default function CreateEventPage() {
   }
 
   return (
-    <div className="m-10 max-w-4xl px-4 sm:px-6">
+    <div className="mx-auto my-10 max-w-4xl px-4 sm:px-6">
       <div className="mb-8 pt-8 pb-2">
         <Link to="/events" className="btn btn-ghost normal-case text-base pl-0 mb-4 font-medium text-gray-400 hover:text-white hover:bg-transparent">
           ← Back to Events
         </Link>
         <h1 className="pb-3 text-4xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-5xl dark:text-white">
-          Create event
+          Edit event
         </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Event id: {eventId}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Event id: {id}</p>
       </div>
 
       <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Event details</h2>
@@ -368,9 +387,9 @@ export default function CreateEventPage() {
           type="button"
           className="btn btn-primary"
           disabled={submitting}
-          onClick={handleCreateEvent}
+          onClick={handleUpdateEvent}
         >
-          {submitting ? 'Creating…' : 'Create event'}
+          {submitting ? 'Updating…' : 'Save changes'}
         </button>
         <Link to="/events" className="btn btn-ghost">
           Cancel
