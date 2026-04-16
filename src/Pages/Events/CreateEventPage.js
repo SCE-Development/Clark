@@ -1,10 +1,11 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
 import React, { useMemo, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, Redirect } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext.js';
 import { createSCEvent } from '../../APIFunctions/SCEvents.js';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock.js';
 import { membershipState } from '../../Enums';
+import config from '../../config/config.json';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
@@ -70,6 +71,7 @@ function toApiRegistrationForm(questions) {
 export default function CreateEventPage() {
   const { user } = useSCE();
   const history = useHistory();
+  const isSCEventsEnabled = config.SCEvents?.ENABLED;
 
   const [eventId] = useState(() => crypto.randomUUID());
   const [eventName, setEventName] = useState('');
@@ -217,6 +219,10 @@ export default function CreateEventPage() {
     }
 
     history.push('/events');
+  }
+
+  if (!isSCEventsEnabled) {
+    return <Redirect to="/notfound" />;
   }
 
   if (!isOfficerOrAdmin) {
