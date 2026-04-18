@@ -56,12 +56,43 @@ function PlusIcon() {
   );
 }
 
-function EventCard({ event }) {
+function EditIcon() {
   return (
-    <div className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 shadow-md backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07]">
-      <h2 className="mb-4 text-2xl font-bold text-white">
-        {event.name || 'Untitled Event'}
-      </h2>
+    <svg
+      className="h-5 w-5 flex-shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  );
+}
+
+function EventCard({ event, user }) {
+  const isAdmin = event.admins && user?._id && event.admins.includes(String(user._id));
+
+  return (
+    <div className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 shadow-md backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07]">
+      <div className="flex items-start justify-between">
+        <h2 className="mb-4 pr-4 text-2xl font-bold text-white">
+          {event.name || 'Untitled Event'}
+        </h2>
+        {isAdmin && (
+          <Link
+            to={`/events/${event.id}/edit`}
+            className="rounded-lg p-2 text-gray-400 hover:bg-white/10 hover:text-emerald-400 transition-colors duration-200"
+            title="Edit Event"
+          >
+            <EditIcon />
+          </Link>
+        )}
+      </div>
 
       <div className="mb-5 space-y-2 text-sm text-gray-300">
         {(event.date || event.time) && (
@@ -188,7 +219,7 @@ export default function EventsPage() {
         {!isLoading && !hasError && events.length > 0 && (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
             {events.map((event) => (
-              <EventCard key={event.id} event={event} />
+              <EventCard key={event.id} event={event} user={user} />
             ))}
           </div>
         )}

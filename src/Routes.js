@@ -22,6 +22,7 @@ import PermissionRequestPage from './Pages/PermissionRequest/PermissionRequest.j
 import EventsPage from './Pages/Events/Events.js';
 import CreateEventPage from './Pages/Events/CreateEventPage.js';
 import EventRegistration from './Pages/Events/EventsRegistation.js';
+import EditEventPage from './Pages/Events/EditEventPage.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -176,6 +177,14 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true
+  },
+  {
+    Component: EditEventPage,
+    path: '/events/:id/edit',
+    pageName: 'Edit Event',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: false
   },
   ...memberRoutes,
 ];
