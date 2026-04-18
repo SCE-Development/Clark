@@ -184,7 +184,8 @@ export default function EditEventPage() {
     };
 
     setSubmitting(true);
-    const result = await updateSCEvent(id, userId, payload);
+    const token = window.localStorage.getItem('jwtToken');
+    const result = await updateSCEvent(id, token, payload);
     setSubmitting(false);
 
     if (result.error) {

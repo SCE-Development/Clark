@@ -193,7 +193,8 @@ export default function CreateEventPage() {
     };
 
     setSubmitting(true);
-    const result = await createSCEvent(payload);
+    const token = window.localStorage.getItem('jwtToken');
+    const result = await createSCEvent(token, payload);
     setSubmitting(false);
 
     if (result.error) {
