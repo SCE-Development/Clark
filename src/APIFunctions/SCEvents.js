@@ -33,13 +33,14 @@ export async function getEventByID(id) {
   return status;
 }
 
-export async function createSCEvent(eventBody) {
+export async function createSCEvent(token, eventBody) {
   const status = new ApiResponse();
   try {
     const res = await fetch(`${SCEVENTS_API_URL}/events/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(eventBody),
     });
@@ -55,13 +56,14 @@ export async function createSCEvent(eventBody) {
   return status;
 }
 
-export async function updateSCEvent(id, userId, eventUpdates) {
+export async function updateSCEvent(id, token, eventUpdates) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}?user_id=${userId}`, {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(eventUpdates),
     });
