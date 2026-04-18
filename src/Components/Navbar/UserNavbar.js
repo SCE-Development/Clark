@@ -22,6 +22,7 @@ export default function UserNavbar(props) {
     { title: 'Printing', route: '/2DPrinting' },
     { title: 'Chat', route: '/messaging' },
     { title: 'LED Sign', route: '/led-sign' },
+    ...(config.SCEvents?.ENABLED ? [{ title: 'SCEvents', route: '/events' }] : []),
   ];
 
   const authentication = [
