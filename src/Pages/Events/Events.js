@@ -74,8 +74,49 @@ function EditIcon() {
   );
 }
 
+function getUserAccessLevel(user) {
+  return user?.accessLevel ?? membershipState.NON_MEMBER;
+}
+
+function canUserSeeEvent(event, user) {
+  const userId = user?._id != null ? String(user._id) : '';
+  const userAccess = getUserAccessLevel(user);
+
+  const isGlobalAdmin = userAccess >= membershipState.ADMIN;
+  const isEventAdmin = Array.isArray(event.admins) && userId
+    ? event.admins.includes(userId)
+    : false;
+
+  const status = event.status || 'draft';
+  const visibility = event.visibility || 'public';
+  const minimumVisibleRole = event.minimum_visible_role || '';
+
+  // Draft events are only visible to global admins or users listed in event.admins
+  if (status === 'draft') {
+    return isGlobalAdmin || isEventAdmin;
+  }
+
+  // Public → everyone
+  if (visibility === 'public') {
+    return true;
+  }
+
+  // Private → compare access levels directly
+  if (visibility === 'private') {
+    const requiredLevel = membershipState[minimumVisibleRole?.toUpperCase()];
+    if (requiredLevel === undefined) return false;
+
+    return userAccess >= requiredLevel;
+  }
+
+  return false;
+}
+
 function EventCard({ event, user }) {
-  const isAdmin = event.admins && user?._id && event.admins.includes(String(user._id));
+  const isEventAdmin =
+    Array.isArray(event.admins) && user?._id
+      ? event.admins.includes(String(user._id))
+      : false;
 
   return (
     <div className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6 shadow-md backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07]">
@@ -83,7 +124,7 @@ function EventCard({ event, user }) {
         <h2 className="mb-4 pr-4 text-2xl font-bold text-white">
           {event.name || 'Untitled Event'}
         </h2>
-        {isAdmin && (
+        {isEventAdmin && (
           <Link
             to={`/events/${event.id}/edit`}
             className="rounded-lg p-2 text-gray-400 hover:bg-white/10 hover:text-emerald-400 transition-colors duration-200"
@@ -91,6 +132,19 @@ function EventCard({ event, user }) {
           >
             <EditIcon />
           </Link>
+        )}
+      </div>
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        {event.status === 'draft' && (
+          <span className="rounded-full bg-yellow-500/15 px-3 py-1 text-xs font-medium text-yellow-200 border border-yellow-400/20">
+            Draft
+          </span>
+        )}
+        {event.visibility === 'private' && (
+          <span className="rounded-full bg-purple-500/15 px-3 py-1 text-xs font-medium text-purple-200 border border-purple-400/20">
+            Private
+          </span>
         )}
       </div>
 
@@ -139,6 +193,7 @@ export default function EventsPage() {
   const [hasError, setHasError] = useState(false);
   const isSCEventsEnabled = config.SCEvents?.ENABLED;
   const canCreateEvent = user?.accessLevel >= membershipState.OFFICER;
+  const visibleEvents = events.filter((event) => canUserSeeEvent(event, user));
 
   useEffect(() => {
     if (!isSCEventsEnabled) {
@@ -210,15 +265,15 @@ export default function EventsPage() {
           </div>
         )}
 
-        {!isLoading && !hasError && events.length === 0 && (
+        {!isLoading && !hasError && visibleEvents.length === 0 && (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center text-lg text-gray-300">
             No events available right now.
           </div>
         )}
 
-        {!isLoading && !hasError && events.length > 0 && (
+        {!isLoading && !hasError && visibleEvents.length > 0 && (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {events.map((event) => (
+            {visibleEvents.map((event) => (
               <EventCard key={event.id} event={event} user={user} />
             ))}
           </div>
