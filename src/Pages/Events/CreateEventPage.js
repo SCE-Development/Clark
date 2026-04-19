@@ -87,6 +87,9 @@ export default function CreateEventPage() {
   });
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
+  const [status, setStatus] = useState('draft');
+  const [visibility, setVisibility] = useState('public');
+  const [minimumVisibleRole, setMinimumVisibleRole] = useState('');
   const [maxAttendees, setMaxAttendees] = useState(UNLIMITED_ATTENDEES);
   const [questions, setQuestions] = useState(defaultQuestions);
   const [submitError, setSubmitError] = useState('');
@@ -176,6 +179,10 @@ export default function CreateEventPage() {
       setSubmitError('Could not resolve your user id.');
       return;
     }
+    if (visibility === 'private' && !minimumVisibleRole) {
+      setSubmitError('Please select a minimum visible role for private events.');
+      return;
+    }
 
     const payload = {
       id: eventId,
@@ -184,12 +191,14 @@ export default function CreateEventPage() {
       time,
       location: location.trim(),
       description: description.trim(),
-      admins: [adminId],
+      admins: [adminId],  // The event creator becomes the initial event admin in SCEvents
       registration_form: toApiRegistrationForm(questions),
       max_attendees:
         maxAttendees === UNLIMITED_ATTENDEES ? UNLIMITED_ATTENDEES : Number(maxAttendees),
       created_at: new Date().toISOString(),
-      status: 'draft',
+      status,
+      visibility,
+      minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
     };
 
     setSubmitting(true);
@@ -336,6 +345,61 @@ export default function CreateEventPage() {
             placeholder="No limit"
           />
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="w-full form-control">
+            <div className="label">
+              <span className="label-text">Publish status</span>
+            </div>
+            <select
+              className="w-full select select-bordered"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+
+          <label className="w-full form-control">
+            <div className="label">
+              <span className="label-text">Visibility</span>
+            </div>
+            <select
+              className="w-full select select-bordered"
+              value={visibility}
+              onChange={(e) => {
+                const nextVisibility = e.target.value;
+                setVisibility(nextVisibility);
+                if (nextVisibility !== 'private') {
+                  setMinimumVisibleRole('');
+                }
+              }}
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </label>
+        </div>
+
+        {visibility === 'private' && (
+          <label className="w-full form-control">
+            <div className="label">
+              <span className="label-text">Minimum visible role</span>
+            </div>
+            <select
+              className="w-full max-w-xs select select-bordered"
+              value={minimumVisibleRole}
+              onChange={(e) => setMinimumVisibleRole(e.target.value)}
+            >
+              <option value="">Select role</option>
+              <option value="member">Member</option>
+              <option value="officer">Officer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+        )}
       </div>
 
       <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">

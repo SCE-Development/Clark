@@ -56,6 +56,9 @@ export default function EditEventPage() {
   const [time, setTime] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
+  const [status, setStatus] = useState('draft');
+  const [visibility, setVisibility] = useState('public');
+  const [minimumVisibleRole, setMinimumVisibleRole] = useState('');
   const [maxAttendees, setMaxAttendees] = useState(UNLIMITED_ATTENDEES);
   const [questions, setQuestions] = useState([]);
   const [eventAdmins, setEventAdmins] = useState([]);
@@ -83,7 +86,12 @@ export default function EditEventPage() {
       setTime(evt.time || '');
       setLocation(evt.location || '');
       setDescription(evt.description || '');
-      setMaxAttendees(evt.max_attendees || UNLIMITED_ATTENDEES);
+      setStatus(evt.status || 'draft');
+      setVisibility(evt.visibility || 'public');
+      setMinimumVisibleRole(evt.minimum_visible_role || '');
+      setMaxAttendees(
+        typeof evt.max_attendees === 'number' ? evt.max_attendees : UNLIMITED_ATTENDEES,
+      );
       setQuestions(evt.registration_form || []);
       setEventAdmins(evt.admins || []);
     }
@@ -172,6 +180,11 @@ export default function EditEventPage() {
       return;
     }
 
+    if (visibility === 'private' && !minimumVisibleRole) {
+      setSubmitError('Please select a minimum visible role for private events.');
+      return;
+    }
+
     const payload = {
       name: eventName.trim(),
       date,
@@ -181,6 +194,9 @@ export default function EditEventPage() {
       registration_form: toApiRegistrationForm(questions),
       max_attendees:
         maxAttendees === UNLIMITED_ATTENDEES ? UNLIMITED_ATTENDEES : Number(maxAttendees),
+      status,
+      visibility,
+      minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
     };
 
     setSubmitting(true);
@@ -249,6 +265,7 @@ export default function EditEventPage() {
     );
   }
 
+  // Edit access: only users listed in event.admins can update an event
   const isEventAdmin = eventAdmins.includes(userId);
   if (!isEventAdmin) {
     return (
@@ -360,6 +377,61 @@ export default function EditEventPage() {
             placeholder="No limit"
           />
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="w-full form-control">
+            <div className="label">
+              <span className="label-text">Publish status</span>
+            </div>
+            <select
+              className="w-full select select-bordered"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+
+          <label className="w-full form-control">
+            <div className="label">
+              <span className="label-text">Visibility</span>
+            </div>
+            <select
+              className="w-full select select-bordered"
+              value={visibility}
+              onChange={(e) => {
+                const nextVisibility = e.target.value;
+                setVisibility(nextVisibility);
+                if (nextVisibility !== 'private') {
+                  setMinimumVisibleRole('');
+                }
+              }}
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </label>
+        </div>
+
+        {visibility === 'private' && (
+          <label className="w-full form-control">
+            <div className="label">
+              <span className="label-text">Minimum visible role</span>
+            </div>
+            <select
+              className="w-full max-w-xs select select-bordered"
+              value={minimumVisibleRole}
+              onChange={(e) => setMinimumVisibleRole(e.target.value)}
+            >
+              <option value="">Select role</option>
+              <option value="member">Member</option>
+              <option value="officer">Officer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+        )}
       </div>
 
       <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">
