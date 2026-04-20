@@ -186,22 +186,17 @@ async function findPasswordReset(resetToken) {
  * reset
  */
 function checkIfPageCountResets(lastLogin) {
-  if (!lastLogin) return false;
+  if (!lastLogin) return true; // New users should probably start fresh
 
-  let oldDate = new Date(lastLogin.getTime());
-
-  // this returns "right now" when called
-  // to unit test, we mock when "right now" is
-  //
-  // by mocking, we can have `new Date` return
-  // tomorrow, last week etc
   const now = new Date();
-  const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
-  // reset if users last login was >= week ago OR there was a sunday between the last login and now
-  const lastLoginWasOverOneWeekAgo  = now.getTime() - oldDate.getTime() >= oneWeekInMilliseconds;
-  const aSundayHasPassedSinceLastLogin = oldDate.getDay() > now.getDay();
 
-  return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
+  // Find the most recent Sunday at 00:00:00
+  const lastSunday = new Date(now);
+  lastSunday.setHours(0, 0, 0, 0);
+  lastSunday.setDate(now.getDate() - now.getDay());
+
+  // If they logged in BEFORE the most recent Sunday, reset!
+  return lastLogin.getTime() < lastSunday.getTime();
 }
 
 /**
