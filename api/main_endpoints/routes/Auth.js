@@ -142,7 +142,6 @@ router.post('/login', async (req, res) => {
 
     const user = await User.findOne({ email: email.toLowerCase() });
 
-    // Replace the comparison line with this:
     const isMatch = await new Promise((resolve, reject) => {
       if (!user) {
         resolve(false);
