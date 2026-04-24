@@ -8,7 +8,8 @@ const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
-const YEAR_RANGE = Array.from({ length: 10 }, (_, i) => 2026 + i);
+const currentYear = new Date().getFullYear();
+const YEAR_RANGE = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
 function toDateKey(date) {
   const y = date.getFullYear();
