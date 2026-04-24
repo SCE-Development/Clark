@@ -6,23 +6,6 @@ import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
 import CalendarView from './CalendarView';
 
-// ─── icons ───────────────────────────────────────────────────────────────────
-
-function PlusIcon() {
-  return (
-    <svg
-      className="h-5 w-5 flex-shrink-0"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
-
 // ─── access helpers ───────────────────────────────────────────────────────────
 
 function getUserAccessLevel(user) {
@@ -105,21 +88,8 @@ export default function EventsPage() {
         <div className="absolute right-[-8rem] top-[10rem] h-[24rem] w-[24rem] rounded-full bg-indigo-500/10 blur-3xl" />
       </div>
 
-      {/* ── Create button (officers/admins only) — top-right ── */}
-      {canCreateEvent && (
-        <div className="relative mx-auto max-w-7xl px-6 pt-8 flex justify-end">
-          <Link
-            to="/events/create"
-            aria-label="Create event"
-            className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-white shadow-sm backdrop-blur transition hover:border-white/30 hover:bg-white/[0.15]"
-          >
-            <PlusIcon />
-          </Link>
-        </div>
-      )}
-
       {/* ── Calendar area ── */}
-      <div className="relative mx-auto max-w-7xl px-6 py-8">
+      <div className="relative mx-auto max-w-[120rem] px-4 py-8 sm:px-6 lg:px-10">
         {isLoading && (
           <div className="py-16 text-center text-lg text-gray-300">
             Loading events...
@@ -133,7 +103,12 @@ export default function EventsPage() {
         )}
 
         {!isLoading && !hasError && (
-          <CalendarView events={visibleEvents} isAdminView={isAdminView} user={user} />
+          <CalendarView
+            events={visibleEvents}
+            isAdminView={isAdminView}
+            user={user}
+            canCreateEvent={canCreateEvent}
+          />
         )}
       </div>
     </div>

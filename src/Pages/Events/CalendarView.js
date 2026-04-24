@@ -194,6 +194,23 @@ function XIcon() {
   );
 }
 
+function PlusIcon() {
+  return (
+    <svg
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
 // ─── Event popup ──────────────────────────────────────────────────────────────
 
 function EventPopup({ event, onClose, isAdminView, user }) {
@@ -409,7 +426,7 @@ function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdmin
   return (
     <div
       className={[
-        'min-h-[100px] border-b border-r border-slate-700/60 p-1.5 transition-colors duration-150',
+        'min-h-[120px] sm:min-h-[130px] border-b border-r border-slate-700/60 p-1.5 transition-colors duration-150',
         isCurrentMonth ? '' : 'opacity-30',
         isToday ? 'bg-cyan-500/[0.12]' : 'hover:bg-slate-700/35',
       ].join(' ')}
@@ -447,7 +464,7 @@ function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdmin
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
-export default function CalendarView({ events, isAdminView = false, user }) {
+export default function CalendarView({ events, isAdminView = false, user, canCreateEvent = false }) {
   const today = new Date();
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -510,7 +527,7 @@ export default function CalendarView({ events, isAdminView = false, user }) {
       )}
 
       <div className="overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)]">
-        <div className="flex items-start justify-between border-b border-slate-600/50 px-5 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-600/50 px-5 py-4">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative w-28 sm:w-36">
@@ -569,17 +586,28 @@ export default function CalendarView({ events, isAdminView = false, user }) {
           </div>
 
           <div className="flex items-center gap-2">
+            {canCreateEvent && (
+              <Link
+                to="/events/create"
+                aria-label="Create event"
+                className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 px-3 text-sm font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+              >
+                <span className="mr-2"><PlusIcon /></span>
+                Create
+              </Link>
+            )}
+
             <button
               onClick={() => setCursor(new Date(year, month - 1, 1))}
               aria-label="Previous month"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
             >
               <ChevronLeft />
             </button>
             <button
               onClick={() => setCursor(new Date(year, month + 1, 1))}
               aria-label="Next month"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
             >
               <ChevronRight />
             </button>
