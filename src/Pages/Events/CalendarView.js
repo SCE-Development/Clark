@@ -294,7 +294,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
 
         <div className="space-y-3 border-t border-slate-700/70 px-5 py-4">
           {event.date && (
-            <div className="flex items-start gap-2.5 text-sm text-slate-200">
+            <div className="flex items-start gap-2.5 text-[15px] text-slate-200">
               <span className="mt-0.5 text-slate-400"><CalendarIcon /></span>
               <span>{formatDate(event.date)}</span>
             </div>
@@ -380,7 +380,7 @@ function EventPill({ event, onSelect, isAdminView }) {
       onClick={() => onSelect(event)}
       className={[
         'flex w-full items-start gap-1.5 rounded-md border px-1.5 py-1',
-        'text-left text-[11px] font-semibold leading-tight',
+        'text-left text-[12px] sm:text-[13px] font-semibold leading-tight',
         'transition-all duration-150 hover:border-white/30 hover:brightness-110',
         colors.bg,
         colors.text,
@@ -434,7 +434,7 @@ function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdmin
       <div className="mb-1 flex justify-end">
         <span
           className={[
-            'flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold',
+            'flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold',
             isToday ? 'bg-cyan-400 text-slate-950' : isCurrentMonth ? 'text-slate-200' : 'text-slate-600',
           ].join(' ')}
         >
@@ -535,7 +535,7 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
                   value={month}
                   onChange={handleMonthChange}
                   aria-label="Select month"
-                  className="h-10 w-full appearance-none rounded-lg border border-slate-400/40 bg-slate-800 px-4 pr-10 text-sm font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  className="h-10 w-full appearance-none rounded-lg border border-slate-400/40 bg-slate-800 px-4 pr-10 text-[14px] font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                 >
                   {MONTHS.map((monthName, index) => (
                     <option key={monthName} value={index} className="bg-slate-900">
@@ -556,7 +556,7 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
                   value={year}
                   onChange={handleYearChange}
                   aria-label="Select year"
-                  className="h-10 w-full appearance-none rounded-lg border border-slate-400/40 bg-slate-800 px-4 pr-10 text-sm font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  className="h-10 w-full appearance-none rounded-lg border border-slate-400/40 bg-slate-800 px-4 pr-10 text-[14px] font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                 >
                   {YEAR_RANGE.map((yearOption) => (
                     <option key={yearOption} value={yearOption} className="bg-slate-900">
@@ -574,13 +574,13 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
 
               <button
                 onClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
-                className="h-10 rounded-lg border border-slate-400/40 bg-slate-800 px-4 text-sm font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                className="h-10 rounded-lg border border-slate-400/40 bg-slate-800 px-4 text-[14px] font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
               >
                 Today
               </button>
             </div>
 
-            <p className="text-xs font-medium tracking-wide text-slate-300">
+            <p className="text-sm font-medium tracking-wide text-slate-300">
               {monthEventCount} event{monthEventCount !== 1 ? 's' : ''} this month
             </p>
           </div>
@@ -590,7 +590,7 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
               <Link
                 to="/events/create"
                 aria-label="Create event"
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 px-3 text-sm font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+                className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 px-3 text-[14px] font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
               >
                 <span className="mr-2"><PlusIcon /></span>
                 Create
@@ -635,7 +635,7 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
               { label: 'Draft', dot: 'bg-amber-300' },
               { label: 'Closed', dot: 'bg-rose-300' },
             ].map(({ label, dot }) => (
-              <span key={label} className="flex items-center gap-1.5 text-[11px] font-medium text-slate-300">
+              <span key={label} className="flex items-center gap-1.5 text-[12px] font-medium text-slate-300">
                 <span className={['h-2 w-2 rounded-full', dot].join(' ')} />
                 {label}
               </span>
@@ -649,7 +649,7 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
               { label: 'Closed', dot: 'bg-rose-300' },
             ].map(({ label, dot }) => (
               <span key={label} className="flex items-center gap-1.5 text-[11px] font-medium text-slate-300">
-                <span className={['h-2 w-2 rounded-full', dot].join(' ')} />
+                <span className={['h-2.5 w-2.5 rounded-full', dot].join(' ')} />
                 {label}
               </span>
             ))}
