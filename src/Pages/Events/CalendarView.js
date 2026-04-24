@@ -590,10 +590,9 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
               <Link
                 to="/events/create"
                 aria-label="Create event"
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 px-3 text-[14px] font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
               >
-                <span className="mr-2"><PlusIcon /></span>
-                Create
+                <PlusIcon />
               </Link>
             )}
 
