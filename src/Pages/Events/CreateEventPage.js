@@ -58,7 +58,7 @@ function toApiRegistrationForm(questions) {
       base.answer_details = { max_chars: q.answer_details.max_chars };
     }
     if (
-      (q.type === 'multiple_choice' || q.type === 'dropdown') &&
+      (q.type === 'multiple_choice' || q.type === 'dropdown' || q.type === 'checkbox') &&
       q.answer_options &&
       q.answer_options.length
     ) {
@@ -126,7 +126,7 @@ export default function CreateEventPage() {
         if (newType === 'textbox') {
           return { ...base, answer_details: { max_chars: 200 } };
         }
-        if (newType === 'multiple_choice' || newType === 'dropdown') {
+        if (newType === 'multiple_choice' || newType === 'dropdown' || newType === 'checkbox') {
           return { ...base, answer_options: ['Option 1', 'Option 2'] };
         }
         return base;
@@ -182,6 +182,9 @@ export default function CreateEventPage() {
     if (visibility === 'private' && !minimumVisibleRole) {
       setSubmitError('Please select a minimum visible role for private events.');
       return;
+    }
+    if (maxAttendees !== UNLIMITED_ATTENDEES && (maxAttendees === '' || maxAttendees <= 0)) {
+      setSubmitError('Please enter a valid max attendees, or check "No limit".');
     }
 
     const payload = {
@@ -332,18 +335,39 @@ export default function CreateEventPage() {
           <div className="label">
             <span className="label-text">Max attendees</span>
           </div>
-          <input
-            type="number"
-            min="1"
-            className="max-w-xs input input-bordered"
-            value={maxAttendees === UNLIMITED_ATTENDEES ? '' : maxAttendees}
-            onChange={(e) =>
-              setMaxAttendees(
-                e.target.value ? parseInt(e.target.value, 10) : UNLIMITED_ATTENDEES,
-              )
-            }
-            placeholder="No limit"
-          />
+          <div className="flex items-center gap-4">
+            <input
+              type="number"
+              min="1"
+              className="max-w-xs input input-bordered"
+              value={maxAttendees === UNLIMITED_ATTENDEES ? '' : maxAttendees}
+              disabled={maxAttendees === UNLIMITED_ATTENDEES}
+              onChange={(e) => {
+                if (!e.target.value) {
+                  setMaxAttendees('');
+                  return;
+                }
+                const val = parseInt(e.target.value, 10);
+                if (!isNaN(val)) setMaxAttendees(val);
+              }}
+              placeholder="e.g. 50"
+            />
+            <label className="flex gap-2 items-center text-sm cursor-pointer label">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm"
+                checked={maxAttendees === UNLIMITED_ATTENDEES}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setMaxAttendees(UNLIMITED_ATTENDEES);
+                  } else {
+                    setMaxAttendees('');
+                  }
+                }}
+              />
+              <span className="label-text font-medium">No limit</span>
+            </label>
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
