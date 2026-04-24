@@ -78,7 +78,7 @@ export default function CreateEventFormQuestionBlock({
         </div>
       )}
 
-      {(question.type === 'multiple_choice' || question.type === 'dropdown') && (
+      {(question.type === 'multiple_choice' || question.type === 'dropdown' || question.type === 'checkbox') && (
         <div className="mt-3 space-y-2">
           <span className="text-sm text-gray-500 dark:text-gray-400">Answer options</span>
           {(question.answer_options || []).map((option, optIndex) => (
