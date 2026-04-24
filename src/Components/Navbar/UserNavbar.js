@@ -15,14 +15,14 @@ export default function UserNavbar(props) {
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
     { title: 'Summer Internship', route: '/s/internship', newTab: true },
-    ...(config.SCEvents?.ENABLED ? [{ title: 'SCEvents', route: '/events' }] : []),
+    ...(config.SCEvents?.ENABLED ? [{ title: 'Events', route: '/events' }] : []),
   ];
 
   const authedRoutes = [
     { title: 'Printing', route: '/2DPrinting' },
     { title: 'Chat', route: '/messaging' },
     { title: 'LED Sign', route: '/led-sign' },
-    ...(config.SCEvents?.ENABLED ? [{ title: 'SCEvents', route: '/events' }] : []),
+    ...(config.SCEvents?.ENABLED ? [{ title: 'Events', route: '/events' }] : []),
   ];
 
   const authentication = [
