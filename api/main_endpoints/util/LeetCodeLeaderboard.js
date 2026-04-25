@@ -3,7 +3,7 @@ const {
   OK,
   SERVER_ERROR,
 } = require('../../util/constants').STATUS_CODES;
-const SIGN2_URL = process.env.SIGN2_URL || 'http://192.168.69.180:8080';
+const SIGN2_URL = process.env.SIGN2_URL || 'http://localhost:12121';
 
 async function getAllUsers() {
   try {
