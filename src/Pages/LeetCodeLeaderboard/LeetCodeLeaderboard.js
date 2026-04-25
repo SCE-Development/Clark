@@ -24,6 +24,16 @@ export default function LeetCodeLeaderboard() {
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [emulatorSrc, setEmulatorSrc] = useState('');
+
+  useEffect(() => {
+    function refreshEmulator() {
+      setEmulatorSrc(`${SIGN2_URL}/image?t=${Date.now()}`);
+    }
+    refreshEmulator();
+    const interval = setInterval(refreshEmulator, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   async function getAllRegisteredUsers() {
     const apiResponse = await getAllUsers(token);
@@ -115,12 +125,11 @@ export default function LeetCodeLeaderboard() {
         } />
         <div className='max-w-full flex flex-col justify-center items-center'>
           <div className='max-w-[1150px] max-h-[1150px] overflow-hidden inline-block scale-50 origin-top border-[6px] border-red-500 dark:border-white' style={{ marginBottom: '-500px' }}>
-            <iframe
+            <img
               id='led-frame'
-              src={SIGN2_URL}
-              title='LED Emulator'
+              src={emulatorSrc}
+              alt='LED Emulator'
               className='w-[1150px] h-[1150px]'
-              scrolling='no'
             />
           </div>
         </div>
