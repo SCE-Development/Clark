@@ -1,7 +1,9 @@
+/* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
 import React, { useState, useEffect } from 'react';
 import { useParams, useHistory, Redirect } from 'react-router-dom';
 import config from '../../config/config.json';
-import { getEventByID } from '../../APIFunctions/SCEvents';
+import { useSCE } from '../../Components/context/SceContext';
+import { getEventByID, registerForSCEvent } from '../../APIFunctions/SCEvents';
 
 function ArrowLeftIcon() {
   return (
@@ -19,6 +21,7 @@ function ArrowLeftIcon() {
 }
 
 export default function EventRegistration() {
+  const { user } = useSCE();
   const { id } = useParams();
   const history = useHistory();
   const isSCEventsEnabled = Boolean(config.SCEvents?.ENABLED);
@@ -26,6 +29,8 @@ export default function EventRegistration() {
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isSCEventsEnabled) {
@@ -34,6 +39,8 @@ export default function EventRegistration() {
 
     async function fetchEvent() {
       setIsLoading(true);
+      setHasError(false);
+
       const response = await getEventByID(id);
       if (!response.error && response.responseData) {
         setEvent(response.responseData);
@@ -67,18 +74,65 @@ export default function EventRegistration() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError('');
 
-    const summary = (event.registration_form || []).map(field => { // eslint-disable-line camelcase
-      const answer = formData[field.id];
-      const displayAnswer = Array.isArray(answer) ? answer.join(', ') : answer;
-      return `- ${field.question}: ${displayAnswer || 'N/A'}`;
-    }).join('\n');
+    const token = window.localStorage.getItem('jwtToken');
+    if (!token) {
+      setSubmitError('You must be logged in to register for an event.');
+      return;
+    }
 
-    const message = `Registration Successful for: ${event.name}!\n\nSummary of your responses:\n${summary}`;
+    const userId = user?._id != null ? String(user._id) : '';
+    const firstName = user?.firstName || '';
+    const lastName = user?.lastName || '';
+    const email = user?.email || '';
 
-    alert(message);
+    if (!userId || !email) {
+      setSubmitError('Missing user information. Please log in again.');
+      return;
+    }
+
+    const payload = {
+      registrant: {
+        name: `${firstName} ${lastName}`.trim(),
+        email,
+        user_id: String(userId),
+      },
+      registration_form_answers: formData,
+    };
+
+    setSubmitting(true);
+    const result = await registerForSCEvent(id, token, payload);
+    setSubmitting(false);
+
+    if (result.error) {
+      let msg = '';
+      const data = result.responseData;
+
+      if (data && typeof data === 'object' && data.error) {
+        msg = String(data.error);
+      } else if (typeof data === 'string' && data.trim()) {
+        msg = data.trim();
+      }
+
+      if (msg.toLowerCase().includes('registration is closed')) {
+        msg = 'This event is no longer accepting sign-ups, but more events are on the way 👀';
+      }
+
+      if (!msg && result.statusCode) {
+        msg = `HTTP ${result.statusCode}`;
+      }
+
+      if (!msg) {
+        msg = 'Failed to submit registration.';
+      }
+
+      setSubmitError(msg);
+      return;
+    }
+
     history.push('/events');
   };
 
@@ -101,6 +155,35 @@ export default function EventRegistration() {
           >
             Back to Events
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Block closed events
+  if (event.status === 'closed') {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 left-[-8rem] h-[22rem] w-[22rem] rounded-full bg-sky-400/10 blur-3xl" />
+          <div className="absolute right-[-8rem] top-[10rem] h-[24rem] w-[24rem] rounded-full bg-indigo-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto flex min-h-screen max-w-3xl items-center justify-center px-6 py-12">
+          <div className="w-full max-w-xl rounded-2xl border border-red-400/20 bg-white/5 p-8 text-center shadow-2xl backdrop-blur-md">
+            <h1 className="mb-3 text-3xl font-semibold text-white md:text-4xl">
+              Registration Closed
+            </h1>
+            <p className="mb-6 text-base text-red-300">
+              This event is no longer accepting sign-ups, but more events are on the way 👀
+            </p>
+            <button
+              onClick={() => history.push('/events')}
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:from-sky-400 hover:to-indigo-400"
+            >
+              Back to Events
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -208,12 +291,19 @@ export default function EventRegistration() {
               </div>
             ))}
 
+            {submitError && (
+              <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {submitError}
+              </div>
+            )}
+
             <div className="pt-6">
               <button
                 type="submit"
-                className="w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:scale-[1.01] hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900 active:scale-[0.99]"
+                disabled={submitting}
+                className="w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:scale-[1.01] hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Complete Registration
+                {submitting ? 'Submitting...' : 'Complete Registration'}
               </button>
             </div>
           </form>

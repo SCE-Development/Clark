@@ -78,3 +78,30 @@ export async function updateSCEvent(id, token, eventUpdates) {
   }
   return status;
 }
+
+export async function registerForSCEvent(eventId, token, payload) {
+  const status = new ApiResponse();
+
+  try {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const body = await res.json();
+    status.responseData = body;
+
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = err;
+  }
+
+  return status;
+}
