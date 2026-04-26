@@ -132,7 +132,6 @@ export default function EventRegistration() {
       setSubmitError(msg);
       return;
     }
-
     history.push('/events');
   };
 
