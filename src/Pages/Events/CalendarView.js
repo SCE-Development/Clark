@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { getEventAttendanceSummary } from '../../APIFunctions/SCEvents';
 
 // ─── tiny helpers ────────────────────────────────────────────────────────────
 
@@ -218,11 +219,22 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const popupRef = useRef(null);
   const colors = pillColors(event, isAdminView);
   const badgeText = getBadgeText(event, isAdminView);
+  const eventId = event.id || event._id;
+  const authToken = user?.token || window.localStorage.getItem('jwtToken');
   const userId = user?._id != null ? String(user._id) : '';
+  const [attendeeCount, setAttendeeCount] = useState(null);
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
+  const [attendanceLoaded, setAttendanceLoaded] = useState(false);
   const canEditEvent =
     Array.isArray(event.admins) &&
     userId &&
     event.admins.includes(userId);
+  const maxAttendees = Number(event.max_attendees);
+  const hasCapacityLimit = Number.isFinite(maxAttendees) && maxAttendees > 0;
+  const remainingSpots =
+    hasCapacityLimit && typeof attendeeCount === 'number'
+      ? Math.max(maxAttendees - attendeeCount, 0)
+      : null;
 
   useEffect(() => {
     function onKey(e) {
@@ -245,11 +257,39 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     };
   }, [onClose]);
 
+  useEffect(() => {
+    let isCurrent = true;
+    setAttendeeCount(null);
+    setAttendanceLoaded(false);
+    setAttendanceLoading(false);
+
+    async function fetchAttendanceSummary() {
+      if (!eventId || !authToken) {
+        return;
+      }
+      setAttendanceLoading(true);
+      const response = await getEventAttendanceSummary(eventId, authToken);
+      if (isCurrent && !response.error && typeof response.responseData?.attendee_count === 'number') {
+        setAttendeeCount(response.responseData.attendee_count);
+      }
+      if (isCurrent) {
+        setAttendanceLoaded(true);
+        setAttendanceLoading(false);
+      }
+    }
+
+    fetchAttendanceSummary();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [eventId, authToken]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
       <div
         ref={popupRef}
-        className="relative w-full max-w-sm rounded-xl border border-slate-400/35 bg-slate-900/95 shadow-lg"
+        className="relative w-full max-w-sm rounded-xl border border-slate-400/35 bg-slate-900 shadow-lg"
         role="dialog"
         aria-modal="true"
         aria-label={event.name}
@@ -323,12 +363,33 @@ function EventPopup({ event, onClose, isAdminView, user }) {
         </div>
 
         <div className="space-y-2 border-t border-slate-700/70 px-5 py-4">
-          {event.max_attendees > 0 && (
+          {hasCapacityLimit && canEditEvent && typeof attendeeCount === 'number' && (
             <p className="text-center text-xs text-slate-400">
-              {event.max_attendees} spot{event.max_attendees !== 1 ? 's' : ''} available
+              {attendeeCount} {attendeeCount === 1 ? 'person' : 'people'} registered
               {event.waitlist_enabled && (
                 <span className="ml-1 text-amber-300">· waitlist enabled</span>
               )}
+            </p>
+          )}
+
+          {hasCapacityLimit && !canEditEvent && typeof remainingSpots === 'number' && (
+            <p className="text-center text-xs text-slate-400">
+              {remainingSpots} spot{remainingSpots !== 1 ? 's' : ''} left
+              {event.waitlist_enabled && (
+                <span className="ml-1 text-amber-300">· waitlist enabled</span>
+              )}
+            </p>
+          )}
+
+          {hasCapacityLimit && !canEditEvent && attendanceLoading && (
+            <p className="text-center text-xs text-slate-400">
+              Loading live spots...
+            </p>
+          )}
+
+          {hasCapacityLimit && !canEditEvent && attendanceLoaded && typeof remainingSpots !== 'number' && (
+            <p className="text-center text-xs text-slate-400">
+              Unable to load live spots
             </p>
           )}
 
