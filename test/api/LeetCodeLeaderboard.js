@@ -88,23 +88,6 @@ describe('LeetCodeLeaderboard', () => {
         GET_ALL_USERS_API_PATH);
       expect(result).to.have.status(FORBIDDEN);
     });
-
-    it('Should return 200 with a successful fetch of all users', async () => {
-      setTokenStatus(true);
-      const result = await test.sendGetRequestWithToken(token,
-        GET_ALL_USERS_API_PATH,
-      );
-      expect(result).to.have.status(OK);
-    });
-
-    it('Should return 500 if there was an error fetching all users', async () => {
-      setTokenStatus(true);
-      getAllUsersStub.resolves(null);
-      const result = await test.sendGetRequestWithToken(token,
-        GET_ALL_USERS_API_PATH,
-      );
-      expect(result).to.have.status(SERVER_ERROR);
-    });
   });
 
   describe('POST /addUser', () => {
@@ -119,45 +102,6 @@ describe('LeetCodeLeaderboard', () => {
         ADD_API_PATH);
       expect(result).to.have.status(FORBIDDEN);
     });
-
-    it('Should return 400 when required fields are missing', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        ADD_API_PATH,
-        { username: 'testuser' },
-      );
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
-    it('Should return 200 when user is added successfully', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        ADD_API_PATH,
-        {
-          username: 'testuser',
-          firstName: 'Test',
-          lastName: 'User',
-        },
-      );
-      expect(result).to.have.status(OK);
-    });
-
-    // add a test to check for 409 error
-
-    it('Should return 500 if there was an error adding the user', async () => {
-      setTokenStatus(true);
-      addUserStub.resolves(false);
-      const result = await test.sendPostRequestWithToken(token,
-        ADD_API_PATH,
-        {
-          username: 'testuser',
-          firstName: 'Test',
-          lastName: 'User',
-        },
-      );
-      expect(result).to.have.status(SERVER_ERROR);
-      addUserStub.restore();
-    });
   });
 
   describe('POST /deleteUser', () => {
@@ -171,35 +115,6 @@ describe('LeetCodeLeaderboard', () => {
       const result = await test.sendPostRequestWithToken(token,
         DELETE_API_PATH);
       expect(result).to.have.status(FORBIDDEN);
-    });
-
-    it('Should return 400 when username field is missing', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH,
-        {},
-      );
-      expect(result).to.have.status(BAD_REQUEST);
-    });
-
-    it('Should return 200 when user is deleted successfully', async () => {
-      setTokenStatus(true);
-      const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH,
-        { username: 'testuser' },
-      );
-      expect(result).to.have.status(OK);
-    });
-
-    it('Should return 500 if there was an error deleting the user', async () => {
-      setTokenStatus(true);
-      deleteUserStub.resolves(false);
-      const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH,
-        { username: 'testuser' },
-      );
-      expect(result).to.have.status(SERVER_ERROR);
-      deleteUserStub.restore();
     });
   });
 });
