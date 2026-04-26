@@ -73,7 +73,7 @@ function storePayment({ confirmationCode, amount, payerName, note, transactionId
 
 async function requestDoorCode() {
   try {
-    const response = await axios.get(DCD_URL + "/getDoorCode");
+    const response = await axios.get(DCD_URL + '/getDoorCode');
     if (response.status === 200 && response.data && response.data.code) {
       return response.data.code;
     } else {
