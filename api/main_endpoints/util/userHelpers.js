@@ -200,12 +200,13 @@ function checkIfPageCountResets(lastLogin) {
 }
 
 /**
- * Update a user's membershipValidUntil date
+ * Update a user's membership details when they are verified as a member
  * @param {String} userId - The user's ID
  * @param {Number} numberOfSemestersToSignUpFor - Number of semesters to extend
+ * @param {String} doorCode - The door code to assign to the user, if applicable
  * @returns {Object} result - Contains success status and message
  */
-async function updateMembershipExpiration(userId, numberOfSemestersToSignUpFor) {
+async function updateMembershipDetails(userId, numberOfSemestersToSignUpFor, doorCode) {
   try {
     const newExpiration = getMemberExpirationDate(numberOfSemestersToSignUpFor);
     const user = await User.findByIdAndUpdate(
@@ -213,6 +214,7 @@ async function updateMembershipExpiration(userId, numberOfSemestersToSignUpFor) 
       {
         membershipValidUntil: newExpiration,
         accessLevel: membershipState.MEMBER,
+        doorCode: doorCode || undefined
       },
       { new: true },
     );
@@ -234,5 +236,5 @@ module.exports = {
   userWithEmailExists,
   checkIfPageCountResets,
   findPasswordReset,
-  updateMembershipExpiration
+  updateMembershipDetails
 };

@@ -1,5 +1,8 @@
 const MembershipPayment = require('../models/MembershipPayment');
 const logger = require('../../util/logger');
+const axios = require('axios');
+const { doorCodeDistribution = {} } = require('../../config/config.json');
+const { DCD_URL } = doorCodeDistribution;
 
 const status = {
   PENDING: 'pending',
@@ -68,4 +71,19 @@ function storePayment({ confirmationCode, amount, payerName, note, transactionId
   });
 }
 
-module.exports = { findVerifyPayment, storePayment };
+async function requestDoorCode() {
+  try {
+    const response = await axios.get(DCD_URL);
+    if (response.status === 200 && response.data && response.data.code) {
+      return response.data.code;
+    } else {
+      logger.error('requestDoorCode received unexpected response from DCD:', response.status, response.data);
+      return null;
+    }
+  } catch (error) {
+    logger.error('requestDoorCode encountered an error:', error);
+    return null;
+  }
+}
+
+module.exports = { findVerifyPayment, storePayment, requestDoorCode };

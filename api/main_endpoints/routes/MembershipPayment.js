@@ -11,8 +11,12 @@ const {
   TOO_MANY_REQUESTS
 } = require('../../util/constants').STATUS_CODES;
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
-const { updateMembershipExpiration } = require('../util/userHelpers');
-const { findVerifyPayment, storePayment } = require('../util/membershipPaymentQueries.js');
+const { updateMembershipDetails } = require('../util/userHelpers');
+const {
+  findVerifyPayment,
+  storePayment,
+  requestDoorCode
+} = require('../util/membershipPaymentQueries.js');
 const { decodeToken } = require('../util/token-functions.js');
 const { membershipPayment = {} } = require('../../config/config.json');
 const { API_KEY = 'GO_AWAY_LOL' } = membershipPayment;
@@ -60,9 +64,20 @@ router.post('/verifyMembership', async (req, res) => {
   const { amount } = paymentDocument;
   const semestersToAdd = amount >= 30 ? 2 : 1;
 
-  const membershipUpdateResult = await updateMembershipExpiration(
+  let doorCode = null;
+  if (membershipPayment.DCD_ENABLED) {
+    doorCode = await requestDoorCode();
+    if (!doorCode) {
+      logger.error('Error requesting door code for user:', userId);
+    }
+  } else {
+    logger.info('Door code distribution disabled, skipping door code request for user:', userId);
+  }
+
+  const membershipUpdateResult = await updateMembershipDetails(
     decoded.token._id,
-    semestersToAdd
+    semestersToAdd,
+    doorCode
   );
 
   if (!membershipUpdateResult) {
