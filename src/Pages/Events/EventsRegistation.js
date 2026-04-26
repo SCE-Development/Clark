@@ -1,7 +1,6 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
 import React, { useState, useEffect } from 'react';
-import { useParams, useHistory, Redirect } from 'react-router-dom';
-import config from '../../config/config.json';
+import { useParams, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
 import { getEventByID, getEventAttendanceSummary, registerForSCEvent } from '../../APIFunctions/SCEvents';
 
@@ -24,7 +23,6 @@ export default function EventRegistration() {
   const { user } = useSCE();
   const { id } = useParams();
   const history = useHistory();
-  const isSCEventsEnabled = Boolean(config.SCEvents?.ENABLED);
   const [event, setEvent] = useState(null);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -36,10 +34,6 @@ export default function EventRegistration() {
   const [attendanceLoading, setAttendanceLoading] = useState(false);
 
   useEffect(() => {
-    if (!isSCEventsEnabled) {
-      return;
-    }
-
     async function fetchEvent() {
       setIsLoading(true);
       setHasError(false);
@@ -58,10 +52,10 @@ export default function EventRegistration() {
       setIsLoading(false);
     }
     fetchEvent();
-  }, [id, isSCEventsEnabled]);
+  }, [id]);
 
   useEffect(() => {
-    if (!isSCEventsEnabled || !id) {
+    if (!id) {
       return;
     }
     let isCurrent = true;
@@ -86,11 +80,7 @@ export default function EventRegistration() {
     return () => {
       isCurrent = false;
     };
-  }, [id, isSCEventsEnabled]);
-
-  if (!isSCEventsEnabled) {
-    return <Redirect to="/notfound" />;
-  }
+  }, [id]);
 
   const handleInputChange = (fieldId, value, type) => {
     if (type === 'checkbox') {

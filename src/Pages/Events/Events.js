@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import config from '../../config/config.json';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getAllSCEvents, getEventAttendanceSummary } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
@@ -281,14 +280,11 @@ export default function EventsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const isSCEventsEnabled = config.SCEvents?.ENABLED;
   const canCreateEvent = user?.accessLevel >= membershipState.OFFICER;
   const visibleEvents = events.filter((event) => canUserSeeEvent(event, user));
   const isAdminView = canCreateEvent;
 
   useEffect(() => {
-    if (!isSCEventsEnabled) return;
-
     async function fetchEvents() {
       setIsLoading(true);
       setHasError(false);
@@ -305,11 +301,7 @@ export default function EventsPage() {
     }
 
     fetchEvents();
-  }, [isSCEventsEnabled]);
-
-  if (!isSCEventsEnabled) {
-    return <Redirect to="/notfound" />;
-  }
+  }, []);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white">
