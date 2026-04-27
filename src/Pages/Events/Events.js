@@ -295,7 +295,8 @@ export default function EventsPage() {
       setIsLoading(true);
       setHasError(false);
 
-      const response = await getAllSCEvents();
+      const token = window.localStorage.getItem('jwtToken');
+      const response = await getAllSCEvents(token);
 
       if (!response.error) {
         setEvents(Array.isArray(response.responseData) ? response.responseData : []);

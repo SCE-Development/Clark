@@ -70,7 +70,10 @@ export default function EditEventPage() {
   useEffect(() => {
     async function loadEvent() {
       setIsLoading(true);
-      const result = await getEventByID(id);
+
+      const token = window.localStorage.getItem('jwtToken');
+      const result = await getEventByID(id, token);
+
       setIsLoading(false);
 
       if (result.error) {

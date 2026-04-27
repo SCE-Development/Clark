@@ -158,6 +158,47 @@ function getBadgeText(event, isAdminView) {
   return '';
 }
 
+function getRegistrationStatus(event) {
+  return event?.registration_status || 'none';
+}
+
+function getRegistrationCta(event) {
+  const registrationStatus = getRegistrationStatus(event);
+
+  switch (registrationStatus) {
+  case 'registered':
+    return {
+      label: 'Registered',
+      disabled: true,
+      className: 'border border-emerald-400/30 bg-emerald-500/10 text-emerald-200',
+    };
+  case 'pending':
+    return {
+      label: 'Pending',
+      disabled: true,
+      className: 'border border-amber-400/30 bg-amber-500/10 text-amber-200',
+    };
+  case 'waitlisted':
+    return {
+      label: 'On waitlist',
+      disabled: true,
+      className: 'border border-violet-400/30 bg-violet-500/10 text-violet-200',
+    };
+  case 'rejected':
+    return {
+      label: 'Unavailable',
+      disabled: true,
+      className: 'border border-slate-500/40 bg-slate-700/40 text-slate-300',
+    };
+  default:
+    return {
+      label: 'Register',
+      disabled: false,
+      className: '',
+    };
+  }
+}
+
 // ─── icons ────────────────────────────────────────────────────────────────────
 
 function ChevronLeft() {
@@ -250,6 +291,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     hasCapacityLimit && typeof attendeeCount === 'number'
       ? Math.max(maxAttendees - attendeeCount, 0)
       : null;
+  const registrationCta = getRegistrationCta(event);
 
   useEffect(() => {
     function onKey(e) {
@@ -332,8 +374,8 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             {event.name || 'Untitled Event'}
           </h3>
 
-          {badgeText && (
-            <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {badgeText && (
               <span
                 className={[
                   'rounded-full border px-2 py-0.5 text-[10px] font-medium',
@@ -344,8 +386,8 @@ function EventPopup({ event, onClose, isAdminView, user }) {
               >
                 {badgeText}
               </span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         <div className="space-y-3 border-t border-slate-700/70 px-5 py-4">
@@ -430,13 +472,24 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </div>
           )}
 
-          {!canEditEvent && event.status === 'published' && (
+          {!canEditEvent && event.status === 'published' && registrationCta.disabled && (
+            <div
+              className={[
+                'inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold',
+                registrationCta.className,
+              ].join(' ')}
+            >
+              {registrationCta.label}
+            </div>
+          )}
+
+          {!canEditEvent && event.status === 'published' && !registrationCta.disabled && (
             <Link
               to={`/events/${event.id}/register`}
               className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
               onClick={onClose}
             >
-              Register
+              {registrationCta.label}
             </Link>
           )}
         </div>
