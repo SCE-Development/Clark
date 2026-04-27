@@ -214,7 +214,7 @@ export const officerOrAdminRoutes = [
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     Component: LeetCodeLeaderboard,
-    path: '/leetcode-leaderboard',
+    path: '/leetcode',
     pageName: 'LeetCode Leaderboard',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/login',
