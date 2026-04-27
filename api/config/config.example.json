@@ -32,7 +32,7 @@
   "LED_SIGN": {
     "ENABLED": false
   },
-  "SIGN2": {
+  "LEETCODE_LED_SIGN": {
     "ENABLED": false
   },
   "membershipPayment": {

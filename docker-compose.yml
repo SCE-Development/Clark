@@ -48,7 +48,7 @@ services:
       - CLEEZY_URL=http://cleezy-app.sce:8000
       - PRINTER_URL=http://host.docker.internal:14000
       - LED_SIGN_URL=http://host.docker.internal:10000
-      - SIGN2_URL=http://host.docker.internal:12121
+      - LEETCODE_LED_SIGN_URL=http://host.docker.internal:12121
       - DISCORD_REDIRECT_URI=https://sce.sjsu.edu/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api:8082/cloudapi
       - DATABASE_HOST=sce-mongodb
