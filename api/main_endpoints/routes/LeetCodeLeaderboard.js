@@ -14,7 +14,8 @@ const { LEETCODE_LED_SIGN = {} } = require('../../config/config.json');
 const axios = require('axios');
 const LEETCODE_LED_SIGN_URL = process.env.LEETCODE_LED_SIGN_URL || 'http://localhost:12121';
 
-router.get('/', async (req, res) => {
+// 1 & 2: Middleware checks JWT and if the sign is enabled
+router.use(async (req, res, next) => {
   const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
@@ -25,96 +26,61 @@ router.get('/', async (req, res) => {
     return res.sendStatus(OK);
   }
 
+  res.locals.userId = decoded.token._id;
+  next();
+});
+
+// 3 & 4: Reusable request handler for Axios setup and error handling
+const handleLeetCodeRequest = async (res, method, endpoint, data = null) => {
   try {
-    const url = new URL('/getAllUsers', LEETCODE_LED_SIGN_URL);
-    const { data } = await axios.get(url.href);
-    if ('error' in data) {
-      logger.error('Error from LeetCode Leaderboard: ', data.error);
-      return res.status(SERVER_ERROR).send('Error fetching users from LeetCode Leaderboard');
+    const url = new URL(endpoint, LEETCODE_LED_SIGN_URL);
+    const response = await axios({ method, url: url.href, data });
+    
+    if (response.data && 'error' in response.data) {
+      throw new Error(response.data.error);
     }
-    return res.status(OK).json({ users: data.users });
+    
+    return response.data;
   } catch (err) {
-    logger.error('Error fetching users from LeetCode Leaderboard: ', err);
-    return res.status(SERVER_ERROR).send('Error fetching users from LeetCode Leaderboard');
+    logger.error(`Error with LeetCode Leaderboard at ${endpoint}: `, err.message || err);
+    res.status(SERVER_ERROR).send('Error communicating with LeetCode Leaderboard');
+    return null;
+  }
+};
+
+router.get('/', async (req, res) => {
+  const data = await handleLeetCodeRequest(res, 'GET', '/getAllUsers');
+  if (data) {
+    return res.status(OK).json({ users: data.users });
   }
 });
 
 router.post('/addUser', async (req, res) => {
-  const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (decoded.status !== OK) {
-    return res.sendStatus(decoded.status);
-  }
-
-  if (!LEETCODE_LED_SIGN.ENABLED) {
-    logger.warn('LeetCode Leaderboard is disabled, returning 200 to mock the service');
+  const { username, firstName, lastName } = req.body;
+  const data = await handleLeetCodeRequest(res, 'POST', '/user/add', { username, firstName, lastName });
+  
+  if (data) {
+    AuditLog.create({
+      userId: res.locals.userId,
+      action: AuditLogActions.ADD_LEETCODE_USER,
+      details: { username },
+    });
     return res.sendStatus(OK);
   }
-
-  const { username, firstName, lastName } = req.body;
-
-  try {
-    const url = new URL('/user/add', LEETCODE_LED_SIGN_URL);
-    const { data } = await axios.post(url.href, {
-      username,
-      firstName,
-      lastName
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if ('error' in data) {
-      logger.error('Error from LeetCode Leaderboard: ', data.error);
-      return res.status(SERVER_ERROR).send('Error adding user to LeetCode Leaderboard');
-    }
-  } catch (err) {
-    logger.error('Error adding user to LeetCode Leaderboard: ', err);
-    return res.status(SERVER_ERROR).send('Error adding user to LeetCode Leaderboard');
-  }
-
-  AuditLog.create({
-    userId: decoded.token._id,
-    action: AuditLogActions.ADD_LEETCODE_USER,
-    details: { username },
-  });
-  return res.sendStatus(OK);
 });
 
 router.post('/deleteUser', async (req, res) => {
-  const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (decoded.status !== OK) {
-    return res.sendStatus(decoded.status);
-  }
-
-  if (!LEETCODE_LED_SIGN.ENABLED) {
-    logger.warn('LeetCode Leaderboard is disabled, returning 200 to mock the service');
+  const { username } = req.body;
+  const data = await handleLeetCodeRequest(res, 'POST', '/user/remove', { username });
+  
+  if (data) {
+    AuditLog.create({
+      userId: res.locals.userId,
+      action: AuditLogActions.DELETE_LEETCODE_USER,
+      details: { username },
+    });
     return res.sendStatus(OK);
   }
-
-  const { username } = req.body;
-
-  try {
-    const url = new URL('/user/remove', LEETCODE_LED_SIGN_URL);
-    const { data } = await axios.post(url.href, { username }, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if ('error' in data) {
-      logger.error('Error from LeetCode Leaderboard: ', data.error);
-      return res.status(SERVER_ERROR).send('Error deleting user from LeetCode Leaderboard');
-    }
-  } catch (err) {
-    logger.error('Error deleting user from LeetCode Leaderboard: ', err);
-    return res.status(SERVER_ERROR).send('Error deleting user from LeetCode Leaderboard');
-  }
-
-  AuditLog.create({
-    userId: decoded.token._id,
-    action: AuditLogActions.DELETE_LEETCODE_USER,
-    details: { username },
-  });
-  return res.sendStatus(OK);
 });
 
 module.exports = router;
