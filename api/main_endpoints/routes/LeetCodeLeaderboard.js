@@ -14,7 +14,7 @@ const { LEETCODE_LED_SIGN = {} } = require('../../config/config.json');
 const axios = require('axios');
 const LEETCODE_LED_SIGN_URL = process.env.LEETCODE_LED_SIGN_URL || 'http://localhost:12121';
 
-// 1 & 2: Middleware checks JWT and if the sign is enabled
+// middleware to abstract token decoding and enabled check
 router.use(async (req, res, next) => {
   const decoded = await decodeToken(req, membershipState.OFFICER);
   if (decoded.status !== OK) {
@@ -30,16 +30,16 @@ router.use(async (req, res, next) => {
   next();
 });
 
-// 3 & 4: Reusable request handler for Axios setup and error handling
+// request handler for clark -> sign2 requests
 const handleLeetCodeRequest = async (res, method, endpoint, data = null) => {
   try {
     const url = new URL(endpoint, LEETCODE_LED_SIGN_URL);
     const response = await axios({ method, url: url.href, data });
-    
+
     if (response.data && 'error' in response.data) {
       throw new Error(response.data.error);
     }
-    
+
     return response.data;
   } catch (err) {
     logger.error(`Error with LeetCode Leaderboard at ${endpoint}: `, err.message || err);
@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
 router.post('/addUser', async (req, res) => {
   const { username, firstName, lastName } = req.body;
   const data = await handleLeetCodeRequest(res, 'POST', '/user/add', { username, firstName, lastName });
-  
+
   if (data) {
     AuditLog.create({
       userId: res.locals.userId,
@@ -72,7 +72,7 @@ router.post('/addUser', async (req, res) => {
 router.post('/deleteUser', async (req, res) => {
   const { username } = req.body;
   const data = await handleLeetCodeRequest(res, 'POST', '/user/remove', { username });
-  
+
   if (data) {
     AuditLog.create({
       userId: res.locals.userId,
