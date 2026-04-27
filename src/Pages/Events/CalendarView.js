@@ -27,6 +27,21 @@ function eventDateKey(event) {
   return toDateKey(d);
 }
 
+function toTimeSortValue(event) {
+  if (!event?.time) return Number.POSITIVE_INFINITY;
+  const [hour, minute] = String(event.time).split(':').map(Number);
+  if (Number.isNaN(hour) || Number.isNaN(minute)) return Number.POSITIVE_INFINITY;
+  return hour * 60 + minute;
+}
+
+function sortEventsForDay(events) {
+  return [...events].sort((a, b) => {
+    const timeDelta = toTimeSortValue(a) - toTimeSortValue(b);
+    if (timeDelta !== 0) return timeDelta;
+    return String(a.name || '').localeCompare(String(b.name || ''));
+  });
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '';
   const d = new Date(`${dateStr}T12:00:00`);
@@ -432,17 +447,18 @@ function EventPopup({ event, onClose, isAdminView, user }) {
 
 // ─── Event pill ───────────────────────────────────────────────────────────────
 
-function EventPill({ event, onSelect, isAdminView }) {
+function EventRow({ event, onSelect, isAdminView }) {
   const colors = pillColors(event, isAdminView);
   const badgeText = getBadgeText(event, isAdminView);
+  const timeLabel = formatTime(event.time);
 
   return (
     <button
       type="button"
       onClick={() => onSelect(event)}
       className={[
-        'flex w-full items-start gap-1.5 rounded-md border px-1.5 py-1',
-        'text-left text-[12px] sm:text-[13px] font-semibold leading-tight',
+        'flex w-full items-center gap-1.5 rounded border px-1.5 py-1',
+        'text-left text-[11px] font-medium leading-tight',
         'transition-all duration-150 hover:border-white/30 hover:brightness-110',
         colors.bg,
         colors.text,
@@ -451,16 +467,21 @@ function EventPill({ event, onSelect, isAdminView }) {
       title={event.name}
     >
       <span className={['mt-1 h-1.5 w-1.5 shrink-0 rounded-full', colors.dot].join(' ')} />
-      <div className="min-w-0 flex-1">
-        <div className="truncate">
-          {event.name || 'Untitled'}
-        </div>
-        {badgeText && (
-          <div className="truncate pt-0.5 text-[10px] opacity-80">
-            {badgeText}
-          </div>
+      <div className="min-w-0 flex-1 truncate">
+        {timeLabel && (
+          <span className="mr-1.5 font-semibold text-white/90">
+            {timeLabel}
+          </span>
         )}
+        <span className="truncate">
+          {event.name || 'Untitled'}
+        </span>
       </div>
+      {badgeText && (
+        <span className="hidden rounded border border-current/30 px-1 py-0.5 text-[9px] uppercase tracking-wide opacity-75 sm:inline">
+          {badgeText}
+        </span>
+      )}
     </button>
   );
 }
@@ -485,18 +506,23 @@ function DayLabels() {
 // ─── Calendar cell ────────────────────────────────────────────────────────────
 
 function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdminView }) {
+  const sortedEvents = sortEventsForDay(events);
+  const mobileRows = sortedEvents.slice(0, 2);
+  const desktopOnlyRows = sortedEvents.slice(2, 4);
+  const hiddenCount = Math.max(sortedEvents.length - 4, 0);
+
   return (
     <div
       className={[
-        'min-h-[120px] sm:min-h-[130px] border-b border-r border-slate-700/60 p-1.5 transition-colors duration-150',
+        'min-h-[106px] sm:min-h-[124px] border-b border-r border-slate-700/60 p-1.5 transition-colors duration-150',
         isCurrentMonth ? '' : 'opacity-30',
         isToday ? 'bg-cyan-500/[0.12]' : 'hover:bg-slate-700/35',
       ].join(' ')}
     >
-      <div className="mb-1 flex justify-end">
+      <div className="mb-1 flex justify-start">
         <span
           className={[
-            'flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold',
+            'flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs font-semibold',
             isToday ? 'bg-cyan-400 text-slate-950' : isCurrentMonth ? 'text-slate-200' : 'text-slate-600',
           ].join(' ')}
         >
@@ -505,8 +531,8 @@ function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdmin
       </div>
 
       <div className="flex flex-col gap-0.5">
-        {events.slice(0, 3).map((ev) => (
-          <EventPill
+        {mobileRows.map((ev) => (
+          <EventRow
             key={ev.id}
             event={ev}
             onSelect={onSelectEvent}
@@ -514,12 +540,107 @@ function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdmin
           />
         ))}
 
-        {events.length > 3 && (
-          <span className="pl-1 text-[10px] text-slate-400">
-            +{events.length - 3} more
+        {desktopOnlyRows.map((ev) => (
+          <div key={ev.id} className="hidden sm:block">
+            <EventRow
+              event={ev}
+              onSelect={onSelectEvent}
+              isAdminView={isAdminView}
+            />
+          </div>
+        ))}
+
+        {hiddenCount > 0 && (
+          <span className="pl-1 text-[10px] font-medium text-slate-400">
+            +{hiddenCount} more
           </span>
         )}
       </div>
+    </div>
+  );
+}
+
+function MobileMonthAgenda({ monthEvents, onSelectEvent, isAdminView }) {
+  if (monthEvents.length === 0) {
+    return (
+      <div className="px-4 py-8 text-center text-sm text-slate-400">
+        No events scheduled this month.
+      </div>
+    );
+  }
+
+  const groupedEvents = monthEvents.reduce((groups, item) => {
+    const lastGroup = groups[groups.length - 1];
+    if (!lastGroup || lastGroup.dateKey !== item.dateKey) {
+      groups.push({ dateKey: item.dateKey, events: [item.event] });
+      return groups;
+    }
+    lastGroup.events.push(item.event);
+    return groups;
+  }, []);
+
+  return (
+    <div className="space-y-3 px-3 pb-4 pt-2">
+      {groupedEvents.map(({ dateKey, events }) => {
+        const [year, month, day] = dateKey.split('-');
+        const date = new Date(Number(year), Number(month) - 1, Number(day));
+        const weekday = date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+        const dayOfMonth = String(date.getDate());
+
+        return (
+          <div key={dateKey} className="flex items-start gap-2">
+            <div className="w-[44px] shrink-0 pt-1 text-center">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {weekday}
+              </div>
+              <div className="text-xl font-semibold leading-6 text-slate-100">
+                {dayOfMonth}
+              </div>
+            </div>
+
+            <div className="min-w-0 flex-1 space-y-1.5">
+              {events.map((event) => {
+                const colors = pillColors(event, isAdminView);
+                const badgeText = getBadgeText(event, isAdminView);
+                const timeLabel = formatTime(event.time) || 'All day';
+
+                return (
+                  <button
+                    key={`${dateKey}-${event.id || event._id || event.name}`}
+                    type="button"
+                    onClick={() => onSelectEvent(event)}
+                    className={[
+                      'flex w-full items-end justify-between gap-3 rounded-lg border px-3 py-2.5 text-left transition-all',
+                      'hover:border-white/30 hover:brightness-110',
+                      colors.bg,
+                      colors.text,
+                      colors.border,
+                    ].join(' ')}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="whitespace-normal break-words text-sm font-semibold leading-snug">
+                        {event.name || 'Untitled Event'}
+                      </div>
+                      <div className="pt-1 text-xs font-semibold text-white/85">
+                        {timeLabel}
+                      </div>
+                    </div>
+
+                    <div className="min-w-[92px] text-right">
+                      <div className="whitespace-normal break-words text-xs opacity-85">
+                        {event.location || '\u00A0'}
+                      </div>
+                      <div className="pt-1 text-[10px] uppercase tracking-wide opacity-80">
+                        {badgeText || '\u00A0'}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -538,6 +659,9 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
       if (!key) return;
       if (!map[key]) map[key] = [];
       map[key].push(ev);
+    });
+    Object.keys(map).forEach((key) => {
+      map[key] = sortEventsForDay(map[key]);
     });
     return map;
   }, [events]);
@@ -577,6 +701,17 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
     .filter((c) => c.isCurrentMonth)
     .reduce((sum, c) => sum + c.events.length, 0);
 
+  const monthEvents = useMemo(() => {
+    return cells
+      .filter((c) => c.isCurrentMonth && c.events.length > 0)
+      .flatMap((c) =>
+        c.events.map((event) => ({
+          event,
+          dateKey: c.key,
+        }))
+      );
+  }, [cells]);
+
   return (
     <>
       {selectedEvent && (
@@ -588,7 +723,7 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
         />
       )}
 
-      <div className="overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)]">
+      <div className="flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none">
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-600/50 px-5 py-4">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
@@ -675,17 +810,27 @@ export default function CalendarView({ events, isAdminView = false, user, canCre
           </div>
         </div>
 
-        <DayLabels />
+        <div className="min-h-0 flex-1 overflow-y-auto sm:hidden">
+          <MobileMonthAgenda
+            monthEvents={monthEvents}
+            onSelectEvent={setSelectedEvent}
+            isAdminView={isAdminView}
+          />
+        </div>
 
-        <div className="grid grid-cols-7 [&>*:nth-child(7n)]:border-r-0">
-          {cells.map((cell) => (
-            <CalCell
-              key={cell.key}
-              {...cell}
-              onSelectEvent={setSelectedEvent}
-              isAdminView={isAdminView}
-            />
-          ))}
+        <div className="hidden sm:block">
+          <DayLabels />
+
+          <div className="grid grid-cols-7 [&>*:nth-child(7n)]:border-r-0">
+            {cells.map((cell) => (
+              <CalCell
+                key={cell.key}
+                {...cell}
+                onSelectEvent={setSelectedEvent}
+                isAdminView={isAdminView}
+              />
+            ))}
+          </div>
         </div>
 
         {isAdminView ? (

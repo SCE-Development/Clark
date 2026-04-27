@@ -283,6 +283,12 @@ export default function EventsPage() {
   const canCreateEvent = user?.accessLevel >= membershipState.OFFICER;
   const visibleEvents = events.filter((event) => canUserSeeEvent(event, user));
   const isAdminView = canCreateEvent;
+  const pageContainerClass = isAdminView
+    ? 'relative h-dvh overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white'
+    : 'relative h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white';
+  const calendarContainerClass = isAdminView
+    ? 'relative h-full w-full overflow-hidden px-3 py-4 sm:px-4 sm:py-5 lg:px-5'
+    : 'relative mx-auto h-full max-w-[120rem] overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10';
 
   useEffect(() => {
     async function fetchEvents() {
@@ -304,7 +310,7 @@ export default function EventsPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white">
+    <div className={pageContainerClass}>
       {/* Ambient blobs — unchanged from original */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-24 left-[-8rem] h-[22rem] w-[22rem] rounded-full bg-sky-400/10 blur-3xl" />
@@ -312,7 +318,7 @@ export default function EventsPage() {
       </div>
 
       {/* ── Calendar area ── */}
-      <div className="relative mx-auto max-w-[120rem] px-4 py-8 sm:px-6 lg:px-10">
+      <div className={calendarContainerClass}>
         {isLoading && (
           <div className="py-16 text-center text-lg text-gray-300">
             Loading events...
