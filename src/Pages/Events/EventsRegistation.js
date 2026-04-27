@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useHistory, Redirect } from 'react-router-dom';
 import config from '../../config/config.json';
 import { useSCE } from '../../Components/context/SceContext';
-import { getEventByID, registerForSCEvent } from '../../APIFunctions/SCEvents';
+import { getEventByID, getEventAttendanceSummary, registerForSCEvent } from '../../APIFunctions/SCEvents';
 
 function ArrowLeftIcon() {
   return (
@@ -30,7 +30,10 @@ export default function EventRegistration() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [attendeeCount, setAttendeeCount] = useState(null);
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
 
   useEffect(() => {
     if (!isSCEventsEnabled) {
@@ -57,6 +60,34 @@ export default function EventRegistration() {
     fetchEvent();
   }, [id, isSCEventsEnabled]);
 
+  useEffect(() => {
+    if (!isSCEventsEnabled || !id) {
+      return;
+    }
+    let isCurrent = true;
+    const token = window.localStorage.getItem('jwtToken');
+    if (!token) {
+      return;
+    }
+
+    async function fetchAttendance() {
+      setAttendanceLoading(true);
+      const response = await getEventAttendanceSummary(id, token);
+      if (isCurrent && !response.error && typeof response.responseData?.attendee_count === 'number') {
+        setAttendeeCount(response.responseData.attendee_count);
+      }
+      if (isCurrent) {
+        setAttendanceLoading(false);
+      }
+    }
+
+    fetchAttendance();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [id, isSCEventsEnabled]);
+
   if (!isSCEventsEnabled) {
     return <Redirect to="/notfound" />;
   }
@@ -77,6 +108,7 @@ export default function EventRegistration() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError('');
+    setSubmitSuccess('');
 
     const token = window.localStorage.getItem('jwtToken');
     if (!token) {
@@ -132,8 +164,10 @@ export default function EventRegistration() {
       setSubmitError(msg);
       return;
     }
-
-    history.push('/events');
+    setSubmitSuccess('Registration request sent successfully.');
+    setTimeout(() => {
+      history.push('/events');
+    }, 1200);
   };
 
   if (isLoading) {
@@ -189,6 +223,13 @@ export default function EventRegistration() {
     );
   }
 
+  const maxAttendees = Number(event.max_attendees);
+  const hasCapacityLimit = Number.isFinite(maxAttendees) && maxAttendees > 0;
+  const remainingSpots =
+    hasCapacityLimit && typeof attendeeCount === 'number'
+      ? Math.max(maxAttendees - attendeeCount, 0)
+      : null;
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white">
       {/* Background Blurs */}
@@ -211,6 +252,16 @@ export default function EventRegistration() {
         <h1 className="mb-8 text-3xl font-semibold text-white md:text-4xl">
           {event.name}
         </h1>
+
+        {hasCapacityLimit && (
+          <div className="mb-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-200">
+            {typeof remainingSpots === 'number'
+              ? `${remainingSpots} spot${remainingSpots !== 1 ? 's' : ''} left`
+              : attendanceLoading
+                ? 'Loading live spots...'
+                : 'Unable to load live spots right now.'}
+          </div>
+        )}
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -297,10 +348,16 @@ export default function EventRegistration() {
               </div>
             )}
 
+            {submitSuccess && (
+              <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                {submitSuccess}
+              </div>
+            )}
+
             <div className="pt-6">
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || Boolean(submitSuccess)}
                 className="w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:scale-[1.01] hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {submitting ? 'Submitting...' : 'Complete Registration'}

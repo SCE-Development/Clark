@@ -33,6 +33,26 @@ export async function getEventByID(id) {
   return status;
 }
 
+export async function getEventAttendanceSummary(id, token) {
+  const status = new ApiResponse();
+  try {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}/attendance`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await res.json();
+    status.responseData = result;
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = err;
+  }
+  return status;
+}
+
 export async function createSCEvent(token, eventBody) {
   const status = new ApiResponse();
   try {
