@@ -8,7 +8,7 @@ import { trashcanSymbol } from '../Overview/SVG.js';
 import ConfirmationModal from '../../Components/DecisionModal/ConfirmationModal.js';
 import { useSCE } from '../../Components/context/SceContext.js';
 
-const SIGN2_URL = process.env.REACT_APP_SIGN2_URL || 'http://192.168.69.180:8888';
+const SIGN2_URL = process.env.REACT_APP_LEETCODE_LED_SIGN_URL || 'http://192.168.69.180:8888';
 
 export default function LeetCodeLeaderboard() {
   const { user } = useSCE();
@@ -31,7 +31,7 @@ export default function LeetCodeLeaderboard() {
       setEmulatorSrc(`${SIGN2_URL}/image?t=${Date.now()}`);
     }
     refreshEmulator();
-    const interval = setInterval(refreshEmulator, 1000);
+    const interval = setInterval(refreshEmulator, 30000);
     return () => clearInterval(interval);
   }, []);
 

@@ -80,7 +80,7 @@ services:
     environment:
       - NODE_ENV=dev
       - REACT_APP_BASE_API_URL=http://localhost
-      - REACT_APP_SIGN2_URL=/sign2/
+      - REACT_APP_LEETCODE_LED_SIGN_URL=/sign2/
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}
