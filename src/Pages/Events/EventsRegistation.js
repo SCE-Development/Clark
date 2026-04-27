@@ -19,6 +19,38 @@ function ArrowLeftIcon() {
   );
 }
 
+function getRegistrationStatus(event) {
+  return event?.registration_status || 'none';
+}
+
+function StatusPanel({ title, message, borderClass, textClass, onBack }) {
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 left-[-8rem] h-[22rem] w-[22rem] rounded-full bg-sky-400/10 blur-3xl" />
+        <div className="absolute right-[-8rem] top-[10rem] h-[24rem] w-[24rem] rounded-full bg-indigo-500/10 blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto flex min-h-screen max-w-3xl items-center justify-center px-6 py-12">
+        <div className={`w-full max-w-xl rounded-2xl bg-white/5 p-8 text-center shadow-2xl backdrop-blur-md ${borderClass}`}>
+          <h1 className="mb-3 text-3xl font-semibold text-white md:text-4xl">
+            {title}
+          </h1>
+          <p className={`mb-6 text-base ${textClass}`}>
+            {message}
+          </p>
+          <button
+            onClick={onBack}
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:from-sky-400 hover:to-indigo-400"
+          >
+            Back to Events
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function EventRegistration() {
   const { user } = useSCE();
   const { id } = useParams();
@@ -32,13 +64,17 @@ export default function EventRegistration() {
   const [submitting, setSubmitting] = useState(false);
   const [attendeeCount, setAttendeeCount] = useState(null);
   const [attendanceLoading, setAttendanceLoading] = useState(false);
+  const registrationStatus = getRegistrationStatus(event);
+  const goBackToEvents = () => history.push('/events');
 
   useEffect(() => {
     async function fetchEvent() {
       setIsLoading(true);
       setHasError(false);
 
-      const response = await getEventByID(id);
+      const token = window.localStorage.getItem('jwtToken');
+      const response = await getEventByID(id, token);
+
       if (!response.error && response.responseData) {
         setEvent(response.responseData);
         const initialData = {};
@@ -154,10 +190,13 @@ export default function EventRegistration() {
       setSubmitError(msg);
       return;
     }
-    setSubmitSuccess('Registration request sent successfully.');
-    setTimeout(() => {
-      history.push('/events');
-    }, 1200);
+
+    setSubmitSuccess('Registration submitted successfully.');
+
+    const refreshed = await getEventByID(id, token);
+    if (!refreshed.error && refreshed.responseData) {
+      setEvent(refreshed.responseData);
+    }
   };
 
   if (isLoading) {
@@ -170,46 +209,74 @@ export default function EventRegistration() {
 
   if (hasError || !event) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
-        <div className="text-center">
-          <p className="mb-4 text-xl text-red-400 font-semibold">Failed to load event details.</p>
-          <button
-            onClick={() => history.push('/events')}
-            className="text-sky-400 hover:text-sky-300 transition-colors underline underline-offset-4"
-          >
-            Back to Events
-          </button>
-        </div>
-      </div>
+      <StatusPanel
+        title="Unable to Load Event"
+        message="We couldn't load this event right now."
+        borderClass="border border-red-400/20"
+        textClass="text-red-300"
+        onBack={goBackToEvents}
+      />
+    );
+  }
+
+  if (registrationStatus === 'registered') {
+    return (
+      <StatusPanel
+        title="Already Registered"
+        message="You are already registered for this event."
+        borderClass="border border-emerald-400/20"
+        textClass="text-emerald-300"
+        onBack={goBackToEvents}
+      />
+    );
+  }
+
+  if (registrationStatus === 'pending') {
+    return (
+      <StatusPanel
+        title="Registration Pending"
+        message="Your registration is already pending for this event."
+        borderClass="border border-sky-400/20"
+        textClass="text-sky-300"
+        onBack={goBackToEvents}
+      />
+    );
+  }
+
+  if (registrationStatus === 'waitlisted') {
+    return (
+      <StatusPanel
+        title="Already on Waitlist"
+        message="You are already on the waitlist for this event."
+        borderClass="border border-violet-400/20"
+        textClass="text-violet-300"
+        onBack={goBackToEvents}
+      />
+    );
+  }
+
+  if (registrationStatus === 'rejected') {
+    return (
+      <StatusPanel
+        title="Registration Unavailable"
+        message="You are not currently eligible to register for this event."
+        borderClass="border border-rose-400/20"
+        textClass="text-rose-300"
+        onBack={goBackToEvents}
+      />
     );
   }
 
   // Block closed events
   if (event.status === 'closed') {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 left-[-8rem] h-[22rem] w-[22rem] rounded-full bg-sky-400/10 blur-3xl" />
-          <div className="absolute right-[-8rem] top-[10rem] h-[24rem] w-[24rem] rounded-full bg-indigo-500/10 blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto flex min-h-screen max-w-3xl items-center justify-center px-6 py-12">
-          <div className="w-full max-w-xl rounded-2xl border border-red-400/20 bg-white/5 p-8 text-center shadow-2xl backdrop-blur-md">
-            <h1 className="mb-3 text-3xl font-semibold text-white md:text-4xl">
-              Registration Closed
-            </h1>
-            <p className="mb-6 text-base text-red-300">
-              This event is no longer accepting sign-ups, but more events are on the way 👀
-            </p>
-            <button
-              onClick={() => history.push('/events')}
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:from-sky-400 hover:to-indigo-400"
-            >
-              Back to Events
-            </button>
-          </div>
-        </div>
-      </div>
+      <StatusPanel
+        title="Registration Closed"
+        message="This event is no longer accepting sign-ups, but more events are on the way 👀"
+        borderClass="border border-red-400/20"
+        textClass="text-red-300"
+        onBack={goBackToEvents}
+      />
     );
   }
 
@@ -230,7 +297,7 @@ export default function EventRegistration() {
 
       <div className="relative mx-auto max-w-3xl px-6 py-12">
         <button
-          onClick={() => history.push('/events')}
+          onClick={goBackToEvents}
           className="mb-8 flex items-center gap-2 text-gray-300 transition-colors hover:text-white group"
         >
           <span className="transition-transform group-hover:-translate-x-1">
@@ -350,7 +417,11 @@ export default function EventRegistration() {
                 disabled={submitting || Boolean(submitSuccess)}
                 className="w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-4 text-lg font-bold text-white shadow-xl transition-all duration-300 hover:scale-[1.01] hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {submitting ? 'Submitting...' : 'Complete Registration'}
+                {submitting
+                  ? 'Submitting...'
+                  : submitSuccess
+                    ? 'Registration submitted'
+                    : 'Complete Registration'}
               </button>
             </div>
           </form>

@@ -2,10 +2,18 @@ import { ApiResponse } from './ApiResponses';
 import config from '../config/config.json';
 
 const SCEVENTS_API_URL = config.SCEvents?.BASE_URL || '/api/scevents';
-export async function getAllSCEvents() {
+
+export async function getAllSCEvents(token) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/`);
+    const headers = token
+      ? { Authorization: `Bearer ${token}` }
+      : {};
+
+    const res = await fetch(`${SCEVENTS_API_URL}/events/`, {
+      headers,
+    });
+
     const result = await res.json();
     status.responseData = result;
     if (!res.ok) {
@@ -18,10 +26,17 @@ export async function getAllSCEvents() {
   return status;
 }
 
-export async function getEventByID(id) {
+export async function getEventByID(id, token) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}`);
+    const headers = token
+      ? { Authorization: `Bearer ${token}` }
+      : {};
+
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}`, {
+      headers,
+    });
+
     const result = await res.json();
     status.responseData = result;
     if (!res.ok) {
