@@ -20,7 +20,7 @@ export async function getAllSCEvents(token) {
       status.error = true;
     }
   } catch (err) {
-    status.responseData = err;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
     status.error = true;
   }
   return status;
@@ -44,7 +44,7 @@ export async function getEventByID(id, token) {
     }
   } catch (err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
   return status;
 }
@@ -64,7 +64,7 @@ export async function getEventAttendanceSummary(id, token) {
     }
   } catch (err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
   return status;
 }
@@ -87,7 +87,7 @@ export async function createSCEvent(token, eventBody) {
     }
   } catch (err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
   return status;
 }
@@ -110,14 +110,57 @@ export async function updateSCEvent(id, token, eventUpdates) {
     }
   } catch (err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
   return status;
 }
 
-export async function registerForSCEvent(eventId, token, payload) {
+export async function getEventRegistrations(eventId, token, { limit = 50, offset = 0 } = {}) {
   const status = new ApiResponse();
+  try {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/registrations`);
+    url.searchParams.set('limit', String(limit));
+    url.searchParams.set('offset', String(offset));
 
+    const res = await fetch(url.href, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await res.json();
+    status.responseData = result;
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
+  }
+  return status;
+}
+
+export async function getEventRegistrationByRequestId(eventId, requestId, token) {
+  const status = new ApiResponse();
+  try {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/registrations/${requestId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await res.json();
+    status.responseData = result;
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
+  }
+  return status;
+}
+
+export async function registerForEvent(eventId, token, payload) {
+  const status = new ApiResponse();
   try {
     const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/register`, {
       method: 'POST',
@@ -127,18 +170,39 @@ export async function registerForSCEvent(eventId, token, payload) {
       },
       body: JSON.stringify(payload),
     });
-
-    const body = await res.json();
-    status.responseData = body;
-
+    const result = await res.json();
+    status.responseData = result;
     if (!res.ok) {
       status.error = true;
     }
   } catch (err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
+  return status;
+}
 
+export async function registerForSCEvent(eventId, token, payload) {
+  return registerForEvent(eventId, token, payload);
+}
+
+export async function getMyEventRegistrationState(eventId, token) {
+  const status = new ApiResponse();
+  try {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/registration/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await res.json();
+    status.responseData = result;
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
+  }
   return status;
 }
 

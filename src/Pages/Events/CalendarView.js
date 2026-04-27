@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { getEventAttendanceSummary, joinWaitlistForSCEvent } from '../../APIFunctions/SCEvents';
+import { getEventAttendanceSummary, getMyEventRegistrationState, joinWaitlistForSCEvent } from '../../APIFunctions/SCEvents';
 
 // ─── tiny helpers ────────────────────────────────────────────────────────────
 
@@ -275,8 +275,6 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const popupRef = useRef(null);
   const colors = pillColors(event, isAdminView);
   const badgeText = getBadgeText(event, isAdminView);
-  const eventId = event.id || event._id;
-  const authToken = user?.token || window.localStorage.getItem('jwtToken');
   const userId = user?._id != null ? String(user._id) : '';
   const [attendeeCount, setAttendeeCount] = useState(null);
   const [attendanceLoading, setAttendanceLoading] = useState(false);
@@ -288,6 +286,10 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     Array.isArray(event.admins) &&
     userId &&
     event.admins.includes(userId);
+  const [hasRegistered, setHasRegistered] = useState(false);
+  const [isCheckingRegistration, setIsCheckingRegistration] = useState(false);
+  const eventId = event?.id || event?._id;
+  const authToken = user?.token;
   const maxAttendees = Number(event.max_attendees);
   const hasCapacityLimit = Number.isFinite(maxAttendees) && maxAttendees > 0;
   const remainingSpots =
@@ -310,6 +312,28 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  useEffect(() => {
+    async function fetchMyRegistrationState() {
+      if (!userId || canEditEvent || !user?.token || event.status !== 'published') {
+        setHasRegistered(false);
+        setIsCheckingRegistration(false);
+        return;
+      }
+
+      setIsCheckingRegistration(true);
+      const eventID = event?.id || event?._id;
+      const response = await getMyEventRegistrationState(eventID, user.token);
+      if (!response.error) {
+        setHasRegistered(Boolean(response.responseData?.registered));
+      } else {
+        setHasRegistered(false);
+      }
+      setIsCheckingRegistration(false);
+    }
+
+    fetchMyRegistrationState();
+  }, [canEditEvent, event, user?.token, userId]);
 
   useEffect(() => {
     function onClickOutside(e) {
@@ -386,12 +410,11 @@ function EventPopup({ event, onClose, isAdminView, user }) {
 
     setWaitlistMessage('Joined waitlist successfully.');
   }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4">
       <div
         ref={popupRef}
-        className="relative w-full max-w-sm rounded-xl border border-slate-400/35 bg-slate-900 shadow-lg"
+        className="relative w-full max-w-sm rounded-xl border border-slate-400/35 bg-slate-900/95 shadow-lg"
         role="dialog"
         aria-modal="true"
         aria-label={event.name}
@@ -465,9 +488,9 @@ function EventPopup({ event, onClose, isAdminView, user }) {
         </div>
 
         <div className="space-y-2 border-t border-slate-700/70 px-5 py-4">
-          {hasCapacityLimit && canEditEvent && typeof attendeeCount === 'number' && (
+          {event.max_attendees > 0 && (
             <p className="text-center text-xs text-slate-400">
-              {attendeeCount} {attendeeCount === 1 ? 'person' : 'people'} registered
+              {event.max_attendees} spot{event.max_attendees !== 1 ? 's' : ''} available
               {event.waitlist_enabled && (
                 <span className="ml-1 text-amber-300">· waitlist available</span>
               )}
@@ -494,15 +517,23 @@ function EventPopup({ event, onClose, isAdminView, user }) {
               Unable to load live spots
             </p>
           )}
-
           {canEditEvent && (
-            <Link
-              to={`/events/${event.id}/edit`}
-              className="inline-flex w-full items-center justify-center rounded-xl border border-slate-400/40 bg-slate-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-slate-300 hover:bg-slate-700"
-              onClick={onClose}
-            >
-              Edit event
-            </Link>
+            <div className="grid grid-cols-1 gap-2">
+              <Link
+                to={`/events/${event.id}/admin/attendees`}
+                className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:from-emerald-400 hover:to-teal-400"
+                onClick={onClose}
+              >
+                View attendees
+              </Link>
+              <Link
+                to={`/events/${event.id}/edit`}
+                className="inline-flex w-full items-center justify-center rounded-xl border border-slate-400/40 bg-slate-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-slate-300 hover:bg-slate-700"
+                onClick={onClose}
+              >
+                Edit event
+              </Link>
+            </div>
           )}
 
           {!canEditEvent && event.status === 'closed' && (

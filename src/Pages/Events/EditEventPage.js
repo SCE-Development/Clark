@@ -1,10 +1,11 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
 import React, { useMemo, useState, useEffect } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
-import { useSCE } from '../../Components/context/SceContext.js';
+import { Link, useHistory, useParams, Redirect } from 'react-router-dom';
+import { useSCE } from '../../Components/context/SceContext';
 import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents.js';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock.js';
 import { membershipState } from '../../Enums';
+import config from '../../config/config.json';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
@@ -45,6 +46,7 @@ export default function EditEventPage() {
   const { id } = useParams();
   const { user } = useSCE();
   const history = useHistory();
+  const isSCEventsEnabled = config.SCEvents?.ENABLED;
 
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState('');
@@ -103,8 +105,12 @@ export default function EditEventPage() {
       setEventAdmins(evt.admins || []);
     }
 
+    if (!isSCEventsEnabled) {
+      return;
+    }
+
     loadEvent();
-  }, [id]);
+  }, [id, isSCEventsEnabled]);
 
   function addQuestion() {
     setQuestions((prev) => [...prev, newQuestionTemplate()]);
@@ -237,6 +243,10 @@ export default function EditEventPage() {
     }
 
     history.push('/events');
+  }
+
+  if (!isSCEventsEnabled) {
+    return <Redirect to="/notfound" />;
   }
 
   if (!isOfficerOrAdmin) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { membershipState } from '../../Enums';
 import { useSCE } from '../context/SceContext';
+import config from '../../config/config.json';
 
 export default function UserNavbar(props) {
   const { user, authenticated } = useSCE();
@@ -14,12 +15,14 @@ export default function UserNavbar(props) {
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
     { title: 'Summer Internship', route: '/s/internship', newTab: true },
+    ...(config.SCEvents?.ENABLED ? [{ title: 'Events', route: '/events' }] : []),
   ];
 
   const authedRoutes = [
     { title: 'Printing', route: '/2DPrinting' },
     { title: 'Chat', route: '/messaging' },
     { title: 'LED Sign', route: '/led-sign' },
+    ...(config.SCEvents?.ENABLED ? [{ title: 'Events', route: '/events' }] : []),
   ];
 
   const authentication = [
