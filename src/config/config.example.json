@@ -3,6 +3,6 @@
   "TINYMCE_API_KEY": "XXXXXXXXXXXXXXXXXXXXX",
   "GOOGLE_API_CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com",
   "SCEvents": {
-    "ENABLED": false
+    "BASE_URL": "/api/scevents"
   }
 }

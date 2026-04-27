@@ -1,6 +1,7 @@
 import { ApiResponse } from './ApiResponses';
+import config from '../config/config.json';
 
-const SCEVENTS_API_URL = 'http://localhost:8002';
+const SCEVENTS_API_URL = config.SCEvents?.BASE_URL || '/api/scevents';
 export async function getAllSCEvents() {
   const status = new ApiResponse();
   try {
