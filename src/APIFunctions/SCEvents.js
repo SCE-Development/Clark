@@ -141,3 +141,28 @@ export async function registerForSCEvent(eventId, token, payload) {
 
   return status;
 }
+
+export async function joinWaitlistForSCEvent(eventId, token) {
+  const status = new ApiResponse();
+
+  try {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/waitlist`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const body = await res.json();
+    status.responseData = body;
+
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = err;
+  }
+
+  return status;
+}

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { getEventAttendanceSummary } from '../../APIFunctions/SCEvents';
+import { getEventAttendanceSummary, joinWaitlistForSCEvent } from '../../APIFunctions/SCEvents';
 
 // ─── tiny helpers ────────────────────────────────────────────────────────────
 
@@ -281,6 +281,9 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const [attendeeCount, setAttendeeCount] = useState(null);
   const [attendanceLoading, setAttendanceLoading] = useState(false);
   const [attendanceLoaded, setAttendanceLoaded] = useState(false);
+  const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
+  const [waitlistMessage, setWaitlistMessage] = useState('');
+  const [waitlistError, setWaitlistError] = useState('');
   const canEditEvent =
     Array.isArray(event.admins) &&
     userId &&
@@ -292,6 +295,13 @@ function EventPopup({ event, onClose, isAdminView, user }) {
       ? Math.max(maxAttendees - attendeeCount, 0)
       : null;
   const registrationCta = getRegistrationCta(event);
+  const isFull = hasCapacityLimit && typeof remainingSpots === 'number' && remainingSpots <= 0;
+  const shouldShowWaitlistJoin =
+    !canEditEvent &&
+    event.status === 'published' &&
+    !registrationCta.disabled &&
+    isFull &&
+    !!event.waitlist_enabled;
 
   useEffect(() => {
     function onKey(e) {
@@ -342,6 +352,41 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     };
   }, [eventId, authToken]);
 
+  async function handleJoinWaitlist() {
+    setWaitlistError('');
+    setWaitlistMessage('');
+  
+    if (!authToken) {
+      setWaitlistError('You must be logged in to join the waitlist.');
+      return;
+    }
+  
+    if (!eventId) {
+      setWaitlistError('Missing event id.');
+      return;
+    }
+  
+    setWaitlistSubmitting(true);
+    const response = await joinWaitlistForSCEvent(eventId, authToken);
+    setWaitlistSubmitting(false);
+  
+    if (response.error) {
+      let msg = '';
+      const data = response.responseData;
+  
+      if (data && typeof data === 'object' && data.error) {
+        msg = String(data.error);
+      } else if (typeof data === 'string' && data.trim()) {
+        msg = data.trim();
+      }
+  
+      setWaitlistError(msg || 'Failed to join waitlist.');
+      return;
+    }
+  
+    setWaitlistMessage('Joined waitlist successfully.');
+  }
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
       <div
@@ -424,7 +469,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             <p className="text-center text-xs text-slate-400">
               {attendeeCount} {attendeeCount === 1 ? 'person' : 'people'} registered
               {event.waitlist_enabled && (
-                <span className="ml-1 text-amber-300">· waitlist enabled</span>
+                <span className="ml-1 text-amber-300">· waitlist available</span>
               )}
             </p>
           )}
@@ -433,7 +478,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             <p className="text-center text-xs text-slate-400">
               {remainingSpots} spot{remainingSpots !== 1 ? 's' : ''} left
               {event.waitlist_enabled && (
-                <span className="ml-1 text-amber-300">· waitlist enabled</span>
+                <span className="ml-1 text-amber-300">· waitlist available</span>
               )}
             </p>
           )}
@@ -483,7 +528,18 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </div>
           )}
 
-          {!canEditEvent && event.status === 'published' && !registrationCta.disabled && (
+          {shouldShowWaitlistJoin && (
+            <button
+              type="button"
+              onClick={handleJoinWaitlist}
+              disabled={waitlistSubmitting}
+              className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:from-amber-400 hover:to-orange-400 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {waitlistSubmitting ? 'Joining waitlist...' : 'Join waitlist'}
+            </button>
+          )}
+
+          {!shouldShowWaitlistJoin && !canEditEvent && event.status === 'published' && !registrationCta.disabled && (
             <Link
               to={`/events/${event.id}/register`}
               className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
@@ -491,6 +547,14 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             >
               {registrationCta.label}
             </Link>
+          )}
+
+          {waitlistError && (
+            <p className="text-center text-xs text-red-300">{waitlistError}</p>
+          )}
+
+          {waitlistMessage && (
+            <p className="text-center text-xs text-emerald-300">{waitlistMessage}</p>
           )}
         </div>
       </div>

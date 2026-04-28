@@ -89,6 +89,8 @@ export default function CreateEventPage() {
   const [visibility, setVisibility] = useState('public');
   const [minimumVisibleRole, setMinimumVisibleRole] = useState('');
   const [maxAttendees, setMaxAttendees] = useState(UNLIMITED_ATTENDEES);
+  const [waitlistEnabled, setWaitlistEnabled] = useState(false);
+  const [waitlistSize, setWaitlistSize] = useState(10);
   const [questions, setQuestions] = useState(defaultQuestions);
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -184,6 +186,10 @@ export default function CreateEventPage() {
     if (maxAttendees !== UNLIMITED_ATTENDEES && (maxAttendees === '' || maxAttendees <= 0)) {
       setSubmitError('Please enter a valid max attendees, or check "No limit".');
     }
+    if (waitlistEnabled && (!waitlistSize || Number(waitlistSize) <= 0)) {
+      setSubmitError('Please enter a valid waitlist size.');
+      return;
+    }
 
     const payload = {
       id: eventId,
@@ -200,6 +206,8 @@ export default function CreateEventPage() {
       status,
       visibility,
       minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
+      waitlist_enabled: waitlistEnabled,
+      waitlist_size: waitlistEnabled ? Number(waitlistSize) : 0,
     };
 
     setSubmitting(true);
@@ -362,6 +370,51 @@ export default function CreateEventPage() {
               <span className="label-text font-medium">No limit</span>
             </label>
           </div>
+        </div>
+
+        <div>
+          <div className="label">
+            <span className="label-text">Waitlist</span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="max-w-xs">
+              {waitlistEnabled ? (
+                <input
+                  type="number"
+                  min="1"
+                  className="w-full input input-bordered"
+                  value={waitlistSize}
+                  onChange={(e) => setWaitlistSize(e.target.value ? parseInt(e.target.value, 10) : '')}
+                  placeholder="e.g. 20"
+                />
+              ) : (
+                <input
+                  type="text"
+                  className="w-full input input-bordered"
+                  value=""
+                  disabled
+                  placeholder="e.g. 20"
+                />
+              )}
+            </div>
+
+            <label className="flex gap-2 items-center text-sm cursor-pointer label">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm"
+                checked={waitlistEnabled}
+                onChange={(e) => setWaitlistEnabled(e.target.checked)}
+              />
+              <span className="label-text font-medium">Enable waitlist</span>
+            </label>
+          </div>
+
+          {waitlistEnabled && (
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              Maximum number of users allowed on the waitlist.
+            </p>
+          )}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
