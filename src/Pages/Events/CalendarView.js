@@ -355,38 +355,38 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   async function handleJoinWaitlist() {
     setWaitlistError('');
     setWaitlistMessage('');
-  
+
     if (!authToken) {
       setWaitlistError('You must be logged in to join the waitlist.');
       return;
     }
-  
+
     if (!eventId) {
       setWaitlistError('Missing event id.');
       return;
     }
-  
+
     setWaitlistSubmitting(true);
     const response = await joinWaitlistForSCEvent(eventId, authToken);
     setWaitlistSubmitting(false);
-  
+
     if (response.error) {
       let msg = '';
       const data = response.responseData;
-  
+
       if (data && typeof data === 'object' && data.error) {
         msg = String(data.error);
       } else if (typeof data === 'string' && data.trim()) {
         msg = data.trim();
       }
-  
+
       setWaitlistError(msg || 'Failed to join waitlist.');
       return;
     }
-  
+
     setWaitlistMessage('Joined waitlist successfully.');
   }
-  
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
       <div
