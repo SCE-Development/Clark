@@ -160,8 +160,12 @@ function getBadgeText(event, isAdminView) {
   return '';
 }
 
-function getRegistrationCta(event) {
-  const registrationStatus = event?.registration_status || 'none';
+function getRegistrationStatus(event) {
+  return event?.registration_status || 'none';
+}
+
+function getRegistrationCta(event, isAdminView) {
+  const registrationStatus = getRegistrationStatus(event);
 
   switch (registrationStatus) {
   case 'registered':
@@ -183,6 +187,13 @@ function getRegistrationCta(event) {
       className: 'border border-violet-400/30 bg-violet-500/10 text-violet-200',
     };
   case 'rejected':
+    if (isAdminView) {
+      return {
+        label: 'Register',
+        disabled: false,
+        className: '',
+      };
+    }
     return {
       label: 'Unavailable',
       disabled: true,
@@ -205,6 +216,7 @@ function getRegistrationCta(event) {
  */
 function canUserManageEvent(event, user) {
   const userId = user?._id != null ? String(user._id) : '';
+  const access = user?.accessLevel ?? 0;
   const eventAdmins = Array.isArray(event.admins) ? event.admins.map((id) => String(id)) : [];
 
   // 1. If user is explicitly listed as an admin for this event
@@ -212,8 +224,12 @@ function canUserManageEvent(event, user) {
     return true;
   }
 
+  if (event.all_org_admins_can_edit && access >= membershipState.OFFICER) {
+    return true;
+  }
+
   // 2. If the event has no admins, allow users with level 3 (ADMIN) or higher to manage it
-  if (eventAdmins.length === 0 && (user?.accessLevel ?? 0) >= membershipState.ADMIN) {
+  if (eventAdmins.length === 0 && access >= membershipState.ADMIN) {
     return true;
   }
 
@@ -239,7 +255,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const eventId = event?.id || event?._id;
   const authToken = user?.token;
   const { maxAttendees, hasCapacityLimit, remainingSpots, isFull } = calculateEventCapacity(event, attendeeCount);
-  const registrationCta = getRegistrationCta(event);
+  const registrationCta = getRegistrationCta(event, isAdminView);
   const shouldShowWaitlistJoin =
     !canManageEvent &&
     event.status === 'published' &&

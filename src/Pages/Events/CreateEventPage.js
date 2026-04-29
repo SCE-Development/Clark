@@ -1,8 +1,9 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
 import { createSCEvent } from '../../APIFunctions/SCEvents';
+import { getAllUsers } from '../../APIFunctions/User';
 import { membershipState } from '../../Enums';
 import { useEventQuestions, toApiRegistrationForm } from './useEventQuestions';
 import { getApiErrorMessage } from './eventUtils';
@@ -37,6 +38,11 @@ function defaultQuestions() {
   ];
 }
 
+function userDisplayName(admin) {
+  const name = [admin.firstName, admin.lastName].filter(Boolean).join(' ').trim();
+  return name || admin.email || admin._id;
+}
+
 export default function CreateEventPage() {
   const { user } = useSCE();
   const history = useHistory();
@@ -61,7 +67,6 @@ export default function CreateEventPage() {
   const [maxAttendees, setMaxAttendees] = useState(UNLIMITED_ATTENDEES);
   const [waitlistEnabled, setWaitlistEnabled] = useState(false);
   const [waitlistSize, setWaitlistSize] = useState(10);
-
   const {
     questions,
     addQuestion,
@@ -70,15 +75,94 @@ export default function CreateEventPage() {
     updateQuestionType,
     updateAnswerOption,
     addAnswerOption,
-    removeAnswerOption
+    removeAnswerOption,
   } = useEventQuestions(defaultQuestions());
-
+  const [eventAdmins, setEventAdmins] = useState([]);
+  const [allOrgAdminsCanEdit, setAllOrgAdminsCanEdit] = useState(false);
+  const [adminSearch, setAdminSearch] = useState('');
+  const [adminSearchResults, setAdminSearchResults] = useState([]);
+  const [adminSearchError, setAdminSearchError] = useState('');
+  const [adminSearching, setAdminSearching] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const debounceRef = useRef(null);
 
   const isOfficerOrAdmin = user?.accessLevel >= membershipState.OFFICER;
 
   const adminId = useMemo(() => (user?._id != null ? String(user._id) : ''), [user]);
+  const eventAdminIds = useMemo(
+    () => eventAdmins.map((admin) => String(admin._id)),
+    [eventAdmins],
+  );
+
+  useEffect(() => {
+    if (!adminId || allOrgAdminsCanEdit) return;
+    setEventAdmins((prev) => {
+      if (prev.some((admin) => String(admin._id) === adminId)) {
+        return prev;
+      }
+      return [
+        ...prev,
+        {
+          _id: adminId,
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          email: user?.email || '',
+          accessLevel: user?.accessLevel,
+        },
+      ];
+    });
+  }, [adminId, user, allOrgAdminsCanEdit]);
+
+  function addEventAdmin(admin) {
+    setEventAdmins((prev) => {
+      if (prev.some((selected) => String(selected._id) === String(admin._id))) {
+        return prev;
+      }
+      return [...prev, admin];
+    });
+    setAdminSearchResults((prev) => (
+      prev.filter((candidate) => String(candidate._id) !== String(admin._id))
+    ));
+  }
+
+  function removeEventAdmin(id) {
+    if (String(id) === adminId) {
+      return;
+    }
+    setEventAdmins((prev) => prev.filter((admin) => String(admin._id) !== String(id)));
+  }
+
+  async function performAdminSearch(query) {
+    setAdminSearching(true);
+    const token = window.localStorage.getItem('jwtToken');
+    const result = await getAllUsers({ token, query, minRole: membershipState.OFFICER });
+    setAdminSearching(false);
+    if (result.error) {
+      setAdminSearchError('Failed to search admins.');
+      return;
+    }
+    const users = Array.isArray(result.responseData?.items) ? result.responseData.items : [];
+    setAdminSearchResults(
+      users.filter((candidate) => (
+        !eventAdminIds.includes(String(candidate._id))
+      )),
+    );
+  }
+
+  function handleAdminSearchChange(value) {
+    setAdminSearch(value);
+    setAdminSearchError('');
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const query = value.trim();
+    if (query.length < 2) {
+      setAdminSearchResults([]);
+      setAdminSearching(false);
+      return;
+    }
+    setAdminSearching(true);
+    debounceRef.current = setTimeout(() => performAdminSearch(query), 300);
+  }
 
   async function handleCreateEvent() {
     setSubmitError('');
@@ -88,6 +172,10 @@ export default function CreateEventPage() {
     }
     if (!adminId) {
       setSubmitError('Could not resolve your user id.');
+      return;
+    }
+    if (!allOrgAdminsCanEdit && eventAdminIds.length === 0) {
+      setSubmitError('Please select at least one event admin, or allow all officers and administrators to edit.');
       return;
     }
     if (visibility === 'private' && !minimumVisibleRole) {
@@ -110,7 +198,8 @@ export default function CreateEventPage() {
       time,
       location: location.trim(),
       description: description.trim(),
-      admins: [adminId],  // The event creator becomes the initial event admin in SCEvents
+      admins: allOrgAdminsCanEdit ? [] : eventAdminIds,
+      all_org_admins_can_edit: allOrgAdminsCanEdit,
       registration_form: toApiRegistrationForm(questions),
       max_attendees:
         maxAttendees === UNLIMITED_ATTENDEES ? UNLIMITED_ATTENDEES : Number(maxAttendees),
@@ -201,6 +290,27 @@ export default function CreateEventPage() {
         updateAnswerOption,
         addAnswerOption,
         removeAnswerOption,
+      }}
+      adminActions={{
+        eventAdmins,
+        userDisplayName,
+        adminSearch,
+        adminSearchResults,
+        adminSearchError,
+        adminSearching,
+        debounceRef,
+        handleAdminSearchChange,
+        performAdminSearch,
+        addEventAdmin,
+        removeEventAdmin,
+        isRemoveDisabledForAdmin: (admin) => String(admin._id) === adminId,
+        allOrgAdminsCanEdit,
+        setAllOrgAdminsCanEdit: (next) => {
+          setAllOrgAdminsCanEdit(next);
+          if (next) {
+            setEventAdmins([]);
+          }
+        },
       }}
     />
   );

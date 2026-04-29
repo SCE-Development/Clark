@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
 import { getEventByID, getEventAttendanceSummary, registerForEvent } from '../../APIFunctions/SCEvents';
+import { membershipState } from '../../Enums';
 import { calculateEventCapacity, getApiErrorMessage } from './eventUtils';
 import { ArrowLeftIcon } from './EventIcons';
 
@@ -223,7 +224,10 @@ export default function EventRegistration() {
     );
   }
 
-  if (registrationStatus === 'rejected') {
+  const canCreateEvent = user?.accessLevel >= membershipState.OFFICER;
+  const isAdminView = canCreateEvent;
+
+  if (registrationStatus === 'rejected' && !isAdminView) {
     return (
       <StatusPanel
         title="Registration Unavailable"

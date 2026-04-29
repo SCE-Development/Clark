@@ -16,7 +16,7 @@ export async function getAllSCEvents(token, { startDate, endDate } = {}) {
       url.searchParams.set('endDate', endDate);
     }
 
-    const res = await fetch(url.pathname + url.search, {
+    const res = await fetch(url.href, {
       headers,
     });
 
