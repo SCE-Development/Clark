@@ -15,7 +15,7 @@ async function cleanUpChunks(dir, id) {
     for (let chunk of chunks) {
       if (!path.basename(chunk).includes(id)) continue;
 
-      await fs.promises.unlink(path.join(dir, chunk), err => {
+      await fs.promises.unlink(path.join(dir, chunk)).catch(err => {
         logger.error(`Failed to delete chunk with id ${id} in ${dir}: ` + err);
       });
     }
@@ -43,7 +43,7 @@ async function cleanUpExpiredChunks(dir, expiry) {
       const age = Date.now() - stats.mtimeMs;
 
       if (age >= expiry) {
-        await fs.promises.unlink(path.join(dir, chunk), err => {
+        await fs.promises.unlink(path.join(dir, chunk)).catch(err => {
           logger.warn(`Failed to delete expired chunk in ${dir}: ` + err);
         });
 

@@ -64,6 +64,8 @@ describe('Printer', () => {
     const MY_BIRTH_DATE = new Date('December 4, 2005 07:53:00');
 
     it('Should delete expired chunks (5 minutes or older)', async () => {
+      // Clean up any pre-existing expired chunks from previous runs
+      await printerUtil.cleanUpExpiredChunks(CHUNK_DIRECTORY, 0);
       const dirBefore = await fs.promises.readdir(CHUNK_DIRECTORY);
       const numFilesBefore = dirBefore.length;
 
