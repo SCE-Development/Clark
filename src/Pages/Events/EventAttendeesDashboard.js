@@ -133,35 +133,35 @@ export default function EventAttendeesDashboard() {
               <h2 className="text-lg font-semibold">Attendees</h2>
               <p className="text-xs text-gray-300">Click an attendee to open details</p>
             </div>
-              {attendees.length === 0 ? (
-                <p className="text-sm text-gray-300">No attendees found for this event yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {attendees.map((attendee) => (
-                    <button
-                      key={attendee.request_id}
-                      className={[
-                        'w-full rounded-lg border px-4 py-3 text-left transition',
-                        selectedRequestId === attendee.request_id
-                          ? 'border-sky-400 bg-sky-500/10'
-                          : 'border-white/10 bg-black/10 hover:bg-white/10',
-                      ].join(' ')}
-                      onClick={() => handleSelectAttendee(attendee.request_id)}
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <div>
-                          <p className="font-semibold">{attendee.registrant?.name || 'Unknown'}</p>
-                          <p className="text-sm text-gray-300">{attendee.registrant?.email || 'No email'}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm uppercase text-gray-300">{attendee.status || 'unknown'}</p>
-                          <p className="text-xs text-gray-400">{formatDateTime(attendee.created_at)}</p>
-                        </div>
+            {attendees.length === 0 ? (
+              <p className="text-sm text-gray-300">No attendees found for this event yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {attendees.map((attendee) => (
+                  <button
+                    key={attendee.request_id}
+                    className={[
+                      'w-full rounded-lg border px-4 py-3 text-left transition',
+                      selectedRequestId === attendee.request_id
+                        ? 'border-sky-400 bg-sky-500/10'
+                        : 'border-white/10 bg-black/10 hover:bg-white/10',
+                    ].join(' ')}
+                    onClick={() => handleSelectAttendee(attendee.request_id)}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="font-semibold">{attendee.registrant?.name || 'Unknown'}</p>
+                        <p className="text-sm text-gray-300">{attendee.registrant?.email || 'No email'}</p>
                       </div>
-                    </button>
-                  ))}
-                </div>
-              )}
+                      <div className="text-right">
+                        <p className="text-sm uppercase text-gray-300">{attendee.status || 'unknown'}</p>
+                        <p className="text-xs text-gray-400">{formatDateTime(attendee.created_at)}</p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
