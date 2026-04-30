@@ -185,15 +185,15 @@ export const officerOrAdminRoutes = [
     pageName: 'Edit Event',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: false
+    inAdminNavbar: true
   },
   {
     Component: EventAttendeesDashboard,
     path: '/events/:id/admin/attendees',
     pageName: 'Event Attendees Dashboard',
-    allowedIf: allowedIf.AUTHENTICATED,
-    redirect: '/login',
-    inAdminNavbar: false,
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true,
     hideFromShortcutSuggestions: true
   },
   {

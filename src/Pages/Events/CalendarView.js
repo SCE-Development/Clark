@@ -282,10 +282,10 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
   const [waitlistMessage, setWaitlistMessage] = useState('');
   const [waitlistError, setWaitlistError] = useState('');
-  const canEditEvent =
-    Array.isArray(event.admins) &&
-    userId &&
-    event.admins.includes(userId);
+  const eventAdmins = Array.isArray(event.admins) ? event.admins.map((id) => String(id)) : [];
+  const canManageEvent =
+    (eventAdmins.length > 0 && userId && eventAdmins.includes(userId))
+    || (eventAdmins.length === 0 && (user?.accessLevel ?? 0) >= 4);
   const [hasRegistered, setHasRegistered] = useState(false);
   const [isCheckingRegistration, setIsCheckingRegistration] = useState(false);
   const eventId = event?.id || event?._id;
@@ -299,7 +299,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const registrationCta = getRegistrationCta(event);
   const isFull = hasCapacityLimit && typeof remainingSpots === 'number' && remainingSpots <= 0;
   const shouldShowWaitlistJoin =
-    !canEditEvent &&
+    !canManageEvent &&
     event.status === 'published' &&
     !registrationCta.disabled &&
     isFull &&
@@ -315,7 +315,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
 
   useEffect(() => {
     async function fetchMyRegistrationState() {
-      if (!userId || canEditEvent || !user?.token || event.status !== 'published') {
+      if (!userId || canManageEvent || !user?.token || event.status !== 'published') {
         setHasRegistered(false);
         setIsCheckingRegistration(false);
         return;
@@ -333,7 +333,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     }
 
     fetchMyRegistrationState();
-  }, [canEditEvent, event, user?.token, userId]);
+  }, [canManageEvent, event, user?.token, userId]);
 
   useEffect(() => {
     function onClickOutside(e) {
@@ -497,7 +497,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </p>
           )}
 
-          {hasCapacityLimit && !canEditEvent && typeof remainingSpots === 'number' && (
+          {hasCapacityLimit && !canManageEvent && typeof remainingSpots === 'number' && (
             <p className="text-center text-xs text-slate-400">
               {remainingSpots} spot{remainingSpots !== 1 ? 's' : ''} left
               {event.waitlist_enabled && (
@@ -506,18 +506,18 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </p>
           )}
 
-          {hasCapacityLimit && !canEditEvent && attendanceLoading && (
+          {hasCapacityLimit && !canManageEvent && attendanceLoading && (
             <p className="text-center text-xs text-slate-400">
               Loading live spots...
             </p>
           )}
 
-          {hasCapacityLimit && !canEditEvent && attendanceLoaded && typeof remainingSpots !== 'number' && (
+          {hasCapacityLimit && !canManageEvent && attendanceLoaded && typeof remainingSpots !== 'number' && (
             <p className="text-center text-xs text-slate-400">
               Unable to load live spots
             </p>
           )}
-          {canEditEvent && (
+          {canManageEvent && (
             <div className="grid grid-cols-1 gap-2">
               <Link
                 to={`/events/${event.id}/admin/attendees`}
@@ -536,19 +536,19 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </div>
           )}
 
-          {!canEditEvent && event.status === 'closed' && (
+          {!canManageEvent && event.status === 'closed' && (
             <div className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl border border-slate-600/60 bg-slate-800/70 px-6 py-2.5 text-sm font-semibold text-slate-400">
               Registration closed
             </div>
           )}
 
-          {!canEditEvent && event.status === 'draft' && (
+          {!canManageEvent && event.status === 'draft' && (
             <div className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl border border-yellow-400/20 bg-yellow-500/10 px-6 py-2.5 text-sm font-semibold text-yellow-300">
               Not yet published
             </div>
           )}
 
-          {!canEditEvent && event.status === 'published' && registrationCta.disabled && (
+          {!canManageEvent && event.status === 'published' && registrationCta.disabled && (
             <div
               className={[
                 'inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold',
@@ -570,7 +570,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </button>
           )}
 
-          {!shouldShowWaitlistJoin && !canEditEvent && event.status === 'published' && !registrationCta.disabled && (
+          {!shouldShowWaitlistJoin && !canManageEvent && event.status === 'published' && !registrationCta.disabled && (
             <Link
               to={`/events/${event.id}/register`}
               className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500"

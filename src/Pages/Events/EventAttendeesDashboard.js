@@ -41,6 +41,7 @@ export default function EventAttendeesDashboard() {
   const [selectedAttendee, setSelectedAttendee] = useState(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [detailError, setDetailError] = useState('');
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   useEffect(() => {
     if (!authenticated || !user?.token || !id) return;
@@ -82,6 +83,19 @@ export default function EventAttendeesDashboard() {
     fetchAttendeeDetail();
   }, [id, selectedRequestId, user?.token]);
 
+  useEffect(() => {
+    if (selectedRequestId) setIsDetailOpen(true);
+  }, [selectedRequestId]);
+
+  function handleSelectAttendee(requestId) {
+    setSelectedRequestId(requestId);
+    setDetailError('');
+  }
+
+  function closeDetailPanel() {
+    setIsDetailOpen(false);
+  }
+
   const selectedAnswers = useMemo(() => {
     if (!selectedAttendee?.answers || typeof selectedAttendee.answers !== 'object') return [];
     return Object.entries(selectedAttendee.answers);
@@ -114,9 +128,11 @@ export default function EventAttendeesDashboard() {
         {!isLoadingList && listError && <p className="rounded-lg bg-red-500/20 p-4 text-red-200">{listError}</p>}
 
         {!isLoadingList && !listError && (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <h2 className="mb-4 text-lg font-semibold">Attendees</h2>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Attendees</h2>
+              <p className="text-xs text-gray-300">Click an attendee to open details</p>
+            </div>
               {attendees.length === 0 ? (
                 <p className="text-sm text-gray-300">No attendees found for this event yet.</p>
               ) : (
@@ -130,7 +146,7 @@ export default function EventAttendeesDashboard() {
                           ? 'border-sky-400 bg-sky-500/10'
                           : 'border-white/10 bg-black/10 hover:bg-white/10',
                       ].join(' ')}
-                      onClick={() => setSelectedRequestId(attendee.request_id)}
+                      onClick={() => handleSelectAttendee(attendee.request_id)}
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div>
@@ -146,41 +162,57 @@ export default function EventAttendeesDashboard() {
                   ))}
                 </div>
               )}
-            </div>
-
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <h2 className="mb-4 text-lg font-semibold">Attendee Detail</h2>
-              {!selectedRequestId && <p className="text-sm text-gray-300">Select an attendee to view answers.</p>}
-              {isLoadingDetail && <p className="text-sm text-gray-300">Loading attendee detail...</p>}
-              {!isLoadingDetail && detailError && <p className="rounded-lg bg-red-500/20 p-3 text-red-200">{detailError}</p>}
-              {!isLoadingDetail && !detailError && selectedAttendee && (
-                <div className="space-y-4">
-                  <div className="rounded-lg border border-white/10 bg-black/10 p-3 text-sm">
-                    <p><span className="text-gray-400">Name:</span> {selectedAttendee.registrant?.name || 'N/A'}</p>
-                    <p><span className="text-gray-400">Email:</span> {selectedAttendee.registrant?.email || 'N/A'}</p>
-                    <p><span className="text-gray-400">Status:</span> {selectedAttendee.status || 'N/A'}</p>
-                    <p><span className="text-gray-400">Submitted:</span> {formatDateTime(selectedAttendee.created_at)}</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold text-gray-200">Registration Form Answers</h3>
-                    {selectedAnswers.length === 0 ? (
-                      <p className="text-sm text-gray-300">No answers submitted.</p>
-                    ) : (
-                      selectedAnswers.map(([fieldKey, value]) => (
-                        <div key={fieldKey} className="rounded-lg border border-white/10 bg-black/10 p-3 text-sm">
-                          <p className="font-medium text-white">{fieldKey}</p>
-                          <p className="mt-1 text-gray-300"><AnswerValue value={value} /></p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         )}
       </div>
+
+      {isDetailOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={closeDetailPanel}>
+          <div
+            className="h-full w-full max-w-xl overflow-y-auto border-l border-white/10 bg-gray-900 p-6 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Attendee Detail</h2>
+              <button
+                type="button"
+                className="rounded-lg border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10"
+                onClick={closeDetailPanel}
+              >
+                Close
+              </button>
+            </div>
+
+            {!selectedRequestId && <p className="text-sm text-gray-300">Select an attendee to view answers.</p>}
+            {isLoadingDetail && <p className="text-sm text-gray-300">Loading attendee detail...</p>}
+            {!isLoadingDetail && detailError && <p className="rounded-lg bg-red-500/20 p-3 text-red-200">{detailError}</p>}
+            {!isLoadingDetail && !detailError && selectedAttendee && (
+              <div className="space-y-4">
+                <div className="rounded-lg border border-white/10 bg-black/10 p-3 text-sm">
+                  <p><span className="text-gray-400">Name:</span> {selectedAttendee.registrant?.name || 'N/A'}</p>
+                  <p><span className="text-gray-400">Email:</span> {selectedAttendee.registrant?.email || 'N/A'}</p>
+                  <p><span className="text-gray-400">Status:</span> {selectedAttendee.status || 'N/A'}</p>
+                  <p><span className="text-gray-400">Submitted:</span> {formatDateTime(selectedAttendee.created_at)}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-gray-200">Registration Form Answers</h3>
+                  {selectedAnswers.length === 0 ? (
+                    <p className="text-sm text-gray-300">No answers submitted.</p>
+                  ) : (
+                    selectedAnswers.map(([fieldKey, value]) => (
+                      <div key={fieldKey} className="rounded-lg border border-white/10 bg-black/10 p-3 text-sm">
+                        <p className="font-medium text-white">{fieldKey}</p>
+                        <p className="mt-1 text-gray-300"><AnswerValue value={value} /></p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
