@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, Redirect, useParams } from 'react-router-dom';
-import config from '../../config/config.json';
 import { getEventRegistrationByRequestId, getEventRegistrations } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 
@@ -30,7 +29,6 @@ function AnswerValue({ value }) {
 export default function EventAttendeesDashboard() {
   const { id } = useParams();
   const { user, authenticated } = useSCE();
-  const isSCEventsEnabled = Boolean(config.SCEvents?.ENABLED);
 
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [listError, setListError] = useState('');
@@ -101,7 +99,6 @@ export default function EventAttendeesDashboard() {
     return Object.entries(selectedAttendee.answers);
   }, [selectedAttendee]);
 
-  if (!isSCEventsEnabled) return <Redirect to="/notfound" />;
   if (!authenticated) return <Redirect to="/login" />;
 
   return (
