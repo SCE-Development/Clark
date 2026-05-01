@@ -3,14 +3,20 @@ import config from '../config/config.json';
 
 const SCEVENTS_API_URL = config.SCEvents?.BASE_URL || '/api/scevents';
 
-export async function getAllSCEvents(token) {
+export async function getAllSCEvents(token, { startDate, endDate } = {}) {
   const status = new ApiResponse();
   try {
     const headers = token
       ? { Authorization: `Bearer ${token}` }
       : {};
 
-    const res = await fetch(`${SCEVENTS_API_URL}/events/`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/`, window.location.origin);
+    if (startDate && endDate) {
+      url.searchParams.set('startDate', startDate);
+      url.searchParams.set('endDate', endDate);
+    }
+
+    const res = await fetch(url.pathname + url.search, {
       headers,
     });
 

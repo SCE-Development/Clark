@@ -132,6 +132,13 @@ function formatEventTime(time) {
   });
 }
 
+function formatDateParam(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function canUserSeeEvent(event, user) {
   const userId = user?._id != null ? String(user._id) : '';
   const userAccess = getUserAccessLevel(user);
@@ -279,6 +286,10 @@ export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [cursor, setCursor] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  });
 
   const canCreateEvent = user?.accessLevel >= membershipState.OFFICER;
   const visibleEvents = events.filter((event) => canUserSeeEvent(event, user));
@@ -296,7 +307,9 @@ export default function EventsPage() {
       setHasError(false);
 
       const token = window.localStorage.getItem('jwtToken');
-      const response = await getAllSCEvents(token);
+      const startDate = formatDateParam(new Date(cursor.getFullYear(), cursor.getMonth(), 1));
+      const endDate = formatDateParam(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0));
+      const response = await getAllSCEvents(token, { startDate, endDate });
 
       if (!response.error) {
         setEvents(Array.isArray(response.responseData) ? response.responseData : []);
@@ -308,7 +321,7 @@ export default function EventsPage() {
     }
 
     fetchEvents();
-  }, []);
+  }, [cursor]);
 
   return (
     <div className={pageContainerClass}>
@@ -338,6 +351,8 @@ export default function EventsPage() {
             isAdminView={isAdminView}
             user={user}
             canCreateEvent={canCreateEvent}
+            cursor={cursor}
+            setCursor={setCursor}
           />
         )}
       </div>
