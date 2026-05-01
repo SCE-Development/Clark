@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getAllSCEvents } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
-import CalendarView from './CalendarView';
+import CalendarView from './Calendar/CalendarView';
 import { toDateKey } from './eventUtils';
 
 function canUserSeeEvent(event, user) {
