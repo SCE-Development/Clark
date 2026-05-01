@@ -1,3 +1,4 @@
+/* eslint-disable camelcase -- SCEvents registration question shape uses snake_case */
 import { useState } from 'react';
 
 export function newQuestionTemplate() {
