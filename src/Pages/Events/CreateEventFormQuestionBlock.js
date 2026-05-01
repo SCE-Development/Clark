@@ -1,6 +1,4 @@
 /* eslint-disable camelcase -- SCEvents registration question shape uses snake_case */
-import React from 'react';
-
 export default function CreateEventFormQuestionBlock({
   question,
   index,

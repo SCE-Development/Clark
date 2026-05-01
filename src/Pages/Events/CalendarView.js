@@ -1,9 +1,17 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getEventAttendanceSummary, getMyEventRegistrationState, joinWaitlistForSCEvent } from '../../APIFunctions/SCEvents';
 import { membershipState } from '../../Enums';
-
-// ─── tiny helpers ────────────────────────────────────────────────────────────
+import { calculateEventCapacity, getApiErrorMessage, toDateKey } from './eventUtils';
+import {
+  ChevronLeft,
+  ChevronRight,
+  CalendarIcon,
+  PinIcon,
+  ClockIcon,
+  XIcon,
+  PlusIcon
+} from './EventIcons';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
@@ -12,13 +20,6 @@ const MONTHS = [
 ];
 const currentYear = new Date().getFullYear();
 const YEAR_RANGE = Array.from({ length: 10 }, (_, i) => currentYear + i);
-
-function toDateKey(date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
 
 function eventDateKey(event) {
   if (!event.date) return null;
@@ -159,12 +160,8 @@ function getBadgeText(event, isAdminView) {
   return '';
 }
 
-function getRegistrationStatus(event) {
-  return event?.registration_status || 'none';
-}
-
 function getRegistrationCta(event) {
-  const registrationStatus = getRegistrationStatus(event);
+  const registrationStatus = event?.registration_status || 'none';
 
   switch (registrationStatus) {
   case 'registered':
@@ -223,76 +220,6 @@ function canUserManageEvent(event, user) {
   return false;
 }
 
-// ─── icons ────────────────────────────────────────────────────────────────────
-
-function ChevronLeft() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-  );
-}
-
-function ChevronRight() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9 18l6-6-6-6" />
-    </svg>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="17" rx="2" />
-      <path d="M8 2v4M16 2v4M3 10h18" />
-    </svg>
-  );
-}
-
-function PinIcon() {
-  return (
-    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 21s6-5.686 6-11a6 6 0 1 0-12 0c0 5.314 6 11 6 11Z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </svg>
-  );
-}
-
-function ClockIcon() {
-  return (
-    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 3" />
-    </svg>
-  );
-}
-
-function XIcon() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M18 6L6 18M6 6l12 12" />
-    </svg>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
-
 // ─── Event popup ──────────────────────────────────────────────────────────────
 
 function EventPopup({ event, onClose, isAdminView, user }) {
@@ -311,14 +238,8 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const [isCheckingRegistration, setIsCheckingRegistration] = useState(false);
   const eventId = event?.id || event?._id;
   const authToken = user?.token;
-  const maxAttendees = Number(event.max_attendees);
-  const hasCapacityLimit = Number.isFinite(maxAttendees) && maxAttendees > 0;
-  const remainingSpots =
-    hasCapacityLimit && typeof attendeeCount === 'number'
-      ? Math.max(maxAttendees - attendeeCount, 0)
-      : null;
+  const { maxAttendees, hasCapacityLimit, remainingSpots, isFull } = calculateEventCapacity(event, attendeeCount);
   const registrationCta = getRegistrationCta(event);
-  const isFull = hasCapacityLimit && typeof remainingSpots === 'number' && remainingSpots <= 0;
   const shouldShowWaitlistJoin =
     !canManageEvent &&
     event.status === 'published' &&
@@ -416,33 +337,24 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     setWaitlistSubmitting(false);
 
     if (response.error) {
-      let msg = '';
-      const data = response.responseData;
-
-      if (data && typeof data === 'object' && data.error) {
-        msg = String(data.error);
-      } else if (typeof data === 'string' && data.trim()) {
-        msg = data.trim();
-      }
-
-      setWaitlistError(msg || 'Failed to join waitlist.');
+      setWaitlistError(getApiErrorMessage(response, { fallback: 'Failed to join waitlist.' }));
       return;
     }
 
     setWaitlistMessage('Joined waitlist successfully.');
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70">
       <div
         ref={popupRef}
-        className="relative w-full max-w-sm rounded-xl border border-slate-400/35 bg-slate-900 shadow-lg"
+        className="relative w-full max-w-sm border shadow-lg rounded-xl border-slate-400/35 bg-slate-900"
         role="dialog"
         aria-modal="true"
         aria-label={event.name}
       >
         <div className={['h-1 w-full rounded-t-xl', colors.dot].join(' ')} />
 
-        <div className="flex items-start justify-between px-5 pb-3 pt-4">
+        <div className="flex items-start justify-between px-5 pt-4 pb-3">
           <div className="flex items-center gap-2">
             <span className={['h-2.5 w-2.5 shrink-0 rounded-full', colors.dot].join(' ')} />
             <span className={['text-xs font-semibold uppercase tracking-wider', colors.accent].join(' ')}>
@@ -451,7 +363,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
           </div>
           <button
             onClick={onClose}
-            className="rounded-md p-1 text-slate-400 transition hover:bg-slate-700/70 hover:text-white"
+            className="p-1 transition rounded-md text-slate-400 hover:bg-slate-700/70 hover:text-white"
             aria-label="Close"
           >
             <XIcon />
@@ -479,7 +391,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
           </div>
         </div>
 
-        <div className="space-y-3 border-t border-slate-700/70 px-5 py-4">
+        <div className="px-5 py-4 space-y-3 border-t border-slate-700/70">
           {event.date && (
             <div className="flex items-start gap-2.5 text-[15px] text-slate-200">
               <span className="mt-0.5 text-slate-400"><CalendarIcon /></span>
@@ -508,18 +420,18 @@ function EventPopup({ event, onClose, isAdminView, user }) {
           )}
         </div>
 
-        <div className="space-y-2 border-t border-slate-700/70 px-5 py-4">
+        <div className="px-5 py-4 space-y-2 border-t border-slate-700/70">
           {event.max_attendees > 0 && (
-            <p className="text-center text-xs text-slate-400">
-              {event.max_attendees} spot{event.max_attendees !== 1 ? 's' : ''} available
-              {event.waitlist_enabled && (
+            <p className="text-xs text-center text-slate-400">
+              {event.max_attendees} total spot{event.max_attendees !== 1 ? 's' : ''}
+              {canManageEvent && event.waitlist_enabled && (
                 <span className="ml-1 text-amber-300">· waitlist available</span>
               )}
             </p>
           )}
 
           {hasCapacityLimit && !canManageEvent && typeof remainingSpots === 'number' && (
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-xs text-center text-slate-400">
               {remainingSpots} spot{remainingSpots !== 1 ? 's' : ''} left
               {event.waitlist_enabled && (
                 <span className="ml-1 text-amber-300">· waitlist available</span>
@@ -528,13 +440,13 @@ function EventPopup({ event, onClose, isAdminView, user }) {
           )}
 
           {hasCapacityLimit && !canManageEvent && attendanceLoading && (
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-xs text-center text-slate-400">
               Loading live spots...
             </p>
           )}
 
           {hasCapacityLimit && !canManageEvent && attendanceLoaded && typeof remainingSpots !== 'number' && (
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-xs text-center text-slate-400">
               Unable to load live spots
             </p>
           )}
@@ -602,11 +514,11 @@ function EventPopup({ event, onClose, isAdminView, user }) {
           )}
 
           {waitlistError && (
-            <p className="text-center text-xs text-red-300">{waitlistError}</p>
+            <p className="text-xs text-center text-red-300">{waitlistError}</p>
           )}
 
           {waitlistMessage && (
-            <p className="text-center text-xs text-emerald-300">{waitlistMessage}</p>
+            <p className="text-xs text-center text-emerald-300">{waitlistMessage}</p>
           )}
         </div>
       </div>
@@ -636,7 +548,7 @@ function EventRow({ event, onSelect, isAdminView }) {
       title={event.name}
     >
       <span className={['mt-1 h-1.5 w-1.5 shrink-0 rounded-full', colors.dot].join(' ')} />
-      <div className="min-w-0 flex-1 truncate">
+      <div className="flex-1 min-w-0 truncate">
         {timeLabel && (
           <span className="mr-1.5 font-semibold text-white/90">
             {timeLabel}
@@ -688,7 +600,7 @@ function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdmin
         isToday ? 'bg-cyan-500/[0.12]' : 'hover:bg-slate-700/35',
       ].join(' ')}
     >
-      <div className="mb-1 flex justify-start">
+      <div className="flex justify-start mb-1">
         <span
           className={[
             'flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs font-semibold',
@@ -732,7 +644,7 @@ function CalCell({ date, isCurrentMonth, isToday, events, onSelectEvent, isAdmin
 function MobileMonthAgenda({ monthEvents, onSelectEvent, isAdminView }) {
   if (monthEvents.length === 0) {
     return (
-      <div className="px-4 py-8 text-center text-sm text-slate-400">
+      <div className="px-4 py-8 text-sm text-center text-slate-400">
         No events scheduled this month.
       </div>
     );
@@ -749,7 +661,7 @@ function MobileMonthAgenda({ monthEvents, onSelectEvent, isAdminView }) {
   }, []);
 
   return (
-    <div className="space-y-3 px-3 pb-4 pt-2">
+    <div className="px-3 pt-2 pb-4 space-y-3">
       {groupedEvents.map(({ dateKey, events }) => {
         const [year, month, day] = dateKey.split('-');
         const date = new Date(Number(year), Number(month) - 1, Number(day));
@@ -786,8 +698,8 @@ function MobileMonthAgenda({ monthEvents, onSelectEvent, isAdminView }) {
                       colors.border,
                     ].join(' ')}
                   >
-                    <div className="min-w-0 flex-1">
-                      <div className="whitespace-normal break-words text-sm font-semibold leading-snug">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold leading-snug break-words whitespace-normal">
                         {event.name || 'Untitled Event'}
                       </div>
                       <div className="pt-1 text-xs font-semibold text-white/85">
@@ -796,7 +708,7 @@ function MobileMonthAgenda({ monthEvents, onSelectEvent, isAdminView }) {
                     </div>
 
                     <div className="min-w-[92px] text-right">
-                      <div className="whitespace-normal break-words text-xs opacity-85">
+                      <div className="text-xs break-words whitespace-normal opacity-85">
                         {event.location || '\u00A0'}
                       </div>
                       <div className="pt-1 text-[10px] uppercase tracking-wide opacity-80">
@@ -899,7 +811,7 @@ export default function CalendarView({
       )}
 
       <div className="flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none">
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-600/50 px-5 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-4 border-b border-slate-600/50">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <div className="relative w-28 sm:w-36">
@@ -916,8 +828,8 @@ export default function CalendarView({
                   ))}
                 </select>
 
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-300">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="absolute inset-y-0 flex items-center pointer-events-none right-3 text-slate-300">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -937,8 +849,8 @@ export default function CalendarView({
                   ))}
                 </select>
 
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-300">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="absolute inset-y-0 flex items-center pointer-events-none right-3 text-slate-300">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -962,7 +874,7 @@ export default function CalendarView({
               <Link
                 to="/events/create"
                 aria-label="Create event"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+                className="inline-flex items-center justify-center w-10 h-10 transition border rounded-lg border-slate-400/40 bg-slate-800 text-slate-100 hover:border-slate-300 hover:bg-slate-700 hover:text-white"
               >
                 <PlusIcon />
               </Link>
@@ -971,21 +883,21 @@ export default function CalendarView({
             <button
               onClick={() => setCursor(new Date(year, month - 1, 1))}
               aria-label="Previous month"
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+              className="flex items-center justify-center w-10 h-10 transition border rounded-lg border-slate-400/40 bg-slate-800 text-slate-100 hover:border-slate-300 hover:bg-slate-700 hover:text-white"
             >
               <ChevronLeft />
             </button>
             <button
               onClick={() => setCursor(new Date(year, month + 1, 1))}
               aria-label="Next month"
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-400/40 bg-slate-800 text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 hover:text-white"
+              className="flex items-center justify-center w-10 h-10 transition border rounded-lg border-slate-400/40 bg-slate-800 text-slate-100 hover:border-slate-300 hover:bg-slate-700 hover:text-white"
             >
               <ChevronRight />
             </button>
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto sm:hidden">
+        <div className="flex-1 min-h-0 overflow-y-auto sm:hidden">
           <MobileMonthAgenda
             monthEvents={monthEvents}
             onSelectEvent={setSelectedEvent}
@@ -1009,7 +921,7 @@ export default function CalendarView({
         </div>
 
         {isAdminView ? (
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-700/70 bg-slate-900/35 px-5 py-3">
+          <div className="flex flex-wrap items-center px-5 py-3 border-t gap-x-4 gap-y-1 border-slate-700/70 bg-slate-900/35">
             {[
               { label: 'Published', dot: 'bg-cyan-300' },
               { label: 'Private', dot: 'bg-violet-300' },
@@ -1023,7 +935,7 @@ export default function CalendarView({
             ))}
           </div>
         ) : (
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-700/70 bg-slate-900/35 px-5 py-3">
+          <div className="flex flex-wrap items-center px-5 py-3 border-t gap-x-4 gap-y-1 border-slate-700/70 bg-slate-900/35">
             {[
               { label: 'Open', dot: 'bg-cyan-300' },
               { label: 'Members only', dot: 'bg-violet-300' },
