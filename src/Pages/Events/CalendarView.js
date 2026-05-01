@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getEventAttendanceSummary, getMyEventRegistrationState, joinWaitlistForSCEvent } from '../../APIFunctions/SCEvents';
+import { membershipState } from '../../Enums';
 
 // ─── tiny helpers ────────────────────────────────────────────────────────────
 
@@ -199,6 +200,29 @@ function getRegistrationCta(event) {
   }
 }
 
+/**
+ * Checks if a user has permission to manage an event.
+ * @param {Object} event The event object.
+ * @param {Object} user The user object.
+ * @returns {boolean} True if the user can manage the event.
+ */
+function canUserManageEvent(event, user) {
+  const userId = user?._id != null ? String(user._id) : '';
+  const eventAdmins = Array.isArray(event.admins) ? event.admins.map((id) => String(id)) : [];
+
+  // 1. If user is explicitly listed as an admin for this event
+  if (eventAdmins.length > 0 && userId && eventAdmins.includes(userId)) {
+    return true;
+  }
+
+  // 2. If the event has no admins, allow users with level 3 (ADMIN) or higher to manage it
+  if (eventAdmins.length === 0 && (user?.accessLevel ?? 0) >= membershipState.ADMIN) {
+    return true;
+  }
+
+  return false;
+}
+
 // ─── icons ────────────────────────────────────────────────────────────────────
 
 function ChevronLeft() {
@@ -282,10 +306,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
   const [waitlistMessage, setWaitlistMessage] = useState('');
   const [waitlistError, setWaitlistError] = useState('');
-  const eventAdmins = Array.isArray(event.admins) ? event.admins.map((id) => String(id)) : [];
-  const canManageEvent =
-    (eventAdmins.length > 0 && userId && eventAdmins.includes(userId))
-    || (eventAdmins.length === 0 && (user?.accessLevel ?? 0) >= 4);
+  const canManageEvent = canUserManageEvent(event, user);
   const [hasRegistered, setHasRegistered] = useState(false);
   const [isCheckingRegistration, setIsCheckingRegistration] = useState(false);
   const eventId = event?.id || event?._id;
@@ -411,10 +432,10 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     setWaitlistMessage('Joined waitlist successfully.');
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
       <div
         ref={popupRef}
-        className="relative w-full max-w-sm rounded-xl border border-slate-400/35 bg-slate-900/95 shadow-lg"
+        className="relative w-full max-w-sm rounded-xl border border-slate-400/35 bg-slate-900 shadow-lg"
         role="dialog"
         aria-modal="true"
         aria-label={event.name}

@@ -182,9 +182,6 @@ export async function registerForEvent(eventId, token, payload) {
   return status;
 }
 
-export async function registerForSCEvent(eventId, token, payload) {
-  return registerForEvent(eventId, token, payload);
-}
 
 export async function getMyEventRegistrationState(eventId, token) {
   const status = new ApiResponse();

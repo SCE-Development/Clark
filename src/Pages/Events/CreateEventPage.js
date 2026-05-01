@@ -2,8 +2,8 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
-import { createSCEvent } from '../../APIFunctions/SCEvents.js';
-import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock.js';
+import { createSCEvent } from '../../APIFunctions/SCEvents';
+import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock';
 import { membershipState } from '../../Enums';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
