@@ -21,7 +21,7 @@ import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
 import PermissionRequestPage from './Pages/PermissionRequest/PermissionRequest.js';
 import EventsPage from './Pages/Events/Events.js';
 import CreateEventPage from './Pages/Events/CreateEventPage.js';
-import EventRegistration from './Pages/Events/EventsRegistation.js';
+import EventRegistration from './Pages/Events/EventsRegistration.js';
 import EditEventPage from './Pages/Events/EditEventPage.js';
 import EventAttendeesDashboard from './Pages/Events/EventAttendeesDashboard.js';
 
