@@ -1,27 +1,10 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
 import { getEventByID, getEventAttendanceSummary, registerForEvent } from '../../APIFunctions/SCEvents';
-
-function ArrowLeftIcon() {
-  return (
-    <svg
-      className="h-5 w-5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-    </svg>
-  );
-}
-
-function getRegistrationStatus(event) {
-  return event?.registration_status || 'none';
-}
+import { calculateEventCapacity, getApiErrorMessage } from './eventUtils';
+import { ArrowLeftIcon } from './EventIcons';
 
 function StatusPanel({ title, message, borderClass, textClass, onBack }) {
   return (
@@ -64,7 +47,7 @@ export default function EventRegistration() {
   const [submitting, setSubmitting] = useState(false);
   const [attendeeCount, setAttendeeCount] = useState(null);
   const [attendanceLoading, setAttendanceLoading] = useState(false);
-  const registrationStatus = getRegistrationStatus(event);
+  const registrationStatus = event?.registration_status || 'none';
   const goBackToEvents = () => history.push('/events');
 
   useEffect(() => {
@@ -166,25 +149,10 @@ export default function EventRegistration() {
     setSubmitting(false);
 
     if (result.error) {
-      let msg = '';
-      const data = result.responseData;
-
-      if (data && typeof data === 'object' && data.error) {
-        msg = String(data.error);
-      } else if (typeof data === 'string' && data.trim()) {
-        msg = data.trim();
-      }
+      let msg = getApiErrorMessage(result, { fallback: 'Failed to submit registration.' });
 
       if (msg.toLowerCase().includes('registration is closed')) {
         msg = 'This event is no longer accepting sign-ups, but more events are on the way 👀';
-      }
-
-      if (!msg && result.statusCode) {
-        msg = `HTTP ${result.statusCode}`;
-      }
-
-      if (!msg) {
-        msg = 'Failed to submit registration.';
       }
 
       setSubmitError(msg);
@@ -280,12 +248,7 @@ export default function EventRegistration() {
     );
   }
 
-  const maxAttendees = Number(event.max_attendees);
-  const hasCapacityLimit = Number.isFinite(maxAttendees) && maxAttendees > 0;
-  const remainingSpots =
-    hasCapacityLimit && typeof attendeeCount === 'number'
-      ? Math.max(maxAttendees - attendeeCount, 0)
-      : null;
+  const { remainingSpots, hasCapacityLimit } = calculateEventCapacity(event, attendeeCount);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white">

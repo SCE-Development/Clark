@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import { getEventRegistrationByRequestId, getEventRegistrations } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
