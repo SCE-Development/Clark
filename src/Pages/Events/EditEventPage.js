@@ -1,45 +1,15 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
-import React, { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
 import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock';
 import { membershipState } from '../../Enums';
+import { toApiRegistrationForm, useEventQuestions } from './useEventQuestions';
+import { getApiErrorMessage } from './eventUtils';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
-
-function newQuestionTemplate() {
-  return {
-    id: crypto.randomUUID(),
-    type: 'textbox',
-    question: '',
-    required: false,
-    answer_details: { max_chars: 200 },
-  };
-}
-
-function toApiRegistrationForm(questions) {
-  return questions.map((q) => {
-    const base = {
-      id: q.id,
-      type: q.type,
-      question: q.question,
-      required: !!q.required,
-    };
-    if (q.type === 'textbox' && q.answer_details?.max_chars) {
-      base.answer_details = { max_chars: q.answer_details.max_chars };
-    }
-    if (
-      (q.type === 'multiple_choice' || q.type === 'dropdown') &&
-      q.answer_options &&
-      q.answer_options.length
-    ) {
-      base.answer_options = q.answer_options;
-    }
-    return base;
-  });
-}
 
 export default function EditEventPage() {
   const { id } = useParams();
@@ -60,8 +30,18 @@ export default function EditEventPage() {
   const [maxAttendees, setMaxAttendees] = useState(UNLIMITED_ATTENDEES);
   const [waitlistEnabled, setWaitlistEnabled] = useState(false);
   const [waitlistSize, setWaitlistSize] = useState(10);
-  const [questions, setQuestions] = useState([]);
   const [eventAdmins, setEventAdmins] = useState([]);
+  const {
+    questions,
+    setQuestions,
+    addQuestion,
+    removeQuestion,
+    updateQuestion,
+    updateQuestionType,
+    updateAnswerOption,
+    addAnswerOption,
+    removeAnswerOption
+  } = useEventQuestions([]);
 
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -106,76 +86,6 @@ export default function EditEventPage() {
     loadEvent();
   }, [id]);
 
-  function addQuestion() {
-    setQuestions((prev) => [...prev, newQuestionTemplate()]);
-  }
-
-  function removeQuestion(qId) {
-    setQuestions((prev) => prev.filter((q) => q.id !== qId));
-  }
-
-  function updateQuestion(qId, field, value) {
-    setQuestions((prev) =>
-      prev.map((q) => (q.id === qId ? { ...q, [field]: value } : q)),
-    );
-  }
-
-  function updateQuestionType(qId, newType) {
-    setQuestions((prev) =>
-      prev.map((q) => {
-        if (q.id !== qId) return q;
-        const base = {
-          id: q.id,
-          type: newType,
-          question: q.question,
-          required: q.required,
-        };
-        if (newType === 'textbox') {
-          return { ...base, answer_details: { max_chars: 200 } };
-        }
-        if (newType === 'multiple_choice' || newType === 'dropdown') {
-          return { ...base, answer_options: ['Option 1', 'Option 2'] };
-        }
-        return base;
-      }),
-    );
-  }
-
-  function updateAnswerOption(questionId, optionIndex, value) {
-    setQuestions((prev) =>
-      prev.map((q) => {
-        if (q.id !== questionId) return q;
-        const next = [...(q.answer_options || [])];
-        next[optionIndex] = value;
-        return { ...q, answer_options: next };
-      }),
-    );
-  }
-
-  function addAnswerOption(questionId) {
-    setQuestions((prev) =>
-      prev.map((q) => {
-        if (q.id !== questionId) return q;
-        return {
-          ...q,
-          answer_options: [...(q.answer_options || []), 'New option'],
-        };
-      }),
-    );
-  }
-
-  function removeAnswerOption(questionId, optionIndex) {
-    setQuestions((prev) =>
-      prev.map((q) => {
-        if (q.id !== questionId) return q;
-        return {
-          ...q,
-          answer_options: (q.answer_options || []).filter((_, i) => i !== optionIndex),
-        };
-      }),
-    );
-  }
-
   async function handleUpdateEvent() {
     setSubmitError('');
     if (!eventName.trim()) {
@@ -215,24 +125,10 @@ export default function EditEventPage() {
     setSubmitting(false);
 
     if (result.error) {
-      let msg = '';
-      const data = result.responseData;
-      if (data && typeof data === 'object' && data.error) {
-        msg = String(data.error);
-      } else if (typeof data === 'string' && data.trim()) {
-        msg = data.trim();
-      }
-      if (!msg && result.statusCode) {
-        msg = `HTTP ${result.statusCode}`;
-      }
-      if (result.networkError) {
-        msg =
-          (msg || 'Network error') +
-          '. Is the SCEvents API running (e.g. Docker on port 8002)?';
-      } else if (!msg) {
-        msg = 'SCEvents returned an error.';
-      }
-      setSubmitError(msg);
+      setSubmitError(getApiErrorMessage(result, {
+        fallback: 'SCEvents returned an error.',
+        networkHint: 'Is the SCEvents API running (e.g. Docker on port 8002)?',
+      }));
       return;
     }
 
