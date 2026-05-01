@@ -79,7 +79,7 @@ export default function EventsPage() {
   return (
     <div className={pageContainerClass}>
       {/* Ambient blobs — unchanged from original */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 left-[-8rem] h-[22rem] w-[22rem] rounded-full bg-sky-400/10 blur-3xl" />
         <div className="absolute right-[-8rem] top-[10rem] h-[24rem] w-[24rem] rounded-full bg-indigo-500/10 blur-3xl" />
       </div>
@@ -87,13 +87,13 @@ export default function EventsPage() {
       {/* ── Calendar area ── */}
       <div className={calendarContainerClass}>
         {isLoading && (
-          <div className="py-16 text-center text-lg text-gray-300">
+          <div className="py-16 text-lg text-center text-gray-300">
             Loading events...
           </div>
         )}
 
         {!isLoading && hasError && (
-          <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-6 text-center text-lg text-red-100">
+          <div className="p-6 text-lg text-center text-red-100 border rounded-2xl border-red-400/30 bg-red-500/10">
             Failed to load events. Please make sure SCEvents is running locally.
           </div>
         )}

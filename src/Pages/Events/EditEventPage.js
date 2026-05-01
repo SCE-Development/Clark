@@ -3,10 +3,10 @@ import { useMemo, useState, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
 import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents';
-import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock';
 import { membershipState } from '../../Enums';
 import { toApiRegistrationForm, useEventQuestions } from './useEventQuestions';
 import { getApiErrorMessage } from './eventUtils';
+import EventEditorForm from './EventEditorForm';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
@@ -186,246 +186,53 @@ export default function EditEventPage() {
   }
 
   return (
-    <div className="mx-auto my-10 max-w-4xl px-4 sm:px-6">
-      <div className="mb-8 pt-8 pb-2">
-        <Link to="/events" className="btn btn-ghost normal-case text-base pl-0 mb-4 font-medium text-gray-400 hover:text-white hover:bg-transparent">
-          ← Back to Events
-        </Link>
-        <h1 className="pb-3 text-4xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-5xl dark:text-white">
-          Edit event
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Event id: {id}</p>
-      </div>
-
-      <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Event details</h2>
-      <div className="p-6 mb-10 space-y-4 border border-gray-200 rounded-lg shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700">
-        <label className="w-full form-control">
-          <div className="label">
-            <span className="label-text">Event name *</span>
-          </div>
-          <input
-            type="text"
-            className="w-full text-sm input input-bordered sm:text-base"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-            placeholder="Event name"
-          />
-        </label>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="w-full form-control">
-            <div className="label">
-              <span className="label-text">Date *</span>
-            </div>
-            <input
-              type="date"
-              className="w-full input input-bordered"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </label>
-          <label className="w-full form-control">
-            <div className="label">
-              <span className="label-text">Time *</span>
-            </div>
-            <input
-              type="time"
-              className="w-full input input-bordered"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-            />
-          </label>
-        </div>
-
-        <label className="w-full form-control">
-          <div className="label">
-            <span className="label-text">Location</span>
-          </div>
-          <input
-            type="text"
-            className="w-full text-sm input input-bordered sm:text-base"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Location"
-          />
-        </label>
-
-        <label className="w-full form-control">
-          <div className="label">
-            <span className="label-text">Description</span>
-          </div>
-          <textarea
-            className="w-full min-h-24 textarea textarea-bordered"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description"
-          />
-        </label>
-
-        <div>
-          <div className="label">
-            <span className="label-text">Max attendees</span>
-          </div>
-          <input
-            type="number"
-            min="1"
-            className="max-w-xs input input-bordered"
-            value={maxAttendees === UNLIMITED_ATTENDEES ? '' : maxAttendees}
-            onChange={(e) =>
-              setMaxAttendees(
-                e.target.value ? parseInt(e.target.value, 10) : UNLIMITED_ATTENDEES,
-              )
-            }
-            placeholder="No limit"
-          />
-        </div>
-
-        <div>
-          <div className="label">
-            <span className="label-text">Waitlist</span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="max-w-xs">
-              {waitlistEnabled ? (
-                <input
-                  type="number"
-                  min="1"
-                  className="w-full input input-bordered"
-                  value={waitlistSize}
-                  onChange={(e) => setWaitlistSize(e.target.value ? parseInt(e.target.value, 10) : '')}
-                  placeholder="e.g. 20"
-                />
-              ) : (
-                <input
-                  type="text"
-                  className="w-full input input-bordered"
-                  value=""
-                  disabled
-                  placeholder="e.g. 20"
-                />
-              )}
-            </div>
-
-            <label className="flex gap-2 items-center text-sm cursor-pointer label">
-              <input
-                type="checkbox"
-                className="checkbox checkbox-sm"
-                checked={waitlistEnabled}
-                onChange={(e) => setWaitlistEnabled(e.target.checked)}
-              />
-              <span className="label-text font-medium">Enable waitlist</span>
-            </label>
-          </div>
-
-          {waitlistEnabled && (
-            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              Maximum number of users allowed on the waitlist.
-            </p>
-          )}
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="w-full form-control">
-            <div className="label">
-              <span className="label-text">Publish status</span>
-            </div>
-            <select
-              className="w-full select select-bordered"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-              <option value="closed">Closed</option>
-            </select>
-          </label>
-
-          <label className="w-full form-control">
-            <div className="label">
-              <span className="label-text">Visibility</span>
-            </div>
-            <select
-              className="w-full select select-bordered"
-              value={visibility}
-              onChange={(e) => {
-                const nextVisibility = e.target.value;
-                setVisibility(nextVisibility);
-                if (nextVisibility !== 'private') {
-                  setMinimumVisibleRole('');
-                }
-              }}
-            >
-              <option value="public">Public</option>
-              <option value="private">Private</option>
-            </select>
-          </label>
-        </div>
-
-        {visibility === 'private' && (
-          <label className="w-full form-control">
-            <div className="label">
-              <span className="label-text">Minimum visible role</span>
-            </div>
-            <select
-              className="w-full max-w-xs select select-bordered"
-              value={minimumVisibleRole}
-              onChange={(e) => setMinimumVisibleRole(e.target.value)}
-            >
-              <option value="">Select role</option>
-              <option value="member">Member</option>
-              <option value="officer">Officer</option>
-              <option value="admin">Admin</option>
-            </select>
-          </label>
-        )}
-      </div>
-
-      <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">
-        Registration questions
-      </h2>
-      <div className="mb-6 space-y-3">
-        {questions.map((q, index) => (
-          <CreateEventFormQuestionBlock
-            key={q.id}
-            question={q}
-            index={index}
-            onUpdateField={updateQuestion}
-            onChangeType={updateQuestionType}
-            onRemove={removeQuestion}
-            onUpdateAnswerOption={updateAnswerOption}
-            onAddAnswerOption={addAnswerOption}
-            onRemoveAnswerOption={removeAnswerOption}
-          />
-        ))}
-        <button
-          type="button"
-          className="w-full border-2 border-dashed btn btn-outline border-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-          onClick={addQuestion}
-        >
-          + Add question
-        </button>
-      </div>
-
-      {submitError && (
-        <div className="p-3 mb-4 text-sm text-red-700 bg-red-50 rounded-lg dark:bg-red-900/30 dark:text-red-200">
-          {submitError}
-        </div>
-      )}
-
-      <div className="flex flex-wrap gap-3 justify-start pt-6 border-t border-gray-200 dark:border-gray-700">
-        <button
-          type="button"
-          className="btn btn-primary"
-          disabled={submitting}
-          onClick={handleUpdateEvent}
-        >
-          {submitting ? 'Updating…' : 'Save changes'}
-        </button>
-        <Link to="/events" className="btn btn-ghost">
-          Cancel
-        </Link>
-      </div>
-    </div>
+    <EventEditorForm
+      meta={{
+        title: 'Edit event',
+        eventIdLabel: id,
+        containerClassName: 'mx-auto my-10 max-w-4xl px-4 sm:px-6',
+        submitLabel: 'Save changes',
+        submittingLabel: 'Updating…',
+        onSubmit: handleUpdateEvent,
+        submitting,
+        submitError,
+        unlimitedAttendeesValue: UNLIMITED_ATTENDEES,
+        maxAttendeesMode: 'edit',
+      }}
+      form={{
+        eventName,
+        setEventName,
+        date,
+        setDate,
+        time,
+        setTime,
+        location,
+        setLocation,
+        description,
+        setDescription,
+        status,
+        setStatus,
+        visibility,
+        setVisibility,
+        minimumVisibleRole,
+        setMinimumVisibleRole,
+        maxAttendees,
+        setMaxAttendees,
+        waitlistEnabled,
+        setWaitlistEnabled,
+        waitlistSize,
+        setWaitlistSize,
+      }}
+      questionActions={{
+        questions,
+        addQuestion,
+        removeQuestion,
+        updateQuestion,
+        updateQuestionType,
+        updateAnswerOption,
+        addAnswerOption,
+        removeAnswerOption,
+      }}
+    />
   );
 }
