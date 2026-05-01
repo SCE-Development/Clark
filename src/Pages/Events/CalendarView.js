@@ -816,9 +816,15 @@ function MobileMonthAgenda({ monthEvents, onSelectEvent, isAdminView }) {
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 
-export default function CalendarView({ events, isAdminView = false, user, canCreateEvent = false }) {
-  const today = new Date();
-  const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
+export default function CalendarView({
+  events,
+  isAdminView = false,
+  user,
+  canCreateEvent = false,
+  cursor,
+  setCursor,
+}) {
+  const today = useMemo(() => new Date(), []);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const eventsByDate = useMemo(() => {
