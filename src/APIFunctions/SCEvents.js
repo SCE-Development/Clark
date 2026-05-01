@@ -3,6 +3,27 @@ import config from '../config/config.json';
 
 const SCEVENTS_API_URL = config.SCEvents?.BASE_URL || '/api/scevents';
 
+async function handleResponse(res, status) {
+  const contentType = res.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    try {
+      const result = await res.json();
+      status.responseData = result;
+    } catch (e) {
+      status.error = true;
+      status.responseData = { error: 'Failed to parse server response as JSON' };
+    }
+  } else {
+    status.error = true;
+    const text = await res.text();
+    status.responseData = { error: text || `Server returned status ${res.status} without a body` };
+  }
+  if (!res.ok) {
+    status.error = true;
+  }
+  return status;
+}
+
 export async function getAllSCEvents(token, { startDate, endDate } = {}) {
   const status = new ApiResponse();
   try {
@@ -20,11 +41,7 @@ export async function getAllSCEvents(token, { startDate, endDate } = {}) {
       headers,
     });
 
-    const result = await res.json();
-    status.responseData = result;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
     status.error = true;
@@ -43,11 +60,7 @@ export async function getEventByID(id, token) {
       headers,
     });
 
-    const result = await res.json();
-    status.responseData = result;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -63,11 +76,7 @@ export async function getEventAttendanceSummary(id, token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    const result = await res.json();
-    status.responseData = result;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -86,11 +95,7 @@ export async function createSCEvent(token, eventBody) {
       },
       body: JSON.stringify(eventBody),
     });
-    const body = await res.json();
-    status.responseData = body;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -109,11 +114,7 @@ export async function updateSCEvent(id, token, eventUpdates) {
       },
       body: JSON.stringify(eventUpdates),
     });
-    const body = await res.json();
-    status.responseData = body;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -133,11 +134,7 @@ export async function getEventRegistrations(eventId, token, { limit = 50, offset
         Authorization: `Bearer ${token}`,
       },
     });
-    const result = await res.json();
-    status.responseData = result;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -153,11 +150,7 @@ export async function getEventRegistrationByRequestId(eventId, requestId, token)
         Authorization: `Bearer ${token}`,
       },
     });
-    const result = await res.json();
-    status.responseData = result;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -176,11 +169,7 @@ export async function registerForEvent(eventId, token, payload) {
       },
       body: JSON.stringify(payload),
     });
-    const result = await res.json();
-    status.responseData = result;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -197,11 +186,7 @@ export async function getMyEventRegistrationState(eventId, token) {
         Authorization: `Bearer ${token}`,
       },
     });
-    const result = await res.json();
-    status.responseData = result;
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
@@ -220,12 +205,7 @@ export async function joinWaitlistForSCEvent(eventId, token) {
       },
     });
 
-    const body = await res.json();
-    status.responseData = body;
-
-    if (!res.ok) {
-      status.error = true;
-    }
+    return await handleResponse(res, status);
   } catch (err) {
     status.error = true;
     status.responseData = err;
@@ -233,3 +213,4 @@ export async function joinWaitlistForSCEvent(eventId, token) {
 
   return status;
 }
+
