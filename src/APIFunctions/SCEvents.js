@@ -39,7 +39,8 @@ export async function getEventByID(id, token) {
       ? { Authorization: `Bearer ${token}` }
       : {};
 
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${id}`, window.location.origin);
+    const res = await fetch(url.href, {
       headers,
     });
 
@@ -58,7 +59,8 @@ export async function getEventByID(id, token) {
 export async function getEventAttendanceSummary(id, token) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}/attendance`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${id}/attendance`, window.location.origin);
+    const res = await fetch(url.href, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -78,7 +80,8 @@ export async function getEventAttendanceSummary(id, token) {
 export async function createSCEvent(token, eventBody) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/`, window.location.origin);
+    const res = await fetch(url.href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -101,7 +104,8 @@ export async function createSCEvent(token, eventBody) {
 export async function updateSCEvent(id, token, eventUpdates) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${id}`, window.location.origin);
+    const res = await fetch(url.href, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -150,7 +154,7 @@ export async function deleteSCEvent(id, token) {
 export async function getEventRegistrations(eventId, token, { limit = 50, offset = 0 } = {}) {
   const status = new ApiResponse();
   try {
-    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/registrations`);
+    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/registrations`, window.location.origin);
     url.searchParams.set('limit', String(limit));
     url.searchParams.set('offset', String(offset));
 
@@ -174,7 +178,8 @@ export async function getEventRegistrations(eventId, token, { limit = 50, offset
 export async function getEventRegistrationByRequestId(eventId, requestId, token) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/registrations/${requestId}`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/registrations/${requestId}`, window.location.origin);
+    const res = await fetch(url.href, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -194,7 +199,8 @@ export async function getEventRegistrationByRequestId(eventId, requestId, token)
 export async function registerForEvent(eventId, token, payload) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/register`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/register`, window.location.origin);
+    const res = await fetch(url.href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -218,7 +224,8 @@ export async function registerForEvent(eventId, token, payload) {
 export async function getMyEventRegistrationState(eventId, token) {
   const status = new ApiResponse();
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/registration/me`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/registration/me`, window.location.origin);
+    const res = await fetch(url.href, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -239,7 +246,8 @@ export async function joinWaitlistForSCEvent(eventId, token) {
   const status = new ApiResponse();
 
   try {
-    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/waitlist`, {
+    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/waitlist`, window.location.origin);
+    const res = await fetch(url.href, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
