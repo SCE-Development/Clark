@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
-import { getEventByID, getEventAttendanceSummary, registerForSCEvent } from '../../APIFunctions/SCEvents';
+import { getEventByID, getEventAttendanceSummary, registerForEvent } from '../../APIFunctions/SCEvents';
 
 function ArrowLeftIcon() {
   return (
@@ -162,7 +162,7 @@ export default function EventRegistration() {
     };
 
     setSubmitting(true);
-    const result = await registerForSCEvent(id, token, payload);
+    const result = await registerForEvent(id, token, payload);
     setSubmitting(false);
 
     if (result.error) {

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { getEventAttendanceSummary, joinWaitlistForSCEvent } from '../../APIFunctions/SCEvents';
+import { getEventAttendanceSummary, getMyEventRegistrationState, joinWaitlistForSCEvent } from '../../APIFunctions/SCEvents';
+import { membershipState } from '../../Enums';
 
 // ─── tiny helpers ────────────────────────────────────────────────────────────
 
@@ -199,6 +200,29 @@ function getRegistrationCta(event) {
   }
 }
 
+/**
+ * Checks if a user has permission to manage an event.
+ * @param {Object} event The event object.
+ * @param {Object} user The user object.
+ * @returns {boolean} True if the user can manage the event.
+ */
+function canUserManageEvent(event, user) {
+  const userId = user?._id != null ? String(user._id) : '';
+  const eventAdmins = Array.isArray(event.admins) ? event.admins.map((id) => String(id)) : [];
+
+  // 1. If user is explicitly listed as an admin for this event
+  if (eventAdmins.length > 0 && userId && eventAdmins.includes(userId)) {
+    return true;
+  }
+
+  // 2. If the event has no admins, allow users with level 3 (ADMIN) or higher to manage it
+  if (eventAdmins.length === 0 && (user?.accessLevel ?? 0) >= membershipState.ADMIN) {
+    return true;
+  }
+
+  return false;
+}
+
 // ─── icons ────────────────────────────────────────────────────────────────────
 
 function ChevronLeft() {
@@ -275,8 +299,6 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const popupRef = useRef(null);
   const colors = pillColors(event, isAdminView);
   const badgeText = getBadgeText(event, isAdminView);
-  const eventId = event.id || event._id;
-  const authToken = user?.token || window.localStorage.getItem('jwtToken');
   const userId = user?._id != null ? String(user._id) : '';
   const [attendeeCount, setAttendeeCount] = useState(null);
   const [attendanceLoading, setAttendanceLoading] = useState(false);
@@ -284,10 +306,11 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
   const [waitlistMessage, setWaitlistMessage] = useState('');
   const [waitlistError, setWaitlistError] = useState('');
-  const canEditEvent =
-    Array.isArray(event.admins) &&
-    userId &&
-    event.admins.includes(userId);
+  const canManageEvent = canUserManageEvent(event, user);
+  const [hasRegistered, setHasRegistered] = useState(false);
+  const [isCheckingRegistration, setIsCheckingRegistration] = useState(false);
+  const eventId = event?.id || event?._id;
+  const authToken = user?.token;
   const maxAttendees = Number(event.max_attendees);
   const hasCapacityLimit = Number.isFinite(maxAttendees) && maxAttendees > 0;
   const remainingSpots =
@@ -297,7 +320,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
   const registrationCta = getRegistrationCta(event);
   const isFull = hasCapacityLimit && typeof remainingSpots === 'number' && remainingSpots <= 0;
   const shouldShowWaitlistJoin =
-    !canEditEvent &&
+    !canManageEvent &&
     event.status === 'published' &&
     !registrationCta.disabled &&
     isFull &&
@@ -310,6 +333,28 @@ function EventPopup({ event, onClose, isAdminView, user }) {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  useEffect(() => {
+    async function fetchMyRegistrationState() {
+      if (!userId || canManageEvent || !user?.token || event.status !== 'published') {
+        setHasRegistered(false);
+        setIsCheckingRegistration(false);
+        return;
+      }
+
+      setIsCheckingRegistration(true);
+      const eventID = event?.id || event?._id;
+      const response = await getMyEventRegistrationState(eventID, user.token);
+      if (!response.error) {
+        setHasRegistered(Boolean(response.responseData?.registered));
+      } else {
+        setHasRegistered(false);
+      }
+      setIsCheckingRegistration(false);
+    }
+
+    fetchMyRegistrationState();
+  }, [canManageEvent, event, user?.token, userId]);
 
   useEffect(() => {
     function onClickOutside(e) {
@@ -386,7 +431,6 @@ function EventPopup({ event, onClose, isAdminView, user }) {
 
     setWaitlistMessage('Joined waitlist successfully.');
   }
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
       <div
@@ -465,16 +509,16 @@ function EventPopup({ event, onClose, isAdminView, user }) {
         </div>
 
         <div className="space-y-2 border-t border-slate-700/70 px-5 py-4">
-          {hasCapacityLimit && canEditEvent && typeof attendeeCount === 'number' && (
+          {event.max_attendees > 0 && (
             <p className="text-center text-xs text-slate-400">
-              {attendeeCount} {attendeeCount === 1 ? 'person' : 'people'} registered
+              {event.max_attendees} spot{event.max_attendees !== 1 ? 's' : ''} available
               {event.waitlist_enabled && (
                 <span className="ml-1 text-amber-300">· waitlist available</span>
               )}
             </p>
           )}
 
-          {hasCapacityLimit && !canEditEvent && typeof remainingSpots === 'number' && (
+          {hasCapacityLimit && !canManageEvent && typeof remainingSpots === 'number' && (
             <p className="text-center text-xs text-slate-400">
               {remainingSpots} spot{remainingSpots !== 1 ? 's' : ''} left
               {event.waitlist_enabled && (
@@ -483,41 +527,49 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </p>
           )}
 
-          {hasCapacityLimit && !canEditEvent && attendanceLoading && (
+          {hasCapacityLimit && !canManageEvent && attendanceLoading && (
             <p className="text-center text-xs text-slate-400">
               Loading live spots...
             </p>
           )}
 
-          {hasCapacityLimit && !canEditEvent && attendanceLoaded && typeof remainingSpots !== 'number' && (
+          {hasCapacityLimit && !canManageEvent && attendanceLoaded && typeof remainingSpots !== 'number' && (
             <p className="text-center text-xs text-slate-400">
               Unable to load live spots
             </p>
           )}
-
-          {canEditEvent && (
-            <Link
-              to={`/events/${event.id}/edit`}
-              className="inline-flex w-full items-center justify-center rounded-xl border border-slate-400/40 bg-slate-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-slate-300 hover:bg-slate-700"
-              onClick={onClose}
-            >
-              Edit event
-            </Link>
+          {canManageEvent && (
+            <div className="grid grid-cols-1 gap-2">
+              <Link
+                to={`/events/${event.id}/admin/attendees`}
+                className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:from-emerald-400 hover:to-teal-400"
+                onClick={onClose}
+              >
+                View attendees
+              </Link>
+              <Link
+                to={`/events/${event.id}/edit`}
+                className="inline-flex w-full items-center justify-center rounded-xl border border-slate-400/40 bg-slate-800 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-slate-300 hover:bg-slate-700"
+                onClick={onClose}
+              >
+                Edit event
+              </Link>
+            </div>
           )}
 
-          {!canEditEvent && event.status === 'closed' && (
+          {!canManageEvent && event.status === 'closed' && (
             <div className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl border border-slate-600/60 bg-slate-800/70 px-6 py-2.5 text-sm font-semibold text-slate-400">
               Registration closed
             </div>
           )}
 
-          {!canEditEvent && event.status === 'draft' && (
+          {!canManageEvent && event.status === 'draft' && (
             <div className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl border border-yellow-400/20 bg-yellow-500/10 px-6 py-2.5 text-sm font-semibold text-yellow-300">
               Not yet published
             </div>
           )}
 
-          {!canEditEvent && event.status === 'published' && registrationCta.disabled && (
+          {!canManageEvent && event.status === 'published' && registrationCta.disabled && (
             <div
               className={[
                 'inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl px-6 py-2.5 text-sm font-semibold',
@@ -539,7 +591,7 @@ function EventPopup({ event, onClose, isAdminView, user }) {
             </button>
           )}
 
-          {!shouldShowWaitlistJoin && !canEditEvent && event.status === 'published' && !registrationCta.disabled && (
+          {!shouldShowWaitlistJoin && !canManageEvent && event.status === 'published' && !registrationCta.disabled && (
             <Link
               to={`/events/${event.id}/register`}
               className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:from-sky-400 hover:to-indigo-400 focus:outline-none focus:ring-2 focus:ring-sky-500"

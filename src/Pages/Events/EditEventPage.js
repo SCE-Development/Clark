@@ -1,9 +1,9 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { useSCE } from '../../Components/context/SceContext.js';
-import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents.js';
-import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock.js';
+import { useSCE } from '../../Components/context/SceContext';
+import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents';
+import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock';
 import { membershipState } from '../../Enums';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */

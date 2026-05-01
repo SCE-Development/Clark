@@ -23,6 +23,7 @@ import EventsPage from './Pages/Events/Events.js';
 import CreateEventPage from './Pages/Events/CreateEventPage.js';
 import EventRegistration from './Pages/Events/EventsRegistation.js';
 import EditEventPage from './Pages/Events/EditEventPage.js';
+import EventAttendeesDashboard from './Pages/Events/EventAttendeesDashboard.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -184,7 +185,16 @@ export const officerOrAdminRoutes = [
     pageName: 'Edit Event',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: false
+    inAdminNavbar: true
+  },
+  {
+    Component: EventAttendeesDashboard,
+    path: '/events/:id/admin/attendees',
+    pageName: 'Event Attendees Dashboard',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: true
   },
   {
     Component: EventsPage,
