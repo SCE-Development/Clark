@@ -121,6 +121,32 @@ export async function updateSCEvent(id, token, eventUpdates) {
   return status;
 }
 
+export async function deleteSCEvent(id, token) {
+  const status = new ApiResponse();
+  try {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    let body;
+    try {
+      body = await res.json();
+    } catch {
+      body = {};
+    }
+    status.responseData = body;
+    if (!res.ok) {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
+  }
+  return status;
+}
+
 export async function getEventRegistrations(eventId, token, { limit = 50, offset = 0 } = {}) {
   const status = new ApiResponse();
   try {

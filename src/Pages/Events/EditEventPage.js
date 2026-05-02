@@ -2,7 +2,7 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
-import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents';
+import { deleteSCEvent, getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents';
 import { getAllUsers, validateEventAdmins } from '../../APIFunctions/User';
 import { membershipState } from '../../Enums';
 import { toApiRegistrationForm, useEventQuestions } from './useEventQuestions';
@@ -57,6 +57,8 @@ export default function EditEventPage() {
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const debounceRef = useRef(null);
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   const userId = useMemo(() => (user?._id != null ? String(user._id) : ''), [user]);
   const eventAdminIds = useMemo(
@@ -236,6 +238,23 @@ export default function EditEventPage() {
     history.push('/events');
   }
 
+  async function handleConfirmDelete() {
+    setDeleteError('');
+    setDeleteSubmitting(true);
+    const token = window.localStorage.getItem('jwtToken');
+    const result = await deleteSCEvent(id, token);
+    setDeleteSubmitting(false);
+    if (result.error) {
+      setDeleteError(getApiErrorMessage(result, {
+        fallback: 'SCEvents returned an error.',
+        networkHint: 'Is the SCEvents API running (e.g. Docker on port 8002)?',
+      }));
+      return false;
+    }
+    history.push('/events');
+    return true;
+  }
+
   if (isLoading) {
     return <div className="p-10 text-center text-lg">Loading event details...</div>;
   }
@@ -281,6 +300,13 @@ export default function EditEventPage() {
         submitError,
         unlimitedAttendeesValue: UNLIMITED_ATTENDEES,
         maxAttendeesMode: 'edit',
+        eventDelete: {
+          show: true,
+          deleteSubmitting,
+          deleteError,
+          clearDeleteError: () => setDeleteError(''),
+          onConfirmDelete: handleConfirmDelete,
+        },
       }}
       form={{
         eventName,
