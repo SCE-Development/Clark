@@ -160,12 +160,8 @@ function getBadgeText(event, isAdminView) {
   return '';
 }
 
-function getRegistrationStatus(event) {
-  return event?.registration_status || 'none';
-}
-
 function getRegistrationCta(event, isAdminView) {
-  const registrationStatus = getRegistrationStatus(event);
+  const registrationStatus = event?.registration_status || 'none';
 
   switch (registrationStatus) {
   case 'registered':
