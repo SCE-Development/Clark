@@ -57,7 +57,7 @@ export default function EventEditorForm({
 
   return (
     <div className={containerClassName}>
-      <div className="mb-8 pb-2 pt-8">
+      <div className="mb-8 pb-2 pt-3">
         <Link to="/events" className="btn btn-ghost mb-4 pl-0 text-base font-medium normal-case text-gray-400 hover:bg-transparent hover:text-white">
           ← Back to Events
         </Link>
@@ -68,7 +68,7 @@ export default function EventEditorForm({
       </div>
 
       <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Event details</h2>
-      <div className="mb-10 space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="mb-10 space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
         <label className="form-control w-full">
           <div className="label">
             <span className="label-text">Event name *</span>
