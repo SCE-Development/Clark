@@ -49,6 +49,7 @@ services:
       - CLEEZY_URL=http://host.docker.internal:8000
       - PRINTER_URL=http://host.docker.internal:14000
       - LED_SIGN_URL=http://host.docker.internal:10000
+      - LEETCODE_LED_SIGN_URL=http://host.docker.internal:12121
       - DISCORD_REDIRECT_URI=http://localhost/api/user/callback
       - MAILER_API_URL=http://sce-cloud-api-dev:8082/cloudapi
       - DATABASE_HOST=sce-mongodb-dev
@@ -79,6 +80,7 @@ services:
     environment:
       - NODE_ENV=dev
       - REACT_APP_BASE_API_URL=http://localhost
+      - REACT_APP_LEETCODE_LED_SIGN_URL=/sign2/
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
       - WATCHPACK_POLLING=${WATCHPACK_POLLING}

@@ -16,6 +16,8 @@ const AuditLogActions = {
   ADD_CARD: 'ADD_CARD',
   DELETE_CARD: 'DELETE_CARD',
   EDIT_CARD: 'EDIT_CARD',
+  ADD_LEETCODE_USER: 'ADD_LEETCODE_USER',
+  DELETE_LEETCODE_USER: 'DELETE_LEETCODE_USER',
 };
 
 module.exports = AuditLogActions;

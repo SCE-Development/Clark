@@ -12,6 +12,7 @@ COPY ./package-lock.json /frontend/package-lock.json
 # and instead define them inline here. We do this as multi-stage
 # builds and environment variables from docker-compose.yml weren't working.
 ENV REACT_APP_BASE_API_URL https://sce.sjsu.edu
+ENV REACT_APP_SIGN2_URL /sign2/
 
 RUN npm install
 
