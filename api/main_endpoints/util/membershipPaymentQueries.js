@@ -1,8 +1,8 @@
 const MembershipPayment = require('../models/MembershipPayment');
 const logger = require('../../util/logger');
 const axios = require('axios');
-const { doorCodeDistribution = {} } = require('../../config/config.json');
-const { DCD_URL } = doorCodeDistribution;
+const { membershipPayment = {} } = require('../../config/config.json');
+const { DCD_URL } = membershipPayment;
 
 const status = {
   PENDING: 'pending',
