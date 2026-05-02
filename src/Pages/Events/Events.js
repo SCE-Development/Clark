@@ -10,16 +10,18 @@ function canUserSeeEvent(event, user) {
   const userAccess = user?.accessLevel ?? membershipState.NON_MEMBER;
 
   const isGlobalAdmin = userAccess >= membershipState.ADMIN;
+  const isOfficerOrAbove = userAccess >= membershipState.OFFICER;
   const isEventAdmin = Array.isArray(event.admins) && userId
     ? event.admins.includes(userId)
     : false;
+  const allOrgAdminsCanEdit = !!event.all_org_admins_can_edit;
 
   const status = event.status || 'draft';
   const visibility = event.visibility || 'public';
   const minimumVisibleRole = event.minimum_visible_role || '';
 
   if (status === 'draft') {
-    return isGlobalAdmin || isEventAdmin;
+    return isGlobalAdmin || isEventAdmin || (allOrgAdminsCanEdit && isOfficerOrAbove);
   }
 
   if (visibility === 'public') {

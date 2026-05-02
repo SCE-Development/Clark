@@ -14,7 +14,8 @@ const {
   OK,
   UNAUTHORIZED,
   NOT_FOUND,
-  FORBIDDEN
+  FORBIDDEN,
+  BAD_REQUEST
 } = require('../../api/util/constants').STATUS_CODES;
 const sinon = require('sinon');
 const SceApiTester = require('../util/tools/SceApiTester');
@@ -167,6 +168,88 @@ describe('User', () => {
       result.body.should.have.property('joinDate');
       result.body.should.have.property('lastLogin');
       result.body.should.have.property('discordID');
+    });
+  });
+
+  describe('/POST admins/validate', () => {
+    it('Should return statusCode 401 if no token is passed in', async () => {
+      const result = await test.sendPostRequest(
+        '/api/User/admins/validate', { ids: [] });
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return statusCode 403 if an invalid token was passed in', async () => {
+      setTokenStatus(null);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/admins/validate', { ids: [] });
+      expect(result).to.have.status(FORBIDDEN);
+    });
+
+    it('Should return statusCode 400 if ids is not an array', async () => {
+      setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.ADMIN });
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/admins/validate', { ids: 'not-array' });
+      expect(result).to.have.status(BAD_REQUEST);
+    });
+
+    it('Should return valid admin users and invalid ids', async () => {
+      await User.deleteMany({});
+
+      const admin = await new User({
+        email: 'admin@sce.dev',
+        password: 'Passw0rd',
+        firstName: 'Ada',
+        lastName: 'Admin',
+        major: 'Computer Science',
+        accessLevel: MEMBERSHIP_STATE.ADMIN,
+      }).save();
+      const officer = await new User({
+        email: 'officer@sce.dev',
+        password: 'Passw0rd',
+        firstName: 'Ollie',
+        lastName: 'Officer',
+        major: 'Computer Science',
+        accessLevel: MEMBERSHIP_STATE.OFFICER,
+      }).save();
+      const missingId = new mongoose.Types.ObjectId().toString();
+
+      setTokenStatus(true, { accessLevel: MEMBERSHIP_STATE.ADMIN });
+      const result = await test.sendPostRequestWithToken(
+        token,
+        '/api/User/admins/validate',
+        {
+          ids: [
+            admin._id.toString(),
+            officer._id.toString(),
+            missingId,
+            'not-object-id',
+            admin._id.toString()
+          ]
+        }
+      );
+
+      expect(result).to.have.status(OK);
+      expect(result.body.validAdmins).to.have.length(2);
+      expect(result.body.validAdmins).to.deep.include.members([
+        {
+          _id: admin._id.toString(),
+          firstName: 'Ada',
+          lastName: 'Admin',
+          email: 'admin@sce.dev',
+          accessLevel: MEMBERSHIP_STATE.ADMIN
+        },
+        {
+          _id: officer._id.toString(),
+          firstName: 'Ollie',
+          lastName: 'Officer',
+          email: 'officer@sce.dev',
+          accessLevel: MEMBERSHIP_STATE.OFFICER
+        }
+      ]);
+      expect(result.body.invalidIds).to.have.members([
+        missingId,
+        'not-object-id'
+      ]);
     });
   });
 

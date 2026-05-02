@@ -128,6 +128,57 @@ router.post('/search', async function(req, res) {
   });
 });
 
+router.post('/admins/validate', async function(req, res) {
+  const decoded = await decodeToken(req, membershipState.NON_MEMBER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  if (!Array.isArray(req.body.ids)) {
+    return res.status(BAD_REQUEST).send({ message: 'ids must be an array.' });
+  }
+
+  const requestedIds = [];
+  const invalidIds = [];
+  const seen = new Set();
+
+  req.body.ids.forEach((id) => {
+    if (typeof id !== 'string' || !id.trim()) {
+      invalidIds.push(id);
+      return;
+    }
+
+    const normalizedId = id.trim();
+    if (seen.has(normalizedId)) {
+      return;
+    }
+    seen.add(normalizedId);
+    requestedIds.push(normalizedId);
+  });
+
+  const objectIdPattern = /^[0-9a-fA-F]{24}$/;
+  const candidateIds = requestedIds.filter((id) => objectIdPattern.test(id));
+  invalidIds.push(...requestedIds.filter((id) => !objectIdPattern.test(id)));
+
+  try {
+    const validAdmins = await User.find({
+      _id: { $in: candidateIds },
+      accessLevel: { $gte: membershipState.OFFICER }
+    }, '_id firstName lastName email accessLevel').lean();
+
+    const validIdSet = new Set(validAdmins.map((user) => user._id.toString()));
+    invalidIds.push(...candidateIds.filter((id) => !validIdSet.has(id)));
+
+    return res.status(OK).send({
+      validAdmins,
+      invalidIds
+    });
+  } catch (err) {
+    logger.error('/admins/validate had an error:', err);
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
 // Search for all members
 router.post('/users', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
@@ -145,6 +196,19 @@ router.post('/users', async function(req, res) {
         }
       }))
     };
+  }
+
+  if (req.body.minRole !== undefined && req.body.minRole !== null) {
+    if (Object.keys(maybeOr).length > 0) {
+      maybeOr = {
+        $and: [
+          maybeOr,
+          { accessLevel: { $gte: req.body.minRole } }
+        ]
+      };
+    } else {
+      maybeOr = { accessLevel: { $gte: req.body.minRole } };
+    }
   }
 
   const sortColumn = req.query.sort || 'joinDate';

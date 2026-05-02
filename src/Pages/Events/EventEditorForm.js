@@ -5,6 +5,7 @@ export default function EventEditorForm({
   meta,
   form,
   questionActions,
+  adminActions,
 }) {
   const {
     title,
@@ -283,6 +284,99 @@ export default function EventEditorForm({
               <option value="admin">Admin</option>
             </select>
           </label>
+        )}
+
+        {adminActions && (
+          <div>
+            {typeof adminActions.setAllOrgAdminsCanEdit === 'function' && (
+              <label className="label mb-3 cursor-pointer justify-start gap-3">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  checked={!!adminActions.allOrgAdminsCanEdit}
+                  onChange={(e) => adminActions.setAllOrgAdminsCanEdit(e.target.checked)}
+                />
+                <span className="label-text font-medium">
+                  All officers and administrators can edit this event
+                </span>
+              </label>
+            )}
+            <div className="label">
+              <span className="label-text">Event admins</span>
+            </div>
+            <div className={`space-y-2${adminActions.allOrgAdminsCanEdit ? ' pointer-events-none opacity-60' : ''}`}>
+              {adminActions.eventAdmins.map((admin) => (
+                <div
+                  key={admin._id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                      {adminActions.userDisplayName(admin)}
+                    </p>
+                    {admin.email && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{admin.email}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    disabled={adminActions.isRemoveDisabledForAdmin?.(admin)}
+                    onClick={() => adminActions.removeEventAdmin(admin._id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className={`relative mt-4${adminActions.allOrgAdminsCanEdit ? ' pointer-events-none opacity-60' : ''}`}>
+              <input
+                type="text"
+                className="input input-bordered w-full"
+                value={adminActions.adminSearch}
+                onChange={(e) => adminActions.handleAdminSearchChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (adminActions.debounceRef.current) clearTimeout(adminActions.debounceRef.current);
+                    const query = adminActions.adminSearch.trim();
+                    if (query.length >= 2) adminActions.performAdminSearch(query);
+                  }
+                }}
+                placeholder="Search admins by name or email"
+              />
+              {adminActions.adminSearch.trim().length >= 2 && (adminActions.adminSearching || adminActions.adminSearchResults.length > 0 || adminActions.adminSearchError) && (
+                <div className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                  {adminActions.adminSearching && (
+                    <div className="p-3 text-sm text-gray-500 dark:text-gray-400">Searching…</div>
+                  )}
+                  {!adminActions.adminSearching && adminActions.adminSearchError && (
+                    <div className="p-3 text-sm text-red-600 dark:text-red-300">{adminActions.adminSearchError}</div>
+                  )}
+                  {!adminActions.adminSearching && adminActions.adminSearchResults.map((admin) => (
+                    <button
+                      key={admin._id}
+                      type="button"
+                      className="flex w-full items-center justify-between border-b border-gray-100 p-3 text-left last:border-b-0 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
+                      onClick={() => adminActions.addEventAdmin(admin)}
+                    >
+                      <span>
+                        <span className="block text-sm font-semibold text-gray-900 dark:text-white">
+                          {adminActions.userDisplayName(admin)}
+                        </span>
+                        <span className="block text-xs text-gray-500 dark:text-gray-400">
+                          {admin.email}
+                        </span>
+                      </span>
+                      <span className="text-sm font-medium text-blue-600 dark:text-blue-300">
+                        Add
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
 

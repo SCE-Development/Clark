@@ -1,8 +1,9 @@
 /* eslint-disable camelcase -- mirrors SCEvents JSON field names in state and payloads */
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { useSCE } from '../../Components/context/SceContext';
 import { getEventByID, updateSCEvent } from '../../APIFunctions/SCEvents';
+import { getAllUsers, validateEventAdmins } from '../../APIFunctions/User';
 import { membershipState } from '../../Enums';
 import { toApiRegistrationForm, useEventQuestions } from './useEventQuestions';
 import { getApiErrorMessage } from './eventUtils';
@@ -10,6 +11,11 @@ import EventEditorForm from './EventEditorForm';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
+
+function userDisplayName(admin) {
+  const name = [admin.firstName, admin.lastName].filter(Boolean).join(' ').trim();
+  return name || admin.email || admin._id;
+}
 
 export default function EditEventPage() {
   const { id } = useParams();
@@ -31,6 +37,11 @@ export default function EditEventPage() {
   const [waitlistEnabled, setWaitlistEnabled] = useState(false);
   const [waitlistSize, setWaitlistSize] = useState(10);
   const [eventAdmins, setEventAdmins] = useState([]);
+  const [allOrgAdminsCanEdit, setAllOrgAdminsCanEdit] = useState(false);
+  const [adminSearch, setAdminSearch] = useState('');
+  const [adminSearchResults, setAdminSearchResults] = useState([]);
+  const [adminSearchError, setAdminSearchError] = useState('');
+  const [adminSearching, setAdminSearching] = useState(false);
   const {
     questions,
     setQuestions,
@@ -40,14 +51,26 @@ export default function EditEventPage() {
     updateQuestionType,
     updateAnswerOption,
     addAnswerOption,
-    removeAnswerOption
+    removeAnswerOption,
   } = useEventQuestions([]);
 
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const debounceRef = useRef(null);
 
-  const isOfficerOrAdmin = user?.accessLevel >= membershipState.OFFICER;
   const userId = useMemo(() => (user?._id != null ? String(user._id) : ''), [user]);
+  const eventAdminIds = useMemo(
+    () => eventAdmins.map((admin) => String(admin._id)),
+    [eventAdmins],
+  );
+
+  const canEditThisEvent = useMemo(() => {
+    if (!userId) return false;
+    if (allOrgAdminsCanEdit && (user?.accessLevel ?? 0) >= membershipState.OFFICER) {
+      return true;
+    }
+    return eventAdminIds.includes(userId);
+  }, [allOrgAdminsCanEdit, user, userId, eventAdminIds]);
 
   useEffect(() => {
     async function loadEvent() {
@@ -80,11 +103,75 @@ export default function EditEventPage() {
         typeof evt.waitlist_size === 'number' && evt.waitlist_size > 0 ? evt.waitlist_size : 10,
       );
       setQuestions(evt.registration_form || []);
-      setEventAdmins(evt.admins || []);
+      const adminIds = Array.isArray(evt.admins) ? evt.admins.map(String) : [];
+      setAllOrgAdminsCanEdit(!!evt.all_org_admins_can_edit);
+      setEventAdmins(adminIds.map((adminId) => ({ _id: adminId })));
+
+      const adminResult = await validateEventAdmins(token, adminIds);
+      if (!adminResult.error) {
+        const validAdmins = Array.isArray(adminResult.responseData?.validAdmins)
+          ? adminResult.responseData.validAdmins
+          : [];
+        const validAdminIds = validAdmins.map((admin) => String(admin._id));
+        setEventAdmins(validAdmins);
+      }
     }
 
     loadEvent();
-  }, [id]);
+  }, [id, userId]);
+
+  function addEventAdmin(admin) {
+    if (allOrgAdminsCanEdit) return;
+    setEventAdmins((prev) => {
+      if (prev.some((selected) => String(selected._id) === String(admin._id))) {
+        return prev;
+      }
+      return [...prev, admin];
+    });
+    setAdminSearchResults((prev) => (
+      prev.filter((candidate) => String(candidate._id) !== String(admin._id))
+    ));
+  }
+
+  function removeEventAdmin(adminId) {
+    if (allOrgAdminsCanEdit) return;
+    if (eventAdminIds.length <= 1) {
+      window.alert('An event must have at least one admin.');
+      return;
+    }
+    setEventAdmins((prev) => prev.filter((admin) => String(admin._id) !== String(adminId)));
+  }
+
+  async function performAdminSearch(query) {
+    setAdminSearching(true);
+    const token = window.localStorage.getItem('jwtToken');
+    const result = await getAllUsers({ token, query, minRole: membershipState.OFFICER });
+    setAdminSearching(false);
+    if (result.error) {
+      setAdminSearchError('Failed to search admins.');
+      return;
+    }
+    const users = Array.isArray(result.responseData?.items) ? result.responseData.items : [];
+    setAdminSearchResults(
+      users.filter((candidate) => (
+        !eventAdminIds.includes(String(candidate._id))
+      )),
+    );
+  }
+
+  function handleAdminSearchChange(value) {
+    setAdminSearch(value);
+    setAdminSearchError('');
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const query = value.trim();
+    if (query.length < 2) {
+      setAdminSearchResults([]);
+      setAdminSearching(false);
+      return;
+    }
+    setAdminSearching(true);
+    debounceRef.current = setTimeout(() => performAdminSearch(query), 300);
+  }
 
   async function handleUpdateEvent() {
     setSubmitError('');
@@ -103,6 +190,18 @@ export default function EditEventPage() {
       return;
     }
 
+    if (!allOrgAdminsCanEdit && eventAdminIds.length === 0) {
+      setSubmitError('Please select at least one event admin, or allow all officers and administrators to edit.');
+      return;
+    }
+
+    if (!allOrgAdminsCanEdit && !eventAdminIds.includes(userId)) {
+      const confirmed = window.confirm('You will lose edit access to this event after saving.');
+      if (!confirmed) {
+        return;
+      }
+    }
+
     const payload = {
       name: eventName.trim(),
       date,
@@ -117,6 +216,8 @@ export default function EditEventPage() {
       minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
       waitlist_enabled: waitlistEnabled,
       waitlist_size: waitlistEnabled ? Number(waitlistSize) : 0,
+      admins: allOrgAdminsCanEdit ? [] : eventAdminIds,
+      all_org_admins_can_edit: allOrgAdminsCanEdit,
     };
 
     setSubmitting(true);
@@ -135,22 +236,6 @@ export default function EditEventPage() {
     history.push('/events');
   }
 
-  if (!isOfficerOrAdmin) {
-    return (
-      <div className="m-10">
-        <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white">
-          Edit event
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Only officers and administrators can edit events.
-        </p>
-        <Link to="/events" className="mt-4 btn btn-primary">
-          Back to events
-        </Link>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return <div className="p-10 text-center text-lg">Loading event details...</div>;
   }
@@ -167,9 +252,7 @@ export default function EditEventPage() {
     );
   }
 
-  // Edit access: only users listed in event.admins can update an event
-  const isEventAdmin = eventAdmins.includes(userId);
-  if (!isEventAdmin) {
+  if (!canEditThisEvent) {
     return (
       <div className="m-10">
         <h1 className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -232,6 +315,40 @@ export default function EditEventPage() {
         updateAnswerOption,
         addAnswerOption,
         removeAnswerOption,
+      }}
+      adminActions={{
+        eventAdmins,
+        userDisplayName,
+        adminSearch,
+        adminSearchResults,
+        adminSearchError,
+        adminSearching,
+        debounceRef,
+        handleAdminSearchChange,
+        performAdminSearch,
+        addEventAdmin,
+        removeEventAdmin,
+        allOrgAdminsCanEdit,
+        setAllOrgAdminsCanEdit: (next) => {
+          setAllOrgAdminsCanEdit(next);
+          if (next) {
+            setEventAdmins([]);
+          } else if (user) {
+            setEventAdmins((prev) => {
+              if (prev.some((a) => String(a._id) === userId)) return prev;
+              return [
+                ...prev,
+                {
+                  _id: userId,
+                  firstName: user.firstName || '',
+                  lastName: user.lastName || '',
+                  email: user.email || '',
+                  accessLevel: user.accessLevel,
+                },
+              ];
+            });
+          }
+        },
       }}
     />
   );

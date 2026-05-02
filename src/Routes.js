@@ -93,6 +93,8 @@ export const memberRoutes = [
     allowedIf: allowedIf.MEMBER,
     redirect: '/',
   },
+
+
   ...authenticatedRoutes,
 ];
 
@@ -177,7 +179,15 @@ export const officerOrAdminRoutes = [
     pageName: 'Create Event',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
-    inAdminNavbar: true
+    inAdminNavbar: false
+  },
+
+  {
+    Component: EditEventPage,
+    path: '/events/:id/edit',
+    pageName: 'Edit Event',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
   },
   {
     Component: EditEventPage,
