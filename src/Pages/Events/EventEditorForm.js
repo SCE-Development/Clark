@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock';
 
@@ -18,7 +19,10 @@ export default function EventEditorForm({
     submitError,
     unlimitedAttendeesValue,
     maxAttendeesMode,
+    eventDelete,
   } = meta;
+
+  const deleteDialogRef = useRef(null);
 
   const {
     eventName,
@@ -425,6 +429,72 @@ export default function EventEditorForm({
           Cancel
         </Link>
       </div>
+
+      {eventDelete?.show && (
+        <div className="mt-10 border-t border-gray-200 pt-8 dark:border-gray-700">
+          <h2 className="mb-3 text-xl font-semibold text-gray-900 dark:text-white">Danger zone</h2>
+          {status === 'published' ? (
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Set status to <span className="font-medium">Closed</span> before you can delete this event.
+            </p>
+          ) : (
+            <>
+              <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+                Permanently delete this event and its registrations. This cannot be undone.
+              </p>
+              {eventDelete.deleteError && (
+                <div className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-200">
+                  {eventDelete.deleteError}
+                </div>
+              )}
+              <button
+                type="button"
+                className="btn btn-outline btn-error"
+                disabled={eventDelete.deleteSubmitting}
+                onClick={() => {
+                  eventDelete.clearDeleteError?.();
+                  deleteDialogRef.current?.showModal();
+                }}
+              >
+                Delete event
+              </button>
+              <dialog
+                ref={deleteDialogRef}
+                id="delete-event-modal"
+                className="modal modal-bottom sm:modal-middle"
+              >
+                <div className="modal-box">
+                  <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-white">Delete this event?</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    This removes the event and all related registration and waitlist data from SCEvents.
+                  </p>
+                  <div className="modal-action">
+                    <form method="dialog" className="flex flex-wrap gap-2">
+                      <button type="submit" className="btn btn-ghost">
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-error"
+                        disabled={eventDelete.deleteSubmitting}
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          const ok = await eventDelete.onConfirmDelete();
+                          if (ok) {
+                            deleteDialogRef.current?.close();
+                          }
+                        }}
+                      >
+                        {eventDelete.deleteSubmitting ? 'Deleting…' : 'Yes, delete permanently'}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
