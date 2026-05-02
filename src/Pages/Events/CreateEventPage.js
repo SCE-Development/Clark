@@ -159,7 +159,7 @@ export default function CreateEventPage() {
       meta={{
         title: 'Create event',
         eventIdLabel: eventId,
-        containerClassName: 'm-10 max-w-4xl px-4 sm:px-6',
+        containerClassName: 'mx-auto mt-3 mb-6 w-full max-w-4xl px-3 sm:mt-4 sm:mb-8 sm:px-6 md:mt-5 md:mb-10',
         submitLabel: 'Create event',
         submittingLabel: 'Creating…',
         onSubmit: handleCreateEvent,
