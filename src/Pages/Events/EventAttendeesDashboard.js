@@ -117,7 +117,7 @@ export default function EventAttendeesDashboard() {
     if (event?.registration_form && Array.isArray(event.registration_form)) {
       event.registration_form.forEach((question) => {
         if (question.id) {
-          questionMap[question.id] = question.label || question.name || question.id;
+          questionMap[question.id] = question.question || question.label || question.name || question.id;
         }
       });
     }
