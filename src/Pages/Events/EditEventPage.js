@@ -38,6 +38,7 @@ export default function EditEventPage() {
   const [waitlistSize, setWaitlistSize] = useState(10);
   const [eventAdmins, setEventAdmins] = useState([]);
   const [allOrgAdminsCanEdit, setAllOrgAdminsCanEdit] = useState(false);
+  const [publishDate, setPublishDate] = useState('');
   const [adminSearch, setAdminSearch] = useState('');
   const [adminSearchResults, setAdminSearchResults] = useState([]);
   const [adminSearchError, setAdminSearchError] = useState('');
@@ -104,6 +105,7 @@ export default function EditEventPage() {
       setWaitlistSize(
         typeof evt.waitlist_size === 'number' && evt.waitlist_size > 0 ? evt.waitlist_size : 10,
       );
+      setPublishDate(evt.publish_date ? evt.publish_date.slice(0, 16) : '');
       setQuestions(evt.registration_form || []);
       const adminIds = Array.isArray(evt.admins) ? evt.admins.map(String) : [];
       setAllOrgAdminsCanEdit(!!evt.all_org_admins_can_edit);
@@ -175,6 +177,12 @@ export default function EditEventPage() {
     debounceRef.current = setTimeout(() => performAdminSearch(query), 300);
   }
 
+  function toPublishDateValue(status, publishDate) {
+    if (status === 'closed') return null;
+    if (!publishDate) return null;
+    return new Date(publishDate).toISOString();
+  }
+
   async function handleUpdateEvent() {
     setSubmitError('');
     if (!eventName.trim()) {
@@ -204,6 +212,18 @@ export default function EditEventPage() {
       }
     }
 
+    if (status === 'closed' && publishDate) {
+      setSubmitError('Closed events cannot have a publish date.');
+      return;
+    }
+
+    if (status === 'published' && publishDate) {
+      const confirmed = window.confirm(
+        'This event is marked published and also has a publish date. It may publish immediately if that date is in the past. Continue?'
+      );
+      if (!confirmed) return;
+    }
+
     const payload = {
       name: eventName.trim(),
       date,
@@ -220,6 +240,7 @@ export default function EditEventPage() {
       waitlist_size: waitlistEnabled ? Number(waitlistSize) : 0,
       admins: allOrgAdminsCanEdit ? [] : eventAdminIds,
       all_org_admins_can_edit: allOrgAdminsCanEdit,
+      publish_date: toPublishDateValue(status, publishDate),
     };
 
     setSubmitting(true);
@@ -331,6 +352,8 @@ export default function EditEventPage() {
         setWaitlistEnabled,
         waitlistSize,
         setWaitlistSize,
+        publishDate,
+        setPublishDate,
       }}
       questionActions={{
         questions,

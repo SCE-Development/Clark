@@ -47,6 +47,8 @@ export default function EventEditorForm({
     setWaitlistEnabled,
     waitlistSize,
     setWaitlistSize,
+    publishDate,
+    setPublishDate,
   } = form;
 
   const {
@@ -243,7 +245,14 @@ export default function EventEditorForm({
             <select
               className="select select-bordered w-full"
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => {
+                const nextStatus = e.target.value;
+                setStatus(nextStatus);
+
+                if (nextStatus === 'closed') {
+                  setPublishDate('');
+                }
+              }}
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -269,6 +278,24 @@ export default function EventEditorForm({
               <option value="public">Public</option>
               <option value="private">Private</option>
             </select>
+          </label>
+
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text">Publish date</span>
+            </div>
+            <input
+              type="datetime-local"
+              className="input input-bordered w-full"
+              value={publishDate}
+              onChange={(e) => setPublishDate(e.target.value)}
+              disabled={status === 'closed'}
+            />
+            <div className="label">
+              <span className="label-text-alt text-gray-500 dark:text-gray-400">
+                Leave blank to publish immediately when status is set to published. Set a future date while status is draft to schedule auto-publish.
+              </span>
+            </div>
           </label>
         </div>
 
