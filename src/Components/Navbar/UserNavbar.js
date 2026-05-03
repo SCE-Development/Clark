@@ -13,6 +13,7 @@ export default function UserNavbar(props) {
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
+    { title: 'Events', route: '/events' },
     { title: 'Summer Internship', route: '/s/internship', newTab: true },
   ];
 
@@ -20,6 +21,7 @@ export default function UserNavbar(props) {
     { title: 'Printing', route: '/2DPrinting' },
     { title: 'Chat', route: '/messaging' },
     { title: 'LED Sign', route: '/led-sign' },
+    { title: 'Events', route: '/events' },
   ];
 
   const authentication = [

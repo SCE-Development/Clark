@@ -206,14 +206,6 @@ export const officerOrAdminRoutes = [
     inAdminNavbar: true,
     hideFromShortcutSuggestions: true
   },
-  {
-    Component: EventsPage,
-    path: '/events',
-    pageName: 'Events',
-    allowedIf: allowedIf.OFFICER_OR_ADMIN,
-    redirect: '/',
-    inAdminNavbar: true
-  },
   ...memberRoutes,
 ];
 
@@ -244,6 +236,11 @@ export const signedOutRoutes = [
     Component: ProjectsPage,
     path: '/projects',
     pageName: 'Projects'
+  },
+  {
+    Component: EventsPage,
+    path: '/events',
+    pageName: 'Events'
   },
   {
     Component: EventRegistration,
