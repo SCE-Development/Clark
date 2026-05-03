@@ -47,10 +47,11 @@ export default function CreateEventFormQuestionBlock({
 
       <label className="w-full mt-3 form-control">
         <div className="label">
-          <span className="label-text">Question text</span>
+          <span className="label-text">Question text *</span>
         </div>
         <input
           type="text"
+          required
           className="w-full text-sm input input-bordered sm:text-base"
           value={question.question}
           onChange={(e) => onUpdateField(question.id, 'question', e.target.value)}
@@ -83,6 +84,7 @@ export default function CreateEventFormQuestionBlock({
             <div key={`${question.id}-opt-${optIndex}`} className="flex gap-2 items-center">
               <input
                 type="text"
+                required
                 className="flex-1 text-sm input input-bordered input-sm"
                 value={option}
                 onChange={(e) => onUpdateAnswerOption(question.id, optIndex, e.target.value)}
