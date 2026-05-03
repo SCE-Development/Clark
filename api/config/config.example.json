@@ -33,7 +33,9 @@
     "ENABLED": false
   },
   "membershipPayment": {
-    "API_KEY": "GO_AWAY_LOL"
+    "API_KEY": "GO_AWAY_LOL",
+    "DCD_ENABLED": false,
+    "DCD_URL": "NOT_SET"
   },
   "secretKey": "super duper secret key",
   "SCEvents": {
