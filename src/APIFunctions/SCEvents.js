@@ -154,11 +154,9 @@ export async function deleteSCEvent(id, token) {
 export async function getEventRegistrations(eventId, token, { limit = 50, offset = 0 } = {}) {
   const status = new ApiResponse();
   try {
-    const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/registrations`, window.location.origin);
-    url.searchParams.set('limit', String(limit));
-    url.searchParams.set('offset', String(offset));
+    const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
 
-    const res = await fetch(url.href, {
+    const res = await fetch(`${SCEVENTS_API_URL}/events/${eventId}/registrations?${params}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -262,7 +260,7 @@ export async function joinWaitlistForSCEvent(eventId, token) {
     }
   } catch (err) {
     status.error = true;
-    status.responseData = err;
+    status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
 
   return status;
