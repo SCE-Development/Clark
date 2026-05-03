@@ -111,7 +111,7 @@ export default function EventAttendeesDashboard() {
 
   const selectedAnswers = useMemo(() => {
     if (!selectedAttendee?.answers || typeof selectedAttendee.answers !== 'object') return [];
-    
+
     // Create a mapping from question ID to question text (label)
     const questionMap = {};
     if (event?.registration_form && Array.isArray(event.registration_form)) {
@@ -196,7 +196,7 @@ export default function EventAttendeesDashboard() {
         <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={closeDetailPanel}>
           <div
             className="h-full w-full max-w-xl overflow-y-auto border-l border-white/10 bg-gray-900 p-6 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold">Attendee Detail</h2>
