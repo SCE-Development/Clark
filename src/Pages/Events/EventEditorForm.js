@@ -82,6 +82,7 @@ export default function EventEditorForm({
           </div>
           <input
             type="text"
+            required
             className="input input-bordered w-full text-sm sm:text-base"
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
@@ -96,6 +97,7 @@ export default function EventEditorForm({
             </div>
             <input
               type="date"
+              required
               className="input input-bordered w-full"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -107,6 +109,7 @@ export default function EventEditorForm({
             </div>
             <input
               type="time"
+              required
               className="input input-bordered w-full"
               value={time}
               onChange={(e) => setTime(e.target.value)}
@@ -116,10 +119,11 @@ export default function EventEditorForm({
 
         <label className="form-control w-full">
           <div className="label">
-            <span className="label-text">Location</span>
+            <span className="label-text">Location *</span>
           </div>
           <input
             type="text"
+            required
             className="input input-bordered w-full text-sm sm:text-base"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
@@ -302,9 +306,12 @@ export default function EventEditorForm({
         {visibility === 'private' && (
           <label className="form-control w-full">
             <div className="label">
-              <span className="label-text">Minimum visible role</span>
+              <span className="label-text">
+                Minimum visible role {visibility === 'private' && '*'}
+              </span>
             </div>
             <select
+              required={visibility === 'private'}
               className="select select-bordered w-full max-w-xs"
               value={minimumVisibleRole}
               onChange={(e) => setMinimumVisibleRole(e.target.value)}
