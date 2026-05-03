@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 import { getAllSCEvents } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
@@ -42,7 +43,28 @@ export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const location = useLocation();
+  const history = useHistory();
+
   const [cursor, setCursor] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const monthParam = params.get('month');
+    const yearParam = params.get('year');
+
+    const month = Number(monthParam);
+    const year = Number(yearParam);
+
+    if (
+      monthParam !== null &&
+      yearParam !== null &&
+      Number.isInteger(month) &&
+      month >= 0 &&
+      month <= 11 &&
+      Number.isInteger(year)
+    ) {
+      return new Date(year, month, 1);
+    }
+
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
@@ -55,6 +77,17 @@ export default function EventsPage() {
   const calendarContainerClass = isAdminView
     ? 'relative h-full w-full overflow-hidden px-3 py-4 sm:px-4 sm:py-5 lg:px-5'
     : 'relative mx-auto h-full max-w-[120rem] overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10';
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    params.set('month', cursor.getMonth());
+    params.set('year', cursor.getFullYear());
+
+    history.replace({
+      search: params.toString(),
+    });
+  }, [cursor, history, location.search]);
 
   useEffect(() => {
     async function fetchEvents() {
