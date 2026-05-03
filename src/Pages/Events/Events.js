@@ -6,6 +6,8 @@ import { membershipState } from '../../Enums';
 import CalendarView from './Calendar/CalendarView';
 import { toDateKey } from './eventUtils';
 
+const EVENTS_CALENDAR_CURSOR_KEY = 'scevents-calendar-cursor';
+
 function canUserSeeEvent(event, user) {
   const userId = user?._id != null ? String(user._id) : '';
   const userAccess = user?.accessLevel ?? membershipState.NON_MEMBER;
@@ -65,6 +67,27 @@ export default function EventsPage() {
       return new Date(year, month, 1);
     }
 
+    const savedCursor = window.localStorage.getItem(EVENTS_CALENDAR_CURSOR_KEY);
+
+    if (savedCursor) {
+      try {
+        const parsedCursor = JSON.parse(savedCursor);
+        const savedMonth = Number(parsedCursor.month);
+        const savedYear = Number(parsedCursor.year);
+
+        if (
+          Number.isInteger(savedMonth) &&
+          savedMonth >= 0 &&
+          savedMonth <= 11 &&
+          Number.isInteger(savedYear)
+        ) {
+          return new Date(savedYear, savedMonth, 1);
+        }
+      } catch {
+        window.localStorage.removeItem(EVENTS_CALENDAR_CURSOR_KEY);
+      }
+    }
+
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
@@ -80,9 +103,16 @@ export default function EventsPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
+    const month = cursor.getMonth();
+    const year = cursor.getFullYear();
 
-    params.set('month', cursor.getMonth());
-    params.set('year', cursor.getFullYear());
+    params.set('month', month);
+    params.set('year', year);
+
+    window.localStorage.setItem(
+      EVENTS_CALENDAR_CURSOR_KEY,
+      JSON.stringify({ month, year }),
+    );
 
     history.replace({
       search: params.toString(),
