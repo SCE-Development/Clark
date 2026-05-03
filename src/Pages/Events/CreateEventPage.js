@@ -67,6 +67,7 @@ export default function CreateEventPage() {
   const [maxAttendees, setMaxAttendees] = useState(UNLIMITED_ATTENDEES);
   const [waitlistEnabled, setWaitlistEnabled] = useState(false);
   const [waitlistSize, setWaitlistSize] = useState(10);
+  const [publishDate, setPublishDate] = useState('');
   const {
     questions,
     addQuestion,
@@ -164,6 +165,12 @@ export default function CreateEventPage() {
     debounceRef.current = setTimeout(() => performAdminSearch(query), 300);
   }
 
+  function toPublishDateValue(status, publishDate) {
+    if (status === 'closed') return null;
+    if (!publishDate) return null;
+    return new Date(publishDate).toISOString();
+  }
+
   async function handleCreateEvent() {
     setSubmitError('');
     if (!eventName.trim()) {
@@ -190,6 +197,16 @@ export default function CreateEventPage() {
       setSubmitError('Please enter a valid waitlist size.');
       return;
     }
+    if (status === 'closed' && publishDate) {
+      setSubmitError('Closed events cannot have a publish date.');
+      return;
+    }
+    if (status === 'published' && publishDate) {
+      const confirmed = window.confirm(
+        'This event is marked published and also has a publish date. It may publish immediately if that date is in the past. Continue?'
+      );
+      if (!confirmed) return;
+    }
 
     const payload = {
       id: eventId,
@@ -209,6 +226,7 @@ export default function CreateEventPage() {
       minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
       waitlist_enabled: waitlistEnabled,
       waitlist_size: waitlistEnabled ? Number(waitlistSize) : 0,
+      publish_date: toPublishDateValue(status, publishDate),
     };
 
     setSubmitting(true);
@@ -280,6 +298,8 @@ export default function CreateEventPage() {
         setWaitlistEnabled,
         waitlistSize,
         setWaitlistSize,
+        publishDate,
+        setPublishDate,
       }}
       questionActions={{
         questions,

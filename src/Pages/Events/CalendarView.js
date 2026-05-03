@@ -10,7 +10,8 @@ import {
   PinIcon,
   ClockIcon,
   XIcon,
-  PlusIcon
+  PlusIcon,
+  ScheduleIcon,
 } from './EventIcons';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -71,11 +72,27 @@ function formatTime(timeStr) {
   });
 }
 
+function isScheduledEvent(event) {
+  if (event.status !== 'draft' || !event.publish_date) return false;
+  const publishDate = new Date(event.publish_date);
+  return !isNaN(publishDate) && publishDate > new Date();
+}
+
 function pillColors(event, isAdminView) {
   const status = event.status || 'draft';
   const visibility = event.visibility || 'public';
 
   if (isAdminView) {
+    if (isScheduledEvent(event)) {
+      return {
+        bg: 'bg-blue-500/12',
+        text: 'text-blue-200',
+        border: 'border-blue-400/40',
+        dot: 'bg-blue-300',
+        accent: 'text-blue-300',
+      };
+    }
+
     if (status === 'draft') {
       return {
         bg: 'bg-amber-500/12',
@@ -149,6 +166,7 @@ function getBadgeText(event, isAdminView) {
   const visibility = event.visibility || 'public';
 
   if (isAdminView) {
+    if (isScheduledEvent(event)) return 'Scheduled';
     if (status === 'draft') return 'Draft';
     if (status === 'closed') return 'Closed';
     if (visibility === 'private') return 'Private';
@@ -531,6 +549,21 @@ function EventPopup({ event, onClose, isAdminView, user }) {
 
           {waitlistMessage && (
             <p className="text-xs text-center text-emerald-300">{waitlistMessage}</p>
+          )}
+
+          {isAdminView && event.publish_date && (
+            <div className="flex items-start gap-2.5 text-sm text-slate-200">
+              <span className="mt-0.5 text-slate-400"><ScheduleIcon /></span>
+              <span>
+                Publish date: {new Date(event.publish_date).toLocaleString()}
+              </span>
+            </div>
+          )}
+
+          {isAdminView && event.published_at && (
+            <div className="text-xs text-slate-400">
+              Published at: {new Date(event.published_at).toLocaleString()}
+            </div>
           )}
         </div>
       </div>
@@ -935,6 +968,7 @@ export default function CalendarView({
         {isAdminView ? (
           <div className="flex flex-wrap items-center px-5 py-3 border-t gap-x-4 gap-y-1 border-slate-700/70 bg-slate-900/35">
             {[
+              { label: 'Scheduled', dot: 'bg-blue-300' },
               { label: 'Published', dot: 'bg-cyan-300' },
               { label: 'Private', dot: 'bg-violet-300' },
               { label: 'Draft', dot: 'bg-amber-300' },
