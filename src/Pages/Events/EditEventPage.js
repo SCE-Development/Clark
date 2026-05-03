@@ -190,6 +190,21 @@ export default function EditEventPage() {
       return;
     }
 
+    if (!date) {
+      setSubmitError('Please select an event date.');
+      return;
+    }
+
+    if (!time) {
+      setSubmitError('Please select an event time.');
+      return;
+    }
+
+    if (!location.trim()) {
+      setSubmitError('Please enter an event location.');
+      return;
+    }
+
     if (visibility === 'private' && !minimumVisibleRole) {
       setSubmitError('Please select a minimum visible role for private events.');
       return;
@@ -222,6 +237,25 @@ export default function EditEventPage() {
         'This event is marked published and also has a publish date. It may publish immediately if that date is in the past. Continue?'
       );
       if (!confirmed) return;
+    }
+
+    const hasBlankQuestion = questions.some((q) => !String(q.question || '').trim());
+
+    if (hasBlankQuestion) {
+      setSubmitError('Please fill out all registration question text fields.');
+      return;
+    }
+
+    const hasBlankAnswerOption = questions.some((q) =>
+      ['multiple_choice', 'dropdown', 'checkbox'].includes(q.type) &&
+      (!Array.isArray(q.answer_options) ||
+        q.answer_options.length === 0 ||
+        q.answer_options.some((opt) => !String(opt || '').trim()))
+    );
+
+    if (hasBlankAnswerOption) {
+      setSubmitError('Please fill out all answer options for choice questions.');
+      return;
     }
 
     const payload = {
