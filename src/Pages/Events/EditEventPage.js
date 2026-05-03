@@ -20,6 +20,7 @@ function userDisplayName(admin) {
 export default function EditEventPage() {
   const { id } = useParams();
   const { user } = useSCE();
+  const token = user?.token;
   const history = useHistory();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +80,6 @@ export default function EditEventPage() {
     async function loadEvent() {
       setIsLoading(true);
 
-      const token = window.localStorage.getItem('jwtToken');
       const result = await getEventByID(id, token);
 
       setIsLoading(false);
@@ -122,7 +122,7 @@ export default function EditEventPage() {
     }
 
     loadEvent();
-  }, [id, userId]);
+  }, [id, token, userId]);
 
   function addEventAdmin(admin) {
     if (allOrgAdminsCanEdit) return;
@@ -148,7 +148,6 @@ export default function EditEventPage() {
 
   async function performAdminSearch(query) {
     setAdminSearching(true);
-    const token = window.localStorage.getItem('jwtToken');
     const result = await getAllUsers({ token, query, minRole: membershipState.OFFICER });
     setAdminSearching(false);
     if (result.error) {
@@ -278,7 +277,6 @@ export default function EditEventPage() {
     };
 
     setSubmitting(true);
-    const token = window.localStorage.getItem('jwtToken');
     const result = await updateSCEvent(id, token, payload);
     setSubmitting(false);
 
@@ -296,7 +294,6 @@ export default function EditEventPage() {
   async function handleConfirmDelete() {
     setDeleteError('');
     setDeleteSubmitting(true);
-    const token = window.localStorage.getItem('jwtToken');
     const result = await deleteSCEvent(id, token);
     setDeleteSubmitting(false);
     if (result.error) {

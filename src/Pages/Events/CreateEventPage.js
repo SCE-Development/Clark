@@ -45,6 +45,7 @@ function userDisplayName(admin) {
 
 export default function CreateEventPage() {
   const { user } = useSCE();
+  const token = user?.token;
   const history = useHistory();
 
   const [eventId] = useState(() => crypto.randomUUID());
@@ -136,7 +137,6 @@ export default function CreateEventPage() {
 
   async function performAdminSearch(query) {
     setAdminSearching(true);
-    const token = window.localStorage.getItem('jwtToken');
     const result = await getAllUsers({ token, query, minRole: membershipState.OFFICER });
     setAdminSearching(false);
     if (result.error) {
@@ -262,7 +262,6 @@ export default function CreateEventPage() {
     };
 
     setSubmitting(true);
-    const token = window.localStorage.getItem('jwtToken');
     const result = await createSCEvent(token, payload);
     setSubmitting(false);
 

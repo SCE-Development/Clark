@@ -42,6 +42,7 @@ function canUserSeeEvent(event, user) {
 
 export default function EventsPage() {
   const { user } = useSCE();
+  const token = user?.token;
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -124,7 +125,6 @@ export default function EventsPage() {
       setIsLoading(true);
       setHasError(false);
 
-      const token = window.localStorage.getItem('jwtToken');
       const startDate = toDateKey(new Date(cursor.getFullYear(), cursor.getMonth(), 1));
       const endDate = toDateKey(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0));
       const response = await getAllSCEvents(token, { startDate, endDate });
@@ -139,7 +139,7 @@ export default function EventsPage() {
     }
 
     fetchEvents();
-  }, [cursor]);
+  }, [cursor, token]);
 
   return (
     <div className={pageContainerClass}>

@@ -37,6 +37,7 @@ function StatusPanel({ title, message, borderClass, textClass, onBack }) {
 
 export default function EventRegistration() {
   const { user } = useSCE();
+  const token = user?.token;
   const { id } = useParams();
   const history = useHistory();
   const [event, setEvent] = useState(null);
@@ -56,7 +57,6 @@ export default function EventRegistration() {
       setIsLoading(true);
       setHasError(false);
 
-      const token = window.localStorage.getItem('jwtToken');
       const response = await getEventByID(id, token);
 
       if (!response.error && response.responseData) {
@@ -72,14 +72,13 @@ export default function EventRegistration() {
       setIsLoading(false);
     }
     fetchEvent();
-  }, [id]);
+  }, [id, token]);
 
   useEffect(() => {
     if (!id) {
       return;
     }
     let isCurrent = true;
-    const token = window.localStorage.getItem('jwtToken');
     if (!token) {
       return;
     }
@@ -100,7 +99,7 @@ export default function EventRegistration() {
     return () => {
       isCurrent = false;
     };
-  }, [id]);
+  }, [id, token]);
 
   const handleInputChange = (fieldId, value, type) => {
     if (type === 'checkbox') {
@@ -120,7 +119,6 @@ export default function EventRegistration() {
     setSubmitError('');
     setSubmitSuccess('');
 
-    const token = window.localStorage.getItem('jwtToken');
     if (!token) {
       setSubmitError('You must be logged in to register for an event.');
       return;
