@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, Redirect, useParams } from 'react-router-dom';
-import { getEventRegistrationByRequestId, getEventRegistrations } from '../../APIFunctions/SCEvents';
+import { getEventByID, getEventRegistrationByRequestId, getEventRegistrations } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 
 function formatDateTime(dateValue) {
@@ -40,6 +40,21 @@ export default function EventAttendeesDashboard() {
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [detailError, setDetailError] = useState('');
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  const [event, setEvent] = useState(null);
+
+  useEffect(() => {
+    if (!authenticated || !user?.token || !id) return;
+
+    async function fetchEventDetails() {
+      const response = await getEventByID(id, user.token);
+      if (!response.error) {
+        setEvent(response.responseData);
+      }
+    }
+
+    fetchEventDetails();
+  }, [authenticated, id, user?.token]);
 
   useEffect(() => {
     if (!authenticated || !user?.token || !id) return;
@@ -96,8 +111,22 @@ export default function EventAttendeesDashboard() {
 
   const selectedAnswers = useMemo(() => {
     if (!selectedAttendee?.answers || typeof selectedAttendee.answers !== 'object') return [];
-    return Object.entries(selectedAttendee.answers);
-  }, [selectedAttendee]);
+    
+    // Create a mapping from question ID to question text (label)
+    const questionMap = {};
+    if (event?.registration_form && Array.isArray(event.registration_form)) {
+      event.registration_form.forEach((question) => {
+        if (question.id) {
+          questionMap[question.id] = question.label || question.name || question.id;
+        }
+      });
+    }
+
+    return Object.entries(selectedAttendee.answers).map(([fieldKey, value]) => {
+      const questionText = questionMap[fieldKey] || fieldKey;
+      return [questionText, value];
+    });
+  }, [selectedAttendee, event]);
 
   if (!authenticated) return <Redirect to="/login" />;
 
