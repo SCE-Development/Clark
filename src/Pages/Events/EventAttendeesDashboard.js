@@ -40,7 +40,6 @@ export default function EventAttendeesDashboard() {
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [detailError, setDetailError] = useState('');
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-
   const [event, setEvent] = useState(null);
 
   useEffect(() => {
@@ -196,7 +195,7 @@ export default function EventAttendeesDashboard() {
         <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={closeDetailPanel}>
           <div
             className="h-full w-full max-w-xl overflow-y-auto border-l border-white/10 bg-gray-900 p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold">Attendee Detail</h2>
