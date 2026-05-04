@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, Redirect, useParams } from 'react-router-dom';
 import { getEventByID, getEventRegistrationByRequestId, getEventRegistrations } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
+import LinkifiedText from '../../Components/LinkifiedText/LinkifiedText';
 
 function formatDateTime(dateValue) {
   if (!dateValue) return 'N/A';
@@ -20,10 +21,10 @@ function SummaryCard({ label, value }) {
 }
 
 function AnswerValue({ value }) {
-  if (Array.isArray(value)) return <span>{value.join(', ') || 'N/A'}</span>;
+  if (Array.isArray(value)) return <span><LinkifiedText>{value.join(', ') || 'N/A'}</LinkifiedText></span>;
   if (value === null || value === undefined || value === '') return <span>N/A</span>;
-  if (typeof value === 'object') return <span>{JSON.stringify(value)}</span>;
-  return <span>{String(value)}</span>;
+  if (typeof value === 'object') return <span><LinkifiedText>{JSON.stringify(value)}</LinkifiedText></span>;
+  return <span><LinkifiedText>{String(value)}</LinkifiedText></span>;
 }
 
 export default function EventAttendeesDashboard() {

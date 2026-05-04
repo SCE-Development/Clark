@@ -21,6 +21,7 @@ import {
   getRegistrationCta,
   pillColors,
 } from './calendarUtils';
+import LinkifiedText from '../../../Components/LinkifiedText/LinkifiedText';
 
 export function EventPopup({ event, onClose, isAdminView, user }) {
   const popupRef = useRef(null);
@@ -215,7 +216,7 @@ export function EventPopup({ event, onClose, isAdminView, user }) {
 
           {event.description && (
             <p className="pt-1 text-sm leading-relaxed text-slate-300">
-              {event.description}
+              <LinkifiedText>{event.description}</LinkifiedText>
             </p>
           )}
         </div>

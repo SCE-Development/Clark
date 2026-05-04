@@ -6,6 +6,7 @@ import { getEventByID, getEventAttendanceSummary, registerForEvent } from '../..
 import { membershipState } from '../../Enums';
 import { calculateEventCapacity, getApiErrorMessage } from './eventUtils';
 import { ArrowLeftIcon } from './EventIcons';
+import LinkifiedText from '../../Components/LinkifiedText/LinkifiedText';
 
 function StatusPanel({ title, message, borderClass, textClass, onBack }) {
   return (
@@ -290,7 +291,7 @@ export default function EventRegistration() {
             {(event.registration_form || []).map((field) => ( // eslint-disable-line camelcase
               <div key={field.id} className="space-y-3">
                 <label className="block text-sm font-semibold text-gray-200 tracking-wide">
-                  {field.question}
+                  <LinkifiedText>{field.question}</LinkifiedText>
                   {field.required && <span className="ml-1 text-red-400 font-bold">*</span>}
                 </label>
 
