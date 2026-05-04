@@ -159,7 +159,7 @@ export default function EventsPage() {
 
         {!isLoading && hasError && (
           <div className="p-6 text-lg text-center text-red-100 border rounded-2xl border-red-400/30 bg-red-500/10">
-            Failed to load events. Please make sure SCEvents is running locally.
+            Failed to load events; SCEvents might be down, please contact a development team member!
           </div>
         )}
 
