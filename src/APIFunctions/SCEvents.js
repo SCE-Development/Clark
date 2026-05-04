@@ -3,6 +3,22 @@ import config from '../config/config.json';
 
 const SCEVENTS_API_URL = config.SCEvents?.BASE_URL || '/api/scevents';
 
+async function fetchSCEventsAllowAuthFallback(url, options = {}, token) {
+  let res = await fetch(url, options);
+
+  // If unauthorized (401), and a token was used, retry without the token
+  // to allow fallback to public event details if SCEvents permits it.
+  if (res.status === 401 && token) {
+    const fallbackOptions = { ...options };
+    if (fallbackOptions.headers) {
+      delete fallbackOptions.headers['Authorization'];
+    }
+    res = await fetch(url, fallbackOptions);
+  }
+
+  return res;
+}
+
 export async function getAllSCEvents(token, { startDate, endDate } = {}) {
   const status = new ApiResponse();
   try {
@@ -16,9 +32,9 @@ export async function getAllSCEvents(token, { startDate, endDate } = {}) {
       url.searchParams.set('endDate', endDate);
     }
 
-    const res = await fetch(url.href, {
+    const res = await fetchSCEventsAllowAuthFallback(url.href, {
       headers,
-    });
+    }, token);
 
     const result = await res.json();
     status.responseData = result;
@@ -40,9 +56,9 @@ export async function getEventByID(id, token) {
       : {};
 
     const url = new URL(`${SCEVENTS_API_URL}/events/${id}`, window.location.origin);
-    const res = await fetch(url.href, {
+    const res = await fetchSCEventsAllowAuthFallback(url.href, {
       headers,
-    });
+    }, token);
 
     const result = await res.json();
     status.responseData = result;
