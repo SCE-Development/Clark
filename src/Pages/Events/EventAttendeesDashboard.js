@@ -3,6 +3,8 @@ import { Link, Redirect, useParams } from 'react-router-dom';
 import { getEventByID, getEventRegistrationByRequestId, getEventRegistrations } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 
+const EVENT_REGISTRATIONS_PAGE_SIZE = 100;
+
 function formatDateTime(dateValue) {
   if (!dateValue) return 'N/A';
   const date = new Date(dateValue);
@@ -41,6 +43,7 @@ export default function EventAttendeesDashboard() {
   const [detailError, setDetailError] = useState('');
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [event, setEvent] = useState(null);
+  const [registrationsOffset, setRegistrationsOffset] = useState(0);
 
   useEffect(() => {
     if (!authenticated || !user?.token || !id) return;
@@ -56,12 +59,23 @@ export default function EventAttendeesDashboard() {
   }, [authenticated, id, user?.token]);
 
   useEffect(() => {
-    if (!authenticated || !user?.token || !id) return;
+    setRegistrationsOffset(0);
+  }, [id, user?.token]);
+
+  useEffect(() => {
+    if (!authenticated || !user?.token || !id) {
+      setIsLoadingList(false);
+      return;
+    }
+
+    let active = true;
+    const controller = new AbortController();
 
     async function fetchRegistrations() {
       setIsLoadingList(true);
       setListError('');
-      const response = await getEventRegistrations(id, user.token, { limit: 100, offset: 0 });
+      const response = await getEventRegistrations(id, user.token, { limit: EVENT_REGISTRATIONS_PAGE_SIZE, offset: registrationsOffset, signal: controller.signal });
+      if (!active || response.aborted) return;
       if (response.error) {
         setListError(response.responseData?.error || 'Failed to load attendees.');
         setAttendees([]);
@@ -74,15 +88,26 @@ export default function EventAttendeesDashboard() {
     }
 
     fetchRegistrations();
-  }, [authenticated, id, user?.token]);
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [authenticated, id, user?.token, registrationsOffset]);
 
   useEffect(() => {
-    if (!selectedRequestId || !user?.token) return;
+    if (!selectedRequestId || !user?.token || !id) {
+      setIsLoadingDetail(false);
+      return;
+    }
+
+    let active = true;
+    const controller = new AbortController();
 
     async function fetchAttendeeDetail() {
       setIsLoadingDetail(true);
       setDetailError('');
-      const response = await getEventRegistrationByRequestId(id, selectedRequestId, user.token);
+      const response = await getEventRegistrationByRequestId(id, selectedRequestId, user.token, controller.signal);
+      if (!active || response.aborted) return;
       if (response.error) {
         setDetailError(response.responseData?.error || 'Failed to load attendee details.');
         setSelectedAttendee(null);
@@ -93,6 +118,10 @@ export default function EventAttendeesDashboard() {
     }
 
     fetchAttendeeDetail();
+    return () => {
+      active = false;
+      controller.abort();
+    };
   }, [id, selectedRequestId, user?.token]);
 
   useEffect(() => {
@@ -106,6 +135,14 @@ export default function EventAttendeesDashboard() {
 
   function closeDetailPanel() {
     setIsDetailOpen(false);
+  }
+
+  function handleRegistrationsPrevPage() {
+    setRegistrationsOffset((prev) => Math.max(0, prev - EVENT_REGISTRATIONS_PAGE_SIZE));
+  }
+
+  function handleRegistrationsNextPage() {
+    setRegistrationsOffset((prev) => prev + EVENT_REGISTRATIONS_PAGE_SIZE);
   }
 
   const selectedAnswers = useMemo(() => {
@@ -128,6 +165,12 @@ export default function EventAttendeesDashboard() {
   }, [selectedAttendee, event]);
 
   if (!authenticated) return <Redirect to="/login" />;
+
+  const registrationsTotal = summary.total || 0;
+  const canPageRegistrationsPrev = registrationsOffset > 0;
+  const canPageRegistrationsNext = registrationsOffset + attendees.length < registrationsTotal;
+  const showRegistrationsPagination =
+    registrationsTotal > EVENT_REGISTRATIONS_PAGE_SIZE || registrationsOffset > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-800 to-gray-600 px-6 py-10 text-white">
@@ -158,6 +201,33 @@ export default function EventAttendeesDashboard() {
               <h2 className="text-lg font-semibold">Attendees</h2>
               <p className="text-xs text-gray-300">Click an attendee to open details</p>
             </div>
+            {showRegistrationsPagination && (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs text-gray-400">
+                  {attendees.length > 0
+                    ? `${registrationsOffset + 1}–${registrationsOffset + attendees.length} of ${registrationsTotal}`
+                    : `${registrationsTotal} total`}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    className="rounded-lg border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={isLoadingList || !canPageRegistrationsPrev}
+                    onClick={handleRegistrationsPrevPage}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-lg border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={isLoadingList || !canPageRegistrationsNext}
+                    onClick={handleRegistrationsNextPage}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
             {attendees.length === 0 ? (
               <p className="text-sm text-gray-300">No attendees found for this event yet.</p>
             ) : (

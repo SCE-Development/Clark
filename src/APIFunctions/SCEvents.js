@@ -151,7 +151,7 @@ export async function deleteSCEvent(id, token) {
   return status;
 }
 
-export async function getEventRegistrations(eventId, token, { limit = 50, offset = 0 } = {}) {
+export async function getEventRegistrations(eventId, token, { limit = 50, offset = 0, signal } = {}) {
   const status = new ApiResponse();
   try {
     const params = new URLSearchParams({ limit: String(limit), offset: String(offset) });
@@ -160,6 +160,7 @@ export async function getEventRegistrations(eventId, token, { limit = 50, offset
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      ...(signal != null ? { signal } : {}),
     });
     const result = await res.json();
     status.responseData = result;
@@ -167,13 +168,17 @@ export async function getEventRegistrations(eventId, token, { limit = 50, offset
       status.error = true;
     }
   } catch (err) {
+    if (err?.name === 'AbortError') {
+      status.aborted = true;
+      return status;
+    }
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
   return status;
 }
 
-export async function getEventRegistrationByRequestId(eventId, requestId, token) {
+export async function getEventRegistrationByRequestId(eventId, requestId, token, signal) {
   const status = new ApiResponse();
   try {
     const url = new URL(`${SCEVENTS_API_URL}/events/${eventId}/registrations/${requestId}`, window.location.origin);
@@ -181,6 +186,7 @@ export async function getEventRegistrationByRequestId(eventId, requestId, token)
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      ...(signal != null ? { signal } : {}),
     });
     const result = await res.json();
     status.responseData = result;
@@ -188,6 +194,10 @@ export async function getEventRegistrationByRequestId(eventId, requestId, token)
       status.error = true;
     }
   } catch (err) {
+    if (err?.name === 'AbortError') {
+      status.aborted = true;
+      return status;
+    }
     status.error = true;
     status.responseData = { error: err?.message || 'Failed to connect to SCEvents API' };
   }
