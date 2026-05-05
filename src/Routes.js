@@ -24,6 +24,8 @@ import CreateEventPage from './Pages/Events/CreateEventPage.js';
 import EventRegistration from './Pages/Events/EventsRegistration.js';
 import EditEventPage from './Pages/Events/EditEventPage.js';
 import EventAttendeesDashboard from './Pages/Events/EventAttendeesDashboard.js';
+import OccupancyMonitor from './Pages/OccupancyMonitor/OccupancyMonitor.js';
+import AdminOccupancyMonitor from './Pages/OccupancyMonitor/AdminOccupancyMonitor.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -206,6 +208,14 @@ export const officerOrAdminRoutes = [
     inAdminNavbar: true,
     hideFromShortcutSuggestions: true
   },
+  {
+    Component: AdminOccupancyMonitor,
+    path: '/occupancy-admin',
+    pageName: 'Occupancy Monitor',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true,
+  },
   ...memberRoutes,
 ];
 
@@ -253,5 +263,10 @@ export const signedOutRoutes = [
     path: '/emailPreferences',
     pageName: 'Email Preferences',
     hideFromShortcutSuggestions: true
+  },
+  {
+    Component: OccupancyMonitor,
+    path: '/occupancy',
+    pageName: 'Office Occupancy',
   },
 ];
