@@ -3,7 +3,7 @@ import { Link, Redirect, useParams } from 'react-router-dom';
 import { getEventByID, getEventRegistrationByRequestId, getEventRegistrations } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 
-const EVENT_REGISTRATIONS_PAGE_SIZE = 100;
+const EVENT_REGISTRATIONS_PAGE_SIZE = 10;
 
 function formatDateTime(dateValue) {
   if (!dateValue) return 'N/A';
@@ -44,6 +44,7 @@ export default function EventAttendeesDashboard() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [event, setEvent] = useState(null);
   const [registrationsOffset, setRegistrationsOffset] = useState(0);
+  const [jumpPageDraft, setJumpPageDraft] = useState('1');
 
   useEffect(() => {
     if (!authenticated || !user?.token || !id) return;
@@ -93,6 +94,10 @@ export default function EventAttendeesDashboard() {
       controller.abort();
     };
   }, [authenticated, id, user?.token, registrationsOffset]);
+
+  useEffect(() => {
+    setJumpPageDraft(String(Math.floor(registrationsOffset / EVENT_REGISTRATIONS_PAGE_SIZE) + 1));
+  }, [registrationsOffset]);
 
   useEffect(() => {
     if (!selectedRequestId || !user?.token || !id) {
@@ -145,6 +150,17 @@ export default function EventAttendeesDashboard() {
     setRegistrationsOffset((prev) => prev + EVENT_REGISTRATIONS_PAGE_SIZE);
   }
 
+  function handleJumpToRegistrationsPage(event) {
+    event.preventDefault();
+    const total = summary.total || 0;
+    const totalPages = Math.max(1, Math.ceil(total / EVENT_REGISTRATIONS_PAGE_SIZE));
+    let page = parseInt(String(jumpPageDraft).trim(), 10);
+    if (!Number.isFinite(page) || page <= 0) page = 1;
+    else if (page > totalPages) page = totalPages;
+    setRegistrationsOffset((page - 1) * EVENT_REGISTRATIONS_PAGE_SIZE);
+    setJumpPageDraft(String(page));
+  }
+
   const selectedAnswers = useMemo(() => {
     if (!selectedAttendee?.answers || typeof selectedAttendee.answers !== 'object') return [];
 
@@ -167,6 +183,11 @@ export default function EventAttendeesDashboard() {
   if (!authenticated) return <Redirect to="/login" />;
 
   const registrationsTotal = summary.total || 0;
+  const registrationsTotalPages = Math.max(1, Math.ceil(registrationsTotal / EVENT_REGISTRATIONS_PAGE_SIZE));
+  const registrationsCurrentPage = Math.min(
+    registrationsTotalPages,
+    Math.floor(registrationsOffset / EVENT_REGISTRATIONS_PAGE_SIZE) + 1,
+  );
   const canPageRegistrationsPrev = registrationsOffset > 0;
   const canPageRegistrationsNext = registrationsOffset + attendees.length < registrationsTotal;
   const showRegistrationsPagination =
@@ -202,13 +223,18 @@ export default function EventAttendeesDashboard() {
               <p className="text-xs text-gray-300">Click an attendee to open details</p>
             </div>
             {showRegistrationsPagination && (
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <p className="text-xs text-gray-400">
-                  {attendees.length > 0
-                    ? `${registrationsOffset + 1}–${registrationsOffset + attendees.length} of ${registrationsTotal}`
-                    : `${registrationsTotal} total`}
-                </p>
-                <div className="flex gap-2">
+              <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                <div className="space-y-1 text-xs text-gray-400">
+                  <p>
+                    Page {registrationsCurrentPage} of {registrationsTotalPages}
+                  </p>
+                  <p>
+                    {attendees.length > 0
+                      ? `${registrationsOffset + 1}–${registrationsOffset + attendees.length} of ${registrationsTotal}`
+                      : `${registrationsTotal} total`}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     className="rounded-lg border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
@@ -225,6 +251,24 @@ export default function EventAttendeesDashboard() {
                   >
                     Next
                   </button>
+                  <form className="flex items-center gap-2" onSubmit={handleJumpToRegistrationsPage}>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      aria-label="Go to page"
+                      value={jumpPageDraft}
+                      onChange={(e) => setJumpPageDraft(e.target.value)}
+                      className="w-14 rounded-lg border border-white/20 bg-black/20 px-2 py-1.5 text-center text-sm text-white"
+                      disabled={isLoadingList}
+                    />
+                    <button
+                      type="submit"
+                      className="rounded-lg border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+                      disabled={isLoadingList}
+                    >
+                      Go
+                    </button>
+                  </form>
                 </div>
               </div>
             )}
