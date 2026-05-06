@@ -24,8 +24,8 @@ import CreateEventPage from './Pages/Events/CreateEventPage.js';
 import EventRegistration from './Pages/Events/EventsRegistration.js';
 import EditEventPage from './Pages/Events/EditEventPage.js';
 import EventAttendeesDashboard from './Pages/Events/EventAttendeesDashboard.js';
-import OccupancyMonitor from './Pages/OccupancyMonitor/OccupancyMonitor.js';
-import AdminOccupancyMonitor from './Pages/OccupancyMonitor/AdminOccupancyMonitor.js';
+import Radar from './Pages/Radar/Radar.js';
+import AdminRadar from './Pages/Radar/AdminRadar.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -209,9 +209,9 @@ export const officerOrAdminRoutes = [
     hideFromShortcutSuggestions: true
   },
   {
-    Component: AdminOccupancyMonitor,
-    path: '/occupancy-admin',
-    pageName: 'Occupancy Monitor',
+    Component: AdminRadar,
+    path: '/radar-admin',
+    pageName: 'Radar',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     redirect: '/',
     inAdminNavbar: true,
@@ -265,8 +265,8 @@ export const signedOutRoutes = [
     hideFromShortcutSuggestions: true
   },
   {
-    Component: OccupancyMonitor,
-    path: '/occupancy',
-    pageName: 'Office Occupancy',
+    Component: Radar,
+    path: '/radar',
+    pageName: 'Radar',
   },
 ];
