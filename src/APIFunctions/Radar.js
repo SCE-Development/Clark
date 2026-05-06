@@ -129,14 +129,14 @@ export async function upsertManagedDevice(device) {
   return status;
 }
 
-export async function removePairedDevice(deviceId) {
+export async function removePairedDevice(publicName) {
   let status = new ApiResponse();
   const url = new URL('/pair/remove', RADAR_API_BASE);
   try {
     const res = await fetch(url.href, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ deviceId }),
+      body: JSON.stringify({ public_name: publicName }),
     });
     if (res.ok) {
       status.responseData = await res.json();
@@ -188,9 +188,11 @@ export async function pairFinalize(data) {
   return status;
 }
 
-export async function enrollStart() {
+export async function enrollStart(deviceType = 'phone', name = 'new_device') {
   let status = new ApiResponse();
   const url = new URL('/enroll/start', RADAR_API_BASE);
+  url.searchParams.set('device_type', deviceType);
+  url.searchParams.set('name', name);
   try {
     const res = await fetch(url.href, { method: 'GET' });
     if (res.ok) {
