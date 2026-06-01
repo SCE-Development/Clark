@@ -8,6 +8,59 @@ import { toDateKey } from './eventUtils';
 
 const EVENTS_CALENDAR_CURSOR_KEY = 'scevents-calendar-cursor';
 
+function getInitialCalendarState(search) {
+  const params = new URLSearchParams(search);
+  const monthParam = params.get('month');
+  const yearParam = params.get('year');
+
+  const month = Number(monthParam);
+  const year = Number(yearParam);
+
+  if (
+    monthParam !== null &&
+    yearParam !== null &&
+    Number.isInteger(month) &&
+    month >= 0 &&
+    month <= 11 &&
+    Number.isInteger(year)
+  ) {
+    return {
+      cursor: new Date(year, month, 1),
+      scrollToTodayWeekOnMount: false,
+    };
+  }
+
+  const savedCursor = window.localStorage.getItem(EVENTS_CALENDAR_CURSOR_KEY);
+
+  if (savedCursor) {
+    try {
+      const parsedCursor = JSON.parse(savedCursor);
+      const savedMonth = Number(parsedCursor.month);
+      const savedYear = Number(parsedCursor.year);
+
+      if (
+        Number.isInteger(savedMonth) &&
+        savedMonth >= 0 &&
+        savedMonth <= 11 &&
+        Number.isInteger(savedYear)
+      ) {
+        return {
+          cursor: new Date(savedYear, savedMonth, 1),
+          scrollToTodayWeekOnMount: false,
+        };
+      }
+    } catch {
+      window.localStorage.removeItem(EVENTS_CALENDAR_CURSOR_KEY);
+    }
+  }
+
+  const today = new Date();
+  return {
+    cursor: new Date(today.getFullYear(), today.getMonth(), 1),
+    scrollToTodayWeekOnMount: true,
+  };
+}
+
 function canUserSeeEvent(event, user) {
   const userId = user?._id != null ? String(user._id) : '';
   const userAccess = user?.accessLevel ?? membershipState.NON_MEMBER;
@@ -49,49 +102,9 @@ export default function EventsPage() {
   const location = useLocation();
   const history = useHistory();
 
-  const [cursor, setCursor] = useState(() => {
-    const params = new URLSearchParams(location.search);
-    const monthParam = params.get('month');
-    const yearParam = params.get('year');
-
-    const month = Number(monthParam);
-    const year = Number(yearParam);
-
-    if (
-      monthParam !== null &&
-      yearParam !== null &&
-      Number.isInteger(month) &&
-      month >= 0 &&
-      month <= 11 &&
-      Number.isInteger(year)
-    ) {
-      return new Date(year, month, 1);
-    }
-
-    const savedCursor = window.localStorage.getItem(EVENTS_CALENDAR_CURSOR_KEY);
-
-    if (savedCursor) {
-      try {
-        const parsedCursor = JSON.parse(savedCursor);
-        const savedMonth = Number(parsedCursor.month);
-        const savedYear = Number(parsedCursor.year);
-
-        if (
-          Number.isInteger(savedMonth) &&
-          savedMonth >= 0 &&
-          savedMonth <= 11 &&
-          Number.isInteger(savedYear)
-        ) {
-          return new Date(savedYear, savedMonth, 1);
-        }
-      } catch {
-        window.localStorage.removeItem(EVENTS_CALENDAR_CURSOR_KEY);
-      }
-    }
-
-    const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), 1);
-  });
+  const [initialCalendarState] = useState(() => getInitialCalendarState(location.search));
+  const [cursor, setCursor] = useState(() => initialCalendarState.cursor);
+  const scrollToTodayWeekOnMount = initialCalendarState.scrollToTodayWeekOnMount;
 
   const isAdminView = user?.accessLevel >= membershipState.OFFICER;
   const visibleEvents = events.filter((event) => canUserSeeEvent(event, user));
@@ -99,7 +112,7 @@ export default function EventsPage() {
     ? 'relative h-dvh overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white'
     : 'relative h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white';
   const calendarContainerClass = isAdminView
-    ? 'relative h-full w-full overflow-hidden px-3 py-4 sm:px-4 sm:py-5 lg:px-5'
+    ? 'relative flex h-full min-h-0 w-full flex-col overflow-hidden px-3 py-4 sm:px-4 sm:py-5 lg:px-5'
     : 'relative mx-auto h-full max-w-[120rem] overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10';
 
   useEffect(() => {
@@ -171,6 +184,7 @@ export default function EventsPage() {
             canCreateEvent={isAdminView}
             cursor={cursor}
             setCursor={setCursor}
+            scrollToTodayWeekOnMount={scrollToTodayWeekOnMount}
           />
         )}
       </div>

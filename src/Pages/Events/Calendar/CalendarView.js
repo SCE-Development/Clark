@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useLayoutEffect } from 'react';
 import { toDateKey } from '../eventUtils';
-import { eventDateKey, sortEventsForDay } from './calendarUtils';
+import { eventDateKey, sortEventsForDay, getWeekRowIndex } from './calendarUtils';
 import { EventPopup } from './EventPopup';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
@@ -14,9 +14,13 @@ export default function CalendarView({
   canCreateEvent = false,
   cursor,
   setCursor,
+  scrollToTodayWeekOnMount = false,
 }) {
   const today = useMemo(() => new Date(), []);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const gridScrollRef = useRef(null);
+  const shouldScrollToTodayWeekRef = useRef(scrollToTodayWeekOnMount);
+  const [scrollToTodayWeekRequest, setScrollToTodayWeekRequest] = useState(0);
 
   const eventsByDate = useMemo(() => {
     const map = {};
@@ -78,6 +82,42 @@ export default function CalendarView({
       );
   }, [cells]);
 
+  const isViewingCurrentMonth =
+    year === today.getFullYear() && month === today.getMonth();
+
+  useLayoutEffect(() => {
+    if (!shouldScrollToTodayWeekRef.current || !isViewingCurrentMonth) {
+      return;
+    }
+
+    const container = gridScrollRef.current;
+    if (!container) {
+      return;
+    }
+
+    const weekIndex = getWeekRowIndex(today.getDate(), firstDayOfMonth);
+    const weekRow = container.querySelector(`[data-week-index="${weekIndex}"]`);
+    if (weekRow) {
+      container.scrollTop = weekRow.offsetTop;
+    }
+
+    shouldScrollToTodayWeekRef.current = false;
+  }, [
+    isViewingCurrentMonth,
+    year,
+    month,
+    firstDayOfMonth,
+    today,
+    cells.length,
+    scrollToTodayWeekRequest,
+  ]);
+
+  function handleTodayClick() {
+    shouldScrollToTodayWeekRef.current = true;
+    setScrollToTodayWeekRequest((n) => n + 1);
+    setCursor(new Date(today.getFullYear(), today.getMonth(), 1));
+  }
+
   return (
     <>
       {selectedEvent && (
@@ -89,7 +129,7 @@ export default function CalendarView({
         />
       )}
 
-      <div className="flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none">
+      <div className="flex h-full min-h-0 max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)]">
         <CalendarHeader
           month={month}
           year={year}
@@ -97,7 +137,7 @@ export default function CalendarView({
           canCreateEvent={canCreateEvent}
           onMonthChange={handleMonthChange}
           onYearChange={handleYearChange}
-          onTodayClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
+          onTodayClick={handleTodayClick}
           onPreviousMonth={() => setCursor(new Date(year, month - 1, 1))}
           onNextMonth={() => setCursor(new Date(year, month + 1, 1))}
         />
@@ -114,6 +154,7 @@ export default function CalendarView({
           cells={cells}
           onSelectEvent={setSelectedEvent}
           isAdminView={isAdminView}
+          gridScrollRef={gridScrollRef}
         />
 
         <CalendarLegend isAdminView={isAdminView} />
