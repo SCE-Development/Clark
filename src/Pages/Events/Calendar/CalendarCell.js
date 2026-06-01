@@ -10,7 +10,7 @@ export function CalendarCell({ date, isCurrentMonth, isToday, events, onSelectEv
   return (
     <div
       className={[
-        'min-h-[106px] sm:min-h-[124px] border-b border-r border-slate-700/60 p-1.5 transition-colors duration-150',
+        'min-h-[106px] sm:min-h-0 sm:h-full border-b border-r border-slate-700/60 p-1.5 transition-colors duration-150',
         isCurrentMonth ? '' : 'opacity-30',
         isToday ? 'bg-cyan-500/[0.12]' : 'hover:bg-slate-700/35',
       ].join(' ')}

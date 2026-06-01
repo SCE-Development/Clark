@@ -5,6 +5,15 @@ export function getWeekRowIndex(dayOfMonth, firstDayOfMonth) {
   return Math.floor((dayOfMonth - 1 + firstDayOfMonth) / 7);
 }
 
+/** Week row (0-based) in the month grid that contains today's cell. */
+export function getTodayWeekRowIndex(cells) {
+  const todayCellIndex = cells.findIndex((cell) => cell.isToday);
+  if (todayCellIndex < 0) {
+    return 0;
+  }
+  return Math.floor(todayCellIndex / 7);
+}
+
 export function eventDateKey(event) {
   if (!event.date) return null;
   if (/^\d{4}-\d{2}-\d{2}$/.test(event.date)) return event.date;
