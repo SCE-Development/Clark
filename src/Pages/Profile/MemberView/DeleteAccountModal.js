@@ -1,5 +1,6 @@
 import React from 'react';
 import { deleteUserByID } from '../../../APIFunctions/User';
+import { logoutUser } from '../../../APIFunctions/Auth';
 import { useSCE } from '../../../Components/context/SceContext';
 
 export default function DeleteAccountModal(props) {
@@ -14,8 +15,8 @@ export default function DeleteAccountModal(props) {
 
     if (!apiResponse.error) {
       bannerCallback('Account Deleted', 'success');
-      setTimeout(() => {
-        window.localStorage.removeItem('jwtToken');
+      setTimeout(async () => {
+        await logoutUser();
         window.location.reload();
       }, 2000);
     } else {

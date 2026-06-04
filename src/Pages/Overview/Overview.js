@@ -4,6 +4,7 @@ const svg = require('./SVG');
 import { getAllUsers, deleteUserByID, getNewPaidMembersThisSemester } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
+import { logoutUser } from '../../APIFunctions/Auth';
 // import { membershipState } from '../../Enums';
 import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
@@ -39,7 +40,7 @@ export default function Overview() {
     }
     if (userToDel._id === user._id) {
       // logout
-      window.localStorage.removeItem('jwtToken');
+      await logoutUser();
       window.location.reload();
       return window.alert('Self-deprecation is an art');
     }

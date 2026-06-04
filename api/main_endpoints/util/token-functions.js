@@ -25,6 +25,8 @@ async function decodeToken(request, requiredAccessLevel = membershipState.NON_ME
   try {
     if (request.headers.authorization && request.headers.authorization.startsWith('Bearer ')) {
       token = request.headers.authorization.split('Bearer ')[1];
+    } else if (request.cookies && request.cookies.jwtToken) {
+      token = request.cookies.jwtToken;
     } else if (request.query && request.query.token) {
       token = request.query.token;
     }

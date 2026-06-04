@@ -67,6 +67,7 @@ export async function loginUser(email, password) {
   try {
     const res = await fetch(url.href, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -88,37 +89,50 @@ export async function loginUser(email, password) {
 }
 
 /**
- * Checks if the user is signed in by evaluating a jwt token in local storage.
+ * Checks if the user is signed in by verifying the auth cookie with the API.
  * @returns {UserApiResponse} Containing information for
  * whether the user is signed or not
  */
 export async function checkIfUserIsSignedIn() {
   let status = new UserApiResponse();
 
-  const token = window.localStorage
-    ? window.localStorage.getItem('jwtToken')
-    : '';
-
-  // If there is not token in local storage,
-  // we cant do anything and return
-  if (!token) {
-    status.error = true;
-    return status;
-  }
-
   const url = new URL('/api/Auth/verify', BASE_API_URL);
   try {
     const res = await fetch(url.href, {
       method: 'POST',
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        'Content-Type': 'application/json'
       }
     });
     if (res.ok) {
-      const result = await res.json();
-      status.responseData = result;
+      const { token, ...rest } = await res.json();
+      status.responseData = rest;
       status.token = token;
+    } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+    status.responseData = err;
+  }
+  return status;
+}
+
+/**
+ * Logs the user out by calling the backend to clear the auth cookie.
+ * @returns {ApiResponse} Whether the logout call succeeded.
+ */
+export async function logoutUser() {
+  let status = new ApiResponse();
+  const url = new URL('/api/Auth/logout', BASE_API_URL);
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    if (!res.ok) {
+      status.error = true;
     }
   } catch(err) {
     status.error = true;

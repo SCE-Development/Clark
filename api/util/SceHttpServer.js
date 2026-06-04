@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const http = require('http');
 const mongoose = require('mongoose');
@@ -35,6 +36,7 @@ class SceHttpServer {
     this.app.locals.email = 'test@test.com';
 
     this.app.use(cors());
+    this.app.use(cookieParser());
     this.app.use(
       bodyParser.json({
         // support JSON-encoded request bodies
