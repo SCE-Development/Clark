@@ -115,6 +115,7 @@ services:
       - ./sce.key:/etc/nginx/sce.key
       - nginx_cache:/var/cache/nginx
       - ./interview/costco_gas.json:/var/www/html/data/costco_gas.json:ro
+      - ./interview/costco_warehouse.json:/var/www/html/data/costco_warehouse.json:ro
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
       - '80:80'
