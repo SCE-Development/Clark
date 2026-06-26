@@ -17,9 +17,9 @@ const { MEMBERSHIP_STATE } = require('../../util/constants.js');
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
 let URL_SHORTENER_BASE_URL =
-  process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
+  process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/url/find/';
 
-router.get('/list', async (req, res) => {
+router.get('/url/list', async (req, res) => {
   if(!ENABLED) {
     return res.json({
       disabled: true
@@ -43,7 +43,7 @@ router.get('/list', async (req, res) => {
   }
 });
 
-router.post('/createUrl', async (req, res) => {
+router.post('/url/createUrl', async (req, res) => {
   const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
@@ -53,7 +53,7 @@ router.post('/createUrl', async (req, res) => {
   // eslint-disable-next-line camelcase
   if (expiresAt) jsonbody.expires_at = expiresAt;
   try {
-    const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
+    const response = await axios.post(CLEEZY_URL + '/url/create_url', jsonbody);
     const data = response.data;
     const u = new URL( data.alias, URL_SHORTENER_BASE_URL);
     res.json({ ...data, link: u });
@@ -63,7 +63,7 @@ router.post('/createUrl', async (req, res) => {
   }
 });
 
-router.post('/deleteUrl', async (req, res) => {
+router.post('/url/deleteUrl', async (req, res) => {
   const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
