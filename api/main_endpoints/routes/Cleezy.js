@@ -17,7 +17,7 @@ const { MEMBERSHIP_STATE } = require('../../util/constants.js');
 let CLEEZY_URL = process.env.CLEEZY_URL
   || 'http://localhost:8000';
 let URL_SHORTENER_BASE_URL =
-  process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/find/';
+  process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/url/find/';
 
 router.get('/list', async (req, res) => {
   if(!ENABLED) {
@@ -53,7 +53,7 @@ router.post('/createUrl', async (req, res) => {
   // eslint-disable-next-line camelcase
   if (expiresAt) jsonbody.expires_at = expiresAt;
   try {
-    const response = await axios.post(CLEEZY_URL + '/create_url', jsonbody);
+    const response = await axios.post(CLEEZY_URL + '/url/create', jsonbody);
     const data = response.data;
     const u = new URL( data.alias, URL_SHORTENER_BASE_URL);
     res.json({ ...data, link: u });
@@ -70,7 +70,7 @@ router.post('/deleteUrl', async (req, res) => {
   }
   const { alias } = req.body;
   axios
-    .post(CLEEZY_URL + '/delete/' + alias)
+    .post(CLEEZY_URL + '/url/delete/' + alias)
     .then(() => {
       res.sendStatus(OK);
     })
