@@ -34,7 +34,7 @@ router.get('/list', async (req, res) => {
     const returnData = await cleezyHelpers.searchCleezyUrls({ page, search, sortColumn, sortOrder });
     res.json(returnData);
   } catch (err) {
-    logger.error('/listAll had an error', err);
+    logger.error('/url/list had an error', err);
     if (err.response && err.response.data) {
       res.status(err.response.status).json({ error: err.response.data });
     } else {
@@ -58,7 +58,7 @@ router.post('/createUrl', async (req, res) => {
     const u = new URL( data.alias, URL_SHORTENER_BASE_URL);
     res.json({ ...data, link: u });
   } catch (err) {
-    logger.error('/createUrl had an error', err);
+    logger.error('/url/create had an error', err);
     res.status(err.response.status).json({ error: err.response.data?.detail || err.response.data || 'Unknown error from Cleezy' });
   }
 });
@@ -75,7 +75,7 @@ router.post('/deleteUrl', async (req, res) => {
       res.sendStatus(OK);
     })
     .catch(err => {
-      logger.error('/deleteUrl had an error', err);
+      logger.error('/url/delete had an error', err);
       res.status(err.response.status).json({ error: err.response.status });
     });
 });
