@@ -47,6 +47,11 @@ export default function CashPaymentsPage() {
       const responseMessage = await response.text();
       setMessage(responseMessage);
       setMessageIsError(!response.ok);
+      if (response.ok) {
+        setName('');
+        setEmail('');
+        setAmount('');
+      }
     } catch {
       setMessage('Failed to submit payment.');
       setMessageIsError(true);
