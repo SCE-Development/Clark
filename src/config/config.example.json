@@ -4,5 +4,6 @@
   "GOOGLE_API_CLIENT_ID": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com",
   "SCEvents": {
     "BASE_URL": "/api/scevents"
-  }
+  },
+  "MEMBERSHIP_PAYMENT_API_KEY": "GO_AWAY_LOL"
 }
