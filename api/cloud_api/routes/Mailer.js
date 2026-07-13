@@ -3,7 +3,6 @@ const router = express.Router();
 const { SceGoogleApiHandler } = require('../util/SceGoogleApiHandler');
 const { verification } = require('../email_templates/verification');
 const { passwordReset } = require('../email_templates/passwordReset');
-const { blastEmail } = require('../email_templates/blastEmail');
 const { unsubscribeEmail } = require('../email_templates/unsubscribeEmail');
 const { membershipConfirmationCode } = require('../email_templates/membershipConfirmationCode');
 const {
@@ -15,16 +14,12 @@ const logger = require('../../util/logger');
 const { googleApiKeys } = require('../../config/config.json');
 const { USER, ENABLED } = googleApiKeys;
 const { MetricsHandler } = require('../../util/metrics');
+const generateHashedId = require('../util/auth').generateHashedId;
 
-// Routing post /sendVerificationEmail calls the sendEmail function
-// and sends the verification email with the verification email template
-router.post('/sendVerificationEmail', async (req, res) => {
-  if (!ENABLED && process.env.NODE_ENV !== 'test') {
-    return res.sendStatus(OK);
-  }
+async function maybeRefreshTokenFromGcp() {
+  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
   const scopes = ['https://mail.google.com/'];
   const pathToToken = __dirname + '/../../config/token.json';
-  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
   const tokenJson = await apiHandler.checkIfTokenFileExists();
 
   if (tokenJson) {
@@ -40,25 +35,34 @@ router.post('/sendVerificationEmail', async (req, res) => {
     logger.warn('getting new token! ', { tokenJson });
     apiHandler.getNewToken();
   }
+}
 
+// Routing post /sendVerificationEmail calls the sendEmail function
+// and sends the verification email with the verification email template
+router.post('/sendVerificationEmail', async (req, res) => {
+  if (!ENABLED && process.env.NODE_ENV !== 'test') {
+    return res.sendStatus(OK);
+  }
 
-  await verification(USER, req.body.recipientEmail, req.body.recipientName)
-    .then((template) => {
-      apiHandler
-        .sendEmail(template)
-        .then((_) => {
-          res.sendStatus(OK);
-          MetricsHandler.emailSent.inc({ type: 'verification' });
-        })
-        .catch((err) => {
-          logger.error('unable to send verification email:', err);
-          res.sendStatus(BAD_REQUEST);
-        });
-    })
-    .catch((err) => {
-      logger.error('unable to generate verification template:', err);
-      res.sendStatus(BAD_REQUEST);
-    });
+  await maybeRefreshTokenFromGcp();
+
+  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
+
+  try {
+    const hashedId = await generateHashedId(req.body.recipientEmail);
+  } catch(e) {
+    logger.error('unable to generate verification template:', err);
+    return res.sendStatus(BAD_REQUEST);
+  }
+  const template = verification(USER, req.body.recipientEmail, req.body.recipientName);
+  try {
+    await apiHandler.sendEmail(template);
+    MetricsHandler.emailSent.inc({ type: 'verification' });
+    return res.sendStatus(OK);
+  } catch(e) {
+    logger.error('unable to send verification email:', err);
+    res.sendStatus(BAD_REQUEST);
+  }
 });
 
 // Routing post /sendPasswordReset calls the sendEmail function
@@ -67,39 +71,26 @@ router.post('/sendPasswordReset', async (req, res) => {
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
-  const scopes = ['https://mail.google.com/'];
-  const pathToToken = __dirname + '/../../config/token.json';
+
+  await maybeRefreshTokenFromGcp();
+
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-  const tokenJson = await apiHandler.checkIfTokenFileExists();
 
-  if (tokenJson) {
-    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
-      logger.warn('refreshing token');
-      MetricsHandler.gcpRefreshTokenLastUpdated.set(Math.floor(Date.now() / 1000));
-      apiHandler.refreshToken();
-    }
-  } else {
-    logger.warn('getting new token! ', { tokenJson });
-    apiHandler.getNewToken();
+  try {
+    const hashedId = await generateHashedId(req.body.recipientEmail);
+  } catch(err) {
+    logger.error('unable to send password reset email:', err);
+    return res.sendStatus(BAD_REQUEST);
   }
-
-  await passwordReset(USER, req.body.resetToken, req.body.recipientEmail)
-    .then((template) => {
-      apiHandler
-        .sendEmail(template)
-        .then((_) => {
-          res.sendStatus(OK);
-          MetricsHandler.emailSent.inc({ type: 'passwordReset' });
-        })
-        .catch((err) => {
-          logger.error('unable to send password reset email:', err);
-          res.sendStatus(BAD_REQUEST);
-        });
-    })
-    .catch((err) => {
-      logger.error('unable to generate password reset template:', err);
-      res.sendStatus(BAD_REQUEST);
-    });
+  const template = passwordReset(USER, req.body.resetToken, req.body.recipientEmail);
+  try {
+    await apiHandler.sendEmail(template);
+    MetricsHandler.emailSent.inc({ type: 'verification' });
+    return res.sendStatus(OK);
+  } catch(err) {
+    logger.error('unable to generate password reset template:', err);
+    res.sendStatus(BAD_REQUEST);
+  }
 });
 
 // Routing post /sendUnsubscribeEmail calls the unsubscribeEmail function
@@ -140,21 +131,10 @@ router.post('/sendMembershipConfirmationCode', async (req, res) => {
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
-  const scopes = ['https://mail.google.com/'];
-  const pathToToken = __dirname + '/../../config/token.json';
-  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-  const tokenJson = await apiHandler.checkIfTokenFileExists();
+  
+  await maybeRefreshTokenFromGcp();
 
-  if (tokenJson) {
-    if (apiHandler.checkIfTokenIsExpired(tokenJson)) {
-      logger.warn('refreshing token');
-      MetricsHandler.gcpRefreshTokenLastUpdated.set(Math.floor(Date.now() / 1000));
-      apiHandler.refreshToken();
-    }
-  } else {
-    logger.warn('getting new token! ', { tokenJson });
-    apiHandler.getNewToken();
-  }
+  const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
 
   const { recipientEmail, confirmationCode } = req.body;
 
