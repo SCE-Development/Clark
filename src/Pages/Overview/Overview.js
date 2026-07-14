@@ -14,13 +14,11 @@ export default function Overview() {
   const { user } = useSCE();
   const [toggleDelete, setToggleDelete] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [paginationText, setPaginationText] = useState('');
-  const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [userToDelete, setUserToDelete] = useState({});
-  const [queryResult, setQueryResult] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState(0);
   const [query, setQuery] = useState('');
   const [currentSortColumn, setCurrentSortColumn] = useState('joinDate');
   const [currentSortOrder, setCurrentSortOrder] = useState('desc');
@@ -29,6 +27,22 @@ export default function Overview() {
   // const [currentQueryType, setCurrentQueryType] = useState('All');
   // const queryTypes = ['All', 'Pending', 'Officer', 'Admin'];
 
+  async function callDatabase() {
+    setLoading(true);
+    const apiResponse = await getAllUsers({
+      token: user.token,
+      query: '', // Filter on client, not server
+      page: -1,  // Special value to fetch all users
+      sortColumn: 'joinDate',
+      sortOrder: 'desc'
+    });
+    if (!apiResponse.error) {
+      setAllUsers(apiResponse.responseData.items);
+      setTotal(apiResponse.responseData.total);
+    }
+    setLoading(false);
+  }
+
   async function deleteUser(userToDel) {
     const response = await deleteUserByID(
       userToDel._id,
@@ -36,6 +50,7 @@ export default function Overview() {
     );
     if (response.error) {
       alert('unable to delete user, check logs');
+      return;
     }
     if (userToDel._id === user._id) {
       // logout
@@ -43,40 +58,14 @@ export default function Overview() {
       window.location.reload();
       return window.alert('Self-deprecation is an art');
     }
-    setUsers(
-      users.filter(
-        child => !child._id.includes(userToDel._id)
-      )
-    );
-    setTotal(total - 1);
-    setQueryResult(
-      queryResult.filter(
-        child => !child._id.includes(userToDel._id)
-      )
-    );
+
+    // Refetch all users after deletion
+    await callDatabase();
+    // The filtering useEffect will automatically reapply current search
   }
 
   function mark(bool) {
     return bool ? svg.checkMark() : svg.xMark();
-  }
-
-  async function callDatabase() {
-    setLoading(true);
-    const sortColumn = currentSortOrder === 'none' ? 'joinDate' : currentSortColumn;
-    const sortOrder = currentSortOrder === 'none' ? 'desc' : currentSortOrder;
-    const apiResponse = await getAllUsers({
-      token: user.token,
-      query: query,
-      page: page,
-      sortColumn: sortColumn,
-      sortOrder: sortOrder
-    });
-    if (!apiResponse.error) {
-      setUsers(apiResponse.responseData.items);
-      setTotal(apiResponse.responseData.total);
-      setRowsPerPage(apiResponse.responseData.rowsPerPage);
-    }
-    setLoading(false);
   }
 
   async function getClubRevenueData() {
@@ -89,25 +78,61 @@ export default function Overview() {
   useEffect(() => {
     callDatabase();
     getClubRevenueData();
-  }, [page, currentSortColumn, currentSortOrder]);
+  }, []);
 
+  // Client-side filtering and sorting
   useEffect(() => {
+    if (!allUsers.length) {
+      setFilteredUsers([]);
+      return;
+    }
 
-    const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, users.length);
-    const pageOffset = page * rowsPerPage;
-    const startingElementNumber = (page * rowsPerPage) + 1;
-    const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
-    setPaginationText(
-      <>
-        <p className='md:hidden text-gray-700 dark:text-white'>
-          {startingElementNumber} - {endingElementNumber} / {total}
-        </p>
-        <p className="hidden md:inline-block text-gray-700 dark:text-white">
-          Showing <span className='font-medium'>{startingElementNumber}</span> to <span className='font-medium'>{endingElementNumber}</span> of <span className='font-medium'>{total}</span> results
-        </p>
-      </>
-    );
-  }, [page, rowsPerPage, users, total]);
+    // Filter users based on query
+    let filtered = allUsers;
+    if (query.trim()) {
+      const searchTerm = query.trim().toLowerCase();
+      filtered = allUsers.filter(user => {
+        return (
+          user.firstName?.toLowerCase().includes(searchTerm) ||
+          user.lastName?.toLowerCase().includes(searchTerm) ||
+          user.email?.toLowerCase().includes(searchTerm)
+        );
+      });
+    }
+
+    // Sort filtered results
+    if (currentSortOrder !== 'none') {
+      filtered = [...filtered].sort((a, b) => {
+        const aVal = a[currentSortColumn];
+        const bVal = b[currentSortColumn];
+
+        // Handle null/undefined
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return 1;
+        if (bVal == null) return -1;
+
+        // Compare based on type
+        let comparison = 0;
+        if (typeof aVal === 'string') {
+          comparison = aVal.localeCompare(bVal);
+        } else if (typeof aVal === 'number') {
+          comparison = aVal - bVal;
+        } else {
+          // Handle dates
+          const dateA = new Date(aVal);
+          const dateB = new Date(bVal);
+          comparison = dateA.getTime() - dateB.getTime();
+        }
+
+        return currentSortOrder === 'asc' ? comparison : -comparison;
+      });
+    }
+
+    setFilteredUsers(filtered);
+    setTotal(filtered.length);
+    setPage(0);
+
+  }, [allUsers, query, currentSortColumn, currentSortOrder]);
 
   function handleSortUsers(columnName) {
     if (columnName === null) {
@@ -179,37 +204,48 @@ export default function Overview() {
   // }
 
   function maybeRenderPagination() {
-    const amountOfUsersOnCurrentPage = Math.min((page + 1) * rowsPerPage, users.length);
-    const pageOffset = page * rowsPerPage;
-    const endingElementNumber = amountOfUsersOnCurrentPage + pageOffset;
-    if (users.length) {
-      return (
-        <nav className='flex justify-start py-6'>
-          <div className='flex items-center navbar-start'>
-            <span className="text-gray-700 dark:text-white">
-              {loading ? '...' : paginationText}
-            </span>
-          </div>
-          <div className='flex justify-end space-x-3 navbar-end'>
-            <button
-              className='btn btn-neutral text-gray-800 bg-gray-500 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
-              onClick={() => setPage(page - 1)}
-              disabled={page === 0 || loading}
-            >
-              previous
-            </button>
-            <button
-              className='btn btn-neutral text-gray-800 bg-gray-200 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
-              onClick={() => setPage(page + 1)}
-              disabled={endingElementNumber >= total || loading}
-            >
-              next
-            </button>
-          </div>
-        </nav>
-      );
-    }
-    return <></>;
+    const ROWS_PER_PAGE = 20;
+    const startIdx = page * ROWS_PER_PAGE;
+    const endIdx = Math.min(startIdx + ROWS_PER_PAGE, total);
+
+    if (filteredUsers.length === 0) return <></>;
+
+    return (
+      <nav className='flex justify-start py-6'>
+        <div className='flex items-center navbar-start'>
+          <span className="text-gray-700 dark:text-white">
+            {loading ? '...' : (
+              <>
+                <p className='md:hidden text-gray-700 dark:text-white'>
+                  {startIdx + 1} - {endIdx} / {total}
+                </p>
+                <p className="hidden md:inline-block text-gray-700 dark:text-white">
+                  Showing <span className='font-medium'>{startIdx + 1}</span> to{' '}
+                  <span className='font-medium'>{endIdx}</span> of{' '}
+                  <span className='font-medium'>{total}</span> results
+                </p>
+              </>
+            )}
+          </span>
+        </div>
+        <div className='flex justify-end space-x-3 navbar-end'>
+          <button
+            className='btn btn-neutral text-gray-800 bg-gray-500 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
+            onClick={() => setPage(page - 1)}
+            disabled={page === 0 || loading}
+          >
+            previous
+          </button>
+          <button
+            className='btn btn-neutral text-gray-800 bg-gray-200 hover:bg-gray-300 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600'
+            onClick={() => setPage(page + 1)}
+            disabled={endIdx >= total || loading}
+          >
+            next
+          </button>
+        </div>
+      </nav>
+    );
   }
 
   return (
@@ -255,29 +291,14 @@ export default function Overview() {
           <div className='py-6'>
             <label className="w-full form-control">
               <div className="label">
-                <span className="label-text text-md text-gray-700 dark:text-white">Type a search, followed by the enter key</span>
+                <span className="label-text text-md text-gray-700 dark:text-white">Type a search</span>
               </div>
               <input
                 className="w-full text-sm input input-bordered text-gray-900 dark:text-white sm:text-base"
                 type="text"
                 placeholder="search by first name, last name, or email"
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    // instead of calling the backend directory, set
-                    // the page we are on to zero if the current page
-                    // we are on isn't the first page (value of 0).
-                    // by doing this, the useEffect will call the backend
-                    // for us with the correct page and query.
-                    if (page) {
-                      setPage(0);
-                    } else {
-                      callDatabase();
-                    }
-                  }
-                }}
-                onChange={event => {
-                  setQuery(event.target.value);
-                }}
+                value={query}
+                onChange={event => setQuery(event.target.value)}
               />
             </label>
           </div>
@@ -309,7 +330,7 @@ export default function Overview() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {filteredUsers.slice(page * 20, (page + 1) * 20).map((user) => (
                 <tr className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10' key={user.email}>
                   <td className=''>
                     <a className='link link-hover text-blue-600 dark:text-blue-400' target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
@@ -350,7 +371,7 @@ export default function Overview() {
 
             </tbody>
           </table>
-          {users.length === 0 && (
+          {filteredUsers.length === 0 && (
             <div className='flex flex-row w-100 justify-center'>
               <p className='text-lg text-gray-700 dark:text-white/70 mt-5 mb-5'>No results found!</p>
             </div>
