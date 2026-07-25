@@ -26,6 +26,8 @@ const tools = require('../util/tools/tools.js');
 const crypto = require('crypto');
 const token = '';
 const printerUtil = require('../../api/main_endpoints/util/Printer.js');
+const User = require('../../api/main_endpoints/models/User.js');
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
 let app = null;
 let test = null;
@@ -37,6 +39,7 @@ chai.use(chaiHttp);
 describe('Printer', () => {
   before(done => {
     initializeTokenMock();
+    tools.emptySchema(User);
 
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/Printer.js',
@@ -132,8 +135,19 @@ describe('Printer', () => {
 
     it(`Should successfully process all ${TOTAL_CHUNKS} chunks sent (with valid token)`, async () => {
       let chunksProcessed = 0;
-      setTokenStatus(true);
+      
+      const testUser = await new User({
+        email: 'getuser@test.com',
+        password: 'Passw0rd',
+        firstName: 'Get',
+        lastName: 'User',
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+        emailVerified: true,
+        escrowPagesPrinted: 0
+      }).save();
 
+      setTokenStatus(true, { _id: testUser._id });
+      
       for (let i = 0; i < TOTAL_CHUNKS; i++) {
         let chunkStart = i * CHUNK_SIZE;
         let chunk = FAKE_PDF.slice(chunkStart, chunkStart + CHUNK_SIZE);
@@ -145,6 +159,7 @@ describe('Printer', () => {
           .set('Authorization', `Bearer ${token}`)
           .type('form')
           .field('totalChunks', TOTAL_CHUNKS)
+          .field('totalPages', 1)
           .field('chunkIdx', i)
           .field('sides', 'one-sided')
           .field('copies', 1)
@@ -157,6 +172,8 @@ describe('Printer', () => {
       }
 
       expect(chunksProcessed).to.equal(TOTAL_CHUNKS);
+      const userAfterPrinting = await User.findOne({ _id: testUser._id });
+      expect(userAfterPrinting.escrowPagesPrinted).to.equal(1);
     });
   });
 });

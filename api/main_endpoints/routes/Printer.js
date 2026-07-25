@@ -124,17 +124,22 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
   }
 
   try {
-    // full pdf can be sent to quasar no problem
-    const printRes = await axios.post(PRINTER_URL + '/print', data, {
-      headers: {
-        ...data.getHeaders(),
-      },
-      maxContentLength: 1024 * 1024 * 150, // 150 mb
-      maxBodyLength: Infinity
-    });
+    let printId = 'if this is the id we didnt print anything due to us thinking the environment was "test"';
 
-    // { print_id: null | string }
-    const printId = printRes.data;
+    if (process.env.NODE_ENV !== 'test') {
+
+      // full pdf can be sent to quasar no problem
+      const printRes = await axios.post(PRINTER_URL + '/print', data, {
+        headers: {
+          ...data.getHeaders(),
+        },
+        maxContentLength: 1024 * 1024 * 150, // 150 mb
+        maxBodyLength: Infinity
+      });
+
+      // { print_id: null | string }
+      const printId = printRes.data;
+    }
 
     await cleanUpChunks(dir, id);
     res.status(OK).send(printId);
