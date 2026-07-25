@@ -16,10 +16,11 @@ const { USER, ENABLED } = googleApiKeys;
 const { MetricsHandler } = require('../../util/metrics');
 const generateHashedId = require('../util/auth').generateHashedId;
 
+const scopes = ['https://mail.google.com/'];
+const pathToToken = __dirname + '/../../config/token.json';
+
 async function maybeRefreshTokenFromGcp() {
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
-  const scopes = ['https://mail.google.com/'];
-  const pathToToken = __dirname + '/../../config/token.json';
   const tokenJson = await apiHandler.checkIfTokenFileExists();
 
   if (tokenJson) {
@@ -48,19 +49,21 @@ router.post('/sendVerificationEmail', async (req, res) => {
 
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
 
+  let template = '';
   try {
     const hashedId = await generateHashedId(req.body.recipientEmail);
+    template = verification(hashedId, USER, req.body.recipientEmail, req.body.recipientName);
   } catch(e) {
     logger.error('unable to generate verification template:', err);
     return res.sendStatus(BAD_REQUEST);
   }
-  const template = verification(USER, req.body.recipientEmail, req.body.recipientName);
+
   try {
     await apiHandler.sendEmail(template);
     MetricsHandler.emailSent.inc({ type: 'verification' });
     return res.sendStatus(OK);
   } catch(e) {
-    logger.error('unable to send verification email:', err);
+    logger.error('unable to send verification email:', e);
     res.sendStatus(BAD_REQUEST);
   }
 });
@@ -76,13 +79,14 @@ router.post('/sendPasswordReset', async (req, res) => {
 
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
 
+  let template = '';
   try {
     const hashedId = await generateHashedId(req.body.recipientEmail);
+    template = passwordReset(hashedId, USER, req.body.resetToken, req.body.recipientEmail);
   } catch(err) {
     logger.error('unable to send password reset email:', err);
     return res.sendStatus(BAD_REQUEST);
   }
-  const template = passwordReset(USER, req.body.resetToken, req.body.recipientEmail);
   try {
     await apiHandler.sendEmail(template);
     MetricsHandler.emailSent.inc({ type: 'verification' });
@@ -102,9 +106,6 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
     return res.sendStatus(BAD_REQUEST);
   }
 
-
-  const scopes = ['https://mail.google.com/'];
-  const pathToToken = __dirname + '/../../config/token.json';
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
   for (let i = 0; i < req.body.users.length; i++) {
     (function(i) {
@@ -131,7 +132,7 @@ router.post('/sendMembershipConfirmationCode', async (req, res) => {
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
-  
+
   await maybeRefreshTokenFromGcp();
 
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);

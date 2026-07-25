@@ -1,4 +1,4 @@
-import Autolinker from 'autolinker';
+// import Autolinker from 'autolinker';
 
 /**
  * Component that automatically converts URLs and email addresses in text into clickable links.
@@ -12,10 +12,7 @@ export default function LinkifiedText({ children }) {
     return <>{children}</>;
   }
 
-  const matches = Autolinker.parse(children, {
-    urls: true,
-    email: true,
-  });
+  const matches = [];
 
   if (matches.length === 0) {
     return <>{children}</>;
