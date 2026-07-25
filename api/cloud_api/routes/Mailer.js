@@ -44,7 +44,6 @@ router.post('/sendVerificationEmail', async (req, res) => {
   if (!ENABLED && process.env.NODE_ENV !== 'test') {
     return res.sendStatus(OK);
   }
-
   await maybeRefreshTokenFromGcp();
 
   const apiHandler = new SceGoogleApiHandler(scopes, pathToToken);
@@ -54,7 +53,7 @@ router.post('/sendVerificationEmail', async (req, res) => {
     const hashedId = await generateHashedId(req.body.recipientEmail);
     template = verification(hashedId, USER, req.body.recipientEmail, req.body.recipientName);
   } catch(e) {
-    logger.error('unable to generate verification template:', err);
+    logger.error('unable to generate verification template:', e);
     return res.sendStatus(BAD_REQUEST);
   }
 
