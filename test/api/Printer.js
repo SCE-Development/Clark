@@ -135,7 +135,7 @@ describe('Printer', () => {
 
     it(`Should successfully process all ${TOTAL_CHUNKS} chunks sent (with valid token)`, async () => {
       let chunksProcessed = 0;
-      
+
       const testUser = await new User({
         email: 'getuser@test.com',
         password: 'Passw0rd',
@@ -147,7 +147,7 @@ describe('Printer', () => {
       }).save();
 
       setTokenStatus(true, { _id: testUser._id });
-      
+
       for (let i = 0; i < TOTAL_CHUNKS; i++) {
         let chunkStart = i * CHUNK_SIZE;
         let chunk = FAKE_PDF.slice(chunkStart, chunkStart + CHUNK_SIZE);
