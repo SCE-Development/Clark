@@ -79,7 +79,7 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     return res.sendStatus(decoded.status);
   }
   // this makes printing pass in unit tests, at some point need to test axios call
-  if (!PRINTING.ENABLED) {
+  if (!PRINTING.ENABLED && process.env.NODE_ENV !== 'test') {
     logger.warn('Printing is disabled, returning 200 and dummy print id to mock the printing server');
     return res.status(OK).send({ printId: null });
   }
