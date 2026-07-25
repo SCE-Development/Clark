@@ -142,10 +142,10 @@ router.post('/sendPrintRequest', upload.single('chunk'), async (req, res) => {
     }
 
     await cleanUpChunks(dir, id);
-    res.status(OK).send(printId);
-
     user.escrowPagesPrinted += Number(totalPages);
     await user.save();
+    res.status(OK).send(printId);
+
   } catch (err) {
     logger.error('/sendPrintRequest had an error: ', err);
 
