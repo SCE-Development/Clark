@@ -88,7 +88,7 @@ router.post('/sendPasswordReset', async (req, res) => {
   }
   try {
     await apiHandler.sendEmail(template);
-    MetricsHandler.emailSent.inc({ type: 'verification' });
+    MetricsHandler.emailSent.inc({ type: 'passwordReset' });
     return res.sendStatus(OK);
   } catch(err) {
     logger.error('unable to generate password reset template:', err);
@@ -112,12 +112,10 @@ router.post('/sendUnsubscribeEmail', async (req, res) => {
         const user = req.body.users[i];
         try {
           let fullName = user.firstName + ' ' + user.lastName;
-          await unsubscribeEmail(USER, user.email, fullName)
-            .then((template) => {
-              apiHandler.sendEmail(template).then((_) => {
-                MetricsHandler.emailSent.inc({ type: 'unsubscribe' });
-              });
-            });
+          const template = unsubscribeEmail(USER, user.email, fullName);
+          await apiHandler.sendEmail(template).then((_) => {
+            MetricsHandler.emailSent.inc({ type: 'unsubscribe' });
+          });
         } catch (error) {
           logger.error('unable to send unsubscribe email:', error);
         }
@@ -145,23 +143,22 @@ router.post('/sendMembershipConfirmationCode', async (req, res) => {
     });
   }
 
-  await membershipConfirmationCode(USER, recipientEmail, confirmationCode)
-    .then((template) => {
-      apiHandler
-        .sendEmail(template)
-        .then((_) => {
-          res.sendStatus(OK);
-          MetricsHandler.emailSent.inc({ type: 'membershipConfirmationCode' });
-        })
-        .catch((err) => {
-          logger.error('unable to send confirmation code: ', err);
-          res.sendStatus(SERVER_ERROR);
-        });
-    })
-    .catch((err) => {
-      logger.error('unable to generate member confirmation email template: ', err);
-      res.sendStatus(SERVER_ERROR);
-    });
+  try {
+    const template = membershipConfirmationCode(USER, recipientEmail, confirmationCode);
+    apiHandler
+      .sendEmail(template)
+      .then((_) => {
+        res.sendStatus(OK);
+        MetricsHandler.emailSent.inc({ type: 'membershipConfirmationCode' });
+      })
+      .catch((err) => {
+        logger.error('unable to send confirmation code: ', err);
+        res.sendStatus(SERVER_ERROR);
+      });
+  } catch(err) {
+    logger.error('unable to generate member confirmation email template: ', err);
+    res.sendStatus(SERVER_ERROR);
+  }
 });
 
 module.exports = router;
