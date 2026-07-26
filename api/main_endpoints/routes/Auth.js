@@ -114,9 +114,11 @@ router.post('/sendPasswordReset', async (req, res) => {
       const passwordReset = new PasswordReset({
         resetToken,
         userId: String(result._id),
+        // 24 hours in milliseconds, (86,400,000 ms)
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       });
-      await passwordReset.save();
       await sendPasswordReset(resetToken, req.body.email);
+      await passwordReset.save();
 
       // create audit log for sending reset password email
       AuditLog.create({

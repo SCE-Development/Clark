@@ -26,7 +26,7 @@ const AuditLogSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-AuditLogSchema.index({ _id: 1, action: 1 });
+AuditLogSchema.index({ userId: 1, action: 1 });
 
 AuditLogSchema.post('save', async function(doc) {
   const newDoc = await doc.constructor.findById(doc._id).populate('userId', 'firstName lastName email');
