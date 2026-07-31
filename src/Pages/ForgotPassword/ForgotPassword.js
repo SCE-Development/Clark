@@ -21,7 +21,9 @@ export default function Login() {
       return;
     }
     setLoading(true);
-    captchaRef.reset();
+    if (process.env.NODE_ENV === 'production') {
+      captchaRef.reset();
+    }
     const resetStatus = await sendPasswordReset(email, captchaValue);
     if (resetStatus.error) {
       setMessage(resetStatus.error?.response?.data?.message || 'An error occurred. Please try again later.');
@@ -51,9 +53,9 @@ export default function Login() {
                   </div>
                   <input type="email" placeholder="Email" className="input input-bordered w-full max-w-xs" onChange={(e) => setEmail(e.target.value)}/>
                 </label>
-                <div id='recaptcha'>
+                {process.env.NODE_ENV === 'production' && <div id='recaptcha'>
                   <GoogleRecaptcha setCaptchaValue={setCaptchaValue} setCaptchaRef={setCaptchaRef}/>
-                </div>
+                </div>}
                 {message && <p
                   className={`${message.includes('email has been sent') ? 'text-green-500' : 'text-red-500'}` +
             ' text-sm md:text-md pt-2 w-full max-w-xs'}

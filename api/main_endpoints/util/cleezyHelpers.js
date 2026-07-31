@@ -12,7 +12,7 @@ let URL_SHORTENER_BASE_URL =
 const searchCleezyUrls = async ({ page, search, sortColumn, sortOrder, limit }) => {
   try {
     const cleezyQuery = search?.replace(/[^a-zA-Z0-9]/g, '');
-    const cleezyRes = await axios.get(CLEEZY_URL + '/list', {
+    const cleezyRes = await axios.get(CLEEZY_URL + '/url/list', {
       params: {
         page,
         ...(cleezyQuery !== undefined && { search: cleezyQuery }),

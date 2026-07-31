@@ -8,8 +8,8 @@ const { OK, BAD_REQUEST } = constants.STATUS_CODES;
 const SceApiTester = require('../util/tools/SceApiTester');
 const { SceGoogleApiHandler } =
   require('../../api/cloud_api/util/SceGoogleApiHandler');
-const verificationTemplate =
-  require('../../api/cloud_api/email_templates/verification');
+const authUtils =
+  require('../../api/cloud_api/util/auth');
 
 let app = null;
 let test = null;
@@ -22,10 +22,10 @@ chai.use(chaiHttp);
 
 describe('Mailer', () => {
   let sendEmailStub = null;
-  let verificationStub = null;
+  let generateHashedIdStub = null;
   before(done => {
     sendEmailStub = sandbox.stub(SceGoogleApiHandler.prototype, 'sendEmail');
-    verificationStub = sandbox.stub(verificationTemplate, 'verification');
+    generateHashedIdStub = sandbox.stub(authUtils, 'generateHashedId');
     app = tools.initializeServer(
       __dirname + '/../../api/cloud_api/routes/Mailer.js');
     test = new SceApiTester(app);
@@ -34,7 +34,7 @@ describe('Mailer', () => {
 
   after(done => {
     if (sendEmailStub) sendEmailStub.restore();
-    if (verificationStub) verificationStub.restore();
+    if (generateHashedIdStub) generateHashedIdStub.restore();
     sandbox.restore();
     tools.terminateServer(done);
   });
@@ -47,7 +47,7 @@ describe('Mailer', () => {
   describe('/POST sendVerificationEmail', () => {
     it('Should return 200 when an email is successfully sent', async () => {
       sendEmailStub.resolves({});
-      verificationStub.resolves({});
+      generateHashedIdStub.resolves({});
       const result = await test.sendPostRequest(
         '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
       expect(result).to.have.status(OK);
@@ -55,7 +55,7 @@ describe('Mailer', () => {
 
     it('Should return 400 when we cannot generate a hashed ID', async () => {
       sendEmailStub.resolves({});
-      verificationStub.rejects({});
+      generateHashedIdStub.rejects({});
       const result = await test.sendPostRequest(
         '/api/Mailer/sendVerificationEmail', VALID_EMAIL_REQUEST);
       expect(result).to.have.status(BAD_REQUEST);
