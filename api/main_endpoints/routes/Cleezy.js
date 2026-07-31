@@ -19,7 +19,7 @@ let CLEEZY_URL = process.env.CLEEZY_URL
 let URL_SHORTENER_BASE_URL =
   process.env.NODE_ENV === 'production' ? 'https://sce.sjsu.edu/s/' : 'http://localhost:8000/url/find/';
 
-router.get('/url/list', async (req, res) => {
+router.get('/list', async (req, res) => {
   if(!ENABLED) {
     return res.json({
       disabled: true
@@ -43,7 +43,7 @@ router.get('/url/list', async (req, res) => {
   }
 });
 
-router.post('/url/create', async (req, res) => {
+router.post('/createUrl', async (req, res) => {
   const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
@@ -63,7 +63,7 @@ router.post('/url/create', async (req, res) => {
   }
 });
 
-router.post('/url/delete', async (req, res) => {
+router.post('/deleteUrl', async (req, res) => {
   const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
