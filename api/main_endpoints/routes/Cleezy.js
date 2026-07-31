@@ -43,7 +43,7 @@ router.get('/url/list', async (req, res) => {
   }
 });
 
-router.post('/url/createUrl', async (req, res) => {
+router.post('/url/create', async (req, res) => {
   const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
@@ -63,7 +63,7 @@ router.post('/url/createUrl', async (req, res) => {
   }
 });
 
-router.post('/url/deleteUrl', async (req, res) => {
+router.post('/url/delete', async (req, res) => {
   const decoded = await decodeToken(req, MEMBERSHIP_STATE.OFFICER);
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
