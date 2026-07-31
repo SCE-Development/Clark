@@ -18,6 +18,13 @@ import Messaging from './Pages/Messaging/Messaging.js';
 import Home from './Pages/Home/Home.js';
 import CardReader from './Pages/CardReader/CardReader.js';
 import AuditLogsPage from './Pages/AuditLog/AuditLog.js';
+import PermissionRequestPage from './Pages/PermissionRequest/PermissionRequest.js';
+import EventsPage from './Pages/Events/Events.js';
+import CreateEventPage from './Pages/Events/CreateEventPage.js';
+import EventRegistration from './Pages/Events/EventsRegistration.js';
+import EditEventPage from './Pages/Events/EditEventPage.js';
+import EventAttendeesDashboard from './Pages/Events/EventAttendeesDashboard.js';
+import CashPaymentsPage from './Pages/CashPayments/CashPayments.js';
 
 // Declare an enum for permission check
 export const allowedIf = {
@@ -80,6 +87,15 @@ export const memberRoutes = [
     redirect: '/login',
     hideFromShortcutSuggestions: true
   },
+  {
+    Component: LedSign,
+    path: '/led-sign',
+    pageName: 'LED Sign',
+    allowedIf: allowedIf.MEMBER,
+    redirect: '/',
+  },
+
+
   ...authenticatedRoutes,
 ];
 
@@ -102,14 +118,6 @@ export const officerOrAdminRoutes = [
   //   inAdminNavbar: true
   // },
   {
-    Component: LedSign,
-    path: '/led-sign',
-    pageName: 'LED Sign',
-    allowedIf: allowedIf.OFFICER_OR_ADMIN,
-    redirect: '/',
-    inAdminNavbar: true
-  },
-  {
     Component: EditUserInfo,
     path: '/user/edit/:id',
     pageName: 'Edit User Info',
@@ -121,6 +129,14 @@ export const officerOrAdminRoutes = [
   {
     Component: URLShortenerPage,
     path: '/short',
+    pageName: 'URL Shortener Page',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    inAdminNavbar: true,
+    redirect: '/',
+  },
+  {
+    Component: PermissionRequestPage,
+    path: '/permissions',
     pageName: 'URL Shortener Page',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     inAdminNavbar: true,
@@ -158,6 +174,47 @@ export const officerOrAdminRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
+  {
+    Component: CreateEventPage,
+    path: '/events/create',
+    pageName: 'Create Event',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: false
+  },
+
+  {
+    Component: EditEventPage,
+    path: '/events/:id/edit',
+    pageName: 'Edit Event',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+  },
+  {
+    Component: EditEventPage,
+    path: '/events/:id/edit',
+    pageName: 'Edit Event',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true
+  },
+  {
+    Component: EventAttendeesDashboard,
+    path: '/events/:id/admin/attendees',
+    pageName: 'Event Attendees Dashboard',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true,
+    hideFromShortcutSuggestions: true
+  },
+  {
+    Component: CashPaymentsPage,
+    path: '/cash-payments',
+    pageName: 'Cash Payments',
+    allowedIf: allowedIf.OFFICER_OR_ADMIN,
+    redirect: '/',
+    inAdminNavbar: true
+  },
   ...memberRoutes,
 ];
 
@@ -188,6 +245,17 @@ export const signedOutRoutes = [
     Component: ProjectsPage,
     path: '/projects',
     pageName: 'Projects'
+  },
+  {
+    Component: EventsPage,
+    path: '/events',
+    pageName: 'Events'
+  },
+  {
+    Component: EventRegistration,
+    path: '/events/:id/register',
+    pageName: 'Event Registration',
+    hideFromShortcutSuggestions: true
   },
   {
     Component: EmailPreferencesPage,

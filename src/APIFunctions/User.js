@@ -13,6 +13,7 @@ export async function getAllUsers({
   page = null,
   sortColumn = null,
   sortOrder = null,
+  minRole = null,
 }) {
   const url = new URL('/api/User/users', BASE_API_URL);
 
@@ -35,12 +36,36 @@ export async function getAllUsers({
       body: JSON.stringify({
         query,
         page,
+        minRole,
       }),
     });
     if (res.ok) {
       const result = await res.json();
       status.responseData = result;
     } else {
+      status.error = true;
+    }
+  } catch(err) {
+    status.error = true;
+  }
+  return status;
+}
+
+export async function validateEventAdmins(token, ids) {
+  let status = new UserApiResponse();
+  const url = new URL('/api/User/admins/validate', BASE_API_URL);
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids }),
+    });
+    const result = await res.json();
+    status.responseData = result;
+    if (!res.ok) {
       status.error = true;
     }
   } catch(err) {

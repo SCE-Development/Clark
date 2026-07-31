@@ -7,6 +7,7 @@ const fs = require('fs');
 const {
   OK,
   UNAUTHORIZED,
+  FORBIDDEN,
 } = require('../../api/util/constants').STATUS_CODES;
 
 const {
@@ -25,6 +26,8 @@ const tools = require('../util/tools/tools.js');
 const crypto = require('crypto');
 const token = '';
 const printerUtil = require('../../api/main_endpoints/util/Printer.js');
+const User = require('../../api/main_endpoints/models/User.js');
+const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 
 let app = null;
 let test = null;
@@ -36,6 +39,7 @@ chai.use(chaiHttp);
 describe('Printer', () => {
   before(done => {
     initializeTokenMock();
+    tools.emptySchema(User);
 
     app = tools.initializeServer([
       __dirname + '/../../api/main_endpoints/routes/Printer.js',
@@ -63,6 +67,8 @@ describe('Printer', () => {
     const MY_BIRTH_DATE = new Date('December 4, 2005 07:53:00');
 
     it('Should delete expired chunks (5 minutes or older)', async () => {
+      // Clean up any pre-existing expired chunks from previous runs
+      await printerUtil.cleanUpExpiredChunks(CHUNK_DIRECTORY, 0);
       const dirBefore = await fs.promises.readdir(CHUNK_DIRECTORY);
       const numFilesBefore = dirBefore.length;
 
@@ -116,19 +122,31 @@ describe('Printer', () => {
 
     const DUMMY_CHUNK = new FormData();
 
-    it('Should return 400 when token is not sent', async () => {
+    it('Should return 401 when token is not sent', async () => {
       const result = await test.sendPostRequest('/api/Printer/sendPrintRequest', { DUMMY_CHUNK });
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 400 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token, '/api/Printer/sendPrintRequest', { DUMMY_CHUNK });
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it(`Should successfully process all ${TOTAL_CHUNKS} chunks sent (with valid token)`, async () => {
       let chunksProcessed = 0;
-      setTokenStatus(true);
+
+      const testUser = await new User({
+        email: 'getuser@test.com',
+        password: 'Passw0rd',
+        firstName: 'Get',
+        lastName: 'User',
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+        emailVerified: true,
+        escrowPagesPrinted: 0
+      }).save();
+
+      setTokenStatus(true, { _id: testUser._id });
 
       for (let i = 0; i < TOTAL_CHUNKS; i++) {
         let chunkStart = i * CHUNK_SIZE;
@@ -141,6 +159,7 @@ describe('Printer', () => {
           .set('Authorization', `Bearer ${token}`)
           .type('form')
           .field('totalChunks', TOTAL_CHUNKS)
+          .field('totalPages', 1)
           .field('chunkIdx', i)
           .field('sides', 'one-sided')
           .field('copies', 1)
@@ -153,6 +172,8 @@ describe('Printer', () => {
       }
 
       expect(chunksProcessed).to.equal(TOTAL_CHUNKS);
+      const userAfterPrinting = await User.findOne({ _id: testUser._id });
+      expect(userAfterPrinting.escrowPagesPrinted).to.equal(1);
     });
   });
 });

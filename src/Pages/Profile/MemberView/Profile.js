@@ -3,6 +3,7 @@ import { getUserById } from '../../../APIFunctions/User';
 import ChangePasswordModal from './ChangePassword';
 import DeleteAccountModal from './DeleteAccountModal';
 import GetApiKeyModal from './GetApiKeyModal';
+import VerifyMembershipModal from './VerifyMembershipModal';
 import { membershipState, membershipStateToString } from '../../../Enums';
 import { useSCE } from '../../../Components/context/SceContext';
 
@@ -53,6 +54,16 @@ export default function Profile() {
             <span className="tracking-wide text-lg">{response.firstName} {response.lastName}</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
+            {response.accessLevel <= membershipState.NON_MEMBER && (
+              <button
+                className="btn btn-success"
+                onClick={() =>
+                  document.getElementById('verify-membership-modal').showModal()
+                }
+              >
+                Verify Membership
+              </button>
+            )}
             <button
               className="btn btn-primary"
               onClick={() =>
@@ -110,6 +121,19 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      {response.accessLevel <= membershipState.NON_MEMBER && (
+        <VerifyMembershipModal
+          bannerCallback={(message, color, delay = 3000) => {
+            setBannerMessage(message);
+            setBannerColor(color);
+            setTimeout(() => {
+              setBannerMessage('');
+              setBannerColor('');
+            }, delay);
+          }}
+          onVerificationSuccess={getUserFromApi}
+        />
+      )}
       <ChangePasswordModal
         bannerCallback={(message, color, delay = 3000) => {
           setBannerMessage(message);

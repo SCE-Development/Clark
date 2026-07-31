@@ -114,9 +114,11 @@ router.post('/sendPasswordReset', async (req, res) => {
       const passwordReset = new PasswordReset({
         resetToken,
         userId: String(result._id),
+        // 24 hours in milliseconds, (86,400,000 ms)
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       });
-      await passwordReset.save();
       await sendPasswordReset(resetToken, req.body.email);
+      await passwordReset.save();
 
       // create audit log for sending reset password email
       AuditLog.create({
@@ -135,100 +137,70 @@ router.post('/sendPasswordReset', async (req, res) => {
 });
 
 // User Login
-router.post('/login', function(req, res) {
-  if (!req.body.email || !req.body.password) {
-    return res.sendStatus(BAD_REQUEST);
-  }
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.sendStatus(BAD_REQUEST);
 
-  User.findOne(
-    {
-      email: req.body.email.toLowerCase()
-    },
-    function(error, user) {
-      if (error) {
-        logger.error('/login User.findOne had an error', error);
-        return res.status(BAD_REQUEST).send({ message: 'Bad Request.' });
-      }
+    const user = await User.findOne({ email: email.toLowerCase() });
 
+    const isMatch = await new Promise((resolve, reject) => {
       if (!user) {
-        return res
-          .status(UNAUTHORIZED)
-          .send({
-            message: 'Username or password does not match our records.'
-          });
+        resolve(false);
       }
-
-      // Check if password matches database
-      user.comparePassword(req.body.password, function(error, isMatch) {
-        if (!isMatch && !error) {
-          return res.status(UNAUTHORIZED).send({
-            message: 'Username or password does not match our records.'
-          });
-        }
-
-        if (user.accessLevel === membershipState.BANNED) {
-          return res
-            .status(UNAUTHORIZED)
-            .send({
-              message: 'The account with email ' +
-                    req.body.email +
-                    ' is banned',
-            });
-        }
-
-        // Check if the user's email has been verified
-        if (!user.emailVerified) {
-          return res
-            .status(UNAUTHORIZED)
-            .send({ message: `The email ${req.body.email} has not been verified` });
-        }
-
-        // If the username and password matches the database, assign and
-        // return a jwt token
-        const jwtOptions = {
-          expiresIn: '2h'
-        };
-
-        // check here to see if we should reset the pagecount. If so, do it
-        if (checkIfPageCountResets(user.lastLogin)) {
-          user.pagesPrinted = 0;
-        }
-
-        // set last login date here!!!!
-        user.lastLogin = new Date();
-
-
-        // Include fields from the User model that should
-        // be passed to the JSON Web Token (JWT)
-        const userToBeSigned = {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          accessLevel: user.accessLevel,
-          pagesPrinted: user.pagesPrinted,
-          _id: user._id
-        };
-        user
-          .save()
-          .then(() => {
-            const token = jwt.sign(
-              userToBeSigned, config.secretKey, jwtOptions
-            );
-            // Create audit log on successful sign-in
-            AuditLog.create({
-              userId: user._id,
-              action: AuditLogActions.LOG_IN,
-              details: { email: user.email }
-            }).catch(logger.error);
-
-            res.json({ token: 'JWT ' + token });
-          })
-          .catch((error) => {
-            logger.error('unable to login user', error);
-            res.sendStatus(SERVER_ERROR);
-          });
+      user.comparePassword(req.body.password, (err, match) => {
+        if (err) reject(err);
+        resolve(match);
       });
     });
+
+    if (!isMatch) {
+      return res.status(UNAUTHORIZED).send({
+        message: 'Username or password does not match our records.'
+      });
+    }
+
+    if (!user.emailVerified) {
+      return res
+        .status(UNAUTHORIZED)
+        .send({ message: `The email ${req.body.email} has not been verified` });
+    }
+
+    if (user.accessLevel === membershipState.BANNED) {
+      return res.status(UNAUTHORIZED).send({ message: `Account ${email} is banned lol` });
+    }
+
+    // Handle Page Reset
+    if (checkIfPageCountResets(user.lastLogin)) {
+      user.pagesPrinted = 0;
+    }
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = jwt.sign({
+      _id: user._id,
+      accessLevel: user.accessLevel,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      accessLevel: user.accessLevel,
+      pagesPrinted: user.pagesPrinted,
+      _id: user._id
+    }, config.secretKey, { expiresIn: '2h' });
+
+    // Create audit log on successful sign-in
+    AuditLog.create({
+      userId: user._id,
+      action: AuditLogActions.LOG_IN,
+      details: { email: user.email }
+    }).catch(logger.error);
+
+    res.json({ token: `JWT ${token}` });
+
+  } catch (error) {
+    logger.error('unable to login user', error);
+    res.sendStatus(SERVER_ERROR);
+  }
 });
 
 // Verifies the users session if they have an active jwtToken.

@@ -27,3 +27,6 @@ scrape_configs:
   - job_name: 'keep-ssh-tunnel-open'
     static_configs:
       - targets: ['keep-ssh-tunnel-open:8000']
+  - job_name: 'goderpad'
+    static_configs:
+      - targets: ['goderpad-backend:7778']

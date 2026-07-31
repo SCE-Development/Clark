@@ -18,9 +18,8 @@ const {
   UNAUTHORIZED,
   NOT_FOUND,
   SERVER_ERROR,
-  FORBIDDEN,
+  FORBIDDEN
 } = require('../../api/util/constants').STATUS_CODES;
-const { MEMBERSHIP_STATE } = require('../../api/util/constants');
 const {
   initializeTokenMock,
   setTokenStatus,
@@ -45,16 +44,15 @@ const token = '';
 
 describe('OfficeAccessCard', () => {
   let deleteCardStub = null;
-  let getAllCardsStub = null;
-  let editAliasStub = null;
   let testCardId = null;
 
   const VALID_CARD_BYTES = 'wesleys card';
   const NEW_CARD_BYTES = 'dials card';
   const INVALID_CARD_BYTES = 'evans card';
 
+  const VALID_ID = id.toString();
+  const INVALID_ID = 'tiffanys id';
   const VALID_ALIAS = 'gauravs card';
-  const INVALID_ALIAS = 'bobs card';
   const NEW_ALIAS = 'updated test card';
   const EMPTY_ALIAS = '';
   const WHITESPACE_ALIAS = '   ';
@@ -76,6 +74,7 @@ describe('OfficeAccessCard', () => {
     // Before each test we empty the database
     tools.emptySchema(OfficeAccessCard);
     const testOfficeAccessCard = new OfficeAccessCard({
+      _id: VALID_ID,
       cardBytes: VALID_CARD_BYTES,
       alias: VALID_ALIAS,
       verifiedCount: INCREMENT_VERIFY_COUNT,
@@ -126,14 +125,14 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(BAD_REQUEST);
     });
 
-    it('Should return 403 with invalid api key', async () => {
+    it('Should return 401 with invalid api key', async () => {
       const params = new URLSearchParams();
       params.append('cardBytes', VALID_CARD_BYTES);
       const path = VERIFY_API_PATH + '?' + params.toString();
       const invalidApiKey = API_KEY + '-invalid-suffix';
       const result = await test.sendGetRequestWithApiKey(
         invalidApiKey + '', path);
-      expect(result).to.have.status(FORBIDDEN);
+      expect(result).to.have.status(UNAUTHORIZED);
     });
 
     it('Should return 404 with valid api key and unknown card', async () => {
@@ -186,17 +185,18 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
+        DELETE_API_PATH, { _id: VALID_ID });
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 404 if the card attempted to be deleted was not found', async () => {
       setTokenStatus(true);
-      deleteCardStub.resolves(false);
+      deleteCardStub.resolves(null);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH, { alias: INVALID_ALIAS },
+        DELETE_API_PATH, { _id: INVALID_ID },
       );
       expect(result).to.have.status(NOT_FOUND);
     });
@@ -205,7 +205,7 @@ describe('OfficeAccessCard', () => {
       setTokenStatus(true);
       deleteCardStub.resolves(true);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH, { alias: VALID_ALIAS },
+        DELETE_API_PATH, {  _id: VALID_ID },
       );
       expect(result).to.have.status(OK);
     });
@@ -214,7 +214,7 @@ describe('OfficeAccessCard', () => {
       setTokenStatus(true);
       deleteCardStub.resolves(false);
       const result = await test.sendPostRequestWithToken(token,
-        DELETE_API_PATH, { alias: VALID_ALIAS },
+        DELETE_API_PATH, { _id: VALID_ID },
       );
       expect(result).to.have.status(SERVER_ERROR);
     });
@@ -226,10 +226,11 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
         GET_ALL_CARDS_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 200 with a successful fetch of all cards', async () => {
@@ -257,10 +258,11 @@ describe('OfficeAccessCard', () => {
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
-        EDIT_API_PATH);
-      expect(result).to.have.status(UNAUTHORIZED);
+        EDIT_API_PATH, { _id: testCardId, alias: NEW_ALIAS });
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 400 when _id is missing from request body', async () => {

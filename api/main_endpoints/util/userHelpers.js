@@ -5,6 +5,7 @@ const PasswordReset = require('../models/PasswordReset');
 const config = require('../../config/config.json');
 const logger = require('../../util/logger');
 const { verifyCaptcha } = require('./captcha');
+const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 
 function testPasswordStrength(password) {
   const passwordStrength = config.passwordStrength || 'strong';
@@ -185,22 +186,46 @@ async function findPasswordReset(resetToken) {
  * reset
  */
 function checkIfPageCountResets(lastLogin) {
-  if (!lastLogin) return false;
+  if (!lastLogin) return true; // New users should probably start fresh
 
-  let oldDate = new Date(lastLogin.getTime());
-
-  // this returns "right now" when called
-  // to unit test, we mock when "right now" is
-  //
-  // by mocking, we can have `new Date` return
-  // tomorrow, last week etc
   const now = new Date();
-  const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
-  // reset if users last login was >= week ago OR there was a sunday between the last login and now
-  const lastLoginWasOverOneWeekAgo  = now.getTime() - oldDate.getTime() >= oneWeekInMilliseconds;
-  const aSundayHasPassedSinceLastLogin = oldDate.getDay() > now.getDay();
 
-  return lastLoginWasOverOneWeekAgo || aSundayHasPassedSinceLastLogin;
+  // Find the most recent Sunday at 00:00:00
+  const lastSunday = new Date(now);
+  lastSunday.setHours(0, 0, 0, 0);
+  lastSunday.setDate(now.getDate() - now.getDay());
+
+  // If they logged in BEFORE the most recent Sunday, reset!
+  return lastLogin.getTime() < lastSunday.getTime();
+}
+
+/**
+ * Update a user's membership details when they are verified as a member
+ * @param {String} userId - The user's ID
+ * @param {Number} numberOfSemestersToSignUpFor - Number of semesters to extend
+ * @param {String} doorCode - The door code to assign to the user, if applicable
+ * @returns {Object} result - Contains success status and message
+ */
+async function updateMembershipDetails(userId, numberOfSemestersToSignUpFor, doorCode) {
+  try {
+    const newExpiration = getMemberExpirationDate(numberOfSemestersToSignUpFor);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        membershipValidUntil: newExpiration,
+        accessLevel: membershipState.MEMBER,
+        doorCode: doorCode || undefined
+      },
+      { new: true },
+    );
+    if (!user) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    logger.error('Error updating membership:', error);
+    return false;
+  }
 }
 
 module.exports = {
@@ -211,4 +236,5 @@ module.exports = {
   userWithEmailExists,
   checkIfPageCountResets,
   findPasswordReset,
+  updateMembershipDetails
 };

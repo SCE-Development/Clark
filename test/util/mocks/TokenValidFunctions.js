@@ -28,18 +28,32 @@ function resetTokenMock() {
 
 /**
  *
- * @param {any} returnValue: value to be return back
- *                           by the function 'checkIfTokenValid'
+ * @param {boolean|null} isSuccessful:
+ *    if true, token is valid (status OK),
+ *    if false, token is invalid (status UNAUTHORIZED),
+ *    if null, token is FORBIDDEN
+ *
  * @param {Object} data: optional value that will be the result
  *                       of the decoded token value
- * @returns return parameter (above)
+ * @returns configured mock response
  */
 function setTokenStatus(
   isSuccessful,
   data = {},
 ) {
-  const status = isSuccessful ? OK : UNAUTHORIZED;
-  const tokenPayload = isSuccessful ? data : null;
+  let status;
+  let tokenPayload;
+
+  if (isSuccessful === true) {
+    status = OK;
+    tokenPayload = data;
+  } else if (isSuccessful === false) {
+    status = UNAUTHORIZED;
+    tokenPayload = null;
+  } else {
+    status = FORBIDDEN;
+    tokenPayload = data;
+  }
 
   decodeTokenValidMock.returns(
     Promise.resolve({

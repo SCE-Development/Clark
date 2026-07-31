@@ -66,9 +66,10 @@ describe('Advertisement', () => {
       expect(res).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const res = await test.sendPostRequestWithToken(token, '/api/Advertisement/createAdvertisement', VALID_ADVERTISEMENT);
-      expect(res).to.have.status(UNAUTHORIZED);
+      expect(res).to.have.status(FORBIDDEN);
     });
 
     describe('audit log tests for creating ads', () => {
@@ -130,9 +131,10 @@ describe('Advertisement', () => {
       expect(res).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 401 if invalid token is sent', async () => {
+    it('Should return 403 if invalid token is sent', async () => {
+      setTokenStatus(null);
       const res = await test.sendPostRequestWithToken(token, '/api/Advertisement/deleteAdvertisement', { _id: VALID_ADVERTISEMENT._id });
-      expect(res).to.have.status(UNAUTHORIZED);
+      expect(res).to.have.status(FORBIDDEN);
     });
 
     it('Should return 404 if ad is not found', async () => {

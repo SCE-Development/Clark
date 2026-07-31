@@ -30,10 +30,23 @@ const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
 
+const SENSITIVE_FIELDS = [
+  'email',
+  'accessLevel',
+  'pagesPrinted',
+  'doorCode'
+];
+
+const ALLOWED_FIELDS = [
+  'firstName', 'lastName', 'email', 'accessLevel', 'major',
+  'discordID', 'emailOptIn', 'membershipValidUntil', 'pagesPrinted',
+  'doorCode'
+];
+
 // Delete a member
 router.post('/delete', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
 
@@ -76,8 +89,7 @@ router.post('/delete', async (req, res) => {
 // Search for a member
 router.post('/search', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
 
@@ -116,10 +128,61 @@ router.post('/search', async function(req, res) {
   });
 });
 
+router.post('/admins/validate', async function(req, res) {
+  const decoded = await decodeToken(req, membershipState.NON_MEMBER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  if (!Array.isArray(req.body.ids)) {
+    return res.status(BAD_REQUEST).send({ message: 'ids must be an array.' });
+  }
+
+  const requestedIds = [];
+  const invalidIds = [];
+  const seen = new Set();
+
+  req.body.ids.forEach((id) => {
+    if (typeof id !== 'string' || !id.trim()) {
+      invalidIds.push(id);
+      return;
+    }
+
+    const normalizedId = id.trim();
+    if (seen.has(normalizedId)) {
+      return;
+    }
+    seen.add(normalizedId);
+    requestedIds.push(normalizedId);
+  });
+
+  const objectIdPattern = /^[0-9a-fA-F]{24}$/;
+  const candidateIds = requestedIds.filter((id) => objectIdPattern.test(id));
+  invalidIds.push(...requestedIds.filter((id) => !objectIdPattern.test(id)));
+
+  try {
+    const validAdmins = await User.find({
+      _id: { $in: candidateIds },
+      accessLevel: { $gte: membershipState.OFFICER }
+    }, '_id firstName lastName email accessLevel').lean();
+
+    const validIdSet = new Set(validAdmins.map((user) => user._id.toString()));
+    invalidIds.push(...candidateIds.filter((id) => !validIdSet.has(id)));
+
+    return res.status(OK).send({
+      validAdmins,
+      invalidIds
+    });
+  } catch (err) {
+    logger.error('/admins/validate had an error:', err);
+    return res.sendStatus(BAD_REQUEST);
+  }
+});
+
 // Search for all members
 router.post('/users', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
 
@@ -133,6 +196,19 @@ router.post('/users', async function(req, res) {
         }
       }))
     };
+  }
+
+  if (req.body.minRole !== undefined && req.body.minRole !== null) {
+    if (Object.keys(maybeOr).length > 0) {
+      maybeOr = {
+        $and: [
+          maybeOr,
+          { accessLevel: { $gte: req.body.minRole } }
+        ]
+      };
+    } else {
+      maybeOr = { accessLevel: { $gte: req.body.minRole } };
+    }
   }
 
   const sortColumn = req.query.sort || 'joinDate';
@@ -162,51 +238,54 @@ router.post('/users', async function(req, res) {
 // Edit/Update a member record
 router.post('/edit', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
 
   const { accessLevel, _id: tokenId, email: tokenEmail } = decoded.token;
   const { _id: targetId, password, numberOfSemestersToSignUpFor, ...userData } = req.body;
-  const isOfficer = accessLevel >= membershipState.OFFICER;
+  const isAtLeastAnOfficer = accessLevel >= membershipState.OFFICER;
   const isTargetAdmin = accessLevel === membershipState.ADMIN;
 
   if (!targetId) {
     return res.sendStatus(BAD_REQUEST);
   }
 
-  const existingUser = await User.findById(targetId);
+  const existingUser = await User.findById(targetId).lean();
   if (!existingUser) {
     return res.status(NOT_FOUND).send({ message: 'User not found.' });
   }
 
-  if (!isOfficer && targetId.toString() !== tokenId.toString()) {
+  if (!isAtLeastAnOfficer && targetId.toString() !== tokenId.toString()) {
     return res
       .status(FORBIDDEN)
       .send('Unauthorized to edit another user');
   }
 
-  // Members cannot change email or accessLevel
-  if (!isOfficer && (userData.email || userData.accessLevel)) {
-    return res.status(UNAUTHORIZED).send('Unauthorized to change sensitive fields');
+  // Members cannot change email, accessLevel, pagesPrinted, or doorCode
+  const forbiddenField = SENSITIVE_FIELDS.find(field => field in userData);
+
+  if (!isAtLeastAnOfficer && forbiddenField) {
+    return res
+      .status(FORBIDDEN)
+      .send(`Unauthorized to change sensitive field: ${forbiddenField}`);
   }
 
   // Officers cannot change accessLevel to ADMIN
-  if (isOfficer && userData.accessLevel === membershipState.ADMIN && !isTargetAdmin) {
+  if (isAtLeastAnOfficer && userData.accessLevel === membershipState.ADMIN && !isTargetAdmin) {
     return res.sendStatus(UNAUTHORIZED);
   }
 
   // Prepare Data for Update (Sanitization)
-  const allowedFields = [
-    'firstName', 'lastName', 'email', 'accessLevel', 'major',
-    'discordID', 'emailOptIn', 'membershipValidUntil'
-  ];
-
   const dataToUpdate = {};
   const fieldChanges = {};
 
-  // Iterate through allowed fields and build the update object and audit log
-  allowedFields.forEach(field => {
+  let fieldsToIterateOver = ALLOWED_FIELDS;
+  if (isAtLeastAnOfficer) {
+    fieldsToIterateOver = Object.keys(existingUser);
+  }
+
+  fieldsToIterateOver.forEach(field => {
     // Only include the field if it was provided in the request body
     if (userData[field] !== undefined) {
       // Check if value actually changed for audit
@@ -218,7 +297,7 @@ router.post('/edit', async (req, res) => {
   });
 
   // Handle special membership duration field
-  if (typeof numberOfSemestersToSignUpFor !== 'undefined' && isOfficer) {
+  if (typeof numberOfSemestersToSignUpFor !== 'undefined' && isAtLeastAnOfficer) {
     dataToUpdate.membershipValidUntil = getMemberExpirationDate(
       parseInt(numberOfSemestersToSignUpFor)
     );
@@ -291,7 +370,7 @@ router.post('/edit', async (req, res) => {
 
 router.post('/getPagesPrintedCount', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
   User.findOne({ email: req.body.email }, function(error, result) {
@@ -317,7 +396,7 @@ router.post('/getPagesPrintedCount', async (req, res) => {
 
 router.post('/getUserById', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
   let targetUserId = req.body.userID;
@@ -403,7 +482,7 @@ router.post('/getUserDataByEmail', (req, res) => {
 // Search for all members with verified emails and subscribed
 router.post('/usersSubscribedAndVerified', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
   User.find({ emailVerified: true, emailOptIn: true })
@@ -428,7 +507,7 @@ router.post('/usersSubscribedAndVerified', async function(req, res) {
 // Search for all members with verified emails, subscribed, and not banned or pending
 router.post('/usersValidVerifiedAndSubscribed', async function(req, res) {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
   User.find({
@@ -454,7 +533,7 @@ router.post('/usersValidVerifiedAndSubscribed', async function(req, res) {
 // Generate an API key for the Messages API if the user does not have an API key; otherwise, return the existing API key
 router.post('/apikey', async (req, res) => {
   const decoded = await decodeToken(req);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
   let { _id } = decoded.token;
@@ -488,7 +567,7 @@ router.post('/apikey', async (req, res) => {
 //  Assumes members who have paid have been assigned an expiration date
 router.get('/getNewPaidMembersThisSemester', async (req, res) => {
   const decoded = await decodeToken(req, membershipState.OFFICER);
-  if (!decoded.token) {
+  if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
 

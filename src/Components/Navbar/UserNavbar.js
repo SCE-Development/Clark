@@ -13,12 +13,15 @@ export default function UserNavbar(props) {
   const unauthedRoutes = [
     { title: 'About', route: '/about' },
     { title: 'Projects', route: '/projects' },
-    { title: 'Summer Internship', route: '/s/internship' },
+    { title: 'Events', route: '/events' },
+    { title: 'Summer Internship', route: '/s/internship', newTab: true },
   ];
 
   const authedRoutes = [
     { title: 'Printing', route: '/2DPrinting' },
     { title: 'Chat', route: '/messaging' },
+    { title: 'LED Sign', route: '/led-sign' },
+    { title: 'Events', route: '/events' },
   ];
 
   const authentication = [
@@ -34,6 +37,15 @@ export default function UserNavbar(props) {
     return (
       <>
         {routesList.map((link) => {
+          if (link.newTab) {
+            return (
+              <li key={link.route}>
+                <a href={link.route} target="_blank" rel="noopener noreferrer">
+                  {link.title}
+                </a>
+              </li>
+            );
+          }
           return (
             <li key={link.route}><a href={link.route}>{link.title}</a></li>
           );
@@ -111,7 +123,7 @@ export default function UserNavbar(props) {
                 </div>
               </summary>
               {isDropdownOpen && (
-                <div className='absolute right-0 mt-2 p-2 shadow menu bg-base-100 w-52 z-[1] rounded-xl'>
+                <div className='absolute right-0 mt-2 p-2 shadow menu bg-base-100 w-52 z-[40] rounded-xl'>
                   <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                     <div>{user.firstName} {user.lastName}</div>
                     <div className="font-medium truncate">{user.email}</div>

@@ -370,7 +370,7 @@ export default function CardReader() {
             cancelText: 'No, keep the card',
             confirmClassAddons: 'bg-red-600 hover:bg-red-500',
             handleConfirmation: async () => {
-              await deleteCardFromDb(token, cardToDelete.alias);
+              await deleteCardFromDb(token, cardToDelete._id);
               await getAllCards();
               setToggleDelete(!toggleDelete);
             },

@@ -9,6 +9,7 @@ const {
   OK,
   SERVER_ERROR,
   UNAUTHORIZED,
+  FORBIDDEN
 } = require('../../api/util/constants').STATUS_CODES;
 const {
   initializeTokenMock,
@@ -67,15 +68,16 @@ describe('LED Sign', () => {
   });
 
   describe('/POST updateSignText', () => {
-    it('Should return 400 when token is not sent', async () => {
+    it('Should return 401 when token is not sent', async () => {
       const result = await test.sendPostRequest('/api/LedSign/updateSignText');
       expect(result).to.have.status(UNAUTHORIZED);
     });
 
-    it('Should return 400 when invalid token is sent', async () => {
+    it('Should return 403 when invalid token is sent', async () => {
+      setTokenStatus(null);
       const result = await test.sendPostRequestWithToken(token,
         '/api/LedSign/updateSignText');
-      expect(result).to.have.status(UNAUTHORIZED);
+      expect(result).to.have.status(FORBIDDEN);
     });
 
     it('Should return 500 when the ssh tunnel is down', async () => {
