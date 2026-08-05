@@ -355,7 +355,7 @@ function LedSign() {
             >
               <div className="led-sign-marquee-container">
                 <div className="led-sign-marquee" style={{ animationDuration: `${getAnimationDuration()}s` }}>
-                  <h1 className="led-sign-preview-text text-3xl" style={{ color: textColor }}>
+                  <h1 className="led-sign-preview-text text-3xl" style={{ color: textColor, filter: `brightness(${brightness / 50})`}}>
                     {text.padEnd(28, ' ')}
                   </h1>
                 </div>
