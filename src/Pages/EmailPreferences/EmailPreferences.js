@@ -118,7 +118,7 @@ export default function EmailPreferencesPage(props) {
                 onChange={() => setIsOptedIntoEmails(true)}
               />
               <label for="default-radio-1" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                {' '}I would like to continue to recieve club update emails from SCE
+                {' '}I would like to continue to receive club update emails from SCE
               </label>
             </div>
             <div className="flex items-center">
