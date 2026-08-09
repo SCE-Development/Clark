@@ -253,7 +253,7 @@ export default function MembershipForm(props) {
     <div className=''>
       <div className = 'flex-none md:flex mb-20'>
         <div className='rounded-3xl backdrop-blur-sm shadow-2xl mt-20 mb-auto ml-auto mr-auto px-10 text-center items-center justify-center'>
-          <div className = 'text-lg md:text-3xl font-bold pb-2'>
+          <div className = 'text-lg md:text-3xl font-bold pb-2 text-gray-100'>
             Semester Plan
           </div>
           <div className="stats stats-vertical text-lg md:text-3xl shadow">
@@ -269,7 +269,7 @@ export default function MembershipForm(props) {
               <div className="stat-desc">↗︎ Only Up From here</div>
             </div>
           </div>
-          <div className = 'text-lg md:text-3xl font-bold  pb-2 pt-4'>
+          <div className = 'text-lg md:text-3xl font-bold  pb-2 pt-4 text-gray-100'>
             Yearly Plan
           </div>
           <div className="stats stats-vertical shadow">
@@ -298,11 +298,11 @@ export default function MembershipForm(props) {
           </div>
         </div>
         <div className='rounded-3xl backdrop-blur-sm shadow-2xl mt-20 ml-auto mr-auto px-10 text-center items-center justify-center xl:max-w-[35%]'>
-          <p className='text-3xl font-bold' >Membership Application</p>
-          <p className='text-2xl font-bold '>
+          <p className='text-3xl font-bold text-gray-100' >Membership Application</p>
+          <p className='text-2xl font-bold text-gray-100'>
             Year: {new Date().getFullYear()}
           </p>
-          <h6 className='text-lg'>
+          <h6 className='text-lg text-gray-100'>
             * = Required field
           </h6>
           <form onSubmit={submitApplication}>
@@ -340,7 +340,7 @@ export default function MembershipForm(props) {
             </div>
             {/* <MajorDropdown setMajor={setMajor} />
             <PlanDropdown setPlan={setPlan} /> */}
-            <p className='text-xl text-center mt-4'> Select Major </p>
+            <p className='text-xl text-center mt-4 text-gray-100'> Select Major </p>
             <div className='flex text-center text-gray-100 justify-center gap-4'>
               <label className="label gap-1.5">
                 <p className='text-bold'> CS </p>
@@ -359,7 +359,7 @@ export default function MembershipForm(props) {
                 <input type="radio" name="radio-10" className="radio" value='Other'  onClick={handleMajorChange}/>
               </label>
             </div>
-            <p className='text-xl text-center'> Select Plan </p>
+            <p className='text-xl text-center text-gray-100'> Select Plan </p>
             <div className='flex text-center text-gray-100 justify-center gap-4 mb-4'>
               <label className="label gap-1.5">
                 <p className='text-bold'> Semester </p>
