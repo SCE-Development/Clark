@@ -8,6 +8,7 @@ import { membershipState } from '../../Enums';
 import { useEventQuestions, toApiRegistrationForm } from './useEventQuestions';
 import { getApiErrorMessage } from './eventUtils';
 import EventEditorForm from './EventEditorForm';
+import Papa from 'papaparse';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
@@ -87,7 +88,12 @@ export default function CreateEventPage() {
   const [adminSearching, setAdminSearching] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [fileTable, setFileTable] = useState([]);
+  const [fileData, setFileData] = useState([]);
+  const [columnArray, setColumnArray] = useState([]);
+  const [values, setValues] = useState([]);
   const debounceRef = useRef(null);
+  const isFileUpload = useRef(false);
 
   const isOfficerOrAdmin = user?.accessLevel >= membershipState.OFFICER;
 
@@ -292,6 +298,82 @@ export default function CreateEventPage() {
     );
   }
 
+  function handleFileUpload(event) {
+    const maxFileSize = 10 * 1024 * 1024;
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    if (file.size > maxFileSize) {
+      alert('File size exceeds the 10MB limit.');
+      event.target.value = '';
+      return;
+    }
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(result) {
+        const columnArray = [];
+        const valuesArray = [];
+
+        result.data.map((data) => {
+          columnArray.push(Object.keys(data));
+          valuesArray.push(Object.values(data));
+        });
+        setFileData(result.data);
+        setColumnArray(columnArray[0]);
+        setValues(valuesArray);
+      }
+    });
+
+    isFileUpload.current = true;
+  }
+
+  async function handleFileCreateEvent() {
+    for (const row of values) {
+      const waitlistValue = Number(row[6]);
+      const hasWaitlist = !Number.isNaN(waitlistValue) && waitlistValue > 0;
+
+      const payload = {
+        id: crypto.randomUUID(),
+        name: row[0].trim(),
+        date: row[1],
+        time: row[2],
+        location: row[3].trim(),
+        description: row[4].trim(),
+        admins: allOrgAdminsCanEdit ? [] : eventAdminIds,
+        all_org_admins_can_edit: allOrgAdminsCanEdit,
+        registration_form: toApiRegistrationForm(questions),
+        max_attendees:
+          Number(row[5]) === UNLIMITED_ATTENDEES ? UNLIMITED_ATTENDEES : Number(row[5]),
+        created_at: new Date().toISOString(),
+        status: row[7],
+        visibility: row[8],
+        minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
+        waitlist_enabled: hasWaitlist,
+        waitlist_size: hasWaitlist ? waitlistValue : 0,
+        publish_date: toPublishDateValue(row[7], row[9]),
+      };
+
+      setSubmitting(true);
+      const result = await createSCEvent(token, payload);
+      setSubmitting(false);
+
+      if (result.error) {
+        setSubmitError(getApiErrorMessage(result, {
+          fallback: 'SCEvents returned an error.',
+          networkHint: 'Is the SCEvents API running (e.g. Docker on port 8002)?',
+        }));
+        return;
+      }
+
+      history.push('/events');
+
+      isFileUpload.current = false;
+    }
+  }
+
   return (
     <EventEditorForm
       meta={{
@@ -300,7 +382,7 @@ export default function CreateEventPage() {
         containerClassName: 'mx-auto mt-3 mb-6 w-full max-w-4xl px-3 sm:mt-4 sm:mb-8 sm:px-6 md:mt-5 md:mb-10',
         submitLabel: 'Create event',
         submittingLabel: 'Creating…',
-        onSubmit: handleCreateEvent,
+        onSubmit: isFileUpload.current ? handleFileCreateEvent : handleCreateEvent,
         submitting,
         submitError,
         unlimitedAttendeesValue: UNLIMITED_ATTENDEES,
@@ -362,6 +444,12 @@ export default function CreateEventPage() {
             setEventAdmins([]);
           }
         },
+      }}
+      fileActions={{
+        handleFileUpload,
+        fileData,
+        columnArray,
+        values,
       }}
     />
   );

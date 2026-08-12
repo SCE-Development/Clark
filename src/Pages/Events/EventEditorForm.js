@@ -7,6 +7,7 @@ export default function EventEditorForm({
   form,
   questionActions,
   adminActions,
+  fileActions,
 }) {
   const {
     title,
@@ -50,6 +51,13 @@ export default function EventEditorForm({
     publishDate,
     setPublishDate,
   } = form;
+
+  const {
+    handleFileUpload,
+    fileData = [],
+    columnArray = [],
+    values = [],
+  } = fileActions || {};
 
   const {
     questions,
@@ -459,10 +467,41 @@ export default function EventEditorForm({
         >
           {submitting ? submittingLabel : submitLabel}
         </button>
+        <label htmlFor="csv-file-input" className="btn btn-outline">
+          Import CSV
+        </label>
+        <input
+          type="file"
+          id="csv-file-input"
+          accept=".csv"
+          placeholder="Import CSV"
+          style={{ display: 'none' }}
+          onChange={handleFileUpload}
+        >
+        </input>
         <Link to="/events" className="btn btn-ghost">
           Cancel
         </Link>
       </div>
+
+      <table style={{borderCollapse: 'collapse', border: '1px solid black', margin: '5px auto'}}>
+        <thead>
+          <tr>
+            {columnArray.map((col, i) => (
+              <th style={{border: '1px solid blackg'}} key={i}>{col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {values.map((v, i) => (
+            <tr key={i}>
+              {v.map((value, i) => (
+                <td style={{border: '1px solid blackg'}} key={i}>{value}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       {eventDelete?.show && (
         <div className="mt-10 border-t border-gray-200 pt-8 dark:border-gray-700">
