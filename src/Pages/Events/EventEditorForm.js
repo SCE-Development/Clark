@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock';
+import ConfirmationModal from
+  '../../Components/DecisionModal/ConfirmationModal.js';
 
 export default function EventEditorForm({
   meta,
@@ -50,12 +52,16 @@ export default function EventEditorForm({
     setWaitlistSize,
     publishDate,
     setPublishDate,
+    confirmModal,
+    setConfirmModal,
+    modalWarningMessage,
+    setModalWarningMessage,
   } = form;
 
   const {
     handleFileUpload,
     fileData = [],
-    columnArray = [],
+    headersArray = [],
     values = [],
   } = fileActions || {};
 
@@ -458,6 +464,22 @@ export default function EventEditorForm({
         </div>
       )}
 
+      <ConfirmationModal {... {
+        headerText: 'Warning',
+        bodyText: `Error: ${modalWarningMessage}`,
+        confirmText: 'Create',
+        cancelText: 'Close',
+        hideConfirmButton: true,
+        handleConfirmation: () => {
+          setConfirmModal(false);
+        },
+        handleCancel: () => {
+          setConfirmModal(false);
+        },
+        open: confirmModal,
+      }
+      }/>
+
       <div className="flex flex-wrap justify-start gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
         <button
           type="button"
@@ -487,7 +509,7 @@ export default function EventEditorForm({
       <table style={{borderCollapse: 'collapse', border: '1px solid black', margin: '5px auto'}}>
         <thead>
           <tr>
-            {columnArray.map((col, i) => (
+            {headersArray.map((col, i) => (
               <th style={{border: '1px solid blackg'}} key={i}>{col}</th>
             ))}
           </tr>

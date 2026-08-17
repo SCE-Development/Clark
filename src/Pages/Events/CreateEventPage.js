@@ -90,8 +90,10 @@ export default function CreateEventPage() {
   const [submitting, setSubmitting] = useState(false);
   const [fileTable, setFileTable] = useState([]);
   const [fileData, setFileData] = useState([]);
-  const [columnArray, setColumnArray] = useState([]);
+  const [headersArray, setHeadersArray] = useState([]);
   const [values, setValues] = useState([]);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [modalWarningMessage, setModalWarningMessage] = useState('');
   const debounceRef = useRef(null);
   const isFileUpload = useRef(false);
 
@@ -298,6 +300,11 @@ export default function CreateEventPage() {
     );
   }
 
+  const EXPECTED_HEADERS = [
+    'Event Name', 'Date', 'Time', 'Location', 'Description',
+    'Max Attendees', 'Waitlist', 'Publish Status', 'Visibility', 'Publish Date',
+  ];
+
   function handleFileUpload(event) {
     const maxFileSize = 10 * 1024 * 1024;
     const file = event.target.files[0];
@@ -305,7 +312,8 @@ export default function CreateEventPage() {
     if (!file) return;
 
     if (file.size > maxFileSize) {
-      alert('File size exceeds the 10MB limit.');
+      setModalWarningMessage(`File size is ${file.size} and exceeds the 10MB limit.`);
+      setConfirmModal(true);
       event.target.value = '';
       return;
     }
@@ -314,15 +322,51 @@ export default function CreateEventPage() {
       header: true,
       skipEmptyLines: true,
       complete: function(result) {
-        const columnArray = [];
+        const headersArray = [];
         const valuesArray = [];
 
         result.data.map((data) => {
-          columnArray.push(Object.keys(data));
+          headersArray.push(Object.keys(data));
           valuesArray.push(Object.values(data));
         });
+
+        const required_number_of_columns = 10;
+
+        for (const row of valuesArray) {
+          let emptyValueCounter = 0;
+
+          if(row.length < required_number_of_columns) {
+            setFileData([]);
+            setHeadersArray([]);
+            setValues([]);
+            const actualHeaders = (headersArray[0] || []).map((h) => h.trim());
+            const missingHeaders = EXPECTED_HEADERS.filter((h) => !actualHeaders.includes(h));
+            setModalWarningMessage(`Missing required columns: ${missingHeaders.join(', ')}`);
+            setConfirmModal(true);
+            isFileUpload.current = false;
+            return;
+          }
+          let missingElements = [];
+          for (let i = 0; i < row.length; i++) {
+            if (i !== 9 && row[i] === '') {
+              emptyValueCounter++;
+              missingElements.push(i);
+            }
+          }
+          if (emptyValueCounter > 0) {
+            setFileData([]);
+            setHeadersArray([]);
+            setValues([]);
+            const missingColumnNames = missingElements.map((i) => headersArray[0][i]);
+            setModalWarningMessage(`Missing required elements: ${missingColumnNames.join(', ')}`);
+            setConfirmModal(true);
+            isFileUpload.current = true;
+            return;
+          }
+        }
+
         setFileData(result.data);
-        setColumnArray(columnArray[0]);
+        setHeadersArray(headersArray[0]);
         setValues(valuesArray);
       }
     });
@@ -331,7 +375,26 @@ export default function CreateEventPage() {
   }
 
   async function handleFileCreateEvent() {
+    if (values.length === 0) {
+      setModalWarningMessage('No valid rows to create. Please upload a valid CSV file.');
+      setConfirmModal(true);
+      return;
+    }
+
     for (const row of values) {
+      /* row layout
+        [0] - string - name
+        [1] - string - date
+        [2] - string - time
+        [3] - string - location
+        [4] - string - description
+        [5] - string - max attendees
+        [6] - string - waitlist
+        [7] - string - publish status
+        [8] - string - visibility
+        [9] - string - publish date
+       */
+
       const waitlistValue = Number(row[6]);
       const hasWaitlist = !Number.isNaN(waitlistValue) && waitlistValue > 0;
 
@@ -348,12 +411,12 @@ export default function CreateEventPage() {
         max_attendees:
           Number(row[5]) === UNLIMITED_ATTENDEES ? UNLIMITED_ATTENDEES : Number(row[5]),
         created_at: new Date().toISOString(),
-        status: row[7],
-        visibility: row[8],
+        status: row[7].toLowerCase(),
+        visibility: row[8].toLowerCase(),
         minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
         waitlist_enabled: hasWaitlist,
         waitlist_size: hasWaitlist ? waitlistValue : 0,
-        publish_date: toPublishDateValue(row[7], row[9]),
+        publish_date: toPublishDateValue(row[7].toLowerCase(), row[9]),
       };
 
       setSubmitting(true);
@@ -367,11 +430,10 @@ export default function CreateEventPage() {
         }));
         return;
       }
-
-      history.push('/events');
-
-      isFileUpload.current = false;
     }
+    history.push('/events');
+
+    isFileUpload.current = false;
   }
 
   return (
@@ -413,6 +475,10 @@ export default function CreateEventPage() {
         setWaitlistSize,
         publishDate,
         setPublishDate,
+        confirmModal,
+        setConfirmModal,
+        modalWarningMessage,
+        setModalWarningMessage,
       }}
       questionActions={{
         questions,
@@ -448,7 +514,7 @@ export default function CreateEventPage() {
       fileActions={{
         handleFileUpload,
         fileData,
-        columnArray,
+        headersArray,
         values,
       }}
     />

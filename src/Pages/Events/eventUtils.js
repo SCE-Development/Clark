@@ -56,4 +56,3 @@ export function getApiErrorMessage(result, options = {}) {
 
   return msg || fallback;
 }
-
