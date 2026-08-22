@@ -93,7 +93,7 @@ export default function CreateEventPage() {
   const [headersArray, setHeadersArray] = useState([]);
   const [values, setValues] = useState([]);
   const [confirmModal, setConfirmModal] = useState(false);
-  const [modalWarningMessage, setModalWarningMessage] = useState('');
+  const [modalErrorMessage, setModalErrorMessage] = useState('');
   const debounceRef = useRef(null);
   const isFileUpload = useRef(false);
 
@@ -305,6 +305,15 @@ export default function CreateEventPage() {
     'Max Attendees', 'Waitlist', 'Publish Status', 'Visibility', 'Publish Date',
   ];
 
+  function showFileErrorModal(modalMessage) {
+    setFileData([]);
+    setHeadersArray([]);
+    setValues([]);
+    setModalErrorMessage(modalMessage);
+    setConfirmModal(true);
+    isFileUpload.current = false;
+  }
+
   function handleFileUpload(event) {
     const maxFileSize = 10 * 1024 * 1024;
     const file = event.target.files[0];
@@ -312,7 +321,7 @@ export default function CreateEventPage() {
     if (!file) return;
 
     if (file.size > maxFileSize) {
-      setModalWarningMessage(`File size is ${file.size} and exceeds the 10MB limit.`);
+      setModalErrorMessage(`File size is ${file.size} and exceeds the 10MB limit.`);
       setConfirmModal(true);
       event.target.value = '';
       return;
@@ -336,31 +345,22 @@ export default function CreateEventPage() {
           let emptyValueCounter = 0;
 
           if(row.length < required_number_of_columns) {
-            setFileData([]);
-            setHeadersArray([]);
-            setValues([]);
             const actualHeaders = (headersArray[0] || []).map((h) => h.trim());
             const missingHeaders = EXPECTED_HEADERS.filter((h) => !actualHeaders.includes(h));
-            setModalWarningMessage(`Missing required columns: ${missingHeaders.join(', ')}`);
-            setConfirmModal(true);
-            isFileUpload.current = false;
+            showFileErrorModal(`Missing required columns: ${missingHeaders.join(', ')}`);
             return;
           }
           let missingElements = [];
           for (let i = 0; i < row.length; i++) {
+            // index 9 is treated different because it is the only one that can be accepted as empty
             if (i !== 9 && row[i] === '') {
               emptyValueCounter++;
               missingElements.push(i);
             }
           }
           if (emptyValueCounter > 0) {
-            setFileData([]);
-            setHeadersArray([]);
-            setValues([]);
             const missingColumnNames = missingElements.map((i) => headersArray[0][i]);
-            setModalWarningMessage(`Missing required elements: ${missingColumnNames.join(', ')}`);
-            setConfirmModal(true);
-            isFileUpload.current = true;
+            showFileErrorModal(`Missing required columns: ${missingColumnNames.join(', ')}`);
             return;
           }
         }
@@ -376,7 +376,7 @@ export default function CreateEventPage() {
 
   async function handleFileCreateEvent() {
     if (values.length === 0) {
-      setModalWarningMessage('No valid rows to create. Please upload a valid CSV file.');
+      setModalErrorMessage('No valid rows to create. Please upload a valid CSV file.');
       setConfirmModal(true);
       return;
     }
@@ -477,8 +477,8 @@ export default function CreateEventPage() {
         setPublishDate,
         confirmModal,
         setConfirmModal,
-        modalWarningMessage,
-        setModalWarningMessage,
+        modalErrorMessage,
+        setModalErrorMessage,
       }}
       questionActions={{
         questions,

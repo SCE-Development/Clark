@@ -54,8 +54,8 @@ export default function EventEditorForm({
     setPublishDate,
     confirmModal,
     setConfirmModal,
-    modalWarningMessage,
-    setModalWarningMessage,
+    modalErrorMessage,
+    setModalErrorMessage,
   } = form;
 
   const {
@@ -465,8 +465,8 @@ export default function EventEditorForm({
       )}
 
       <ConfirmationModal {... {
-        headerText: 'Warning',
-        bodyText: `Error: ${modalWarningMessage}`,
+        headerText: 'Error',
+        bodyText: modalErrorMessage,
         confirmText: 'Create',
         cancelText: 'Close',
         hideConfirmButton: true,
