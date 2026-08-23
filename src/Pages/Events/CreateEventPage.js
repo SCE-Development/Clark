@@ -305,6 +305,39 @@ export default function CreateEventPage() {
     'Max Attendees', 'Waitlist', 'Publish Status', 'Visibility', 'Publish Date',
   ];
 
+  const EXAMPLE_CSV_ROWS = [
+    EXPECTED_HEADERS,
+    ['Example Name', 'yyyy-mm-dd', 'hh:mm PM', 'Example Location', 'Example description', '20', '5', 'published', 'public', 'yyyy-mm-dd'],
+    ['Cookie party', '2026-08-21', '6:00 AM', 'Engineering Building', 'Eat cookies', '-1', '-1', 'draft', 'public', ''],
+    ['', '', '', '', '', '', '', '', '', ''],
+    ['Note: max attendees: -1 for unlimited, waitlist: -1 to disable, publish date: leave empty if none. Visibility can only be public atm. Do not touch row one and start at row two. DELETE THIS BOX BEFORE SUBMITTING', '', '', '', '', '', '', '', '', ''],
+  ];
+
+  /** Only quotes a cell when it actually needs it (contains a comma, quote, or newline). */
+  function toCsvCell(cell) {
+    const str = String(cell);
+    if (/[",\n]/.test(str)) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  }
+
+  const EXAMPLE_CSV = EXAMPLE_CSV_ROWS
+    .map((row) => row.map(toCsvCell).join(','))
+    .join('\r\n');
+
+  function handleDownloadExampleCsv() {
+    const blob = new Blob([EXAMPLE_CSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'example-events.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
   function showFileErrorModal(modalMessage) {
     setFileData([]);
     setHeadersArray([]);
@@ -513,6 +546,7 @@ export default function CreateEventPage() {
       }}
       fileActions={{
         handleFileUpload,
+        handleDownloadExampleCsv,
         fileData,
         headersArray,
         values,

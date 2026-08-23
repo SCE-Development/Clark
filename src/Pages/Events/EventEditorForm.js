@@ -60,6 +60,7 @@ export default function EventEditorForm({
 
   const {
     handleFileUpload,
+    handleDownloadExampleCsv,
     fileData = [],
     headersArray = [],
     values = [],
@@ -501,6 +502,13 @@ export default function EventEditorForm({
           onChange={handleFileUpload}
         >
         </input>
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={handleDownloadExampleCsv}
+        >
+          Download Example CSV
+        </button>
         <Link to="/events" className="btn btn-ghost">
           Cancel
         </Link>
