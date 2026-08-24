@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const svg = require('./SVG');
-import { getAllUsers, deleteUserByID, getNewPaidMembersThisSemester } from '../../APIFunctions/User';
+import { getAllUsers, deleteUserByID, getNewPaidMembersThisSemester, bulkEditUsers } from '../../APIFunctions/User';
 import { formatFirstAndLastName } from '../../APIFunctions/Profile';
 import { getAllUsersValidVerifiedAndSubscribed } from '../../APIFunctions/User';
 // import { membershipState } from '../../Enums';
@@ -9,14 +9,18 @@ import ConfirmationModal from
   '../../Components/DecisionModal/ConfirmationModal.js';
 const enums = require('../../Enums.js');
 import { useSCE } from '../../Components/context/SceContext.js';
+import SelectDropdown from './SelectDropdown.js';
 
 const ALL_ROWS = 'all';
 const DEFAULT_PAGE_SIZE = 20;
-const PAGE_SIZE_OPTIONS = [10, DEFAULT_PAGE_SIZE, 50, ALL_ROWS];
-
-function pageSizeLabel(pageSize) {
-  return pageSize === ALL_ROWS ? 'All' : String(pageSize);
-}
+const PAGE_SIZE_OPTIONS = [10, DEFAULT_PAGE_SIZE, 50, ALL_ROWS].map(value => ({
+  value,
+  label: value === ALL_ROWS ? 'All' : String(value),
+}));
+const ROLE_OPTIONS = Object.values(enums.membershipState).map(value => ({
+  value,
+  label: enums.membershipStateToString(value),
+}));
 
 export default function Overview() {
   const { user } = useSCE();
@@ -33,7 +37,11 @@ export default function Overview() {
   // what the user picked in the dropdown. distinct from rowsPerPage, which is
   // the size the server actually used -- under 'all' those two differ.
   const [pageSizeChoice, setPageSizeChoice] = useState(DEFAULT_PAGE_SIZE);
-  const [isPageSizeDropdownOpen, setIsPageSizeDropdownOpen] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkAccessLevel, setBulkAccessLevel] = useState(
+    enums.membershipState.MEMBER
+  );
+  const [toggleBulkEdit, setToggleBulkEdit] = useState(false);
   const [currentSortColumn, setCurrentSortColumn] = useState('joinDate');
   const [currentSortOrder, setCurrentSortOrder] = useState('desc');
   const [clubRevenueData, setClubRevenueData] = useState({newMembersThisYear:0, newSingleSemesterMembers:0, newAnnualMembers:0, currentActiveMembers:0});
@@ -66,6 +74,13 @@ export default function Overview() {
         child => !child._id.includes(userToDel._id)
       )
     );
+    // the row is gone, so leaving it selected would let a bulk edit target a
+    // user who is no longer on screen
+    setSelectedIds(previouslySelected => {
+      const nextSelected = new Set(previouslySelected);
+      nextSelected.delete(userToDel._id);
+      return nextSelected;
+    });
   }
 
   function mark(bool) {
@@ -89,6 +104,9 @@ export default function Overview() {
       setTotal(apiResponse.responseData.total);
       setRowsPerPage(apiResponse.responseData.rowsPerPage);
     }
+    // every refetch replaces the rendered rows, so any prior selection refers
+    // to users that are no longer on screen
+    setSelectedIds(new Set());
     setLoading(false);
   }
 
@@ -142,9 +160,48 @@ export default function Overview() {
 
   function handlePageSizeChange(pageSize) {
     setPageSizeChoice(pageSize);
-    setIsPageSizeDropdownOpen(false);
     // whatever page we were on probably doesn't exist at the new size
     setPage(0);
+  }
+
+  function toggleUserSelection(userId) {
+    setSelectedIds(previouslySelected => {
+      const nextSelected = new Set(previouslySelected);
+      if (nextSelected.has(userId)) {
+        nextSelected.delete(userId);
+      } else {
+        nextSelected.add(userId);
+      }
+      return nextSelected;
+    });
+  }
+
+  function toggleSelectAll() {
+    setSelectedIds(previouslySelected =>
+      previouslySelected.size === users.length
+        ? new Set()
+        : new Set(users.map(userOnPage => userOnPage._id))
+    );
+  }
+
+  async function bulkUpdateAccessLevel() {
+    const response = await bulkEditUsers(
+      [...selectedIds],
+      bulkAccessLevel,
+      user.token
+    );
+    if (response.error) {
+      return alert('unable to update the selected users, check logs');
+    }
+    const skipped = response.responseData.skipped || [];
+    if (skipped.length) {
+      alert(
+        `${skipped.length} user(s) were skipped because they outrank you: ` +
+        skipped.map(skippedUser => skippedUser.email).join(', ')
+      );
+    }
+    // refetch so the table shows the new roles. this also clears the selection
+    callDatabase();
   }
 
   function handleArrowVisibility(sortOrder, columnName) {
@@ -235,6 +292,7 @@ export default function Overview() {
   return (
     <div className='overview-container bg-white dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-600 min-h-[100dvh]'>
       <ConfirmationModal {... {
+        id: 'delete-user-modal',
         headerText: `Delete ${userToDelete.firstName} ${userToDelete.lastName} ?`,
         bodyText: `Are you sure you want to delete 
           ${userToDelete.firstName}? They'll be gone forever if you do.`,
@@ -247,6 +305,22 @@ export default function Overview() {
         },
         handleCancel: () => setToggleDelete(!toggleDelete),
         open: toggleDelete
+      }
+      } />
+      <ConfirmationModal {... {
+        id: 'bulk-edit-modal',
+        headerText: `Change ${selectedIds.size} user(s) to ` +
+          `${enums.membershipStateToString(bulkAccessLevel)}?`,
+        bodyText: 'This updates every selected user at once. Users who ' +
+          'outrank you will be skipped.',
+        confirmText: 'Yes, update them',
+        cancelText: 'Never mind',
+        handleConfirmation: () => {
+          bulkUpdateAccessLevel();
+          setToggleBulkEdit(!toggleBulkEdit);
+        },
+        handleCancel: () => setToggleBulkEdit(!toggleBulkEdit),
+        open: toggleBulkEdit
       }
       } />
       <div className='px-4'>
@@ -301,45 +375,70 @@ export default function Overview() {
               />
             </label>
             <div className='relative w-full sm:w-48 sm:shrink-0'>
-              <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-                Entries per page
-              </label>
-              <button
-                onClick={() => setIsPageSizeDropdownOpen(!isPageSizeDropdownOpen)}
+              <SelectDropdown
+                label='Entries per page'
+                options={PAGE_SIZE_OPTIONS}
+                value={pageSizeChoice}
+                onChange={handlePageSizeChange}
                 disabled={loading}
-                className='w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex justify-between items-center'
-              >
-                <span>{pageSizeLabel(pageSizeChoice)}</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${isPageSizeDropdownOpen ? 'rotate-180' : ''}`}
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
-                </svg>
-              </button>
-
-              {isPageSizeDropdownOpen && (
-                <div className='absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto'>
-                  <div className='p-2'>
-                    {PAGE_SIZE_OPTIONS.map(option => (
-                      <button
-                        key={option}
-                        onClick={() => handlePageSizeChange(option)}
-                        className={`w-full text-left text-sm p-2 rounded cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 ${option === pageSizeChoice ? 'bg-gray-100 dark:bg-gray-600' : ''}`}
-                      >
-                        {pageSizeLabel(option)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              />
             </div>
           </div>
+          {selectedIds.size > 0 && (
+            <div className='flex flex-col gap-4 mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 sm:flex-row sm:items-end'>
+              <span className='text-sm font-medium text-gray-700 dark:text-gray-300 sm:flex-1'>
+                {selectedIds.size} selected
+              </span>
+              <div className='relative w-full sm:w-48 sm:shrink-0'>
+                <SelectDropdown
+                  label='Set membership status to'
+                  options={ROLE_OPTIONS}
+                  value={bulkAccessLevel}
+                  onChange={setBulkAccessLevel}
+                />
+              </div>
+              <div className='flex gap-2'>
+                <button
+                  onClick={() => setToggleBulkEdit(!toggleBulkEdit)}
+                  className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                >
+                  Apply
+                </button>
+                <button
+                  onClick={() => setSelectedIds(new Set())}
+                  className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500'
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          )}
           <table className='table px-3'>
             <thead>
               <tr>
+                <th className='w-px'>
+                  <div className='flex items-center justify-center'>
+                    <input
+                      type='checkbox'
+                      className='form-checkbox h-4 w-4 text-blue-600 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500'
+                      aria-label='Select every user on this page'
+                      disabled={users.length === 0}
+                      checked={
+                        users.length > 0 && selectedIds.size === users.length
+                      }
+                      // indeterminate is a DOM property, not an attribute, so
+                      // react can't set it declaratively
+                      ref={checkbox => {
+                        if (checkbox) {
+                          checkbox.indeterminate =
+                            selectedIds.size > 0 &&
+                            selectedIds.size < users.length;
+                        }
+                      }}
+                      onChange={toggleSelectAll}
+                    />
+                  </div>
+                </th>
                 {[
                   { title: 'Name/Email', className: 'text-base text-gray-700 dark:text-white/70', columnName: 'email'},
                   { title: 'Printing', className: 'text-base text-gray-700 dark:text-white/70 hidden text-center md:table-cell', columnName: 'pagesPrinted'},
@@ -367,6 +466,17 @@ export default function Overview() {
             <tbody>
               {users.map((user) => (
                 <tr className='break-all !rounded md:break-keep hover:bg-gray-100 dark:hover:bg-white/10' key={user.email}>
+                  <td className='w-px'>
+                    <div className='flex items-center justify-center'>
+                      <input
+                        type='checkbox'
+                        className='form-checkbox h-4 w-4 text-blue-600 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500'
+                        aria-label={`Select ${user.email}`}
+                        checked={selectedIds.has(user._id)}
+                        onChange={() => toggleUserSelection(user._id)}
+                      />
+                    </div>
+                  </td>
                   <td className=''>
                     <a className='link link-hover text-blue-600 dark:text-blue-400' target="_blank" rel="noopener noreferrer" href={`/user/edit/${user._id}`}>
                       {formatFirstAndLastName(user)}

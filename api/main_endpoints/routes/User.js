@@ -389,6 +389,115 @@ router.post('/edit', async (req, res) => {
   }
 });
 
+// Change the accessLevel of many members at once
+router.post('/bulkEdit', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const { accessLevel: editorAccessLevel, _id: editorId } = decoded.token;
+  const { ids, accessLevel } = req.body;
+  const isEditorAdmin = editorAccessLevel === membershipState.ADMIN;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: 'ids must be a non-empty array.' });
+  }
+
+  const validAccessLevels = Object.values(membershipState);
+  if (!validAccessLevels.includes(accessLevel)) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: `${accessLevel} is not a valid access level.` });
+  }
+
+  // Only admins can hand out the admin role
+  if (accessLevel === membershipState.ADMIN && !isEditorAdmin) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  // Admins may re-role themselves, but an officer demoting themselves mid-bulk
+  // would lock them out of the page they're standing on
+  if (!isEditorAdmin && ids.some(id => String(id) === String(editorId))) {
+    return res
+      .status(FORBIDDEN)
+      .send({ message: 'Officers cannot change their own access level.' });
+  }
+
+  try {
+    const targetUsers = await User.find(
+      { _id: { $in: ids } },
+      '_id email accessLevel'
+    ).lean();
+
+    if (targetUsers.length === 0) {
+      return res.status(NOT_FOUND).send({ message: 'No users found.' });
+    }
+
+    // An officer can't touch anyone ranked above them. /delete draws the same
+    // line; bulk selection makes it much easier to sweep up an admin by
+    // accident, so we skip those rather than fail the whole request.
+    const editable = [];
+    const skipped = [];
+    targetUsers.forEach(targetUser => {
+      if (isEditorAdmin || targetUser.accessLevel <= editorAccessLevel) {
+        editable.push(targetUser);
+      } else {
+        skipped.push({ _id: targetUser._id, email: targetUser.email });
+      }
+    });
+
+    // Users already at the target level would otherwise produce audit log
+    // entries claiming a change that didn't happen
+    const changed = editable.filter(
+      targetUser => targetUser.accessLevel !== accessLevel
+    );
+
+    if (changed.length === 0) {
+      return res.status(OK).send({
+        message: 'No changes submitted.',
+        modified: 0,
+        skipped,
+      });
+    }
+
+    const result = await User.updateMany(
+      { _id: { $in: changed.map(targetUser => targetUser._id) } },
+      { accessLevel }
+    );
+
+    // one entry per user, shaped like the one /edit writes so the audit log
+    // page renders them the same way
+    changed.forEach(targetUser => {
+      const fieldChanges = {
+        accessLevel: { from: targetUser.accessLevel, to: accessLevel },
+      };
+      AuditLog.create({
+        userId: editorId,
+        action: AuditLogActions.UPDATE_USER,
+        documentId: targetUser._id,
+        details: {
+          updatedInfo: JSON.stringify({ accessLevel }),
+          fieldChanges: JSON.stringify(fieldChanges),
+        },
+      }).catch(logger.error);
+    });
+
+    return res.status(OK).send({
+      message: `${changed.length} user(s) were updated.`,
+      modified: result.nModified,
+      skipped,
+    });
+  } catch (error) {
+    logger.error('/bulkEdit had an error:', error);
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: 'Bad Request: Unable to update users.' });
+  }
+});
+
 router.post('/getPagesPrintedCount', async (req, res) => {
   const decoded = await decodeToken(req);
   if (decoded.status !== OK) {

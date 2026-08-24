@@ -173,6 +173,38 @@ export async function editUser(userToEdit, token) {
 }
 
 /**
+ * Change the access level of many users in one request.
+ * @param {string[]} ids The MongoDB ids of the users to update
+ * @param {number} accessLevel The membershipState value to apply to all of them
+ * @param {string} token The jwt token for authentication
+ * @returns {UserApiResponse} containing the number modified and any users that
+ * were skipped because the editor outranked them
+ */
+export async function bulkEditUsers(ids, accessLevel, token) {
+  let status = new UserApiResponse();
+  const url = new URL('/api/User/bulkEdit', BASE_API_URL);
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids, accessLevel }),
+    });
+    if (res.ok) {
+      status.responseData = await res.json();
+    } else {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = err.message || err;
+  }
+  return status;
+}
+
+/**
  * Deletes a user by an ID
  * @param {string} _id The ID of the user to delete
  * @param {string} token jwt token to authorize deletion
