@@ -29,6 +29,8 @@ const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
+const ALLOWED_ROWS_PER_PAGE = [10, 20, 50];
+const ALL_ROWS = 'all';
 
 const SENSITIVE_FIELDS = [
   'email',
@@ -220,15 +222,34 @@ router.post('/users', async function(req, res) {
   };
   const sortOrder = orderToInteger[req.query.order] || orderToInteger.default;
 
+  const total = await User.count(maybeOr);
+
+  // 'all' collapses every match onto a single page. anything we don't
+  // recognize falls back to the default rather than erroring, so callers that
+  // don't send a size keep working unchanged.
+  const requestedRowsPerPage = req.body.rowsPerPage;
+  const showAllRows = requestedRowsPerPage === ALL_ROWS;
+  let rowsPerPage = ROWS_PER_PAGE;
+  if (showAllRows) {
+    rowsPerPage = total;
+  } else if (ALLOWED_ROWS_PER_PAGE.includes(Number(requestedRowsPerPage))) {
+    rowsPerPage = Number(requestedRowsPerPage);
+  }
+
+  // mongo reads a limit of 0 as "no limit", which is what we want for 'all'
+  // and is also why we can't just pass rowsPerPage straight through
+  const limit = showAllRows ? 0 : rowsPerPage;
+
   // make sure that the page we want to see is 0 by default
   // and avoid negative page numbers
-  let skip = Math.max(Number(req.body.page) || 0, 0);
-  skip *= ROWS_PER_PAGE;
-  const total = await User.count(maybeOr);
-  User.find(maybeOr, { password: 0, }, { skip, limit: ROWS_PER_PAGE, })
+  const skip = showAllRows
+    ? 0
+    : Math.max(Number(req.body.page) || 0, 0) * rowsPerPage;
+
+  User.find(maybeOr, { password: 0, }, { skip, limit })
     .sort({ [sortColumn] : sortOrder })
     .then(items => {
-      res.status(OK).send({ items, total, rowsPerPage: ROWS_PER_PAGE, });
+      res.status(OK).send({ items, total, rowsPerPage, });
     })
     .catch((e) => {
       res.sendStatus(BAD_REQUEST);
@@ -365,6 +386,115 @@ router.post('/edit', async (req, res) => {
   } catch (error) {
     logger.error('/edit had an error:', error);
     return res.status(BAD_REQUEST).send({ message: 'Bad Request: Unable to update user.' });
+  }
+});
+
+// Change the accessLevel of many members at once
+router.post('/bulkEdit', async (req, res) => {
+  const decoded = await decodeToken(req, membershipState.OFFICER);
+  if (decoded.status !== OK) {
+    return res.sendStatus(decoded.status);
+  }
+
+  const { accessLevel: editorAccessLevel, _id: editorId } = decoded.token;
+  const { ids, accessLevel } = req.body;
+  const isEditorAdmin = editorAccessLevel === membershipState.ADMIN;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: 'ids must be a non-empty array.' });
+  }
+
+  const validAccessLevels = Object.values(membershipState);
+  if (!validAccessLevels.includes(accessLevel)) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: `${accessLevel} is not a valid access level.` });
+  }
+
+  // Only admins can hand out the admin role
+  if (accessLevel === membershipState.ADMIN && !isEditorAdmin) {
+    return res.sendStatus(UNAUTHORIZED);
+  }
+
+  // Admins may re-role themselves, but an officer demoting themselves mid-bulk
+  // would lock them out of the page they're standing on
+  if (!isEditorAdmin && ids.some(id => String(id) === String(editorId))) {
+    return res
+      .status(FORBIDDEN)
+      .send({ message: 'Officers cannot change their own access level.' });
+  }
+
+  try {
+    const targetUsers = await User.find(
+      { _id: { $in: ids } },
+      '_id email accessLevel'
+    ).lean();
+
+    if (targetUsers.length === 0) {
+      return res.status(NOT_FOUND).send({ message: 'No users found.' });
+    }
+
+    // An officer can't touch anyone ranked above them. /delete draws the same
+    // line; bulk selection makes it much easier to sweep up an admin by
+    // accident, so we skip those rather than fail the whole request.
+    const editable = [];
+    const skipped = [];
+    targetUsers.forEach(targetUser => {
+      if (isEditorAdmin || targetUser.accessLevel <= editorAccessLevel) {
+        editable.push(targetUser);
+      } else {
+        skipped.push({ _id: targetUser._id, email: targetUser.email });
+      }
+    });
+
+    // Users already at the target level would otherwise produce audit log
+    // entries claiming a change that didn't happen
+    const changed = editable.filter(
+      targetUser => targetUser.accessLevel !== accessLevel
+    );
+
+    if (changed.length === 0) {
+      return res.status(OK).send({
+        message: 'No changes submitted.',
+        modified: 0,
+        skipped,
+      });
+    }
+
+    const result = await User.updateMany(
+      { _id: { $in: changed.map(targetUser => targetUser._id) } },
+      { accessLevel }
+    );
+
+    // one entry per user, shaped like the one /edit writes so the audit log
+    // page renders them the same way
+    changed.forEach(targetUser => {
+      const fieldChanges = {
+        accessLevel: { from: targetUser.accessLevel, to: accessLevel },
+      };
+      AuditLog.create({
+        userId: editorId,
+        action: AuditLogActions.UPDATE_USER,
+        documentId: targetUser._id,
+        details: {
+          updatedInfo: JSON.stringify({ accessLevel }),
+          fieldChanges: JSON.stringify(fieldChanges),
+        },
+      }).catch(logger.error);
+    });
+
+    return res.status(OK).send({
+      message: `${changed.length} user(s) were updated.`,
+      modified: result.nModified,
+      skipped,
+    });
+  } catch (error) {
+    logger.error('/bulkEdit had an error:', error);
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: 'Bad Request: Unable to update users.' });
   }
 });
 

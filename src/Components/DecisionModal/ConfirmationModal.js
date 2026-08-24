@@ -5,14 +5,17 @@ export default function ConfirmationModal(props) {
 
   const confirmText = props.confirmText || 'Confirm';
   const cancelText = props.cancelText || 'Cancel';
+  // pages rendering more than one modal must pass distinct ids, otherwise
+  // getElementById below finds whichever one mounted first
+  const id = props.id || 'confirmation-modal';
 
   useEffect(() => {
     if (open) {
-      document.getElementById('confirmation-modal').showModal();
+      document.getElementById(id).showModal();
     }
   }, [open]);
   return (<>
-    <dialog id="confirmation-modal" className="modal modal-bottom sm:modal-middle">
+    <dialog id={id} className="modal modal-bottom sm:modal-middle">
       <div className="modal-box">
         <h3 className="font-bold text-lg">{headerText}</h3>
         <p className="text-sm text-gray-500">

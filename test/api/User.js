@@ -953,4 +953,334 @@ describe('User', () => {
       });
     });
   });
+
+  describe('/POST bulkEdit', () => {
+    let member;
+    let officer;
+    let admin;
+
+    const editorOfficer = {
+      _id: new mongoose.Types.ObjectId().toString(),
+      accessLevel: MEMBERSHIP_STATE.OFFICER,
+    };
+    const editorAdmin = {
+      _id: new mongoose.Types.ObjectId().toString(),
+      accessLevel: MEMBERSHIP_STATE.ADMIN,
+    };
+
+    beforeEach(async () => {
+      await User.deleteMany({});
+      await AuditLog.deleteMany({});
+      member = await new User({
+        email: 'bulk-member@sce.dev',
+        password: 'Passw0rd',
+        firstName: 'Mem',
+        lastName: 'Ber',
+        major: 'Computer Science',
+        accessLevel: MEMBERSHIP_STATE.MEMBER,
+      }).save();
+      officer = await new User({
+        email: 'bulk-officer@sce.dev',
+        password: 'Passw0rd',
+        firstName: 'Off',
+        lastName: 'Icer',
+        major: 'Computer Science',
+        accessLevel: MEMBERSHIP_STATE.OFFICER,
+      }).save();
+      admin = await new User({
+        email: 'bulk-admin@sce.dev',
+        password: 'Passw0rd',
+        firstName: 'Ad',
+        lastName: 'Min',
+        major: 'Computer Science',
+        accessLevel: MEMBERSHIP_STATE.ADMIN,
+      }).save();
+    });
+
+    after(async () => {
+      await User.deleteMany({});
+      await AuditLog.deleteMany({});
+    });
+
+    it('Should return statusCode 401 if no token is passed in', async () => {
+      const result = await test.sendPostRequest('/api/User/bulkEdit', {
+        ids: [member._id.toString()],
+        accessLevel: MEMBERSHIP_STATE.OFFICER,
+      });
+      expect(result).to.have.status(UNAUTHORIZED);
+    });
+
+    it('Should return statusCode 403 if an invalid token was passed in',
+      async () => {
+        setTokenStatus(null);
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/bulkEdit', {
+            ids: [member._id.toString()],
+            accessLevel: MEMBERSHIP_STATE.OFFICER,
+          });
+        expect(result).to.have.status(FORBIDDEN);
+      });
+
+    it('Should return statusCode 400 if ids is not a non-empty array',
+      async () => {
+        setTokenStatus(true, editorOfficer);
+        for (const ids of [undefined, [], 'not-an-array', {}]) {
+          const result = await test.sendPostRequestWithToken(
+            token, '/api/User/bulkEdit', {
+              ids,
+              accessLevel: MEMBERSHIP_STATE.MEMBER,
+            });
+          expect(result).to.have.status(BAD_REQUEST);
+        }
+      });
+
+    it('Should return statusCode 400 for an invalid access level',
+      async () => {
+        setTokenStatus(true, editorOfficer);
+        for (const accessLevel of [99, -7, 'OFFICER', undefined]) {
+          const result = await test.sendPostRequestWithToken(
+            token, '/api/User/bulkEdit', {
+              ids: [member._id.toString()],
+              accessLevel,
+            });
+          expect(result).to.have.status(BAD_REQUEST);
+        }
+      });
+
+    it('Should return statusCode 401 if an officer tries to grant admin',
+      async () => {
+        setTokenStatus(true, editorOfficer);
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/bulkEdit', {
+            ids: [member._id.toString()],
+            accessLevel: MEMBERSHIP_STATE.ADMIN,
+          });
+        expect(result).to.have.status(UNAUTHORIZED);
+      });
+
+    it('Should let an admin grant admin', async () => {
+      setTokenStatus(true, editorAdmin);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/bulkEdit', {
+          ids: [member._id.toString()],
+          accessLevel: MEMBERSHIP_STATE.ADMIN,
+        });
+      expect(result).to.have.status(OK);
+      const updated = await User.findById(member._id).lean();
+      expect(updated.accessLevel).to.equal(MEMBERSHIP_STATE.ADMIN);
+    });
+
+    it('Should return statusCode 403 if an officer includes themselves',
+      async () => {
+        setTokenStatus(true, {
+          _id: officer._id.toString(),
+          accessLevel: MEMBERSHIP_STATE.OFFICER,
+        });
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/bulkEdit', {
+            ids: [member._id.toString(), officer._id.toString()],
+            accessLevel: MEMBERSHIP_STATE.MEMBER,
+          });
+        expect(result).to.have.status(FORBIDDEN);
+        // the whole request is rejected, so the other user is untouched
+        const untouched = await User.findById(member._id).lean();
+        expect(untouched.accessLevel).to.equal(MEMBERSHIP_STATE.MEMBER);
+      });
+
+    it('Should let an admin include themselves', async () => {
+      setTokenStatus(true, {
+        _id: admin._id.toString(),
+        accessLevel: MEMBERSHIP_STATE.ADMIN,
+      });
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/bulkEdit', {
+          ids: [admin._id.toString()],
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+        });
+      expect(result).to.have.status(OK);
+      const updated = await User.findById(admin._id).lean();
+      expect(updated.accessLevel).to.equal(MEMBERSHIP_STATE.MEMBER);
+    });
+
+    it('Should update every selected user', async () => {
+      setTokenStatus(true, editorAdmin);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/bulkEdit', {
+          ids: [member._id.toString(), officer._id.toString()],
+          accessLevel: MEMBERSHIP_STATE.PENDING,
+        });
+      expect(result).to.have.status(OK);
+      expect(result.body.modified).to.equal(2);
+      const updated = await User.find({
+        _id: { $in: [member._id, officer._id] }
+      }).lean();
+      updated.forEach(updatedUser => {
+        expect(updatedUser.accessLevel).to.equal(MEMBERSHIP_STATE.PENDING);
+      });
+    });
+
+    it('Should skip users who outrank the editor', async () => {
+      setTokenStatus(true, editorOfficer);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/bulkEdit', {
+          ids: [member._id.toString(), admin._id.toString()],
+          accessLevel: MEMBERSHIP_STATE.NON_MEMBER,
+        });
+      expect(result).to.have.status(OK);
+      expect(result.body.skipped).to.have.length(1);
+      expect(result.body.skipped[0].email).to.equal('bulk-admin@sce.dev');
+      const untouchedAdmin = await User.findById(admin._id).lean();
+      expect(untouchedAdmin.accessLevel).to.equal(MEMBERSHIP_STATE.ADMIN);
+      const updatedMember = await User.findById(member._id).lean();
+      expect(updatedMember.accessLevel).to.equal(MEMBERSHIP_STATE.NON_MEMBER);
+    });
+
+    it('Should not report changes for users already at the target level',
+      async () => {
+        setTokenStatus(true, editorAdmin);
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/bulkEdit', {
+            ids: [officer._id.toString()],
+            accessLevel: MEMBERSHIP_STATE.OFFICER,
+          });
+        expect(result).to.have.status(OK);
+        expect(result.body.modified).to.equal(0);
+        const auditEntries = await AuditLog.find({}).lean();
+        expect(auditEntries).to.have.length(0);
+      });
+
+    it('Should return statusCode 404 if none of the ids exist', async () => {
+      setTokenStatus(true, editorAdmin);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/bulkEdit', {
+          ids: [new mongoose.Types.ObjectId().toString()],
+          accessLevel: MEMBERSHIP_STATE.MEMBER,
+        });
+      expect(result).to.have.status(NOT_FOUND);
+    });
+
+    it('Should write one audit log per changed user', async () => {
+      setTokenStatus(true, editorAdmin);
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/bulkEdit', {
+          ids: [member._id.toString(), officer._id.toString()],
+          accessLevel: MEMBERSHIP_STATE.NON_MEMBER,
+        });
+      expect(result).to.have.status(OK);
+
+      const auditEntries = await AuditLog.find({
+        action: AuditLogActions.UPDATE_USER
+      }).lean();
+      expect(auditEntries).to.have.length(2);
+
+      const memberEntry = auditEntries.find(
+        entry => String(entry.documentId) === member._id.toString()
+      );
+      expect(memberEntry).to.exist;
+      const fieldChanges = JSON.parse(memberEntry.details.fieldChanges);
+      expect(fieldChanges.accessLevel).to.deep.equal({
+        from: MEMBERSHIP_STATE.MEMBER,
+        to: MEMBERSHIP_STATE.NON_MEMBER
+      });
+    });
+  });
+
+  describe('/POST users rowsPerPage', () => {
+    const SEEDED_USERS = 25;
+    const DEFAULT_ROWS_PER_PAGE = 20;
+
+    before(async () => {
+      await User.deleteMany({});
+      await User.insertMany(
+        Array.from({ length: SEEDED_USERS }, (_, index) => ({
+          email: `rows-per-page-${index}@sce.com`,
+          password: 'Passw0rd',
+          firstName: `first-${index}`,
+          lastName: `last-${index}`,
+          major: 'Computer Science',
+        }))
+      );
+    });
+
+    beforeEach(() => {
+      setTokenStatus(true);
+    });
+
+    after(async () => {
+      await User.deleteMany({});
+    });
+
+    it('Should default to 20 rows per page when rowsPerPage is omitted',
+      async () => {
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/users', {});
+        expect(result).to.have.status(OK);
+        expect(result.body.rowsPerPage).to.equal(DEFAULT_ROWS_PER_PAGE);
+        expect(result.body.items.length).to.equal(DEFAULT_ROWS_PER_PAGE);
+        expect(result.body.total).to.equal(SEEDED_USERS);
+      });
+
+    it('Should return only the requested number of rows', async () => {
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/users', { rowsPerPage: 10 });
+      expect(result).to.have.status(OK);
+      expect(result.body.rowsPerPage).to.equal(10);
+      expect(result.body.items.length).to.equal(10);
+      expect(result.body.total).to.equal(SEEDED_USERS);
+    });
+
+    it('Should return every user when fewer exist than the requested size',
+      async () => {
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/users', { rowsPerPage: 50 });
+        expect(result).to.have.status(OK);
+        expect(result.body.rowsPerPage).to.equal(50);
+        expect(result.body.items.length).to.equal(SEEDED_USERS);
+      });
+
+    it('Should offset by the requested size when paging', async () => {
+      const firstPage = await test.sendPostRequestWithToken(
+        token, '/api/User/users', { rowsPerPage: 10, page: 0 });
+      const thirdPage = await test.sendPostRequestWithToken(
+        token, '/api/User/users', { rowsPerPage: 10, page: 2 });
+      expect(thirdPage).to.have.status(OK);
+      // 25 users at 10 per page leaves 5 on the final page
+      expect(thirdPage.body.items.length).to.equal(5);
+      const firstPageIds = firstPage.body.items.map(user => String(user._id));
+      thirdPage.body.items.forEach(user => {
+        expect(firstPageIds).to.not.include(String(user._id));
+      });
+    });
+
+    it('Should return every matching user when rowsPerPage is "all"',
+      async () => {
+        const result = await test.sendPostRequestWithToken(
+          token, '/api/User/users', { rowsPerPage: 'all' });
+        expect(result).to.have.status(OK);
+        expect(result.body.items.length).to.equal(SEEDED_USERS);
+        expect(result.body.rowsPerPage).to.equal(SEEDED_USERS);
+      });
+
+    it('Should respect the query when rowsPerPage is "all"', async () => {
+      const result = await test.sendPostRequestWithToken(
+        token, '/api/User/users', { rowsPerPage: 'all', query: 'first-1' });
+      expect(result).to.have.status(OK);
+      // first-1, and first-10 through first-19
+      expect(result.body.items.length).to.equal(11);
+      expect(result.body.total).to.equal(11);
+      expect(result.body.rowsPerPage).to.equal(11);
+    });
+
+    it('Should fall back to 20 rows per page for a disallowed size',
+      async () => {
+        const disallowedSizes = [1000, 0, -5, 'everything', null];
+        for (const rowsPerPage of disallowedSizes) {
+          const result = await test.sendPostRequestWithToken(
+            token, '/api/User/users', { rowsPerPage });
+          expect(result).to.have.status(OK);
+          expect(result.body.rowsPerPage).to.equal(DEFAULT_ROWS_PER_PAGE);
+          expect(result.body.items.length).to.equal(DEFAULT_ROWS_PER_PAGE);
+        }
+      });
+  });
 });

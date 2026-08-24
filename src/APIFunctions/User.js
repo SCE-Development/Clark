@@ -4,6 +4,8 @@ import { BASE_API_URL, membershipState, userFilterType } from '../Enums';
 /**
  * Queries the database for all users.
  * @param {string} token The jwt token for verification
+ * @param {(number|'all'|null)} rowsPerPage How many users to return per page.
+ * Accepts 10, 20, 50, or 'all'; anything else falls back to the server default.
  * @returns {UserApiResponse} Containing any error information or the array of
  * users.
  */
@@ -14,6 +16,7 @@ export async function getAllUsers({
   sortColumn = null,
   sortOrder = null,
   minRole = null,
+  rowsPerPage = null,
 }) {
   const url = new URL('/api/User/users', BASE_API_URL);
 
@@ -37,6 +40,7 @@ export async function getAllUsers({
         query,
         page,
         minRole,
+        rowsPerPage,
       }),
     });
     if (res.ok) {
@@ -158,6 +162,38 @@ export async function editUser(userToEdit, token) {
     if (res.ok) {
       const result = await res.json();
       status.responseData = result;
+    } else {
+      status.error = true;
+    }
+  } catch (err) {
+    status.error = true;
+    status.responseData = err.message || err;
+  }
+  return status;
+}
+
+/**
+ * Change the access level of many users in one request.
+ * @param {string[]} ids The MongoDB ids of the users to update
+ * @param {number} accessLevel The membershipState value to apply to all of them
+ * @param {string} token The jwt token for authentication
+ * @returns {UserApiResponse} containing the number modified and any users that
+ * were skipped because the editor outranked them
+ */
+export async function bulkEditUsers(ids, accessLevel, token) {
+  let status = new UserApiResponse();
+  const url = new URL('/api/User/bulkEdit', BASE_API_URL);
+  try {
+    const res = await fetch(url.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids, accessLevel }),
+    });
+    if (res.ok) {
+      status.responseData = await res.json();
     } else {
       status.error = true;
     }
