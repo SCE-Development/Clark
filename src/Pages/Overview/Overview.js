@@ -10,6 +10,14 @@ import ConfirmationModal from
 const enums = require('../../Enums.js');
 import { useSCE } from '../../Components/context/SceContext.js';
 
+const ALL_ROWS = 'all';
+const DEFAULT_PAGE_SIZE = 20;
+const PAGE_SIZE_OPTIONS = [10, DEFAULT_PAGE_SIZE, 50, ALL_ROWS];
+
+function pageSizeLabel(pageSize) {
+  return pageSize === ALL_ROWS ? 'All' : String(pageSize);
+}
+
 export default function Overview() {
   const { user } = useSCE();
   const [toggleDelete, setToggleDelete] = useState(false);
@@ -22,6 +30,10 @@ export default function Overview() {
   const [queryResult, setQueryResult] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(0);
   const [query, setQuery] = useState('');
+  // what the user picked in the dropdown. distinct from rowsPerPage, which is
+  // the size the server actually used -- under 'all' those two differ.
+  const [pageSizeChoice, setPageSizeChoice] = useState(DEFAULT_PAGE_SIZE);
+  const [isPageSizeDropdownOpen, setIsPageSizeDropdownOpen] = useState(false);
   const [currentSortColumn, setCurrentSortColumn] = useState('joinDate');
   const [currentSortOrder, setCurrentSortOrder] = useState('desc');
   const [clubRevenueData, setClubRevenueData] = useState({newMembersThisYear:0, newSingleSemesterMembers:0, newAnnualMembers:0, currentActiveMembers:0});
@@ -69,7 +81,8 @@ export default function Overview() {
       query: query,
       page: page,
       sortColumn: sortColumn,
-      sortOrder: sortOrder
+      sortOrder: sortOrder,
+      rowsPerPage: pageSizeChoice
     });
     if (!apiResponse.error) {
       setUsers(apiResponse.responseData.items);
@@ -89,7 +102,7 @@ export default function Overview() {
   useEffect(() => {
     callDatabase();
     getClubRevenueData();
-  }, [page, currentSortColumn, currentSortOrder]);
+  }, [page, currentSortColumn, currentSortOrder, pageSizeChoice]);
 
   useEffect(() => {
 
@@ -125,6 +138,13 @@ export default function Overview() {
       setCurrentSortColumn(columnName);
       setCurrentSortOrder('asc');
     }
+  }
+
+  function handlePageSizeChange(pageSize) {
+    setPageSizeChoice(pageSize);
+    setIsPageSizeDropdownOpen(false);
+    // whatever page we were on probably doesn't exist at the new size
+    setPage(0);
   }
 
   function handleArrowVisibility(sortOrder, columnName) {
@@ -252,8 +272,8 @@ export default function Overview() {
           <p className='mb-2'>Current Active Members: {clubRevenueData.currentActiveMembers}</p>
         </div>
         <div className='px-6 border rounded-lg border-gray-300 dark:border-white/10'>
-          <div className='py-6'>
-            <label className="w-full form-control">
+          <div className='flex flex-col gap-4 py-6 sm:flex-row sm:items-end'>
+            <label className="w-full form-control sm:flex-1">
               <div className="label">
                 <span className="label-text text-md text-gray-700 dark:text-white">Type a search, followed by the enter key</span>
               </div>
@@ -280,6 +300,42 @@ export default function Overview() {
                 }}
               />
             </label>
+            <div className='relative w-full sm:w-48 sm:shrink-0'>
+              <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+                Entries per page
+              </label>
+              <button
+                onClick={() => setIsPageSizeDropdownOpen(!isPageSizeDropdownOpen)}
+                disabled={loading}
+                className='w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex justify-between items-center'
+              >
+                <span>{pageSizeLabel(pageSizeChoice)}</span>
+                <svg
+                  className={`w-4 h-4 transition-transform ${isPageSizeDropdownOpen ? 'rotate-180' : ''}`}
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+                </svg>
+              </button>
+
+              {isPageSizeDropdownOpen && (
+                <div className='absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto'>
+                  <div className='p-2'>
+                    {PAGE_SIZE_OPTIONS.map(option => (
+                      <button
+                        key={option}
+                        onClick={() => handlePageSizeChange(option)}
+                        className={`w-full text-left text-sm p-2 rounded cursor-pointer text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 ${option === pageSizeChoice ? 'bg-gray-100 dark:bg-gray-600' : ''}`}
+                      >
+                        {pageSizeLabel(option)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           <table className='table px-3'>
             <thead>

@@ -29,6 +29,8 @@ const {sendUnsubscribeEmail} = require('../util/emailHelpers');
 const crypto = require('crypto');
 
 const ROWS_PER_PAGE = 20;
+const ALLOWED_ROWS_PER_PAGE = [10, 20, 50];
+const ALL_ROWS = 'all';
 
 const SENSITIVE_FIELDS = [
   'email',
@@ -220,15 +222,34 @@ router.post('/users', async function(req, res) {
   };
   const sortOrder = orderToInteger[req.query.order] || orderToInteger.default;
 
+  const total = await User.count(maybeOr);
+
+  // 'all' collapses every match onto a single page. anything we don't
+  // recognize falls back to the default rather than erroring, so callers that
+  // don't send a size keep working unchanged.
+  const requestedRowsPerPage = req.body.rowsPerPage;
+  const showAllRows = requestedRowsPerPage === ALL_ROWS;
+  let rowsPerPage = ROWS_PER_PAGE;
+  if (showAllRows) {
+    rowsPerPage = total;
+  } else if (ALLOWED_ROWS_PER_PAGE.includes(Number(requestedRowsPerPage))) {
+    rowsPerPage = Number(requestedRowsPerPage);
+  }
+
+  // mongo reads a limit of 0 as "no limit", which is what we want for 'all'
+  // and is also why we can't just pass rowsPerPage straight through
+  const limit = showAllRows ? 0 : rowsPerPage;
+
   // make sure that the page we want to see is 0 by default
   // and avoid negative page numbers
-  let skip = Math.max(Number(req.body.page) || 0, 0);
-  skip *= ROWS_PER_PAGE;
-  const total = await User.count(maybeOr);
-  User.find(maybeOr, { password: 0, }, { skip, limit: ROWS_PER_PAGE, })
+  const skip = showAllRows
+    ? 0
+    : Math.max(Number(req.body.page) || 0, 0) * rowsPerPage;
+
+  User.find(maybeOr, { password: 0, }, { skip, limit })
     .sort({ [sortColumn] : sortOrder })
     .then(items => {
-      res.status(OK).send({ items, total, rowsPerPage: ROWS_PER_PAGE, });
+      res.status(OK).send({ items, total, rowsPerPage, });
     })
     .catch((e) => {
       res.sendStatus(BAD_REQUEST);
