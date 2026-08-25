@@ -228,9 +228,35 @@ async function updateMembershipDetails(userId, numberOfSemestersToSignUpFor, doo
   }
 }
 
+/**
+ * Revoke a member's benefits once their membership has lapsed. Officers and
+ * above aren't subject to membership expiration, so they keep their door code.
+ * Mutates the document in place; the caller is responsible for saving it.
+ * @param {Object} user - The user document to check
+ * @returns {Boolean} whether the membership had lapsed
+ */
+function expireMembershipIfLapsed(user) {
+  if (!user || user.accessLevel !== membershipState.MEMBER) {
+    return false;
+  }
+  if (!user.membershipValidUntil) {
+    return false;
+  }
+  // `$gt` is how getNewPaidMembersThisSemester counts active members, so an
+  // expiration landing exactly on now counts as lapsed here too
+  if (new Date(user.membershipValidUntil) > new Date()) {
+    return false;
+  }
+
+  user.accessLevel = membershipState.NON_MEMBER;
+  user.doorCode = undefined;
+  return true;
+}
+
 module.exports = {
   registerUser,
   getMemberExpirationDate,
+  expireMembershipIfLapsed,
   testPasswordStrength,
   hashPassword,
   userWithEmailExists,

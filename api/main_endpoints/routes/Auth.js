@@ -24,7 +24,12 @@ const {
 const membershipState = require('../../util/constants').MEMBERSHIP_STATE;
 const PASSWORD_RESET_EXPIRATION = require('../../util/constants').PASSWORD_RESET_EXPIRATION;
 const { sendVerificationEmail, sendPasswordReset } = require('../util/emailHelpers');
-const { userWithEmailExists, checkIfPageCountResets, findPasswordReset } = require('../util/userHelpers');
+const {
+  userWithEmailExists,
+  checkIfPageCountResets,
+  findPasswordReset,
+  expireMembershipIfLapsed
+} = require('../util/userHelpers');
 
 const AuditLogActions = require('../util/auditLogActions.js');
 const AuditLog = require('../models/AuditLog.js');
@@ -170,12 +175,20 @@ router.post('/login', async (req, res) => {
       return res.status(UNAUTHORIZED).send({ message: `Account ${email} is banned lol` });
     }
 
+    // Nothing else expires memberships, so catch a lapsed one here and strip
+    // the door code before it can be handed back out on the profile page
+    const membershipLapsed = expireMembershipIfLapsed(user);
+
     // Handle Page Reset
     if (checkIfPageCountResets(user.lastLogin)) {
       user.pagesPrinted = 0;
     }
     user.lastLogin = new Date();
     await user.save();
+
+    if (membershipLapsed) {
+      logger.info('Membership lapsed, revoked door code for user:', String(user._id));
+    }
 
     const token = jwt.sign({
       _id: user._id,
