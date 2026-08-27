@@ -4,6 +4,7 @@ import { getAllSCEvents } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
 import CalendarView from './Calendar/CalendarView';
+import { VIEW_MODES } from './Calendar/calendarConstants';
 import { toDateKey } from './eventUtils';
 
 const EVENTS_CALENDAR_CURSOR_KEY = 'scevents-calendar-cursor';
@@ -48,6 +49,15 @@ export default function EventsPage() {
   const [hasError, setHasError] = useState(false);
   const location = useLocation();
   const history = useHistory();
+
+  const [view, setView] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const viewParam = params.get('view');
+
+    return VIEW_MODES.some(({ value }) => value === viewParam)
+      ? viewParam
+      : 'month';
+  });
 
   const [cursor, setCursor] = useState(() => {
     const params = new URLSearchParams(location.search);
@@ -110,6 +120,12 @@ export default function EventsPage() {
     params.set('month', month);
     params.set('year', year);
 
+    if (view === 'month') {
+      params.delete('view');
+    } else {
+      params.set('view', view);
+    }
+
     window.localStorage.setItem(
       EVENTS_CALENDAR_CURSOR_KEY,
       JSON.stringify({ month, year }),
@@ -118,7 +134,7 @@ export default function EventsPage() {
     history.replace({
       search: params.toString(),
     });
-  }, [cursor, history, location.search]);
+  }, [cursor, history, location.search, view]);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -171,6 +187,8 @@ export default function EventsPage() {
             canCreateEvent={isAdminView}
             cursor={cursor}
             setCursor={setCursor}
+            view={view}
+            onViewChange={setView}
           />
         )}
       </div>

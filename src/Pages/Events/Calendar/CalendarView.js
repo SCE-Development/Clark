@@ -6,6 +6,7 @@ import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { MobileMonthAgenda } from './MobileMonthAgenda';
 import { CalendarLegend } from './CalendarLegend';
+import { MONTHS } from './calendarConstants';
 
 export default function CalendarView({
   events,
@@ -14,6 +15,8 @@ export default function CalendarView({
   canCreateEvent = false,
   cursor,
   setCursor,
+  view,
+  onViewChange,
 }) {
   const today = useMemo(() => new Date(), []);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -34,16 +37,6 @@ export default function CalendarView({
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
-
-  function handleMonthChange(e) {
-    const nextMonth = Number(e.target.value);
-    setCursor(new Date(year, nextMonth, 1));
-  }
-
-  function handleYearChange(e) {
-    const nextYear = Number(e.target.value);
-    setCursor(new Date(nextYear, month, 1));
-  }
 
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -91,15 +84,15 @@ export default function CalendarView({
 
       <div className="flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none">
         <CalendarHeader
-          month={month}
-          year={year}
-          monthEventCount={monthEventCount}
+          view={view}
+          onViewChange={onViewChange}
+          title={`${MONTHS[month]} ${year}`}
+          eventCount={monthEventCount}
+          countLabel="this month"
           canCreateEvent={canCreateEvent}
-          onMonthChange={handleMonthChange}
-          onYearChange={handleYearChange}
           onTodayClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
-          onPreviousMonth={() => setCursor(new Date(year, month - 1, 1))}
-          onNextMonth={() => setCursor(new Date(year, month + 1, 1))}
+          onPrevious={() => setCursor(new Date(year, month - 1, 1))}
+          onNext={() => setCursor(new Date(year, month + 1, 1))}
         />
 
         <div className="flex-1 min-h-0 overflow-y-auto sm:hidden">

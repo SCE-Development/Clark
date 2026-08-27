@@ -5,5 +5,9 @@ export const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-const currentYear = new Date().getFullYear();
-export const YEAR_RANGE = Array.from({ length: 10 }, (_, i) => currentYear + i);
+export const VIEW_MODES = [
+  { label: 'Day', value: 'day' },
+  { label: 'Week', value: 'week' },
+  { label: 'Month', value: 'month' },
+  { label: 'Year', value: 'year' },
+];
