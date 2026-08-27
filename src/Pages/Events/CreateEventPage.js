@@ -88,7 +88,6 @@ export default function CreateEventPage() {
   const [adminSearching, setAdminSearching] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [fileTable, setFileTable] = useState([]);
   const [fileData, setFileData] = useState([]);
   const [headersArray, setHeadersArray] = useState([]);
   const [values, setValues] = useState([]);
@@ -104,6 +103,44 @@ export default function CreateEventPage() {
     () => eventAdmins.map((admin) => String(admin._id)),
     [eventAdmins],
   );
+
+  const CSV_COLUMN = Object.freeze({
+    EVENT_NAME: 0,
+    DATE: 1,
+    TIME: 2,
+    LOCATION: 3,
+    DESCRIPTION: 4,
+    MAX_ATTENDEES: 5,
+    WAITLIST: 6,
+    STATUS: 7,
+    VISIBILITY: 8,
+    PUBLISH_DATE: 9,
+  });
+
+  const EXPECTED_HEADERS = [
+    'Event Name', 'Date', 'Time', 'Location', 'Description',
+    'Max Attendees', 'Waitlist', 'Publish Status', 'Visibility', 'Publish Date',
+  ];
+
+  const EXAMPLE_CSV_ROWS = [
+    EXPECTED_HEADERS,
+    ['Example Name', 'yyyy-mm-dd', 'hh:mm PM', 'Example Location', 'Example description', '20', '5', 'published', 'public', 'yyyy-mm-dd'],
+    ['Cookie party', '2026-08-21', '6:00 AM', 'Engineering Building', 'Eat cookies', '-1', '-1', 'draft', 'public', ''],
+    ['', '', '', '', '', '', '', '', '', ''],
+    ['Note: max attendees: -1 for unlimited, waitlist: -1 to disable, publish date: leave empty if none. Visibility can only be public atm. Do not touch row one and start at row two. DELETE THIS BOX BEFORE SUBMITTING', '', '', '', '', '', '', '', '', ''],
+  ];
+
+  function toCsvCell(cell) {
+    const str = String(cell);
+    if (/[",\n]/.test(str)) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  }
+
+  const EXAMPLE_CSV = EXAMPLE_CSV_ROWS
+    .map((row) => row.map(toCsvCell).join(','))
+    .join('\r\n');
 
   useEffect(() => {
     if (!adminId || allOrgAdminsCanEdit) return;
@@ -300,32 +337,6 @@ export default function CreateEventPage() {
     );
   }
 
-  const EXPECTED_HEADERS = [
-    'Event Name', 'Date', 'Time', 'Location', 'Description',
-    'Max Attendees', 'Waitlist', 'Publish Status', 'Visibility', 'Publish Date',
-  ];
-
-  const EXAMPLE_CSV_ROWS = [
-    EXPECTED_HEADERS,
-    ['Example Name', 'yyyy-mm-dd', 'hh:mm PM', 'Example Location', 'Example description', '20', '5', 'published', 'public', 'yyyy-mm-dd'],
-    ['Cookie party', '2026-08-21', '6:00 AM', 'Engineering Building', 'Eat cookies', '-1', '-1', 'draft', 'public', ''],
-    ['', '', '', '', '', '', '', '', '', ''],
-    ['Note: max attendees: -1 for unlimited, waitlist: -1 to disable, publish date: leave empty if none. Visibility can only be public atm. Do not touch row one and start at row two. DELETE THIS BOX BEFORE SUBMITTING', '', '', '', '', '', '', '', '', ''],
-  ];
-
-  /** Only quotes a cell when it actually needs it (contains a comma, quote, or newline). */
-  function toCsvCell(cell) {
-    const str = String(cell);
-    if (/[",\n]/.test(str)) {
-      return `"${str.replace(/"/g, '""')}"`;
-    }
-    return str;
-  }
-
-  const EXAMPLE_CSV = EXAMPLE_CSV_ROWS
-    .map((row) => row.map(toCsvCell).join(','))
-    .join('\r\n');
-
   function handleDownloadExampleCsv() {
     const blob = new Blob([EXAMPLE_CSV], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -348,7 +359,7 @@ export default function CreateEventPage() {
   }
 
   function handleFileUpload(event) {
-    const maxFileSize = 10 * 1024 * 1024;
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
     const file = event.target.files[0];
 
     if (!file) return;
@@ -385,15 +396,15 @@ export default function CreateEventPage() {
           }
           let missingElements = [];
           for (let i = 0; i < row.length; i++) {
-            // index 9 is treated different because it is the only one that can be accepted as empty
-            if (i !== 9 && row[i] === '') {
+            // PUBLISH_DATE is treated different because it is the only one that can be accepted as empty
+            if (i !== CSV_COLUMN.PUBLISH_DATE && row[i] === '') {
               emptyValueCounter++;
               missingElements.push(i);
             }
           }
           if (emptyValueCounter > 0) {
             const missingColumnNames = missingElements.map((i) => headersArray[0][i]);
-            showFileErrorModal(`Missing required columns: ${missingColumnNames.join(', ')}`);
+            showFileErrorModal(`Missing required elements: ${missingColumnNames.join(', ')}`);
             return;
           }
         }
@@ -415,41 +426,32 @@ export default function CreateEventPage() {
     }
 
     for (const row of values) {
-      /* row layout
-        [0] - string - name
-        [1] - string - date
-        [2] - string - time
-        [3] - string - location
-        [4] - string - description
-        [5] - string - max attendees
-        [6] - string - waitlist
-        [7] - string - publish status
-        [8] - string - visibility
-        [9] - string - publish date
-       */
-
-      const waitlistValue = Number(row[6]);
+      const waitlistValue = Number(row[CSV_COLUMN.WAITLIST]);
       const hasWaitlist = !Number.isNaN(waitlistValue) && waitlistValue > 0;
+      const rowStatus = row[CSV_COLUMN.STATUS].toLowerCase();
+      const rowVisibility = row[CSV_COLUMN.VISIBILITY].toLowerCase();
 
       const payload = {
         id: crypto.randomUUID(),
-        name: row[0].trim(),
-        date: row[1],
-        time: row[2],
-        location: row[3].trim(),
-        description: row[4].trim(),
+        name: row[CSV_COLUMN.EVENT_NAME].trim(),
+        date: row[CSV_COLUMN.DATE],
+        time: row[CSV_COLUMN.TIME],
+        location: row[CSV_COLUMN.LOCATION].trim(),
+        description: row[CSV_COLUMN.DESCRIPTION].trim(),
         admins: allOrgAdminsCanEdit ? [] : eventAdminIds,
         all_org_admins_can_edit: allOrgAdminsCanEdit,
         registration_form: toApiRegistrationForm(questions),
         max_attendees:
-          Number(row[5]) === UNLIMITED_ATTENDEES ? UNLIMITED_ATTENDEES : Number(row[5]),
+          Number(row[CSV_COLUMN.MAX_ATTENDEES]) === UNLIMITED_ATTENDEES
+            ? UNLIMITED_ATTENDEES
+            : Number(row[CSV_COLUMN.MAX_ATTENDEES]),
         created_at: new Date().toISOString(),
-        status: row[7].toLowerCase(),
-        visibility: row[8].toLowerCase(),
-        minimum_visible_role: visibility === 'private' ? minimumVisibleRole : '',
+        status: rowStatus,
+        visibility: rowVisibility,
+        minimum_visible_role: rowVisibility === 'private' ? minimumVisibleRole : '',
         waitlist_enabled: hasWaitlist,
         waitlist_size: hasWaitlist ? waitlistValue : 0,
-        publish_date: toPublishDateValue(row[7].toLowerCase(), row[9]),
+        publish_date: toPublishDateValue(rowStatus, row[CSV_COLUMN.PUBLISH_DATE]),
       };
 
       setSubmitting(true);
