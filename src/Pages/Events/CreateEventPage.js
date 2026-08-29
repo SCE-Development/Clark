@@ -8,6 +8,7 @@ import { membershipState } from '../../Enums';
 import { useEventQuestions, toApiRegistrationForm } from './useEventQuestions';
 import { getApiErrorMessage } from './eventUtils';
 import EventEditorForm from './EventEditorForm';
+import Papa from 'papaparse';
 
 /** Matches SCEvents `max_attendees` when there is no cap. */
 const UNLIMITED_ATTENDEES = -1;
@@ -87,7 +88,13 @@ export default function CreateEventPage() {
   const [adminSearching, setAdminSearching] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [fileData, setFileData] = useState([]);
+  const [headersArray, setHeadersArray] = useState([]);
+  const [values, setValues] = useState([]);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [modalErrorMessage, setModalErrorMessage] = useState('');
   const debounceRef = useRef(null);
+  const isFileUpload = useRef(false);
 
   const isOfficerOrAdmin = user?.accessLevel >= membershipState.OFFICER;
 
@@ -96,6 +103,44 @@ export default function CreateEventPage() {
     () => eventAdmins.map((admin) => String(admin._id)),
     [eventAdmins],
   );
+
+  const CSV_COLUMN = Object.freeze({
+    EVENT_NAME: 0,
+    DATE: 1,
+    TIME: 2,
+    LOCATION: 3,
+    DESCRIPTION: 4,
+    MAX_ATTENDEES: 5,
+    WAITLIST: 6,
+    STATUS: 7,
+    VISIBILITY: 8,
+    PUBLISH_DATE: 9,
+  });
+
+  const EXPECTED_HEADERS = [
+    'Event Name', 'Date', 'Time', 'Location', 'Description',
+    'Max Attendees', 'Waitlist', 'Publish Status', 'Visibility', 'Publish Date',
+  ];
+
+  const EXAMPLE_CSV_ROWS = [
+    EXPECTED_HEADERS,
+    ['Example Name', 'yyyy-mm-dd', 'hh:mm PM', 'Example Location', 'Example description', '20', '5', 'published', 'public', 'yyyy-mm-dd'],
+    ['Cookie party', '2026-08-21', '6:00 AM', 'Engineering Building', 'Eat cookies', '-1', '-1', 'draft', 'public', ''],
+    ['', '', '', '', '', '', '', '', '', ''],
+    ['Note: max attendees: -1 for unlimited, waitlist: -1 to disable, publish date: leave empty if none. Visibility can only be public atm. Do not touch row one and start at row two. DELETE THIS BOX BEFORE SUBMITTING', '', '', '', '', '', '', '', '', ''],
+  ];
+
+  function toCsvCell(cell) {
+    const str = String(cell);
+    if (/[",\n]/.test(str)) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  }
+
+  const EXAMPLE_CSV = EXAMPLE_CSV_ROWS
+    .map((row) => row.map(toCsvCell).join(','))
+    .join('\r\n');
 
   useEffect(() => {
     if (!adminId || allOrgAdminsCanEdit) return;
@@ -292,6 +337,140 @@ export default function CreateEventPage() {
     );
   }
 
+  function handleDownloadExampleCsv() {
+    const blob = new Blob([EXAMPLE_CSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'example-events.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  function showFileErrorModal(modalMessage) {
+    setFileData([]);
+    setHeadersArray([]);
+    setValues([]);
+    setModalErrorMessage(modalMessage);
+    setConfirmModal(true);
+    isFileUpload.current = false;
+  }
+
+  function handleFileUpload(event) {
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    if (file.size > maxFileSize) {
+      setModalErrorMessage(`File size is ${file.size} and exceeds the 10MB limit.`);
+      setConfirmModal(true);
+      event.target.value = '';
+      return;
+    }
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(result) {
+        const headersArray = [];
+        const valuesArray = [];
+
+        result.data.map((data) => {
+          headersArray.push(Object.keys(data));
+          valuesArray.push(Object.values(data));
+        });
+
+        const required_number_of_columns = 10;
+
+        for (const row of valuesArray) {
+          let emptyValueCounter = 0;
+
+          if(row.length < required_number_of_columns) {
+            const actualHeaders = (headersArray[0] || []).map((h) => h.trim());
+            const missingHeaders = EXPECTED_HEADERS.filter((h) => !actualHeaders.includes(h));
+            showFileErrorModal(`Missing required columns: ${missingHeaders.join(', ')}`);
+            return;
+          }
+          let missingElements = [];
+          for (let i = 0; i < row.length; i++) {
+            // PUBLISH_DATE is treated different because it is the only one that can be accepted as empty
+            if (i !== CSV_COLUMN.PUBLISH_DATE && row[i] === '') {
+              emptyValueCounter++;
+              missingElements.push(i);
+            }
+          }
+          if (emptyValueCounter > 0) {
+            const missingColumnNames = missingElements.map((i) => headersArray[0][i]);
+            showFileErrorModal(`Missing required elements: ${missingColumnNames.join(', ')}`);
+            return;
+          }
+        }
+
+        setFileData(result.data);
+        setHeadersArray(headersArray[0]);
+        setValues(valuesArray);
+      }
+    });
+
+    isFileUpload.current = true;
+  }
+
+  async function handleFileCreateEvent() {
+    if (values.length === 0) {
+      setModalErrorMessage('No valid rows to create. Please upload a valid CSV file.');
+      setConfirmModal(true);
+      return;
+    }
+
+    for (const row of values) {
+      const waitlistValue = Number(row[CSV_COLUMN.WAITLIST]);
+      const hasWaitlist = !Number.isNaN(waitlistValue) && waitlistValue > 0;
+      const rowStatus = row[CSV_COLUMN.STATUS].toLowerCase();
+      const rowVisibility = row[CSV_COLUMN.VISIBILITY].toLowerCase();
+
+      const payload = {
+        id: crypto.randomUUID(),
+        name: row[CSV_COLUMN.EVENT_NAME].trim(),
+        date: row[CSV_COLUMN.DATE],
+        time: row[CSV_COLUMN.TIME],
+        location: row[CSV_COLUMN.LOCATION].trim(),
+        description: row[CSV_COLUMN.DESCRIPTION].trim(),
+        admins: allOrgAdminsCanEdit ? [] : eventAdminIds,
+        all_org_admins_can_edit: allOrgAdminsCanEdit,
+        registration_form: toApiRegistrationForm(questions),
+        max_attendees:
+          Number(row[CSV_COLUMN.MAX_ATTENDEES]) === UNLIMITED_ATTENDEES
+            ? UNLIMITED_ATTENDEES
+            : Number(row[CSV_COLUMN.MAX_ATTENDEES]),
+        created_at: new Date().toISOString(),
+        status: rowStatus,
+        visibility: rowVisibility,
+        minimum_visible_role: rowVisibility === 'private' ? minimumVisibleRole : '',
+        waitlist_enabled: hasWaitlist,
+        waitlist_size: hasWaitlist ? waitlistValue : 0,
+        publish_date: toPublishDateValue(rowStatus, row[CSV_COLUMN.PUBLISH_DATE]),
+      };
+
+      setSubmitting(true);
+      const result = await createSCEvent(token, payload);
+      setSubmitting(false);
+
+      if (result.error) {
+        setSubmitError(getApiErrorMessage(result, {
+          fallback: 'SCEvents returned an error.',
+          networkHint: 'Is the SCEvents API running (e.g. Docker on port 8002)?',
+        }));
+        return;
+      }
+    }
+    history.push('/events');
+
+    isFileUpload.current = false;
+  }
+
   return (
     <EventEditorForm
       meta={{
@@ -300,7 +479,7 @@ export default function CreateEventPage() {
         containerClassName: 'mx-auto mt-3 mb-6 w-full max-w-4xl px-3 sm:mt-4 sm:mb-8 sm:px-6 md:mt-5 md:mb-10',
         submitLabel: 'Create event',
         submittingLabel: 'Creating…',
-        onSubmit: handleCreateEvent,
+        onSubmit: isFileUpload.current ? handleFileCreateEvent : handleCreateEvent,
         submitting,
         submitError,
         unlimitedAttendeesValue: UNLIMITED_ATTENDEES,
@@ -331,6 +510,10 @@ export default function CreateEventPage() {
         setWaitlistSize,
         publishDate,
         setPublishDate,
+        confirmModal,
+        setConfirmModal,
+        modalErrorMessage,
+        setModalErrorMessage,
       }}
       questionActions={{
         questions,
@@ -362,6 +545,13 @@ export default function CreateEventPage() {
             setEventAdmins([]);
           }
         },
+      }}
+      fileActions={{
+        handleFileUpload,
+        handleDownloadExampleCsv,
+        fileData,
+        headersArray,
+        values,
       }}
     />
   );

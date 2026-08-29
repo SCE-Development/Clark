@@ -1,12 +1,15 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import CreateEventFormQuestionBlock from './CreateEventFormQuestionBlock';
+import ConfirmationModal from
+  '../../Components/DecisionModal/ConfirmationModal.js';
 
 export default function EventEditorForm({
   meta,
   form,
   questionActions,
   adminActions,
+  fileActions,
 }) {
   const {
     title,
@@ -49,7 +52,19 @@ export default function EventEditorForm({
     setWaitlistSize,
     publishDate,
     setPublishDate,
+    confirmModal,
+    setConfirmModal,
+    modalErrorMessage,
+    setModalErrorMessage,
   } = form;
+
+  const {
+    handleFileUpload,
+    handleDownloadExampleCsv,
+    fileData = [],
+    headersArray = [],
+    values = [],
+  } = fileActions || {};
 
   const {
     questions,
@@ -450,6 +465,22 @@ export default function EventEditorForm({
         </div>
       )}
 
+      <ConfirmationModal {... {
+        headerText: 'Error',
+        bodyText: modalErrorMessage,
+        confirmText: 'Create',
+        cancelText: 'Close',
+        hideConfirmButton: true,
+        handleConfirmation: () => {
+          setConfirmModal(false);
+        },
+        handleCancel: () => {
+          setConfirmModal(false);
+        },
+        open: confirmModal,
+      }
+      }/>
+
       <div className="flex flex-wrap justify-start gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
         <button
           type="button"
@@ -459,10 +490,48 @@ export default function EventEditorForm({
         >
           {submitting ? submittingLabel : submitLabel}
         </button>
+        <label htmlFor="csv-file-input" className="btn btn-outline">
+          Import CSV
+        </label>
+        <input
+          type="file"
+          id="csv-file-input"
+          accept=".csv"
+          placeholder="Import CSV"
+          style={{ display: 'none' }}
+          onChange={handleFileUpload}
+        >
+        </input>
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={handleDownloadExampleCsv}
+        >
+          Download Example CSV
+        </button>
         <Link to="/events" className="btn btn-ghost">
           Cancel
         </Link>
       </div>
+
+      <table style={{borderCollapse: 'collapse', border: '1px solid black', margin: '5px auto'}}>
+        <thead>
+          <tr>
+            {headersArray.map((col, i) => (
+              <th style={{border: '1px solid blackg'}} key={i}>{col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {values.map((v, i) => (
+            <tr key={i}>
+              {v.map((value, i) => (
+                <td style={{border: '1px solid blackg'}} key={i}>{value}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       {eventDelete?.show && (
         <div className="mt-10 border-t border-gray-200 pt-8 dark:border-gray-700">
