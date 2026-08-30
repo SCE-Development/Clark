@@ -15,6 +15,7 @@ import EditUserInfo from '../../src/Pages/UserManager/EditUserInfo';
 import URLShortenerPage from '../../src/Pages/URLShortener/URLShortener';
 import sendUnsubscribeEmail from '../../src/Pages/Profile/admin/SendUnsubscribeEmail';
 import NotFoundPage from '../../src/Pages/NotFoundPage/NotFoundPage';
+import AuditLogPage from '../../src/Pages/AuditLog/AuditLog';
 
 import { membershipState } from '../../src/Enums';
 import { MemoryRouter } from 'react-router-dom';
@@ -59,6 +60,17 @@ function getComponentFromRoute(route, props = adminAppProps, user = mockUser) {
 
 describe('<Routing /> with <PrivateRoute />', () => {
   describe('Renders correct components for Admin user', () => {
+    // Prevent ReferenceError: EventSource is not defined
+    if (typeof global.EventSource === 'undefined') {
+      global.EventSource = class {
+        constructor() {}
+        close() {}
+        addEventListener() {}
+        removeEventListener() {}
+        onmessage() {}
+        onerror() {}
+      };
+    }
     it('Should render a <Home /> component with the / endpoint', () => {
       const wrapper = getComponentFromRoute('/');
       expect(wrapper.find(Home)).to.have.lengthOf(1);
@@ -148,6 +160,14 @@ describe('<Routing /> with <PrivateRoute />', () => {
       () => {
         const wrapper = getComponentFromRoute('/not-real');
         expect(wrapper.find(NotFoundPage)).to.have.lengthOf(1);
+      }
+    );
+    it(
+      'Should render a <AuditLogsPage /> component with with the /audit-logs ' +
+      'endpoint',
+      () => {
+        const wrapper = getComponentFromRoute('/audit-logs');
+        expect(wrapper.find(AuditLogPage)).to.have.lengthOf(1);
       }
     );
   });
