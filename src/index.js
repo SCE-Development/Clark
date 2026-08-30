@@ -7,6 +7,7 @@ import Routing from './Routing';
 import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
 import { SceContext } from './Components/context/SceContext';
 import SearchModal from './Components/ShortcutKeyModal/SearchModal';
+import BackgroundColorContextProvider from './Components/context/BackgroundColorContext';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -31,10 +32,12 @@ function App() {
   return (
     !isAuthenticating && (
       <SceContext.Provider value={{user, setUser, authenticated, setAuthenticated}}>
-        <BrowserRouter>
-          <SearchModal/>
-          <Routing/>
-        </BrowserRouter>
+        <BackgroundColorContextProvider>
+          <BrowserRouter>
+            <SearchModal/>
+            <Routing/>
+          </BrowserRouter>
+        </BackgroundColorContextProvider>
       </SceContext.Provider>
     )
   );
