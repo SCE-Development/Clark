@@ -2,6 +2,7 @@ import React from 'react';
 import UserNavbar from './UserNavbar';
 import AdminNavbar from './AdminNavbar';
 import { useSCE } from '../context/SceContext';
+import { logoutUser } from '../../APIFunctions/Auth';
 
 function NavBarWrapper({
   enableAdminNavbar = false,
@@ -10,10 +11,10 @@ function NavBarWrapper({
 }) {
   const { user, setUser, setAuthenticated } = useSCE();
 
-  function handleLogout() {
+  async function handleLogout() {
     setAuthenticated(false);
     setUser({});
-    window.localStorage.removeItem('jwtToken');
+    await logoutUser();
     window.location.reload();
   }
 
