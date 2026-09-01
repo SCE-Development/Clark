@@ -14,6 +14,7 @@ import { CalendarGrid } from './CalendarGrid';
 import { MobileMonthAgenda } from './MobileMonthAgenda';
 import { CalendarLegend } from './CalendarLegend';
 import { TimeGrid } from './TimeGrid';
+import { YearView } from './YearView';
 
 export default function CalendarView({
   events,
@@ -24,6 +25,7 @@ export default function CalendarView({
   setCursor,
   view,
   onViewChange,
+  onYearMonthSelect,
 }) {
   const today = useMemo(() => new Date(), []);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -129,6 +131,15 @@ export default function CalendarView({
           <TimeGrid
             days={view === 'day' ? dayViewDays : weekViewDays}
             onSelectEvent={setSelectedEvent}
+            isAdminView={isAdminView}
+          />
+        ) : view === 'year' ? (
+          <YearView
+            year={year}
+            activeMonth={month}
+            eventsByDate={eventsByDate}
+            onSelectEvent={setSelectedEvent}
+            onSelectMonth={onYearMonthSelect}
             isAdminView={isAdminView}
           />
         ) : (
