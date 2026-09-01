@@ -13,6 +13,7 @@ import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { MobileMonthAgenda } from './MobileMonthAgenda';
 import { CalendarLegend } from './CalendarLegend';
+import { TimeGrid } from './TimeGrid';
 
 export default function CalendarView({
   events,
@@ -66,6 +67,13 @@ export default function CalendarView({
   const eventCount = Object.entries(eventsByDate).reduce((sum, [key, dayEvents]) => {
     return key >= startDate && key <= endDate ? sum + dayEvents.length : sum;
   }, 0);
+  const cursorKey = toDateKey(cursor);
+  const dayViewDays = [{
+    date: cursor,
+    key: cursorKey,
+    isToday: cursorKey === todayKey,
+    events: eventsByDate[cursorKey] || [],
+  }];
 
   const monthEvents = useMemo(() => {
     return cells
@@ -89,7 +97,9 @@ export default function CalendarView({
         />
       )}
 
-      <div className="flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none">
+      <div className={view === 'month'
+        ? 'flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none'
+        : 'flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)]'}>
         <CalendarHeader
           view={view}
           onViewChange={onViewChange}
@@ -105,19 +115,29 @@ export default function CalendarView({
           onNext={() => setCursor(stepCursor(view, cursor, 1))}
         />
 
-        <div className="flex-1 min-h-0 overflow-y-auto sm:hidden">
-          <MobileMonthAgenda
-            monthEvents={monthEvents}
+        {view === 'day' ? (
+          <TimeGrid
+            days={dayViewDays}
             onSelectEvent={setSelectedEvent}
             isAdminView={isAdminView}
           />
-        </div>
+        ) : (
+          <>
+            <div className="flex-1 min-h-0 overflow-y-auto sm:hidden">
+              <MobileMonthAgenda
+                monthEvents={monthEvents}
+                onSelectEvent={setSelectedEvent}
+                isAdminView={isAdminView}
+              />
+            </div>
 
-        <CalendarGrid
-          cells={cells}
-          onSelectEvent={setSelectedEvent}
-          isAdminView={isAdminView}
-        />
+            <CalendarGrid
+              cells={cells}
+              onSelectEvent={setSelectedEvent}
+              isAdminView={isAdminView}
+            />
+          </>
+        )}
 
         <CalendarLegend isAdminView={isAdminView} />
       </div>
