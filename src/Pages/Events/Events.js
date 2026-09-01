@@ -8,41 +8,6 @@ import { VIEW_MODES } from './Calendar/calendarConstants';
 import { calendarSearchParams, visibleRange } from './Calendar/calendarUtils';
 
 const EVENTS_CALENDAR_CURSOR_KEY = 'scevents-calendar-cursor';
-// Temporary Year-view preview events. Remove this block when preview is no longer needed.
-const YEAR_VIEW_PREVIEW_EVENTS = [
-  {
-    id: 'year-preview-2026-08-12',
-    name: 'Preview: Design review',
-    date: '2026-08-12',
-    time: '10:00',
-    status: 'published',
-    visibility: 'public',
-  },
-  {
-    id: 'year-preview-2026-09-01',
-    name: 'Preview: Project kickoff',
-    date: '2026-09-01',
-    time: '14:00',
-    status: 'published',
-    visibility: 'public',
-  },
-  {
-    id: 'year-preview-2026-09-03',
-    name: 'Preview: Member workshop',
-    date: '2026-09-03',
-    time: '18:00',
-    status: 'published',
-    visibility: 'public',
-  },
-  {
-    id: 'year-preview-2026-12-15',
-    name: 'Preview: End-of-year social',
-    date: '2026-12-15',
-    time: '17:30',
-    status: 'published',
-    visibility: 'public',
-  },
-];
 
 function canUserSeeEvent(event, user) {
   const userId = user?._id != null ? String(user._id) : '';
@@ -153,11 +118,6 @@ export default function EventsPage() {
 
   const isAdminView = user?.accessLevel >= membershipState.OFFICER;
   const visibleEvents = events.filter((event) => canUserSeeEvent(event, user));
-  const showYearPreview = view === 'year'
-    && new URLSearchParams(location.search).get('calendarPreview') === 'year';
-  const calendarEvents = showYearPreview
-    ? [...visibleEvents, ...YEAR_VIEW_PREVIEW_EVENTS]
-    : visibleEvents;
   const pageContainerClass = isAdminView
     ? 'relative h-dvh overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white'
     : 'relative h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-r from-gray-800 to-gray-600 text-white';
@@ -232,7 +192,7 @@ export default function EventsPage() {
 
         {!isLoading && !hasError && (
           <CalendarView
-            events={calendarEvents}
+            events={visibleEvents}
             isAdminView={isAdminView}
             user={user}
             canCreateEvent={isAdminView}
