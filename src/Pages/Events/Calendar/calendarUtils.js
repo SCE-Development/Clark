@@ -281,6 +281,26 @@ export function stepCursor(view, cursor, direction) {
 export function viewTitle(view, cursor) {
   if (view === 'day') return formatDate(toDateKey(cursor));
   if (view === 'year') return String(cursor.getFullYear());
+  if (view === 'week') {
+    const weekStart = new Date(
+      cursor.getFullYear(),
+      cursor.getMonth(),
+      cursor.getDate() - cursor.getDay(),
+    );
+    const weekEnd = new Date(
+      weekStart.getFullYear(),
+      weekStart.getMonth(),
+      weekStart.getDate() + 6,
+    );
+
+    if (weekStart.getFullYear() !== weekEnd.getFullYear()) {
+      return `${MONTHS[weekStart.getMonth()]} ${weekStart.getFullYear()} - ${MONTHS[weekEnd.getMonth()]} ${weekEnd.getFullYear()}`;
+    }
+    if (weekStart.getMonth() !== weekEnd.getMonth()) {
+      return `${MONTHS[weekStart.getMonth()]} - ${MONTHS[weekEnd.getMonth()]} ${weekEnd.getFullYear()}`;
+    }
+    return `${MONTHS[weekStart.getMonth()]} ${weekStart.getFullYear()}`;
+  }
   return `${MONTHS[cursor.getMonth()]} ${cursor.getFullYear()}`;
 }
 

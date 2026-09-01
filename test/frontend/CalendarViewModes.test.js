@@ -65,9 +65,12 @@ describe('Calendar view mode helpers', () => {
     it('formats titles and count labels for all four views', () => {
       const cursor = new Date(2026, 7, 27);
       const crossMonthWeekCursor = new Date(2026, 8, 2);
+      const crossYearWeekCursor = new Date(2026, 11, 30);
 
       expect(viewTitle('day', cursor)).to.equal('Thursday, August 27, 2026');
-      expect(viewTitle('week', crossMonthWeekCursor)).to.equal('September 2026');
+      expect(viewTitle('week', cursor)).to.equal('August 2026');
+      expect(viewTitle('week', crossMonthWeekCursor)).to.equal('August - September 2026');
+      expect(viewTitle('week', crossYearWeekCursor)).to.equal('December 2026 - January 2027');
       expect(viewTitle('month', cursor)).to.equal('August 2026');
       expect(viewTitle('year', cursor)).to.equal('2026');
       expect(countLabel('day')).to.equal('today');
