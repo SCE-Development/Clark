@@ -60,6 +60,7 @@ export function YearView({
             </div>
 
             {selectedEvents.length > 0 ? (
+              <div className="mt-2 max-h-28 space-y-1 overflow-y-auto">
                 {selectedEvents.map((event, index) => (
                   <EventRow
                     key={event.id || event._id || `${selectedDateKey}-${index}`}
