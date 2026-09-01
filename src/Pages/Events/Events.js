@@ -119,7 +119,7 @@ export default function EventsPage() {
   const calendarContainerClass = isAdminView
     ? 'relative h-full w-full overflow-hidden px-3 py-4 sm:px-4 sm:py-5 lg:px-5'
     : 'relative mx-auto h-full max-w-[120rem] overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10';
-  const fetchView = view === 'day' ? 'day' : 'month';
+  const fetchView = view === 'day' || view === 'week' ? view : 'month';
 
   useEffect(() => {
     const params = calendarSearchParams(location.search, cursor, view);

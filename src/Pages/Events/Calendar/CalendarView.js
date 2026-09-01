@@ -74,6 +74,16 @@ export default function CalendarView({
     isToday: cursorKey === todayKey,
     events: eventsByDate[cursorKey] || [],
   }];
+  const weekViewDays = Array.from({ length: 7 }, (_, dayOffset) => {
+    const date = new Date(year, month, cursor.getDate() - cursor.getDay() + dayOffset);
+    const key = toDateKey(date);
+    return {
+      date,
+      key,
+      isToday: key === todayKey,
+      events: eventsByDate[key] || [],
+    };
+  });
 
   const monthEvents = useMemo(() => {
     return cells
@@ -115,9 +125,9 @@ export default function CalendarView({
           onNext={() => setCursor(stepCursor(view, cursor, 1))}
         />
 
-        {view === 'day' ? (
+        {view === 'day' || view === 'week' ? (
           <TimeGrid
-            days={dayViewDays}
+            days={view === 'day' ? dayViewDays : weekViewDays}
             onSelectEvent={setSelectedEvent}
             isAdminView={isAdminView}
           />
