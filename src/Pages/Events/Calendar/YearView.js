@@ -130,7 +130,7 @@ export function YearView({
                             ? 'bg-slate-700/70 text-slate-50'
                             : 'text-slate-200 hover:bg-slate-700/60',
                       ].join(' ')}
-                      aria-label={`${monthName} ${date.getDate()}`}
+                      aria-label={`${monthName} ${date.getDate()}, ${year}`}
                     >
                       <span
                         className={[
