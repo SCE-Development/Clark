@@ -1,12 +1,18 @@
 import { useState, useMemo } from 'react';
 import { toDateKey } from '../eventUtils';
-import { eventDateKey, sortEventsForDay } from './calendarUtils';
+import {
+  countLabel,
+  eventDateKey,
+  sortEventsForDay,
+  stepCursor,
+  viewTitle,
+  visibleRange,
+} from './calendarUtils';
 import { EventPopup } from './EventPopup';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { MobileMonthAgenda } from './MobileMonthAgenda';
 import { CalendarLegend } from './CalendarLegend';
-import { MONTHS } from './calendarConstants';
 
 export default function CalendarView({
   events,
@@ -56,9 +62,10 @@ export default function CalendarView({
     };
   });
 
-  const monthEventCount = cells
-    .filter((c) => c.isCurrentMonth)
-    .reduce((sum, c) => sum + c.events.length, 0);
+  const { startDate, endDate } = visibleRange(view, cursor);
+  const eventCount = Object.entries(eventsByDate).reduce((sum, [key, dayEvents]) => {
+    return key >= startDate && key <= endDate ? sum + dayEvents.length : sum;
+  }, 0);
 
   const monthEvents = useMemo(() => {
     return cells
@@ -86,13 +93,16 @@ export default function CalendarView({
         <CalendarHeader
           view={view}
           onViewChange={onViewChange}
-          title={`${MONTHS[month]} ${year}`}
-          eventCount={monthEventCount}
-          countLabel="this month"
+          title={viewTitle(view, cursor)}
+          eventCount={eventCount}
+          countLabel={countLabel(view)}
           canCreateEvent={canCreateEvent}
-          onTodayClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
-          onPrevious={() => setCursor(new Date(year, month - 1, 1))}
-          onNext={() => setCursor(new Date(year, month + 1, 1))}
+          onTodayClick={() => {
+            const day = view === 'day' || view === 'week' ? today.getDate() : 1;
+            setCursor(new Date(today.getFullYear(), today.getMonth(), day));
+          }}
+          onPrevious={() => setCursor(stepCursor(view, cursor, -1))}
+          onNext={() => setCursor(stepCursor(view, cursor, 1))}
         />
 
         <div className="flex-1 min-h-0 overflow-y-auto sm:hidden">

@@ -65,7 +65,7 @@ export function CalendarHeader({
 
         <button
           onClick={onPrevious}
-          aria-label="Previous month"
+          aria-label={`Previous ${view}`}
           className="flex items-center justify-center w-10 h-10 transition border rounded-lg border-slate-400/40 bg-slate-800 text-slate-100 hover:border-slate-300 hover:bg-slate-700 hover:text-white"
         >
           <ChevronLeft />
@@ -73,7 +73,7 @@ export function CalendarHeader({
 
         <button
           onClick={onNext}
-          aria-label="Next month"
+          aria-label={`Next ${view}`}
           className="flex items-center justify-center w-10 h-10 transition border rounded-lg border-slate-400/40 bg-slate-800 text-slate-100 hover:border-slate-300 hover:bg-slate-700 hover:text-white"
         >
           <ChevronRight />

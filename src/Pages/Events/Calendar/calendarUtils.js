@@ -1,5 +1,6 @@
 import { membershipState } from '../../../Enums';
 import { toDateKey } from '../eventUtils';
+import { MONTHS } from './calendarConstants';
 
 export function eventDateKey(event) {
   if (!event.date) return null;
@@ -227,4 +228,125 @@ export function canUserManageEvent(event, user) {
   }
 
   return false;
+}
+
+export function visibleRange(view, cursor) {
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const day = cursor.getDate();
+  let start;
+  let end;
+
+  switch (view) {
+  case 'day':
+    start = new Date(year, month, day);
+    end = new Date(year, month, day);
+    break;
+  case 'week':
+    start = new Date(year, month, day - cursor.getDay());
+    end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+    break;
+  case 'year':
+    start = new Date(year, 0, 1);
+    end = new Date(year, 11, 31);
+    break;
+  default:
+    start = new Date(year, month, 1);
+    end = new Date(year, month + 1, 0);
+  }
+
+  return {
+    startDate: toDateKey(start),
+    endDate: toDateKey(end),
+  };
+}
+
+export function stepCursor(view, cursor, direction) {
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const day = cursor.getDate();
+
+  switch (view) {
+  case 'day':
+    return new Date(year, month, day + direction);
+  case 'week':
+    return new Date(year, month, day + (7 * direction));
+  case 'year':
+    return new Date(year + direction, month, 1);
+  default:
+    return new Date(year, month + direction, 1);
+  }
+}
+
+export function viewTitle(view, cursor) {
+  if (view === 'day') return formatDate(toDateKey(cursor));
+  if (view === 'year') return String(cursor.getFullYear());
+  return `${MONTHS[cursor.getMonth()]} ${cursor.getFullYear()}`;
+}
+
+export function countLabel(view) {
+  switch (view) {
+  case 'day':
+    return 'today';
+  case 'week':
+    return 'this week';
+  case 'year':
+    return 'this year';
+  default:
+    return 'this month';
+  }
+}
+
+export function bucketEventsByHour(events) {
+  const allDayEvents = [];
+  const eventsByHour = Array.from({ length: 24 }, () => []);
+
+  events.forEach((event) => {
+    const validTime = /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(event?.time || ''));
+    const timeValue = toTimeSortValue(event);
+
+    if (!validTime || !Number.isFinite(timeValue)) {
+      allDayEvents.push(event);
+      return;
+    }
+
+    eventsByHour[Math.floor(timeValue / 60)].push(event);
+  });
+
+  return { allDayEvents, eventsByHour };
+}
+
+export function miniMonthMatrix(year, month) {
+  const firstDayOffset = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const totalCells = Math.ceil((firstDayOffset + daysInMonth) / 7) * 7;
+  return Array.from({ length: totalCells }, (_, index) => {
+    const day = index - firstDayOffset + 1;
+    return day >= 1 && day <= daysInMonth
+      ? new Date(year, month, day)
+      : null;
+  });
+}
+
+export function calendarSearchParams(search, cursor, view) {
+  const params = new URLSearchParams(search);
+  const month = cursor.getMonth();
+  const year = cursor.getFullYear();
+
+  params.set('month', month);
+  params.set('year', year);
+
+  if (view === 'month') {
+    params.delete('view');
+  } else {
+    params.set('view', view);
+  }
+
+  if (view === 'day' || view === 'week') {
+    params.set('day', cursor.getDate());
+  } else {
+    params.delete('day');
+  }
+
+  return params;
 }

@@ -5,6 +5,7 @@ import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
 import CalendarView from './Calendar/CalendarView';
 import { VIEW_MODES } from './Calendar/calendarConstants';
+import { calendarSearchParams } from './Calendar/calendarUtils';
 import { toDateKey } from './eventUtils';
 
 const EVENTS_CALENDAR_CURSOR_KEY = 'scevents-calendar-cursor';
@@ -63,9 +64,11 @@ export default function EventsPage() {
     const params = new URLSearchParams(location.search);
     const monthParam = params.get('month');
     const yearParam = params.get('year');
+    const dayParam = params.get('day');
 
     const month = Number(monthParam);
     const year = Number(yearParam);
+    const day = Number(dayParam);
 
     if (
       monthParam !== null &&
@@ -75,7 +78,13 @@ export default function EventsPage() {
       month <= 11 &&
       Number.isInteger(year)
     ) {
-      return new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const validDay = dayParam !== null &&
+        Number.isInteger(day) &&
+        day >= 1 &&
+        day <= daysInMonth;
+
+      return new Date(year, month, validDay ? day : 1);
     }
 
     const savedCursor = window.localStorage.getItem(EVENTS_CALENDAR_CURSOR_KEY);
@@ -100,7 +109,7 @@ export default function EventsPage() {
     }
 
     const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), 1);
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate());
   });
 
   const isAdminView = user?.accessLevel >= membershipState.OFFICER;
@@ -113,18 +122,9 @@ export default function EventsPage() {
     : 'relative mx-auto h-full max-w-[120rem] overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10';
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    const params = calendarSearchParams(location.search, cursor, view);
     const month = cursor.getMonth();
     const year = cursor.getFullYear();
-
-    params.set('month', month);
-    params.set('year', year);
-
-    if (view === 'month') {
-      params.delete('view');
-    } else {
-      params.set('view', view);
-    }
 
     window.localStorage.setItem(
       EVENTS_CALENDAR_CURSOR_KEY,
