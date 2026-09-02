@@ -65,8 +65,8 @@ describe('<AboutPage />', () => {
     const tocButtons = tocNav.find('button');
     expect(tocButtons.length).to.be.greaterThan(0);
     expect(tocButtons.at(0).text()).to.equal('Introduction');
-    expect(tocButtons.at(1).text()).to.equal('Location & Hours');
-    expect(tocButtons.at(2).text()).to.equal('Membership');
+    expect(tocButtons.at(1).text()).to.equal('Our Team');
+    expect(tocButtons.at(2).text()).to.equal('Location & Hours');
   });
 
   it('Should have responsive text sizing', () => {
