@@ -1,11 +1,20 @@
 import { useState, useMemo } from 'react';
 import { toDateKey } from '../eventUtils';
-import { eventDateKey, sortEventsForDay } from './calendarUtils';
+import {
+  countLabel,
+  eventDateKey,
+  sortEventsForDay,
+  stepCursor,
+  viewTitle,
+  visibleRange,
+} from './calendarUtils';
 import { EventPopup } from './EventPopup';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { MobileMonthAgenda } from './MobileMonthAgenda';
 import { CalendarLegend } from './CalendarLegend';
+import { TimeGrid } from './TimeGrid';
+import { YearView } from './YearView';
 
 export default function CalendarView({
   events,
@@ -14,6 +23,9 @@ export default function CalendarView({
   canCreateEvent = false,
   cursor,
   setCursor,
+  view,
+  onViewChange,
+  onYearMonthSelect,
 }) {
   const today = useMemo(() => new Date(), []);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -35,16 +47,6 @@ export default function CalendarView({
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
 
-  function handleMonthChange(e) {
-    const nextMonth = Number(e.target.value);
-    setCursor(new Date(year, nextMonth, 1));
-  }
-
-  function handleYearChange(e) {
-    const nextYear = Number(e.target.value);
-    setCursor(new Date(nextYear, month, 1));
-  }
-
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const totalCells = Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7;
@@ -63,9 +65,27 @@ export default function CalendarView({
     };
   });
 
-  const monthEventCount = cells
-    .filter((c) => c.isCurrentMonth)
-    .reduce((sum, c) => sum + c.events.length, 0);
+  const { startDate, endDate } = visibleRange(view, cursor);
+  const eventCount = Object.entries(eventsByDate).reduce((sum, [key, dayEvents]) => {
+    return key >= startDate && key <= endDate ? sum + dayEvents.length : sum;
+  }, 0);
+  const cursorKey = toDateKey(cursor);
+  const dayViewDays = [{
+    date: cursor,
+    key: cursorKey,
+    isToday: cursorKey === todayKey,
+    events: eventsByDate[cursorKey] || [],
+  }];
+  const weekViewDays = Array.from({ length: 7 }, (_, dayOffset) => {
+    const date = new Date(year, month, cursor.getDate() - cursor.getDay() + dayOffset);
+    const key = toDateKey(date);
+    return {
+      date,
+      key,
+      isToday: key === todayKey,
+      events: eventsByDate[key] || [],
+    };
+  });
 
   const monthEvents = useMemo(() => {
     return cells
@@ -89,32 +109,56 @@ export default function CalendarView({
         />
       )}
 
-      <div className="flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none">
+      <div className={view === 'month'
+        ? 'flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)] sm:h-auto sm:max-h-none'
+        : 'flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-slate-500/50 bg-slate-800/85 shadow-[0_0_0_1px_rgba(148,163,184,0.05)]'}>
         <CalendarHeader
-          month={month}
-          year={year}
-          monthEventCount={monthEventCount}
+          view={view}
+          onViewChange={onViewChange}
+          title={viewTitle(view, cursor)}
+          eventCount={eventCount}
+          countLabel={countLabel(view)}
           canCreateEvent={canCreateEvent}
-          onMonthChange={handleMonthChange}
-          onYearChange={handleYearChange}
-          onTodayClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
-          onPreviousMonth={() => setCursor(new Date(year, month - 1, 1))}
-          onNextMonth={() => setCursor(new Date(year, month + 1, 1))}
+          onTodayClick={() => {
+            const day = view === 'day' || view === 'week' ? today.getDate() : 1;
+            setCursor(new Date(today.getFullYear(), today.getMonth(), day));
+          }}
+          onPrevious={() => setCursor(stepCursor(view, cursor, -1))}
+          onNext={() => setCursor(stepCursor(view, cursor, 1))}
         />
 
-        <div className="flex-1 min-h-0 overflow-y-auto sm:hidden">
-          <MobileMonthAgenda
-            monthEvents={monthEvents}
+        {view === 'day' || view === 'week' ? (
+          <TimeGrid
+            days={view === 'day' ? dayViewDays : weekViewDays}
             onSelectEvent={setSelectedEvent}
             isAdminView={isAdminView}
           />
-        </div>
+        ) : view === 'year' ? (
+          <YearView
+            year={year}
+            activeMonth={month}
+            eventsByDate={eventsByDate}
+            onSelectEvent={setSelectedEvent}
+            onSelectMonth={onYearMonthSelect}
+            isAdminView={isAdminView}
+          />
+        ) : (
+          <>
+            <div className="flex-1 min-h-0 overflow-y-auto sm:hidden">
+              <MobileMonthAgenda
+                monthEvents={monthEvents}
+                onSelectEvent={setSelectedEvent}
+                isAdminView={isAdminView}
+              />
+            </div>
 
-        <CalendarGrid
-          cells={cells}
-          onSelectEvent={setSelectedEvent}
-          isAdminView={isAdminView}
-        />
+            <CalendarGrid
+              cells={cells}
+              onSelectEvent={setSelectedEvent}
+              isAdminView={isAdminView}
+            />
+          </>
+        )}
 
         <CalendarLegend isAdminView={isAdminView} />
       </div>
