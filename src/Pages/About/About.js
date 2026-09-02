@@ -27,6 +27,13 @@ function useScrollSpy() {
   return activeId;
 }
 
+const eboardDetails = [
+  { role: 'President', name: 'Cindy Tat', discord: '_c1ndytat' },
+  { role: 'Vice President', name: 'Wesley Wong', discord: 'weslayer' },
+  { role: 'Treasurer', name: 'Gerard Consuelo', discord: 'epicgdog' },
+  { role: 'EP/PR Chair', name: 'Rachel Tran', discord: 'ra2y' },
+];
+
 export default function AboutPage() {
   const activeId = useScrollSpy();
 
@@ -63,6 +70,21 @@ export default function AboutPage() {
                 <li>• Collaborative workspace and community</li>
                 <li>• Professional development workshops</li>
               </ul>
+            </div>
+          </section>
+
+          <section id="eboard" data-spy className="space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-900 md:text-3xl dark:text-gray-100">Our Team</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {eboardDetails.map((entry) => (
+                <div key={entry.role} className="p-6 bg-gray-50 rounded-lg border border-black dark:bg-gray-800 dark:border-white">
+                  <h3 className="mb-3 font-semibold text-gray-900 dark:text-gray-100">{entry.role}</h3>
+                  <div className="space-y-1 text-sm">
+                    <p>{entry.name}</p>
+                    <p>Discord: <span className="font-mono">{entry.discord}</span></p>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -230,6 +252,15 @@ export default function AboutPage() {
                   ].join(' ')}
                 >
                   Introduction
+                </button>
+                <button
+                  onClick={() => scrollToSection('eboard')}
+                  className={[
+                    'block w-full text-sm text-left transition-colors hover:text-blue-600 dark:hover:text-blue-400'
+                    , activeId === 'eboard' ? 'font-bold text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
+                  ].join(' ')}
+                >
+                  Our Team
                 </button>
                 <button
                   onClick={() => scrollToSection('location')}
