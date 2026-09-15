@@ -109,14 +109,6 @@ export const officerOrAdminRoutes = [
     redirect: '/',
     inAdminNavbar: true
   },
-  //
-  // {
-  //   Component: EmailPage,
-  //   path: '/email-list',
-  //   allowedIf: userIsOfficerOrAdmin,
-  //   redirect: '/',
-  //   inAdminNavbar: true
-  // },
   {
     Component: EditUserInfo,
     path: '/user/edit/:id',
@@ -137,7 +129,7 @@ export const officerOrAdminRoutes = [
   {
     Component: PermissionRequestPage,
     path: '/permissions',
-    pageName: 'URL Shortener Page',
+    pageName: 'Permission Request Page',
     allowedIf: allowedIf.OFFICER_OR_ADMIN,
     inAdminNavbar: true,
     redirect: '/',
@@ -183,13 +175,6 @@ export const officerOrAdminRoutes = [
     inAdminNavbar: false
   },
 
-  {
-    Component: EditEventPage,
-    path: '/events/:id/edit',
-    pageName: 'Edit Event',
-    allowedIf: allowedIf.OFFICER_OR_ADMIN,
-    redirect: '/',
-  },
   {
     Component: EditEventPage,
     path: '/events/:id/edit',
