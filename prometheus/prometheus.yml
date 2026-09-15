@@ -30,3 +30,6 @@ scrape_configs:
   - job_name: 'goderpad'
     static_configs:
       - targets: ['goderpad-backend:7778']
+  - job_name: 'smee2'
+    static_configs:
+      - targets: ['smee2:5000']
