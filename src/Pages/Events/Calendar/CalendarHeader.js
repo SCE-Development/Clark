@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, PlusIcon } from '../EventIcons';
-import { MONTHS, YEAR_RANGE } from './calendarConstants';
+import { ChevronDown, ChevronLeft, ChevronRight, PlusIcon } from '../EventIcons';
+import { VIEW_MODES } from './calendarConstants';
 
 export function CalendarHeader({
-  month,
-  year,
-  monthEventCount,
+  view,
+  onViewChange,
+  title,
+  eventCount,
+  countLabel,
   canCreateEvent,
-  onMonthChange,
-  onYearChange,
   onTodayClick,
-  onPreviousMonth,
-  onNextMonth,
+  onPrevious,
+  onNext,
 }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-4 border-b border-slate-600/50">
@@ -19,32 +19,20 @@ export function CalendarHeader({
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative w-28 sm:w-36">
             <select
-              value={month}
-              onChange={onMonthChange}
-              aria-label="Select month"
+              value={view}
+              onChange={(e) => onViewChange(e.target.value)}
+              aria-label="Select calendar view"
               className="h-10 w-full appearance-none rounded-lg border border-slate-400/40 bg-slate-800 px-4 pr-10 text-[14px] font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
             >
-              {MONTHS.map((monthName, index) => (
-                <option key={monthName} value={index} className="bg-slate-900">
-                  {monthName}
+              {VIEW_MODES.map(({ label, value }) => (
+                <option key={value} value={value} className="bg-slate-900">
+                  {label}
                 </option>
               ))}
             </select>
-          </div>
-
-          <div className="relative w-24">
-            <select
-              value={year}
-              onChange={onYearChange}
-              aria-label="Select year"
-              className="h-10 w-full appearance-none rounded-lg border border-slate-400/40 bg-slate-800 px-4 pr-10 text-[14px] font-semibold text-slate-100 transition hover:border-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            >
-              {YEAR_RANGE.map((yearOption) => (
-                <option key={yearOption} value={yearOption} className="bg-slate-900">
-                  {yearOption}
-                </option>
-              ))}
-            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-300">
+              <ChevronDown />
+            </div>
           </div>
 
           <button
@@ -56,11 +44,11 @@ export function CalendarHeader({
         </div>
 
         <p className="text-sm font-medium tracking-wide text-slate-300">
-          {monthEventCount} event{monthEventCount !== 1 ? 's' : ''} this month
+          {eventCount} event{eventCount !== 1 ? 's' : ''} {countLabel}
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-[6px]">
         {canCreateEvent && (
           <Link
             to="/events/create"
@@ -71,17 +59,21 @@ export function CalendarHeader({
           </Link>
         )}
 
+        <span className="mr-[6px] text-[14px] font-semibold text-slate-100 whitespace-nowrap">
+          {title}
+        </span>
+
         <button
-          onClick={onPreviousMonth}
-          aria-label="Previous month"
+          onClick={onPrevious}
+          aria-label={`Previous ${view}`}
           className="flex items-center justify-center w-10 h-10 transition border rounded-lg border-slate-400/40 bg-slate-800 text-slate-100 hover:border-slate-300 hover:bg-slate-700 hover:text-white"
         >
           <ChevronLeft />
         </button>
 
         <button
-          onClick={onNextMonth}
-          aria-label="Next month"
+          onClick={onNext}
+          aria-label={`Next ${view}`}
           className="flex items-center justify-center w-10 h-10 transition border rounded-lg border-slate-400/40 bg-slate-800 text-slate-100 hover:border-slate-300 hover:bg-slate-700 hover:text-white"
         >
           <ChevronRight />

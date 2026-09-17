@@ -4,7 +4,8 @@ import { getAllSCEvents } from '../../APIFunctions/SCEvents';
 import { useSCE } from '../../Components/context/SceContext';
 import { membershipState } from '../../Enums';
 import CalendarView from './Calendar/CalendarView';
-import { toDateKey } from './eventUtils';
+import { VIEW_MODES } from './Calendar/calendarConstants';
+import { calendarSearchParams, visibleRange } from './Calendar/calendarUtils';
 
 const EVENTS_CALENDAR_CURSOR_KEY = 'scevents-calendar-cursor';
 
@@ -49,13 +50,24 @@ export default function EventsPage() {
   const location = useLocation();
   const history = useHistory();
 
+  const [view, setView] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const viewParam = params.get('view');
+
+    return VIEW_MODES.some(({ value }) => value === viewParam)
+      ? viewParam
+      : 'month';
+  });
+
   const [cursor, setCursor] = useState(() => {
     const params = new URLSearchParams(location.search);
     const monthParam = params.get('month');
     const yearParam = params.get('year');
+    const dayParam = params.get('day');
 
     const month = Number(monthParam);
     const year = Number(yearParam);
+    const day = Number(dayParam);
 
     if (
       monthParam !== null &&
@@ -65,7 +77,13 @@ export default function EventsPage() {
       month <= 11 &&
       Number.isInteger(year)
     ) {
-      return new Date(year, month, 1);
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const validDay = dayParam !== null &&
+        Number.isInteger(day) &&
+        day >= 1 &&
+        day <= daysInMonth;
+
+      return new Date(year, month, validDay ? day : 1);
     }
 
     const savedCursor = window.localStorage.getItem(EVENTS_CALENDAR_CURSOR_KEY);
@@ -90,8 +108,13 @@ export default function EventsPage() {
     }
 
     const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), 1);
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate());
   });
+
+  function handleYearMonthSelect(month) {
+    setCursor(new Date(cursor.getFullYear(), month, 1));
+    setView('month');
+  }
 
   const isAdminView = user?.accessLevel >= membershipState.OFFICER;
   const visibleEvents = events.filter((event) => canUserSeeEvent(event, user));
@@ -101,14 +124,12 @@ export default function EventsPage() {
   const calendarContainerClass = isAdminView
     ? 'relative h-full w-full overflow-hidden px-3 py-4 sm:px-4 sm:py-5 lg:px-5'
     : 'relative mx-auto h-full max-w-[120rem] overflow-y-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-10';
+  const fetchView = view === 'day' || view === 'week' || view === 'year' ? view : 'month';
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    const params = calendarSearchParams(location.search, cursor, view);
     const month = cursor.getMonth();
     const year = cursor.getFullYear();
-
-    params.set('month', month);
-    params.set('year', year);
 
     window.localStorage.setItem(
       EVENTS_CALENDAR_CURSOR_KEY,
@@ -118,16 +139,19 @@ export default function EventsPage() {
     history.replace({
       search: params.toString(),
     });
-  }, [cursor, history, location.search]);
+  }, [cursor, history, location.search, view]);
 
   useEffect(() => {
+    let isCurrent = true;
+
     async function fetchEvents() {
       setIsLoading(true);
       setHasError(false);
 
-      const startDate = toDateKey(new Date(cursor.getFullYear(), cursor.getMonth(), 1));
-      const endDate = toDateKey(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0));
+      const { startDate, endDate } = visibleRange(fetchView, cursor);
       const response = await getAllSCEvents(token, { startDate, endDate });
+
+      if (!isCurrent) return;
 
       if (!response.error) {
         setEvents(Array.isArray(response.responseData) ? response.responseData : []);
@@ -139,7 +163,10 @@ export default function EventsPage() {
     }
 
     fetchEvents();
-  }, [cursor, token]);
+    return () => {
+      isCurrent = false;
+    };
+  }, [cursor, fetchView, token]);
 
   return (
     <div className={pageContainerClass}>
@@ -171,6 +198,9 @@ export default function EventsPage() {
             canCreateEvent={isAdminView}
             cursor={cursor}
             setCursor={setCursor}
+            view={view}
+            onViewChange={setView}
+            onYearMonthSelect={handleYearMonthSelect}
           />
         )}
       </div>
