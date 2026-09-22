@@ -303,12 +303,12 @@ router.post('/edit', async (req, res) => {
 
   let fieldsToIterateOver = ALLOWED_FIELDS;
   if (isAtLeastAnOfficer) {
-    fieldsToIterateOver = Object.keys(existingUser);
+    fieldsToIterateOver = Object.keys(existingUser).concat(SENSITIVE_FIELDS);
   }
 
   fieldsToIterateOver.forEach(field => {
     // Only include the field if it was provided in the request body
-    if (userData[field] !== undefined) {
+     if (userData[field] !== undefined) {
       // Check if value actually changed for audit
       if (userData[field] !== existingUser[field]) {
         fieldChanges[field] = { from: existingUser[field], to: userData[field] };
