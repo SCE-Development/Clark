@@ -306,11 +306,14 @@ router.post('/edit', async (req, res) => {
     fieldsToIterateOver = Object.keys(existingUser);
   }
 
+  const allowedFieldSet = new Set(ALLOWED_FIELDS);
   fieldsToIterateOver.forEach(field => {
     // Only include the field if it was provided in the request body
-    if (userData[field] !== undefined) {
-      // Check if value actually changed for audit
-      if (userData[field] !== existingUser[field]) {
+    const previousValue = existingUser[field] ?? null;
+    
+    // Check if value actually changed for audit
+    if (allowedFieldSet.has(field) && userData[field] !== undefined) {
+        if (userData[field] !== previousValue) {
         fieldChanges[field] = { from: existingUser[field], to: userData[field] };
       }
       dataToUpdate[field] = userData[field];
