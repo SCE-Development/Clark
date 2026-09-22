@@ -303,7 +303,7 @@ router.post('/edit', async (req, res) => {
 
   let fieldsToIterateOver = ALLOWED_FIELDS;
   if (isAtLeastAnOfficer) {
-    fieldsToIterateOver = Object.keys(existingUser);
+    fieldsToIterateOver = Object.keys(existingUser).concat(SENSITIVE_FIELDS);
   }
 
   const allowedFieldSet = new Set(ALLOWED_FIELDS);
@@ -312,7 +312,7 @@ router.post('/edit', async (req, res) => {
     const previousValue = existingUser[field] ?? null;
     
     // Check if value actually changed for audit
-    if (allowedFieldSet.has(field) && userData[field] !== undefined) {
+    if (allowedFieldSet.has(field)) {
         if (userData[field] !== previousValue) {
         fieldChanges[field] = { from: existingUser[field], to: userData[field] };
       }
