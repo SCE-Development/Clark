@@ -8,6 +8,11 @@ import { checkIfUserIsSignedIn } from './APIFunctions/Auth';
 import { SceContext } from './Components/context/SceContext';
 import SearchModal from './Components/ShortcutKeyModal/SearchModal';
 
+// Auth migrated from localStorage to httpOnly cookies; sweep any stale entry.
+if (typeof window !== 'undefined' && window.localStorage) {
+  window.localStorage.removeItem('jwtToken');
+}
+
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);

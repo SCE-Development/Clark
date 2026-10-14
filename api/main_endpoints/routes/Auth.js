@@ -208,6 +208,14 @@ router.post('/login', async (req, res) => {
       details: { email: user.email }
     }).catch(logger.error);
 
+    res.cookie('jwtToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 2 * 60 * 60 * 1000
+    });
+
     res.json({ token: `JWT ${token}` });
 
   } catch (error) {
@@ -224,7 +232,21 @@ router.post('/verify', async function(req, res) {
   if (decoded.status !== OK) {
     return res.sendStatus(decoded.status);
   }
-  res.status(OK).json(decoded.token);
+  // Return the cookie's token in the body so the React app can keep
+  // attaching Authorization: Bearer headers for API calls. External
+  // callers using a header to authenticate get back their own token.
+  const cookieToken = req.cookies && req.cookies.jwtToken;
+  const headerToken = req.headers.authorization
+    && req.headers.authorization.startsWith('Bearer ')
+    ? req.headers.authorization.split('Bearer ')[1]
+    : null;
+  const rawToken = cookieToken || headerToken;
+  res.status(OK).json({ ...decoded.token, token: rawToken ? `JWT ${rawToken.replace(/^JWT\s/, '')}` : undefined });
+});
+
+router.post('/logout', function(req, res) {
+  res.clearCookie('jwtToken', { path: '/' });
+  res.sendStatus(OK);
 });
 
 router.post('/generateHashedId', async (req, res) => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSCE } from '../context/SceContext';
 import { membershipState } from '../../Enums';
+import { logoutUser } from '../../APIFunctions/Auth';
 
 export default function UserNavBar(props) {
   const { user, setAuthenticated } = useSCE();
@@ -15,9 +16,9 @@ export default function UserNavBar(props) {
     return className;
   };
 
-  function handleLogout() {
+  async function handleLogout() {
     setAuthenticated(false);
-    window.localStorage.removeItem('jwtToken');
+    await logoutUser();
     window.location.reload();
   }
 
